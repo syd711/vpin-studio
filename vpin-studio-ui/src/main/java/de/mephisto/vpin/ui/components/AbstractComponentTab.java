@@ -19,6 +19,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -42,6 +43,9 @@ abstract public class AbstractComponentTab implements StudioEventListener {
   public Button openFolderButton;
 
   @FXML
+  public Separator folderSeparator;
+
+  @FXML
   public VBox componentSummaryPane;
 
   @FXML
@@ -54,23 +58,24 @@ abstract public class AbstractComponentTab implements StudioEventListener {
   protected void refresh() {
     String savedTargetFolder = component.getTargetFolder();
     JFXFuture.supplyAsync(() -> client.getComponentService().getComponent(getComponentType()))
-      .thenAcceptLater(comp -> {
-        component = comp;
-        // set the target folder the user may have changed
-        if (!component.isInstalled()) {
-          component.setTargetFolder(savedTargetFolder);
-        }
+        .thenAcceptLater(comp -> {
+          component = comp;
+          // set the target folder the user may have changed
+          if (!component.isInstalled()) {
+            component.setTargetFolder(savedTargetFolder);
+          }
 
-        componentSummaryController.refreshComponent(component);
-        componentUpdateController.refreshComponent(component);
-        refreshTab(component);
-      });
+          componentSummaryController.refreshComponent(component);
+          componentUpdateController.refreshComponent(component);
+          refreshTab(component);
+        });
   }
 
   /**
    * Called when a component is updated, gives opportunity to the tab to refresh itself
+   *
    * @param component The updated component
-  */
+   */
   protected void refreshTab(ComponentRepresentation component2) {
   }
 
@@ -91,7 +96,10 @@ abstract public class AbstractComponentTab implements StudioEventListener {
   }
 
   protected void initialize() {
-    openFolderButton.setDisable(!SystemUtil.isFolderActionSupported());
+    openFolderButton.managedProperty().bindBidirectional(openFolderButton.visibleProperty());
+    folderSeparator.managedProperty().bindBidirectional(folderSeparator.visibleProperty());
+    openFolderButton.setVisible(client.getSystemService().isLocal());
+    folderSeparator.setVisible(client.getSystemService().isLocal());
 
     try {
       FXMLLoader loader = new FXMLLoader(ComponentUpdateController.class.getResource("component-update-panel.fxml"));
@@ -114,14 +122,14 @@ abstract public class AbstractComponentTab implements StudioEventListener {
     }
 
     JFXFuture.supplyAsync(() -> client.getComponentService().getComponent(getComponentType()))
-      .thenAcceptLater(comp -> {
-        this.component = comp;
-        componentSummaryController.setComponent(this, component);
-        componentUpdateController.setComponent(this, component);
-        refreshTab(component);
+        .thenAcceptLater(comp -> {
+          this.component = comp;
+          componentSummaryController.setComponent(this, component);
+          componentUpdateController.setComponent(this, component);
+          refreshTab(component);
 
-        EventManager.getInstance().addListener(this);
-      });
+          EventManager.getInstance().addListener(this);
+        });
   }
 
   public void clearCustomValues() {

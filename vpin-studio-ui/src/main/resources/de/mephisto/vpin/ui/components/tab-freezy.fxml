@@ -29,7 +29,7 @@
                      <Tooltip text="Open Freezy Installation Folder" />
                   </tooltip>
                </Button>
-               <Separator layoutX="259.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+               <Separator fx:id="folderSeparator" layoutX="259.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                <Button fx:id="flexDMDBtn" mnemonicParsing="false" onAction="#onFlexDMD" styleClass="external-component" text="FlexDMD UI" textFill="WHITE">
                   <font>
                      <Font size="14.0" />
