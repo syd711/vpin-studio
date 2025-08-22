@@ -58,7 +58,7 @@ import java.util.function.Consumer;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
-public class TemplateEditorController implements Initializable, BindingChangedListener, MediaPlayerListener {
+public class TemplateEditorController implements Initializable, MediaPlayerListener {
   private final static Logger LOG = LoggerFactory.getLogger(TemplateEditorController.class);
 
   @FXML
@@ -316,9 +316,8 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   }
 
   private void refreshTransparency() {
-    boolean enabled = getCardTemplate().isTransparentBackground();
-    if (enabled) {
-      if (!getCardTemplate().isOverlayMode()) {
+    if (getCardTemplate().isOverlayMode()) {
+      if (getCardTemplate().getOverlayScreen() == null) {
         Image backgroundImage = new Image(Studio.class.getResourceAsStream("transparent.png"));
         BackgroundImage myBI = new BackgroundImage(backgroundImage,
             BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
@@ -424,16 +423,6 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     }
   }
 
-  @Override
-  public void beanPropertyChanged(Object bean, String key, Object value) {
-    if (bean instanceof CardTemplate) {
-      // refresh the preview immediately
-      cardPreview.setTemplate((CardTemplate) bean);
-      // and background save with debounce
-      saveCardTemplate((CardTemplate) bean);
-    }
-  }
-
   private void saveCardTemplate(CardTemplate cardTemplate) {
     cardTemplateSaveDebouncer.debounce("cardTemplate", () -> {
       JFXFuture.runAsync(() -> client.getHighscoreCardTemplatesClient().save(cardTemplate))
@@ -498,7 +487,14 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
   private void initBindings() {
     try {
-      templateBeanBinder = new CardTemplateBinder(this);
+      templateBeanBinder = new CardTemplateBinder();
+      templateBeanBinder.addListener((bean, key, value) -> {
+        // refresh the preview immediately
+        cardPreview.setTemplate((CardTemplate) bean);
+        // and background save with debounce
+        saveCardTemplate((CardTemplate) bean);
+      });
+
       templateBeanBinder.setBean(this.getCardTemplate());
 
       layerEditorOverlayController.initialize(this, accordion);

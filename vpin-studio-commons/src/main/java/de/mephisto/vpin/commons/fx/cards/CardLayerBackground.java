@@ -1,6 +1,5 @@
 package de.mephisto.vpin.commons.fx.cards;
 
-import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -22,8 +21,10 @@ import de.mephisto.vpin.restclient.cards.CardTemplate;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
 
 public class CardLayerBackground extends Canvas implements CardLayer {
   protected final static Logger LOG = LoggerFactory.getLogger(CardLayerDebug.class);
@@ -34,7 +35,7 @@ public class CardLayerBackground extends Canvas implements CardLayer {
 
   @Override
   public boolean isSelectable() {
-    return false;
+    return true;
   }
 
   /**
@@ -61,30 +62,22 @@ public class CardLayerBackground extends Canvas implements CardLayer {
       lt.pulse("getBackgroundImage()");
       imageDirty = true;
     }
-    if (!template.isTransparentBackground()) {
-     // if the backgroundImage has Changed, in all cases effect must be re-applied
-      if (imageDirty || hasEffectsChanged(template)) {
-        cacheFinalImage = ImageUtil.clone(cacheBackgroundImage);
-        if (template.getBlur() > 0) {
-          //cacheFinalImage = ImageUtil.blurImage(cacheFinalImage, template.getBlur());
-          cacheFinalImage = ImageUtil.fastBlur(cacheFinalImage, template.getBlur() / 2);
-          lt.pulse("blurImage()");
-        }
+    // if the backgroundImage has Changed, effect must be re-applied
+    if (imageDirty || hasEffectsChanged(template)) {
+      // if background has not change, just reapply effect on cached background image
+      cacheFinalImage = ImageUtil.clone(cacheBackgroundImage);
 
-        if (template.isGrayScale()) {
-          cacheFinalImage = ImageUtil.grayScaleImage(cacheFinalImage);
-          lt.pulse("grayScaleImage()");
-        }
-
-        float alphaWhite = template.getAlphaWhite();
-        float alphaBlack = template.getAlphaBlack();
-        ImageUtil.applyAlphaComposites(cacheFinalImage, alphaWhite, alphaBlack);
-        lt.pulse("applyAlphaComposites()");
-  
-        imageDirty = true;
+      if (template.isGrayScale()) {
+        cacheFinalImage = ImageUtil.grayScaleImage(cacheFinalImage);
+        lt.pulse("grayScaleImage()");
       }
-    } else {
-      cacheFinalImage = cacheBackgroundImage;
+
+      float alphaWhite = template.getAlphaWhite();
+      float alphaBlack = template.getAlphaBlack();
+      ImageUtil.applyAlphaComposites(cacheFinalImage, alphaWhite, alphaBlack);
+      lt.pulse("applyAlphaComposites()");
+
+      imageDirty = true;
     }
 
     if (imageDirty) {
@@ -95,26 +88,47 @@ public class CardLayerBackground extends Canvas implements CardLayer {
     //--------------------------
     // Draw Part
 
+    double X = template.getMarginLeft() * zoomX;
+    double Y = template.getMarginTop() * zoomY;
+    double W = width - (template.getMarginLeft() + template.getMarginRight()) * zoomX;
+    double H = height - (template.getMarginTop() + template.getMarginBottom()) * zoomY;
+    int border = template.getBorderWidth() > 0 ? (int) (template.getBorderWidth() * zoomX) : 0;
+
+    // Set the clip region
+    Rectangle rect = new Rectangle(X, Y, W, H);
+    rect.setArcWidth(template.getBorderRadius() * 2 * zoomX);
+    rect.setArcHeight(template.getBorderRadius() * 2 * zoomY);
+    this.setClip(rect);
+
     if (cacheBackground != null) {
-      g.drawImage(cacheBackground, 0, 0, width, height);
+
+      // Use java fx for blur effect, much quicker !
+      GaussianBlur blur = null;
+      if (template.getBlur() > 0) {
+        blur = new GaussianBlur(template.getBlur());
+      }
+      g.setEffect(blur);
+
+      // Use java fx for transparency
+      g.setGlobalAlpha(1.0 - template.getTransparentPercentage() / 100.0);
+
+      g.drawImage(cacheBackground, X  + border, Y + border, W - 2 * border, H - 2 * border);
       lt.pulse("drawImage()");
     }
 
-    if (template.getBorderWidth() > 0) {
-      g.setStroke(Paint.valueOf(template.getFontColor()));
-      double strokeWidthX = template.getBorderWidth() * zoomX / 2;
-      double strokeWidthY = template.getBorderWidth() * zoomY / 2;
-      g.setLineWidth(strokeWidthX * 2);
-      // left
-      g.strokeLine(strokeWidthX, strokeWidthX, strokeWidthX, height - strokeWidthX);
-      // Right
-      g.strokeLine(width - strokeWidthX, strokeWidthX, width - strokeWidthX, height - strokeWidthX);
+    // remove applied effects for drawing the border
+    g.setEffect(null);
+    g.setGlobalAlpha(1.0);
 
-      g.setLineWidth(strokeWidthY * 2);
-      // Top 
-      g.strokeLine(strokeWidthY, strokeWidthY, width - strokeWidthY, strokeWidthY);
-      // Bottom
-      g.strokeLine(strokeWidthY, height - strokeWidthY, width - strokeWidthY, height - strokeWidthY);
+    if (template.getBorderWidth() > 0) {
+      g.setStroke(Paint.valueOf(template.getBorderColor()));
+      double strokeWidth = template.getBorderWidth() * zoomX;
+
+      g.setLineWidth(strokeWidth);
+
+      g.strokeRoundRect(X + strokeWidth / 2, Y + strokeWidth / 2, W - strokeWidth, H -  + strokeWidth, 
+          template.getBorderRadius() * 2 * zoomX, template.getBorderRadius() * 2 * zoomY);
+
 
       lt.pulse("drawBorder()");
     }
@@ -122,15 +136,11 @@ public class CardLayerBackground extends Canvas implements CardLayer {
 
   private @Nullable BufferedImage getBackgroundImage(@Nonnull CardTemplate template, @Nullable CardData data) {
 
-    if (template.isTransparentBackground()) {
-      BufferedImage bufferedImage = new BufferedImage(200, 200, BufferedImage.TYPE_INT_ARGB);
+    if (template.isUseColoredBackground()) {
+      BufferedImage bufferedImage = new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB);
       Graphics2D g2 = (Graphics2D) bufferedImage.getGraphics();
-      g2.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR));
-
-      int value = 255 - (255 * template.getTransparentPercentage() / 100);
-      g2.setBackground(new java.awt.Color(0, 0, 0, value));
-      g2.clearRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
-      g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+      g2.setColor(java.awt.Color.decode(template.getBackgroundColor()));
+      g2.fillRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
       g2.dispose();
       return bufferedImage;
     }
@@ -196,8 +206,8 @@ public class CardLayerBackground extends Canvas implements CardLayer {
 
     // Check on Template
     int hashTemplate = Objects.hash(
-      template.isTransparentBackground(),
-      template.getTransparentPercentage(),
+      template.isUseColoredBackground(),
+      template.getBackgroundColor(),
       template.getBackground()
     );
     if (cacheHashTemplate == 0 || cacheHashTemplate != hashTemplate) {
@@ -214,8 +224,8 @@ public class CardLayerBackground extends Canvas implements CardLayer {
     boolean hasChanged = false;
 
     int hashEffect = Objects.hash(
-      template.getBlur(),
       template.isGrayScale(),
+      template.getTransparentPercentage(),
       template.getAlphaWhite(),
       template.getAlphaBlack()
     );

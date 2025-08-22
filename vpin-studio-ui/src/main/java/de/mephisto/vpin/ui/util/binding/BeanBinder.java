@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.util.binding;
 
-import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.ui.util.FontSelectorDialog;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -11,22 +10,27 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.beanutils.PropertyUtils;
-import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BeanBinder<T> {
   private final static Logger LOG = LoggerFactory.getLogger(BeanBinder.class);
 
-  private BindingChangedListener listener;
+  private List<BindingChangedListener> listeners = new ArrayList<>();
 
   private T bean;
 
   private boolean paused;
 
-  public BeanBinder(BindingChangedListener listener) {
-    this.listener = listener;
+  public void addListener(BindingChangedListener listener) {
+    this.listeners.add(listener);
+  }
+  public void removeListener(BindingChangedListener listener) {
+    this.listeners.remove(listener);
   }
 
   public void setBean(T bean) {
@@ -218,8 +222,10 @@ public class BeanBinder<T> {
   private void setProperty(String property, Object value, boolean skipChangeEvent) {
     try {
       PropertyUtils.setProperty(bean, property, value);
-      if (listener != null && !skipChangeEvent && !paused) {
-        listener.beanPropertyChanged(bean, property, value);
+      if (!skipChangeEvent && !paused) {
+        for (BindingChangedListener listener : listeners) {
+          listener.beanPropertyChanged(bean, property, value);
+        }
       }
     }
     catch (Exception e) {

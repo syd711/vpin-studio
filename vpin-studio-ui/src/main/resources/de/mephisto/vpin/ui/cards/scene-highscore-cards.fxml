@@ -120,7 +120,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Open Screen Validators Settings" />
+                              <Tooltip text="Open Highscore Card Settings" />
                            </tooltip>
                         </Button>
                      </items>

@@ -12,40 +12,56 @@ public class CardTemplate extends JsonSettings {
 
   private Integer version = null;
 
+  private boolean renderBackground = true;
+  private boolean renderTableName = true;
+  private boolean renderTitle = true;
+  private boolean renderWheelIcon = true;
+  private boolean renderCanvas = false;
+
+  // Background images
+  private boolean useDefaultBackground = true;
+  private String background = "Old Bumbers";
+  private boolean useColoredBackground = true;
+  private String backgroundColor = "#000000";
+
+  // BACKGROUND SETTINGS
   private double backgroundX = 0;
   private double backgroundY = 0;
-  private double backgroundWidth = 1.0;
-  private double backgroundHeight = 1.0;
   private double zoom = 1.0;
   private boolean useDmdPositions = false;
   private boolean fullScreen = true;
 
+  private int transparentPercentage = 0;
   private int alphaBlack = 33;
   private int alphaWhite = 1;
   private int blur = 6;
   private boolean grayScale = false;
 
+  // LAYOUT SETTINGS
   private int borderWidth = 1;
+  public int borderRadius = 0;
   private String borderColor = "#FFFFFF";
-
-  /**@deprecated no more used */
-  private int padding = 10;
-
-  private double scoresX = 0.3;
-  private double scoresY = 0.4;
-  private double scoresWidth = 0.7;
-  private double scoresHeight = 0.6;
 
   private int marginTop = 10;
   private int marginRight = 10;
   private int marginBottom = 10;
   private int marginLeft = 10;
 
+  /**@deprecated no more used */
+  private int padding = 10;
+
+  // WHEEL SETTINGS
   private double wheelX = 0.0;
   private double wheelY = 0.5;
   private double wheelSize = 0.3;
   /**@deprecated no more used */
   private int wheelPadding = 32;
+
+  // SCORES SETTINGS
+  private double scoresX = 0.3;
+  private double scoresY = 0.4;
+  private double scoresWidth = 0.7;
+  private double scoresHeight = 0.6;
 
   private int rowMargin = 5;
   private boolean rawScore = true;
@@ -58,6 +74,11 @@ public class CardTemplate extends JsonSettings {
   private int scoreFontSize = 90;
   private String scoreFontStyle = "Regular";
 
+  private boolean renderFriends = true;
+  private boolean renderPositions = true;
+  private boolean renderScoreDates = true;
+
+  // TABLENAME SETTINGS
   private boolean tableUseVpsName = false;
   private boolean tableRenderManufacturer = true;
   private boolean tableRenderYear = true;
@@ -71,6 +92,7 @@ public class CardTemplate extends JsonSettings {
   private double tableWidth = 1.0;
   private double tableHeight = 0.2;
 
+  // TITLE SETTINGS
   private String title = "Highscores";
   private String titleFontName = "Cambria";
   private int titleFontSize = 120;
@@ -82,17 +104,7 @@ public class CardTemplate extends JsonSettings {
   private double titleWidth = 1.0;
   private double titleHeight = 0.2;
 
-  // Background images
-  private boolean useDefaultBackground = true;
-  private String background = "Old Bumbers";
-  private boolean transparentBackground = false;
-  private int transparentPercentage = 0;
-
-  private boolean renderTableName = true;
-  private boolean renderTitle = true;
-  private boolean renderWheelIcon = true;
-  private boolean renderCanvas = false;
-
+  // CANVAS SETTINGS
   private double canvasX = 0.1;
   private double canvasY = 0.1;
   private double canvasWidth = 0.8;
@@ -101,10 +113,7 @@ public class CardTemplate extends JsonSettings {
   private int canvasAlphaPercentage = 0;
   private int canvasBorderRadius = 0;
 
-  private boolean renderFriends = true;
-  private boolean renderPositions = true;
-  private boolean renderScoreDates = true;
-
+  // OVERLAY SETTINGS
   private boolean overlayMode = false;
   private String overlayScreen = null;
 
@@ -133,22 +142,6 @@ public class CardTemplate extends JsonSettings {
 
   public void setBackgroundY(double backgroundY) {
     this.backgroundY = backgroundY;
-  }
-
-  public double getBackgroundWidth() {
-    return backgroundWidth;
-  }
-
-  public void setBackgroundWidth(double backgroundWidth) {
-    this.backgroundWidth = backgroundWidth;
-  }
-
-  public double getBackgroundHeight() {
-    return backgroundHeight;
-  }
-
-  public void setBackgroundHeight(double backgroundHeight) {
-    this.backgroundHeight = backgroundHeight;
   }
 
   public double getZoom() {
@@ -391,6 +384,14 @@ public class CardTemplate extends JsonSettings {
     this.id = id;
   }
 
+  public boolean isRenderBackground() {
+    return renderBackground;
+  }
+
+  public void setRenderBackground(boolean renderBackground) {
+    this.renderBackground = renderBackground;
+  }
+
   public boolean isRenderWheelIcon() {
     return renderWheelIcon;
   }
@@ -407,22 +408,6 @@ public class CardTemplate extends JsonSettings {
     this.renderTitle = renderTitle;
   }
 
-  public boolean isTransparentBackground() {
-    return transparentBackground;
-  }
-
-  public void setTransparentBackground(boolean transparentBackground) {
-    this.transparentBackground = transparentBackground;
-  }
-
-  public int getTransparentPercentage() {
-    return transparentPercentage;
-  }
-
-  public void setTransparentPercentage(int transparentPercentage) {
-    this.transparentPercentage = transparentPercentage;
-  }
-
   public boolean isRenderTableName() {
     return renderTableName;
   }
@@ -437,6 +422,14 @@ public class CardTemplate extends JsonSettings {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public int getTransparentPercentage() {
+    return transparentPercentage;
+  }
+
+  public void setTransparentPercentage(int transparentPercentage) {
+    this.transparentPercentage = transparentPercentage;
   }
 
   public int getAlphaBlack() {
@@ -462,6 +455,14 @@ public class CardTemplate extends JsonSettings {
   public void setBackground(String background) {
     this.background = background;
   }
+ 
+  public String getBackgroundColor() {
+    return backgroundColor;
+  }
+
+  public void setBackgroundColor(String backgroundColor) {
+    this.backgroundColor = backgroundColor;
+  }
 
   public int getBorderWidth() {
     return borderWidth;
@@ -471,7 +472,15 @@ public class CardTemplate extends JsonSettings {
     this.borderWidth = borderWidth;
   }
 
- public int getRowMargin() {
+  public int getBorderRadius() {
+    return borderRadius;
+  }
+
+  public void setBorderRadius(int borderRadius) {
+    this.borderRadius = borderRadius;
+  }
+
+  public int getRowMargin() {
     return rowMargin;
   }
 
@@ -727,6 +736,14 @@ public class CardTemplate extends JsonSettings {
     this.useDefaultBackground = useDefaultBackground;
   }
 
+  public boolean isUseColoredBackground() {
+    return useColoredBackground;
+  }
+
+  public void setUseColoredBackground(boolean useColorBackground) {
+    this.useColoredBackground = useColorBackground;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -753,19 +770,31 @@ public class CardTemplate extends JsonSettings {
   //-------------------------------------- deprecated but kept to parse old template ---
 
   /**
-   * @deprecated fo not use anymore
+   * @deprecated not used anymore
    */
   public int getPadding() {
     return padding;
   }
   /**
-   * @deprecated fo not use anymore
+   * @deprecated not used anymore
    */
   public void setPadding(int padding) {
     this.padding = padding;
   }
 
- 
+  /**
+   * @deprecated use isUseColoredBackground()
+   */
+  public boolean _isTransparentBackground() {
+    return isUseColoredBackground();
+  }
+
+  /**
+   * @deprecated use setUseColoredBackground()
+   */
+  public void _setTransparentBackground(boolean transparentBackground) {
+    setUseColoredBackground(transparentBackground);
+  }
 
   /**
    * @deprecated use getWheelRightPadding())

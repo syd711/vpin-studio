@@ -4,11 +4,11 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Spinner?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.ScrollPane?>
@@ -19,13 +19,33 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<TitledPane fx:id="settingsPane" text="Background Settings" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.panels.LayerEditorBackgroundController">
+<TitledPane fx:id="settingsPane" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.panels.LayerEditorBackgroundController">
+   <graphic>
+      <BorderPane prefWidth="250.0">
+         <left>
+            <Label text="Background Settings" />
+         </left>
+         <right>
+            <Button fx:id="eyeBtn" mnemonicParsing="false" >
+               <font>
+                  <Font size="10.0"/>
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline"/>
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Toggle title visibility"/>
+               </tooltip>
+            </Button>
+         </right>
+      </BorderPane>
+   </graphic>
    <content>
       <ScrollPane hbarPolicy="NEVER">
          <content>
             <VBox styleClass="accordion-container" >
                <children>
-                  <RadioButton fx:id="transparentBackgroundRadio" mnemonicParsing="false" text="Transparent Background" textFill="WHITE">
+                  <RadioButton fx:id="coloredBackgroundRadio" mnemonicParsing="false" text="Solid Background" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -33,15 +53,15 @@
                         <Insets bottom="6.0" />
                      </VBox.margin>
                   </RadioButton>
-                  <VBox fx:id="transparentBackgroundPane" spacing="6.0" >
+                  <VBox fx:id="coloredBackgroundPane" spacing="6.0" >
                      <children>
-                        <Label text="Alpha Percentage:" textFill="WHITE">
+                        <Label text="Color:" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Slider fx:id="alphaPercentageSpinner">
-                        </Slider>
+                        <ColorPicker fx:id="backgroundColorSelector" >
+                        </ColorPicker>
                      </children>
                   </VBox>
 
@@ -96,7 +116,6 @@
                      </children>
                   </VBox>
 
-
                   <CheckBox fx:id="grayScaleCheckbox" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" text="Grayscale Background" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
@@ -105,6 +124,21 @@
                         <Insets top="24.0" />
                      </VBox.margin>
                   </CheckBox>
+
+                  <Label text="Alpha Percentage:" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Slider fx:id="alphaPercentageSlider">
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
+                  </Slider>
+
                   <Label text="Brighten Background:" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
@@ -114,37 +148,40 @@
                      </VBox.margin>
                   </Label>
                   <Slider fx:id="brightenSlider" maxWidth="330.0">
-                     <padding>
-                        <Insets bottom="12.0" top="6.0" />
-                     </padding>
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
                   </Slider>
+
                   <Label text="Darken Background:" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
-                     <padding>
+                     <VBox.margin>
                         <Insets top="12.0" />
-                     </padding>
+                     </VBox.margin>
                   </Label>
                   <Slider fx:id="darkenSlider" maxWidth="330.0">
-                     <padding>
-                        <Insets bottom="12.0" top="6.0" />
-                     </padding>
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
                   </Slider>
+
                   <Label text="Blur Background:" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
-                     <padding>
-                        <Insets top="12.0" />
-                     </padding>
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
                   </Label>
                   <Slider fx:id="blurSlider" max="50.0" maxWidth="330.0">
-                     <padding>
-                        <Insets bottom="12.0" top="6.0" />
-                     </padding>
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
                   </Slider>
                </children>
+
                <padding>
                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                </padding>

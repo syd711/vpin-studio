@@ -5,8 +5,6 @@ import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.*;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -26,30 +24,30 @@ import static de.mephisto.vpin.ui.Studio.stage;
 public class LayerEditorBackgroundController extends LayerEditorBaseController {
 
   @FXML
-  private RadioButton transparentBackgroundRadio;
+  private RadioButton coloredBackgroundRadio;
   @FXML
   private RadioButton defaultBackgroundRadio;
   @FXML
   private RadioButton fallbackBackgroundRadio;
 
   @FXML
-  private VBox transparentBackgroundPane;
+  private VBox coloredBackgroundPane;
   @FXML
   private VBox defaultBackgroundPane;
   @FXML
   private VBox fallbackBackgroundPane;
 
   @FXML
-  private Slider alphaPercentageSpinner;
-
+  private ColorPicker backgroundColorSelector;
   @FXML
   private ComboBox<String> backgroundImageCombo;
-
   @FXML
   private Button falbackUploadBtn;
 
   @FXML
   private CheckBox grayScaleCheckbox;
+  @FXML
+  private Slider alphaPercentageSlider;
   @FXML
   private Slider brightenSlider;
   @FXML
@@ -86,9 +84,11 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
 
   @Override
   public void setTemplate(CardTemplate cardTemplate, CardResolution res) {
+    setIconVisibility(cardTemplate.isRenderBackground());
+
     // background
-    if (cardTemplate.isTransparentBackground()) {
-      transparentBackgroundRadio.setSelected(true);
+    if (cardTemplate.isUseColoredBackground()) {
+      coloredBackgroundRadio.setSelected(true);
     }
     else if (cardTemplate.isUseDefaultBackground()) {
       defaultBackgroundRadio.setSelected(true);
@@ -97,13 +97,13 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
       fallbackBackgroundRadio.setSelected(true);
     }
 
+    CardTemplateBinder.setColorPickerValue(backgroundColorSelector, cardTemplate, "backgroundColor");
+
     grayScaleCheckbox.setSelected(cardTemplate.isGrayScale());
+    alphaPercentageSlider.setValue(cardTemplate.getTransparentPercentage());
     brightenSlider.setValue(cardTemplate.getAlphaWhite());
     darkenSlider.setValue(cardTemplate.getAlphaBlack());
     blurSlider.setValue(cardTemplate.getBlur());
-
-    // transparent background
-    alphaPercentageSpinner.setValue(cardTemplate.getTransparentPercentage());
 
     // fallback background
     String backgroundName = cardTemplate.getBackground();
@@ -114,9 +114,10 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
   }
 
   public void initBindings(CardTemplateBinder templateBeanBinder) {
+    bindVisibilityIcon(templateBeanBinder, "renderBackground");
 
     ToggleGroup radioGroup = new ToggleGroup();
-    transparentBackgroundRadio.setToggleGroup(radioGroup);
+    coloredBackgroundRadio.setToggleGroup(radioGroup);
     defaultBackgroundRadio.setToggleGroup(radioGroup);
     fallbackBackgroundRadio.setToggleGroup(radioGroup);
 
@@ -124,18 +125,14 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
     defaultBackgroundPane.setVisible(false);
     defaultBackgroundPane.setManaged(false);
 
-
     radioGroup.selectedToggleProperty().addListener((obs, o, n) -> {
-      transparentBackgroundPane.setDisable(n != transparentBackgroundRadio);
+      coloredBackgroundPane.setDisable(n != coloredBackgroundRadio);
       defaultBackgroundPane.setDisable(n != defaultBackgroundRadio);
       fallbackBackgroundPane.setDisable(n != fallbackBackgroundRadio);
 
-      templateBeanBinder.setProperty("transparentBackground", n == transparentBackgroundRadio);
+      templateBeanBinder.setProperty("useColoredBackground", n == coloredBackgroundRadio);
       templateBeanBinder.setProperty("useDefaultBackground", n == defaultBackgroundRadio);
     });
-
-    // transparent background
-    templateBeanBinder.bindSlider(alphaPercentageSpinner, "transparentPercentage");
 
     // default background
     imageList = FXCollections.observableList(new ArrayList<>(client.getHighscoreCardsService().getHighscoreBackgroundImages()));
@@ -143,29 +140,26 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
     backgroundImageCombo.setCellFactory(c -> new WidgetFactory.HighscoreBackgroundImageListCell(client));
     backgroundImageCombo.setButtonCell(new WidgetFactory.HighscoreBackgroundImageListCell(client));
 
+    templateBeanBinder.bindColorPicker(backgroundColorSelector, "backgroundColor");
+
     templateBeanBinder.bindComboBox(backgroundImageCombo, "background");
 
     // Other properties
     templateBeanBinder.bindCheckbox(grayScaleCheckbox, "grayScale");
+    templateBeanBinder.bindSlider(alphaPercentageSlider, "transparentPercentage");
     templateBeanBinder.bindSlider(brightenSlider, "alphaWhite");
     templateBeanBinder.bindSlider(darkenSlider, "alphaBlack");
     templateBeanBinder.bindSlider(blurSlider, "blur");
 
-    transparentBackgroundRadio.selectedProperty().addListener((obs, old, enabled) -> {
+    /* coloredBackgroundRadio.selectedProperty().addListener((obs, old, enabled) -> {
       grayScaleCheckbox.setDisable(enabled);
       blurSlider.setDisable(enabled);
       brightenSlider.setDisable(enabled);
       darkenSlider.setDisable(enabled);
-    });
-
-    transparentBackgroundRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        if (newValue && alphaPercentageSpinner.getValue() <= 0) {
-          alphaPercentageSpinner.setValue(50);
-        }
+      if (enabled && alphaPercentageSlider.getValue() <= 0) {
+        alphaPercentageSlider.setValue(50);
       }
-    });
+    }); */
   }
 
   @Override

@@ -5,13 +5,26 @@ import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.ui.util.PositionResizer;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 
 public class LayerEditorLayoutController extends LayerEditorBaseController {
 
   @FXML
-  private Slider borderSlider;
+  private Slider zoomSlider;
   @FXML
-  private Spinner<Integer> paddingSpinner;
+  private VBox backgroundPositionBox;
+  @FXML
+  private Spinner<Integer> backgroundXSpinner;
+   @FXML
+  private Spinner<Integer> backgroundYSpinner;
+
+  @FXML
+  private Spinner<Integer> borderSizeSpinner;
+  @FXML
+  private Spinner<Integer> borderRadiusSpinner;
+  @FXML
+  private ColorPicker borderColorSelector;
+
   @FXML
   private Spinner<Integer> marginTopSpinner;
   @FXML
@@ -24,8 +37,15 @@ public class LayerEditorLayoutController extends LayerEditorBaseController {
 
   @Override
   public void setTemplate(CardTemplate cardTemplate, CardResolution res) {
-    borderSlider.setValue(cardTemplate.getBorderWidth());
-    paddingSpinner.getValueFactory().setValue(cardTemplate.getPadding());
+    setIconVisibility(cardTemplate.isRenderBackground());
+
+    zoomSlider.setValue(cardTemplate.getZoom());
+    LayerSubEditorPositionController.setValue(backgroundXSpinner, cardTemplate, "backgroundX", res.toWidth());
+    LayerSubEditorPositionController.setValue(backgroundYSpinner, cardTemplate, "backgroundY", res.toHeight());
+
+    borderSizeSpinner.getValueFactory().setValue(cardTemplate.getBorderWidth());
+    borderRadiusSpinner.getValueFactory().setValue(cardTemplate.getBorderRadius());
+    CardTemplateBinder.setColorPickerValue(borderColorSelector, cardTemplate, "borderColor");
 
     marginTopSpinner.getValueFactory().setValue(cardTemplate.getMarginTop());
     marginRightSpinner.getValueFactory().setValue(cardTemplate.getMarginRight());
@@ -35,8 +55,19 @@ public class LayerEditorLayoutController extends LayerEditorBaseController {
 
   @Override
   public void initBindings(CardTemplateBinder templateBeanBinder) {
-    templateBeanBinder.bindSlider(borderSlider, "borderWidth");
-    templateBeanBinder.bindSpinner(paddingSpinner, "padding");
+    templateBeanBinder.addListener((bean, key, value) -> {
+      if ("renderBackground".equals(key)) {
+        setIconVisibility((boolean) value);
+      }
+    });
+
+    templateBeanBinder.bindSlider(zoomSlider, "zoom");
+    LayerSubEditorPositionController.bindSpinner(backgroundXSpinner, "backgroundX", templateBeanBinder, 0, 1920, true);
+    LayerSubEditorPositionController.bindSpinner(backgroundYSpinner, "backgroundY", templateBeanBinder, 0, 1920, false);
+
+    templateBeanBinder.bindSpinner(borderSizeSpinner, "borderWidth");
+    templateBeanBinder.bindSpinner(borderRadiusSpinner, "borderRadius");
+    templateBeanBinder.bindColorPicker(borderColorSelector, "borderColor");
 
     templateBeanBinder.bindSpinner(marginTopSpinner, "marginTop");
     templateBeanBinder.bindSpinner(marginRightSpinner, "marginRight");
@@ -46,11 +77,17 @@ public class LayerEditorLayoutController extends LayerEditorBaseController {
 
   @Override
   public void bindDragBox(PositionResizer dragBox) {
-    //positionController.bindDragBox(dragBox);
+    // background connot be distord
+    dragBox.setAspectRatio(1.0);
+    //FIXME OLE add capability in dragBox.setResizable(false);
+
+    LayerSubEditorPositionController.bindSpinner(backgroundXSpinner, dragBox.xProperty(), dragBox.xMinProperty(), dragBox.xMaxProperty());
+    LayerSubEditorPositionController.bindSpinner(backgroundYSpinner, dragBox.yProperty(), dragBox.yMinProperty(), dragBox.yMaxProperty());
   }
   @Override
   public void unbindDragBox(PositionResizer dragBox) {
-    //positionController.unbindDragBox(dragBox);
+    LayerSubEditorPositionController.unbindSpinner(backgroundXSpinner);
+    LayerSubEditorPositionController.unbindSpinner(backgroundYSpinner);
   }
 
 }
