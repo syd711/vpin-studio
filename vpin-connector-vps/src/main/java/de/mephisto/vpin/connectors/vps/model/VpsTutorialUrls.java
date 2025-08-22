@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class VpsTutorialUrls extends VpsAuthoredUrls {
   private String title;
@@ -67,21 +68,14 @@ public class VpsTutorialUrls extends VpsAuthoredUrls {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof VpsTutorialUrls)) return false;
-    //if (!super.equals(o)) return false;
-
+    if (o == null || getClass() != o.getClass()) return false;
+    if (!super.equals(o)) return false;
     VpsTutorialUrls that = (VpsTutorialUrls) o;
-
-    if (title != null && !title.equals(that.title)) return false;
-    return youtubeId.equals(that.youtubeId);
+    return Objects.equals(title, that.title) && Objects.equals(youtubeId, that.youtubeId);
   }
 
   @Override
   public int hashCode() {
-    int result = super.hashCode();
-    result = 31 * result + title.hashCode();
-    result = 31 * result + youtubeId.hashCode();
-    return result;
+    return Objects.hash(super.hashCode(), title, youtubeId);
   }
 }
