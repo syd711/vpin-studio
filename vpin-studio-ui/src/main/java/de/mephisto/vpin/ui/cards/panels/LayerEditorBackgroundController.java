@@ -87,9 +87,15 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
   @Override
   public void setTemplate(CardTemplate cardTemplate, CardResolution res) {
     // background
-    transparentBackgroundRadio.setSelected(cardTemplate.isTransparentBackground());
-    defaultBackgroundRadio.setSelected(cardTemplate.isUseDefaultBackground());
-    fallbackBackgroundRadio.setSelected(!cardTemplate.isTransparentBackground() && !cardTemplate.isUseDefaultBackground());
+    if (cardTemplate.isTransparentBackground()) {
+      transparentBackgroundRadio.setSelected(true);
+    }
+    else if (cardTemplate.isUseDefaultBackground()) {
+      defaultBackgroundRadio.setSelected(true);
+    }
+    else {
+      fallbackBackgroundRadio.setSelected(true);
+    }
 
     grayScaleCheckbox.setSelected(cardTemplate.isGrayScale());
     brightenSlider.setValue(cardTemplate.getAlphaWhite());
@@ -125,7 +131,7 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
       fallbackBackgroundPane.setDisable(n != fallbackBackgroundRadio);
 
       templateBeanBinder.setProperty("transparentBackground", n == transparentBackgroundRadio);
-      templateBeanBinder.setProperty("useDirectB2S", n == defaultBackgroundRadio);
+      templateBeanBinder.setProperty("useDefaultBackground", n == defaultBackgroundRadio);
     });
 
     // transparent background

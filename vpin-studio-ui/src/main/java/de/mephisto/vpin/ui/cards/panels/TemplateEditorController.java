@@ -296,6 +296,8 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
     CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS);
     CardResolution res = cardSettings.getCardResolution();
+    resolutionLabel.setText("Resolution: " + res.toWidth() + " x " + res.toHeight());
+
     templateBeanBinder.setResolution(res);
 
     layerEditorOverlayController.setTemplate(cardTemplate, res);
@@ -447,7 +449,6 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   public void initialize(URL url, ResourceBundle resourceBundle) {
 
     folderBtn.setVisible(SystemUtil.isFolderActionSupported());
-    resolutionLabel.setText("");
 
     Frontend frontend = client.getFrontendService().getFrontendCached();
     FrontendUtil.replaceName(folderBtn.getTooltip(), frontend);
@@ -476,8 +477,6 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       waitOverlay = loader.load();
       WaitOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Getting Card Data...");
-
-      //accordion.setExpandedPane(backgroundSettingsPane);
 
       // Initialize bindings between CardTemplate and sidebar
       initBindings();
@@ -715,14 +714,10 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   //-------------- MediaPlayerListener
   @Override
   public void onReady(Media media) {
-    if (media != null && media.getWidth() > 0) {
-      resolutionLabel.setText("Resolution: " + media.getWidth() + " x " + media.getHeight());
-    }
   }
 
   @Override
   public void onDispose() {
-    this.resolutionLabel.setText("");
   }
 
 }
