@@ -502,14 +502,14 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       templateBeanBinder = new CardTemplateBinder(this);
       templateBeanBinder.setBean(this.getCardTemplate());
 
-      layerEditorOverlayController.initialize(this);
-      layerEditorBackgroundController.initialize(this);
-      layerEditorLayoutController.initialize(this);
-      layerEditorCanvasController.initialize(this);
-      layerEditorTitleController.initialize(this);
-      layerEditorTableNameController.initialize(this);
-      layerEditorWheelController.initialize(this);
-      layerEditorScoresController.initialize(this);
+      layerEditorOverlayController.initialize(this, accordion);
+      layerEditorBackgroundController.initialize(this, accordion);
+      layerEditorLayoutController.initialize(this, accordion);
+      layerEditorCanvasController.initialize(this, accordion);
+      layerEditorTitleController.initialize(this, accordion);
+      layerEditorTableNameController.initialize(this, accordion);
+      layerEditorWheelController.initialize(this, accordion);
+      layerEditorScoresController.initialize(this, accordion);
     }
     catch (Exception e) {
       LOG.error("Error initializing highscore editor fields:" + e.getMessage(), e);
@@ -614,6 +614,9 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   private void loadDragBoxes(CardLayer layer) {
     if (layer != null) {
 
+      LayerEditorBaseController controller = layerToController(layer);
+      controller.layerSelected();
+
       // The canvas box
       PositionResizer dragBox = new PositionResizer();
 
@@ -634,7 +637,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       dragBox.setX((int) (layer.getLocX() / zoomX));
       dragBox.setY((int) (layer.getLocY() / zoomY));
 
-      layerToController(layer).bindDragBox(dragBox);
+      controller.bindDragBox(dragBox);
       dragBox.setUserData(layer);
 
       dragBox.addToPane(cardPreview);

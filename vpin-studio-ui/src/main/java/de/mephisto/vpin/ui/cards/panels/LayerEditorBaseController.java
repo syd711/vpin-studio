@@ -5,11 +5,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.mephisto.vpin.restclient.cards.CardTemplate;
-import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.ui.util.PositionResizer;
-import de.mephisto.vpin.ui.util.binding.BeanBinder;
 import javafx.fxml.FXML;
+import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.TitledPane;
 
@@ -24,12 +23,16 @@ public abstract class LayerEditorBaseController {
   @FXML
   protected Button eyeBtn;
 
+  /** The top accordion */
+  protected Accordion accordion;
+
   /** Link to the parent controller */
   protected TemplateEditorController templateEditorController;
 
-  public void initialize(TemplateEditorController templateEditorController) {
+  public void initialize(TemplateEditorController templateEditorController, Accordion accordion) {
     LOG.info("initBindings for {}", getClass().getSimpleName());
     this.templateEditorController = templateEditorController;
+    this.accordion = accordion;
     initBindings(templateEditorController.getBeanBinder());
   }
 
@@ -40,6 +43,22 @@ public abstract class LayerEditorBaseController {
   public abstract void bindDragBox(PositionResizer dragBox);
 
   public abstract void unbindDragBox(PositionResizer dragBox);
+
+
+  /**
+   * Called when the associated element is selected in the preview
+   */
+  public void layerSelected() {
+
+    TitledPane expandedPane = accordion.getExpandedPane();
+    expandedPane.setAnimated(false);
+    settingsPane.setAnimated(false);
+
+    accordion.setExpandedPane(settingsPane);
+    
+    expandedPane.setAnimated(true);
+    settingsPane.setAnimated(true);
+  }
 
 
   //---------------------------------------- Common Utilities ---
@@ -63,6 +82,4 @@ public abstract class LayerEditorBaseController {
       e.consume();
     });
   }
-
-
 }
