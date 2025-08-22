@@ -100,6 +100,19 @@
                               <Tooltip text="Open Table in Table Overview" />
                            </tooltip>
                         </Button>
+                        <Button fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" iconSize="18" />
+                           </graphic>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <tooltip>
+                              <Tooltip text="Asset Manager" />
+                           </tooltip>
+                        </Button>
+
+                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
 
                         <Button fx:id="maniaBtn" layoutX="339.0" layoutY="11.0" mnemonicParsing="false" onAction="#onManiaTable" textFill="WHITE">
                            <graphic>

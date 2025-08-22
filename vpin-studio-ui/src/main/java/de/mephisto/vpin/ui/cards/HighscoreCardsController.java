@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.cards;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.cards.panels.TemplateEditorController;
@@ -71,6 +72,9 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
   private Button tableEditBtn;
 
   @FXML
+  private Button assetManagerBtn;
+
+  @FXML
   private TitledPane defaultBackgroundTitlePane;
 
   @FXML
@@ -96,6 +100,14 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
         refreshRawPreview(game);
         EventManager.getInstance().notifyTableChange(game.getId(), null);
       }
+    }
+  }
+
+  @FXML
+  private void onMediaEdit() {
+    GameRepresentation selectedItems = getSelection();
+    if (selectedItems != null) {
+      TableDialogs.openTableAssetsDialog(null, selectedItems, VPinScreen.BackGlass);
     }
   }
 
@@ -133,30 +145,30 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
     GameRepresentationModel selectedItem = getSelectedModel();
 
     JFXFuture.supplyAsync(() -> {
-      if (force) {
-        client.getGameService().clearCache();
-      }
-      return client.getGameService().getVpxGamesCached();
-    })
-    .onErrorSupply(e -> {
-      Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, "Error", "Loading tables failed: " + e.getMessage()));
-      return Collections.emptyList();
-    })
-    .thenAcceptLater(games -> {
-        setItems(games);
+          if (force) {
+            client.getGameService().clearCache();
+          }
+          return client.getGameService().getVpxGamesCached();
+        })
+        .onErrorSupply(e -> {
+          Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, "Error", "Loading tables failed: " + e.getMessage()));
+          return Collections.emptyList();
+        })
+        .thenAcceptLater(games -> {
+          setItems(games);
 
-        if (games.isEmpty()) {
-          tableView.setPlaceholder(new Label("No tables found"));
-        }
-        templateEditorPane.setVisible(!games.isEmpty());
+          if (games.isEmpty()) {
+            tableView.setPlaceholder(new Label("No tables found"));
+          }
+          templateEditorPane.setVisible(!games.isEmpty());
 
-        tableView.refresh();
-        tableView.requestFocus();
+          tableView.refresh();
+          tableView.requestFocus();
 
-        setSelectionOrFirst(selectedItem);
+          setSelectionOrFirst(selectedItem);
 
-        endReload();
-    });
+          endReload();
+        });
   }
 
 
@@ -209,7 +221,7 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
 
   @Override
   public void refreshView(GameRepresentationModel model) {
-    GameRepresentation game = model != null ? model.getBean(): null;
+    GameRepresentation game = model != null ? model.getBean() : null;
 
     templateEditorPane.setVisible(model != null);
     tableEditBtn.setDisable(model == null);
@@ -328,18 +340,18 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
   @Override
   public void tableChanged(int id, @Nullable String rom, @Nullable String gameName) {
     JFXFuture.supplyAsync(() -> client.getGameService().getGame(id))
-    .thenAcceptLater(refreshedGame -> {
-      if (refreshedGame != null) {
-        reloadItem(refreshedGame);
-      }
-      else {
-        // detection of deletion for a table
-        Optional<GameRepresentationModel> model = models.stream().filter(g -> g.getGameId() == id).findFirst();
-        if (model.isPresent()) {    
-          models.remove(model.get());
-        }
-      }
-    });
+        .thenAcceptLater(refreshedGame -> {
+          if (refreshedGame != null) {
+            reloadItem(refreshedGame);
+          }
+          else {
+            // detection of deletion for a table
+            Optional<GameRepresentationModel> model = models.stream().filter(g -> g.getGameId() == id).findFirst();
+            if (model.isPresent()) {
+              models.remove(model.get());
+            }
+          }
+        });
   }
 
   @Override
