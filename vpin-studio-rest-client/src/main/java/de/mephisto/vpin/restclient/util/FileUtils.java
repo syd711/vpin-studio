@@ -9,7 +9,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.UserDefinedFileAttributeView;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -223,18 +227,73 @@ public class FileUtils {
   }
 
   public static File uniqueAsset(File target) {
+    return uniqueAssetByMarker(target, null);
+  }
+
+  private static final String MARKER = "VPIN-STUDIO:File Type";
+
+  /**
+   * Like uniqueAsset but identify an already existing file by a marker
+   * In that case, return that file
+   */
+  public static File uniqueAssetByMarker(File target, String marker) {
     int index = 1;
-    String segment = String.format("%02d", index);
     String originalBaseName = FilenameUtils.getBaseName(target.getName());
     String suffix = FilenameUtils.getExtension(target.getName());
 
     while (target.exists()) {
+      // detect previously marked file
+      if (marker != null) {
+        String mark = getAttribute(target, MARKER);
+        if (marker.equals(mark)) {
+          return target;
+        }
+      }
+      String segment = String.format("%02d", index++);
       target = new File(target.getParentFile(), originalBaseName + segment + "." + suffix);
-      index++;
-      segment = String.format("%02d", index);
     }
     return target;
   }
+
+  public static File backupExistingAsset(File target) {
+    return backupAssetByMarker(target, null);
+  }
+
+  public static File backupAssetByMarker(File target, String marker) {
+    if (target.exists()) {
+      File backup = uniqueAssetByMarker(target, marker);
+      // when no marker and target exists, backup forcibly doesn't exist
+      if (backup.exists()) {
+        // when backup exists, it has been identified by marker, then returns it
+        return backup;
+      }
+      // else, rename target to backup
+      if (!target.renameTo(backup)) {
+        LOG.error("Cannot rename {} to {}, existing file will be overwritten", target, backup);
+      }
+    }
+    return target;
+  }
+
+  /**
+   * Add a studio marker to file
+   */
+  public static void addMarker(File target, String marker) {
+      // detect previously marked file
+      if (marker != null) {
+        setAttribute(target, MARKER, marker);
+      }
+  }
+
+  /**
+   * Delete marker previously set on the file
+   */
+  public static void removeMarker(File target) {
+        removeAttribute(target, MARKER);
+      }
+  }
+
+  //----------------------------------
 
   static Pattern filePattern = Pattern.compile(" \\(\\d\\d?\\)$");
 
@@ -297,6 +356,60 @@ public class FileUtils {
             result.add(file);
           }
         }
+      }
+    }
+  }
+
+  //---------------------------------------------- File Attributes ---
+
+  public static String getAttribute(File file, String attrName) {
+    if (file.exists()) {
+      try {
+        Path path = file.toPath();
+        UserDefinedFileAttributeView attrView = Files.getFileAttributeView(path, UserDefinedFileAttributeView.class);
+        List<String> names = attrView.list();
+        if (names.contains(attrName)) {
+          ByteBuffer dest = ByteBuffer.allocate(attrView.size(attrName));
+          attrView.read(attrName, dest);
+          dest.rewind();
+          Charset charset = Charset.forName("UTF-8");
+          return charset.decode(dest).toString();
+        }
+      }
+      catch (IOException ioe) {
+        LOG.error("Cannot get attribute {} for file {}", attrName, file.toString(), ioe);
+      }
+    }
+    // else
+    return null;
+  }
+
+  public static void setAttribute(File file, String attrName, String value) {
+    if (file.exists()) {
+      try {
+        Path path = file.toPath();
+        UserDefinedFileAttributeView attrView = Files.getFileAttributeView(path, UserDefinedFileAttributeView.class);
+        Charset charset = Charset.forName("UTF-8");
+        attrView.write(attrName, charset.encode(value));
+      }
+      catch (IOException ioe) {
+        LOG.error("Cannot set attribute {} for file {}", attrName, file.toString(), ioe);
+      }
+    }
+  }
+
+  public static void removeAttribute(File file, String attrName) {
+    if (file.exists()) {
+      try {
+        Path path = file.toPath();
+        UserDefinedFileAttributeView attrView = Files.getFileAttributeView(path, UserDefinedFileAttributeView.class);
+        List<String> names = attrView.list();
+        if (names.contains(attrName)) {
+          attrView.delete(attrName);
+        }
+      }
+      catch (IOException ioe) {
+        LOG.error("Cannot remove attribute {} for file {}", attrName, file.toString(), ioe);
       }
     }
   }

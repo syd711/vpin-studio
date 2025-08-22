@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.frontend.FrontendService;
@@ -23,7 +24,6 @@ import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.mania.ManiaService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vps.VpsService;
 import de.mephisto.vpin.commons.fx.ImageUtil;
@@ -50,6 +50,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 
 @Service
@@ -58,9 +59,6 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
 
   @Autowired
   private HighscoreService highscoreService;
-
-  @Autowired
-  private DefaultPictureService directB2SService;
 
   @Autowired
   private VpsService vpsService;
@@ -89,83 +87,30 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
 
   private Map<Integer, ScoreSummary> scoreCache = new LinkedHashMap<>();
 
-  public File generateTableCardFile(Game game) {
-    generateCard(game);
-    return getCardSampleFile();
+  public byte[] generateTableCardFile(Game game) {
+    CardTemplate template = cardTemplatesService.getTemplateForGame(game);
+    ScoreSummary summary = getScoreSummary(game, template, true);
+    return generatePreview(game, summary, template);
   }
 
-  public File generateTemplateTableCardFile(Game game, int templateId) {
-    try {
-      CardTemplate template = cardTemplatesService.getTemplate(templateId);
-      generateCard(game, true, template);
-      return getCardSampleFile();
-    }
-    catch (Exception e) {
-      LOG.error("Failed to generate template card: " + e.getMessage(), e);
-    }
-    return getCardSampleFile();
-  }
-
-  public List<String> getBackgrounds() {
-    File folder = new File(SystemService.RESOURCES, "backgrounds");
-    File[] files = folder.listFiles((dir, name) -> name.endsWith("jpg") || name.endsWith("png"));
-    return Arrays.stream(files).sorted().map(f -> FilenameUtils.getBaseName(f.getName())).collect(Collectors.toList());
+  public byte[] generateTemplateTableCardFile(Game game, int templateId) {
+    CardTemplate template = cardTemplatesService.getTemplate(templateId);
+    ScoreSummary summary = getScoreSummary(game, template, true);
+    return generatePreview(game, summary, template);
   }
 
   public boolean generateCard(Game game) {
-    try {
-      CardTemplate template = cardTemplatesService.getTemplateForGame(game);
-      return generateCard(game, false, template);
-    }
-    catch (Exception e) {
-      LOG.error("Failed to generate card: " + e.getMessage(), e);
-    }
-    return false;
+    CardTemplate template = cardTemplatesService.getTemplateForGame(game);
+    return generateCard(game, template);
   }
 
-  public boolean generateCard(Game game, boolean generateSampleCard, int templateId) {
-    try {
-      CardTemplate template = cardTemplatesService.getTemplate(templateId);
-      return generateCard(game, generateSampleCard, template);
-    }
-    catch (Exception e) {
-      LOG.error("Failed to generate card: " + e.getMessage(), e);
-    }
-    return false;
-  }
-
-  /**
-   * The card must be drawn synchronized and in a FX thread.
-   * We need to wait until finished, because otherwise the UI would show the previous result
-   *
-   * @param game
-   * @param generateSampleCard
-   * @param template
-   * @return
-   */
-  public synchronized boolean generateCard(Game game, boolean generateSampleCard, CardTemplate template) {
-    try {
-      ScoreSummary summary = getScoreSummary(game, template, generateSampleCard);
-      Platform.runLater(() -> {
-        Thread.currentThread().setName("FX Card Generator Thread for " + game.getGameDisplayName());
-        doGenerateCard(game, summary, generateSampleCard, template);
-        LOG.info("Finished card generation for \"{}\"", game.getGameDisplayName());
-      });
-
-      Thread.currentThread().setName("Card Generator Thread for " + game.getGameDisplayName());
-      synchronized (this) {
-        this.wait();
-      }
-      return true;
-    }
-    catch (Exception e) {
-      LOG.error("Failed to generate image: " + e.getMessage(), e);
-      return false;
-    }
+  public boolean generateCard(Game game, int templateId) {
+    CardTemplate template = cardTemplatesService.getTemplate(templateId);
+    return generateCard(game, template);
   }
 
   @NonNull
-  private ScoreSummary getScoreSummary(Game game, CardTemplate template, boolean generateSampleCard) {
+  private ScoreSummary getScoreSummary(Game game, CardTemplate template, boolean generatePreview) {
     long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
     ScoreSummary summary = template.isRenderScoreDates() ? 
       highscoreService.getScoreSummaryWithDates(serverId, game):
@@ -173,7 +118,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
 
     if (template.isRenderFriends()) {
       //add simply caching until a real card is generated, should be sufficient while editing
-      if (generateSampleCard) {
+      if (generatePreview) {
         if (!scoreCache.containsKey(game.getId())) {
           summary = getMergedScoreSummary(summary, game);
           scoreCache.put(game.getId(), summary);
@@ -186,7 +131,6 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
     }
     return summary;
   }
-
 
   /**
    * Returns a list of all scores for the given game
@@ -203,29 +147,40 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
     return summary;
   }
 
-
-
-  private boolean doGenerateCard(Game game, ScoreSummary summary, boolean generateSampleCard, CardTemplate template) {
+  private byte[] generatePreview(Game game, ScoreSummary summary, CardTemplate template) {
     try {
+      BufferedImage bufferedImage = doGenerateCardImage(game, summary, template);
+      return ImageUtil.toBytes(bufferedImage);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to generate highscore preview", e);
+      SLOG.error("Failed to generate highscore card: " + e.getMessage());
+      return null;
+    }
+  }
+
+  /**
+   * Generate the card and store it
+   */
+  public synchronized boolean generateCard(Game game, CardTemplate template) {
+    try {
+      ScoreSummary summary = getScoreSummary(game, template, false);
       if (!summary.getScores().isEmpty() && !StringUtils.isEmpty(summary.getRaw())) {
         String screenName = cardSettings.getPopperScreen();
-
-        //sample card are always generated
-        if (generateSampleCard || StringUtils.isEmpty(screenName)) {
-          BufferedImage bufferedImage = generateCard(game, summary, template);
-          if (bufferedImage != null) {
-            ImageUtil.write(bufferedImage, getCardSampleFile());
-            return true;
-          }
-          return false;
-        }
-
         if (!StringUtils.isEmpty(screenName)) {
           if (!game.isCardDisabled()) {
-            BufferedImage bufferedImage = generateCard(game, summary, template);
+            BufferedImage bufferedImage = doGenerateCardImage(game, summary, template);
             if (bufferedImage != null) {
               File highscoreCard = getCardFile(game, screenName);
+              //TODO add a parameter to define the policy
+              //REPLACE => keep highscoreCard
+              //APPEND => highscoreCard = FileUtils.uniqueAssetByMarker(highscoreCard, "Highscore Card");
+              //PREPEND/BACKUP =>
+              highscoreCard = FileUtils.backupAssetByMarker(highscoreCard, "Highscore Card");
+
               ImageUtil.write(bufferedImage, highscoreCard);
+              FileUtils.addMarker(highscoreCard, "Highscore Card");
+
               LOG.info("Written highscore card: " + highscoreCard.getAbsolutePath());
               SLOG.info("Written highscore card: " + highscoreCard.getAbsolutePath());
               return true;
@@ -253,31 +208,52 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
       LOG.error("Failed to generate highscore card: {}", e.getMessage(), e);
       SLOG.error("Failed to generate highscore card: " + e.getMessage());
     }
-    finally {
-      synchronized (this) {
-        notifyAll();
-      }
-    }
     return false;
   }
 
-  private BufferedImage generateCard(Game game, ScoreSummary summary, CardTemplate template) throws Exception {
-    CardResolution res = cardSettings.getCardResolution();
+  /*
+   * The card must be drawn synchronized and in a FX thread.
+   * We need to wait until finished, because otherwise the UI would show the previous result
+   */
+  private BufferedImage doGenerateCardImage(Game game, ScoreSummary summary, CardTemplate template) throws Exception {
+    // sync between FX thread and calling thread
+    CountDownLatch latch = new CountDownLatch(1);
+    BufferedImage[] generatedImage = { null };
+    Platform.runLater(() -> {
+      try {
+        CardResolution res = cardSettings.getCardResolution();
 
-    CardGraphicsHighscore cardGraphics = new CardGraphicsHighscore(false);
-    cardGraphics.setTemplate(template);
+        CardGraphicsHighscore cardGraphics = new CardGraphicsHighscore(false);
+        cardGraphics.setTemplate(template);
 
-    CardData data = getCardData(game, summary, template);
-    data.addBaseUrl("http://localhost:" + systemService.getServerPort() + "/" + VPinStudioServer.API_SEGMENT);
-    cardGraphics.setData(data, res);
-    // resize the cards to the needed resolution    
-    cardGraphics.resize(res.toWidth(), res.toHeight());
+        CardData data = getCardData(game, summary, template);
+        data.addBaseUrl("http://localhost:" + systemService.getServerPort() + "/" + VPinStudioServer.API_SEGMENT);
+        cardGraphics.setData(data, res);
+        // resize the cards to the needed resolution    
+        cardGraphics.resize(res.toWidth(), res.toHeight());
 
-    // then export image
-    return cardGraphics.snapshot();
+        // then export image
+        generatedImage[0] = cardGraphics.snapshot();
+
+        LOG.info("Finished card generation for \"{}\"", game.getGameDisplayName());
+      }
+      finally {
+        latch.countDown();
+      }
+    });
+    // wait for termination of FX thread
+    latch.await();
+
+    return generatedImage[0];
   }
 
   //-----------------------------------------
+
+  public List<String> getBackgrounds() {
+    File folder = new File(SystemService.RESOURCES, "backgrounds");
+    File[] files = folder.listFiles((dir, name) -> name.endsWith("jpg") || name.endsWith("png"));
+    return Arrays.stream(files).sorted().map(f -> FilenameUtils.getBaseName(f.getName())).collect(Collectors.toList());
+  }
 
   public CardTemplate getCardTemplate(Long templateId) {
     return cardTemplatesService.getTemplate(templateId);
@@ -333,10 +309,6 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
     }
 
     return cardData;
-  }
-
-  private File getCardSampleFile() {
-    return new File(SystemService.RESOURCES, "highscore-card-sample.png");
   }
 
   @NonNull

@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.assets;
 
 import com.drew.imaging.ImageMetadataReader;
-import com.drew.imaging.ImageProcessingException;
 import com.drew.lang.Rational;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
@@ -155,7 +154,13 @@ public class AssetService {
     }
   }
 
-  private static void readVideoAndImageMetadata(File file, AssetMetaData metaData) throws ImageProcessingException, IOException {
+  public static AssetMetaData readVideoAndImageMetadata(File file) throws Exception {
+    AssetMetaData metadata = new AssetMetaData();
+    readVideoAndImageMetadata(file, metadata);
+    return metadata;
+  }
+
+  private static void readVideoAndImageMetadata(File file, AssetMetaData metaData) throws Exception {
     Metadata metadata = ImageMetadataReader.readMetadata(file);
     Iterable<Directory> directories = metadata.getDirectories();
     for (Directory directory : directories) {
