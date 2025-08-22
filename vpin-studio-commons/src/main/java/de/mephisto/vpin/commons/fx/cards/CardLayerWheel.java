@@ -19,7 +19,8 @@ public class CardLayerWheel extends ImageView implements CardLayer {
       //file exists && there is place to render it
       String wheelIconUrl = data.getWheelUrl();
       if (wheelIconUrl != null) {
-        this.cacheImage = new Image(wheelIconUrl, true);
+        // cannot use background loading, needed for image generation
+        this.cacheImage = new Image(wheelIconUrl, false);
       }
     }
 
