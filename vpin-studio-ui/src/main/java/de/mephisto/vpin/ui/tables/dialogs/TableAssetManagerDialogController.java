@@ -1093,7 +1093,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     }
   }
 
-  public void setPlaylist(Stage stage, @NonNull TableOverviewController overviewController, @NonNull PlaylistRepresentation playlist, @Nullable VPinScreen screen) {
+  public void setPlaylist(Stage stage, @Nullable TableOverviewController overviewController, @NonNull PlaylistRepresentation playlist, @Nullable VPinScreen screen) {
     if (this.playlistHint != null) {
       this.playlistHint.setVisible(client.getFrontendService().getFrontendType().equals(FrontendType.Popper));
     }
@@ -1105,13 +1105,16 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       this.screen = screen;
     }
 
+    this.nextButton.setVisible(overviewController != null);
+    this.prevButton.setVisible(overviewController != null);
+
     this.renameBtn.setVisible(false);
 
     if (!isEmbeddedMode()) {
       nextButton.setDisable(true);
       prevButton.setDisable(true);
       openDataManager.setVisible(false);
-      openPlaylistManagerBtn.setVisible(true);
+      openPlaylistManagerBtn.setVisible(overviewController != null);
       tableSelection.setVisible(false);
       playlistSelection.setVisible(true);
 
@@ -1126,7 +1129,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     initDragAndDrop();
   }
 
-  public void setGame(Stage stage, @NonNull TableOverviewController overviewController, @Nullable GameRepresentation game, @Nullable VPinScreen screen, boolean embedded) {
+  public void setGame(Stage stage, @Nullable TableOverviewController overviewController, @Nullable GameRepresentation game, @Nullable VPinScreen screen, boolean embedded) {
     serverAssetsList.setItems(FXCollections.emptyObservableList());
     if (this.playlistHint != null) {
       this.playlistHint.setVisible(false);
@@ -1143,6 +1146,14 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       });
     }
     this.overviewController = overviewController;
+
+    if (this.nextButton != null) {
+      this.nextButton.setVisible(overviewController != null);
+    }
+
+    if (this.prevButton != null) {
+      this.prevButton.setVisible(overviewController != null);
+    }
 
     setGame(game, screen);
     initDragAndDrop();

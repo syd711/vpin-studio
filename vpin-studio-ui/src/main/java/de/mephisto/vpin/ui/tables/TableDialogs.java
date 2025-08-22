@@ -299,7 +299,7 @@ public class TableDialogs {
     return false;
   }
 
-  public static boolean openTableAssetsDialog(TableOverviewController overviewController, GameRepresentation game, VPinScreen screen) {
+  public static boolean openTableAssetsDialog(@Nullable TableOverviewController overviewController, GameRepresentation game, VPinScreen screen) {
     if (TableAssetManagerDialogController.INSTANCE != null) {
       return true;
     }
@@ -319,7 +319,7 @@ public class TableDialogs {
     return true;
   }
 
-  public static boolean openTableAssetsDialog(TableOverviewController overviewController, GameRepresentation game, PlaylistRepresentation playlist, VPinScreen screen) {
+  public static boolean openTableAssetsDialog(@Nullable TableOverviewController overviewController, GameRepresentation game, PlaylistRepresentation playlist, VPinScreen screen) {
     if (TableAssetManagerDialogController.INSTANCE != null) {
       return true;
     }

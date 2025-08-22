@@ -253,17 +253,6 @@
                               </Label>
                               <HBox alignment="CENTER_RIGHT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
                                  <children>
-                                    <Button fx:id="nvOffsetBtn" mnemonicParsing="false" onAction="#onNvOffset">
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2s-script-text" iconSize="18" />
-                                       </graphic>
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <tooltip>
-                                          <Tooltip text="Edit NVOffset" />
-                                       </tooltip>
-                                    </Button>
                                     <Button fx:id="scriptBtn" layoutX="163.0" layoutY="11.0" mnemonicParsing="false" onAction="#onScriptEdit">
                                        <graphic>
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2f-file-document-edit-outline" iconSize="18" />
@@ -273,6 +262,17 @@
                                        </font>
                                        <tooltip>
                                           <Tooltip text="Edit table script" />
+                                       </tooltip>
+                                    </Button>
+                                    <Button fx:id="nvOffsetBtn" mnemonicParsing="false" onAction="#onNvOffset">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2s-script-text" iconSize="18" />
+                                       </graphic>
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <tooltip>
+                                          <Tooltip text="Edit NVOffset" />
                                        </tooltip>
                                     </Button>
                                     <Label>

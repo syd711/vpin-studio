@@ -29,7 +29,7 @@
                      <Tooltip text="Open MAME Installation Folder" />
                   </tooltip>
                </Button>
-               <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+               <Separator fx:id="folderSeparator" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                     <Button fx:id="mameBtn" mnemonicParsing="false" onAction="#onMameSetup" styleClass="external-component" text="VPin MAME Setup" textFill="WHITE">
                         <font>
                             <Font size="14.0" />
