@@ -167,8 +167,8 @@
    <center>
       <StackPane fx:id="previewStack" styleClass="media-container" BorderPane.alignment="CENTER">
          <children>
-            <BorderPane fx:id="previewOverlayPanel" prefHeight="200.0" prefWidth="200.0" />
-            <Pane fx:id="previewPanel" styleClass="media-container">
+            <BorderPane fx:id="previewOverlayPanel" />
+            <Pane fx:id="previewPanel">
                <children>
                </children>
             </Pane>

@@ -104,6 +104,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
   /**
    * The live preview component
+   * Disable autosizing as this is imposed by container
    */
   private CardGraphicsHighscore cardPreview = new CardGraphicsHighscore(false);
 
@@ -486,7 +487,6 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       previewStack.heightProperty().addListener((obs, o, n) -> resizeCardPreview(previewStack.getWidth(), n.doubleValue(), false));
 
       previewPanel.getChildren().add(cardPreview);
-      resizeCardPreview(previewStack.getWidth(), previewStack.getHeight(), true);
 
       // selector
       cardPreview.setOnMousePressed(e -> onDragboxEnter(e));
@@ -529,13 +529,22 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
   private void resizeCardPreview(double width, double height, boolean forceWidth) {
     // make sure the panel is full size always
-    previewPanel.resizeRelocate(0, 0, width, height);
-
     if (width > 0 && height > 0) {
       double aspectRatio = 16.0 / 9.0;
-      Insets in = previewPanel.getInsets();
-      double newWidth = width - in.getLeft() - in.getRight();
-      double newHeight = height - in.getTop() - in.getBottom();
+
+      Insets in1 = previewStack.getInsets();
+      width -= in1.getRight() + in1.getLeft();
+      height -= in1.getTop() + in1.getBottom();
+
+      previewPanel.resizeRelocate(0, 0, width, height);
+
+      Insets in2 = previewPanel.getInsets();
+      width -= in2.getLeft() + in2.getRight();
+      height -= in2.getTop() + in2.getBottom();
+
+      // now adjust with aspect ratio and center in previewPanel
+      double newWidth = width;
+      double newHeight = height;
       double offSetX = 0;
       double offSetY = 0;
       if (forceWidth) {
