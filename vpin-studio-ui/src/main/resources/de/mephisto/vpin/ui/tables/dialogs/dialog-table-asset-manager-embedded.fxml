@@ -212,7 +212,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Update the ROM name for this table." />
+                              <Tooltip text="Rename the asset file" />
                            </tooltip>
                            <font>
                               <Font size="14.0" />
@@ -222,6 +222,9 @@
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" iconSize="18" />
                            </graphic>
+                           <tooltip>
+                              <Tooltip text="Open preview dialog" />
+                           </tooltip>
                         </Button>
                         <SplitMenuButton fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete">
                            <graphic>

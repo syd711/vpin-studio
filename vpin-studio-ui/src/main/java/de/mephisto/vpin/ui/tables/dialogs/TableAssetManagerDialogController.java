@@ -1147,8 +1147,13 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     }
     this.overviewController = overviewController;
 
-    this.nextButton.setVisible(overviewController != null);
-    this.prevButton.setVisible(overviewController != null);
+    if (this.nextButton != null) {
+      this.nextButton.setVisible(overviewController != null);
+    }
+
+    if (this.prevButton != null) {
+      this.prevButton.setVisible(overviewController != null);
+    }
 
     setGame(game, screen);
     initDragAndDrop();
