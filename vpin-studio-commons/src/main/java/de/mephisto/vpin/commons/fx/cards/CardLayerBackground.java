@@ -67,7 +67,7 @@ public class CardLayerBackground extends Canvas implements CardLayer {
         cacheFinalImage = ImageUtil.clone(cacheBackgroundImage);
         if (template.getBlur() > 0) {
           //cacheFinalImage = ImageUtil.blurImage(cacheFinalImage, template.getBlur());
-          cacheFinalImage = ImageUtil.fastBlur(cacheFinalImage, template.getBlur());
+          cacheFinalImage = ImageUtil.fastBlur(cacheFinalImage, template.getBlur() / 2);
           lt.pulse("blurImage()");
         }
 

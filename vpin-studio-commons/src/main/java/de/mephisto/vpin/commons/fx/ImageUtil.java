@@ -235,9 +235,12 @@ public class ImageUtil {
   }
 
   public static byte[] toBytes(BufferedImage image) throws IOException {
-    ByteArrayOutputStream out = new ByteArrayOutputStream();
-    ImageIO.write(image, "PNG", out);
-    return out.toByteArray();
+    if (image != null) {
+      ByteArrayOutputStream out = new ByteArrayOutputStream();
+      ImageIO.write(image, "PNG", out);
+      return out.toByteArray();
+    }
+    return null;
   }
 
   public static void writeJPG(BufferedImage image, File file) throws IOException {

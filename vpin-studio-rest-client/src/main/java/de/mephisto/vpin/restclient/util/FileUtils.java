@@ -289,8 +289,7 @@ public class FileUtils {
    * Delete marker previously set on the file
    */
   public static void removeMarker(File target) {
-        removeAttribute(target, MARKER);
-      }
+    removeAttribute(target, MARKER);
   }
 
   //----------------------------------
