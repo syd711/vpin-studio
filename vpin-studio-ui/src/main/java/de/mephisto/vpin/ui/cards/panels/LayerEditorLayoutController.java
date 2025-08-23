@@ -6,7 +6,9 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.util.PositionResizer;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import javafx.scene.layout.VBox;
+import javafx.util.StringConverter;
 
 import java.util.Optional;
 
@@ -43,8 +45,11 @@ public class LayerEditorLayoutController extends LayerEditorBaseController {
     setIconVisibility(cardTemplate.isRenderBackground());
 
     zoomSlider.setValue(cardTemplate.getZoom());
-    LayerSubEditorPositionController.setValue(backgroundXSpinner, cardTemplate, "backgroundX", res.toWidth());
-    LayerSubEditorPositionController.setValue(backgroundYSpinner, cardTemplate, "backgroundY", res.toHeight());
+
+    IntegerSpinnerValueFactory factoryX = (IntegerSpinnerValueFactory) backgroundXSpinner.getValueFactory();
+    factoryX.setValue((int) cardTemplate.getBackgroundX());
+    IntegerSpinnerValueFactory factoryY = (IntegerSpinnerValueFactory) backgroundYSpinner.getValueFactory();
+    factoryY.setValue((int) cardTemplate.getBackgroundY());
 
     borderSizeSpinner.getValueFactory().setValue(cardTemplate.getBorderWidth());
     borderRadiusSpinner.getValueFactory().setValue(cardTemplate.getBorderRadius());
@@ -65,8 +70,31 @@ public class LayerEditorLayoutController extends LayerEditorBaseController {
     });
 
     templateBeanBinder.bindSlider(zoomSlider, "zoom");
-    LayerSubEditorPositionController.bindSpinner(backgroundXSpinner, "backgroundX", templateBeanBinder, 0, 1920, true);
-    LayerSubEditorPositionController.bindSpinner(backgroundYSpinner, "backgroundY", templateBeanBinder, 0, 1920, false);
+    
+    StringConverter<Integer> converter = new StringConverter<>() {
+      @Override
+      public String toString(Integer object) {
+        return object+"%";
+      }
+      @Override
+      public Integer fromString(String str) {
+        return Integer.parseInt(str.replace("%", "").trim());
+      }
+    };
+
+    SpinnerValueFactory.IntegerSpinnerValueFactory factoryX = new SpinnerValueFactory.IntegerSpinnerValueFactory(-100, 100, 0);
+    backgroundXSpinner.setValueFactory(factoryX);
+    factoryX.setConverter(converter);
+    factoryX.valueProperty().addListener((observableValue, integer, t1) -> {
+      templateBeanBinder.setProperty("backgroundX", Double.parseDouble(String.valueOf(t1)) / 100);
+    });
+
+    SpinnerValueFactory.IntegerSpinnerValueFactory factoryY = new SpinnerValueFactory.IntegerSpinnerValueFactory(-100, 100, 0);
+    backgroundYSpinner.setValueFactory(factoryY);
+    factoryY.setConverter(converter);
+    factoryY.valueProperty().addListener((observableValue, integer, t1) -> {
+      templateBeanBinder.setProperty("backgroundY", Double.parseDouble(String.valueOf(t1)) / 100);
+    });
 
     templateBeanBinder.bindSpinner(borderSizeSpinner, "borderWidth");
     templateBeanBinder.bindSpinner(borderRadiusSpinner, "borderRadius");
@@ -80,17 +108,9 @@ public class LayerEditorLayoutController extends LayerEditorBaseController {
 
   @Override
   public void bindDragBox(PositionResizer dragBox) {
-    // background connot be distord
-    dragBox.setAspectRatio(1.0);
-    //FIXME OLE add capability in dragBox.setResizable(false);
-
-    LayerSubEditorPositionController.bindSpinner(backgroundXSpinner, dragBox.xProperty(), dragBox.xMinProperty(), dragBox.xMaxProperty());
-    LayerSubEditorPositionController.bindSpinner(backgroundYSpinner, dragBox.yProperty(), dragBox.yMinProperty(), dragBox.yMaxProperty());
   }
   @Override
   public void unbindDragBox(PositionResizer dragBox) {
-    LayerSubEditorPositionController.unbindSpinner(backgroundXSpinner);
-    LayerSubEditorPositionController.unbindSpinner(backgroundYSpinner);
   }
 
 }

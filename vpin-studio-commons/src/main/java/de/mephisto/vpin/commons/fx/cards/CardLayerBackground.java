@@ -35,13 +35,13 @@ public class CardLayerBackground extends Canvas implements CardLayer {
 
   @Override
   public boolean isSelectable() {
-    return true;
+    return false;
   }
 
   /**
    * Indication on relative times
-   CardLayerBackground/getBackgroundImage(): 132 ms
-   CardLayerBackground/blurImage(): 424 ms
+   CardLayerBackground/getBackgroundImage(): 132 ms  => moved to getCardData
+   CardLayerBackground/blurImage(): 424 ms   => moved to FX
    CardLayerBackground/applyAlphaComposites(): 203 ms
    CardLayerBackground/toFXImage(): 52 ms
    CardLayerBackground/drawImage(): 0 ms
@@ -88,16 +88,18 @@ public class CardLayerBackground extends Canvas implements CardLayer {
     //--------------------------
     // Draw Part
 
-    double X = template.getMarginLeft() * zoomX;
-    double Y = template.getMarginTop() * zoomY;
-    double W = width - (template.getMarginLeft() + template.getMarginRight()) * zoomX;
-    double H = height - (template.getMarginTop() + template.getMarginBottom()) * zoomY;
+    double framex = template.getMarginLeft() * zoomX;
+    double framey = template.getMarginTop() * zoomY;
+    double framewidth = width - (template.getMarginLeft() + template.getMarginRight()) * zoomX;
+    double frameheight = height - (template.getMarginTop() + template.getMarginBottom()) * zoomY;
     int border = template.getBorderWidth() > 0 ? (int) (template.getBorderWidth() * zoomX) : 0;
+    double radiusx = template.getBorderRadius() * 2 * zoomX;
+    double radiusy = template.getBorderRadius() * 2 * zoomY;
 
     // Set the clip region
-    Rectangle rect = new Rectangle(X, Y, W, H);
-    rect.setArcWidth(template.getBorderRadius() * 2 * zoomX);
-    rect.setArcHeight(template.getBorderRadius() * 2 * zoomY);
+    Rectangle rect = new Rectangle(framex, framey, framewidth, frameheight);
+    rect.setArcWidth(radiusx);
+    rect.setArcHeight(radiusy);
     this.setClip(rect);
 
     if (cacheBackground != null) {
@@ -112,7 +114,37 @@ public class CardLayerBackground extends Canvas implements CardLayer {
       // Use java fx for transparency
       g.setGlobalAlpha(1.0 - template.getTransparentPercentage() / 100.0);
 
-      g.drawImage(cacheBackground, X  + border, Y + border, W - 2 * border, H - 2 * border);
+      // coords in image
+      double imgZoom = template.getZoom() / 100;    // max zoom is 100
+      double imgWidth = cacheBackground.getWidth();
+      double imgHeight = cacheBackground.getHeight();
+
+      // Resize image in proportion of the frame and calculate offset to center
+      if (framewidth * imgHeight > frameheight * imgWidth) {
+        imgHeight = imgWidth * frameheight / framewidth;
+      } else {
+        imgWidth = imgHeight * framewidth / frameheight;
+      }
+
+      // zoom the image and center it
+      imgWidth *= imgZoom;
+      imgHeight *= imgZoom;
+      //double imgX = (cacheBackground.getWidth() - imgWidth) / 2.0;
+      //double imgY = (cacheBackground.getHeight() - imgHeight) / 2.0;
+
+      double imgX = (1 + template.getBackgroundX()) * (cacheBackground.getWidth() - imgWidth) / 2.0;
+      double imgY = (1 + template.getBackgroundY()) * (cacheBackground.getHeight() - imgHeight) / 2.0;
+
+/*
+System.out.println("framewidth x frameheight = " + framewidth + " x " + frameheight + "(ratio " + (framewidth/frameheight) + ")");
+System.out.println("ImgW x ImhH = " + cacheBackground.getWidth() + " x " + cacheBackground.getHeight() + "(ratio " + (cacheBackground.getWidth()/cacheBackground.getHeight()) + ")");
+System.out.println("Img Zoom = " + imgZoom);
+System.out.println("W x H = " + framewidth + " x " + frameheight  + "(ratio " + (framewidth/frameheight) + ")");
+System.out.println("w x h = " + imgWidth + " x " + imgHeight  + "(ratio " + (imgWidth/imgHeight) + ")");
+System.out.println("");
+*/
+
+      g.drawImage(cacheBackground, imgX, imgY, imgWidth, imgHeight, framex  + border, framey + border, framewidth - 2 * border, frameheight - 2 * border);
       lt.pulse("drawImage()");
     }
 
@@ -126,7 +158,7 @@ public class CardLayerBackground extends Canvas implements CardLayer {
 
       g.setLineWidth(strokeWidth);
 
-      g.strokeRoundRect(X + strokeWidth / 2, Y + strokeWidth / 2, W - strokeWidth, H -  + strokeWidth, 
+      g.strokeRoundRect(framex + strokeWidth / 2, framey + strokeWidth / 2, framewidth - strokeWidth, frameheight -  + strokeWidth, 
           template.getBorderRadius() * 2 * zoomX, template.getBorderRadius() * 2 * zoomY);
 
 
@@ -176,10 +208,6 @@ public class CardLayerBackground extends Canvas implements CardLayer {
       } catch (IOException e) {
         LOG.error("Cannot load image from source %s", sourceImage.getAbsolutePath(), e);
       }
-    }
-
-    if (backgroundImage != null) {
-      backgroundImage = ImageUtil.crop(backgroundImage, 16, 9);
     }
 
     return backgroundImage;

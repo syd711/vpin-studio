@@ -8,11 +8,9 @@ import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.ImageViewer;
 import de.mephisto.vpin.commons.utils.media.MediaPlayerListener;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
-import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
@@ -25,7 +23,6 @@ import de.mephisto.vpin.ui.cards.TemplateAssigmentProgressModel;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.util.*;
-import de.mephisto.vpin.ui.util.binding.BindingChangedListener;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -54,7 +51,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -131,9 +127,9 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   private Button folderBtn;
 
   /**
-   * the dragboxes, today only used at a time
+   * the dragbox of the selected Layer
    */
-  private List<PositionResizer> dragBoxes = new ArrayList<>();
+  private PositionResizer dragBox;
 
   public Debouncer cardTemplateSaveDebouncer = new Debouncer();
 
@@ -571,7 +567,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       cardPreview.resizeRelocate(offSetX, offSetY, newWidth, newHeight);
 
       // in case dragboxes was here, deselect it
-      unloadDragBoxes();
+      unloadDragBox();
 
       Rectangle cliprect = new Rectangle(newWidth, newHeight);
       cardPreview.setClip(cliprect);
@@ -580,42 +576,42 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
   //------------------------------------------- SELECTION ---
 
-  public void onDragboxEnter(MouseEvent e) {
-    unloadDragBoxes();
+  public void onDragboxEnter(MouseEvent me) {
+    unloadDragBox();
 
-    CardLayer layer = cardPreview.selectCardLayer(e.getX(), e.getY());
-    loadDragBoxes(layer);
+    CardLayer layer = cardPreview.selectCardLayer(me.getX(), me.getY());
+    loadDragBox(layer, me);
 
-    e.consume();
+    me.consume();
   }
 
-  public void onDragboxExit(MouseEvent e) {
-    unloadDragBoxes();
-    e.consume();
+  public void onDragboxExit(MouseEvent me) {
+    unloadDragBox();
+    me.consume();
   }
 
-  private void unloadDragBoxes() {
+  private void unloadDragBox() {
     // first delete previous boxes
-    for (PositionResizer dragBox : dragBoxes) {
+    if (dragBox != null) {
       dragBox.removeFromPane(cardPreview);
 
       if (dragBox.getUserData() instanceof CardLayer) {
         CardLayer layer = (CardLayer) dragBox.getUserData();
         layerToController(layer).unbindDragBox(dragBox);
       }
+      dragBox = null;
     }
-    dragBoxes.clear();
   }
 
 
-  private void loadDragBoxes(CardLayer layer) {
+  private void loadDragBox(CardLayer layer, MouseEvent me) {
     if (layer != null) {
 
       LayerEditorBaseController controller = layerToController(layer);
       controller.layerSelected();
 
       // The canvas box
-      PositionResizer dragBox = new PositionResizer();
+      this.dragBox = new PositionResizer();
 
       CardResolution res = cardPreview.getCardResolution();
       double zoomX = res == null ? 1.0 : cardPreview.getWidth() / res.toWidth();
@@ -639,7 +635,6 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
       dragBox.addToPane(cardPreview);
       dragBox.select();
-      dragBoxes.add(dragBox);
     }
   }
 
