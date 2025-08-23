@@ -8,9 +8,7 @@ import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
 import de.mephisto.vpin.commons.utils.FXUtil;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardResolution;
-import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
@@ -312,7 +310,6 @@ public class MenuController implements Initializable {
             .thenAcceptLater(carddata -> {
               CardGraphicsHighscore highscoreCard = new CardGraphicsHighscore(true);
               highscoreCard.setTemplate(template);
-              carddata.addBaseUrl(client.getURL(""));
               highscoreCard.setData(carddata, CardResolution.HDReady);
               scoreView.setCenter(highscoreCard);
             });

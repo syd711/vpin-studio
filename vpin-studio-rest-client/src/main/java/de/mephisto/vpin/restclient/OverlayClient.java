@@ -52,6 +52,7 @@ public interface OverlayClient {
 
   CardTemplate getCardTemplate(GameRepresentation game);
 
+  /** get the CardData with streams */
   CardData getCardData(GameRepresentation game, CardTemplate template);
 
   //------------------------------

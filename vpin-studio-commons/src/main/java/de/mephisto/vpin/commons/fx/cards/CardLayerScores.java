@@ -262,32 +262,34 @@ public class CardLayerScores extends Canvas implements CardLayer {
     int scoreLength = 0;
     int initialsLength = 0;
     int maxPosition = 0;
-    for (ScoreRepresentation score : scores) {
-      scoreLength = Math.max(scoreLength, score.getFormattedScore().length());
-      initialsLength = Math.max(initialsLength, score.getPlayerInitials().length());
-      maxPosition = Math.max(maxPosition, score.getPosition());
-    }
-    DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT);
-
-    for (ScoreRepresentation score : scores) {
-      String renderString = "";
-      if (renderPositions) {
-        renderString += StringUtils.leftPad(Integer.toString(score.getPosition()), maxPosition > 9 ? 2 : 1);
-        renderString += ". ";
+    if (scores != null) {
+      for (ScoreRepresentation score : scores) {
+        scoreLength = Math.max(scoreLength, score.getFormattedScore().length());
+        initialsLength = Math.max(initialsLength, score.getPlayerInitials().length());
+        maxPosition = Math.max(maxPosition, score.getPosition());
       }
+      DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT);
 
-      renderString += StringUtils.rightPad(score.getPlayerInitials(), initialsLength);
-      renderString += "   ";
+      for (ScoreRepresentation score : scores) {
+        String renderString = "";
+        if (renderPositions) {
+          renderString += StringUtils.leftPad(Integer.toString(score.getPosition()), maxPosition > 9 ? 2 : 1);
+          renderString += ". ";
+        }
 
-      String scoreText = StringUtils.leftPad(score.getFormattedScore(), scoreLength);
-      renderString += scoreText;
+        renderString += StringUtils.rightPad(score.getPlayerInitials(), initialsLength);
+        renderString += "   ";
 
-      if (renderDate && score.hasPlayer() && score.getCreatedAt() != null) {
-        renderString += "  ";
-        renderString += df.format(score.getCreatedAt());
+        String scoreText = StringUtils.leftPad(score.getFormattedScore(), scoreLength);
+        renderString += scoreText;
+
+        if (renderDate && score.hasPlayer() && score.getCreatedAt() != null) {
+          renderString += "  ";
+          renderString += df.format(score.getCreatedAt());
+        }
+
+        text.addLine(renderString, score.isExternal());
       }
-
-      text.addLine(renderString, score.isExternal());
     }
   }
 }

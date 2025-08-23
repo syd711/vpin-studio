@@ -1,6 +1,12 @@
 package de.mephisto.vpin.commons.fx.cards;
 
+import java.io.File;
+import java.io.IOException;
+
+import org.apache.commons.io.FileUtils;
+
 import de.mephisto.vpin.restclient.cards.CardData;
+import de.mephisto.vpin.restclient.system.FileLoaderForTest;
 
 
 /**
@@ -8,13 +14,17 @@ import de.mephisto.vpin.restclient.cards.CardData;
  */
 public class CardDataMock  {
 
-  public static CardData create() {
+  public static CardData create() throws IOException {
     CardData data = new CardData();
-    data.setGameName("Ace of Speed (Original 2019)");
+    data.setGameName("Jaws (Original 2019)");
     data.setManufacturer("Original");
     data.setYear(2019);
-    data.setWheelUrl("file:///C:/PinballX/Media/Visual Pinball/Wheel Images/Ace Of Speed (Original 2019).png");
-    data.setBackgroundUrl("file:///C:/PinballX/Media/Visual Pinball/Backglass Images/AC-DC (Stern 2012).png");
+
+    File wheelIcon = FileLoaderForTest.load("testsystem/vPinball/PinUPSystem/POPMedia/Visual Pinball X/Wheel/Jaws (Animated).apng");
+    File backglass = FileLoaderForTest.load("testsystem/vPinball/PinUPSystem/POPMedia/Visual Pinball X/DMD/Jaws.png");
+    System.out.println(wheelIcon.getAbsolutePath());
+    data.setWheel(FileUtils.readFileToByteArray(wheelIcon));
+    data.setBackground(FileUtils.readFileToByteArray(backglass));
   
     /*
     ArrayList<String> scores = new ArrayList<>();

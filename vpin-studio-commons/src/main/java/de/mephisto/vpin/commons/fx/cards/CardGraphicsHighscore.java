@@ -108,9 +108,14 @@ public class CardGraphicsHighscore extends StackPane {
 
     //-----------
     // From here, below system of coordinate is template dimensions
-    
-    backgroundLayer.setVisible(true);
-    resizeRelocate(backgroundLayer, 0, 0, WIDTH, HEIGHT, zoomX, zoomY);
+
+    if (template.isRenderBackground()) {
+      backgroundLayer.setVisible(true);
+      resizeRelocate(backgroundLayer, 0, 0, WIDTH, HEIGHT, zoomX, zoomY);
+    }
+    else {
+      backgroundLayer.setVisible(false);
+    }
 
     if (template.isRenderCanvas()) {
       canvasLayer.setVisible(true);

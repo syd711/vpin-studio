@@ -1,5 +1,7 @@
 package de.mephisto.vpin.commons.fx.cards;
 
+import java.io.ByteArrayInputStream;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -16,10 +18,10 @@ public class CardLayerWheel extends ImageView implements CardLayer {
   public void draw(@Nonnull CardTemplate template, @Nullable CardData data, double zoomX, double zoomY) {
 
     if (data != null && hasChanged(data)) {
-      //file exists && there is place to render it
-      String wheelIconUrl = data.getWheelUrl();
-      if (wheelIconUrl != null) {
-        this.cacheImage = new Image(wheelIconUrl, true);
+      if (data.getWheel() != null) {
+        this.cacheImage = new Image(new ByteArrayInputStream(data.getWheel()));
+      } else {
+        this.cacheImage = null;
       }
     }
 
@@ -53,13 +55,13 @@ public class CardLayerWheel extends ImageView implements CardLayer {
 
   //------------------------------------ Detetection of layer changes
 
-  private String cacheWheelUrl = null;
+  private int cacheGameId = -1;
 
   private boolean hasChanged(@Nonnull CardData data) {
     boolean hasChanged = false;
     // check on 
-    if (cacheWheelUrl == null || !cacheWheelUrl.equals(data.getWheelUrl())) {
-      cacheWheelUrl = data.getWheelUrl();
+    if (cacheGameId == -1 || cacheGameId != data.getGameId()) {
+      cacheGameId = data.getGameId();
       hasChanged = true;
     }
     return hasChanged;

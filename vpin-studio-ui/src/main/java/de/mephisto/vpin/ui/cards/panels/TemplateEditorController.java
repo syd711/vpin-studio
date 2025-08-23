@@ -8,6 +8,7 @@ import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.ImageViewer;
 import de.mephisto.vpin.commons.utils.media.MediaPlayerListener;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
@@ -58,7 +59,7 @@ import java.util.function.Consumer;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
-public class TemplateEditorController implements Initializable, BindingChangedListener, MediaPlayerListener {
+public class TemplateEditorController implements Initializable, MediaPlayerListener {
   private final static Logger LOG = LoggerFactory.getLogger(TemplateEditorController.class);
 
   @FXML
@@ -296,6 +297,8 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
     CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS);
     CardResolution res = cardSettings.getCardResolution();
+    resolutionLabel.setText("Resolution: " + res.toWidth() + " x " + res.toHeight());
+
     templateBeanBinder.setResolution(res);
 
     layerEditorOverlayController.setTemplate(cardTemplate, res);
@@ -314,9 +317,8 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   }
 
   private void refreshTransparency() {
-    boolean enabled = getCardTemplate().isTransparentBackground();
-    if (enabled) {
-      if (!getCardTemplate().isOverlayMode()) {
+    if (getCardTemplate().isOverlayMode()) {
+      if (getCardTemplate().getOverlayScreen() == null) {
         Image backgroundImage = new Image(Studio.class.getResourceAsStream("transparent.png"));
         BackgroundImage myBI = new BackgroundImage(backgroundImage,
             BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
@@ -371,12 +373,9 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       refreshTransparency();
       refreshOverlayBackgroundPreview();
 
-      JFXFuture.supplyAsync(() -> client.getHighscoreCardsService().getHighscoreCardData(game.get(), templateCombo.getValue()))
+      JFXFuture.supplyAsync(() -> client.getCardData(game.get(), templateCombo.getValue()))
           .thenAcceptLater(cardData -> {
             CardResolution res = templateBeanBinder.getResolution();
-
-            String baseurl = client.getRestClient().getBaseUrl() + VPinStudioClient.API;
-            cardData.addBaseUrl(baseurl);
             cardPreview.setData(cardData, res);
 
             previewStack.getChildren().remove(waitOverlay);
@@ -422,16 +421,6 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     }
   }
 
-  @Override
-  public void beanPropertyChanged(Object bean, String key, Object value) {
-    if (bean instanceof CardTemplate) {
-      // refresh the preview immediately
-      cardPreview.setTemplate((CardTemplate) bean);
-      // and background save with debounce
-      saveCardTemplate((CardTemplate) bean);
-    }
-  }
-
   private void saveCardTemplate(CardTemplate cardTemplate) {
     cardTemplateSaveDebouncer.debounce("cardTemplate", () -> {
       JFXFuture.runAsync(() -> client.getHighscoreCardTemplatesClient().save(cardTemplate))
@@ -447,7 +436,6 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   public void initialize(URL url, ResourceBundle resourceBundle) {
 
     folderBtn.setVisible(SystemUtil.isFolderActionSupported());
-    resolutionLabel.setText("");
 
     Frontend frontend = client.getFrontendService().getFrontendCached();
     FrontendUtil.replaceName(folderBtn.getTooltip(), frontend);
@@ -477,8 +465,6 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       WaitOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Getting Card Data...");
 
-      //accordion.setExpandedPane(backgroundSettingsPane);
-
       // Initialize bindings between CardTemplate and sidebar
       initBindings();
 
@@ -499,7 +485,14 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
   private void initBindings() {
     try {
-      templateBeanBinder = new CardTemplateBinder(this);
+      templateBeanBinder = new CardTemplateBinder();
+      templateBeanBinder.addListener((bean, key, value) -> {
+        // refresh the preview immediately
+        cardPreview.setTemplate((CardTemplate) bean);
+        // and background save with debounce
+        saveCardTemplate((CardTemplate) bean);
+      });
+
       templateBeanBinder.setBean(this.getCardTemplate());
 
       layerEditorOverlayController.initialize(this, accordion);
@@ -715,14 +708,10 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   //-------------- MediaPlayerListener
   @Override
   public void onReady(Media media) {
-    if (media != null && media.getWidth() > 0) {
-      resolutionLabel.setText("Resolution: " + media.getWidth() + " x " + media.getHeight());
-    }
   }
 
   @Override
   public void onDispose() {
-    this.resolutionLabel.setText("");
   }
 
 }

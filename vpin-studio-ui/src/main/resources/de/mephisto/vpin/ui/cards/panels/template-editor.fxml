@@ -93,6 +93,9 @@
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" iconSize="18" />
                </graphic>
+               <tooltip>
+                  <Tooltip text="Display the image of the card as it would be saved upon generation." />
+               </tooltip>
             </Button>
             <Separator layoutX="307.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
             <Button fx:id="generateBtn" layoutX="565.0" layoutY="11.0" mnemonicParsing="false" onAction="#onGenerate" textFill="WHITE">

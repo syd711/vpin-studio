@@ -63,9 +63,11 @@ public abstract class LayerEditorBaseController {
 
   //---------------------------------------- Common Utilities ---
 
-    public void setIconVisibility(boolean visible) {
-    FontIcon icon = (FontIcon) eyeBtn.getGraphic();
-    icon.setIconLiteral(visible  ? "mdi2e-eye-outline" : "mdi2e-eye-off-outline");
+  public void setIconVisibility(boolean visible) {
+    if (eyeBtn != null) {
+      FontIcon icon = (FontIcon) eyeBtn.getGraphic();
+      icon.setIconLiteral(visible  ? "mdi2e-eye-outline" : "mdi2e-eye-off-outline");
+    }
     settingsPane.getContent().setDisable(!visible);
   }
 

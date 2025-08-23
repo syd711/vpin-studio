@@ -298,7 +298,7 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   @Override
   public CardData getCardData(GameRepresentation game, CardTemplate template) {
     Game _game = gameService.getGame(game.getId());
-    return cardService.getCardData(_game,template);
+    return cardService.getCardData(_game, template, true);
   }
 
   //--------------------------
