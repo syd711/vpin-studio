@@ -99,7 +99,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
 
       result.setStatus("Packing " + manifestFile.getAbsolutePath());
       result.setProgress(1);
-      ZipUtil.zipFileEncrypted(manifestFile, BackupPackageInfo.ARCHIVE_FILENAME, zipOut);
+      ZipUtil.zipFileEncrypted(manifestFile, BackupPackageInfo.PACKAGE_INFO_JSON_FILENAME, zipOut);
       manifestFile.delete();
     }
     catch (Exception e) {

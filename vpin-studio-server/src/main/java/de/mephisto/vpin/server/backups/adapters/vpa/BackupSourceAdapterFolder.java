@@ -56,7 +56,7 @@ public class BackupSourceAdapterFolder implements BackupSourceAdapter {
             cache.put(archiveFile.getName(), descriptor);
           }
           catch (Exception e) {
-            LOG.error("Failed to read " + archiveFile.getAbsolutePath() + ": " + e.getMessage());
+            LOG.error("Failed to read " + archiveFile.getAbsolutePath() + ": " + e.getMessage(), e);
           }
         }
       }

@@ -2,7 +2,7 @@ package de.mephisto.vpin.restclient.backups;
 
 public class BackupPackageInfo {
   public static final int TARGET_WHEEL_SIZE_WIDTH = 100;
-  public final static String ARCHIVE_FILENAME = "package-info.json";
+  public final static String PACKAGE_INFO_JSON_FILENAME = "package-info.json";
   public final static String REGISTRY_FILENAME = "registry.json";
 
   private BackupFileInfo directb2s;

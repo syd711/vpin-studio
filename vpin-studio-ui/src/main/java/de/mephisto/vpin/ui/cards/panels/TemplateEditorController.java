@@ -301,7 +301,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
     CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS);
     CardResolution res = cardSettings.getCardResolution();
-    resolutionLabel.setText("Resolution: " + res.toWidth() + " x " + res.toHeight());
+    resolutionLabel.setText(res.toWidth() + " x " + res.toHeight());
 
     templateBeanBinder.setResolution(res);
 

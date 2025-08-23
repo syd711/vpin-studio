@@ -9,9 +9,6 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.model.FileHeader;
-import net.sf.sevenzipjbinding.ExtractOperationResult;
-import net.sf.sevenzipjbinding.impl.RandomAccessFileOutStream;
-import net.sf.sevenzipjbinding.simple.ISimpleInArchiveItem;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -19,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.util.List;
 
 public class VpaArchiveUtil {
@@ -68,7 +64,7 @@ public class VpaArchiveUtil {
   public static BackupPackageInfo readPackageInfo(File file) throws Exception {
     ZipFile zipFile = createZipFile(file);
     try {
-      String text = readStringFromZip(zipFile, BackupPackageInfo.ARCHIVE_FILENAME);
+      String text = readStringFromZip(zipFile, BackupPackageInfo.PACKAGE_INFO_JSON_FILENAME);
       if (text != null) {
         return objectMapper.readValue(text, BackupPackageInfo.class);
       }
@@ -96,7 +92,8 @@ public class VpaArchiveUtil {
   public static String readStringFromZip(ZipFile zipFile, String fileName) {
     try {
       File target = extractFile(zipFile, fileName);
-      return FileUtils.readFileToString(target, "utf8");
+      String result = FileUtils.readFileToString(target, "utf8");
+      return result;
     }
     catch (Exception e) {
       LOG.error("Failed to read {}: {}", fileName, e.getMessage(), e);
