@@ -785,14 +785,14 @@ public class CardTemplate extends JsonSettings {
   /**
    * @deprecated use isUseColoredBackground()
    */
-  public boolean _isTransparentBackground() {
+  public boolean isTransparentBackground() {
     return isUseColoredBackground();
   }
 
   /**
    * @deprecated use setUseColoredBackground()
    */
-  public void _setTransparentBackground(boolean transparentBackground) {
+  public void setTransparentBackground(boolean transparentBackground) {
     setUseColoredBackground(transparentBackground);
   }
 

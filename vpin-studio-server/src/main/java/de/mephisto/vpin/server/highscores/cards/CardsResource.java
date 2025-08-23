@@ -49,7 +49,7 @@ public class CardsResource {
   public CardData getCardData(@PathVariable("gameId") int gameId, @PathVariable("templateId") int templateId) throws Exception {
     Game game = gameService.getGame(gameId);
     if (game != null) {
-      return cardService.getCardData(game, templateId);
+      return cardService.getCardData(game, templateId, false);
     }
     throw new ResponseStatusException(NOT_FOUND, "No game found for id " + gameId);
   }

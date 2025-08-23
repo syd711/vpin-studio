@@ -5,11 +5,11 @@ import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.cards.CardResolution;
+import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.util.FileUtils;
-import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
@@ -24,6 +24,7 @@ import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.mania.ManiaService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vps.VpsService;
 import de.mephisto.vpin.commons.fx.ImageUtil;
@@ -45,6 +46,8 @@ import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -61,6 +64,9 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
   private HighscoreService highscoreService;
 
   @Autowired
+  private DefaultPictureService defaultPictureService;
+
+  @Autowired
   private VpsService vpsService;
 
   @Autowired
@@ -74,9 +80,6 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
 
   @Autowired
   private FrontendStatusService frontendStatusService;
-
-  @Autowired
-  private SystemService systemService;
 
   @Autowired
   private ManiaService maniaService;
@@ -226,8 +229,8 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
         CardGraphicsHighscore cardGraphics = new CardGraphicsHighscore(false);
         cardGraphics.setTemplate(template);
 
-        CardData data = getCardData(game, summary, template);
-        data.addBaseUrl("http://localhost:" + systemService.getServerPort() + "/" + VPinStudioServer.API_SEGMENT);
+        CardData data = getCardData(game, summary, template, true);
+
         cardGraphics.setData(data, res);
         // resize the cards to the needed resolution    
         cardGraphics.resize(res.toWidth(), res.toHeight());
@@ -259,17 +262,17 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
     return cardTemplatesService.getTemplate(templateId);
   }
 
-  public CardData getCardData(Game game, int templateId) {
+  public CardData getCardData(Game game, int templateId, boolean withStreams) {
     CardTemplate template = cardTemplatesService.getTemplate(templateId);
-    return getCardData(game, template);
+    return getCardData(game, template, withStreams);
   }
 
-  public CardData getCardData(Game game, CardTemplate template) {
+  public CardData getCardData(Game game, CardTemplate template, boolean withStreams) {
     ScoreSummary summary = getScoreSummary(game, template, false);
-    return getCardData(game, summary, template);
+    return getCardData(game, summary, template, withStreams);
   }
 
-  private CardData getCardData(Game game, ScoreSummary summary, CardTemplate template) {
+  private CardData getCardData(Game game, ScoreSummary summary, CardTemplate template, boolean withStreams) {
     CardData cardData = new CardData();
 
     VpsTable vpsTable = null;
@@ -288,9 +291,26 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
     cardData.setGameDisplayName(game.getGameDisplayName());
     cardData.setGameName(game.getGameName());
 
-    cardData.setWheelUrl("media/" + game.getId() + "/" + VPinScreen.Wheel);
-    cardData.setBackgroundUrl("assets/defaultbackground/" + game.getId());
-    
+    if (withStreams) {
+      File background = defaultPictureService.getRawDefaultPicture(game);
+      if (background != null && !background.exists()) {
+        defaultPictureService.extractDefaultPicture(game);
+      }
+      try {
+        cardData.setBackground(org.apache.commons.io.FileUtils.readFileToByteArray(background));
+      } catch (IOException e) {
+        LOG.info("Cannot load background for game {}: {}", game.getGameDisplayName(), e.getMessage());
+      }
+
+      FrontendMediaItem media = frontendService.getDefaultMediaItem(game, VPinScreen.Wheel);
+      if (media != null && media.getFile().exists())
+        try {
+          cardData.setWheel(org.apache.commons.io.FileUtils.readFileToByteArray(media.getFile()));
+        } catch (IOException e) {
+          LOG.info("Cannot load wheel for game {}: {}", game.getGameDisplayName(), e.getMessage());
+        }
+    }
+
     if (summary != null) {
       cardData.setRawScore(summary.getRaw());
 

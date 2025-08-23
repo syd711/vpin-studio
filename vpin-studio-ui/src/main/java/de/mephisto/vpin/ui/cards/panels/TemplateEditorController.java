@@ -8,6 +8,7 @@ import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.ImageViewer;
 import de.mephisto.vpin.commons.utils.media.MediaPlayerListener;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
@@ -372,12 +373,9 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       refreshTransparency();
       refreshOverlayBackgroundPreview();
 
-      JFXFuture.supplyAsync(() -> client.getHighscoreCardsService().getHighscoreCardData(game.get(), templateCombo.getValue()))
+      JFXFuture.supplyAsync(() -> client.getCardData(game.get(), templateCombo.getValue()))
           .thenAcceptLater(cardData -> {
             CardResolution res = templateBeanBinder.getResolution();
-
-            String baseurl = client.getRestClient().getBaseUrl() + VPinStudioClient.API;
-            cardData.addBaseUrl(baseurl);
             cardPreview.setData(cardData, res);
 
             previewStack.getChildren().remove(waitOverlay);

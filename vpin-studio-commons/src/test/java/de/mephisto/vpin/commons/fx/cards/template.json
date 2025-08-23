@@ -1,8 +1,6 @@
 {
   "id": 6,
   "name": "Default",
-  "referenceWidth": 1280,
-  "referenceHeight": 720,
   "alphaBlack": 33,
   "alphaWhite": 1,
   "background": "Old Bumbers",

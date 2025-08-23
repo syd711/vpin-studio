@@ -1,13 +1,16 @@
 package de.mephisto.vpin.restclient.cards;
 
+import java.io.IOException;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 
 
 /**
  */
-public class CardData  {
+public class CardData {
 
   private int gameId;
   private String gameDisplayName;
@@ -16,17 +19,13 @@ public class CardData  {
   private String vpsName;
   private String manufacturer;
   private Integer year;
-  private String wheelUrl;
-  private String backgroundUrl;
   private String vpsTableId;
 
   private List<ScoreRepresentation> scores;
   private String rawScore;
 
-  public void addBaseUrl(String baseurl) {
-    wheelUrl = baseurl + wheelUrl;
-    backgroundUrl = baseurl + backgroundUrl;
-  }
+  private byte[] background;
+  private byte[] wheel;
 
   //-----------------------------------------
 
@@ -78,22 +77,6 @@ public class CardData  {
     this.year = year;
   }
 
-  public String getWheelUrl() {
-    return wheelUrl;
-  }
-
-  public void setWheelUrl(String wheelUrl) {
-    this.wheelUrl = wheelUrl;
-  }
-
-  public String getBackgroundUrl() {
-    return backgroundUrl;
-  }
-
-  public void setBackgroundUrl(String backgroundUrl) {
-    this.backgroundUrl = backgroundUrl;
-  }
-
   public List<ScoreRepresentation> getScores() {
     return scores;
   }
@@ -116,5 +99,24 @@ public class CardData  {
 
   public void setVpsTableId(String vpsTableId) {
     this.vpsTableId = vpsTableId;
+  }
+
+  //---------------------------------------
+
+  public byte[] getWheel() {
+    return wheel;
+  }
+
+  public void setWheel(byte[] wheel) {
+    this.wheel = wheel;
+  }
+
+  @JsonIgnore
+  public byte[] getBackground() {
+    return background;
+  }
+
+  public void setBackground(byte[] background) {
+    this.background = background;
   }
 }

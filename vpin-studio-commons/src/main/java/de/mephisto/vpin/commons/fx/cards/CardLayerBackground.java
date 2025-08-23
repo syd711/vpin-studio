@@ -2,9 +2,9 @@ package de.mephisto.vpin.commons.fx.cards;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
@@ -146,16 +146,15 @@ public class CardLayerBackground extends Canvas implements CardLayer {
     }
 
     BufferedImage backgroundImage = null;
-    if (template.isUseDefaultBackground() && data != null && data.getBackgroundUrl() != null) {
+    if (template.isUseDefaultBackground() && data != null) {
       try {
-        URL url = new URL(data.getBackgroundUrl());
-        backgroundImage = ImageIO.read(url);
+        backgroundImage = ImageIO.read(new ByteArrayInputStream(data.getBackground()));
       }
       catch (Exception e) {
-        LOG.info("Using default image as fallback instead of " + data.getBackgroundUrl());
+        LOG.info("Cannot load image, Using default image as fallback instead of default backgroundUrl");
       }
     }
-    // fall back or !isUseDirectB2S()
+    // fall back or !isUseDefaultBackground()
     if (backgroundImage ==  null) {
       File backgroundsFolder = new File(SystemInfo.RESOURCES + "backgrounds");
       File sourceImage = new File(backgroundsFolder, template.getBackground() + ".jpg");
@@ -188,34 +187,21 @@ public class CardLayerBackground extends Canvas implements CardLayer {
 
   //------------------------------------ Detetection of layer changes
 
-  private String cacheBackgroundUrl = null;
   private int cacheHashTemplate = 0;
 
   private boolean hasBackroundChanged(CardTemplate template, @Nullable CardData data) {
-    boolean hasChanged = false;
-    // check on CardData
-    if (template.isUseDefaultBackground() && data != null) {
-      if (cacheBackgroundUrl == null || !cacheBackgroundUrl.equals(data.getBackgroundUrl())) {
-        cacheBackgroundUrl = data.getBackgroundUrl();
-        hasChanged = true;
-      }
-    }
-    else {
-      cacheBackgroundUrl = null;
-    }
-
-    // Check on Template
     int hashTemplate = Objects.hash(
+      data != null ? data.getGameId() : -1,
+      template.isUseDefaultBackground(),
       template.isUseColoredBackground(),
       template.getBackgroundColor(),
       template.getBackground()
     );
     if (cacheHashTemplate == 0 || cacheHashTemplate != hashTemplate) {
       cacheHashTemplate = hashTemplate;
-      hasChanged = true;
+      return true;
     }
-
-    return hasChanged;
+    return false;
   }
 
   private int cacheHashEffect = 0;

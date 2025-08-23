@@ -47,7 +47,9 @@ public class CardGraphicsTest extends Application {
         // make the test fail in case of Execption
         fail(e);
       }
-      countDownLatch.countDown();
+      finally {
+        countDownLatch.countDown();
+      }
     });
     countDownLatch.await();
   }
@@ -60,7 +62,7 @@ public class CardGraphicsTest extends Application {
   }
 
 
-  public CardGraphicsHighscore generateHighscore(boolean useRawScore) {
+  public CardGraphicsHighscore generateHighscore(boolean useRawScore) throws IOException {
     CardGraphicsHighscore graphics = new CardGraphicsHighscore(true);
     try {
       CardTemplate template = loadTemplate("template.json");
@@ -80,7 +82,7 @@ public class CardGraphicsTest extends Application {
   }
 
   @Override
-  public void start(final Stage stage) {
+  public void start(final Stage stage) throws IOException {
   
     BorderPane layout = new BorderPane();
     stage.setScene(new Scene(layout, 800, 450));

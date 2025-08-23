@@ -488,7 +488,13 @@ public class VPinStudioClient implements OverlayClient {
 
   @Override
   public CardData getCardData(GameRepresentation game, CardTemplate template) {
-    return getHighscoreCardsService().getHighscoreCardData(game, template);
+    CardData cardData = getHighscoreCardsService().getHighscoreCardData(game, template);
+    ByteArrayInputStream wheel = assetServiceClient.getGameMediaItem(game.getId(), VPinScreen.Wheel);
+    cardData.setWheel(wheel.readAllBytes());
+
+    ByteArrayInputStream background = backglassServiceClient.getDefaultPicture(game);
+    cardData.setBackground(background.readAllBytes());
+    return cardData;
   }
 
   @Override
