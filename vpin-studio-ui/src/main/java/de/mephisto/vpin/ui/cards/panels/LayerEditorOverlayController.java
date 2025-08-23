@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.cards.panels;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.util.PositionResizer;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -18,7 +19,7 @@ public class LayerEditorOverlayController extends LayerEditorBaseController {
 
 
   @Override
-  public void setTemplate(CardTemplate cardTemplate, CardResolution res) {
+  public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
     setIconVisibility(cardTemplate.isOverlayMode());
   }
 

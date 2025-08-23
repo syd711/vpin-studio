@@ -22,6 +22,7 @@ import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
 import de.mephisto.vpin.ui.cards.HighscoreGeneratorProgressModel;
 import de.mephisto.vpin.ui.cards.TemplateAssigmentProgressModel;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.util.*;
 import de.mephisto.vpin.ui.util.binding.BindingChangedListener;
@@ -38,6 +39,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.media.Media;
@@ -49,6 +51,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,6 +80,8 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
   @FXML
   private Accordion accordion;
+  @FXML
+  private Label resolutionLabel;
 
   @FXML
   private LayerEditorOverlayController layerEditorOverlayController; //fxml magic! Not unused -> id + "Controller"
@@ -124,9 +130,6 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   @FXML
   private Button folderBtn;
 
-  @FXML
-  private Label resolutionLabel;
-
   /**
    * the dragboxes, today only used at a time
    */
@@ -141,6 +144,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
   private Optional<GameRepresentation> gameRepresentation;
   private List<CardTemplate> templates;
+
 
 
   @FXML
@@ -207,11 +211,11 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       template.setName(s);
       template.setId(null);
       JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().save(template))
-      .thenAcceptLater(newTemplate -> loadTemplates(newTemplate))
-      .onErrorLater(ex -> {
-          LOG.error("Failed to create new template: " + ex.getMessage(), ex);
-          WidgetFactory.showAlert(Studio.stage, "Creating Template Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
-        });
+          .thenAcceptLater(newTemplate -> loadTemplates(newTemplate))
+          .onErrorLater(ex -> {
+            LOG.error("Failed to create new template: " + ex.getMessage(), ex);
+            WidgetFactory.showAlert(Studio.stage, "Creating Template Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
+          });
     }
   }
 
@@ -224,15 +228,15 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       cardTemplate.setName(s);
 
       JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().save(cardTemplate))
-      .thenAcceptLater(updatedTemplate -> {
-          loadTemplates(updatedTemplate);
-          assignTemplate(updatedTemplate);
-          //highscoreCardsController.refresh(gameRepresentation, templates, true);
-        })
-      .onErrorLater(ex -> {
-        LOG.error("Failed to rename template: " + ex.getMessage(), ex);
-        WidgetFactory.showAlert(Studio.stage, "Renaming Template Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
-      });
+          .thenAcceptLater(updatedTemplate -> {
+            loadTemplates(updatedTemplate);
+            assignTemplate(updatedTemplate);
+            //highscoreCardsController.refresh(gameRepresentation, templates, true);
+          })
+          .onErrorLater(ex -> {
+            LOG.error("Failed to rename template: " + ex.getMessage(), ex);
+            WidgetFactory.showAlert(Studio.stage, "Renaming Template Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
+          });
     }
   }
 
@@ -301,14 +305,14 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
     templateBeanBinder.setResolution(res);
 
-    layerEditorOverlayController.setTemplate(cardTemplate, res);
-    layerEditorBackgroundController.setTemplate(cardTemplate, res);
-    layerEditorLayoutController.setTemplate(cardTemplate, res);
-    layerEditorCanvasController.setTemplate(cardTemplate, res);
-    layerEditorTitleController.setTemplate(cardTemplate, res);
-    layerEditorTableNameController.setTemplate(cardTemplate, res);
-    layerEditorWheelController.setTemplate(cardTemplate, res);
-    layerEditorScoresController.setTemplate(cardTemplate, res);
+    layerEditorOverlayController.setTemplate(cardTemplate, res, this.gameRepresentation);
+    layerEditorBackgroundController.setTemplate(cardTemplate, res, this.gameRepresentation);
+    layerEditorLayoutController.setTemplate(cardTemplate, res, this.gameRepresentation);
+    layerEditorCanvasController.setTemplate(cardTemplate, res, this.gameRepresentation);
+    layerEditorTitleController.setTemplate(cardTemplate, res, this.gameRepresentation);
+    layerEditorTableNameController.setTemplate(cardTemplate, res, this.gameRepresentation);
+    layerEditorWheelController.setTemplate(cardTemplate, res, this.gameRepresentation);
+    layerEditorScoresController.setTemplate(cardTemplate, res, this.gameRepresentation);
 
     templateBeanBinder.setPaused(false);
 
@@ -463,7 +467,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
       waitOverlay = loader.load();
       WaitOverlayController ctrl = loader.getController();
-      ctrl.setLoadingMessage("Getting Card Data...");
+      ctrl.setLoadingMessage("Generating Card...");
 
       // Initialize bindings between CardTemplate and sidebar
       initBindings();
@@ -511,13 +515,13 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
   private void loadTemplates(CardTemplate selectedTemplate) {
     JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().getTemplates())
-    .thenAcceptLater(templates -> {
-      this.templates = templates;
-      templateCombo.setItems(FXCollections.observableList(templates));
-      if (selectedTemplate != null) {
-        this.templateCombo.setValue(selectedTemplate);
-      }
-    });
+        .thenAcceptLater(templates -> {
+          this.templates = templates;
+          templateCombo.setItems(FXCollections.observableList(templates));
+          if (selectedTemplate != null) {
+            this.templateCombo.setValue(selectedTemplate);
+          }
+        });
   }
 
   private void resizeCardPreview(double width, double height, boolean forceWidth) {

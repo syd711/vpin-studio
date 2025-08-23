@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.cards.panels;
 
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.TitledPane;
+
+import java.util.Optional;
 
 public abstract class LayerEditorBaseController {
   final protected static Logger LOG = LoggerFactory.getLogger(LayerEditorBaseController.class);
@@ -38,7 +41,7 @@ public abstract class LayerEditorBaseController {
 
   public abstract void initBindings(CardTemplateBinder templateBeanBinder);
 
-  public abstract void setTemplate(CardTemplate cardTemplate, CardResolution res);
+  public abstract void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game);
 
   public abstract void bindDragBox(PositionResizer dragBox);
 

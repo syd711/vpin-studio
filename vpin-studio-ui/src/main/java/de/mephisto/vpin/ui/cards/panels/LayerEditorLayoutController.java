@@ -2,10 +2,13 @@ package de.mephisto.vpin.ui.cards.panels;
 
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.cards.CardResolution;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.util.PositionResizer;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+
+import java.util.Optional;
 
 public class LayerEditorLayoutController extends LayerEditorBaseController {
 
@@ -36,7 +39,7 @@ public class LayerEditorLayoutController extends LayerEditorBaseController {
 
 
   @Override
-  public void setTemplate(CardTemplate cardTemplate, CardResolution res) {
+  public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
     setIconVisibility(cardTemplate.isRenderBackground());
 
     zoomSlider.setValue(cardTemplate.getZoom());

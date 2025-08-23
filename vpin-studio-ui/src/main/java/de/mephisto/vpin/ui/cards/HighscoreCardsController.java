@@ -15,8 +15,6 @@ import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -25,15 +23,12 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.paint.Paint;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
-import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 
@@ -46,17 +41,9 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
 
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreCardsController.class);
 
-  @FXML
-  private Label resolutionLabel;
-
-  @FXML
-  private Button openDefaultPictureBtn;
 
   @FXML
   private Button maniaBtn;
-
-  @FXML
-  private ImageView rawDirectB2SImage;
 
 
   @FXML
@@ -72,9 +59,6 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
   private Button assetManagerBtn;
 
   @FXML
-  private TitledPane defaultBackgroundTitlePane;
-
-  @FXML
   private BorderPane templateEditorPane;
 
 
@@ -84,20 +68,6 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
   private TemplateEditorController templateEditorController;
 
   public HighscoreCardsController() {
-  }
-
-  @FXML
-  private void onBackgroundReset() {
-    GameRepresentation game = getSelection();
-    if (game != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Re-generate default background for \"" + game.getGameDisplayName() + "\"?",
-          "This will re-generate the existing default background.", null, "Generate Background");
-      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        Studio.client.getAssetService().deleteGameAssets(game.getId());
-        refreshRawPreview(game);
-        EventManager.getInstance().notifyTableChange(game.getId(), null);
-      }
-    }
   }
 
   @FXML
@@ -168,54 +138,6 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
         });
   }
 
-
-  @FXML
-  private void onDefaultPictureUpload() {
-    GameRepresentation game = getSelection();
-    if (game != null) {
-      boolean uploaded = TableDialogs.openDefaultBackgroundUploadDialog(game);
-      if (uploaded) {
-        reloadItem(game);
-      }
-    }
-  }
-
-  @FXML
-  private void onOpenDefaultPicture() {
-    GameRepresentation game = getSelection();
-    if (game != null) {
-      TableDialogs.openMediaDialog(Studio.stage, "Default Picture", client.getBackglassServiceClient().getDefaultPictureUrl(game));
-    }
-  }
-
-  private void refreshRawPreview(GameRepresentation game) {
-    if (!defaultBackgroundTitlePane.isExpanded()) {
-      return;
-    }
-
-    try {
-      resolutionLabel.setText("");
-      openDefaultPictureBtn.setVisible(false);
-      rawDirectB2SImage.setImage(null);
-
-      if (game != null) {
-        openDefaultPictureBtn.setTooltip(new Tooltip("Open directb2s image"));
-        InputStream input = client.getBackglassServiceClient().getDefaultPicture(game);
-        Image image = new Image(input);
-        rawDirectB2SImage.setImage(image);
-        input.close();
-
-        if (image.getWidth() > 300) {
-          openDefaultPictureBtn.setVisible(true);
-          resolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
-        }
-      }
-    }
-    catch (IOException e) {
-      LOG.error("Failed to load raw b2s: " + e.getMessage(), e);
-    }
-  }
-
   @Override
   public void refreshView(GameRepresentationModel model) {
     GameRepresentation game = model != null ? model.getBean() : null;
@@ -231,7 +153,6 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
     NavigationController.setBreadCrumb(breadcrumb);
 
     templateEditorController.selectTable(Optional.ofNullable(game));
-    refreshRawPreview(game);
   }
 
   @Override
@@ -310,15 +231,6 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       refreshView(newSelection);
-    });
-
-    defaultBackgroundTitlePane.expandedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        if (getSelection() != null) {
-          refreshRawPreview(getSelection());
-        }
-      }
     });
 
     EventManager.getInstance().addListener(this);

@@ -1,22 +1,30 @@
 package de.mephisto.vpin.ui.cards.panels;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.cards.CardResolution;
+import de.mephisto.vpin.restclient.cards.CardTemplate;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.util.*;
+import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.tables.TableDialogs;
+import de.mephisto.vpin.ui.util.PositionResizer;
+import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Optional;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
@@ -32,17 +40,27 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
 
   @FXML
   private VBox coloredBackgroundPane;
-  @FXML
-  private VBox defaultBackgroundPane;
+
   @FXML
   private VBox fallbackBackgroundPane;
 
   @FXML
   private ColorPicker backgroundColorSelector;
+
   @FXML
   private ComboBox<String> backgroundImageCombo;
+
   @FXML
   private Button falbackUploadBtn;
+
+  @FXML
+  private Label resolutionLabel;
+
+  @FXML
+  private Button openDefaultPictureBtn;
+
+  @FXML
+  private ImageView rawDirectB2SImage;
 
   @FXML
   private CheckBox grayScaleCheckbox;
@@ -56,6 +74,65 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
   private Slider blurSlider;
 
   private ObservableList<String> imageList;
+
+  private Optional<GameRepresentation> game = Optional.empty();
+
+  private void refreshRawPreview(GameRepresentation game) {
+    try {
+      resolutionLabel.setText("");
+      openDefaultPictureBtn.setVisible(false);
+      rawDirectB2SImage.setImage(null);
+
+      if (game != null) {
+        openDefaultPictureBtn.setTooltip(new Tooltip("Open directb2s image"));
+        InputStream input = client.getBackglassServiceClient().getDefaultPicture(game);
+        Image image = new Image(input);
+        rawDirectB2SImage.setImage(image);
+        input.close();
+
+        if (image.getWidth() > 300) {
+          openDefaultPictureBtn.setVisible(true);
+          resolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
+        }
+      }
+    }
+    catch (IOException e) {
+      LOG.error("Failed to load raw b2s: " + e.getMessage(), e);
+    }
+  }
+
+  @FXML
+  private void onDefaultPictureUpload() {
+    if (game.isPresent()) {
+      boolean uploaded = TableDialogs.openDefaultBackgroundUploadDialog(game.get());
+      if (uploaded) {
+        refreshRawPreview(this.game.get());
+        EventManager.getInstance().notifyTableChange(game.get().getId(), null);
+        //TODO refresh preview
+      }
+    }
+  }
+
+  @FXML
+  private void onOpenDefaultPicture() {
+    if (this.game.isPresent()) {
+      TableDialogs.openMediaDialog(Studio.stage, "Default Picture", client.getBackglassServiceClient().getDefaultPictureUrl(game.get()));
+    }
+  }
+
+  @FXML
+  private void onBackgroundReset() {
+    if (this.game.isPresent()) {
+      GameRepresentation game = this.game.get();
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Re-generate default background for \"" + game.getGameDisplayName() + "\"?",
+          "This will re-generate the existing default background.", null, "Generate Background");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        Studio.client.getAssetService().deleteGameAssets(game.getId());
+        EventManager.getInstance().notifyTableChange(game.getId(), null);
+        //TODO refresh preview
+      }
+    }
+  }
 
   @FXML
   private void onUploadButton() {
@@ -83,7 +160,8 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
   }
 
   @Override
-  public void setTemplate(CardTemplate cardTemplate, CardResolution res) {
+  public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
+    this.game = game;
     setIconVisibility(cardTemplate.isRenderBackground());
 
     // background
@@ -111,6 +189,9 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
       backgroundImageCombo.setValue(imageList.get(0));
     }
 
+    if (game.isPresent()) {
+      refreshRawPreview(game.get());
+    }
   }
 
   public void initBindings(CardTemplateBinder templateBeanBinder) {
@@ -121,13 +202,9 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
     defaultBackgroundRadio.setToggleGroup(radioGroup);
     fallbackBackgroundRadio.setToggleGroup(radioGroup);
 
-    // TODO OLE : make pane invisible for time being, to be implemented
-    defaultBackgroundPane.setVisible(false);
-    defaultBackgroundPane.setManaged(false);
 
     radioGroup.selectedToggleProperty().addListener((obs, o, n) -> {
       coloredBackgroundPane.setDisable(n != coloredBackgroundRadio);
-      defaultBackgroundPane.setDisable(n != defaultBackgroundRadio);
       fallbackBackgroundPane.setDisable(n != fallbackBackgroundRadio);
 
       templateBeanBinder.setProperty("useColoredBackground", n == coloredBackgroundRadio);
@@ -165,6 +242,7 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
   @Override
   public void bindDragBox(PositionResizer dragBox) {
   }
+
   @Override
   public void unbindDragBox(PositionResizer dragBox) {
   }

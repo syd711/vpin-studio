@@ -1,40 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.geometry.Rectangle2D?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Slider?>
-<?import javafx.scene.control.Spinner?>
-<?import javafx.scene.control.Tooltip?>
-<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<TitledPane fx:id="settingsPane" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.panels.LayerEditorBackgroundController">
+<TitledPane fx:id="settingsPane" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.panels.LayerEditorBackgroundController">
    <graphic>
       <BorderPane prefWidth="250.0">
          <left>
             <Label text="Background Settings" />
          </left>
          <right>
-            <Button fx:id="eyeBtn" mnemonicParsing="false" >
+            <Button fx:id="eyeBtn" mnemonicParsing="false">
                <font>
-                  <Font size="10.0"/>
+                  <Font size="10.0" />
                </font>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline"/>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline" />
                </graphic>
                <tooltip>
-                  <Tooltip text="Toggle title visibility"/>
+                  <Tooltip text="Toggle title visibility" />
                </tooltip>
             </Button>
          </right>
@@ -43,7 +44,7 @@
    <content>
       <ScrollPane hbarPolicy="NEVER">
          <content>
-            <VBox styleClass="accordion-container" >
+            <VBox styleClass="accordion-container">
                <children>
                   <RadioButton fx:id="coloredBackgroundRadio" mnemonicParsing="false" text="Solid Background" textFill="WHITE">
                      <font>
@@ -53,14 +54,14 @@
                         <Insets bottom="6.0" />
                      </VBox.margin>
                   </RadioButton>
-                  <VBox fx:id="coloredBackgroundPane" spacing="6.0" >
+                  <VBox fx:id="coloredBackgroundPane" spacing="6.0">
                      <children>
                         <Label text="Color:" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <ColorPicker fx:id="backgroundColorSelector" >
+                        <ColorPicker fx:id="backgroundColorSelector">
                         </ColorPicker>
                      </children>
                   </VBox>
@@ -70,18 +71,70 @@
                         <Font size="14.0" />
                      </font>
                      <VBox.margin>
-                        <Insets top="12.0" bottom="6.0" />
+                        <Insets bottom="6.0" top="12.0" />
                      </VBox.margin>
                   </RadioButton>
-                  <VBox fx:id="defaultBackgroundPane" spacing="6.0" >
+                  <Label styleClass="checkbox-description" text="Preview for selected game" />
+                  <VBox styleClass="accordion-container">
                      <children>
-                        <Label text="Use image from media" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <ComboBox fx:id="mediaComboBox" prefWidth="150.0" />
+                        <BorderPane styleClass="media-parent">
+                           <center>
+                              <ImageView fx:id="rawDirectB2SImage" fitHeight="200.0" fitWidth="240.0" pickOnBounds="true" preserveRatio="true">
+                                 <viewport>
+                                    <Rectangle2D />
+                                 </viewport>
+                                 <BorderPane.margin>
+                                    <Insets />
+                                 </BorderPane.margin>
+                              </ImageView>
+                           </center>
+                           <top>
+                              <ToolBar BorderPane.alignment="CENTER">
+                                 <items>
+                                    <Button fx:id="onDefaultPictureUpload" mnemonicParsing="false" onAction="#onDefaultPictureUpload" text="Upload" textFill="WHITE">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                                       </graphic>
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Button>
+                                    <Button fx:id="openDefaultPictureBtn" mnemonicParsing="false" onAction="#onOpenDefaultPicture" text="View">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" iconSize="18" />
+                                       </graphic>
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Button>
+                                    <Button fx:id="resetBackgroundBtn" mnemonicParsing="false" onAction="#onBackgroundReset" text="Reset" textFill="#ff3333">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Button>
+                                 </items>
+                              </ToolBar>
+                           </top>
+                        </BorderPane>
+                        <BorderPane>
+                           <VBox.margin>
+                              <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                           </VBox.margin>
+                           <left>
+                              <Label fx:id="resolutionLabel" BorderPane.alignment="CENTER" />
+                           </left>
+                           <right>
+                              <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER_LEFT">
+                                 <BorderPane.margin>
+                                    <Insets />
+                                 </BorderPane.margin>
+                              </HBox>
+                           </right>
+                        </BorderPane>
                      </children>
+                     <padding>
+                        <Insets bottom="1.0" />
+                     </padding>
                   </VBox>
 
                   <RadioButton fx:id="fallbackBackgroundRadio" mnemonicParsing="false" text="Fallback Background" textFill="WHITE">
@@ -89,10 +142,10 @@
                         <Font size="14.0" />
                      </font>
                      <VBox.margin>
-                        <Insets top="12.0" bottom="6.0" />
+                        <Insets bottom="6.0" top="12.0" />
                      </VBox.margin>
                   </RadioButton>
-                  <VBox fx:id="fallbackBackgroundPane" spacing="6.0" >
+                  <VBox fx:id="fallbackBackgroundPane" spacing="6.0">
                      <children>
                         <Label text="Fallback Background Image:" textFill="WHITE">
                            <font>

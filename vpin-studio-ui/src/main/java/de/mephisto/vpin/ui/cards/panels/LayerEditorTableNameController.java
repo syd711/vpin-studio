@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.cards.panels;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.cards.CardResolution;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.util.PositionResizer;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -56,7 +57,7 @@ public class LayerEditorTableNameController extends LayerEditorBaseController {
   }
 
   @Override
-  public void setTemplate(CardTemplate cardTemplate, CardResolution res) {
+  public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
     setIconVisibility(cardTemplate.isRenderTableName());
 
     CardTemplateBinder.setFontLabel(tableFontLabel, cardTemplate, "table");

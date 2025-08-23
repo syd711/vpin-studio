@@ -29,9 +29,6 @@ public class HighscoreCardsColumnSorter implements BaseColumnSorter<GameRepresen
       else if (column.equals(HighscoreCardsController.columnTemplate)) {
         comp = Comparator.comparing(o -> String.valueOf(o.getGame().getTemplateId()));
       }
-      else if (column.equals(HighscoreCardsController.columnStatus)) {
-        comp = Comparator.comparing(o -> String.valueOf(o.getGame().getValidationState().getCode()));
-      }
 
       // optionally reverse order 
       if (comp != null && column.getSortType().equals(TableColumn.SortType.DESCENDING)) {

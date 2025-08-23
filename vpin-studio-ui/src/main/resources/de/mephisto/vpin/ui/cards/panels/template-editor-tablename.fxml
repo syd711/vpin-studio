@@ -19,7 +19,7 @@
    <graphic>
       <BorderPane prefWidth="250.0">
          <left>
-            <Label text="TableName Settings" />
+            <Label text="Table Name Settings" />
          </left>
          <right>
             <Button fx:id="eyeBtn" mnemonicParsing="false" >
