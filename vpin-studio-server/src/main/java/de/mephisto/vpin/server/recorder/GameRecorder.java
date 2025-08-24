@@ -23,6 +23,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 public class GameRecorder {
   private final static Logger LOG = LoggerFactory.getLogger(GameRecorder.class);
@@ -63,7 +64,11 @@ public class GameRecorder {
         }
 
         File recordingTempFile = createTemporaryRecordingFile(game, screen, option.getRecordMode());
-        FrontendPlayerDisplay recordingScreen = recordingScreens.stream().filter(s -> s.getScreen().equals(screen)).findFirst().get();
+        List<FrontendPlayerDisplay> collect = recordingScreens.stream().filter(s -> s.getScreen().equals(screen)).collect(Collectors.toList());
+        if (collect.isEmpty()) {
+          continue;
+        }
+        FrontendPlayerDisplay recordingScreen = collect.get(0);
         int totalDuration = option.getRecordingDuration() + option.getInitialDelay();
         if (totalDuration > totalTime) {
           totalTime = totalDuration;

@@ -7,10 +7,10 @@ import de.mephisto.vpin.restclient.system.FeaturesInfo;
  * Use feature control to activate or not components in the tool
  */
 public enum FrontendType {
-  Standalone(SupportType.NONE, SupportType.NONE, SupportType.NONE,false, SupportType.NONE, false, false, false, false, false, false, false, false),
+  Standalone(SupportType.NONE, SupportType.NONE, SupportType.NONE,false, SupportType.NONE, false, false, false, false, true, false, false, false),
   Popper    (SupportType.FULL, SupportType.FULL, SupportType.FULL, true, SupportType.FULL, true, false, true, true, true, true, true, true),
-  PinballX  (SupportType.MINI, SupportType.MINI, SupportType.MINI, true, SupportType.MINI, true, true, false, true, false, true, true, false),
-  PinballY  (SupportType.MINI, SupportType.NONE, SupportType.MINI, true, SupportType.MINI, true, true, false, true, false, true, true, false);
+  PinballX  (SupportType.MINI, SupportType.MINI, SupportType.MINI, true, SupportType.MINI, true, true, false, true, true, true, true, false),
+  PinballY  (SupportType.MINI, SupportType.NONE, SupportType.MINI, true, SupportType.MINI, true, true, false, true, true, true, true, false);
 
   enum SupportType {NONE, MINI, FULL}
 
