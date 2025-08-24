@@ -17,68 +17,40 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<TitledPane fx:id="settingsPane" text="Background Layout" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.panels.LayerEditorLayoutController">
+<TitledPane fx:id="settingsPane" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.panels.LayerEditorFrameController">
+   <graphic>
+      <BorderPane prefWidth="250.0">
+         <left>
+            <Label text="Frame Settings" />
+         </left>
+         <right>
+            <!--Button fx:id="eyeBtn" mnemonicParsing="false" >
+               <font>
+                  <Font size="10.0"/>
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline"/>
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Toggle title visibility"/>
+               </tooltip>
+            </Button-->
+         </right>
+      </BorderPane>
+   </graphic>
    <content>
       <ScrollPane hbarPolicy="NEVER">
          <content>
             <VBox styleClass="accordion-container" >
               <children>
-                <HBox alignment="CENTER_LEFT" spacing="6.0">
-                    <children>
-                      <Label text="Background Zoom" textFill="WHITE">
-                          <font>
-                            <Font size="14.0" />
-                          </font>
-                      </Label>
-                      <Label>
-                          <graphic>
-                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                          </graphic>
-                          <tooltip>
-                            <Tooltip text="Zoom in the background, then click on it and position" />
-                          </tooltip>
-                      </Label>
-                    </children>
-                </HBox>
-                <Slider fx:id="zoomSlider" maxWidth="330.0">
-                    <padding>
+                <Label text="Change how the background is displayed, by adding a bordered frame arround it. The margins set transparent spacing arround" prefWidth="200" wrapText="true">
+                    <graphic>
+                      <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" />
+                    </graphic>
+                    <VBox.margin>
                       <Insets top="6.0" />
-                    </padding>
-                </Slider>
-
-                <VBox fx:id="backgroundPositionBox" >
-                  <children>
-                    <HBox alignment="CENTER_LEFT" spacing="6.0">
-                        <children>
-                          <Label text="Background Position:" textFill="WHITE">
-                              <font>
-                                <Font size="14.0" />
-                              </font>
-                          </Label>
-                          <Label>
-                              <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" />
-                              </graphic>
-                              <tooltip>
-                                <Tooltip text="The position of the background within the card when zoomed" />
-                              </tooltip>
-                          </Label>
-                        </children>
-                        <VBox.margin>
-                          <Insets top="12.0" />
-                        </VBox.margin>
-                    </HBox>
-                    <HBox alignment="BASELINE_LEFT" spacing="12.0">
-                        <children>
-                          <Spinner fx:id="backgroundXSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
-                          <Spinner fx:id="backgroundYSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
-                        </children>
-                        <VBox.margin>
-                          <Insets top="6.0" />
-                        </VBox.margin>
-                    </HBox>
-                  </children>
-                </VBox>
+                    </VBox.margin>
+                </Label>
 
                 <Label text="Border" textFill="WHITE">
                     <font>
@@ -117,7 +89,7 @@
                 </HBox>
                 <VBox fx:id="borderColorPane" spacing="3.0" >
                   <children>
-                    <Label text="Color:" textFill="WHITE">
+                    <Label text="Border Color:" textFill="WHITE">
                         <font>
                           <Font size="14.0" />
                         </font>
@@ -181,6 +153,67 @@
                       <Insets top="3.0" />
                     </VBox.margin>
                 </HBox>
+
+                <HBox alignment="CENTER_LEFT" spacing="3.0">
+                    <children>
+                      <Label text="Background Zoom" textFill="WHITE">
+                          <font>
+                            <Font size="14.0" />
+                          </font>
+                      </Label>
+                      <Label>
+                          <graphic>
+                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                          </graphic>
+                          <tooltip>
+                            <Tooltip text="Zoom in the background, then click on it and position" />
+                          </tooltip>
+                      </Label>
+                    </children>
+                    <VBox.margin>
+                      <Insets top="12.0" />
+                    </VBox.margin>
+                </HBox>
+                <Slider fx:id="zoomSlider" maxWidth="330.0">
+                    <padding>
+                      <Insets top="6.0" />
+                    </padding>
+                </Slider>
+
+                <VBox fx:id="backgroundPositionBox" >
+                  <children>
+                    <HBox alignment="CENTER_LEFT" spacing="6.0">
+                        <children>
+                          <Label text="Background Position:" textFill="WHITE">
+                              <font>
+                                <Font size="14.0" />
+                              </font>
+                          </Label>
+                          <Label>
+                              <graphic>
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" />
+                              </graphic>
+                              <tooltip>
+                                <Tooltip text="The position of the background within the card when zoomed" />
+                              </tooltip>
+                          </Label>
+                        </children>
+                        <VBox.margin>
+                          <Insets top="6.0" />
+                        </VBox.margin>
+                    </HBox>
+                    <HBox alignment="BASELINE_LEFT" spacing="12.0">
+                        <children>
+                          <Spinner fx:id="backgroundXSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
+                          <Spinner fx:id="backgroundYSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
+                        </children>
+                        <VBox.margin>
+                          <Insets top="6.0" />
+                        </VBox.margin>
+                    </HBox>
+                  </children>
+                </VBox>
+
 
               </children>
               <padding>

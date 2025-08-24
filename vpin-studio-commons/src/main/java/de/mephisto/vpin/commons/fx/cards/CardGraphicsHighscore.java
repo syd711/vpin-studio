@@ -163,11 +163,16 @@ public class CardGraphicsHighscore extends StackPane {
       tableNameLayer.setVisible(false);
     }
 
-    scoresLayer.setVisible(true);
-    resizeRelocate(scoresLayer, 
-      WIDTH * template.getScoresX(), HEIGHT * template.getScoresY(), 
-      WIDTH * template.getScoresWidth(), HEIGHT * template.getScoresHeight(), 
-      zoomX, zoomY);
+    if (template.isRenderScores()) {
+      scoresLayer.setVisible(true);
+      resizeRelocate(scoresLayer, 
+        WIDTH * template.getScoresX(), HEIGHT * template.getScoresY(), 
+        WIDTH * template.getScoresWidth(), HEIGHT * template.getScoresHeight(), 
+        zoomX, zoomY);
+    }
+    else {
+      scoresLayer.setVisible(false);
+    }
 
     if (debug) {
       // add a temporary debug layer
@@ -211,6 +216,10 @@ public class CardGraphicsHighscore extends StackPane {
     WritableImage snapshot = this.snapshot(snapshotParameters, null);
     BufferedImage bufferedImage = new BufferedImage((int) rectangle2D.getWidth(), (int) rectangle2D.getHeight(), BufferedImage.TYPE_INT_ARGB);
     return SwingFXUtils.fromFXImage(snapshot, bufferedImage);
+  }
+
+  public List<CardLayer> getLayers() {
+    return layers;
   }
 
   public CardLayer selectCardLayer(double x, double y) {

@@ -67,4 +67,8 @@ public class CardLayerWheel extends ImageView implements CardLayer {
     return hasChanged;
   }
 
+  @Override
+  public void forceRefresh() {
+    cacheGameId = -1;
+  }
 }

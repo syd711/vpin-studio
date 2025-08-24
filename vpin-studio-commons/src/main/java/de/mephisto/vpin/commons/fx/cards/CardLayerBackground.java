@@ -250,4 +250,10 @@ System.out.println("");
     return hasChanged;
   }
 
+  @Override
+  public void forceRefresh() {
+    cacheHashTemplate = 0;
+    cacheHashEffect = 0;
+  }
+
 }

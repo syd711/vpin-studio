@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.cards.panels;
 
+import de.mephisto.vpin.commons.fx.cards.CardLayerBackground;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
@@ -107,8 +108,9 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
       boolean uploaded = TableDialogs.openDefaultBackgroundUploadDialog(game.get());
       if (uploaded) {
         refreshRawPreview(this.game.get());
+        // refresh card preview
+        this.templateEditorController.getLayer(CardLayerBackground.class).forceRefresh();
         EventManager.getInstance().notifyTableChange(game.get().getId(), null);
-        //TODO refresh preview
       }
     }
   }
@@ -128,8 +130,9 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
           "This will re-generate the existing default background.", null, "Generate Background");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         Studio.client.getAssetService().deleteGameAssets(game.getId());
+        // refresh card preview
+        this.templateEditorController.getLayer(CardLayerBackground.class).forceRefresh();
         EventManager.getInstance().notifyTableChange(game.getId(), null);
-        //TODO refresh preview
       }
     }
   }

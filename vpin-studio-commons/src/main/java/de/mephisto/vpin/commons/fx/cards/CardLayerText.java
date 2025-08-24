@@ -100,5 +100,4 @@ public class CardLayerText extends Canvas implements CardLayer {
 
     g.fillText(text, width / 2, height / 2, width);
   }
-
 }

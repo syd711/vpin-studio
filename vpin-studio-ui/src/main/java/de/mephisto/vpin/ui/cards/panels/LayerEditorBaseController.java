@@ -77,16 +77,18 @@ public abstract class LayerEditorBaseController {
   }
 
   public void bindVisibilityIcon(CardTemplateBinder templateBeanBinder, String property) {
-    eyeBtn.setOnMouseReleased(e -> {
-      try {
-        boolean visible = !templateBeanBinder.getProperty(property, true);
-        templateBeanBinder.setProperty(property, visible);
-        setIconVisibility(visible);
-      } 
-      catch (Exception ex) {
-        LOG.error("Cannot read property {} from template", property, ex);
-      }
-      e.consume();
-    });
+    if (eyeBtn != null) {
+      eyeBtn.setOnMouseReleased(e -> {
+        try {
+          boolean visible = !templateBeanBinder.getProperty(property, true);
+          templateBeanBinder.setProperty(property, visible);
+          setIconVisibility(visible);
+        } 
+        catch (Exception ex) {
+          LOG.error("Cannot read property {} from template", property, ex);
+        }
+        e.consume();
+      });
+    }
   }
 }

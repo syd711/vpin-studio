@@ -55,6 +55,8 @@ public class LayerEditorScoresController extends LayerEditorBaseController {
 
   @Override
   public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
+    setIconVisibility(cardTemplate.isRenderScores());
+
     CardTemplateBinder.setFontLabel(scoreFontLabel, cardTemplate, "score");
     CardTemplateBinder.setColorPickerValue(fontColorSelector, cardTemplate, "fontColor");
     CardTemplateBinder.setColorPickerValue(friendsFontColorSelector, cardTemplate, "friendsFontColor");
@@ -71,6 +73,8 @@ public class LayerEditorScoresController extends LayerEditorBaseController {
 
   @Override
   public void initBindings(CardTemplateBinder templateBeanBinder) {
+    bindVisibilityIcon(templateBeanBinder, "renderScores");
+
     friendsFontColorSelector.managedProperty().bindBidirectional(friendsFontColorSelector.visibleProperty());
     renderFriendsHighscore.managedProperty().bindBidirectional(renderFriendsHighscore.visibleProperty());
 

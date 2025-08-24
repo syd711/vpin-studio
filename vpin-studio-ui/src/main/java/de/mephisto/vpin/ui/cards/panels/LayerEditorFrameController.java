@@ -12,7 +12,7 @@ import javafx.util.StringConverter;
 
 import java.util.Optional;
 
-public class LayerEditorLayoutController extends LayerEditorBaseController {
+public class LayerEditorFrameController extends LayerEditorBaseController {
 
   @FXML
   private Slider zoomSlider;
@@ -42,7 +42,7 @@ public class LayerEditorLayoutController extends LayerEditorBaseController {
 
   @Override
   public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
-    setIconVisibility(cardTemplate.isRenderBackground());
+    setIconVisibility(cardTemplate.isRenderFrame());
 
     zoomSlider.setValue(cardTemplate.getZoom());
 
@@ -63,6 +63,8 @@ public class LayerEditorLayoutController extends LayerEditorBaseController {
 
   @Override
   public void initBindings(CardTemplateBinder templateBeanBinder) {
+    bindVisibilityIcon(templateBeanBinder, "renderFrame");
+
     templateBeanBinder.addListener((bean, key, value) -> {
       if ("renderBackground".equals(key)) {
         setIconVisibility((boolean) value);

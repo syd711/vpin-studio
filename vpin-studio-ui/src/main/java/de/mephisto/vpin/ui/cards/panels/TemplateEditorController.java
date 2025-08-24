@@ -20,7 +20,6 @@ import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
 import de.mephisto.vpin.ui.cards.HighscoreGeneratorProgressModel;
 import de.mephisto.vpin.ui.cards.TemplateAssigmentProgressModel;
-import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.util.*;
 import javafx.application.Platform;
@@ -36,7 +35,6 @@ import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.media.Media;
@@ -48,8 +46,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
@@ -84,7 +80,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   @FXML
   private LayerEditorBackgroundController layerEditorBackgroundController; //fxml magic! Not unused -> id + "Controller"
   @FXML
-  private LayerEditorLayoutController layerEditorLayoutController; //fxml magic! Not unused -> id + "Controller"
+  private LayerEditorFrameController layerEditorFrameController; //fxml magic! Not unused -> id + "Controller"
   @FXML
   private LayerEditorCanvasController layerEditorCanvasController; //fxml magic! Not unused -> id + "Controller"
   @FXML
@@ -303,7 +299,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
     layerEditorOverlayController.setTemplate(cardTemplate, res, this.gameRepresentation);
     layerEditorBackgroundController.setTemplate(cardTemplate, res, this.gameRepresentation);
-    layerEditorLayoutController.setTemplate(cardTemplate, res, this.gameRepresentation);
+    layerEditorFrameController.setTemplate(cardTemplate, res, this.gameRepresentation);
     layerEditorCanvasController.setTemplate(cardTemplate, res, this.gameRepresentation);
     layerEditorTitleController.setTemplate(cardTemplate, res, this.gameRepresentation);
     layerEditorTableNameController.setTemplate(cardTemplate, res, this.gameRepresentation);
@@ -497,7 +493,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
       layerEditorOverlayController.initialize(this, accordion);
       layerEditorBackgroundController.initialize(this, accordion);
-      layerEditorLayoutController.initialize(this, accordion);
+      layerEditorFrameController.initialize(this, accordion);
       layerEditorCanvasController.initialize(this, accordion);
       layerEditorTitleController.initialize(this, accordion);
       layerEditorTableNameController.initialize(this, accordion);
@@ -638,9 +634,24 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     }
   }
 
+  public <T extends CardLayer> T getLayer(Class<T> clazz) {
+    for (CardLayer cardLayer : cardPreview.getLayers()) {
+      if (cardLayer.getClass().equals(clazz)) {
+        @SuppressWarnings("unchecked")
+        T cardLayerT = (T) cardLayer;
+        return cardLayerT;
+      }
+    }
+    return null;
+  }
+
   protected LayerEditorBaseController layerToController(CardLayer layer) {
     if (layer instanceof CardLayerBackground) {
-      return layerEditorLayoutController;
+      if (templateBeanBinder.getBean().isRenderFrame()) {
+        return layerEditorFrameController;
+      } else {
+        return layerEditorBackgroundController;
+      }
     }
     else if (layer instanceof CardLayerCanvas) {
       return layerEditorCanvasController;

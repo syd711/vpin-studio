@@ -34,6 +34,12 @@ public interface CardLayer {
    */
   void draw(@Nonnull CardTemplate template, @Nullable CardData data, double zoomX, double zoomY);
 
+  /**
+   * force a layer to refresh, invalidating its cache if any. Do nothing by default
+   */
+  default void forceRefresh() {
+  };
+
   //------------------------------------------
 
   // methods of Node exposed via CardLayer
@@ -76,4 +82,5 @@ public interface CardLayer {
     }
     return Font.font(family, fontWeight, fontPosture, (int) size);
   }
+
 }

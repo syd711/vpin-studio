@@ -13,10 +13,12 @@ public class CardTemplate extends JsonSettings {
   private Integer version = null;
 
   private boolean renderBackground = true;
+  private boolean renderFrame = true;
   private boolean renderTableName = true;
   private boolean renderTitle = true;
   private boolean renderWheelIcon = true;
   private boolean renderCanvas = false;
+  private boolean renderScores = true;
 
   // Background images
   private boolean useDefaultBackground = true;
@@ -37,7 +39,7 @@ public class CardTemplate extends JsonSettings {
   private int blur = 6;
   private boolean grayScale = false;
 
-  // LAYOUT SETTINGS
+  // FRAME SETTINGS
   private int borderWidth = 1;
   public int borderRadius = 0;
   private String borderColor = "#FFFFFF";
@@ -391,6 +393,14 @@ public class CardTemplate extends JsonSettings {
   public void setRenderBackground(boolean renderBackground) {
     this.renderBackground = renderBackground;
   }
+  
+  public boolean isRenderFrame() {
+    return renderFrame;
+  }
+
+  public void setRenderFrame(boolean renderFrame) {
+    this.renderFrame = renderFrame;
+  }
 
   public boolean isRenderWheelIcon() {
     return renderWheelIcon;
@@ -414,6 +424,14 @@ public class CardTemplate extends JsonSettings {
 
   public void setRenderTableName(boolean renderTableName) {
     this.renderTableName = renderTableName;
+  }
+
+  public boolean isRenderScores() {
+    return renderScores;
+  }
+
+  public void setRenderScores(boolean renderScore) {
+    this.renderScores = renderScore;
   }
 
   public String getName() {
