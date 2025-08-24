@@ -148,7 +148,7 @@
                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18"/>
                             </graphic>
                             <tooltip>
-                                <Tooltip text="Open FlexDMD installation folder"/>
+                                <Tooltip text="Open Backups folder"/>
                             </tooltip>
                         </Button>
                     </items>

@@ -43,7 +43,7 @@
          <content>
             <VBox styleClass="accordion-container" >
               <children>
-                <Label text="Change how the background is displayed, by adding a bordered frame arround it. The margins set transparent spacing arround" prefWidth="200" wrapText="true">
+                <Label text="Change how the background is displayed, by adding a bordered frame. The margins set transparent spacing around" prefWidth="200" wrapText="true">
                     <graphic>
                       <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" />
                     </graphic>

@@ -92,7 +92,7 @@ public class VpaArchiveUtil {
   public static String readStringFromZip(ZipFile zipFile, String fileName) {
     try {
       File target = extractFile(zipFile, fileName);
-      String result = FileUtils.readFileToString(target, "utf8");
+      String result = target != null ? FileUtils.readFileToString(target, "utf8") : null;
       return result;
     }
     catch (Exception e) {
