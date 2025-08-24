@@ -44,6 +44,17 @@ public class VPRegTest {
   }
 
   @Test
+  public void testDelete() {
+    File vpRegFile = new File("C:\\vPinball\\VisualPinball\\User\\VPReg.stg");
+
+    VPReg reg = new VPReg(vpRegFile, "AMH", null);
+    String data = reg.toJson();
+    assertTrue(data != null);
+
+    reg.deleteEntry("AMH");
+  }
+
+  @Test
   public void testAllHighscores() {
     ScoringDB scoringDB = ScoringDB.load();
     File vpRegFile = new File("../testsystem/vPinball/VisualPinball/User/VPReg2.stg");

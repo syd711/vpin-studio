@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,68 +54,84 @@ public class VPXFileScanner {
 
   private static final Pattern VAR_PATTERN = Pattern.compile("(?:Set *)?(\\w*)\\s*=\\s*(.*)");
 
+
+  private static final ExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+
   VPXFileScanner() {
     //force scan method
   }
 
   public static ScanResult scan(@NonNull File gameFile) {
-    long start = System.currentTimeMillis();
-    ScanResult result = new ScanResult();
+    Future<ScanResult> future = scheduler.submit(new Callable<ScanResult>() {
+      @Override
+      public ScanResult call() {
+        long start = System.currentTimeMillis();
+        ScanResult result = new ScanResult();
 
-    String script = VPXUtil.readScript(gameFile);
+        String script = VPXUtil.readScript(gameFile);
 
-    result.setFoundControllerStop(script.toLowerCase().contains("controller.stop"));
-    result.setFoundTableExit(script.toLowerCase().contains("table1_exit"));
+        result.setFoundControllerStop(script.toLowerCase().contains("controller.stop"));
+        result.setFoundTableExit(script.toLowerCase().contains("table1_exit"));
 
-    List<String> allLines = new ArrayList<>();
-    script = script.replaceAll("\r\n", "\n");
-    script = script.replaceAll("\r", "\n");
-    allLines.addAll(Arrays.asList(script.split("\n")));
-    Collections.reverse(allLines);
+        List<String> allLines = new ArrayList<>();
+        script = script.replaceAll("\r\n", "\n");
+        script = script.replaceAll("\r", "\n");
+        allLines.addAll(Arrays.asList(script.split("\n")));
+        Collections.reverse(allLines);
 
-    scanLines(gameFile, result, allLines);
+        scanLines(gameFile, result, allLines);
 
-    //---------------------
-    // Post manupulations
+        //---------------------
+        // Post manupulations
 
-    if (StringUtils.isNotEmpty(result.getGameName())) {
-      result.setRom(result.getGameName());
-    }
+        if (StringUtils.isNotEmpty(result.getGameName())) {
+          result.setRom(result.getGameName());
+        }
 
-    //apply table name as ROM name, e.g. for EM tables
-    if (StringUtils.isEmpty(result.getRom()) && !StringUtils.isEmpty(result.getTableName())) {
-      result.setRom(result.getTableName());
-    }
+        //apply table name as ROM name, e.g. for EM tables
+        if (StringUtils.isEmpty(result.getRom()) && !StringUtils.isEmpty(result.getTableName())) {
+          result.setRom(result.getTableName());
+        }
 
-    if (StringUtils.isEmpty(result.getRom()) && allLines.size() > 1) {
-      LOG.info("Regular scan failed, running deep scan for " + gameFile.getAbsolutePath());
-      runDeepScan(gameFile, result);
-    }
+        if (StringUtils.isEmpty(result.getRom()) && allLines.size() > 1) {
+          LOG.info("Regular scan failed, running deep scan for " + gameFile.getAbsolutePath());
+          runDeepScan(gameFile, result);
+        }
 
-    if (!StringUtils.isEmpty(result.getRom())) {
-      LOG.info("Finished scan of table " + gameFile.getAbsolutePath() + ", found ROM '" + result.getRom() + "', took " + (System.currentTimeMillis() - start) + " ms for " + allLines.size() + " lines.");
-    }
-    else if (StringUtils.isEmpty(result.getRom()) && StringUtils.isEmpty(result.getTableName()) && !StringUtils.isEmpty(result.getHsFileName())) {
-      result.setTableName(FilenameUtils.getBaseName(result.getHsFileName()));
-      LOG.info("Finished scan of table " + gameFile.getAbsolutePath() + ", found EM highscore filename '" + result.getHsFileName() + "', took " + (System.currentTimeMillis() - start) + " ms for " + allLines.size() + " lines.");
-    }
-    else {
-      LOG.info("Finished scan of table " + gameFile.getAbsolutePath() + ", no ROM found" + "', took " + (System.currentTimeMillis() - start) + " ms for " + allLines.size() + " lines.");
-    }
+        if (!StringUtils.isEmpty(result.getRom())) {
+          LOG.info("Finished scan of table " + gameFile.getAbsolutePath() + ", found ROM '" + result.getRom() + "', took " + (System.currentTimeMillis() - start) + " ms for " + allLines.size() + " lines.");
+        }
+        else if (StringUtils.isEmpty(result.getRom()) && StringUtils.isEmpty(result.getTableName()) && !StringUtils.isEmpty(result.getHsFileName())) {
+          result.setTableName(FilenameUtils.getBaseName(result.getHsFileName()));
+          LOG.info("Finished scan of table " + gameFile.getAbsolutePath() + ", found EM highscore filename '" + result.getHsFileName() + "', took " + (System.currentTimeMillis() - start) + " ms for " + allLines.size() + " lines.");
+        }
+        else {
+          LOG.info("Finished scan of table " + gameFile.getAbsolutePath() + ", no ROM found" + "', took " + (System.currentTimeMillis() - start) + " ms for " + allLines.size() + " lines.");
+        }
 
-    if (!result.isFoundControllerStop()) {
+        if (!result.isFoundControllerStop()) {
 //      LOG.warn("No 'Controller.stop' call found for \"" + gameFile.getAbsolutePath() + "\"");
-    }
+        }
 
-    if (!StringUtils.isEmpty(result.getSomeTextFile()) && StringUtils.isEmpty(result.getHsFileName())) {
-      result.setHsFileName(result.getSomeTextFile());
-    }
+        if (!StringUtils.isEmpty(result.getSomeTextFile()) && StringUtils.isEmpty(result.getHsFileName())) {
+          result.setHsFileName(result.getSomeTextFile());
+        }
 
-    if (StringUtils.isEmpty(result.getRom()) && !StringUtils.isEmpty(result.getHsFileName())) {
-      result.setRom(FilenameUtils.getBaseName(result.getHsFileName()));
-    }
+        if (StringUtils.isEmpty(result.getRom()) && !StringUtils.isEmpty(result.getHsFileName())) {
+          result.setRom(FilenameUtils.getBaseName(result.getHsFileName()));
+        }
 
-    return result;
+        return result;
+      }
+    });
+
+    try {
+      return future.get(10, TimeUnit.SECONDS);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to read {}: {}", gameFile.getAbsolutePath(), e.getMessage());
+      return new ScanResult();
+    }
   }
 
   private static void runDeepScan(File gameFile, ScanResult result) {
