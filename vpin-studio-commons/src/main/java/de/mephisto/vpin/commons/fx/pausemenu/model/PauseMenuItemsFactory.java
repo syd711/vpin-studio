@@ -64,8 +64,11 @@ public class PauseMenuItemsFactory {
         maniaItem.setCompetition(competition);
       }
     }
-    item = new PauseMenuItem(PauseMenuItemTypes.highscores, "Highscores", "Highscore Card", new Image(PauseMenu.class.getResourceAsStream("highscores.png")));
-    pauseMenuItems.add(item);
+
+    if (!game.isCardDisabled()) {
+      item = new PauseMenuItem(PauseMenuItemTypes.highscores, "Highscores", "Highscore Card", new Image(PauseMenu.class.getResourceAsStream("highscores.png")));
+      pauseMenuItems.add(item);
+    }
 
     if (cardScreen == null || !cardScreen.equals(VPinScreen.GameInfo)) {
       loadMedia(game, pauseMenuItems, PauseMenuItemTypes.info, VPinScreen.GameInfo, frontendMedia, "Instructions", "Info Card", "infocard.png", "tutorial.png");
