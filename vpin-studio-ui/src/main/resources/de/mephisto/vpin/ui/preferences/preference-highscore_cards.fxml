@@ -34,7 +34,7 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="148.0" styleClass="preference-description" text="Select the PinUP Popper screen the highscore cards will be generated for. " textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="148.0" styleClass="preference-description" text="Select the screen the highscore cards will be generated for. " textFill="WHITE" />
                   <Label styleClass="preference-description" text="Ensure that the screen is enabled (and bound to a key in your frontend if supported)." textFill="WHITE">
                      <VBox.margin>
                         <Insets bottom="6.0" />
