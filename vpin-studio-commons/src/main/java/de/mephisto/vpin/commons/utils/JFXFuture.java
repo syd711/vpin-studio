@@ -12,7 +12,7 @@ import de.mephisto.vpin.restclient.util.ReturnMessage;
 import javafx.application.Platform;
 
 /**
- * A wrapper arround CompletableFuture to simplify async call in JFX context
+ * A wrapper around CompletableFuture to simplify async call in JFX context
  * instead of :  new Thread(() -> { code;  Platform.runLater(() -> { onJFXThread; }); }).start();
  * same is : JFXFuture.runAsync(() -> { code; }).thenLater(() -> { onJFXThread; });
  * 
