@@ -61,6 +61,7 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
   @FXML
   private BorderPane templateEditorPane;
 
+  private List<CardTemplate> templates;
 
   private final List<String> ignoreList = new ArrayList<>();
 
@@ -109,19 +110,32 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
   private void doReload(boolean force) {
     startReload("Loading Tables...");
 
-    GameRepresentationModel selectedItem = getSelectedModel();
-
-    JFXFuture.supplyAsync(() -> {
-          if (force) {
-            client.getGameService().clearCache();
-          }
-          return client.getGameService().getVpxGamesCached();
-        })
+    // load in parallel games and templates
+    JFXFuture.supplyAllAsync(
+          () -> client.getHighscoreCardTemplatesClient().getTemplates(),
+          () -> {
+                if (force) {
+                  client.getGameService().clearCache();
+                }
+                return client.getGameService().getVpxGamesCached();
+              }
+        )
         .onErrorSupply(e -> {
           Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, "Error", "Loading tables failed: " + e.getMessage()));
-          return Collections.emptyList();
+          return new Object[] { Collections.emptyList(), Collections.emptyList() };
         })
-        .thenAcceptLater(games -> {
+        .thenAcceptLater(objs -> {
+          @SuppressWarnings("unchecked")
+          List<CardTemplate> _templates = (List<CardTemplate>) objs[0];
+          @SuppressWarnings("unchecked")
+          List<GameRepresentation> games = (List<GameRepresentation>) objs[1];
+
+          this.templates = _templates;
+          templateEditorController.loadTemplates(templates, null);
+
+          // keep current selection
+          GameRepresentationModel selectedItem = getSelectedModel();
+
           setItems(games);
 
           if (games.isEmpty()) {
@@ -135,6 +149,40 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
           setSelectionOrFirst(selectedItem);
 
           endReload();
+        });
+  }
+
+  public List<CardTemplate> getCardTemplates() {
+    return templates;
+  }
+
+  public CardTemplate getCardTemplateForGame(GameRepresentation game) {
+    if (templates != null) {
+      if (game.getTemplateId() != null) {
+        Optional<CardTemplate> first = templates.stream().filter(g -> g.getId().equals(game.getTemplateId())).findFirst();
+        if (first.isPresent()) {
+          return first.get();
+        }
+      }
+      // else 
+      return getDefaultTemplate();
+    }
+    return null;
+  }
+
+  public CardTemplate getDefaultTemplate() {
+    return templates.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst().orElse(null);
+  }
+
+  public void refreshTemplates(CardTemplate selectedTemplate) {
+    JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().getTemplates())
+        .onErrorSupply(e -> {
+          Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, "Error", "Loading templates failed: " + e.getMessage()));
+          return Collections.emptyList();
+        })
+        .thenAcceptLater(templates -> {
+          this.templates = templates;
+          templateEditorController.loadTemplates(templates, selectedTemplate);
         });
   }
 
@@ -217,7 +265,7 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
     }, this, true);
 
     BaseLoadingColumn.configureColumn(columnTemplate, (value, model) -> {
-      CardTemplate template = templateEditorController.getCardTemplateForGame(value);
+      CardTemplate template = getCardTemplateForGame(value);
       String templateName = template != null ? template.getName() : "-";
       Label label = new Label(templateName);
       label.getStyleClass().add("default-text");

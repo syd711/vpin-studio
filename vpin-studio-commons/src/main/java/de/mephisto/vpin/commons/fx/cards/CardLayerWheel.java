@@ -26,9 +26,9 @@ public class CardLayerWheel extends ImageView implements CardLayer {
     }
 
     // draw part
-    if (cacheImage != null) {
-      super.setImage(cacheImage);
-    }
+
+    // set image even when null, so that the card of a game without wheel is correctly rendered
+    super.setImage(cacheImage);
   }
 
   //------------------------------------ Detetection of layer changes

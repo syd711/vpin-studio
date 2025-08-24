@@ -44,6 +44,10 @@ public class LayerEditorFrameController extends LayerEditorBaseController {
   public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
     setIconVisibility(cardTemplate.isRenderFrame());
 
+    // wrong old zoom values
+    if (cardTemplate.getZoom() == 0) {
+      cardTemplate.setZoom(1.0);
+    }
     zoomSlider.setValue(cardTemplate.getZoom());
 
     IntegerSpinnerValueFactory factoryX = (IntegerSpinnerValueFactory) backgroundXSpinner.getValueFactory();
@@ -72,7 +76,8 @@ public class LayerEditorFrameController extends LayerEditorBaseController {
     });
 
     templateBeanBinder.bindSlider(zoomSlider, "zoom");
-    
+    // a 0 zoom is useless as the image would nt be drawn at all
+    zoomSlider.setMin(1);
     StringConverter<Integer> converter = new StringConverter<>() {
       @Override
       public String toString(Integer object) {

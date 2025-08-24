@@ -1,6 +1,5 @@
 package de.mephisto.vpin.commons.fx.cards;
 
-import de.mephisto.vpin.commons.fx.cards.CardLayerText.CardLayerTextType;
 import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
@@ -32,8 +31,8 @@ public class CardGraphicsHighscore extends StackPane {
 
   CardLayerBackground backgroundLayer = new CardLayerBackground();
   CardLayerCanvas canvasLayer = new CardLayerCanvas();
-  CardLayerText titleLayer = new CardLayerText(CardLayerTextType.Title);
-  CardLayerText tableNameLayer = new CardLayerText(CardLayerTextType.TableName);
+  CardLayerTitle titleLayer = new CardLayerTitle();
+  CardLayerTableName tableNameLayer = new CardLayerTableName();
   CardLayerWheel wheelLayer = new CardLayerWheel();
   CardLayerScores scoresLayer = new CardLayerScores();
 
