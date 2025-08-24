@@ -14,6 +14,7 @@ import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.preferences.BackupSettings;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
@@ -98,7 +99,9 @@ public class VpaService implements InitializingBean {
 
   //-------------------------------
 
-  public void createBackup(BackupPackageInfo packageInfo, BiConsumer<File, String> zipOut,
+  public void createBackup(BackupPackageInfo packageInfo,
+                           JobDescriptor jobDescriptor,
+                           BiConsumer<File, String> zipOut,
                            Game game, TableDetails tableDetails) throws IOException {
     File gameFolder = game.getGameFile().getParentFile();
 
@@ -107,37 +110,50 @@ public class VpaService implements InitializingBean {
     File romFile = game.getRomFile();
     if (backupSettings.isRom() && romFile != null && romFile.exists()) {
       packageInfo.setRom(BackupFileInfoFactory.create(romFile));
-      zipFile(romFile, MAME_FOLDER + "/roms/" + romFile.getName(), zipOut);
+      if (!zipFile(jobDescriptor, romFile, MAME_FOLDER + "/roms/" + romFile.getName(), zipOut)) {
+        return;
+      }
     }
 
     File povFile = game.getPOVFile();
     if (backupSettings.isPov() && povFile.exists()) {
       packageInfo.setPov(BackupFileInfoFactory.create(povFile));
-      zipFile(povFile, povFile.getName(), zipOut);
+      if (!zipFile(jobDescriptor, povFile, povFile.getName(), zipOut)) {
+        return;
+      }
     }
+
 
     File resFile = game.getResFile();
     if (backupSettings.isRes() && resFile.exists()) {
       packageInfo.setRes(BackupFileInfoFactory.create(resFile));
-      zipFile(resFile, resFile.getName(), zipOut);
+      if (!zipFile(jobDescriptor, resFile, resFile.getName(), zipOut)) {
+        return;
+      }
     }
 
     File vbsFile = game.getVBSFile();
     if (backupSettings.isVbs() && vbsFile.exists()) {
       packageInfo.setVbs(BackupFileInfoFactory.create(vbsFile));
-      zipFile(vbsFile, vbsFile.getName(), zipOut);
+      if (!zipFile(jobDescriptor, vbsFile, vbsFile.getName(), zipOut)) {
+        return;
+      }
     }
 
     File iniFile = game.getIniFile();
     if (backupSettings.isIni() && iniFile.exists()) {
       packageInfo.setRes(BackupFileInfoFactory.create(iniFile));
-      zipFile(iniFile, iniFile.getName(), zipOut);
+      if (!zipFile(jobDescriptor, iniFile, iniFile.getName(), zipOut)) {
+        return;
+      }
     }
 
     File gameFile = game.getGameFile();
     if (gameFile.exists()) {
       packageInfo.setVpx(BackupFileInfoFactory.create(gameFile));
-      zipFile(gameFile, gameFile.getName(), zipOut);
+      if (!zipFile(jobDescriptor, gameFile, gameFile.getName(), zipOut)) {
+        return;
+      }
     }
 
     if (backupSettings.isDirectb2s()) {
@@ -149,7 +165,9 @@ public class VpaService implements InitializingBean {
           File directB2SFile = new File(gameFolder, version);
           if (directB2SFile.exists()) {
             files.add(directB2SFile);
-            zipFile(directB2SFile, directB2SFile.getName(), zipOut);
+            if (!zipFile(jobDescriptor, directB2SFile, directB2SFile.getName(), zipOut)) {
+              return;
+            }
           }
         }
         if (!files.isEmpty()) {
@@ -164,7 +182,9 @@ public class VpaService implements InitializingBean {
       File highscoreBackupFile = highscoreBackupService.backup(game);
       if (highscoreBackupFile != null && highscoreBackupFile.exists()) {
         packageInfo.setHighscore(BackupFileInfoFactory.create(highscoreBackupFile));
-        zipFile(highscoreBackupFile, "Highscore/" + highscoreBackupFile.getName(), zipOut);
+        if (!zipFile(jobDescriptor, highscoreBackupFile, "Highscore/" + highscoreBackupFile.getName(), zipOut)) {
+          return;
+        }
       }
     }
 
@@ -176,7 +196,9 @@ public class VpaService implements InitializingBean {
         if (dmdFolder.exists()) {
           List<File> archiveFiles = new ArrayList<>();
           dmdPackage.setModificationDate(new Date(dmdFolder.lastModified()));
-          zipFile(dmdFolder, "DMD/" + dmdPackage.getName() + "/", zipOut);
+          if (!zipFile(jobDescriptor, dmdFolder, "DMD/" + dmdPackage.getName() + "/", zipOut)) {
+            return;
+          }
           packageInfo.setDmd(BackupFileInfoFactory.create(dmdFolder, archiveFiles));
         }
       }
@@ -187,7 +209,9 @@ public class VpaService implements InitializingBean {
       File musicFolder = musicService.getMusicFolder(game);
       if (musicFolder != null && musicFolder.exists()) {
         packageInfo.setMusic(BackupFileInfoFactory.create(musicFolder));
-        zipFile(musicFolder, "Music/" + musicFolder.getName(), zipOut);
+        if (!zipFile(jobDescriptor, musicFolder, "Music/" + musicFolder.getName(), zipOut)) {
+          return;
+        }
       }
     }
 
@@ -196,7 +220,9 @@ public class VpaService implements InitializingBean {
       File altSoundFolder = altSoundService.getAltSoundFolder(game);
       if (altSoundFolder != null) {
         packageInfo.setAltSound(BackupFileInfoFactory.create(altSoundFolder));
-        zipFile(altSoundFolder, MAME_FOLDER + "/altsound/" + altSoundFolder.getName(), zipOut);
+        if (!zipFile(jobDescriptor, altSoundFolder, MAME_FOLDER + "/altsound/" + altSoundFolder.getName(), zipOut)) {
+          return;
+        }
       }
       else {
         LOG.warn("ALT sound was detected but no folder was found.");
@@ -207,29 +233,37 @@ public class VpaService implements InitializingBean {
     File cfgFile = game.getCfgFile();
     if (cfgFile != null && cfgFile.exists()) {
       packageInfo.setCfg(BackupFileInfoFactory.create(cfgFile));
-      zipFile(cfgFile, MAME_FOLDER + "/cfg/" + cfgFile.getName(), zipOut);
+      if (!zipFile(jobDescriptor, cfgFile, MAME_FOLDER + "/cfg/" + cfgFile.getName(), zipOut)) {
+        return;
+      }
     }
 
     //colored DMD
     File altColorFolder = altColorService.getAltColorFolder(game);
     if (backupSettings.isAltColor() && altColorFolder != null && altColorFolder.exists()) {
-      zipFile(altColorFolder, MAME_FOLDER + "/altcolor/" + altColorFolder.getName(), zipOut);
+      zipFile(jobDescriptor, altColorFolder, MAME_FOLDER + "/altcolor/" + altColorFolder.getName(), zipOut);
       File backupsFolder = new File(altColorFolder, "backups");
       if (backupsFolder.exists()) {
-        zipFile(backupsFolder, MAME_FOLDER + "/altcolor/" + altColorFolder.getName() + "/backups", zipOut);
+        if (!zipFile(jobDescriptor, backupsFolder, MAME_FOLDER + "/altcolor/" + altColorFolder.getName() + "/backups", zipOut)) {
+          return;
+        }
       }
       packageInfo.setAltColor(BackupFileInfoFactory.create(altColorFolder));
     }
 
     if (backupSettings.isPupPack()) {
-      zipPupPack(packageInfo, game, zipOut);
+      if (!zipPupPack(jobDescriptor, packageInfo, game, zipOut)) {
+        return;
+      }
     }
 
     if (backupSettings.isFrontendMedia()) {
-      zipFrontendMedia(packageInfo, game, zipOut);
+      if (!zipFrontendMedia(jobDescriptor, packageInfo, game, zipOut)) {
+        return;
+      }
     }
 
-    zipTableDetails(game, tableDetails, zipOut);
+    zipTableDetails(jobDescriptor, game, tableDetails, zipOut);
 
     if (backupSettings.isRegistryData()) {
       Map<String, Object> options = mameService.getOptionsRaw(game.getRom());
@@ -242,10 +276,14 @@ public class VpaService implements InitializingBean {
       mameData.setRegistryData(options);
       mameData.setRom(game.getRom());
       mameData.setAlias(game.getRomAlias());
-      zipMameRegistryData(mameData, zipOut);
+      if (!zipMameRegistryData(jobDescriptor, mameData, zipOut)) {
+        return;
+      }
     }
 
-    writeWheelToPackageInfo(packageInfo, game);
+    if (!jobDescriptor.isCancelled()) {
+      writeWheelToPackageInfo(packageInfo, game);
+    }
   }
 
   public long calculateTotalSize(Game game) {
@@ -285,7 +323,7 @@ public class VpaService implements InitializingBean {
     return totalSizeExpected;
   }
 
-  private void zipFrontendMedia(BackupPackageInfo packageInfo, Game game, BiConsumer<File, String> zipOut) {
+  private boolean zipFrontendMedia(JobDescriptor jobDescriptor, BackupPackageInfo packageInfo, Game game, BiConsumer<File, String> zipOut) {
     VPinScreen[] values = VPinScreen.values();
     List<File> screenFiles = new ArrayList<>();
     for (VPinScreen value : values) {
@@ -303,7 +341,9 @@ public class VpaService implements InitializingBean {
             }
           }
           screenFiles.add(mediaFile);
-          zipFile(mediaFile, "Screens/" + value.name() + "/" + mediaFile.getName(), zipOut);
+          if (!zipFile(jobDescriptor, mediaFile, "Screens/" + value.name() + "/" + mediaFile.getName(), zipOut)) {
+            return false;
+          }
         }
       }
     }
@@ -311,31 +351,38 @@ public class VpaService implements InitializingBean {
     if (!screenFiles.isEmpty()) {
       packageInfo.setPopperMedia(BackupFileInfoFactory.create(game.getGameName(), null, screenFiles));
     }
+    return true;
   }
 
   /**
    * Archives the PUP pack
    */
-  private void zipPupPack(BackupPackageInfo packageInfo, Game game, BiConsumer<File, String> zipOut) {
+  private boolean zipPupPack(@NonNull JobDescriptor jobDescriptor, BackupPackageInfo packageInfo, Game game, BiConsumer<File, String> zipOut) {
     PupPack pupPack = pupPacksService.getPupPack(game);
     if (pupPack != null) {
       File pupackFolder = pupPack.getPupPackFolder();
       LOG.info("Packing {}", pupackFolder.getAbsolutePath());
-      zipFile(pupackFolder, "PUPPack/" + pupackFolder.getName(), zipOut);
+      if (!zipFile(jobDescriptor, pupackFolder, "PUPPack/" + pupackFolder.getName(), zipOut)) {
+        return false;
+      }
       packageInfo.setPupPack(BackupFileInfoFactory.create(pupackFolder));
     }
+    return true;
   }
 
-  private void zipMameRegistryData(@NonNull BackupMameData registryData, BiConsumer<File, String> zipOut) throws IOException {
+  private boolean zipMameRegistryData(@NonNull JobDescriptor jobDescriptor, @NonNull BackupMameData registryData, BiConsumer<File, String> zipOut) throws IOException {
     String tableDetailsJson = objectMapper.writeValueAsString(registryData);
 
     File tableDetailsTmpFile = File.createTempFile("registry", "json");
     tableDetailsTmpFile.deleteOnExit();
     Files.write(tableDetailsTmpFile.toPath(), tableDetailsJson.getBytes());
-    zipFile(tableDetailsTmpFile, BackupPackageInfo.REGISTRY_FILENAME, zipOut);
+    if (!zipFile(jobDescriptor, tableDetailsTmpFile, BackupPackageInfo.REGISTRY_FILENAME, zipOut)) {
+      return false;
+    }
     if (!tableDetailsTmpFile.delete()) {
       LOG.warn("Failed to delete temporary registry.json file {}", tableDetailsTmpFile.getName());
     }
+    return true;
   }
 
   private void writeWheelToPackageInfo(BackupPackageInfo packageInfo, Game game) throws IOException {
@@ -360,7 +407,7 @@ public class VpaService implements InitializingBean {
     }
   }
 
-  private void zipTableDetails(Game game, TableDetails tableDetails, BiConsumer<File, String> zipOut) throws IOException {
+  private void zipTableDetails(@NonNull JobDescriptor jobDescriptor, Game game, TableDetails tableDetails, BiConsumer<File, String> zipOut) throws IOException {
     if (StringUtils.isEmpty(tableDetails.getGameFileName())) {
       tableDetails.setGameFileName(game.getGameFileName());
     }
@@ -375,15 +422,20 @@ public class VpaService implements InitializingBean {
     File tableDetailsTmpFile = File.createTempFile("table-details", "json");
     tableDetailsTmpFile.deleteOnExit();
     Files.write(tableDetailsTmpFile.toPath(), tableDetailsJson.getBytes());
-    zipFile(tableDetailsTmpFile, TableDetails.ARCHIVE_FILENAME, zipOut);
+    zipFile(jobDescriptor, tableDetailsTmpFile, TableDetails.ARCHIVE_FILENAME, zipOut);
     if (!tableDetailsTmpFile.delete()) {
       LOG.warn("Failed to delete temporary table-details file {}", tableDetailsTmpFile.getName());
     }
   }
 
-  private void zipFile(File fileToZip, String fileName, BiConsumer<File, String> zipOut) {
+  private boolean zipFile(@NonNull JobDescriptor jobDescriptor, File fileToZip, String fileName, BiConsumer<File, String> zipOut) {
+    if (jobDescriptor.isCancelled()) {
+      LOG.info("Cancelled backup, skipped writing {}", fileToZip.getAbsolutePath());
+      return false;
+    }
     zipOut.accept(fileToZip, fileName);
     LOG.info("Zipped archive file: {}", fileToZip);
+    return true;
   }
 
   @Override

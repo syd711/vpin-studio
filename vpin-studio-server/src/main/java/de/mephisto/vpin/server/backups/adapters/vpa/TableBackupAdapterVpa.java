@@ -2,12 +2,12 @@ package de.mephisto.vpin.server.backups.adapters.vpa;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import de.mephisto.vpin.restclient.backups.BackupType;
-import de.mephisto.vpin.restclient.util.FileUtils;
-import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.restclient.backups.BackupPackageInfo;
+import de.mephisto.vpin.restclient.backups.BackupType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.util.FileUtils;
+import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.server.backups.BackupDescriptor;
 import de.mephisto.vpin.server.backups.adapters.TableBackupAdapter;
 import de.mephisto.vpin.server.games.Game;
@@ -28,6 +28,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
   private final Game game;
   private final TableDetails tableDetails;
   private final VpaService vpaService;
+  private boolean cancelled = false;
 
 
   public TableBackupAdapterVpa(@NonNull VpaService vpaService,
@@ -38,7 +39,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
     this.tableDetails = tableDetails;
   }
 
-  public void createBackup(JobDescriptor result) {
+  public void createBackup(JobDescriptor jobDescriptor) {
     BackupDescriptor backupDescriptor = new BackupDescriptor();
     BackupPackageInfo packageInfo = new BackupPackageInfo();
 
@@ -46,7 +47,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
     backupDescriptor.setTableDetails(tableDetails);
     backupDescriptor.setPackageInfo(packageInfo);
 
-    result.setStatus("Calculating export size of " + game.getGameDisplayName());
+    jobDescriptor.setStatus("Calculating export size of " + game.getGameDisplayName());
     long totalSizeExpected = vpaService.calculateTotalSize(game);
     LOG.info("Calculated total approx. size of " + FileUtils.readableFileSize(totalSizeExpected) + " for the archive of " + game.getGameDisplayName());
 
@@ -72,12 +73,16 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
 
     try {
       ZipFile zipOut = vpaService.createProtectedArchive(tempFile);
-      vpaService.createBackup(packageInfo, (fileToZip, fileName) -> {
-        result.setStatus("Packing " + fileToZip.getAbsolutePath());
-        if (result.getProgress() < 1 && tempFile.exists()) {
+      vpaService.createBackup(packageInfo, jobDescriptor, (fileToZip, fileName) -> {
+        if (cancelled) {
+          return;
+        }
+
+        jobDescriptor.setStatus("Packing " + fileToZip.getAbsolutePath());
+        if (jobDescriptor.getProgress() < 1 && tempFile.exists()) {
           if (totalSizeExpected > 0) {
             long l = tempFile.length() * 100 / totalSizeExpected / 100;
-            result.setProgress(l);
+            jobDescriptor.setProgress(l);
           }
         }
         try {
@@ -93,18 +98,22 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
       objectMapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
       String packageInfoJson = objectMapper.writeValueAsString(packageInfo);
 
-      File manifestFile = File.createTempFile("package-info", "json");
-      manifestFile.deleteOnExit();
-      Files.write(manifestFile.toPath(), packageInfoJson.getBytes());
+      if (!cancelled) {
+        File manifestFile = File.createTempFile("package-info", "json");
+        manifestFile.deleteOnExit();
+        Files.write(manifestFile.toPath(), packageInfoJson.getBytes());
+        jobDescriptor.setStatus("Packing " + manifestFile.getAbsolutePath());
+        ZipUtil.zipFileEncrypted(manifestFile, BackupPackageInfo.PACKAGE_INFO_JSON_FILENAME, zipOut);
+        manifestFile.delete();
+      }
 
-      result.setStatus("Packing " + manifestFile.getAbsolutePath());
-      result.setProgress(1);
-      ZipUtil.zipFileEncrypted(manifestFile, BackupPackageInfo.PACKAGE_INFO_JSON_FILENAME, zipOut);
-      manifestFile.delete();
+      jobDescriptor.setProgress(1);
+
+      backupDescriptor.setSize(target.length());
     }
     catch (Exception e) {
       LOG.error("Create VPA for " + game.getGameDisplayName() + " failed: " + e.getMessage(), e);
-      result.setError("Create VPA for " + game.getGameDisplayName() + " failed: " + e.getMessage());
+      jobDescriptor.setError("Create VPA for " + game.getGameDisplayName() + " failed: " + e.getMessage());
       return;
     }
     finally {
@@ -114,18 +123,29 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
       }
       else {
         LOG.error("Final renaming export file to " + target.getAbsolutePath() + " failed.");
-        result.setError("Final renaming export file to " + target.getAbsolutePath() + " failed.");
-        return;
+        jobDescriptor.setError("Final renaming export file to " + target.getAbsolutePath() + " failed.");
+      }
+
+      if (target.exists() && this.cancelled) {
+        target.delete();
       }
     }
-
-    backupDescriptor.setSize(target.length());
   }
 
   public void simulateBackup() throws IOException {
     BackupPackageInfo packageInfo = new BackupPackageInfo();
-    vpaService.createBackup(packageInfo, (fileToZip, fileName) -> {
+    vpaService.createBackup(packageInfo, new JobDescriptor(), (fileToZip, fileName) -> {
       LOG.info("Added to backup: \"{}\" [Source {}]", fileName, fileToZip.getAbsolutePath());
     }, game, tableDetails);
+  }
+
+  @Override
+  public void cancel(JobDescriptor jobDescriptor) {
+    this.cancelled = true;
+  }
+
+  @Override
+  public boolean isCancelable() {
+    return true;
   }
 }

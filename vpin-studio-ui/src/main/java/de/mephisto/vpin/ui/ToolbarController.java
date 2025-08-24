@@ -26,6 +26,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -431,6 +432,12 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
         }
       }
     }
+    jobBtn.setOnShowing(new EventHandler<Event>() {
+      @Override
+      public void handle(Event event) {
+        JobPoller.getInstance().refreshJobsUI();
+      }
+    });
   }
 
   private void onCabSwitch(ConnectionEntry connection) {

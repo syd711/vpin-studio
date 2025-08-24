@@ -270,6 +270,7 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
 
   private boolean backupTable(@NonNull Game game, @NonNull BackupExportDescriptor exportDescriptor) {
     JobDescriptor descriptor = new JobDescriptor(JobType.TABLE_BACKUP);
+    descriptor.setCancelable(true);
     descriptor.setTitle("Backup of \"" + game.getGameDisplayName() + "\"");
     descriptor.setGameId(game.getId());
 

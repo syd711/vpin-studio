@@ -37,7 +37,12 @@ public class TableBackupJob implements Job {
   }
 
   @Override
+  public void cancel(JobDescriptor jobDescriptor) {
+    tableBackupAdapter.cancel(jobDescriptor);
+  }
+
+  @Override
   public boolean isCancelable() {
-    return false;
+    return tableBackupAdapter.isCancelable();
   }
 }
