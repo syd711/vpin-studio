@@ -43,16 +43,14 @@ public class VPRegTest {
     assertEquals(data, restoredData);
   }
 
-  @Test
-  public void testDelete() {
-    File vpRegFile = new File("C:\\vPinball\\VisualPinball\\User\\VPReg.stg");
-
-    VPReg reg = new VPReg(vpRegFile, "AMH", null);
-    String data = reg.toJson();
-    assertTrue(data != null);
-
-    reg.deleteEntry("AMH");
-  }
+//  @Test
+//  public void testDelete() {
+//    File vpRegFile = new File("C:\\vPinball\\VisualPinball\\User\\VPReg.stg");
+//    VPReg reg = new VPReg(vpRegFile, "AMH", null);
+//    String data = reg.toJson();
+//    assertTrue(data != null);
+//    reg.deleteEntry("AMH");
+//  }
 
   @Test
   public void testAllHighscores() {

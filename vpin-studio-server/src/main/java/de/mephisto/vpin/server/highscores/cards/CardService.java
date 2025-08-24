@@ -115,9 +115,9 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
   @NonNull
   private ScoreSummary getScoreSummary(Game game, CardTemplate template, boolean generatePreview) {
     long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
-    ScoreSummary summary = template.isRenderScoreDates() ? 
-      highscoreService.getScoreSummaryWithDates(serverId, game):
-      highscoreService.getScoreSummary(serverId, game);
+    ScoreSummary summary = template.isRenderScoreDates() ?
+        highscoreService.getScoreSummaryWithDates(serverId, game) :
+        highscoreService.getScoreSummary(serverId, game);
 
     if (template.isRenderFriends()) {
       //add simply caching until a real card is generated, should be sufficient while editing
@@ -179,13 +179,22 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
               //REPLACE => keep highscoreCard
               //APPEND => highscoreCard = FileUtils.uniqueAssetByMarker(highscoreCard, "Highscore Card");
               //PREPEND/BACKUP =>
-              highscoreCard = FileUtils.backupAssetByMarker(highscoreCard, "Highscore Card");
+//              highscoreCard = FileUtils.backupAssetByMarker(highscoreCard, "Highscore Card");
 
-              ImageUtil.write(bufferedImage, highscoreCard);
-              FileUtils.addMarker(highscoreCard, "Highscore Card");
 
-              LOG.info("Written highscore card: " + highscoreCard.getAbsolutePath());
-              SLOG.info("Written highscore card: " + highscoreCard.getAbsolutePath());
+              if (highscoreCard.exists() && !highscoreCard.delete()) {
+                LOG.info("Writing highscore card {} failed, file is locked.", highscoreCard.getAbsolutePath());
+                SLOG.info("Writing highscore card " + highscoreCard.getAbsolutePath() + " failed, file is locked.");
+              }
+              else {
+                ImageUtil.write(bufferedImage, highscoreCard);
+                LOG.info("Written highscore card: " + highscoreCard.getAbsolutePath());
+                SLOG.info("Written highscore card: " + highscoreCard.getAbsolutePath());
+              }
+
+//              FileUtils.addMarker(highscoreCard, "Highscore Card");
+
+
               return true;
             }
           }
@@ -221,7 +230,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
   private BufferedImage doGenerateCardImage(Game game, ScoreSummary summary, CardTemplate template) throws Exception {
     // sync between FX thread and calling thread
     CountDownLatch latch = new CountDownLatch(1);
-    BufferedImage[] generatedImage = { null };
+    BufferedImage[] generatedImage = {null};
     Platform.runLater(() -> {
       try {
         CardResolution res = cardSettings.getCardResolution();
@@ -298,7 +307,8 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
       }
       try {
         cardData.setBackground(org.apache.commons.io.FileUtils.readFileToByteArray(background));
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.info("Cannot load background for game {}: {}", game.getGameDisplayName(), e.getMessage());
       }
 
@@ -306,7 +316,8 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
       if (media != null && media.getFile().exists())
         try {
           cardData.setWheel(org.apache.commons.io.FileUtils.readFileToByteArray(media.getFile()));
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           LOG.info("Cannot load wheel for game {}: {}", game.getGameDisplayName(), e.getMessage());
         }
     }
