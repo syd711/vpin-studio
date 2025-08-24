@@ -51,20 +51,24 @@ public abstract class LayerEditorBaseController {
   /**
    * Called when the associated element is selected in the preview
    */
-  public void layerSelected() {
+  public void expandSettingsPane() {
 
     TitledPane expandedPane = accordion.getExpandedPane();
     if (expandedPane != null) {
       expandedPane.setAnimated(false);
-      settingsPane.setAnimated(false);
-
-      accordion.setExpandedPane(settingsPane);
+    }
+    settingsPane.setAnimated(false);
+    accordion.setExpandedPane(settingsPane);
+    settingsPane.setAnimated(true);
       
+    if (expandedPane != null) {
       expandedPane.setAnimated(true);
-      settingsPane.setAnimated(true);
     }
   }
 
+  public TitledPane getSettingsPane() {
+    return settingsPane;
+  }
 
   //---------------------------------------- Common Utilities ---
 

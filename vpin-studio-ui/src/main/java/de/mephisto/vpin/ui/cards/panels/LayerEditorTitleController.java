@@ -38,7 +38,7 @@ public class LayerEditorTitleController extends LayerEditorBaseController {
   private void onFontTitleApplyAll() {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Apply To All", "Apply selected font settings to all templates?");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      CardTemplate selection = templateEditorController.getCardTemplate();
+      CardTemplate selection = templateEditorController.getSelectedCardTemplate();
       templateEditorController.applyFontOnAllTemplates(item -> {
         item.setTitleFontName(selection.getTitleFontName());
         item.setTitleFontSize(selection.getTitleFontSize());

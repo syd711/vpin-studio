@@ -47,5 +47,4 @@ public class LayerEditorOverlayController extends LayerEditorBaseController {
   @Override
   public void unbindDragBox(PositionResizer dragBox) {
   }
-
 }

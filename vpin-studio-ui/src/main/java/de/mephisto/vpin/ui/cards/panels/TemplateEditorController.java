@@ -26,7 +26,6 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -47,6 +46,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -123,9 +123,9 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   private Button folderBtn;
 
   /**
-   * the dragbox of the selected Layer
+   * the dragboxes, today only used at a time
    */
-  private PositionResizer dragBox;
+  private List<PositionResizer> dragBoxes = new ArrayList<>();
 
   public Debouncer cardTemplateSaveDebouncer = new Debouncer();
 
@@ -135,8 +135,6 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   private AssetMediaPlayer assetMediaPlayer;
 
   private Optional<GameRepresentation> gameRepresentation;
-  private List<CardTemplate> templates;
-
 
 
   @FXML
@@ -186,14 +184,13 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
   @FXML
   private void onCreate(ActionEvent e) {
-    CardTemplate template = this.templateCombo.getValue();
+    CardTemplate template = getSelectedCardTemplate();
     String gameName = gameRepresentation.get().getGameName();
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     String s = WidgetFactory.showInputDialog(stage, "New Template", "Enter Template Name", "Enter a meaningful name that identifies the card design.", "The values of the selected template \"" + template.getName() + "\" will be used as default.", gameName);
     if (!StringUtils.isEmpty(s)) {
-      ObservableList<CardTemplate> items = this.templateCombo.getItems();
-
+      List<CardTemplate> items = highscoreCardsController.getCardTemplates();
       Optional<CardTemplate> duplicate = items.stream().filter(t -> t.getName().equals(s)).findFirst();
       if (duplicate.isPresent()) {
         WidgetFactory.showAlert(stage, "Error", "A template with the name \"" + s + "\" already exist.");
@@ -203,7 +200,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       template.setName(s);
       template.setId(null);
       JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().save(template))
-          .thenAcceptLater(newTemplate -> loadTemplates(newTemplate))
+          .thenAcceptLater(newTemplate -> highscoreCardsController.refreshTemplates(newTemplate))
           .onErrorLater(ex -> {
             LOG.error("Failed to create new template: " + ex.getMessage(), ex);
             WidgetFactory.showAlert(Studio.stage, "Creating Template Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
@@ -214,14 +211,14 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   @FXML
   private void onRename(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    CardTemplate cardTemplate = getCardTemplate();
+    CardTemplate cardTemplate = getSelectedCardTemplate();
     String s = WidgetFactory.showInputDialog(stage, "Rename Template", "Enter Template Name", "Enter the new template name.", null, cardTemplate.getName());
     if (!StringUtils.isEmpty(s) && !cardTemplate.getName().equals(s)) {
       cardTemplate.setName(s);
 
       JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().save(cardTemplate))
           .thenAcceptLater(updatedTemplate -> {
-            loadTemplates(updatedTemplate);
+            highscoreCardsController.refreshTemplates(updatedTemplate);
             assignTemplate(updatedTemplate);
             //highscoreCardsController.refresh(gameRepresentation, templates, true);
           })
@@ -235,16 +232,14 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   @FXML
   private void onDelete(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    CardTemplate cardTemplate = getCardTemplate();
+    CardTemplate cardTemplate = getSelectedCardTemplate();
     Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete Template", "Delete Template \"" + cardTemplate.getName() + "\"?", "Assigned tables will use the default template again.", "Delete");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       try {
         client.getHighscoreCardTemplatesClient().deleteTemplate(cardTemplate.getId());
         Platform.runLater(() -> {
-          CardTemplate defaultTemplate = templates.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst().get();
-
-          loadTemplates(defaultTemplate);
-
+         CardTemplate defaultTemplate = highscoreCardsController.getDefaultTemplate();
+          highscoreCardsController.refreshTemplates(defaultTemplate);
           assignTemplate(defaultTemplate);
           //highscoreCardsController.refresh(gameRepresentation, templates, true);
         });
@@ -257,7 +252,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   }
 
   public void applyFontOnAllTemplates(Consumer<CardTemplate> font) {
-    ObservableList<CardTemplate> items = templateCombo.getItems();
+    List<CardTemplate> items = highscoreCardsController.getCardTemplates();
     for (CardTemplate item : items) {
       font.accept(item);
     }
@@ -273,7 +268,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     WidgetFactory.showConfirmation(stage, "Update Finished", "Updated " + items.size() + " templates.");
   }
 
-  public CardTemplate getCardTemplate() {
+  public CardTemplate getSelectedCardTemplate() {
     return this.templateCombo.getValue();
   }
 
@@ -282,13 +277,16 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   }
 
   private void setTemplate(CardTemplate cardTemplate) {
+    // deselect any element if any
+    unloadDragBoxes();
+
     deleteBtn.setDisable(cardTemplate.getName().equals(CardTemplate.DEFAULT));
     renameBtn.setDisable(cardTemplate.getName().equals(CardTemplate.DEFAULT));
 
     // interrupt propety changes
     templateBeanBinder.setPaused(true);
 
-    // set the bean  and resolution
+    // set the selected template on the TemplateBinder
     templateBeanBinder.setBean(cardTemplate);
 
     CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS);
@@ -313,8 +311,9 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   }
 
   private void refreshTransparency() {
-    if (getCardTemplate().isOverlayMode()) {
-      if (getCardTemplate().getOverlayScreen() == null) {
+    CardTemplate template = getSelectedCardTemplate();
+    if (template.isOverlayMode()) {
+      if (template.getOverlayScreen() == null) {
         Image backgroundImage = new Image(Studio.class.getResourceAsStream("transparent.png"));
         BackgroundImage myBI = new BackgroundImage(backgroundImage,
             BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
@@ -369,7 +368,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       refreshTransparency();
       refreshOverlayBackgroundPreview();
 
-      JFXFuture.supplyAsync(() -> client.getCardData(game.get(), templateCombo.getValue()))
+      JFXFuture.supplyAsync(() -> client.getCardData(game.get(), getSelectedCardTemplate()))
           .thenAcceptLater(cardData -> {
             CardResolution res = templateBeanBinder.getResolution();
             cardPreview.setData(cardData, res);
@@ -382,7 +381,6 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     }
   }
 
-
   private void refreshOverlayBackgroundPreview() {
     if (assetMediaPlayer != null) {
       assetMediaPlayer.disposeMedia();
@@ -390,8 +388,9 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     mediaPlayerControl.setVisible(false);
     previewOverlayPanel.setVisible(false);
 
-    if (this.gameRepresentation.isPresent() && getCardTemplate().getOverlayScreen() != null) {
-      VPinScreen overlayScreen = VPinScreen.valueOf(getCardTemplate().getOverlayScreen());
+    CardTemplate template = getSelectedCardTemplate();
+    if (this.gameRepresentation.isPresent() && template.getOverlayScreen() != null) {
+      VPinScreen overlayScreen = VPinScreen.valueOf(template.getOverlayScreen());
 
       JFXFuture.supplyAsync(() -> client.getFrontendService().getFrontendMedia(this.gameRepresentation.get().getId()))
           .thenAcceptLater(frontendMedia -> {
@@ -441,8 +440,6 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       this.deleteBtn.setDisable(true);
       this.renameBtn.setDisable(true);
 
-      loadTemplates(null);
-
       templateCombo.valueProperty().addListener(new ChangeListener<CardTemplate>() {
         @Override
         public void changed(ObservableValue<? extends CardTemplate> observable, CardTemplate oldValue, CardTemplate newValue) {
@@ -456,6 +453,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
         }
       });
 
+      // load overlay
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
       waitOverlay = loader.load();
       WaitOverlayController ctrl = loader.getController();
@@ -473,6 +471,14 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       // selector
       cardPreview.setOnMousePressed(e -> onDragboxEnter(e));
       previewPanel.setOnMousePressed(e -> onDragboxExit(e));
+
+      // auto selection of layer on tabbed opening
+      accordion.expandedPaneProperty().addListener((obs, o, n) -> {
+        if (n != null) {
+          CardLayer layer = titledPaneToLayer(n);
+          loadDragBox(layer, false);
+        }
+      });
     }
     catch (Exception e) {
       LOG.error("Failed to initialize template editor: " + e.getMessage(), e);
@@ -489,8 +495,6 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
         saveCardTemplate((CardTemplate) bean);
       });
 
-      templateBeanBinder.setBean(this.getCardTemplate());
-
       layerEditorOverlayController.initialize(this, accordion);
       layerEditorBackgroundController.initialize(this, accordion);
       layerEditorFrameController.initialize(this, accordion);
@@ -505,15 +509,11 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     }
   }
 
-  private void loadTemplates(CardTemplate selectedTemplate) {
-    JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().getTemplates())
-        .thenAcceptLater(templates -> {
-          this.templates = templates;
-          templateCombo.setItems(FXCollections.observableList(templates));
-          if (selectedTemplate != null) {
-            this.templateCombo.setValue(selectedTemplate);
-          }
-        });
+  public void loadTemplates(List<CardTemplate> templates, CardTemplate selectedTemplate) {
+    templateCombo.setItems(FXCollections.observableList(templates));
+    if (selectedTemplate != null) {
+      templateCombo.setValue(selectedTemplate);
+    }
   }
 
   private void resizeCardPreview(double width, double height, boolean forceWidth) {
@@ -563,7 +563,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       cardPreview.resizeRelocate(offSetX, offSetY, newWidth, newHeight);
 
       // in case dragboxes was here, deselect it
-      unloadDragBox();
+      unloadDragBoxes();
 
       Rectangle cliprect = new Rectangle(newWidth, newHeight);
       cardPreview.setClip(cliprect);
@@ -573,41 +573,39 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   //------------------------------------------- SELECTION ---
 
   public void onDragboxEnter(MouseEvent me) {
-    unloadDragBox();
-
     CardLayer layer = cardPreview.selectCardLayer(me.getX(), me.getY());
-    loadDragBox(layer, me);
+
+    loadDragBox(layer, true);
 
     me.consume();
   }
 
-  public void onDragboxExit(MouseEvent me) {
-    unloadDragBox();
-    me.consume();
+  public void onDragboxExit(MouseEvent e) {
+    unloadDragBoxes();
+    e.consume();
   }
 
-  private void unloadDragBox() {
+  private void unloadDragBoxes() {
     // first delete previous boxes
-    if (dragBox != null) {
+    for (PositionResizer dragBox : dragBoxes) {
       dragBox.removeFromPane(cardPreview);
 
       if (dragBox.getUserData() instanceof CardLayer) {
         CardLayer layer = (CardLayer) dragBox.getUserData();
         layerToController(layer).unbindDragBox(dragBox);
       }
-      dragBox = null;
     }
+    dragBoxes.clear();
   }
 
 
-  private void loadDragBox(CardLayer layer, MouseEvent me) {
+  private void loadDragBox(CardLayer layer, boolean expandSettings) {
+    // make sure first old draggbox is unselected
+    unloadDragBoxes();
     if (layer != null) {
 
-      LayerEditorBaseController controller = layerToController(layer);
-      controller.layerSelected();
-
       // The canvas box
-      this.dragBox = new PositionResizer();
+      PositionResizer dragBox = new PositionResizer();
 
       CardResolution res = cardPreview.getCardResolution();
       double zoomX = res == null ? 1.0 : cardPreview.getWidth() / res.toWidth();
@@ -626,11 +624,17 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       dragBox.setX((int) (layer.getLocX() / zoomX));
       dragBox.setY((int) (layer.getLocY() / zoomY));
 
+      LayerEditorBaseController controller = layerToController(layer);
       controller.bindDragBox(dragBox);
       dragBox.setUserData(layer);
 
+      if (expandSettings) {
+        controller.expandSettingsPane();
+      }
+
       dragBox.addToPane(cardPreview);
       dragBox.select();
+      dragBoxes.add(dragBox);
     }
   }
 
@@ -641,6 +645,36 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
         T cardLayerT = (T) cardLayer;
         return cardLayerT;
       }
+    }
+    return null;
+  }
+
+  protected CardLayer titledPaneToLayer(TitledPane pane) {
+    CardTemplate template = getSelectedCardTemplate();
+
+    if (layerEditorOverlayController.getSettingsPane() == pane) {
+      return null;
+    }
+    else if (layerEditorBackgroundController.getSettingsPane() == pane && template.isRenderBackground()) {
+      return null;
+    }
+    else if (layerEditorFrameController.getSettingsPane() == pane && template.isRenderBackground()) {
+      return null;      // do not return the layer as it is not selectable
+    }
+    else if (layerEditorCanvasController.getSettingsPane() == pane && template.isRenderCanvas()) {
+      return getLayer(CardLayerCanvas.class);
+    }
+    else if (layerEditorTitleController.getSettingsPane() == pane && template.isRenderTitle()) {
+      return getLayer(CardLayerTitle.class);
+    }
+    else if (layerEditorTableNameController.getSettingsPane() == pane && template.isRenderTableName()) {
+      return getLayer(CardLayerTableName.class);
+    }
+    else if (layerEditorWheelController.getSettingsPane() == pane && template.isRenderWheelIcon()) {
+      return getLayer(CardLayerWheel.class);
+    }
+    else if (layerEditorScoresController.getSettingsPane() == pane && template.isRenderScores()) {
+      return getLayer(CardLayerScores.class);
     }
     return null;
   }
@@ -656,13 +690,11 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     else if (layer instanceof CardLayerCanvas) {
       return layerEditorCanvasController;
     }
-    else if (layer instanceof CardLayerText) {
-      switch (((CardLayerText) layer).getType()) {
-        case Title:
-          return layerEditorTitleController;
-        case TableName:
-          return layerEditorTableNameController;
-      }
+    else if (layer instanceof CardLayerTitle) {
+      return layerEditorTitleController;
+    }
+    else if (layer instanceof CardLayerTableName) {
+      return layerEditorTableNameController;
     }
     else if (layer instanceof CardLayerWheel) {
       return layerEditorWheelController;
@@ -676,19 +708,6 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
   //-----------------------------------------
 
-  public CardTemplate getCardTemplateForGame(GameRepresentation game) {
-    if (templates != null) {
-      if (game.getTemplateId() != null) {
-        Optional<CardTemplate> first = templates.stream().filter(g -> g.getId().equals(game.getTemplateId())).findFirst();
-        if (first.isPresent()) {
-          return first.get();
-        }
-      }
-      // else 
-      return templates.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst().orElse(null);
-    }
-    return null;
-  }
 
   private void assignTemplate(CardTemplate newValue) {
     List<GameRepresentation> selection = highscoreCardsController.getSelections();
@@ -703,7 +722,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     this.gameRepresentation = gameRepresentation;
     if (this.gameRepresentation.isPresent()) {
       GameRepresentation game = gameRepresentation.get();
-      CardTemplate template = getCardTemplateForGame(game);
+      CardTemplate template = highscoreCardsController.getCardTemplateForGame(game);
       if (template != null) {
         if (template.equals(templateCombo.getValue())) {
           setTemplate(template);
