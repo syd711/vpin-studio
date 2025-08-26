@@ -24,7 +24,6 @@ public class DMDInstallationUtil {
 
   public static void unzip(@NonNull File archiveFile, @NonNull File dmdFolder) {
     try {
-
       if (dmdFolder.exists() && !dmdFolder.delete()) {
         LOG.error("Failed to delete existing DMD file " + dmdFolder.getAbsolutePath());
       }
@@ -44,8 +43,8 @@ public class DMDInstallationUtil {
         }
 
         String name = zipEntry.getName().replaceAll("\\\\", "/");
-        if (name.contains(dmdFolderName)) {
-          name = StringUtils.substringAfter(name, dmdFolderName);
+        if (name.toLowerCase().contains(dmdFolderName.toLowerCase())) {
+          name = name.substring(name.toLowerCase().indexOf(dmdFolderName.toLowerCase()) + dmdFolderName.length());
         }
         if (name.startsWith("/")) {
           name = name.substring(1);
@@ -91,8 +90,8 @@ public class DMDInstallationUtil {
         }
 
         String name = item.getPath().replaceAll("\\\\", "/");
-        if (name.contains(dmdFolderName)) {
-          name = StringUtils.substringAfter(name, dmdFolderName);
+        if (name.toLowerCase().contains(dmdFolderName.toLowerCase())) {
+          name = name.substring(name.toLowerCase().indexOf(dmdFolderName.toLowerCase()) + dmdFolderName.length());
         }
         if (name.startsWith("/")) {
           name = name.substring(1);
