@@ -39,6 +39,11 @@ public class TableScanProgressModel extends ProgressModel<GameRepresentation> {
   }
 
   @Override
+  public boolean isIndeterminate() {
+    return gameRepresentations.size() == 1;
+  }
+
+  @Override
   public String nextToString(GameRepresentation game) {
     return game.getGameDisplayName();
   }

@@ -62,12 +62,11 @@ public class VPXFileScanner {
   }
 
   public static ScanResult scan(@NonNull File gameFile) {
+    ScanResult result = new ScanResult();
     Future<ScanResult> future = scheduler.submit(new Callable<ScanResult>() {
       @Override
       public ScanResult call() {
         long start = System.currentTimeMillis();
-        ScanResult result = new ScanResult();
-
         String script = VPXUtil.readScript(gameFile);
 
         result.setFoundControllerStop(script.toLowerCase().contains("controller.stop"));
@@ -77,6 +76,7 @@ public class VPXFileScanner {
         script = script.replaceAll("\r\n", "\n");
         script = script.replaceAll("\r", "\n");
         allLines.addAll(Arrays.asList(script.split("\n")));
+        LOG.info("Scanning {} lines for {}", allLines.size(), gameFile.getName());
         Collections.reverse(allLines);
 
         scanLines(gameFile, result, allLines);
@@ -126,15 +126,15 @@ public class VPXFileScanner {
     });
 
     try {
-      return future.get(30, TimeUnit.SECONDS);
+      return future.get(130, TimeUnit.SECONDS);
     }
     catch (TimeoutException e) {
       LOG.error("Failed to read {}: {}", gameFile.getAbsolutePath(), "read timed out");
-      return new ScanResult();
+      return result;
     }
     catch (Exception e) {
       LOG.error("Failed to read {}: {}", gameFile.getAbsolutePath(), e.getMessage(), e);
-      return new ScanResult();
+      return result;
     }
   }
 
@@ -306,13 +306,14 @@ public class VPXFileScanner {
       lineSearchDMDType(result, line);
       lineSearchInitUltraDmd(result, line, evalctxt);
       lineSearchDMDProjectFolder(result, line, evalctxt);
-    } catch (Exception e) {
-      LOG.error("error on line "+nbline, e);
+    }
+    catch (Exception e) {
+      LOG.error("error on line " + nbline, e);
     }
   }
 
   /**
-   * Complex case 
+   * Complex case
    * Const tableName = "ex""'otic" & " 'and' " & "com'""plex" ' with a "comment" at the end
    * => ex"'otic 'and' com'"plex
    */
@@ -339,7 +340,7 @@ public class VPXFileScanner {
         // this is a character to keep
         if (c == '\"') {
           // detection of String
-          inString = !inString; 
+          inString = !inString;
         }
         bld.append(c);
       }
@@ -359,7 +360,7 @@ public class VPXFileScanner {
       evalctxt.onEvaluateList("TO_ARRAY(" + varargs + ")", list -> {
         //LOG.info("line parsed {}", varargs);
       });
-    } 
+    }
     else {
       Matcher matcher = VAR_PATTERN.matcher(line);
       if (matcher.matches()) {
@@ -478,7 +479,8 @@ public class VPXFileScanner {
         if (with == null) {
           // with object is not known yet, add the value so that it is added later
           evalctxt.setTempValue("withGameName_Value", res);
-        } else {
+        }
+        else {
           setGameNameForObject(result, with, res);
         }
       });
@@ -529,7 +531,6 @@ public class VPXFileScanner {
       result.setPupPackName(extractLineValue(line, pattern));
     }
   }*/
-
   private static void lineSearchDMDType(ScanResult result, String line) {
     if (StringUtils.containsIgnoreCase(line, "CreateObject(\"UltraDMD.DMDObject\")")) {
       result.setDMDType("UltraDMD");
@@ -548,7 +549,7 @@ public class VPXFileScanner {
       // cf UltraDMD_Options.vbs
       result.setDMDType("UltraDMD");
       evalctxt.onEvaluateString(folder, res -> result.setDMDProjectFolder(res + ".UltraDMD"));
-    } 
+    }
   }
 
   private static void lineSearchDMDProjectFolder(ScanResult result, String line, EvaluationContext evalctxt) {
