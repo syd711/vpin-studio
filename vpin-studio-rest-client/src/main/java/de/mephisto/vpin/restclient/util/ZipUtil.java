@@ -59,11 +59,11 @@ public class ZipUtil {
 
           String entryName = zipEntry.getName().replaceAll("\\\\", "/");
           String suffix = FilenameUtils.getExtension(entryName);
-          boolean isTargetFolder = archiveFolder == null || entryName.startsWith(archiveFolder);
+          boolean isTargetFolder = archiveFolder == null || entryName.toLowerCase().startsWith(archiveFolder.toLowerCase());
           if (suffixAllowList.isEmpty() || suffixAllowList.contains(suffix.toLowerCase()) || isTargetFolder) {
             String itempath = entryName;
             if (archiveFolder != null) {
-              if (!itempath.startsWith(archiveFolder)) {
+              if (!itempath.toLowerCase().startsWith(archiveFolder.toLowerCase())) {
                 zis.closeEntry();
                 zipEntry = zis.getNextEntry();
                 continue;
@@ -401,46 +401,6 @@ public class ZipUtil {
     }
     finally {
       LOG.info("Contains check for \"" + file.getAbsolutePath() + "\" took " + (System.currentTimeMillis() - start) + "ms.");
-    }
-
-    return fileFound;
-  }
-
-  public static String containsFolder(@NonNull File file, @NonNull String name) {
-    String fileFound = null;
-    try {
-      byte[] buffer = new byte[1024];
-      FileInputStream fileInputStream = new FileInputStream(file);
-      ZipInputStream zis = new ZipInputStream(fileInputStream);
-      ZipEntry zipEntry = zis.getNextEntry();
-
-      while (zipEntry != null) {
-        if (zipEntry.isDirectory()) {
-          if (zipEntry.getName().equals(name)) {
-            fileFound = zipEntry.getName();
-          }
-        }
-        else {
-          String entryName = zipEntry.getName();
-          if (entryName.contains(name + "/")) {
-            fileFound = entryName;
-          }
-        }
-        zis.closeEntry();
-
-        if (fileFound != null) {
-          break;
-        }
-
-        zipEntry = zis.getNextEntry();
-      }
-      fileInputStream.close();
-      zis.closeEntry();
-      zis.close();
-    }
-    catch (Exception e) {
-      LOG.error("Search of " + file.getAbsolutePath() + " failed: " + e.getMessage(), e);
-      return null;
     }
 
     return fileFound;
