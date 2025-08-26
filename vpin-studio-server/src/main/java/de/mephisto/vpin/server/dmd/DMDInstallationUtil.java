@@ -26,7 +26,7 @@ public class DMDInstallationUtil {
   public static void unzip(@NonNull File archiveFile, @NonNull File dmdFolder) {
     ZipUtil.unzip(archiveFile, dmdFolder, null);
   }
-
+  //TODO replace with PackageUtil
   public static void unrar(File archiveFile, File dmdFolder) {
     try {
 

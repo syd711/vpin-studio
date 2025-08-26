@@ -44,6 +44,7 @@ public class VpsTableColumn extends HBox {
       }
       else {
         label.setText(" - ");
+        label.setPrefWidth(WidgetFactory.DEFAULT_ICON_SIZE);
         label.setStyle(disabled ? WidgetFactory.DISABLED_TEXT_STYLE : WidgetFactory.DEFAULT_TEXT_STYLE);
         label.setTooltip(new Tooltip("No VPS table mapped."));
       }
@@ -62,6 +63,7 @@ public class VpsTableColumn extends HBox {
       }
       else {
         label.setText(" - ");
+        label.setPrefWidth(WidgetFactory.DEFAULT_ICON_SIZE);
         label.setStyle(disabled ? WidgetFactory.DISABLED_TEXT_STYLE : WidgetFactory.DEFAULT_TEXT_STYLE);
         label.setTooltip(new Tooltip("No VPS table version mapped."));
       }

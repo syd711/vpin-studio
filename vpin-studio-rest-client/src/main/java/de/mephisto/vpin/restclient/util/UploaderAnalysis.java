@@ -172,6 +172,7 @@ public class UploaderAnalysis {
   public String getMusicFolder() {
     String path = null;
     String pupPackFolder = getPupPackRootDirectory();
+    String dmdPath = getDMDPath();
     for (String filenameWithPath : getFilteredFilenamesWithPath()) {
       String suffix = FilenameUtils.getExtension(filenameWithPath);
       if (!musicSuffixes.contains(suffix)) {
@@ -180,6 +181,11 @@ public class UploaderAnalysis {
       if (pupPackFolder != null && isFileBelowFolder(getPupPackRootDirectory(), filenameWithPath)) {
         continue;
       }
+
+      if (dmdPath != null && filenameWithPath.contains(dmdPath)) {
+        continue;
+      }
+
       if (filenameWithPath.contains("/")) {
         path = filenameWithPath.substring(0, filenameWithPath.lastIndexOf("/"));
         break;
