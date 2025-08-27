@@ -90,14 +90,14 @@ public class DMDService implements InitializingBean {
   }
 
   public void installDMDPackage(@NonNull File archive, UploaderAnalysis analysis, @NonNull Game game) {
-    File dmdFolder = game.getDMDProjectFolder() != null ? getDmdFolder(game):
-      analysis.getDMDPath() != null ? new File(game.getGameFile().getParentFile(), analysis.getDMDPath()):
-      null;
+    File dmdFolder = game.getDMDProjectFolder() != null ? getDmdFolder(game) :
+        analysis.getDMDPath() != null ? new File(game.getGameFile().getParentFile(), analysis.getDMDPath()) :
+            null;
 
     if (dmdFolder != null) {
       String extension = FilenameUtils.getExtension(archive.getName()).toLowerCase();
-      if (extension.equals(PackageUtil.ARCHIVE_ZIP)) {
-        DMDInstallationUtil.unzip(archive, dmdFolder);
+      if (extension.equals(PackageUtil.ARCHIVE_ZIP) || extension.equals(PackageUtil.ARCHIVE_VPA)) {
+        PackageUtil.unpackTargetFolder(archive, dmdFolder, analysis.getDMDPath(), Collections.emptyList(), null);
       }
       else if (extension.equals(PackageUtil.ARCHIVE_7Z) || extension.equals(PackageUtil.ARCHIVE_RAR)) {
         DMDInstallationUtil.unrar(archive, dmdFolder);

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.dmd;
 
+import de.mephisto.vpin.restclient.util.ZipUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.IInArchive;
@@ -23,55 +24,9 @@ public class DMDInstallationUtil {
   private final static Logger LOG = LoggerFactory.getLogger(DMDInstallationUtil.class);
 
   public static void unzip(@NonNull File archiveFile, @NonNull File dmdFolder) {
-    try {
-
-      if (dmdFolder.exists() && !dmdFolder.delete()) {
-        LOG.error("Failed to delete existing DMD file " + dmdFolder.getAbsolutePath());
-      }
-      dmdFolder.mkdirs();
-      String dmdFolderName = dmdFolder.getName();
-
-      byte[] buffer = new byte[1024];
-      FileInputStream fileInputStream = new FileInputStream(archiveFile);
-      ZipInputStream zis = new ZipInputStream(fileInputStream);
-      ZipEntry zipEntry = zis.getNextEntry();
-
-      while (zipEntry != null) {
-        if (zipEntry.isDirectory()) {
-          zis.closeEntry();
-          zipEntry = zis.getNextEntry();
-          continue;
-        }
-
-        String name = zipEntry.getName().replaceAll("\\\\", "/");
-        if (name.contains(dmdFolderName)) {
-          name = StringUtils.substringAfter(name, dmdFolderName);
-        }
-        if (name.startsWith("/")) {
-          name = name.substring(1);
-        }
-
-        File targetFile = new File(dmdFolder, name);
-        FileOutputStream fos = new FileOutputStream(targetFile);
-        int len;
-        while ((len = zis.read(buffer)) > 0) {
-          fos.write(buffer, 0, len);
-        }
-        fos.close();
-        LOG.info("Written " + targetFile.getAbsolutePath());
-
-        zis.closeEntry();
-        zipEntry = zis.getNextEntry();
-      }
-      fileInputStream.close();
-      zis.closeEntry();
-      zis.close();
-    }
-    catch (Exception e) {
-      LOG.error("Unzipping of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
-    }
+    ZipUtil.unzip(archiveFile, dmdFolder, null);
   }
-
+  //TODO replace with PackageUtil
   public static void unrar(File archiveFile, File dmdFolder) {
     try {
 
@@ -91,8 +46,8 @@ public class DMDInstallationUtil {
         }
 
         String name = item.getPath().replaceAll("\\\\", "/");
-        if (name.contains(dmdFolderName)) {
-          name = StringUtils.substringAfter(name, dmdFolderName);
+        if (name.toLowerCase().contains(dmdFolderName.toLowerCase())) {
+          name = name.substring(name.toLowerCase().indexOf(dmdFolderName.toLowerCase()) + dmdFolderName.length());
         }
         if (name.startsWith("/")) {
           name = name.substring(1);

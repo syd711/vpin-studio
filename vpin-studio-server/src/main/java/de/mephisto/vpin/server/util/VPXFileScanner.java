@@ -126,10 +126,14 @@ public class VPXFileScanner {
     });
 
     try {
-      return future.get(10, TimeUnit.SECONDS);
+      return future.get(30, TimeUnit.SECONDS);
+    }
+    catch (TimeoutException e) {
+      LOG.error("Failed to read {}: {}", gameFile.getAbsolutePath(), "read timed out");
+      return new ScanResult();
     }
     catch (Exception e) {
-      LOG.error("Failed to read {}: {}", gameFile.getAbsolutePath(), e.getMessage());
+      LOG.error("Failed to read {}: {}", gameFile.getAbsolutePath(), e.getMessage(), e);
       return new ScanResult();
     }
   }

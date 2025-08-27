@@ -68,4 +68,6 @@ TODO
 - Fixed ALT sound upload so that a game selection is mandatory now. This enforces the correct ROM name to be used from the game instead of guessing it from the uploading file.
 - Fixed initial selection of the backglass manager: When you press the backglass button from the backglass sidebar in the tables overview, the backglass manager tab initializes with the correct selection again.
 - Fixed saving the PinUP Popper preferences and added option to set the default media directory. 
+- Fixed installation of DMD bundles.
+- Improved detection of music bundles. 
 - ...and improved the wiki documentation (well, at least a bit...) 

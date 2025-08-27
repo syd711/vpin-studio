@@ -91,8 +91,11 @@ public class HighscoreBackupService implements InitializingBean {
     if (StringUtils.isEmpty(rom)) {
       rom = game.getTableName();
     }
-    File folder = new File(systemService.getBackupFolder(), rom);
-    return writeBackupFile(game, folder);
+    if (!StringUtils.isEmpty(rom)) {
+      File folder = new File(systemService.getBackupFolder(), rom);
+      return writeBackupFile(game, folder);
+    }
+    return null;
   }
 
   public boolean restore(@NonNull Game game, @NonNull List<Game> games, @NonNull String filename) {
