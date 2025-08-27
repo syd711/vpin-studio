@@ -9,6 +9,15 @@ import java.util.Objects;
 public class VpsTutorialUrls extends VpsAuthoredUrls {
   private String title;
   private String youtubeId;
+  private String url;
+
+  public String getUrl() {
+    return url;
+  }
+
+  public void setUrl(String url) {
+    this.url = url;
+  }
 
   public List<VpsUrl> getUrls() {
     List<VpsUrl> urls = super.getUrls();
@@ -21,6 +30,14 @@ public class VpsTutorialUrls extends VpsAuthoredUrls {
       url.setBroken(false);
       urls.add(url);
     }
+
+    if(this.url != null) {
+      VpsUrl vpsUrl = new VpsUrl();
+      vpsUrl.setBroken(false);
+      vpsUrl.setUrl(this.url);
+      urls.add(vpsUrl);
+    }
+
     return urls;
   }
 
