@@ -22,17 +22,32 @@
             <Label text="Wheel Settings" />
          </left>
          <right>
-            <Button fx:id="eyeBtn" mnemonicParsing="false" >
-               <font>
-                  <Font size="10.0"/>
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline"/>
-               </graphic>
-               <tooltip>
-                  <Tooltip text="Toggle canvas visibility"/>
-               </tooltip>
-            </Button>
+             <HBox alignment="CENTER_RIGHT" spacing="3.0">
+                 <children>
+                     <Button fx:id="eyeBtn" mnemonicParsing="false">
+                         <font>
+                             <Font size="10.0" />
+                         </font>
+                         <graphic>
+                             <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline" />
+                         </graphic>
+                         <tooltip>
+                             <Tooltip text="Toggle overlay mode" />
+                         </tooltip>
+                     </Button>
+                     <Button fx:id="lockBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onLockToggle">
+                         <font>
+                             <Font size="10.0" />
+                         </font>
+                         <graphic>
+                             <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lock-open-variant-outline" />
+                         </graphic>
+                         <tooltip>
+                             <Tooltip text="Toggle overlay mode" />
+                         </tooltip>
+                     </Button>
+                 </children>
+             </HBox>
          </right>
       </BorderPane>
    </graphic>

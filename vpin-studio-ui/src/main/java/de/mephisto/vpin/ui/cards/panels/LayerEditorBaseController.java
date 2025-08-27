@@ -1,17 +1,17 @@
 package de.mephisto.vpin.ui.cards.panels;
 
-import de.mephisto.vpin.restclient.games.GameRepresentation;
-import org.kordamp.ikonli.javafx.FontIcon;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import de.mephisto.vpin.restclient.cards.CardTemplate;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.cards.CardResolution;
+import de.mephisto.vpin.restclient.cards.CardTemplate;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.util.PositionResizer;
 import javafx.fxml.FXML;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.TitledPane;
+import org.kordamp.ikonli.javafx.FontIcon;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
@@ -25,11 +25,17 @@ public abstract class LayerEditorBaseController {
   protected TitledPane settingsPane;
   @FXML
   protected Button eyeBtn;
+  @FXML
+  protected Button lockBtn;
 
-  /** The top accordion */
+  /**
+   * The top accordion
+   */
   protected Accordion accordion;
 
-  /** Link to the parent controller */
+  /**
+   * Link to the parent controller
+   */
   protected TemplateEditorController templateEditorController;
 
   public void initialize(TemplateEditorController templateEditorController, Accordion accordion) {
@@ -47,6 +53,12 @@ public abstract class LayerEditorBaseController {
 
   public abstract void unbindDragBox(PositionResizer dragBox);
 
+  @FXML
+  private void onLockToggle() {
+    FontIcon icon = WidgetFactory.createIcon("mdi2l-lock", 12, null);
+
+    lockBtn.setGraphic(icon);
+  }
 
   /**
    * Called when the associated element is selected in the preview
@@ -60,7 +72,7 @@ public abstract class LayerEditorBaseController {
     settingsPane.setAnimated(false);
     accordion.setExpandedPane(settingsPane);
     settingsPane.setAnimated(true);
-      
+
     if (expandedPane != null) {
       expandedPane.setAnimated(true);
     }
@@ -75,7 +87,7 @@ public abstract class LayerEditorBaseController {
   public void setIconVisibility(boolean visible) {
     if (eyeBtn != null) {
       FontIcon icon = (FontIcon) eyeBtn.getGraphic();
-      icon.setIconLiteral(visible  ? "mdi2e-eye-outline" : "mdi2e-eye-off-outline");
+      icon.setIconLiteral(visible ? "mdi2e-eye-outline" : "mdi2e-eye-off-outline");
     }
     settingsPane.getContent().setDisable(!visible);
   }
@@ -87,7 +99,7 @@ public abstract class LayerEditorBaseController {
           boolean visible = !templateBeanBinder.getProperty(property, true);
           templateBeanBinder.setProperty(property, visible);
           setIconVisibility(visible);
-        } 
+        }
         catch (Exception ex) {
           LOG.error("Cannot read property {} from template", property, ex);
         }

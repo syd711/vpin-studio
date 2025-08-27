@@ -74,6 +74,8 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   private Accordion accordion;
   @FXML
   private Label resolutionLabel;
+  @FXML
+  private Label nagBarLabel;
 
   @FXML
   private LayerEditorOverlayController layerEditorOverlayController; //fxml magic! Not unused -> id + "Controller"
@@ -100,6 +102,11 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   private BorderPane previewOverlayPanel;
 
   private Parent waitOverlay;
+
+  @FXML
+  private ToggleButton cardModeBtn;
+  @FXML
+  private ToggleButton templateModeBtn;
 
   /**
    * The live preview component
@@ -238,7 +245,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       try {
         client.getHighscoreCardTemplatesClient().deleteTemplate(cardTemplate.getId());
         Platform.runLater(() -> {
-         CardTemplate defaultTemplate = highscoreCardsController.getDefaultTemplate();
+          CardTemplate defaultTemplate = highscoreCardsController.getDefaultTemplate();
           highscoreCardsController.refreshTemplates(defaultTemplate);
           assignTemplate(defaultTemplate);
           //highscoreCardsController.refresh(gameRepresentation, templates, true);
@@ -283,7 +290,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     deleteBtn.setDisable(cardTemplate.getName().equals(CardTemplate.DEFAULT));
     renameBtn.setDisable(cardTemplate.getName().equals(CardTemplate.DEFAULT));
 
-    // interrupt propety changes
+    // interrupt property changes
     templateBeanBinder.setPaused(true);
 
     // set the selected template on the TemplateBinder
@@ -683,7 +690,8 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     if (layer instanceof CardLayerBackground) {
       if (templateBeanBinder.getBean().isRenderFrame()) {
         return layerEditorFrameController;
-      } else {
+      }
+      else {
         return layerEditorBackgroundController;
       }
     }

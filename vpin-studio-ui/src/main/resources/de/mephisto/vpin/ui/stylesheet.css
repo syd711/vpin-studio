@@ -1042,6 +1042,14 @@
 }
 
 /**
+ * NagBar
+ */
+.nagbar-container {
+    -fx-padding: 3 3 3 6;
+    -fx-background-color: -fx-info-background;
+}
+
+/**
  * Date Picker
  */
 
@@ -1401,16 +1409,17 @@
 }
 
 .custom-toggle-button {
-    -fx-border-style: solid solid solid solid;
-    -fx-border-color: transparent;
+    -fx-border-width: 1;
+    -fx-border-color: default;
+    -fx-border-radius: 3px;
     -fx-font-size: 14px;
 }
 
 .custom-toggle-button:selected {
+    -fx-border-width: 1;
+    -fx-border-color: #6666FF;
+    -fx-border-radius: 3px;
     -fx-background-color: #333366; /* Selected button color */
-    -fx-text-fill: white; /* Text color when selected */
-    -fx-border-color: #333366; /* Border color when selected */
-    -fx-border-radius: 5px; /* Rounded corners */
 }
 
 .dnd-dashed-border {
