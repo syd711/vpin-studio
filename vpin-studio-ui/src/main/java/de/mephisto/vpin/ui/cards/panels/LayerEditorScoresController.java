@@ -53,9 +53,10 @@ public class LayerEditorScoresController extends LayerEditorBaseController {
     }
   }
 
-  @Override
   public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
+    super.setTemplate(cardTemplate, res, game, cardTemplate.isLockScores());
     setIconVisibility(cardTemplate.isRenderScores());
+    lockBtn.setSelected(cardTemplate.isLockScores());
 
     CardTemplateBinder.setFontLabel(scoreFontLabel, cardTemplate, "score");
     CardTemplateBinder.setColorPickerValue(fontColorSelector, cardTemplate, "fontColor");

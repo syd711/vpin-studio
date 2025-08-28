@@ -51,6 +51,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
@@ -146,6 +147,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   private AssetMediaPlayer assetMediaPlayer;
 
   private Optional<GameRepresentation> gameRepresentation;
+  private TemplateComboChangeListener templateComboChangeListener;
 
 
   @FXML
@@ -306,21 +308,42 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
     templateBeanBinder.setResolution(res);
 
-    layerEditorOverlayController.setTemplate(cardTemplate, res, this.gameRepresentation);
-    layerEditorBackgroundController.setTemplate(cardTemplate, res, this.gameRepresentation);
-    layerEditorFrameController.setTemplate(cardTemplate, res, this.gameRepresentation);
-    layerEditorCanvasController.setTemplate(cardTemplate, res, this.gameRepresentation);
-    layerEditorTitleController.setTemplate(cardTemplate, res, this.gameRepresentation);
-    layerEditorTableNameController.setTemplate(cardTemplate, res, this.gameRepresentation);
-    layerEditorWheelController.setTemplate(cardTemplate, res, this.gameRepresentation);
-    layerEditorManufacturerController.setTemplate(cardTemplate, res, this.gameRepresentation);
-    layerEditorOtherMediaController.setTemplate(cardTemplate, res, this.gameRepresentation);
-    layerEditorScoresController.setTemplate(cardTemplate, res, this.gameRepresentation);
+    templateModeBtn.setSelected(cardTemplate.isTemplate());
+    cardModeBtn.setSelected(!cardTemplate.isTemplate());
+
+    refreshNagBar(cardTemplate, this.gameRepresentation);
+
+    layerEditorOverlayController.setTemplate(cardTemplate, res, this.gameRepresentation, cardTemplate.isLockBackground());
+    layerEditorBackgroundController.setTemplate(cardTemplate, res, this.gameRepresentation, cardTemplate.isLockBackground());
+    layerEditorFrameController.setTemplate(cardTemplate, res, this.gameRepresentation, cardTemplate.isLockBackground());
+    layerEditorCanvasController.setTemplate(cardTemplate, res, this.gameRepresentation, cardTemplate.isLockBackground());
+    layerEditorTitleController.setTemplate(cardTemplate, res, this.gameRepresentation, cardTemplate.isLockBackground());
+    layerEditorTableNameController.setTemplate(cardTemplate, res, this.gameRepresentation, cardTemplate.isLockBackground());
+    layerEditorWheelController.setTemplate(cardTemplate, res, this.gameRepresentation, cardTemplate.isLockBackground());
+    layerEditorManufacturerController.setTemplate(cardTemplate, res, this.gameRepresentation, cardTemplate.isLockBackground());
+    layerEditorOtherMediaController.setTemplate(cardTemplate, res, this.gameRepresentation, cardTemplate.isLockBackground());
+    layerEditorScoresController.setTemplate(cardTemplate, res, this.gameRepresentation, cardTemplate.isLockBackground());
 
     templateBeanBinder.setPaused(false);
 
     cardPreview.setTemplate(cardTemplate);
     refreshPreview(this.gameRepresentation, true);
+  }
+
+  private void refreshNagBar(CardTemplate cardTemplate, Optional<GameRepresentation> gameRepresentation) {
+    nagBarLabel.setVisible(gameRepresentation.isPresent());
+    if (gameRepresentation.isPresent()) {
+      if (cardTemplate.isTemplate()) {
+        nagBarLabel.setText("Editing template \"" + cardTemplate.getName() + "\", previewing game \"" + gameRepresentation.get().getGameDisplayName() + "\"");
+      }
+      else {
+        Optional<CardTemplate> parent = this.templateCombo.getItems().stream().filter(t -> t.getId() == cardTemplate.getParentId()).findFirst();
+        if (!parent.isPresent()) {
+          parent = this.templateCombo.getItems().stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst();
+        }
+        nagBarLabel.setText("Editing highscore card for \"" + gameRepresentation.get().getGameDisplayName() + "\", using template \"" + parent.get().getName() + "\".");
+      }
+    }
   }
 
   private void refreshTransparency() {
@@ -442,8 +465,8 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-
     folderBtn.setVisible(SystemUtil.isFolderActionSupported());
+    nagBarLabel.setText("Loading...");
 
     Frontend frontend = client.getFrontendService().getFrontendCached();
     FrontendUtil.replaceName(folderBtn.getTooltip(), frontend);
@@ -453,18 +476,8 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       this.deleteBtn.setDisable(true);
       this.renameBtn.setDisable(true);
 
-      templateCombo.valueProperty().addListener(new ChangeListener<CardTemplate>() {
-        @Override
-        public void changed(ObservableValue<? extends CardTemplate> observable, CardTemplate oldValue, CardTemplate newValue) {
-          if (newValue != null) {
-            setTemplate(newValue);
-            if (gameRepresentation.isPresent()) {
-              assignTemplate(newValue);
-              //highscoreCardsController.refresh(gameRepresentation, templates, false);
-            }
-          }
-        }
-      });
+      templateComboChangeListener = new TemplateComboChangeListener();
+      templateCombo.valueProperty().addListener(templateComboChangeListener);
 
       // load overlay
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
@@ -490,6 +503,41 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
         if (n != null) {
           CardLayer layer = titledPaneToLayer(n);
           loadDragBox(layer, false);
+        }
+      });
+
+      cardModeBtn.getToggleGroup().selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+        @Override
+        public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
+          if (!templateBeanBinder.isPaused() && gameRepresentation.isPresent()) {
+            GameRepresentation game = gameRepresentation.get();
+            //create new card template
+            if (newValue.equals(cardModeBtn)) {
+              //delete possible existing one
+              client.getHighscoreCardTemplatesClient().deleteTemplate(game.getTemplateId());
+
+              CardTemplate t = new CardTemplate();
+              t.setParentId(templateCombo.getValue().getId());
+              t.setName(CardTemplate.CARD_TEMPLATE_PREFIX + game.getId());
+              CardTemplate newTemplate = client.getHighscoreCardTemplatesClient().save(t);
+              game.setTemplateId(newTemplate.getId());
+              client.getGameService().saveGame(game);
+
+              setTemplate(newTemplate);
+            }
+            else {
+              //switch back to the template
+              CardTemplate cardTemplate = templateBeanBinder.getBean();
+              client.getHighscoreCardTemplatesClient().deleteTemplate(cardTemplate.getId());
+
+              CardTemplate activeTemplate = templateCombo.getValue();
+              game.setTemplateId(activeTemplate.getId());
+              client.getGameService().saveGame(game);
+              setTemplate(activeTemplate);
+            }
+            highscoreCardsController.refreshView(game);
+            refreshNagBar(templateBeanBinder.getBean(), gameRepresentation);
+          }
         }
       });
     }
@@ -525,10 +573,14 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   }
 
   public void loadTemplates(List<CardTemplate> templates, CardTemplate selectedTemplate) {
-    templateCombo.setItems(FXCollections.observableList(templates));
+    templateCombo.valueProperty().removeListener(templateComboChangeListener);
+    List<CardTemplate> realTemplates = templates.stream().filter(t -> t.isTemplate()).collect(Collectors.toList());
+    templateCombo.setItems(FXCollections.observableList(realTemplates));
+
     if (selectedTemplate != null) {
       templateCombo.setValue(selectedTemplate);
     }
+    templateCombo.valueProperty().addListener(templateComboChangeListener);
   }
 
   private void resizeCardPreview(double width, double height, boolean forceWidth) {
@@ -752,11 +804,11 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       GameRepresentation game = gameRepresentation.get();
       CardTemplate template = highscoreCardsController.getCardTemplateForGame(game);
       if (template != null) {
-        if (template.equals(templateCombo.getValue())) {
-          setTemplate(template);
-        }
-        else {
+        setTemplate(template);
+        if (template.isTemplate()) {
+          templateCombo.valueProperty().removeListener(templateComboChangeListener);
           templateCombo.setValue(template);
+          templateCombo.valueProperty().addListener(templateComboChangeListener);
         }
       }
     }
@@ -771,4 +823,17 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   public void onDispose() {
   }
 
+
+  class TemplateComboChangeListener implements ChangeListener<CardTemplate> {
+    @Override
+    public void changed(ObservableValue<? extends CardTemplate> observable, CardTemplate oldValue, CardTemplate newValue) {
+      if (newValue != null) {
+        setTemplate(newValue);
+        if (gameRepresentation.isPresent()) {
+          assignTemplate(newValue);
+          //highscoreCardsController.refresh(gameRepresentation, templates, false);
+        }
+      }
+    }
+  }
 }

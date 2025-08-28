@@ -18,9 +18,10 @@ public class LayerEditorWheelController extends LayerEditorBaseController {
   @FXML
   private Spinner<Integer> wheelImageYSpinner;
 
-  @Override
   public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
+    super.setTemplate(cardTemplate, res, game, cardTemplate.isLockWheelIcon());
     setIconVisibility(cardTemplate.isRenderWheelIcon());
+    setIconVisibility(cardTemplate.isLockWheelIcon());
 
     LayerSubEditorPositionController.setValue(wheelSizeSpinner, cardTemplate, "wheelSize", res.toWidth());
     LayerSubEditorPositionController.setValue(wheelImageXSpinner, cardTemplate, "wheelX", res.toWidth());

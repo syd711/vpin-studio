@@ -1,27 +1,41 @@
 package de.mephisto.vpin.restclient.cards;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 
 import java.util.Objects;
 
 public class CardTemplate extends JsonSettings {
+  public final static String CARD_TEMPLATE_PREFIX = "__card_template_";
+
   public final static String DEFAULT = "Default";
 
   private Long id;
+  private Long parentId;
+
   private String name = DEFAULT;
 
   private Integer version = null;
 
   private boolean renderBackground = true;
+  private boolean lockBackground = false;
   private boolean renderFrame = true;
+  private boolean lockFrame = false;
   private boolean renderTableName = true;
+  private boolean lockTableName = false;
   private boolean renderTitle = true;
+  private boolean lockTitle = false;
   private boolean renderWheelIcon = true;
+  private boolean lockWheelIcon = false;
   private boolean renderManufacturerLogo = false;
+  private boolean lockManufacturerLogo = false;
   private boolean renderOtherMedia = false;
+  private boolean lockOtherMedia = false;
   private boolean renderCanvas = false;
+  private boolean lockCanvas = false;
   private boolean renderScores = true;
+  private boolean lockScores = false;
 
   // Background images
   private boolean useDefaultBackground = true;
@@ -148,6 +162,92 @@ public class CardTemplate extends JsonSettings {
   }
 
   //----------------------------------------
+
+
+  @JsonIgnore
+  public boolean isTemplate() {
+    return !this.name.startsWith(CARD_TEMPLATE_PREFIX);
+  }
+
+  public Long getParentId() {
+    return parentId;
+  }
+
+  public void setParentId(Long parentId) {
+    this.parentId = parentId;
+  }
+
+  public boolean isLockBackground() {
+    return lockBackground;
+  }
+
+  public void setLockBackground(boolean lockBackground) {
+    this.lockBackground = lockBackground;
+  }
+
+  public boolean isLockFrame() {
+    return lockFrame;
+  }
+
+  public void setLockFrame(boolean lockFrame) {
+    this.lockFrame = lockFrame;
+  }
+
+  public boolean isLockTableName() {
+    return lockTableName;
+  }
+
+  public void setLockTableName(boolean lockTableName) {
+    this.lockTableName = lockTableName;
+  }
+
+  public boolean isLockTitle() {
+    return lockTitle;
+  }
+
+  public void setLockTitle(boolean lockTitle) {
+    this.lockTitle = lockTitle;
+  }
+
+  public boolean isLockWheelIcon() {
+    return lockWheelIcon;
+  }
+
+  public void setLockWheelIcon(boolean lockWheelIcon) {
+    this.lockWheelIcon = lockWheelIcon;
+  }
+
+  public boolean isLockManufacturerLogo() {
+    return lockManufacturerLogo;
+  }
+
+  public void setLockManufacturerLogo(boolean lockManufacturerLogo) {
+    this.lockManufacturerLogo = lockManufacturerLogo;
+  }
+
+  public boolean isLockOtherMedia() {
+    return lockOtherMedia;
+  }
+
+  public void setLockOtherMedia(boolean lockOtherMedia) {
+    this.lockOtherMedia = lockOtherMedia;
+  }
+
+  public boolean isLockCanvas() {
+    return lockCanvas;
+  }
+
+  public void setLockCanvas(boolean lockCanvas) {
+    this.lockCanvas = lockCanvas;
+  }
+
+  public boolean isLockScores() {
+    return lockScores;
+  }
+
+  public void setLockScores(boolean lockScores) {
+    this.lockScores = lockScores;
+  }
 
   public double getBackgroundX() {
     return backgroundX;

@@ -18,9 +18,10 @@ public class LayerEditorOverlayController extends LayerEditorBaseController {
   private ComboBox<String> screensComboBox;
 
 
-  @Override
   public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
+    super.setTemplate(cardTemplate, res, game, false);
     setIconVisibility(cardTemplate.isOverlayMode());
+
   }
 
   public void initBindings(CardTemplateBinder templateBeanBinder) {

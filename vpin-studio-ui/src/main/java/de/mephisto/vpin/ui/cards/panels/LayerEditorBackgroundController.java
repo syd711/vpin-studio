@@ -163,7 +163,10 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
   }
 
   @Override
-  public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
+  public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game, boolean locked) {
+    super.setTemplate(cardTemplate, res, game, cardTemplate.isLockBackground());
+
+
     this.game = game;
     setIconVisibility(cardTemplate.isRenderBackground());
 
@@ -230,6 +233,8 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
     templateBeanBinder.bindSlider(brightenSlider, "alphaWhite");
     templateBeanBinder.bindSlider(darkenSlider, "alphaBlack");
     templateBeanBinder.bindSlider(blurSlider, "blur");
+
+    templateBeanBinder.bindToggleButton(lockBtn, "lockBackground");
 
     /* coloredBackgroundRadio.selectedProperty().addListener((obs, old, enabled) -> {
       grayScaleCheckbox.setDisable(enabled);

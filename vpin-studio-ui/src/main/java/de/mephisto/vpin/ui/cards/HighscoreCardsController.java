@@ -112,17 +112,17 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
 
     // load in parallel games and templates
     JFXFuture.supplyAllAsync(
-          () -> client.getHighscoreCardTemplatesClient().getTemplates(),
-          () -> {
-                if (force) {
-                  client.getGameService().clearCache();
-                }
-                return client.getGameService().getVpxGamesCached();
+            () -> client.getHighscoreCardTemplatesClient().getTemplates(),
+            () -> {
+              if (force) {
+                client.getGameService().clearCache();
               }
+              return client.getGameService().getVpxGamesCached();
+            }
         )
         .onErrorSupply(e -> {
           Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, "Error", "Loading tables failed: " + e.getMessage()));
-          return new Object[] { Collections.emptyList(), Collections.emptyList() };
+          return new Object[]{Collections.emptyList(), Collections.emptyList()};
         })
         .thenAcceptLater(objs -> {
           @SuppressWarnings("unchecked")
@@ -131,7 +131,6 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
           List<GameRepresentation> games = (List<GameRepresentation>) objs[1];
 
           this.templates = _templates;
-          templateEditorController.loadTemplates(templates, null);
 
           // keep current selection
           GameRepresentationModel selectedItem = getSelectedModel();
@@ -147,6 +146,29 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
           tableView.requestFocus();
 
           setSelectionOrFirst(selectedItem);
+
+          GameRepresentation selection = this.getSelection();
+          CardTemplate template = null;
+          if (selection != null) {
+            CardTemplate cardTemplate = client.getCardTemplate(selection);
+            if (cardTemplate != null) {
+              if (cardTemplate.isTemplate()) {
+                template = cardTemplate;
+              }
+              else {
+                Optional<CardTemplate> cardBaseTemplate = templates.stream().filter(t -> t.getId().equals(selection.getTemplateId())).findFirst();
+                if (cardBaseTemplate.isPresent()) {
+                  template = cardBaseTemplate.get();
+                }
+              }
+            }
+          }
+
+          if (template == null) {
+            template = this.templates.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst().get();
+          }
+
+          templateEditorController.loadTemplates(templates, template);
 
           endReload();
         });
@@ -189,9 +211,12 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
   @Override
   public void refreshView(GameRepresentationModel model) {
     GameRepresentation game = model != null ? model.getBean() : null;
+    refreshView(game);
+  }
 
-    templateEditorPane.setVisible(model != null);
-    tableEditBtn.setDisable(model == null);
+  public void refreshView(GameRepresentation game) {
+    templateEditorPane.setVisible(game != null);
+    tableEditBtn.setDisable(game == null);
     maniaBtn.setDisable(game == null || StringUtils.isEmpty(game.getExtTableId()));
 
     List<String> breadcrumb = new ArrayList<>(Arrays.asList("Highscore Cards"));
@@ -201,6 +226,7 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
     NavigationController.setBreadCrumb(breadcrumb);
 
     templateEditorController.selectTable(Optional.ofNullable(game));
+    tableView.refresh();
   }
 
   @Override
@@ -267,6 +293,12 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
     BaseLoadingColumn.configureColumn(columnTemplate, (value, model) -> {
       CardTemplate template = getCardTemplateForGame(value);
       String templateName = template != null ? template.getName() : "-";
+      if (templateName.startsWith(CardTemplate.CARD_TEMPLATE_PREFIX)) {
+        templateName = "- custom -";
+      }
+      else if (template == null) {
+        templateName = CardTemplate.DEFAULT;
+      }
       Label label = new Label(templateName);
       label.getStyleClass().add("default-text");
       if (template != null) {

@@ -29,6 +29,7 @@ public class BeanBinder<T> {
   public void addListener(BindingChangedListener listener) {
     this.listeners.add(listener);
   }
+
   public void removeListener(BindingChangedListener listener) {
     this.listeners.remove(listener);
   }
@@ -45,6 +46,9 @@ public class BeanBinder<T> {
     this.paused = paused;
   }
 
+  public boolean isPaused() {
+    return this.paused;
+  }
 
   //------------------------------
 
@@ -72,6 +76,12 @@ public class BeanBinder<T> {
 
   public void bindCheckbox(CheckBox checkbox, String property) {
     checkbox.selectedProperty().addListener((observableValue, s, t1) -> {
+      setProperty(property, t1);
+    });
+  }
+
+  public void bindToggleButton(ToggleButton btn, String property) {
+    btn.selectedProperty().addListener((observableValue, s, t1) -> {
       setProperty(property, t1);
     });
   }

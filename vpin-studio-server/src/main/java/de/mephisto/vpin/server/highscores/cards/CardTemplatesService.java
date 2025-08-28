@@ -1,12 +1,11 @@
 package de.mephisto.vpin.server.highscores.cards;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
-import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +16,8 @@ import java.util.Optional;
 @Service
 public class CardTemplatesService {
 
-  /** 
-   * The current version of CardTemplate. Increment by 1 when incompatible changes 
+  /**
+   * The current version of CardTemplate. Increment by 1 when incompatible changes
    * in CardTemplate are introduced and update the checkversion() method
    */
   public static final Integer CURRENT_VERSION = 2;
@@ -48,8 +47,15 @@ public class CardTemplatesService {
   }
 
   public boolean delete(int id) {
-    templateMappingRepository.deleteById((long) id);
-    return true;
+    Optional<TemplateMapping> byId = templateMappingRepository.findById((long) id);
+    if (byId.isPresent()) {
+      TemplateMapping templateMapping = byId.get();
+      if (!templateMapping.getTemplate().getName().equals(CardTemplate.DEFAULT)) {
+        templateMappingRepository.deleteById((long) id);
+        return true;
+      }
+    }
+    return false;
   }
 
   public List<CardTemplate> getTemplates() {
@@ -64,7 +70,7 @@ public class CardTemplatesService {
 
     for (TemplateMapping mapping : all) {
       CardTemplate template = mapping.getTemplate();
-      template = checkVersion(template);
+//      template = checkVersion(template);
       template.setId(mapping.getId());
       result.add(template);
     }
@@ -76,7 +82,7 @@ public class CardTemplatesService {
   }
 
   public CardTemplate getTemplateOrDefault(Long templateId) {
-      if (templateId != null) {
+    if (templateId != null) {
       return getTemplate(templateId);
     }
     return getCardTemplate(CardTemplate.DEFAULT);
@@ -95,10 +101,10 @@ public class CardTemplatesService {
     Optional<TemplateMapping> mapping = templateMappingRepository.findById(templateId);
     if (mapping.isPresent()) {
       TemplateMapping m = mapping.get();
-      CardTemplate template = m.getTemplate();
-      template = checkVersion(template);
-      template.setId(m.getId());
-      return template;
+//      CardTemplate template = m.getTemplate();
+//      template = checkVersion(template);
+//      template.setId(m.getId());
+      return m.getTemplate();
     }
 
     return getCardTemplate(CardTemplate.DEFAULT);
@@ -106,16 +112,17 @@ public class CardTemplatesService {
 
   //-------------------------------------------------- Template version management
 
-  private CardTemplate checkVersion(CardTemplate template) {
-    Integer version = template.getVersion();
-    if (version == null || version == 1) {
-      template = upgradeFromVersion1(template);
-      template.setVersion(CURRENT_VERSION);
-      template = save(template);
-    }
-  
-    return template;
-  }
+  //TODO disabled for now
+//  private CardTemplate checkVersion(CardTemplate template) {
+//    Integer version = template.getVersion();
+//    if (version == null || version == 1) {
+//      template = upgradeFromVersion1(template);
+//      template.setVersion(CURRENT_VERSION);
+//      template = save(template);
+//    }
+//
+//    return template;
+//  }
 
   private CardTemplate upgradeFromVersion1(CardTemplate template) {
 

@@ -40,9 +40,10 @@ public class LayerEditorFrameController extends LayerEditorBaseController {
   private Spinner<Integer> marginLeftSpinner;
 
 
-  @Override
   public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
+    super.setTemplate(cardTemplate, res, game, cardTemplate.isLockFrame());
     setIconVisibility(cardTemplate.isRenderFrame());
+    lockBtn.setSelected(cardTemplate.isLockFrame());
 
     // wrong old zoom values
     if (cardTemplate.getZoom() == 0) {
@@ -58,6 +59,8 @@ public class LayerEditorFrameController extends LayerEditorBaseController {
     borderSizeSpinner.getValueFactory().setValue(cardTemplate.getBorderWidth());
     borderRadiusSpinner.getValueFactory().setValue(cardTemplate.getBorderRadius());
     CardTemplateBinder.setColorPickerValue(borderColorSelector, cardTemplate, "borderColor");
+
+    lockBtn.setSelected(cardTemplate.isLockBackground());
 
     marginTopSpinner.getValueFactory().setValue(cardTemplate.getMarginTop());
     marginRightSpinner.getValueFactory().setValue(cardTemplate.getMarginRight());

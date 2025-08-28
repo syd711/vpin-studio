@@ -5,10 +5,11 @@ import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.util.PositionResizer;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Accordion;
-import javafx.scene.control.Button;
-import javafx.scene.control.TitledPane;
+import javafx.scene.control.*;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,12 +27,14 @@ public abstract class LayerEditorBaseController {
   @FXML
   protected Button eyeBtn;
   @FXML
-  protected Button lockBtn;
+  protected ToggleButton lockBtn;
 
   /**
    * The top accordion
    */
   protected Accordion accordion;
+
+  protected CardTemplate template;
 
   /**
    * Link to the parent controller
@@ -42,29 +45,51 @@ public abstract class LayerEditorBaseController {
     LOG.info("initBindings for {}", getClass().getSimpleName());
     this.templateEditorController = templateEditorController;
     this.accordion = accordion;
+    settingsPane.managedProperty().bindBidirectional(settingsPane.visibleProperty());
+    this.lockBtn.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        toggleLockButton(newValue);
+      }
+    });
+
     initBindings(templateEditorController.getBeanBinder());
   }
 
   public abstract void initBindings(CardTemplateBinder templateBeanBinder);
 
-  public abstract void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game);
+  public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game, boolean locked) {
+    this.template = cardTemplate;
+    lockBtn.setSelected(cardTemplate.isLockBackground());
+
+//    settingsPane.setVisible(template != null && template.isTemplate() || (!template.isTemplate()) && newValue);
+  }
 
   public abstract void bindDragBox(PositionResizer dragBox);
 
   public abstract void unbindDragBox(PositionResizer dragBox);
 
-  @FXML
-  private void onLockToggle() {
-    FontIcon icon = WidgetFactory.createIcon("mdi2l-lock", 12, null);
 
-    lockBtn.setGraphic(icon);
+  @FXML
+  private void onLockToggle(ActionEvent ae) {
+    toggleLockButton(this.lockBtn.isSelected());
+  }
+
+  protected void toggleLockButton(boolean lock) {
+    if (lock) {
+      FontIcon icon = WidgetFactory.createIcon("mdi2l-lock", 12, null);
+      lockBtn.setGraphic(icon);
+    }
+    else {
+      FontIcon icon = WidgetFactory.createIcon("mdi2l-lock-open-variant-outline", 12, null);
+      lockBtn.setGraphic(icon);
+    }
   }
 
   /**
    * Called when the associated element is selected in the preview
    */
   public void expandSettingsPane() {
-
     TitledPane expandedPane = accordion.getExpandedPane();
     if (expandedPane != null) {
       expandedPane.setAnimated(false);

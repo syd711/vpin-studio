@@ -56,9 +56,10 @@ public class LayerEditorTableNameController extends LayerEditorBaseController {
     }
   }
 
-  @Override
   public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
+    super.setTemplate(cardTemplate, res, game, cardTemplate.isLockTableName());
     setIconVisibility(cardTemplate.isRenderTableName());
+    lockBtn.setSelected(cardTemplate.isLockTitle());
 
     CardTemplateBinder.setFontLabel(tableFontLabel, cardTemplate, "table");
     tableUseVpsNameCheckbox.setSelected(cardTemplate.isTableUseVpsName());
