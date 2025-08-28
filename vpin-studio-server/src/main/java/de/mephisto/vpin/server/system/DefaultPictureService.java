@@ -1,9 +1,7 @@
 package de.mephisto.vpin.server.system;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.frontend.FrontendMedia;
@@ -22,8 +20,6 @@ import de.mephisto.vpin.server.games.GameAssetChangedEvent;
 import de.mephisto.vpin.server.games.GameDataChangedEvent;
 import de.mephisto.vpin.server.games.GameDataChangedListener;
 import de.mephisto.vpin.server.games.GameLifecycleService;
-import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
-import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.commons.fx.ImageUtil;
@@ -345,6 +341,58 @@ public class DefaultPictureService implements ApplicationListener<ApplicationRea
     return null;
   }
 
+
+  public File getManufacturerPicture(String manufacturer, Integer year, boolean useYear) {
+    if (StringUtils.isEmpty(manufacturer)) {
+      return null;
+    }
+
+    String manufacturerFilter = cleanName(manufacturer);
+    File folder = new File(SystemService.RESOURCES, "manufacturers");
+    File[] files = folder.listFiles((dir, name) -> cleanName(name).startsWith(manufacturerFilter));
+    File preferred = null;
+    int prefscore = -1;
+    for (File f : files) {
+      int score = 0;
+
+      //String extension = FilenameUtils.getExtension(f.getName()).toLowerCase();
+      String filename = FilenameUtils.removeExtension(f.getName()).trim();
+      int start = filename.indexOf("(");
+      if (start > 0 && filename.endsWith(")") && year != null && year > 0) {
+        // if years are not used, just ignore the image as it contains year info
+        if (useYear) {
+          int pos = filename.indexOf("-");
+          String yearStr = Integer.toString(year);
+          String fromYear = StringUtils.substring(filename, start + 1, pos);
+          String toYear = StringUtils.substring(filename, pos + 1, -1);
+          if (StringUtils.isEmpty(fromYear) || fromYear.compareTo(yearStr) <= 0) {
+            if (StringUtils.isEmpty(toYear) || toYear.compareTo(yearStr) >= 0) {
+              score += 2;
+            }
+          }
+        }
+      }
+      else {
+        // when no year specified, prefer generic name
+        score += StringUtils.equalsIgnoreCase(manufacturer, filename) ? 2 : 1;
+      }
+
+      if (score > prefscore) {
+        prefscore = score;
+        preferred = f;
+      }
+    }
+
+    return preferred;
+  }
+
+  private String cleanName(String name) {
+    String ret = name.toLowerCase();
+    ret = StringUtils.remove(ret, " ");
+    ret = StringUtils.remove(ret, ".");
+    return ret;
+  }
+
   //---------------------------------------------------
 
   @Override
@@ -393,4 +441,5 @@ public class DefaultPictureService implements ApplicationListener<ApplicationRea
     //ALWAYS AVOID CALLING GETKNOWNGAMES DURING THE INITILIZATION PHASE OF THE SERVER
     clearImages();
   }
+
 }

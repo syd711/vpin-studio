@@ -6,10 +6,10 @@ import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
@@ -46,7 +46,6 @@ import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -178,9 +177,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
               //TODO add a parameter to define the policy
               //REPLACE => keep highscoreCard
               //APPEND => highscoreCard = FileUtils.uniqueAssetByMarker(highscoreCard, "Highscore Card");
-              //PREPEND/BACKUP =>
-//              highscoreCard = FileUtils.backupAssetByMarker(highscoreCard, "Highscore Card");
-
+              //PREPEND/BACKUP => highscoreCard = FileUtils.backupAssetByMarker(highscoreCard, "Highscore Card");
 
               if (highscoreCard.exists() && !highscoreCard.delete()) {
                 LOG.info("Writing highscore card {} failed, file is locked.", highscoreCard.getAbsolutePath());
@@ -267,11 +264,11 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
     return Arrays.stream(files).sorted().map(f -> FilenameUtils.getBaseName(f.getName())).collect(Collectors.toList());
   }
 
-  public CardTemplate getCardTemplate(Long templateId) {
+  public CardTemplate getCardTemplate(long templateId) {
     return cardTemplatesService.getTemplate(templateId);
   }
 
-  public CardData getCardData(Game game, int templateId, boolean withStreams) {
+  public CardData getCardData(Game game, long templateId, boolean withStreams) {
     CardTemplate template = cardTemplatesService.getTemplate(templateId);
     return getCardData(game, template, withStreams);
   }
@@ -296,30 +293,33 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
       cardData.setVpsTableId(vpsTableId);
     }
 
+    // load overwrites
+    TableDetails details = frontendService.getTableDetails(game.getId());
+    if (details != null) {
+      if (StringUtils.isNotEmpty(details.getManufacturer())) {
+        cardData.setManufacturer(details.getManufacturer());
+      }
+      if (details.getGameYear() != null) {
+        cardData.setYear(details.getGameYear());
+      }
+    }
+
     cardData.setGameId(game.getId());
     cardData.setGameDisplayName(game.getGameDisplayName());
     cardData.setGameName(game.getGameName());
 
     if (withStreams) {
-      File background = defaultPictureService.getRawDefaultPicture(game);
-      if (background != null && !background.exists()) {
-        defaultPictureService.extractDefaultPicture(game);
-      }
-      try {
-        cardData.setBackground(org.apache.commons.io.FileUtils.readFileToByteArray(background));
-      }
-      catch (IOException e) {
-        LOG.info("Cannot load background for game {}: {}", game.getGameDisplayName(), e.getMessage());
+      cardData.setBackground(getImage(game, cardData, template, "background"));
+
+      cardData.setWheel(getImage(game, cardData, template, "wheel"));
+
+      if (template.isRenderManufacturerLogo()) {
+        cardData.setManufacturerLogo(getImage(game, cardData, template, "manufacturerLogo"));
       }
 
-      FrontendMediaItem media = frontendService.getDefaultMediaItem(game, VPinScreen.Wheel);
-      if (media != null && media.getFile().exists())
-        try {
-          cardData.setWheel(org.apache.commons.io.FileUtils.readFileToByteArray(media.getFile()));
-        }
-        catch (IOException e) {
-          LOG.info("Cannot load wheel for game {}: {}", game.getGameDisplayName(), e.getMessage());
-        }
+      if (template.isRenderOtherMedia()) {
+        cardData.setOtherMedia(getImage(game, cardData, template, "otherMedia"));
+      }
     }
 
     if (summary != null) {
@@ -340,6 +340,44 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
     }
 
     return cardData;
+  }
+
+  public byte[] getImage(Game game, CardData cardData, CardTemplate template, String imageName) {
+    try {
+      if ("background".equals(imageName)) {
+        File background = defaultPictureService.getRawDefaultPicture(game);
+        if (background != null && !background.exists()) {
+          defaultPictureService.extractDefaultPicture(game);
+        }
+        return org.apache.commons.io.FileUtils.readFileToByteArray(background);
+      }
+      else if ("wheel".equals(imageName)) {
+        FrontendMediaItem media = frontendService.getDefaultMediaItem(game, VPinScreen.Wheel);
+        if (media != null && media.getFile().exists()) {
+          return org.apache.commons.io.FileUtils.readFileToByteArray(media.getFile());
+        }
+      }
+      else if ("manufacturerLogo".equals(imageName)) {
+        File manufacturer = defaultPictureService.getManufacturerPicture(cardData.getManufacturer(), cardData.getYear(), template.isManufacturerLogoUseYear());
+        if (manufacturer != null && manufacturer.exists()) {
+          return org.apache.commons.io.FileUtils.readFileToByteArray(manufacturer);
+        }
+      }
+      else if ("otherMedia".equals(imageName)) {
+        List<FrontendMediaItem> medias = frontendService.getMediaItems(game, template.getOtherMediaScreen());
+        if (medias != null) {
+          for (FrontendMediaItem media : medias) {
+            if (media.getFile().exists() && media.getMimeType().contains("image")) {
+              return org.apache.commons.io.FileUtils.readFileToByteArray(media.getFile());
+            }
+          }
+        }
+      }
+    }
+    catch (IOException e) {
+      LOG.info("Cannot load {} for game {}: {}", imageName, game.getGameDisplayName(), e.getMessage());
+    }
+    return null;
   }
 
   @NonNull

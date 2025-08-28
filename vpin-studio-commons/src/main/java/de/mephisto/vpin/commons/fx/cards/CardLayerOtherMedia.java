@@ -6,15 +6,16 @@ import javax.annotation.Nullable;
 import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 
-public class CardLayerWheel extends CardLayerBaseImage {
+public class CardLayerOtherMedia extends CardLayerBaseImage {
 
   @Override
   protected boolean keepAspectRatio(@Nonnull CardTemplate template) {
-    return true;
+    return template.isOtherMediaKeepAspectRatio();
   }
 
   @Override
   protected byte[] getImage(@Nonnull CardTemplate template, @Nullable CardData data) {
-    return data != null ? data.getWheel() : null;
+    return data != null ? data.getOtherMedia() : null;
   }
-}
+
+ }

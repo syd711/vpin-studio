@@ -35,7 +35,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="Toggle overlay mode" />
+                        <Tooltip text="Toggle title visibility" />
                      </tooltip>
                   </Button>
                   <Button fx:id="lockBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onLockToggle">
@@ -46,7 +46,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lock-open-variant-outline" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="Toggle overlay mode" />
+                        <Tooltip text="Toggle protection for card mode" />
                      </tooltip>
                   </Button>
                </children>

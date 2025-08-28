@@ -58,6 +58,10 @@ public class HighscoreCardsServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "cards/generate/" + gameId, Boolean.class);
   }
 
+  public byte[] getHighscoreImage(GameRepresentation game, CardTemplate template, String image) {
+    return getRestClient().readBinary(API + "cards/image/" + image + "/" + game.getId() + "/" + template.getId());
+  }
+
   public List<String> getHighscoreBackgroundImages() {
     return Arrays.asList(getRestClient().get(API + "cards/backgrounds", String[].class));
   }

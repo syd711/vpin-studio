@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 
-public class CardLayerTableName extends CardLayerText {
+public class CardLayerTableName extends CardLayerBaseText {
 
   @Override
   protected CardTextData getTextData(@Nonnull CardTemplate template, @Nullable CardData data) {

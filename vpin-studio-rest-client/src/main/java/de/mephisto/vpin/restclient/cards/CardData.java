@@ -1,6 +1,5 @@
 package de.mephisto.vpin.restclient.cards;
 
-import java.io.IOException;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -26,6 +25,8 @@ public class CardData {
 
   private byte[] background;
   private byte[] wheel;
+  private byte[] manufacturerLogo;
+  private byte[] otherMedia;
 
   //-----------------------------------------
 
@@ -118,5 +119,21 @@ public class CardData {
 
   public void setBackground(byte[] background) {
     this.background = background;
+  }
+
+  public byte[] getManufacturerLogo() {
+    return manufacturerLogo;
+  }
+
+  public void setManufacturerLogo(byte[] manufacturerLogo) {
+    this.manufacturerLogo = manufacturerLogo;
+  }
+
+  public byte[] getOtherMedia() {
+    return otherMedia;
+  }
+
+  public void setOtherMedia(byte[] other2Media) {
+    this.otherMedia = other2Media;
   }
 }

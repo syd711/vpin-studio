@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.cards;
 
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 
 import java.util.Objects;
 
@@ -17,6 +18,8 @@ public class CardTemplate extends JsonSettings {
   private boolean renderTableName = true;
   private boolean renderTitle = true;
   private boolean renderWheelIcon = true;
+  private boolean renderManufacturerLogo = false;
+  private boolean renderOtherMedia = false;
   private boolean renderCanvas = false;
   private boolean renderScores = true;
 
@@ -51,6 +54,22 @@ public class CardTemplate extends JsonSettings {
 
   /**@deprecated no more used */
   private int padding = 10;
+
+  // MANUFACTURER LOGO SETTINGS
+  private boolean manufacturerLogoKeepAspectRatio = true;
+  private boolean manufacturerLogoUseYear = true;
+  private double manufacturerLogoX = 0.15;
+  private double manufacturerLogoY = 0.05;
+  private double manufacturerLogoWidth = 0.85;
+  private double manufacturerLogoHeight = 0.2;
+
+  // OTHER MEDIA SETTINGS
+  private boolean otherMediaKeepAspectRatio = true;
+  private VPinScreen otherMediaScreen = null;
+  private double otherMediaX = 0.8;
+  private double otherMediaY = 0.6;
+  private double otherMediaWidth = 0.2;
+  private double otherMediaHeight = 0.2;
 
   // WHEEL SETTINGS
   private double wheelX = 0.0;
@@ -314,6 +333,102 @@ public class CardTemplate extends JsonSettings {
     this.wheelSize = wheelSize;
   }
   
+  public boolean isManufacturerLogoKeepAspectRatio() {
+    return manufacturerLogoKeepAspectRatio;
+  }
+
+  public void setManufacturerLogoKeepAspectRatio(boolean manufacturerKeepAspectRatio) {
+    this.manufacturerLogoKeepAspectRatio = manufacturerKeepAspectRatio;
+  }
+
+  public boolean isManufacturerLogoUseYear() {
+    return manufacturerLogoUseYear;
+  }
+
+  public void setManufacturerLogoUseYear(boolean manufacturerLogoUseYear) {
+    this.manufacturerLogoUseYear = manufacturerLogoUseYear;
+  }
+
+  public double getManufacturerLogoX() {
+    return manufacturerLogoX;
+  }
+
+  public void setManufacturerLogoX(double manufacturerLogoX) {
+    this.manufacturerLogoX = manufacturerLogoX;
+  }
+
+  public double getManufacturerLogoY() {
+    return manufacturerLogoY;
+  }
+
+  public void setManufacturerLogoY(double manufacturerLogoY) {
+    this.manufacturerLogoY = manufacturerLogoY;
+  }
+
+  public double getManufacturerLogoWidth() {
+    return manufacturerLogoWidth;
+  }
+
+  public void setManufacturerLogoWidth(double manufacturerLogoWidth) {
+    this.manufacturerLogoWidth = manufacturerLogoWidth;
+  }
+
+  public double getManufacturerLogoHeight() {
+    return manufacturerLogoHeight;
+  }
+
+  public void setManufacturerLogoHeight(double manufacturerLogoHeight) {
+    this.manufacturerLogoHeight = manufacturerLogoHeight;
+  }
+
+  public VPinScreen getOtherMediaScreen() {
+    return otherMediaScreen;
+  }
+
+  public void setOtherMediaScreen(VPinScreen otherMediaScreen) {
+    this.otherMediaScreen = otherMediaScreen;
+  }
+
+  public boolean isOtherMediaKeepAspectRatio() {
+    return otherMediaKeepAspectRatio;
+  }
+
+  public void setOtherMediaKeepAspectRatio(boolean other2MediaKeepAspectRatio) {
+    this.otherMediaKeepAspectRatio = other2MediaKeepAspectRatio;
+  }
+
+  public double getOtherMediaX() {
+    return otherMediaX;
+  }
+
+  public void setOtherMediaX(double other2MediaX) {
+    this.otherMediaX = other2MediaX;
+  }
+
+  public double getOtherMediaY() {
+    return otherMediaY;
+  }
+
+  public void setOtherMediaY(double other2MediaY) {
+    this.otherMediaY = other2MediaY;
+  }
+
+  public double getOtherMediaWidth() {
+    return otherMediaWidth;
+  }
+
+  public void setOtherMediaWidth(double other2MediaWidth) {
+    this.otherMediaWidth = other2MediaWidth;
+  }
+
+  public double getOtherMediaHeight() {
+    return otherMediaHeight;
+  }
+
+  public void setOtherMediaHeight(double other2MediaHeight) {
+    this.otherMediaHeight = other2MediaHeight;
+  }
+
   public double getScoresX() {
     return scoresX;
   }
@@ -408,6 +523,22 @@ public class CardTemplate extends JsonSettings {
 
   public void setRenderWheelIcon(boolean renderWheelIcon) {
     this.renderWheelIcon = renderWheelIcon;
+  }
+
+  public boolean isRenderManufacturerLogo() {
+    return renderManufacturerLogo;
+  }
+
+  public void setRenderManufacturerLogo(boolean renderManufacturerLogo) {
+    this.renderManufacturerLogo = renderManufacturerLogo;
+  }
+
+  public boolean isRenderOtherMedia() {
+    return renderOtherMedia;
+  }
+
+  public void setRenderOtherMedia(boolean renderOther2Media) {
+    this.renderOtherMedia = renderOther2Media;
   }
 
   public boolean isRenderTitle() {

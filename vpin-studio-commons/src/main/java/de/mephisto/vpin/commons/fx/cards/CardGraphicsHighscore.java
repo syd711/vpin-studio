@@ -34,10 +34,12 @@ public class CardGraphicsHighscore extends StackPane {
   CardLayerTitle titleLayer = new CardLayerTitle();
   CardLayerTableName tableNameLayer = new CardLayerTableName();
   CardLayerWheel wheelLayer = new CardLayerWheel();
+  CardLayerManufacturer manufacturerLayer = new CardLayerManufacturer();
+  CardLayerOtherMedia otherMediaLayer = new CardLayerOtherMedia();
   CardLayerScores scoresLayer = new CardLayerScores();
 
-  List<CardLayer> layers = Arrays.asList(backgroundLayer, canvasLayer, wheelLayer, titleLayer, 
-      tableNameLayer, scoresLayer);
+  List<CardLayer> layers = Arrays.asList(backgroundLayer, canvasLayer, manufacturerLayer, otherMediaLayer, wheelLayer, 
+      titleLayer, tableNameLayer, scoresLayer);
 
   /** Activate the layers to visualize the disposition */
   private boolean debug = false;
@@ -125,6 +127,28 @@ public class CardGraphicsHighscore extends StackPane {
     }
     else {
       canvasLayer.setVisible(false);
+    }
+
+    if (template.isRenderManufacturerLogo()) {
+      manufacturerLayer.setVisible(true);
+      resizeRelocate(manufacturerLayer, 
+        WIDTH * template.getManufacturerLogoX(), HEIGHT * template.getManufacturerLogoY(), 
+        WIDTH * template.getManufacturerLogoWidth(), HEIGHT * template.getManufacturerLogoHeight(), 
+        zoomX, zoomY);
+    }
+    else {
+      manufacturerLayer.setVisible(false);
+    }
+
+    if (template.isRenderOtherMedia()) {
+      otherMediaLayer.setVisible(true);
+      resizeRelocate(otherMediaLayer, 
+        WIDTH * template.getOtherMediaX(), HEIGHT * template.getOtherMediaY(), 
+        WIDTH * template.getOtherMediaWidth(), HEIGHT * template.getOtherMediaHeight(), 
+        zoomX, zoomY);
+    }
+    else {
+      otherMediaLayer.setVisible(false);
     }
 
     if (template.isRenderWheelIcon()) {

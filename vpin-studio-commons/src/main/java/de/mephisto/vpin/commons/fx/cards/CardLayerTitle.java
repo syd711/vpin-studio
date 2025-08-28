@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 
-public class CardLayerTitle extends CardLayerText {
+public class CardLayerTitle extends CardLayerBaseText {
 
   @Override
   protected CardTextData getTextData(@Nonnull CardTemplate template, @Nullable CardData data) {

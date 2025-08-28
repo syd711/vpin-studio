@@ -14,7 +14,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
-public abstract class CardLayerText extends Canvas implements CardLayer {
+public abstract class CardLayerBaseText extends Canvas implements CardLayer {
 
   protected abstract CardTextData getTextData(@Nonnull CardTemplate template, @Nullable CardData data);
 

@@ -54,15 +54,13 @@ public class BeanBinder<T> {
     });
   }
 
-  public void bindComboBox(ComboBox<String> comboBox, String property) {
+  public <U> void bindComboBox(ComboBox<U> comboBox, String property) {
     bindComboBox(comboBox, property, "");
   }
 
-  public void bindComboBox(ComboBox<String> comboBox, String property, String defaultValue) {
+  public <U> void bindComboBox(ComboBox<U> comboBox, String property, String defaultValue) {
     comboBox.valueProperty().addListener((observableValue, s, t1) -> {
-      Platform.runLater(() -> {
-        setProperty(property, t1);
-      });
+      setProperty(property, t1);
     });
   }
 

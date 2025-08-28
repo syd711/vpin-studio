@@ -92,6 +92,10 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   @FXML
   private LayerEditorWheelController layerEditorWheelController; //fxml magic! Not unused -> id + "Controller"
   @FXML
+  private LayerEditorManufacturerController layerEditorManufacturerController; //fxml magic! Not unused -> id + "Controller"
+  @FXML
+  private LayerEditorOtherMediaController layerEditorOtherMediaController; //fxml magic! Not unused -> id + "Controller"
+  @FXML
   private LayerEditorScoresController layerEditorScoresController; //fxml magic! Not unused -> id + "Controller"
 
   @FXML
@@ -309,6 +313,8 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     layerEditorTitleController.setTemplate(cardTemplate, res, this.gameRepresentation);
     layerEditorTableNameController.setTemplate(cardTemplate, res, this.gameRepresentation);
     layerEditorWheelController.setTemplate(cardTemplate, res, this.gameRepresentation);
+    layerEditorManufacturerController.setTemplate(cardTemplate, res, this.gameRepresentation);
+    layerEditorOtherMediaController.setTemplate(cardTemplate, res, this.gameRepresentation);
     layerEditorScoresController.setTemplate(cardTemplate, res, this.gameRepresentation);
 
     templateBeanBinder.setPaused(false);
@@ -509,6 +515,8 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       layerEditorTitleController.initialize(this, accordion);
       layerEditorTableNameController.initialize(this, accordion);
       layerEditorWheelController.initialize(this, accordion);
+      layerEditorManufacturerController.initialize(this, accordion);
+      layerEditorOtherMediaController.initialize(this, accordion);
       layerEditorScoresController.initialize(this, accordion);
     }
     catch (Exception e) {
@@ -680,6 +688,12 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     else if (layerEditorWheelController.getSettingsPane() == pane && template.isRenderWheelIcon()) {
       return getLayer(CardLayerWheel.class);
     }
+    else if (layerEditorManufacturerController.getSettingsPane() == pane && template.isRenderManufacturerLogo()) {
+      return getLayer(CardLayerManufacturer.class);
+    }
+    else if (layerEditorOtherMediaController.getSettingsPane() == pane && template.isRenderOtherMedia()) {
+      return getLayer(CardLayerOtherMedia.class);
+    }
     else if (layerEditorScoresController.getSettingsPane() == pane && template.isRenderScores()) {
       return getLayer(CardLayerScores.class);
     }
@@ -706,6 +720,12 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     }
     else if (layer instanceof CardLayerWheel) {
       return layerEditorWheelController;
+    }
+    else if (layer instanceof CardLayerManufacturer) {
+      return layerEditorManufacturerController;
+    }
+    else if (layer instanceof CardLayerOtherMedia) {
+      return layerEditorOtherMediaController;
     }
     else if (layer instanceof CardLayerScores) {
       return layerEditorScoresController;
