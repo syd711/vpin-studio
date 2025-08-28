@@ -23,7 +23,7 @@ public class LayerEditorOtherMediaController extends LayerEditorBaseController {
   private ComboBox<VPinScreen> otherMediaScreensComboBox;
 
   public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
-    super.setTemplate(cardTemplate, res, game, cardTemplate.isLockOtherMedia());
+    super.setTemplate(cardTemplate, res, game);
     setIconVisibility(cardTemplate.isRenderOtherMedia());
     lockBtn.setSelected(cardTemplate.isLockOtherMedia());
     positionController.setTemplate("otherMedia", cardTemplate, res);

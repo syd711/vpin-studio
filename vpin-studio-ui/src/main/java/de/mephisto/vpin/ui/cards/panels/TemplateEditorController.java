@@ -20,6 +20,7 @@ import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
 import de.mephisto.vpin.ui.cards.HighscoreGeneratorProgressModel;
 import de.mephisto.vpin.ui.cards.TemplateAssigmentProgressModel;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.util.*;
 import javafx.application.Platform;
@@ -282,7 +283,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   }
 
   public CardTemplate getSelectedCardTemplate() {
-    return this.templateCombo.getValue();
+    return this.templateBeanBinder.getBean();
   }
 
   public CardTemplateBinder getBeanBinder() {
@@ -313,16 +314,16 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
     refreshNagBar(cardTemplate, this.gameRepresentation);
 
-    layerEditorOverlayController.setTemplate(cardTemplate, res, this.gameRepresentation, cardTemplate.isLockBackground());
-    layerEditorBackgroundController.setTemplate(cardTemplate, res, this.gameRepresentation, cardTemplate.isLockBackground());
-    layerEditorFrameController.setTemplate(cardTemplate, res, this.gameRepresentation, cardTemplate.isLockBackground());
-    layerEditorCanvasController.setTemplate(cardTemplate, res, this.gameRepresentation, cardTemplate.isLockBackground());
-    layerEditorTitleController.setTemplate(cardTemplate, res, this.gameRepresentation, cardTemplate.isLockBackground());
-    layerEditorTableNameController.setTemplate(cardTemplate, res, this.gameRepresentation, cardTemplate.isLockBackground());
-    layerEditorWheelController.setTemplate(cardTemplate, res, this.gameRepresentation, cardTemplate.isLockBackground());
-    layerEditorManufacturerController.setTemplate(cardTemplate, res, this.gameRepresentation, cardTemplate.isLockBackground());
-    layerEditorOtherMediaController.setTemplate(cardTemplate, res, this.gameRepresentation, cardTemplate.isLockBackground());
-    layerEditorScoresController.setTemplate(cardTemplate, res, this.gameRepresentation, cardTemplate.isLockBackground());
+    layerEditorOverlayController.setTemplate(cardTemplate, res, this.gameRepresentation);
+    layerEditorBackgroundController.setTemplate(cardTemplate, res, this.gameRepresentation);
+    layerEditorFrameController.setTemplate(cardTemplate, res, this.gameRepresentation);
+    layerEditorCanvasController.setTemplate(cardTemplate, res, this.gameRepresentation);
+    layerEditorTitleController.setTemplate(cardTemplate, res, this.gameRepresentation);
+    layerEditorTableNameController.setTemplate(cardTemplate, res, this.gameRepresentation);
+    layerEditorWheelController.setTemplate(cardTemplate, res, this.gameRepresentation);
+    layerEditorManufacturerController.setTemplate(cardTemplate, res, this.gameRepresentation);
+    layerEditorOtherMediaController.setTemplate(cardTemplate, res, this.gameRepresentation);
+    layerEditorScoresController.setTemplate(cardTemplate, res, this.gameRepresentation);
 
     templateBeanBinder.setPaused(false);
 
@@ -522,8 +523,6 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
               CardTemplate newTemplate = client.getHighscoreCardTemplatesClient().save(t);
               game.setTemplateId(newTemplate.getId());
               client.getGameService().saveGame(game);
-
-              setTemplate(newTemplate);
             }
             else {
               //switch back to the template
@@ -533,10 +532,12 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
               CardTemplate activeTemplate = templateCombo.getValue();
               game.setTemplateId(activeTemplate.getId());
               client.getGameService().saveGame(game);
-              setTemplate(activeTemplate);
             }
-            highscoreCardsController.refreshView(game);
-            refreshNagBar(templateBeanBinder.getBean(), gameRepresentation);
+
+            EventManager.getInstance().notifyTableChange(game.getId(), null);
+            GameRepresentation updatedGame = client.getGameService().getGame(game.getId());
+            highscoreCardsController.refreshView(updatedGame);
+            refreshNagBar(templateBeanBinder.getBean(), Optional.of(updatedGame));
           }
         }
       });
@@ -556,16 +557,16 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
         saveCardTemplate((CardTemplate) bean);
       });
 
-      layerEditorOverlayController.initialize(this, accordion);
-      layerEditorBackgroundController.initialize(this, accordion);
-      layerEditorFrameController.initialize(this, accordion);
-      layerEditorCanvasController.initialize(this, accordion);
-      layerEditorTitleController.initialize(this, accordion);
-      layerEditorTableNameController.initialize(this, accordion);
-      layerEditorWheelController.initialize(this, accordion);
-      layerEditorManufacturerController.initialize(this, accordion);
-      layerEditorOtherMediaController.initialize(this, accordion);
-      layerEditorScoresController.initialize(this, accordion);
+      layerEditorOverlayController.initialize(this, accordion, "lockOverlay");
+      layerEditorBackgroundController.initialize(this, accordion, "lockBackground");
+      layerEditorFrameController.initialize(this, accordion, "lockFrame");
+      layerEditorCanvasController.initialize(this, accordion, "lockCanvas");
+      layerEditorTitleController.initialize(this, accordion, "lockTitle");
+      layerEditorTableNameController.initialize(this, accordion, "lockTableName");
+      layerEditorWheelController.initialize(this, accordion, "lockWheelIcon");
+      layerEditorManufacturerController.initialize(this, accordion, "lockManufacturerLogo");
+      layerEditorOtherMediaController.initialize(this, accordion, "lockOtherMedia");
+      layerEditorScoresController.initialize(this, accordion, "lockScores");
     }
     catch (Exception e) {
       LOG.error("Error initializing highscore editor fields:" + e.getMessage(), e);
@@ -804,12 +805,12 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       GameRepresentation game = gameRepresentation.get();
       CardTemplate template = highscoreCardsController.getCardTemplateForGame(game);
       if (template != null) {
-        setTemplate(template);
         if (template.isTemplate()) {
           templateCombo.valueProperty().removeListener(templateComboChangeListener);
           templateCombo.setValue(template);
           templateCombo.valueProperty().addListener(templateComboChangeListener);
         }
+        setTemplate(template);
       }
     }
   }

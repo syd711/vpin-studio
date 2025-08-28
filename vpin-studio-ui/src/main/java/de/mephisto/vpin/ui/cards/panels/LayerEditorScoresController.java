@@ -54,7 +54,7 @@ public class LayerEditorScoresController extends LayerEditorBaseController {
   }
 
   public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
-    super.setTemplate(cardTemplate, res, game, cardTemplate.isLockScores());
+    super.setTemplate(cardTemplate, res, game);
     setIconVisibility(cardTemplate.isRenderScores());
     lockBtn.setSelected(cardTemplate.isLockScores());
 

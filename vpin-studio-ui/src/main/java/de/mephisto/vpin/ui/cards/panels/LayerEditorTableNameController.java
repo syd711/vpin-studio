@@ -57,7 +57,7 @@ public class LayerEditorTableNameController extends LayerEditorBaseController {
   }
 
   public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
-    super.setTemplate(cardTemplate, res, game, cardTemplate.isLockTableName());
+    super.setTemplate(cardTemplate, res, game);
     setIconVisibility(cardTemplate.isRenderTableName());
     lockBtn.setSelected(cardTemplate.isLockTitle());
 

@@ -48,7 +48,7 @@ public class LayerEditorTitleController extends LayerEditorBaseController {
   }
 
   public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
-    super.setTemplate(cardTemplate, res, game, cardTemplate.isLockTitle());
+    super.setTemplate(cardTemplate, res, game);
     setIconVisibility(cardTemplate.isRenderTitle());
 
     titleText.setText(cardTemplate.getTitle());

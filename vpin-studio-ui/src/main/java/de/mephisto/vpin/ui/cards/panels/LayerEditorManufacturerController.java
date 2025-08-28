@@ -17,7 +17,7 @@ public class LayerEditorManufacturerController extends LayerEditorBaseController
   //private CheckBox manufacturerLogoKeepARCheckBox;
 
   public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
-    super.setTemplate(cardTemplate, res, game, cardTemplate.isLockManufacturerLogo());
+    super.setTemplate(cardTemplate, res, game);
     setIconVisibility(cardTemplate.isRenderManufacturerLogo());
     lockBtn.setSelected(cardTemplate.isLockManufacturerLogo());
 

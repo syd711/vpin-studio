@@ -5,16 +5,21 @@ import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.util.PositionResizer;
+import de.mephisto.vpin.ui.util.binding.BeanBinder;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanWrapper;
 
 import java.util.Optional;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public abstract class LayerEditorBaseController {
   final protected static Logger LOG = LoggerFactory.getLogger(LayerEditorBaseController.class);
@@ -34,15 +39,15 @@ public abstract class LayerEditorBaseController {
    */
   protected Accordion accordion;
 
-  protected CardTemplate template;
-
   /**
    * Link to the parent controller
    */
   protected TemplateEditorController templateEditorController;
+  private String lockProperty;
 
-  public void initialize(TemplateEditorController templateEditorController, Accordion accordion) {
+  public void initialize(TemplateEditorController templateEditorController, Accordion accordion, String lockProperty) {
     LOG.info("initBindings for {}", getClass().getSimpleName());
+    this.lockProperty = lockProperty;
     this.templateEditorController = templateEditorController;
     this.accordion = accordion;
     settingsPane.managedProperty().bindBidirectional(settingsPane.visibleProperty());
@@ -58,11 +63,26 @@ public abstract class LayerEditorBaseController {
 
   public abstract void initBindings(CardTemplateBinder templateBeanBinder);
 
-  public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game, boolean locked) {
-    this.template = cardTemplate;
-    lockBtn.setSelected(cardTemplate.isLockBackground());
+  public void setTemplate(CardTemplate template, CardResolution res, Optional<GameRepresentation> game) {
+    if (!StringUtils.isEmpty(lockProperty) && template != null) {
 
-//    settingsPane.setVisible(template != null && template.isTemplate() || (!template.isTemplate()) && newValue);
+      CardTemplateBinder beanBinder = templateEditorController.getBeanBinder();
+      boolean locked = beanBinder.getProperty(lockProperty, null);
+      lockBtn.setSelected(locked);
+
+      if (template.isTemplate()) {
+        settingsPane.setVisible(true);
+      }
+      else {
+        lockBtn.setSelected(locked);
+
+        CardTemplate parent = client.getHighscoreCardTemplatesClient().getTemplateById(beanBinder.getBean().getParentId());
+        BeanBinder binder = new BeanBinder();
+        binder.setBean(parent);
+        locked = (boolean) binder.getProperty(lockProperty, null);
+        settingsPane.setVisible(!locked);
+      }
+    }
   }
 
   public abstract void bindDragBox(PositionResizer dragBox);
@@ -84,6 +104,8 @@ public abstract class LayerEditorBaseController {
       FontIcon icon = WidgetFactory.createIcon("mdi2l-lock-open-variant-outline", 12, null);
       lockBtn.setGraphic(icon);
     }
+
+    templateEditorController.getBeanBinder().setProperty(lockProperty, lock);
   }
 
   /**

@@ -162,10 +162,8 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
     }
   }
 
-  @Override
-  public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game, boolean locked) {
-    super.setTemplate(cardTemplate, res, game, cardTemplate.isLockBackground());
-
+  public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
+    super.setTemplate(cardTemplate, res, game);
 
     this.game = game;
     setIconVisibility(cardTemplate.isRenderBackground());

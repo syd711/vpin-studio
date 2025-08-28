@@ -19,7 +19,7 @@ public class LayerEditorWheelController extends LayerEditorBaseController {
   private Spinner<Integer> wheelImageYSpinner;
 
   public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
-    super.setTemplate(cardTemplate, res, game, cardTemplate.isLockWheelIcon());
+    super.setTemplate(cardTemplate, res, game);
     setIconVisibility(cardTemplate.isRenderWheelIcon());
     setIconVisibility(cardTemplate.isLockWheelIcon());
 

@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 
 /*********************************************************************************************************************
@@ -23,7 +24,7 @@ public class HighscoreCardTemplatesServiceClient extends VPinStudioClientService
   }
 
   public List<CardTemplate> getTemplates() {
-    if(!cachedTemplates.isEmpty()) {
+    if (!cachedTemplates.isEmpty()) {
       return cachedTemplates;
     }
     return Arrays.asList(getRestClient().get(API + "cardtemplates", CardTemplate[].class));
@@ -33,7 +34,8 @@ public class HighscoreCardTemplatesServiceClient extends VPinStudioClientService
     try {
       getRestClient().delete(API + "cardtemplates/delete/" + id);
       cachedTemplates.clear();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to delete template: " + e.getMessage(), e);
     }
   }
@@ -41,12 +43,19 @@ public class HighscoreCardTemplatesServiceClient extends VPinStudioClientService
   public CardTemplate save(CardTemplate template) {
     try {
       return getRestClient().post(API + "cardtemplates/save", template, CardTemplate.class);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to save template: " + e.getMessage(), e);
       throw new RuntimeException(e);
     }
     finally {
       cachedTemplates.clear();
     }
+  }
+
+  public CardTemplate getTemplateById(Long parentId) {
+    List<CardTemplate> templates = getTemplates();
+    Optional<CardTemplate> first = templates.stream().filter(t -> t.getId().equals(parentId)).findFirst();
+    return first.orElse(null);
   }
 }

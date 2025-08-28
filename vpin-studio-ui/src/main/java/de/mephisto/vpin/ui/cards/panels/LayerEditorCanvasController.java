@@ -19,7 +19,7 @@ public class LayerEditorCanvasController extends LayerEditorBaseController {
   private Spinner<Integer> canvasBorderRadiusSpinner;
 
   public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
-    super.setTemplate(cardTemplate, res, game, cardTemplate.isLockCanvas());
+    super.setTemplate(cardTemplate, res, game);
     setIconVisibility(cardTemplate.isRenderCanvas());
     lockBtn.setSelected(cardTemplate.isLockCanvas());
 

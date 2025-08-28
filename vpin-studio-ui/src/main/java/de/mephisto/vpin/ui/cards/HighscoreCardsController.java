@@ -145,8 +145,6 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
           tableView.refresh();
           tableView.requestFocus();
 
-          setSelectionOrFirst(selectedItem);
-
           GameRepresentation selection = this.getSelection();
           CardTemplate template = null;
           if (selection != null) {
@@ -170,6 +168,7 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
 
           templateEditorController.loadTemplates(templates, template);
 
+          setSelectionOrFirst(selectedItem);
           endReload();
         });
   }
@@ -339,6 +338,8 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
   public void tablesChanged() {
     doReload(false);
   }
+
+
 
   @Override
   protected GameRepresentationModel toModel(GameRepresentation game) {

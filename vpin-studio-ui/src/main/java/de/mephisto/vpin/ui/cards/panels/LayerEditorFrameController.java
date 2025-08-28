@@ -41,7 +41,7 @@ public class LayerEditorFrameController extends LayerEditorBaseController {
 
 
   public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
-    super.setTemplate(cardTemplate, res, game, cardTemplate.isLockFrame());
+    super.setTemplate(cardTemplate, res, game);
     setIconVisibility(cardTemplate.isRenderFrame());
     lockBtn.setSelected(cardTemplate.isLockFrame());
 

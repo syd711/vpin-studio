@@ -37,6 +37,8 @@ public class CardTemplate extends JsonSettings {
   private boolean renderScores = true;
   private boolean lockScores = false;
 
+  private boolean lockOverlay = false;
+
   // Background images
   private boolean useDefaultBackground = true;
   private String background = "Old Bumbers";
@@ -167,6 +169,14 @@ public class CardTemplate extends JsonSettings {
   @JsonIgnore
   public boolean isTemplate() {
     return !this.name.startsWith(CARD_TEMPLATE_PREFIX);
+  }
+
+  public boolean isLockOverlay() {
+    return lockOverlay;
+  }
+
+  public void setLockOverlay(boolean lockOverlay) {
+    this.lockOverlay = lockOverlay;
   }
 
   public Long getParentId() {
