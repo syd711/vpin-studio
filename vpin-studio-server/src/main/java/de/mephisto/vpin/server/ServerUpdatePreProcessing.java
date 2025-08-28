@@ -21,7 +21,7 @@ import static de.mephisto.vpin.server.system.SystemService.RESOURCES;
 
 public class ServerUpdatePreProcessing {
   private final static Logger LOG = LoggerFactory.getLogger(ServerUpdatePreProcessing.class);
-  private final static List<String> resources = Arrays.asList("PinVol.exe", "ffmpeg.exe", "jptch.exe", "nircmd.exe", "downloader.vbs", "PupPackScreenTweaker.exe", "puplauncher.exe", "vpxtool.exe", "maintenance.mp4", ScoringDB.SCORING_DB_NAME);
+  private final static List<String> resources = Arrays.asList("PinVol.exe", "ffmpeg.exe", "jptch.exe", "nircmd.exe", "downloader.vbs", "PupPackScreenTweaker.exe", "puplauncher.exe", "vpxtool.exe", "maintenance.mp4", ScoringDB.SCORING_DB_NAME, "manufacturers/");
   private final static List<String> jvmFiles = Arrays.asList("jinput-dx8_64.dll");
 
   public static void execute() {
@@ -144,7 +144,12 @@ public class ServerUpdatePreProcessing {
   private static void runResourcesCheck() {
     for (String resource : resources) {
       File check = new File(RESOURCES, resource);
-      if (!check.exists()) {
+      if (check.isDirectory()) {
+        if (!check.exists() && check.mkdirs()) {
+
+        }
+      }
+      else if (!check.exists()) {
         LOG.info("Downloading missing resource file " + check.getAbsolutePath());
         Updater.download("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/" + resource, check);
       }
