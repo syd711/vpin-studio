@@ -4,7 +4,9 @@ import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.system.NVRamsInfo;
 import de.mephisto.vpin.restclient.system.ScoringDB;
+import de.mephisto.vpin.restclient.util.PackageUtil;
 import net.sf.sevenzipjbinding.SevenZip;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,13 +17,14 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static de.mephisto.vpin.server.system.SystemService.RESOURCES;
 
 public class ServerUpdatePreProcessing {
   private final static Logger LOG = LoggerFactory.getLogger(ServerUpdatePreProcessing.class);
-  private final static List<String> resources = Arrays.asList("PinVol.exe", "ffmpeg.exe", "jptch.exe", "nircmd.exe", "downloader.vbs", "PupPackScreenTweaker.exe", "puplauncher.exe", "vpxtool.exe", "maintenance.mp4", ScoringDB.SCORING_DB_NAME, "manufacturers/");
+  private final static List<String> resources = Arrays.asList("PinVol.exe", "ffmpeg.exe", "jptch.exe", "nircmd.exe", "downloader.vbs", "PupPackScreenTweaker.exe", "puplauncher.exe", "vpxtool.exe", "maintenance.mp4", ScoringDB.SCORING_DB_NAME, "manufacturers/manufacturers.zip");
   private final static List<String> jvmFiles = Arrays.asList("jinput-dx8_64.dll");
 
   public static void execute() {
@@ -144,14 +147,13 @@ public class ServerUpdatePreProcessing {
   private static void runResourcesCheck() {
     for (String resource : resources) {
       File check = new File(RESOURCES, resource);
-      if (check.isDirectory()) {
-        if (!check.exists() && check.mkdirs()) {
-
-        }
-      }
-      else if (!check.exists()) {
+      if (!check.exists()) {
+        check.getParentFile().mkdirs();
         LOG.info("Downloading missing resource file " + check.getAbsolutePath());
         Updater.download("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/" + resource, check);
+        if (FilenameUtils.getExtension(check.getName()).equalsIgnoreCase("zip")) {
+          PackageUtil.unpackTargetFolder(check, check.getParentFile(), null, Collections.emptyList(), null);
+        }
       }
     }
   }
