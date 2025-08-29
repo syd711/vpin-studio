@@ -1422,6 +1422,20 @@
     -fx-background-color: #333366; /* Selected button color */
 }
 
+.custom-toggle-button2 {
+    -fx-border-width: 1;
+    -fx-border-color: transparent;
+    -fx-border-radius: 3px;
+    -fx-font-size: 14px;
+}
+
+.custom-toggle-button2:selected {
+    -fx-border-width: 1;
+    -fx-border-color: #44AA44;
+    -fx-border-radius: 3px;
+    -fx-background-color: #116611 /* Selected button color */
+}
+
 .dnd-dashed-border {
     -fx-border-color: white;
     -fx-border-width: 3;

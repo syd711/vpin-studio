@@ -55,7 +55,7 @@
                         <ToggleGroup fx:id="mode" />
                      </toggleGroup>
                         </ToggleButton>
-                        <ToggleButton fx:id="cardModeBtn" mnemonicParsing="false" selected="true" styleClass="custom-toggle-button" text="Card Mode" toggleGroup="$mode">
+                        <ToggleButton fx:id="cardModeBtn" mnemonicParsing="false" selected="true" styleClass="custom-toggle-button2" text="Card Mode" toggleGroup="$mode">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -192,7 +192,7 @@
                         </Pane>
                     </center>
                <top>
-                  <BorderPane styleClass="nagbar-container">
+                  <BorderPane fx:id="nagBar" styleClass="nagbar-container">
                      <center>
                         <Label fx:id="nagBarLabel" text="Editing highscore card for XY using template XY" BorderPane.alignment="CENTER_LEFT" />
                      </center>

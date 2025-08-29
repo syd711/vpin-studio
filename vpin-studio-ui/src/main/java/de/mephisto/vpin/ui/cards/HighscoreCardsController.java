@@ -208,9 +208,6 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
         setSelection(selectedItem, true);
       }
     }
-    //templateEditorController.selectTable(selectedItem, false);
-    //refreshRawPreview(selectedItem);
-    //refreshPreview(getSelection());
   }
 
 
@@ -263,12 +260,9 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
       CardTemplate template = client.getCardTemplate(value);
       Label label = new Label("");
       if(template != null && !template.isTemplate()) {
-        label.setGraphic(WidgetFactory.createCheckboxIcon());
+        label.setGraphic(WidgetFactory.createCheckboxIcon(WidgetFactory.OK_COLOR, "The table has a customized highscore card"));
       }
       label.getStyleClass().add("default-text");
-      if (template != null) {
-        label.setTooltip(new Tooltip(template.getName()));
-      }
       return label;
     }, this, true);
 

@@ -138,6 +138,10 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   @FXML
   private Button folderBtn;
 
+  @FXML
+  private Pane nagBar;
+
+
   /**
    * the dragboxes, today only used at a time
    */
@@ -349,9 +353,11 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     nagBarLabel.setVisible(gameRepresentation.isPresent());
     if (gameRepresentation.isPresent()) {
       if (cardTemplate.isTemplate()) {
+        nagBar.setStyle("-fx-background-color: #333366;");
         nagBarLabel.setText("Editing template \"" + cardTemplate.getName() + "\", previewing game \"" + gameRepresentation.get().getGameDisplayName() + "\"");
       }
       else {
+        nagBar.setStyle("-fx-background-color: #116611;");
         Optional<CardTemplate> parent = this.templateCombo.getItems().stream().filter(t -> t.getId() == cardTemplate.getParentId()).findFirst();
         if (!parent.isPresent()) {
           parent = this.templateCombo.getItems().stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst();
