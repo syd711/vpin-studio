@@ -483,7 +483,7 @@ public class VPinStudioClient implements OverlayClient {
 
   @Override
   public CardTemplate getCardTemplate(GameRepresentation game) {
-    return getHighscoreCardsService().getCardTemplate(game);
+    return getHighscoreCardTemplatesClient().getCardTemplateForGame(game);
   }
 
   @Override

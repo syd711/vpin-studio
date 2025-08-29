@@ -53,6 +53,9 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnTemplate;
 
   @FXML
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnBaseTemplate;
+
+  @FXML
   private Button tableEditBtn;
 
   @FXML
@@ -60,8 +63,6 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
 
   @FXML
   private BorderPane templateEditorPane;
-
-  private List<CardTemplate> templates;
 
   private final List<String> ignoreList = new ArrayList<>();
 
@@ -130,8 +131,6 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
           @SuppressWarnings("unchecked")
           List<GameRepresentation> games = (List<GameRepresentation>) objs[1];
 
-          this.templates = _templates;
-
           // keep current selection
           GameRepresentationModel selectedItem = getSelectedModel();
 
@@ -154,45 +153,20 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
                 template = cardTemplate;
               }
               else {
-                Optional<CardTemplate> cardBaseTemplate = templates.stream().filter(t -> t.getId().equals(selection.getTemplateId())).findFirst();
-                if (cardBaseTemplate.isPresent()) {
-                  template = cardBaseTemplate.get();
-                }
+                template = client.getHighscoreCardTemplatesClient().getTemplateById(selection.getTemplateId());
               }
             }
           }
 
           if (template == null) {
-            template = this.templates.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst().get();
+            template = client.getHighscoreCardTemplatesClient().getDefaultTemplate();
           }
 
-          templateEditorController.loadTemplates(templates, template);
+          templateEditorController.loadTemplates(client.getHighscoreCardTemplatesClient().getTemplates(), template);
 
           setSelectionOrFirst(selectedItem);
           endReload();
         });
-  }
-
-  public List<CardTemplate> getCardTemplates() {
-    return templates;
-  }
-
-  public CardTemplate getCardTemplateForGame(GameRepresentation game) {
-    if (templates != null) {
-      if (game.getTemplateId() != null) {
-        Optional<CardTemplate> first = templates.stream().filter(g -> g.getId().equals(game.getTemplateId())).findFirst();
-        if (first.isPresent()) {
-          return first.get();
-        }
-      }
-      // else 
-      return getDefaultTemplate();
-    }
-    return null;
-  }
-
-  public CardTemplate getDefaultTemplate() {
-    return templates.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst().orElse(null);
   }
 
   public void refreshTemplates(CardTemplate selectedTemplate) {
@@ -202,7 +176,6 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
           return Collections.emptyList();
         })
         .thenAcceptLater(templates -> {
-          this.templates = templates;
           templateEditorController.loadTemplates(templates, selectedTemplate);
         });
   }
@@ -290,19 +263,40 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
     }, this, true);
 
     BaseLoadingColumn.configureColumn(columnTemplate, (value, model) -> {
-      CardTemplate template = getCardTemplateForGame(value);
-      String templateName = template != null ? template.getName() : "-";
-      if (templateName.startsWith(CardTemplate.CARD_TEMPLATE_PREFIX)) {
-        templateName = "- custom -";
+      CardTemplate template = client.getCardTemplate(value);
+      Label label = new Label("");
+      if(template != null && !template.isTemplate()) {
+        label.setGraphic(WidgetFactory.createCheckboxIcon());
       }
-      else if (template == null) {
-        templateName = CardTemplate.DEFAULT;
-      }
-      Label label = new Label(templateName);
       label.getStyleClass().add("default-text");
       if (template != null) {
-        label.setTooltip(new Tooltip(templateName));
+        label.setTooltip(new Tooltip(template.getName()));
       }
+      return label;
+    }, this, true);
+
+    BaseLoadingColumn.configureColumn(columnBaseTemplate, (value, model) -> {
+      CardTemplate template = client.getCardTemplate(value);
+      String templateName = "-";
+      if(template == null) {
+        templateName = CardTemplate.DEFAULT;
+      }
+      else if (template.isTemplate()) {
+        templateName = template.getName();
+      }
+      else {
+        CardTemplate templateById = client.getHighscoreCardTemplatesClient().getTemplateById(template.getParentId());
+        if (templateById == null) {
+          templateName = CardTemplate.DEFAULT;
+        }
+        else {
+          templateName = templateById.getName();
+        }
+      }
+
+      Label label = new Label(templateName);
+      label.getStyleClass().add("default-text");
+      label.setTooltip(new Tooltip(templateName));
       return label;
     }, this, true);
 
@@ -338,7 +332,6 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
   public void tablesChanged() {
     doReload(false);
   }
-
 
 
   @Override

@@ -43,6 +43,8 @@ public abstract class LayerEditorBaseController {
    * Link to the parent controller
    */
   protected TemplateEditorController templateEditorController;
+
+  private int settingsPanelIndex = -1;
   private String lockProperty;
 
   public void initialize(TemplateEditorController templateEditorController, Accordion accordion, String lockProperty) {
@@ -71,16 +73,18 @@ public abstract class LayerEditorBaseController {
       lockBtn.setSelected(locked);
 
       if (template.isTemplate()) {
-        settingsPane.setVisible(true);
+        setVisible(true);
       }
       else {
         lockBtn.setSelected(locked);
-
         CardTemplate parent = client.getHighscoreCardTemplatesClient().getTemplateById(beanBinder.getBean().getParentId());
-        BeanBinder binder = new BeanBinder();
-        binder.setBean(parent);
-        locked = (boolean) binder.getProperty(lockProperty, null);
-        settingsPane.setVisible(!locked);
+        if (lockProperty != null && parent != null) {
+          BeanBinder binder = new BeanBinder();
+          binder.setBean(parent);
+          locked = (boolean) binder.getProperty(lockProperty, null);
+
+          setVisible(!locked);
+        }
       }
     }
   }
@@ -89,6 +93,20 @@ public abstract class LayerEditorBaseController {
 
   public abstract void unbindDragBox(PositionResizer dragBox);
 
+  public void setVisible(boolean b) {
+    if (lockProperty != null) {
+      if (b) {
+        if (!templateEditorController.getAccordion().getPanes().contains(settingsPane)) {
+          templateEditorController.getAccordion().getPanes().add(settingsPanelIndex, settingsPane);
+          settingsPane.setVisible(true);
+        }
+      }
+      else {
+        settingsPanelIndex = templateEditorController.getAccordion().getPanes().indexOf(settingsPane);
+        templateEditorController.getAccordion().getPanes().remove(settingsPane);
+      }
+    }
+  }
 
   @FXML
   private void onLockToggle(ActionEvent ae) {

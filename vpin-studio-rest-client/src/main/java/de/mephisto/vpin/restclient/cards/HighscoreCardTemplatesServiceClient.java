@@ -2,6 +2,7 @@ package de.mephisto.vpin.restclient.cards;
 
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,10 +25,10 @@ public class HighscoreCardTemplatesServiceClient extends VPinStudioClientService
   }
 
   public List<CardTemplate> getTemplates() {
-    if (!cachedTemplates.isEmpty()) {
-      return cachedTemplates;
+    if (cachedTemplates.isEmpty()) {
+      cachedTemplates = new ArrayList<>(Arrays.asList(getRestClient().get(API + "cardtemplates", CardTemplate[].class)));
     }
-    return Arrays.asList(getRestClient().get(API + "cardtemplates", CardTemplate[].class));
+    return cachedTemplates;
   }
 
   public void deleteTemplate(Long id) {
@@ -45,7 +46,7 @@ public class HighscoreCardTemplatesServiceClient extends VPinStudioClientService
       return getRestClient().post(API + "cardtemplates/save", template, CardTemplate.class);
     }
     catch (Exception e) {
-      LOG.error("Failed to save template: " + e.getMessage(), e);
+      LOG.error("Failed to save template: {}", e.getMessage(), e);
       throw new RuntimeException(e);
     }
     finally {
@@ -57,5 +58,25 @@ public class HighscoreCardTemplatesServiceClient extends VPinStudioClientService
     List<CardTemplate> templates = getTemplates();
     Optional<CardTemplate> first = templates.stream().filter(t -> t.getId().equals(parentId)).findFirst();
     return first.orElse(null);
+  }
+
+  public CardTemplate getTemplateByName(String name) {
+    List<CardTemplate> templates = getTemplates();
+    Optional<CardTemplate> first = templates.stream().filter(t -> t.getName().equals(name)).findFirst();
+    return first.orElse(null);
+  }
+
+  public CardTemplate getDefaultTemplate() {
+    return getTemplateByName(CardTemplate.DEFAULT);
+  }
+
+  public CardTemplate getCardTemplateForGame(GameRepresentation game) {
+    if (game.getTemplateId() != null) {
+      CardTemplate templateById = getTemplateById(game.getTemplateId());
+      if (templateById != null) {
+        return templateById;
+      }
+    }
+    return getDefaultTemplate();
   }
 }

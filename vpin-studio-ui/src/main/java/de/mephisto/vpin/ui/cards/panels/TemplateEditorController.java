@@ -204,7 +204,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     String s = WidgetFactory.showInputDialog(stage, "New Template", "Enter Template Name", "Enter a meaningful name that identifies the card design.", "The values of the selected template \"" + template.getName() + "\" will be used as default.", gameName);
     if (!StringUtils.isEmpty(s)) {
-      List<CardTemplate> items = highscoreCardsController.getCardTemplates();
+      List<CardTemplate> items = client.getHighscoreCardTemplatesClient().getTemplates();
       Optional<CardTemplate> duplicate = items.stream().filter(t -> t.getName().equals(s)).findFirst();
       if (duplicate.isPresent()) {
         WidgetFactory.showAlert(stage, "Error", "A template with the name \"" + s + "\" already exist.");
@@ -252,7 +252,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       try {
         client.getHighscoreCardTemplatesClient().deleteTemplate(cardTemplate.getId());
         Platform.runLater(() -> {
-          CardTemplate defaultTemplate = highscoreCardsController.getDefaultTemplate();
+          CardTemplate defaultTemplate = client.getHighscoreCardTemplatesClient().getDefaultTemplate();
           highscoreCardsController.refreshTemplates(defaultTemplate);
           assignTemplate(defaultTemplate);
           //highscoreCardsController.refresh(gameRepresentation, templates, true);
@@ -266,7 +266,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   }
 
   public void applyFontOnAllTemplates(Consumer<CardTemplate> font) {
-    List<CardTemplate> items = highscoreCardsController.getCardTemplates();
+    List<CardTemplate> items = client.getHighscoreCardTemplatesClient().getTemplates();
     for (CardTemplate item : items) {
       font.accept(item);
     }
@@ -386,7 +386,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     JFXFuture.runAsync(() -> client.getHighscoreCardTemplatesClient().save((CardTemplate) this.templateBeanBinder.getBean()))
         .thenLater(() -> refreshPreview(this.gameRepresentation, true))
         .onErrorLater(e -> {
-          LOG.error("Failed to save template: " + e.getMessage());
+          LOG.error("Failed to save template: {}", e.getMessage(), e);
           WidgetFactory.showAlert(stage, "Error", "Failed to save template: " + e.getMessage());
         });
   }
@@ -458,7 +458,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       JFXFuture.runAsync(() -> client.getHighscoreCardTemplatesClient().save(cardTemplate))
           .thenLater(() -> refreshPreview(this.gameRepresentation, true))
           .onErrorLater(e -> {
-            LOG.error("Failed to save template: " + e.getMessage());
+            LOG.error("Failed to save template: {}",e.getMessage(), e);
             WidgetFactory.showAlert(stage, "Error", "Failed to save template: " + e.getMessage());
           });
     }, 1000);
@@ -803,7 +803,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     this.gameRepresentation = gameRepresentation;
     if (this.gameRepresentation.isPresent()) {
       GameRepresentation game = gameRepresentation.get();
-      CardTemplate template = highscoreCardsController.getCardTemplateForGame(game);
+      CardTemplate template = client.getHighscoreCardTemplatesClient().getCardTemplateForGame(game);
       if (template != null) {
         if (template.isTemplate()) {
           templateCombo.valueProperty().removeListener(templateComboChangeListener);
@@ -813,6 +813,10 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
         setTemplate(template);
       }
     }
+  }
+
+  public Accordion getAccordion() {
+    return accordion;
   }
 
   //-------------- MediaPlayerListener

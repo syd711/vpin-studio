@@ -40,9 +40,11 @@ public class CardsResource {
   public CardTemplate getCardTemplate(@PathVariable("gameId") int gameId) throws Exception {
     Game game = gameService.getGame(gameId);
     if (game != null) {
-      return cardService.getCardTemplate(game.getTemplateId());
+      if (game.getTemplateId() != null) {
+        return cardService.getCardTemplate(game.getTemplateId());
+      }
     }
-    throw new ResponseStatusException(NOT_FOUND, "No game found for id " + gameId);
+    throw new ResponseStatusException(NOT_FOUND, "No game or template found for id " + gameId);
   }
 
   @GetMapping("/gamedata/{gameId}/{templateId}")
@@ -138,7 +140,8 @@ public class CardsResource {
       File backgroundsFolder = new File(SystemService.RESOURCES, "backgrounds");
       File out = new File(backgroundsFolder, name);
       return UploadUtil.upload(file, out);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Background upload failed: " + e.getMessage());
     }
   }
