@@ -530,7 +530,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       cardModeBtn.getToggleGroup().selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
         @Override
         public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
-          if (!templateBeanBinder.isPaused() && gameRepresentation.isPresent()) {
+          if (!templateBeanBinder.isPaused() && gameRepresentation.isPresent() && newValue != null) {
             GameRepresentation game = gameRepresentation.get();
             //create new card template
             if (newValue.equals(cardModeBtn)) {
