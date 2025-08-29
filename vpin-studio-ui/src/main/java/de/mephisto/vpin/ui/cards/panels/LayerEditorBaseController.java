@@ -102,7 +102,9 @@ public abstract class LayerEditorBaseController {
         }
       }
       else {
-        settingsPanelIndex = templateEditorController.getAccordion().getPanes().indexOf(settingsPane);
+        if (settingsPanelIndex == -1) {
+          settingsPanelIndex = templateEditorController.getAccordion().getPanes().indexOf(settingsPane);
+        }
         templateEditorController.getAccordion().getPanes().remove(settingsPane);
       }
     }

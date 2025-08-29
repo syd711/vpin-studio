@@ -57,7 +57,7 @@ public class HighscoreCardTemplatesServiceClient extends VPinStudioClientService
   public CardTemplate getTemplateById(Long parentId) {
     List<CardTemplate> templates = getTemplates();
     Optional<CardTemplate> first = templates.stream().filter(t -> t.getId().equals(parentId)).findFirst();
-    return first.orElse(null);
+    return first.orElse(getDefaultTemplate());
   }
 
   public CardTemplate getTemplateByName(String name) {

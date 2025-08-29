@@ -21,8 +21,11 @@ import de.mephisto.vpin.ui.cards.HighscoreCardsController;
 import de.mephisto.vpin.ui.cards.HighscoreGeneratorProgressModel;
 import de.mephisto.vpin.ui.cards.TemplateAssigmentProgressModel;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.util.*;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -57,7 +60,7 @@ import java.util.stream.Collectors;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
-public class TemplateEditorController implements Initializable, MediaPlayerListener {
+public class TemplateEditorController implements Initializable, MediaPlayerListener, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(TemplateEditorController.class);
 
   @FXML
@@ -458,7 +461,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       JFXFuture.runAsync(() -> client.getHighscoreCardTemplatesClient().save(cardTemplate))
           .thenLater(() -> refreshPreview(this.gameRepresentation, true))
           .onErrorLater(e -> {
-            LOG.error("Failed to save template: {}",e.getMessage(), e);
+            LOG.error("Failed to save template: {}", e.getMessage(), e);
             WidgetFactory.showAlert(stage, "Error", "Failed to save template: " + e.getMessage());
           });
     }, 1000);
@@ -514,30 +517,12 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
             GameRepresentation game = gameRepresentation.get();
             //create new card template
             if (newValue.equals(cardModeBtn)) {
-              //delete possible existing one
-              client.getHighscoreCardTemplatesClient().deleteTemplate(game.getTemplateId());
-
-              CardTemplate t = new CardTemplate();
-              t.setParentId(templateCombo.getValue().getId());
-              t.setName(CardTemplate.CARD_TEMPLATE_PREFIX + game.getId());
-              CardTemplate newTemplate = client.getHighscoreCardTemplatesClient().save(t);
-              game.setTemplateId(newTemplate.getId());
-              client.getGameService().saveGame(game);
+              assignTemplate(null);
             }
             else {
               //switch back to the template
-              CardTemplate cardTemplate = templateBeanBinder.getBean();
-              client.getHighscoreCardTemplatesClient().deleteTemplate(cardTemplate.getId());
-
-              CardTemplate activeTemplate = templateCombo.getValue();
-              game.setTemplateId(activeTemplate.getId());
-              client.getGameService().saveGame(game);
+              assignTemplate(templateCombo.getValue());
             }
-
-            EventManager.getInstance().notifyTableChange(game.getId(), null);
-            GameRepresentation updatedGame = client.getGameService().getGame(game.getId());
-            highscoreCardsController.refreshView(updatedGame);
-            refreshNagBar(templateBeanBinder.getBean(), Optional.of(updatedGame));
           }
         }
       });
@@ -790,9 +775,16 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   //-----------------------------------------
 
 
-  private void assignTemplate(CardTemplate newValue) {
+  /**
+   * Null when the games should receive a custom template
+   *
+   * @param cardTemplate
+   */
+  private void assignTemplate(@Nullable CardTemplate cardTemplate) {
+    CardTemplate baseTemplate = templateCombo.getValue();
     List<GameRepresentation> selection = highscoreCardsController.getSelections();
-    ProgressDialog.createProgressDialog(new TemplateAssigmentProgressModel(selection, newValue.getId()));
+    ProgressDialog.createProgressDialog(new TemplateAssigmentProgressModel(selection, baseTemplate, cardTemplate));
+    highscoreCardsController.refreshView(this.gameRepresentation.get());
   }
 
   public void setCardsController(HighscoreCardsController highscoreCardsController) {
@@ -828,6 +820,13 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   public void onDispose() {
   }
 
+  //-------------- Studio Event Listener
+  @Override
+  public void tableChanged(int id, @Nullable String rom, @Nullable String gameName) {
+    GameRepresentation game = client.getGameService().getGame(id);
+    highscoreCardsController.refreshView(game);
+    refreshNagBar(templateBeanBinder.getBean(), Optional.of(game));
+  }
 
   class TemplateComboChangeListener implements ChangeListener<CardTemplate> {
     @Override
@@ -836,7 +835,6 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
         setTemplate(newValue);
         if (gameRepresentation.isPresent()) {
           assignTemplate(newValue);
-          //highscoreCardsController.refresh(gameRepresentation, templates, false);
         }
       }
     }

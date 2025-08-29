@@ -46,7 +46,7 @@ public class CardTemplatesService {
     return cardTemplate;
   }
 
-  public boolean delete(int id) {
+  public synchronized boolean delete(int id) {
     Optional<TemplateMapping> byId = templateMappingRepository.findById((long) id);
     if (byId.isPresent()) {
       TemplateMapping templateMapping = byId.get();

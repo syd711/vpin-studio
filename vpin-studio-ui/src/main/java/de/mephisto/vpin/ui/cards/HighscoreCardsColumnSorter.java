@@ -1,11 +1,14 @@
 package de.mephisto.vpin.ui.cards;
 
+import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.ui.tables.GameRepresentationModel;
 import de.mephisto.vpin.ui.tables.panels.BaseColumnSorter;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
 import java.util.Comparator;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class HighscoreCardsColumnSorter implements BaseColumnSorter<GameRepresentationModel> {
 
@@ -17,7 +20,6 @@ public class HighscoreCardsColumnSorter implements BaseColumnSorter<GameRepresen
 
   @Override
   public Comparator<GameRepresentationModel> buildComparator(TableView<GameRepresentationModel> tableView) {
-
     Comparator<GameRepresentationModel> comp = null;
 
     if (!tableView.getSortOrder().isEmpty()) {
@@ -27,7 +29,20 @@ public class HighscoreCardsColumnSorter implements BaseColumnSorter<GameRepresen
         comp = Comparator.comparing(o -> o.getName());
       }
       else if (column.equals(HighscoreCardsController.columnTemplate)) {
-        comp = Comparator.comparing(o -> String.valueOf(o.getGame().getTemplateId()));
+        comp = Comparator.comparing(o -> {
+          CardTemplate templateById = client.getHighscoreCardTemplatesClient().getTemplateById(o.getGame().getTemplateId());
+          return String.valueOf(templateById.isTemplate());
+        });
+      }
+      else if (column.equals(HighscoreCardsController.columnBaseTemplate)) {
+        comp = Comparator.comparing(o -> {
+          CardTemplate templateById = client.getHighscoreCardTemplatesClient().getTemplateById(o.getGame().getTemplateId());
+          String value = null;
+          if (templateById.isTemplate()) {
+            value = client.getHighscoreCardTemplatesClient().getTemplateById(templateById.getParentId()).getName();
+          }
+          return String.valueOf(value);
+        });
       }
 
       // optionally reverse order 

@@ -41,11 +41,6 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
 
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreCardsController.class);
 
-
-  @FXML
-  private Button maniaBtn;
-
-
   @FXML
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnDisplayName;
 
@@ -60,6 +55,9 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
 
   @FXML
   private Button assetManagerBtn;
+
+  @FXML
+  private Button maniaBtn;
 
   @FXML
   private BorderPane templateEditorPane;
@@ -188,8 +186,7 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
 
   public void refreshView(GameRepresentation game) {
     templateEditorPane.setVisible(game != null);
-    tableEditBtn.setDisable(game == null);
-    maniaBtn.setDisable(game == null || StringUtils.isEmpty(game.getExtTableId()));
+    maniaBtn.setDisable(tableView.getSelectionModel().getSelectedItems().size() != 1 || game == null || StringUtils.isEmpty(game.getExtTableId()));
 
     List<String> breadcrumb = new ArrayList<>(Arrays.asList("Highscore Cards"));
     if (game != null) {
@@ -303,6 +300,9 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
 
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+      assetManagerBtn.setDisable(tableView.getSelectionModel().getSelectedItems().size() != 1);
+      tableEditBtn.setDisable(tableView.getSelectionModel().getSelectedItems().size() != 1);
+      maniaBtn.setDisable(tableView.getSelectionModel().getSelectedItems().size() != 1);
       refreshView(newSelection);
     });
 
