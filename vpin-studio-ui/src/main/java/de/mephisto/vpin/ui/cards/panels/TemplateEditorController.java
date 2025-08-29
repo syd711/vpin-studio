@@ -249,6 +249,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().save(cardTemplate))
           .thenAcceptLater(updatedTemplate -> {
             highscoreCardsController.refreshTemplates(updatedTemplate);
+            assignTemplate(updatedTemplate);
           })
           .onErrorLater(ex -> {
             LOG.error("Failed to rename template: " + ex.getMessage(), ex);
