@@ -10,13 +10,16 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Accordion;
+import javafx.scene.control.Button;
+import javafx.scene.control.TitledPane;
+import javafx.scene.control.ToggleButton;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanWrapper;
 
+import java.util.Comparator;
 import java.util.Optional;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -43,7 +46,6 @@ public abstract class LayerEditorBaseController {
    * Link to the parent controller
    */
   protected TemplateEditorController templateEditorController;
-  private int settingsPanelIndex = -1;
   private String lockProperty;
 
   public void initialize(TemplateEditorController templateEditorController, Accordion accordion, String lockProperty) {
@@ -52,6 +54,7 @@ public abstract class LayerEditorBaseController {
     this.templateEditorController = templateEditorController;
     this.accordion = accordion;
     settingsPane.managedProperty().bindBidirectional(settingsPane.visibleProperty());
+    settingsPane.setUserData(lockProperty);
     lockBtn.managedProperty().bindBidirectional(lockBtn.visibleProperty());
     this.lockBtn.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
@@ -99,14 +102,17 @@ public abstract class LayerEditorBaseController {
     if (lockProperty != null) {
       if (b) {
         if (!templateEditorController.getAccordion().getPanes().contains(settingsPane)) {
-          templateEditorController.getAccordion().getPanes().add(settingsPanelIndex, settingsPane);
+          templateEditorController.getAccordion().getPanes().add(settingsPane);
+          templateEditorController.getAccordion().getPanes().sort(new Comparator<TitledPane>() {
+            @Override
+            public int compare(TitledPane o1, TitledPane o2) {
+              return String.valueOf(o1.getUserData()).compareTo(String.valueOf(o2.getUserData()));
+            }
+          });
           settingsPane.setVisible(true);
         }
       }
       else {
-        if (settingsPanelIndex == -1) {
-          settingsPanelIndex = templateEditorController.getAccordion().getPanes().indexOf(settingsPane);
-        }
         templateEditorController.getAccordion().getPanes().remove(settingsPane);
       }
     }
