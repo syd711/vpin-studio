@@ -65,6 +65,8 @@ hs_err_pid*
 /resources/vbs/*.vbs
 /resources/vpin-studio.db
 /resources/vpin-studio.db.bak
+/resources/vpin-studio.db-shm
+/resources/vpin-studio.db-wal
 /resources/vpin-studio.sqbpro
 /resources/b2s-raw/
 /resources/b2s-cropped/
