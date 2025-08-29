@@ -21,7 +21,8 @@ public class PinUPMediaAccessStrategy extends DefaultMediaAccessStrategy {
   @Override
   public File getGameMediaFolder(@NonNull Game game, @NonNull VPinScreen screen, @Nullable String extension, boolean create) {
     String mediaDirectory = game.getEmulator().getMediaDirectory();
-    return ensureDirExist(new File(mediaDirectory, screen.name()), create);
+    File mediaFile = new File(mediaDirectory, screen.name());
+    return ensureDirExist(mediaFile, create);
   }
 
   @Override

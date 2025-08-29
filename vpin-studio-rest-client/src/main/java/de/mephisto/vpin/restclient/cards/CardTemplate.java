@@ -68,8 +68,6 @@ public class CardTemplate extends JsonSettings {
   private int marginBottom = 10;
   private int marginLeft = 10;
 
-  /**@deprecated no more used */
-  private int padding = 10;
 
   // MANUFACTURER LOGO SETTINGS
   private boolean manufacturerLogoKeepAspectRatio = true;
@@ -91,8 +89,6 @@ public class CardTemplate extends JsonSettings {
   private double wheelX = 0.0;
   private double wheelY = 0.5;
   private double wheelSize = 0.3;
-  /**@deprecated no more used */
-  private int wheelPadding = 32;
 
   // SCORES SETTINGS
   private double scoresX = 0.3;
@@ -1025,60 +1021,4 @@ public class CardTemplate extends JsonSettings {
   public String getSettingsName() {
     return null;
   }
-
-  //-------------------------------------- deprecated but kept to parse old template ---
-
-  /**
-   * @deprecated not used anymore
-   */
-  public int getPadding() {
-    return padding;
-  }
-  /**
-   * @deprecated not used anymore
-   */
-  public void setPadding(int padding) {
-    this.padding = padding;
-  }
-
-  /**
-   * @deprecated use isUseColoredBackground()
-   */
-  public boolean isTransparentBackground() {
-    return isUseColoredBackground();
-  }
-
-  /**
-   * @deprecated use setUseColoredBackground()
-   */
-  public void setTransparentBackground(boolean transparentBackground) {
-    setUseColoredBackground(transparentBackground);
-  }
-
-  /**
-   * @deprecated use getWheelRightPadding())
-   */
-  public int getWheelPadding() {
-    return wheelPadding;
-  }
-  /**
-   * @deprecated use setWheelRightPadding())
-   */
-  public void setWheelPadding(int wheelPadding) {
-    this.wheelPadding = wheelPadding;
-  }
-
-  /**
-   * @deprecated use isUseDefault())
-   */
-  public boolean isUseDirectB2S() {
-    return isUseDefaultBackground();
-  }
-  /**
-   * @deprecated use setUseDefault()
-   */
-  public void setUseDirectB2S(boolean useDirectB2S) {
-    setUseDefaultBackground(useDirectB2S);
-  }
-
 }

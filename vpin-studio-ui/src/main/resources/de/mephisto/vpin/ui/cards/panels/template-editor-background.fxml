@@ -41,15 +41,15 @@
                         <Tooltip text="Toggle background visibility" />
                      </tooltip>
                   </Button>
-                  <ToggleButton fx:id="lockBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onLockToggle">
+                  <ToggleButton fx:id="lockBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onLockToggle" styleClass="custom-toggle-button-small">
                      <font>
                         <Font size="10.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lock-open-variant-outline" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lock-open-variant-outline" iconSize="13" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="Toggle protection for card mode" />
+                        <Tooltip text="Lock these properties for custom templates." />
                      </tooltip>
                   </ToggleButton>
                </children>

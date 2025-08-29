@@ -43,7 +43,6 @@ public abstract class LayerEditorBaseController {
    * Link to the parent controller
    */
   protected TemplateEditorController templateEditorController;
-
   private int settingsPanelIndex = -1;
   private String lockProperty;
 
@@ -53,6 +52,7 @@ public abstract class LayerEditorBaseController {
     this.templateEditorController = templateEditorController;
     this.accordion = accordion;
     settingsPane.managedProperty().bindBidirectional(settingsPane.visibleProperty());
+    lockBtn.managedProperty().bindBidirectional(lockBtn.visibleProperty());
     this.lockBtn.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -73,9 +73,11 @@ public abstract class LayerEditorBaseController {
       lockBtn.setSelected(locked);
 
       if (template.isTemplate()) {
+        lockBtn.setVisible(true);
         setVisible(true);
       }
       else {
+        lockBtn.setVisible(false);
         lockBtn.setSelected(locked);
         CardTemplate parent = client.getHighscoreCardTemplatesClient().getTemplateById(beanBinder.getBean().getParentId());
         if (lockProperty != null && parent != null) {

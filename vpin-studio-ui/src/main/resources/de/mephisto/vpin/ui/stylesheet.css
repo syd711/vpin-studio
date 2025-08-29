@@ -1408,6 +1408,21 @@
     -fx-border-color: #6666FF;
 }
 
+.custom-toggle-button-small {
+    -fx-border-width: 1;
+    -fx-border-color: transparent;
+    -fx-border-radius: 3px;
+    -fx-font-size: 10px;
+}
+
+.custom-toggle-button-small:selected {
+    -fx-border-width: 1;
+    -fx-font-size: 10px;
+    -fx-border-color: #6666FF;
+    -fx-border-radius: 3px;
+    -fx-background-color: #333366; /* Selected button color */
+}
+
 .custom-toggle-button {
     -fx-border-width: 1;
     -fx-border-color: transparent;

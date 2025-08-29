@@ -495,7 +495,7 @@ public class VPinStudioClient implements OverlayClient {
       if (template.isRenderManufacturerLogo()) { 
         cardData.setManufacturerLogo(highscoreCardsServiceClient.getHighscoreImage(game, template, "manufacturerLogo"));
       }
-      if (template.isRenderOtherMedia()) { 
+      if (template.isRenderOtherMedia() && template.getOtherMediaScreen() != null) {
         cardData.setOtherMedia(highscoreCardsServiceClient.getHighscoreImage(game, template, "otherMedia"));
       }
       return cardData;

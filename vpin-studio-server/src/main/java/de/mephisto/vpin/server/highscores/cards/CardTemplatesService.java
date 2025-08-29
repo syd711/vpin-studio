@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CardTemplatesService {
@@ -28,6 +29,9 @@ public class CardTemplatesService {
   @Autowired
   private PreferencesService preferencesService;
 
+  @Autowired
+  private TemplateMerger templateMerger;
+
   public CardTemplate save(CardTemplate cardTemplate) {
     if (cardTemplate.getId() != null) {
       Optional<TemplateMapping> mapping = templateMappingRepository.findById(cardTemplate.getId());
@@ -43,7 +47,7 @@ public class CardTemplatesService {
     m.setCardTemplate(cardTemplate);
     TemplateMapping updatedMapping = templateMappingRepository.saveAndFlush(m);
     cardTemplate.setId(updatedMapping.getId());
-    return cardTemplate;
+    return getTemplate(updatedMapping.getId());
   }
 
   public synchronized boolean delete(int id) {
@@ -68,10 +72,16 @@ public class CardTemplatesService {
       all = templateMappingRepository.findAll();
     }
 
-    for (TemplateMapping mapping : all) {
-      CardTemplate template = mapping.getTemplate();
+    List<CardTemplate> templates = all.stream().map(t -> {
+      CardTemplate template = t.getTemplate();
+      template.setId(t.getId());
+      return template;
+    }).collect(Collectors.toList());
+
+    CardTemplate defaultTemplate = templates.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst().get();
+    for (CardTemplate template : templates) {
+      template = templateMerger.merge(template, defaultTemplate);
 //      template = checkVersion(template);
-      template.setId(mapping.getId());
       result.add(template);
     }
     return result;
@@ -98,16 +108,13 @@ public class CardTemplatesService {
   }
 
   public CardTemplate getTemplate(long templateId) {
-    Optional<TemplateMapping> mapping = templateMappingRepository.findById(templateId);
-    if (mapping.isPresent()) {
-      TemplateMapping m = mapping.get();
-//      CardTemplate template = m.getTemplate();
-//      template = checkVersion(template);
-//      template.setId(m.getId());
-      return m.getTemplate();
+    List<CardTemplate> templates = getTemplates();
+    for (CardTemplate template : templates) {
+      if (template.getId() == templateId) {
+        return template;
+      }
     }
-
-    return getCardTemplate(CardTemplate.DEFAULT);
+    return templates.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst().get();
   }
 
   //-------------------------------------------------- Template version management
@@ -125,7 +132,6 @@ public class CardTemplatesService {
 //  }
 
   private CardTemplate upgradeFromVersion1(CardTemplate template) {
-
     CardSettings cardSettings = preferencesService.getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS);
     CardResolution res = cardSettings.getCardResolution();
     if (res != null) {
@@ -141,11 +147,11 @@ public class CardTemplatesService {
       template.setTitleY(currentY / height);
       template.setTitleHeight(template.getTitleFontSize() / height);
 
-      currentY += template.getTitleFontSize() + template.getPadding();
+      currentY += template.getTitleFontSize();
       template.setTableY(currentY / height);
       template.setTableHeight(template.getTableFontSize() / height);
 
-      currentY += template.getTableFontSize() + template.getPadding();
+      currentY += template.getTableFontSize();
       template.setWheelY(currentY / height);
       template.setScoresY(currentY / height);
       template.setScoresHeight((height - currentY - template.getMarginBottom()) / height);
@@ -154,7 +160,7 @@ public class CardTemplatesService {
       double currentX = template.getMarginLeft();
       template.setWheelX(currentX / width);
       if (template.isRenderWheelIcon()) {
-        currentX += template.getWheelSize() + template.getPadding();
+        currentX += template.getWheelSize();
       }
       template.setWheelSize(template.getWheelSize() / width);
 
