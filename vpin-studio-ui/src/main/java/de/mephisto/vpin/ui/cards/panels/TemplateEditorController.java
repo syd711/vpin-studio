@@ -203,6 +203,15 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   private void onCreate(ActionEvent e) {
     CardTemplate template = getSelectedCardTemplate();
     String gameName = gameRepresentation.get().getGameName();
+    if(gameName.contains("(")) {
+      gameName = gameName.substring(0, gameName.indexOf("("));
+    }
+
+    if(gameName.contains("[")) {
+      gameName = gameName.substring(0, gameName.indexOf("["));
+    }
+
+    gameName = gameName.trim();
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     String s = WidgetFactory.showInputDialog(stage, "New Template", "Enter Template Name", "Enter a meaningful name that identifies the card design.", "The values of the selected template \"" + template.getName() + "\" will be used as default.", gameName);
@@ -217,7 +226,11 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       template.setName(s);
       template.setId(null);
       JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().save(template))
-          .thenAcceptLater(newTemplate -> highscoreCardsController.refreshTemplates(newTemplate))
+          .thenAcceptLater(newTemplate -> {
+            highscoreCardsController.refreshTemplates(newTemplate);
+            templateCombo.setValue(newTemplate);
+            assignTemplate(newTemplate);
+          })
           .onErrorLater(ex -> {
             LOG.error("Failed to create new template: " + ex.getMessage(), ex);
             WidgetFactory.showAlert(Studio.stage, "Creating Template Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
@@ -236,8 +249,6 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().save(cardTemplate))
           .thenAcceptLater(updatedTemplate -> {
             highscoreCardsController.refreshTemplates(updatedTemplate);
-            assignTemplate(updatedTemplate);
-            //highscoreCardsController.refresh(gameRepresentation, templates, true);
           })
           .onErrorLater(ex -> {
             LOG.error("Failed to rename template: " + ex.getMessage(), ex);
@@ -258,7 +269,6 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
           CardTemplate defaultTemplate = client.getHighscoreCardTemplatesClient().getDefaultTemplate();
           highscoreCardsController.refreshTemplates(defaultTemplate);
           assignTemplate(defaultTemplate);
-          //highscoreCardsController.refresh(gameRepresentation, templates, true);
         });
       }
       catch (Exception ex) {
