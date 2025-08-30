@@ -118,9 +118,6 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   private BackglassManagerSidebarController backglassManagerSideBarController; //fxml magic! Not unused
 
   //-------------
-
-  private boolean activeView = false;
-
   @FXML
   private void onTableMouseClicked(MouseEvent mouseEvent) {
     if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
@@ -231,17 +228,6 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   }
 
   @FXML
-  private void onDirectB2SDisable() {
-    DirectB2S selectedItem = getSelection();
-    if (selectedItem != null) {
-      JFXFuture
-          .supplyAsync(() -> client.getBackglassServiceClient().disableBackglass(selectedItem.getEmulatorId(), selectedItem.getFileName()))
-          .thenAcceptLater(this::reloadItem)
-          .onErrorLater((e) -> WidgetFactory.showAlert(stage, "Error", "Cannot disable backglass", e.getMessage()));
-    }
-  }
-
-  @FXML
   private void onVpsOpen() {
     GameRepresentation game = getGameFromSelection();
     if (game != null) {
@@ -270,17 +256,6 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       setItems(data);
       endReload();
     });
-  }
-
-  @FXML
-  private void onDismiss() {
-    DirectB2SModel model = this.getSelectedModel();
-    if (model != null) {
-    }
-  }
-
-  @FXML
-  private void onDismissAll() {
   }
 
   @FXML
@@ -322,15 +297,12 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
   @Override
   public void onViewDeactivated() {
-    activeView = false;
-
     double position = splitPane.getDividers().get(0).getPosition();
     LocalUISettings.saveProperty("backglassesDivider", String.valueOf(position));
   }
 
   @Override
   public void onViewActivated(NavigationOptions options) {
-    activeView = true;
     NavigationController.setBreadCrumb(Arrays.asList("Backglasses"));
 
     // first time activation
