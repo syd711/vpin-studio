@@ -27,6 +27,11 @@ public class MediaViewPane extends Pane {
    */
   private boolean rotated;
 
+  /**
+   * Whether loading is deactivated:
+   */
+  private boolean noloading = false;
+
   protected MediaOptions mediaOptions;
 
   public void setMediaOptions(MediaOptions mediaOptions) {
@@ -74,8 +79,12 @@ public class MediaViewPane extends Pane {
     }
   }
 
+  public void setNoLoading(boolean noloading) {
+    this.noloading = noloading;
+  }
+
   public void setLoading() {
-    setCenter(new ProgressIndicator());
+    setCenter(noloading ? null : new ProgressIndicator());
   }
 
   protected boolean isRotated() {

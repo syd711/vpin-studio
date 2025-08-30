@@ -813,7 +813,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   private void assignTemplate(@Nullable CardTemplate cardTemplate) {
     CardTemplate existingTemplate = client.getHighscoreCardTemplatesClient().getCardTemplateForGame(this.gameRepresentation.get());
     if (existingTemplate != null && !existingTemplate.isTemplate()) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Apply the template \"" + cardTemplate.getName() + " to the table \"" + this.gameRepresentation.get().getGameDisplayName() + "\"?", "This will delete the existing custom template.");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Apply the template \"" + cardTemplate.getName() + "\" to the table \"" + this.gameRepresentation.get().getGameDisplayName() + "\"?", "This will delete the existing custom template.");
       if (!result.get().equals(ButtonType.OK)) {
         return;
       }
