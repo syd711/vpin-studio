@@ -207,11 +207,11 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   private void onCreate(ActionEvent e) {
     CardTemplate template = getSelectedCardTemplate();
     String gameName = gameRepresentation.get().getGameName();
-    if(gameName.contains("(")) {
+    if (gameName.contains("(")) {
       gameName = gameName.substring(0, gameName.indexOf("("));
     }
 
-    if(gameName.contains("[")) {
+    if (gameName.contains("[")) {
       gameName = gameName.substring(0, gameName.indexOf("["));
     }
 
@@ -266,7 +266,14 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   private void onDelete(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     CardTemplate cardTemplate = getSelectedCardTemplate();
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete Template", "Delete Template \"" + cardTemplate.getName() + "\"?", "Assigned tables will use the default template again.", "Delete");
+    String msg1 = "Delete template \"" + cardTemplate.getName() + "\"?";
+    String msg2 = "Assigned tables will use the default template again.";
+    if (!cardTemplate.isTemplate()) {
+      msg1 = "Delete template for table \"" + gameRepresentation.get().getGameDisplayName() + "\"?";
+      msg2 = "The table will use the default template again.";
+    }
+
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete Template", msg1, msg2, "Delete");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       try {
         client.getHighscoreCardTemplatesClient().deleteTemplate(cardTemplate.getId());
@@ -798,6 +805,14 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
    * @param cardTemplate
    */
   private void assignTemplate(@Nullable CardTemplate cardTemplate) {
+    CardTemplate existingTemplate = client.getHighscoreCardTemplatesClient().getCardTemplateForGame(this.gameRepresentation.get());
+    if (existingTemplate != null && !existingTemplate.isTemplate()) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Apply the template \"" + cardTemplate.getName() + " to the table \"" + this.gameRepresentation.get().getGameDisplayName() + "\"?", "This will delete the existing custom template.");
+      if (!result.get().equals(ButtonType.OK)) {
+        return;
+      }
+    }
+
     CardTemplate baseTemplate = templateCombo.getValue();
     List<GameRepresentation> selection = highscoreCardsController.getSelections();
     ProgressDialog.createProgressDialog(new TemplateAssigmentProgressModel(selection, baseTemplate, cardTemplate));
