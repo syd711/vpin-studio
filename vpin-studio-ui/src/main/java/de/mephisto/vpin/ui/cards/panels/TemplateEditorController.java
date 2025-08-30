@@ -697,25 +697,27 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       // keep the order of setters !
       dragBox.setZoomX(zoomX);
       dragBox.setZoomY(zoomY);
-      dragBox.setBounds(0, 0, (int) WIDTH, (int) HEIGHT);
-      dragBox.setAcceptOutsidePart(true, 50);
 
       dragBox.setWidth((int) (layer.getWidth() / zoomX));
       dragBox.setHeight((int) (layer.getHeight() / zoomY));
       dragBox.setX((int) (layer.getLocX() / zoomX));
       dragBox.setY((int) (layer.getLocY() / zoomY));
 
+      // call this once width and height have been set
+      dragBox.setBounds(0, 0, (int) WIDTH, (int) HEIGHT);
+      dragBox.setAcceptOutsidePart(true, 50);
+
       LayerEditorBaseController controller = layerToController(layer);
       controller.bindDragBox(dragBox);
       dragBox.setUserData(layer);
 
-      if (expandSettings) {
-        controller.expandSettingsPane();
-      }
-
       dragBox.addToPane(cardPreview);
       dragBox.select();
       dragBoxes.add(dragBox);
+
+      if (expandSettings) {
+        controller.expandSettingsPane();
+      }
     }
   }
 

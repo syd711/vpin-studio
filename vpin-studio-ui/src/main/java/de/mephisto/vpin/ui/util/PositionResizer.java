@@ -326,13 +326,13 @@ public class PositionResizer {
 
   private void recalculateMinMax() {
     // set max then min to avoid error
-    xMaxProperty.set(acceptOutsideClicked ? areaMaxX - minInside : Math.max(areaMaxX - widthProperty.get(), areaMinX));
-    xMinProperty.set(acceptOutsideClicked ? areaMinX - widthProperty.get() + minInside : areaMinX);
-    yMaxProperty.set(acceptOutsideClicked ? areaMaxY - minInside : Math.max(areaMaxY - heightProperty.get(), areaMinY + minInside));
-    yMinProperty.set(acceptOutsideClicked ? areaMinY - heightProperty.get() + minInside : areaMinY);
-    widthMaxProperty.set(acceptOutsideClicked ? 2 * 2000 : Math.max(areaMaxX - xProperty.get(), minSize));
+    xMaxProperty.set(acceptOutsidePart ? areaMaxX - minInside : Math.max(areaMaxX - widthProperty.get(), areaMinX));
+    xMinProperty.set(acceptOutsidePart ? areaMinX - widthProperty.get() + minInside : areaMinX);
+    yMaxProperty.set(acceptOutsidePart ? areaMaxY - minInside : Math.max(areaMaxY - heightProperty.get(), areaMinY + minInside));
+    yMinProperty.set(acceptOutsidePart ? areaMinY - heightProperty.get() + minInside : areaMinY);
+    widthMaxProperty.set(acceptOutsidePart ? 2 * 2000 : Math.max(areaMaxX - xProperty.get(), minSize));
     widthMinProperty.set(minSize);
-    heightMaxProperty.set(acceptOutsideClicked ? 2 * 2000 : Math.max(areaMaxY - yProperty.get(), minSize));
+    heightMaxProperty.set(acceptOutsidePart ? 2 * 2000 : Math.max(areaMaxY - yProperty.get(), minSize));
     heightMinProperty.set(minSize);
   }
 
