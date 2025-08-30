@@ -152,7 +152,7 @@ System.out.println("");
     g.setEffect(null);
     g.setGlobalAlpha(1.0);
 
-    if (template.getBorderWidth() > 0) {
+    if (template.getBorderWidth() > 0 && template.isRenderFrame()) {
       g.setStroke(Paint.valueOf(template.getBorderColor()));
       double strokeWidth = template.getBorderWidth() * zoomX;
 
