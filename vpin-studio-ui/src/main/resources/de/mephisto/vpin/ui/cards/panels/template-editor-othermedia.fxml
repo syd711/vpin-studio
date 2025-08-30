@@ -62,7 +62,7 @@
             <VBox styleClass="accordion-container" >
                <children>
 
-                  <Label text="Add an additional layer containing a media asset." prefWidth="200" wrapText="true">
+                  <Label text="Add an additional image layer containing a media asset." prefWidth="200" wrapText="true">
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.4" />
                      </graphic>

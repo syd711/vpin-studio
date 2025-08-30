@@ -21,7 +21,6 @@ public class LayerEditorWheelController extends LayerEditorBaseController {
   public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
     super.setTemplate(cardTemplate, res, game);
     setIconVisibility(cardTemplate.isRenderWheelIcon());
-    setIconVisibility(cardTemplate.isLockWheelIcon());
 
     LayerSubEditorPositionController.setValue(wheelSizeSpinner, cardTemplate, "wheelSize", res.toWidth());
     LayerSubEditorPositionController.setValue(wheelImageXSpinner, cardTemplate, "wheelX", res.toWidth());

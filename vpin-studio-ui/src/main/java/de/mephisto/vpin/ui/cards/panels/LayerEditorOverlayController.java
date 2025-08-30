@@ -21,7 +21,8 @@ public class LayerEditorOverlayController extends LayerEditorBaseController {
   public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
     super.setTemplate(cardTemplate, res, game);
     setIconVisibility(cardTemplate.isOverlayMode());
-
+    String overlayScreen = templateEditorController.getBeanBinder().getBean().getOverlayScreen();
+    screensComboBox.setValue(overlayScreen);
   }
 
   public void initBindings(CardTemplateBinder templateBeanBinder) {
@@ -45,6 +46,7 @@ public class LayerEditorOverlayController extends LayerEditorBaseController {
   @Override
   public void bindDragBox(PositionResizer dragBox) {
   }
+
   @Override
   public void unbindDragBox(PositionResizer dragBox) {
   }

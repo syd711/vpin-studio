@@ -125,11 +125,11 @@ public abstract class LayerEditorBaseController {
 
   protected void toggleLockButton(boolean lock) {
     if (lock) {
-      FontIcon icon = WidgetFactory.createIcon("mdi2l-lock", 12, null);
+      FontIcon icon = WidgetFactory.createIcon("mdi2l-lock", 13, null);
       lockBtn.setGraphic(icon);
     }
     else {
-      FontIcon icon = WidgetFactory.createIcon("mdi2l-lock-open-variant-outline", 12, null);
+      FontIcon icon = WidgetFactory.createIcon("mdi2l-lock-open-variant-outline", 13, null);
       lockBtn.setGraphic(icon);
     }
 
