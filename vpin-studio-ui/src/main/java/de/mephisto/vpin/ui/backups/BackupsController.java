@@ -18,6 +18,7 @@ import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.tables.TablesController;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
@@ -270,17 +271,7 @@ public class BackupsController implements Initializable, StudioFXController, Stu
       }
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title, null, null, "Delete");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        try {
-          for (BackupDescriptorRepresentation selectedItem : selectedItems) {
-            boolean b = client.getArchiveService().deleteBackup(selectedItem.getSource().getId(), selectedItem.getFilename());
-            if (!b) {
-              WidgetFactory.showAlert(stage, "Error", "Failed to delete \"" + selectedItem.getFilename() + "\"");
-            }
-          }
-        }
-        catch (Exception e) {
-          WidgetFactory.showAlert(stage, "Error", "Error deleting archives: " + e.getMessage());
-        }
+        ProgressDialog.createProgressDialog(new BackupDeleteProgressModel(selectedItems));
         tableView.getSelectionModel().clearSelection();
         doReload();
         tablesController.getRepositorySideBarController().setArchiveDescriptor(Optional.empty());
