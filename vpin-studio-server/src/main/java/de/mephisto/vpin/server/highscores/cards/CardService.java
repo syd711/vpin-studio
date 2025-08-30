@@ -95,8 +95,8 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
     return generatePreview(game, summary, template);
   }
 
-  public byte[] generateTemplateTableCardFile(Game game, int templateId) {
-    CardTemplate template = cardTemplatesService.getTemplate(templateId);
+  public byte[] generateTemplateTableCardFile(Game game, long templateId) {
+    CardTemplate template = cardTemplatesService.getTemplateOrDefault(templateId);
     ScoreSummary summary = getScoreSummary(game, template, true);
     return generatePreview(game, summary, template);
   }
@@ -106,8 +106,8 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
     return generateCard(game, template);
   }
 
-  public boolean generateCard(Game game, int templateId) {
-    CardTemplate template = cardTemplatesService.getTemplate(templateId);
+  public boolean generateCard(Game game, Long templateId) {
+    CardTemplate template = cardTemplatesService.getTemplateOrDefault(templateId);
     return generateCard(game, template);
   }
 
@@ -265,11 +265,11 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
   }
 
   public CardTemplate getCardTemplate(long templateId) {
-    return cardTemplatesService.getTemplate(templateId);
+    return cardTemplatesService.getTemplateOrDefault(templateId);
   }
 
   public CardData getCardData(Game game, long templateId, boolean withStreams) {
-    CardTemplate template = cardTemplatesService.getTemplate(templateId);
+    CardTemplate template = cardTemplatesService.getTemplateOrDefault(templateId);
     return getCardData(game, template, withStreams);
   }
 

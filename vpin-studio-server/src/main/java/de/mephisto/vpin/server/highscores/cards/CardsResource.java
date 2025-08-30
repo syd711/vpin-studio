@@ -85,7 +85,7 @@ public class CardsResource {
 
   // OLE Not used but kept in API
   @GetMapping("/generate/{gameId}/{templateId}")
-  public boolean generateCardWithTemplate(@PathVariable("gameId") int gameId, @PathVariable("templateId") int templateId) {
+  public boolean generateCardWithTemplate(@PathVariable("gameId") int gameId, @PathVariable("templateId") long templateId) {
     Game game = gameService.getGame(gameId);
     if (game != null) {
       return cardService.generateCard(game, templateId);

@@ -2,19 +2,14 @@ package de.mephisto.vpin.server.highscores.cards;
 
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
 public class TemplateMerger {
-
-  @Autowired
-  private TemplateMappingRepository templateMappingRepository;
 
   private static Map<String, List<String>> lock2properties = new HashMap<>();
 
@@ -32,16 +27,10 @@ public class TemplateMerger {
   }
 
 
-  public CardTemplate merge(@NonNull CardTemplate card, @NonNull CardTemplate defaultTemplate) {
+  public CardTemplate _merge(@NonNull CardTemplate card, @NonNull CardTemplate parent) {
     if (card.isTemplate()) {
       return card;
     }
-
-    CardTemplate parent = getParent(card);
-    if (parent == null) {
-      parent = defaultTemplate;
-    }
-
     mergeProperties(parent, card);
     return card;
   }
@@ -55,23 +44,14 @@ public class TemplateMerger {
       BeanWrapper cardWrapper = new BeanWrapperImpl(card);
 
       boolean locked = (boolean) parentWrapper.getPropertyValue(lockProperty);
+      // any case, copy the lock property from template into the CardTemplate
+      cardWrapper.setPropertyValue(lockProperty, locked);
+      // override all other properties when parent is master (locked=true)
       if (locked) {
         for (String field : fields) {
           cardWrapper.setPropertyValue(field, parentWrapper.getPropertyValue(field));
         }
       }
     }
-  }
-
-  @Nullable
-  private CardTemplate getParent(CardTemplate card) {
-    if (card.getParentId() != null) {
-      Optional<TemplateMapping> byId = templateMappingRepository.findById(card.getParentId());
-      if (byId.isPresent()) {
-        return byId.get().getTemplate();
-      }
-    }
-
-    return null;
   }
 }
