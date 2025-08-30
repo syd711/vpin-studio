@@ -183,7 +183,10 @@
     <center>
         <StackPane fx:id="previewStack" styleClass="media-container" BorderPane.alignment="CENTER">
             <children>
-                <BorderPane fx:id="previewOverlayPanel" />
+                <BorderPane fx:id="previewOverlayPanel">
+               <StackPane.margin>
+                  <Insets top="48.0" />
+               </StackPane.margin></BorderPane>
                 <BorderPane>
                     <center>
                         <Pane fx:id="previewPanel">
