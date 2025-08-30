@@ -192,6 +192,9 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
     if (StringUtils.isEmpty(backgroundName)) {
       backgroundImageCombo.setValue(imageList.get(0));
     }
+    else {
+      backgroundImageCombo.setValue(backgroundName);
+    }
 
     if (game.isPresent()) {
       refreshRawPreview(game.get());

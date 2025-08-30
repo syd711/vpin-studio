@@ -90,14 +90,6 @@
                             <Font size="14.0" />
                           </font>
                       </Label>
-                      <Label>
-                          <graphic>
-                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                          </graphic>
-                          <tooltip>
-                            <Tooltip text="Determines the inner horizontal and vertical gaps between the card components." />
-                          </tooltip>
-                      </Label>
                     </children>
                     <VBox.margin>
                       <Insets top="12.0" />

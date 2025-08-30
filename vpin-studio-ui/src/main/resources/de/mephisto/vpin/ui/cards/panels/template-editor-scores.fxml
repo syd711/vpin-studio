@@ -234,7 +234,7 @@
                     </VBox.margin>
                 </CheckBox>
 
-                <CheckBox fx:id="renderScoreDatesCheckbox" mnemonicParsing="false" text="Render creation Dates" textFill="WHITE">
+                <CheckBox fx:id="renderScoreDatesCheckbox" mnemonicParsing="false" text="Render Creation Dates" textFill="WHITE">
                     <font>
                       <Font size="14.0" />
                     </font>
