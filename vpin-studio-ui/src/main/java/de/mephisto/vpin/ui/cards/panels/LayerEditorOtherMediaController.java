@@ -23,20 +23,21 @@ public class LayerEditorOtherMediaController extends LayerEditorBaseController {
   private ComboBox<VPinScreen> otherMediaScreensComboBox;
 
   public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
-    super.setTemplate(cardTemplate, res, game);
     setIconVisibility(cardTemplate.isRenderOtherMedia());
-    lockBtn.setSelected(cardTemplate.isLockOtherMedia());
+    setIconLock(cardTemplate.isLockOtherMedia(), cardTemplate.isTemplate());
+
     positionController.setTemplate("otherMedia", cardTemplate, res);
 
     //otherMediaKeepARCheckBox.setSelected(cardTemplate.isOtherMediaKeepAspectRatio());
 
-    lockBtn.setSelected(cardTemplate.isLockBackground());
     otherMediaScreensComboBox.getSelectionModel().select(cardTemplate.getOtherMediaScreen());
   }
 
   @Override
   public void initBindings(CardTemplateBinder templateBeanBinder) {
     bindVisibilityIcon(templateBeanBinder, "renderOtherMedia");
+    bindLockIcon(templateBeanBinder, "lockOtherMedia");
+
     positionController.initBindings("otherMedia", templateBeanBinder);
 
     //templateBeanBinder.bindCheckbox(otherMediaKeepARCheckBox, "otherMediaKeepAspectRatio");

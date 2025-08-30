@@ -19,8 +19,8 @@ public class LayerEditorWheelController extends LayerEditorBaseController {
   private Spinner<Integer> wheelImageYSpinner;
 
   public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
-    super.setTemplate(cardTemplate, res, game);
     setIconVisibility(cardTemplate.isRenderWheelIcon());
+    setIconLock(cardTemplate.isLockWheelIcon(), cardTemplate.isTemplate());
 
     LayerSubEditorPositionController.setValue(wheelSizeSpinner, cardTemplate, "wheelSize", res.toWidth());
     LayerSubEditorPositionController.setValue(wheelImageXSpinner, cardTemplate, "wheelX", res.toWidth());
@@ -30,6 +30,7 @@ public class LayerEditorWheelController extends LayerEditorBaseController {
   @Override
   public void initBindings(CardTemplateBinder templateBeanBinder) {
     bindVisibilityIcon(templateBeanBinder, "renderWheelIcon");
+    bindLockIcon(templateBeanBinder, "lockWheelIcon");
 
     LayerSubEditorPositionController.bindSpinner(wheelSizeSpinner, "wheelSize", templateBeanBinder, 0, 1920, true);
     LayerSubEditorPositionController.bindSpinner(wheelImageXSpinner, "wheelX", templateBeanBinder, 0, 1920, true);

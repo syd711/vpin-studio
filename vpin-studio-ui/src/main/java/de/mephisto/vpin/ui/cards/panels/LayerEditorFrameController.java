@@ -41,9 +41,8 @@ public class LayerEditorFrameController extends LayerEditorBaseController {
 
 
   public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
-    super.setTemplate(cardTemplate, res, game);
     setIconVisibility(cardTemplate.isRenderFrame());
-    lockBtn.setSelected(cardTemplate.isLockFrame());
+    setIconLock(cardTemplate.isLockFrame(), cardTemplate.isTemplate());
 
     // wrong old zoom values
     if (cardTemplate.getZoom() == 0) {
@@ -60,8 +59,6 @@ public class LayerEditorFrameController extends LayerEditorBaseController {
     borderRadiusSpinner.getValueFactory().setValue(cardTemplate.getBorderRadius());
     CardTemplateBinder.setColorPickerValue(borderColorSelector, cardTemplate, "borderColor");
 
-    lockBtn.setSelected(cardTemplate.isLockBackground());
-
     marginTopSpinner.getValueFactory().setValue(cardTemplate.getMarginTop());
     marginRightSpinner.getValueFactory().setValue(cardTemplate.getMarginRight());
     marginBottomSpinner.getValueFactory().setValue(cardTemplate.getMarginBottom());
@@ -71,6 +68,7 @@ public class LayerEditorFrameController extends LayerEditorBaseController {
   @Override
   public void initBindings(CardTemplateBinder templateBeanBinder) {
     bindVisibilityIcon(templateBeanBinder, "renderFrame");
+    bindLockIcon(templateBeanBinder, "lockFrame");
 
     templateBeanBinder.addListener((bean, key, value) -> {
       if ("renderBackground".equals(key)) {

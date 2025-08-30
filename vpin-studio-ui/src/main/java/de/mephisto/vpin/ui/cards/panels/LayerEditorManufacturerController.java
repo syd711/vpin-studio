@@ -17,9 +17,8 @@ public class LayerEditorManufacturerController extends LayerEditorBaseController
   //private CheckBox manufacturerLogoKeepARCheckBox;
 
   public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
-    super.setTemplate(cardTemplate, res, game);
     setIconVisibility(cardTemplate.isRenderManufacturerLogo());
-    lockBtn.setSelected(cardTemplate.isLockManufacturerLogo());
+    setIconLock(cardTemplate.isLockManufacturerLogo(), cardTemplate.isTemplate());
 
     positionController.setTemplate("manufacturerLogo", cardTemplate, res);
 
@@ -31,6 +30,8 @@ public class LayerEditorManufacturerController extends LayerEditorBaseController
   @Override
   public void initBindings(CardTemplateBinder templateBeanBinder) {
     bindVisibilityIcon(templateBeanBinder, "renderManufacturerLogo");
+    bindLockIcon(templateBeanBinder, "lockManufacturerLogo");
+
     positionController.initBindings("manufacturerLogo", templateBeanBinder);
 
     templateBeanBinder.bindCheckbox(manufacturerLogoUseYearCheckBox, "manufacturerLogoUseYear");

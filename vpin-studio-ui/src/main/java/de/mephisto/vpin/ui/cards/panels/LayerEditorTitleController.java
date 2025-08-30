@@ -48,8 +48,8 @@ public class LayerEditorTitleController extends LayerEditorBaseController {
   }
 
   public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
-    super.setTemplate(cardTemplate, res, game);
     setIconVisibility(cardTemplate.isRenderTitle());
+    setIconLock(cardTemplate.isLockTitle(), cardTemplate.isTemplate());
 
     titleText.setText(cardTemplate.getTitle());
     CardTemplateBinder.setFontLabel(titleFontLabel, cardTemplate, "title");
@@ -63,6 +63,7 @@ public class LayerEditorTitleController extends LayerEditorBaseController {
   @Override
   public void initBindings(CardTemplateBinder templateBeanBinder) {
     bindVisibilityIcon(templateBeanBinder, "renderTitle");
+    bindLockIcon(templateBeanBinder, "lockTitle");
 
     templateBeanBinder.bindTextField(titleText, "title");
 

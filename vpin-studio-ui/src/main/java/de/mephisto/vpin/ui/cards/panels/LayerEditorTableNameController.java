@@ -57,9 +57,8 @@ public class LayerEditorTableNameController extends LayerEditorBaseController {
   }
 
   public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
-    super.setTemplate(cardTemplate, res, game);
     setIconVisibility(cardTemplate.isRenderTableName());
-    lockBtn.setSelected(cardTemplate.isLockTitle());
+    setIconLock(cardTemplate.isLockTableName(), cardTemplate.isTemplate());
 
     CardTemplateBinder.setFontLabel(tableFontLabel, cardTemplate, "table");
     tableUseVpsNameCheckbox.setSelected(cardTemplate.isTableUseVpsName());
@@ -75,6 +74,7 @@ public class LayerEditorTableNameController extends LayerEditorBaseController {
   @Override
   public void initBindings(CardTemplateBinder templateBeanBinder) {
     bindVisibilityIcon(templateBeanBinder, "renderTableName");
+    bindLockIcon(templateBeanBinder, "lockTableName");
 
     templateBeanBinder.bindCheckbox(tableUseVpsNameCheckbox, "tableUseVpsName");
     tableUseVpsNameCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {

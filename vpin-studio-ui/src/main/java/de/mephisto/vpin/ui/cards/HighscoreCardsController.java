@@ -109,7 +109,7 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
   private void doReload(boolean force) {
     startReload("Loading Tables...");
 
-    // load in parallel games and templates
+    // load in parallel games and templates, it will ensure templates are cached before the columns access them
     JFXFuture.supplyAllAsync(
             () -> client.getHighscoreCardTemplatesClient().getTemplates(),
             () -> {
@@ -142,39 +142,12 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
           tableView.refresh();
           tableView.requestFocus();
 
-          GameRepresentation selection = this.getSelection();
-          CardTemplate template = null;
-          if (selection != null) {
-            CardTemplate cardTemplate = client.getCardTemplate(selection);
-            if (cardTemplate != null) {
-              if (cardTemplate.isTemplate()) {
-                template = cardTemplate;
-              }
-              else {
-                template = client.getHighscoreCardTemplatesClient().getTemplateById(selection.getTemplateId());
-              }
-            }
-          }
+          // do not select the template, it will be selected by the selection of the game
+          templateEditorController.loadTemplates(_templates, null);
 
-          if (template == null) {
-            template = client.getHighscoreCardTemplatesClient().getDefaultTemplate();
-          }
-
-          templateEditorController.loadTemplates(client.getHighscoreCardTemplatesClient().getTemplates(), template);
-
+          // select the game, it will refresh the view and select associated template
           setSelectionOrFirst(selectedItem);
           endReload();
-        });
-  }
-
-  public void refreshTemplates(CardTemplate selectedTemplate) {
-    JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().getTemplates())
-        .onErrorSupply(e -> {
-          Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, "Error", "Loading templates failed: " + e.getMessage()));
-          return Collections.emptyList();
-        })
-        .thenAcceptLater(templates -> {
-          templateEditorController.loadTemplates(templates, selectedTemplate);
         });
   }
 

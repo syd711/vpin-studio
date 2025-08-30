@@ -19,12 +19,10 @@ public class LayerEditorCanvasController extends LayerEditorBaseController {
   private Spinner<Integer> canvasBorderRadiusSpinner;
 
   public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
-    super.setTemplate(cardTemplate, res, game);
     setIconVisibility(cardTemplate.isRenderCanvas());
-    lockBtn.setSelected(cardTemplate.isLockCanvas());
+    setIconLock(cardTemplate.isLockCanvas(), cardTemplate.isTemplate());
 
     CardTemplateBinder.setColorPickerValue(canvasColorSelector, cardTemplate, "canvasBackground");
-
 
     positionController.setTemplate("canvas", cardTemplate, res);
     canvasBorderRadiusSpinner.getValueFactory().setValue(cardTemplate.getCanvasBorderRadius());
@@ -34,6 +32,7 @@ public class LayerEditorCanvasController extends LayerEditorBaseController {
   @Override
   public void initBindings(CardTemplateBinder templateBeanBinder) {
     bindVisibilityIcon(templateBeanBinder, "renderCanvas");
+    bindLockIcon(templateBeanBinder, "lockCanvas");
 
     templateBeanBinder.bindColorPicker(canvasColorSelector, "canvasBackground");
     templateBeanBinder.bindSlider(canvasAlphaPercentageSlider, "canvasAlphaPercentage");

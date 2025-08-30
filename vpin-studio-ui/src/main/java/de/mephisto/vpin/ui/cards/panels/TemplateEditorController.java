@@ -5,7 +5,6 @@ import de.mephisto.vpin.commons.fx.cards.*;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
-import de.mephisto.vpin.commons.utils.media.ImageViewer;
 import de.mephisto.vpin.commons.utils.media.MediaPlayerListener;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardResolution;
@@ -20,11 +19,9 @@ import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
 import de.mephisto.vpin.ui.cards.HighscoreGeneratorProgressModel;
 import de.mephisto.vpin.ui.cards.TemplateAssigmentProgressModel;
-import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.util.*;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -51,6 +48,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -231,7 +229,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       template.setId(null);
       JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().save(template))
           .thenAcceptLater(newTemplate -> {
-            highscoreCardsController.refreshTemplates(newTemplate);
+            refreshTemplates(newTemplate);
             templateCombo.setValue(newTemplate);
             assignTemplate(newTemplate);
           })
@@ -252,7 +250,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
       JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().save(cardTemplate))
           .thenAcceptLater(updatedTemplate -> {
-            highscoreCardsController.refreshTemplates(updatedTemplate);
+            refreshTemplates(updatedTemplate);
             assignTemplate(updatedTemplate);
           })
           .onErrorLater(ex -> {
@@ -279,7 +277,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
         client.getHighscoreCardTemplatesClient().deleteTemplate(cardTemplate.getId());
         Platform.runLater(() -> {
           CardTemplate defaultTemplate = client.getHighscoreCardTemplatesClient().getDefaultTemplate();
-          highscoreCardsController.refreshTemplates(defaultTemplate);
+          refreshTemplates(defaultTemplate);
           assignTemplate(defaultTemplate);
         });
       }
@@ -469,11 +467,6 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
                 mediaPlayerControl.setVisible(true);
               }
 
-              if (previewOverlayPanel.getCenter() instanceof ImageViewer) {
-                ImageViewer imageViewer = (ImageViewer) previewOverlayPanel.getCenter();
-                // FIXME OLE imageViewer.scaleForTemplate(cardPreview);
-              }
-
               previewOverlayPanel.setVisible(true);
             }
           });
@@ -538,7 +531,6 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
         @Override
         public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
           if (!templateBeanBinder.isPaused() && gameRepresentation.isPresent() && newValue != null) {
-            GameRepresentation game = gameRepresentation.get();
             //create new card template
             if (newValue.equals(cardModeBtn)) {
               assignTemplate(null);
@@ -566,16 +558,16 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
         saveCardTemplate((CardTemplate) bean);
       });
 
-      layerEditorOverlayController.initialize(this, accordion, "lockOverlay");
-      layerEditorBackgroundController.initialize(this, accordion, "lockBackground");
-      layerEditorFrameController.initialize(this, accordion, "lockFrame");
-      layerEditorCanvasController.initialize(this, accordion, "lockCanvas");
-      layerEditorTitleController.initialize(this, accordion, "lockTitle");
-      layerEditorTableNameController.initialize(this, accordion, "lockTableName");
-      layerEditorWheelController.initialize(this, accordion, "lockWheelIcon");
-      layerEditorManufacturerController.initialize(this, accordion, "lockManufacturerLogo");
-      layerEditorOtherMediaController.initialize(this, accordion, "lockOtherMedia");
-      layerEditorScoresController.initialize(this, accordion, "lockScores");
+      layerEditorOverlayController.initialize(this, accordion);
+      layerEditorBackgroundController.initialize(this, accordion);
+      layerEditorFrameController.initialize(this, accordion);
+      layerEditorCanvasController.initialize(this, accordion);
+      layerEditorTitleController.initialize(this, accordion);
+      layerEditorTableNameController.initialize(this, accordion);
+      layerEditorWheelController.initialize(this, accordion);
+      layerEditorManufacturerController.initialize(this, accordion);
+      layerEditorOtherMediaController.initialize(this, accordion);
+      layerEditorScoresController.initialize(this, accordion);
     }
     catch (Exception e) {
       LOG.error("Error initializing highscore editor fields:" + e.getMessage(), e);
@@ -592,6 +584,18 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     }
     templateCombo.valueProperty().addListener(templateComboChangeListener);
   }
+
+  public void refreshTemplates(CardTemplate selectedTemplate) {
+    JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().getTemplates())
+        .onErrorSupply(e -> {
+          Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, "Error", "Loading templates failed: " + e.getMessage()));
+          return Collections.emptyList();
+        })
+        .thenAcceptLater(templates -> {
+          loadTemplates(templates, selectedTemplate);
+        });
+  }
+
 
   private void resizeCardPreview(double width, double height, boolean forceWidth) {
     // make sure the panel is full size always
@@ -834,13 +838,16 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
           templateCombo.setValue(template);
           templateCombo.valueProperty().addListener(templateComboChangeListener);
         }
+        else if (template.getParentId() != null) {
+          CardTemplate parentTemplate = client.getHighscoreCardTemplatesClient().getTemplateById(template.getParentId());
+          templateCombo.valueProperty().removeListener(templateComboChangeListener);
+          templateCombo.setValue(parentTemplate);
+          templateCombo.valueProperty().addListener(templateComboChangeListener);
+        }
+
         setTemplate(template);
       }
     }
-  }
-
-  public Accordion getAccordion() {
-    return accordion;
   }
 
   //-------------- MediaPlayerListener

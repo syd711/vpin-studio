@@ -19,14 +19,16 @@ public class LayerEditorOverlayController extends LayerEditorBaseController {
 
 
   public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
-    super.setTemplate(cardTemplate, res, game);
     setIconVisibility(cardTemplate.isOverlayMode());
+    setIconLock(cardTemplate.isLockOverlay(), cardTemplate.isTemplate());
+
     String overlayScreen = templateEditorController.getBeanBinder().getBean().getOverlayScreen();
     screensComboBox.setValue(overlayScreen);
   }
 
   public void initBindings(CardTemplateBinder templateBeanBinder) {
     bindVisibilityIcon(templateBeanBinder, "overlayMode");
+    bindLockIcon(templateBeanBinder, "lockOverlay");
 
     List<VPinScreen> VPinScreens = new ArrayList<>(Arrays.asList(VPinScreen.values()));
     VPinScreens.remove(VPinScreen.Audio);
