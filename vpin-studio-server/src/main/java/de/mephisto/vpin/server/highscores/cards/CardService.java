@@ -364,8 +364,8 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
         }
       }
       else if ("otherMedia".equals(imageName)) {
-        List<FrontendMediaItem> medias = frontendService.getMediaItems(game, template.getOtherMediaScreen());
-        if (medias != null) {
+        if (template.getOtherMediaScreen() != null) {
+          List<FrontendMediaItem> medias = frontendService.getMediaItems(game, template.getOtherMediaScreen());
           for (FrontendMediaItem media : medias) {
             if (media.getFile().exists() && media.getMimeType().contains("image")) {
               return org.apache.commons.io.FileUtils.readFileToByteArray(media.getFile());
