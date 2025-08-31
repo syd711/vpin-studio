@@ -150,6 +150,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   private CardTemplateBinder templateBeanBinder;
 
   private HighscoreCardsController highscoreCardsController;
+
   private AssetMediaPlayer assetMediaPlayer;
 
   private Optional<GameRepresentation> gameRepresentation;
@@ -190,14 +191,14 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   @FXML
   private void onStart() {
     if (assetMediaPlayer != null) {
-      assetMediaPlayer.getMediaPlayer().play();
+      assetMediaPlayer.play();
     }
   }
 
   @FXML
   private void onStop() {
     if (assetMediaPlayer != null) {
-      assetMediaPlayer.getMediaPlayer().pause();
+      assetMediaPlayer.pause();
     }
   }
 
@@ -372,25 +373,6 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     }
   }
 
-  private void refreshTransparency() {
-    CardTemplate template = getSelectedCardTemplate();
-    if (template.isOverlayMode()) {
-      if (template.getOverlayScreen() == null) {
-        Image backgroundImage = new Image(Studio.class.getResourceAsStream("transparent.png"));
-        BackgroundImage myBI = new BackgroundImage(backgroundImage,
-            BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
-        previewPanel.setBackground(new Background(myBI));
-      }
-      else {
-        //the existing CSS class will hide the video else
-        previewPanel.setBackground(Background.EMPTY);
-      }
-    }
-    else {
-      previewPanel.setBackground(new Background(new BackgroundFill(Paint.valueOf("#000000"), null, null)));
-    }
-  }
-
   @FXML
   private void onGenerate() {
     if (this.gameRepresentation.isPresent()) {
@@ -427,7 +409,6 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     if (game.isPresent()) {
       previewStack.getChildren().remove(waitOverlay);
       previewStack.getChildren().add(waitOverlay);
-      refreshTransparency();
       refreshOverlayBackgroundPreview();
 
       JFXFuture.supplyAsync(() -> client.getCardData(game.get(), getSelectedCardTemplate()))
@@ -451,25 +432,40 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     previewOverlayPanel.setVisible(false);
 
     CardTemplate template = getSelectedCardTemplate();
-    if (this.gameRepresentation.isPresent() && template.getOverlayScreen() != null) {
-      VPinScreen overlayScreen = VPinScreen.valueOf(template.getOverlayScreen());
-
+    if (this.gameRepresentation.isPresent() && template.isOverlayMode() && StringUtils.isNotEmpty(template.getOverlayScreen())) {
       JFXFuture.supplyAsync(() -> client.getFrontendService().getFrontendMedia(this.gameRepresentation.get().getId()))
           .thenAcceptLater(frontendMedia -> {
+            VPinScreen overlayScreen = VPinScreen.valueOf(template.getOverlayScreen());
             FrontendMediaItemRepresentation defaultMediaItem = frontendMedia.getDefaultMediaItem(overlayScreen);
             if (defaultMediaItem != null) {
-              assetMediaPlayer = WidgetFactory.addMediaItemToBorderPane(client, defaultMediaItem, previewOverlayPanel, this, null);
+              assetMediaPlayer = WidgetFactory.addMediaItemToBorderPane(client, defaultMediaItem, previewOverlayPanel, this, null, true);
+              assetMediaPlayer.setMediaViewSize(cardPreview.getWidth(), cardPreview.getHeight());
+
               //images do not have a media player
-              if (assetMediaPlayer != null) {
-                double fitwith = stage.getWidth() - 900; // was cardPreview.getFitWidth()
-                double fitheight = stage.getHeight() - 200; // was cardPreview.getFitHeight()
-                assetMediaPlayer.setSize(fitwith, fitheight);
+              if (assetMediaPlayer.hasMediaPlayer()) {
                 mediaPlayerControl.setVisible(true);
               }
-
               previewOverlayPanel.setVisible(true);
             }
           });
+    }
+    else if (template.getTransparentPercentage() > 0) {
+
+      assetMediaPlayer = new AssetMediaPlayer() {};
+      Region p = new Region() {
+        @Override public boolean isResizable() {
+          return false;
+        }
+      };
+      Image backgroundImage = new Image(Studio.class.getResourceAsStream("transparent.png"));
+      BackgroundImage myBI = new BackgroundImage(backgroundImage,
+          BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
+      p.setBackground(new Background(myBI));
+      assetMediaPlayer.setCenter(p);
+      assetMediaPlayer.setMediaViewSize(cardPreview.getWidth(), cardPreview.getHeight());
+
+      previewOverlayPanel.setCenter(assetMediaPlayer);
+      previewOverlayPanel.setVisible(true);
     }
   }
 
@@ -504,7 +500,11 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
       waitOverlay = loader.load();
       WaitOverlayController ctrl = loader.getController();
-      ctrl.setLoadingMessage("Generating Card...");
+      ctrl.setLoadingMessage("Refreshing  Card...");
+
+      previewStack.setBackground(new Background(new BackgroundFill(Paint.valueOf("#000000"), null, null)));
+      previewPanel.setBackground(Background.EMPTY);
+      previewOverlayPanel.setBackground(Background.EMPTY);
 
       // Initialize bindings between CardTemplate and sidebar
       initBindings();
@@ -648,6 +648,11 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
       Rectangle cliprect = new Rectangle(newWidth, newHeight);
       cardPreview.setClip(cliprect);
+
+      // also resize the media within the preview
+      if (assetMediaPlayer != null) {
+        assetMediaPlayer.setMediaViewSize(newWidth, newHeight);
+      }
     }
   }
 

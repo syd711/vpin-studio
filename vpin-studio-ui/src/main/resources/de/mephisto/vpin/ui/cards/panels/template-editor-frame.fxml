@@ -136,32 +136,57 @@
                       <Insets top="12.0" />
                     </VBox.margin>
                 </HBox>
-                <Label text="top / bottom:" textFill="WHITE">
-                    <font>
-                      <Font size="14.0" />
-                    </font>
-                    <VBox.margin>
-                      <Insets top="3.0" />
-                    </VBox.margin>
-                </Label>
-                <HBox alignment="BASELINE_LEFT" spacing="12.0">
-                    <children>
-                      <Spinner fx:id="marginTopSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
-                      <Spinner fx:id="marginBottomSpinner" editable="true" layoutX="87.0" layoutY="10.0" prefWidth="110.0" styleClass="widget-default" />
+
+                <HBox spacing="12.0">
+                  <children>
+                      <VBox>
+                        <children>
+                          <Label text="Top:" textFill="WHITE">
+                              <font>
+                                <Font size="14.0" />
+                              </font>
+                          </Label>
+                          <Spinner fx:id="marginTopSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
+                        </children>
+                      </VBox>
+                      <VBox>
+                        <children>
+                          <Label text="Bottom:" textFill="WHITE">
+                              <font>
+                                <Font size="14.0" />
+                              </font>
+                          </Label>
+                          <Spinner fx:id="marginBottomSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
+                        </children>
+                      </VBox>
                     </children>
                     <VBox.margin>
                       <Insets top="3.0" />
                     </VBox.margin>
                 </HBox>
-                <Label text="left / right:" textFill="WHITE">
-                    <font>
-                      <Font size="14.0" />
-                    </font>
-                </Label>
+
                 <HBox spacing="12.0">
-                    <children>
-                      <Spinner fx:id="marginLeftSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
-                      <Spinner fx:id="marginRightSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
+                  <children>
+                      <VBox>
+                        <children>
+                          <Label text="Left:" textFill="WHITE">
+                              <font>
+                                <Font size="14.0" />
+                              </font>
+                          </Label>
+                          <Spinner fx:id="marginLeftSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
+                        </children>
+                      </VBox>
+                      <VBox>
+                        <children>
+                          <Label text="Right:" textFill="WHITE">
+                              <font>
+                                <Font size="14.0" />
+                              </font>
+                          </Label>
+                          <Spinner fx:id="marginRightSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
+                        </children>
+                      </VBox>
                     </children>
                     <VBox.margin>
                       <Insets top="3.0" />

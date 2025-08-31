@@ -24,23 +24,22 @@ public class AudioMediaPlayer extends AssetMediaPlayer {
 
   private static AudioMediaPlayer activePlayer = null;
 
-  @Nullable
-  private final FrontendMediaItemRepresentation mediaItem;
+  protected int retryCounter = 0;
+
   private ProgressBar progressBar;
   private DoubleBinding binding;
   private MediaView mediaView;
   private FontIcon fontIcon;
 
-  public AudioMediaPlayer(@NonNull String url) {
-    this(null, url);
+  public AudioMediaPlayer() {
+    super();
   }
 
-  public AudioMediaPlayer(@Nullable FrontendMediaItemRepresentation mediaItem, @NonNull String url) {
-    super(url);
-    this.mediaItem = mediaItem;
+  public void render(@NonNull String url) {
+    render(null, url);
   }
 
-  public void render() {
+  public void render(@Nullable FrontendMediaItemRepresentation mediaItem, @NonNull String url) {
     setLoading();
 
     Media media = new Media(url);
@@ -59,7 +58,7 @@ public class AudioMediaPlayer extends AssetMediaPlayer {
           catch (InterruptedException e) {
             throw new RuntimeException(e);
           }
-          render();
+          render(mediaItem, url);
         });
       }
       else {

@@ -1,6 +1,5 @@
 package de.mephisto.vpin.commons.utils.media;
 
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.scene.media.Media;
@@ -12,45 +11,29 @@ import org.slf4j.LoggerFactory;
 public class VideoMediaPlayer extends AssetMediaPlayer {
   private final static Logger LOG = LoggerFactory.getLogger(VideoMediaPlayer.class);
 
-  private VPinScreen screen;
-
   private final String mimeType;
 
-  private FrontendMediaItemRepresentation mediaItem;
   private MediaView mediaView;
   private Media media;
 
-  private double fitWidth = 0;
-  private double fitHeight = 0;
-
   private boolean invertPlayfield;
 
-  public VideoMediaPlayer(@NonNull String url, @NonNull String screenName,
-                          @NonNull String mimeType, boolean invertPlayfield) {
-    this(null, screenName, url, mimeType, invertPlayfield);
-  }
-
-  public VideoMediaPlayer(@NonNull FrontendMediaItemRepresentation mediaItem, @NonNull String url,
-                          @NonNull String mimeType, boolean invertPlayfield) {
-    this(mediaItem, mediaItem.getScreen(), url, mimeType, invertPlayfield);
-  }
-
-  private VideoMediaPlayer(@NonNull FrontendMediaItemRepresentation mediaItem, @NonNull String screenName,
-                           @NonNull String url, @NonNull String mimeType, boolean invertPlayfield) {
-    super(url);
-    this.mediaItem = mediaItem;
+  public VideoMediaPlayer(@NonNull String mimeType, boolean invertPlayfield) {
+    super();
     this.mimeType = mimeType;
     this.invertPlayfield = invertPlayfield;
-
-    if (screenName.equalsIgnoreCase("PlayField")) {
-      screen = VPinScreen.PlayField;
-    }
-    else if (screenName.equalsIgnoreCase("Loading")) {
-      screen = VPinScreen.Loading;
-    }
   }
 
-  public void render() {
+  public void render(@NonNull String url, @NonNull String screenName) {
+    render(null, screenName, url);
+  }
+
+  public void render(@NonNull FrontendMediaItemRepresentation mediaItem, @NonNull String url) {
+    render(mediaItem, mediaItem.getScreen(), url);
+  }
+    
+  private void render(@NonNull FrontendMediaItemRepresentation mediaItem, @NonNull String screenName, @NonNull String url) {
+
     String baseType = mimeType.split("/")[0];
     String mediaType = mimeType.split("/")[1];
 
@@ -86,18 +69,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
       mediaView.setVisible(false);
 
       if (mediaOptions == null || mediaOptions.isAutoRotate()) {
-        scaleMediaView();
-      }
-
-      if (fitHeight > 0 && fitWidth > 0) {
-        if (this.isRotated()) {
-          mediaView.setFitHeight(fitWidth);
-          mediaView.setFitWidth(fitHeight);
-        }
-        else {
-          mediaView.setFitHeight(fitHeight);
-          mediaView.setFitWidth(fitWidth);
-        }
+        scaleMediaView(screenName);
       }
 
       mediaView.setVisible(true);
@@ -106,29 +78,18 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
     });
   }
 
-  private void scaleMediaView() {
-    if (VPinScreen.PlayField.equals(screen)) {
+  private void scaleMediaView(String screenName) {
+    if ("PlayField".equalsIgnoreCase(screenName)) {
       if (media.getWidth() > media.getHeight()) {
         mediaView.setRotate(90 + (invertPlayfield ? 180 : 0));
         setRotated(true);
       }
     }
-    else if (VPinScreen.Loading.equals(screen)) {
+    else if ("Loading".equalsIgnoreCase(screenName)) {
       if (media.getWidth() > media.getHeight()) {
         mediaView.setRotate(90);
         setRotated(true);
       }
-    }
-  }
-
-  @Override
-  public void setMediaViewSize(double fitWidth, double fitHeight) {
-    this.fitWidth = fitWidth;
-    this.fitHeight = fitHeight;
-
-    if (this.mediaView != null) {
-      this.mediaView.setFitWidth(fitWidth);
-      this.mediaView.setFitHeight(fitHeight);
     }
   }
 

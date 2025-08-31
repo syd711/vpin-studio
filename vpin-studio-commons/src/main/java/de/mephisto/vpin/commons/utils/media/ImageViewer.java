@@ -3,52 +3,39 @@ package de.mephisto.vpin.commons.utils.media;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-public class ImageViewer extends MediaViewPane {
+public class ImageViewer extends AssetMediaPlayer {
 
   private ImageView imageView;
-  private Image image;
-  private String url;
 
-  public ImageViewer(String url, Object userdata, String screenName, boolean invertPlayfield) {
-    this.url = url;
-    render(userdata, screenName, invertPlayfield);
+  public void render(String url, Object userdata, String screenName, boolean invertPlayfield) {
+    setLoading();
+    JFXFuture.supplyAsync(() -> new Image(url)).thenAcceptLater(i -> { 
+      render(i, userdata, screenName, invertPlayfield);
+    });
   }
 
-  public ImageViewer(String url, Image image) {
-    this.url = url;
-    this.image = image;
-    render(null, null, false);
+  public void render(@NonNull Image image) {
+    render(image, null, null, false);
   }
 
-  public ImageViewer(FrontendMediaItemRepresentation mediaItem, Image image, boolean invertPlayfield) {
-    this.image = image;
+  public void render(@NonNull Image image, String screenName, boolean invertPlayfield) {
+    render(image, null, screenName, invertPlayfield);
+  }
 
-    render(mediaItem, mediaItem.getScreen(), invertPlayfield);
+  public void render(@NonNull FrontendMediaItemRepresentation mediaItem, @NonNull Image image, boolean invertPlayfield) {
+    render(image, mediaItem, mediaItem.getScreen(), invertPlayfield);
   }
 
   public ImageView getImageView() {
     return imageView;
   }
 
-  private void render(Object userdata, String screenName, boolean invertPlayfield) {
-    if (image == null) {
-      setLoading();
-
-      JFXFuture.supplyAsync(() -> new Image(url)).thenAcceptLater(i -> { 
-        this.image = i; 
-        displayImage(userdata, screenName, invertPlayfield);
-      });
-    }
-    else {
-      displayImage(userdata, screenName, invertPlayfield);
-    }
-  }
-
-  private void displayImage(@Nullable Object userdata, @Nullable String screenName, boolean invertPlayfield) {
+  private void render(@NonNull Image image, @Nullable Object userdata, @Nullable String screenName, boolean invertPlayfield) {
     this.imageView = new ImageView(image);
     setCenter(imageView);
     imageView.setPreserveRatio(true);

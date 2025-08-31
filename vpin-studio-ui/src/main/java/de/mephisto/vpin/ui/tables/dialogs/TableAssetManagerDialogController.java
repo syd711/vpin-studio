@@ -608,18 +608,19 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         Frontend frontend = client.getFrontendService().getFrontendCached();
 
         if (baseType.equals("image")) {
-          ImageViewer imageViewer = new ImageViewer(assetUrl, tableAsset, tableAsset.getScreen(), frontend.isPlayfieldMediaInverted());
+          ImageViewer imageViewer = new ImageViewer();
+          imageViewer.render(assetUrl, tableAsset, tableAsset.getScreen(), frontend.isPlayfieldMediaInverted());
           serverAssetMediaPane.setCenter(imageViewer);
         }
         else if (baseType.equals("audio")) {
-          serverAudioMediaPlayer = new AudioMediaPlayer(assetUrl);
+          serverAudioMediaPlayer = new AudioMediaPlayer();
           serverAssetMediaPane.setCenter(serverAudioMediaPlayer);
-          serverAudioMediaPlayer.render();
+          serverAudioMediaPlayer.render(assetUrl);
         }
         else if (baseType.equals("video")) {
-          serverVideoMediaPlayer = new VideoMediaPlayer(assetUrl, tableAsset.getScreen(), mimeType, frontend.isPlayfieldMediaInverted());
+          serverVideoMediaPlayer = new VideoMediaPlayer(mimeType, frontend.isPlayfieldMediaInverted());
           serverAssetMediaPane.setCenter(serverVideoMediaPlayer);
-          serverVideoMediaPlayer.render();
+          serverVideoMediaPlayer.render(assetUrl, tableAsset.getScreen());
         }
       }
       catch (Exception e) {
@@ -892,18 +893,19 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
         Tooltip.uninstall(mediaPane, null);
         if (baseType.equals("image")) {
-          ImageViewer iv = new ImageViewer(url, mediaItem, mediaItem.getScreen(), frontend.isPlayfieldMediaInverted());
+          ImageViewer iv = new ImageViewer();
+          iv.render(url, mediaItem, mediaItem.getScreen(), frontend.isPlayfieldMediaInverted());
           mediaPane.setCenter(iv);
         }
         else if (baseType.equals("audio")) {
-          assetAudioMediaPlayer = new AudioMediaPlayer(mediaItem, url);
+          assetAudioMediaPlayer = new AudioMediaPlayer();
           mediaPane.setCenter(assetAudioMediaPlayer);
-          assetAudioMediaPlayer.render();
+          assetAudioMediaPlayer.render(mediaItem, url);
         }
         else if (baseType.equals("video")) {
-          assetVideoMediaPlayer = new VideoMediaPlayer(mediaItem, url, mimeType, frontend.isPlayfieldMediaInverted());
+          assetVideoMediaPlayer = new VideoMediaPlayer(mimeType, frontend.isPlayfieldMediaInverted());
           mediaPane.setCenter(assetVideoMediaPlayer);
-          assetVideoMediaPlayer.render();
+          assetVideoMediaPlayer.render(mediaItem, url);
         }
         Tooltip.install(mediaPane, WidgetFactory.createMediaItemTooltip(mediaItem));
       }
@@ -1033,9 +1035,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   @Override
   public void onDialogCancel() {
     try {
-      if (this.serverAudioMediaPlayer != null && this.serverAudioMediaPlayer.getMediaPlayer() != null) {
-        this.serverAudioMediaPlayer.getMediaPlayer().stop();
-        this.serverAudioMediaPlayer.getMediaPlayer().dispose();
+      if (this.serverAudioMediaPlayer != null) {
+        this.serverAudioMediaPlayer.stopAndDispose();
       }
     }
     catch (Exception e) {
@@ -1043,9 +1044,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     }
 
     try {
-      if (this.serverVideoMediaPlayer != null && this.serverVideoMediaPlayer.getMediaPlayer() != null) {
-        this.serverVideoMediaPlayer.getMediaPlayer().stop();
-        this.serverVideoMediaPlayer.getMediaPlayer().dispose();
+      if (this.serverVideoMediaPlayer != null) {
+        this.serverVideoMediaPlayer.stopAndDispose();
       }
     }
     catch (Exception e) {
@@ -1053,9 +1053,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     }
 
     try {
-      if (this.assetVideoMediaPlayer != null && this.assetVideoMediaPlayer.getMediaPlayer() != null) {
-        this.assetVideoMediaPlayer.getMediaPlayer().stop();
-        this.assetVideoMediaPlayer.getMediaPlayer().dispose();
+      if (this.assetVideoMediaPlayer != null) {
+        this.assetVideoMediaPlayer.stopAndDispose();
       }
     }
     catch (Exception e) {
@@ -1063,9 +1062,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     }
 
     try {
-      if (this.assetAudioMediaPlayer != null && this.assetAudioMediaPlayer.getMediaPlayer() != null) {
-        this.assetAudioMediaPlayer.getMediaPlayer().stop();
-        this.assetAudioMediaPlayer.getMediaPlayer().dispose();
+      if (this.assetAudioMediaPlayer != null) {
+        this.assetAudioMediaPlayer.stopAndDispose();
       }
     }
     catch (Exception e) {

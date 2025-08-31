@@ -926,16 +926,20 @@ public class WidgetFactory {
     parent.setCenter(label);
   }
 
-  public static AssetMediaPlayer addMediaItemToBorderPane(VPinStudioClient client, FrontendMediaItemRepresentation mediaItem, BorderPane parent) {
-    return addMediaItemToBorderPane(client, mediaItem, parent, null, null);
-  }
-
   public static AssetMediaPlayer addMediaItemToBorderPane(String url, BorderPane parent) {
     Image image = new Image(url);
-    ImageViewer imageViewer = new ImageViewer(url, image);
+    return addMediaItemToBorderPane(image, parent);
+  }
+  public static AssetMediaPlayer addMediaItemToBorderPane(Image image, BorderPane parent) {
+    ImageViewer imageViewer = new ImageViewer();
     parent.setCenter(imageViewer);
     parent.setUserData(imageViewer);
-    return null;
+    imageViewer.render(image);
+    return imageViewer;
+  }
+
+  public static AssetMediaPlayer addMediaItemToBorderPane(VPinStudioClient client, FrontendMediaItemRepresentation mediaItem, BorderPane parent) {
+    return addMediaItemToBorderPane(client, mediaItem, parent, null, null);
   }
 
   public static AssetMediaPlayer addMediaItemToBorderPane(VPinStudioClient client, FrontendMediaItemRepresentation mediaItem, BorderPane parent, MediaPlayerListener listener, MediaOptions mediaOptions) {
@@ -959,31 +963,33 @@ public class WidgetFactory {
 
     if (baseType.equals("image") && !audioOnly) {
       Image image = new Image(url);
-      ImageViewer imageViewer = new ImageViewer(mediaItem, image, frontend.isPlayfieldMediaInverted());
+      ImageViewer imageViewer = new ImageViewer();
       imageViewer.setNoLoading(noLoading);
       parent.setCenter(imageViewer);
       parent.setUserData(imageViewer);
+      imageViewer.render(mediaItem, image, frontend.isPlayfieldMediaInverted());
+      return imageViewer;
     }
     else if (baseType.equals("audio")) {
-      AudioMediaPlayer audioMediaPlayer = new AudioMediaPlayer(mediaItem, url);
+      AudioMediaPlayer audioMediaPlayer = new AudioMediaPlayer();
       audioMediaPlayer.setMediaOptions(mediaOptions);
       audioMediaPlayer.setNoLoading(noLoading);
       parent.setCenter(audioMediaPlayer);
       if (listener != null) {
         audioMediaPlayer.addListener(listener);
       }
-      audioMediaPlayer.render();
+      audioMediaPlayer.render(mediaItem, url);
       return audioMediaPlayer;
     }
     else if (baseType.equals("video") && !audioOnly) {
-      VideoMediaPlayer videoMediaPlayer = new VideoMediaPlayer(mediaItem, url, mimeType, frontend.isPlayfieldMediaInverted());
+      VideoMediaPlayer videoMediaPlayer = new VideoMediaPlayer(mimeType, frontend.isPlayfieldMediaInverted());
       videoMediaPlayer.setMediaOptions(mediaOptions);
       videoMediaPlayer.setNoLoading(noLoading);
       parent.setCenter(videoMediaPlayer);
       if (listener != null) {
         videoMediaPlayer.addListener(listener);
       }
-      videoMediaPlayer.render();
+      videoMediaPlayer.render(mediaItem, url);
       return videoMediaPlayer;
     }
     else {

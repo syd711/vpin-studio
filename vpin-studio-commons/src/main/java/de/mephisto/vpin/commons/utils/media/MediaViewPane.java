@@ -1,6 +1,5 @@
 package de.mephisto.vpin.commons.utils.media;
 
-import javafx.geometry.Bounds;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
@@ -14,8 +13,12 @@ import javafx.scene.media.MediaView;
  * Also manage rotated images or videos
  */
 public class MediaViewPane extends Pane {
+
   private int marginX = 0;
   private int marginY = 0;
+
+  private double fitWidth = -1;
+  private double fitHeight = -1;
 
   /**
    * The centered child in the Pane, only one at a time
@@ -51,6 +54,11 @@ public class MediaViewPane extends Pane {
     }
   }
 
+  public void setMediaViewSize(double fitWidth, double fitHeight) {
+    this.fitWidth = fitWidth;
+    this.fitHeight = fitHeight;
+  }
+
   @Override
   protected void layoutChildren() {
     super.layoutChildren();
@@ -58,24 +66,30 @@ public class MediaViewPane extends Pane {
     double width = getWidth();
     double height = getHeight();
 
-    double fitWidth = rotated ? height - marginX : width - marginX;
-    double fitHeight = rotated ? width - marginY : height - marginY;
+    double mediaViewWidth =  fitWidth != -1 ? fitWidth : width - marginX;
+    double mediaViewHeight = fitHeight != -1 ? fitHeight : height - marginY;
+
+    if (rotated) {
+      double forSwitch = mediaViewWidth;
+      mediaViewWidth = mediaViewHeight;
+      mediaViewHeight = forSwitch;
+    }
 
     if (child instanceof ImageView) {
       ImageView imageView = ((ImageView) child);
-      imageView.setFitWidth(fitWidth);
-      imageView.setFitHeight(fitHeight);
+      imageView.setFitWidth(mediaViewWidth);
+      imageView.setFitHeight(mediaViewHeight);
       super.layoutInArea(child, 0, 0, width, height, 0, HPos.CENTER, VPos.CENTER);
     }
     else if (child instanceof MediaView) {
       MediaView mediaView = ((MediaView) child);
-      mediaView.setFitWidth(fitWidth);
-      mediaView.setFitHeight(fitHeight);
+      mediaView.setFitWidth(mediaViewWidth);
+      mediaView.setFitHeight(mediaViewHeight);
       super.layoutInArea(child, 0, 0, width, height, 0, HPos.CENTER, VPos.CENTER);
     }
-    else {
-      Bounds bounds = child.getLayoutBounds();
-      child.relocate((width - bounds.getWidth()) / 2.0, (height - bounds.getHeight()) / 2);
+    else if (child != null) {
+      child.resize(mediaViewWidth, mediaViewHeight);
+      super.layoutInArea(child, 0, 0, width, height, 0, HPos.CENTER, VPos.CENTER);
     }
   }
 

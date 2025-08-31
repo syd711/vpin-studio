@@ -181,44 +181,42 @@
         </ToolBar>
     </top>
     <center>
-        <StackPane fx:id="previewStack" styleClass="media-container" BorderPane.alignment="CENTER">
-            <children>
-                <BorderPane fx:id="previewOverlayPanel">
-               <StackPane.margin>
-                  <Insets top="48.0" />
-               </StackPane.margin></BorderPane>
-                <BorderPane>
-                    <center>
+        <BorderPane>
+            <center>
+                <StackPane fx:id="previewStack" styleClass="media-container" BorderPane.alignment="CENTER">
+                    <children>
+                        <BorderPane fx:id="previewOverlayPanel">
+                        </BorderPane>
                         <Pane fx:id="previewPanel">
                             <children>
                             </children>
                         </Pane>
-                    </center>
-               <top>
-                  <BorderPane fx:id="nagBar" styleClass="nagbar-container">
-                     <center>
+                    </children>
+                </StackPane>
+            </center>
+            <top>
+                <BorderPane fx:id="nagBar" styleClass="nagbar-container">
+                    <center>
                         <Label fx:id="nagBarLabel" text="Editing highscore card for XY using template XY" BorderPane.alignment="CENTER_LEFT" />
-                     </center>
-                  </BorderPane>
-               </top>
-               <bottom>
-                      <HBox alignment="CENTER_RIGHT" BorderPane.alignment="CENTER">
-                          <children>
-                              <Label layoutX="10.0" layoutY="15.0" text="Card Resolution: ">
-                                  <padding>
-                                      <Insets left="6.0" />
-                                  </padding>
-                              </Label>
-                              <Label fx:id="resolutionLabel" text="Resolution">
-                                  <padding>
-                                      <Insets left="6.0" />
-                                  </padding>
-                              </Label>
-                          </children>
-                      </HBox>
-               </bottom>
+                    </center>
                 </BorderPane>
-            </children>
-        </StackPane>
+            </top>
+            <bottom>
+                <HBox alignment="CENTER_RIGHT" BorderPane.alignment="CENTER">
+                    <children>
+                        <Label layoutX="10.0" layoutY="15.0" text="Card Resolution: ">
+                            <padding>
+                                <Insets left="6.0" />
+                            </padding>
+                        </Label>
+                        <Label fx:id="resolutionLabel" text="Resolution">
+                            <padding>
+                                <Insets left="6.0" />
+                            </padding>
+                        </Label>
+                    </children>
+                </HBox>
+            </bottom>
+        </BorderPane>
     </center>
 </BorderPane>

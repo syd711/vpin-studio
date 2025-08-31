@@ -1,7 +1,6 @@
 package de.mephisto.vpin.commons.utils.media;
 
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.scene.control.Label;
 import javafx.scene.media.MediaPlayer;
@@ -17,25 +16,15 @@ import java.util.concurrent.TimeUnit;
 abstract public class AssetMediaPlayer extends MediaViewPane {
   private final static Logger LOG = LoggerFactory.getLogger(AssetMediaPlayer.class);
 
-  protected int retryCounter = 0;
-
-  @NonNull
-  protected final String url;
-
   protected MediaPlayer mediaPlayer;
 
   protected final java.util.List<MediaPlayerListener> listeners = new ArrayList<>();
 
-  public AssetMediaPlayer(@NonNull String url) {
-    this.url = url;
+  public AssetMediaPlayer() {
   }
 
   public void addListener(MediaPlayerListener listener) {
     this.listeners.add(listener);
-  }
-
-  public MediaPlayer getMediaPlayer() {
-    return mediaPlayer;
   }
 
   protected Label getErrorLabel(@Nullable FrontendMediaItemRepresentation mediaItem) {
@@ -52,15 +41,19 @@ abstract public class AssetMediaPlayer extends MediaViewPane {
     return label;
   }
 
+  public boolean hasMediaPlayer() {
+    return mediaPlayer != null;
+  }
+
   public void disposeMedia() {
     for (MediaPlayerListener listener : this.listeners) {
       listener.onDispose();
     }
     this.listeners.clear();
 
-    if (getMediaPlayer() != null) {
+    if (mediaPlayer != null) {
       try {
-        getMediaPlayer().stop();
+        mediaPlayer.stop();
       } catch (Exception e) {
         LOG.info("Stopping media view: " + e.getMessage());
       }
@@ -68,7 +61,7 @@ abstract public class AssetMediaPlayer extends MediaViewPane {
       try {
         final ExecutorService executor = Executors.newFixedThreadPool(1);
         final Future<?> future = executor.submit(() -> {
-          getMediaPlayer().dispose();
+          mediaPlayer.dispose();
         });
 
         future.get(500, TimeUnit.MILLISECONDS);
@@ -78,15 +71,25 @@ abstract public class AssetMediaPlayer extends MediaViewPane {
         LOG.info("Disposing media view: " + e.getMessage());
       }
     }
-    else {
-      LOG.warn("No mediaplayer found for " + url);
+  }
+
+  public void play() {
+    if (mediaPlayer != null) {
+      mediaPlayer.play();;
     }
   }
 
-  public void setSize(double fitWidth, double fitHeight) {
-
+  public void pause() {
+    if (mediaPlayer != null) {
+      mediaPlayer.pause();;
+    }
   }
 
-  public void setMediaViewSize(double fitWidth, double fitHeight) {
+  public void stopAndDispose() {
+    if (mediaPlayer != null) {
+      mediaPlayer.stop();;
+      mediaPlayer.dispose();
+    }
   }
+
 }
