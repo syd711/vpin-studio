@@ -231,7 +231,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().save(template))
           .thenAcceptLater(newTemplate -> {
             refreshTemplates(newTemplate);
-            templateCombo.setValue(newTemplate);
+            selectTemplateInCombo(newTemplate);
             assignTemplate(newTemplate);
           })
           .onErrorLater(ex -> {
@@ -832,14 +832,6 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
    * @param cardTemplate
    */
   private void assignTemplate(@Nullable CardTemplate cardTemplate) {
-    CardTemplate existingTemplate = client.getHighscoreCardTemplatesClient().getCardTemplateForGame(this.gameRepresentation.get());
-    if (existingTemplate != null && !existingTemplate.isTemplate()) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Apply the template \"" + cardTemplate.getName() + "\" to the table \"" + this.gameRepresentation.get().getGameDisplayName() + "\"?", "This will delete the existing custom template.");
-      if (!result.get().equals(ButtonType.OK)) {
-        return;
-      }
-    }
-
     CardTemplate baseTemplate = templateCombo.getValue();
     List<GameRepresentation> selection = highscoreCardsController.getSelections();
     ProgressDialog.createProgressDialog(new TemplateAssigmentProgressModel(selection, baseTemplate, cardTemplate));
@@ -857,15 +849,11 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       CardTemplate template = client.getHighscoreCardTemplatesClient().getCardTemplateForGame(game);
       if (template != null) {
         if (template.isTemplate()) {
-          templateCombo.valueProperty().removeListener(templateComboChangeListener);
-          templateCombo.setValue(template);
-          templateCombo.valueProperty().addListener(templateComboChangeListener);
+          selectTemplateInCombo(template);
         }
         else if (template.getParentId() != null) {
           CardTemplate parentTemplate = client.getHighscoreCardTemplatesClient().getTemplateById(template.getParentId());
-          templateCombo.valueProperty().removeListener(templateComboChangeListener);
-          templateCombo.setValue(parentTemplate);
-          templateCombo.valueProperty().addListener(templateComboChangeListener);
+          selectTemplateInCombo(parentTemplate);
         }
 
         setTemplate(template);
@@ -874,6 +862,12 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     else {
       refreshPreview(Optional.empty());
     }
+  }
+
+  private void selectTemplateInCombo(CardTemplate template) {
+    templateCombo.valueProperty().removeListener(templateComboChangeListener);
+    templateCombo.setValue(template);
+    templateCombo.valueProperty().addListener(templateComboChangeListener);
   }
 
   //-------------- MediaPlayerListener
@@ -897,6 +891,17 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     @Override
     public void changed(ObservableValue<? extends CardTemplate> observable, CardTemplate oldValue, CardTemplate newValue) {
       if (newValue != null) {
+        if (gameRepresentation.isPresent()) {
+          CardTemplate existingTemplate = client.getHighscoreCardTemplatesClient().getCardTemplateForGame(gameRepresentation.get());
+          if (existingTemplate != null && !existingTemplate.isTemplate()) {
+            Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Apply the template \"" + existingTemplate.getName() + "\" to the table \"" + gameRepresentation.get().getGameDisplayName() + "\"?", "This will delete the existing custom template.");
+            if (!result.get().equals(ButtonType.OK)) {
+              selectTemplateInCombo(oldValue);
+              return;
+            }
+          }
+        }
+        // all good, assign template
         setTemplate(newValue);
         if (gameRepresentation.isPresent()) {
           assignTemplate(newValue);
