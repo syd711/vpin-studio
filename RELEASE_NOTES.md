@@ -3,8 +3,8 @@
 ## Changes
 
 - **Highscore Card Editor**
-
-TODO
+  - The highscore card editor has undergone a huge revamp. Not only all visible elemens support **drag and drop** now, but also new elements have been added. E.g. you can now add the **manufacturer logo** or **media from other screens**. Also, the templating mechanism has been reimplemented which should simplify the re-use and adaption of existing cards layout. **Note that due to the refactoring of the editor, old layouts may got broken or need adaptions.** 
+   <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/cards/cards.png?raw=true" width="700" />
 
 - **Table Backups**
   - The Studio supports creating and restoring table backups now. **Note that this feature is solely for private use only!!!** For this reason, the backups are password protected. To enable the feature, you need to configure your VPU or VPF account for authentication. Check out the YouTube channel video for more details.
