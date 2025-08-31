@@ -160,4 +160,9 @@ public abstract class LayerEditorBaseController {
       });
     }
   }
+
+  public boolean isNotLocked() {
+    List<TitledPane> panes = accordion.getPanes();
+    return panes.contains(settingsPane);
+  }
 }

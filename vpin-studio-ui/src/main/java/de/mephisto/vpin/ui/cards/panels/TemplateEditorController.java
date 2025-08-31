@@ -352,7 +352,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     templateBeanBinder.setPaused(false);
 
     cardPreview.setTemplate(cardTemplate);
-    refreshPreview(this.gameRepresentation, true);
+    refreshPreview(this.gameRepresentation);
   }
 
   private void refreshNagBar(CardTemplate cardTemplate, Optional<GameRepresentation> gameRepresentation) {
@@ -384,32 +384,37 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       else {
         ProgressDialog.createProgressDialog(new HighscoreGeneratorProgressModel(client, "Generating Highscore Card", this.gameRepresentation.get()));
       }
-      refreshPreview(this.gameRepresentation, true);
+      refreshPreview(this.gameRepresentation);
     }
   }
 
   @FXML
   private void onGenerateClick() {
     JFXFuture.runAsync(() -> client.getHighscoreCardTemplatesClient().save((CardTemplate) this.templateBeanBinder.getBean()))
-        .thenLater(() -> refreshPreview(this.gameRepresentation, true))
+        .thenLater(() -> refreshPreview(this.gameRepresentation))
         .onErrorLater(e -> {
           LOG.error("Failed to save template: {}", e.getMessage(), e);
           WidgetFactory.showAlert(stage, "Error", "Failed to save template: " + e.getMessage());
         });
   }
 
-  private void refreshPreview(Optional<GameRepresentation> game, boolean regenerate) {
-    this.openImageBtn.setDisable(true);
-    this.generateBtn.setDisable(true);
-    this.generateAllBtn.setDisable(true);
-    mediaPlayerControl.setVisible(false);
-
-    cardPreview.setData(null, null);
+  private void refreshPreview(Optional<GameRepresentation> game) {
 
     if (game.isPresent()) {
-      previewStack.getChildren().remove(waitOverlay);
-      previewStack.getChildren().add(waitOverlay);
-      refreshOverlayBackgroundPreview();
+
+      // change game, so empty and add the wait overlay
+      // else full background reload
+      if (!cardPreview.isForGame(game.get().getId())) {
+        this.openImageBtn.setDisable(true);
+        this.generateBtn.setDisable(true);
+        this.generateAllBtn.setDisable(true);
+
+        cardPreview.setData(null, null);
+        previewStack.getChildren().remove(waitOverlay);
+        previewStack.getChildren().add(waitOverlay);
+      }
+
+       refreshOverlayBackgroundPreview();
 
       JFXFuture.supplyAsync(() -> client.getCardData(game.get(), getSelectedCardTemplate()))
           .thenAcceptLater(cardData -> {
@@ -421,6 +426,14 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
             this.generateBtn.setDisable(false);
             this.generateAllBtn.setDisable(false);
           });
+    }
+    else {
+      this.openImageBtn.setDisable(true);
+      this.generateBtn.setDisable(true);
+      this.generateAllBtn.setDisable(true);
+      mediaPlayerControl.setVisible(false);
+
+      cardPreview.setData(null, null);
     }
   }
 
@@ -472,7 +485,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   private void saveCardTemplate(CardTemplate cardTemplate) {
     cardTemplateSaveDebouncer.debounce("cardTemplate", () -> {
       JFXFuture.runAsync(() -> client.getHighscoreCardTemplatesClient().save(cardTemplate))
-          .thenLater(() -> refreshPreview(this.gameRepresentation, true))
+          .thenLater(() -> refreshPreview(this.gameRepresentation))
           .onErrorLater(e -> {
             LOG.error("Failed to save template: {}", e.getMessage(), e);
             WidgetFactory.showAlert(stage, "Error", "Failed to save template: " + e.getMessage());
@@ -523,7 +536,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       accordion.expandedPaneProperty().addListener((obs, o, n) -> {
         if (n != null) {
           CardLayer layer = titledPaneToLayer(n);
-          loadDragBox(layer, false);
+          loadDragBox(layer);
         }
       });
 
@@ -660,10 +673,14 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
   public void onDragboxEnter(MouseEvent me) {
     CardLayer layer = cardPreview.selectCardLayer(me.getX(), me.getY());
-
-    loadDragBox(layer, true);
-
-    me.consume();
+    if (layer != null) {
+      LayerEditorBaseController controller = layerToController(layer);
+      if (controller != null && controller.isNotLocked()) {
+        // expanding the pane will make the layer selected
+        controller.expandSettingsPane();
+        me.consume();
+      }
+    }
   }
 
   public void onDragboxExit(MouseEvent e) {
@@ -685,7 +702,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   }
 
 
-  private void loadDragBox(CardLayer layer, boolean expandSettings) {
+  private void loadDragBox(CardLayer layer) {
     // make sure first old draggbox is unselected
     unloadDragBoxes();
     if (layer != null) {
@@ -719,10 +736,6 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       dragBox.addToPane(cardPreview);
       dragBox.select();
       dragBoxes.add(dragBox);
-
-      if (expandSettings) {
-        controller.expandSettingsPane();
-      }
     }
   }
 
@@ -854,6 +867,9 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
         setTemplate(template);
       }
+    }
+    else {
+      refreshPreview(Optional.empty());
     }
   }
 
