@@ -67,8 +67,12 @@ public abstract class LayerEditorBaseController {
   /**
    * Called when the associated element is selected in the preview
    */
-  public void expandSettingsPane() {
+  public boolean expandSettingsPane() {
     TitledPane expandedPane = accordion.getExpandedPane();
+    if (expandedPane == settingsPane) {
+      return false;
+    }
+
     if (expandedPane != null) {
       expandedPane.setAnimated(false);
     }
@@ -79,6 +83,7 @@ public abstract class LayerEditorBaseController {
     if (expandedPane != null) {
       expandedPane.setAnimated(true);
     }
+    return true;
   }
 
   public TitledPane getSettingsPane() {

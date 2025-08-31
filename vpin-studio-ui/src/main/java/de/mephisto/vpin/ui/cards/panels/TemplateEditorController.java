@@ -677,7 +677,10 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       LayerEditorBaseController controller = layerToController(layer);
       if (controller != null && controller.isNotLocked()) {
         // expanding the pane will make the layer selected
-        controller.expandSettingsPane();
+        if (!controller.expandSettingsPane()) {
+          // if already expanded, just select the layer
+          loadDragBox(layer);
+        }
         me.consume();
       }
     }
