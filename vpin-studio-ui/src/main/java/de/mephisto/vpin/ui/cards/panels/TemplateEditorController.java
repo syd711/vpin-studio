@@ -319,7 +319,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     unloadDragBoxes();
 
     deleteBtn.setDisable(cardTemplate.getName().equals(CardTemplate.DEFAULT));
-    renameBtn.setDisable(cardTemplate.getName().equals(CardTemplate.DEFAULT));
+    renameBtn.setDisable(cardTemplate.getName().equals(CardTemplate.DEFAULT) || !cardTemplate.isTemplate());
 
     // interrupt property changes
     templateBeanBinder.setPaused(true);

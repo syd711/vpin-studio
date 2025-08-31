@@ -164,7 +164,7 @@ public class CardTemplate extends JsonSettings {
 
   @JsonIgnore
   public boolean isTemplate() {
-    return !this.name.startsWith(CARD_TEMPLATE_PREFIX);
+    return parentId == null;
   }
 
   public boolean isLockOverlay() {
