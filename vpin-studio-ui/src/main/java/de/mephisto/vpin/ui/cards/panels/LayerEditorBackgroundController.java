@@ -210,7 +210,6 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
     defaultBackgroundRadio.setToggleGroup(radioGroup);
     fallbackBackgroundRadio.setToggleGroup(radioGroup);
 
-
     radioGroup.selectedToggleProperty().addListener((obs, o, n) -> {
       coloredBackgroundPane.setDisable(n != coloredBackgroundRadio);
       fallbackBackgroundPane.setDisable(n != fallbackBackgroundRadio);

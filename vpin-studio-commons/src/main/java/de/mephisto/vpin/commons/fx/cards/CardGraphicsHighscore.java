@@ -110,7 +110,7 @@ public class CardGraphicsHighscore extends StackPane {
     //-----------
     // From here, below system of coordinate is template dimensions
 
-    if (template.isRenderBackground()) {
+    if (template.isRenderBackground() || template.isRenderFrame()) {
       backgroundLayer.setVisible(true);
       resizeRelocate(backgroundLayer, 0, 0, WIDTH, HEIGHT, zoomX, zoomY);
     }

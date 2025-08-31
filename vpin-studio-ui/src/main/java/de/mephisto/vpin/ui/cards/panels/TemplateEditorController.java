@@ -746,7 +746,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     else if (layerEditorBackgroundController.getSettingsPane() == pane && template.isRenderBackground()) {
       return null;
     }
-    else if (layerEditorFrameController.getSettingsPane() == pane && template.isRenderBackground()) {
+    else if (layerEditorFrameController.getSettingsPane() == pane && template.isRenderFrame()) {
       return null;      // do not return the layer as it is not selectable
     }
     else if (layerEditorCanvasController.getSettingsPane() == pane && template.isRenderCanvas()) {
