@@ -31,7 +31,7 @@ public class CardTemplatesService {
   @Autowired
   private TemplateMerger templateMerger;
 
-  public CardTemplate save(CardTemplate cardTemplate) {
+  public synchronized CardTemplate save(CardTemplate cardTemplate) {
     if (cardTemplate.getId() != null) {
       Optional<TemplateMapping> mapping = templateMappingRepository.findById(cardTemplate.getId());
       if (mapping.isPresent()) {

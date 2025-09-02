@@ -227,6 +227,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       }
 
       template.setName(s);
+      template.setParentId(null);
       template.setId(null);
       JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().save(template))
           .thenAcceptLater(newTemplate -> {
