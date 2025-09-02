@@ -90,6 +90,14 @@ public class SuperHacTableAssetAdapter extends DefaultTableAssetAdapter implemen
         }
         break;
       }
+      case Wheel: {
+        String url = createBaseUrl(game.getExtTableId(), "wheel");
+        boolean check = HttpUtils.check(url);
+        if (check) {
+          result.add(toTableAsset(source, EmulatorType.valueOf(emulatorName), screenSegment, url, "wheel"));
+        }
+        break;
+      }
     }
 
     return result;
