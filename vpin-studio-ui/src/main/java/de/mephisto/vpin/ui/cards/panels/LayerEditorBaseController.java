@@ -107,6 +107,12 @@ public abstract class LayerEditorBaseController {
           boolean visible = !templateBeanBinder.getProperty(property, true);
           templateBeanBinder.setProperty(property, visible);
           setIconVisibility(visible);
+          if (visible) {
+            templateEditorController.selectLayer(this);
+          }
+          else {
+            templateEditorController.deselectLayer(this);
+          }
         }
         catch (Exception ex) {
           LOG.error("Cannot read property {} from template", property, ex);
