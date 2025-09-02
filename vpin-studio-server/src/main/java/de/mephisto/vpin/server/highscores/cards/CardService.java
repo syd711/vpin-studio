@@ -349,7 +349,9 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
         if (background != null && !background.exists()) {
           defaultPictureService.extractDefaultPicture(game);
         }
-        return org.apache.commons.io.FileUtils.readFileToByteArray(background);
+        if (background != null && background.exists()) {
+          return org.apache.commons.io.FileUtils.readFileToByteArray(background);
+        }
       }
       else if ("wheel".equals(imageName)) {
         FrontendMediaItem media = frontendService.getDefaultMediaItem(game, VPinScreen.Wheel);

@@ -88,13 +88,18 @@ public class CardLayerBackground extends Canvas implements CardLayer {
     //--------------------------
     // Draw Part
 
-    double framex = template.getMarginLeft() * zoomX;
-    double framey = template.getMarginTop() * zoomY;
-    double framewidth = width - (template.getMarginLeft() + template.getMarginRight()) * zoomX;
-    double frameheight = height - (template.getMarginTop() + template.getMarginBottom()) * zoomY;
-    int border = template.getBorderWidth() > 0 ? (int) (template.getBorderWidth() * zoomX) : 0;
-    double radiusx = template.getBorderRadius() * 2 * zoomX;
-    double radiusy = template.getBorderRadius() * 2 * zoomY;
+    double framex = 0, framey = 0, framewidth = width, frameheight = height;
+    double border = 0, radiusx = 0, radiusy = 0;
+
+    if (template.isRenderFrame()) {
+      framex = template.getMarginLeft() * zoomX;
+      framey = template.getMarginTop() * zoomY;
+      framewidth -= (template.getMarginLeft() + template.getMarginRight()) * zoomX;
+      frameheight -= (template.getMarginTop() + template.getMarginBottom()) * zoomY;
+      border = template.getBorderWidth() > 0 ? (int) (template.getBorderWidth() * zoomX) : 0;
+      radiusx = template.getBorderRadius() * 2 * zoomX;
+      radiusy = template.getBorderRadius() * 2 * zoomY;
+    }
 
     // Set the clip region
     Rectangle rect = new Rectangle(framex, framey, framewidth, frameheight);
@@ -102,7 +107,7 @@ public class CardLayerBackground extends Canvas implements CardLayer {
     rect.setArcHeight(radiusy);
     this.setClip(rect);
 
-    if (cacheBackground != null) {
+    if (cacheBackground != null && template.isRenderBackground()) {
 
       // Use java fx for blur effect, much quicker !
       GaussianBlur blur = null;
@@ -115,9 +120,9 @@ public class CardLayerBackground extends Canvas implements CardLayer {
       g.setGlobalAlpha(1.0 - template.getTransparentPercentage() / 100.0);
 
       // coords in image
-      double imgZoom = template.getZoom() / 100;    // max zoom is 100
       double imgWidth = cacheBackground.getWidth();
       double imgHeight = cacheBackground.getHeight();
+      double offsetX = 0, offsetY = 0;
 
       // Resize image in proportion of the frame and calculate offset to center
       if (framewidth * imgHeight > frameheight * imgWidth) {
@@ -126,23 +131,18 @@ public class CardLayerBackground extends Canvas implements CardLayer {
         imgWidth = imgHeight * framewidth / frameheight;
       }
 
-      // zoom the image and center it
-      imgWidth *= imgZoom;
-      imgHeight *= imgZoom;
-      //double imgX = (cacheBackground.getWidth() - imgWidth) / 2.0;
-      //double imgY = (cacheBackground.getHeight() - imgHeight) / 2.0;
+      if (template.isRenderFrame()) {
+        // zoom the image and center it
+        double imgZoom = template.getZoom() / 100;    // max zoom is 100
+        imgWidth *= imgZoom;
+        imgHeight *= imgZoom;
 
-      double imgX = (1 + template.getBackgroundX()) * (cacheBackground.getWidth() - imgWidth) / 2.0;
-      double imgY = (1 + template.getBackgroundY()) * (cacheBackground.getHeight() - imgHeight) / 2.0;
+        offsetX = template.getBackgroundX();
+        offsetY = template.getBackgroundY();
+      }
 
-/*
-System.out.println("framewidth x frameheight = " + framewidth + " x " + frameheight + "(ratio " + (framewidth/frameheight) + ")");
-System.out.println("ImgW x ImhH = " + cacheBackground.getWidth() + " x " + cacheBackground.getHeight() + "(ratio " + (cacheBackground.getWidth()/cacheBackground.getHeight()) + ")");
-System.out.println("Img Zoom = " + imgZoom);
-System.out.println("W x H = " + framewidth + " x " + frameheight  + "(ratio " + (framewidth/frameheight) + ")");
-System.out.println("w x h = " + imgWidth + " x " + imgHeight  + "(ratio " + (imgWidth/imgHeight) + ")");
-System.out.println("");
-*/
+      double imgX = (1 + offsetX) * (cacheBackground.getWidth() - imgWidth) / 2.0;
+      double imgY = (1 + offsetY) * (cacheBackground.getHeight() - imgHeight) / 2.0;
 
       g.drawImage(cacheBackground, imgX, imgY, imgWidth, imgHeight, framex  + border, framey + border, framewidth - 2 * border, frameheight - 2 * border);
       lt.pulse("drawImage()");
@@ -162,7 +162,7 @@ System.out.println("");
           template.getBorderRadius() * 2 * zoomX, template.getBorderRadius() * 2 * zoomY);
 
 
-      lt.pulse("drawBorder()");
+      lt.pulse("drawFrame()");
     }
   }
 

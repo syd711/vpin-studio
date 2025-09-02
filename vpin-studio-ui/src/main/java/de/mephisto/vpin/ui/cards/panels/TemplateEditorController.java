@@ -232,7 +232,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().save(template))
           .thenAcceptLater(newTemplate -> {
             refreshTemplates(newTemplate);
-            templateCombo.setValue(newTemplate);
+            selectTemplateInCombo(newTemplate);
             assignTemplate(newTemplate);
           })
           .onErrorLater(ex -> {
@@ -353,7 +353,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     templateBeanBinder.setPaused(false);
 
     cardPreview.setTemplate(cardTemplate);
-    refreshPreview(this.gameRepresentation, true);
+    refreshPreview(this.gameRepresentation);
   }
 
   private void refreshNagBar(CardTemplate cardTemplate, Optional<GameRepresentation> gameRepresentation) {
@@ -385,32 +385,37 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       else {
         ProgressDialog.createProgressDialog(new HighscoreGeneratorProgressModel(client, "Generating Highscore Card", this.gameRepresentation.get()));
       }
-      refreshPreview(this.gameRepresentation, true);
+      refreshPreview(this.gameRepresentation);
     }
   }
 
   @FXML
   private void onGenerateClick() {
     JFXFuture.runAsync(() -> client.getHighscoreCardTemplatesClient().save((CardTemplate) this.templateBeanBinder.getBean()))
-        .thenLater(() -> refreshPreview(this.gameRepresentation, true))
+        .thenLater(() -> refreshPreview(this.gameRepresentation))
         .onErrorLater(e -> {
           LOG.error("Failed to save template: {}", e.getMessage(), e);
           WidgetFactory.showAlert(stage, "Error", "Failed to save template: " + e.getMessage());
         });
   }
 
-  private void refreshPreview(Optional<GameRepresentation> game, boolean regenerate) {
-    this.openImageBtn.setDisable(true);
-    this.generateBtn.setDisable(true);
-    this.generateAllBtn.setDisable(true);
-    mediaPlayerControl.setVisible(false);
-
-    cardPreview.setData(null, null);
+  private void refreshPreview(Optional<GameRepresentation> game) {
 
     if (game.isPresent()) {
-      previewStack.getChildren().remove(waitOverlay);
-      previewStack.getChildren().add(waitOverlay);
-      refreshOverlayBackgroundPreview();
+
+      // change game, so empty and add the wait overlay
+      // else full background reload
+      if (!cardPreview.isForGame(game.get().getId())) {
+        this.openImageBtn.setDisable(true);
+        this.generateBtn.setDisable(true);
+        this.generateAllBtn.setDisable(true);
+
+        cardPreview.setData(null, null);
+        previewStack.getChildren().remove(waitOverlay);
+        previewStack.getChildren().add(waitOverlay);
+      }
+
+       refreshOverlayBackgroundPreview();
 
       JFXFuture.supplyAsync(() -> client.getCardData(game.get(), getSelectedCardTemplate()))
           .thenAcceptLater(cardData -> {
@@ -422,6 +427,14 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
             this.generateBtn.setDisable(false);
             this.generateAllBtn.setDisable(false);
           });
+    }
+    else {
+      this.openImageBtn.setDisable(true);
+      this.generateBtn.setDisable(true);
+      this.generateAllBtn.setDisable(true);
+      mediaPlayerControl.setVisible(false);
+
+      cardPreview.setData(null, null);
     }
   }
 
@@ -473,7 +486,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   private void saveCardTemplate(CardTemplate cardTemplate) {
     cardTemplateSaveDebouncer.debounce("cardTemplate", () -> {
       JFXFuture.runAsync(() -> client.getHighscoreCardTemplatesClient().save(cardTemplate))
-          .thenLater(() -> refreshPreview(this.gameRepresentation, true))
+          .thenLater(() -> refreshPreview(this.gameRepresentation))
           .onErrorLater(e -> {
             LOG.error("Failed to save template: {}", e.getMessage(), e);
             WidgetFactory.showAlert(stage, "Error", "Failed to save template: " + e.getMessage());
@@ -524,7 +537,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       accordion.expandedPaneProperty().addListener((obs, o, n) -> {
         if (n != null) {
           CardLayer layer = titledPaneToLayer(n);
-          loadDragBox(layer, false);
+          loadDragBox(layer);
         }
       });
 
@@ -661,10 +674,17 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
   public void onDragboxEnter(MouseEvent me) {
     CardLayer layer = cardPreview.selectCardLayer(me.getX(), me.getY());
-
-    loadDragBox(layer, true);
-
-    me.consume();
+    if (layer != null) {
+      LayerEditorBaseController controller = layerToController(layer);
+      if (controller != null && controller.isNotLocked()) {
+        // expanding the pane will make the layer selected
+        if (!controller.expandSettingsPane()) {
+          // if already expanded, just select the layer
+          loadDragBox(layer);
+        }
+        me.consume();
+      }
+    }
   }
 
   public void onDragboxExit(MouseEvent e) {
@@ -686,7 +706,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   }
 
 
-  private void loadDragBox(CardLayer layer, boolean expandSettings) {
+  private void loadDragBox(CardLayer layer) {
     // make sure first old draggbox is unselected
     unloadDragBoxes();
     if (layer != null) {
@@ -720,10 +740,6 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       dragBox.addToPane(cardPreview);
       dragBox.select();
       dragBoxes.add(dragBox);
-
-      if (expandSettings) {
-        controller.expandSettingsPane();
-      }
     }
   }
 
@@ -747,7 +763,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     else if (layerEditorBackgroundController.getSettingsPane() == pane && template.isRenderBackground()) {
       return null;
     }
-    else if (layerEditorFrameController.getSettingsPane() == pane && template.isRenderBackground()) {
+    else if (layerEditorFrameController.getSettingsPane() == pane && template.isRenderFrame()) {
       return null;      // do not return the layer as it is not selectable
     }
     else if (layerEditorCanvasController.getSettingsPane() == pane && template.isRenderCanvas()) {
@@ -817,14 +833,6 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
    * @param cardTemplate
    */
   private void assignTemplate(@Nullable CardTemplate cardTemplate) {
-    CardTemplate existingTemplate = client.getHighscoreCardTemplatesClient().getCardTemplateForGame(this.gameRepresentation.get());
-    if (existingTemplate != null && !existingTemplate.isTemplate()) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Apply the template \"" + cardTemplate.getName() + "\" to the table \"" + this.gameRepresentation.get().getGameDisplayName() + "\"?", "This will delete the existing custom template.");
-      if (!result.get().equals(ButtonType.OK)) {
-        return;
-      }
-    }
-
     CardTemplate baseTemplate = templateCombo.getValue();
     List<GameRepresentation> selection = highscoreCardsController.getSelections();
     ProgressDialog.createProgressDialog(new TemplateAssigmentProgressModel(selection, baseTemplate, cardTemplate));
@@ -842,20 +850,25 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       CardTemplate template = client.getHighscoreCardTemplatesClient().getCardTemplateForGame(game);
       if (template != null) {
         if (template.isTemplate()) {
-          templateCombo.valueProperty().removeListener(templateComboChangeListener);
-          templateCombo.setValue(template);
-          templateCombo.valueProperty().addListener(templateComboChangeListener);
+          selectTemplateInCombo(template);
         }
         else if (template.getParentId() != null) {
           CardTemplate parentTemplate = client.getHighscoreCardTemplatesClient().getTemplateById(template.getParentId());
-          templateCombo.valueProperty().removeListener(templateComboChangeListener);
-          templateCombo.setValue(parentTemplate);
-          templateCombo.valueProperty().addListener(templateComboChangeListener);
+          selectTemplateInCombo(parentTemplate);
         }
 
         setTemplate(template);
       }
     }
+    else {
+      refreshPreview(Optional.empty());
+    }
+  }
+
+  private void selectTemplateInCombo(CardTemplate template) {
+    templateCombo.valueProperty().removeListener(templateComboChangeListener);
+    templateCombo.setValue(template);
+    templateCombo.valueProperty().addListener(templateComboChangeListener);
   }
 
   //-------------- MediaPlayerListener
@@ -879,6 +892,17 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     @Override
     public void changed(ObservableValue<? extends CardTemplate> observable, CardTemplate oldValue, CardTemplate newValue) {
       if (newValue != null) {
+        if (gameRepresentation.isPresent()) {
+          CardTemplate existingTemplate = client.getHighscoreCardTemplatesClient().getCardTemplateForGame(gameRepresentation.get());
+          if (existingTemplate != null && !existingTemplate.isTemplate()) {
+            Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Apply the template \"" + existingTemplate.getName() + "\" to the table \"" + gameRepresentation.get().getGameDisplayName() + "\"?", "This will delete the existing custom template.");
+            if (!result.get().equals(ButtonType.OK)) {
+              selectTemplateInCombo(oldValue);
+              return;
+            }
+          }
+        }
+        // all good, assign template
         setTemplate(newValue);
         if (gameRepresentation.isPresent()) {
           assignTemplate(newValue);

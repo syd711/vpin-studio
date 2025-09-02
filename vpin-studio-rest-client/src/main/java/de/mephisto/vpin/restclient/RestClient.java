@@ -273,7 +273,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
       return baos.toByteArray();
     }
     catch (Exception e) {
-      LOG.error("Failed while reading bytes from %s: %s", resource, e.getMessage(), e);
+      LOG.error("Failed while reading bytes from {}: {}", resource, e.getMessage(), e);
     }
     return null;
   }

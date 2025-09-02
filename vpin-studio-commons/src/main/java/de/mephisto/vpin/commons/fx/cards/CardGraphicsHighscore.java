@@ -80,6 +80,10 @@ public class CardGraphicsHighscore extends StackPane {
     this.requestLayout();
   }
 
+  public boolean isForGame(int gameId) {
+    return data != null && gameId == data.getGameId();
+  }
+
   @Override protected void layoutChildren() {
     double width = getWidth();
     double height = getHeight();
@@ -110,7 +114,7 @@ public class CardGraphicsHighscore extends StackPane {
     //-----------
     // From here, below system of coordinate is template dimensions
 
-    if (template.isRenderBackground()) {
+    if (template.isRenderBackground() || template.isRenderFrame()) {
       backgroundLayer.setVisible(true);
       resizeRelocate(backgroundLayer, 0, 0, WIDTH, HEIGHT, zoomX, zoomY);
     }
@@ -263,5 +267,4 @@ public class CardGraphicsHighscore extends StackPane {
     double lh = layer.getHeight();
     return (x >= lx && x < lx + lw && y >= ly && y < ly + lh);
   }
-
 }

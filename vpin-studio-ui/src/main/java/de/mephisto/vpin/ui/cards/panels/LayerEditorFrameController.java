@@ -70,12 +70,6 @@ public class LayerEditorFrameController extends LayerEditorBaseController {
     bindVisibilityIcon(templateBeanBinder, "renderFrame");
     bindLockIcon(templateBeanBinder, "lockFrame");
 
-    templateBeanBinder.addListener((bean, key, value) -> {
-      if ("renderBackground".equals(key)) {
-        setIconVisibility((boolean) value);
-      }
-    });
-
     templateBeanBinder.bindSlider(zoomSlider, "zoom");
     // a 0 zoom is useless as the image would nt be drawn at all
     zoomSlider.setMin(1);
