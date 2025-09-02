@@ -105,6 +105,9 @@ public class TemplateAssigmentProgressModel extends ProgressModel<GameRepresenta
           client.getHighscoreCardTemplatesClient().deleteTemplate(cardTemplate.getId());
         }
         game.setTemplateId(baseTemplate.getId());
+
+        //write lock waiting
+        Thread.sleep(300);
         client.getGameService().saveGame(game);
       }
 
