@@ -200,7 +200,7 @@ public class VPXFileScanner {
   }
 
   private static void lineSearchTextFileName(ScanResult result, String line) {
-    if (TXT_FILENAME_PATTERN.matcher(line).matches()) {
+    if (!line.contains("Array(") && TXT_FILENAME_PATTERN.matcher(line).matches()) {
       String pattern = ".txt";
       if (line.contains("'") && line.trim().indexOf("'") < line.indexOf(pattern)) {
         return;
