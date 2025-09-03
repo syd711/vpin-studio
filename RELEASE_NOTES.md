@@ -7,7 +7,7 @@
    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/cards/cards.png?raw=true" width="700" />
 
 - **Table Backups**
-  - The Studio supports creating and restoring table backups now. **Note that this feature is solely for private use only!!!** For this reason, the backups are password protected. To enable the feature, you need to configure your VPU or VPF account for authentication. Check out the YouTube channel video for more details.
+  - The Studio supports creating and restoring table backups now. **Note that this feature is solely for private use only!!!** For this reason, the backups are password protected. To enable the feature, you need to configure your VPU or VPF account for authentication. Check out the YouTube channel video linked on our Discord for more details. Note that VPBM has been removed entirely from the Studio for this.
   
     <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/backups/overview.png?raw=true" width="700" />
   
