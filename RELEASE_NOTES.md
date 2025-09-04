@@ -4,6 +4,8 @@
 
 - **Backups**: Fixed mix-up of .res and .ini files.
 - **Backups**: Added target folder selection to the backup folder so that backup "sources" can also be chosen as target.
+- **DMD Position**: Removed ending version in filename for tables using ultraDMD or flexDMD
+- **DMD Position**: Fixed save of values when section name contains dot
 
 ---
 
