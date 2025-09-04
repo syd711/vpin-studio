@@ -2,22 +2,26 @@ package de.mephisto.vpin.ui.backups.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.backups.BackupSourceRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.BackupExportDescriptor;
 import de.mephisto.vpin.restclient.preferences.BackupSettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -82,16 +86,21 @@ public class TablesBackupDialogController implements Initializable, DialogContro
   @FXML
   private CheckBox registryDataCheckBox;
 
-
   @FXML
   private VBox frontendColumn;
+
+  @FXML
+  private ComboBox<BackupSourceRepresentation> sourceCombo;
 
 
   private List<GameRepresentation> games;
 
   @FXML
   private void onExportClick(ActionEvent e) throws Exception {
+    BackupSourceRepresentation source = sourceCombo.getValue();
+
     BackupExportDescriptor descriptor = new BackupExportDescriptor();
+    descriptor.setBackupSourceId(source.getId());
     descriptor.setRemoveFromPlaylists(removeFromPlaylistCheckbox.isSelected());
     descriptor.getGameIds().addAll(games.stream().map(GameRepresentation::getId).collect(Collectors.toList()));
     Studio.client.getArchiveService().backupTable(descriptor);
@@ -138,10 +147,13 @@ public class TablesBackupDialogController implements Initializable, DialogContro
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-
     frontendColumn.managedProperty().bindBidirectional(frontendColumn.visibleProperty());
     pupPackCheckBox.managedProperty().bindBidirectional(pupPackCheckBox.visibleProperty());
     popperMediaCheckBox.managedProperty().bindBidirectional(popperMediaCheckBox.visibleProperty());
+
+    List<BackupSourceRepresentation> repositories = new ArrayList<>(client.getArchiveService().getBackupSources());
+    sourceCombo.setItems(FXCollections.observableList(repositories));
+    sourceCombo.getSelectionModel().select(0);
 
     frontendColumn.setVisible(!Features.IS_STANDALONE);
 

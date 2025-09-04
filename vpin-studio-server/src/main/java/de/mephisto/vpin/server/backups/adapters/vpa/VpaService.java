@@ -142,7 +142,7 @@ public class VpaService implements InitializingBean {
 
     File iniFile = game.getIniFile();
     if (backupSettings.isIni() && iniFile.exists()) {
-      packageInfo.setRes(BackupFileInfoFactory.create(iniFile));
+      packageInfo.setIni(BackupFileInfoFactory.create(iniFile));
       if (!zipFile(jobDescriptor, iniFile, iniFile.getName(), zipOut)) {
         return;
       }

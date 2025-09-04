@@ -82,6 +82,8 @@ public class BackupSourceFolderDialogController implements Initializable, Dialog
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    folderBtn.managedProperty().bindBidirectional(folderBtn.visibleProperty());
+
     source = new BackupSourceRepresentation();
     folderBtn.setVisible(client.getSystemService().isLocal());
 

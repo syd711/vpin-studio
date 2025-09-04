@@ -1,3 +1,12 @@
+## Release Notes 4.2.1
+
+## Bugfixes
+
+- **Backups**: Fixed mix-up of .res and .ini files.
+- **Backups**: Added target folder selection to the backup folder so that backup "sources" can also be chosen as target.
+
+---
+
 ## Release Notes 4.2.0
 
 ## Changes

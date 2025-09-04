@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.server.backups.BackupDescriptor;
+import de.mephisto.vpin.server.backups.BackupSource;
 import de.mephisto.vpin.server.backups.adapters.TableBackupAdapter;
 import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -25,16 +26,19 @@ import java.util.Date;
 public class TableBackupAdapterVpa implements TableBackupAdapter {
   private final static Logger LOG = LoggerFactory.getLogger(TableBackupAdapterVpa.class);
 
+  @NonNull
+  private final BackupSource backupSource;
   private final Game game;
   private final TableDetails tableDetails;
   private final VpaService vpaService;
   private boolean cancelled = false;
 
-
   public TableBackupAdapterVpa(@NonNull VpaService vpaService,
+                               @NonNull BackupSource backupSource,
                                @NonNull Game game,
                                @NonNull TableDetails tableDetails) {
     this.vpaService = vpaService;
+    this.backupSource = backupSource;
     this.game = game;
     this.tableDetails = tableDetails;
   }
@@ -52,7 +56,12 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
     LOG.info("Calculated total approx. size of " + FileUtils.readableFileSize(totalSizeExpected) + " for the archive of " + game.getGameDisplayName());
 
     String baseName = FilenameUtils.getBaseName(game.getGameFileName());
-    File target = new File(VpaBackupSource.FOLDER, baseName + "." + BackupType.VPA.name().toLowerCase());
+    File targetFolder = new File(backupSource.getLocation());
+    if (!targetFolder.exists()) {
+      targetFolder = VpaBackupSource.FOLDER;
+    }
+
+    File target = new File(targetFolder, baseName + "." + BackupType.VPA.name().toLowerCase());
     target = FileUtils.uniqueFile(target);
     backupDescriptor.setFilename(target.getName());
 

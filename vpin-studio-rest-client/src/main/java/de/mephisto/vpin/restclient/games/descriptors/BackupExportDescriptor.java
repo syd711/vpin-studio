@@ -5,7 +5,16 @@ import java.util.List;
 
 public class BackupExportDescriptor {
   private List<Integer> gameIds = new ArrayList<>();
+  private long backupSourceId;
   private boolean removeFromPlaylists = false;
+
+  public long getBackupSourceId() {
+    return backupSourceId;
+  }
+
+  public void setBackupSourceId(long backupSourceId) {
+    this.backupSourceId = backupSourceId;
+  }
 
   public List<Integer> getGameIds() {
     return gameIds;
