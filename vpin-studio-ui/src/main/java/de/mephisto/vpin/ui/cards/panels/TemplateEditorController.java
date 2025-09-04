@@ -49,6 +49,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -743,6 +744,32 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     }
   }
 
+  public void selectLayer(LayerEditorBaseController controller) {
+    if (controller.isNotLocked()) {
+      // expanding the pane will make the layer selected
+      if (!controller.expandSettingsPane()) {
+        // if already expanded, just select the layer
+        CardLayer layer = controllerToLayer(controller);
+        loadDragBox(layer);
+      }
+    }
+  }
+
+  public void deselectLayer(LayerEditorBaseController controller) {
+    for (Iterator<PositionResizer> iter = dragBoxes.iterator(); iter.hasNext();) {
+      PositionResizer dragBox = iter.next();
+      if (dragBox.getUserData() instanceof CardLayer) {
+        CardLayer layer = (CardLayer) dragBox.getUserData();
+        LayerEditorBaseController associatedController = layerToController(layer);
+        if (associatedController == controller) {
+          dragBox.removeFromPane(cardPreview);
+          associatedController.unbindDragBox(dragBox);
+          iter.remove();
+        }
+      }
+    }
+  }
+
   public <T extends CardLayer> T getLayer(Class<T> clazz) {
     for (CardLayer cardLayer : cardPreview.getLayers()) {
       if (cardLayer.getClass().equals(clazz)) {
@@ -824,8 +851,16 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     throw new RuntimeException("CardLayer not mapped");
   }
 
-  //-----------------------------------------
+  private CardLayer controllerToLayer(LayerEditorBaseController controller) {
+    for (CardLayer layer : cardPreview.getLayers()) {
+      if (layerToController(layer) == controller) {
+        return layer;
+      }
+    }
+    return null;
+  }
 
+  //-----------------------------------------
 
   /**
    * Null when the games should receive a custom template

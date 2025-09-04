@@ -53,7 +53,7 @@ public class TableAssetDefaultSourcesFactory {
     source.setProvided(true);
     source.setEnabled(true);
     source.setLocation("https://github.com/superhac/vpinmediadb");
-    source.setSupportedScreens(Arrays.asList(VPinScreen.GameInfo.name(), VPinScreen.GameHelp.name(), VPinScreen.BackGlass.name(), VPinScreen.DMD.name(), VPinScreen.PlayField.name()));
+    source.setSupportedScreens(Arrays.asList(VPinScreen.GameInfo.name(), VPinScreen.GameHelp.name(), VPinScreen.BackGlass.name(), VPinScreen.DMD.name(), VPinScreen.PlayField.name(), VPinScreen.Wheel.name()));
     return source;
   }
 }

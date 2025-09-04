@@ -11,7 +11,6 @@ import org.apache.poi.poifs.filesystem.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -23,6 +22,7 @@ public class VPXUtil {
   private final static String VPX_TOOL_EXE = "vpxtool.exe";
 
   public static String readScript(@NonNull File file) {
+    long extractionStart = System.currentTimeMillis();
     try {
       byte[] content = readBytes(file);
 
@@ -45,6 +45,9 @@ public class VPXUtil {
     }
     catch (Exception e) {
       return String.valueOf(e.getMessage());
+    }
+    finally {
+      LOG.info("Script extraction for {} took {}ms.", file.getAbsolutePath(), (System.currentTimeMillis() - extractionStart));
     }
   }
 
@@ -217,7 +220,7 @@ public class VPXUtil {
       return script;
     }
     catch (Exception e) {
-      LOG.error("Exporting VBS failed for {}: {} - {}", vpxFile.getAbsolutePath(), error,  e.getMessage(), e);
+      LOG.error("Exporting VBS failed for {}: {} - {}", vpxFile.getAbsolutePath(), error, e.getMessage(), e);
       throw new Exception("Exporting VBS failed for \"" + vpxFile.getAbsolutePath() + "\": " + error);
     }
   }
