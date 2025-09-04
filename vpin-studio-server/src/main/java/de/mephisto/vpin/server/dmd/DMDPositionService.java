@@ -66,13 +66,7 @@ public class DMDPositionService {
   public DMDInfo getDMDInfo(int gameId) {
     Game game = gameService.getGame(gameId);
     String rom = StringUtils.defaultString(game.getRomAlias(), game.getRom());
-    String storeName = rom;
-    if (DMDPackageTypes.UltraDMD.equals(game.getDMDType())) {
-      storeName = FilenameUtils.getBaseName(game.getGameFileName());
-    }
-    else if (DMDPackageTypes.FlexDMD.equals(game.getDMDType())) {
-      storeName = game.getDMDGameName();
-    }
+    String storeName = getStoreName(game);
 
     DMDInfo dmdinfo = new DMDInfo();
     dmdinfo.setGameId(game.getId());
@@ -133,7 +127,7 @@ public class DMDPositionService {
         if (type == null) {
           SubnodeConfiguration virtualdmdConf = iniConfiguration.getSection("virtualdmd");
           SubnodeConfiguration alphaNumericConf = iniConfiguration.getSection("alphanumeric");
-          SubnodeConfiguration conf = iniConfiguration.getSection(dmdinfo.getDmdStoreName().replace(".", ".."));
+          SubnodeConfiguration conf = iniConfiguration.getSection(dmdinfo.getDmdStoreName());
           boolean virtualDmdEnabled = safeGetBoolean(conf, "virtualdmd enabled", safeGetBoolean(virtualdmdConf, "enabled", false));
           boolean alphaNumericEnabled = safeGetBoolean(conf, "alphanumeric enabled", safeGetBoolean(alphaNumericConf, "enabled", false));
           type = alphaNumericEnabled ? DMDType.AlphaNumericDMD :
@@ -267,7 +261,7 @@ public class DMDPositionService {
   private boolean fillDMDInfoFromIni(DMDInfo info, DMDInfoZone main, List<DMDInfoZone> alphaNumZones, INIConfiguration iniConfiguration) {
     if (info.getDmdStoreName() != null) {
       SubnodeConfiguration virtualdmdConf = iniConfiguration.getSection("virtualdmd");
-      SubnodeConfiguration conf = iniConfiguration.getSection(info.getDmdStoreName().replace(".", ".."));
+      SubnodeConfiguration conf = iniConfiguration.getSection(info.getDmdStoreName());
 
       info.setLocallySaved(!conf.isEmpty());
       info.setUseRegistry(false);
@@ -413,13 +407,8 @@ public class DMDPositionService {
   public boolean saveDMDInfo(DMDInfo dmdinfo) {
     Game game = gameService.getGame(dmdinfo.getGameId());
     String rom = StringUtils.defaultString(game.getRomAlias(), game.getRom());
-    String storeName = rom;
-    if (DMDPackageTypes.UltraDMD.equals(game.getDMDType())) {
-      storeName = FilenameUtils.getBaseName(game.getGameFileName());
-    }
-    else if (DMDPackageTypes.FlexDMD.equals(game.getDMDType())) {
-      storeName = game.getDMDGameName();
-    }
+    String storeName = getStoreName(game);
+
     dmdinfo.setDmdStoreName(storeName);
 
     List<FrontendPlayerDisplay> screenResDisplays = screenService.getScreenResDisplays(game);
@@ -580,9 +569,15 @@ public class DMDPositionService {
   }
 
   private boolean saveVirtualDMDInfoInIni(Game game, DMDInfo dmdinfo, DMDInfoZone dmdinfoZone, INIConfiguration iniConfiguration, boolean locallySaved) {
+    // A TEMPORARY DIRTY HACK AS A WORKAROUND TO SAVE MULTIPLE VALUES UNDER A SECTION WITH A NAME CONTAINING DOTS
+    // https://issues.commons.apache.narkive.com/fY6Eq7l3/jira-created-configuration-684-yamlconfiguration-keys-with-double-dots
+    if (dmdinfo.getDmdStoreName().contains(".")) {
+      return tempSaveIniInSequence(game, dmdinfo, dmdinfoZone, locallySaved);
+    }
+    
     SubnodeConfiguration virtualdmdConf = iniConfiguration.getSection("virtualdmd");
     SubnodeConfiguration alphaNumericConf = iniConfiguration.getSection("alphanumeric");
-    SubnodeConfiguration conf = iniConfiguration.getSection(dmdinfo.getDmdStoreName().replace(".", ".."));
+    SubnodeConfiguration conf = iniConfiguration.getSection(dmdinfo.getDmdStoreName());
 
     // if the global virtualDMD is not enabled, force enable=true
     if (!safeGetBoolean(virtualdmdConf, "enabled", false)) {
@@ -618,6 +613,61 @@ public class DMDPositionService {
 
     return saveDmdDeviceIni(game.getEmulator(), iniConfiguration);
   }
+
+  //------------------------------------------
+  // TEMPORARY
+  private boolean tempSaveIniInSequence(Game game, DMDInfo dmdinfo, DMDInfoZone dmdinfoZone, boolean locallySaved) {
+    INIConfiguration iniConfiguration = loadDmdDeviceIni(game.getEmulator());
+    SubnodeConfiguration virtualdmdConf = iniConfiguration.getSection("virtualdmd");
+    SubnodeConfiguration alphaNumericConf = iniConfiguration.getSection("alphanumeric");
+
+    boolean ret = true;
+    // if the global virtualDMD is not enabled, force enable=true
+    if (!safeGetBoolean(virtualdmdConf, "enabled", false)) {
+      ret &= tempSaveProperty(game, dmdinfo, "virtualdmd enabled", true);
+    }
+    else {
+      ret &= tempClearProperty(game, dmdinfo, "virtualdmd enabled");
+    }
+    // if the global alphaNumeric is enabled, force enable=false
+    if (safeGetBoolean(alphaNumericConf, "enabled", false)) {
+      ret &= tempSaveProperty(game, dmdinfo, "alphanumeric enabled", false);
+    }
+    // else globally not enabled, no need for key in rom
+    else {
+      ret &= tempClearProperty(game, dmdinfo, "alphanumeric enabled");
+    }
+
+    // now store the positions in the good section
+    if (locallySaved) {
+      ret &= tempSaveProperty(game, dmdinfo, "virtualdmd left", (int) dmdinfoZone.getX());
+      ret &= tempSaveProperty(game, dmdinfo, "virtualdmd top", (int) dmdinfoZone.getY());
+      ret &= tempSaveProperty(game, dmdinfo, "virtualdmd width", (int) dmdinfoZone.getWidth());
+      ret &= tempSaveProperty(game, dmdinfo, "virtualdmd height", (int) dmdinfoZone.getHeight());
+    }
+    else {
+      // else update the global ones
+      virtualdmdConf.setProperty("left", (int) dmdinfoZone.getX());
+      virtualdmdConf.setProperty("top", (int) dmdinfoZone.getY());
+      virtualdmdConf.setProperty("width", (int) dmdinfoZone.getWidth());
+      virtualdmdConf.setProperty("height", (int) dmdinfoZone.getHeight());
+      return saveDmdDeviceIni(game.getEmulator(), iniConfiguration);
+    }
+    return ret;
+  }
+  private <T> boolean tempSaveProperty(Game game, DMDInfo dmdinfo, String property, T value) {
+    INIConfiguration iniConfiguration = loadDmdDeviceIni(game.getEmulator());
+    SubnodeConfiguration conf = iniConfiguration.getSection(dmdinfo.getDmdStoreName());
+    conf.setProperty(property, value);
+    return saveDmdDeviceIni(game.getEmulator(), iniConfiguration);
+  }
+  private <T> boolean tempClearProperty(Game game, DMDInfo dmdinfo, String property) {
+    INIConfiguration iniConfiguration = loadDmdDeviceIni(game.getEmulator());
+    SubnodeConfiguration conf = iniConfiguration.getSection(dmdinfo.getDmdStoreName());
+    conf.clearProperty(property);
+    return saveDmdDeviceIni(game.getEmulator(), iniConfiguration);
+  }
+  //------------------------------------------
 
   private boolean saveAlphaNumericDMDInfoInIni(Game game, DMDInfo dmdinfo, INIConfiguration iniConfiguration) {
     String rom = StringUtils.defaultString(game.getRomAlias(), game.getRom());
@@ -709,6 +759,22 @@ public class DMDPositionService {
       LOG.error("Failed to write dmddevice.ini", e);
       return false;
     }
+  }
+
+  public String getStoreName(Game game) {
+    String rom = StringUtils.defaultString(game.getRomAlias(), game.getRom());
+    String storeName = rom;
+    if (DMDPackageTypes.UltraDMD.equals(game.getDMDType())) {
+      storeName = FilenameUtils.getBaseName(game.getGameFileName());
+      // cf https://github.com/vbousquet/flexdmd/blob/6357c1874e896777a53348094eafa86f386dd8fe/FlexDMD/FlexDMD.cs#L188
+      storeName = storeName.replaceAll("[\\s_vV][\\d_\\.]+[a-z]?(-DOF)?\\*?$", "").trim();
+    }
+    else if (DMDPackageTypes.FlexDMD.equals(game.getDMDType())) {
+      storeName = game.getDMDGameName();
+      // cf https://github.com/vbousquet/flexdmd/blob/6357c1874e896777a53348094eafa86f386dd8fe/FlexDMD/FlexDMD.cs#L188
+      storeName = storeName.replaceAll("[\\s_vV][\\d_\\.]+[a-z]?(-DOF)?\\*?$", "").trim();
+    }
+    return storeName;
   }
 
   private boolean isShowDmd(String rom) {
