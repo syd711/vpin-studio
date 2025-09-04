@@ -31,12 +31,12 @@ public class DMDPositionServiceTest {
     Assertions.assertEquals(expectedStoreName, storename);
   }
 
-  //@Test
+  @Test
   public void saveIni() throws Exception {
       var authSvn = new INIConfiguration();     
-      var groups = authSvn.getSection("sec.sec");
-      groups.setProperty("p1", "val1");
-      groups.setProperty("p2", "val2");     
+      //var groups = authSvn.getSection("sec.sec");
+      authSvn.setProperty("sec..sec.p1", "val1");
+      authSvn.setProperty("sec..sec.p2", "val2");     
 
       authSvn.setSeparatorUsedInOutput("=");
       StringWriter w = new StringWriter();
