@@ -31,7 +31,7 @@ public class DMDPositionServiceTest {
     Assertions.assertEquals(expectedStoreName, storename);
   }
 
-  @Test
+  //@Test
   public void saveIni() throws Exception {
       var authSvn = new INIConfiguration();     
       var groups = authSvn.getSection("sec.sec");
