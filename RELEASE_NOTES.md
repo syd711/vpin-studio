@@ -4,8 +4,9 @@
 
 - **Backups**: Fixed mix-up of .res and .ini files.
 - **Backups**: Added target folder selection to the backup folder so that backup "sources" can also be chosen as target.
-- **DMD Position**: Removed ending version in filename for tables using ultraDMD or flexDMD
-- **DMD Position**: Fixed save of values when section name contains dot
+- **DMD Position**: Removed ending version in filename for tables using ultraDMD or flexDMD.
+- **DMD Position**: Fixed save of values when section name contains dots.
+- **VPS Settings**: Fixed issue that for new tables, the VPS updates have been disabled by default.
 
 ---
 
