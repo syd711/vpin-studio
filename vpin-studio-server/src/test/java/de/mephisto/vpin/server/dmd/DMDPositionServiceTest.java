@@ -44,7 +44,8 @@ public class DMDPositionServiceTest {
       String output = w.toString();
       Assertions.assertEquals("[sec.sec]\r\n" + //
                 "p1=val1\r\n" + //
-                "p2=val2", output);
+                "p2=val2\r\n" + //
+                "\r\n", output);
   }
 
 }
