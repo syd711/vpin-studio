@@ -3,6 +3,8 @@ package de.mephisto.vpin.ui.backups.dialogs;
 import de.mephisto.vpin.commons.BackupSourceType;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.backups.BackupSourceRepresentation;
+import de.mephisto.vpin.restclient.system.FolderRepresentation;
+import de.mephisto.vpin.ui.util.FolderChooserDialog;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -24,7 +26,6 @@ import static de.mephisto.vpin.ui.Studio.stage;
 
 public class BackupSourceFolderDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(BackupSourceFolderDialogController.class);
-  private static File lastFolderSelection;
 
   @FXML
   private Button saveBtn;
@@ -63,21 +64,15 @@ public class BackupSourceFolderDialogController implements Initializable, Dialog
 
   @FXML
   private void onFileSelect() {
-    DirectoryChooser chooser = new DirectoryChooser();
-    if (BackupSourceFolderDialogController.lastFolderSelection != null) {
-      chooser.setInitialDirectory(BackupSourceFolderDialogController.lastFolderSelection);
-    }
-    chooser.setTitle("Select Backup Folder");
-    File targetFolder = chooser.showDialog(stage);
-    if (targetFolder != null) {
-      folderField.setText(targetFolder.getAbsolutePath());
-      BackupSourceFolderDialogController.lastFolderSelection = targetFolder;
-
-      if(StringUtils.isEmpty(nameField.getText())) {
-        nameField.setText(targetFolder.getAbsolutePath());
+    FolderRepresentation folderRepresentation = FolderChooserDialog.open(null);
+    if (folderRepresentation != null) {
+      folderField.setText(folderRepresentation.getPath());
+      if (StringUtils.isEmpty(nameField.getText())) {
+        nameField.setText(folderRepresentation.getName());
       }
+
+      validateInput();
     }
-    validateInput();
   }
 
   @Override
@@ -85,7 +80,7 @@ public class BackupSourceFolderDialogController implements Initializable, Dialog
     folderBtn.managedProperty().bindBidirectional(folderBtn.visibleProperty());
 
     source = new BackupSourceRepresentation();
-    folderBtn.setVisible(client.getSystemService().isLocal());
+//    folderBtn.setVisible(client.getSystemService().isLocal());
 
     nameField.textProperty().addListener((observableValue, s, t1) -> {
       source.setName(t1);

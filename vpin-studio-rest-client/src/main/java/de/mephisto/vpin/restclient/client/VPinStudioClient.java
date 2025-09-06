@@ -54,6 +54,7 @@ import de.mephisto.vpin.restclient.recorder.RecorderServiceClient;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.res.ResServiceClient;
 import de.mephisto.vpin.restclient.system.FeaturesInfo;
+import de.mephisto.vpin.restclient.system.FolderChooserServiceClient;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.restclient.system.SystemServiceClient;
 import de.mephisto.vpin.restclient.textedit.TextEditorServiceClient;
@@ -97,6 +98,7 @@ public class VPinStudioClient implements OverlayClient {
   private final DOFLinxServiceClient dofLinxServiceClient;
   private final EmulatorServiceClient emulatorServiceClient;
   private final FpServiceClient fpServiceClient;
+  private final FolderChooserServiceClient folderChooserServiceClient;
   private final GamesServiceClient gamesServiceClient;
   private final GameMediaServiceClient gameMediaServiceClient;
   private final GameStatusServiceClient gameStatusServiceClient;
@@ -149,6 +151,7 @@ public class VPinStudioClient implements OverlayClient {
     this.discordServiceClient = new DiscordServiceClient(this);
     this.emulatorServiceClient = new EmulatorServiceClient(this);
     this.fpServiceClient = new FpServiceClient(this);
+    this.folderChooserServiceClient = new FolderChooserServiceClient(this);
     this.gamesServiceClient = new GamesServiceClient(this);
     this.gameMediaServiceClient = new GameMediaServiceClient(this);
     this.gameStatusServiceClient = new GameStatusServiceClient(this);
@@ -183,6 +186,10 @@ public class VPinStudioClient implements OverlayClient {
 
   public String getHost() {
     return restClient.getHost();
+  }
+
+  public FolderChooserServiceClient getFolderChooserService() {
+    return folderChooserServiceClient;
   }
 
   public TableAssetSourcesServiceClient getAssetSourcesService() {
