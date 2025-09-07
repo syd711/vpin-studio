@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.backups;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.backups.BackupSourceRepresentation;
+import de.mephisto.vpin.restclient.backups.BackupSourceType;
 import de.mephisto.vpin.restclient.backups.BackupType;
 import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
@@ -302,9 +303,17 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
 
     //VPA files
     if (systemService.getBackupType().equals(BackupType.VPA)) {
-      BackupSource backupSource = new VpaBackupSource();
-      this.defaultBackupSourceAdapter = new BackupSourceAdapterFolder(vpaService, backupSource);
-      this.backupSourcesCache.put(backupSource.getId(), this.defaultBackupSourceAdapter);
+      List<BackupSource> all = backupSourceRepository.findAll();
+      if (all.isEmpty()) {
+        BackupSource backupSource = new BackupSource();
+        backupSource = new BackupSource();
+        backupSource.setCreatedAt(new Date());
+        backupSource.setName("Default Backups Folder");
+        backupSource.setType(BackupSourceType.Folder.name());
+        backupSource.setLocation(VpaBackupSource.FOLDER.getAbsolutePath());
+        backupSource.setEnabled(true);
+        backupSourceRepository.saveAndFlush(backupSource);
+      }
     }
 
     //EXTERNAL
@@ -315,7 +324,7 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
         vpaSourceAdapter = BackupSourceAdapterFactory.create(this, as, vpaService);
       }
       catch (Exception e) {
-        LOG.error("Failed to create archive source: {}", e.getMessage());
+        LOG.error("Failed to create archive source: {}", e.getMessage(), e);
         continue;
       }
       this.backupSourcesCache.put(as.getId(), vpaSourceAdapter);

@@ -1,4 +1,4 @@
-package de.mephisto.vpin.commons;
+package de.mephisto.vpin.restclient.backups;
 
 public enum BackupSourceType {
   Folder,

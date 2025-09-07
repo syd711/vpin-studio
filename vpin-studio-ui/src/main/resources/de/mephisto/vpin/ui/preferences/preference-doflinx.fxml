@@ -51,12 +51,12 @@
                      <children>
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                            <children>
-                              <TextField fx:id="installationFolderText" prefHeight="30.0" prefWidth="472.0">
+                              <TextField fx:id="installationFolderText" prefHeight="30.0" prefWidth="430.0">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </TextField>
-                              <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFolder" styleClass="external-component" text="Folder...">
+                              <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFolder" text="Select Folder...">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

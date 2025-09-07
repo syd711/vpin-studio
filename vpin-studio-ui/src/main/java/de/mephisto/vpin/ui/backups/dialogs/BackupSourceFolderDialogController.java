@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.backups.dialogs;
 
-import de.mephisto.vpin.commons.BackupSourceType;
+import de.mephisto.vpin.restclient.backups.BackupSourceType;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.backups.BackupSourceRepresentation;
 import de.mephisto.vpin.restclient.system.FolderRepresentation;
@@ -11,18 +11,13 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
-
-import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.stage;
 
 public class BackupSourceFolderDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(BackupSourceFolderDialogController.class);
@@ -80,7 +75,6 @@ public class BackupSourceFolderDialogController implements Initializable, Dialog
     folderBtn.managedProperty().bindBidirectional(folderBtn.visibleProperty());
 
     source = new BackupSourceRepresentation();
-//    folderBtn.setVisible(client.getSystemService().isLocal());
 
     nameField.textProperty().addListener((observableValue, s, t1) -> {
       source.setName(t1);

@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.backups;
 
-import de.mephisto.vpin.commons.BackupSourceType;
+import de.mephisto.vpin.restclient.backups.BackupSourceType;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;

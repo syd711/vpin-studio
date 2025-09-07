@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.backups.adapters.vpa;
 
-import de.mephisto.vpin.commons.BackupSourceType;
+import de.mephisto.vpin.restclient.backups.BackupSourceType;
 import de.mephisto.vpin.restclient.backups.BackupType;
 import de.mephisto.vpin.server.backups.BackupSource;
 import de.mephisto.vpin.server.system.SystemService;

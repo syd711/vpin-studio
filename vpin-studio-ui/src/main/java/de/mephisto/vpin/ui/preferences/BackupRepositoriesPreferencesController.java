@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.preferences;
 
-import de.mephisto.vpin.commons.BackupSourceType;
+import de.mephisto.vpin.restclient.backups.BackupSourceType;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.backups.BackupSourceRepresentation;
@@ -53,10 +53,6 @@ public class BackupRepositoriesPreferencesController implements Initializable {
   private void onEdit() {
     BackupSourceRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
-      if (selectedItem.getId() < 0) {
-        return;
-      }
-
       BackupSourceRepresentation sourceRepresentation = null;
       BackupSourceType backupSourceType = BackupSourceType.valueOf(selectedItem.getType());
       switch (backupSourceType) {
@@ -194,8 +190,9 @@ public class BackupRepositoriesPreferencesController implements Initializable {
     });
 
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-      boolean disable = newSelection == null || newSelection.getId() < 0;
-      deleteBtn.setDisable(disable);
+      boolean disable = newSelection == null;
+      deleteBtn.setDisable(disable || tableView.getItems().size() == 1);
+//      deleteBtn.setDisable(false);
       editBtn.setDisable(disable);
     });
 

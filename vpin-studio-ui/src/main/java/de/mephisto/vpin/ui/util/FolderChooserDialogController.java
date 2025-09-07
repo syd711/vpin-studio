@@ -14,13 +14,13 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,11 +37,14 @@ public class FolderChooserDialogController implements Initializable, DialogContr
   @FXML
   private Button openBtn;
 
+  @FXML
+  private TextField pathField;
 
   private FolderRepresentation selection;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
+    this.selection = null;
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
   }
@@ -60,11 +63,25 @@ public class FolderChooserDialogController implements Initializable, DialogContr
     treeView.setShowRoot(false);
     treeView.setMaxWidth(Double.MAX_VALUE);
     treeView.setMaxHeight(Double.MAX_VALUE);
+    openBtn.setDisable(true);
+
+    treeView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TreeItem<FolderRepresentation>>() {
+      @Override
+      public void changed(ObservableValue<? extends TreeItem<FolderRepresentation>> observable, TreeItem<FolderRepresentation> oldValue, TreeItem<FolderRepresentation> newValue) {
+        openBtn.setDisable(newValue == null);
+        if(newValue != null) {
+          pathField.setText(newValue.getValue().getPath());
+        }
+        else {
+          pathField.setText("");
+        }
+      }
+    });
   }
 
   @Override
   public void onDialogCancel() {
-
+    this.selection = null;
   }
 
 
