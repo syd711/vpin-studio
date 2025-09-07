@@ -4,6 +4,8 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.system.FolderRepresentation;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -18,7 +20,10 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -67,14 +72,54 @@ public class FolderChooserDialogController implements Initializable, DialogContr
     JFXFuture.supplyAsync(() -> client.getFolderChooserService().getRoots())
         .thenAcceptLater(folders -> {
           TreeItem root = new TreeItem();
+          List<LazyTreeItem> roots = new ArrayList<>();
           for (FolderRepresentation folder : folders) {
-            root.getChildren().add(createTreeItem(folder));
+            roots.add(createTreeItem(folder));
           }
+          root.getChildren().addAll(roots);
           treeView.setRoot(root);
           treeView.refresh();
           treeView.getRoot().setExpanded(true);
-        });
 
+          treeView.getRoot().getChildren().get(0).setExpanded(true);
+
+          if (path != null) {
+            for (TreeItem t : roots) {
+              LazyTreeItem lazyTreeItem = (LazyTreeItem) t;
+              FolderRepresentation r = lazyTreeItem.getValue();
+              if (path.startsWith(r.getName())) {
+                LazyTreeItem expand = expand(lazyTreeItem, path);
+                if (expand != null) {
+                  treeView.getSelectionModel().select(expand);
+                  int row = treeView.getRow(expand);
+                  if (row > 5) {
+                    treeView.scrollTo(row - 5);
+                  }
+                  else {
+                    treeView.scrollTo(row);
+                  }
+
+                }
+              }
+            }
+          }
+        });
+  }
+
+  private LazyTreeItem expand(@Nullable LazyTreeItem parent, @NonNull String path) {
+    List<TreeItem<FolderRepresentation>> children = parent.getChildren();
+    if (children != null) {
+      for (TreeItem<FolderRepresentation> child : children) {
+        if (path.startsWith(child.getValue().getPath())) {
+          child.setExpanded(true);
+          if (path.equals(child.getValue().getPath())) {
+            return (LazyTreeItem) child;
+          }
+          return expand((LazyTreeItem) child, path);
+        }
+      }
+    }
+    return null;
   }
 
   public FolderRepresentation getSelection() {
