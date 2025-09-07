@@ -76,7 +76,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="folderField" prefHeight="30.0" promptText="Enter the location for the media folder here." GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <TextField fx:id="folderField" editable="false" prefHeight="30.0" promptText="The location of the media folder." GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>

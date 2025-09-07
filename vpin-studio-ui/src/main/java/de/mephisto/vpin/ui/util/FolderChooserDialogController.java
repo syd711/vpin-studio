@@ -18,6 +18,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.stage.Stage;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +70,7 @@ public class FolderChooserDialogController implements Initializable, DialogContr
       @Override
       public void changed(ObservableValue<? extends TreeItem<FolderRepresentation>> observable, TreeItem<FolderRepresentation> oldValue, TreeItem<FolderRepresentation> newValue) {
         openBtn.setDisable(newValue == null);
-        if(newValue != null) {
+        if (newValue != null) {
           pathField.setText(newValue.getValue().getPath());
         }
         else {
@@ -127,9 +128,9 @@ public class FolderChooserDialogController implements Initializable, DialogContr
     List<TreeItem<FolderRepresentation>> children = parent.getChildren();
     if (children != null) {
       for (TreeItem<FolderRepresentation> child : children) {
-        if (path.startsWith(child.getValue().getPath())) {
+        if (matches(path, child)) {
           child.setExpanded(true);
-          if (path.equals(child.getValue().getPath())) {
+          if (path.equalsIgnoreCase(child.getValue().getPath())) {
             return (LazyTreeItem) child;
           }
           return expand((LazyTreeItem) child, path);
@@ -137,6 +138,13 @@ public class FolderChooserDialogController implements Initializable, DialogContr
       }
     }
     return null;
+  }
+
+  private static boolean matches(@NotNull String path, TreeItem<FolderRepresentation> child) {
+    if (path.equalsIgnoreCase(child.getValue().getPath())) {
+      return true;
+    }
+    return path.toLowerCase().startsWith(child.getValue().getPath().toLowerCase() + "\\");
   }
 
   public FolderRepresentation getSelection() {

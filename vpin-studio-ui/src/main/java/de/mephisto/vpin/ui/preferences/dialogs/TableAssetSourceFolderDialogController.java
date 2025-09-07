@@ -6,7 +6,9 @@ import de.mephisto.vpin.connectors.assets.AssetLookupStrategy;
 import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.connectors.assets.TableAssetSourceType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.system.FolderRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.util.FolderChooserDialog;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -14,7 +16,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -28,7 +29,6 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.stage;
 
 public class TableAssetSourceFolderDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(TableAssetSourceFolderDialogController.class);
@@ -101,18 +101,11 @@ public class TableAssetSourceFolderDialogController implements Initializable, Di
 
   @FXML
   private void onFileSelect() {
-    DirectoryChooser chooser = new DirectoryChooser();
-    if (TableAssetSourceFolderDialogController.lastFolderSelection != null) {
-      chooser.setInitialDirectory(TableAssetSourceFolderDialogController.lastFolderSelection);
-    }
-    chooser.setTitle("Select Folder");
-    File targetFolder = chooser.showDialog(stage);
-    if (targetFolder != null) {
-      folderField.setText(targetFolder.getAbsolutePath());
-      TableAssetSourceFolderDialogController.lastFolderSelection = targetFolder;
-
+    FolderRepresentation folder = FolderChooserDialog.open(null);
+    if (folder != null) {
+      folderField.setText(folder.getPath());
       if (StringUtils.isEmpty(nameField.getText())) {
-        nameField.setText(targetFolder.getAbsolutePath());
+        nameField.setText(folder.getName());
       }
     }
     validateInput();
@@ -120,8 +113,6 @@ public class TableAssetSourceFolderDialogController implements Initializable, Di
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    folderBtn.setVisible(client.getSystemService().isLocal());
-
     nameField.textProperty().addListener((observableValue, s, t1) -> {
       source.setName(t1);
       validateInput();

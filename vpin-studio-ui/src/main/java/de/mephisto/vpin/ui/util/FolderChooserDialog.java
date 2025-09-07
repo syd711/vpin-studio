@@ -3,7 +3,6 @@ package de.mephisto.vpin.ui.util;
 import de.mephisto.vpin.commons.utils.FXResizeHelper;
 import de.mephisto.vpin.restclient.system.FolderRepresentation;
 import de.mephisto.vpin.ui.Studio;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
@@ -29,7 +28,7 @@ public class FolderChooserDialog {
       stage = Studio.stage;
     }
 
-    if (forceLocal || !client.getSystemService().isLocal()) { //TODO
+    if (forceLocal || client.getSystemService().isLocal()) {
       return openLocalFolderChooser(title, path);
     }
     else {

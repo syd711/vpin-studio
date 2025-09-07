@@ -5,8 +5,10 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
+import de.mephisto.vpin.restclient.system.FolderRepresentation;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.util.FolderChooserDialog;
 import de.mephisto.vpin.ui.util.StudioFolderChooser;
 import de.mephisto.vpin.ui.util.SystemUtil;
 import javafx.application.Platform;
@@ -455,19 +457,11 @@ public class EmulatorsController implements Initializable {
   }
 
   private void onFolderSelect(ActionEvent event, TextField field) {
-    Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-    StudioFolderChooser chooser = new StudioFolderChooser();
-    chooser.setTitle("Select Folder");
-
     String value = field.getText();
-    if(!StringUtils.isEmpty(value) && new File(value).exists()) {
-      chooser.setInitialDirectory(new File(value));
-    }
 
-    File targetFolder = chooser.showOpenDialog(stage);
-
-    if (targetFolder != null) {
-      field.setText(targetFolder.getAbsolutePath());
+    FolderRepresentation folder = FolderChooserDialog.open(value);
+    if (folder != null) {
+      field.setText(folder.getPath());
     }
   }
 
@@ -481,18 +475,6 @@ public class EmulatorsController implements Initializable {
     selectFolderButtonGames.managedProperty().bindBidirectional(selectFolderButtonGames.visibleProperty());
     selectFolderButtonRoms.managedProperty().bindBidirectional(selectFolderButtonRoms.visibleProperty());
     selectFolderButtonMedia.managedProperty().bindBidirectional(selectFolderButtonMedia.visibleProperty());
-
-    openFolderButtonLaunch.managedProperty().bindBidirectional(openFolderButtonLaunch.visibleProperty());
-    openFolderButtonLaunch.setVisible(client.getSystemService().isLocal());
-
-    openFolderButtonMedia.managedProperty().bindBidirectional(openFolderButtonMedia.visibleProperty());
-    openFolderButtonMedia.setVisible(client.getSystemService().isLocal());
-
-    openFolderButtonRoms.managedProperty().bindBidirectional(openFolderButtonRoms.visibleProperty());
-    openFolderButtonRoms.setVisible(client.getSystemService().isLocal());
-
-    openFolderButtonGames.managedProperty().bindBidirectional(openFolderButtonGames.visibleProperty());
-    openFolderButtonGames.setVisible(client.getSystemService().isLocal());
 
     try {
       FXMLLoader loader = new FXMLLoader(EmulatorsTableController.class.getResource("table-emulators.fxml"));
