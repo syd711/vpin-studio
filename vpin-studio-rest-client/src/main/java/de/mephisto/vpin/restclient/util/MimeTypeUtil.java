@@ -40,10 +40,10 @@ public class MimeTypeUtil {
         mimeType = "image/jpg";
       }
       else if (suffix.endsWith("mp3")) {
-        mimeType = "audio.mp3";
+        mimeType = "audio/mpeg";
       }
       else if (suffix.endsWith("ogg")) {
-        mimeType = "audio.ogg";
+        mimeType = "audio/ogg";
       }
       else if (suffix.endsWith("mp4")) {
         mimeType = "video/mp4";
