@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SDetail;
+import de.mephisto.vpin.restclient.directb2s.DirectB2SFrameType;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2sScreenRes;
@@ -29,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -195,6 +197,14 @@ public class DirectB2SResource {
     if (image == null) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
+    ByteArrayResource resource = new ByteArrayResource(image);
+    return download(resource, name, forceDownload);
+  }
+
+  private ResponseEntity<Resource> download(Resource resource, String name, boolean forceDownload) {
+    if (resource == null) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
 
     HttpHeaders headers = new HttpHeaders();
     if (forceDownload) {
@@ -205,12 +215,19 @@ public class DirectB2SResource {
     headers.add("Expires", "0");
     headers.add("X-Frame-Options", "SAMEORIGIN");
 
-    ByteArrayResource resource = new ByteArrayResource(image);
-    return ResponseEntity.ok()
-        .headers(headers)
-        .contentLength(resource.contentLength())
-        .contentType(forceDownload ? MediaType.APPLICATION_OCTET_STREAM : MediaType.IMAGE_PNG)
-        .body(resource);
+    ResponseEntity.BodyBuilder res = ResponseEntity.ok().headers(headers);
+
+    try {
+      res.contentLength(resource.contentLength());
+    }
+    catch (IOException ioe) {
+      LOG.warn("Cannot determine content Length for " + name);
+    }
+
+    // add content Type
+    res = res.contentType(forceDownload ? MediaType.APPLICATION_OCTET_STREAM : MediaType.IMAGE_PNG);
+
+    return res.body(resource);
   }
 
   private ResponseEntity<StreamingResponseBody> download(File file) {
@@ -406,6 +423,22 @@ public class DirectB2SResource {
     filename = URLDecoder.decode(filename, StandardCharsets.UTF_8);
     File screenRes = new File(filename);
     return download(screenRes);
+  }
+
+  @GetMapping("/frame/{emuId}/{filename}/{frameType}")
+  public ResponseEntity<Resource> generateFrame(@PathVariable("emuId") int emulatorId, @PathVariable("filename") String filename, @PathVariable("frameType") DirectB2SFrameType frameType) {
+    // first decoding done by the RestService but an extra one is needed
+    filename = URLDecoder.decode(filename, StandardCharsets.UTF_8);
+
+    if (DirectB2SFrameType.USE_FRAME.equals(frameType)) {
+      DirectB2sScreenRes screenres = getScreenRes(emulatorId, filename, false);
+      String filePath = screenres.getBackgroundFilePath();
+      return download(new FileSystemResource(filePath), "frame.png", false);
+    }
+
+    Game game = gameService.getGameByDirectB2S(emulatorId, filename);
+    byte[] frame = backglassService.generateFrame(emulatorId, filename, game, frameType);
+    return download(frame, frameType + ".png", false);
   }
 
   @PostMapping("/screenRes/save")

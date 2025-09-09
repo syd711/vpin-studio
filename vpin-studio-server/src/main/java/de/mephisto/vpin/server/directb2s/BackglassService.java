@@ -899,7 +899,62 @@ public class BackglassService implements InitializingBean {
     }
   }
 
+
+  public byte[] generateFrame(int emulatorId, String filename, @Nullable Game game, DirectB2SFrameType frameType) {
+    File b2sFile = getB2sFile(emulatorId, filename);
+    if (b2sFile != null && b2sFile.exists()) {
+      try {
+        DirectB2SData tableData = getDirectB2SData(b2sFile, emulatorId, filename);
+        BufferedImage image = getPreviewBackgroundImage(tableData, game, false);
+
+        // The background image should fit the full screen
+        DirectB2sScreenRes screenres = getScreenRes(b2sFile, false);
+        int targetW = screenres.getFullBackglassWidth();
+        int targetH = screenres.getFullBackglassHeight();
+
+        return DirectB2SFrameTypeGenerator.generateAsByte(image, targetW, targetH, frameType, false);
+      }
+      catch (IOException ioe) {
+        LOG.error("Error in frame generation for {} and emulator {}", filename, emulatorId, ioe);
+      }
+    }
+    return null;
+  }
+
+  protected void generateAndSaveFrame(DirectB2sScreenRes screenres, @Nullable Game game) {
+    if (screenres.isBackglassCentered() && !DirectB2SFrameType.USE_FRAME.equals(screenres.getFrameType())) {
+      byte[] frame = generateFrame(screenres.getEmulatorId(), screenres.getB2SFileName(), game, screenres.getFrameType());
+      if (frame != null) {
+        File b2sFile = getB2sFile(screenres.getEmulatorId(), screenres.getB2SFileName());
+        File frameFolder = new File(b2sFile.getParent(), "_Frames");
+        if (frameFolder.exists() || frameFolder.mkdir()) {
+          String name = FilenameUtils.getBaseName(screenres.getB2SFileName());
+          File frameFile = new File(frameFolder, name + " " + screenres.getFrameType() + ".png");
+          try {
+            Files.deleteIfExists(frameFile.toPath());
+            ByteArrayInputStream is = new ByteArrayInputStream(frame);
+            try (FileOutputStream out = new FileOutputStream(frameFile)) {
+              StreamUtils.copy(is, out);
+              screenres.setBackgroundFilePath(frameFile.getAbsolutePath());
+            }
+          }
+          catch (IOException ioe) {
+            LOG.error("Error saving frame", ioe);
+          }
+        }
+      }
+    }
+    else {
+      LOG.warn("Cannot create generate or save frame");
+    }
+  }
+
+
   public void saveScreenRes(DirectB2sScreenRes screenres, @Nullable Game game) throws Exception {
+    // possibly generate frame and modify screenres
+    generateAndSaveFrame(screenres, game);
+
+    // then save screenres
     GameEmulator emulator = emulatorService.getGameEmulator(screenres.getEmulatorId());
     File b2sFile = new File(emulator.getGamesDirectory(), screenres.getB2SFileName());
 
@@ -1119,6 +1174,21 @@ public class BackglassService implements InitializingBean {
   }
 
   public byte[] getPreviewBackground(DirectB2SData tableData, @Nullable Game game, boolean includeFrame) {
+    try {
+      BufferedImage preview = getPreviewBackgroundImage(tableData, game, includeFrame);
+      if (preview != null) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(preview, "png", baos);
+        return baos.toByteArray();
+      }
+    }
+    catch (IOException ioe) {
+      LOG.error("Cannot generate preview image for {]}", tableData.getFilename(), ioe);
+    }
+    return null;
+  }
+
+  private BufferedImage getPreviewBackgroundImage(DirectB2SData tableData, @Nullable Game game, boolean includeFrame) throws IOException {
     if (tableData != null && tableData.isBackgroundAvailable()) {
       String base64 = getBackgroundBase64(tableData.getEmulatorId(), tableData.getFilename());
       if (base64 != null) {
@@ -1167,13 +1237,7 @@ public class BackglassService implements InitializingBean {
               }
             }
           }
-
-          ByteArrayOutputStream baos = new ByteArrayOutputStream();
-          ImageIO.write(preview, "png", baos);
-          return baos.toByteArray();
-        }
-        catch (IOException ioe) {
-          LOG.error("Cannot generate preview image for {]}", tableData.getFilename(), ioe);
+          return preview;
         }
       }
     }

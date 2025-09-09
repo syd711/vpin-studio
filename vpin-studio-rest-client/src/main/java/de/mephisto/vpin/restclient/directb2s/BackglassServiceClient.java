@@ -303,6 +303,20 @@ public class BackglassServiceClient extends VPinStudioClientService {
     return null;
   }
 
+  public InputStream generateFrame(int emulatorId, String b2sFileName, DirectB2SFrameType frameType) {
+    String url = getRestClient().getBaseUrl() + API + "directb2s/frame/" + emulatorId
+        + "/" + URLEncoder.encode(URLEncoder.encode(b2sFileName, StandardCharsets.UTF_8), StandardCharsets.UTF_8)
+        + "/" + frameType.name();
+    try {
+      return new URL(url).openStream();
+    }
+    catch (Exception e) {
+      LOG.info("cannot get generated frame file for {}, emulator {}", b2sFileName, emulatorId);
+    }
+    return null;
+  }
+
+
   public ReturnMessage saveScreenRes(DirectB2sScreenRes screenres) {
     return getRestClient().post(API + "directb2s/screenRes/save", screenres, ReturnMessage.class);
   }

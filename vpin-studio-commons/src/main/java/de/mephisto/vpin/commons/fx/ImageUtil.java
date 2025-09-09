@@ -7,6 +7,15 @@ import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Paint;
+
+import org.apache.commons.math3.linear.DecompositionSolver;
+import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.QRDecomposition;
+import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.RealVector;
+import org.apache.commons.math3.ml.clustering.CentroidCluster;
+import org.apache.commons.math3.ml.clustering.DoublePoint;
+import org.apache.commons.math3.ml.clustering.KMeansPlusPlusClusterer;
 import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,10 +32,14 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class ImageUtil {
   private final static Logger LOG = LoggerFactory.getLogger(ImageUtil.class);
@@ -106,6 +119,22 @@ public class ImageUtil {
     GraphicsDevice gd = ge.getDefaultScreenDevice();
     GraphicsConfiguration gc = gd.getDefaultConfiguration();
     return create(image, Math.PI, gc);
+  }
+
+  public static BufferedImage flipHorizontal(BufferedImage image) {
+    AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
+    // offset so that image stays in frame
+    tx.translate(-image.getWidth(), 0);
+    AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+    return op.filter(image, null);
+  }
+
+  public static BufferedImage flipVertical(BufferedImage image) {
+    AffineTransform tx = AffineTransform.getScaleInstance(1, -1);
+    // offset so that image stays in frame
+    tx.translate(0, -image.getHeight());
+    AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+    return op.filter(image, null);
   }
 
   private static BufferedImage create(BufferedImage image, double angle, GraphicsConfiguration gc) {
@@ -189,6 +218,14 @@ public class ImageUtil {
     return Scalr.resize(originalImage, Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, targetWidth, Scalr.OP_ANTIALIAS);
   }
 
+  public static BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) {
+    BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, originalImage.getType());
+    Graphics2D g = resizedImage.createGraphics();
+    g.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
+    g.dispose();
+    return resizedImage;
+  }
+
   public static BufferedImage crop(BufferedImage image, int xRatio, int yRatio) {
     int width = image.getWidth();
     int height = image.getHeight();
@@ -224,6 +261,184 @@ public class ImageUtil {
     GrayscaleFilter filter = new GrayscaleFilter();
     return filter.filter(originalImage, null);
   }
+
+
+  /**
+   * Iterate over every stepPx pixels of the image and calcul
+   * Use the K-Means algorithm to find the dominant colors.
+   * @return the [red, green, blue] values of the Color
+   */
+  public static int[] getDominantColor(BufferedImage image, int stepPx) {
+    int[][] colors = getDominantColors(image, 1, stepPx);
+    return colors[0];
+  }
+
+  /**
+   * Return an array of nbColors dominant colors
+   */
+  public static int[][] getDominantColors(BufferedImage image, int nbColors, int stepPx) {
+    int width = image.getWidth();
+    int height = image.getHeight();
+    // Use DoublePoint for K-Means
+    List<DoublePoint> points = new ArrayList<>();
+
+    for (int y = 0; y < height; y+=stepPx) {
+      for (int x = 0; x < width; x+=stepPx) {
+        int rgb = image.getRGB(x, y);
+        DoublePoint p = new DoublePoint(new double[] {
+          (rgb >> 16) & 0xFF, // Red
+          (rgb >> 8) & 0xFF,  // Green
+          rgb & 0xFF          // Blue
+        });
+        points.add(p);
+      }
+    }
+
+    // Run K-Means
+    KMeansPlusPlusClusterer<DoublePoint> clusterer = new KMeansPlusPlusClusterer<>(nbColors);
+    List<CentroidCluster<DoublePoint>> clusters = clusterer.cluster(points);
+    // Extract cluster centers (dominant colors)
+    int[][] dominantColors = new int[nbColors][3];
+    for (int i = 0; i < nbColors; i++) {
+        double[] center = clusters.get(i).getCenter().getPoint();
+        dominantColors[i] = new int[]{(int) center[0], (int) center[1], (int) center[2]};
+    }
+    return dominantColors;
+  }
+
+  //----------------------------------------------------------
+
+  /**
+   * Apply a perspective effect to an image
+   * @param img The Image to be transformed
+   * @param side The "left" or "right" value for the perspective
+   * @param depthX the sheer effect of the perspective on x (good value are 0.1 or 0.2)
+   * @param depthY the increase effect of Y
+   */
+  public static BufferedImage applyPerspective(BufferedImage img, String side, double depthX, double depthY) {
+    int w = img.getWidth();
+    int h = img.getHeight();
+
+    double[][] src, dst;
+    if (side.equals("left")) {
+      src = new double[][] {{0, 0}, {w, 0}, {w, h}, {0, h}};
+      dst = new double[][] {{w * depthX, 0}, {w, - h * depthY}, {w, h + h * depthY}, {w * depthX, h}};
+    } 
+    else if (side.equals("right")) {
+      src = new double[][] {{0, 0}, {w, 0}, {w, h}, {0, h}};
+      dst = new double[][] {{0, - h * depthY}, {w - w * depthX, 0}, {w - w * depthX, h}, {0, h + h * depthY}};
+    }
+    if (side.equals("top")) {
+      src = new double[][] {{0, 0}, {w, 0}, {w, h}, {0, h}};
+      dst = new double[][] {{-w * depthX, 0}, {w + w * depthX, 0}, {w, h - h * depthY}, {0, h - h * depthY}};
+    } 
+    else if (side.equals("bottom")) {
+      src = new double[][] {{0, 0}, {w, 0}, {w, h}, {0, h}};
+      dst = new double[][] {{0, h * depthY}, {w, h * depthY}, {w + w * depthX, h}, {- w * depthX, h}};
+    }
+    else {
+      return img;
+    }
+
+    double[] coeffs = getPerspectiveCoeffs(dst, src);
+
+    BufferedImage dest = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+    Graphics2D g2d = dest.createGraphics();
+    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+    g2d.setColor(Color.BLACK);
+    g2d.fillRect(0, 0, w, h);
+    g2d.setClip(0, 0, w, h);
+
+    for (int y = 0; y < h; y++) {
+      for (int x = 0; x < w; x++) {
+        // Apply inverse transform to get source coordinates
+        double[] pt = inversePerspectiveTransform(x, y, coeffs);
+        int srcX = (int) pt[0];
+        int srcY = (int) pt[1];
+        if (srcX >= 0 && srcX < w && srcY >= 0 && srcY < h) {
+          dest.setRGB(x, y, img.getRGB(srcX, srcY));
+        }
+      }
+    }
+    g2d.dispose();
+    return dest;
+  }
+
+  private static double[] inversePerspectiveTransform(double x, double y, double[] coeffs) {
+      // coeffs = [a, b, c, d, e, f, g, h]
+      // Solve for (u, v) in:
+      // x = (a*u + b*v + c) / (g*u + h*v + 1)
+      // y = (d*u + e*v + f) / (g*u + h*v + 1)
+      // Here, we need to solve for u, v given x, y
+
+    double a = coeffs[0], b = coeffs[1], c = coeffs[2];
+    double d = coeffs[3], e = coeffs[4], f = coeffs[5];
+    double g = coeffs[6], h = coeffs[7];
+
+    double A11 = x * g - a;
+    double A12 = x * h - b;
+    double A21 = y * g - d;
+    double A22 = y * h - e;
+
+    double detA = A11 * A22 - A12 * A21;
+    if (Math.abs(detA) < 1e-10) {
+        // Avoid division by zero; return a default or throw an exception
+        return new double[] {x, y};
+    }
+
+    double B1 = c - x;
+    double B2 = f - y;
+    double u = (A22 * B1 - A12 * B2) / detA;
+    double v = (A11 * B2 - A21 * B1) / detA;
+
+    return new double[]{u, v};
+  }
+
+  private static double[] getPerspectiveCoeffs(double[][] srcCoords, double[][] dstCoords) {
+    int numPoints = srcCoords.length;
+    int numRows = 2 * numPoints;
+    int numCols = 8;
+    double[][] matrix = new double[numRows][numCols];
+    double[] b = new double[numRows];
+
+    for (int i = 0; i < numPoints; i++) {
+        double[] p1 = dstCoords[i];
+        double[] p2 = srcCoords[i];
+        int row = 2 * i;
+
+        // First row
+        matrix[row][0] = p1[0];
+        matrix[row][1] = p1[1];
+        matrix[row][2] = 1;
+        matrix[row][3] = 0;
+        matrix[row][4] = 0;
+        matrix[row][5] = 0;
+        matrix[row][6] = -p2[0] * p1[0];
+        matrix[row][7] = -p2[0] * p1[1];
+        b[row] = p2[0];
+
+        // Second row
+        matrix[row + 1][0] = 0;
+        matrix[row + 1][1] = 0;
+        matrix[row + 1][2] = 0;
+        matrix[row + 1][3] = p1[0];
+        matrix[row + 1][4] = p1[1];
+        matrix[row + 1][5] = 1;
+        matrix[row + 1][6] = -p2[1] * p1[0];
+        matrix[row + 1][7] = -p2[1] * p1[1];
+        b[row + 1] = p2[1];
+    }
+
+    RealMatrix A = MatrixUtils.createRealMatrix(matrix);
+    RealVector B = MatrixUtils.createRealVector(b);
+
+    DecompositionSolver solver = new QRDecomposition(A).getSolver();
+    RealVector solution = solver.solve(B);
+
+    return solution.toArray();
+  }
+
+  //----------------------------------------------------------
 
   public static void write(BufferedImage image, File file) throws IOException {
     if (file.getName().endsWith(".png")) {
