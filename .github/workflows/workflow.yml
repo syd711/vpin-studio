@@ -20,9 +20,6 @@ jobs:
     runs-on: macos-13
 
     steps:
-      - name: Install Inno Setup
-        run: choco install innosetup --yes
-
       # Step 1: Checkout the repository
       - name: Checkout VPin Studio
         uses: actions/checkout@v3
@@ -278,6 +275,9 @@ jobs:
       # otherwise, read permission is required at least
       pull-requests: write
     steps:
+      - name: Install Inno Setup
+        run: choco install innosetup --yes
+
       - name: Checkout VPin Studio
         uses: actions/checkout@v3
 
