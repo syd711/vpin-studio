@@ -111,7 +111,7 @@ public class FileSystemTableAssetAdapter extends DefaultTableAssetAdapter implem
     asset.setSourceId(tableAssetSource.getId());
     asset.setName(filename);
     asset.setAuthor(tableAssetSource.getName());
-    asset.setLength(filename.length());
+    asset.setLength(f.length());
 
     return asset;
   }

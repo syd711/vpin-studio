@@ -22,18 +22,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.PathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URLDecoder;
@@ -43,6 +41,10 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static de.mephisto.vpin.server.util.RequestUtil.CONTENT_LENGTH;
@@ -135,7 +137,8 @@ public class GameMediaResource {
   }
 
   @GetMapping("/assets/d/{screen}/{assetSourceId}/{gameId}/{url}")
-  public ResponseEntity<StreamingResponseBody> getMedia(@PathVariable("screen") String screen,
+  public void getMedia(HttpServletResponse response, HttpServletRequest request,
+                                                        @PathVariable("screen") String screen,
                                                         @PathVariable("assetSourceId") String assetSourceId,
                                                         @PathVariable("gameId") int gameId,
                                                         @PathVariable("url") String url) throws Exception {
@@ -154,17 +157,31 @@ public class GameMediaResource {
     }
 
     TableAsset tableAsset = result.get();
-    return ResponseEntity.ok()
-        .contentType(MediaType.parseMediaType(tableAsset.getMimeType()))
-        .header("X-Frame-Options", "SAMEORIGIN")
-        .body(out -> {
-          try {
-            tableAssetsService.download(out, tableAsset);
-          }
-          catch (Exception e) {
-            LOG.error("Failed to stream media {} from {}: {}", name, assetSourceId, e.getMessage(), e);
-          }
-        });
+
+    // Set headers
+    if (tableAsset.getLength() > 0) {
+      response.setContentLength((int) tableAsset.getLength());
+    }
+    response.setHeader(CONTENT_TYPE, tableAsset.getMimeType());
+    response.setHeader("Access-Control-Allow-Origin", "*");
+    //response.setHeader("Access-Control-Expose-Headers", "origin, range");
+    response.setHeader("Cache-Control", "public, max-age=3600");
+
+    // For HEAD, do not write the body
+    if ("HEAD".equals(request.getMethod())) {
+      response.setStatus(HttpStatus.OK.value());
+      return;
+    }
+    // else normal download
+    try (ServletOutputStream outputStream = response.getOutputStream()) {
+      tableAssetsService.download(outputStream, tableAsset);
+      response.flushBuffer();
+      response.setStatus(HttpStatus.OK.value());
+    } 
+    catch (IOException e) {
+      LOG.error("Failed to stream media {} from {}: {}", name, assetSourceId, e.getMessage(), e);
+      response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+    }
   }
 
   @GetMapping("/{id}/{screen}/{name}")
@@ -187,10 +204,7 @@ public class GameMediaResource {
 
       if (frontendMediaItem != null) {
         File file = frontendMediaItem.getFile();
-        FileInputStream in = new FileInputStream(file);
-        byte[] bytes = IOUtils.toByteArray(in);
-        ByteArrayResource bytesResource = new ByteArrayResource(bytes);
-        in.close();
+        PathResource resource = new PathResource(file.toPath());
 
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set(CONTENT_LENGTH, String.valueOf(file.length()));
@@ -198,7 +212,7 @@ public class GameMediaResource {
         responseHeaders.set("Access-Control-Allow-Origin", "*");
         responseHeaders.set("Access-Control-Expose-Headers", "origin, range");
         responseHeaders.set("Cache-Control", "public, max-age=3600");
-        return ResponseEntity.ok().headers(responseHeaders).body(bytesResource);
+        return ResponseEntity.ok().headers(responseHeaders).body(resource);
       }
     }
 
