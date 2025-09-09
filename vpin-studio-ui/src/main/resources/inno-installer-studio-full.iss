@@ -10,7 +10,7 @@
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={20A6F5DB-5F2D-44A2-B56D-AAFF7A0BC995}
+AppId={{20A6F5DB-5F2D-44A2-B56D-AAFF7A0BC995}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
@@ -54,7 +54,7 @@ Source: "..\..\..\Output\Vpin-Studio\VPin-Studio-Server.l4j.ini"; DestDir: "{app
 
 [Icons]
 Name: "{autoprograms}\VPin-Studio\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
-Name: "{autoprograms}\VPin-Studio\VPin-Studio-Server.exe"; Filename: "{app}\VPin-Studio-Server.exe"
+Name: "{autoprograms}\VPin-Studio\VPin-Studio-Server.exe"; Filename: "{app}\VPin-Studio-Server.exe";
 Name: "{autoprograms}\VPin-Studio\VPin-Studio-Server"; Filename: "{app}\VPin-Studio-Server.bat"; Flags: runminimized
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
