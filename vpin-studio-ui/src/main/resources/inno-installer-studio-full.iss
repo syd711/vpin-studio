@@ -6,6 +6,7 @@
 #define MyAppPublisher "Matthias Faust"
 #define MyAppURL "https://github.com/syd711/vpin-studio"
 #define MyAppExeName "VPin-Studio.exe"
+#define MyAppExeNameVPBM "vPinBackupManager.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
