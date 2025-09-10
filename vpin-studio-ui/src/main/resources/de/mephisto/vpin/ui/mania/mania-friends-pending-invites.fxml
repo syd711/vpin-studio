@@ -61,7 +61,7 @@
                      <children>
                         <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="300.0" prefWidth="500.0">
                            <graphic>
-                              <FontIcon iconColor="#605e5e" iconLiteral="mdi2e-email-receive-outline" iconSize="300" textOrigin="CENTER" />
+                              <FontIcon iconColor="#605e5e" iconLiteral="mdi2e-email-arrow-left-outline" iconSize="300" textOrigin="CENTER" />
                            </graphic>
                         </Label>
                         <Label text="No pending invites found." textFill="#605e5e">

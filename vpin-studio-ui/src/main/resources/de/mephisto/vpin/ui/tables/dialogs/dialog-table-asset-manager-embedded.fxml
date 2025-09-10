@@ -212,7 +212,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-file-check-outline" iconSize="18" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2i-image-check-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Use this file as default asset file" />

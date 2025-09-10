@@ -160,12 +160,12 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="18" />
                                        </graphic>
                                     </Button>
-                                    <Button fx:id="setDefaultBtn" mnemonicParsing="false" onAction="#onSetdefault" text="Set As Default" textFill="WHITE">
+                                    <Button fx:id="setDefaultBtn" mnemonicParsing="false" onAction="#onSetDefault" text="Set As Default" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2f-file-check-outline" iconSize="18" />
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2i-image-check-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
                                           <Tooltip text="Use this file as default asset file" />

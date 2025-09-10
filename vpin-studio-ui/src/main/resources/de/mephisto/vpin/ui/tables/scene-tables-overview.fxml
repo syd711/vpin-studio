@@ -248,7 +248,7 @@
                   <ComboBox fx:id="emulatorCombo" prefWidth="170.0" promptText="All VPX Tables" />
                   <Button fx:id="emulatorBtn" layoutX="704.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEmulatorManager" textFill="WHITE">
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2g-google-controller" iconSize="18" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-controller" iconSize="18" />
                      </graphic>
                      <font>
                         <Font size="14.0" />
