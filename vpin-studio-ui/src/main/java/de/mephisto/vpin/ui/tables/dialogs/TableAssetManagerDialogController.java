@@ -4,9 +4,7 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
-import de.mephisto.vpin.commons.utils.media.AudioMediaPlayer;
-import de.mephisto.vpin.commons.utils.media.ImageViewer;
-import de.mephisto.vpin.commons.utils.media.VideoMediaPlayer;
+import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.restclient.assets.AssetRequest;
@@ -223,10 +221,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private FrontendMediaRepresentation frontendMedia;
   private Node lastSelected;
   private boolean embedded = false;
-  private AudioMediaPlayer serverAudioMediaPlayer;
-  private VideoMediaPlayer serverVideoMediaPlayer;
-  private AudioMediaPlayer assetAudioMediaPlayer;
-  private VideoMediaPlayer assetVideoMediaPlayer;
+  private AssetMediaPlayer serverMediaPlayer;
+  private AssetMediaPlayer assetMediaPlayer;
 
   public static void close() {
     if (INSTANCE != null) {
@@ -600,28 +596,17 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         return;
       }
 
-      String baseType = mimeType.split("/")[0];
       String assetUrl = client.getGameMediaService().getUrl(tableAsset, this.game == null ? -1 : this.game.getId());
       LOG.info("Loading asset: " + assetUrl);
 
       try {
-        Frontend frontend = client.getFrontendService().getFrontendCached();
+        // if a previous media player was on, dispose it and free resources
+        if (serverMediaPlayer != null) {
+          serverMediaPlayer.disposeMedia();
+        }
 
-        if (baseType.equals("image")) {
-          ImageViewer imageViewer = new ImageViewer();
-          imageViewer.render(assetUrl, tableAsset, tableAsset.getScreen(), frontend.isPlayfieldMediaInverted());
-          serverAssetMediaPane.setCenter(imageViewer);
-        }
-        else if (baseType.equals("audio")) {
-          serverAudioMediaPlayer = new AudioMediaPlayer();
-          serverAssetMediaPane.setCenter(serverAudioMediaPlayer);
-          serverAudioMediaPlayer.render(assetUrl);
-        }
-        else if (baseType.equals("video")) {
-          serverVideoMediaPlayer = new VideoMediaPlayer(mimeType, frontend.isPlayfieldMediaInverted());
-          serverAssetMediaPane.setCenter(serverVideoMediaPlayer);
-          serverVideoMediaPlayer.render(assetUrl, tableAsset.getScreen());
-        }
+        this.serverMediaPlayer = WidgetFactory.createAssetMediaPlayer(client, assetUrl, tableAsset.getScreen(), mimeType, false, false);
+        serverAssetMediaPane.setCenter(serverMediaPlayer);
       }
       catch (Exception e) {
         LOG.error("Preview failed for " + tableAsset, e);
@@ -888,25 +873,11 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         }
         conversionMenu.setDisable(!atleastone);
 
-        String url = client.getURL(mediaItem.getUri()) + "/" + URLEncoder.encode(mediaItem.getName(), Charset.defaultCharset());
-        LOG.info("Loading " + url);
-
         Tooltip.uninstall(mediaPane, null);
-        if (baseType.equals("image")) {
-          ImageViewer iv = new ImageViewer();
-          iv.render(url, mediaItem, mediaItem.getScreen(), frontend.isPlayfieldMediaInverted());
-          mediaPane.setCenter(iv);
-        }
-        else if (baseType.equals("audio")) {
-          assetAudioMediaPlayer = new AudioMediaPlayer();
-          mediaPane.setCenter(assetAudioMediaPlayer);
-          assetAudioMediaPlayer.render(mediaItem, url);
-        }
-        else if (baseType.equals("video")) {
-          assetVideoMediaPlayer = new VideoMediaPlayer(mimeType, frontend.isPlayfieldMediaInverted());
-          mediaPane.setCenter(assetVideoMediaPlayer);
-          assetVideoMediaPlayer.render(mediaItem, url);
-        }
+
+        assetMediaPlayer = WidgetFactory.createAssetMediaPlayer(client, mediaItem, false, false);
+        mediaPane.setCenter(assetMediaPlayer);
+
         Tooltip.install(mediaPane, WidgetFactory.createMediaItemTooltip(mediaItem));
       }
     });
@@ -1035,8 +1006,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   @Override
   public void onDialogCancel() {
     try {
-      if (this.serverAudioMediaPlayer != null) {
-        this.serverAudioMediaPlayer.stopAndDispose();
+      if (this.serverMediaPlayer != null) {
+        this.serverMediaPlayer.stopAndDispose();
       }
     }
     catch (Exception e) {
@@ -1044,26 +1015,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     }
 
     try {
-      if (this.serverVideoMediaPlayer != null) {
-        this.serverVideoMediaPlayer.stopAndDispose();
-      }
-    }
-    catch (Exception e) {
-      LOG.error("Media disposal failed: {}", e.getMessage());
-    }
-
-    try {
-      if (this.assetVideoMediaPlayer != null) {
-        this.assetVideoMediaPlayer.stopAndDispose();
-      }
-    }
-    catch (Exception e) {
-      LOG.error("Media disposal failed: {}", e.getMessage());
-    }
-
-    try {
-      if (this.assetAudioMediaPlayer != null) {
-        this.assetAudioMediaPlayer.stopAndDispose();
+      if (this.assetMediaPlayer != null) {
+        this.assetMediaPlayer.stopAndDispose();
       }
     }
     catch (Exception e) {

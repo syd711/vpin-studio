@@ -50,7 +50,7 @@ public class MediaViewPane extends Pane {
     }
     this.child = n;
     if (child != null) {
-      getChildren().add(child);
+      getChildren().add(0, child);
     }
   }
 
@@ -108,6 +108,4 @@ public class MediaViewPane extends Pane {
   public void setRotated(boolean rotated) {
     this.rotated = rotated;
   }
-
-
 }

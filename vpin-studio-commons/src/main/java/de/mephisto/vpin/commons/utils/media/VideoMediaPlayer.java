@@ -1,10 +1,21 @@
 package de.mephisto.vpin.commons.utils.media;
 
-import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
+import de.mephisto.vpin.commons.utils.JFXFuture;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+import javafx.geometry.HPos;
+import javafx.geometry.VPos;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import javafx.scene.paint.Paint;
+
+import org.apache.commons.lang3.StringUtils;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,10 +24,14 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
 
   private final String mimeType;
 
+  private ImageView imageView;
   private MediaView mediaView;
-  private Media media;
+
+  private boolean modeVideo = false;
+  private Button playBtn;
 
   private boolean invertPlayfield;
+
 
   public VideoMediaPlayer(@NonNull String mimeType, boolean invertPlayfield) {
     super();
@@ -24,34 +39,84 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
     this.invertPlayfield = invertPlayfield;
   }
 
-  public void render(@NonNull String url, @NonNull String screenName) {
-    render(null, screenName, url);
-  }
+  public void render(@NonNull String url, @Nullable String screenName, boolean usePreview)  {
 
-  public void render(@NonNull FrontendMediaItemRepresentation mediaItem, @NonNull String url) {
-    render(mediaItem, mediaItem.getScreen(), url);
-  }
-    
-  private void render(@NonNull FrontendMediaItemRepresentation mediaItem, @NonNull String screenName, @NonNull String url) {
-
-    String baseType = mimeType.split("/")[0];
-    String mediaType = mimeType.split("/")[1];
-
-    if (mediaType.equalsIgnoreCase("quicktime")) {
-      setCenter(getEncodingNotSupportedLabel(mediaItem));
+    if (StringUtils.endsWithIgnoreCase(mimeType, "/quicktime")) {
+      setCenter(getEncodingNotSupportedLabel());
       return;
     }
 
     setLoading();
 
-    media = new Media(url);
+    if (usePreview) {
+      JFXFuture.supplyAsync(() -> new Image(url + "?preview=true", false))
+        .thenAcceptLater(image -> {
+          // create an ImageView with a play button
+          this.imageView = new ImageView(image);
+          imageView.setPreserveRatio(true);
+          setCenter(imageView);
+
+          scaleImageView(image, screenName);
+
+          // add an image on top 
+          FontIcon fontIcon = new FontIcon();
+          fontIcon.setIconSize(48);
+          fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+          fontIcon.setIconLiteral("bi-play");
+          this.playBtn = new Button();
+          playBtn.setGraphic(fontIcon);
+          playBtn.setVisible(false);
+          getChildren().add(playBtn);
+          playBtn.managedProperty().bind(playBtn.visibleProperty());
+
+          this.setOnMouseEntered(me -> {
+            playBtn.setVisible(true);
+          });
+          this.setOnMouseExited(me -> {
+            playBtn.setVisible(false);
+          });
+
+          playBtn.setOnMouseReleased(me -> {
+            // in video mode, switch back to the imageView
+            if (modeVideo) {
+              mediaView.getMediaPlayer().stop();
+              setCenter(imageView);            
+              fontIcon.setIconLiteral("bi-play");
+              modeVideo = false;
+            }
+            // in audio mode, when mediaPLayer has already been created, just switch to it
+            else if (mediaPlayer != null) {
+              setCenter(mediaView);
+              mediaView.getMediaPlayer().play();
+              fontIcon.setIconLiteral("bi-stop");
+              modeVideo = true;
+            }
+            else {
+              getChildren().remove(playBtn);
+              fontIcon.setIconLiteral("bi-stop");
+              renderVideo(url, screenName);
+              modeVideo = true;
+            }
+          });
+        });
+    }
+    else {
+      renderVideo(url, screenName);
+    }
+  }
+
+  public void renderVideo(@NonNull String url, @Nullable String screenName) {
+
+    setLoading();
+
+    Media media = new Media(url);
     LOG.info("Streaming media: " + url);
     mediaPlayer = new MediaPlayer(media);
 
     mediaPlayer.setOnError(() -> {
       LOG.warn("Media player error: " + mediaPlayer.getError() + ", URL: " + mediaPlayer.getMedia().getSource());
       disposeMedia();
-      setCenter(getErrorLabel(mediaItem));
+      setCenter(getErrorLabel());
     });
 
     mediaPlayer.setOnReady(() -> {
@@ -59,37 +124,62 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
         listener.onReady(media);
       }
 
-      mediaPlayer.setAutoPlay(baseType.equals("video"));
+      mediaPlayer.setAutoPlay(true);
       mediaPlayer.setCycleCount(-1);
       mediaPlayer.setMute(true);
 
       mediaView = new MediaView(mediaPlayer);
-      mediaView.setUserData(mediaItem);
       mediaView.setPreserveRatio(true);
-      mediaView.setVisible(false);
 
       if (mediaOptions == null || mediaOptions.isAutoRotate()) {
-        scaleMediaView(screenName);
+        scaleMediaView(media, screenName);
       }
 
-      mediaView.setVisible(true);
-
       setCenter(mediaView);
+      if (playBtn != null) {
+        getChildren().add(playBtn);
+      }
     });
   }
 
-  private void scaleMediaView(String screenName) {
-    if ("PlayField".equalsIgnoreCase(screenName)) {
+  private void scaleMediaView(Media media, @Nullable String screenName) {
+    if (VPinScreen.PlayField.getSegment().equalsIgnoreCase(screenName)) {
       if (media.getWidth() > media.getHeight()) {
         mediaView.setRotate(90 + (invertPlayfield ? 180 : 0));
         setRotated(true);
       }
     }
-    else if ("Loading".equalsIgnoreCase(screenName)) {
+    else if (VPinScreen.Loading.getSegment().equalsIgnoreCase(screenName)) {
       if (media.getWidth() > media.getHeight()) {
         mediaView.setRotate(90);
         setRotated(true);
       }
+    }
+  }
+
+  private void scaleImageView(Image image,  @Nullable String screenName) {
+    if (VPinScreen.PlayField.getSegment().equalsIgnoreCase(screenName)) {
+      if (image.getWidth() > image.getHeight()) {
+        imageView.setRotate(90 + (invertPlayfield ? 180 : 0));
+        setRotated(true);
+      }
+    }
+    else if (VPinScreen.Loading.getSegment().equalsIgnoreCase(screenName)) {
+      if (image.getWidth() > image.getHeight()) {
+        imageView.setRotate(90);
+        setRotated(true);
+      }
+    }
+  }
+
+  @Override
+  protected void layoutChildren() {
+    super.layoutChildren();
+
+    if (playBtn != null) {
+      double width = getWidth();
+      double height = getHeight();
+      super.layoutInArea(playBtn, 0, 0, width, height, 0, HPos.CENTER, VPos.CENTER);
     }
   }
 

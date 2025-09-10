@@ -3,12 +3,12 @@ package de.mephisto.vpin.server.assets;
 import de.mephisto.vpin.connectors.assets.AssetLookupStrategy;
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetSource;
-import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.util.MimeTypeUtil;
 import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 /**
  * And asset search service based on the local filesystem
  */
-public class FileSystemTableAssetAdapter extends DefaultTableAssetAdapter implements TableAssetsAdapter<Game> {
+public class FileSystemTableAssetAdapter extends DefaultTableAssetAdapter {
   private final static Logger LOG = LoggerFactory.getLogger(FileSystemTableAssetAdapter.class);
 
 
@@ -77,14 +77,9 @@ public class FileSystemTableAssetAdapter extends DefaultTableAssetAdapter implem
     fileName = fileName.replaceAll("@2x", "");
     File source = new File(fileName);
     if (source.exists()) {
-      try {
-        FileUtils.copyFile(source, outputStream);
-        LOG.info("Copied {} from {}", source.getAbsolutePath(), this.source);
-      }
-      catch (Exception e) {
-        //do not log URL
-        LOG.error("Failed to execute media item copy: " + e.getClass().getSimpleName(), e);
-      }
+      // exception are thrown and are caught buy caller 
+      FileUtils.copyFile(source, outputStream);
+      LOG.info("Copied {} from {}", source.getAbsolutePath(), this.source);
     }
     else {
       LOG.error("Failed to resolve media source file {} from source {}", source.getAbsolutePath(), getAssetSource());

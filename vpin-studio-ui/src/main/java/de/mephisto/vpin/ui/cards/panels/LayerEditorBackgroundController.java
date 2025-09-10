@@ -118,7 +118,7 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
   @FXML
   private void onOpenDefaultPicture() {
     if (this.game.isPresent()) {
-      TableDialogs.openMediaDialog(Studio.stage, "Default Picture", client.getBackglassServiceClient().getDefaultPictureUrl(game.get()));
+      TableDialogs.openMediaDialog(Studio.stage, "Default Picture", client.getBackglassServiceClient().getDefaultPictureUrl(game.get()), "image/png");
     }
   }
 

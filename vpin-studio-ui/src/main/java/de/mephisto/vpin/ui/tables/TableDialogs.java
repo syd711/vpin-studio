@@ -678,7 +678,7 @@ public class TableDialogs {
   public static void openMediaDialog(Stage parent, FrontendMediaItemRepresentation item) {
     Stage stage = Dialogs.createStudioDialogStage(parent, MediaPreviewController.class, "dialog-media-preview.fxml", item.getScreen() + " Screen", "dialog-media-preview");
     MediaPreviewController controller = (MediaPreviewController) stage.getUserData();
-    controller.setData(stage, item);
+    controller.setData(stage, item, false);
 
     FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
     stage.setUserData(fxResizeHelper);
@@ -688,10 +688,10 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static void openMediaDialog(@NonNull Stage parent, @NonNull String title, @NonNull String url) {
+  public static void openMediaDialog(@NonNull Stage parent, @NonNull String title, @NonNull String url, @NonNull String mimeType) {
     Stage stage = Dialogs.createStudioDialogStage(parent, MediaPreviewController.class, "dialog-media-preview.fxml", title, "dialog-media-preview");
     MediaPreviewController controller = (MediaPreviewController) stage.getUserData();
-    controller.setData(stage, url);
+    controller.setData(stage, url, mimeType);
 
     FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
     stage.setUserData(fxResizeHelper);
