@@ -433,7 +433,7 @@ public class GameMediaResource {
     Game game = frontendService.getOriginalGame(gameId);
     File target = gameMediaService.uniqueMediaAsset(game, screen);
     FileOutputStream out = new FileOutputStream(target);
-    //copy base64 asset
+    // copy base64 asset
     if (screen.equals(VPinScreen.AudioLaunch) || screen.equals(VPinScreen.Audio)) {
       IOUtils.write(EMPTY_MP3, out);
     }
