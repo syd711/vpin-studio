@@ -226,6 +226,24 @@ public class FileUtils {
     return target;
   }
 
+  //-----------------------------------------------
+  static Pattern assetPattern = Pattern.compile("\\d\\d$");
+
+  public static boolean isDefaultAsset(String filename) {
+    String basename = FilenameUtils.getBaseName(filename);
+    String baseAssetName = baseUniqueAsset(filename);
+    return basename.equals(baseAssetName);
+  }
+
+  public static String baseUniqueAsset(String filename) {
+    String basename = FilenameUtils.removeExtension(filename).trim();
+    Matcher match = assetPattern.matcher(basename);
+    if (match.find()) {
+      basename = match.replaceAll("");
+    }
+    return basename;
+  }
+
   public static File uniqueAsset(File target) {
     return uniqueAssetByMarker(target, null);
   }

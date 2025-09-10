@@ -370,6 +370,9 @@ public class GameMediaResource {
       if (data.containsKey("blank")) {
         return addBlank(gameId, screen);
       }
+      if (data.containsKey("setDefault")) {
+        return setDefaultAsset(gameId, screen, data.get("setDefault"));
+      }
       if (data.containsKey("oldName")) {
         return renameAsset(gameId, screen, data.get("oldName"), data.get("newName"));
       }
@@ -380,6 +383,50 @@ public class GameMediaResource {
     }
     finally {
       gameLifecycleService.notifyGameAssetsChanged(gameId, AssetType.FRONTEND_MEDIA, null);
+    }
+    return false;
+  }
+
+  private boolean setDefaultAsset(int gameId, VPinScreen screen, String defaultName) {
+    Game game = frontendService.getOriginalGame(gameId);
+    List<File> mediaFiles = frontendService.getMediaFiles(game, screen);
+
+    File torename = mediaFiles.stream().filter(f -> f.getName().equals(defaultName)).findFirst().orElse(null);
+    if (torename == null) {
+      LOG.info("Cannot set default asset as {} does not exist in the assets for game {} and screen {}", defaultName, gameId, screen);
+      return false;
+    }
+
+    String extension = FilenameUtils.getExtension(defaultName);
+    File temp = new File(torename.getParentFile(), "temp_" + defaultName);
+    if (torename.renameTo(temp)) {
+      for (File file : mediaFiles) {
+        // find existing default files, mind there could be several with different extensions
+        String fileext = FilenameUtils.getExtension(file.getName());
+        if (FileUtils.isDefaultAsset(file.getName()) && StringUtils.equalsIgnoreCase(fileext, extension)) {
+          File defaultFile = FileUtils.uniqueAsset(file);
+          if (file.renameTo(defaultFile)) {
+            LOG.info("Renamed \"{}\" to \"{}\"", file.getAbsolutePath(), defaultFile.getName());
+          }
+          else {
+            LOG.warn("Cannot rename \"{}\" to \"{}\", state may be inconsistent", file.getAbsolutePath(), defaultFile.getName());
+            return false;
+          }
+        }
+      }
+      // ends by renaming temp file to default
+      File newFile = new File(torename.getParent(), FileUtils.baseUniqueAsset(defaultName) + "." + extension);
+      if (temp.renameTo(newFile)) {
+        LOG.info("New default asset set \"{} \"for game {} and screen{}", newFile.getAbsolutePath(), gameId, screen);
+        return true;
+      }
+      else {
+        LOG.warn("Cannot rename \"{}\" to \"{}\", state may be inconsistent", temp.getAbsolutePath(), newFile.getName());
+      }
+
+    }
+    else {
+      LOG.warn("Cannot rename \"{}\", set as default operation ignored", torename.getAbsolutePath());
     }
     return false;
   }

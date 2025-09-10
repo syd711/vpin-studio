@@ -44,6 +44,12 @@ public class GameMediaServiceClient extends VPinStudioClientService {
     return getRestClient().delete(API + API_SEGMENT_MEDIA + "/media/" + gameId);
   }
 
+  public boolean setDefaultMedia(int gameId, VPinScreen screen, String name) throws Exception {
+    Map<String, Object> params = new HashMap<>();
+    params.put("setDefault", name);
+    return getRestClient().put(API + API_SEGMENT_MEDIA + "/media/" + gameId + "/" + screen.name(), params, Boolean.class);
+  }
+
   public boolean renameMedia(int gameId, VPinScreen screen, String name, String newName) throws Exception {
     Map<String, Object> params = new HashMap<>();
     params.put("oldName", name);

@@ -130,6 +130,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private Button prevButton;
 
   @FXML
+  private Button setDefaultBtn;
+
+  @FXML
   private Button renameBtn;
 
   @FXML
@@ -495,6 +498,40 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   }
 
   @FXML
+  private void onSetDefault() {
+    FrontendMediaItemRepresentation selectedItem = this.assetList.getSelectionModel().getSelectedItem();
+    if (selectedItem != null) {
+      String name = selectedItem.getName();
+      String baseName = FilenameUtils.getBaseName(name);
+      String uniqueAssetName = null; //FileUtils.baseUniqueAsset(name);
+      if (StringUtils.equals(baseName, uniqueAssetName)) {}
+
+      Optional<ButtonType> buttonType = WidgetFactory.showConfirmation(localStage, "Set As Default Asset",
+          "Do you want to set this file as your default asset ?",
+          "Current default asset file will be automatically renamed.");
+      if (buttonType.isPresent() && buttonType.get().equals(ButtonType.OK)) {
+        try {
+          boolean status = client.getGameMediaService().setDefaultMedia(game.getId(), screen, selectedItem.getName());
+          if (!status) {
+            WidgetFactory.showAlert(localStage, "Warning", 
+                "Coundl't set default asset for game "+ game.getGameName() + "\".", 
+                "Please check the asset files as they may be in an inconsistent state.");
+
+          }
+          EventManager.getInstance().notifyTableChange(game.getId(), null, game.getGameName());
+          onReload();
+        }
+        catch(Exception e) {
+            WidgetFactory.showAlert(localStage, "Error", 
+                "An error occurred while setting default asset for game "+ game.getGameName() + "\".",
+                e.getMessage());
+        }
+      }
+    }    
+  }
+
+
+  @FXML
   private void onRename() {
     FrontendMediaItemRepresentation selectedItem = this.assetList.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
@@ -675,6 +712,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
     assetSearchBox.managedProperty().bindBidirectional(assetSearchBox.visibleProperty());
     assetSourceComboBox.managedProperty().bindBidirectional(assetSourceComboBox.visibleProperty());
+    setDefaultBtn.managedProperty().bindBidirectional(setDefaultBtn.visibleProperty());
     renameBtn.managedProperty().bindBidirectional(renameBtn.visibleProperty());
 
     if (openPlaylistManagerBtn != null) {
@@ -798,6 +836,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     downloadBtn.setVisible(false);
     webPreviewBtn.setVisible(false);
 
+    this.setDefaultBtn.setDisable(true);
     this.renameBtn.setDisable(true);
     this.downloadAssetBtn.setDisable(true);
     this.addAudioBlank.setVisible(false);
@@ -847,6 +886,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
         WidgetFactory.disposeMediaPane(mediaPane);
         infoBtn.setDisable(list.size() != 1);
+        setDefaultBtn.setDisable(list.size() != 1);
         renameBtn.setDisable(list.size() != 1);
         downloadAssetBtn.setDisable(list.size() != 1);
 
@@ -863,6 +903,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         FrontendMediaItemRepresentation mediaItem = list.get(0);
         String mimeType = mediaItem.getMimeType();
         String baseType = mimeType.split("/")[0];
+
+        // add a condition, asset should not be the default asset already
+        setDefaultBtn.setDisable(setDefaultBtn.isDisable() || FileUtils.isDefaultAsset(mediaItem.getName()));
 
         boolean atleastone = false;
         for (MenuItem item : conversionMenu.getItems()) {
@@ -943,6 +986,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     boolean small = w.intValue() < 725;
     uploadBtn.setText(small ? "" : "Upload");
     downloadAssetBtn.setText(small ? "" : "Download");
+    setDefaultBtn.setText(small ? "" : "Set As Default");
     renameBtn.setText(small ? "" : "Rename");
     reloadBtn.setText(small ? "" : "Reload");
   }
@@ -1059,6 +1103,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     this.nextButton.setVisible(overviewController != null);
     this.prevButton.setVisible(overviewController != null);
 
+    this.setDefaultBtn.setVisible(false);
     this.renameBtn.setVisible(false);
 
     if (!isEmbeddedMode()) {
@@ -1123,6 +1168,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       this.screen = screen;
     }
 
+    this.setDefaultBtn.setVisible(true);
     this.renameBtn.setVisible(true);
 
     if (!isEmbeddedMode()) {

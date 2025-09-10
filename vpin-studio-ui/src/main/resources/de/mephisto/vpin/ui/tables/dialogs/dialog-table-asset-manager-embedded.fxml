@@ -207,6 +207,17 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                            </graphic>
                         </Button>
+                        <Button fx:id="setDefaultBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onSetDefault" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-file-check-outline" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Use this file as default asset file" />
+                           </tooltip>
+                        </Button>
                         <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" textFill="WHITE">
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />

@@ -15,8 +15,9 @@
   - Mirror, Creates a blurred mirror reflection with perspective.
   - Gradient, Calculate the dominant color of the image and use it to draw a gradient to black
 
-- **TableMedias** : In the Table Media tab of the tables sidebar, videos are now previewed as one frame, vs the full video that is consuming lots of CPU. A play icon to start the video appears when mouse is over the media. A stop icon stops the vidéo.
-
-- **Assets and Medias**: Improved streaming of Table Assets and Frontend Medias
+- **Assets and Medias** : 
+  - In the Table Media tab of the tables sidebar, videos are now previewed as one frame, vs the full video that is consuming lots of CPU. A play icon to start the video appears when mouse is over the media. A stop icon stops the vidéo.
+  - In Asset Manager, Added 'Set A Default' button to choose default asset in the list of assets
+  - Improved streaming of Table Assets and Frontend Medias
 
 ## Bugfixes

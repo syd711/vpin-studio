@@ -160,12 +160,23 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="18" />
                                        </graphic>
                                     </Button>
+                                    <Button fx:id="setDefaultBtn" mnemonicParsing="false" onAction="#onSetdefault" text="Set As Default" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2f-file-check-outline" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="Use this file as default asset file" />
+                                       </tooltip>
+                                    </Button>
                                     <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" text="Rename" textFill="WHITE">
                                        <graphic>
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip text="Update the ROM name for this table." />
+                                          <Tooltip text="Rename the asset file" />
                                        </tooltip>
                                        <font>
                                           <Font size="14.0" />
