@@ -2071,22 +2071,6 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }
   }
 
-  public void selectPrevious() {
-    int selectedIndex = this.tableView.getSelectionModel().getSelectedIndex();
-    if (!tableView.getItems().isEmpty() && selectedIndex > 0) {
-      tableView.getSelectionModel().clearSelection();
-      tableView.getSelectionModel().select((selectedIndex - 1));
-    }
-  }
-
-  public void selectNext() {
-    int selectedIndex = this.tableView.getSelectionModel().getSelectedIndex();
-    if (!tableView.getItems().isEmpty() && (selectedIndex + 1) < tableView.getItems().size()) {
-      tableView.getSelectionModel().clearSelection();
-      tableView.getSelectionModel().select((selectedIndex + 1));
-    }
-  }
-
   @Override
   protected int getPreferredColumnIndex(@NotNull String columnId) {
     return -1;

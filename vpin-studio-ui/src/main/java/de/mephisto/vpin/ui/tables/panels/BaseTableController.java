@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.WaitOverlay;
+import de.mephisto.vpin.ui.backglassmanager.DirectB2SModel;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.util.Keys;
@@ -454,6 +455,56 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
     }
   }
 
+  public M selectNextModel() {
+    return selectNextModel(m-> true);
+  }
+
+  public M selectNextModel(Predicate<M> filter) {
+    M selection = getSelectedModel();
+    if (selection != null) {
+      int nbCheck = 0;
+      do {
+        int selectedIndex = this.tableView.getSelectionModel().getSelectedIndex() + 1;
+        if (selectedIndex >= tableView.getItems().size()) {
+          selectedIndex = 0;
+        }
+        clearSelection();
+        tableView.getSelectionModel().select(selectedIndex);
+        selection = getSelectedModel();
+        nbCheck++;
+      }
+      while (!filter.test(selection) && nbCheck < tableView.getItems().size());
+      return selection;
+    }
+    return null;
+  }
+
+  public M selectPreviousModel() {
+    return selectPreviousModel(m -> true);
+  }
+
+  public M selectPreviousModel(Predicate<M> filter) {
+    M selection = getSelectedModel();
+    if (selection != null) {
+      int nbCheck = 0;
+      do {
+        int selectedIndex = this.tableView.getSelectionModel().getSelectedIndex() - 1;
+        if (selectedIndex < 0) {
+          selectedIndex = tableView.getItems().size() - 1;
+        }
+        clearSelection();
+        tableView.getSelectionModel().select(selectedIndex);
+        selection = getSelectedModel();
+        //this.
+        nbCheck++;
+      }
+      while (!filter.test(selection) && nbCheck < tableView.getItems().size());
+      return selection;
+    }
+    return null;
+  }
+
+
   public void setSelection(M model, boolean scrollToModel) {
     if (model == null) {
       clearSelection();
@@ -481,7 +532,6 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
       }
     }
   }
-
 
   //----------------------
   // Playlists
@@ -566,4 +616,5 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
   public TableView<M> getTableView() {
     return tableView;
   }
+
 }

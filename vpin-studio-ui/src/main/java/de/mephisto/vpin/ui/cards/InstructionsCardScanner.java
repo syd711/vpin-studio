@@ -35,7 +35,7 @@ public class InstructionsCardScanner extends Application {
 
   private final static Logger LOG = LoggerFactory.getLogger(InstructionsCardScanner.class);
 
-  private File folder = new File("D:/Instruction Cards");
+  private File folder = new File("D:/Pincab Assets/_INSTRUCTION CARDS");
   private File database = new File("d:/TablesDB");
 
 

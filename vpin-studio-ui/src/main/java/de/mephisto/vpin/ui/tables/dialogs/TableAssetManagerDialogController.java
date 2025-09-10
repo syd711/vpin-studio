@@ -236,7 +236,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   @FXML
   private void onNext(ActionEvent e) {
-    overviewController.selectNext();
+    overviewController.selectNextModel();
     GameRepresentation selection = overviewController.getSelection();
     if (selection != null && !selection.equals(this.game)) {
       this.tablesCombo.setValue(selection);
@@ -245,7 +245,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   @FXML
   private void onPrevious(ActionEvent e) {
-    overviewController.selectPrevious();
+    overviewController.selectPreviousModel();
     GameRepresentation selection = overviewController.getSelection();
     if (selection != null && !selection.equals(this.game)) {
       this.tablesCombo.setValue(selection);

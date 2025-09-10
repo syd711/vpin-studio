@@ -612,43 +612,4 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     }
     return null;
   }
-
-  public int selectNextGame() {
-    DirectB2SModel selection = getSelectedModel();
-    if (selection != null) {
-      int nbCheck = 0;
-      do {
-        int selectedIndex = this.tableView.getSelectionModel().getSelectedIndex() + 1;
-        if (selectedIndex >= tableView.getItems().size()) {
-          selectedIndex = 0;
-        }
-        tableView.getSelectionModel().select(selectedIndex);
-        selection = getSelectedModel();
-        nbCheck++;
-      }
-      while (selection.getGameId() <= 0 && nbCheck < tableView.getItems().size());
-      return selection.getGameId();
-    }
-    return -1;
-  }
-
-  public int selectPreviousGame() {
-    DirectB2SModel selection = getSelectedModel();
-    if (selection != null) {
-      int nbCheck = 0;
-      do {
-        int selectedIndex = this.tableView.getSelectionModel().getSelectedIndex() - 1;
-        if (selectedIndex < 0) {
-          selectedIndex = tableView.getItems().size() - 1;
-        }
-        tableView.getSelectionModel().select(selectedIndex);
-        selection = getSelectedModel();
-        //this.
-        nbCheck++;
-      }
-      while (selection.getGameId() <= 0 && nbCheck < tableView.getItems().size());
-      return selection.getGameId();
-    }
-    return -1;
-  }
 }

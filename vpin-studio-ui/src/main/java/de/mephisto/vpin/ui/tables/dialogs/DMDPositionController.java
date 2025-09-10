@@ -11,9 +11,10 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.backglassmanager.BackglassManagerController;
 import de.mephisto.vpin.ui.backglassmanager.BackglassManagerControllerUtils;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.tables.panels.BaseGameModel;
+import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.util.PositionResizer;
 import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
@@ -71,7 +72,7 @@ public class DMDPositionController implements Initializable, DialogController {
   @FXML
   protected DialogHeaderController headerController;  //fxml magic! Not unused -> id + "Controller"
 
-  private BackglassManagerController backglassMgrController;
+  private BaseTableController<?, ? extends BaseGameModel> baseMgrController;
 
   @FXML
   private Label titleLabel;
@@ -208,7 +209,10 @@ public class DMDPositionController implements Initializable, DialogController {
   protected void onPrevious(ActionEvent e) {
     onAutosave(() -> {
       clearGame();
-      switchGame(backglassMgrController.selectPreviousGame());  
+      BaseGameModel selection = baseMgrController.selectPreviousModel(m -> m.getGameId() > 0);
+      if (selection != null) {
+        switchGame(selection.getGameId());
+      }
     });
   }
 
@@ -216,7 +220,11 @@ public class DMDPositionController implements Initializable, DialogController {
   protected void onNext(ActionEvent e) {
     onAutosave(() -> {
       clearGame();
-      switchGame(backglassMgrController.selectNextGame());
+
+      BaseGameModel selection = baseMgrController.selectNextModel(m -> m.getGameId() > 0);
+      if (selection != null) {
+        switchGame(selection.getGameId());
+      }
     });
   }
 
@@ -265,7 +273,7 @@ public class DMDPositionController implements Initializable, DialogController {
     JFXFuture.supplyAsync(() -> client.getGame(gameId))
     .thenAcceptLater(game -> {
       if (game != null) {
-        setGame(game, backglassMgrController);
+        setGame(game, baseMgrController);
       }
     });
   }
@@ -604,14 +612,14 @@ public class DMDPositionController implements Initializable, DialogController {
   public void onDialogCancel() {
   }
 
-  public void setGame(GameRepresentation gameRepresentation, @Nullable BackglassManagerController backglassMgrController) {
+  public void setGame(GameRepresentation gameRepresentation, @Nullable BaseTableController<?, ? extends BaseGameModel> baseMgrController) {
     this.game = gameRepresentation;
-    this.backglassMgrController = backglassMgrController;
+    this.baseMgrController = baseMgrController;
     titleLabel.setText(game.getGameDisplayName());
 
-    saveLocallyBtn.setVisible(backglassMgrController != null);
-    prevButton.setVisible(backglassMgrController != null);
-    nextButton.setVisible(backglassMgrController != null);
+    saveLocallyBtn.setVisible(baseMgrController != null);
+    prevButton.setVisible(baseMgrController != null);
+    nextButton.setVisible(baseMgrController != null);
 
     disableAll();
     setWait(true);
@@ -715,7 +723,7 @@ public class DMDPositionController implements Initializable, DialogController {
     // no local save if no rom
     if (storename != null) {
 
-      if (backglassMgrController != null) {
+      if (baseMgrController != null) {
         saveLocallyBtn.setText("Save for " + storename);
         saveLocallyBtn.setVisible(true);
 

@@ -9,6 +9,9 @@
   
      <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/cards/cards.png?raw=true" width="700" />
 
+- **Tables Overview**
+  - Support of next/prev in DmdPosition tool when opened from Tables
+
 - **BackglassManager**: Added a frame generator directly in studio, on an idea and python script provided by Himura95. 4 different generators are provided: 
   - Ambilight, Uses the pixels on the edge of the backglass to generate the frame.
   - Blurred, Creates a blurred zoom of the backglass.

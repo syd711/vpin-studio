@@ -25,13 +25,14 @@ import de.mephisto.vpin.restclient.webhooks.WebhookSet;
 import de.mephisto.vpin.restclient.webhooks.WebhookSettings;
 import de.mephisto.vpin.ui.MediaPreviewController;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.backglassmanager.BackglassManagerController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.preferences.dialogs.IScoredGameRoomDialogController;
 import de.mephisto.vpin.ui.preferences.dialogs.WebhooksDialogController;
 import de.mephisto.vpin.ui.tables.dialogs.*;
 import de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2ProfileDialogController;
 import de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2SampleTypeDialogController;
+import de.mephisto.vpin.ui.tables.panels.BaseGameModel;
+import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
@@ -46,7 +47,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -383,10 +383,10 @@ public class TableDialogs {
     return true;
   }
 
-  public static void openDMDPositionDialog(GameRepresentation game, @Nullable BackglassManagerController backglassMgrController) {
+  public static void openDMDPositionDialog(GameRepresentation game, @Nullable BaseTableController<?, ? extends BaseGameModel> baseTableController) {
     Stage stage = Dialogs.createStudioDialogStage(DMDPositionController.class, "dialog-dmd-position.fxml", "DMD Position");
     DMDPositionController controller = (DMDPositionController) stage.getUserData();
-    controller.setGame(game, backglassMgrController);
+    controller.setGame(game, baseTableController);
     stage.showAndWait();
   }
 

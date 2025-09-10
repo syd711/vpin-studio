@@ -8,12 +8,13 @@ import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.validation.*;
+import de.mephisto.vpin.ui.tables.panels.BaseGameModel;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingModel;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.DISABLED_COLOR;
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class GameRepresentationModel extends BaseLoadingModel<GameRepresentation, GameRepresentationModel> {
+public class GameRepresentationModel extends BaseLoadingModel<GameRepresentation, GameRepresentationModel> implements BaseGameModel {
 
   VpsTable vpsTable;
 
@@ -29,6 +30,7 @@ public class GameRepresentationModel extends BaseLoadingModel<GameRepresentation
     return getBean();
   }
 
+  @Override     // BaseGameModel
   public int getGameId() {
     return bean.getId();
   }

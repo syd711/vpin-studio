@@ -485,7 +485,7 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   @FXML
   private void onNext(ActionEvent e) {
-    tableOverviewController.selectNext();
+    tableOverviewController.selectNextModel();
     GameRepresentation selection = tableOverviewController.getSelection();
     if (selection != null && !selection.equals(this.game)) {
       TableDataController.lastTab = this.tabPane.getSelectionModel().getSelectedIndex();
@@ -501,7 +501,7 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   @FXML
   private void onPrevious(ActionEvent e) {
-    tableOverviewController.selectPrevious();
+    tableOverviewController.selectPreviousModel();
     GameRepresentation selection = tableOverviewController.getSelection();
     if (selection != null && !selection.equals(this.game)) {
       int index = this.tabPane.getSelectionModel().getSelectedIndex();

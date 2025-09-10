@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SDetail;
 import de.mephisto.vpin.restclient.validation.BackglassValidationCode;
 import de.mephisto.vpin.restclient.validation.ValidationState;
+import de.mephisto.vpin.ui.tables.panels.BaseGameModel;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingModel;
 
 import org.apache.commons.lang3.StringUtils;
@@ -14,7 +15,7 @@ import java.util.Objects;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class DirectB2SModel extends BaseLoadingModel<DirectB2S, DirectB2SModel> {
+public class DirectB2SModel extends BaseLoadingModel<DirectB2S, DirectB2SModel> implements BaseGameModel {
   private final static Logger LOG = LoggerFactory.getLogger(DirectB2SModel.class);
 
   // not null when loaded
@@ -51,6 +52,7 @@ public class DirectB2SModel extends BaseLoadingModel<DirectB2S, DirectB2SModel> 
     return bean.getEmulatorId();
   }
 
+  @Override     // BaseGameModel
   public int getGameId() {
     return bean.getGameId();
   }
