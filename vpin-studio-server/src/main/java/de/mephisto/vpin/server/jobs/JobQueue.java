@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -49,6 +51,7 @@ public class JobQueue implements InitializingBean {
   public void submit(JobDescriptor descriptor) {
     queue.offer(descriptor);
     pollQueue();
+    LOG.info("Job list size: " + getJobs().size());
   }
 
   public int size() {
@@ -59,10 +62,15 @@ public class JobQueue implements InitializingBean {
     this.queue.remove(descriptor);
     descriptor.setCancelled(true);
     descriptor.getJob().cancel(descriptor);
+    LOG.info("Dismissed job \"" + descriptor + "\"");
   }
 
   public boolean isEmpty() {
     return this.queue.isEmpty();
+  }
+
+  public List<JobDescriptor> getJobs() {
+    return new ArrayList<>(this.queue);
   }
 
   @Override
