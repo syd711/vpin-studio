@@ -269,7 +269,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   private void onOpenDirectB2SBackground() {
     if (tableData != null) {
       String url = client.getBackglassServiceClient().getDirectB2sBackgroundUrl(tableData.getEmulatorId(), tableData.getFilename());
-      TableDialogs.openMediaDialog(Studio.stage, "Backglass", url);
+      TableDialogs.openMediaDialog(Studio.stage, "Backglass", url, "image/png");
     }
   }
 

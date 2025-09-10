@@ -1,8 +1,6 @@
 package de.mephisto.vpin.commons.utils.media;
 
-import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
@@ -36,10 +34,6 @@ public class AudioMediaPlayer extends AssetMediaPlayer {
   }
 
   public void render(@NonNull String url) {
-    render(null, url);
-  }
-
-  public void render(@Nullable FrontendMediaItemRepresentation mediaItem, @NonNull String url) {
     setLoading();
 
     Media media = new Media(url);
@@ -58,11 +52,11 @@ public class AudioMediaPlayer extends AssetMediaPlayer {
           catch (InterruptedException e) {
             throw new RuntimeException(e);
           }
-          render(mediaItem, url);
+          render(url);
         });
       }
       else {
-        setCenter(getErrorLabel(mediaItem));
+        setCenter(getErrorLabel());
       }
     });
 

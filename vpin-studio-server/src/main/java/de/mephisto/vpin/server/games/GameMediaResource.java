@@ -5,7 +5,6 @@ import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.*;
-import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.restclient.util.FileUtils;
@@ -16,22 +15,22 @@ import de.mephisto.vpin.server.frontend.FrontendStatusEventsResource;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.frontend.WheelIconDelete;
 import de.mephisto.vpin.server.util.UploadUtil;
+import de.mephisto.vpin.server.system.JCodec;
+
+import org.apache.catalina.connector.ClientAbortException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.PathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URLDecoder;
@@ -47,7 +46,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
-import static de.mephisto.vpin.server.util.RequestUtil.CONTENT_LENGTH;
 import static de.mephisto.vpin.server.util.RequestUtil.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -137,7 +135,7 @@ public class GameMediaResource {
   }
 
   @GetMapping("/assets/d/{screen}/{assetSourceId}/{gameId}/{url}")
-  public void getMedia(HttpServletResponse response, HttpServletRequest request,
+  public void getTableAsset(HttpServletResponse response, HttpServletRequest request,
                                                         @PathVariable("screen") String screen,
                                                         @PathVariable("assetSourceId") String assetSourceId,
                                                         @PathVariable("gameId") int gameId,
@@ -164,7 +162,7 @@ public class GameMediaResource {
     }
     response.setHeader(CONTENT_TYPE, tableAsset.getMimeType());
     response.setHeader("Access-Control-Allow-Origin", "*");
-    //response.setHeader("Access-Control-Expose-Headers", "origin, range");
+    response.setHeader("Access-Control-Expose-Headers", "origin, range");
     response.setHeader("Cache-Control", "public, max-age=3600");
 
     // For HEAD, do not write the body
@@ -178,6 +176,10 @@ public class GameMediaResource {
       response.flushBuffer();
       response.setStatus(HttpStatus.OK.value());
     } 
+    catch (ClientAbortException cae) {
+      LOG.info("Connection aborted while streaming media {} from {}", name, assetSourceId);
+      response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+    }
     catch (IOException e) {
       LOG.error("Failed to stream media {} from {}: {}", name, assetSourceId, e.getMessage(), e);
       response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -185,44 +187,97 @@ public class GameMediaResource {
   }
 
   @GetMapping("/{id}/{screen}/{name}")
-  public ResponseEntity<Resource> handleRequestWithName(@PathVariable("id") int id, @PathVariable("screen") String screen, @PathVariable("name") String name) throws IOException {
+  public void getMedia(HttpServletResponse response, HttpServletRequest request,
+                                                        @PathVariable("id") int id, 
+                                                        @PathVariable("screen") String screen, 
+                                                        @PathVariable("name") String name, 
+                                                        @RequestParam(value = "preview", required = false) boolean preview) 
+                                                        throws IOException {
+
     screen = screen.replaceAll("@2x", "");
     VPinScreen vPinScreen = VPinScreen.valueOfSegment(screen);
     if (vPinScreen == null) {
       LOG.error("Failed to resolve screen for value {}", screen);
     }
     Game game = frontendService.getOriginalGame(id);
-    if (game != null) {
-      FrontendMedia frontendMedia = frontendService.getGameMedia(game);
-      FrontendMediaItem frontendMediaItem = frontendMedia.getDefaultMediaItem(vPinScreen);
-      if (!StringUtils.isEmpty(name)) {
-        name = name.replaceAll("%(?![0-9a-fA-F]{2})", "%25");
-        name = name.replaceAll("\\+", "%2B");
-        name = URLDecoder.decode(name, Charset.defaultCharset());
-        frontendMediaItem = frontendMedia.getMediaItem(vPinScreen, name);
-      }
-
-      if (frontendMediaItem != null) {
-        File file = frontendMediaItem.getFile();
-        PathResource resource = new PathResource(file.toPath());
-
-        HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set(CONTENT_LENGTH, String.valueOf(file.length()));
-        responseHeaders.set(CONTENT_TYPE, frontendMediaItem.getMimeType());
-        responseHeaders.set("Access-Control-Allow-Origin", "*");
-        responseHeaders.set("Access-Control-Expose-Headers", "origin, range");
-        responseHeaders.set("Cache-Control", "public, max-age=3600");
-        return ResponseEntity.ok().headers(responseHeaders).body(resource);
-      }
+    if (game == null) {
+      throw new ResponseStatusException(NOT_FOUND);
     }
 
-    return ResponseEntity.notFound().build();
+    FrontendMedia frontendMedia = frontendService.getGameMedia(game);
+    FrontendMediaItem frontendMediaItem = frontendMedia.getDefaultMediaItem(vPinScreen);
+    if (!StringUtils.isEmpty(name)) {
+      name = name.replaceAll("%(?![0-9a-fA-F]{2})", "%25");
+      name = name.replaceAll("\\+", "%2B");
+      name = URLDecoder.decode(name, Charset.defaultCharset());
+      frontendMediaItem = frontendMedia.getMediaItem(vPinScreen, name);
+    }
+
+    if (frontendMediaItem == null) {
+      throw new ResponseStatusException(NOT_FOUND);
+    }
+
+    File file = frontendMediaItem.getFile();
+
+    int contentLength = -1;
+    String mimeType = frontendMediaItem.getMimeType();
+    if (preview && StringUtils.startsWithIgnoreCase(mimeType, "video/")) {
+      // will return only a frame, content length cannot be calculated
+      mimeType = "image/png";
+    }
+    else {
+      contentLength = (int) frontendMediaItem.getSize();
+    }
+
+    // Set headers
+    if (contentLength > 0) {
+      response.setContentLength(contentLength);
+    }
+    response.setHeader(CONTENT_TYPE, mimeType);
+    response.setHeader("Access-Control-Allow-Origin", "*");
+    response.setHeader("Access-Control-Expose-Headers", "origin, range");
+    response.setHeader("Cache-Control", "public, max-age=3600");
+
+    // For HEAD, do not write the body
+    if ("HEAD".equals(request.getMethod())) {
+      response.setStatus(HttpStatus.OK.value());
+      return;
+    }
+    // else normal download
+    try (ServletOutputStream outputStream = response.getOutputStream()) {
+
+      if (preview && StringUtils.startsWithIgnoreCase(mimeType, "video/")) {
+        byte[] bytes = JCodec.grab(frontendMediaItem.getFile());
+        response.setContentLength(bytes.length);
+        response.getOutputStream().write(bytes);
+      }
+      else {
+        try (FileInputStream in = new FileInputStream(file)) {
+          IOUtils.copy(in, outputStream);
+        }
+      }
+      response.flushBuffer();
+      response.setStatus(HttpStatus.OK.value());
+    } 
+    catch (ClientAbortException cae) {
+      LOG.info("Connection aborted while downloading {} for game {}", name, id);
+      response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+    }
+    catch (IOException e) {
+      LOG.error("Failed to stream media {} for game {}: {}", name, id, e.getMessage(), e);
+      response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+    }
   }
 
   @GetMapping("/{id}/{screen}")
-  public ResponseEntity<Resource> handleRequest(@PathVariable("id") int id, @PathVariable("screen") String screen) throws IOException {
-    return handleRequestWithName(id, screen, null);
+  public void getMedia(HttpServletResponse response, HttpServletRequest request,
+                                                @PathVariable("id") int id, 
+                                                @PathVariable("screen") String screen,
+                                                @RequestParam(value = "preview", required = false) boolean preview) 
+                                                throws IOException {
+    getMedia(response, request, id, screen, null, preview);
   }
+
 
   @PostMapping("/upload/{screen}/{append}")
   public JobDescriptor upload(@PathVariable("screen") VPinScreen screen,

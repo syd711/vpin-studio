@@ -133,7 +133,8 @@ public class TablesSidebarScriptDataController implements Initializable {
   @FXML
   private void onScreenshotView() {
     if (this.game.isPresent()) {
-      TableDialogs.openMediaDialog(Studio.stage, "Table Screenshot", Studio.client.getRestClient().getBaseUrl() + VPinStudioClientService.API + "vpx/screenshot/" + game.get().getId());
+      String url = Studio.client.getRestClient().getBaseUrl() + VPinStudioClientService.API + "vpx/screenshot/" + game.get().getId();
+      TableDialogs.openMediaDialog(Studio.stage, "Table Screenshot", url, "image/png");
     }
   }
 

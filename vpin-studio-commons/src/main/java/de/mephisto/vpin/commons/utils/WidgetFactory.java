@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.commons.utils.media.*;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -905,7 +906,6 @@ public class WidgetFactory {
       if (mediaItem == null) {
         label.setText("No media found");
       }
-      label.setUserData(mediaItem);
       label.setStyle(MEDIA_CONTAINER_LABEL);
 
       if (mediaItem != null) {
@@ -915,7 +915,8 @@ public class WidgetFactory {
     }
 
     if (previewEnabled && mediaItem != null) {
-      addMediaItemToBorderPane(client, mediaItem, parent);
+      AssetMediaPlayer assetMediaPlayer = createAssetMediaPlayer(client, mediaItem, false, true);
+      parent.setCenter(assetMediaPlayer);
       Tooltip.install(parent, createMediaItemTooltip(mediaItem));
     }
   }
@@ -926,74 +927,46 @@ public class WidgetFactory {
     parent.setCenter(label);
   }
 
-  public static AssetMediaPlayer addMediaItemToBorderPane(String url, BorderPane parent) {
-    Image image = new Image(url);
-    return addMediaItemToBorderPane(image, parent);
-  }
-  public static AssetMediaPlayer addMediaItemToBorderPane(Image image, BorderPane parent) {
-    ImageViewer imageViewer = new ImageViewer();
-    parent.setCenter(imageViewer);
-    parent.setUserData(imageViewer);
-    imageViewer.render(image);
-    return imageViewer;
-  }
-
-  public static AssetMediaPlayer addMediaItemToBorderPane(VPinStudioClient client, FrontendMediaItemRepresentation mediaItem, BorderPane parent) {
-    return addMediaItemToBorderPane(client, mediaItem, parent, null, null);
-  }
-
-  public static AssetMediaPlayer addMediaItemToBorderPane(VPinStudioClient client, FrontendMediaItemRepresentation mediaItem, BorderPane parent, MediaPlayerListener listener, MediaOptions mediaOptions) {
-      return addMediaItemToBorderPane(client, mediaItem, parent, listener, mediaOptions, false);
-  }
-
-  public static AssetMediaPlayer addMediaItemToBorderPane(VPinStudioClient client, FrontendMediaItemRepresentation mediaItem, BorderPane parent, 
-          MediaPlayerListener listener, MediaOptions mediaOptions, boolean noLoading) {
+  public static AssetMediaPlayer createAssetMediaPlayer(VPinStudioClient client, FrontendMediaItemRepresentation mediaItem, 
+                                                        boolean noLoading, boolean usePreview) {
     String mimeType = mediaItem.getMimeType();
     if (mimeType == null) {
       LOG.info("Failed to resolve mime type for " + mediaItem);
       return null;
     }
 
-    boolean audioOnly = parent.getId().equalsIgnoreCase("screenAudioLaunch") || parent.getId().equalsIgnoreCase("screenAudio");
-    String baseType = mimeType.split("/")[0];
-    String url = client.getURL(mediaItem.getUri());
-    url += "/" + URLEncoder.encode(mediaItem.getName(), Charset.defaultCharset());
+    String url = client.getURL(mediaItem.getUri()) + "/" + URLEncoder.encode(mediaItem.getName(), Charset.defaultCharset());
+    return createAssetMediaPlayer(client, url, mediaItem.getScreen(), mimeType, noLoading, usePreview);
+  }
+
+  public static AssetMediaPlayer createAssetMediaPlayer(VPinStudioClient client, String url, @Nullable String screenName, 
+                                                        String mimeType, boolean noLoading, boolean usePreview) {
+
+    boolean audioOnly = VPinScreen.Audio.getSegment().equalsIgnoreCase(screenName) || VPinScreen.AudioLaunch.getSegment().equalsIgnoreCase(screenName);
 
     Frontend frontend = client.getFrontendService().getFrontendCached();
 
+    String baseType = mimeType.split("/")[0];
     if (baseType.equals("image") && !audioOnly) {
-      Image image = new Image(url);
       ImageViewer imageViewer = new ImageViewer();
       imageViewer.setNoLoading(noLoading);
-      parent.setCenter(imageViewer);
-      parent.setUserData(imageViewer);
-      imageViewer.render(mediaItem, image, frontend.isPlayfieldMediaInverted());
+      imageViewer.render(url, screenName, frontend.isPlayfieldMediaInverted());
       return imageViewer;
     }
     else if (baseType.equals("audio")) {
       AudioMediaPlayer audioMediaPlayer = new AudioMediaPlayer();
-      audioMediaPlayer.setMediaOptions(mediaOptions);
       audioMediaPlayer.setNoLoading(noLoading);
-      parent.setCenter(audioMediaPlayer);
-      if (listener != null) {
-        audioMediaPlayer.addListener(listener);
-      }
-      audioMediaPlayer.render(mediaItem, url);
+      audioMediaPlayer.render(url);
       return audioMediaPlayer;
     }
     else if (baseType.equals("video") && !audioOnly) {
       VideoMediaPlayer videoMediaPlayer = new VideoMediaPlayer(mimeType, frontend.isPlayfieldMediaInverted());
-      videoMediaPlayer.setMediaOptions(mediaOptions);
       videoMediaPlayer.setNoLoading(noLoading);
-      parent.setCenter(videoMediaPlayer);
-      if (listener != null) {
-        videoMediaPlayer.addListener(listener);
-      }
-      videoMediaPlayer.render(mediaItem, url);
+      videoMediaPlayer.render(url, screenName, usePreview);
       return videoMediaPlayer;
     }
     else {
-      LOG.error("Invalid media mime type " + mimeType + " of asset used for media panel " + parent.getId());
+      LOG.error("Invalid media mime type " + mimeType + " of asset used for media panel " + screenName);
     }
 
     return null;
@@ -1094,9 +1067,6 @@ public class WidgetFactory {
       Node node = parent.getCenter();
       if (node instanceof AssetMediaPlayer) {
         ((AssetMediaPlayer) node).disposeMedia();
-      }
-      else if (node instanceof ImageViewer) {
-        ((ImageViewer) node).disposeImage();
       }
       parent.setCenter(null);
     }

@@ -161,7 +161,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   @FXML
   private void onOpenImage() {
     if (gameRepresentation.isPresent()) {
-      TableDialogs.openMediaDialog(Studio.stage, "Highscore Card", client.getHighscoreCardsService().getHighscoreCardUrl(gameRepresentation.get()));
+      TableDialogs.openMediaDialog(Studio.stage, "Highscore Card", client.getHighscoreCardsService().getHighscoreCardUrl(gameRepresentation.get()), "image/png");
     }
   }
 
@@ -453,8 +453,10 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
             VPinScreen overlayScreen = VPinScreen.valueOf(template.getOverlayScreen());
             FrontendMediaItemRepresentation defaultMediaItem = frontendMedia.getDefaultMediaItem(overlayScreen);
             if (defaultMediaItem != null) {
-              assetMediaPlayer = WidgetFactory.addMediaItemToBorderPane(client, defaultMediaItem, previewOverlayPanel, this, null, true);
+              assetMediaPlayer = WidgetFactory.createAssetMediaPlayer(client, defaultMediaItem, true, false);
+              assetMediaPlayer.addListener(this);
               assetMediaPlayer.setMediaViewSize(cardPreview.getWidth(), cardPreview.getHeight());
+              previewOverlayPanel.setCenter(assetMediaPlayer);
 
               //images do not have a media player
               if (assetMediaPlayer.hasMediaPlayer()) {

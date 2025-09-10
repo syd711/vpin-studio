@@ -3,13 +3,9 @@ package de.mephisto.vpin.ui;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
-import de.mephisto.vpin.commons.utils.media.ImageViewer;
 import de.mephisto.vpin.commons.utils.media.MediaOptions;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -24,17 +20,15 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class MediaPreviewController implements Initializable, DialogController, ChangeListener<Number> {
+public class MediaPreviewController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(MediaPreviewController.class);
   public static final int MARGIN = 44;
-
 
   @FXML
   private BorderPane mediaView;
 
   private Stage dialogStage;
   private AssetMediaPlayer assetMediaPlayer;
-  private FrontendMediaItemRepresentation item;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -47,65 +41,42 @@ public class MediaPreviewController implements Initializable, DialogController, 
 
   }
 
-  public void setData(Stage dialogStage, String url) {
+  public void setData(Stage dialogStage, String url, String mimeType) {
     this.dialogStage = dialogStage;
 
-    MediaOptions mediaOptions = new MediaOptions();
-    mediaOptions.setAutoRotate(false);
-    assetMediaPlayer = WidgetFactory.addMediaItemToBorderPane(url, mediaView);
-    Platform.runLater(() -> {
-      if (assetMediaPlayer == null) {
-        ImageViewer imageViewer = (ImageViewer) mediaView.getUserData();
-        imageViewer.getImageView().setFitWidth(dialogStage.getWidth() * 1 - MARGIN);
-        imageViewer.getImageView().setFitHeight(dialogStage.getHeight() * 1 - MARGIN);
-      }
-      else {
-        assetMediaPlayer.setMediaViewSize(dialogStage.getWidth() * 1 - MARGIN, dialogStage.getHeight() * 1 - MARGIN);
-      }
-    });
+    assetMediaPlayer = WidgetFactory.createAssetMediaPlayer(client, url, null, mimeType, false, false);
 
-    dialogStage.widthProperty().addListener(this);
-    dialogStage.heightProperty().addListener(this);
+    mediaView.setCenter(assetMediaPlayer);
+
+    Platform.runLater(() -> resizeAssetMediaPlayer());
+    dialogStage.widthProperty().addListener((obs, o, n) -> resizeAssetMediaPlayer());
+    dialogStage.heightProperty().addListener((obs, o, n) -> resizeAssetMediaPlayer());
   }
 
-  public void setData(Stage dialogStage, FrontendMediaItemRepresentation item) {
+  public void setData(Stage dialogStage, FrontendMediaItemRepresentation item, boolean usePreview) {
     this.dialogStage = dialogStage;
 
+    assetMediaPlayer = WidgetFactory.createAssetMediaPlayer(client, item, false, usePreview);
     MediaOptions mediaOptions = new MediaOptions();
     mediaOptions.setAutoRotate(false);
-    assetMediaPlayer = WidgetFactory.addMediaItemToBorderPane(client, item, mediaView, null, mediaOptions);
-    this.item = item;
-    Platform.runLater(() -> {
-      if (assetMediaPlayer == null) {
-        ImageViewer imageViewer = (ImageViewer) mediaView.getUserData();
-        imageViewer.getImageView().setFitWidth(dialogStage.getWidth() * 1 - MARGIN);
-        imageViewer.getImageView().setFitHeight(dialogStage.getHeight() * 1 - MARGIN);
-      }
-      else {
-        assetMediaPlayer.setMediaViewSize(dialogStage.getWidth() * 1 - MARGIN, dialogStage.getHeight() * 1 - MARGIN);
-      }
-    });
+    assetMediaPlayer.setMediaOptions(mediaOptions);
 
-    dialogStage.widthProperty().addListener(this);
-    dialogStage.heightProperty().addListener(this);
+    mediaView.setCenter(assetMediaPlayer);
+
+    Platform.runLater(() -> resizeAssetMediaPlayer());
+    dialogStage.widthProperty().addListener((obs, o, n) -> resizeAssetMediaPlayer());
+    dialogStage.heightProperty().addListener((obs, o, n) -> resizeAssetMediaPlayer());
   }
 
   @Override
   public void onDialogCancel() {
-
+    assetMediaPlayer.disposeMedia();
   }
 
-  @Override
-  public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-    if (assetMediaPlayer == null) {
-      ImageViewer imageViewer = (ImageViewer) mediaView.getUserData();
-      imageViewer.getImageView().setFitWidth(dialogStage.getWidth() * 1 - MARGIN);
-      imageViewer.getImageView().setFitHeight(dialogStage.getHeight() * 1 - MARGIN);
-    }
-    else {
-      VPinScreen screen = VPinScreen.valueOf(item.getScreen());
-      boolean rotated = VPinScreen.PlayField.equals(screen) || VPinScreen.Loading.equals(screen);
-      assetMediaPlayer.setMediaViewSize(dialogStage.getWidth() * 1 - MARGIN, dialogStage.getHeight() * 1 - MARGIN);
+  private void resizeAssetMediaPlayer() {
+    if (assetMediaPlayer != null) {
+      assetMediaPlayer.resize(dialogStage.getWidth() - MARGIN, dialogStage.getHeight() - MARGIN);
+      assetMediaPlayer.setMediaViewSize(dialogStage.getWidth() - MARGIN, dialogStage.getHeight() - MARGIN);
     }
   }
 }

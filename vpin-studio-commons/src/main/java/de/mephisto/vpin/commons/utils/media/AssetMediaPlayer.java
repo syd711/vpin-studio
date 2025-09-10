@@ -1,7 +1,5 @@
 package de.mephisto.vpin.commons.utils.media;
 
-import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.scene.control.Label;
 import javafx.scene.media.MediaPlayer;
 import org.slf4j.Logger;
@@ -27,17 +25,15 @@ abstract public class AssetMediaPlayer extends MediaViewPane {
     this.listeners.add(listener);
   }
 
-  protected Label getErrorLabel(@Nullable FrontendMediaItemRepresentation mediaItem) {
+  protected Label getErrorLabel() {
     Label label = new Label("  Media available\n(but not playable)");
     label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00; -fx-font-weight: bold;");
-    label.setUserData(mediaItem);
     return label;
   }
 
-  protected Label getEncodingNotSupportedLabel(@Nullable FrontendMediaItemRepresentation mediaItem) {
+  protected Label getEncodingNotSupportedLabel() {
     Label label = new Label("        Media available\n(encoding not supported)");
     label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00; -fx-font-weight: bold;");
-    label.setUserData(mediaItem);
     return label;
   }
 
