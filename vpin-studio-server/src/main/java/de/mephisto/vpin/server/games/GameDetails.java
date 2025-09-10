@@ -68,7 +68,7 @@ public class GameDetails {
 
   private Boolean cardsDisabled = false;
 
-  private Boolean ignoreUpdates = true;
+  private Boolean ignoreUpdates = false;
 
   private Boolean foundControllerStop = true;
 
