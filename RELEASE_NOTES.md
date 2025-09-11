@@ -1,3 +1,12 @@
+## Release Notes 4.2.2
+
+## Bugfixes
+
+ - **Server**: The DOF process is not killed anymore when the frontend is terminated. This hopefully avoid issues that after recordings, outputs remain on HIGH state.
+
+---
+
+
 ## Release Notes 4.2.1
 
 ## Bugfixes
