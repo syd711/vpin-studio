@@ -17,16 +17,19 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
-import de.mephisto.vpin.restclient.system.MonitorInfo;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
+import javafx.scene.transform.Rotate;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.apache.commons.lang3.StringUtils;
@@ -68,8 +71,10 @@ public class PauseMenu extends Application {
   @Override
   public void start(Stage stage) {
     ServerFX.client = new VPinStudioClient("localhost");
+    GameStatus status = ((VPinStudioClient) client).getGameStatusService().getStatus();
+    status.setGameId(14);
     loadPauseMenu();
-    togglePauseMenu();
+    togglePauseMenu(status, true);
   }
 
   public static boolean isVisible() {
@@ -88,8 +93,10 @@ public class PauseMenu extends Application {
       stage.getIcons().add(new Image(PauseMenu.class.getResourceAsStream("logo-64.png")));
 
       PauseMenuSettings pauseMenuSettings = ServerFX.client.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
-      MonitorInfo screenBounds = ServerFX.client.getScreenInfo(pauseMenuSettings != null ? pauseMenuSettings.getPauseMenuScreenId() : -1);
-      LOG.info("Pause Menu is using screen {}", screenBounds);
+      //do use the screen and not the monitor here because the resolution != capable screen size!!!!
+      Screen playfieldScreen = SystemUtil.getScreenById(pauseMenuSettings.getPauseMenuScreenId());
+      LOG.info("Pause Menu is using screen {}", playfieldScreen);
+      Rectangle2D screenBounds = playfieldScreen.getBounds();
       FXMLLoader loader = new FXMLLoader(MenuController.class.getResource("menu-main.fxml"));
       BorderPane root = loader.load();
 
@@ -99,7 +106,7 @@ public class PauseMenu extends Application {
         root.setTranslateX(0);
         root.setRotate(-90);
         stage.setY((screenBounds.getHeight() - root.getPrefWidth()) / 2);
-        stage.setX(screenBounds.getX() + (screenBounds.getWidth() / 2 / 2));
+        stage.setX(screenBounds.getMinX() + (screenBounds.getWidth() / 2 / 2));
         double max = Math.max(screenBounds.getWidth(), screenBounds.getHeight());
         if (max > 2560) {
           stage.setX(stage.getX() + 600);
@@ -114,7 +121,7 @@ public class PauseMenu extends Application {
         LOG.info("Window Mode: Portrait");
         root.setTranslateY(0);
         root.setTranslateX(0);
-        stage.setX(screenBounds.getX() + ((screenBounds.getWidth() - root.getPrefWidth()) / 2));
+        stage.setX(screenBounds.getMinX() + ((screenBounds.getWidth() - root.getPrefWidth()) / 2));
         stage.setY(screenBounds.getHeight() / 2 / 2);
         double max = Math.max(screenBounds.getWidth(), screenBounds.getHeight());
         if (max > 2560) {
@@ -134,7 +141,7 @@ public class PauseMenu extends Application {
     }
   }
 
-  private static void scalePauseMenuStage(BorderPane root, MonitorInfo screenBounds) {
+  private static void scalePauseMenuStage(BorderPane root, Rectangle2D screenBounds) {
     double max = Math.max(screenBounds.getWidth(), screenBounds.getHeight());
     double scaling = 1;
     if (max > 2560) {
