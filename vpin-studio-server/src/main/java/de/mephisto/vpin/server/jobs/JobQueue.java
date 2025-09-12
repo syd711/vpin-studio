@@ -10,10 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 @Service
 public class JobQueue implements InitializingBean {
@@ -29,7 +26,7 @@ public class JobQueue implements InitializingBean {
 
   private void pollQueue() {
     if (!isEmpty()) {
-      JobDescriptor descriptor = queue.poll();
+      JobDescriptor descriptor = queue.peek();
       Callable<JobDescriptor> exec = () -> {
         Thread.currentThread().setName(descriptor.toString());
         Job job = descriptor.getJob();
@@ -41,6 +38,7 @@ public class JobQueue implements InitializingBean {
           descriptor.setProgress(1);
           LOG.info("Finished " + descriptor + ", queue size is " + queue.size());
         }
+        queue.remove(descriptor);
         pollQueue();
         return descriptor;
       };

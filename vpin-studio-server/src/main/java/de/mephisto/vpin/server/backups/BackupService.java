@@ -275,6 +275,9 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
     descriptor.setGameId(game.getId());
 
     Optional<BackupSource> byId = backupSourceRepository.findById(exportDescriptor.getBackupSourceId());
+    if (byId.isEmpty()) {
+      byId = Optional.of(defaultBackupSourceAdapter.getBackupSource());
+    }
     TableBackupAdapter adapter = tableBackupAdapterFactory.createAdapter(game, byId.get());
 
     BackupSourceAdapter sourceAdapter = getDefaultBackupSource();
