@@ -10,7 +10,10 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Service
 public class JobQueue implements InitializingBean {
@@ -24,32 +27,30 @@ public class JobQueue implements InitializingBean {
 
   }
 
-  private void pollQueue() {
-    if (!isEmpty()) {
-      JobDescriptor descriptor = queue.peek();
-      Callable<JobDescriptor> exec = () -> {
-        Thread.currentThread().setName(descriptor.toString());
-        Job job = descriptor.getJob();
-        if (job == null) {
-          LOG.error("No job found for " + descriptor);
-        }
-        else {
-          descriptor.getJob().execute(descriptor);
-          descriptor.setProgress(1);
-          LOG.info("Finished " + descriptor + ", queue size is " + queue.size());
-        }
-        queue.remove(descriptor);
-        pollQueue();
-        return descriptor;
-      };
-      executor.submit(exec);
-    }
+  private void submitJob(JobDescriptor descriptor) {
+    Callable<JobDescriptor> exec = () -> {
+      Thread.currentThread().setName(descriptor.toString());
+      Job job = descriptor.getJob();
+      if (job == null) {
+        LOG.error("No job found for {}", descriptor);
+      }
+      else if (descriptor.isCancelled()) {
+        LOG.info("Job has been cancelled: {}", descriptor);
+      }
+      else {
+        descriptor.getJob().execute(descriptor);
+        descriptor.setProgress(1);
+        LOG.info("Finished {}, queue size is {}", descriptor, queue.size());
+      }
+      return descriptor;
+    };
+    executor.submit(exec);
   }
 
   public void submit(JobDescriptor descriptor) {
     queue.offer(descriptor);
-    pollQueue();
-    LOG.info("Job list size: " + getJobs().size());
+    submitJob(descriptor);
+    LOG.info("Job list size: {}", getJobs().size());
   }
 
   public int size() {
@@ -57,10 +58,9 @@ public class JobQueue implements InitializingBean {
   }
 
   public void cancel(JobDescriptor descriptor) {
-    this.queue.remove(descriptor);
     descriptor.setCancelled(true);
     descriptor.getJob().cancel(descriptor);
-    LOG.info("Dismissed job \"" + descriptor + "\"");
+    LOG.info("Dismissed job \"{}\"", descriptor);
   }
 
   public boolean isEmpty() {
@@ -69,6 +69,10 @@ public class JobQueue implements InitializingBean {
 
   public List<JobDescriptor> getJobs() {
     return new ArrayList<>(this.queue);
+  }
+
+  public void dismiss(JobDescriptor jobDescriptor) {
+    this.queue.remove(jobDescriptor);
   }
 
   @Override

@@ -20,7 +20,7 @@ public class JobService {
     List<JobDescriptor> jobList = getJobs();
     List<JobDescriptor> collect = jobList.stream().filter(j -> j.isFinished() || j.isCancelled()).collect(Collectors.toList());
     for (JobDescriptor jobDescriptor : collect) {
-      jobList.remove(jobDescriptor);
+      jobQueue.dismiss(jobDescriptor);
     }
   }
 
@@ -29,6 +29,7 @@ public class JobService {
     Optional<JobDescriptor> job = jobList.stream().filter(j -> j.getUuid().equals(uuid)).findFirst();
     if (job.isPresent()) {
       jobQueue.cancel(job.get());
+      jobQueue.dismiss(job.get());
     }
   }
 
