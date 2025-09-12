@@ -3,8 +3,9 @@
 ## Bugfixes
 
 - **Highscore Cards**: Fixed centering of highscore cards when shown on startup.
-- **Server**: The DOF process is not killed anymore when the frontend is terminated. This hopefully avoid issues that after recordings, outputs remain on HIGH state.
+- **Server**: The DOF process is not killed anymore when the frontend is terminated. This hopefully avoids issues that after recordings, outputs remain on HIGH state.
 - **Main Window / Jobs Menu**: Fixed jobs progress drop-down menu which did not proper show the current queue state of the jobs to execute.
+- **Main Window / File System Folder Buttons**: Fixed resolving of network drives for the yellow file system buttons on the table overview sidebar panels. 
 
 ---
 
