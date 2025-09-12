@@ -58,6 +58,7 @@ public class JobQueue implements InitializingBean {
   }
 
   public void cancel(JobDescriptor descriptor) {
+    descriptor.setProgress(1);
     descriptor.setCancelled(true);
     descriptor.getJob().cancel(descriptor);
     LOG.info("Dismissed job \"{}\"", descriptor);
@@ -72,6 +73,7 @@ public class JobQueue implements InitializingBean {
   }
 
   public void dismiss(JobDescriptor jobDescriptor) {
+    jobDescriptor.setProgress(1);
     this.queue.remove(jobDescriptor);
   }
 

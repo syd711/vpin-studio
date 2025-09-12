@@ -129,9 +129,6 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
   private Button dmdBtn;
 
   @FXML
-  private Button frontendConfigBtn;
-
-  @FXML
   private HBox frontendTitleButtonArea;
 
   @FXML
@@ -244,7 +241,13 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
           gamePupFolder = new File(pupFolder, game.get().getRomAlias());
         }
 
-        SystemUtil.openFolder(gamePupFolder, new File(frontend.getInstallationDirectory(), "PUPVideos"));
+        UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+        if (StringUtils.isEmpty(uiSettings.getWinNetworkShare()) || client.getSystemService().isLocal()) {
+          SystemUtil.openFolder(gamePupFolder, new File(frontend.getInstallationDirectory(), "PUPVideos"));
+        }
+        else {
+          SystemUtil.openFolder(new File(frontend.getInstallationDirectory(), "PUPVideos"));
+        }
       }
     }
     catch (Exception e) {
@@ -258,7 +261,16 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
       if (this.game.isPresent()) {
         FileInfo altSoundFolder = client.getAltSoundService().getAltSoundFolderInfo(game.get().getId());
         if (altSoundFolder != null) {
-          SystemUtil.open(altSoundFolder);
+          UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+          if (StringUtils.isEmpty(uiSettings.getWinNetworkShare()) || client.getSystemService().isLocal()) {
+            SystemUtil.open(altSoundFolder);
+          }
+          else {
+            GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getGameEmulator(game.get().getEmulatorId());
+            if (gameEmulator != null) {
+              SystemUtil.openFolder(new File(gameEmulator.getInstallationDirectory(), "VPinMAME/altsound"));
+            }
+          }
         }
         else {
           WidgetFactory.showAlert(Studio.stage, "Error", "No valid ALT sound folder found for game \"" + game.get().getId() + "\".");
@@ -278,7 +290,16 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
       if (this.game.isPresent()) {
         FileInfo altColorFolder = client.getAltColorService().getAltColorFolderInfo(game.get().getId());
         if (altColorFolder != null) {
-          SystemUtil.open(altColorFolder);
+          UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+          if (StringUtils.isEmpty(uiSettings.getWinNetworkShare()) || client.getSystemService().isLocal()) {
+            SystemUtil.open(altColorFolder);
+          }
+          else {
+            GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getGameEmulator(game.get().getEmulatorId());
+            if (gameEmulator != null) {
+              SystemUtil.openFolder(new File(gameEmulator.getInstallationDirectory(), "VPinMAME/altcolor"));
+            }
+          }
         }
         else {
           WidgetFactory.showAlert(Studio.stage, "Error", "No valid ALT color folder found for game \"" + game.get().getId() + "\".");
@@ -350,7 +371,13 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
 
         DMDPackage dmdPackage = client.getDmdService().getDMDPackage(this.game.get().getId());
         File dmdFolder = dmdPackage != null ? new File(tablesFolder, dmdPackage.getName()) : null;
-        SystemUtil.openFolder(dmdFolder, tablesFolder);
+        if (dmdFolder == null) {
+          WidgetFactory.showAlert(Studio.stage, "Error", "No DMD found.");
+        }
+        else {
+          SystemUtil.openFolder(dmdFolder, tablesFolder);
+        }
+
       }
     }
     catch (Exception e) {
@@ -375,21 +402,6 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
     catch (Exception e) {
       LOG.error("Failed to open VPX: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open VPX: " + e.getMessage());
-    }
-  }
-
-
-  @FXML
-  private void onFrontendAdminOpen() {
-    Frontend frontend = client.getFrontendService().getFrontendCached();
-    if (frontend.getAdminExe() != null) {
-      File file = new File(frontend.getInstallationDirectory(), frontend.getAdminExe());
-      if (!file.exists()) {
-        WidgetFactory.showAlert(Studio.stage, "Did not find admin exe", "The exe file " + file.getAbsolutePath() + " was not found.");
-      }
-      else {
-        Studio.open(file);
-      }
     }
   }
 
@@ -451,7 +463,6 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
 
   public void loadSidePanels() {
     Frontend frontend = client.getFrontendService().getFrontendCached();
-    FrontendUtil.replaceName(frontendConfigBtn.getTooltip(), frontend);
 
     try {
       FXMLLoader loader = new FXMLLoader(TablesSidebarAltSoundController.class.getResource("scene-tables-sidebar-altsound.fxml"));

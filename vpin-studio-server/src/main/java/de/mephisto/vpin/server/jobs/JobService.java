@@ -28,8 +28,9 @@ public class JobService {
     List<JobDescriptor> jobList = getJobs();
     Optional<JobDescriptor> job = jobList.stream().filter(j -> j.getUuid().equals(uuid)).findFirst();
     if (job.isPresent()) {
-      jobQueue.cancel(job.get());
-      jobQueue.dismiss(job.get());
+      JobDescriptor jobDescriptor = job.get();
+      jobQueue.cancel(jobDescriptor);
+      jobQueue.dismiss(jobDescriptor);
     }
   }
 
