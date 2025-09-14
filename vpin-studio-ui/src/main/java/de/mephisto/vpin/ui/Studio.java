@@ -10,11 +10,14 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientErrorHandler;
 import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.mania.ManiaConfig;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.system.FeaturesInfo;
 import de.mephisto.vpin.restclient.system.SystemSummary;
+import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
+import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.jobs.JobPoller;
@@ -22,7 +25,9 @@ import de.mephisto.vpin.ui.launcher.LauncherController;
 import de.mephisto.vpin.ui.tables.ClearCacheProgressModel;
 import de.mephisto.vpin.ui.tables.TableReloadProgressModel;
 import de.mephisto.vpin.ui.tables.vbsedit.VBSManager;
+import de.mephisto.vpin.ui.util.FileMonitoringService;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Application;
 import javafx.application.HostServices;
@@ -44,6 +49,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 import net.sf.sevenzipjbinding.SevenZip;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +62,7 @@ import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -68,7 +75,9 @@ public class Studio extends Application {
   private final static Logger LOG = LoggerFactory.getLogger(Studio.class);
   private static final String MACOS_APP_NAME = "vpin-studio.app";
 
-  /** The static features activated, static for a simple access in code */
+  /**
+   * The static features activated, static for a simple access in code
+   */
   public static FeaturesInfo Features;
 
   public static Stage stage;
@@ -430,6 +439,29 @@ public class Studio extends Application {
       }
     }
     return false;
+  }
+
+
+  public static boolean editGameFile(@NonNull GameRepresentation game, @NonNull String filePath) throws Exception {
+    FileMonitoringService.getInstance().setPaused(true);
+
+    MonitoredTextFile monitoredTextFile = new MonitoredTextFile(VPinFile.LOCAL_GAME_FILE);
+    monitoredTextFile.setFileId(String.valueOf(game.getId()));
+    monitoredTextFile.setPath(filePath);
+    MonitoredTextFile loadedMonitoredFile = client.getTextEditorService().getText(monitoredTextFile);
+    FileMonitoringService.getInstance().monitor(monitoredTextFile);
+
+    String fileName = FilenameUtils.getBaseName(game.getGameFileName());
+
+    String content = loadedMonitoredFile.getContent();
+    File tempFile = new File(FileMonitoringService.getInstance().getMonitoringFolder(), fileName + "[" + game.getId() + "].txt");
+    if (tempFile.exists() && !tempFile.delete()) {
+      LOG.error("Failed to delete {}", tempFile.getAbsolutePath());
+    }
+
+    Files.write(tempFile.toPath(), content.getBytes());
+    FileMonitoringService.getInstance().setPaused(false);
+    return edit(tempFile);
   }
 
   public static boolean edit(@Nullable File file) {

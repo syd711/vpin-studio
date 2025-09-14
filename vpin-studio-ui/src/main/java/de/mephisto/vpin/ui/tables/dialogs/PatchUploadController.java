@@ -6,7 +6,7 @@ import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
-import de.mephisto.vpin.restclient.textedit.TextFile;
+import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -143,7 +143,7 @@ public class PatchUploadController extends BaseUploadController {
   private void onReadme(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     String value = (String) ((Button) e.getSource()).getUserData();
-    Dialogs.openTextEditor("readme", stage, new TextFile(value), "README");
+    Dialogs.openTextEditor("readme", stage, new MonitoredTextFile(value), "README");
   }
 
   @Override

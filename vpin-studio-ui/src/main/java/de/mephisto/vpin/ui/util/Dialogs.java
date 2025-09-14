@@ -9,7 +9,7 @@ import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.system.SystemData;
-import de.mephisto.vpin.restclient.textedit.TextFile;
+import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.launcher.InstallationDialogController;
@@ -88,11 +88,11 @@ public class Dialogs {
     return true;
   }
 
-  public static boolean openTextEditor(TextFile file, String title) throws Exception {
+  public static boolean openTextEditor(MonitoredTextFile file, String title) throws Exception {
     return openTextEditor("text-editor", Studio.stage, file, title);
   }
 
-  public static boolean openTextEditor(String stateId, Stage s, TextFile file, String title) {
+  public static boolean openTextEditor(String stateId, Stage s, MonitoredTextFile file, String title) {
     try {
       FXMLLoader fxmlLoader = new FXMLLoader(TextEditorController.class.getResource("text-editor.fxml"));
       Stage stage = WidgetFactory.createDialogStage(stateId, fxmlLoader, s, title, TextEditorController.class.getSimpleName());

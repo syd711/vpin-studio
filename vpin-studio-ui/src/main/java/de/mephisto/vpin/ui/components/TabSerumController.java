@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.components;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.components.ComponentType;
-import de.mephisto.vpin.restclient.textedit.TextFile;
+import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
 import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -45,7 +45,7 @@ public class TabSerumController extends AbstractComponentTab implements Initiali
     }
     else {
       try {
-        boolean b = Dialogs.openTextEditor(new TextFile(VPinFile.DmdDeviceIni), "DmdDevice.ini");
+        boolean b = Dialogs.openTextEditor(new MonitoredTextFile(VPinFile.DmdDeviceIni), "DmdDevice.ini");
         if (b) {
           client.getMameService().clearCache();
           EventManager.getInstance().notifyTablesChanged();

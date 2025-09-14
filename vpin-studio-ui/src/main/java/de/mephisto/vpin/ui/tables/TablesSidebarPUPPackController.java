@@ -3,11 +3,10 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.ScreenMode;
-import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.puppacks.PupPackRepresentation;
-import de.mephisto.vpin.restclient.textedit.TextFile;
+import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.validation.ValidationState;
@@ -213,7 +212,7 @@ public class TablesSidebarPUPPackController implements Initializable {
     if (!StringUtils.isEmpty(value)) {
       File file = new File(pupPack.getPath(), value);
       Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-      Dialogs.openTextEditor("puppack", stage, new TextFile(file), file.getName());
+      Dialogs.openTextEditor("puppack", stage, new MonitoredTextFile(file), file.getName());
     }
   }
 
@@ -223,7 +222,7 @@ public class TablesSidebarPUPPackController implements Initializable {
     if (!StringUtils.isEmpty(value)) {
       File file = new File(pupPack.getPath(), value + ".bat");
       Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-      Dialogs.openTextEditor("puppack", stage, new TextFile(file), file.getName());
+      Dialogs.openTextEditor("puppack", stage, new MonitoredTextFile(file), file.getName());
     }
   }
 
