@@ -250,8 +250,14 @@ public class GameMediaResource {
 
       if (getPreview) {
         byte[] bytes = JCodec.grab(frontendMediaItem.getFile());
-        response.setContentLength(bytes.length);
-        response.getOutputStream().write(bytes);
+        if (bytes != null) {
+          response.setContentLength(bytes.length);
+          response.getOutputStream().write(bytes);
+        }
+        else {
+          response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+          return;
+        }
       }
       else {
         try (FileInputStream in = new FileInputStream(file)) {
