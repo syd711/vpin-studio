@@ -16,6 +16,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 /**
  * A base dialog class that support Next / prev and autosave buttons
@@ -35,6 +37,13 @@ public abstract class BasePrevNextController implements Initializable, DialogCon
 
   //------------------------------------------
 
+  /**
+   * Flag the dialog dirty, making the (*) displayed in the dialog title. Or Unflag with false parameter
+   */
+  protected void setDialogDirty(boolean b) {
+    headerController.setDirty(b);
+  }
+
   @FXML
   protected void onPrevious(ActionEvent e) {
     onAutosave(() -> openPrev());
@@ -50,10 +59,13 @@ public abstract class BasePrevNextController implements Initializable, DialogCon
       autosave(onSuccess);
     }
     else if (headerController.isDirty()) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "you have unsaved changes, do you want to save it ?");
-      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      Optional<ButtonType> result = WidgetFactory.showYesNoConfirmation(Studio.stage, "You have unsaved changes.", "Do you want to save them ?");
+      if (result.isPresent() && result.get().equals(ButtonType.YES)) {
         autosave(onSuccess);
         return;
+      }
+      else if (result.isPresent() && result.get().equals(ButtonType.NO)) {
+        onSuccess.run();
       }
       else {
         // click cancel, stay on the table
@@ -79,5 +91,20 @@ public abstract class BasePrevNextController implements Initializable, DialogCon
    * Method called on autosave, Save current Object, must call onSuccess if successfully
    */
   protected abstract void autosave(@Nullable Runnable onSuccess);
+
+   //----------------------- handler
+
+  @Override
+  public void onKeyPressed(KeyEvent ke) {
+    if (ke.getCode() == KeyCode.PAGE_UP) {
+      onPrevious(null);
+    }
+    if (ke.getCode() == KeyCode.PAGE_DOWN) {
+      onNext(null);
+    }
+    if (ke.getCode() == KeyCode.S && ke.isControlDown()) {
+      autosave(null);
+    }
+  }
 
 }

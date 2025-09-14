@@ -309,9 +309,7 @@ public class TableDialogs {
     controller.loadAllTables(game.getEmulatorId());
     controller.setGame(stage, overviewController, game, screen, false);
 
-    FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
-    fxResizeHelper.setUserData(controller);
-    stage.setUserData(fxResizeHelper);
+    FXResizeHelper.install(stage, 30, 6);
     stage.setMinWidth(860);
     stage.setMinHeight(600);
 
@@ -373,8 +371,7 @@ public class TableDialogs {
     EventLogController controller = (EventLogController) stage.getUserData();
     controller.setGame(game);
 
-    FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
-    stage.setUserData(fxResizeHelper);
+    FXResizeHelper.install(stage, 30, 6);
     stage.setMinWidth(800);
     stage.setMinHeight(600);
 
@@ -562,7 +559,7 @@ public class TableDialogs {
   }
 
   public static void openTableDataDialog(@Nullable TableOverviewController overviewController, GameRepresentation game) {
-    openTableDataDialog(overviewController, game, TableDataController.lastTab);
+    openTableDataDialog(overviewController, game, -1);
   }
 
   public static void openTableDataDialog(@Nullable TableOverviewController overviewController, GameRepresentation game, int tab) {
@@ -571,8 +568,7 @@ public class TableDialogs {
       TableDataController controller = (TableDataController) stage.getUserData();
       controller.setGame(stage, overviewController, game, tab);
 
-      FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6, true);
-      stage.setUserData(fxResizeHelper);
+      FXResizeHelper.install(stage, 30, 6, true);
       stage.setMinWidth(812);
       stage.setMaxWidth(812);
       stage.setMaxHeight(1060);
@@ -680,8 +676,7 @@ public class TableDialogs {
     MediaPreviewController controller = (MediaPreviewController) stage.getUserData();
     controller.setData(stage, item, false);
 
-    FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
-    stage.setUserData(fxResizeHelper);
+    FXResizeHelper.install(stage, 30, 6);
     stage.setMinWidth(800);
     stage.setMinHeight(600);
 
@@ -693,8 +688,7 @@ public class TableDialogs {
     MediaPreviewController controller = (MediaPreviewController) stage.getUserData();
     controller.setData(stage, url, mimeType);
 
-    FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
-    stage.setUserData(fxResizeHelper);
+    FXResizeHelper.install(stage, 30, 6);
     stage.setMinWidth(800);
     stage.setMinHeight(600);
 

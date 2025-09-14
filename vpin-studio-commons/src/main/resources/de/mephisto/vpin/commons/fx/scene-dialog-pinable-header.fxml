@@ -37,7 +37,7 @@
                   <Tooltip text="Toggle modal behaviour of this dialog." />
                </tooltip>
             </Button>
-            <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onCloseClick" prefHeight="24.0" prefWidth="24.0" styleClass="header-button" stylesheets="@stylesheet.css">
+            <Button mnemonicParsing="false" onAction="#onCloseClick" prefHeight="24.0" prefWidth="24.0" styleClass="header-button" stylesheets="@stylesheet.css">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-close" iconSize="16" />
                </graphic>

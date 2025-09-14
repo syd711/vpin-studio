@@ -65,7 +65,8 @@ public class HeaderResizeableController implements Initializable {
   private void onMouseClick(MouseEvent e) {
     if (e.getClickCount() == 2) {
       FXResizeHelper helper = (FXResizeHelper) getStage().getUserData();
-      helper.switchWindowedMode(e);
+      boolean isMaximize = helper.switchWindowedMode(e);
+      refreshWindowMaximizedState(isMaximize);
     }
   }
 
@@ -142,22 +143,14 @@ public class HeaderResizeableController implements Initializable {
   @FXML
   private void onMaximize() {
     FXResizeHelper helper = (FXResizeHelper) getStage().getUserData();
-    helper.switchWindowedMode(event);
-    refreshWindowMaximizedState();
+    boolean isMaximize = helper.switchWindowedMode(event);
+    refreshWindowMaximizedState(isMaximize);
   }
 
-  private void refreshWindowMaximizedState() {
-    boolean mIsMaximized = Studio.stage.getX() == 0 && Studio.stage.getY() == 0;
-    if (mIsMaximized) {
-      FontIcon icon = WidgetFactory.createIcon("mdi2w-window-restore");
-      icon.setIconSize(16);
-      maximizeBtn.setGraphic(icon);
-    }
-    else {
-      FontIcon icon = WidgetFactory.createIcon("mdi2w-window-maximize");
-      icon.setIconSize(16);
-      maximizeBtn.setGraphic(icon);
-    }
+  private void refreshWindowMaximizedState(boolean isMaximized) {
+    FontIcon icon = WidgetFactory.createIcon(isMaximized? "mdi2w-window-restore" : "mdi2w-window-maximize");
+    icon.setIconSize(16);
+    maximizeBtn.setGraphic(icon);
   }
 
   @FXML
@@ -207,8 +200,8 @@ public class HeaderResizeableController implements Initializable {
         }
       });
 
-
-      refreshWindowMaximizedState();
+      boolean isMaximize = FXResizeHelper.isMaximized(stage);
+      refreshWindowMaximizedState(isMaximize);
     });
 
   }

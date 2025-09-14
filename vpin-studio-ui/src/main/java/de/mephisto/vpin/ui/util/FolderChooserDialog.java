@@ -36,8 +36,7 @@ public class FolderChooserDialog {
       FolderChooserDialogController controller = (FolderChooserDialogController) dialogStage.getUserData();
       controller.setPath(path);
 
-      FXResizeHelper fxResizeHelper = new FXResizeHelper(dialogStage, 30, 6);
-      dialogStage.setUserData(fxResizeHelper);
+      FXResizeHelper.install(dialogStage, 30, 6);
       dialogStage.setMinWidth(600);
       dialogStage.setMinHeight(550);
 

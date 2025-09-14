@@ -20,8 +20,6 @@ import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.commons.fx.DialogHeaderController;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import javafx.application.Platform;
@@ -31,13 +29,11 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.geometry.BoundingBox;
 import javafx.scene.control.*;
 import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -60,28 +56,18 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.Function;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class DMDPositionController implements Initializable, DialogController {
+public class DMDPositionController extends BasePrevNextController {
   private final static Logger LOG = LoggerFactory.getLogger(DMDPositionController.class);
-
-  @FXML
-  protected DialogHeaderController headerController;  //fxml magic! Not unused -> id + "Controller"
 
   private BaseTableController<?, ? extends BaseGameModel> baseMgrController;
 
   @FXML
   private Label titleLabel;
-  @FXML
-  private Button prevButton;
-  @FXML
-  private Button nextButton;
-  @FXML
-  private CheckBox autosaveCheckbox;
 
   @FXML
   private TabPane tabPane;
@@ -204,62 +190,41 @@ public class DMDPositionController implements Initializable, DialogController {
 
   private ToggleGroup ratioRadioGroup;
   
+  //-------------------------------------- BaseNextPrevController --
  
-  @FXML
-  protected void onPrevious(ActionEvent e) {
-    onAutosave(() -> {
-      clearGame();
-      BaseGameModel selection = baseMgrController.selectPreviousModel(m -> m.getGameId() > 0);
-      if (selection != null) {
-        switchGame(selection.getGameId());
-      }
-    });
-  }
-
-  @FXML
-  protected void onNext(ActionEvent e) {
-    onAutosave(() -> {
-      clearGame();
-
-      BaseGameModel selection = baseMgrController.selectNextModel(m -> m.getGameId() > 0);
-      if (selection != null) {
-        switchGame(selection.getGameId());
-      }
-    });
-  }
-
- protected void onAutosave(@NonNull Runnable onSuccess) {
-    if (autosaveCheckbox.isSelected()) {
-      onSaveClick(true, onSuccess);
-    }
-    else if (headerController.isDirty()) {
-      Optional<ButtonType> result = WidgetFactory.showYesNoConfirmation(Studio.stage, "You have unsaved changes.", "Do you want to save them ?");
-      if (result.isPresent() && result.get().equals(ButtonType.YES)) {
-        onSaveClick(true, onSuccess);
-        return;
-      }
-      else if (result.isPresent() && result.get().equals(ButtonType.NO)) {
-        onSuccess.run();
-      }
-      else {
-        // click cancel, stay on the table
-        return;
-      }
-    }
-    else {
-      onSuccess.run();
+  @Override
+  protected void openPrev() {
+    clearGame();
+    BaseGameModel selection = baseMgrController.selectPreviousModel(m -> m.getGameId() > 0);
+    if (selection != null) {
+      switchGame(selection.getGameId());
     }
   }
+
+  @Override
+  protected void openNext() {
+    clearGame();
+    BaseGameModel selection = baseMgrController.selectNextModel(m -> m.getGameId() > 0);
+    if (selection != null) {
+      switchGame(selection.getGameId());
+    }
+  }
+
+  @Override
+  protected void autosave(@NonNull Runnable onSuccess) {
+    onSaveClick(true, onSuccess);
+  }
+
+  //-------------------------------------------------
 
   /**
-   * Start th espinning indicator OR Stop spinning and display the image back
+   * Start the spinning indicator OR Stop spinning and display the image back
    */
   public void setWait(boolean on) {
     parentpane.setCenter(on ? progressIndicator : imagepane);
   }
 
   private void clearGame() {
-    headerController.setDirty(false);
     titleLabel.setText("loading...");
     romLabel.setText("--");
     tablePositionLabel.setText("");
@@ -267,6 +232,7 @@ public class DMDPositionController implements Initializable, DialogController {
     disableAll();
     loadImage(null, false);
     loadDragBoxes(null, false);
+    setDialogDirty(false);
   }
 
   private void switchGame(int gameId) {
@@ -310,7 +276,7 @@ public class DMDPositionController implements Initializable, DialogController {
           client.getDmdPositionService().saveDMDInfo(dmdinfo);
         })
         .thenLater(() -> {
-          headerController.setDirty(false);
+          setDialogDirty(false);
           if (onSuccess != null) {
             onSuccess.run();
           }
@@ -329,23 +295,7 @@ public class DMDPositionController implements Initializable, DialogController {
       }
     }
     // else process dialog keys
-    KeyCode code = ke.getCode();
-    switch (code) {
-      case PAGE_DOWN: {
-        onNext(null); 
-        return;
-      }
-      case PAGE_UP: {
-        onPrevious(null); 
-        return;
-      }
-      case S: {
-        if (ke.isControlDown()) {
-          onSaveLocallyClick(null);
-          return;
-        }
-      }
-    }
+    super.onKeyPressed(ke);
   }
 
   @FXML
@@ -477,7 +427,7 @@ public class DMDPositionController implements Initializable, DialogController {
             dragBox.setAspectRatio(aspectRatio.getValue());
           }
         }
-        headerController.setDirty(true);
+        setDialogDirty(true);
       }
     });
 
@@ -535,7 +485,7 @@ public class DMDPositionController implements Initializable, DialogController {
       public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
         DMDInfo dmdinfo = fillDmdInfo();
         loadDmdInfo(dmdinfo);
-        headerController.setDirty(true);
+        setDialogDirty(true);
       }
     });
 
@@ -556,13 +506,13 @@ public class DMDPositionController implements Initializable, DialogController {
       if (!newV) {
         disableViaIniCheckbox.setSelected(true);
       }
-      headerController.setDirty(true);
+      setDialogDirty(true);
     });
     disableViaIniCheckbox.selectedProperty().addListener((obs, oldV, newV) -> {
       if (!newV) {
         disableViaMameCheckbox.setSelected(true);
       }
-      headerController.setDirty(true);
+      setDialogDirty(true);
     });
 
     // by default hide the noFullDMD Pane
@@ -605,7 +555,7 @@ public class DMDPositionController implements Initializable, DialogController {
     factory.valueProperty().bindBidirectional(property);
     factory.minProperty().bind(minProperty);
     factory.maxProperty().bind(maxProperty);
-    factory.valueProperty().addListener((obs, o, v) -> headerController.setDirty(true));
+    factory.valueProperty().addListener((obs, o, v) -> setDialogDirty(true));
   }
 
   @Override
@@ -685,7 +635,7 @@ public class DMDPositionController implements Initializable, DialogController {
       selectTab(zone.getOnScreen(), false);
     }
     // method called either after autoposition or move, so DMD is modified
-    headerController.setDirty(true);
+    setDialogDirty(true);
   }
 
   /**
@@ -765,7 +715,7 @@ public class DMDPositionController implements Initializable, DialogController {
     disableBGScoreCheckbox.setSelected(dmdinfo.isDisableBackglassScores());
 
     loadDmdInfo(dmdinfo);
-    headerController.setDirty(dirty);
+    setDialogDirty(dirty);
   }
 
   private void loadImage(VPinScreen onScreen, boolean forceRefresh) {

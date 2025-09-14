@@ -16,8 +16,7 @@ public class PlaylistDialogs {
     Stage stage = Dialogs.createStudioDialogStage(PlaylistManagerController.class, "dialog-playlist-manager.fxml", "Playlist Manager", "playlistManager");
     PlaylistManagerController controller = (PlaylistManagerController) stage.getUserData();
 
-    FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
-    stage.setUserData(fxResizeHelper);
+    FXResizeHelper.install(stage, 30, 6);
     stage.setMinWidth(1024);
     stage.setMinHeight(700);
 

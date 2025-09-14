@@ -70,7 +70,7 @@ public class LayerEditorFrameController extends LayerEditorBaseController {
     bindVisibilityIcon(templateBeanBinder, "renderFrame");
     bindLockIcon(templateBeanBinder, "lockFrame");
 
-    templateBeanBinder.bindSlider(zoomSlider, "zoom");
+    templateBeanBinder.bindIntSlider(zoomSlider, "zoom");
     // a 0 zoom is useless as the image would nt be drawn at all
     zoomSlider.setMin(1);
     StringConverter<Integer> converter = new StringConverter<>() {

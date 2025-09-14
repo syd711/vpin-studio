@@ -37,7 +37,7 @@ public class PinVolSettingsDialogController implements Initializable, DialogCont
   @FXML
   private void onSaveClick(ActionEvent e) {
     Platform.runLater(() -> {
-      pinVolController.save();
+      pinVolController.save(true);
     });
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();

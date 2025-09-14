@@ -656,10 +656,8 @@ public class WidgetFactory {
         }
       });
     }
-    else if (userData instanceof DialogHeaderResizeableController) {
+    if (userData instanceof DialogHeaderResizeableController) {
       DialogHeaderResizeableController dialogHeaderController = (DialogHeaderResizeableController) userData;
-      dialogHeaderController.setStateId(stateId);
-      dialogHeaderController.setTitle(title);
       dialogHeaderController.setMaximizeable(LocalUISettings.isMaximizeable(stateId));
     }
 

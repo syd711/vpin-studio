@@ -230,11 +230,10 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
 
     // Other properties
     templateBeanBinder.bindCheckbox(grayScaleCheckbox, "grayScale");
-    templateBeanBinder.bindSlider(alphaPercentageSlider, "transparentPercentage");
-    templateBeanBinder.bindSlider(brightenSlider, "alphaWhite");
-    templateBeanBinder.bindSlider(darkenSlider, "alphaBlack");
-    templateBeanBinder.bindSlider(blurSlider, "blur");
-
+    templateBeanBinder.bindIntSlider(alphaPercentageSlider, "transparentPercentage");
+    templateBeanBinder.bindIntSlider(brightenSlider, "alphaWhite");
+    templateBeanBinder.bindIntSlider(darkenSlider, "alphaBlack");
+    templateBeanBinder.bindIntSlider(blurSlider, "blur");
 
     /* coloredBackgroundRadio.selectedProperty().addListener((obs, old, enabled) -> {
       grayScaleCheckbox.setDisable(enabled);

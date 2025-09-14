@@ -35,7 +35,7 @@
             </VBox>
             <VBox fx:id="emptyDataBox">
                <children>
-                  <Label styleClass="preference-description" text="No table selected." />
+                  <Label fx:id="emptyDataLabel" styleClass="preference-description" text="No table selected." />
                </children>
                <VBox.margin>
                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
@@ -47,6 +47,14 @@
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
+                  </Label>
+                  <Label fx:id="dialogCommentLabel" text="Modification done in that tab will be stored immediately, no save needed !" wrapText="true">
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2a-alert-rhombus-outline" iconSize="18" />
+                     </graphic>
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
                   </Label>
                </children>
                <VBox.margin>

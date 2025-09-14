@@ -327,7 +327,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     templateBeanBinder.setPaused(true);
 
     // set the selected template on the TemplateBinder
-    templateBeanBinder.setBean(cardTemplate);
+    templateBeanBinder.setBean(cardTemplate, false);
 
     CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS);
     CardResolution res = cardSettings.getCardResolution();

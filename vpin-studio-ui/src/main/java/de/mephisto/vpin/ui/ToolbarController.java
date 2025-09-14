@@ -232,8 +232,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
       monitorStage = Dialogs.createStudioDialogStage(CabMonitorController.class, "dialog-cab-monitor.fxml", "Cabinet Monitor", CabMonitorController.MODAL_STATE_ID);
       CabMonitorController controller = (CabMonitorController) monitorStage.getUserData();
       controller.setData(monitorStage);
-      FXResizeHelper fxResizeHelper = new FXResizeHelper(monitorStage, 30, 6);
-      monitorStage.setUserData(fxResizeHelper);
+      FXResizeHelper.install(monitorStage, 30, 6);
       monitorStage.setMinWidth(600);
       monitorStage.setMinHeight(500);
 
