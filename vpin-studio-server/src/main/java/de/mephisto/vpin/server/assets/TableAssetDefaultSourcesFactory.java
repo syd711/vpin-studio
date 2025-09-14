@@ -49,7 +49,7 @@ public class TableAssetDefaultSourcesFactory {
     source.setId(SuperHacTableAssetAdapter.SOURCE_ID);
     source.setLookupStrategy(AssetLookupStrategy.screens);
     source.setType(TableAssetSourceType.SuperHacRepo);
-    source.setName("superhac VPinMediaDB");
+    source.setName("Superhac VPinMediaDB");
     source.setProvided(true);
     source.setEnabled(true);
     source.setLocation("https://github.com/superhac/vpinmediadb");

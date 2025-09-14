@@ -1,17 +1,14 @@
 package de.mephisto.vpin.server.frontend.pinballx;
 
-import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorScript;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.frontend.pinballx.PinballXSettings;
-import de.mephisto.vpin.restclient.frontend.pinbally.PinballYSettings;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.frontend.BaseConnector;
-import de.mephisto.vpin.server.frontend.CacheTableAssetsAdapter;
 import de.mephisto.vpin.server.frontend.GameEntry;
 import de.mephisto.vpin.server.frontend.pinbally.PinballYTableParser;
 import de.mephisto.vpin.server.games.GameEmulator;
@@ -76,16 +73,16 @@ public class PinballXConnector extends BaseConnector {
       // no effect if already stopped
       this.assetsAdapter.stopRefresh();
     }
-
+/*
     try {
       Class<?> aClass = Class.forName("de.mephisto.vpin.popper.PopperAssetAdapter");
-      TableAssetsAdapter assetAdapter = (TableAssetsAdapter) aClass.getDeclaredConstructor().newInstance();
-      super.setTableAssetAdapter(new CacheTableAssetsAdapter(assetAdapter));
+      de.mephisto.vpin.connectors.assets.TableAssetsAdapter assetAdapter = (de.mephisto.vpin.connectors.assets.TableAssetsAdapter) aClass.getDeclaredConstructor().newInstance();
+      super.setTableAssetAdapter(new de.mephisto.vpin.server.frontend.CacheTableAssetsAdapter(assetAdapter));
     }
     catch (Exception e) {
       LOG.error("Unable to find PopperAssetAdapter: " + e.getMessage());
     }
-
+*/
     LOG.info("Finished initialization of " + this);
   }
 
