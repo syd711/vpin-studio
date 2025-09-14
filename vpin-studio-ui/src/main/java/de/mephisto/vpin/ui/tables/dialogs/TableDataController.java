@@ -615,7 +615,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
       }
 
       if (!Features.FIELDS_EXTENDED) {
-        //tabPane.getTabs().remove(extrasTab);
+        tabPane.getTabs().remove(extrasTab);
         customizationPane.setVisible(false);
       }
 
@@ -652,7 +652,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
     boolean patchVersionEnabled = !StringUtils.isEmpty(serverSettings.getMappingPatchVersion());
     patchVersion.setDisable(!patchVersionEnabled);
-//FIXME    patchVersionPanel.setVisible(Features.FIELDS_EXTENDED && patchVersionEnabled);
+    patchVersionPanel.setVisible(Features.FIELDS_EXTENDED && patchVersionEnabled);
 
     List<VpsTable> tables = client.getVpsService().getTables();
     TreeSet<String> collect = new TreeSet<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
