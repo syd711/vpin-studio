@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.textedit.TextFile;
+import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
 import de.mephisto.vpin.ui.util.RichText;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -56,7 +56,7 @@ public class TextEditorController implements Initializable, DialogController {
   private Label lastModified;
 
   private RichText richText;
-  private TextFile file;
+  private MonitoredTextFile file;
 
   private boolean saved = false;
 
@@ -71,7 +71,7 @@ public class TextEditorController implements Initializable, DialogController {
 
     try {
       file.setContent(this.richText.getCodeArea().getText());
-      TextFile save = client.getTextEditorService().save(file);
+      MonitoredTextFile save = client.getTextEditorService().save(file);
       lastModified.setText(DateFormat.getDateTimeInstance().format(save.getLastModified()));
       size.setText(FileUtils.readableFileSize(save.getSize()));
     }
@@ -126,7 +126,7 @@ public class TextEditorController implements Initializable, DialogController {
     stage.close();
   }
 
-  public void load(TextFile file) throws Exception {
+  public void load(MonitoredTextFile file) throws Exception {
     this.file = file;
     if(file.getvPinFile() == null) {
       richText = new RichText(file.getContent());
@@ -137,7 +137,7 @@ public class TextEditorController implements Initializable, DialogController {
       dataGrid.setVisible(false);
     }
     else {
-      TextFile value = client.getTextEditorService().getText(file);
+      MonitoredTextFile value = client.getTextEditorService().getText(file);
       lastModified.setText(DateFormat.getDateTimeInstance().format(value.getLastModified()));
       size.setText(FileUtils.readableFileSize(value.getSize()));
       richText = new RichText(value.getContent());

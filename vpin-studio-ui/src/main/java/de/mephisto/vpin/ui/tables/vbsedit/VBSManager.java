@@ -1,13 +1,13 @@
 package de.mephisto.vpin.ui.tables.vbsedit;
 
-import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.textedit.TextFile;
+import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
 import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.FileMonitoringService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,14 +22,8 @@ public class VBSManager {
   private final static Logger LOG = LoggerFactory.getLogger(VBSManager.class);
 
   private static final VBSManager instance = new VBSManager();
-  private final VbsMonitoringService monitoringService = new VbsMonitoringService();
-
-
-  private boolean embeddedEditing = false;//!System.getProperty("os.name").contains("Windows");
 
   private VBSManager() {
-    monitoringService.startMonitoring(getVbsFolder());
-    LOG.info("VPS Monitor started.");
   }
 
   public static VBSManager getInstance() {
@@ -43,19 +37,19 @@ public class VBSManager {
 
   public void edit(Optional<GameRepresentation> game, boolean embeddedEditor) {
     try {
-      TextFile textFile = new TextFile(VPinFile.VBScript);
-      textFile.setFileId(game.get().getId());
+      MonitoredTextFile monitoredTextFile = new MonitoredTextFile(VPinFile.VBScript);
+      monitoredTextFile.setFileId(String.valueOf(game.get().getId()));
 
       if (game.isPresent()) {
         if (embeddedEditor) {
-          boolean b = Dialogs.openTextEditor(textFile, game.get().getGameFileName());
+          boolean b = Dialogs.openTextEditor(monitoredTextFile, game.get().getGameFileName());
           if (b) {
             client.getMameService().clearCache();
             EventManager.getInstance().notifyTablesChanged();
           }
         }
         else {
-          TextFile value = client.getTextEditorService().getText(textFile);
+          MonitoredTextFile value = client.getTextEditorService().getText(monitoredTextFile);
           File vbsFile = writeVbsFile(game.get(), value.getContent());
 
           openFile(vbsFile);
@@ -76,19 +70,10 @@ public class VBSManager {
     Studio.edit(vbsFile);
   }
 
-  private static File getVbsFolder() {
-    File basePath = Updater.getWriteableBaseFolder();
-    File vpsFolder = new File(basePath, "./resources/vbs/");
-    if (!vpsFolder.exists()) {
-      vpsFolder.mkdirs();
-    }
-    return vpsFolder;
-  }
-
   private File writeVbsFile(GameRepresentation game, String content) throws IOException {
-    monitoringService.setPaused(true);
+    FileMonitoringService.getInstance().setPaused(true);
     String name = game.getGameName() + "[" + game.getId() + "].vbs";
-    File vbsFile = new File(getVbsFolder(), name);
+    File vbsFile = new File(FileMonitoringService.getInstance().getMonitoringFolder(), name);
     if (vbsFile.exists()) {
       if (!vbsFile.delete()) {
         throw new IOException("Failed to delete " + vbsFile.getAbsolutePath());
@@ -98,7 +83,7 @@ public class VBSManager {
 
     Files.write(vbsFile.toPath(), content.getBytes());
     LOG.info("Written .vbs file '" + vbsFile.getAbsolutePath() + "'");
-    monitoringService.setPaused(false);
+    FileMonitoringService.getInstance().setPaused(false);
     return vbsFile;
   }
 }

@@ -41,6 +41,9 @@ public class TablesSidebarIniController implements Initializable {
   private Button deleteBtn;
 
   @FXML
+  private Button editBtn;
+
+  @FXML
   private VBox dataBox;
 
   @FXML
@@ -56,6 +59,24 @@ public class TablesSidebarIniController implements Initializable {
   private void onUpload() {
     if (game.isPresent()) {
       TableDialogs.directUpload(Studio.stage, AssetType.INI, game.get(), null);
+    }
+  }
+
+
+  @FXML
+  private void onEdit() {
+    if (game.isPresent()) {
+      try {
+        GameRepresentation gameRepresentation = game.get();
+        String iniPath = gameRepresentation.getIniPath();
+        if (iniPath != null) {
+          Studio.editGameFile(gameRepresentation, iniPath);
+        }
+      }
+      catch (Exception e) {
+        LOG.error("Failed to open .ini file: {}", e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open .ini file: " + e.getMessage());
+      }
     }
   }
 
@@ -99,11 +120,13 @@ public class TablesSidebarIniController implements Initializable {
     emptyDataBox.setVisible(true);
     uploadBtn.setDisable(true);
     deleteBtn.setDisable(true);
+    editBtn.setDisable(true);
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
       boolean iniFileAvailable = game.getIniPath() != null;
 
+      editBtn.setDisable(!iniFileAvailable);
       dataBox.setVisible(iniFileAvailable);
       emptyDataBox.setVisible(!iniFileAvailable);
 

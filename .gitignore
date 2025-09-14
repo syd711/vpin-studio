@@ -75,6 +75,7 @@ resources/media-cropped/
 /resources/overlay.png
 /resources/overlay.jpg
 /resources/pinemhi/pinemhi.ini
+/resources/text-temp/**
 /resources/component-archives/**
 /resources/screenshots/**
 /resources/directoutputconfig.zip

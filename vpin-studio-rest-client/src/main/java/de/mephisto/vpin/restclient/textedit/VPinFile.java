@@ -1,7 +1,7 @@
 package de.mephisto.vpin.restclient.textedit;
 
 public enum VPinFile {
-  DmdDeviceIni, VPinballXIni, VPMAliasTxt, VBScript, DOFLinxINI, LOCAL;
+  DmdDeviceIni, VPinballXIni, VPMAliasTxt, VBScript, DOFLinxINI, LOCAL_GAME_FILE;
 
 
   @Override
@@ -22,7 +22,7 @@ public enum VPinFile {
       case DOFLinxINI: {
         return "DOFLinx.INI";
       }
-      case LOCAL: {
+      case LOCAL_GAME_FILE: {
         return "Local File";
       }
       default: {

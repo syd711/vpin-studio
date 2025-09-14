@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.mame;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.mephisto.vpin.restclient.textedit.TextFile;
+import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
 import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.GameCachingService;
@@ -64,21 +64,21 @@ public class MameRomAliasService implements InitializingBean {
     return null;
   }
 
-  public TextFile loadAliasFile(@NonNull GameEmulator emulator) {
-    TextFile textFile = new TextFile();
+  public MonitoredTextFile loadAliasFile(@NonNull GameEmulator emulator) {
+    MonitoredTextFile monitoredTextFile = new MonitoredTextFile();
     File vpmAliasFile = getVPMAliasFile(emulator);
     try {
       if (vpmAliasFile.exists()) {
-        textFile.setSize(vpmAliasFile.length());
-        textFile.setPath(vpmAliasFile.getAbsolutePath());
-        textFile.setLastModified(new Date(vpmAliasFile.lastModified()));
-        textFile.setContent(FileUtils.readFileToString(vpmAliasFile, Charset.defaultCharset()));
+        monitoredTextFile.setSize(vpmAliasFile.length());
+        monitoredTextFile.setPath(vpmAliasFile.getAbsolutePath());
+        monitoredTextFile.setLastModified(new Date(vpmAliasFile.lastModified()));
+        monitoredTextFile.setContent(FileUtils.readFileToString(vpmAliasFile, Charset.defaultCharset()));
       }
     }
     catch (IOException e) {
       LOG.error("Error loading " + vpmAliasFile.getAbsolutePath() + ": " + e.getMessage(), e);
     }
-    return textFile;
+    return monitoredTextFile;
   }
 
   public void saveAliasFile(@NonNull GameEmulator emulator, @NonNull Map<String, String> mapping) {
