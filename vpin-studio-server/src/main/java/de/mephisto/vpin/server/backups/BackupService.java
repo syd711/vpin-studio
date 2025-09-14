@@ -81,8 +81,6 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
   @Autowired
   private PreferencesService preferencesService;
 
-  private BackupSourceAdapter defaultBackupSourceAdapter;
-
   private final Map<Long, BackupSourceAdapter> backupSourcesCache = new LinkedHashMap<>();
 
   public List<BackupDescriptor> getBackupDescriptorForGame(int gameId) {
@@ -171,16 +169,8 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
     return backupSourcesCache.values().stream().map(BackupSourceAdapter::getBackupSource).collect(Collectors.toList());
   }
 
-  public BackupSourceAdapter getDefaultBackupSource() {
-    return this.defaultBackupSourceAdapter;
-  }
-
   public BackupSourceAdapter getBackupSourceAdapter(long sourceId) {
     return backupSourcesCache.get(sourceId);
-  }
-
-  public File export(BackupDescriptor backupDescriptor) {
-    return getDefaultBackupSource().export(backupDescriptor);
   }
 
   public void invalidateCache() {
@@ -216,17 +206,6 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
     backupSourcesCache.put(updatedSource.getId(), BackupSourceAdapterFactory.create(this, updatedSource, vpaService));
     LOG.info("(Re)created archive source adapter \"" + updatedSource + "\"");
     return updatedSource;
-  }
-
-  public File getTargetFile(BackupDescriptor backupDescriptor) {
-    BackupType backupType = BackupType.VPA;
-
-    switch (backupType) {
-      case VPA: {
-        return new File(VpaBackupSource.FOLDER, backupDescriptor.getFilename());
-      }
-    }
-    return null;
   }
 
 
@@ -277,9 +256,9 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
 
     Optional<BackupSource> byId = backupSourceRepository.findById(exportDescriptor.getBackupSourceId());
     TableBackupAdapter adapter = tableBackupAdapterFactory.createAdapter(game, byId.get());
+    BackupSourceAdapter backupSourceAdapter = BackupSourceAdapterFactory.create(this, byId.get(), vpaService);
 
-    BackupSourceAdapter sourceAdapter = getDefaultBackupSource();
-    descriptor.setJob(new TableBackupJob(frontendService, sourceAdapter, adapter, exportDescriptor, game.getId()));
+    descriptor.setJob(new TableBackupJob(frontendService, backupSourceAdapter, adapter, exportDescriptor, game.getId()));
     jobService.offer(descriptor);
     LOG.info("Offered export job for '" + game.getGameDisplayName() + "'");
     return true;
