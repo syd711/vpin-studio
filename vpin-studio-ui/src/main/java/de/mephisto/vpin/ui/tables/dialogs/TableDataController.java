@@ -937,7 +937,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
   protected void switchGame(GameRepresentation game) {
     try {
       this.game = game;
-      TableDetails tableDetails = game.getGameName().contains("a") ? client.getFrontendService().getTableDetails(game.getId()) : null;
+      TableDetails tableDetails = client.getFrontendService().getTableDetails(game.getId());
       tableDetailsBinder.setBean(tableDetails, true);
 
       if (game.isVpxGame() || game.isFpGame()) {
