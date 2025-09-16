@@ -431,7 +431,7 @@ public class ApngDecoder {
 
       doFilter(scanLine0, scanLine1, filterByte, srcBpp);
 
-      int pos = ((y + mipPos(offsetY, mip, starting_y, increment_y)) * imgWidth + offsetX + starting_x[mip]) * resultBpp;
+      int pos = ((mipPos(y + offsetY, mip, starting_y, increment_y)) * imgWidth + offsetX + starting_x[mip]) * resultBpp;
       int step = increment_x[mip];
 
       if (colorType == PNG_COLOR_PALETTE) {
