@@ -122,23 +122,30 @@ public class PinVolSettingsController implements Initializable {
     this.stage = stage;
     this.games = games;
 
+    if (!showSystemVolume) {
+      systemVolumeRoot.setVisible(false);
+      tableLabel.setVisible(false);
+    }
+
+    tableSettingsBox.setVisible(!games.isEmpty());
+    systemVolumeLabel.setVisible(!games.isEmpty());
+    saveBtn.setVisible(games.isEmpty());
+
+    if (games.size() == 1) {
+      tableLabel.setText("PinVol Settings for \"" + games.get(0).getGameDisplayName() + "\"");
+    }
+    else {
+      tableLabel.setText("PinVol Settings for " + games.size() + " tables");
+    }
+
+    reload(false);
+  }
+
+  public void reload(boolean clearCache) {
     try {
-      if (!showSystemVolume) {
-        systemVolumeRoot.setVisible(false);
-        tableLabel.setVisible(false);
+      if (clearCache) {
+        client.getPinVolService().clearCache();
       }
-
-      tableSettingsBox.setVisible(!games.isEmpty());
-      systemVolumeLabel.setVisible(!games.isEmpty());
-      saveBtn.setVisible(games.isEmpty());
-
-      if (games.size() == 1) {
-        tableLabel.setText("PinVol Settings for \"" + games.get(0).getGameDisplayName() + "\"");
-      }
-      else {
-        tableLabel.setText("PinVol Settings for " + games.size() + " tables");
-      }
-
       PinVolPreferences pinVolTablePreferences = client.getPinVolService().getPinVolTablePreferences();
       systemVolume = pinVolTablePreferences.getSystemVolume();
       int ssfDbLimit = pinVolTablePreferences.getSsfDbLimit();
@@ -312,5 +319,5 @@ public class PinVolSettingsController implements Initializable {
 
   public BooleanProperty dirtyProperty() {
     return dirty;
-  } 
+  }
 }

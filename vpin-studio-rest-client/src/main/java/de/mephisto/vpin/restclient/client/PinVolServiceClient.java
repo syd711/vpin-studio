@@ -57,4 +57,8 @@ public class PinVolServiceClient extends VPinStudioClientService {
   public boolean restart() {
     return getRestClient().get(API + "pinvol/restart", Boolean.class);
   }
+
+  public boolean isValid() {
+    return getRestClient().get(API + "pinvol/valid", Boolean.class);
+  }
 }

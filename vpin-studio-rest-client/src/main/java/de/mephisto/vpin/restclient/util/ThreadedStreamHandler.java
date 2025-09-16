@@ -49,6 +49,8 @@ class ThreadedStreamHandler extends Thread {
   private boolean sudoIsRequested = false;
   private boolean enableLog = false;
 
+  private boolean stopped = false;
+
   /**
    * A simple constructor for when the sudo command is not necessary.
    * This constructor will just run the command you provide, without
@@ -81,6 +83,8 @@ class ThreadedStreamHandler extends Thread {
   }
 
   public void run() {
+    stopped = false;
+
     // on mac os x 10.5.x, when i run a 'sudo' command, i need to write
     // the admin password out immediately; that's why this code is
     // here.
@@ -90,11 +94,10 @@ class ThreadedStreamHandler extends Thread {
       printWriter.flush();
     }
 
-    BufferedReader bufferedReader = null;
-    try {
-      bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+    try (InputStreamReader isr = new InputStreamReader(inputStream);
+        BufferedReader bufferedReader = new BufferedReader(isr)) {
       String line = null;
-      while ((line = bufferedReader.readLine()) != null) {
+      while (! stopped && (line = bufferedReader.readLine()) != null) {
         outputBuffer.append(line + "\n");
         if (enableLog) {
           LOG.info("System Command Output: " + line);
@@ -102,13 +105,11 @@ class ThreadedStreamHandler extends Thread {
       }
     } catch (Exception ioe) {
       LOG.warn("Error reading process stream: " + ioe.getMessage());
-    } finally {
-      try {
-        bufferedReader.close();
-      } catch (IOException e) {
-        // ignore this one
-      }
     }
+  }
+
+  public void stopThread() {
+    this.stopped = true;
   }
 
   private void doSleep(long millis) {

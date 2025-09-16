@@ -25,4 +25,9 @@
   - In Asset Manager, Added 'Set A Default' button to choose default asset in the list of assets
   - Improved streaming of Table Assets and Frontend Medias
 
+- **PinVol Preferences** : 
+  - Added possibility to change the installation folder of PinVol and switch between PinVol provided as part of Studio to an installed version
+  - Improved monitoring of PinVol process
+
+
 ## Bugfixes

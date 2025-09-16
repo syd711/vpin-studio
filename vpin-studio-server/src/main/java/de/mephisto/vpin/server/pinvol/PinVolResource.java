@@ -32,6 +32,11 @@ public class PinVolResource {
     return pinVolService.killPinVol();
   }
 
+  @GetMapping("/valid")
+  public boolean isValid() {
+    return pinVolService.isValid();
+  }
+
   @GetMapping("/preferences")
   public PinVolPreferences getPreferences() {
     return pinVolService.getPinVolTablePreferences();
