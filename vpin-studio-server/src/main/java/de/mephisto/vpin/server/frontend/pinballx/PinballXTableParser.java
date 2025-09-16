@@ -74,7 +74,7 @@ public class PinballXTableParser extends DefaultHandler {
                 try {
                   readNode(detail, name, content);
                 } catch (Exception e) {
-                  LOG.warn("Ignored exception while parsing " + name + " '" + content+ "'' of table '" + gameName + 
+                  LOG.warn("Ignored exception while parsing " + name + " '" + content+ "' of table '" + gameName + 
                     " for emulator "  + emu.getName() +  "': " + e.getMessage());
                 }
               }
@@ -182,11 +182,11 @@ public class PinballXTableParser extends DefaultHandler {
         break;
       }
       case "rating": {
-        detail.setGameRating(Integer.parseInt(content));
+        detail.setGameRating(StringUtils.isNotEmpty(content) ? Integer.parseInt(content) : null);
         break;
       }
       case "players": {
-        detail.setNumberOfPlayers(Integer.parseInt(content));
+        detail.setNumberOfPlayers(StringUtils.isNotEmpty(content) ? Integer.parseInt(content): null);
         break;
       }
       case "comment": {

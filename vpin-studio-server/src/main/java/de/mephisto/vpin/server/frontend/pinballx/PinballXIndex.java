@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.frontend.pinballx;
 
+import de.mephisto.vpin.connectors.assets.TableAssetSourceType;
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -177,7 +178,7 @@ public class PinballXIndex {
       // url must start with / not encoded !
       String url = "/" + URLEncoder.encode(folder + "/" + name, StandardCharsets.UTF_8);
       asset.setUrl(url);
-      asset.setSourceId(folder);
+      asset.setSourceId(TableAssetSourceType.PinballX.name());
       asset.setName(name);
       asset.setAuthor(author);
 

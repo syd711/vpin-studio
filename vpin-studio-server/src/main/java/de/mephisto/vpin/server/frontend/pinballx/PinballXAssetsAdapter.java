@@ -111,7 +111,7 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
       searchRecursive(results, ftp, "", filter, isScreenEmulatorIndependent(screen), emulator, false, folders, screenSegment);
       LOG.info("PinballX search finished, took " + (System.currentTimeMillis() - start) + "ms.");
       for (TableAsset asset : results) {
-        asset.setSourceId("PinballX");
+        asset.setSourceId(TableAssetSourceType.PinballX.name());
         asset.setAuthor("gameex");
         asset.setEmulator(emulatorType);
         asset.setScreen(screen.name());

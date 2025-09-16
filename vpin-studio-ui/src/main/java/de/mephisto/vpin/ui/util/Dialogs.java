@@ -101,8 +101,7 @@ public class Dialogs {
       TextEditorController controller = (TextEditorController) stage.getUserData();
       controller.load(file);
 
-      FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
-      stage.setUserData(fxResizeHelper);
+      FXResizeHelper.install(stage, 30, 6);
 
       stage.showAndWait();
       return controller.isSaved();

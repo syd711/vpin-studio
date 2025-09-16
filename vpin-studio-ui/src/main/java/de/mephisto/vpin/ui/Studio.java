@@ -319,8 +319,7 @@ public class Studio extends Application {
             }
 
             // ResizeHelper.addResizeListener(stage);
-            FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
-            stage.setUserData(fxResizeHelper);
+            FXResizeHelper.install(stage, 30, 6);
 
             // OLE use event bubbling, from most specific node up to windows
             //scene.addEventFilter(KeyEvent.KEY_PRESSED, new StudioKeyEventHandler(stage));

@@ -524,6 +524,10 @@ public class GamesServiceClient extends VPinStudioClientService {
   }
 
   public GameScoreValidation getGameScoreValidation(int gameId, TableDetails tableDetails) {
-    return getRestClient().post(API + "games/scorevalidation/" + gameId, tableDetails, GameScoreValidation.class);
+    if (tableDetails != null) {
+      return getRestClient().post(API + "games/scorevalidation/" + gameId, tableDetails, GameScoreValidation.class);
+    }
+    //else 
+    return getRestClient().get(API + "games/scorevalidation/" + gameId, GameScoreValidation.class);
   }
 }

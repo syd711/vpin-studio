@@ -11,6 +11,8 @@
 
 - **Tables Overview**
   - Support of next/prev in DmdPosition tool when opened from Tables
+  - Support of next/prev in Table Detail dialog
+  - Added Ctrl+S in Table Detail dialog
 
 - **BackglassManager**: Added a frame generator directly in studio, on an idea and python script provided by Himura95. 4 different generators are provided: 
   - Ambilight, Uses the pixels on the edge of the backglass to generate the frame.

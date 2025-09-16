@@ -35,7 +35,7 @@ public class LayerEditorCanvasController extends LayerEditorBaseController {
     bindLockIcon(templateBeanBinder, "lockCanvas");
 
     templateBeanBinder.bindColorPicker(canvasColorSelector, "canvasBackground");
-    templateBeanBinder.bindSlider(canvasAlphaPercentageSlider, "canvasAlphaPercentage");
+    templateBeanBinder.bindIntSlider(canvasAlphaPercentageSlider, "canvasAlphaPercentage");
     
     positionController.initBindings("canvas", templateBeanBinder);
     templateBeanBinder.bindSpinner(canvasBorderRadiusSpinner, "canvasBorderRadius", 0, 100);

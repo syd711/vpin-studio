@@ -2,16 +2,12 @@ package de.mephisto.vpin.ui.recorder;
 
 import de.mephisto.vpin.commons.utils.FXResizeHelper;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.recorder.RecordingDataSummary;
 import de.mephisto.vpin.ui.recorder.dialogs.FFMpegOptionsDialogController;
 import de.mephisto.vpin.ui.recorder.dialogs.RecordingProgressDialogController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
-
-import java.util.List;
 
 public class RecorderDialogs {
 
@@ -28,8 +24,7 @@ public class RecorderDialogs {
     FFMpegOptionsDialogController controller = (FFMpegOptionsDialogController) stage.getUserData();
     controller.setData(vPinScreen);
 
-    FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
-    stage.setUserData(fxResizeHelper);
+    FXResizeHelper.install(stage, 30, 6);
     stage.setMinWidth(600);
     stage.setMinHeight(350);
 

@@ -8,6 +8,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -16,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class DialogHeaderController implements Initializable {
@@ -25,10 +27,10 @@ public class DialogHeaderController implements Initializable {
   private double yOffset;
 
   @FXML
-  private BorderPane header;
+  protected BorderPane header;
 
   @FXML
-  private Label titleLabel;
+  protected Label titleLabel;
 
   /**
    * The dirty indicator
@@ -39,6 +41,8 @@ public class DialogHeaderController implements Initializable {
   private Button modalBtn;
 
   private Stage stage;
+
+  // used to memorize the state of the dialog when dragged
   private DialogController dialogController;
   private String id;
 
@@ -46,9 +50,17 @@ public class DialogHeaderController implements Initializable {
 
   @FXML
   private void onCloseClick() {
-    Object userData = stage.getUserData();
-    if (userData instanceof DialogController) {
-      ((DialogController) userData).onDialogCancel();
+    if (isDirty()) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "You have unsaved changes.", "Do you really want to close and lose them ?");
+      if (!result.isPresent() || !result.get().equals(ButtonType.OK)) {
+        // stay here
+        return;
+      }
+    }
+    // else close the stage
+    DialogController dialogController = getDialogController();
+    if (dialogController != null) {
+      dialogController.onDialogCancel();
     }
     stage.close();
   }
@@ -56,16 +68,25 @@ public class DialogHeaderController implements Initializable {
   @FXML
   private void onModalToggle() {
     modal = !modal;
+    DialogController dialogController = getDialogController();
+    if (dialogController != null) {
+      dialogController.setModality(modal);
+    }
+  }
+
+  protected DialogController getDialogController() {
     Object userData = stage.getUserData();
     if (userData instanceof DialogController) {
-      ((DialogController) userData).setModality(modal);
+      return (DialogController) userData;
     }
     else if (userData instanceof FXResizeHelper) {
-      Object controller = ((FXResizeHelper) userData).getUserData();
-      if(controller instanceof DialogController) {
-        ((DialogController) controller).setModality(modal);
+      // for FXResizeHelper, the DialogController has been wrapped into the FXResizeHelper
+      userData = ((FXResizeHelper) userData).getUserData();
+      if (userData instanceof DialogController) {
+        return (DialogController) userData;
       }
     }
+    return null;
   }
 
   public void setModal(boolean b) {
@@ -138,6 +159,9 @@ public class DialogHeaderController implements Initializable {
     }
   }
 
+  //---------------------------------------------
+  // State management
+
   public void enableStateListener(Stage stage, DialogController dialogController, String id) {
     this.dialogController = dialogController;
     this.id = id;
@@ -156,6 +180,7 @@ public class DialogHeaderController implements Initializable {
       int height = (int) stage.getHeight();
       LocalUISettings.saveLocation(id, x, y, width, height);
 
+      // should not be null as this method is called when enableStateListener is called  
       dialogController.onResized(x, y, width, height);
     }, 500);
   }

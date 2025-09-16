@@ -3,7 +3,6 @@ package de.mephisto.vpin.ui.tables.panels;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
-import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -52,7 +51,7 @@ public class PropperRenamingController implements Initializable {
   private Button applyBtn;
 
 
-  private TableDetails tableDetails;
+  private String gameFileName;
   private UISettings uiSettings;
   private TextField screenNameField;
   private TextField fileNameField;
@@ -92,19 +91,15 @@ public class PropperRenamingController implements Initializable {
     refreshNames();
   }
 
-  public void setData(int width, TableDetails tableDetails, UISettings uiSettings, TextField screenNameField, TextField fileNameField, TextField gameNameField) {
-    root.setMinWidth(width);
-    this.tableDetails = tableDetails;
-    this.uiSettings = uiSettings;
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    displayNameCheckBox.setSelected(true);
+    fileNameCheckBox.setSelected(true);
+    gameNameCheckBox.setSelected(true);
 
-    this.screenNameField = screenNameField;
-    this.fileNameField = fileNameField;
-    this.gameNameField = gameNameField;
-
-    authorBtn.setSelected(uiSettings.isPropperAuthorField());
-    versionBtn.setSelected(uiSettings.isPropperVersionField());
-    modBtn.setSelected(uiSettings.isPropperModField());
-    vrBtn.setSelected(uiSettings.isPropperVRField());
+    displayNameCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> refreshNames());
+    fileNameCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> refreshNames());
+    gameNameCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> refreshNames());
 
     authorBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
       uiSettings.setPropperAuthorField(newValue);
@@ -126,47 +121,45 @@ public class PropperRenamingController implements Initializable {
       client.getPreferenceService().setJsonPreference(uiSettings);
       refreshNames();
     });
+  }
 
-    if (tableDetails == null || isGameNameDisabled(tableDetails)) {
-      fileNameCheckBox.setSelected(false);
-      fileNameCheckBox.setDisable(true);
-    }
+  /**
+   * Do this once after initialize method is called
+   */
+  public void initBindings(int width, UISettings uiSettings, TextField screenNameField, TextField fileNameField, TextField gameNameField) {
+    root.setMinWidth(width);
+    this.uiSettings = uiSettings;
 
+    this.screenNameField = screenNameField;
+    this.fileNameField = fileNameField;
+    this.gameNameField = gameNameField;
+
+    authorBtn.setSelected(uiSettings.isPropperAuthorField());
+    versionBtn.setSelected(uiSettings.isPropperVersionField());
+    modBtn.setSelected(uiSettings.isPropperModField());
+    vrBtn.setSelected(uiSettings.isPropperVRField());  
+  }
+
+  public void setGame(String gameFileName) {
+    this.gameFileName = gameFileName;
     refreshNames();
   }
 
-  private static boolean isGameNameDisabled(TableDetails tableDetails) {
-    return false; //StringUtils.contains(tableDetails.getGameFileName(), "/") || StringUtils.contains(tableDetails.getGameFileName(), "\\");
-  }
-
-  @Override
-  public void initialize(URL location, ResourceBundle resources) {
-    displayNameCheckBox.setSelected(true);
-    fileNameCheckBox.setSelected(true);
-    gameNameCheckBox.setSelected(true);
-
-    displayNameCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> refreshNames());
-    fileNameCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> refreshNames());
-    gameNameCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> refreshNames());
-
-  }
-
   private void refreshNames() {
-    displayNameCheckBox.setDisable(vpsTable == null);
-    gameNameCheckBox.setDisable(vpsTable == null);
-    fileNameCheckBox.setDisable(vpsTable == null);
-    fileName.setDisable(vpsTable == null);
 
-    if (tableDetails == null || isGameNameDisabled(tableDetails)) {
-      fileNameCheckBox.setSelected(false);
-      fileNameCheckBox.setDisable(true);
-    }
+    boolean screenNameDisabled = screenNameField.isDisable();
+    boolean gameNameDisabled = gameNameField.isDisable();
+    boolean fileNameDisabled = fileNameField.isDisable();
 
-    this.applyBtn.setDisable(vpsTable == null);
+    displayNameCheckBox.setDisable(vpsTable == null || screenNameDisabled);
+    gameNameCheckBox.setDisable(vpsTable == null || gameNameDisabled);
+    fileNameCheckBox.setDisable(vpsTable == null || fileNameDisabled);
 
-    displayName.setDisable(!displayNameCheckBox.isSelected());
-    fileName.setDisable(!fileNameCheckBox.isSelected());
-    gameName.setDisable(!gameNameCheckBox.isSelected());
+    this.applyBtn.setDisable(vpsTable == null || screenNameDisabled && gameNameDisabled && fileNameDisabled);
+
+    displayName.setDisable(!displayNameCheckBox.isSelected() || screenNameDisabled);
+    fileName.setDisable(!fileNameCheckBox.isSelected() || fileNameDisabled);
+    gameName.setDisable(!gameNameCheckBox.isSelected() || gameNameDisabled);
 
     authorBtn.setDisable(vpsTableVersion == null);
     versionBtn.setDisable(vpsTableVersion == null);
@@ -197,7 +190,7 @@ public class PropperRenamingController implements Initializable {
         builder.append(")");
       }
 
-      if (gameNameCheckBox.isSelected()) {
+      if (gameNameCheckBox.isSelected() && ! gameNameDisabled) {
         gameName.setText(builder.toString());
       }
 
@@ -224,15 +217,14 @@ public class PropperRenamingController implements Initializable {
         }
       }
 
-      if (displayNameCheckBox.isSelected()) {
+      if (displayNameCheckBox.isSelected() && ! screenNameDisabled) {
         displayName.setText(builder.toString());
       }
 
-      if (fileNameCheckBox.isSelected()) {
+      if (fileNameCheckBox.isSelected() && ! fileNameDisabled) {
         String fileSuffix = "vpx";
-        String existingName = tableDetails.getGameFileName();
-        if(existingName != null) {
-          fileSuffix = FilenameUtils.getExtension(existingName);
+        if(gameFileName != null) {
+          fileSuffix = FilenameUtils.getExtension(gameFileName);
         }
         fileName.setText(builder + "." + fileSuffix);
       }

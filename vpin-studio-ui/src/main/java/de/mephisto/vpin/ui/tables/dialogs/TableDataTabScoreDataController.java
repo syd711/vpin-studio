@@ -94,7 +94,6 @@ public class TableDataTabScoreDataController implements Initializable {
   private TableDataController tableDataController;
 
   private GameRepresentation game;
-  private TableDetails tableDetails;
 
   @FXML
   private void onScoreReset() {
@@ -141,10 +140,8 @@ public class TableDataTabScoreDataController implements Initializable {
     highscoreFileName.setValue(scannedHighscoreFileName.getText());
   }
 
-  public void setGame(TableDataController tableDataController, GameRepresentation game, TableDetails tableDetails, HighscoreFiles highscoreFiles, ServerSettings serverSettings) {
-    this.tableDataController = tableDataController;
+  public void setGame(GameRepresentation game, TableDetails tableDetails, HighscoreFiles highscoreFiles, ServerSettings serverSettings) {
     this.game = game;
-    this.tableDetails = tableDetails;
 
     List<String> availableRoms = new ArrayList<>();
     if (highscoreFiles.getNvRams() != null) {
@@ -171,15 +168,6 @@ public class TableDataTabScoreDataController implements Initializable {
     applyRomBtn.setDisable(true);
     String tableRomName = tableDetails != null ? tableDetails.getRomName() : null;
     romName.setValue(tableRomName);
-    romName.valueProperty().addListener((observable, oldValue, newValue) -> {
-      onRomNameUpdate(newValue);
-    });
-    romName.focusedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        onRomNameFocusChange(newValue);
-      }
-    });
 
     if (StringUtils.isEmpty(tableRomName) && !StringUtils.isEmpty(game.getScannedRom())) {
       if (!StringUtils.isEmpty(game.getRomAlias())) {
@@ -191,20 +179,10 @@ public class TableDataTabScoreDataController implements Initializable {
 
       applyRomBtn.setDisable(false);
     }
-    romName.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
-      debouncer.debounce("romName", () -> {
-        onRomNameUpdate(newValue);
-      }, DEBOUNCE_MS, true);
-    });
-
 
     applyAltRomBtn.setDisable(true);
     String tableRomAlt = tableDetails != null ? tableDetails.getRomAlt() : null;
     altRomName.setText(tableRomAlt);
-    altRomName.textProperty().addListener((observable, oldValue, newValue) -> {
-      onAltRomNameUpdate(newValue);
-    });
-    altRomName.focusedProperty().addListener((observable, oldValue, newValue) -> onAltRomNameFocusChange(newValue));
 
     if (StringUtils.isEmpty(tableRomAlt) && !StringUtils.isEmpty(game.getScannedAltRom())) {
       altRomName.setPromptText(game.getScannedAltRom() + " (scanned value)");
@@ -229,20 +207,11 @@ public class TableDataTabScoreDataController implements Initializable {
     if (StringUtils.isEmpty(highscoreFileName.getValue()) && !StringUtils.isEmpty(game.getScannedHsFileName())) {
       highscoreFileName.setPromptText(game.getScannedHsFileName() + " (scanned value)");
     }
-    highscoreFileName.valueProperty().addListener((observable, oldValue, newValue) -> {
-      onHighscoreFilenameUpdate(newValue);
-    });
-    highscoreFileName.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
-      debouncer.debounce("highscoreFileName", () -> {
-        onHighscoreFilenameUpdate(newValue);
-      }, DEBOUNCE_MS, true);
-    });
   }
 
-  public void save() {
-
+  public boolean save() {
+    return true;
   }
-
 
   public void refreshScannedValues() {
     if (!game.isVpxGame()) {
@@ -278,21 +247,21 @@ public class TableDataTabScoreDataController implements Initializable {
   }
 
   private void onAltRomNameUpdate(String newValue) {
-    tableDetails.setRomAlt(newValue);
+    tableDataController.setTableDetailProperty("romAlt", newValue);
     refreshStatusIcons();
   }
 
   private void onAltRomNameFocusChange(Boolean newValue) {
     if (!newValue) {
       altRomName.setPromptText("");
-      if ((tableDetails == null || StringUtils.isEmpty(tableDetails.getRomAlt())) && !StringUtils.isEmpty(game.getScannedAltRom())) {
+      if (StringUtils.isEmpty(altRomName.getText()) && !StringUtils.isEmpty(game.getScannedAltRom())) {
         altRomName.setPromptText(game.getScannedAltRom() + " (scanned value)");
       }
     }
   }
 
   private void onRomNameUpdate(String newValue) {
-    tableDetails.setRomName(newValue);
+    tableDataController.setTableDetailProperty("romName", newValue);
     refreshStatusIcons();
   }
 
@@ -300,7 +269,7 @@ public class TableDataTabScoreDataController implements Initializable {
   private void onRomNameFocusChange(Boolean newValue) {
     if (!newValue) {
       romName.setPromptText("");
-      if ((tableDetails == null || StringUtils.isEmpty(tableDetails.getRomName())) && !StringUtils.isEmpty(game.getScannedRom())) {
+      if (StringUtils.isEmpty(romName.getValue()) && !StringUtils.isEmpty(game.getScannedRom())) {
         if (!StringUtils.isEmpty(game.getRomAlias())) {
           romName.setPromptText(game.getRom() + " (aliased ROM)");
         }
@@ -312,6 +281,8 @@ public class TableDataTabScoreDataController implements Initializable {
   }
 
   private void refreshStatusIcons() {
+    // get the score validations with the modified TableDetails (real time check)
+    TableDetails tableDetails = tableDataController.getTableDetails();
     GameScoreValidation gameScoreValidation = client.getGameService().getGameScoreValidation(game.getId(), tableDetails);
     romStatusBox.getChildren().removeAll(romStatusBox.getChildren());
     hsFileStatusBox.getChildren().removeAll(hsFileStatusBox.getChildren());
@@ -340,5 +311,39 @@ public class TableDataTabScoreDataController implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     openHsFileBtn.setVisible(client.getSystemService().isLocal());
+  }
+
+  public void initBindings(TableDataController tableDataController) {
+    this.tableDataController = tableDataController;
+
+    romName.valueProperty().addListener((observable, oldValue, newValue) -> {
+      onRomNameUpdate(newValue);
+    });
+    romName.focusedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        onRomNameFocusChange(newValue);
+      }
+    });
+
+    romName.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
+      debouncer.debounce("romName", () -> {
+        onRomNameUpdate(newValue);
+      }, DEBOUNCE_MS, true);
+    });
+
+    altRomName.textProperty().addListener((observable, oldValue, newValue) -> {
+      onAltRomNameUpdate(newValue);
+    });
+    altRomName.focusedProperty().addListener((observable, oldValue, newValue) -> onAltRomNameFocusChange(newValue));
+
+    highscoreFileName.valueProperty().addListener((observable, oldValue, newValue) -> {
+      onHighscoreFilenameUpdate(newValue);
+    });
+    highscoreFileName.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
+      debouncer.debounce("highscoreFileName", () -> {
+        onHighscoreFilenameUpdate(newValue);
+      }, DEBOUNCE_MS, true);
+    });
   }
 }
