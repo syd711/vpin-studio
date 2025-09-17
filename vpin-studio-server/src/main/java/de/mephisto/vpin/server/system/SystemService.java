@@ -371,7 +371,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
         success = true;
       }
     }
-    return success;
+    return !isProcessRunning(name);
   }
 
   public boolean isProcessRunning(String name) {

@@ -151,11 +151,8 @@ public class SystemCommandExecutor {
 
       exitValue = process.waitFor();
 
-      inputStreamHandler.interrupt();
-      errorStreamHandler.interrupt();
-      inputStreamHandler.join();
-      errorStreamHandler.join();
-
+      inputStreamHandler.stopThread();
+      errorStreamHandler.stopThread();
     }
     catch (Exception e) {
       if (ignoreError) {

@@ -77,6 +77,8 @@ public interface PreferenceNames {
   String ACTIVE_GAME = "activeGame";
   String PREVIEW_ENABLED = "previewEnabled";
   String PINVOL_AUTOSTART_ENABLED = "pinVolAutoStartEnabled";
+  String PINVOL_FOLDER = "pinVolInstallationFolder";
+
   String PINEMHI_AUTOSTART_ENABLED = "pinemhiAutoStartEnabled";
 
   String BACKUP_SETTINGS = "backupSettings";

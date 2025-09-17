@@ -148,7 +148,9 @@ public class PreferencesService implements InitializingBean, PreferenceChangedLi
       String key = entry.getKey();
       Object oldValue = entry.getValue();
       Object newValue = values.get(key);
-      notifyListeners(key, oldValue, newValue);
+      if (!Objects.equals(oldValue, newValue)) {
+        notifyListeners(key, oldValue, newValue);
+      }
     }
   }
 

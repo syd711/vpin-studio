@@ -5,6 +5,7 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.Tooltip?>
@@ -36,6 +37,75 @@
                      </VBox.margin>
                   </Label>
                   <Hyperlink onAction="#onLink" text="http://mjrnet.org/pinscape/PinVol.html" />
+
+                  <VBox>
+                     <children>
+                        <Label styleClass="preference-subtitle" text="Installation" textFill="WHITE" />
+                        <Label styleClass="preference-description" text="Select the folder of your Pinvol installation." textFill="WHITE" />
+                        <HBox alignment="CENTER_LEFT" spacing="6.0">
+                           <children>
+                              <CheckBox fx:id="useDefaultFolderCheckBox" mnemonicParsing="false" text="Use Pinvol.exe provided with VPin Studio" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <Label>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="Uncheck if you want to use your own version of Pinvol." wrapText="true" />
+                                 </tooltip>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                              </Label>
+                           </children>
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <GridPane fx:id="installationPane" vgap="3.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="631.9999679565428" minWidth="10.0" prefWidth="550.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Label styleClass="default-text" text="Folder:" />
+                              <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
+                                 <children>
+                                    <TextField fx:id="installationFolderText" editable="false" prefHeight="30.0" prefWidth="430.0">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </TextField>
+                                    <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFolder" text="Select Folder...">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                              <Label fx:id="pinvolFolderErrorLabel" styleClass="error-message" text="Invalid Pinvol installation folder, no &quot;Pinvol.exe&quot; file found." GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets left="3.0" right="3.0" />
+                                 </padding>
+                              </Label>
+                           </children>
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </GridPane>
+                     </children>
+                  </VBox>
+
                   <VBox>
                      <children>
                         <CheckBox fx:id="columnPinVol" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Show &quot;PinVol&quot; Column in Table Overview" textFill="WHITE">
@@ -107,7 +177,7 @@
                      </VBox.margin>
                   </Label>
                   <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="Adjust system volume settings." textFill="WHITE" />
-                  <GridPane hgap="3.0" vgap="3.0">
+                  <GridPane fx:id="adjustSystemVolumePane" hgap="3.0" vgap="3.0">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="243.2000732421875" minWidth="10.0" prefWidth="166.39999389648438" />
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="442.4000549316406" minWidth="10.0" prefWidth="421.6000061035156" />

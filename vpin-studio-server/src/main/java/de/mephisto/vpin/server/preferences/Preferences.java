@@ -103,6 +103,9 @@ public class Preferences {
   @Column(name = "pinVolAutoStartEnabled", nullable = false, columnDefinition = "boolean default false")
   private boolean pinVolAutoStartEnabled;
 
+  @Column(name = "pinVolInstallationFolder", nullable = true, columnDefinition = "PinVol Installation folder")
+  private String pinVolInstallationFolder;
+
   @Column(name = "pinemhiAutoStartEnabled", nullable = false, columnDefinition = "boolean default false")
   private boolean pinemhiAutoStartEnabled;
 
@@ -359,6 +362,14 @@ public class Preferences {
 
   public void setPinVolAutoStartEnabled(boolean pinVolAutoStartEnabled) {
     this.pinVolAutoStartEnabled = pinVolAutoStartEnabled;
+  }
+  
+  public String getPinVolInstallationFolder() {
+    return pinVolInstallationFolder;
+  }
+
+  public void setPinVolInstallationFolder(String pinVolInstallationFolder) {
+    this.pinVolInstallationFolder = pinVolInstallationFolder;
   }
 
   public boolean getPreviewEnabled() {
