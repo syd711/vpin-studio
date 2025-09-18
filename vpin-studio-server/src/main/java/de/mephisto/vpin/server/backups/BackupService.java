@@ -135,7 +135,7 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
 
   @Nullable
   public BackupDescriptor getBackupDescriptors(long sourceId, @NonNull String filename) {
-    BackupSourceAdapter sourceAdapter = backupSourcesCache.get(sourceId);
+    BackupSourceAdapter sourceAdapter = getBackupSourceAdapter(sourceId);
     List<BackupDescriptor> descriptors = sourceAdapter.getBackupDescriptors();
     for (BackupDescriptor descriptor : descriptors) {
       String descriptorFilename = descriptor.getFilename();
@@ -203,7 +203,8 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
     BackupSource updatedSource = backupSourceRepository.saveAndFlush(backupSource);
     backupSourcesCache.remove(updatedSource.getId());
 
-    backupSourcesCache.put(updatedSource.getId(), BackupSourceAdapterFactory.create(this, updatedSource, vpaService));
+    BackupSourceAdapter backupSourceAdapter = BackupSourceAdapterFactory.create(this, updatedSource, vpaService);
+    backupSourcesCache.put(updatedSource.getId(), backupSourceAdapter);
     LOG.info("(Re)created archive source adapter \"" + updatedSource + "\"");
     return updatedSource;
   }
