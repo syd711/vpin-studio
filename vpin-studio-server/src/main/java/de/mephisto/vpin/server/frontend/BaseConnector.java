@@ -890,7 +890,8 @@ public abstract class BaseConnector implements FrontendConnector {
                     p.info().command().get().contains("VPinballX") ||
                     p.info().command().get().contains("Future Pinball") ||
                     p.info().command().get().startsWith("VPinball") ||
-                    p.info().command().get().contains("B2SBackglassServerEXE")))
+                    p.info().command().get().contains("B2SBackglassServerEXE") ||
+                    p.info().command().get().contains("DOF")))
         .collect(Collectors.toList());
 
     if (processes.isEmpty()) {
