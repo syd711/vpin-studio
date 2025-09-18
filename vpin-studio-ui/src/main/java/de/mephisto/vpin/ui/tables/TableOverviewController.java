@@ -7,6 +7,7 @@ import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
+import de.mephisto.vpin.restclient.backups.BackupDescriptorRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
@@ -1115,6 +1116,21 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       HBox row = new HBox(2);
       row.setAlignment(Pos.CENTER_RIGHT);
       row.setMinWidth(34);
+
+      BackupDescriptorRepresentation backup = client.getBackupService().getBackup(value);
+      if (backup != null) {
+        Button compBtn = new Button();
+        compBtn.getStyleClass().add("table-media-button");
+        compBtn.setTooltip(new Tooltip("A backup for this table has been found"));
+        FontIcon cmpIcon = WidgetFactory.createIcon("mdi2a-archive-outline");
+        compBtn.setGraphic(cmpIcon);
+        row.getChildren().add(compBtn);
+        compBtn.setOnAction(event -> {
+          Platform.runLater(() -> {
+            getTablesController().switchToBackupsTab(backup);
+          });
+        });
+      }
 
       if (iScoredSettings != null && iScoredSettings.isEnabled() && !value.getCompetitionTypes().isEmpty()) {
         Button compBtn = new Button();

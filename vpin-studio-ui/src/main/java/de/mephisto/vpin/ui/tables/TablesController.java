@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.backups.BackupDescriptorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
@@ -95,10 +96,10 @@ public class TablesController implements Initializable, StudioFXController, Stud
   private Tab backglassManagerTab;
 
   @FXML
-  private Tab tablesStatisticsTab;
+  private Tab tableBackupsTab;
 
   @FXML
-  private Tab tableRepositoryTab;
+  private Tab tablesStatisticsTab;
 
   @FXML
   private Tab vpsTablesTab;
@@ -200,7 +201,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
       tabPane.getTabs().remove(tablesStatisticsTab);
     }
     if (!Features.BACKUPS_ENABLED) {
-      tabPane.getTabs().remove(tableRepositoryTab);
+      tabPane.getTabs().remove(tableBackupsTab);
     }
 
     try {
@@ -251,10 +252,10 @@ public class TablesController implements Initializable, StudioFXController, Stud
         Parent repositoryRoot = loader.load();
         backupsController = loader.getController();
         backupsController.setRootController(this);
-        tableRepositoryTab.setContent(repositoryRoot);
+        tableBackupsTab.setContent(repositoryRoot);
       }
       else {
-        tabPane.getTabs().remove(tableRepositoryTab);
+        tabPane.getTabs().remove(tableBackupsTab);
       }
     }
     catch (IOException e) {
@@ -422,7 +423,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
     if (tabPane.getTabs().contains(tablesStatisticsTab) && cnt++ == index) {
       return TAB_STATISTICS;
     }
-    if (tabPane.getTabs().contains(tableRepositoryTab) && cnt++ == index) {
+    if (tabPane.getTabs().contains(tableBackupsTab) && cnt++ == index) {
       return TAB_BACKUPS;
     }
     if (tabPane.getTabs().contains(recorderTab) && cnt++ == index) {
@@ -455,6 +456,11 @@ public class TablesController implements Initializable, StudioFXController, Stud
   public void switchToBackglassManagerTab(GameRepresentation game) {
     backglassManagerController.selectGame(game);
     tabPane.getSelectionModel().select(backglassManagerTab);
+  }
+
+  public void switchToBackupsTab(BackupDescriptorRepresentation backup) {
+    backupsController.selectBackup(backup);
+    tabPane.getSelectionModel().select(tableBackupsTab);
   }
 
   @Override
@@ -614,7 +620,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
       tabPane.getSelectionModel().select(tablesStatisticsTab);
     }
     else if (ke.getCode() == KeyCode.F6) {
-      tabPane.getSelectionModel().select(tableRepositoryTab);
+      tabPane.getSelectionModel().select(tableBackupsTab);
     }
     else if (ke.getCode() == KeyCode.F7 && Features.RECORDER) {
       tabPane.getSelectionModel().select(recorderTab);
@@ -629,6 +635,10 @@ public class TablesController implements Initializable, StudioFXController, Stud
     if (activeController != null) {
       activeController.onKeyEvent(ke);
     }
+  }
+
+  public BackupsController getTableBackupsController() {
+    return backupsController;
   }
 
   private StudioFXController getController(int tab) {

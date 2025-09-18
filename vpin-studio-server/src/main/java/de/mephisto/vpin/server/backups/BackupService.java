@@ -209,7 +209,6 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
     return updatedSource;
   }
 
-
   public boolean restoreBackup(@NonNull ArchiveRestoreDescriptor installDescriptor) {
     try {
       BackupDescriptor backupDescriptor = getBackupDescriptors(installDescriptor.getArchiveSourceId(), installDescriptor.getFilename());
@@ -309,6 +308,17 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
       }
       this.backupSourcesCache.put(as.getId(), vpaSourceAdapter);
     }
+
+    new Thread(() -> {
+      Thread.currentThread().setName("Backup Service Initializer");
+      Collection<BackupSourceAdapter> values = backupSourcesCache.values();
+      int count = 0;
+      for (BackupSourceAdapter value : values) {
+        count += value.getBackupDescriptors().size();
+      }
+      LOG.info("Backup Service initialized with {} backups.", count);
+    }).start();
+
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }
