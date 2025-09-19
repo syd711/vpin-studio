@@ -22,7 +22,7 @@ import java.util.Optional;
 /**
  * And asset search service based on the local filesystem
  */
-public class VideoTutorialsTableAssetAdapter extends DefaultTableAssetAdapter implements TableAssetsAdapter<Game> {
+public class VideoTutorialsTableAssetAdapter extends DefaultTableAssetAdapter {
   private final static Logger LOG = LoggerFactory.getLogger(VideoTutorialsTableAssetAdapter.class);
 
   public final static String SOURCE_ID = TableAssetSourceType.TutorialVideos + "-Kongedam";
@@ -86,8 +86,8 @@ public class VideoTutorialsTableAssetAdapter extends DefaultTableAssetAdapter im
   }
 
   @Override
-  public void writeAsset(@NonNull OutputStream outputStream, @NonNull TableAsset tableAsset) throws Exception {
-    writeUrlAsset(outputStream, tableAsset);
+  public void writeAsset(@NonNull OutputStream outputStream, @NonNull TableAsset tableAsset, long start, long length) throws Exception {
+    writeUrlAsset(outputStream, tableAsset, start, length);
   }
 
   @Override

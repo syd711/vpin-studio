@@ -10,16 +10,21 @@ import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPFileFilter;
+import org.apache.commons.net.io.CopyStreamException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
@@ -230,28 +235,38 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
   //-------------------------------------
 
   @Override
-  public void writeAsset(@NonNull OutputStream outputStream, @NonNull TableAsset tableAsset) throws Exception {
-//
-//    FTPClient ftp = null;
-//    try {
-//      ftp = open();
-//
-//      String decodeUrl = URLDecoder.decode(url, StandardCharsets.UTF_8);
-//      decodeUrl = decodeUrl.substring(1);
-//      LOG.info("downloading " + decodeUrl);
-//
-//      String folder = StringUtils.substringBeforeLast(decodeUrl, "/");
-//      String name = StringUtils.substringAfterLast(decodeUrl, "/");
-//
-//      ftp.changeWorkingDirectory(rootfolder + folder);
-//      ftp.retrieveFile(name, outputStream);
-//    }
-//    catch (CopyStreamException cse) {
-//      LOG.error("Error while downloading asset " + url + ": " + cse.getMessage());
-//    }
-//    finally {
-//      close(ftp);
-//    }
+  public void writeAsset(@NonNull OutputStream outputStream, @NonNull TableAsset tableAsset, long start, long length) throws Exception {
+    FTPClient ftp = null;
+    try {
+      ftp = open();
+
+      String url = tableAsset.getUrl();
+      String decodeUrl = URLDecoder.decode(url, StandardCharsets.UTF_8);
+      decodeUrl = decodeUrl.substring(1);
+      LOG.info("downloading " + decodeUrl);
+
+      String folder = StringUtils.substringBeforeLast(decodeUrl, "/");
+      String name = StringUtils.substringAfterLast(decodeUrl, "/");
+
+      ftp.changeWorkingDirectory(rootfolder + folder);
+      ftp.setFileType(FTP.BINARY_FILE_TYPE);
+
+      try (InputStream in = ftp.retrieveFileStream(name)) {
+        LOG.info("Read FTP file \"" + decodeUrl + "\", " + ftp.getReplyString());
+        if (start < 0) {
+          IOUtils.copy(in, outputStream);
+        }
+        else {
+          IOUtils.copyLarge(in, outputStream, start, length);
+        }
+      }
+    }
+    catch (CopyStreamException cse) {
+      LOG.error("Error while downloading asset: " + cse.getMessage());
+    }
+    finally {
+      close(ftp);
+    }
   }
 
   private String[] fromScreenToFolders(VPinScreen screen) {

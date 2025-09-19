@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRange;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -46,7 +47,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
-import static de.mephisto.vpin.server.util.RequestUtil.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -156,14 +156,47 @@ public class GameMediaResource {
 
     TableAsset tableAsset = result.get();
 
-    // Set headers
-    if (tableAsset.getLength() > 0) {
-      response.setContentLength((int) tableAsset.getLength());
+    long contentLength = tableAsset.getLength();
+    String mimeType = tableAsset.getMimeType();
+
+    // Process headers
+
+    response.setContentType(mimeType);
+
+    HttpStatus status = HttpStatus.OK;
+
+    // optional range
+    long start = -1, end = -1;
+    String rangeHeader = request.getHeader("Range");
+    if (rangeHeader != null) {
+      List<HttpRange> ranges = HttpRange.parseRanges(rangeHeader);
+      if (ranges.size() == 1) {
+        status = HttpStatus.PARTIAL_CONTENT;
+        HttpRange range = ranges.get(0);
+        start = range.getRangeStart(contentLength);
+        end = range.getRangeEnd(contentLength);
+        response.setHeader("Content-Range", "bytes " + start + "-" + end + "/" + contentLength);
+        contentLength = end - start + 1;
+      }
     }
-    response.setHeader(CONTENT_TYPE, tableAsset.getMimeType());
+    else {
+      System.out.println("no range");
+    }
+
+    if (contentLength > 0) {
+      response.setContentLength((int) contentLength);
+    }
     response.setHeader("Access-Control-Allow-Origin", "*");
     response.setHeader("Access-Control-Expose-Headers", "origin, range");
-    response.setHeader("Cache-Control", "public, max-age=3600");
+    response.setHeader("Cache-Control", "public, max-age=36000");
+    response.setHeader("Accept-Ranges", "bytes");
+
+    if (start >= 0) {
+      LOG.info("Processing {} method, Length={}, range {}-{}", request.getMethod(), contentLength, start, end);
+    } 
+    else {
+      LOG.info("Processing {} method, Length={}", request.getMethod(), contentLength);
+    }
 
     // For HEAD, do not write the body
     if ("HEAD".equals(request.getMethod())) {
@@ -171,18 +204,19 @@ public class GameMediaResource {
       return;
     }
     // else normal download
+    response.setStatus(status.value());
+
     try (ServletOutputStream outputStream = response.getOutputStream()) {
-      tableAssetsService.download(outputStream, tableAsset);
+      tableAssetsService.download(outputStream, tableAsset, start, contentLength);
       response.flushBuffer();
-      response.setStatus(HttpStatus.OK.value());
     } 
     catch (ClientAbortException cae) {
       LOG.info("Connection aborted while streaming media {} from {}", name, assetSourceId);
-      response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+      response.sendError(HttpStatus.REQUEST_TIMEOUT.value(), "connection aborted");
     }
     catch (IOException e) {
       LOG.error("Failed to stream media {} from {}: {}", name, assetSourceId, e.getMessage(), e);
-      response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+      response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
     }
   }
 
@@ -205,12 +239,15 @@ public class GameMediaResource {
     }
 
     FrontendMedia frontendMedia = frontendService.getGameMedia(game);
-    FrontendMediaItem frontendMediaItem = frontendMedia.getDefaultMediaItem(vPinScreen);
+    final FrontendMediaItem frontendMediaItem;
     if (!StringUtils.isEmpty(name)) {
       name = name.replaceAll("%(?![0-9a-fA-F]{2})", "%25");
       name = name.replaceAll("\\+", "%2B");
       name = URLDecoder.decode(name, Charset.defaultCharset());
       frontendMediaItem = frontendMedia.getMediaItem(vPinScreen, name);
+    }
+    else {
+      frontendMediaItem = frontendMedia.getDefaultMediaItem(vPinScreen);
     }
 
     if (frontendMediaItem == null) {
@@ -219,8 +256,8 @@ public class GameMediaResource {
 
     File file = frontendMediaItem.getFile();
 
-    boolean getPreview = false;
-    int contentLength = -1;
+    final boolean getPreview;
+    long contentLength = -1;
     String mimeType = frontendMediaItem.getMimeType();
     if (preview && StringUtils.startsWithIgnoreCase(mimeType, "video/")) {
       // will return only a frame, content length cannot be calculated
@@ -228,17 +265,45 @@ public class GameMediaResource {
       getPreview = true;
     }
     else {
-      contentLength = (int) frontendMediaItem.getSize();
+      contentLength = frontendMediaItem.getSize();
+      getPreview = false;
     }
 
-    // Set headers
-    if (contentLength > 0) {
-      response.setContentLength(contentLength);
+    // Process headers
+
+    response.setContentType(mimeType);
+
+    HttpStatus status = HttpStatus.OK;
+
+    // optional range
+    long start = -1, end = -1;
+    String rangeHeader = request.getHeader("Range");
+    if (rangeHeader != null) {
+      List<HttpRange> ranges = HttpRange.parseRanges(rangeHeader);
+      if (ranges.size() == 1) {
+        status = HttpStatus.PARTIAL_CONTENT;
+        HttpRange range = ranges.get(0);
+        start = range.getRangeStart(contentLength);
+        end = range.getRangeEnd(contentLength);
+        response.setHeader("Content-Range", "bytes " + start + "-" + end + "/" + contentLength);
+        contentLength = end - start + 1;
+      }
     }
-    response.setHeader(CONTENT_TYPE, mimeType);
+
+    if (contentLength > 0) {
+      response.setContentLength((int) contentLength);
+    }
     response.setHeader("Access-Control-Allow-Origin", "*");
     response.setHeader("Access-Control-Expose-Headers", "origin, range");
-    response.setHeader("Cache-Control", "public, max-age=3600");
+    response.setHeader("Cache-Control", "public, max-age=36000");
+    response.setHeader("Accept-Ranges", "bytes");
+
+    if (start >= 0) {
+      LOG.info("Processing {} method, Length={}, range {}-{}", request.getMethod(), contentLength, start, end);
+    } 
+    else {
+      LOG.info("Processing {} method, Length={}", request.getMethod(), contentLength);
+    }
 
     // For HEAD, do not write the body
     if ("HEAD".equals(request.getMethod())) {
@@ -248,6 +313,8 @@ public class GameMediaResource {
     // else normal download
     try (ServletOutputStream outputStream = response.getOutputStream()) {
 
+      response.setStatus(status.value());
+
       if (getPreview) {
         byte[] bytes = JCodec.grab(frontendMediaItem.getFile());
         if (bytes != null) {
@@ -255,25 +322,29 @@ public class GameMediaResource {
           response.getOutputStream().write(bytes);
         }
         else {
-          response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+          response.sendError(HttpStatus.NOT_FOUND.value());
           return;
         }
       }
       else {
         try (FileInputStream in = new FileInputStream(file)) {
-          IOUtils.copy(in, outputStream);
+          if (start >= 0) {
+            IOUtils.copyLarge(in, outputStream, start, contentLength);
+          }
+          else {
+            IOUtils.copy(in, outputStream);
+          }
         }
       }
       response.flushBuffer();
-      response.setStatus(HttpStatus.OK.value());
     } 
     catch (ClientAbortException cae) {
       LOG.info("Connection aborted while downloading {} for game {}", name, id);
-      response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+      response.sendError(HttpStatus.REQUEST_TIMEOUT.value(), "connection aborted");
     }
     catch (IOException e) {
       LOG.error("Failed to stream media {} for game {}: {}", name, id, e.getMessage(), e);
-      response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+      response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
     }
   }
 

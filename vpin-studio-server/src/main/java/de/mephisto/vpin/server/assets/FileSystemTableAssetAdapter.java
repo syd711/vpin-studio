@@ -9,17 +9,19 @@ import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -71,15 +73,25 @@ public class FileSystemTableAssetAdapter extends DefaultTableAssetAdapter {
   }
 
   @Override
-  public void writeAsset(@NonNull OutputStream outputStream, @NonNull TableAsset tableAsset) throws Exception {
+  public void writeAsset(@NonNull OutputStream outputStream, @NonNull TableAsset tableAsset, long start, long length) throws Exception {
     String decoded = URLDecoder.decode(tableAsset.getUrl(), StandardCharsets.UTF_8);
     String fileName = decoded.substring("/".length());
     fileName = fileName.replaceAll("@2x", "");
     File source = new File(fileName);
     if (source.exists()) {
+
+Thread.sleep(1000);
+
       // exception are thrown and are caught buy caller 
-      FileUtils.copyFile(source, outputStream);
-      LOG.info("Copied {} from {}", source.getAbsolutePath(), this.source);
+        try (InputStream fis = Files.newInputStream(source.toPath())) {
+          if (start < 0) {
+            IOUtils.copyLarge(fis, outputStream);
+          }
+          else {
+            IOUtils.copyLarge(fis, outputStream, start, length);
+          }
+          LOG.info("write {} from {}", source.getAbsolutePath(), this.source);
+        }
     }
     else {
       LOG.error("Failed to resolve media source file {} from source {}", source.getAbsolutePath(), getAssetSource());

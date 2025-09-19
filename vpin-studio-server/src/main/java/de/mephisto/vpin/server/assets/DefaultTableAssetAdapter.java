@@ -3,7 +3,6 @@ package de.mephisto.vpin.server.assets;
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -11,6 +10,9 @@ import java.io.BufferedInputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import org.apache.commons.io.IOUtils;
+
 
 abstract public class DefaultTableAssetAdapter implements TableAssetsAdapter<Game> {
 
@@ -50,16 +52,17 @@ abstract public class DefaultTableAssetAdapter implements TableAssetsAdapter<Gam
     return false;
   }
 
-  protected void writeUrlAsset(@NonNull OutputStream outputStream, @NonNull TableAsset tableAsset) throws Exception {
+  protected void writeUrlAsset(@NonNull OutputStream outputStream, @NonNull TableAsset tableAsset, long start, long length) throws Exception {
     String urlString = tableAsset.getUrl();
     URL url = new URL(urlString.replaceAll(" ", "%20"));
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
     connection.setDoOutput(true);
     try (BufferedInputStream in = new BufferedInputStream(url.openStream())) {
-      byte dataBuffer[] = new byte[1024];
-      int bytesRead;
-      while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
-        outputStream.write(dataBuffer, 0, bytesRead);
+      if (start < 0) {
+        IOUtils.copy(in, outputStream);
+      }
+      else {
+        IOUtils.copyLarge(in, outputStream, start, length);
       }
     }
   }

@@ -76,8 +76,8 @@ public class CacheTableAssetsAdapter implements TableAssetsAdapter<Game> {
   }
 
   @Override
-  public void writeAsset(@NonNull OutputStream out, @NonNull TableAsset tableAsset) throws Exception {
-    delegate.writeAsset(out, tableAsset);
+  public void writeAsset(@NonNull OutputStream out, @NonNull TableAsset tableAsset, long start, long end) throws Exception {
+    delegate.writeAsset(out, tableAsset, start, end);
   }
 
   @Override

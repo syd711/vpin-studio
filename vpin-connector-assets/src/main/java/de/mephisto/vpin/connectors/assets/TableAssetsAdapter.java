@@ -20,7 +20,7 @@ public interface TableAssetsAdapter<T> {
    * @param outputStream the stream to write on
    * @param tableAsset   The asset
    */
-  void writeAsset(@NonNull OutputStream outputStream, @NonNull TableAsset tableAsset) throws Exception;
+  void writeAsset(@NonNull OutputStream outputStream, @NonNull TableAsset tableAsset, long start, long length) throws Exception;
 
   /**
    * Test the connection to the remote search server

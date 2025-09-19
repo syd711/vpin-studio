@@ -109,7 +109,7 @@ public class TableAssetsService {
         }
       }
       try (FileOutputStream fileOutputStream = new FileOutputStream(target)) {
-        adapter.get().writeAsset(fileOutputStream, asset);
+        adapter.get().writeAsset(fileOutputStream, asset, -1, -1);
         LOG.info("Downloaded file {}", target.getAbsolutePath());
       }
       catch (Exception e) {
@@ -118,11 +118,11 @@ public class TableAssetsService {
     }
   }
 
-  public void download(@NonNull OutputStream out, @NonNull TableAsset tableAsset) throws Exception {
+  public void download(@NonNull OutputStream out, @NonNull TableAsset tableAsset, long start, long length) throws Exception {
     String assetSourceId = tableAsset.getSourceId();
     Optional<TableAssetsAdapter<Game>> adapter = getAllAdapters().stream().filter(a -> a.getAssetSource().getId().equalsIgnoreCase(assetSourceId)).findFirst();
     if (adapter.isPresent()) {
-      adapter.get().writeAsset(out, tableAsset);
+      adapter.get().writeAsset(out, tableAsset, start, length);
     }
   }
 

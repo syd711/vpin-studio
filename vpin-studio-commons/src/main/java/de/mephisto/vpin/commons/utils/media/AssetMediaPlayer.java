@@ -55,13 +55,13 @@ abstract public class AssetMediaPlayer extends MediaViewPane {
       }
 
       try {
-        final ExecutorService executor = Executors.newFixedThreadPool(1);
-        final Future<?> future = executor.submit(() -> {
-          mediaPlayer.dispose();
-        });
+        // final ExecutorService executor = Executors.newFixedThreadPool(1);
+        // final Future<?> future = executor.submit(() -> {
+        mediaPlayer.dispose();
+        // });
 
-        future.get(500, TimeUnit.MILLISECONDS);
-        executor.shutdownNow();
+        // future.get(500, TimeUnit.MILLISECONDS);
+        // executor.shutdownNow();
       }
       catch (Exception e) {
         LOG.info("Disposing media view: " + e.getMessage());

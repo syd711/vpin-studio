@@ -9,6 +9,8 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -116,7 +119,7 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
   //-------------------------------------
 
   @Override
-  public void writeAsset(@NonNull OutputStream out, @NonNull TableAsset tableAsset) throws Exception {
+  public void writeAsset(@NonNull OutputStream outputStream, @NonNull TableAsset tableAsset, long start, long length) throws Exception {
     FTPClient ftp = null;
     try {
       ftp = open();
@@ -132,11 +135,14 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
       ftp.changeWorkingDirectory(rootfolder + folder);
       ftp.setFileType(FTP.BINARY_FILE_TYPE);
 
-      if (ftp.retrieveFile(name, out)) {
+      try (InputStream in = ftp.retrieveFileStream(name)) {
         LOG.info("Read FTP file \"" + decodeUrl + "\", " + ftp.getReplyString());
-      }
-      else {
-        LOG.error("FTP download incomplete \"" + decodeUrl + "\", " + ftp.getReplyString());
+        if (start < 0) {
+          IOUtils.copy(in, outputStream);
+        }
+        else {
+          IOUtils.copyLarge(in, outputStream, start, length);
+        }
       }
     }
     catch (CopyStreamException cse) {

@@ -120,26 +120,30 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
     });
 
     mediaPlayer.setOnReady(() -> {
-      for (MediaPlayerListener listener : this.listeners) {
-        listener.onReady(media);
-      }
-
-      mediaPlayer.setAutoPlay(true);
-      mediaPlayer.setCycleCount(-1);
-      mediaPlayer.setMute(true);
-
-      mediaView = new MediaView(mediaPlayer);
-      mediaView.setPreserveRatio(true);
-
-      if (mediaOptions == null || mediaOptions.isAutoRotate()) {
-        scaleMediaView(media, screenName);
-      }
-
-      setCenter(mediaView);
-      if (playBtn != null) {
-        getChildren().add(playBtn);
-      }
+      installMediaView(screenName, media);
     });
+  }
+
+  private void installMediaView(String screenName, Media media) {
+    for (MediaPlayerListener listener : this.listeners) {
+      listener.onReady(media);
+    }
+
+    mediaPlayer.setAutoPlay(true);
+    mediaPlayer.setCycleCount(-1);
+    mediaPlayer.setMute(true);
+
+    mediaView = new MediaView(mediaPlayer);
+    mediaView.setPreserveRatio(true);
+
+    if (mediaOptions == null || mediaOptions.isAutoRotate()) {
+      scaleMediaView(media, screenName);
+    }
+
+    setCenter(mediaView);
+    if (playBtn != null) {
+      getChildren().add(playBtn);
+    }
   }
 
   private void scaleMediaView(Media media, @Nullable String screenName) {

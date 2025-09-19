@@ -121,8 +121,8 @@ public class SuperHacTableAssetAdapter extends DefaultTableAssetAdapter implemen
   }
 
   @Override
-  public void writeAsset(@NonNull OutputStream outputStream, @NonNull TableAsset tableAsset) throws Exception {
-    writeUrlAsset(outputStream, tableAsset);
+  public void writeAsset(@NonNull OutputStream outputStream, @NonNull TableAsset tableAsset, long start, long length) throws Exception {
+    writeUrlAsset(outputStream, tableAsset, start, length);
   }
 
   @Override
