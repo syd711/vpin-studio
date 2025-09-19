@@ -68,7 +68,7 @@
                                         <Tooltip text="Table Statistics (F5)" />
                                     </tooltip>
                                 </Tab>
-                                <Tab fx:id="tableRepositoryTab" text=" Table Backups">
+                                <Tab fx:id="tableBackupsTab" text=" Table Backups">
                                     <content>
                                         <BorderPane />
                                     </content>

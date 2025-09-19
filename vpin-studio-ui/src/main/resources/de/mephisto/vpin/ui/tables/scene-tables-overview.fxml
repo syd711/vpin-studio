@@ -31,7 +31,7 @@
                         <children>
                            <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                               <columns>
-                                 <TableColumn fx:id="columnStatus" minWidth="50" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Status" />
+                                 <TableColumn fx:id="columnStatus" minWidth="60" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Status" />
                                  <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="290.0" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
                                  <TableColumn fx:id="columnVersion" minWidth="60.0" prefWidth="90.0" style="-fx-alignment: BASELINE_LEFT;" text="Version" />
                                  <TableColumn fx:id="columnVPS" minWidth="60.0" prefWidth="105.0" style="-fx-alignment: CENTER;" text="VPS Status" />

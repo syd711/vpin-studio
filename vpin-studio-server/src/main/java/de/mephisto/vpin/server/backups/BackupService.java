@@ -81,8 +81,6 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
   @Autowired
   private PreferencesService preferencesService;
 
-  private BackupSourceAdapter defaultBackupSourceAdapter;
-
   private final Map<Long, BackupSourceAdapter> backupSourcesCache = new LinkedHashMap<>();
 
   public List<BackupDescriptor> getBackupDescriptorForGame(int gameId) {
@@ -137,7 +135,7 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
 
   @Nullable
   public BackupDescriptor getBackupDescriptors(long sourceId, @NonNull String filename) {
-    BackupSourceAdapter sourceAdapter = backupSourcesCache.get(sourceId);
+    BackupSourceAdapter sourceAdapter = getBackupSourceAdapter(sourceId);
     List<BackupDescriptor> descriptors = sourceAdapter.getBackupDescriptors();
     for (BackupDescriptor descriptor : descriptors) {
       String descriptorFilename = descriptor.getFilename();
@@ -171,16 +169,8 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
     return backupSourcesCache.values().stream().map(BackupSourceAdapter::getBackupSource).collect(Collectors.toList());
   }
 
-  public BackupSourceAdapter getDefaultBackupSource() {
-    return this.defaultBackupSourceAdapter;
-  }
-
   public BackupSourceAdapter getBackupSourceAdapter(long sourceId) {
     return backupSourcesCache.get(sourceId);
-  }
-
-  public File export(BackupDescriptor backupDescriptor) {
-    return getDefaultBackupSource().export(backupDescriptor);
   }
 
   public void invalidateCache() {
@@ -213,22 +203,11 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
     BackupSource updatedSource = backupSourceRepository.saveAndFlush(backupSource);
     backupSourcesCache.remove(updatedSource.getId());
 
-    backupSourcesCache.put(updatedSource.getId(), BackupSourceAdapterFactory.create(this, updatedSource, vpaService));
+    BackupSourceAdapter backupSourceAdapter = BackupSourceAdapterFactory.create(this, updatedSource, vpaService);
+    backupSourcesCache.put(updatedSource.getId(), backupSourceAdapter);
     LOG.info("(Re)created archive source adapter \"" + updatedSource + "\"");
     return updatedSource;
   }
-
-  public File getTargetFile(BackupDescriptor backupDescriptor) {
-    BackupType backupType = BackupType.VPA;
-
-    switch (backupType) {
-      case VPA: {
-        return new File(VpaBackupSource.FOLDER, backupDescriptor.getFilename());
-      }
-    }
-    return null;
-  }
-
 
   public boolean restoreBackup(@NonNull ArchiveRestoreDescriptor installDescriptor) {
     try {
@@ -277,9 +256,9 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
 
     Optional<BackupSource> byId = backupSourceRepository.findById(exportDescriptor.getBackupSourceId());
     TableBackupAdapter adapter = tableBackupAdapterFactory.createAdapter(game, byId.get());
+    BackupSourceAdapter backupSourceAdapter = BackupSourceAdapterFactory.create(this, byId.get(), vpaService);
 
-    BackupSourceAdapter sourceAdapter = getDefaultBackupSource();
-    descriptor.setJob(new TableBackupJob(frontendService, sourceAdapter, adapter, exportDescriptor, game.getId()));
+    descriptor.setJob(new TableBackupJob(frontendService, backupSourceAdapter, adapter, exportDescriptor, game.getId()));
     jobService.offer(descriptor);
     LOG.info("Offered export job for '" + game.getGameDisplayName() + "'");
     return true;
@@ -329,6 +308,17 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
       }
       this.backupSourcesCache.put(as.getId(), vpaSourceAdapter);
     }
+
+    new Thread(() -> {
+      Thread.currentThread().setName("Backup Service Initializer");
+      Collection<BackupSourceAdapter> values = backupSourcesCache.values();
+      int count = 0;
+      for (BackupSourceAdapter value : values) {
+        count += value.getBackupDescriptors().size();
+      }
+      LOG.info("Backup Service initialized with {} backups.", count);
+    }).start();
+
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

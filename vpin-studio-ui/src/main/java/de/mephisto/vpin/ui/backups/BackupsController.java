@@ -599,6 +599,7 @@ public class BackupsController implements Initializable, StudioFXController, Stu
   public void onViewActivated(NavigationOptions options) {
     NavigationController.setBreadCrumb(Arrays.asList(TAB_NAME));
     refreshView();
+    EventManager.getInstance().removeListener(this);
     EventManager.getInstance().addListener(this);
   }
 
@@ -693,6 +694,11 @@ public class BackupsController implements Initializable, StudioFXController, Stu
 
   public void setRootController(TablesController tablesController) {
     this.tablesController = tablesController;
+  }
+
+  public void selectBackup(BackupDescriptorRepresentation backup) {
+    onViewActivated(null);
+    //TODO finish selection impl
   }
 
   @Override

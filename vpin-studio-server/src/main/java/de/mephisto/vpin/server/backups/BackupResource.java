@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,9 +47,20 @@ public class BackupResource {
     return backupService.restoreBackup(descriptor);
   }
 
+  @GetMapping()
+  public List<BackupDescriptorRepresentation> getBackups() {
+    List<BackupDescriptor> descriptors = backupService.getBackupSourceDescriptors();
+    return toRepresentation(descriptors);
+  }
+
   @GetMapping("/{sourceId}")
   public List<BackupDescriptorRepresentation> getBackups(@PathVariable("sourceId") long sourceId) {
     List<BackupDescriptor> descriptors = backupService.getBackupSourceDescriptors(sourceId);
+    return toRepresentation(descriptors);
+  }
+
+  @NotNull
+  private List<BackupDescriptorRepresentation> toRepresentation(List<BackupDescriptor> descriptors) {
     List<BackupDescriptorRepresentation> result = new ArrayList<>();
     for (BackupDescriptor backupDescriptor : descriptors) {
       BackupDescriptorRepresentation descriptorRepresentation = toRepresentation(backupDescriptor);
@@ -76,12 +88,7 @@ public class BackupResource {
   @GetMapping("/game/{id}")
   public List<BackupDescriptorRepresentation> getBackupsForGame(@PathVariable("id") int gameId) {
     List<BackupDescriptor> backupDescriptors = backupService.getBackupDescriptorForGame(gameId);
-    List<BackupDescriptorRepresentation> result = new ArrayList<>();
-    for (BackupDescriptor backupDescriptor : backupDescriptors) {
-      BackupDescriptorRepresentation descriptorRepresentation = toRepresentation(backupDescriptor);
-      result.add(descriptorRepresentation);
-    }
-    return result;
+    return toRepresentation(backupDescriptors);
   }
 
   @GetMapping("/invalidate")

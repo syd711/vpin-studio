@@ -3,14 +3,18 @@ package de.mephisto.vpin.restclient.backups;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.*;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -26,6 +30,8 @@ public class BackupServiceClient extends VPinStudioClientService {
 
   private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
+  private final List<BackupDescriptorRepresentation> backupsCached = new ArrayList<>();
+
   public BackupServiceClient(VPinStudioClient client) {
     super(client);
   }
@@ -34,11 +40,19 @@ public class BackupServiceClient extends VPinStudioClientService {
     return Arrays.asList(getRestClient().get(API + "backups/" + sourceId, BackupDescriptorRepresentation[].class));
   }
 
+  public List<BackupDescriptorRepresentation> getBackups() {
+    if (backupsCached.isEmpty()) {
+      backupsCached.addAll(Arrays.asList(getRestClient().get(API + "backups", BackupDescriptorRepresentation[].class)));
+    }
+    return backupsCached;
+  }
+
   public List<BackupSourceRepresentation> getBackupSources() {
     return Arrays.asList(getRestClient().get(API + "backups/sources", BackupSourceRepresentation[].class));
   }
 
   public boolean deleteBackup(long sourceId, String filename) {
+    backupsCached.clear();
     return getRestClient().delete(API + "backups/" + sourceId + "/" + filename);
   }
 
@@ -48,8 +62,10 @@ public class BackupServiceClient extends VPinStudioClientService {
 
   public BackupSourceRepresentation saveBackupSource(BackupSourceRepresentation source) throws Exception {
     try {
+      backupsCached.clear();
       return getRestClient().post(API + "backups/save", source, BackupSourceRepresentation.class);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to save archive source: " + e.getMessage(), e);
       throw e;
     }
@@ -70,7 +86,8 @@ public class BackupServiceClient extends VPinStudioClientService {
       JobDescriptor body = createUploadTemplate().exchange(url, HttpMethod.POST, upload, JobDescriptor.class).getBody();
       finalizeUpload(upload);
       return body;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Archive upload failed: " + e.getMessage(), e);
       throw e;
     }
@@ -90,5 +107,16 @@ public class BackupServiceClient extends VPinStudioClientService {
 
   public boolean restoreTable(ArchiveRestoreDescriptor descriptor) {
     return getRestClient().post(API + "backups/restore", descriptor, Boolean.class);
+  }
+
+  @Nullable
+  public BackupDescriptorRepresentation getBackup(@NonNull GameRepresentation value) {
+    List<BackupDescriptorRepresentation> backups = getBackups();
+    for (BackupDescriptorRepresentation backup : backups) {
+      if (String.valueOf(backup.getTableDetails().getGameFileName()).equals(value.getGameFileName())) {
+        return backup;
+      }
+    }
+    return null;
   }
 }
