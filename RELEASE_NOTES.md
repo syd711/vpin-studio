@@ -17,6 +17,7 @@
   - Support of next/previous navigation in DmdPosition tool when opened from the tables overview.
   - Support of next/previous navigation in the Table Data dialog.
   - Added "Save" shortcut (Ctrl+S) in Table Data dialog.
+  - Added support of puppack in studio for PinballX and PinballY
 
 - **BackglassManager**
   - Added a frame generator directly in studio, on an idea and python script provided by Himura95. Four different generators are provided: 
