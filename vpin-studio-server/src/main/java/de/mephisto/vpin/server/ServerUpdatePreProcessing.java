@@ -81,7 +81,7 @@ public class ServerUpdatePreProcessing {
   }
 
   private static void runVpxToolsUpdateCheck() {
-    long expectedSize = 16038912;
+    long expectedSize = 15362048;
     File check = new File(RESOURCES, "vpxtool.exe");
     if (check.exists()) {
       long size = check.length();
