@@ -14,6 +14,7 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,10 +75,10 @@ public class FrontendScreenController implements Initializable {
     imageView.setFitHeight(image.getHeight());
 
     Stage screenStage = asset.getScreenStage();
-    double x = screen.getWidth() / 2 - image.getWidth() / 2;
-    double y = screen.getHeight() / 2 - image.getHeight() / 2;
-    screenStage.setX(x);
-    screenStage.setY(y);
+//    double x = screen.getWidth() / 2 - image.getWidth() / 2;
+//    double y = screen.getHeight() / 2 - image.getHeight() / 2;
+    screenStage.setX(0);
+    screenStage.setY(0);
     screenStage.setHeight(screen.getHeight());
     screenStage.setWidth(screen.getWidth());
 //    screenStage.initStyle(StageStyle.UTILITY);

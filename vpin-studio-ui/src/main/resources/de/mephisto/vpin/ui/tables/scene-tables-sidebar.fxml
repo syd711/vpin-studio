@@ -28,18 +28,6 @@
                                 <HBox fx:id="frontendTitleButtonArea" alignment="CENTER_RIGHT" spacing="6.0"
                                       BorderPane.alignment="CENTER">
                                     <children>
-                                        <Button fx:id="frontendConfigBtn" mnemonicParsing="false"
-                                                onAction="#onFrontendAdminOpen" styleClass="external-component">
-                                            <font>
-                                                <Font size="10.0"/>
-                                            </font>
-                                            <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new"/>
-                                            </graphic>
-                                            <tooltip>
-                                                <Tooltip text="[Frontend] Setup"/>
-                                            </tooltip>
-                                        </Button>
                                         <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false"
                                                 onAction="#onPrefsScreenValidators">
                                             <font>

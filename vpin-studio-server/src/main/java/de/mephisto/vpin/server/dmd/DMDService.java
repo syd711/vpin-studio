@@ -80,11 +80,8 @@ public class DMDService implements InitializingBean {
           st.setCode(GameValidationCode.CODE_NO_DMDFOLDER);
           dmdPackage.getValidationStates().add(st);
         }
+        return dmdPackage;
       }
-      else {
-        dmdPackage.setName("Not Used");
-      }
-      return dmdPackage;
     }
     return null;
   }
