@@ -38,3 +38,5 @@
   - Updated vpxtools.exe to v0.24.2. Thanks again to @francisdb here for his awesome tool!
 
 ## Bugfixes
+
+- Fixed wrong update check that happened when one client was connected/disconnected to different servers.
