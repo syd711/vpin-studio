@@ -34,5 +34,7 @@
   - Added possibility to change the installation folder of PinVol and switch between PinVol provided as part of Studio to an installed version
   - Improved monitoring of PinVol process
 
+- **Misc**
+  - Updated vpxtools.exe to v0.24.2. Thanks again to @francisdb here for his awesome tool!
 
 ## Bugfixes
