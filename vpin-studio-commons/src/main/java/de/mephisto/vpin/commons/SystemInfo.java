@@ -36,6 +36,13 @@ public class SystemInfo {
     return null;
   }
 
+  public File resolvePinupPlayerFolder() {
+    if (OSUtil.isWindows()) {
+      return SystemInfoWindows.INSTANCE.resolvePinupPlayerFolder();
+    }
+    return null;
+  }
+
   public File resolvePinballXInstallationFolder() {
     if (OSUtil.isWindows()) {
       return SystemInfoWindows.INSTANCE.resolvePinballXInstallationFolder();
