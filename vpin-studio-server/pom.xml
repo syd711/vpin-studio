@@ -6,7 +6,7 @@
 
     <groupId>de.mephisto.vpin</groupId>
     <artifactId>vpin-studio-server</artifactId>
-    <version>4.2.1</version>
+    <version>4.2.2</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -399,6 +399,7 @@
                                         <include>backgrounds/*</include>
                                         <include>themes/**</include>
                                         <include>pinemhi/**</include>
+                                        <include>DOFTest/**</include>
                                         <include>vpbm/**</include>
                                         <include>nvrams/**</include>
                                         <include>scripts/**</include>
@@ -418,10 +419,8 @@
                                         <include>*.index</include>
                                     </includes>
                                     <excludes>
-                                        <exclude>vpbm/identifiers.dat</exclude>
                                         <exclude>pinemhi/pinemhi.ini</exclude>
                                         <exclude>pinemhi/pinemhi.ini.bak</exclude>
-                                        <include>vpbm/Logs/*.log</include>
                                     </excludes>
                                 </resource>
                             </resources>

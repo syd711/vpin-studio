@@ -261,6 +261,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
 
   private void runUpdateCheck() {
     try {
+      newVersion = null;
       updateBtn.setVisible(false);
       new Thread(() -> {
 

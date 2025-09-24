@@ -114,11 +114,11 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
   @NonNull
   private ScoreSummary getScoreSummary(Game game, CardTemplate template, boolean generatePreview) {
     long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
-    ScoreSummary summary = template.isRenderScoreDates() ?
+    ScoreSummary summary = (template != null && template.isRenderScoreDates()) ?
         highscoreService.getScoreSummaryWithDates(serverId, game) :
         highscoreService.getScoreSummary(serverId, game);
 
-    if (template.isRenderFriends()) {
+    if (template != null && template.isRenderFriends()) {
       //add simply caching until a real card is generated, should be sufficient while editing
       if (generatePreview) {
         if (!scoreCache.containsKey(game.getId())) {
