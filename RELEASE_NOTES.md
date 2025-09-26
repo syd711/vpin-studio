@@ -6,12 +6,12 @@
   - The "Default Backups Folder" is not mandatory anymore and can be re-configured with another name and folder.
   - Added backup indicator for the tables overview so that you can immediately see which tables are backed up already. 
     
-    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/cards/asdfsaf.png?raw=true" width="700" />
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/backups/indicator.png?raw=true" width="500" />
 
 - **Folder Selections**
   - Added new dialog to select folders from the remote system. This allows the configurations at a lot of places now, where it only had been possible when the Studio was used on the cabinet itself.
   
-     <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/cards/asdfsaf.png?raw=true" width="700" />
+     <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/misc/folder-chooser.png?raw=true" width="700" />
 
 - **Tables Overview**
   - Support of next/previous navigation in DmdPosition tool when opened from the tables overview.
