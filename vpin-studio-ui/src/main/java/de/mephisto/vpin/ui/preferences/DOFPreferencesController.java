@@ -54,7 +54,7 @@ public class DOFPreferencesController implements Initializable {
 
   @FXML
   private void onFolder(ActionEvent event) {
-    FolderRepresentation folder = FolderChooserDialog.open(null);
+    FolderRepresentation folder = FolderChooserDialog.open(installationFolderText.getText());
     if (folder != null) {
       this.installationFolderText.setText(folder.getPath());
     }

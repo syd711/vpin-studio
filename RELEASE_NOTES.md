@@ -9,7 +9,7 @@
     <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/backups/indicator.png?raw=true" width="500" />
 
 - **Folder Selections**
-  - Added new dialog to select folders from the remote system. This allows the configurations at a lot of places now, where it only had been possible when the Studio was used on the cabinet itself.
+  - Added new dialog to select folders from the remote system. This allows the configurations at a lot of places now, where it only had been possible when the Studio was used on the cabinet itself. This also helps set up **backup folders** from remote.
   
      <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/misc/folder-chooser.png?raw=true" width="700" />
 
