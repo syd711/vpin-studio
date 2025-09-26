@@ -29,10 +29,12 @@
   - In the Table Media tab of the tables sidebar, videos are now previewed as one frame vs. the full video that is consuming lots of CPU. On mouse over, a play button is shown to start the video playback. A stop icon button stops the video.
   - In Table Asset Manager, added "Set A Default" button to choose default asset in the list of assets.
   - Improved streaming of table assets and frontend media.
+   
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/media-sidebar.png?raw=true" width="700" /> 
 
 - **PinVol Preferences** 
-  - Added possibility to change the installation folder of PinVol and switch between PinVol provided as part of Studio to an installed version
-  - Improved monitoring of PinVol process
+  - Added possibility to change the installation folder of PinVol and switch between PinVol provided as part of Studio to an installed version.
+  - Improved monitoring of the PinVol process.
 
 - **Misc**
   - Updated vpxtools.exe to v0.24.2. Thanks again to @francisdb here for his awesome tool!

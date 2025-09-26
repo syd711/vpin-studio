@@ -41,10 +41,10 @@
                   <VBox>
                      <children>
                         <Label styleClass="preference-subtitle" text="Installation" textFill="WHITE" />
-                        <Label styleClass="preference-description" text="Select the folder of your Pinvol installation." textFill="WHITE" />
+                        <Label styleClass="preference-description" text="Select the folder of your PinVol installation." textFill="WHITE" />
                         <HBox alignment="CENTER_LEFT" spacing="6.0">
                            <children>
-                              <CheckBox fx:id="useDefaultFolderCheckBox" mnemonicParsing="false" text="Use Pinvol.exe provided with VPin Studio" textFill="WHITE">
+                              <CheckBox fx:id="useDefaultFolderCheckBox" mnemonicParsing="false" text="Use PinVol.exe provided with VPin Studio" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -54,7 +54,7 @@
                                     <Font size="14.0" />
                                  </font>
                                  <tooltip>
-                                    <Tooltip prefWidth="300.0" text="Uncheck if you want to use your own version of Pinvol." wrapText="true" />
+                                    <Tooltip prefWidth="300.0" text="Uncheck if you want to use your own version of PinVol." wrapText="true" />
                                  </tooltip>
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
