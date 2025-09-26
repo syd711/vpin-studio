@@ -212,7 +212,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-image" iconSize="18" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2i-image-check-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="Use this file as default asset file" />
@@ -282,7 +282,7 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="bi-info-circle" iconSize="18" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2i-information-variant" iconSize="18" />
                            </graphic>
                            <tooltip>
                               <Tooltip prefWidth="350.0" text="Shows all metadata extracted from the selected asset." wrapText="true" />
