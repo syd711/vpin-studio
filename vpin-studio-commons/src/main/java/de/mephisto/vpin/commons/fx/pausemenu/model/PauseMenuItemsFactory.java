@@ -7,10 +7,10 @@ import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.connectors.vps.model.VpsTutorialUrls;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.system.FeaturesInfo;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -70,6 +70,7 @@ public class PauseMenuItemsFactory {
       pauseMenuItems.add(item);
     }
 
+    //only load the media of those screens that are not the highscore card screen or if no highscore card screen is set
     if (cardScreen == null || !cardScreen.equals(VPinScreen.GameInfo)) {
       loadMedia(game, pauseMenuItems, PauseMenuItemTypes.info, VPinScreen.GameInfo, frontendMedia, "Instructions", "Info Card", "infocard.png", "tutorial.png");
     }
