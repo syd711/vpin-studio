@@ -214,7 +214,10 @@ public class BackupsController implements Initializable, StudioFXController, Stu
 
   public void doReload(Optional<BackupDescriptorRepresentation> selection) {
     if (selection.isEmpty()) {
-      selection = Optional.of(this.tableView.getSelectionModel().getSelectedItem());
+      BackupDescriptorRepresentation selectedItem = this.tableView.getSelectionModel().getSelectedItem();
+      if (selectedItem != null) {
+        selection = Optional.of(selectedItem);
+      }
     }
 
     this.tableView.getSelectionModel().clearSelection();
@@ -247,7 +250,7 @@ public class BackupsController implements Initializable, StudioFXController, Stu
 
     new Thread(() -> {
       if (selectedItem != null && invalidate) {
-        client.getArchiveService().invalidateArchiveCache();
+        client.getArchiveService().invalidateBackupCache();
       }
 
       BackupSourceRepresentation backupSource = sourceCombo.getValue();
@@ -258,9 +261,9 @@ public class BackupsController implements Initializable, StudioFXController, Stu
         tableView.setItems(data);
         tableView.refresh();
         if (data.contains(selection)) {
+          deleteBtn.setDisable(false);
           tableView.getSelectionModel().select(selection);
-          deleteBtn.setDisable(sourceCombo.getValue() != null && sourceCombo.getValue().getId() != -1);
-          restoreBtn.setDisable(sourceCombo.getValue() != null && sourceCombo.getValue().getId() != -1);
+          restoreBtn.setDisable(false);
         }
 
         this.searchTextField.setDisable(false);
@@ -685,7 +688,6 @@ public class BackupsController implements Initializable, StudioFXController, Stu
     if (jobType.equals(JobType.TABLE_BACKUP)) {
       Platform.runLater(() -> {
         onReload();
-        EventManager.getInstance().notifyTableChange(event.getGameId(), null);
       });
     }
   }

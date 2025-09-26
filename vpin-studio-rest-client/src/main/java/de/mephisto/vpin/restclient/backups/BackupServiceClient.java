@@ -75,7 +75,7 @@ public class BackupServiceClient extends VPinStudioClientService {
     return Arrays.asList(getRestClient().get(API + "backups/game/" + gameId, BackupDescriptorRepresentation[].class));
   }
 
-  public boolean invalidateArchiveCache() {
+  public boolean invalidateBackupCache() {
     return getRestClient().get(API + "backups/invalidate", Boolean.class);
   }
 

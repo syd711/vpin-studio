@@ -21,6 +21,7 @@ import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
+import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.mania.ManiaSettings;
 import de.mephisto.vpin.restclient.pinvol.PinVolPreferences;
 import de.mephisto.vpin.restclient.pinvol.PinVolTableEntry;
@@ -33,6 +34,8 @@ import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.backups.BackupDialogs;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.events.JobFinishedEvent;
+import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.playlistmanager.PlaylistDialogs;
 import de.mephisto.vpin.ui.tables.actions.BulkActions;
 import de.mephisto.vpin.ui.tables.editors.AltSound2EditorController;
@@ -90,7 +93,7 @@ import static de.mephisto.vpin.commons.utils.WidgetFactory.DISABLED_COLOR;
 import static de.mephisto.vpin.ui.Studio.*;
 
 public class TableOverviewController extends BaseTableController<GameRepresentation, GameRepresentationModel>
-    implements Initializable, StudioFXController, ListChangeListener<GameRepresentationModel>, PreferenceChangeListener {
+    implements Initializable, StudioFXController, ListChangeListener<GameRepresentationModel>, PreferenceChangeListener, StudioEventListener {
 
   private final static Logger LOG = LoggerFactory.getLogger(TableOverviewController.class);
 
@@ -1943,6 +1946,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         refreshToolbars();
       });
     }
+
+    EventManager.getInstance().addListener(this);
   }
 
   private void refreshToolbars() {
@@ -2084,6 +2089,16 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     else if (key.equals(PreferenceNames.IGNORED_VALIDATION_SETTINGS)) {
       ignoredValidations = client.getPreferenceService().getJsonPreference(PreferenceNames.IGNORED_VALIDATION_SETTINGS, IgnoredValidationSettings.class);
       refreshViewAssetColumns(assetManagerMode);
+    }
+  }
+
+  @Override
+  public void jobFinished(@NonNull JobFinishedEvent event) {
+    JobType jobType = event.getJobType();
+    if (jobType.equals(JobType.TABLE_BACKUP)) {
+      Platform.runLater(() -> {
+        EventManager.getInstance().notifyTableChange(event.getGameId(), null);
+      });
     }
   }
 

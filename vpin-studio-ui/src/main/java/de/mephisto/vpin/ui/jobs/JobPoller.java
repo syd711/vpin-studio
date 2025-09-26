@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.jobs;
 
-import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
@@ -19,10 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -52,6 +49,8 @@ public class JobPoller implements StudioEventListener {
   public void removeListener(JobUpdatesListener listener) {
     this.listeners.remove(listener);
   }
+
+  private final Queue<JobDescriptor> finishedJobs = new ConcurrentLinkedQueue<>();
 
   public static void destroy() {
     if (instance != null) {
@@ -104,7 +103,7 @@ public class JobPoller implements StudioEventListener {
               LOG.info("JobPoller is waiting for " + activeJobs.size() + " running jobs.");
               refreshJobsUI();
               poll = !activeJobs.isEmpty();
-              notifyListeners(activeJobs);
+              notifyListeners(activeJobs, allJobs);
             }
             LOG.info("JobPoller finished all jobs");
             refreshJobsUI();
@@ -122,9 +121,16 @@ public class JobPoller implements StudioEventListener {
     setPolling();
   }
 
-  private void notifyListeners(List<JobDescriptor> activeJobs) {
+  private void notifyListeners(List<JobDescriptor> activeJobs, List<JobDescriptor> allJobs) {
     for (JobUpdatesListener listener : listeners) {
       listener.jobsRefreshed(activeJobs);
+    }
+
+    for (JobDescriptor job : allJobs) {
+      if ((job.isCancelled() || job.isFinished()) && !finishedJobs.contains(job)) {
+        finishedJobs.add(job);
+        EventManager.getInstance().notifyJobFinished(job);
+      }
     }
   }
 
@@ -229,6 +235,7 @@ public class JobPoller implements StudioEventListener {
     for (JobDescriptor clientJob : new ArrayList<>(clientJobs)) {
       if (clientJob.isFinished() || clientJob.isCancelled()) {
         clientJobs.remove(clientJob);
+        finishedJobs.remove(clientJob);
       }
     }
   }
