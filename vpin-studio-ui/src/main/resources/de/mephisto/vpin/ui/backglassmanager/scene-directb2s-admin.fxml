@@ -96,7 +96,7 @@
                         <Font size="14.0" />
                     </font>
                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2i-image-edit-outline" iconSize="18" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2a-application-edit-outline" iconSize="18" />
                     </graphic>
                     <tooltip>
                         <Tooltip text="Open .res editor" />

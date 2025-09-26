@@ -96,7 +96,7 @@
                                                                       </Button>
                                                                       <Button fx:id="useAsMediaBackglassBtn" mnemonicParsing="false" onAction="#onBackglassUseAsMedia" textFill="WHITE" BorderPane.alignment="CENTER">
                                                                           <graphic>
-                                                                              <FontIcon iconColor="WHITE" iconLiteral="mdi2i-image-plus" iconSize="14" />
+                                                                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-file-image-plus-outline" iconSize="14" />
                                                                           </graphic>
                                                                           <tooltip>
                                                                               <Tooltip prefWidth="400.0" text="Export the backglass image and use it as a backglass media asset in your frontend." wrapText="true" />
@@ -161,7 +161,7 @@
                                                                           </Button>
                                                                           <Button fx:id="useAsMediaDMDBtn" mnemonicParsing="false" onAction="#onDMDUseAsMedia" textFill="WHITE" BorderPane.alignment="CENTER">
                                                                               <graphic>
-                                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2i-image-plus" iconSize="14" />
+                                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2f-file-image-plus-outline" iconSize="14" />
                                                                               </graphic>
                                                                               <tooltip>
                                                                                   <Tooltip prefWidth="400.0" text="Export the DMD image and use it as a DMD media asset in your frontend." wrapText="true" />
