@@ -400,39 +400,40 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
       if (!Features.MANIA_ENABLED) {
         return false;
       }
+      if (cabinet == null) {
+        return false;
+      }
 
       ManiaSettings maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
       if (maniaSettings.isSubmitTables()) {
-        if (cabinet != null) {
-          long start = System.currentTimeMillis();
-          List<Game> knownGames = gameService.getKnownGames(-1);
-          List<InstalledTable> installedTables = new ArrayList<>();
-          for (Game game : knownGames) {
-            if (!StringUtils.isEmpty(game.getExtTableVersionId()) && !StringUtils.isEmpty(game.getExtTableVersionId())) {
-              InstalledTable installedTable = new InstalledTable();
-              installedTable.setVpsTableId(game.getExtTableId());
-              installedTable.setVpsVersionId(game.getExtTableVersionId());
+        long start = System.currentTimeMillis();
+        List<Game> knownGames = gameService.getKnownGames(-1);
+        List<InstalledTable> installedTables = new ArrayList<>();
+        for (Game game : knownGames) {
+          if (!StringUtils.isEmpty(game.getExtTableVersionId()) && !StringUtils.isEmpty(game.getExtTableVersionId())) {
+            InstalledTable installedTable = new InstalledTable();
+            installedTable.setVpsTableId(game.getExtTableId());
+            installedTable.setVpsVersionId(game.getExtTableVersionId());
 
-              if (maniaSettings.isSubmitRatings()) {
-                installedTable.setRating(game.getRating());
-              }
-              installedTables.add(installedTable);
+            if (maniaSettings.isSubmitRatings()) {
+              installedTable.setRating(game.getRating());
             }
+            installedTables.add(installedTable);
           }
-
-          cabinet.getSettings().setInstalledTables(installedTables);
-          new Thread(() -> {
-            try {
-              maniaClient.getCabinetClient().update(cabinet);
-              long duration = System.currentTimeMillis() - start;
-              LOG.info("VPin Mania table synchronization finished, {} tables synchronized in {}ms.", installedTables.size(), duration);
-            }
-            catch (Exception e) {
-              LOG.error("Cabinet update for sync failed: {}", e.getMessage(), e);
-            }
-          }).start();
-          return true;
         }
+
+        cabinet.getSettings().setInstalledTables(installedTables);
+        new Thread(() -> {
+          try {
+            maniaClient.getCabinetClient().update(cabinet);
+            long duration = System.currentTimeMillis() - start;
+            LOG.info("VPin Mania table synchronization finished, {} tables synchronized in {}ms.", installedTables.size(), duration);
+          }
+          catch (Exception e) {
+            LOG.error("Cabinet update for sync failed: {}", e.getMessage(), e);
+          }
+        }).start();
+        return true;
       }
       else {
         if (cabinet != null && !cabinet.getSettings().getInstalledTables().isEmpty()) {
