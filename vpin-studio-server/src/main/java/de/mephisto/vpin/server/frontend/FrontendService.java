@@ -508,7 +508,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
       }
     }
 
-    return new FrontendControl();
+    return null;
   }
 
   public FrontendControls getControls() {

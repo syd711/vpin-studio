@@ -82,7 +82,7 @@ public class CardGenerationPreferencesController implements Initializable {
     popperScreenInfo.setVisible(frontendType.equals(FrontendType.Popper));
 
     ObservableList<String> screenNames = FXCollections.observableList(new ArrayList<>());
-    if (Features.PUPPACKS_ENABLED) {
+    if (frontendType.equals(FrontendType.Popper)) {
       menuPupPack = client.getPupPackService().getMenuPupPack();
       screenNames.addAll("", VPinScreen.Other2.name(), VPinScreen.GameInfo.name(), VPinScreen.GameHelp.name());
     }
@@ -162,8 +162,7 @@ public class CardGenerationPreferencesController implements Initializable {
           if (!fn.isActive()) {
             msg = "The screen has not been activated in PinUP Popper.";
           }
-
-          if (fn.getCtrlKey() <= 0 && fn.getJoyCode() <= 0) {
+          else if (fn.getCtrlKey() <= 0 && fn.getJoyCode() <= 0) {
             msg = "The screen is not bound to any key in PinUP Popper.";
           }
         }
