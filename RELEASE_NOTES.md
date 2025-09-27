@@ -1,3 +1,11 @@
+## Release Notes 4.3.1
+
+## Changes
+
+- Fixed missing icons that prevented the preferences from being loaded.
+
+---
+
 ## Release Notes 4.3.0
 
 ## Changes

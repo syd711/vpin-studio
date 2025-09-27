@@ -161,14 +161,8 @@
                      </BorderPane.margin>
                      <children>
                         <Hyperlink fx:id="kofiLink" onAction="#onKofiLink">
-                           <graphic>
-                              <FontIcon iconColor="#c7c3c3" iconLiteral="mdi-discord" iconSize="24" />
-                           </graphic>
                         </Hyperlink>
                         <Hyperlink onAction="#onDiscordLink" text="Join Discord">
-                           <graphic>
-                              <FontIcon iconColor="#c7c3c3" iconLiteral="mdi-discord" iconSize="24" />
-                           </graphic>
                         </Hyperlink>
                         <Hyperlink fx:id="versionLink" onAction="#onVersionLInk" styleClass="version-label" text="Hyperlink" textFill="#b0abab" />
                         <Label fx:id="hostLabel" layoutX="358.0" layoutY="10.0" styleClass="version-label" text="Label">
