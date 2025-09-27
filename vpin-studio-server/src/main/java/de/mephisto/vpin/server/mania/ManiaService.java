@@ -13,6 +13,7 @@ import de.mephisto.vpin.restclient.mania.ManiaTableSyncResult;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusChangeListener;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.frontend.TableStatusChangeListener;
@@ -74,6 +75,9 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
   @Autowired
   private FrontendStatusService frontendStatusService;
+
+  @Autowired
+  private GameDetailsRepository gameDetailsRepository;
 
   @Autowired
   private PreferencesService preferencesService;
@@ -398,6 +402,14 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   public boolean synchronizeTables() {
     try {
       if (!Features.MANIA_ENABLED || cabinet == null) {
+        return false;
+      }
+
+      // The check is made for re-installation of servers that are already registered on mania
+      // If the database for the GameDetails is empty, this is the initial installation boot up.
+      List<GameDetails> rawGames = gameDetailsRepository.findAll();
+      if (rawGames.isEmpty()) {
+        LOG.info("Skipped table synchronization, no games have been imported yet.");
         return false;
       }
 
