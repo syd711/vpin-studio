@@ -21,7 +21,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 /**
- * As we manipulate both dimension in template coordinate system and image coordinate, 
+ * As we manipulate both dimension in template coordinate system and image coordinate,
  * a WIDTH uppercase refer to template coordinate and width lowercase, refer to the image
  * then width = WIDTH * zoomX and height = HEIGHT * zoomY
  */
@@ -41,7 +41,8 @@ public class CardLayerScores extends Canvas implements CardLayer {
     if (data != null) {
       if (template.isRawScore()) {
         addCardDataScoreFromRaw(textBlock, data.getRawScore());
-      } else {
+      }
+      else {
         List<ScoreRepresentation> scores = data.getScores();
         if (template.getMaxScores() > 0 && scores.size() > template.getMaxScores()) {
           scores = scores.subList(0, template.getMaxScores());
@@ -82,7 +83,7 @@ public class CardLayerScores extends Canvas implements CardLayer {
     g.setTextBaseline(VPos.CENTER);
 
     // one line added in columns, so put half on top and half on bottom
-    double x =  0;
+    double x = 0;
     double y = 0;
     for (TextColumn textColumn : textColumns) {
       textColumn.renderAt(g, x, y, template.getRowMargin() * zoomY);
@@ -225,7 +226,7 @@ public class CardLayerScores extends Canvas implements CardLayer {
       int nblines = (int) (remainingHEIGHT / (FONT.getSize() + template.getRowMargin()));
       if (nblines >= lines.size()) {
         // fit so do nothing and return null
-        return new TextBlock[] { this, null };
+        return new TextBlock[]{this, null};
       }
       // else
       TextBlock block1 = new TextBlock(template);
@@ -236,11 +237,11 @@ public class CardLayerScores extends Canvas implements CardLayer {
       block2.lines = lines.subList(nblines, lines.size());
       block2.externals = externals.subList(nblines, lines.size());
 
-      return new TextBlock[] { block1, block2 };
+      return new TextBlock[]{block1, block2};
     }
 
     public double getHEIGHT(Font FONT) {
-      return this.lines.size() * (FONT.getSize() + template.getRowMargin()); 
+      return this.lines.size() * (FONT.getSize() + template.getRowMargin());
     }
 
     public int getWIDTH(Font FONT) {
@@ -278,9 +279,7 @@ public class CardLayerScores extends Canvas implements CardLayer {
     if (raw != null) {
       String formattedRaw = ScoreFormatUtil.formatRaw(raw);
       for (String line : formattedRaw.split("\n")) {
-        if (StringUtils.isNotEmpty(line)) {
-          text.addLine(line, false);
-        }
+        text.addLine(line, false);
       }
     }
   }
