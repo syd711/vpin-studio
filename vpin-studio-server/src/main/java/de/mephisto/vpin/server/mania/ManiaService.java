@@ -397,10 +397,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
    */
   public boolean synchronizeTables() {
     try {
-      if (!Features.MANIA_ENABLED) {
-        return false;
-      }
-      if (cabinet == null) {
+      if (!Features.MANIA_ENABLED || cabinet == null) {
         return false;
       }
 

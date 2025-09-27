@@ -20,13 +20,11 @@ import java.util.*;
 public class BackupSourceAdapterFolder implements BackupSourceAdapter {
   private final static Logger LOG = LoggerFactory.getLogger(BackupSourceAdapterFolder.class);
 
-  private final VpaService vpaService;
   private final BackupSource source;
   private final File archiveFolder;
   private final Map<String, BackupDescriptor> cache = new HashMap<>();
 
-  public BackupSourceAdapterFolder(VpaService vpaService, BackupSource source) {
-    this.vpaService = vpaService;
+  public BackupSourceAdapterFolder(BackupSource source) {
     this.source = source;
     this.archiveFolder = new File(source.getLocation());
   }
@@ -79,7 +77,9 @@ public class BackupSourceAdapterFolder implements BackupSourceAdapter {
         return false;
       }
     }
-    this.invalidate();
+    else {
+      this.cache.remove(file.getName());
+    }
     return true;
   }
 

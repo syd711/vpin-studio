@@ -44,6 +44,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
   }
 
   public void createBackup(JobDescriptor jobDescriptor) {
+    LOG.info("********************* Table Backup: {} ***********************************", game.getGameDisplayName());
     BackupDescriptor backupDescriptor = new BackupDescriptor();
     BackupPackageInfo packageInfo = new BackupPackageInfo();
 
@@ -138,6 +139,8 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
       if (target.exists() && this.cancelled) {
         target.delete();
       }
+
+      LOG.info("********************* /Table Backup: {} ***********************************", game.getGameDisplayName());
     }
   }
 

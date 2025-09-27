@@ -76,6 +76,7 @@ public class BackupServiceClient extends VPinStudioClientService {
   }
 
   public boolean invalidateBackupCache() {
+    this.backupsCached.clear();
     return getRestClient().get(API + "backups/invalidate", Boolean.class);
   }
 

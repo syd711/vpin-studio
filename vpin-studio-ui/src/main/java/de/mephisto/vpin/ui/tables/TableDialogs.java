@@ -153,7 +153,7 @@ public class TableDialogs {
   }
 
   public static void openMetadataDialog(AssetRequest request) {
-    Stage stage = Dialogs.createStudioDialogStage(AssetMetadataController.class, "dialog-asset-metadata.fxml", "Metadata for\"" + request.getName() + "\"");
+    Stage stage = Dialogs.createStudioDialogStage(AssetMetadataController.class, "dialog-asset-metadata.fxml", "Metadata for \"" + request.getName() + "\"");
     AssetMetadataController controller = (AssetMetadataController) stage.getUserData();
     controller.setData(request);
     stage.showAndWait();

@@ -37,7 +37,7 @@
     <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/media-sidebar.png?raw=true" width="500" /> 
 
 - **Highscore Cards** 
-  - Highscore Texts is split in different columns to fit the zone
+  - Raw highscore text is split into different columns now to fit the zone.
 
 - **PinVol Preferences** 
   - Added possibility to change the installation folder of PinVol and switch between PinVol provided as part of Studio to an installed version.

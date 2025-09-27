@@ -57,6 +57,12 @@ public class BackupDeleteProgressModel extends ProgressModel<BackupDescriptorRep
   }
 
   @Override
+  public void finalizeModel(ProgressResultModel progressResultModel) {
+    super.finalizeModel(progressResultModel);
+    client.getBackupService().invalidateBackupCache();
+  }
+
+  @Override
   public void processNext(ProgressResultModel progressResultModel, BackupDescriptorRepresentation backup) {
     try {
       List<GameRepresentation> gamesByFileName = client.getGameService().getGamesByFileName(-1, backup.getTableDetails().getGameFileName());

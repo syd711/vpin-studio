@@ -10,7 +10,7 @@ public class BackupSourceAdapterFactory {
     BackupSourceType backupSourceType = BackupSourceType.valueOf(source.getType());
     switch (backupSourceType) {
       case Folder: {
-        return new BackupSourceAdapterFolder(vpaService, source);
+        return new BackupSourceAdapterFolder(source);
       }
       case Http: {
         return new BackupSourceAdapterHttpServer(backupService, source);

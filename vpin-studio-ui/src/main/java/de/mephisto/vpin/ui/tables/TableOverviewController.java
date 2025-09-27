@@ -2097,6 +2097,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     JobType jobType = event.getJobType();
     if (jobType.equals(JobType.TABLE_BACKUP)) {
       Platform.runLater(() -> {
+        client.getBackupService().invalidateBackupCache();
         EventManager.getInstance().notifyTableChange(event.getGameId(), null);
       });
     }
