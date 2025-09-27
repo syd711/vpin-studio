@@ -29,7 +29,7 @@
      <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/backglassmanager/res-default.png?raw=true" width="350" />   
      <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/backglassmanager/res-mirror.png?raw=true" width="350" />   
 
-- **Assets and Medias** 
+- **Assets and Media** 
   - In the Table Media tab of the tables sidebar, videos are now previewed as one frame vs. the full video that is consuming lots of CPU. On mouse over, a play button is shown to start the video playback. A stop icon button stops the video.
   - In Table Asset Manager, added "Set A Default" button to choose default asset in the list of assets.
   - Improved streaming of table assets and frontend media.
@@ -50,3 +50,4 @@
 
 - Fixed wrong update check that happened when one client was connected/disconnected to different servers.
 - Fixed pause menu that did not load the highscore card.
+- Fixed performance issues during re-installations for cabinets that have already been registered on vpin-mania.net.
