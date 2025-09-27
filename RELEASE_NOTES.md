@@ -31,6 +31,9 @@
   - In Table Asset Manager, added "Set A Default" button to choose default asset in the list of assets.
   - Improved streaming of table assets and frontend media.
 
+- **Highscore Cards** 
+  - Highscore Texts is split in different columns to fit the zone
+
 - **PinVol Preferences** 
   - Added possibility to change the installation folder of PinVol and switch between PinVol provided as part of Studio to an installed version
   - Improved monitoring of PinVol process

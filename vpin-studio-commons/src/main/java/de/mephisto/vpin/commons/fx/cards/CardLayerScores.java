@@ -62,25 +62,15 @@ public class CardLayerScores extends Canvas implements CardLayer {
     double HEIGHT = height / zoomY;
 
     double fontSIZE = Math.max(template.getScoreFontSize(), 20);
-    Font FONT = createFont(template.getScoreFontName(), template.getScoreFontStyle(), fontSIZE);
+    Font FONT;
 
     //scale down block until every one is matching
     List<TextColumn> textColumns = null;
     do {
-      for (TextBlock block : textBlocks) {
-        while (block.getHEIGHT(FONT) > HEIGHT && fontSIZE > 20) {
-          fontSIZE--;
-          FONT = createFont(template.getScoreFontName(), template.getScoreFontStyle(), fontSIZE);
-        }
-      }
+      FONT = createFont(template.getScoreFontName(), template.getScoreFontStyle(), fontSIZE);
       textColumns = createTextColumns(template, textBlocks, FONT, HEIGHT);
     }
-    while (textColumns.size() > 1 && fontSIZE-- > 20);
-
-    while (computeTotalWIDTH(textColumns, FONT) >= WIDTH && fontSIZE > 20) {
-      fontSIZE--;
-      FONT = createFont(template.getScoreFontName(), template.getScoreFontStyle(), fontSIZE);
-    }
+    while (computeTotalWIDTH(textColumns, FONT) >= WIDTH && fontSIZE-- > 20);
 
     //yStart = centerYToRemainingSpace(textColumns, yStart, remainingHeight);
     //int columnsWidth = getColumnsWidth(textColumns);
@@ -93,7 +83,7 @@ public class CardLayerScores extends Canvas implements CardLayer {
 
     // one line added in columns, so put half on top and half on bottom
     double x =  0;
-    double y = font.getSize() / 2;
+    double y = 0;
     for (TextColumn textColumn : textColumns) {
       textColumn.renderAt(g, x, y, template.getRowMargin() * zoomY);
       x += textColumn.getWIDTH(FONT) * zoomX;
@@ -119,22 +109,39 @@ public class CardLayerScores extends Canvas implements CardLayer {
     return width;
   }
 
-  List<TextColumn> createTextColumns(CardTemplate template, List<TextBlock> blocks, Font FONT, double remainingHEIGHT) {
+  List<TextColumn> createTextColumns(CardTemplate template, List<TextBlock> blocks, Font FONT, double HEIGHT) {
     List<TextColumn> columns = new ArrayList<>();
     TextColumn column = new TextColumn();
-    double columnHEIGHT = remainingHEIGHT;
+    double remainingHEIGHT = HEIGHT;
     for (TextBlock block : blocks) {
-      double HEIGHT = block.getHEIGHT(FONT);
-      if (columnHEIGHT < HEIGHT) {
-        columns.add(column);
-        column = new TextColumn();
-        columnHEIGHT = remainingHEIGHT;
-      }
+      while (block != null) {
+        double blockHEIGHT = block.getHEIGHT(FONT);
+        if (blockHEIGHT < remainingHEIGHT) {
+          column.addBlock(block);
+          remainingHEIGHT = remainingHEIGHT - blockHEIGHT;
+          block = null;
+        }
+        // do not split a block in a non empty column
+        else if (!column.isEmpty()) {
+          columns.add(column);
+          column = new TextColumn();
+          remainingHEIGHT = HEIGHT;
+          // same block but in a new empty column
+        }
+        else {
+          TextBlock[] splitBlocks = block.splitToHeight(FONT, remainingHEIGHT);
+          column.addBlock(splitBlocks[0]);
+          columns.add(column);
 
-      columnHEIGHT = columnHEIGHT - HEIGHT;
-      column.addBlock(block);
+          column = new TextColumn();
+          remainingHEIGHT = HEIGHT;
+          block = splitBlocks[1];
+        }
+      }
     }
-    columns.add(column);
+    if (!column.isEmpty()) {
+      columns.add(column);
+    }
     return columns;
   }
 
@@ -142,6 +149,10 @@ public class CardLayerScores extends Canvas implements CardLayer {
     private final List<TextBlock> blocks = new ArrayList<>();
 
     TextColumn() {
+    }
+
+    public boolean isEmpty() {
+      return blocks.isEmpty();
     }
 
     public void addBlock(TextBlock block) {
@@ -174,8 +185,8 @@ public class CardLayerScores extends Canvas implements CardLayer {
   }
 
   class TextBlock {
-    private final List<String> lines;
-    private final List<Boolean> externals;
+    private List<String> lines;
+    private List<Boolean> externals;
     private final CardTemplate template;
 
     TextBlock(CardTemplate template) {
@@ -204,15 +215,32 @@ public class CardLayerScores extends Canvas implements CardLayer {
         }
 
         double fontSize = g.getFont().getSize();
-        g.fillText(line, x, y + fontSize * 0.45);
+        g.fillText(line, x, y + (fontSize + rowMargin) / 2);
         y = y + fontSize + rowMargin;
       }
       return y;
     }
 
+    public TextBlock[] splitToHeight(Font FONT, double remainingHEIGHT) {
+      int nblines = (int) (remainingHEIGHT / (FONT.getSize() + template.getRowMargin()));
+      if (nblines >= lines.size()) {
+        // fit so do nothing and return null
+        return new TextBlock[] { this, null };
+      }
+      // else
+      TextBlock block1 = new TextBlock(template);
+      block1.lines = lines.subList(0, nblines);
+      block1.externals = externals.subList(0, nblines);
+
+      TextBlock block2 = new TextBlock(template);
+      block2.lines = lines.subList(nblines, lines.size());
+      block2.externals = externals.subList(nblines, lines.size());
+
+      return new TextBlock[] { block1, block2 };
+    }
+
     public double getHEIGHT(Font FONT) {
-      // +1 to render an extra blank line with space distributed above and below
-      return (this.lines.size() + 1) * (FONT.getSize() + template.getRowMargin()); 
+      return this.lines.size() * (FONT.getSize() + template.getRowMargin()); 
     }
 
     public int getWIDTH(Font FONT) {
