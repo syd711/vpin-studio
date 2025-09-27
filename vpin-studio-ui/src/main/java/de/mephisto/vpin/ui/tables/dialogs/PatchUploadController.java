@@ -125,7 +125,7 @@ public class PatchUploadController extends BaseUploadController {
 
 
         LOG.info("Starting Game Patcher");
-        GamePatcherUploadPostProcessingProgressModel progressModel = new GamePatcherUploadPostProcessingProgressModel("Patching Game", uploadDescriptor);
+        GamePatcherUploadPostProcessingProgressModel progressModel = new GamePatcherUploadPostProcessingProgressModel("Patching Game", uploadDescriptor, game);
         result = UniversalUploadUtil.postProcess(progressModel);
         if (result.isPresent()) {
           // notify listeners of table import done

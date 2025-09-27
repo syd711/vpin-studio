@@ -51,3 +51,4 @@
 - Fixed wrong update check that happened when one client was connected/disconnected to different servers.
 - Fixed pause menu that did not load the highscore card.
 - Fixed performance issues during re-installations for cabinets that have already been registered on vpin-mania.net.
+- Fixed refresh after table patching: The table scan is triggered after patching a table now. This will detect additional changes made by the patch, e.g. the DMD type.
