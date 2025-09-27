@@ -71,10 +71,8 @@ public class PauseMenu extends Application {
   @Override
   public void start(Stage stage) {
     ServerFX.client = new VPinStudioClient("localhost");
-    GameStatus status = ((VPinStudioClient) client).getGameStatusService().getStatus();
-    status.setGameId(14);
     loadPauseMenu();
-    togglePauseMenu(status, true);
+    togglePauseMenu(null, true);
   }
 
   public static boolean isVisible() {

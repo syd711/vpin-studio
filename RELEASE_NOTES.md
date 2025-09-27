@@ -44,3 +44,4 @@
 ## Bugfixes
 
 - Fixed wrong update check that happened when one client was connected/disconnected to different servers.
+- Fixed pause menu that did not load the highscore card.

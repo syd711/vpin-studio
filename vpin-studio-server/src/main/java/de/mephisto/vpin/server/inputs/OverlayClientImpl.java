@@ -50,6 +50,7 @@ import de.mephisto.vpin.server.games.GameStatusService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.highscores.cards.CardService;
+import de.mephisto.vpin.server.highscores.cards.CardTemplatesService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vps.VpsService;
@@ -107,6 +108,9 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
 
   @Autowired
   private CardService cardService;
+
+  @Autowired
+  private CardTemplatesService cardTemplatesService;
 
   @Autowired
   private DiscordService discordService;
@@ -292,7 +296,8 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
 
   @Override
   public CardTemplate getCardTemplate(GameRepresentation game) {
-    return cardService.getCardTemplate(game.getTemplateId());
+    Game g = gameService.getGame(game.getId());
+    return cardTemplatesService.getTemplateForGame(g);
   }
 
   @Override

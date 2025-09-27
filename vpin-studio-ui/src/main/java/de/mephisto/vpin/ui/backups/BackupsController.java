@@ -195,7 +195,7 @@ public class BackupsController implements Initializable, StudioFXController, Stu
   private void onArchiveAdd() {
     boolean uploaded = BackupDialogs.openArchiveUploadDialog();
     if (uploaded) {
-      doReload();
+      doReload(Optional.empty());
     }
   }
 
@@ -209,21 +209,32 @@ public class BackupsController implements Initializable, StudioFXController, Stu
 
   @FXML
   public void onReload() {
-    doReload(true);
+    doReload(true, Optional.empty());
   }
 
-  public void doReload() {
+  public void doReload(Optional<BackupDescriptorRepresentation> selection) {
+    if (selection.isEmpty()) {
+      selection = Optional.of(this.tableView.getSelectionModel().getSelectedItem());
+    }
+
     this.tableView.getSelectionModel().clearSelection();
-    doReload(false);
+    doReload(false, selection);
   }
 
-  public void doReload(boolean invalidate) {
+  public void doReload(boolean invalidate, Optional<BackupDescriptorRepresentation> value) {
+    if (value.isEmpty()) {
+      BackupDescriptorRepresentation selectedItem = this.tableView.getSelectionModel().getSelectedItem();
+      if (selectedItem != null) {
+        value = Optional.of(selectedItem);
+      }
+    }
+
     this.searchTextField.setDisable(true);
 
     BackupSourceRepresentation selectedItem = sourceCombo.getSelectionModel().getSelectedItem();
-    final BackupDescriptorRepresentation selection = tableView.getSelectionModel().getSelectedItem();
+    final BackupDescriptorRepresentation selection = value.orElse(null);
     tableView.getSelectionModel().clearSelection();
-    boolean disable = selection == null;
+    boolean disable = value.isEmpty();
     deleteBtn.setDisable(disable);
     restoreBtn.setDisable(disable);
 
@@ -239,8 +250,8 @@ public class BackupsController implements Initializable, StudioFXController, Stu
         client.getArchiveService().invalidateArchiveCache();
       }
 
-      BackupSourceRepresentation value = sourceCombo.getValue();
-      archives = client.getArchiveService().getBackupsForSource(value.getId());
+      BackupSourceRepresentation backupSource = sourceCombo.getValue();
+      archives = client.getArchiveService().getBackupsForSource(backupSource.getId());
 
       Platform.runLater(() -> {
         data = FXCollections.observableList(filterArchives(archives));
@@ -273,7 +284,7 @@ public class BackupsController implements Initializable, StudioFXController, Stu
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         ProgressDialog.createProgressDialog(new BackupDeleteProgressModel(selectedItems));
         tableView.getSelectionModel().clearSelection();
-        doReload();
+        doReload(Optional.empty());
         tablesController.getRepositorySideBarController().setArchiveDescriptor(Optional.empty());
       }
     }
@@ -585,8 +596,9 @@ public class BackupsController implements Initializable, StudioFXController, Stu
       restoreBtn.setDisable(!newValue.getType().equals(BackupSourceType.Folder.name()));
       downloadBtn.setDisable(!newValue.getType().equals(BackupSourceType.Folder.name()));
 
+      BackupDescriptorRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
       tableView.getSelectionModel().clearSelection();
-      doReload();
+      doReload(selectedItem != null ? Optional.of(selectedItem) : Optional.empty());
     };
     refreshRepositoryCombo();
 
@@ -598,19 +610,24 @@ public class BackupsController implements Initializable, StudioFXController, Stu
   @Override
   public void onViewActivated(NavigationOptions options) {
     NavigationController.setBreadCrumb(Arrays.asList(TAB_NAME));
-    refreshView();
+    if (options == null) {
+      refreshView(Optional.empty());
+    }
+    else {
+      refreshView(Optional.of((BackupDescriptorRepresentation) options.getModel()));
+    }
     EventManager.getInstance().removeListener(this);
     EventManager.getInstance().addListener(this);
   }
 
-  public void refreshView() {
+  public void refreshView(Optional<BackupDescriptorRepresentation> selection) {
     toolbar.getItems().stream().forEach(i -> i.setDisable(true));
     JFXFuture.supplyAsync(() -> {
       return client.getAuthenticationService().isAuthenticated();
     }).thenAcceptLater(authenticated -> {
       if (authenticated) {
         toolbar.getItems().stream().forEach(i -> i.setDisable(false));
-        this.doReload();
+        this.doReload(selection);
       }
       else {
         WidgetFactory.showInformation(stage, "Authentication Required", "Go to the backup settings for more details.");
@@ -676,7 +693,7 @@ public class BackupsController implements Initializable, StudioFXController, Stu
   public void repositoryUpdated() {
     Platform.runLater(() -> {
       refreshRepositoryCombo();
-      doReload();
+      doReload(Optional.empty());
     });
   }
 
@@ -697,7 +714,8 @@ public class BackupsController implements Initializable, StudioFXController, Stu
   }
 
   public void selectBackup(BackupDescriptorRepresentation backup) {
-    onViewActivated(null);
+    NavigationOptions options = new NavigationOptions(backup);
+    onViewActivated(options);
     //TODO finish selection impl
   }
 

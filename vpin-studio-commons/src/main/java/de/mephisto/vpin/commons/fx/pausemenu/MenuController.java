@@ -8,7 +8,9 @@ import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
 import de.mephisto.vpin.commons.utils.FXUtil;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardResolution;
+import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
@@ -303,17 +305,28 @@ public class MenuController implements Initializable {
       scoreView.setVisible(true);
 
       JFXFuture
-        .supplyAsync(() -> client.getCardTemplate(game))
-        .thenAcceptLater(template -> {
-          JFXFuture
-            .supplyAsync(() -> client.getCardData(game, template))
-            .thenAcceptLater(carddata -> {
-              CardGraphicsHighscore highscoreCard = new CardGraphicsHighscore(true);
-              highscoreCard.setTemplate(template);
-              highscoreCard.setData(carddata, CardResolution.HDReady);
-              scoreView.setCenter(highscoreCard);
-            });
-        });
+          .supplyAsync(() -> {
+            try {
+              CardTemplate cardTemplate = client.getCardTemplate(game);
+              return cardTemplate;
+            }
+            catch (Exception e) {
+              LOG.error("Failed to read card template for {}: {}", game.getGameDisplayName() + "/" + game.getId(), e.getMessage(), e);
+            }
+            return null;
+          })
+          .thenAcceptLater(template -> {
+            JFXFuture
+                .supplyAsync(() -> {
+                  return client.getCardData(game, template);
+                })
+                .thenAcceptLater(carddata -> {
+                  CardGraphicsHighscore highscoreCard = new CardGraphicsHighscore(true);
+                  highscoreCard.setTemplate(template);
+                  highscoreCard.setData(carddata, CardResolution.HDReady);
+                  scoreView.setCenter(highscoreCard);
+                });
+          });
     }
     else if (activeSelection.getVideoUrl() != null) {
       mediaView.setVisible(true);
