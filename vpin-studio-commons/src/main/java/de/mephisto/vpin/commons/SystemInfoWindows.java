@@ -58,6 +58,19 @@ public class SystemInfoWindows {
     return new File("C:/vPinball/PinUPSystem");
   }
 
+  /**
+   * Usefull for PinballX and PinballY, use same CLSID as PinUpPlayerRegister.bat
+   */
+  public File resolvePinupPlayerFolder() {
+    String regkey = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Classes\\WOW6432Node\\CLSID\\{88919FAC-00B2-4AA8-B1C7-52AD65C476D3}\\LocalServer32";
+    String pinuPlayerExe = extractRegistryValue(readRegistry(regkey, null));
+    File pinupPlayerFile = new File(pinuPlayerExe);
+    if (pinupPlayerFile.exists()) {
+      return pinupPlayerFile.getParentFile();
+    }
+    return null;
+  }
+
   public File resolvePinballXInstallationFolder() {
     return resolveFolder("PinballX");
   }

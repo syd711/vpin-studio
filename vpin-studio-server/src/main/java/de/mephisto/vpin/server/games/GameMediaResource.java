@@ -340,7 +340,6 @@ public class GameMediaResource {
     } 
     catch (ClientAbortException cae) {
       LOG.info("Connection aborted while downloading {} for game {}", name, id);
-      response.sendError(HttpStatus.REQUEST_TIMEOUT.value(), "connection aborted");
     }
     catch (IOException e) {
       LOG.error("Failed to stream media {} for game {}: {}", name, id, e.getMessage(), e);

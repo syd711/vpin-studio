@@ -126,10 +126,14 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
         this.pinupInstallationFolder = new File(store.get(PINUP_SYSTEM_INSTALLATION_DIR));
         frontendType = FrontendType.Popper;
       }
+      else {
+        // for non PinupPopper users, initialize pinupInstallationFolder from player
+        this.pinupInstallationFolder =  resolvePinupPlayerFolder();
+      }
 
       // now that frontend is determined, activate or deactivate features
       frontendType.apply(Features);
-      // POssibly override features from system
+      // Possibly override features from system
       apply(Features, store.get(SYSTEM_FEATURES_ON), true);
       apply(Features, store.get(SYSTEM_FEATURES_OFF), false);
 
@@ -178,7 +182,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     LOG.info(formatPathLog("Charset", Charset.defaultCharset().displayName()));
     LOG.info(formatPathLog("Frontend Type", this.getFrontendType().name()));
     if (pinupInstallationFolder != null) {
-      LOG.info(formatPathLog("PinupPopper Folder", this.pinupInstallationFolder));
+      LOG.info(formatPathLog("PinupSystem Folder", this.pinupInstallationFolder));
     }
     if (pinballXInstallationFolder != null) {
       LOG.info(formatPathLog("PinballX Folder", this.pinballXInstallationFolder));

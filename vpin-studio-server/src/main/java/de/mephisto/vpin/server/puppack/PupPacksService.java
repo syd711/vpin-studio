@@ -67,7 +67,7 @@ public class PupPacksService implements InitializingBean {
   public PupPack getMenuPupPack() {
     File pupPackFolder = getPupPackFolder();
     File menuPupPackFolder = new File(pupPackFolder, "PinUpMenu");
-    return loadPupPack(menuPupPackFolder);
+    return menuPupPackFolder.exists() ? loadPupPack(menuPupPackFolder) : null;
   }
 
   public boolean delete(@NonNull Game game) {

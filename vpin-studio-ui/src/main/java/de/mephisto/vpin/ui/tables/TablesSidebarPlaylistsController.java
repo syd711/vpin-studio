@@ -81,6 +81,8 @@ public class TablesSidebarPlaylistsController implements Initializable {
 
   @FXML
   private Label dialogTitleLabel;
+  @FXML
+  private Label dialogCommentLabel;
 
   @FXML
   private Separator playlistManagerSeparator;
@@ -123,6 +125,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
   public void setDialogMode() {
     this.dialogMode = true;
     this.dialogTitleLabel.setVisible(true);
+    this.dialogCommentLabel.setVisible(true);
     this.toolbar.setVisible(false);
   }
 
@@ -382,6 +385,8 @@ public class TablesSidebarPlaylistsController implements Initializable {
     toolbar.managedProperty().bindBidirectional(toolbar.visibleProperty());
     dialogTitleLabel.managedProperty().bindBidirectional(dialogTitleLabel.visibleProperty());
     dialogTitleLabel.setVisible(false);
+    dialogCommentLabel.managedProperty().bindBidirectional(dialogCommentLabel.visibleProperty());
+    dialogCommentLabel.setVisible(false);
 
     playlistManagerBtn.setVisible(Features.PLAYLIST_CRUD && Features.PLAYLIST_MANAGER);
     playlistManagerSeparator.setVisible(Features.PLAYLIST_CRUD && Features.PLAYLIST_MANAGER);

@@ -17,6 +17,7 @@
   - Support of next/previous navigation in DmdPosition tool when opened from the tables overview.
   - Support of next/previous navigation in the Table Data dialog.
   - Added "Save" shortcut (Ctrl+S) in Table Data dialog.
+  - Added support of puppack in studio for PinballX and PinballY
 
 - **BackglassManager**
   - Added a frame generator directly in studio, on an idea and python script provided by @Himura95. Four different generators are provided: 
@@ -34,6 +35,9 @@
   - Improved streaming of table assets and frontend media.
    
     <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/media-sidebar.png?raw=true" width="500" /> 
+
+- **Highscore Cards** 
+  - Highscore Texts is split in different columns to fit the zone
 
 - **PinVol Preferences** 
   - Added possibility to change the installation folder of PinVol and switch between PinVol provided as part of Studio to an installed version.
