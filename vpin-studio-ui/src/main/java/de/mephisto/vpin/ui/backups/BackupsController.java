@@ -77,6 +77,9 @@ public class BackupsController implements Initializable, StudioFXController, Stu
   private Button reloadBtn;
 
   @FXML
+  private Label countLabel;
+
+  @FXML
   private TextField searchTextField;
 
   @FXML
@@ -89,7 +92,7 @@ public class BackupsController implements Initializable, StudioFXController, Stu
   private TableColumn<BackupDescriptorRepresentation, String> iconColumn;
 
   @FXML
-  private TableColumn<BackupDescriptorRepresentation, String> nameColumn;
+  TableColumn<BackupDescriptorRepresentation, String> nameColumn;
 
   @FXML
   private TableColumn<BackupDescriptorRepresentation, String> directB2SColumn;
@@ -247,7 +250,7 @@ public class BackupsController implements Initializable, StudioFXController, Stu
       tableStack.getChildren().add(loadingOverlay);
     }
 
-
+    countLabel.setText("-");
     new Thread(() -> {
       if (selectedItem != null && invalidate) {
         client.getArchiveService().invalidateBackupCache();
@@ -270,7 +273,7 @@ public class BackupsController implements Initializable, StudioFXController, Stu
 
         tableStack.getChildren().remove(loadingOverlay);
         tableView.setVisible(true);
-
+        countLabel.setText(archives.size() + " backups");
       });
     }).start();
   }

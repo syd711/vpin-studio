@@ -96,7 +96,7 @@ public class VpaArchiveUtil {
       return result;
     }
     catch (Exception e) {
-      LOG.error("Failed to read {}: {}", fileName, e.getMessage(), e);
+      LOG.error("Failed to read {}: {}", fileName, e.getMessage());
     }
     return null;
   }

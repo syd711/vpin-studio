@@ -1,3 +1,12 @@
+## Release Notes 4.3.2
+
+## Changes
+
+- Backups: Fixed critical refresh issue that lead to an endless reload of backups after creating a backup and restarting the Studio.
+- Backups: Added footer label to show the amount of backup files.
+
+---
+
 ## Release Notes 4.3.1
 
 ## Changes
