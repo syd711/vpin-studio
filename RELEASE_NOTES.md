@@ -1,3 +1,11 @@
+## Release Notes 4.3.3
+
+## Changes
+
+- Backups: Fixed memory leak.
+
+---
+
 ## Release Notes 4.3.2
 
 ## Changes
