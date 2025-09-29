@@ -373,7 +373,7 @@ public class VpaService implements InitializingBean {
   private boolean zipMameRegistryData(@NonNull JobDescriptor jobDescriptor, @NonNull BackupMameData registryData, BiConsumer<File, String> zipOut) throws IOException {
     String tableDetailsJson = objectMapper.writeValueAsString(registryData);
 
-    File tableDetailsTmpFile = File.createTempFile("registry", "json");
+    File tableDetailsTmpFile = File.createTempFile("registry", ".json");
     tableDetailsTmpFile.deleteOnExit();
     Files.write(tableDetailsTmpFile.toPath(), tableDetailsJson.getBytes());
     if (!zipFile(jobDescriptor, tableDetailsTmpFile, BackupPackageInfo.REGISTRY_FILENAME, zipOut)) {
@@ -419,7 +419,7 @@ public class VpaService implements InitializingBean {
 
     String tableDetailsJson = objectMapper.writeValueAsString(tableDetails);
 
-    File tableDetailsTmpFile = File.createTempFile("table-details", "json");
+    File tableDetailsTmpFile = File.createTempFile("table-details", ".json");
     tableDetailsTmpFile.deleteOnExit();
     Files.write(tableDetailsTmpFile.toPath(), tableDetailsJson.getBytes());
     zipFile(jobDescriptor, tableDetailsTmpFile, TableDetails.ARCHIVE_FILENAME, zipOut);

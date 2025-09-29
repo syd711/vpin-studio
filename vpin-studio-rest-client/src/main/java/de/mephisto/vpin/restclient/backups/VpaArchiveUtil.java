@@ -90,13 +90,19 @@ public class VpaArchiveUtil {
 
   @Nullable
   public static String readStringFromZip(ZipFile zipFile, String fileName) {
+    File target = null;
     try {
-      File target = extractFile(zipFile, fileName);
+      target = extractFile(zipFile, fileName);
       String result = target != null ? FileUtils.readFileToString(target, "utf8") : null;
       return result;
     }
     catch (Exception e) {
-      LOG.error("Failed to read {}: {}", fileName, e.getMessage());
+      LOG.error("Failed to read {}: {}", fileName, e.getMessage(), e);
+    }
+    finally {
+      if (target != null && target.exists() && !target.delete()) {
+        LOG.info("Failed to delete {}", fileName);
+      }
     }
     return null;
   }
@@ -201,8 +207,7 @@ public class VpaArchiveUtil {
 
   public static File extractFile(ZipFile zipFile, String fileName) {
     try {
-      String tempDir = System.getProperty("java.io.tmpdir");
-      File tmp = new File(tempDir, fileName);
+      File tmp = File.createTempFile(fileName, ".tmp");
       if (tmp.exists() && !tmp.delete()) {
         LOG.error("Failed to delete {}", tmp.getAbsolutePath());
       }
