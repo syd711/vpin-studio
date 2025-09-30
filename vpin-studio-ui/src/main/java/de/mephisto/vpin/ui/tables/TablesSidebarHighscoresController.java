@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.utils.ScoreGraphUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.restclient.cards.CardTemplate;
+import de.mephisto.vpin.restclient.cards.CardTemplateType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.*;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
@@ -328,14 +328,9 @@ public class TablesSidebarHighscoresController implements Initializable {
 
       cardsEnabledCheckbox.setDisable(false);
       cardsEnabledCheckbox.setSelected(!game.isCardDisabled());
-      List<CardTemplate> templates = client.getHighscoreCardTemplatesClient().getTemplates();
-      Long templateId = g.get().getTemplateId();
-      Optional<CardTemplate> first = templates.stream().filter(t -> t.getId().equals(templateId)).findFirst();
-      if (first.isEmpty()) {
-        first = templates.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst();
-      }
-      InputStream highscoreCard = client.getHighscoreCardsService().getHighscoreCardPreview(game, first.get());
 
+      //TODO swith to new Image(URL) to avoid non closed InputStrem + async loading ?
+      InputStream highscoreCard = client.getHighscoreCardsService().getHighscoreCardPreview(game, CardTemplateType.HIGSCORE_CARD);
       if (highscoreCard != null) {
         cardImage.setImage(new Image(highscoreCard));
       }

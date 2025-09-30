@@ -1,8 +1,8 @@
 package de.mephisto.vpin.ui.cards;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
+import de.mephisto.vpin.restclient.cards.CardTemplateType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import java.util.Iterator;
 import java.util.List;
 
-import static de.mephisto.vpin.commons.fx.pausemenu.PauseMenuUIDefaults.MAX_REFRESH_COUNT;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TemplateAssigmentProgressModel extends ProgressModel<GameRepresentation> {
@@ -24,15 +23,20 @@ public class TemplateAssigmentProgressModel extends ProgressModel<GameRepresenta
   private List<GameRepresentation> games;
 
   private final Iterator<GameRepresentation> gameIterator;
-  private final CardTemplate baseTemplate;
   private final CardTemplate cardTemplate;
+  private final boolean switchToCardMode;
+  private final CardTemplateType templateType;
 
-  public TemplateAssigmentProgressModel(List<GameRepresentation> games, CardTemplate baseTemplate, @Nullable CardTemplate cardTemplate) {
+  /**
+   * BaseTemplate is used when CardTemplate is null, the template use 
+   */
+  public TemplateAssigmentProgressModel(List<GameRepresentation> games, @Nullable CardTemplate cardTemplate, boolean switchToCardMode, CardTemplateType templateType) {
     super("Applying Template");
     this.games = games;
     this.gameIterator = games.iterator();
-    this.baseTemplate = baseTemplate;
     this.cardTemplate = cardTemplate;
+    this.switchToCardMode = switchToCardMode;
+    this.templateType = templateType;
   }
 
   @Override
@@ -66,51 +70,9 @@ public class TemplateAssigmentProgressModel extends ProgressModel<GameRepresenta
   }
 
   @Override
-  public void finalizeModel(ProgressResultModel progressResultModel) {
-    super.finalizeModel(progressResultModel);
-
-    if (games.size() > MAX_REFRESH_COUNT) {
-      EventManager.getInstance().notifyTablesChanged();
-    }
-    else {
-      for (GameRepresentation game : games) {
-        EventManager.getInstance().notifyTableChange(game.getId(), null);
-      }
-    }
-  }
-
-  @Override
   public void processNext(ProgressResultModel progressResultModel, GameRepresentation game) {
     try {
-      //create new card template
-      if (cardTemplate == null) {
-        //delete possible existing one
-        CardTemplate existingGameTemplate = client.getHighscoreCardTemplatesClient().getTemplateById(game.getTemplateId());
-        if (existingGameTemplate != null && !existingGameTemplate.isTemplate()) {
-          client.getHighscoreCardTemplatesClient().deleteTemplate(game.getTemplateId());
-        }
-
-        String json = JsonSettings.objectMapper.writeValueAsString(baseTemplate);
-        CardTemplate t = JsonSettings.objectMapper.readValue(json, CardTemplate.class);
-        t.setId(null);
-        t.setParentId(baseTemplate.getId());
-        t.setName(CardTemplate.CARD_TEMPLATE_PREFIX + game.getId());
-        CardTemplate newTemplate = client.getHighscoreCardTemplatesClient().save(t);
-        game.setTemplateId(newTemplate.getId());
-        client.getGameService().saveGame(game);
-      }
-      else {
-        //switch back to the template
-        if (!cardTemplate.isTemplate()) {
-          client.getHighscoreCardTemplatesClient().deleteTemplate(cardTemplate.getId());
-        }
-        game.setTemplateId(baseTemplate.getId());
-
-        //write lock waiting
-        Thread.sleep(300);
-        client.getGameService().saveGame(game);
-      }
-
+      client.getHighscoreCardTemplatesClient().assignTemplate(game, cardTemplate.getId(), switchToCardMode, templateType);
       EventManager.getInstance().notifyTableChange(game.getId(), null);
     }
     catch (Exception e) {

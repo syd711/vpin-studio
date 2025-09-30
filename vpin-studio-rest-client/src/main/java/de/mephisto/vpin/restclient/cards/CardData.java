@@ -28,6 +28,16 @@ public class CardData {
   private byte[] manufacturerLogo;
   private byte[] otherMedia;
 
+  private byte[] fallbackBackground;
+  private byte[] frame;
+
+  @JsonIgnore
+  private boolean backgroundUpdated;
+  @JsonIgnore
+  private boolean fallbackBackgroundUpdated;
+  @JsonIgnore
+  private boolean frameUpdated;
+
   //-----------------------------------------
 
   public int getGameId() {
@@ -119,6 +129,45 @@ public class CardData {
 
   public void setBackground(byte[] background) {
     this.background = background;
+    this.backgroundUpdated = true;
+  }
+
+  public boolean checkBackroundUpdated() {
+    boolean ret = backgroundUpdated;
+    backgroundUpdated = false;
+    return ret;
+  }
+
+  @JsonIgnore
+  public byte[] getFallbackBackground() {
+    return fallbackBackground;
+  }
+
+  public void setFallbackBackground(byte[] fallbackBackground) {
+    this.fallbackBackground = fallbackBackground;
+    this.fallbackBackgroundUpdated = true;
+  }
+
+  public boolean checkFallbackBackgroundUpdated() {
+    boolean ret = fallbackBackgroundUpdated;
+    fallbackBackgroundUpdated = false;
+    return ret;
+  }
+
+  @JsonIgnore
+  public byte[] getFrame() {
+    return frame;
+  }
+
+  public void setFrame(byte[] frame) {
+    this.frame = frame;
+    this.frameUpdated = true;
+  }
+
+  public boolean checkFrameUpdated() {
+    boolean ret = frameUpdated;
+    frameUpdated = false;
+    return ret;
   }
 
   public byte[] getManufacturerLogo() {

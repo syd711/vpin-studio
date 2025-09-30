@@ -464,7 +464,11 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
 
   public synchronized Game save(Game game) throws Exception {
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
-    gameDetails.setTemplateId(game.getTemplateId());
+
+    gameDetails.setTemplateId(game.getHighscoreCardTemplateId());
+    gameDetails.setInstructionCardTemplateId(game.getInstructionCardTemplateId());
+    gameDetails.setWheelTemplateId(game.getWheelTemplateId());
+
     gameDetails.setIgnoreUpdates(game.isIgnoreUpdates());
     gameDetails.setNotes(game.getComment());
     gameDetails.setCardsDisabled(game.isCardDisabled());

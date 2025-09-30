@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.alx.AlxSummary;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
+import de.mephisto.vpin.restclient.cards.CardTemplateType;
 import de.mephisto.vpin.restclient.client.ImageCache;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
@@ -295,15 +296,15 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   }
 
   @Override
-  public CardTemplate getCardTemplate(GameRepresentation game) {
+  public CardTemplate getHighscoreCardTemplate(GameRepresentation game) {
     Game g = gameService.getGame(game.getId());
-    return cardTemplatesService.getTemplateForGame(g);
+    return cardTemplatesService.getTemplateForGame(g, CardTemplateType.HIGSCORE_CARD);
   }
 
   @Override
   public CardData getCardData(GameRepresentation game, CardTemplate template) {
-    Game _game = gameService.getGame(game.getId());
-    return cardService.getCardData(_game, template, true);
+    Game g = gameService.getGame(game.getId());
+    return cardService.getCardData(g, template, true);
   }
 
   //--------------------------

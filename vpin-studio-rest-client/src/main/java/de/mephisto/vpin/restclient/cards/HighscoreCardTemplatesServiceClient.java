@@ -8,8 +8,11 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 /*********************************************************************************************************************
@@ -26,9 +29,16 @@ public class HighscoreCardTemplatesServiceClient extends VPinStudioClientService
 
   public List<CardTemplate> getTemplates() {
     if (cachedTemplates.isEmpty()) {
-      cachedTemplates = new ArrayList<>(Arrays.asList(getRestClient().get(API + "cardtemplates", CardTemplate[].class)));
+      CardTemplate[] templates = getRestClient().get(API + "cardtemplates", CardTemplate[].class);
+      if (templates != null) {
+        cachedTemplates = new ArrayList<>(Arrays.asList(templates));
+      }
     }
     return cachedTemplates;
+  }
+
+  public List<CardTemplate> getTemplates(CardTemplateType templateType) {
+    return getTemplates().stream().filter(template -> templateType.equals(template.getTemplateType())).collect(Collectors.toList());
   }
 
   public void deleteTemplate(Long id) {
@@ -57,26 +67,45 @@ public class HighscoreCardTemplatesServiceClient extends VPinStudioClientService
   public CardTemplate getTemplateById(Long id) {
     List<CardTemplate> templates = getTemplates();
     Optional<CardTemplate> first = templates.stream().filter(t -> t.getId().equals(id)).findFirst();
-    return first.orElse(getDefaultTemplate());
-  }
-
-  public CardTemplate getTemplateByName(String name) {
-    List<CardTemplate> templates = getTemplates();
-    Optional<CardTemplate> first = templates.stream().filter(t -> t.getName().equals(name)).findFirst();
     return first.orElse(null);
   }
 
-  public CardTemplate getDefaultTemplate() {
-    return getTemplateByName(CardTemplate.DEFAULT);
+  public CardTemplate getDefaultTemplate(CardTemplateType templateType) {
+    List<CardTemplate> templates = getTemplates();
+    Optional<CardTemplate> first = templates.stream().filter(t -> t.isDefault() && templateType.equals(t.getTemplateType())).findFirst();
+    return first.orElse(null);
   }
 
-  public CardTemplate getCardTemplateForGame(GameRepresentation game) {
-    if (game.getTemplateId() != null) {
-      CardTemplate templateById = getTemplateById(game.getTemplateId());
-      if (templateById != null) {
-        return templateById;
+  public CardTemplate getBaseCardTemplateForGame(GameRepresentation game, CardTemplateType templateType) {
+    CardTemplate templateById = null;
+    if (game.getTemplateId(templateType) != null) {
+      templateById = getTemplateById(game.getTemplateId(templateType));
+      if (templateById != null && !templateById.isTemplate()) {
+        templateById = getTemplateById(templateById.getParentId());
       }
     }
-    return getDefaultTemplate();
+    return templateById != null ? templateById : getDefaultTemplate(templateType);
+  }
+
+  public CardTemplate getCardTemplateForGame(GameRepresentation game, CardTemplateType templateType) {
+    CardTemplate template = null;
+    if (game.getTemplateId(templateType) != null) {
+      template = getTemplateById(game.getTemplateId(templateType));
+    }
+    return template != null ? template : getDefaultTemplate(templateType);
+  }
+
+  public boolean assignTemplate(GameRepresentation game, Long templateId, boolean switchToCardMode, CardTemplateType templateType) {
+    try {
+      Map<String, Object> params = new HashMap<>();
+      params.put("gameId", game.getId());
+      params.put("templateId", templateId);
+      params.put("templateType", templateType);
+      params.put("switchToCardMode", switchToCardMode);
+      return getRestClient().post(API + "cardtemplates/assign", params, Boolean.class);
+    }
+    finally {
+      cachedTemplates.clear();
+    }
   }
 }

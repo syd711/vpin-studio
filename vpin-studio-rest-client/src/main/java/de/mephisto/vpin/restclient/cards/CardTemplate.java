@@ -16,17 +16,19 @@ public class CardTemplate extends JsonSettings {
 
   private String name = DEFAULT;
 
+  private CardTemplateType templateType = CardTemplateType.HIGSCORE_CARD;
+
   private Integer version = null;
 
-  private boolean renderBackground = true;
+  private boolean renderBackground = false;
   private boolean lockBackground = false;
-  private boolean renderFrame = true;
+  private boolean renderFrame = false;
   private boolean lockFrame = false;
-  private boolean renderTableName = true;
+  private boolean renderTableName = false;
   private boolean lockTableName = false;
-  private boolean renderTitle = true;
+  private boolean renderTitle = false;
   private boolean lockTitle = false;
-  private boolean renderWheelIcon = true;
+  private boolean renderWheelIcon = false;
   private boolean lockWheelIcon = false;
   private boolean renderManufacturerLogo = false;
   private boolean lockManufacturerLogo = false;
@@ -34,7 +36,7 @@ public class CardTemplate extends JsonSettings {
   private boolean lockOtherMedia = false;
   private boolean renderCanvas = false;
   private boolean lockCanvas = false;
-  private boolean renderScores = true;
+  private boolean renderScores = false;
   private boolean lockScores = false;
 
   private boolean lockOverlay = false;
@@ -42,32 +44,33 @@ public class CardTemplate extends JsonSettings {
   // Background images
   private boolean useDefaultBackground = true;
   private String background = "Old Bumbers";
-  private boolean useColoredBackground = true;
+  private boolean useColoredBackground = false;
   private String backgroundColor = "#000000";
 
   // BACKGROUND SETTINGS
   private double backgroundX = 0;
   private double backgroundY = 0;
-  private double zoom = 1.0;
+  private double zoom = 100;
   private boolean useDmdPositions = false;
   private boolean fullScreen = true;
 
   private int transparentPercentage = 0;
-  private int alphaBlack = 33;
-  private int alphaWhite = 1;
-  private int blur = 6;
+  private int alphaBlack = 0;
+  private int alphaWhite = 0;
+  private int blur = 0;
   private boolean grayScale = false;
 
   // FRAME SETTINGS
-  private int borderWidth = 1;
+  private int borderWidth = 0;
   public int borderRadius = 0;
   private String borderColor = "#FFFFFF";
 
-  private int marginTop = 10;
-  private int marginRight = 10;
-  private int marginBottom = 10;
-  private int marginLeft = 10;
+  private int marginTop = 0;
+  private int marginRight = 0;
+  private int marginBottom = 0;
+  private int marginLeft = 0;
 
+  private String frame;
 
   // MANUFACTURER LOGO SETTINGS
   private boolean manufacturerLogoKeepAspectRatio = true;
@@ -159,8 +162,15 @@ public class CardTemplate extends JsonSettings {
     this.version = version;
   }
 
-  //----------------------------------------
+  public CardTemplateType getTemplateType() {
+    return templateType;
+  }
 
+  public void setTemplateType(CardTemplateType templateType) {
+    this.templateType = templateType;
+  }
+ 
+  //----------------------------------------
 
   @JsonIgnore
   public boolean isTemplate() {
@@ -438,7 +448,7 @@ public class CardTemplate extends JsonSettings {
   public void setWheelSize(double wheelSize) {
     this.wheelSize = wheelSize;
   }
-  
+
   public boolean isManufacturerLogoKeepAspectRatio() {
     return manufacturerLogoKeepAspectRatio;
   }
@@ -599,6 +609,14 @@ public class CardTemplate extends JsonSettings {
     this.marginLeft = marginLeft;
   }
 
+  public String getFrame() {
+    return frame;
+  }
+
+  public void setFrame(String frame) {
+    this.frame = frame;
+  }
+
   public Long getId() {
     return id;
   }
@@ -677,6 +695,11 @@ public class CardTemplate extends JsonSettings {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  @JsonIgnore
+  public boolean isDefault() {
+    return DEFAULT.equals(getName());
   }
 
   public int getTransparentPercentage() {
@@ -1020,5 +1043,153 @@ public class CardTemplate extends JsonSettings {
   @Override
   public String getSettingsName() {
     return null;
+  }
+
+  //-----------------------------------------------------------
+
+  public void resetDefaultHighscoreCard() {
+    renderBackground = true;
+    renderFrame = true;
+    renderTableName = true;
+    renderTitle = true;
+    renderWheelIcon = true;
+    renderManufacturerLogo = false;
+    renderOtherMedia = false;
+    renderCanvas = false;
+    renderScores = true;
+
+    // BACKGROUND IMAGES
+    useDefaultBackground = true;
+    background = "Old Bumbers";
+    useColoredBackground = true;
+    backgroundColor = "#000000";
+
+    transparentPercentage = 0;
+    alphaBlack = 33;
+    alphaWhite = 1;
+    blur = 6;
+    grayScale = false;
+
+    // FRAME SETTINGS
+    borderWidth = 1;
+    borderRadius = 0;
+    borderColor = "#FFFFFF";
+
+    marginTop = 10;
+    marginRight = 10;
+    marginBottom = 10;
+    marginLeft = 10;
+
+    // MANUFACTURER LOGO SETTINGS
+    manufacturerLogoKeepAspectRatio = true;
+    manufacturerLogoUseYear = true;
+    manufacturerLogoX = 0.15;
+    manufacturerLogoY = 0.05;
+    manufacturerLogoWidth = 0.85;
+    manufacturerLogoHeight = 0.2;
+
+    // OTHER MEDIA SETTINGS
+    otherMediaKeepAspectRatio = true;
+    otherMediaScreen = null;
+    otherMediaX = 0.8;
+    otherMediaY = 0.6;
+    otherMediaWidth = 0.2;
+    otherMediaHeight = 0.2;
+
+    // WHEEL SETTINGS
+    wheelX = 0.0;
+    wheelY = 0.5;
+    wheelSize = 0.3;
+
+    // SCORES SETTINGS
+    scoresX = 0.3;
+    scoresY = 0.4;
+    scoresWidth = 0.7;
+    scoresHeight = 0.6;
+
+    rowMargin = 5;
+    rawScore = true;
+    maxScores = 0;
+
+    fontColor = "#FFFFFF";
+    friendsFontColor = "#CCCCCC";
+
+    scoreFontName = "Monospaced";
+    scoreFontSize = 90;
+    scoreFontStyle = "Regular";
+
+    renderFriends = true;
+    renderPositions = true;
+    renderScoreDates = true;
+
+    // TABLENAME SETTINGS
+    tableUseVpsName = false;
+    tableRenderManufacturer = true;
+    tableRenderYear = true;
+    tableFontName = "Impact";
+    tableFontSize = 72;
+    tableFontStyle = "Regular";
+    tableUseDefaultColor = true;
+    tableColor = "#FFFFFF";
+    tableX = 0.0;
+    tableY = 0.2;
+    tableWidth = 1.0;
+    tableHeight = 0.2;
+
+    // TITLE SETTINGS
+    title = "Highscores";
+    titleFontName = "Cambria";
+    titleFontSize = 120;
+    titleFontStyle = "Regular";
+    titleUseDefaultColor = true;
+    titleColor = "#FFFFFF";
+    titleX = 0;
+    titleY = 0;
+    titleWidth = 1.0;
+    titleHeight = 0.2;
+
+    // CANVAS SETTINGS
+    canvasX = 0.1;
+    canvasY = 0.1;
+    canvasWidth = 0.8;
+    canvasHeight = 0.8;
+    canvasAlphaPercentage = 0;
+    canvasBorderRadius = 0;
+
+    // OVERLAY SETTINGS
+    overlayMode = false;
+    overlayScreen = null;
+  }
+
+  public void resetDefaultInstructionsCard() {
+    //TODO find a good feault settings
+  }
+
+  public void resetDefaultWheel() {
+    //TODO find a good default settings
+    renderBackground = true;
+    renderFrame = true;
+    renderTableName = true;
+
+    useDefaultBackground = true;
+
+    borderRadius = 2000;
+    marginTop = 80;
+    marginBottom = 80;
+    marginLeft = 80;
+    marginRight = 80;
+    frame = "wheel-tarcissio";
+
+    tableFontName = "Comic Sans MS";
+    tableFontSize = 100;
+    tableUseVpsName = true;
+    tableRenderManufacturer = false;
+    tableRenderYear = false;
+    tableUseDefaultColor = false;
+    tableColor = "#999999";
+    tableX = 0;
+    tableY = 0.85;
+    tableWidth = 1;
+    tableHeight = 0.15;
   }
 }

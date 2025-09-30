@@ -1,13 +1,14 @@
 package de.mephisto.vpin.server.highscores.cards;
 
 import de.mephisto.vpin.restclient.cards.CardData;
+import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
+import de.mephisto.vpin.restclient.cards.CardTemplateType;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.RequestUtil;
 import de.mephisto.vpin.server.util.UploadUtil;
-import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,12 +37,18 @@ public class CardsResource {
   @Autowired
   private CardService cardService;
 
-  @GetMapping("/cardtemplate/{gameId}")
-  public CardTemplate getCardTemplate(@PathVariable("gameId") int gameId) throws Exception {
+
+  @GetMapping("/resolution/{templateType}")
+  public CardResolution getCardResolution(@PathVariable("templateType") CardTemplateType templateType) {
+    return cardService.getCardResolution(templateType);
+  }
+
+  @GetMapping("/cardtemplate/{gameId}/{templateType}")
+  public CardTemplate getCardTemplate(@PathVariable("gameId") int gameId, @PathVariable("templateType") CardTemplateType templateType) throws Exception {
     Game game = gameService.getGame(gameId);
     if (game != null) {
-      if (game.getTemplateId() != null) {
-        return cardService.getCardTemplate(game.getTemplateId());
+      if (game.getTemplateId(templateType) != null) {
+        return cardService.getCardTemplate(game.getTemplateId(templateType));
       }
     }
     throw new ResponseStatusException(NOT_FOUND, "No game or template found for id " + gameId);
@@ -56,11 +63,11 @@ public class CardsResource {
     throw new ResponseStatusException(NOT_FOUND, "No game found for id " + gameId);
   }
 
-  @GetMapping("/preview/{gameId}")
-  public ResponseEntity<byte[]> generateCardPreview(@PathVariable("gameId") int gameId) throws Exception {
+  @GetMapping("/preview/{gameId}/{templateType}")
+  public ResponseEntity<byte[]> generateCardPreview(@PathVariable("gameId") int gameId, @PathVariable("templateType") CardTemplateType templateType) throws Exception {
     Game game = gameService.getGame(gameId);
     if (game != null) {
-      return RequestUtil.serializeImage(cardService.generateTableCardFile(game), "highscore-card-sample.png");
+      return RequestUtil.serializeImage(cardService.generateTableCardFile(game, templateType), "card-sample.png");
     }
     throw new ResponseStatusException(NOT_FOUND, "No game found for id " + gameId);
   }
@@ -69,16 +76,16 @@ public class CardsResource {
   public ResponseEntity<byte[]> generateCardPreview(@PathVariable("gameId") int gameId, @PathVariable("templateId") int templateId) throws Exception {
     Game game = gameService.getGame(gameId);
     if (game != null) {
-      return RequestUtil.serializeImage(cardService.generateTemplateTableCardFile(game, templateId), "highscore-card-sample.png");
+      return RequestUtil.serializeImage(cardService.generateTemplateTableCardFile(game, templateId), "card-sample.png");
     }
     throw new ResponseStatusException(NOT_FOUND, "No game found for id " + gameId);
   }
 
-  @GetMapping("/generate/{gameId}")
-  public boolean generateCard(@PathVariable("gameId") int gameId) {
+  @GetMapping("/generate/{gameId}/{templateType}")
+  public boolean generateCard(@PathVariable("gameId") int gameId, @PathVariable("templateType") CardTemplateType templateType) {
     Game game = gameService.getGame(gameId);
     if (game != null) {
-      return cardService.generateCard(game);
+      return cardService.generateCard(game, templateType);
     }
     throw new ResponseStatusException(NOT_FOUND, "No game found for id " + gameId);
   }
@@ -111,25 +118,40 @@ public class CardsResource {
     throw new ResponseStatusException(NOT_FOUND, "No game found for id " + gameId);
   }
 
+  //-------------------------------------------
+
   @GetMapping("/backgrounds")
   public List<String> getBackgrounds() {
-    return cardService.getBackgrounds();
+    return cardService.getImages("backgrounds");
+  }
+  @GetMapping("/frames")
+  public List<String> getFrames() {
+    return cardService.getImages("frames");
   }
 
   @GetMapping("/background/{name}")
   public ResponseEntity<byte[]> getBackground(@PathVariable("name") String imageName) throws Exception {
-    String image = imageName.replaceAll("\\+", " ");
-    File folder = new File(SystemService.RESOURCES, "backgrounds");
-    File[] files = folder.listFiles((dir, name) -> FilenameUtils.getBaseName(name).equals(image));
-    if (files != null && files.length > 0) {
-      return RequestUtil.serializeImage(files[0]);
-    }
-    return ResponseEntity.notFound().build();
+    File img = cardService.getImage("backgrounds", imageName);
+    return img != null ? RequestUtil.serializeImage(img) : ResponseEntity.notFound().build();
   }
 
+  @GetMapping("/frame/{name}")
+  public ResponseEntity<byte[]> getFrame(@PathVariable("name") String imageName) throws Exception {
+    File img = cardService.getImage("frames", imageName);
+    return img != null ? RequestUtil.serializeImage(img) : ResponseEntity.notFound().build();
+  }
 
-  @PostMapping(value = "/backgroundupload")
-  public Boolean upload(@RequestPart(value = "file", required = false) MultipartFile file, HttpServletRequest request) throws IOException {
+  @PostMapping(value = "/backgroundUpload")
+  public Boolean backgroundUpload(@RequestPart(value = "file", required = false) MultipartFile file, HttpServletRequest request) throws IOException {
+    return doUpload(file, "backgrounds");
+  }
+
+  @PostMapping(value = "/frameUpload")
+  public Boolean frameUpload(@RequestPart(value = "file", required = false) MultipartFile file, HttpServletRequest request) throws IOException {
+    return doUpload(file, "frames");
+  }
+
+  private Boolean doUpload(MultipartFile file, String subfolder) throws IOException {
     try {
       if (file == null) {
         LOG.error("Upload request did not contain a file object.");
@@ -137,7 +159,7 @@ public class CardsResource {
       }
 
       String name = file.getOriginalFilename().replaceAll("/", "").replaceAll("\\\\", "");
-      File backgroundsFolder = new File(SystemService.RESOURCES, "backgrounds");
+      File backgroundsFolder = new File(SystemService.RESOURCES, subfolder);
       File out = new File(backgroundsFolder, name);
       return UploadUtil.upload(file, out);
     }

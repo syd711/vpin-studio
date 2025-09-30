@@ -1,6 +1,9 @@
 package de.mephisto.vpin.server.highscores.cards;
 
+import de.mephisto.vpin.restclient.JsonArg;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
+import de.mephisto.vpin.restclient.cards.CardTemplateType;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,5 +31,13 @@ public class CardTemplatesResource {
   @DeleteMapping(value = "/delete/{id}")
   public boolean deleteTemplate(@PathVariable("id") int id) throws Exception {
     return cardTemplatesService.delete(id);
+  }
+
+  @PostMapping(value = "/assign")
+  public Boolean assignTemplate(@JsonArg("gameId") int gameId, 
+                                @JsonArg("templateId") long templateId, 
+                                @JsonArg("switchToCardMode") boolean switchToCardMode, 
+                                @JsonArg("templateType") String templateType) throws Exception {
+    return cardTemplatesService.assignTemplate(gameId, templateId, switchToCardMode, CardTemplateType.valueOf(templateType));
   }
 }

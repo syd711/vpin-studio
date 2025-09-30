@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Slider?>
@@ -253,6 +254,32 @@
                   </children>
                 </VBox>
 
+                <VBox fx:id="frameImagePane" spacing="3.0">
+                    <children>
+                      <Label text="Frame Image:" textFill="WHITE">
+                          <font>
+                            <Font size="14.0" />
+                          </font>
+                      </Label>
+                      <HBox alignment="CENTER_LEFT" spacing="6.0">
+                          <children>
+                            <ComboBox fx:id="frameImageCombo" prefWidth="200.0">
+                                <HBox.margin>
+                                  <Insets top="3.0" />
+                                </HBox.margin>
+                            </ComboBox>
+                            <Button fx:id="frameUploadBtn" mnemonicParsing="false" onAction="#onUploadButton">
+                                <graphic>
+                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                                </graphic>
+                            </Button>
+                          </children>
+                      </HBox>
+                    </children>
+                    <VBox.margin>
+                      <Insets top="12.0" />
+                    </VBox.margin>
+                </VBox>
 
               </children>
               <padding>

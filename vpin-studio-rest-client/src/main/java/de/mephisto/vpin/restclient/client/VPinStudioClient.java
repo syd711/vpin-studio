@@ -15,6 +15,7 @@ import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.cards.HighscoreCardTemplatesServiceClient;
 import de.mephisto.vpin.restclient.cards.HighscoreCardsServiceClient;
+import de.mephisto.vpin.restclient.cards.CardTemplateType;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.competitions.CompetitionsServiceClient;
@@ -489,8 +490,8 @@ public class VPinStudioClient implements OverlayClient {
   }
 
   @Override
-  public CardTemplate getCardTemplate(GameRepresentation game) {
-    return getHighscoreCardTemplatesClient().getCardTemplateForGame(game);
+  public CardTemplate getHighscoreCardTemplate(GameRepresentation game) {
+    return getHighscoreCardTemplatesClient().getCardTemplateForGame(game, CardTemplateType.HIGSCORE_CARD);
   }
 
   @Override
@@ -499,6 +500,10 @@ public class VPinStudioClient implements OverlayClient {
       CardData cardData = highscoreCardsServiceClient.getHighscoreCardData(game, template);
       cardData.setWheel(highscoreCardsServiceClient.getHighscoreImage(game, template, "wheel"));
       cardData.setBackground(highscoreCardsServiceClient.getHighscoreImage(game, template, "background"));
+
+      cardData.setFallbackBackground(highscoreCardsServiceClient.getCardsBackgroundImage(template.getBackground()));
+      cardData.setFrame(highscoreCardsServiceClient.getCardsFrameImage(template.getFrame()));
+
       if (template.isRenderManufacturerLogo()) { 
         cardData.setManufacturerLogo(highscoreCardsServiceClient.getHighscoreImage(game, template, "manufacturerLogo"));
       }

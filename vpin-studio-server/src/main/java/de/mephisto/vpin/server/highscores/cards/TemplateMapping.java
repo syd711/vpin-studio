@@ -47,7 +47,9 @@ public class TemplateMapping {
 
   public CardTemplate getTemplate() {
     try {
-      return CardTemplate.fromJson(CardTemplate.class, templateJson);
+      CardTemplate template = CardTemplate.fromJson(CardTemplate.class, templateJson);
+      template.setId(id);
+      return template;
     } catch (Exception e) {
       throw new RuntimeException("cannot deserialize card template " + id, e);
     }
