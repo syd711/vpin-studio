@@ -107,10 +107,10 @@ jobs:
           echo "ls .. results"
           ls -al ..          
           #package in .app
-          jpackage --name VPin-Studio --input . --app-version ${{ steps.project.outputs.version }} --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Studio --resource-dir package/macos --type app-image  --icon VpinStudio.icns  --dest ../ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_x64/zulu-11.jre @../jpackage_log.txt
+          jpackage --name VPin-Studio --input . --app-version ${{ steps.project.outputs.version }} --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Studio --resource-dir package/macos --type app-image  --icon VpinStudio.icns  --dest ../app/ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_x64/zulu-11.jre @../jpackage_log.txt
           #add MacOS 26 icons
-          cp ./Assets.car ../VPin-Studio.app/Contents/Resources
-          sed -i '' $'s/<string>VPin-Studio.icns<\/string>/<string>VPin-Studio.icns<\/string>\\\n  <key>CFBundleIconName<\/key>\\\n  <string>Vpin-Studio<\/string>/g' '../VPin-Studio.app/Contents/Info.plist'
+          cp ./Assets.car ../app/VPin-Studio.app/Contents/Resources
+          sed -i '' $'s/<string>VPin-Studio.icns<\/string>/<string>VPin-Studio.icns<\/string>\\\n  <key>CFBundleIconName<\/key>\\\n  <string>Vpin-Studio<\/string>/g' '../app/VPin-Studio.app/Contents/Info.plist'
           #install create dmg
           brew install create-dmg
           create-dmg \
@@ -123,7 +123,7 @@ jobs:
           --app-drop-link 600 185 \
           --hdiutil-verbose \
           "VPin-Studio-${{ steps.project.outputs.version }}.dmg" \
-          "../"
+          "../app/"
           #rename/copy for artifact
           cp ./VPin-Studio-${{ steps.project.outputs.version }}.dmg ../VPin-Studio-Client-MacOS-x64.dmg
 
@@ -226,6 +226,7 @@ jobs:
           cp -R ./mac-package/VpinStudio.icns ./mac-build
           cp -R ./mac-package/Assets.car ./mac-build
           cp ./mac-package/jpackage_log.txt ./
+  
       
 
       # Step 7: Package the Java application as a macOS .app bundle
@@ -241,10 +242,10 @@ jobs:
           echo "ls .. results"
           ls -al ..          
           #Create .app
-          jpackage --name VPin-Studio --input . --app-version ${{ steps.project.outputs.version }} --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Studio --resource-dir package/macos --type app-image  --icon VpinStudio.icns  --dest ../ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64/zulu-11.jre @../jpackage_log.txt
+          jpackage --name VPin-Studio --input . --app-version ${{ steps.project.outputs.version }} --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Studio --resource-dir package/macos --type app-image  --icon VpinStudio.icns  --dest ../app/ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64/zulu-11.jre @../jpackage_log.txt
           #add MacOS 26 icons
-          cp ./Assets.car ../VPin-Studio.app/Contents/Resources
-          sed -i '' $'s/<string>VPin-Studio.icns<\/string>/<string>VPin-Studio.icns<\/string>\\\n  <key>CFBundleIconName<\/key>\\\n  <string>Vpin-Studio<\/string>/g' '../VPin-Studio.app/Contents/Info.plist'
+          cp ./Assets.car ../app/VPin-Studio.app/Contents/Resources
+          sed -i '' $'s/<string>VPin-Studio.icns<\/string>/<string>VPin-Studio.icns<\/string>\\\n  <key>CFBundleIconName<\/key>\\\n  <string>Vpin-Studio<\/string>/g' '../app/VPin-Studio.app/Contents/Info.plist'
           #install create dmg
           brew install create-dmg
           create-dmg \
@@ -257,7 +258,7 @@ jobs:
           --app-drop-link 600 185 \
           --hdiutil-verbose \
           "VPin-Studio-${{ steps.project.outputs.version }}.dmg" \
-          "../"
+          "../app/"
           #rename/copy for artifact
           cp ./VPin-Studio-${{ steps.project.outputs.version }}.dmg ../VPin-Studio-Client-MacOS-arm64.dmg
           
