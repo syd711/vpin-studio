@@ -223,6 +223,7 @@ jobs:
           cp ./vpin-studio-ui/target/vpin-studio-ui.jar ./mac-build
           cp -R ./mac-package/package ./mac-build
           cp -R ./mac-package/VpinStudio.icns ./mac-build
+          cp -R ./mac-package/Assets.car ./mac-build
           cp ./mac-package/jpackage_log.txt ./
       
 
