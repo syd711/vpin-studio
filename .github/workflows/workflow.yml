@@ -106,14 +106,10 @@ jobs:
           ls -al .
           echo "ls .. results"
           ls -al ..          
-          #echo "ls package results"
-          #ls -al package
-          #echo "ls package/macos results"
-          #ls -al package/macos
           #package in .app
           jpackage --name VPin-Studio --input . --app-version ${{ steps.project.outputs.version }} --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Studio --resource-dir package/macos --type app-image  --icon VpinStudio.icns  --dest ../ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_x64/zulu-11.jre @../jpackage_log.txt
           #add MacOS 26 icons
-          cp Assets.car ../VPin-Studio.app/Contents/Resources
+          cp /mac-build/Assets.car ../VPin-Studio.app/Contents/Resources
           sed -i '' $'s/<string>VPin-Studio.icns<\/string>/<string>VPin-Studio.icns<\/string>\\\n  <key>CFBundleIconName<\/key>\\\n  <string>Vpin-Studio<\/string>/g' '../VPin-Studio.app/Contents/Info.plist'
           #install create dmg
           brew install create-dmg
@@ -127,11 +123,7 @@ jobs:
           --app-drop-link 600 185 \
           "VPin-Studio-${{ steps.project.outputs.version }}.dmg" \
           "../"
-          #check to see if the jpackage worked.
-          #echo "ls -al ../VPin-Studio.app"
-          #ls -al ../VPin-Studio.app
-          #echo "ls -al ../VPin-Studio.app/Contents"
-          #ls -al ../VPin-Studio.app/Contents
+          #rename/copy for artifact
           cp ../VPin-Studio-${{ steps.project.outputs.version }}.dmg ../VPin-Studio-Client-MacOS-x64.dmg
 
       # Step 8: Zip the .app bundle for easy distribution
@@ -246,13 +238,10 @@ jobs:
           ls -al .
           echo "ls .. results"
           ls -al ..          
-          #echo "ls package results"
-          #ls -al package
-          #echo "ls package/macos results"
-          #ls -al package/macos
+          #Create .app
           jpackage --name VPin-Studio --input . --app-version ${{ steps.project.outputs.version }} --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Studio --resource-dir package/macos --type app-image  --icon VpinStudio.icns  --dest ../ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64/zulu-11.jre @../jpackage_log.txt
           #add MacOS 26 icons
-          cp Assets.car ../VPin-Studio.app/Contents/Resources
+          cp ./mac-build/Assets.car ../VPin-Studio.app/Contents/Resources
           sed -i '' $'s/<string>VPin-Studio.icns<\/string>/<string>VPin-Studio.icns<\/string>\\\n  <key>CFBundleIconName<\/key>\\\n  <string>Vpin-Studio<\/string>/g' '../VPin-Studio.app/Contents/Info.plist'
           #install create dmg
           brew install create-dmg
@@ -266,12 +255,7 @@ jobs:
           --app-drop-link 600 185 \
           "VPin-Studio-${{ steps.project.outputs.version }}.dmg" \
           "../"
-          #check to see if the jpackage worked.
-          #echo "ls -al ../VPin-Studio.app"
-          #ls -al ../VPin-Studio.app
-          #echo "ls -al ../VPin-Studio.app/Contents"
-          #ls -al ../VPin-Studio.app/Contents
-          #rename
+          #rename/copy for artifact
           cp ../VPin-Studio-${{ steps.project.outputs.version }}.dmg ../VPin-Studio-Client-MacOS-arm64.dmg
           
       # Step 8: Zip the .app bundle for easy distribution
