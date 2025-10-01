@@ -125,7 +125,7 @@ jobs:
           "VPin-Studio-${{ steps.project.outputs.version }}.dmg" \
           "../"
           #rename/copy for artifact
-          cp ../VPin-Studio-${{ steps.project.outputs.version }}.dmg ../VPin-Studio-Client-MacOS-x64.dmg
+          cp ./VPin-Studio-${{ steps.project.outputs.version }}.dmg ../VPin-Studio-Client-MacOS-x64.dmg
 
       # Step 8: Zip the .app bundle for easy distribution
       #Update for correct location
@@ -259,7 +259,7 @@ jobs:
           "VPin-Studio-${{ steps.project.outputs.version }}.dmg" \
           "../"
           #rename/copy for artifact
-          cp ../VPin-Studio-${{ steps.project.outputs.version }}.dmg ../VPin-Studio-Client-MacOS-arm64.dmg
+          cp ./VPin-Studio-${{ steps.project.outputs.version }}.dmg ../VPin-Studio-Client-MacOS-arm64.dmg
           
       # Step 8: Zip the .app bundle for easy distribution
       #Skipping this in favor of dmg distribution
