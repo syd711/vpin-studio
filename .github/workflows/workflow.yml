@@ -109,8 +109,9 @@ jobs:
           #package in .app
           jpackage --name VPin-Studio --input . --app-version ${{ steps.project.outputs.version }} --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Studio --resource-dir package/macos --type app-image  --icon VpinStudio.icns  --dest ../app/ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_x64/zulu-11.jre @../jpackage_log.txt
           #add MacOS 26 icons
-          cp ./Assets.car ../app/VPin-Studio.app/Contents/Resources
-          sed -i '' $'s/<string>VPin-Studio.icns<\/string>/<string>VPin-Studio.icns<\/string>\\\n  <key>CFBundleIconName<\/key>\\\n  <string>Vpin-Studio<\/string>/g' '../app/VPin-Studio.app/Contents/Info.plist'
+          #Commenting out to test dmg creation without app changes
+          #cp ./Assets.car ../app/VPin-Studio.app/Contents/Resources
+          #sed -i '' $'s/<string>VPin-Studio.icns<\/string>/<string>VPin-Studio.icns<\/string>\\\n  <key>CFBundleIconName<\/key>\\\n  <string>Vpin-Studio<\/string>/g' '../app/VPin-Studio.app/Contents/Info.plist'
           #install create dmg
           brew install create-dmg
           create-dmg \
@@ -244,8 +245,9 @@ jobs:
           #Create .app
           jpackage --name VPin-Studio --input . --app-version ${{ steps.project.outputs.version }} --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Studio --resource-dir package/macos --type app-image  --icon VpinStudio.icns  --dest ../app/ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64/zulu-11.jre @../jpackage_log.txt
           #add MacOS 26 icons
-          cp ./Assets.car ../app/VPin-Studio.app/Contents/Resources
-          sed -i '' $'s/<string>VPin-Studio.icns<\/string>/<string>VPin-Studio.icns<\/string>\\\n  <key>CFBundleIconName<\/key>\\\n  <string>Vpin-Studio<\/string>/g' '../app/VPin-Studio.app/Contents/Info.plist'
+          #Commenting out to test dmg creation without app changes
+          #cp ./Assets.car ../app/VPin-Studio.app/Contents/Resources
+          #sed -i '' $'s/<string>VPin-Studio.icns<\/string>/<string>VPin-Studio.icns<\/string>\\\n  <key>CFBundleIconName<\/key>\\\n  <string>Vpin-Studio<\/string>/g' '../app/VPin-Studio.app/Contents/Info.plist'
           #install create dmg
           brew install create-dmg
           create-dmg \
