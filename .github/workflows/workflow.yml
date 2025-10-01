@@ -121,6 +121,7 @@ jobs:
           --icon-size 100 \
           --icon "VPin-Studio.app" 200 190 \
           --app-drop-link 600 185 \
+          --hdiutil-verbose \        
           "VPin-Studio-${{ steps.project.outputs.version }}.dmg" \
           "../"
           #rename/copy for artifact
@@ -254,6 +255,7 @@ jobs:
           --icon-size 100 \
           --icon "VPin-Studio.app" 200 190 \
           --app-drop-link 600 185 \
+          --hdiutil-verbose \
           "VPin-Studio-${{ steps.project.outputs.version }}.dmg" \
           "../"
           #rename/copy for artifact
