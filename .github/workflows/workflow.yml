@@ -95,8 +95,6 @@ jobs:
       
 
       # Step 7: Package the Java application as a macOS .app bundle
-      #The jpackage config needs to be updated to properly reference the locations of the files.
-      #jpackage @jpackage_config.txt
       - name: Package as macOSx64 App
         working-directory: ./mac-build
         run: |
@@ -109,9 +107,8 @@ jobs:
           #package in .app
           jpackage --name VPin-Studio --input . --app-version ${{ steps.project.outputs.version }} --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Studio --resource-dir package/macos --type app-image  --icon VpinStudio.icns  --dest ../app/ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_x64/zulu-11.jre @../jpackage_log.txt
           #add MacOS 26 icons
-          #Commenting out to test dmg creation without app changes
-          #cp ./Assets.car ../app/VPin-Studio.app/Contents/Resources
-          #sed -i '' $'s/<string>VPin-Studio.icns<\/string>/<string>VPin-Studio.icns<\/string>\\\n  <key>CFBundleIconName<\/key>\\\n  <string>Vpin-Studio<\/string>/g' '../app/VPin-Studio.app/Contents/Info.plist'
+          cp ./Assets.car ../app/VPin-Studio.app/Contents/Resources
+          sed -i '' $'s/<string>VPin-Studio.icns<\/string>/<string>VPin-Studio.icns<\/string>\\\n  <key>CFBundleIconName<\/key>\\\n  <string>Vpin-Studio<\/string>/g' '../app/VPin-Studio.app/Contents/Info.plist'
           #install create dmg
           brew install create-dmg
           create-dmg \
@@ -128,16 +125,8 @@ jobs:
           #rename/copy for artifact
           cp ./VPin-Studio-${{ steps.project.outputs.version }}.dmg ../VPin-Studio-Client-MacOS-x64.dmg
 
-      # Step 8: Zip the .app bundle for easy distribution
-      #Update for correct location
-      #- name: Zip macOSx64 .app Bundle
-     #   working-directory: ./
-       # run: |
-       #   echo "ls ."
-       #   ls -al .  
-        #  zip -r VPin-Studio-Client-MacOS-x64.zip VPin-Studio.app
 
-      # Step 9: Upload the .app zip file as an artifact
+      # Step 8: Upload the .app zip file as an artifact
       #Update for correct location
       - name: Upload macOSx64 Build Artifact
         uses: actions/upload-artifact@v4
@@ -231,8 +220,6 @@ jobs:
       
 
       # Step 7: Package the Java application as a macOS .app bundle
-      #The jpackage config needs to be updated to properly reference the locations of the files.
-      #jpackage @jpackage_config.txt
       - name: Package as macOS App
         working-directory: ./mac-build
         run: |
@@ -246,8 +233,8 @@ jobs:
           jpackage --name VPin-Studio --input . --app-version ${{ steps.project.outputs.version }} --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Studio --resource-dir package/macos --type app-image  --icon VpinStudio.icns  --dest ../app/ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64/zulu-11.jre @../jpackage_log.txt
           #add MacOS 26 icons
           #Commenting out to test dmg creation without app changes
-          #cp ./Assets.car ../app/VPin-Studio.app/Contents/Resources
-          #sed -i '' $'s/<string>VPin-Studio.icns<\/string>/<string>VPin-Studio.icns<\/string>\\\n  <key>CFBundleIconName<\/key>\\\n  <string>Vpin-Studio<\/string>/g' '../app/VPin-Studio.app/Contents/Info.plist'
+          cp ./Assets.car ../app/VPin-Studio.app/Contents/Resources
+          sed -i '' $'s/<string>VPin-Studio.icns<\/string>/<string>VPin-Studio.icns<\/string>\\\n  <key>CFBundleIconName<\/key>\\\n  <string>Vpin-Studio<\/string>/g' '../app/VPin-Studio.app/Contents/Info.plist'
           #install create dmg
           brew install create-dmg
           create-dmg \
@@ -263,18 +250,8 @@ jobs:
           "../app/"
           #rename/copy for artifact
           cp ./VPin-Studio-${{ steps.project.outputs.version }}.dmg ../VPin-Studio-Client-MacOS-arm64.dmg
-          
-      # Step 8: Zip the .app bundle for easy distribution
-      #Skipping this in favor of dmg distribution
-      #Update for correct location
-      #- name: Zip macOSam64 .app Bundle
-       # working-directory: ./
-      #  run: |
-      #    echo "ls ."
-       #   ls -al .  
-      #    zip -r VPin-Studio-Client-MacOS-arm64.zip VPin-Studio.app
 
-      # Step 9: Upload the .app zip file as an artifact
+      # Step 8: Upload the .app zip file as an artifact
       #Update for correct location
       - name: Upload macOSarm64 Build Artifact
         uses: actions/upload-artifact@v4
