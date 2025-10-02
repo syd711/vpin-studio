@@ -1,3 +1,12 @@
+## Release Notes 4.3.4
+
+## Changes
+
+- Fixed VPin Mania view that was broken due to previous icon changes.
+- 
+
+---
+
 ## Release Notes 4.3.3
 
 ## Changes
