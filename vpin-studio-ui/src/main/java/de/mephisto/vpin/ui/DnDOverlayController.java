@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -15,6 +16,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
@@ -64,11 +66,14 @@ public class DnDOverlayController implements Initializable {
 
   public void setMessage(String message) {
     if (message == null) {
-      ((VBox) messageLabel.getParent().getParent()).getChildren().clear();;
-    } else {
+      ((VBox) messageLabel.getParent().getParent()).getChildren().clear();
+      ;
+    }
+    else {
       messageLabel.setText(message);
     }
   }
+
   public void setMessageFontsize(int i) {
     Font font = messageLabel.getFont();
     font = Font.font(font.getFamily(), i);
@@ -80,7 +85,7 @@ public class DnDOverlayController implements Initializable {
     root.setPrefWidth(width);
     root.setPrefHeight(height);
 
-    if(width < 400) {
+    if (width < 400) {
       dropZone.getStyleClass().clear();
       dropZone.getStyleClass().add("dnd-dashed-border-small");
     }
@@ -133,8 +138,10 @@ public class DnDOverlayController implements Initializable {
             double width = ((Pane) forDim).getWidth();
             double height = ((Pane) forDim).getHeight();
             controller.setViewParams(width, height);
-            controller.setGame(null); 
+            controller.setGame(null);
+            System.out.println("added");
             loaderStack.getChildren().add(dndLoadingOverlay);
+            loaderStack.requestLayout();
           }
         }
       };
@@ -153,6 +160,9 @@ public class DnDOverlayController implements Initializable {
           if (event.getDragboard().hasFiles() && (!singleSelectionOnly || event.getDragboard().getFiles().size() == 1)) {
             event.acceptTransferModes(TransferMode.COPY);
           }
+          else if (event.getDragboard().hasContent(DataFormat.URL)) {
+            event.acceptTransferModes(TransferMode.COPY);
+          }
           else {
             event.consume();
           }
@@ -163,7 +173,9 @@ public class DnDOverlayController implements Initializable {
         @Override
         public void handle(DragEvent event) {
           node.setVisible(true);
+          System.out.println("removed");
           loaderStack.getChildren().remove(controller.dndLoadingOverlay);
+          loaderStack.requestLayout();
         }
       });
       return controller;

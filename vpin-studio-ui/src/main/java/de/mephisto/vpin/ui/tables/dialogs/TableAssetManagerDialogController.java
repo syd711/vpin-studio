@@ -52,7 +52,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.DataFormat;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -504,7 +507,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       String name = selectedItem.getName();
       String baseName = FilenameUtils.getBaseName(name);
       String uniqueAssetName = null; //FileUtils.baseUniqueAsset(name);
-      if (StringUtils.equals(baseName, uniqueAssetName)) {}
+      if (StringUtils.equals(baseName, uniqueAssetName)) {
+      }
 
       Optional<ButtonType> buttonType = WidgetFactory.showConfirmation(localStage, "Set As Default Asset",
           "Do you want to set this file as your default asset ?",
@@ -513,21 +517,21 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         try {
           boolean status = client.getGameMediaService().setDefaultMedia(game.getId(), screen, selectedItem.getName());
           if (!status) {
-            WidgetFactory.showAlert(localStage, "Warning", 
-                "Coundl't set default asset for game "+ game.getGameName() + "\".", 
+            WidgetFactory.showAlert(localStage, "Warning",
+                "Coundl't set default asset for game " + game.getGameName() + "\".",
                 "Please check the asset files as they may be in an inconsistent state.");
 
           }
           EventManager.getInstance().notifyTableChange(game.getId(), null, game.getGameName());
           onReload();
         }
-        catch(Exception e) {
-            WidgetFactory.showAlert(localStage, "Error", 
-                "An error occurred while setting default asset for game "+ game.getGameName() + "\".",
-                e.getMessage());
+        catch (Exception e) {
+          WidgetFactory.showAlert(localStage, "Error",
+              "An error occurred while setting default asset for game " + game.getGameName() + "\".",
+              e.getMessage());
         }
       }
-    }    
+    }
   }
 
 
@@ -851,6 +855,22 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     serverAssetsList.setPlaceholder(new Label("          Press the search button\nto find assets for this screen and table."));
     assetList.setPlaceholder(new Label("No assets found for this screen and table."));
     assetList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+    assetList.setOnDragDetected(event -> {
+      FrontendMediaItemRepresentation selectedItem = assetList.getSelectionModel().getSelectedItem();
+      if (selectedItem != null) {
+        Dragboard db = assetList.startDragAndDrop(TransferMode.COPY);
+        Map<DataFormat, Object> data = new HashMap<>();
+        data.put(DataFormat.URL, selectedItem);
+        db.setContent(data);
+        event.consume();
+      }
+    });
+    assetList.setOnDragOver(event -> {
+      if (event.getGestureSource() != assetList && event.getDragboard().hasContent(DataFormat.URL)) {
+        event.acceptTransferModes(TransferMode.COPY);
+      }
+      event.consume();
+    });
 
 
     if (!isEmbeddedMode()) {
