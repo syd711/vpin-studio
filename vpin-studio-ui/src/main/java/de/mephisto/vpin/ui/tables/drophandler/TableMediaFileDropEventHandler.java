@@ -67,7 +67,7 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
       return;
     }
 
-    if (event.getDragboard().hasContent(DataFormat.URL)) {
+    if (event.getDragboard().hasContent(DataFormat.URL) && !event.getDragboard().hasContent(DataFormat.FILES)) {
       dropAsset(event);
     }
     else if (!files.isEmpty()) {
