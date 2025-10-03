@@ -401,9 +401,6 @@ public class VpaService implements InitializingBean {
 
       byte[] bytes = ImageUtil.toBytes(resizedImage);
       packageInfo.setThumbnail(Base64.getEncoder().encodeToString(bytes));
-
-      byte[] original = Files.readAllBytes(originalFile.toPath());
-      packageInfo.setIcon(Base64.getEncoder().encodeToString(original));
     }
   }
 

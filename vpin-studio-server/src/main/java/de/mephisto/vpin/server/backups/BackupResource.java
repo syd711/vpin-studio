@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.backups;
 
 import de.mephisto.vpin.restclient.backups.BackupDescriptorRepresentation;
+import de.mephisto.vpin.restclient.backups.BackupPackageInfo;
 import de.mephisto.vpin.restclient.backups.BackupSourceRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.ArchiveRestoreDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.BackupExportDescriptor;
@@ -94,6 +95,7 @@ public class BackupResource {
   @GetMapping("/invalidate")
   public boolean invalidateCache() {
     backupService.invalidateCache();
+    getBackups();
     return true;
   }
 
@@ -175,6 +177,8 @@ public class BackupResource {
     representation.setCreatedAt(descriptor.getCreatedAt());
     representation.setSize(descriptor.getSize());
     representation.setArchiveType(FilenameUtils.getExtension(descriptor.getFilename()));
+
+    BackupPackageInfo packageInfo = descriptor.getPackageInfo();
     representation.setPackageInfo(descriptor.getPackageInfo());
     representation.setSource(source);
     return representation;

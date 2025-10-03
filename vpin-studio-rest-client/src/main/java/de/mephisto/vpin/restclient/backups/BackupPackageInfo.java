@@ -23,7 +23,6 @@ public class BackupPackageInfo {
   private BackupFileInfo vpx;
   private BackupFileInfo mameData;
 
-  private String icon;
   private String thumbnail;
 
   public BackupFileInfo getCfg() {
@@ -160,14 +159,6 @@ public class BackupPackageInfo {
 
   public void setMameData(BackupFileInfo mameData) {
     this.mameData = mameData;
-  }
-
-  public String getIcon() {
-    return icon;
-  }
-
-  public void setIcon(String icon) {
-    this.icon = icon;
   }
 
   public String getThumbnail() {
