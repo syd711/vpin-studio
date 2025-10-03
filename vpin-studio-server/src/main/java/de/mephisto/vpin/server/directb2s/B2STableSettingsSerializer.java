@@ -81,6 +81,9 @@ public class B2STableSettingsSerializer {
 
       Node rootNodeByRom = null;
       if (rom != null) {
+        // one table (Guardians of Galaxy Trilogy) has a rom name with a space...
+        rom = StringUtils.deleteWhitespace(rom);
+
         rootNodeByRom = findChild(root, rom);
         if (rootNodeByRom == null) {
           rootNodeByRom = doc.createElement(rom);

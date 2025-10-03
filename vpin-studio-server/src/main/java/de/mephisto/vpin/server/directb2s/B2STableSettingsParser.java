@@ -162,13 +162,19 @@ public class B2STableSettingsParser extends DefaultHandler {
   public DirectB2ServerSettings getServerSettings() {
     return serverSettings;
   }
+
   public Map<String, DirectB2STableSettings> getTableSettings() {
     return tableSettings;
   }
 
   @Nullable
   public DirectB2STableSettings getEntry(String rom) {
-    return rom!=null? tableSettings.get(rom): null;
+    if (rom!=null) {
+      // one table has space in rom, but tagnames cannot have spaces
+      rom = StringUtils.deleteWhitespace(rom);
+      return tableSettings.get(rom);
+    }
+    return null;
   }
 
   //---------------------------------------

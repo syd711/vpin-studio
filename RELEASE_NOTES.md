@@ -1,3 +1,11 @@
+## Release Notes 4.3.4
+
+## Changes
+
+- fix discord icon preventing opening of the vpin mania registration dialog
+- fix spaces in tagnames of b2STableSettings.xml
+
+
 ## Release Notes 4.3.3
 
 ## Changes
