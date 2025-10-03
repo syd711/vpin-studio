@@ -159,7 +159,7 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
     templateEditorPane.setVisible(game != null);
     maniaBtn.setDisable(tableView.getSelectionModel().getSelectedItems().size() != 1 || game == null || StringUtils.isEmpty(game.getExtTableId()));
 
-    List<String> breadcrumb = new ArrayList<>(Arrays.asList("Highscore Cards"));
+    List<String> breadcrumb = new ArrayList<>(Arrays.asList("Designer", "Highscore Cards"));
     if (game != null) {
       breadcrumb.add(game.getGameDisplayName());
     }
@@ -171,7 +171,7 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
 
   @Override
   public void onViewActivated(NavigationOptions options) {
-    NavigationController.setBreadCrumb(Arrays.asList("Highscore Cards"));
+    NavigationController.setBreadCrumb(Arrays.asList("Designer", "Highscore Cards"));
 
     if (options != null && options.getGameId() > 0) {
       GameRepresentationModel selectedItem = tableView.getItems().stream().filter(g -> g.getGameId() == options.getGameId()).findFirst().orElse(null);
@@ -196,7 +196,7 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
     iconMania.setFitHeight(18);
     maniaBtn.setGraphic(iconMania);
 
-    NavigationController.setBreadCrumb(Arrays.asList("Highscore Cards"));
+    NavigationController.setBreadCrumb(Arrays.asList("Designer", "Highscore Cards"));
 
     try {
       FXMLLoader loader = new FXMLLoader(TemplateEditorController.class.getResource("template-editor.fxml"));

@@ -59,13 +59,8 @@
                   </VBox>
                   <VBox fx:id="cardsBtn" alignment="CENTER" onMousePressed="#onHighscoreCardsClick" styleClass="navigation-button">
                       <children>
-                          <FontIcon iconColor="WHITE" iconLiteral="mdi2f-format-list-numbered" iconSize="28" />
-                          <Label text="Highscore" textFill="WHITE" wrapText="true">
-                              <font>
-                                  <Font size="14.0" />
-                              </font>
-                          </Label>
-                          <Label layoutX="30.0" layoutY="34.0" text="Cards" textFill="WHITE">
+                          <FontIcon iconColor="WHITE" iconLiteral="mdi2p-palette-outline" iconSize="28" />
+                          <Label text="Designer" textFill="WHITE" wrapText="true">
                               <font>
                                   <Font size="14.0" />
                               </font>

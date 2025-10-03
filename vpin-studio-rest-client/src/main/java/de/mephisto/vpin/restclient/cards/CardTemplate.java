@@ -1180,7 +1180,7 @@ public class CardTemplate extends JsonSettings {
     marginRight = 80;
     frame = "wheel-tarcissio";
 
-    tableFontName = "Comic Sans MS";
+    tableFontName = "Arial";
     tableFontSize = 100;
     tableUseVpsName = true;
     tableRenderManufacturer = false;
