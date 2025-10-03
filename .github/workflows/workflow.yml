@@ -239,7 +239,7 @@ jobs:
           echo "Update info.plist"
           sed -i '' $'s/<string>VPin-Studio.icns<\/string>/<string>VPin-Studio.icns<\/string>\\\n  <key>CFBundleIconName<\/key>\\\n  <string>Vpin-Studio<\/string>/g' '../VPin-Studio.app/Contents/Info.plist'            
           echo "repackage as DMG"
-          jpackage --name VPin-Studio --app-version ${{ steps.project.outputs.version }} --app-image ../VPin-Studio.app --type dmg --icon mac-build/VpinStudio.icns -dest ../ @../jpackage_log.txt
+          jpackage --name VPin-Studio --app-version ${{ steps.project.outputs.version }} --app-image ../VPin-Studio.app --type dmg --icon mac-build/VpinStudio.icns --dest ../ @../jpackage_log.txt
           #rename
           cp ../VPin-Studio-${{ steps.project.outputs.version }}.dmg ../VPin-Studio-Client-MacOS-arm64.dmg
           
