@@ -232,16 +232,14 @@ jobs:
           ls -al .
           echo "ls .. results"
           ls -al ..        
-          #package as app
+          echo "package as app"
           jpackage --name VPin-Studio --input . --app-version ${{ steps.project.outputs.version }} --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Studio  --type app-image --icon VpinStudio.icns  --dest ../ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64/zulu-11.jre @../jpackage_log.txt
-          #copy in new icons
+          echo "copy in new icons"
           cp -R  'Assets.car' '../VPin-Studio.app/Contents/Resources'
-          #Update info.plist
+          echo "Update info.plist"
           sed -i '' $'s/<string>VPin-Studio.icns<\/string>/<string>VPin-Studio.icns<\/string>\\\n  <key>CFBundleIconName<\/key>\\\n  <string>Vpin-Studio<\/string>/g' '../VPin-Studio.app/Contents/Info.plist'            
-          cd ..
-          ls VPin-Studio*
-          #repackage as DMG
-          jpackage --name VPin-Studio --app-image VPin-Studio.app --app-version ${{ steps.project.outputs.version }} --type dmg --icon mac-build/VpinStudio.icns @../jpackage_log.txt
+          echo "repackage as DMG"
+          jpackage --name VPin-Studio --app-version ${{ steps.project.outputs.version }} --app-image ../VPin-Studio.app --type dmg --icon mac-build/VpinStudio.icns -dest ../ @../jpackage_log.txt
           #rename
           cp ../VPin-Studio-${{ steps.project.outputs.version }}.dmg ../VPin-Studio-Client-MacOS-arm64.dmg
           
