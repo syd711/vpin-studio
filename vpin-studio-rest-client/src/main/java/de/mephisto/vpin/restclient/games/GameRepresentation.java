@@ -2,6 +2,7 @@ package de.mephisto.vpin.restclient.games;
 
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
+import de.mephisto.vpin.restclient.cards.CardTemplateType;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.validation.ValidationState;
@@ -9,6 +10,8 @@ import de.mephisto.vpin.restclient.validation.ValidationState;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * {
@@ -59,7 +62,6 @@ public class GameRepresentation {
   private boolean selected;
   private boolean romRequired;
   private String assets;
-  private boolean defaultBackgroundAvailable;
   private AltColorTypes altColorType;
   private String extTableId;
   private String extTableVersionId;
@@ -67,7 +69,11 @@ public class GameRepresentation {
   private String launcher;
   private int emulatorId;
   private String pupPackName;
-  private Long templateId;
+
+  private Long highscoreCardTemplateId;
+  private Long instructionCardTemplateId;
+  private Long wheelTemplateId;
+
   private boolean vpxGame;
   private boolean fpGame;
   private boolean fxGame;
@@ -255,12 +261,41 @@ public class GameRepresentation {
     this.pupPackName = pupPackName;
   }
 
-  public Long getTemplateId() {
-    return templateId;
+  @JsonIgnore
+  public Long getTemplateId(CardTemplateType templateType) {
+    switch (templateType) {
+      case HIGSCORE_CARD:
+        return getHighscoreCardTemplateId();
+      case INSTRUCTIONS_CARD:
+        return getInstructionCardTemplateId();
+      case WHEEL:
+        return getWheelTemplateId();
+    }
+    return null;
   }
 
-  public void setTemplateId(Long templateId) {
-    this.templateId = templateId;
+  public Long getHighscoreCardTemplateId() {
+    return highscoreCardTemplateId;
+  }
+
+  public void setHighscoreCardTemplateId(Long highscoreCardTemplateId) {
+    this.highscoreCardTemplateId = highscoreCardTemplateId;
+  }
+
+  public Long getInstructionCardTemplateId() {
+    return instructionCardTemplateId;
+  }
+
+  public void setInstructionCardTemplateId(Long instructionCardTemplateId) {
+    this.instructionCardTemplateId = instructionCardTemplateId;
+  }
+
+  public Long getWheelTemplateId() {
+    return wheelTemplateId;
+  }
+
+  public void setWheelTemplateId(Long wheelTemplateId) {
+    this.wheelTemplateId = wheelTemplateId;
   }
 
   public Date getDateAdded() {

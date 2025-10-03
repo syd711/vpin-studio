@@ -53,12 +53,14 @@ import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 
@@ -982,10 +984,10 @@ public class WidgetFactory {
   }
 
   public static class HighscoreBackgroundImageListCell extends ListCell<String> {
-    private final VPinStudioClient client;
+    private final Function<String, byte[]> provider;
 
-    public HighscoreBackgroundImageListCell(VPinStudioClient client) {
-      this.client = client;
+    public HighscoreBackgroundImageListCell(Function<String, byte[]> provider) {
+      this.provider = provider;
     }
 
     protected void updateItem(String item, boolean empty) {
@@ -993,7 +995,7 @@ public class WidgetFactory {
       setGraphic(null);
       setText(null);
       if (item != null) {
-        Image image = new Image(client.getHighscoreCardsService().getHighscoreBackgroundImage(item));
+        Image image = new Image(new ByteArrayInputStream(provider.apply(item)));
         ImageView imageView = new ImageView(image);
         imageView.setFitWidth(80);
 

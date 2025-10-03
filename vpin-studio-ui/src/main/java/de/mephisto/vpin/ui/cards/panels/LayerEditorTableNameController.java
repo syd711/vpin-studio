@@ -81,6 +81,9 @@ public class LayerEditorTableNameController extends LayerEditorBaseController {
       tableRenderManufacturerBox.setDisable(!t1);
       tableRenderYearBox.setDisable(!t1);
     });
+    tableRenderManufacturerBox.setDisable(true);
+    tableRenderYearBox.setDisable(true);
+
     templateBeanBinder.bindCheckbox(tableRenderManufacturerCheckbox, "tableRenderManufacturer");
     templateBeanBinder.bindCheckbox(tableRenderYearCheckbox, "tableRenderYear");
 

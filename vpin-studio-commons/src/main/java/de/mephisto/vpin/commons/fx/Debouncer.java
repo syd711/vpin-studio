@@ -40,4 +40,11 @@ public class Debouncer {
   public void shutdown() {
     scheduler.shutdownNow();
   }
+
+  public void cancel(final String key) {
+    final Future<?> job = delayedMap.remove(key);
+    if (job != null) {
+      job.cancel(true);
+    }
+  }
 }

@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.cards.panels;
 
-import de.mephisto.vpin.commons.fx.cards.CardLayerBackground;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.function.Function;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
@@ -79,26 +80,31 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
   private Optional<GameRepresentation> game = Optional.empty();
 
   private void refreshRawPreview(GameRepresentation game) {
-    try {
-      resolutionLabel.setText("");
-      openDefaultPictureBtn.setVisible(false);
-      rawDirectB2SImage.setImage(null);
+    resolutionLabel.setText("");
+    openDefaultPictureBtn.setVisible(false);
+    rawDirectB2SImage.setImage(null);
 
-      if (game != null) {
-        openDefaultPictureBtn.setTooltip(new Tooltip("Open directb2s image"));
-        InputStream input = client.getBackglassServiceClient().getDefaultPicture(game);
-        Image image = new Image(input);
-        rawDirectB2SImage.setImage(image);
-        input.close();
-
-        if (image.getWidth() > 300) {
-          openDefaultPictureBtn.setVisible(true);
-          resolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
-        }
-      }
-    }
-    catch (IOException e) {
-      LOG.error("Failed to load raw b2s: " + e.getMessage(), e);
+    if (game != null) {
+      JFXFuture
+        .supplyAsync(() -> {
+          try (InputStream input = client.getBackglassServiceClient().getDefaultPicture(game)) {
+            return new Image(input);
+          }
+          catch (IOException e) {
+            LOG.error("Failed to load raw b2s: " + e.getMessage(), e);
+            return null;
+          }
+        })
+        .thenAcceptLater(image -> {
+          openDefaultPictureBtn.setTooltip(new Tooltip("Open directb2s image"));
+          if (image != null) {
+            rawDirectB2SImage.setImage(image);
+            if (image.getWidth() > 300) {
+              openDefaultPictureBtn.setVisible(true);
+              resolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
+            }
+          }
+        });
     }
   }
 
@@ -108,8 +114,6 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
       boolean uploaded = TableDialogs.openDefaultBackgroundUploadDialog(game.get());
       if (uploaded) {
         refreshRawPreview(this.game.get());
-        // refresh card preview
-        this.templateEditorController.getLayer(CardLayerBackground.class).forceRefresh();
         EventManager.getInstance().notifyTableChange(game.get().getId(), null);
       }
     }
@@ -130,8 +134,6 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
           "This will re-generate the existing default background.", null, "Generate Background");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         Studio.client.getAssetService().deleteGameAssets(game.getId());
-        // refresh card preview
-        this.templateEditorController.getLayer(CardLayerBackground.class).forceRefresh();
         EventManager.getInstance().notifyTableChange(game.getId(), null);
       }
     }
@@ -148,7 +150,7 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
     File file = fileChooser.showOpenDialog(stage);
     if (file != null && file.exists()) {
       try {
-        boolean result = client.getHighscoreCardsService().uploadHighscoreBackgroundImage(file, null);
+        boolean result = client.getHighscoreCardsService().uploadCardsBackgroundImage(file, null);
         if (result) {
           String baseName = FilenameUtils.getBaseName(file.getName());
           if (!imageList.contains(baseName)) {
@@ -219,10 +221,12 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
     });
 
     // default background
-    imageList = FXCollections.observableList(new ArrayList<>(client.getHighscoreCardsService().getHighscoreBackgroundImages()));
+    imageList = FXCollections.observableList(new ArrayList<>(client.getHighscoreCardsService().getCardsBackgroundImages()));
     backgroundImageCombo.setItems(imageList);
-    backgroundImageCombo.setCellFactory(c -> new WidgetFactory.HighscoreBackgroundImageListCell(client));
-    backgroundImageCombo.setButtonCell(new WidgetFactory.HighscoreBackgroundImageListCell(client));
+
+    Function<String, byte[]> backgroundProvider = item -> client.getHighscoreCardsService().getCardsBackgroundImage(item);
+    backgroundImageCombo.setCellFactory(c -> new WidgetFactory.HighscoreBackgroundImageListCell(backgroundProvider));
+    backgroundImageCombo.setButtonCell(new WidgetFactory.HighscoreBackgroundImageListCell(backgroundProvider));
 
     templateBeanBinder.bindColorPicker(backgroundColorSelector, "backgroundColor");
 

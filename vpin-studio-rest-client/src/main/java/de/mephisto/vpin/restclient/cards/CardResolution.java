@@ -1,76 +1,41 @@
 package de.mephisto.vpin.restclient.cards;
 
-
 public enum CardResolution {
-  qHD, HDReady, HD;
+  qHD(960, 540), 
+  HDReady(1280, 720), 
+  HD(1920, 1080), 
+  WHEEL(1000, 1000);
+
+
+  private CardResolution(int width, int height) {
+    this.width = width;
+    this.height = height;
+  }
+
+  private int width;
+  private int height;
 
 
   public static CardResolution valueOfString(String newValue) {
-    switch (newValue) {
-      case "960 x 540": {
-        return qHD;
-      }
-      case "1280 x 720": {
-        return HDReady;
-      }
-      case "1920 x 1080": {
-        return HD;
-      }
-      default: {
-        return HDReady;
+    for (CardResolution res : CardResolution.values()) {
+      if (newValue.equals(res.toString())) {
+        return res;
       }
     }
+    // not found
+    return HDReady;
   }
 
   @Override
   public String toString() {
-    switch (this) {
-      case qHD: {
-        return "960 x 540";
-      }
-      case HDReady: {
-        return "1280 x 720";
-      }
-      case HD: {
-        return "1920 x 1080";
-      }
-      default: {
-        return "1280 x 720";
-      }
-    }
+    return width + " x " + height;
   }
 
   public int toWidth() {
-    switch (this) {
-      case qHD: {
-        return 960;
-      }
-      case HDReady: {
-        return 1280;
-      }
-      case HD: {
-        return 1920;
-      }
-      default: {
-        return 1280;
-      }
-    }
+    return width;
   }
 
   public int toHeight() {
-    switch (this) {
-      case qHD: {
-        return 540;
-      }
-      case HDReady: {
-        return 720;
-      }
-      case HD: {
-        return 1080;
-      }
-      default: {
-        return 720;
-      }
-    }
+    return height;
   }
 }

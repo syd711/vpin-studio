@@ -10,6 +10,8 @@
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
@@ -19,6 +21,20 @@
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane prefHeight="900.0" prefWidth="1400.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.panels.TemplateEditorController">
+    <top>
+
+        <TabPane fx:id="tabPane">
+            <tabs>
+                <Tab fx:id="highscoreCardsTab" closable="false" text="Highscore Cards" />
+                <!--Tab fx:id="instructionCardsTab" closable="false" text="Instruction Cards" /-->
+                <Tab fx:id="wheelsTab" closable="false" text="Wheels" />
+            </tabs>
+        </TabPane>
+
+    </top>
+    <center>
+        <BorderPane>
+
     <right>
         <VBox styleClass="subpanel" BorderPane.alignment="CENTER">
             <children>
@@ -217,6 +233,9 @@
                     </children>
                 </HBox>
             </bottom>
+        </BorderPane>
+    </center>
+
         </BorderPane>
     </center>
 </BorderPane>

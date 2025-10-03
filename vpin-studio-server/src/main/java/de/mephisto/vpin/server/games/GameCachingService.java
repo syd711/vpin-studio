@@ -34,7 +34,6 @@ import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.roms.RomService;
 import de.mephisto.vpin.server.roms.ScanResult;
-import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.vps.VpsService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -397,7 +396,10 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
       game.setVersion(gameDetails.getTableVersion());
     }
 
-    game.setTemplateId(gameDetails.getTemplateId());
+    game.setHighscoreCardTemplateId(gameDetails.getTemplateId());
+    game.setInstructionCardTemplateId(gameDetails.getInstructionCardTemplateId());
+    game.setWheelTemplateId(gameDetails.getWheelTemplateId());
+
     game.setComment(gameDetails.getNotes());
 
     //PUP pack assignment: we have to differ between the scanned name and the actual resolved one which could be different.

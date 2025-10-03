@@ -17,7 +17,6 @@ import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
-import de.mephisto.vpin.server.backups.adapters.vpa.VpaService;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.dmd.DMDService;
@@ -108,9 +107,6 @@ public class GameMediaService {
 
   @Autowired
   private VpsService vpsService;
-
-  @Autowired
-  private VpaService vpaService;
 
   /**
    * moved from VpsService to break circular dependency.
@@ -240,7 +236,7 @@ public class GameMediaService {
     if (romChanged || hsChanged) {
       LOG.info("Game highscore data fields have been changed, triggering score check.");
       highscoreService.scanScore(game, EventOrigin.USER_INITIATED);
-      cardService.generateCard(game);
+      cardService.generateHighscoreCard(game);
     }
   }
 

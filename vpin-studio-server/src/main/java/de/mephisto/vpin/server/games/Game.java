@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.games;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
+import de.mephisto.vpin.restclient.cards.CardTemplateType;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.dmd.DMDPackageTypes;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
@@ -61,11 +62,14 @@ public class Game {
 
   private int nbDirectB2S;
 
-  private boolean defaultBackgroundAvailable;
   private boolean eventLogAvailable;
 
   private String pupPackName;
-  private Long templateId;
+
+  private Long highscoreCardTemplateId;
+  private Long instructionCardTemplateId;
+  private Long wheelTemplateId;
+
   private String extTableId;
   private String extTableVersionId;
   private String extVersion;
@@ -234,12 +238,54 @@ public class Game {
     return this.emulator.isFxEmulator();
   }
 
-  public Long getTemplateId() {
-    return templateId;
+  public Long getTemplateId(CardTemplateType templateType) {
+    switch (templateType) {
+      case HIGSCORE_CARD:
+        return getHighscoreCardTemplateId();
+      case INSTRUCTIONS_CARD:
+        return getInstructionCardTemplateId();
+      case WHEEL:
+        return getWheelTemplateId();
+    }
+    return null;
   }
 
-  public void setTemplateId(Long templateId) {
-    this.templateId = templateId;
+  public void setTemplateId(CardTemplateType templateType, Long id) {
+    switch (templateType) {
+      case HIGSCORE_CARD:
+        this.highscoreCardTemplateId = id;
+        break;
+      case INSTRUCTIONS_CARD:
+        this.instructionCardTemplateId = id;
+        break;
+      case WHEEL:
+        this.wheelTemplateId = id;
+        break;
+    }
+  }
+
+  public Long getHighscoreCardTemplateId() {
+    return highscoreCardTemplateId;
+  }
+
+  public void setHighscoreCardTemplateId(Long highscoreCardTemplateId) {
+    this.highscoreCardTemplateId = highscoreCardTemplateId;
+  }
+
+  public Long getInstructionCardTemplateId() {
+    return instructionCardTemplateId;
+  }
+
+  public void setInstructionCardTemplateId(Long instructionCardTemplateId) {
+    this.instructionCardTemplateId = instructionCardTemplateId;
+  }
+
+  public Long getWheelTemplateId() {
+    return wheelTemplateId;
+  }
+
+  public void setWheelTemplateId(Long wheelTemplateId) {
+    this.wheelTemplateId = wheelTemplateId;
   }
 
   public Date getDateAdded() {

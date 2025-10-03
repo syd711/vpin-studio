@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.cards;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
+import de.mephisto.vpin.restclient.cards.CardTemplateType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.*;
@@ -106,7 +107,7 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
     doReload(true);
   }
 
-  private void doReload(boolean force) {
+  public void doReload(boolean force) {
     startReload("Loading Tables...");
 
     // load in parallel games and templates, it will ensure templates are cached before the columns access them
@@ -124,7 +125,7 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
           return new Object[]{Collections.emptyList(), Collections.emptyList()};
         })
         .thenAcceptLater(objs -> {
-          @SuppressWarnings("unchecked")
+          @SuppressWarnings({ "unchecked", "unused" })
           List<CardTemplate> _templates = (List<CardTemplate>) objs[0];
           @SuppressWarnings("unchecked")
           List<GameRepresentation> games = (List<GameRepresentation>) objs[1];
@@ -141,9 +142,6 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
 
           tableView.refresh();
           tableView.requestFocus();
-
-          // do not select the template, it will be selected by the selection of the game
-          templateEditorController.loadTemplates(_templates, null);
 
           // select the game, it will refresh the view and select associated template
           setSelectionOrFirst(selectedItem);
@@ -230,7 +228,7 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
     }, this, true);
 
     BaseLoadingColumn.configureColumn(columnTemplate, (value, model) -> {
-      CardTemplate template = client.getCardTemplate(value);
+      CardTemplate template = getCardTemplateForGame(value);
       Label label = new Label("");
       if(template != null && !template.isTemplate()) {
         label.setGraphic(WidgetFactory.createCheckboxIcon(WidgetFactory.OK_COLOR, "The table has a customized highscore card"));
@@ -240,23 +238,8 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
     }, this, true);
 
     BaseLoadingColumn.configureColumn(columnBaseTemplate, (value, model) -> {
-      CardTemplate template = client.getCardTemplate(value);
-      String templateName = "-";
-      if(template == null) {
-        templateName = CardTemplate.DEFAULT;
-      }
-      else if (template.isTemplate()) {
-        templateName = template.getName();
-      }
-      else {
-        CardTemplate templateById = client.getHighscoreCardTemplatesClient().getTemplateById(template.getParentId());
-        if (templateById == null) {
-          templateName = CardTemplate.DEFAULT;
-        }
-        else {
-          templateName = templateById.getName();
-        }
-      }
+      CardTemplate template = getBaseCardTemplateForGame(value);
+      String templateName = template == null ? CardTemplate.DEFAULT : template.getName();
 
       Label label = new Label(templateName);
       label.getStyleClass().add("default-text");
@@ -300,10 +283,18 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
     doReload(false);
   }
 
+  public CardTemplate getCardTemplateForGame(GameRepresentation game) {
+    CardTemplateType templateType = templateEditorController.getSelectedTemplateType();
+    return client.getHighscoreCardTemplatesClient().getCardTemplateForGame(game, templateType);
+  }
+
+  public CardTemplate getBaseCardTemplateForGame(GameRepresentation game) {
+    CardTemplateType templateType = templateEditorController.getSelectedTemplateType();
+    return client.getHighscoreCardTemplatesClient().getBaseCardTemplateForGame(game, templateType);
+  }
 
   @Override
   protected GameRepresentationModel toModel(GameRepresentation game) {
     return new GameRepresentationModel(game);
   }
-
 }

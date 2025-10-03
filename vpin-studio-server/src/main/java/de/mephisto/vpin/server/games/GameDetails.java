@@ -45,6 +45,8 @@ public class GameDetails {
   private String eventLog;
 
   private Long templateId;
+  private Long instructionCardTemplateId;
+  private Long wheelTemplateId;
 
   private String romName;
 
@@ -148,6 +150,22 @@ public class GameDetails {
 
   public void setTemplateId(Long templateId) {
     this.templateId = templateId;
+  }
+
+  public Long getInstructionCardTemplateId() {
+    return instructionCardTemplateId;
+  }
+
+  public void setInstructionCardTemplateId(Long instructionCardTemplateId) {
+    this.instructionCardTemplateId = instructionCardTemplateId;
+  }
+
+  public Long getWheelTemplateId() {
+    return wheelTemplateId;
+  }
+
+  public void setWheelTemplateId(Long wheelTemplateId) {
+    this.wheelTemplateId = wheelTemplateId;
   }
 
   public String getPupPack() {
