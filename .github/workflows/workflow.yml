@@ -17,7 +17,7 @@ on:
 jobs:
   mac-app-build-x64:
     name: mac-app-build-x64
-    runs-on: macos-13
+    runs-on: macos-15-intel
 
     steps:
       # Step 1: Checkout the repository
@@ -90,43 +90,32 @@ jobs:
           cp ./vpin-studio-ui/target/vpin-studio-ui.jar ./mac-build
           cp -R ./mac-package/package ./mac-build
           cp -R ./mac-package/VpinStudio.icns ./mac-build
+          cp -R ./mac-package/Assets.car ./mac-build
           cp ./mac-package/jpackage_log.txt ./
       
 
       # Step 7: Package the Java application as a macOS .app bundle
-      #The jpackage config needs to be updated to properly reference the locations of the files.
-      #jpackage @jpackage_config.txt
       - name: Package as macOSx64 App
         working-directory: ./mac-build
         run: |
           #echo "Github Run Number = ${{ github.run_number }}"
           
-          echo "ls . results"
-          ls -al .
-          echo "ls .. results"
-          ls -al ..          
-          #echo "ls package results"
-          #ls -al package
-          #echo "ls package/macos results"
-          #ls -al package/macos
-          jpackage --name VPin-Studio --input . --app-version ${{ steps.project.outputs.version }} --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Studio --resource-dir package/macos --type dmg  --icon VpinStudio.icns  --dest ../ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_x64/zulu-11.jre @../jpackage_log.txt
-          #check to see if the jpackage worked.
-          #echo "ls -al ../VPin-Studio.app"
-          #ls -al ../VPin-Studio.app
-          #echo "ls -al ../VPin-Studio.app/Contents"
-          #ls -al ../VPin-Studio.app/Contents
+         # echo "ls . results"
+         #ls -al .
+         # echo "ls .. results"
+         # ls -al ..      
+          echo "Package Mac App with jpackage"
+          jpackage --name VPin-Studio --input . --app-version ${{ steps.project.outputs.version }} --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Studio --type app-image  --icon VpinStudio.icns  --dest ../ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_x64/zulu-11.jre @../jpackage_log.txt
+          echo "copy in new icons"
+          cp -R  'Assets.car' '../VPin-Studio.app/Contents/Resources'
+          echo "Update info.plist"
+          sed -i '' $'s/<string>VPin-Studio.icns<\/string>/<string>VPin-Studio.icns<\/string>\\\n  <key>CFBundleIconName<\/key>\\\n  <string>Vpin-Studio<\/string>/g' '../VPin-Studio.app/Contents/Info.plist'            
+          echo "repackage as DMG"
+          jpackage --name VPin-Studio --app-version ${{ steps.project.outputs.version }} --app-image ../VPin-Studio.app --type dmg --icon VpinStudio.icns --dest ../
+          #rename
           cp ../VPin-Studio-${{ steps.project.outputs.version }}.dmg ../VPin-Studio-Client-MacOS-x64.dmg
 
-      # Step 8: Zip the .app bundle for easy distribution
-      #Update for correct location
-      #- name: Zip macOSx64 .app Bundle
-     #   working-directory: ./
-       # run: |
-       #   echo "ls ."
-       #   ls -al .  
-        #  zip -r VPin-Studio-Client-MacOS-x64.zip VPin-Studio.app
-
-      # Step 9: Upload the .app zip file as an artifact
+      # Step 8: Upload the .app zip file as an artifact
       #Update for correct location
       - name: Upload macOSx64 Build Artifact
         uses: actions/upload-artifact@v4
@@ -228,10 +217,10 @@ jobs:
         run: |
           #echo "Github Run Number = ${{ github.run_number }}"
           
-          echo "ls . results"
-          ls -al .
-          echo "ls .. results"
-          ls -al ..        
+          #echo "ls . results"
+          #ls -al .
+          #echo "ls .. results"
+          #ls -al ..        
           echo "package as app"
           jpackage --name VPin-Studio --input . --app-version ${{ steps.project.outputs.version }} --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Studio  --type app-image --icon VpinStudio.icns  --dest ../ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64/zulu-11.jre @../jpackage_log.txt
           echo "copy in new icons"
