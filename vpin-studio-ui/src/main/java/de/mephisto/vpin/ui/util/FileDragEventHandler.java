@@ -2,7 +2,6 @@ package de.mephisto.vpin.ui.util;
 
 import de.mephisto.vpin.ui.DnDOverlayController;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.scene.Node;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
@@ -91,7 +90,7 @@ public class FileDragEventHandler implements EventHandler<DragEvent> {
     else {
       event.consume();
     }
-    overlayController.showOverlay();
+    overlayController.showOverlay(event);
   }
 
   public FileDragEventHandler setOnDragFilter(Predicate<DragEvent> dragFilter) {

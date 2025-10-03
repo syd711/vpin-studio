@@ -5,7 +5,6 @@ import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -67,7 +66,6 @@ public class DnDOverlayController implements Initializable {
   public void setMessage(String message) {
     if (message == null) {
       ((VBox) messageLabel.getParent().getParent()).getChildren().clear();
-      ;
     }
     else {
       messageLabel.setText(message);
@@ -139,9 +137,9 @@ public class DnDOverlayController implements Initializable {
             double height = ((Pane) forDim).getHeight();
             controller.setViewParams(width, height);
             controller.setGame(null);
-            System.out.println("added");
+            System.out.println("added " + dndLoadingOverlay);
             loaderStack.getChildren().add(dndLoadingOverlay);
-            loaderStack.requestLayout();
+            System.out.println(loaderStack.getChildren().size());
           }
         }
       };
@@ -175,7 +173,6 @@ public class DnDOverlayController implements Initializable {
           node.setVisible(true);
           System.out.println("removed");
           loaderStack.getChildren().remove(controller.dndLoadingOverlay);
-          loaderStack.requestLayout();
         }
       });
       return controller;
@@ -190,8 +187,8 @@ public class DnDOverlayController implements Initializable {
     dndLoadingOverlay.setOnDragDropped(eventHandler);
   }
 
-  public void showOverlay() {
-    showHandler.handle(null);
+  public void showOverlay(DragEvent event) {
+    showHandler.handle(event);
   }
 
   public void hideOverlay() {

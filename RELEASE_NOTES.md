@@ -3,7 +3,11 @@
 ## Changes
 
 - Fixed VPin Mania view that was broken due to previous icon changes.
-- 
+- Added performance logging for backup to evaluate possible issues.
+- Fixed drag and drop issues where the drop zones for screens have not been resetted on drag-exit.
+- Added drag and drop support for assets. You can now copy assets directly between screens via drag and drop. This might come in handy when you want to use the playfield video as loading video too.
+
+  <img src="https://github.com/syd711/vpin-studio/blob/main/release-notes/dnd.png?raw=true" width="500" />
 
 ---
 

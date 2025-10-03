@@ -12,7 +12,7 @@
    <center>
       <VBox fx:id="dropZone" alignment="CENTER" styleClass="dnd-dashed-border" BorderPane.alignment="CENTER">
          <BorderPane.margin>
-            <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+            <Insets />
          </BorderPane.margin>
          <children>
             <BorderPane>

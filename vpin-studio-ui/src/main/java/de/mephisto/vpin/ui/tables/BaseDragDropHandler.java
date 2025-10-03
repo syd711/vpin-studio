@@ -76,7 +76,7 @@ public abstract class BaseDragDropHandler {
             event.consume();
           }
 
-          overlayController.showOverlay();
+          overlayController.showOverlay(event);
         }
         catch (Exception e) {
           LOG.info("Dragging failed: {}", e.getMessage(), e);
