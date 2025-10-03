@@ -137,11 +137,12 @@ jobs:
 
   ######################################################################################################################
   # macOS ARM
+  # Updated for MacOS 26
   ######################################################################################################################
 
   mac-app-build-arm64:
     name: mac-app-build-arm64
-    runs-on: macos-15
+    runs-on: macos-26
 
     steps:
       # Step 1: Checkout the repository
@@ -212,8 +213,10 @@ jobs:
         run: |
           mkdir -p ./mac-build
           cp ./vpin-studio-ui/target/vpin-studio-ui.jar ./mac-build
-          cp -R ./mac-package/package ./mac-build
+          #Not Needed?
+          #cp -R ./mac-package/package ./mac-build
           cp -R ./mac-package/VpinStudio.icns ./mac-build
+          cp -R ./mac-package/Assets.car ./mac-build
           cp ./mac-package/jpackage_log.txt ./
       
 
@@ -229,16 +232,14 @@ jobs:
           ls -al .
           echo "ls .. results"
           ls -al ..          
-          #echo "ls package results"
-          #ls -al package
-          #echo "ls package/macos results"
-          #ls -al package/macos
-          jpackage --name VPin-Studio --input . --app-version ${{ steps.project.outputs.version }} --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Studio --resource-dir package/macos --type dmg --icon VpinStudio.icns  --dest ../ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64/zulu-11.jre @../jpackage_log.txt
-          #check to see if the jpackage worked.
-          #echo "ls -al ../VPin-Studio.app"
-          #ls -al ../VPin-Studio.app
-          #echo "ls -al ../VPin-Studio.app/Contents"
-          #ls -al ../VPin-Studio.app/Contents
+          jpackage --name VPin-Studio --input . --app-version ${{ steps.project.outputs.version }} --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Studio  --type app-image --icon VpinStudio.icns  --dest ../ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64/zulu-11.jre @../jpackage_log.txt
+          #copy in new icons
+          cp -R  'Assets.car' '..VPin-Studio.app/Contents/Resources'
+          #Update info.plist
+          sed -i '' $'s/<string>VPin-Studio.icns<\/string>/<string>VPin-Studio.icns<\/string>\\\n  <key>CFBundleIconName<\/key>\\\n  <string>Vpin-Studio<\/string>/g' '../VPin-Studio.app/Contents/Info.plist'            
+          cd ..
+          jpackage --name VPin-Studio --app-image VPin-Studio.app --app-version ${{ steps.project.outputs.version }} --type dmg --icon mac-build/VpinStudio.icns @../jpackage_log.txt
+
           #rename
           cp ../VPin-Studio-${{ steps.project.outputs.version }}.dmg ../VPin-Studio-Client-MacOS-arm64.dmg
           
