@@ -532,7 +532,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
       addArchiveBtn.setDisable(!archiveSource.getType().equals(BackupSourceType.Folder.name()));
       restoreBtn.setDisable(!archiveSource.getType().equals(BackupSourceType.Folder.name()) || newSelection == null);
       downloadBtn.setDisable(!archiveSource.getType().equals(BackupSourceType.Folder.name()) || tableView.getSelectionModel().getSelectedItems().size() == 0);
-      openFolderButton.setDisable(newSelection != null);
+      openFolderButton.setDisable(newSelection == null);
 
 
       if (oldSelection == null || !oldSelection.equals(newSelection)) {
@@ -544,7 +544,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
       TableRow<BackupModel> row = new TableRow<>();
       row.setOnMouseClicked(event -> {
         if (event.getClickCount() == 2 && (!row.isEmpty())) {
-
+          onRestore();
         }
       });
       return row;
