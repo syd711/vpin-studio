@@ -5,6 +5,8 @@ import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.*;
+import de.mephisto.vpin.restclient.games.AssetCopy;
+import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.restclient.util.FileUtils;
@@ -89,6 +91,13 @@ public class GameMediaResource {
   public TableAssetSource getTableAssetConf() throws Exception {
     TableAssetsAdapter<Game> assetAdapter = frontendService.getTableAssetAdapter();
     return assetAdapter != null ? assetAdapter.getAssetSource() : null;
+  }
+
+  @PostMapping("/assets/copy")
+  public boolean copyAsset(@RequestBody AssetCopy assetCopy) {
+    VPinScreen target = assetCopy.getTarget();
+    FrontendMediaItemRepresentation item = assetCopy.getItem();
+    return gameMediaService.copyAsset(item.getGameId(), item.getName(), VPinScreen.valueOf(item.getScreen()), target);
   }
 
   @PostMapping("/assets/search")
