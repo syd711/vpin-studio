@@ -52,7 +52,7 @@
                      <children>
                         <HBox GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
-                              <TextField fx:id="fileNameField" editable="false" prefHeight="30.0" prefWidth="399.0">
+                              <TextField fx:id="fileNameField" editable="false" prefHeight="30.0" prefWidth="400.0">
                                  <HBox.margin>
                                     <Insets right="12.0" />
                                  </HBox.margin>
@@ -81,7 +81,7 @@
                            </font>
                         </Button>
                         <Label fx:id="romLabel" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Label fx:id="tableLabel" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label fx:id="tableLabel" maxWidth="350.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                      </children>
                      <BorderPane.margin>
                         <Insets top="6.0" />

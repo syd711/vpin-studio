@@ -1,3 +1,12 @@
+## Release Notes 4.3.5
+
+## Changes
+
+- Improved performance of backup loading.
+- Fixed some upload dialog issues that where misaligned for long filenames.
+
+---
+
 ## Release Notes 4.3.4
 
 ## Changes
@@ -9,6 +18,8 @@
 - Added drag and drop support for assets. You can now **copy** assets directly between screens via drag and drop. This might come in handy when you want to use the playfield video as loading video too. Note that the asset type is not checked for this operation.
 
   <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/dnd.png?raw=true" width="700" />
+
+---
 
 ## Release Notes 4.3.3
 

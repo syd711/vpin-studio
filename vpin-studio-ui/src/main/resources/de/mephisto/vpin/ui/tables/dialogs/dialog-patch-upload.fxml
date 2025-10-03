@@ -78,7 +78,7 @@
                               </HBox>
                               <Label styleClass="default-text" text="Patch File:" />
                               <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Table:" GridPane.rowIndex="2" />
-                              <Label fx:id="tableNameLabel" layoutX="10.0" layoutY="49.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <Label fx:id="tableNameLabel" layoutX="10.0" layoutY="49.0" maxWidth="450.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                               <Label fx:id="titleLabel11" text="README.txt" textFill="WHITE" GridPane.rowIndex="3">
                                  <font>
                                     <Font size="14.0" />
