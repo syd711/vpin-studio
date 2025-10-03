@@ -137,9 +137,7 @@ public class DnDOverlayController implements Initializable {
             double height = ((Pane) forDim).getHeight();
             controller.setViewParams(width, height);
             controller.setGame(null);
-            System.out.println("added " + dndLoadingOverlay);
             loaderStack.getChildren().add(dndLoadingOverlay);
-            System.out.println(loaderStack.getChildren().size());
           }
         }
       };
@@ -171,7 +169,6 @@ public class DnDOverlayController implements Initializable {
         @Override
         public void handle(DragEvent event) {
           node.setVisible(true);
-          System.out.println("removed");
           loaderStack.getChildren().remove(controller.dndLoadingOverlay);
         }
       });
