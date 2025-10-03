@@ -59,7 +59,7 @@ public class BackupDialogs {
     stage.showAndWait();
   }
 
-  public static void openArchiveDownloadDialog(ObservableList<BackupDescriptorRepresentation> selectedItems) {
+  public static void openArchiveDownloadDialog(List<BackupDescriptorRepresentation> selectedItems) {
     Stage stage = Dialogs.createStudioDialogStage(BackupDownloadDialogController.class, "dialog-backup-download.fxml", "Archive Download");
     BackupDownloadDialogController controller = (BackupDownloadDialogController) stage.getUserData();
     controller.setData(selectedItems);

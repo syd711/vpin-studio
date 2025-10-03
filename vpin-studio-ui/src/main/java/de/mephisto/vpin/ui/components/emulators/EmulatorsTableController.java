@@ -109,7 +109,6 @@ public class EmulatorsTableController extends BaseTableController<GameEmulatorRe
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize("emulator", "emulators", new EmulatorsTableColumnSorter(this));
-
     validationError.setVisible(false);
 
     BaseLoadingColumn.configureColumn(columnSelection, (value, model) -> {

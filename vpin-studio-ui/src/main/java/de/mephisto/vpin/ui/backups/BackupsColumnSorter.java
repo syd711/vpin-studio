@@ -7,7 +7,7 @@ import javafx.scene.control.TableView;
 
 import java.util.Comparator;
 
-public class BackupsColumnSorter implements BaseColumnSorter<BackupDescriptorRepresentation> {
+public class BackupsColumnSorter implements BaseColumnSorter<BackupModel> {
 
   private final BackupsController tableOverviewController;
 
@@ -15,14 +15,14 @@ public class BackupsColumnSorter implements BaseColumnSorter<BackupDescriptorRep
     this.tableOverviewController = backupsController;
   }
 
-  public Comparator<BackupDescriptorRepresentation> buildComparator(TableView<BackupDescriptorRepresentation> tableView) {
-    Comparator<BackupDescriptorRepresentation> comp = null;
+  public Comparator<BackupModel> buildComparator(TableView<BackupModel> tableView) {
+    Comparator<BackupModel> comp = null;
 
     if (!tableView.getSortOrder().isEmpty()) {
-      TableColumn<BackupDescriptorRepresentation, ?> column = tableView.getSortOrder().get(0);
+      TableColumn<BackupModel, ?> column = tableView.getSortOrder().get(0);
 
       if (column.equals(tableOverviewController.nameColumn)) {
-        comp = Comparator.comparing(o -> o.getFilename().toLowerCase());
+        comp = Comparator.comparing(o -> o.getName().toLowerCase());
       }
       // optionally reverse order
       if (comp != null && column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
