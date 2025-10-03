@@ -85,7 +85,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
   TableColumn<BackupModel, BackupModel> nameColumn;
 
   @FXML
-  private TableColumn<BackupModel, BackupModel> directB2SColumn;
+  TableColumn<BackupModel, BackupModel> directB2SColumn;
 
   @FXML
   private TableColumn<BackupModel, BackupModel> pupPackColumn;
@@ -237,18 +237,15 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
       List<BackupDescriptorRepresentation> filteredBackups = filterArchives(data);
       return filteredBackups;
     }).thenAcceptLater((filteredBackups) -> {
-      this.filteredData = filteredBackups.stream().map(e -> toModel(e)).collect(Collectors.toList());
-      tableView.setItems(FXCollections.observableList(filteredData));
+      setItems(filteredBackups);
       tableView.refresh();
-      if (filteredData.contains(selection)) {
+      if (filteredData != null && filteredData.contains(selection)) {
         deleteBtn.setDisable(false);
         tableView.getSelectionModel().select(toModel(selection));
         restoreBtn.setDisable(false);
       }
 
       this.searchTextField.setDisable(false);
-
-      tableStack.getChildren().remove(loadingOverlay);
       tableView.setVisible(true);
       endReload();
     });
@@ -277,6 +274,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize("backup", "backups", new BackupsColumnSorter(this));
 
+    openFolderButton.setDisable(true);
     clearBtn.setVisible(false);
     endSeparator.managedProperty().bindBidirectional(endSeparator.visibleProperty());
     sourceCombo.managedProperty().bindBidirectional(sourceCombo.visibleProperty());
@@ -294,17 +292,14 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
     searchTextField.textProperty().addListener((observableValue, s, filterValue) -> {
       clearSelection();
       List<BackupDescriptorRepresentation> filteredBackups = filterArchives(data);
-      filteredData = filteredBackups.stream().map(b -> toModel(b)).collect(Collectors.toList());
-      tableView.setItems(FXCollections.observableList(filteredData));
-      tableView.refresh();
+      setItems(filteredBackups);
       clearBtn.setVisible(filterValue != null && !filterValue.isEmpty());
     });
     searchTextField.setOnKeyPressed(event -> {
       if (event.getCode().toString().equalsIgnoreCase("ESCAPE")) {
         searchTextField.setText("");
         tableView.requestFocus();
-        tableView.setItems(FXCollections.observableList(data.stream().map(b -> toModel(b)).collect(Collectors.toList())));
-        tableView.refresh();
+        setItems(data);
         event.consume();
       }
     });
@@ -537,7 +532,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
       addArchiveBtn.setDisable(!archiveSource.getType().equals(BackupSourceType.Folder.name()));
       restoreBtn.setDisable(!archiveSource.getType().equals(BackupSourceType.Folder.name()) || newSelection == null);
       downloadBtn.setDisable(!archiveSource.getType().equals(BackupSourceType.Folder.name()) || tableView.getSelectionModel().getSelectedItems().size() == 0);
-      openFolderButton.setDisable(newSelection == null);
+      openFolderButton.setDisable(newSelection != null);
 
 
       if (oldSelection == null || !oldSelection.equals(newSelection)) {
