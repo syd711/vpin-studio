@@ -38,7 +38,8 @@
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <Label styleClass="preference-description" text="This section configures which game emulators to use in the VPin Studio." textFill="WHITE" />
+                  <Label styleClass="preference-description" text="This section configures which game emulators are visible for the Studio." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="208.0" styleClass="preference-description" text="The unchecked emulators will remain active for the frontend, but won't be shown in the different views." textFill="WHITE" />
                   <VBox fx:id="emulatorList" spacing="6.0">
                      <VBox.margin>
                         <Insets top="6.0" />

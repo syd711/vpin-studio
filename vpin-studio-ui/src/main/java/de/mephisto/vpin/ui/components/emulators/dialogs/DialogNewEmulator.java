@@ -1,10 +1,13 @@
 package de.mephisto.vpin.ui.components.emulators.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -24,7 +27,16 @@ public class DialogNewEmulator implements Initializable, DialogController {
   private Button cancelBtn;
 
   @FXML
-  private VBox exclusionList;
+  private VBox emulatorFieldsList;
+
+  @FXML
+  private ComboBox<EmulatorType> emulatorTypeComboBox;
+
+  @FXML
+  private TextField nameField;
+
+  @FXML
+  private TextField descriptionField;
 
   @FXML
   private void onCancelClick(ActionEvent e) {

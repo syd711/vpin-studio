@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.frontend;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 public enum EmulatorType {
 
   VisualPinball("vpx"), VisualPinball9("vpt"),
@@ -48,6 +50,24 @@ public enum EmulatorType {
         return "FP";
       default:
         return "";
+    }
+  }
+
+  @Nullable
+  public String folderName() {
+    switch (this) {
+      case ZenFX:
+        return "Pinball FX";
+      case ZenFX2:
+        return "Pinball FX2";
+      case ZenFX3:
+        return "Pinball FX3";
+      case PinballM:
+        return "Pinball M";
+      case Zaccaria:
+        return "Zaccaria Pinball";
+      default:
+        return null;
     }
   }
 
