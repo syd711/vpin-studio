@@ -1390,12 +1390,12 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       PreparedStatement preparedStatement = null;
       if (emulator.getId() < 0) {
         preparedStatement = Objects.requireNonNull(connect).prepareStatement("INSERT INTO Emulators (" +
-                "EmuName, Description, DirGames, DirMedia, EmuDisplay, Visible, DirRoms, EmuLaunchDir, GamesExt, LaunchScript, PostScript) values (?,?,?,?,?,?,?,?,?,?,?)"
+                "EmuName, Description, DirGames, DirMedia, EmuDisplay, Visible, DirRoms, EmuLaunchDir, GamesExt, KeepDisplays, LaunchScript, PostScript) values (?,?,?,?,?,?,?,?,?,?,?)"
             , Statement.RETURN_GENERATED_KEYS);
       }
       else {
         preparedStatement = Objects.requireNonNull(connect).prepareStatement("INSERT OR REPLACE INTO Emulators (" +
-                "EMUID, EmuName, Description, DirGames, DirMedia, EmuDisplay, Visible, DirRoms, EmuLaunchDir, GamesExt, LaunchScript, PostScript) values (?,?,?,?,?,?,?,?,?,?,?,?)"
+                "EMUID, EmuName, Description, DirGames, DirMedia, EmuDisplay, Visible, DirRoms, EmuLaunchDir, GamesExt, KeepDisplays, LaunchScript, PostScript) values (?,?,?,?,?,?,?,?,?,?,?,?)"
             , Statement.RETURN_GENERATED_KEYS);
         preparedStatement.setInt(index++, emulator.getId());
       }
@@ -1409,6 +1409,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.setString(index++, emulator.getRomDirectory());
       preparedStatement.setString(index++, emulator.getInstallationDirectory());
       preparedStatement.setString(index++, emulator.getGameExt());
+      preparedStatement.setString(index++, emulator.getKeepDisplays());
       preparedStatement.setString(index++, emulator.getLaunchScript() != null ? emulator.getLaunchScript().getScript() : null);
       preparedStatement.setString(index++, emulator.getExitScript() != null ? emulator.getExitScript().getScript() : null);
       preparedStatement.executeUpdate();
@@ -1476,6 +1477,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     e.setMediaDirectory(rs.getString("DirMedia"));
     e.setRomDirectory(rs.getString("DirRoms"));
     e.setDescription(rs.getString("Description"));
+    e.setKeepDisplays(rs.getString("KeepDisplays"));
     e.setInstallationDirectory(rs.getString("EmuLaunchDir"));
     e.getLaunchScript().setScript(rs.getString("LaunchScript"));
     e.getExitScript().setScript(rs.getString("PostScript"));

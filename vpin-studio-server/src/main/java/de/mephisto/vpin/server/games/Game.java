@@ -235,7 +235,7 @@ public class Game {
   }
 
   public boolean isFxGame() {
-    return this.emulator.isFxEmulator();
+    return this.emulator.isZenEmulator();
   }
 
   public Long getTemplateId(CardTemplateType templateType) {

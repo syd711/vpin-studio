@@ -41,7 +41,10 @@ public class DialogNewEmulatorController implements Initializable, DialogControl
   private TextField nameField;
 
   @FXML
-  private Label validationLabel;
+  private Label validationTitle;
+
+  @FXML
+  private Label validationText;
 
   @FXML
   private Label errorTitle;
@@ -83,12 +86,12 @@ public class DialogNewEmulatorController implements Initializable, DialogControl
 
     emulatorTypeComboBox.valueProperty().addListener(new ChangeListener<EmulatorType>() {
       @Override
-      public void changed(ObservableValue<? extends EmulatorType> observable, EmulatorType oldValue, EmulatorType newValue) {
-        nameField.setText(newValue.folderName());
+      public void changed(ObservableValue<? extends EmulatorType> observable, EmulatorType oldValue, EmulatorType emulatorType) {
+        nameField.setText(emulatorType.folderName());
 
         JFXFuture.supplyAsync(() -> {
           validatedEmulator = null;
-          return client.getEmulatorService().validate(newValue);
+          return client.getEmulatorService().validate(emulatorType);
         }).thenAcceptLater((validation) -> {
           try {
             installBtn.setDisable(validation.getErrorTitle() != null);
@@ -104,7 +107,14 @@ public class DialogNewEmulatorController implements Initializable, DialogControl
 
               validatedEmulator.setName(nameField.getText());
               infoContainer.setVisible(true);
-              validationLabel.setText(validation.getGameEmulator().getGamesDirectory());
+              if (emulatorType.equals(EmulatorType.ZenFX) || emulatorType.equals(EmulatorType.ZenFX3) || emulatorType.equals(EmulatorType.Zaccaria) || emulatorType.equals(EmulatorType.PinballM)) {
+                validationText.setText("The games of this emulator type will be automatically imported.");
+              }
+              else {
+                validationText.setText("You can setup the emulator and continue with the configuration.");
+              }
+
+              validationTitle.setText("Validation Successful");
             }
 
             nameField.selectAll();

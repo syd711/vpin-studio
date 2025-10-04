@@ -1,7 +1,6 @@
 package de.mephisto.vpin.restclient.frontend;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 public enum EmulatorType {
 
@@ -31,7 +30,7 @@ public enum EmulatorType {
     return FuturePinball.equals(this);
   }
 
-  public boolean isFxEmulator() {
+  public boolean isZenEmulator() {
     return ZenFX.equals(this) || ZenFX2.equals(this) || ZenFX3.equals(this) || PinballM.equals(this);
   }
 
@@ -70,7 +69,7 @@ public enum EmulatorType {
       case FuturePinball:
         return "Future Pinball";
       case VisualPinball:
-        return "Visual Pinball";
+        return "Visual Pinball X";
       case VisualPinball9:
         return "Visual Pinball";
       case MAME:

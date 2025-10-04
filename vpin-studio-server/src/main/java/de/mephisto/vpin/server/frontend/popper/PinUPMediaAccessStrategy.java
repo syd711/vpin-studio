@@ -23,7 +23,7 @@ public class PinUPMediaAccessStrategy extends DefaultMediaAccessStrategy {
   @Override
   public File getEmulatorMediaFolder(@NotNull EmulatorType emulatorType) {
     File defaultMedia = new File(pinUPConnector.getSettings().getGlobalMediaDir());
-    return new File(defaultMedia, emulatorType.folderName());
+    return new File(defaultMedia.getParentFile(), emulatorType.folderName());
   }
 
   @Override

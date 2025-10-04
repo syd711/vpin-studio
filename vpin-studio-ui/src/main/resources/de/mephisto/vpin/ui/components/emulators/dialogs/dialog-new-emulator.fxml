@@ -74,7 +74,8 @@
                               <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                            </VBox.margin>
                            <children>
-                              <Label fx:id="validationLabel" prefWidth="450.0" styleClass="default-text" text="A validation is triggered after an emulator type has been selected. The validation will try to lookup the existing emulator for this type and pre-fill the settings for you." wrapText="true" />
+                              <Label fx:id="validationTitle" styleClass="default-headline" text="Information" />
+                              <Label fx:id="validationText" prefWidth="450.0" styleClass="default-text" text="A validation is triggered after an emulator type has been selected. The validation will try to lookup the existing emulator for this type and pre-fill the settings for you." wrapText="true" />
                            </children>
                            <padding>
                               <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />

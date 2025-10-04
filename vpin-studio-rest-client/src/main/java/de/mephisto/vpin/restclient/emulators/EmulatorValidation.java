@@ -1,10 +1,18 @@
 package de.mephisto.vpin.restclient.emulators;
 
 public class EmulatorValidation {
-  private String name;
   private String errorTitle;
   private String errorText;
   private GameEmulatorRepresentation gameEmulator;
+  private int gameCount;
+
+  public int getGameCount() {
+    return gameCount;
+  }
+
+  public void setGameCount(int gameCount) {
+    this.gameCount = gameCount;
+  }
 
   public String getErrorText() {
     return errorText;

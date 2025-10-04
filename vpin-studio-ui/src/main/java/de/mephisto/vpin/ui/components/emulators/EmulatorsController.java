@@ -298,8 +298,8 @@ public class EmulatorsController implements Initializable {
   private void onCreate() {
     GameEmulatorRepresentation emulatorRepresentation = EmulatorDialogs.openNewEmulatorDialog();
     if (emulatorRepresentation != null) {
-//      GameEmulatorRepresentation gameEmulatorRepresentation = client.getEmulatorService().saveGameEmulator(emu);
-//      onReload();
+      emulatorRepresentation = client.getEmulatorService().saveGameEmulator(emulatorRepresentation);
+      onReload();
       tableController.select(emulatorRepresentation);
     }
   }

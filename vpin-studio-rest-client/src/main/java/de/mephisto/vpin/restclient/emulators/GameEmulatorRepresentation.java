@@ -15,8 +15,9 @@ public class GameEmulatorRepresentation {
   private String gamesDirectory;
   private String mediaDirectory;
   private String romDirectory;
-  private int id;
+  private int id = -1;
   private boolean enabled;
+  private String keepDisplays;
 
   private String exeName;
   private String exeParameters;
@@ -35,6 +36,14 @@ public class GameEmulatorRepresentation {
 
   public void setValidationStates(List<ValidationState> validationStates) {
     this.validationStates = validationStates;
+  }
+
+  public String getKeepDisplays() {
+    return keepDisplays;
+  }
+
+  public void setKeepDisplays(String keepDisplays) {
+    this.keepDisplays = keepDisplays;
   }
 
   public String getGameExt() {
@@ -82,7 +91,7 @@ public class GameEmulatorRepresentation {
   }
 
   public boolean isFxEmulator() {
-    return type.isFxEmulator();
+    return type.isZenEmulator();
   }
 
   public boolean isVpxEmulator() {
