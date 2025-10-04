@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -20,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 
@@ -82,7 +84,9 @@ public class DialogNewEmulatorController implements Initializable, DialogControl
 
     errorContainer.setVisible(false);
 
-    emulatorTypeComboBox.setItems(FXCollections.observableList(Arrays.asList(EmulatorType.values())));
+    ArrayList<EmulatorType> emulatorTypes = new ArrayList<>(Arrays.asList(EmulatorType.values()));
+    emulatorTypes.remove(EmulatorType.OTHER);
+    emulatorTypeComboBox.setItems(FXCollections.observableList(emulatorTypes));
 
     emulatorTypeComboBox.valueProperty().addListener(new ChangeListener<EmulatorType>() {
       @Override

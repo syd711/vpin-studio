@@ -1,11 +1,9 @@
 package de.mephisto.vpin.server.emulators;
 
-import de.mephisto.vpin.commons.SystemInfoWindows;
 import de.mephisto.vpin.restclient.emulators.EmulatorValidation;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorScript;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
@@ -16,7 +14,6 @@ import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;

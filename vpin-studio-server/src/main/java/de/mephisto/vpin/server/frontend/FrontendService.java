@@ -405,11 +405,19 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     GameEmulator gameEmulator = emulatorService.getGameEmulator(emuId);
     String gameFileName = gameEmulator.getGameFileName(file);
     String gameDisplayName = baseName.replaceAll("-", " ").replaceAll("_", " ");
-    return getFrontendConnector().importGame(emuId, formattedBaseName, gameFileName, gameDisplayName, null, new Date(file.lastModified()));
+
+    TableDetails tableDetails = new TableDetails();
+    tableDetails.setEmulatorId(emuId);
+    tableDetails.setStatus(1);
+    tableDetails.setGameName(formattedBaseName);
+    tableDetails.setGameFileName(gameFileName);
+    tableDetails.setGameDisplayName(gameDisplayName);
+    tableDetails.setDateModified(new Date(file.lastModified()));
+    return importGame(tableDetails);
   }
 
-  public int importGame(int emulatorId, @NonNull String gameName, @NonNull String gameFileName, @NonNull String gameDisplayName, @Nullable String launchCustomVar, @NonNull java.util.Date dateFileUpdated) {
-    return getFrontendConnector().importGame(emulatorId, gameName, gameFileName, gameDisplayName, launchCustomVar, dateFileUpdated);
+  public int importGame(@NonNull TableDetails tableDetails) {
+    return getFrontendConnector().importGame(tableDetails);
   }
 
   public boolean deleteGame(int id) {

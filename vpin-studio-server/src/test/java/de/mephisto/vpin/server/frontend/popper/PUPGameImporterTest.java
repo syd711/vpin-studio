@@ -13,5 +13,6 @@ public class PUPGameImporterTest {
     Assertions.assertNotEquals(0, PUPGameImporter.read(EmulatorType.Zaccaria).size());
     Assertions.assertNotEquals(0, PUPGameImporter.read(EmulatorType.ZenFX));
     Assertions.assertNotEquals(0, PUPGameImporter.read(EmulatorType.ZenFX3));
+    Assertions.assertNotEquals(0, PUPGameImporter.read(EmulatorType.PinballM));
   }
 }

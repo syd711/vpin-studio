@@ -76,6 +76,8 @@ public enum EmulatorType {
         return "Visual Pinball X";
       case VisualPinball9:
         return "Visual Pinball";
+      case PinballArcade:
+        return "Pinball Arcade";
       case MAME:
         return "MAME";
       case OTHER:

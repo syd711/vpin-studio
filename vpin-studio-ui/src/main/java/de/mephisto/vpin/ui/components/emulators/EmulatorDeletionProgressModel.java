@@ -44,7 +44,7 @@ public class EmulatorDeletionProgressModel extends ProgressModel<GameEmulatorRep
 
   @Override
   public String nextToString(GameEmulatorRepresentation c) {
-    return "Deleting... ";
+    return "Deleting emulator and linked game entries";
   }
 
   @Override

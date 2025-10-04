@@ -2,9 +2,11 @@ package de.mephisto.vpin.server.emulators;
 
 import de.mephisto.vpin.restclient.emulators.EmulatorValidation;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.server.frontend.popper.PUPGameImporter;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameEmulatorValidationService;
@@ -32,7 +34,7 @@ public class EmulatorService {
   @Autowired
   private EmulatorFactory emulatorFactory;
 
-  private List<EmulatorChangeListener> listeners = new ArrayList<>();
+  private final List<EmulatorChangeListener> listeners = new ArrayList<>();
 
   private final Map<Integer, GameEmulator> emulators = new LinkedHashMap<>();
 
@@ -192,18 +194,26 @@ public class EmulatorService {
   private void synchronizeEmulatorGames(GameEmulator emulator) {
     int count = 0;
     List<Game> gamesByEmulator = frontendService.getGamesByEmulator(emulator.getId());
-    String gamesDirectory = emulator.getGamesDirectory();
-    if (gamesDirectory != null) {
-      File gamesFolder = new File(gamesDirectory);
-      if (gamesFolder.exists()) {
-        File[] files = gamesFolder.listFiles((dir, name) -> name.endsWith(emulator.getGameExt()));
-        if (files != null) {
-          for (File file : files) {
-            Optional<Game> game = gamesByEmulator.stream().filter(g -> g.getGameFile().equals(file)).findFirst();
-            if (game.isEmpty()) {
-              LOG.info("Importing \"{}\" for emulator \"{}\".", file.getAbsolutePath(), emulator.getName() + "/" + emulator.getId());
-              frontendService.importGame(file, emulator.getId());
-              count++;
+
+    if (gamesByEmulator.isEmpty() && emulator.isZenEmulator()) {
+      for (TableDetails tableDetails : PUPGameImporter.read(emulator.getType())) {
+        frontendService.importGame(tableDetails);
+      }
+    }
+    else {
+      String gamesDirectory = emulator.getGamesDirectory();
+      if (!StringUtils.isEmpty(gamesDirectory)) {
+        File gamesFolder = new File(gamesDirectory);
+        if (gamesFolder.exists()) {
+          File[] files = gamesFolder.listFiles((dir, name) -> name.endsWith(emulator.getGameExt()));
+          if (files != null) {
+            for (File file : files) {
+              Optional<Game> game = gamesByEmulator.stream().filter(g -> g.getGameFile().equals(file)).findFirst();
+              if (game.isEmpty()) {
+                LOG.info("Importing \"{}\" for emulator \"{}\".", file.getAbsolutePath(), emulator.getName() + "/" + emulator.getId());
+                frontendService.importGame(file, emulator.getId());
+                count++;
+              }
             }
           }
         }

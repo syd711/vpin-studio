@@ -10,7 +10,7 @@ public class TableDetails {
   private int sqlVersion;
   private int emulatorId;
 
-  private int status;
+  private int status = 1;
   private String gameName;
   private String gameFileName;
   private String gameDisplayName;

@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.frontend.popper;
 
 import de.mephisto.vpin.restclient.frontend.TableDetails;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
 

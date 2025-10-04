@@ -402,21 +402,11 @@ public abstract class BaseConnector implements FrontendConnector {
   }
 
   @Override
-  public int importGame(int emulatorId,
-                        @NonNull String gameName, @NonNull String gameFileName, @NonNull String gameDisplayName,
-                        @Nullable String launchCustomVar, @NonNull java.util.Date dateFileUpdated) {
-    LOG.info("Add game entry for '" + gameName + "', file name '" + gameFileName + "'");
+  public int importGame(@NonNull TableDetails tableDetails) {
+    String gameFileName = tableDetails.getGameFileName();
+    int emulatorId = tableDetails.getEmulatorId();
 
-    TableDetails details = new TableDetails();
-    details.setEmulatorId(emulatorId);
-    details.setGameName(gameName);
-    details.setGameFileName(gameFileName);
-    details.setGameDisplayName(gameDisplayName);
-    details.setDateAdded(new java.util.Date());
-    details.setLaunchCustomVar(launchCustomVar);
-    details.setStatus(1); // enable game
-
-    updateGameInDb(emulatorId, gameFileName, details);
+    updateGameInDb(emulatorId, gameFileName, tableDetails);
 
     int id = filenameToId(emulatorId, gameFileName);
     GameEntry e = new GameEntry(emulatorId, gameFileName, id);

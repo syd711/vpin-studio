@@ -817,36 +817,45 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
    *
    * @return the generated game id.
    */
-  public int importGame(int emulatorId, @NonNull String gameName, @NonNull String gameFileName, @NonNull String gameDisplayName, @Nullable String launchCustomVar, @NonNull java.util.Date dateFileUpdated) {
+  public int importGame(@NonNull TableDetails tableDetails) {
     Connection connect = this.connect();
     try {
       PreparedStatement preparedStatement = Objects.requireNonNull(connect).prepareStatement("INSERT INTO Games (EMUID, GameName, GameFileName, GameDisplay, Visible, LaunchCustomVar, DateAdded, DateFileUpdated, " +
-          "Author, TAGS, Category, MediaSearch, IPDBNum, AltRunMode) " +
+          "Author, TAGS, Category, MediaSearch, IPDBNum, AltRunMode, GAMEVER, GameType, GameTheme, GameYear, Manufact, GKeepDisplays, NumPlayers, Notes, ROM) " +
           "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
-      preparedStatement.setInt(1, emulatorId);
-      preparedStatement.setString(2, gameName);
-      preparedStatement.setString(3, gameFileName);
-      preparedStatement.setString(4, gameDisplayName);
+      preparedStatement.setInt(1, tableDetails.getEmulatorId());
+      preparedStatement.setString(2, tableDetails.getGameName());
+      preparedStatement.setString(3, tableDetails.getGameFileName());
+      preparedStatement.setString(4, tableDetails.getGameDisplayName());
       preparedStatement.setInt(5, 1);
-      preparedStatement.setString(6, launchCustomVar != null ? launchCustomVar : "");
+      preparedStatement.setString(6, tableDetails.getLaunchCustomVar() != null ? tableDetails.getLaunchCustomVar() : "");
 
       SimpleDateFormat sdf = new SimpleDateFormat(POPPER_DATE_FORMAT);
       Timestamp timestamp = new Timestamp(System.currentTimeMillis());
       String ts = sdf.format(timestamp);
       preparedStatement.setString(7, ts);
-      preparedStatement.setString(8, sdf.format(dateFileUpdated));
+      preparedStatement.setString(8, tableDetails.getDateModified() != null ? sdf.format(tableDetails.getDateModified()) : sdf.format(new java.util.Date()));
 
-      preparedStatement.setString(9, "");
-      preparedStatement.setString(10, "");
-      preparedStatement.setString(11, "");
+      preparedStatement.setString(9, tableDetails.getAuthor());
+      preparedStatement.setString(10, tableDetails.getTags());
+      preparedStatement.setString(11, tableDetails.getCategory());
       preparedStatement.setString(12, "");
       preparedStatement.setString(13, "");
-      preparedStatement.setString(14, "");
+      preparedStatement.setString(14, tableDetails.getAltRunMode());
+      preparedStatement.setString(15, tableDetails.getGameVersion());
+      preparedStatement.setString(16, tableDetails.getGameType());
+      preparedStatement.setString(17, tableDetails.getGameTheme());
+      preparedStatement.setInt(18, tableDetails.getGameYear());
+      preparedStatement.setString(19, tableDetails.getManufacturer());
+      preparedStatement.setString(20, tableDetails.getKeepDisplays());
+      preparedStatement.setInt(21, tableDetails.getNumberOfPlayers());
+      preparedStatement.setString(23, tableDetails.getNotes());
+      preparedStatement.setString(24, tableDetails.getRomName());
 
       preparedStatement.executeUpdate();
       preparedStatement.close();
 
-      LOG.info("Added game entry for '" + gameName + "', file name '" + gameFileName + "'");
+      LOG.info("Added game entry for '" + tableDetails.getGameName() + "', file name '" + tableDetails.getGameFileName() + "'");
       try (ResultSet keys = preparedStatement.getGeneratedKeys()) {
         if (keys.next()) {
           return keys.getInt(1);
