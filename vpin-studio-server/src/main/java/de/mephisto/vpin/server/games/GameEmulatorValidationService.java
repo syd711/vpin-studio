@@ -29,7 +29,7 @@ public class GameEmulatorValidationService {
       }
     }
 
-    if (frontendType.equals(FrontendType.Popper) && StringUtils.isEmpty(emulator.getGameExt())) {
+    if (frontendType.equals(FrontendType.Popper) && StringUtils.isEmpty(emulator.getGameExt()) && !emulator.isZaccariaEmulator()) {
       result.add(ValidationStateFactory.create(GameEmulatorValidationCode.CODE_NO_GAME_EXTENSION));
       if (findFirst) {
         return result;

@@ -34,6 +34,10 @@ public enum EmulatorType {
     return ZenFX.equals(this) || ZenFX2.equals(this) || ZenFX3.equals(this) || PinballM.equals(this);
   }
 
+  public boolean isZaccariaEmulator() {
+    return Zaccaria.equals(this);
+  }
+
   public boolean isMameEmulator() {
     return MAME.equals(this);
   }

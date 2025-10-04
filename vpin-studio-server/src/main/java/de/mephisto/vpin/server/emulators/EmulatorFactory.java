@@ -170,6 +170,9 @@ public class EmulatorFactory implements ApplicationContextAware {
     emu.setType(emulatorType);
     emu.setEnabled(true);
     emu.setGameExt("zip");
+    emu.setDescription("MAME Emulator");
+    emu.setInstallationDirectory("C:\\MAME");
+    emu.setGamesDirectory("C:\\MAME\\roms");
     emu.setLaunchScript(createScript(true, "START \"\" \"[STARTDIR]Launch\\VPXSTARTER.exe\" 2 2 10 \"Multiple Arcade Machine Emulator\"\n" +
         "\n" +
         "C:\n" +

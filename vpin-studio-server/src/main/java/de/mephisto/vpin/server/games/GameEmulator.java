@@ -164,6 +164,11 @@ public class GameEmulator {
   }
 
   @JsonIgnore
+  public boolean isZaccariaEmulator() {
+    return type.isZaccariaEmulator();
+  }
+
+  @JsonIgnore
   public boolean isMameEmulator() {
     return type.isMameEmulator();
   }

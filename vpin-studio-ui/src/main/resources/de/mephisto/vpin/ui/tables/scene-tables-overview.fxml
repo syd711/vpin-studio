@@ -245,7 +245,7 @@
                      </children>
                   </StackPane>
                   <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
-                  <ComboBox fx:id="emulatorCombo" prefWidth="170.0" promptText="All VPX Tables" />
+                  <ComboBox fx:id="emulatorCombo" prefWidth="190.0" promptText="All VPX Tables" />
                   <Button fx:id="emulatorBtn" layoutX="704.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEmulatorManager" textFill="WHITE">
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2c-controller" iconSize="18" />

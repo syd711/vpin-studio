@@ -1181,7 +1181,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.setString(index++, ""); //no field for notes
       preparedStatement.setInt(index++, playlist.isSqlPlayList() ? 1 : 0);
       preparedStatement.setString(index++, playlist.getPlayListSQL());
-      preparedStatement.setInt(index++, playlist.getMenuColor() != null ? playlist.getMenuColor() :  Integer.valueOf("FFFFFF", 16));
+      preparedStatement.setInt(index++, playlist.getMenuColor() != null ? playlist.getMenuColor() : Integer.valueOf("FFFFFF", 16));
       preparedStatement.setInt(index++, playlist.getPassCode());
       preparedStatement.setInt(index++, playlist.isUglyList() ? 1 : 0);
       preparedStatement.setInt(index++, playlist.isHideSysLists() ? 1 : 0);
@@ -1387,15 +1387,19 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     try {
       int index = 1;
 
+      if (emulator.getSafeName() == null) {
+        emulator.setSafeName(emulator.getName());
+      }
+
       PreparedStatement preparedStatement = null;
       if (emulator.getId() < 0) {
         preparedStatement = Objects.requireNonNull(connect).prepareStatement("INSERT INTO Emulators (" +
-                "EmuName, Description, DirGames, DirMedia, EmuDisplay, Visible, DirRoms, EmuLaunchDir, GamesExt, KeepDisplays, LaunchScript, PostScript) values (?,?,?,?,?,?,?,?,?,?,?)"
+                "EmuName, Description, DirGames, DirMedia, EmuDisplay, Visible, DirRoms, EmuLaunchDir, GamesExt, KeepDisplays, LaunchScript, PostScript) values (?,?,?,?,?,?,?,?,?,?,?,?)"
             , Statement.RETURN_GENERATED_KEYS);
       }
       else {
         preparedStatement = Objects.requireNonNull(connect).prepareStatement("INSERT OR REPLACE INTO Emulators (" +
-                "EMUID, EmuName, Description, DirGames, DirMedia, EmuDisplay, Visible, DirRoms, EmuLaunchDir, GamesExt, KeepDisplays, LaunchScript, PostScript) values (?,?,?,?,?,?,?,?,?,?,?,?)"
+                "EMUID, EmuName, Description, DirGames, DirMedia, EmuDisplay, Visible, DirRoms, EmuLaunchDir, GamesExt, KeepDisplays, LaunchScript, PostScript) values (?,?,?,?,?,?,?,?,?,?,?,?,?)"
             , Statement.RETURN_GENERATED_KEYS);
         preparedStatement.setInt(index++, emulator.getId());
       }
