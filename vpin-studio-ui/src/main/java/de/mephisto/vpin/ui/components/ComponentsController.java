@@ -197,6 +197,7 @@ public class ComponentsController implements Initializable, StudioFXController, 
     tabPane.setTabMaxWidth(100);
     tabPane.setTabMinWidth(100);
 
+    hint.setVisible(false);
     hint.managedProperty().bindBidirectional(hint.visibleProperty());
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();

@@ -8,7 +8,9 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /*********************************************************************************************************************
@@ -63,6 +65,10 @@ public class EmulatorServiceClient extends VPinStudioClientService {
 
   public List<GameEmulatorRepresentation> getGameEmulatorsUncached() {
     return Arrays.asList(getRestClient().get(API + API_SEGMENT_EMULATORS, GameEmulatorRepresentation[].class));
+  }
+
+  public EmulatorValidation validate(EmulatorType emulatorType) {
+    return getRestClient().get(API + API_SEGMENT_EMULATORS + "/validate/" + emulatorType.name(), EmulatorValidation.class);
   }
 
   public List<GameEmulatorRepresentation> getBackglassGameEmulators() {

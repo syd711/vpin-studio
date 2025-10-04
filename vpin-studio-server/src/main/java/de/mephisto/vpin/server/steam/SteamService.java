@@ -20,7 +20,9 @@ public class SteamService implements InitializingBean {
   public File getGameFolder(@NonNull EmulatorType emulatorType) {
     Map<String, File> gameFolders = SteamUtil.getGameFolders();
     if (!StringUtils.isEmpty(emulatorType.folderName()) && gameFolders.containsKey(emulatorType.folderName())) {
-      return gameFolders.get(emulatorType.folderName());
+      File file = gameFolders.get(emulatorType.folderName());
+      LOG.info("SteamService resolved game folder {}", file.getAbsolutePath());
+      return file;
     }
     return null;
   }

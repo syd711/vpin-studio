@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.frontend.popper;
 
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.server.frontend.DefaultMediaAccessStrategy;
 import de.mephisto.vpin.server.games.Game;
@@ -7,6 +8,7 @@ import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.playlists.Playlist;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
@@ -19,6 +21,12 @@ public class PinUPMediaAccessStrategy extends DefaultMediaAccessStrategy {
   }
 
   @Override
+  public File getEmulatorMediaFolder(@NotNull EmulatorType emulatorType) {
+    File defaultMedia = new File(pinUPConnector.getSettings().getGlobalMediaDir());
+    return new File(defaultMedia, emulatorType.folderName());
+  }
+
+  @Override
   public File getGameMediaFolder(@NonNull Game game, @NonNull VPinScreen screen, @Nullable String extension, boolean create) {
     String mediaDirectory = game.getEmulator().getMediaDirectory();
     File mediaFile = new File(mediaDirectory, screen.name());
@@ -26,7 +34,7 @@ public class PinUPMediaAccessStrategy extends DefaultMediaAccessStrategy {
   }
 
   @Override
-  public File getEmulatorMediaFolder(@NonNull GameEmulator emu, VPinScreen screen) {
+  public File getEmulatorMediaFolder(@NonNull GameEmulator emu, @NonNull VPinScreen screen) {
     String mediaDirectory = emu.getMediaDirectory();
     return new File(mediaDirectory, screen.name());
   }

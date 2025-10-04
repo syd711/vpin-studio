@@ -1,5 +1,7 @@
 package de.mephisto.vpin.server.emulators;
 
+import de.mephisto.vpin.restclient.emulators.EmulatorValidation;
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.FrontendService;
@@ -10,6 +12,7 @@ import de.mephisto.vpin.server.mame.MameService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +29,9 @@ public class EmulatorService {
 
   @Autowired
   private MameService mameService;
+
+  @Autowired
+  private EmulatorFactory emulatorFactory;
 
   private List<EmulatorChangeListener> listeners = new ArrayList<>();
 
@@ -168,6 +174,10 @@ public class EmulatorService {
     catch (Exception e) {
       LOG.error("Emulator initialization failed: " + e.getMessage(), e);
     }
+  }
+
+  public EmulatorValidation validate(EmulatorType emulatorType) {
+    return emulatorFactory.create(emulatorType);
   }
 
   private void synchronizeEmulator(GameEmulator emulator) {

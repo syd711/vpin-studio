@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient.frontend;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 public enum EmulatorType {
@@ -53,7 +54,7 @@ public enum EmulatorType {
     }
   }
 
-  @Nullable
+  @NonNull
   public String folderName() {
     switch (this) {
       case ZenFX:
@@ -66,8 +67,18 @@ public enum EmulatorType {
         return "Pinball M";
       case Zaccaria:
         return "Zaccaria Pinball";
+      case FuturePinball:
+        return "Future Pinball";
+      case VisualPinball:
+        return "Visual Pinball";
+      case VisualPinball9:
+        return "Visual Pinball";
+      case MAME:
+        return "MAME";
+      case OTHER:
+        return "Other";
       default:
-        return null;
+        throw new UnsupportedOperationException("No matching emulator type found for " + this);
     }
   }
 
