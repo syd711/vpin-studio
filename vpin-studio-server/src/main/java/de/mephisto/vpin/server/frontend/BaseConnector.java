@@ -880,6 +880,8 @@ public abstract class BaseConnector implements FrontendConnector {
                     p.info().command().get().contains("VPinballX") ||
                     p.info().command().get().contains("Future Pinball") ||
                     p.info().command().get().contains("PinballFX") ||
+                    p.info().command().get().contains("Pinball FX") ||
+                    p.info().command().get().contains("PinballM") ||
                     p.info().command().get().contains("Zaccaria") ||
                     p.info().command().get().startsWith("VPinball") ||
                     p.info().command().get().contains("B2SBackglassServerEXE") ||

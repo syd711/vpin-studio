@@ -76,6 +76,12 @@ public class SteamUtil {
   }
 
   public static void main(String[] args) {
+    List<ProcessHandle> processHandles = ProcessHandle.allProcesses().collect(Collectors.toList());
+    for (ProcessHandle processHandle : processHandles) {
+      if(processHandle.info() != null && processHandle.info().command().isPresent()) {
+        System.out.println(processHandle.info().command().get());
+      }
+    }
     System.out.println(getGameFolders());
   }
 }
