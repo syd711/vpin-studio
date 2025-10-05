@@ -30,6 +30,10 @@ public enum EmulatorType {
     return FuturePinball.equals(this);
   }
 
+  public boolean isPupGameImportSupported() {
+    return isZenEmulator() || isZaccariaEmulator();
+  }
+
   public boolean isZenEmulator() {
     return ZenFX.equals(this) || ZenFX2.equals(this) || ZenFX3.equals(this) || PinballM.equals(this);
   }

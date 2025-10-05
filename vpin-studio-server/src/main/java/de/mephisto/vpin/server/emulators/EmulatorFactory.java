@@ -377,7 +377,7 @@ public class EmulatorFactory implements ApplicationContextAware {
       return null;
     }
 
-    List<TableDetails> read = PUPGameImporter.read(emulatorType);
+    List<TableDetails> read = PUPGameImporter.read(emulatorType, -1);
     if (read.isEmpty()) {
       validation.setErrorTitle("The PUP game import failed.");
       validation.setErrorText("The automatic setup for this emulator is supported, but the automatic game import failed. Please contact support.");

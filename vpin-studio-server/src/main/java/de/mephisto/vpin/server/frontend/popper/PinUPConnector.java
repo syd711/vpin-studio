@@ -822,7 +822,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     try {
       PreparedStatement preparedStatement = Objects.requireNonNull(connect).prepareStatement("INSERT INTO Games (EMUID, GameName, GameFileName, GameDisplay, Visible, LaunchCustomVar, DateAdded, DateFileUpdated, " +
           "Author, TAGS, Category, MediaSearch, IPDBNum, AltRunMode, GAMEVER, GameType, GameTheme, GameYear, Manufact, GKeepDisplays, NumPlayers, Notes, ROM) " +
-          "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+          "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
       preparedStatement.setInt(1, tableDetails.getEmulatorId());
       preparedStatement.setString(2, tableDetails.getGameName());
       preparedStatement.setString(3, tableDetails.getGameFileName());
@@ -849,13 +849,13 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.setString(19, tableDetails.getManufacturer());
       preparedStatement.setString(20, tableDetails.getKeepDisplays());
       preparedStatement.setInt(21, tableDetails.getNumberOfPlayers());
-      preparedStatement.setString(23, tableDetails.getNotes());
-      preparedStatement.setString(24, tableDetails.getRomName());
+      preparedStatement.setString(22, tableDetails.getNotes());
+      preparedStatement.setString(23, tableDetails.getRomName());
 
       preparedStatement.executeUpdate();
       preparedStatement.close();
 
-      LOG.info("Added game entry for '" + tableDetails.getGameName() + "', file name '" + tableDetails.getGameFileName() + "'");
+      LOG.info("Added game entry for '" + tableDetails.getGameName() + "', file name '" + tableDetails.getGameFileName() + "', emulator " + tableDetails.getEmulatorId());
       try (ResultSet keys = preparedStatement.getGeneratedKeys()) {
         if (keys.next()) {
           return keys.getInt(1);
@@ -863,7 +863,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to update game table:" + e.getMessage(), e);
+      LOG.error("Failed to update game table: {}", e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -1527,6 +1527,10 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
   @NonNull
   private EmulatorType getEmulatorType(String emuName, String dirGames, String extension) {
+    if (emuName.toLowerCase().contains("fx") && !emuName.toLowerCase().contains("2")) {
+      return EmulatorType.ZenFX;
+    }
+
     EmulatorType type = EmulatorType.fromExtension(extension);
     if (type != null) {
       return type;

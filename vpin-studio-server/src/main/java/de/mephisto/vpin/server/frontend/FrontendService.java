@@ -11,10 +11,7 @@ import de.mephisto.vpin.restclient.preferences.AutoFillSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.emulators.EmulatorService;
-import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameDetailsRepository;
-import de.mephisto.vpin.server.games.GameEmulator;
-import de.mephisto.vpin.server.games.GameLifecycleService;
+import de.mephisto.vpin.server.games.*;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -690,7 +687,10 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     if (result) {
       LOG.info("Sucessfully deleted emulator {}, now deleting Studio game details.", emulatorId);
       for (Game game : gamesByEmulator) {
-        gameDetailsRepository.deleteById((long) game.getId());
+        GameDetails byPupId = gameDetailsRepository.findByPupId(game.getId());
+        if (byPupId != null) {
+          gameDetailsRepository.delete(byPupId);
+        }
       }
       LOG.info("Studio game details deletion completed, deleted {} games", gamesByEmulator.size());
     }

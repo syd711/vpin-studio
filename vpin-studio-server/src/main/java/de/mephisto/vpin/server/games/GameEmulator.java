@@ -164,6 +164,11 @@ public class GameEmulator {
   }
 
   @JsonIgnore
+  public boolean isPupGameImportSupported() {
+    return type.isPupGameImportSupported();
+  }
+
+  @JsonIgnore
   public boolean isZaccariaEmulator() {
     return type.isZaccariaEmulator();
   }

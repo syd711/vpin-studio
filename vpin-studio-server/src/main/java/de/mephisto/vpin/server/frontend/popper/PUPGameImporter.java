@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.mephisto.vpin.commons.SystemInfo;
-import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import org.slf4j.Logger;
@@ -13,25 +12,34 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class PUPGameImporter {
   private final static Logger LOG = LoggerFactory.getLogger(PUPGameImporter.class);
 
-  public static List<TableDetails> read(EmulatorType emulatorType) {
+  public static List<TableDetails> read(EmulatorType emulatorType, int emulatorId) {
+    List<TableDetails> result = new ArrayList<>();
     switch (emulatorType) {
       case Zaccaria: {
-        return importPupGames("zaccaria.json");
+        result.addAll(importPupGames("zaccaria.json"));
+        break;
       }
       case ZenFX: {
-        return importPupGames("pinball_fx.json");
+        result.addAll(importPupGames("pinball_fx.json"));
+        break;
       }
       case ZenFX3: {
-        return importPupGames("pinball_fx3.json");
+        result.addAll(importPupGames("pinball_fx3.json"));
+        break;
+      }
+      case PinballM: {
+        result.addAll(importPupGames("pinball_m.json"));
+        break;
       }
     }
-    return Collections.emptyList();
+
+    result.stream().forEach(g -> g.setEmulatorId(emulatorId));
+    return result;
   }
 
   private static List<TableDetails> importPupGames(String filename) {

@@ -10,11 +10,15 @@ import de.mephisto.vpin.server.frontend.popper.PUPGameImporter;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameEmulatorValidationService;
+import de.mephisto.vpin.server.games.GameMediaService;
 import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.vps.VpsService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -33,6 +37,10 @@ public class EmulatorService {
 
   @Autowired
   private EmulatorFactory emulatorFactory;
+
+  @Lazy
+  @Autowired
+  private GameMediaService gameMediaService;
 
   private final List<EmulatorChangeListener> listeners = new ArrayList<>();
 
@@ -101,8 +109,8 @@ public class EmulatorService {
     GameEmulator saved = frontendService.saveEmulator(emulator);
     this.emulators.remove(saved.getId());
     loadEmulator(saved);
-    synchronizeEmulator(emulator);
-    notifyEmulatorChange(emulator.getId());
+    synchronizeEmulator(saved);
+    notifyEmulatorChange(saved.getId());
     return saved;
   }
 
@@ -186,41 +194,21 @@ public class EmulatorService {
       return;
     }
 
-    if (emulator.isZenEmulator()) {
-      synchronizeEmulatorGames(emulator);
-    }
-  }
-
-  private void synchronizeEmulatorGames(GameEmulator emulator) {
     int count = 0;
-    List<Game> gamesByEmulator = frontendService.getGamesByEmulator(emulator.getId());
-
-    if (gamesByEmulator.isEmpty() && emulator.isZenEmulator()) {
-      for (TableDetails tableDetails : PUPGameImporter.read(emulator.getType())) {
-        frontendService.importGame(tableDetails);
-      }
-    }
-    else {
-      String gamesDirectory = emulator.getGamesDirectory();
-      if (!StringUtils.isEmpty(gamesDirectory)) {
-        File gamesFolder = new File(gamesDirectory);
-        if (gamesFolder.exists()) {
-          File[] files = gamesFolder.listFiles((dir, name) -> name.endsWith(emulator.getGameExt()));
-          if (files != null) {
-            for (File file : files) {
-              Optional<Game> game = gamesByEmulator.stream().filter(g -> g.getGameFile().equals(file)).findFirst();
-              if (game.isEmpty()) {
-                LOG.info("Importing \"{}\" for emulator \"{}\".", file.getAbsolutePath(), emulator.getName() + "/" + emulator.getId());
-                frontendService.importGame(file, emulator.getId());
-                count++;
-              }
-            }
+    if (emulator.isPupGameImportSupported()) {
+      List<Game> gamesByEmulator = frontendService.getGamesByEmulator(emulator.getId());
+      if (gamesByEmulator.isEmpty()) {
+        List<TableDetails> tableDetailList = PUPGameImporter.read(emulator.getType(), emulator.getId());
+        for (TableDetails tableDetails : tableDetailList) {
+          int gameId = frontendService.importGame(tableDetails);
+          if (gameId > 0) {
+            gameMediaService.autoMatch(gameId, false);
+            count++;
           }
         }
+        LOG.info("\"{}\" emulator synchronization finished, added {} games.", emulator.getName(), count);
       }
     }
-
-    LOG.info("\"{}\" emulator synchronization finished, added {} games.", emulator.getName(), count);
   }
 
   public boolean clearCache() {

@@ -108,6 +108,11 @@ public class GameMediaService {
   @Autowired
   private VpsService vpsService;
 
+  public VpsMatch autoMatch(int gameId, boolean overwrite) {
+    Game game = gameService.getGame(gameId);
+    return autoMatch(game, overwrite, false);
+  }
+
   /**
    * moved from VpsService to break circular dependency.
    */

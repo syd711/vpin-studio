@@ -298,9 +298,8 @@ public class EmulatorsController implements Initializable {
   private void onCreate() {
     GameEmulatorRepresentation emulatorRepresentation = EmulatorDialogs.openNewEmulatorDialog();
     if (emulatorRepresentation != null) {
-      emulatorRepresentation = client.getEmulatorService().saveGameEmulator(emulatorRepresentation);
-      onReload();
-      tableController.select(emulatorRepresentation);
+      ProgressDialog.createProgressDialog(new EmulatorCreateProgressModel(emulatorRepresentation, this));
+
     }
   }
 
@@ -527,5 +526,9 @@ public class EmulatorsController implements Initializable {
 
       refreshTableWidth();
     });
+  }
+
+  public void select(GameEmulatorRepresentation gameEmulator) {
+    this.tableController.select(gameEmulator);
   }
 }
