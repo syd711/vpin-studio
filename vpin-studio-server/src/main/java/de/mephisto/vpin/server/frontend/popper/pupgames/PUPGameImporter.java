@@ -19,6 +19,7 @@ public class PUPGameImporter {
 
   public static List<TableDetails> read(EmulatorType emulatorType, int emulatorId) {
     List<TableDetails> result = new ArrayList<>();
+    LOG.info("Running pupgames importer for {}", emulatorType);
     switch (emulatorType) {
       case Zaccaria: {
         result.addAll(importPupGames("zaccaria.json"));

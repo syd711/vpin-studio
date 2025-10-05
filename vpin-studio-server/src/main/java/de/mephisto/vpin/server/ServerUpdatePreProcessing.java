@@ -30,7 +30,7 @@ public class ServerUpdatePreProcessing {
 
   static {
     PUP_GAMES.put("pinball_fx.json", 234022L);
-    PUP_GAMES.put("pinball_fx3.json", 228703L);
+    PUP_GAMES.put("pinball_fx3.json", 157062L);
     PUP_GAMES.put("zaccaria.json", 217581L);
     PUP_GAMES.put("pinball_m.json", 11574L);
   }

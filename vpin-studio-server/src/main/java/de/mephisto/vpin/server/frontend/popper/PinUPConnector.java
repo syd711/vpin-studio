@@ -1528,7 +1528,13 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
   @NonNull
   private EmulatorType getEmulatorType(String emuName, String dirGames, String extension, String launchScript) {
-    if (emuName.toLowerCase().contains("fx") && !emuName.toLowerCase().contains("2")) {
+    if (emuName.toLowerCase().contains("fx")) {
+      if (launchScript != null && launchScript.toLowerCase().contains("fx3")) {
+        return EmulatorType.ZenFX3;
+      }
+      if (launchScript != null && launchScript.toLowerCase().contains("fx2")) {
+        return EmulatorType.ZenFX2;
+      }
       return EmulatorType.ZenFX;
     }
 
