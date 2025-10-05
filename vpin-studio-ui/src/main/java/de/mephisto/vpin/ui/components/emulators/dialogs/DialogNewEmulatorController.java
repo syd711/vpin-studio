@@ -89,6 +89,7 @@ public class DialogNewEmulatorController implements Initializable, DialogControl
 
     ArrayList<EmulatorType> emulatorTypes = new ArrayList<>(Arrays.asList(EmulatorType.values()));
     emulatorTypes.remove(EmulatorType.OTHER);
+    emulatorTypes.remove(EmulatorType.ZenFX2);
     List<EmulatorTypeModel> collect = emulatorTypes.stream().map(EmulatorTypeModel::new).collect(Collectors.toList());
     emulatorTypeComboBox.setItems(FXCollections.observableList(collect));
 
