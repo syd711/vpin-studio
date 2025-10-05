@@ -23,7 +23,9 @@ import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -37,7 +39,7 @@ public class DialogNewEmulatorController implements Initializable, DialogControl
   private Button cancelBtn;
 
   @FXML
-  private ComboBox<EmulatorType> emulatorTypeComboBox;
+  private ComboBox<EmulatorTypeModel> emulatorTypeComboBox;
 
   @FXML
   private TextField nameField;
@@ -64,6 +66,7 @@ public class DialogNewEmulatorController implements Initializable, DialogControl
 
   @FXML
   private void onCancelClick(ActionEvent e) {
+    validatedEmulator = null;
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
   }
@@ -86,12 +89,19 @@ public class DialogNewEmulatorController implements Initializable, DialogControl
 
     ArrayList<EmulatorType> emulatorTypes = new ArrayList<>(Arrays.asList(EmulatorType.values()));
     emulatorTypes.remove(EmulatorType.OTHER);
-    emulatorTypeComboBox.setItems(FXCollections.observableList(emulatorTypes));
+    List<EmulatorTypeModel> collect = emulatorTypes.stream().map(EmulatorTypeModel::new).collect(Collectors.toList());
+    emulatorTypeComboBox.setItems(FXCollections.observableList(collect));
 
-    emulatorTypeComboBox.valueProperty().addListener(new ChangeListener<EmulatorType>() {
+    emulatorTypeComboBox.valueProperty().addListener(new ChangeListener<EmulatorTypeModel>() {
       @Override
-      public void changed(ObservableValue<? extends EmulatorType> observable, EmulatorType oldValue, EmulatorType emulatorType) {
-        nameField.setText(emulatorType.folderName());
+      public void changed(ObservableValue<? extends EmulatorTypeModel> observable, EmulatorTypeModel oldValue, EmulatorTypeModel emulatorTypeModel) {
+        if(emulatorTypeModel == null) {
+          return;
+        }
+
+        EmulatorType emulatorType = emulatorTypeModel.emulatorType;
+
+        nameField.setText(emulatorTypeModel.toString());
 
         JFXFuture.supplyAsync(() -> {
           validatedEmulator = null;
@@ -134,10 +144,23 @@ public class DialogNewEmulatorController implements Initializable, DialogControl
 
   @Override
   public void onDialogCancel() {
-
+    validatedEmulator = null;
   }
 
   public GameEmulatorRepresentation getValidatedEmulator() {
     return validatedEmulator;
+  }
+
+  static class EmulatorTypeModel {
+    private final EmulatorType emulatorType;
+
+    EmulatorTypeModel(EmulatorType emulatorType) {
+      this.emulatorType = emulatorType;
+    }
+
+    @Override
+    public String toString() {
+      return emulatorType.folderName();
+    }
   }
 }

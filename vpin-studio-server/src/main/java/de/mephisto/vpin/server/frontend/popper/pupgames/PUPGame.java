@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.frontend.popper;
+package de.mephisto.vpin.server.frontend.popper.pupgames;
 
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 

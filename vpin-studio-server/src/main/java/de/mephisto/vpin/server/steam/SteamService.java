@@ -27,6 +27,10 @@ public class SteamService implements InitializingBean {
     return null;
   }
 
+  public File getSteamFolder() {
+    return SteamUtil.getSteamFolder();
+  }
+
   @Override
   public void afterPropertiesSet() throws Exception {
 

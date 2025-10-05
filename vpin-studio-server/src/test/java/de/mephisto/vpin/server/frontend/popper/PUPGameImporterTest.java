@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.frontend.popper;
 
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
+import de.mephisto.vpin.server.frontend.popper.pupgames.PUPGameImporter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

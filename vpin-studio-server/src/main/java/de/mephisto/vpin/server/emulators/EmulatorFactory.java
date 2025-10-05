@@ -7,7 +7,7 @@ import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
-import de.mephisto.vpin.server.frontend.popper.PUPGameImporter;
+import de.mephisto.vpin.server.frontend.popper.pupgames.PUPGameImporter;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.steam.SteamService;
 import de.mephisto.vpin.server.system.SystemService;
@@ -265,7 +265,7 @@ public class EmulatorFactory implements ApplicationContextAware {
 
 
   private void validateZenFX(EmulatorType emulatorType, EmulatorValidation validation) {
-    GameEmulatorRepresentation emu = setupDefaultEmulatorWithGameList(emulatorType, validation);
+    GameEmulatorRepresentation emu = setupSteamEmulator(emulatorType, validation);
     if (emu == null) {
       return;
     }
@@ -288,12 +288,13 @@ public class EmulatorFactory implements ApplicationContextAware {
   }
 
   private void validateZenFX3(EmulatorType emulatorType, EmulatorValidation validation) {
-    GameEmulatorRepresentation emu = setupDefaultEmulatorWithGameList(emulatorType, validation);
+    GameEmulatorRepresentation emu = setupSteamEmulator(emulatorType, validation);
     if (emu == null) {
       return;
     }
 
     emu.setGameExt("pxp");
+    emu.setGamesDirectory(new File(getSteamService().getGameFolder(emulatorType), "data\\steam").getAbsolutePath());
     emu.setExitScript(createScript(false, "\"[STARTDIR]LAUNCH\\PUPCLOSER.EXE\" WINTIT \"Pinball FX3\" 4 1\n"));
     emu.setLaunchScript(createScript(true, "@echo off\n" +
         "\n" +
@@ -325,7 +326,7 @@ public class EmulatorFactory implements ApplicationContextAware {
 
 
   private void validateZenM(EmulatorType emulatorType, EmulatorValidation validation) {
-    GameEmulatorRepresentation emu = setupDefaultEmulatorWithGameList(emulatorType, validation);
+    GameEmulatorRepresentation emu = setupSteamEmulator(emulatorType, validation);
     if (emu == null) {
       return;
     }
@@ -349,13 +350,14 @@ public class EmulatorFactory implements ApplicationContextAware {
 
 
   private void validateZaccaria(EmulatorType emulatorType, EmulatorValidation validation) {
-    GameEmulatorRepresentation emu = setupDefaultEmulatorWithGameList(emulatorType, validation);
+    GameEmulatorRepresentation emu = setupSteamEmulator(emulatorType, validation);
     if (emu == null) {
       return;
     }
 
     emu.setDescription("Zaccaria Pinball");
     emu.setGameExt("");
+
     emu.setKeepDisplays("0,1,9,10");
     emu.setExitScript(createScript(false, "\"[STARTDIR]LAUNCH\\PUPCLOSER.EXE\" WINTIT \"Zaccaria_Pinball\" 10 5 2"));
     emu.setLaunchScript(createScript(true, "START \"\" \"[STARTDIR]Launch\\VPXSTARTER.exe\" 5 5 5 \"Zaccaria Pinball\"\n" +
@@ -369,7 +371,7 @@ public class EmulatorFactory implements ApplicationContextAware {
   }
 
   @Nullable
-  private GameEmulatorRepresentation setupDefaultEmulatorWithGameList(EmulatorType emulatorType, EmulatorValidation validation) {
+  private GameEmulatorRepresentation setupSteamEmulator(EmulatorType emulatorType, EmulatorValidation validation) {
     File gameFolder = getSteamService().getGameFolder(emulatorType);
     if (gameFolder == null) {
       validation.setErrorTitle("No installation directory found for this emulator type.");
@@ -392,7 +394,7 @@ public class EmulatorFactory implements ApplicationContextAware {
 
     emu.setType(emulatorType);
     emu.setEnabled(true);
-    emu.setInstallationDirectory(gameFolder.getAbsolutePath());
+    emu.setInstallationDirectory(getSteamService().getSteamFolder().getAbsolutePath());
     emu.setExeName("");
     emu.setSafeName(emulatorType.folderName());
     emu.setDescription(emulatorType.folderName());

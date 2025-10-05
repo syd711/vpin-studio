@@ -71,22 +71,17 @@ public class PlayButtonController implements Initializable, ChangeListener<Launc
 
   public void setData(GameRepresentation game) {
     this.game = game;
-    boolean disable = game == null || game.getGameFilePath() == null;
+    GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
+    boolean disable = !isPlayable(game, gameEmulator);
     launchCombo.setDisable(disable);
     launchBtn.setDisable(disable);
     this.launchCombo.getItems().clear();
 
-    if (disable || game == null) {
-      return;
-    }
-
-    JFXFuture.supplyAllAsync(
-      () -> client.getEmulatorService().getGameEmulator(game.getEmulatorId()),
-      () -> client.getEmulatorService().getAltExeNames(game.getEmulatorId())
+    JFXFuture.supplyAsync(
+        () -> client.getEmulatorService().getAltExeNames(game.getEmulatorId())
     ).thenAcceptLater(objs -> {
-      GameEmulatorRepresentation gameEmulator = (GameEmulatorRepresentation) objs[0];
       @SuppressWarnings("unchecked")
-      List<String> altExeNames = (List<String>) objs[1];
+      List<String> altExeNames = objs;
 
       List<LaunchConfiguration> items = new ArrayList<>();
 
@@ -130,6 +125,17 @@ public class PlayButtonController implements Initializable, ChangeListener<Launc
     });
   }
 
+  private boolean isPlayable(GameRepresentation game, GameEmulatorRepresentation gameEmulator) {
+    if (game == null) {
+      return false;
+    }
+
+    if (gameEmulator.isZaccariaEmulator() || gameEmulator.isFxEmulator()) {
+      return true;
+    }
+    return game.getGameFilePath() != null;
+  }
+
   private static boolean isCameraModeSupported(String altExeName) {
     return altExeName.startsWith("VPinballX");
   }
@@ -167,7 +173,7 @@ public class PlayButtonController implements Initializable, ChangeListener<Launc
   @Override
   public void changed(ObservableValue<? extends LaunchConfiguration> observable, LaunchConfiguration oldValue, LaunchConfiguration newValue) {
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-    if(newValue != null) {
+    if (newValue != null) {
       uiSettings.setLaunchConfiguration(newValue);
       client.getPreferenceService().setJsonPreference(uiSettings);
     }

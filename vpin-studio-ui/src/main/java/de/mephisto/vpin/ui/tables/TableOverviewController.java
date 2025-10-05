@@ -2025,8 +2025,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     this.exportBtn.setDisable(!vpxOrFpEmulator);
     this.deleteBtn.setVisible(vpxOrFpEmulator);
     this.scanBtn.setVisible(vpxEmulator);
-    this.playButtonController.setVisible(vpxOrFpEmulator);
-    this.stopBtn.setVisible(vpxOrFpEmulator);
+//    this.playButtonController.setVisible(vpxOrFpEmulator);
+//    this.stopBtn.setVisible(vpxOrFpEmulator);
 
     this.uploadsButtonController.updateVisibility(vpxOrFpEmulator, vpxEmulator, fpEmulator);
 
@@ -2047,10 +2047,11 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     boolean vpxMode = newValue == null || newValue.isVpxEmulator();
     boolean fpMode = newValue == null || newValue.isFpEmulator();
     boolean fxMode = newValue == null || newValue.isFxEmulator();
+    boolean zaccariaMode = newValue == null || newValue.isZaccariaEmulator();
 
     columnVersion.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnVersion());
     columnEmulator.setVisible((vpxMode || fpMode) && !assetManagerMode && !Features.IS_STANDALONE && uiSettings.isColumnEmulator());
-    columnVPS.setVisible((vpxMode || fpMode || fxMode) && !assetManagerMode && uiSettings.isColumnVpsStatus());
+    columnVPS.setVisible((vpxMode || fpMode || fxMode || zaccariaMode) && !assetManagerMode && uiSettings.isColumnVpsStatus());
     columnPatchVersion.setVisible((vpxMode || fpMode || fxMode) && !assetManagerMode && uiSettings.isColumnPatchVersion());
     columnRom.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnRom());
     columnB2S.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnBackglass());
@@ -2067,8 +2068,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     columnDateAdded.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnDateAdded());
     columnDateModified.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnDateModified());
     columnLauncher.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnLauncher());
-    columnComment.setVisible((vpxMode || fpMode || fxMode) && !assetManagerMode && uiSettings.isColumnComment());
-    columnPlaylists.setVisible((vpxMode || fpMode || fxMode) && !assetManagerMode && Features.PLAYLIST_ENABLED && uiSettings.isColumnPlaylists());
+    columnComment.setVisible((vpxMode || fpMode || fxMode || zaccariaMode) && !assetManagerMode && uiSettings.isColumnComment());
+    columnPlaylists.setVisible((vpxMode || fpMode || fxMode || zaccariaMode) && !assetManagerMode && Features.PLAYLIST_ENABLED && uiSettings.isColumnPlaylists());
   }
 
   @Override

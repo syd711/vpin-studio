@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.frontend.popper;
+package de.mephisto.vpin.server.frontend.popper.pupgames;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;

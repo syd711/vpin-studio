@@ -1477,8 +1477,9 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     String emuName = rs.getString("EmuName");
     String dirGames = rs.getString("DirGames");
     String extension = rs.getString("GamesExt");
+    String launchScript = rs.getString("LaunchScript");
 
-    EmulatorType type = getEmulatorType(emuName, dirGames, extension);
+    EmulatorType type = getEmulatorType(emuName, dirGames, extension, launchScript);
 
     GameEmulator e = new GameEmulator();
     e.setType(type);
@@ -1526,9 +1527,15 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   }
 
   @NonNull
-  private EmulatorType getEmulatorType(String emuName, String dirGames, String extension) {
+  private EmulatorType getEmulatorType(String emuName, String dirGames, String extension, String launchScript) {
     if (emuName.toLowerCase().contains("fx") && !emuName.toLowerCase().contains("2")) {
       return EmulatorType.ZenFX;
+    }
+
+    if (emuName.toLowerCase().contains("pinballm")
+        || emuName.toLowerCase().contains("pinball m")
+        || (launchScript != null && launchScript.toLowerCase().contains("pinballm"))) {
+      return EmulatorType.PinballM;
     }
 
     EmulatorType type = EmulatorType.fromExtension(extension);
@@ -2428,6 +2435,8 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
                     p.info().command().get().contains("PinUpPackEditor") ||
                     p.info().command().get().contains("VPinballX") ||
                     p.info().command().get().startsWith("VPinball") ||
+                    p.info().command().get().contains("PinballFX") ||
+                    p.info().command().get().contains("Zaccaria") ||
                     p.info().command().get().contains("Future Pinball") ||
                     p.info().command().get().contains("B2SBackglassServerEXE"))).collect(Collectors.toList());
 

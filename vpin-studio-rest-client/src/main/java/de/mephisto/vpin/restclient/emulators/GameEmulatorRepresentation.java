@@ -93,6 +93,9 @@ public class GameEmulatorRepresentation {
   public boolean isFxEmulator() {
     return type.isZenEmulator();
   }
+  public boolean isZaccariaEmulator() {
+    return type.isZaccariaEmulator();
+  }
 
   public boolean isVpxEmulator() {
     return type.isVpxEmulator();

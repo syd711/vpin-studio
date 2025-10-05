@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.steam;
 
 import de.mephisto.vpin.commons.utils.WinRegistry;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -12,37 +14,53 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class SteamUtil {
   private final static Logger LOG = LoggerFactory.getLogger(SteamService.class);
 
-  public static Map<String, File> getGameFolders() {
-    Map<String, File> gameFolders = new HashMap<>();
+  @Nullable
+  public static File getSteamFolder() {
     try {
       Map<String, Object> currentUserValues = WinRegistry.getCurrentUserValues("Software\\Valve\\Steam");
       String steamPath = (String) currentUserValues.get("SteamPath");
       if (!StringUtils.isEmpty(steamPath)) {
         File f = new File(steamPath);
         if (f.exists()) {
-          File libConfigFile = new File(steamPath, "config/libraryfolders.vdf");
-          if (libConfigFile.exists()) {
-            List<String> lines = FileUtils.readLines(libConfigFile, StandardCharsets.UTF_8);
-            for (String line : lines) {
-              if (line.contains("path")) {
-                String[] split = line.split("\\t");
-                String path = split[split.length - 1].replaceAll("\"", "");
-                File appsFolder = new File(path, "steamapps/common");
-                if (appsFolder.exists()) {
-                  File[] files = appsFolder.listFiles(new FileFilter() {
-                    @Override
-                    public boolean accept(File pathname) {
-                      return pathname.isDirectory();
-                    }
-                  });
+          return f;
+        }
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to resolve Steam: {}", e.getMessage(), e);
+    }
+    return null;
+  }
 
-                  for (File file : files) {
-                    gameFolders.put(file.getName(), file);
+  @NonNull
+  public static Map<String, File> getGameFolders() {
+    Map<String, File> gameFolders = new HashMap<>();
+    try {
+      File steamFolder = getSteamFolder();
+      if (steamFolder != null) {
+        File libConfigFile = new File(steamFolder, "config/libraryfolders.vdf");
+        if (libConfigFile.exists()) {
+          List<String> lines = FileUtils.readLines(libConfigFile, StandardCharsets.UTF_8);
+          for (String line : lines) {
+            if (line.contains("path")) {
+              String[] split = line.split("\\t");
+              String path = split[split.length - 1].replaceAll("\"", "");
+              File appsFolder = new File(path, "steamapps/common");
+              if (appsFolder.exists()) {
+                File[] files = appsFolder.listFiles(new FileFilter() {
+                  @Override
+                  public boolean accept(File pathname) {
+                    return pathname.isDirectory();
                   }
+                });
+
+                for (File file : files) {
+                  gameFolders.put(file.getName(), file);
                 }
               }
             }

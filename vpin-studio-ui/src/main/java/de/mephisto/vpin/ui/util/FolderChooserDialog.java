@@ -63,7 +63,7 @@ public class FolderChooserDialog {
 
     if (path != null) {
       File init = new File(path);
-      while (!init.exists()) {
+      while (init != null && !init.exists()) {
         init = init.getParentFile();
       }
       chooser.setInitialDirectory(init);

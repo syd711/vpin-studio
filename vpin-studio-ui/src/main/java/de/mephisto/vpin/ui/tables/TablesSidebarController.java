@@ -827,8 +827,8 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
     titledPanePov.setVisible(vpxMode);
     titledPaneIni.setVisible(vpxMode);
     titledPaneAltSound.setVisible(vpxMode);
-    //titledPaneDirectB2s.setVisible(vpxMode);
-    //titledPanePUPPack.setVisible(vpxMode);
+    titledPaneDirectB2s.setVisible(newValue == null || newValue.isVpxEmulator() || newValue.isFpEmulator());
+    titledPanePUPPack.setVisible(newValue == null || newValue.isVpxEmulator() || newValue.isFpEmulator());
     titledPaneDMD.setVisible(vpxMode);
     titledPaneMame.setVisible(vpxMode);
     //titledPaneVps.setVisible(vpxMode);
