@@ -335,7 +335,8 @@ public class TablesSidebarHighscoresController implements Initializable {
         cardImage.setImage(new Image(highscoreCard));
       }
       else {
-        cardImage.setImage(new Image(ResourceLoader.class.getResourceAsStream("empty-preview.png")));
+        InputStream resourceAsStream = Studio.class.getResourceAsStream("empty-preview.png");
+        cardImage.setImage(new Image(resourceAsStream));
       }
 
       String rom = game.getRom();
