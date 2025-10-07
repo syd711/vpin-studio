@@ -352,7 +352,9 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
       cardData.setWheel(getImage(game, cardData, template, "wheel"));
 
       cardData.setFallbackBackground(getBytes("backgrounds", template.getBackground()));
-      cardData.setFrame(getBytes("frames", template.getFrame()));
+      if(template.getFrame() != null) {
+        cardData.setFrame(getBytes("frames", template.getFrame()));
+      }
 
       if (template.isRenderManufacturerLogo()) {
         cardData.setManufacturerLogo(getImage(game, cardData, template, "manufacturerLogo"));
