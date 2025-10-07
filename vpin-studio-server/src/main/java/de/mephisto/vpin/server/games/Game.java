@@ -230,6 +230,10 @@ public class Game {
     return this.emulator != null && this.emulator.isVpxEmulator();
   }
 
+  public boolean isZenGame() {
+    return this.emulator != null && this.emulator.isZenEmulator();
+  }
+
   public boolean isFpGame() {
     return this.emulator.isFpEmulator();
   }

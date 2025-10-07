@@ -237,6 +237,21 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     return games;
   }
 
+
+  private List<Game> getZenGames() {
+    List<Game> games = new ArrayList<>();
+    List<GameEmulator> gameEmulators = emulatorService.getZenGameEmulators();
+    for (GameEmulator gameEmulator : gameEmulators) {
+      if (gameEmulator.isEnabled()) {
+        if (!allGamesByEmulatorId.containsKey(gameEmulator.getId())) {
+          fetchEmulatorGames(gameEmulator);
+        }
+        games.addAll(allGamesByEmulatorId.get(gameEmulator.getId()));
+      }
+    }
+    return games;
+  }
+
   private void fetchEmulatorGames(GameEmulator emulator) {
     long start = System.currentTimeMillis();
     List<Game> gamesByEmulator = frontendService.getGamesByEmulator(emulator.getId());
@@ -491,18 +506,27 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
       case ALT_COLOR:
       case PUP_PACK:
       case ALT_SOUND: {
-        List<Game> vpxGames = getVpxGames();
         if (changedEvent.getAsset() != null) {
           Object asset = changedEvent.getAsset();
           if (asset instanceof String) {
+            List<Game> vpxGames = getVpxGames();
             String rom = String.valueOf(asset);
             for (Game vpxGame : vpxGames) {
               if (rom.equalsIgnoreCase(vpxGame.getRom()) || rom.equalsIgnoreCase(vpxGame.getTableName())) {
                 invalidate(vpxGame.getId());
               }
             }
+
+            List<Game> zenGames = getZenGames();
+            String tableName = String.valueOf(asset);
+            for (Game zenGame : zenGames) {
+              if (tableName.equalsIgnoreCase(zenGame.getGameName())) {
+                invalidate(zenGame.getId());
+              }
+            }
           }
         }
+
         return;
       }
       case INI:

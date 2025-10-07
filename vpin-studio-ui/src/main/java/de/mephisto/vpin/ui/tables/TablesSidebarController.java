@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -822,6 +823,8 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
 
   public void refreshViewForEmulator(GameEmulatorRepresentation newValue) {
     boolean vpxMode = newValue == null || newValue.isVpxEmulator();
+    boolean fx1Mode = newValue == null || newValue.getType().equals(EmulatorType.ZenFX);
+    boolean fx3Mode = newValue == null || newValue.getType().equals(EmulatorType.ZenFX3);
 
     titledPaneHighscores.setVisible(vpxMode);
     titledPanePov.setVisible(vpxMode);
@@ -832,7 +835,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
     titledPaneDMD.setVisible(vpxMode);
     titledPaneMame.setVisible(vpxMode);
     //titledPaneVps.setVisible(vpxMode);
-    titledPaneAltColor.setVisible(vpxMode);
+    titledPaneAltColor.setVisible(vpxMode || fx1Mode || fx3Mode);
     titledPaneScriptDetails.setVisible(vpxMode);
 
     if (!getTableOverviewController().isAssetManagerMode()) {

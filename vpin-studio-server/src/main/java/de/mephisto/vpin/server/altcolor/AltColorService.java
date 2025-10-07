@@ -44,8 +44,9 @@ public class AltColorService implements InitializingBean {
   @Autowired
   private GameLifecycleService gameLifecycleService;
 
-  public void setAltColorEnabled(@NonNull String rom, boolean b) {
-    if (!StringUtils.isEmpty(rom)) {
+  public void setAltColorEnabled(@NonNull Game game, boolean b) {
+    String rom = game.getRom();
+    if (game.isVpxGame() && !StringUtils.isEmpty(rom)) {
       MameOptions options = mameService.getOptions(rom);
       options.setColorizeDmd(b);
       options.setUseExternalDmd(b);
@@ -66,7 +67,7 @@ public class AltColorService implements InitializingBean {
     try {
       AltColor altColor = getAltColor(game);
       if (altColor.isAvailable()) {
-        File dir = new File(getAltColorFolder(game), altColor.getName());
+        File dir = getAltColorFolder(game);
         if (dir.exists()) {
           File[] files = dir.listFiles();
           if (files != null) {
@@ -87,13 +88,12 @@ public class AltColorService implements InitializingBean {
     return false;
   }
 
-  //public File getAltColorFolder() {
-  //  return new File(mameService.getMameFolder(), "altcolor");
-  //}
-
   public File getAltColorFolder(@NonNull Game game) {
     File altColorFolder = null;
-    if (!StringUtils.isEmpty(game.getRomAlias()) && game.getEmulator() != null) {
+    if (game.isZenGame()) {
+      altColorFolder = new File(game.getEmulator().getAltColorFolder(), game.getGameName());
+    }
+    else if (!StringUtils.isEmpty(game.getRomAlias()) && game.getEmulator() != null) {
       altColorFolder = new File(game.getEmulator().getAltColorFolder(), game.getRomAlias());
     }
     else if (!StringUtils.isEmpty(game.getRom()) && game.getEmulator() != null) {
@@ -164,7 +164,7 @@ public class AltColorService implements InitializingBean {
     installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.VNI, "pin2dmd.vni");
     installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.CRZ, game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX);
 
-    setAltColorEnabled(game.getRom(), true);
+    setAltColorEnabled(game, true);
   }
 
   private void installAltColorFromArchive(@NonNull UploaderAnalysis analysis, @NonNull File gameAltColorFolder, @NonNull File out, @NonNull AssetType assetType, @NonNull String fileName) {
@@ -198,7 +198,7 @@ public class AltColorService implements InitializingBean {
       }
     }
     LOG.info("Successfully imported ALT color from temp file " + out.getAbsolutePath());
-    setAltColorEnabled(game.getRom(), true);
+    setAltColorEnabled(game, true);
     return JobDescriptorFactory.empty();
   }
 
@@ -206,7 +206,9 @@ public class AltColorService implements InitializingBean {
     String suffix = FilenameUtils.getExtension(fileName);
     if (name.endsWith(suffix)) {
       backupFolder(folder, suffix);
-      FileUtils.copyFile(out, new File(folder, fileName));
+      File f = new File(folder, fileName);
+      FileUtils.copyFile(out, f);
+      LOG.info("Written ALT color file {}", f.getAbsolutePath());
     }
   }
 

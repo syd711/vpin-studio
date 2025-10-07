@@ -95,6 +95,10 @@ public class EmulatorService {
     return getGameEmulators().stream().filter(e -> e.isVpxEmulator() && e.isValid()).collect(Collectors.toList());
   }
 
+  public List<GameEmulator> getZenGameEmulators() {
+    return getGameEmulators().stream().filter(e -> e.isZenEmulator() && e.isValid()).collect(Collectors.toList());
+  }
+
   public List<GameEmulator> getBackglassGameEmulators() {
     return getGameEmulators().stream().filter(GameEmulator::isValid).filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
   }

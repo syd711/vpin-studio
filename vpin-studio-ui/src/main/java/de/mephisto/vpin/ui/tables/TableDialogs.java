@@ -411,7 +411,7 @@ public class TableDialogs {
   }
 
   public static void openAltColorUploadDialog(GameRepresentation game, File file, UploaderAnalysis analysis, Runnable finalizer) {
-    if (StringUtils.isEmpty(game.getRom())) {
+    if (game.isVpxGame() && StringUtils.isEmpty(game.getRom())) {
       WidgetFactory.showAlert(Studio.stage, "No ROM", "Table \"" + game.getGameDisplayName() + "\" has no ROM name set.", "The ROM name is required for this upload type.");
     }
 
