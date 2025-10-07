@@ -170,7 +170,7 @@ public class TableOverviewContextMenu {
     vpsResetItem.setGraphic(iconVpsReset);
     ctxMenu.getItems().add(vpsResetItem);
 
-    if (game.isVpxGame()) {
+    if (client.getEmulatorService().isVpxGame(game)) {
       ctxMenu.getItems().add(new SeparatorMenuItem());
 
       MenuItem resetRatingsItem = new MenuItem("Reset Ratings");
@@ -179,7 +179,7 @@ public class TableOverviewContextMenu {
       ctxMenu.getItems().add(resetRatingsItem);
     }
 
-    if (Features.MANIA_ENABLED && game.isVpxGame()) {
+    if (Features.MANIA_ENABLED && client.getEmulatorService().isVpxGame(game)) {
       ctxMenu.getItems().add(new SeparatorMenuItem());
       MenuItem maniaEntry = new MenuItem("Open VPin Mania Entry");
       maniaEntry.setDisable(StringUtils.isEmpty(game.getExtTableId()) || multiSelection);
@@ -209,7 +209,7 @@ public class TableOverviewContextMenu {
 
     ctxMenu.getItems().add(new SeparatorMenuItem());
 
-    if(game.isVpxGame()) {
+    if(client.getEmulatorService().isVpxGame(game)) {
       MenuItem eventLogItem = new MenuItem("Event Log");
       KeyCombination eventLogItemKey = new KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN);
       eventLogItem.setAccelerator(eventLogItemKey);
@@ -223,7 +223,7 @@ public class TableOverviewContextMenu {
     }
 
 
-    if(game.isVpxGame()) {
+    if(client.getEmulatorService().isVpxGame(game)) {
       MenuItem pinVolItem = new MenuItem("PinVol Settings");
       pinVolItem.setOnAction(actionEvent -> TableDialogs.openPinVolSettings(tableView.getSelectionModel().getSelectedItems().stream().map(m -> m.getGame()).collect(Collectors.toList())));
 //    pinVolItem.setDisable(games.isEmpty());
@@ -231,7 +231,7 @@ public class TableOverviewContextMenu {
       ctxMenu.getItems().add(pinVolItem);
     }
 
-    if (game.isVpxGame()) {
+    if (client.getEmulatorService().isVpxGame(game)) {
       ctxMenu.getItems().add(new SeparatorMenuItem());
 
       MenuItem reloadItem = new MenuItem("Reload");
@@ -262,7 +262,7 @@ public class TableOverviewContextMenu {
 //      ctxMenu.getItems().add(importsItem);
 //    }
 
-    if (game.isVpxGame()) {
+    if (client.getEmulatorService().isVpxGame(game)) {
       ctxMenu.getItems().add(new SeparatorMenuItem());
 
       MenuItem uploadAndImportTableItem = new MenuItem("Upload and Import Table");
@@ -368,7 +368,7 @@ public class TableOverviewContextMenu {
 //    ctxMenu.getItems().add(validateAllItem);
 
 
-    if (game.isVpxGame()) {
+    if (client.getEmulatorService().isVpxGame(game)) {
       ctxMenu.getItems().add(new SeparatorMenuItem());
 
       MenuItem launchItem = new MenuItem("Launch");

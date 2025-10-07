@@ -74,10 +74,6 @@ public class GameRepresentation {
   private Long instructionCardTemplateId;
   private Long wheelTemplateId;
 
-  private boolean vpxGame;
-  private boolean fpGame;
-  private boolean fxGame;
-
   private boolean cardDisabled;
   private boolean eventLogAvailable;
   private boolean ignoreUpdates;
@@ -227,30 +223,6 @@ public class GameRepresentation {
 
   public void setComment(String comment) {
     this.comment = comment;
-  }
-
-  public boolean isVpxGame() {
-    return vpxGame;
-  }
-
-  public void setVpxGame(boolean vpxGame) {
-    this.vpxGame = vpxGame;
-  }
-
-  public boolean isFpGame() {
-    return fpGame;
-  }
-
-  public void setFpGame(boolean fpGame) {
-    this.fpGame = fpGame;
-  }
-
-  public boolean isFxGame() {
-    return fxGame;
-  }
-
-  public void setFxGame(boolean fxGame) {
-    this.fxGame = fxGame;
   }
 
   public String getPupPackName() {

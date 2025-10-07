@@ -6,6 +6,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.emulators.LaunchConfiguration;
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -94,7 +95,7 @@ public class PlayButtonController implements Initializable, ChangeListener<Launc
         items.add(new LaunchConfiguration("Launch via PinUP Popper", true, null, null));
       }
 
-      if (game.isVpxGame() && altExeNames != null) {
+      if (client.getEmulatorService().isVpxGame(game) && altExeNames != null) {
         for (String altExeName : altExeNames) {
           items.add(new LaunchConfiguration(altExeName, false, altExeName, null));
           if (isCameraModeSupported(altExeName)) {
@@ -102,10 +103,16 @@ public class PlayButtonController implements Initializable, ChangeListener<Launc
           }
         }
       }
-      else if (game.isFpGame() && altExeNames != null) {
+      else if (client.getEmulatorService().isFpGame(game) && altExeNames != null) {
         for (String altExeName : altExeNames) {
           items.add(new LaunchConfiguration(altExeName, false, altExeName, null));
         }
+      }
+      else if (client.getEmulatorService().isZenGame(game) && !gameEmulator.getType().equals(EmulatorType.ZenFX2)) {
+        items.add(new LaunchConfiguration("Launch via Steam", false, null, null));
+      }
+      else if (client.getEmulatorService().isZaccariaGame(game)) {
+        items.add(new LaunchConfiguration("Launch via Steam", false, null, null));
       }
 
       launchCombo.setItems(FXCollections.observableList(items));

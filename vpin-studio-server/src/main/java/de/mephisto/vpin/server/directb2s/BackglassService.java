@@ -552,7 +552,7 @@ public class BackglassService implements InitializingBean {
   @Nullable
   private DirectB2S reloadDirectB2SAndVersions(@NonNull GameEmulator emulator, String fileName) {
     //do not check this for emulators that do not support backglasses anyway
-    if (emulator.isMameEmulator() || emulator.isOtherEmulator() || emulator.isZaccariaEmulator()) {
+    if (emulator.isMameEmulator() || emulator.isOtherEmulator() || emulator.isZaccariaEmulator() || emulator.isZenEmulator()) {
       return null;
     }
 

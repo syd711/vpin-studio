@@ -285,7 +285,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
     GameRepresentation game = g.orElse(null);
 
     if (game != null) {
-      autoFillBtn.setVisible(game.isVpxGame() && Features.FIELDS_STANDARD);
+      autoFillBtn.setVisible(client.getEmulatorService().isVpxGame(game) && Features.FIELDS_STANDARD);
 
       dateAdded.setText(game.getDateAdded() == null ? "-" : DateFormat.getDateTimeInstance().format(game.getDateAdded()));
       emulatorLabel.setText(client.getEmulatorService().getGameEmulator(game.getEmulatorId()).getName());

@@ -11,6 +11,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.function.Predicate;
 
+import static de.mephisto.vpin.ui.Studio.client;
+
 public class TableOverviewPredicateFactory {
   /**
    * We need a new Predicate each time else TableView does not detect the changes
@@ -21,7 +23,7 @@ public class TableOverviewPredicateFactory {
       public boolean test(GameRepresentationModel model) {
         GameRepresentation game = model.getGame();
 
-        boolean vpxGame = game.isVpxGame();
+        boolean vpxGame = client.getEmulatorService().isVpxGame(game);
         if (vpxGame) {
           if (filterSettings.isNoHighscoreSettings() && (!StringUtils.isEmpty(game.getRom()) || !StringUtils.isEmpty(game.getHsFileName()) || !StringUtils.isEmpty(game.getHsFileName()))) {
             return false;

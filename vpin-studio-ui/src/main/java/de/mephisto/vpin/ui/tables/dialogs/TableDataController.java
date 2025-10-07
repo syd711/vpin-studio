@@ -539,10 +539,10 @@ public class TableDataController extends BasePrevNextController implements AutoC
     TableDetails tableDetails = tableDetailsBinder.getBean();
     if (tableDetails != null) {
       String updatedGameFileName = tableDetails.getGameFileName();
-      if (game.isVpxGame() && !updatedGameFileName.toLowerCase().endsWith(".vpx")) {
+      if (client.getEmulatorService().isVpxGame(game) && !updatedGameFileName.toLowerCase().endsWith(".vpx")) {
         updatedGameFileName = updatedGameFileName + ".vpx";
       }
-      else if (game.isFpGame() && !updatedGameFileName.toLowerCase().endsWith(".fpt")) {
+      else if (client.getEmulatorService().isFpGame(game) && !updatedGameFileName.toLowerCase().endsWith(".fpt")) {
         updatedGameFileName = updatedGameFileName + ".fpt";
       }
 
@@ -576,7 +576,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
       EventManager.getInstance().notifyTableChange(game.getId(), null);
 
-      if (game.isVpxGame()) {
+      if (client.getEmulatorService().isVpxGame(game)) {
         tableDataTabScoreDataController.refreshScannedValues();
       }
     }
@@ -940,7 +940,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
       TableDetails tableDetails = client.getFrontendService().getTableDetails(game.getId());
       tableDetailsBinder.setBean(tableDetails, true);
 
-      if (game.isVpxGame() || game.isFpGame()) {
+      if (client.getEmulatorService().isVpxGame(game) || client.getEmulatorService().isFpGame(game)) {
         autoFillBtn.setVisible(true);
         propertRenamingRoot.setVisible(true);
         if (propperRenamingController != null) {
@@ -953,7 +953,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
         propertRenamingRoot.setVisible(false);
       }
 
-      if (game.isVpxGame()) {
+      if (client.getEmulatorService().isVpxGame(game)) {
         HighscoreFiles highscoreFiles = client.getGameService().getHighscoreFiles(game.getId());
         scoreDataTab.setDisable(false);
         if (tableDataTabScoreDataController != null) {
@@ -988,10 +988,10 @@ public class TableDataController extends BasePrevNextController implements AutoC
       extrasTab.setDisable(!isPopper15);
 
       if (tableDetails != null) {
-        gameFileName.setDisable(!game.isVpxGame() && !game.isFpGame());
+        gameFileName.setDisable(!client.getEmulatorService().isVpxGame(game) && !client.getEmulatorService().isFpGame(game));
       }
       else {
-        gameFileName.setDisable(StringUtils.contains(game.getGameFileName(), "/") || StringUtils.contains(game.getGameFileName(), "\\") || !game.isVpxGame());
+        gameFileName.setDisable(StringUtils.contains(game.getGameFileName(), "/") || StringUtils.contains(game.getGameFileName(), "\\") || !client.getEmulatorService().isVpxGame(game));
       }
 
       boolean hasNoDetail = tableDetails == null;

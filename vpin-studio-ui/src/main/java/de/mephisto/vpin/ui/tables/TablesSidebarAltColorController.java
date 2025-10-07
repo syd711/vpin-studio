@@ -194,7 +194,7 @@ public class TablesSidebarAltColorController implements Initializable {
       emptyDataBox.setVisible(!altColorAvailable);
 
       GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
-      boolean validVPX = game.isVpxGame() && StringUtils.isEmpty(game.getRom());
+      boolean validVPX = client.getEmulatorService().isVpxGame(game) && StringUtils.isEmpty(game.getRom());
       boolean validEmu = gameEmulator.getType().equals(EmulatorType.ZenFX) || gameEmulator.getType().equals(EmulatorType.ZenFX3) || gameEmulator.getType().equals(EmulatorType.VisualPinball) || gameEmulator.getType().equals(EmulatorType.VisualPinball9);
       uploadBtn.setDisable(!validEmu && !validVPX);
       deleteBtn.setDisable(!altColorAvailable);
