@@ -522,6 +522,9 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
       case serum: {
         String name = game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX;
+        if (game.isZenGame()) {
+          name = "pin2dmd." + UploaderAnalysis.SERUM_SUFFIX;
+        }
         if (isValidationEnabled(game, CODE_ALT_COLOR_FILES_MISSING) && !altColor.contains(name)) {
           result.add(ValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, name));
         }

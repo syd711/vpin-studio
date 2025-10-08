@@ -91,16 +91,16 @@ public class AltColorService implements InitializingBean {
   public File getAltColorFolder(@NonNull Game game) {
     File altColorFolder = null;
     if (game.isZenGame()) {
-      altColorFolder = new File(game.getEmulator().getAltColorFolder(), game.getGameName());
+      altColorFolder = new File(mameService.getAltColorFolder(), game.getGameName());
     }
     else if (!StringUtils.isEmpty(game.getRomAlias()) && game.getEmulator() != null) {
-      altColorFolder = new File(game.getEmulator().getAltColorFolder(), game.getRomAlias());
+      altColorFolder = new File(mameService.getAltColorFolder(), game.getRomAlias());
     }
     else if (!StringUtils.isEmpty(game.getRom()) && game.getEmulator() != null) {
-      altColorFolder = new File(game.getEmulator().getAltColorFolder(), game.getRom());
+      altColorFolder = new File(mameService.getAltColorFolder(), game.getRom());
     }
     if ((altColorFolder == null || !altColorFolder.exists()) && !StringUtils.isEmpty(game.getTableName()) && game.getEmulator() != null) {
-      altColorFolder = new File(game.getEmulator().getAltColorFolder(), game.getTableName());
+      altColorFolder = new File(mameService.getAltColorFolder(), game.getTableName());
     }
     return altColorFolder;
   }
@@ -162,7 +162,13 @@ public class AltColorService implements InitializingBean {
     installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.PAC, "pin2dmd.pac");
     installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.PAL, "pin2dmd.pal");
     installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.VNI, "pin2dmd.vni");
-    installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.CRZ, game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX);
+
+    if (game.isZenGame()) {
+      installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.CRZ, "pin2dmd." + UploaderAnalysis.SERUM_SUFFIX);
+    }
+    else {
+      installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.CRZ, game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX);
+    }
 
     setAltColorEnabled(game, true);
   }
@@ -190,7 +196,12 @@ public class AltColorService implements InitializingBean {
         installAltColorFromFile(name, folder, out, "pin2dmd.pac");
         installAltColorFromFile(name, folder, out, "pin2dmd.vni");
         installAltColorFromFile(name, folder, out, "pin2dmd.pal");
-        installAltColorFromFile(name, folder, out, game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX);
+        if (game.isZenGame()) {
+          installAltColorFromFile(name, folder, out, "pin2dmd." + UploaderAnalysis.SERUM_SUFFIX);
+        }
+        else {
+          installAltColorFromFile(name, folder, out, game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX);
+        }
       }
       catch (IOException e) {
         LOG.error("Failed to copy alt color file: " + e.getMessage(), e);

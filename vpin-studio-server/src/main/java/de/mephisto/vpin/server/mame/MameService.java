@@ -408,6 +408,10 @@ public class MameService implements InitializingBean {
     return cfgFolder;
   }
 
+  public File getAltColorFolder() {
+    return new File(getMameFolder(), "altcolor");
+  }
+
   public File getRomsFolder() {
     if (romsFolder == null) {
       romsFolder = getVpinMameSetupFolder(ROMS_DIRECTORY);
