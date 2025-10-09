@@ -3,6 +3,7 @@
 ## Changes
 
 - Improved performance of backup loading.
+- Fixed sorting of backups.
 - Fixed some upload dialog issues that where misaligned for long filenames.
 
 ---
