@@ -198,6 +198,17 @@ public class WidgetFactory {
     return fontIcon;
   }
 
+  public static FontIcon createEditIcon(@Nullable String color) {
+    FontIcon fontIcon = new FontIcon();
+    fontIcon.setIconSize(DEFAULT_ICON_SIZE);
+    fontIcon.setIconLiteral("mdi2f-file-document-edit-outline");
+    fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+    if (color != null) {
+      fontIcon.setIconColor(Paint.valueOf(color));
+    }
+    return fontIcon;
+  }
+
   public static FontIcon createBotIcon() {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(DEFAULT_ICON_SIZE);

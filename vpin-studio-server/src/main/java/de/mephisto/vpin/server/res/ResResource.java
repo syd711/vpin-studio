@@ -24,9 +24,9 @@ public class ResResource {
   @Autowired
   private ResService resService;
 
-  @PostMapping("/delete/{emulatorId}")
-  public boolean deleteRes(@PathVariable("emulatorId") int emulatorId, @RequestBody String file) {
-    return resService.deleteRes(emulatorId, file);
+  @DeleteMapping("{gameId}")
+  public boolean delete(@PathVariable("gameId") int gameId) {
+    return resService.delete(gameId);
   }
 
   @PostMapping("/upload")

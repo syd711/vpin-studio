@@ -1001,14 +1001,28 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
           //icon = WidgetFactory.createIcon("mdi2n-numeric-" + nbVersions + "-circle-outline", 24, getIconColor(value));
         }
         else {
-          icon = WidgetFactory.createCheckIcon(value.isDisabled() ? DISABLED_COLOR : "#FFFFFF");
+          icon = WidgetFactory.createEditIcon(value.isDisabled() ? DISABLED_COLOR : "#FFFFFF");
         }
+
+        Button button = new Button();
+        icon.setIconSize(22);
+        button.getStyleClass().add("table-media-button");
+        button.setGraphic(icon);
+        button.setOnAction(new EventHandler<ActionEvent>() {
+          @Override
+          public void handle(ActionEvent event) {
+            tablesController.switchToBackglassManagerTab(value);
+          }
+        });
+
         if (hasUpdate) {
-          return WidgetFactory.addUpdateIcon(icon, "A new backglass version or an update for the existing one is available");
+          button.setTooltip(new Tooltip("A new backglass version or an update for the existing one is available"));
         }
         else {
-          return WidgetFactory.wrapIcon(icon, value.getDirectB2SPath());
+          button.setTooltip(new Tooltip(value.getDirectB2SPath()));
         }
+
+        return button;
       }
       else if (hasUpdate) {
         return WidgetFactory.createUpdateIcon("A new backglass version or an update for the existing one is available");
@@ -1041,14 +1055,54 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     BaseLoadingColumn.configureColumn(columnINI, (value, model) -> {
       if (value.getIniPath() != null) {
-        return WidgetFactory.createCheckboxIcon(getIconColor(value), value.getIniPath());
+        Button compBtn = new Button();
+        compBtn.getStyleClass().add("table-media-button");
+        compBtn.setTooltip(new Tooltip("Edit " + value.getIniPath()));
+        FontIcon cmpIcon = WidgetFactory.createEditIcon(null);
+        cmpIcon.setIconSize(22);
+        compBtn.setGraphic(cmpIcon);
+        compBtn.setOnAction(new EventHandler<ActionEvent>() {
+          @Override
+          public void handle(ActionEvent event) {
+            try {
+              GameRepresentation gameRepresentation = value;
+              String iniPath = gameRepresentation.getIniPath();
+              Studio.editGameFile(gameRepresentation, iniPath);
+            }
+            catch (Exception e) {
+              LOG.error("Failed to open .ini file: {}", e.getMessage(), e);
+              WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open .ini file: " + e.getMessage());
+            }
+          }
+        });
+        return compBtn;
       }
       return null;
     }, this, true);
 
     BaseLoadingColumn.configureColumn(columnRES, (value, model) -> {
       if (value.getResPath() != null) {
-        return WidgetFactory.createCheckboxIcon(getIconColor(value), value.getResPath());
+        Button compBtn = new Button();
+        compBtn.getStyleClass().add("table-media-button");
+        compBtn.setTooltip(new Tooltip("Edit " + value.getResPath()));
+        FontIcon cmpIcon = WidgetFactory.createEditIcon(null);
+        cmpIcon.setIconSize(22);
+        compBtn.setGraphic(cmpIcon);
+        compBtn.setOnAction(new EventHandler<ActionEvent>() {
+          @Override
+          public void handle(ActionEvent event) {
+            try {
+              GameRepresentation gameRepresentation = value;
+              String resPath = gameRepresentation.getResPath();
+              Studio.editGameFile(gameRepresentation, resPath);
+            }
+            catch (Exception e) {
+              LOG.error("Failed to open .res file: {}", e.getMessage(), e);
+              WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open .res file: " + e.getMessage());
+            }
+          }
+        });
+        return compBtn;
       }
       return null;
     }, this, true);

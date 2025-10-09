@@ -1,6 +1,8 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
@@ -188,6 +190,34 @@ public class TablesSidebarTableDetailsController implements Initializable {
   @FXML
   private VBox screenFields;
 
+  @FXML
+  private VBox tableFilesBox;
+
+  @FXML
+  private Label resFileLabel;
+  @FXML
+  private Label iniFileLabel;
+  @FXML
+  private Label povFileLabel;
+  @FXML
+  private Button resFileUploadBtn;
+  @FXML
+  private Button iniFileUploadBtn;
+  @FXML
+  private Button povFileUploadBtn;
+  @FXML
+  private Button resFileDeleteBtn;
+  @FXML
+  private Button iniFileDeleteBtn;
+  @FXML
+  private Button povFileDeleteBtn;
+  @FXML
+  private Button resFileEditBtn;
+  @FXML
+  private Button iniFileEditBtn;
+  @FXML
+  private Button povFileEditBtn;
+
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
@@ -195,6 +225,98 @@ public class TablesSidebarTableDetailsController implements Initializable {
 
   // Add a public no-args constructor
   public TablesSidebarTableDetailsController() {
+  }
+
+  @FXML
+  private void onIniUpload() {
+    if (game.isPresent()) {
+      TableDialogs.directUpload(Studio.stage, AssetType.INI, game.get(), null);
+    }
+  }
+  @FXML
+  private void onResUpload() {
+    if (game.isPresent()) {
+      TableDialogs.directUpload(Studio.stage, AssetType.RES, game.get(), null);
+    }
+  }
+
+  @FXML
+  private void onPovUpload() {
+    if (game.isPresent()) {
+      TableDialogs.directUpload(Studio.stage, AssetType.POV, game.get(), null);
+    }
+  }
+
+  @FXML
+  private void onIniEdit() {
+    if (game.isPresent()) {
+      try {
+        GameRepresentation gameRepresentation = game.get();
+        String path = gameRepresentation.getIniPath();
+        Studio.editGameFile(gameRepresentation, path);
+      }
+      catch (Exception e) {
+        LOG.error("Failed to open .ini file: {}", e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open .ini file: " + e.getMessage());
+      }
+    }
+  }
+
+  @FXML
+  private void onResEdit() {
+    if (game.isPresent()) {
+      try {
+        GameRepresentation gameRepresentation = game.get();
+        String path = gameRepresentation.getResPath();
+        Studio.editGameFile(gameRepresentation, path);
+      }
+      catch (Exception e) {
+        LOG.error("Failed to open .res file: {}", e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open .res file: " + e.getMessage());
+      }
+    }
+  }
+
+  @FXML
+  private void onPovEdit() {
+    if (game.isPresent()) {
+      try {
+        GameRepresentation gameRepresentation = game.get();
+        String path = gameRepresentation.getPovPath();
+        Studio.editGameFile(gameRepresentation, path);
+      }
+      catch (Exception e) {
+        LOG.error("Failed to open .pov file: {}", e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open .pov file: " + e.getMessage());
+      }
+    }
+  }
+
+  @FXML
+  private void onIniDelete() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete .ini for table '" + this.game.get().getGameDisplayName() + "'?");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      client.getIniService().delete(this.game.get().getId());
+      EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
+    }
+  }
+
+  @FXML
+  private void onResDelete() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete .res for table '" + this.game.get().getGameDisplayName() + "'?");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      client.getResService().delete(this.game.get().getId());
+      EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
+    }
+  }
+
+  @FXML
+  private void onPovDelete() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete POV file for table '" + this.game.get().getGameDisplayName() + "'?");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      client.getVpxService().deletePOV(this.game.get().getId());
+      EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
+    }
   }
 
   @FXML
@@ -263,6 +385,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
   public void refreshView(Optional<GameRepresentation> g) {
     this.game = g;
 
+    tableFilesBox.setVisible(false);
     if (g.isEmpty()) {
       uploadsButtonController.setData(Collections.emptyList(), tablesSidebarController.getTableOverviewController().getEmulatorSelection());
     }
@@ -285,6 +408,9 @@ public class TablesSidebarTableDetailsController implements Initializable {
     GameRepresentation game = g.orElse(null);
 
     if (game != null) {
+      GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
+      tableFilesBox.setVisible(gameEmulator != null && gameEmulator.isVpxEmulator());
+
       autoFillBtn.setVisible(client.getEmulatorService().isVpxGame(game) && Features.FIELDS_STANDARD);
 
       dateAdded.setText(game.getDateAdded() == null ? "-" : DateFormat.getDateTimeInstance().format(game.getDateAdded()));
@@ -296,8 +422,17 @@ public class TablesSidebarTableDetailsController implements Initializable {
       // will be overriden by tableDetails status
       status.setText(game.isDisabled() ? "Disabled" : "Enabled");
       notes.setText(StringUtils.defaultIfEmpty(game.getComment(), ""));
-
       romName.setText(StringUtils.defaultIfEmpty(game.getRom(), "-"));
+
+      this.resFileLabel.setText(StringUtils.defaultIfEmpty(game.getResPath(), "-"));
+      this.resFileDeleteBtn.setDisable(game.getResPath() == null);
+      this.resFileEditBtn.setDisable(game.getResPath() == null);
+      this.iniFileLabel.setText(StringUtils.defaultIfEmpty(game.getIniPath(), "-"));
+      this.iniFileDeleteBtn.setDisable(game.getIniPath() == null);
+      this.iniFileEditBtn.setDisable(game.getIniPath() == null);
+      this.povFileLabel.setText(StringUtils.defaultIfEmpty(game.getPovPath(), "-"));
+      this.povFileDeleteBtn.setDisable(game.getPovPath() == null);
+      this.povFileEditBtn.setDisable(game.getPovPath() == null);
     }
     else {
       autoFillBtn.setVisible(false);
@@ -309,8 +444,23 @@ public class TablesSidebarTableDetailsController implements Initializable {
       gameDisplayName.setText("-");
       status.setText("-");
       notes.setText("");
-
       romName.setText("-");
+
+      this.povFileDeleteBtn.setDisable(true);
+      this.povFileUploadBtn.setDisable(true);
+      this.povFileEditBtn.setDisable(true);
+
+      this.resFileDeleteBtn.setDisable(true);
+      this.resFileUploadBtn.setDisable(true);
+      this.resFileEditBtn.setDisable(true);
+
+      this.iniFileDeleteBtn.setDisable(true);
+      this.iniFileUploadBtn.setDisable(true);
+      this.iniFileEditBtn.setDisable(true);
+
+      this.resFileLabel.setText("-");
+      this.iniFileLabel.setText("-");
+      this.povFileLabel.setText("-");
     }
 
 
@@ -414,6 +564,8 @@ public class TablesSidebarTableDetailsController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    tableFilesBox.managedProperty().bindBidirectional(tableFilesBox.visibleProperty());
+
     autoFillBtn.managedProperty().bindBidirectional(autoFillBtn.visibleProperty());
     extrasPanel.managedProperty().bindBidirectional(extrasPanel.visibleProperty());
     popperRuntimeFields.managedProperty().bindBidirectional(popperRuntimeFields.visibleProperty());

@@ -531,6 +531,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
       }
       case INI:
       case POV:
+      case RES:
       case DIRECTB2S: {
         Object asset = changedEvent.getAsset();
         if (asset instanceof String) {
