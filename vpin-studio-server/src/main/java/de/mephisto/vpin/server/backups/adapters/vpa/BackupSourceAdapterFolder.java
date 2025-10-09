@@ -91,8 +91,9 @@ public class BackupSourceAdapterFolder implements BackupSourceAdapter {
 
   @Override
   public void invalidate() {
+    long start = System.currentTimeMillis();
     cache.clear();
     getBackupDescriptors();
-    LOG.info("Invalidated archive source \"" + this.getBackupSource() + "\"");
+    LOG.info("Invalidated archive source {}, loaded {} backups in {}", this.getBackupSource(), this.getBackupDescriptors().size(), (System.currentTimeMillis() - start) + "ms.");
   }
 }

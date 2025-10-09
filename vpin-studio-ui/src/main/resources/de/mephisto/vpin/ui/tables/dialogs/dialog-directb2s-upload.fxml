@@ -75,7 +75,7 @@
                               </HBox>
                               <Label styleClass="default-text" text="Backglass File:" />
                               <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Table:" GridPane.rowIndex="1" />
-                              <Label fx:id="gameLabel" layoutX="10.0" layoutY="49.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Label fx:id="gameLabel" layoutX="10.0" layoutY="49.0" maxWidth="450.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                            </children>
                         </GridPane>
                      </children>

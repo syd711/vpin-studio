@@ -15,6 +15,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
@@ -64,11 +65,13 @@ public class DnDOverlayController implements Initializable {
 
   public void setMessage(String message) {
     if (message == null) {
-      ((VBox) messageLabel.getParent().getParent()).getChildren().clear();;
-    } else {
+      ((VBox) messageLabel.getParent().getParent()).getChildren().clear();
+    }
+    else {
       messageLabel.setText(message);
     }
   }
+
   public void setMessageFontsize(int i) {
     Font font = messageLabel.getFont();
     font = Font.font(font.getFamily(), i);
@@ -80,7 +83,7 @@ public class DnDOverlayController implements Initializable {
     root.setPrefWidth(width);
     root.setPrefHeight(height);
 
-    if(width < 400) {
+    if (width < 400) {
       dropZone.getStyleClass().clear();
       dropZone.getStyleClass().add("dnd-dashed-border-small");
     }
@@ -133,7 +136,7 @@ public class DnDOverlayController implements Initializable {
             double width = ((Pane) forDim).getWidth();
             double height = ((Pane) forDim).getHeight();
             controller.setViewParams(width, height);
-            controller.setGame(null); 
+            controller.setGame(null);
             loaderStack.getChildren().add(dndLoadingOverlay);
           }
         }
@@ -151,6 +154,9 @@ public class DnDOverlayController implements Initializable {
         @Override
         public void handle(DragEvent event) {
           if (event.getDragboard().hasFiles() && (!singleSelectionOnly || event.getDragboard().getFiles().size() == 1)) {
+            event.acceptTransferModes(TransferMode.COPY);
+          }
+          else if (event.getDragboard().hasContent(DataFormat.URL)) {
             event.acceptTransferModes(TransferMode.COPY);
           }
           else {
@@ -178,8 +184,8 @@ public class DnDOverlayController implements Initializable {
     dndLoadingOverlay.setOnDragDropped(eventHandler);
   }
 
-  public void showOverlay() {
-    showHandler.handle(null);
+  public void showOverlay(DragEvent event) {
+    showHandler.handle(event);
   }
 
   public void hideOverlay() {

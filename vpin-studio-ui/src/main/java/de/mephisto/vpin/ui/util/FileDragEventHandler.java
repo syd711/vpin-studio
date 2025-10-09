@@ -22,12 +22,13 @@ public class FileDragEventHandler implements EventHandler<DragEvent> {
   private List<String> suffixes;
 
   protected DnDOverlayController overlayController;
-  
+
   private Predicate<DragEvent> dragFilter;
 
   public static FileDragEventHandler install(Pane loaderStack, Node node, boolean singleSelectionOnly, String... suffix) {
     FileDragEventHandler handler = new FileDragEventHandler(loaderStack, node, singleSelectionOnly, suffix);
     node.setOnDragOver(handler);
+    node.setOnDragExited(handler);
     return handler;
   }
 
@@ -41,9 +42,13 @@ public class FileDragEventHandler implements EventHandler<DragEvent> {
     overlayController.setMessageFontsize(14);
   }
 
-
   @Override
   public void handle(DragEvent event) {
+    if (event.getEventType().equals(DragEvent.DRAG_EXITED)) {
+      event.consume();
+      return;
+    }
+
     if (dragFilter != null && !dragFilter.test(event)) {
       return;
     }
@@ -78,14 +83,18 @@ public class FileDragEventHandler implements EventHandler<DragEvent> {
     if (event.getGestureSource() != node && containsMedia) {
       event.acceptTransferModes(TransferMode.COPY);
     }
+    else if (event.getDragboard().hasContent(DataFormat.URL)) {
+      //drag and drop from and asset list
+      event.acceptTransferModes(TransferMode.COPY);
+    }
     else {
       event.consume();
     }
-    overlayController.showOverlay();
+    overlayController.showOverlay(event);
   }
 
   public FileDragEventHandler setOnDragFilter(Predicate<DragEvent> dragFilter) {
-    this.dragFilter  = dragFilter;
+    this.dragFilter = dragFilter;
     return this;
   }
 

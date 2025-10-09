@@ -37,6 +37,7 @@ import de.mephisto.vpin.server.vps.VpsService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.aspectj.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -798,6 +799,26 @@ public class GameMediaService {
     }
     LOG.info("*********** /Game Deletion End **********");
     return success;
+  }
+
+  public boolean copyAsset(int gameId, String name, VPinScreen screen, VPinScreen target) {
+    try {
+      Game game = gameService.getGame(gameId);
+      if (game != null) {
+        File mediaFolder = frontendService.getMediaFolder(game, screen, null, false);
+        File mediaFile = new File(mediaFolder, name);
+        if (mediaFile.exists()) {
+          String suffix = FilenameUtils.getExtension(mediaFile.getName());
+          File targetFile = uniqueMediaAsset(game, target, suffix);
+          FileUtil.copyFile(mediaFile, targetFile);
+        }
+      }
+      return true;
+    }
+    catch (Exception e) {
+      LOG.error("Failed to copy asset {} to {}: {}", name, target, e.getMessage(), e);
+    }
+    return false;
   }
 
   public File uniqueMediaAsset(Game game, VPinScreen screen) {

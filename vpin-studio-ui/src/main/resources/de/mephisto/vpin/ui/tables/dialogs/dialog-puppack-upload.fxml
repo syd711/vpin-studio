@@ -27,7 +27,7 @@
                   <GridPane vgap="3.0" BorderPane.alignment="CENTER">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="154.39994354248046" minWidth="10.0" prefWidth="154.39994354248046" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="400.0" minWidth="10.0" prefWidth="400.0" />
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
                     </columnConstraints>
                     <rowConstraints>
@@ -59,7 +59,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="tableLabel" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label fx:id="tableLabel" prefWidth="400.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         <Label fx:id="titleLabel11" layoutX="10.0" layoutY="83.0" text="Resolved ROM Name:" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
