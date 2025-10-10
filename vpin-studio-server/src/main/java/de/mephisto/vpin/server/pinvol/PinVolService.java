@@ -227,7 +227,7 @@ public class PinVolService implements InitializingBean, FileChangeListener {
 
   private File getPinVolExe() {
     String installFolderPreferences = (String) preferencesService.getPreferenceValue(PreferenceNames.PINVOL_FOLDER);
-    return installFolderPreferences == null ? 
+    return installFolderPreferences == null ?
         new File(SystemService.RESOURCES, "PinVol.exe") :
         new File(installFolderPreferences, "PinVol.exe");
   }
@@ -244,6 +244,14 @@ public class PinVolService implements InitializingBean, FileChangeListener {
       FileMonitoringThread settingsThread = new FileMonitoringThread(this, pincolSettingsFile, true);
       settingsThread.startMonitoring();
     }
+  }
+
+  public PinVolPreferences save(@NonNull PinVolUpdate update) {
+    PinVolPreferences updated = update(update);
+    if (isRunning() && isValid()) {
+      restart();
+    }
+    return updated;
   }
 
   public PinVolPreferences update(@NonNull PinVolUpdate update) {

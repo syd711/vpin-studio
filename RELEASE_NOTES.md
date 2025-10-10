@@ -5,6 +5,8 @@
 - Improved performance of backup loading.
 - Fixed table sorting of backups.
 - Fixed some upload dialog issues that where misaligned for long filenames.
+- Fixed of PinVOL settings: If the PinVOL service is running while saving changes, it is restarted now so that the in-memory values are not used on table start.
+- Added additional "Hide Toolbar" call for frontend based recordings. The frontend itself (e.g. Popper) should take care of the, but there are reports about the Windows toolbar not hiding.
 
 ---
 

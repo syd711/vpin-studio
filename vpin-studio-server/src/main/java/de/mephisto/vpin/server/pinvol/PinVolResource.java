@@ -49,7 +49,7 @@ public class PinVolResource {
 
   @PostMapping("/save")
   public PinVolPreferences save(@RequestBody PinVolUpdate update) throws Exception {
-    return pinVolService.update(update);
+    return pinVolService.save(update);
   }
 
 }
