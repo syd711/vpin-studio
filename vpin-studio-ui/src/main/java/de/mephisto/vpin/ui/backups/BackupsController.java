@@ -218,7 +218,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
     this.searchTextField.setDisable(true);
 
     BackupSourceRepresentation selectedItem = sourceCombo.getSelectionModel().getSelectedItem();
-    final BackupDescriptorRepresentation selection = value.orElse(null);
+    final BackupDescriptorRepresentation selectedBackup = value.orElse(null);
     tableView.getSelectionModel().clearSelection();
     boolean disable = value.isEmpty();
     deleteBtn.setDisable(disable);
@@ -239,9 +239,9 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
     }).thenAcceptLater((filteredBackups) -> {
       setItems(filteredBackups);
       tableView.refresh();
-      if (filteredData != null && filteredData.contains(selection)) {
+      if (tableView.getItems().contains(toModel(selectedBackup))) {
         deleteBtn.setDisable(false);
-        tableView.getSelectionModel().select(toModel(selection));
+        tableView.getSelectionModel().select(toModel(selectedBackup));
         restoreBtn.setDisable(false);
       }
 
