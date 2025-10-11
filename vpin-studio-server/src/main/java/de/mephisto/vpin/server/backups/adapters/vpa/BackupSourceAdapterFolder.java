@@ -44,6 +44,7 @@ public class BackupSourceAdapterFolder implements BackupSourceAdapter {
 
   public List<BackupDescriptor> getBackupDescriptors() {
     if (cache.isEmpty()) {
+      long start = System.currentTimeMillis();
       File[] vpaFiles = archiveFolder.listFiles((dir, name) -> name.endsWith("." + BackupType.VPA.name().toLowerCase()));
       if (vpaFiles != null) {
         for (File archiveFile : vpaFiles) {
@@ -57,6 +58,7 @@ public class BackupSourceAdapterFolder implements BackupSourceAdapter {
             LOG.error("Failed to read " + archiveFile.getAbsolutePath() + ": " + e.getMessage(), e);
           }
         }
+        LOG.info("Loaded existing backups: {}, took " + (System.currentTimeMillis() - start) + "ms.", vpaFiles.length);
       }
     }
     return new ArrayList<>(cache.values());

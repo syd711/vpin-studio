@@ -30,6 +30,7 @@ import de.mephisto.vpin.ui.tables.panels.PropperRenamingController;
 import de.mephisto.vpin.ui.tables.vps.VpsTableVersionCell;
 import de.mephisto.vpin.ui.util.AutoCompleteTextField;
 import de.mephisto.vpin.ui.util.AutoCompleteTextFieldChangeListener;
+import de.mephisto.vpin.ui.util.TagField;
 import de.mephisto.vpin.ui.util.binding.BeanBinder;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -109,9 +110,6 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
   @FXML
   private Spinner<Integer> numberOfPlayers;
-
-  @FXML
-  private TextField tags;
 
   @FXML
   private ComboBox<String> category;
@@ -282,14 +280,13 @@ public class TableDataController extends BasePrevNextController implements AutoC
   private TableOverviewController tableOverviewController;
 
   private GameRepresentation game;
-  private BeanBinder<TableDetails> tableDetailsBinder = new BeanBinder<>();
+  private final BeanBinder<TableDetails> tableDetailsBinder = new BeanBinder<>();
   private String initialVpxFileName = null;
 
   private UISettings uiSettings;
   private ServerSettings serverSettings;
 
   private Stage stage;
-  private ScoringDB scoringDB;
   private TableDataTabStatisticsController tableStatisticsController;
   private TableDataTabScreensController tableScreensController;
   private TableDataTabScoreDataController tableDataTabScoreDataController;
@@ -560,7 +557,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
       // do not notify TableChange as it will be done globally once all controllers are saved
       success &= pinVolController.save(false);
       success &= tableScreensController.save();
-      success &= tableDataTabCommentsController.save();
+      success &= tableDataTabCommentsController.save(tableDetails);
       success &= tableDataTabScoreDataController.save();
 
       if (tableDetails != null) {
@@ -648,15 +645,14 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
     this.serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
     this.uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-    scoringDB = client.getSystemService().getScoringDatabase();
 
     boolean patchVersionEnabled = !StringUtils.isEmpty(serverSettings.getMappingPatchVersion());
     patchVersion.setDisable(!patchVersionEnabled);
     patchVersionPanel.setVisible(Features.FIELDS_EXTENDED && patchVersionEnabled);
 
     List<VpsTable> tables = client.getVpsService().getTables();
-    TreeSet<String> collect = new TreeSet<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
-    autoCompleteNameField = new AutoCompleteTextField(null, this.nameField, this, collect);
+    List<String> collect = new ArrayList<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
+    autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, collect);
   }
 
   private void loadTabs() {
@@ -756,7 +752,6 @@ public class TableDataController extends BasePrevNextController implements AutoC
   }
 
   private void initBindings() {
-
     Frontend frontend = client.getFrontendService().getFrontendCached();
 
     autoFillCheckbox.setSelected(uiSettings.isAutoApplyVpsData());
@@ -850,8 +845,6 @@ public class TableDataController extends BasePrevNextController implements AutoC
     tableDetailsBinder.bindComboBox(gameTypeCombo, "gameType");
 
     tableDetailsBinder.bindSpinner(numberOfPlayers, "numberOfPlayers", 0, 4);
-
-    tableDetailsBinder.bindTextField(tags, "tags");
 
     category.setItems(FXCollections.observableList(frontend.getFieldLookups().getCategory()));
     tableDetailsBinder.bindComboBox(category, "category");

@@ -99,7 +99,6 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
 
   @NonNull
   public List<BackupDescriptor> getBackupSourceDescriptors() {
-    long start = System.currentTimeMillis();
     List<BackupDescriptor> result = new ArrayList<>();
     for (BackupSourceAdapter adapter : backupSourcesCache.values()) {
       if (adapter.getBackupSource().isEnabled()) {
@@ -113,7 +112,6 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
       }
       return o1.getTableDetails().getGameDisplayName().compareTo(o2.getTableDetails().getGameDisplayName());
     });
-    LOG.info("Loaded existing backups: {}, took " + (System.currentTimeMillis() - start) + "ms.", result.size());
     return result;
   }
 

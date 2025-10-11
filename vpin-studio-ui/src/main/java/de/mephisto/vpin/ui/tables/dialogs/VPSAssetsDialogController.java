@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.TreeSet;
@@ -74,8 +75,8 @@ public class VPSAssetsDialogController implements DialogController, AutoComplete
     this.game = game;
 
     List<VpsTable> tables = client.getVpsService().getTables();
-    TreeSet<String> collect = new TreeSet<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
-    autoCompleteNameField = new AutoCompleteTextField(stage, this.nameField, this, collect);
+    List<String> collect = new ArrayList<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
+    autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, collect);
 
     if (!StringUtils.isEmpty(game.getExtTableId())) {
       VpsTable tableById = client.getVpsService().getTableById(game.getExtTableId());

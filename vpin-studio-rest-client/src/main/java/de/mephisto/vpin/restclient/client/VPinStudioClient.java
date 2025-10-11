@@ -58,6 +58,7 @@ import de.mephisto.vpin.restclient.system.FeaturesInfo;
 import de.mephisto.vpin.restclient.system.FolderChooserServiceClient;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.restclient.system.SystemServiceClient;
+import de.mephisto.vpin.restclient.tagging.TaggingServiceClient;
 import de.mephisto.vpin.restclient.textedit.TextEditorServiceClient;
 import de.mephisto.vpin.restclient.tournaments.TournamentsServiceClient;
 import de.mephisto.vpin.restclient.util.OSUtil;
@@ -122,6 +123,7 @@ public class VPinStudioClient implements OverlayClient {
   private final PatcherServiceClient patcherServiceClient;
   private final SystemServiceClient systemServiceClient;
   private final TournamentsServiceClient tournamentsServiceClient;
+  private final TaggingServiceClient taggingServiceClient;
   private final TextEditorServiceClient textEditorServiceClient;
   private final PinVolServiceClient pinVolServiceClient;
   private final ResServiceClient resServiceClient;
@@ -174,6 +176,7 @@ public class VPinStudioClient implements OverlayClient {
     this.frontendServiceClient = new FrontendServiceClient(this);
     this.systemServiceClient = new SystemServiceClient(this);
     this.textEditorServiceClient = new TextEditorServiceClient(this);
+    this.taggingServiceClient = new TaggingServiceClient(this);
     this.vpxServiceClient = new VpxServiceClient(this);
     this.vpsServiceClient = new VpsServiceClient(this);
     this.pinVolServiceClient = new PinVolServiceClient(this);
@@ -187,6 +190,10 @@ public class VPinStudioClient implements OverlayClient {
 
   public String getHost() {
     return restClient.getHost();
+  }
+
+  public TaggingServiceClient getTaggingService() {
+    return taggingServiceClient;
   }
 
   public FolderChooserServiceClient getFolderChooserService() {

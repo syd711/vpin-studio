@@ -89,7 +89,17 @@ public class GameRepresentation {
   private String resPath;
   private boolean altSoundAvailable;
 
+  private List<String> tags = new ArrayList<>();
+
   private int nbDirectB2S = -1;
+
+  public List<String> getTags() {
+    return tags;
+  }
+
+  public void setTags(List<String> tags) {
+    this.tags = tags;
+  }
 
   public boolean isIgnoreUpdates() {
     return ignoreUpdates;

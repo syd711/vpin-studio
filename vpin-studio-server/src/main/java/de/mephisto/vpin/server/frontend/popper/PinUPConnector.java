@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.frontend.popper.PopperSettings;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
+import de.mephisto.vpin.restclient.tagging.TaggingUtil;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.server.competitions.CompetitionIdFactory;
@@ -2158,6 +2159,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     game.setGameName(gameName);
     game.setDateAdded(getDate(rs, "DateAdded"));
     game.setDateUpdated(getDate(rs, "DateUpdated"));
+    game.setTags(TaggingUtil.getTags(rs.getString("TAGS")));
 
     game.setVersion(rs.getString("GAMEVER"));
     game.setAltLauncherExe(rs.getString("ALTEXE"));
