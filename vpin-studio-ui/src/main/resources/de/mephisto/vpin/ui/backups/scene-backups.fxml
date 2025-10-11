@@ -23,22 +23,22 @@
                           <columns>
                               <TableColumn fx:id="iconColumn" minWidth="0.0" prefWidth="90.39989471435547" sortable="false" style="-fx-alignment: CENTER;" />
                               <TableColumn fx:id="nameColumn" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
-                              <TableColumn fx:id="directB2SColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="DirectB2S" />
-                              <TableColumn fx:id="iniColumn" prefWidth="60.0" style="-fx-alignment: CENTER;" text="INI" />
-                              <TableColumn fx:id="vbsColumn" prefWidth="60.0" style="-fx-alignment: CENTER;" text="VBS" />
-                              <TableColumn fx:id="resColumn" prefWidth="60.0" style="-fx-alignment: CENTER;" text="RES" />
-                              <TableColumn fx:id="povColumn" prefWidth="60.0" style="-fx-alignment: CENTER;" text="POV" />
-                              <TableColumn fx:id="pupPackColumn" style="-fx-alignment: CENTER;" text="PUP Pack" />
-                              <TableColumn fx:id="popperColumn" prefWidth="120.0" style="-fx-alignment: CENTER;" text="Frontend Media" />
-                              <TableColumn fx:id="romColumn" prefWidth="60.0" style="-fx-alignment: CENTER;" text="ROM" />
-                              <TableColumn fx:id="altSoundColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="ALT Sound" />
-                              <TableColumn fx:id="altColorColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="ALT Color" />
-                              <TableColumn fx:id="musicColumn" prefWidth="60.0" style="-fx-alignment: CENTER;" text="Music" />
-                              <TableColumn fx:id="dmdColumn" prefWidth="60.0" style="-fx-alignment: CENTER;" text="DMD" />
-                              <TableColumn fx:id="registryColumn" prefWidth="105.0" style="-fx-alignment: CENTER;" text="Registry Data" />
-                              <TableColumn fx:id="highscoreColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Highscores" />
-                              <TableColumn fx:id="sizeColumn" prefWidth="100.0" style="-fx-alignment: CENTER;" text="Size" />
-                              <TableColumn fx:id="createdAtColumn" minWidth="2.39996337890625" prefWidth="150.0" style="-fx-alignment: CENTER;" text="Created At" />
+                              <TableColumn fx:id="directB2SColumn" prefWidth="90.0" sortable="false" style="-fx-alignment: CENTER;" text="DirectB2S" />
+                              <TableColumn fx:id="iniColumn" prefWidth="60.0" sortable="false" style="-fx-alignment: CENTER;" text="INI" />
+                              <TableColumn fx:id="vbsColumn" prefWidth="60.0" sortable="false" style="-fx-alignment: CENTER;" text="VBS" />
+                              <TableColumn fx:id="resColumn" prefWidth="60.0" sortable="false" style="-fx-alignment: CENTER;" text="RES" />
+                              <TableColumn fx:id="povColumn" prefWidth="60.0" sortable="false" style="-fx-alignment: CENTER;" text="POV" />
+                              <TableColumn fx:id="pupPackColumn" style="-fx-alignment: CENTER;" sortable="false" text="PUP Pack" />
+                              <TableColumn fx:id="popperColumn" prefWidth="120.0" sortable="false" style="-fx-alignment: CENTER;" text="Frontend Media" />
+                              <TableColumn fx:id="romColumn" prefWidth="60.0" sortable="false" style="-fx-alignment: CENTER;" text="ROM" />
+                              <TableColumn fx:id="altSoundColumn" prefWidth="90.0" sortable="false" style="-fx-alignment: CENTER;" text="ALT Sound" />
+                              <TableColumn fx:id="altColorColumn" prefWidth="90.0" sortable="false" style="-fx-alignment: CENTER;" text="ALT Color" />
+                              <TableColumn fx:id="musicColumn" prefWidth="60.0" sortable="false" style="-fx-alignment: CENTER;" text="Music" />
+                              <TableColumn fx:id="dmdColumn" prefWidth="60.0" sortable="false" style="-fx-alignment: CENTER;" text="DMD" />
+                              <TableColumn fx:id="registryColumn" prefWidth="105.0" sortable="false" style="-fx-alignment: CENTER;" text="Registry Data" />
+                              <TableColumn fx:id="highscoreColumn" prefWidth="90.0" sortable="false" style="-fx-alignment: CENTER;" text="Highscores" />
+                              <TableColumn fx:id="sizeColumn" prefWidth="100.0" sortable="false" style="-fx-alignment: CENTER;" text="Size" />
+                              <TableColumn fx:id="createdAtColumn"  sortable="false" minWidth="2.39996337890625" prefWidth="150.0" style="-fx-alignment: CENTER;" text="Created At" />
                           </columns>
                       </TableView>
                </children>
@@ -113,7 +113,7 @@
                       </tooltip>
                   </Button>
                   <Separator layoutX="1022.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
-                  <Button fx:id="deleteBtn" layoutX="379.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
+                  <Button fx:id="deleteBtn" layoutX="379.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBackupDelete" text="Delete" textFill="#ff3333">
                       <font>
                           <Font size="14.0" />
                       </font>

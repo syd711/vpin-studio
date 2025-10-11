@@ -68,7 +68,7 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
       return frontendMedia.getDefaultMediaItem(VPinScreen.Wheel);
     }).thenAcceptLater(item -> {
       if (item != null) {
-        ByteArrayInputStream gameMediaItem = ServerFX.client.getGameMediaItem(score.getGameId(), VPinScreen.Wheel);
+        ByteArrayInputStream gameMediaItem = ServerFX.client.getWheelIcon(game.getId(), true);
         Image image = new Image(gameMediaItem);
         wheelImageView.setImage(image);
       }
@@ -105,7 +105,7 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
       FrontendMediaRepresentation frontendMedia = client.getFrontendService().getFrontendMedia(game.getId());
       FrontendMediaItemRepresentation item = frontendMedia.getDefaultMediaItem(VPinScreen.Wheel);
       if (item != null) {
-        ByteArrayInputStream gameMediaItem = ServerFX.client.getGameMediaItem(game.getId(), VPinScreen.Wheel);
+        ByteArrayInputStream gameMediaItem = ServerFX.client.getWheelIcon(game.getId(), true);
         Image image = new Image(gameMediaItem);
         wheelImageView.setImage(image);
       }

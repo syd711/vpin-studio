@@ -459,8 +459,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
   }
 
   public void switchToBackupsTab(BackupDescriptorRepresentation backup) {
-    backupsController.selectBackup(backup);
     tabPane.getSelectionModel().select(tableBackupsTab);
+    backupsController.selectBackup(backup);
   }
 
   @Override

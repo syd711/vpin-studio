@@ -16,9 +16,9 @@ import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusEventsResource;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.frontend.WheelIconDelete;
-import de.mephisto.vpin.server.util.UploadUtil;
 import de.mephisto.vpin.server.system.JCodec;
-
+import de.mephisto.vpin.server.util.PngFrameCapture;
+import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.catalina.connector.ClientAbortException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -32,10 +32,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -43,10 +43,6 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -145,10 +141,10 @@ public class GameMediaResource {
 
   @GetMapping("/assets/d/{screen}/{assetSourceId}/{gameId}/{url}")
   public void getTableAsset(HttpServletResponse response, HttpServletRequest request,
-                                                        @PathVariable("screen") String screen,
-                                                        @PathVariable("assetSourceId") String assetSourceId,
-                                                        @PathVariable("gameId") int gameId,
-                                                        @PathVariable("url") String url) throws Exception {
+                            @PathVariable("screen") String screen,
+                            @PathVariable("assetSourceId") String assetSourceId,
+                            @PathVariable("gameId") int gameId,
+                            @PathVariable("url") String url) throws Exception {
     VPinScreen vPinScreen = VPinScreen.valueOfSegment(screen);
     Game game = gameService.getGame(gameId);
     EmulatorType emulatorType = game != null && game.getEmulator() != null ? game.getEmulator().getType() : EmulatorType.VisualPinball;
@@ -202,7 +198,7 @@ public class GameMediaResource {
 
     if (start >= 0) {
       LOG.info("Processing {} method, Length={}, range {}-{}", request.getMethod(), contentLength, start, end);
-    } 
+    }
     else {
       LOG.info("Processing {} method, Length={}", request.getMethod(), contentLength);
     }
@@ -218,7 +214,7 @@ public class GameMediaResource {
     try (ServletOutputStream outputStream = response.getOutputStream()) {
       tableAssetsService.download(outputStream, tableAsset, start, contentLength);
       response.flushBuffer();
-    } 
+    }
     catch (ClientAbortException cae) {
       LOG.info("Connection aborted while streaming media {} from {}", name, assetSourceId);
       response.sendError(HttpStatus.REQUEST_TIMEOUT.value(), "connection aborted");
@@ -231,11 +227,11 @@ public class GameMediaResource {
 
   @GetMapping("/{id}/{screen}/{name}")
   public void getMedia(HttpServletResponse response, HttpServletRequest request,
-                                                        @PathVariable("id") int id, 
-                                                        @PathVariable("screen") String screen, 
-                                                        @PathVariable("name") String name, 
-                                                        @RequestParam(value = "preview", required = false) boolean preview) 
-                                                        throws IOException {
+                       @PathVariable("id") int id,
+                       @PathVariable("screen") String screen,
+                       @PathVariable("name") String name,
+                       @RequestParam(value = "preview", required = false) boolean preview)
+      throws IOException {
 
     screen = screen.replaceAll("@2x", "");
     VPinScreen vPinScreen = VPinScreen.valueOfSegment(screen);
@@ -309,7 +305,7 @@ public class GameMediaResource {
 
     if (start >= 0) {
       LOG.info("Processing {} method, Length={}, range {}-{}", request.getMethod(), contentLength, start, end);
-    } 
+    }
     else {
       LOG.info("Processing {} method, Length={}", request.getMethod(), contentLength);
     }
@@ -336,17 +332,25 @@ public class GameMediaResource {
         }
       }
       else {
-        try (FileInputStream in = new FileInputStream(file)) {
-          if (start >= 0) {
-            IOUtils.copyLarge(in, outputStream, start, contentLength);
-          }
-          else {
-            IOUtils.copy(in, outputStream);
+        String ext = FilenameUtils.getExtension(file.getName());
+        if (ext.equalsIgnoreCase("apng") && preview) {
+          byte[] bytes = PngFrameCapture.captureFirstFrame(file);
+          response.setContentLength((int) bytes.length);
+          IOUtils.copy(new ByteArrayInputStream(bytes), outputStream);
+        }
+        else {
+          try (FileInputStream in = new FileInputStream(file)) {
+            if (start >= 0) {
+              IOUtils.copyLarge(in, outputStream, start, contentLength);
+            }
+            else {
+              IOUtils.copy(in, outputStream);
+            }
           }
         }
       }
       response.flushBuffer();
-    } 
+    }
     catch (ClientAbortException cae) {
       LOG.info("Connection aborted while downloading {} for game {}", name, id);
     }
@@ -358,10 +362,10 @@ public class GameMediaResource {
 
   @GetMapping("/{id}/{screen}")
   public void getMedia(HttpServletResponse response, HttpServletRequest request,
-                                                @PathVariable("id") int id, 
-                                                @PathVariable("screen") String screen,
-                                                @RequestParam(value = "preview", required = false) boolean preview) 
-                                                throws IOException {
+                       @PathVariable("id") int id,
+                       @PathVariable("screen") String screen,
+                       @RequestParam(value = "preview", required = false) boolean preview)
+      throws IOException {
     getMedia(response, request, id, screen, null, preview);
   }
 

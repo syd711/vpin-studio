@@ -29,7 +29,7 @@ public class ScoreItem extends BorderPane {
   }
 
   private void initComponent() {
-    ByteArrayInputStream gameMediaItem = ServerFX.client.getGameMediaItem(this.game.getId(), VPinScreen.Wheel);
+    ByteArrayInputStream gameMediaItem = ServerFX.client.getWheelIcon(this.game.getId(), true);
     Image image = new Image(gameMediaItem);
 
     ImageView wheelIcon = new ImageView(image);

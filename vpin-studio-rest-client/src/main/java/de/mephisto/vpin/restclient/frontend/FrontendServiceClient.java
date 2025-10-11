@@ -6,7 +6,10 @@ import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.games.*;
+import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
+import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
+import de.mephisto.vpin.restclient.games.GameList;
+import de.mephisto.vpin.restclient.games.GameListItem;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -33,6 +36,7 @@ public class FrontendServiceClient extends VPinStudioClientService {
     super(client);
   }
 
+  private final Map<Integer, FrontendMediaRepresentation> frontendMediaCache = new HashMap<>();
 
   public int getVersion() {
     return getRestClient().get(API + API_SEGMENT_FRONTEND + "/version", Integer.class);
@@ -84,11 +88,19 @@ public class FrontendServiceClient extends VPinStudioClientService {
   }
 
   public FrontendMediaRepresentation getFrontendMedia(int gameId) {
-    return getRestClient().get(API + API_SEGMENT_FRONTEND + "/media/" + gameId, FrontendMediaRepresentation.class);
+    if (!frontendMediaCache.containsKey(gameId)) {
+      frontendMediaCache.put(gameId, getRestClient().get(API + API_SEGMENT_FRONTEND + "/media/" + gameId, FrontendMediaRepresentation.class));
+    }
+    return frontendMediaCache.get(gameId);
   }
+
+  public void clearCache(int gameId) {
+    frontendMediaCache.remove(gameId);
+  }
+
   public FrontendMediaItemRepresentation getDefaultFrontendMediaItem(int gameId, VPinScreen screen) {
-    return getRestClient().get(API + API_SEGMENT_FRONTEND + "/media/" + gameId + "/" + screen.name(), 
-      FrontendMediaItemRepresentation.class);
+    return getRestClient().get(API + API_SEGMENT_FRONTEND + "/media/" + gameId + "/" + screen.name(),
+        FrontendMediaItemRepresentation.class);
   }
 
   public FrontendPlayerDisplay getScreenDisplay(VPinScreen screen) {
@@ -96,7 +108,7 @@ public class FrontendServiceClient extends VPinStudioClientService {
   }
 
   public FrontendScreenSummary getScreenSummary(boolean forceReload) {
-    if(forceReload) {
+    if (forceReload) {
       getRestClient().clearCache(API + API_SEGMENT_FRONTEND + "/screens");
     }
     return getRestClient().getCached(API + API_SEGMENT_FRONTEND + "/screens", FrontendScreenSummary.class);
@@ -195,6 +207,7 @@ public class FrontendServiceClient extends VPinStudioClientService {
 
 
   public boolean clearCache() {
+    this.frontendMediaCache.clear();
     final RestTemplate restTemplate = new RestTemplate();
     return restTemplate.getForObject(getRestClient().getBaseUrl() + API + API_SEGMENT_FRONTEND + "/clearcache", Boolean.class);
   }

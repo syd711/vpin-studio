@@ -55,7 +55,28 @@ public class AssetServiceClient extends VPinStudioClientService {
 
   @Nullable
   public ByteArrayInputStream getGameMediaItem(int id, @Nullable VPinScreen screen) {
-      return getGameMediaItem(id, screen, null);
+    return getGameMediaItem(id, screen, null);
+  }
+
+  @Nullable
+  public ByteArrayInputStream getWheelIcon(int id, boolean skipApng) {
+    //------------
+    // The Wheel is cached for performance reason
+    //goes to the GameMediaResource, 404 is not a bug
+    String url = API + "media/" + id + "/" + VPinScreen.Wheel.name() + "?preview=" + skipApng;
+    if (!client.getImageCache().containsKey(url)) {
+      byte[] bytes = getRestClient().readBinary(url);
+      if (bytes == null) {
+        bytes = new byte[]{};
+      }
+      client.getImageCache().put(url, bytes);
+    }
+
+    byte[] imageBytes = client.getImageCache().get(url);
+    if (imageBytes == null || imageBytes.length == 0) {
+      return null;
+    }
+    return new ByteArrayInputStream(imageBytes);
   }
 
   @Nullable
@@ -65,30 +86,13 @@ public class AssetServiceClient extends VPinStudioClientService {
         return null;
       }
 
-      //------------
-      // The Wheel is cached for performance reason
-      //goes to the GameMediaResource, 404 is not a bug
-      String url = API + "media/" + id + "/" + screen.name();
-      if (!client.getImageCache().containsKey(url) && screen.equals(VPinScreen.Wheel)) {
-        byte[] bytes = getRestClient().readBinary(url);
-        if (bytes == null) {
-          bytes = new byte[]{};
-        }
-        client.getImageCache().put(url, bytes);
-      }
-
       if (screen.equals(VPinScreen.Wheel)) {
-        byte[] imageBytes = client.getImageCache().get(url);
-        if (imageBytes == null || imageBytes.length == 0) {
-          return null;
-        }
-        return new ByteArrayInputStream(imageBytes);
+        return getWheelIcon(id, false);
       }
-      //------------
-      // other medias
 
+      String url = API + "media/" + id + "/" + screen.name();
       if (name != null) {
-        url += "/" +  URLEncoder.encode(name, Charset.defaultCharset());
+        url += "/" + URLEncoder.encode(name, Charset.defaultCharset());
       }
 
       byte[] bytes = getRestClient().readBinary(url);

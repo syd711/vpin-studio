@@ -57,7 +57,7 @@ public class WidgetLatestScoreItemController extends WidgetController implements
   }
 
   public void setData(GameRepresentation game, FrontendMediaRepresentation gameMedia, ScoreRepresentation score) {
-    InputStream gameMediaItem = ServerFX.client.getGameMediaItem(game.getId(), VPinScreen.Wheel);
+    InputStream gameMediaItem = ServerFX.client.getWheelIcon(game.getId(), true);
     if (gameMediaItem == null) {
       gameMediaItem = ServerFX.class.getResourceAsStream("avatar-blank.png");
     }

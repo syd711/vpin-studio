@@ -903,6 +903,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         if (screen.equals(VPinScreen.Wheel)) {
           client.getImageCache().clearWheelCache();
         }
+        if (game != null) {
+          client.getFrontendService().clearCache(game.getId());
+        }
 
         WidgetFactory.disposeMediaPane(mediaPane);
         infoBtn.setDisable(list.size() != 1);
@@ -1302,6 +1305,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       }
       if (screen.equals(VPinScreen.Wheel)) {
         client.getImageCache().clearWheelCache();
+        if (this.game != null) {
+          client.getFrontendService().clearCache(this.game.getId());
+        }
       }
 
       this.addToPlaylistBtn.setVisible(screen.equals(VPinScreen.Loading));

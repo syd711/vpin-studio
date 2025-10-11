@@ -580,8 +580,8 @@ public class VPinStudioClient implements OverlayClient {
   }
 
   @Override
-  public ByteArrayInputStream getGameMediaItem(int id, @Nullable VPinScreen screen) {
-    return getAssetService().getGameMediaItem(id, screen);
+  public ByteArrayInputStream getWheelIcon(int id, boolean skipApng) {
+    return getAssetService().getWheelIcon(id, skipApng);
   }
 
   @Override

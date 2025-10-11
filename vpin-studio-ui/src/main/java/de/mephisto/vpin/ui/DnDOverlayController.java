@@ -102,7 +102,7 @@ public class DnDOverlayController implements Initializable {
       FrontendMediaRepresentation frontendMedia = client.getFrontendService().getFrontendMedia(game.getId());
       FrontendMediaItemRepresentation item = frontendMedia.getDefaultMediaItem(VPinScreen.Wheel);
       if (item != null) {
-        ByteArrayInputStream gameMediaItem = client.getGameMediaItem(game.getId(), VPinScreen.Wheel);
+        ByteArrayInputStream gameMediaItem = client.getWheelIcon(game.getId(), true);
         tableWheelImage.setImage(new Image(gameMediaItem));
       }
       else {
