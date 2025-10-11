@@ -157,9 +157,7 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                           <children>
                               <Label text="Game Display Name:" textFill="WHITE" GridPane.rowIndex="3">
@@ -177,11 +175,6 @@
                                       <Font size="14.0" />
                                   </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="168.0" text="Tags:" textFill="WHITE" GridPane.rowIndex="7">
-                                  <font>
-                                      <Font size="14.0" />
-                                  </font>
-                              </Label>
                               <Label fx:id="gameName" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                   <font>
                                       <Font size="14.0" />
@@ -193,11 +186,6 @@
                                   </font>
                               </Label>
                               <Label fx:id="gameFileName" layoutX="168.0" layoutY="132.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                                  <font>
-                                      <Font size="14.0" />
-                                  </font>
-                              </Label>
-                              <Label fx:id="tags" layoutX="173.0" layoutY="163.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="7">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
@@ -222,12 +210,12 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="442.0" text="Notes:" textFill="WHITE" GridPane.rowIndex="8" GridPane.valignment="TOP">
+                        <Label layoutX="10.0" layoutY="442.0" text="Notes:" textFill="WHITE" GridPane.rowIndex="7" GridPane.valignment="TOP">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <TextArea fx:id="notes" editable="false" prefHeight="90.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                        <TextArea fx:id="notes" editable="false" prefHeight="90.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                         <Label layoutX="190.0" layoutY="245.0" styleClass="default-text" text="Emulator:" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
@@ -253,10 +241,25 @@
                         <Insets />
                      </VBox.margin>
                       </GridPane>
+                  <BorderPane fx:id="tags">
+                     <left>
+                              <Label maxWidth="180.0" minWidth="180.0" prefWidth="180.0" text="Tags:" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </Label>
+                     </left>
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
+                  </BorderPane>
                   <Label layoutX="22.0" layoutY="657.0" text="Table Data" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
+                     <VBox.margin>
+                        <Insets top="24.0" />
+                     </VBox.margin>
                   </Label>
                   <GridPane vgap="3.0">
                     <columnConstraints>

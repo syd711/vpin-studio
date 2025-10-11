@@ -3,6 +3,9 @@ package de.mephisto.vpin.restclient.games;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class FilterSettings extends JsonSettings {
   private int emulatorId = -1;
   private boolean missingAssets;
@@ -24,8 +27,17 @@ public class FilterSettings extends JsonSettings {
   private boolean withIni;
   private boolean withNVOffset;
   private boolean withAlias;
+  private List<String> tags = new ArrayList<>();
   private int gameStatus = -1;
   private CommentType noteType;
+
+  public List<String> getTags() {
+    return tags;
+  }
+
+  public void setTags(List<String> tags) {
+    this.tags = tags;
+  }
 
   public boolean isIScored() {
     return iScored;

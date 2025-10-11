@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.util;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.tagging.TaggingUtil;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -16,21 +17,21 @@ import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class TagField extends FlowPane implements AutoCompleteTextFieldChangeListener {
 
   private final TextField inputField;
-  public List<String> COLORS = Arrays.asList("#FF6B6B", "#AAA93D", "#6BCB77", "#4D96FF", "#9D4EDD", "#00B4D8", "#F81144", "#FFA94D");
 
   private final ObservableList<String> tags = FXCollections.observableList(new ArrayList<>());
+  private double tagWidth;
+  private boolean customTags = true;
 
-  public TagField(Pane tagContainer, List<String> initialTags) {
+  public TagField(Pane tagContainer, List<String> suggestions) {
     super(0, 0);
     // TextField for input
     inputField = new TextField();
-    AutoCompleteTextField autoCompleteTextField = new AutoCompleteTextField(inputField, this, initialTags);
+    AutoCompleteTextField autoCompleteTextField = new AutoCompleteTextField(inputField, this, suggestions);
     inputField.setPrefWidth(400);
     inputField.setStyle("-fx-font-size: 14px");
     inputField.setPromptText("Hit Enter to apply new tags...");
@@ -39,6 +40,10 @@ public class TagField extends FlowPane implements AutoCompleteTextFieldChangeLis
     inputField.setOnAction(e -> {
       String text = inputField.getText().trim();
       if (!text.isEmpty()) {
+        if (!suggestions.contains(text.trim()) && !customTags) {
+          return;
+        }
+
         if (tags.contains(text.trim())) {
           return;
         }
@@ -64,6 +69,15 @@ public class TagField extends FlowPane implements AutoCompleteTextFieldChangeLis
     });
   }
 
+  public void setPreferredWidth(double width) {
+    inputField.setPrefWidth(width);
+  }
+
+
+  public void setPreferredTagWidth(double tagWidth) {
+    this.tagWidth = tagWidth;
+  }
+
   public void addListener(ListChangeListener<String> listener) {
     tags.addListener(listener);
   }
@@ -83,9 +97,12 @@ public class TagField extends FlowPane implements AutoCompleteTextFieldChangeLis
   // Create a tag with text and remove button
   private HBox createTag(String tag) {
     HBox tagBox = new HBox();
+    if (tagWidth > 0) {
+      tagBox.setMaxWidth(tagWidth);
+    }
 
-    int index = tags.indexOf(tag) % COLORS.size();
-    String color = COLORS.get(index);
+    int index = tags.indexOf(tag) % TaggingUtil.COLORS.size();
+    String color = TaggingUtil.COLORS.get(index);
     tagBox.setStyle("-fx-background-color: " + color + "; -fx-background-radius: 12; -fx-padding: 3 10;");
     tagBox.setSpacing(3);
 
@@ -121,5 +138,9 @@ public class TagField extends FlowPane implements AutoCompleteTextFieldChangeLis
         });
       });
     });
+  }
+
+  public void setAllowCustomTags(boolean customTags) {
+    this.customTags = customTags;
   }
 }

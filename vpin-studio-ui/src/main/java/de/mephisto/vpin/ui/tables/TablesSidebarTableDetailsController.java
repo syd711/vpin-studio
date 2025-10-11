@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.tagging.TaggingUtil;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
@@ -15,11 +16,14 @@ import de.mephisto.vpin.ui.tables.models.TableStatus;
 import de.mephisto.vpin.ui.tables.panels.UploadsButtonController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FrontendUtil;
+import de.mephisto.vpin.ui.util.TagButton;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -32,6 +36,7 @@ import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
+import static org.yaml.snakeyaml.tokens.Token.ID.Tag;
 
 public class TablesSidebarTableDetailsController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarTableDetailsController.class);
@@ -97,7 +102,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
   private Label numberOfPlayers;
 
   @FXML
-  private Label tags;
+  private BorderPane tags;
 
   @FXML
   private Label category;
@@ -233,6 +238,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
       TableDialogs.directUpload(Studio.stage, AssetType.INI, game.get(), null);
     }
   }
+
   @FXML
   private void onResUpload() {
     if (game.isPresent()) {
@@ -475,7 +481,17 @@ public class TablesSidebarTableDetailsController implements Initializable {
       manufacturer.setText(StringUtils.isEmpty(tableDetails.getManufacturer()) ? "-" : tableDetails.getManufacturer());
       numberOfPlayers.setText(tableDetails.getNumberOfPlayers() == null ? "-" : String.valueOf(tableDetails.getNumberOfPlayers()));
       altLaunch.setText(tableDetails.getAltLaunchExe() == null ? "-" : tableDetails.getAltLaunchExe());
-      tags.setText(StringUtils.isEmpty(tableDetails.getTags()) ? "-" : tableDetails.getTags());
+
+      FlowPane tagsRoot = new FlowPane(3, 3);
+      tags.setCenter(tagsRoot);
+
+      for (String tagsValue : game.getTags()) {
+        int index = game.getTags().indexOf(tagsValue) % TaggingUtil.COLORS.size();
+        String color = TaggingUtil.COLORS.get(index);
+        TagButton tagButton = new TagButton(tagsValue, color);
+        tagsRoot.getChildren().add(tagButton);
+      }
+
       category.setText(StringUtils.isEmpty(tableDetails.getCategory()) ? "-" : tableDetails.getCategory());
       author.setText(StringUtils.isEmpty(tableDetails.getAuthor()) ? "-" : tableDetails.getAuthor());
       launchCustomVar.setText(StringUtils.isEmpty(tableDetails.getLaunchCustomVar()) ? "-" : tableDetails.getLaunchCustomVar());
@@ -535,7 +551,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
       gameTheme.setText("-");
       manufacturer.setText("-");
       numberOfPlayers.setText("-");
-      tags.setText("-");
+      tags.setCenter(new Label("-"));
       category.setText("-");
       author.setText("-");
       launchCustomVar.setText("-");
@@ -572,6 +588,9 @@ public class TablesSidebarTableDetailsController implements Initializable {
     gameMetaDataFields.managedProperty().bindBidirectional(gameMetaDataFields.visibleProperty());
 
     popperRuntimeFields.setVisible(Features.FIELDS_EXTENDED);
+
+
+    tags.setCenter(new Label("-"));
 
     try {
       FXMLLoader loader = new FXMLLoader(UploadsButtonController.class.getResource("uploads-btn.fxml"));

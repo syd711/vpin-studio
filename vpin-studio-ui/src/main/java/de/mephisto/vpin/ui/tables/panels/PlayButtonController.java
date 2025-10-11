@@ -72,8 +72,7 @@ public class PlayButtonController implements Initializable, ChangeListener<Launc
 
   public void setData(GameRepresentation game) {
     this.game = game;
-    GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
-    boolean disable = !isPlayable(game, gameEmulator);
+    boolean disable = true;
     launchCombo.setDisable(disable);
     launchBtn.setDisable(disable);
     this.launchCombo.getItems().clear();
@@ -85,6 +84,10 @@ public class PlayButtonController implements Initializable, ChangeListener<Launc
       List<String> altExeNames = objs;
 
       List<LaunchConfiguration> items = new ArrayList<>();
+      GameEmulatorRepresentation gameEmulator = null;
+      if (game != null) {
+        gameEmulator = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
+      }
 
       String exeName = gameEmulator != null ? gameEmulator.getExeName() : null;
       if (!StringUtils.isEmpty(exeName)) {

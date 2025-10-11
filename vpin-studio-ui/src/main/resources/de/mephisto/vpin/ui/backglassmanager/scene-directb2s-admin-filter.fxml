@@ -62,35 +62,35 @@
                   
                  <Label styleClass="default-title" text="Backglass Filters">
                      <VBox.margin>
-                        <Insets top="12.0" />
+                        <Insets bottom="12.0" top="24.0" />
                      </VBox.margin>
                   </Label>
 
-                  <VBox fx:id="backglassFilters">
+                  <VBox fx:id="backglassFilters" spacing="6.0">
                      <children>
-                        <CheckBox fx:id="missingDMDImageCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="Missing DMD Image" />
-                        <CheckBox fx:id="notFullDMDRatioCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="DMD Aspect Ratio not full DMD" />
-                        <CheckBox fx:id="scoresAvailableCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="Presence of Score Element" />
-                        <CheckBox fx:id="missingTableCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="Backglass without Table" />
+                        <CheckBox fx:id="missingDMDImageCheckBox" mnemonicParsing="false" styleClass="default-text" text="Missing DMD Image" />
+                        <CheckBox fx:id="notFullDMDRatioCheckBox" mnemonicParsing="false" styleClass="default-text" text="DMD Aspect Ratio not full DMD" />
+                        <CheckBox fx:id="scoresAvailableCheckBox" mnemonicParsing="false" styleClass="default-text" text="Presence of Score Element" />
+                        <CheckBox fx:id="missingTableCheckBox" mnemonicParsing="false" styleClass="default-text" text="Backglass without Table" />
                      </children>
                   </VBox>
 
                   <Label styleClass="default-title" text="Settings Filters">
                      <VBox.margin>
-                        <Insets top="12.0" />
+                        <Insets bottom="12.0" top="24.0" />
                      </VBox.margin>
                   </Label>
 
-                  <VBox fx:id="settingFilters">
+                  <VBox fx:id="settingFilters" spacing="6.0">
                      <children>
 
-                        <Label styleClass="preference-checkbox" text="Grill Visibility" />
+                        <Label styleClass="default-text" text="Grill Visibility" />
                         <ComboBox fx:id="grillVisibilityComboBox" prefWidth="150.0" />
-                        <CheckBox fx:id="backglassVisibilityCheckBox" layoutX="10.0" layoutY="78.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Backglass Hidden" />
+                        <CheckBox fx:id="backglassVisibilityCheckBox" layoutX="10.0" layoutY="78.0" mnemonicParsing="false" styleClass="default-text" text="Backglass Hidden" />
 
-                        <CheckBox fx:id="b2sdmdVisibilityCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="B2S DMD Hidden" />
+                        <CheckBox fx:id="b2sdmdVisibilityCheckBox" mnemonicParsing="false" styleClass="default-text" text="B2S DMD Hidden" />
 
-                        <Label styleClass="preference-checkbox" text="DMD Visibility" />
+                        <Label styleClass="default-text" text="DMD Visibility" />
                         <ComboBox fx:id="dmdVisibilityComboBox" prefWidth="150.0" />
 
                      </children>
