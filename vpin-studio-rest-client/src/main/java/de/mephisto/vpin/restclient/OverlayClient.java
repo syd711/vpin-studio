@@ -79,7 +79,7 @@ public interface OverlayClient {
 
   ScoreSummaryRepresentation getRecentScoresByGame(int count, int gameId);
 
-  ByteArrayInputStream getGameMediaItem(int id, VPinScreen screen);
+  ByteArrayInputStream getWheelIcon(int id, boolean skipApng);
 
   //--------------------------
 

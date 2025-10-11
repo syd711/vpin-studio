@@ -233,6 +233,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
   @FXML
   public void onReload() {
     client.clearWheelCache();
+    client.getFrontendService().clearCache();
 
     tableView.setVisible(false);
 
@@ -339,7 +340,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
       hBox.setAlignment(Pos.CENTER_LEFT);
 
       Image image = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
-      ByteArrayInputStream gameMediaItem = ServerFX.client.getGameMediaItem(value.getGameId(), VPinScreen.Wheel);
+      ByteArrayInputStream gameMediaItem = ServerFX.client.getWheelIcon(game.getId(), true);
       if (gameMediaItem != null) {
         image = new Image(gameMediaItem);
       }

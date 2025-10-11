@@ -1,3 +1,11 @@
+## Release Notes 4.3.6
+
+- Fixed delete action for backups.
+- Performance optimization: Added caching for game media data which will improve the performance of the dashboard and player's score list.
+- Performance optimization: Improved all list views (dashboard, player highscores, competitions) so that only the first frame of .apng wheel icons is loaded. When shown in dialogs, competition headers or in the asset manager, the full .apng animations are loaded and shown.
+
+---
+
 ## Release Notes 4.3.5
 
 ## Changes

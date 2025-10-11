@@ -53,6 +53,7 @@ import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.highscores.cards.CardTemplatesService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.util.PngFrameCapture;
 import de.mephisto.vpin.server.vps.VpsService;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.Nullable;
@@ -125,7 +126,7 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
 
 
   private <R> R convert(Object source, Class<R> clazz) {
-  try {
+    try {
       String s = mapper.writeValueAsString(source);
       return mapper.readValue(s, clazz);
     }
@@ -336,21 +337,25 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   }
 
   @Override
-  public ByteArrayInputStream getGameMediaItem(int id, VPinScreen screen) {
-    if (screen != null) {
-      try {
-        FrontendMediaItem defaultMediaItem = frontendService.getGameMedia(id).getDefaultMediaItem(screen);
-        if (defaultMediaItem != null && defaultMediaItem.getFile().exists()) {
-          File file = defaultMediaItem.getFile();
-          FileInputStream fileInputStream = new FileInputStream(file);
-          byte[] bytes = IOUtils.toByteArray(fileInputStream);
-          fileInputStream.close();
+  public ByteArrayInputStream getWheelIcon(int id, boolean skipApng) {
+    try {
+      FrontendMediaItem defaultMediaItem = frontendService.getGameMedia(id).getDefaultMediaItem(VPinScreen.Wheel);
+      if (defaultMediaItem != null && defaultMediaItem.getFile().exists()) {
+        File file = defaultMediaItem.getFile();
+
+        if (skipApng) {
+          byte[] bytes = PngFrameCapture.captureFirstFrame(file);
           return new ByteArrayInputStream(bytes);
         }
+
+        FileInputStream fileInputStream = new FileInputStream(file);
+        byte[] bytes = IOUtils.toByteArray(fileInputStream);
+        fileInputStream.close();
+        return new ByteArrayInputStream(bytes);
       }
-      catch (Exception e) {
-        LOG.error("Error reading media item: " + e.getMessage(), e);
-      }
+    }
+    catch (Exception e) {
+      LOG.error("Error reading media item: " + e.getMessage(), e);
     }
     return null;
   }

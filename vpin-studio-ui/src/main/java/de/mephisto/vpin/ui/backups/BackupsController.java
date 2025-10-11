@@ -252,7 +252,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
   }
 
   @FXML
-  private void onDelete() {
+  private void onBackupDelete() {
     List<BackupModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
       String title = "Delete the " + selectedItems.size() + " selected archives?";
