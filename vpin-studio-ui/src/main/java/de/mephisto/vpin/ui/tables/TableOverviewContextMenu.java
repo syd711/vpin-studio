@@ -242,7 +242,7 @@ public class TableOverviewContextMenu {
       ctxMenu.getItems().add(reloadItem);
 
       MenuItem scanItem = new MenuItem("Scan");
-      KeyCombination scanItemKey = new KeyCodeCombination(KeyCode.T, KeyCombination.CONTROL_DOWN);
+      KeyCombination scanItemKey = new KeyCodeCombination(KeyCode.J, KeyCombination.CONTROL_DOWN);
       scanItem.setAccelerator(scanItemKey);
       scanItem.setGraphic(WidgetFactory.createIcon("mdi2m-map-search-outline"));
       scanItem.setOnAction(actionEvent -> tableOverviewController.onTablesScan());
@@ -383,13 +383,20 @@ public class TableOverviewContextMenu {
       if (Features.BACKUPS_ENABLED) {
         ctxMenu.getItems().add(new SeparatorMenuItem());
 
-        MenuItem exportItem = new MenuItem("Backup Table");
+        MenuItem exportItem = new MenuItem("Backup Table(s)");
         KeyCombination backupKey = new KeyCodeCombination(KeyCode.B, KeyCombination.CONTROL_DOWN);
         exportItem.setAccelerator(backupKey);
         exportItem.setGraphic(WidgetFactory.createIcon("mdi2a-archive-outline"));
         exportItem.setOnAction(actionEvent -> tableOverviewController.onBackup());
         ctxMenu.getItems().add(exportItem);
       }
+
+      MenuItem tagItem = new MenuItem("Tag Table(s)");
+      KeyCombination backupKey = new KeyCodeCombination(KeyCode.T, KeyCombination.CONTROL_DOWN);
+      tagItem.setAccelerator(backupKey);
+      tagItem.setGraphic(WidgetFactory.createIcon("mdi2t-tag-multiple-outline"));
+      tagItem.setOnAction(actionEvent -> tableOverviewController.onTagging());
+      ctxMenu.getItems().add(tagItem);
     }
 
     GameEmulatorRepresentation emu = client.getEmulatorService().getGameEmulator(game.getEmulatorId());

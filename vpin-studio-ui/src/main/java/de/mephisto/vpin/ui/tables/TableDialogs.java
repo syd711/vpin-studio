@@ -366,6 +366,15 @@ public class TableDialogs {
   }
 
 
+  public static boolean openTaggingDialog(List<GameRepresentation> games) {
+    Stage stage = Dialogs.createStudioDialogStage(TaggingDialogController.class, "dialog-tagging.fxml", "Bulk Tagging");
+    TaggingDialogController controller = (TaggingDialogController) stage.getUserData();
+    controller.setGames(games);
+    stage.showAndWait();
+    return true;
+  }
+
+
   public static boolean openEventLogDialog(GameRepresentation game) {
     Stage stage = Dialogs.createStudioDialogStage(EventLogController.class, "dialog-event-log.fxml", "Event Log", "eventLog");
     EventLogController controller = (EventLogController) stage.getUserData();

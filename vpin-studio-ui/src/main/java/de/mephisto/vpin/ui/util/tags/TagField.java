@@ -31,6 +31,7 @@ public class TagField extends VBox implements AutoCompleteTextFieldChangeListene
   private final AutoCompleteTextField autoCompleteTextField;
   private double tagWidth;
   private boolean customTags = true;
+  private double height;
 
   public TagField(List<String> suggestions) {
     super(6);
@@ -70,18 +71,26 @@ public class TagField extends VBox implements AutoCompleteTextFieldChangeListene
         tagContainer.getChildren().removeAll(tagContainer.getChildren());
         for (String tag : tags) {
           if (!StringUtils.isEmpty(tag)) {
-            tagContainer.getChildren().add(createTag(tag));
+            HBox tagBox = createTag(tag);
+            tagContainer.getChildren().add(tagBox);
           }
         }
+
         clearInput();
       }
     });
+  }
+
+  public void setPreferredHeight(double height) {
+    this.height = height;
+    tagContainer.setMaxHeight(this.height);
   }
 
   public void setPreferredWidth(double width) {
     setPrefWidth(width);
     inputField.setMaxWidth(width);
     tagContainer.setMaxWidth(width);
+    setPreferredTagWidth(width);
   }
 
 
@@ -165,5 +174,9 @@ public class TagField extends VBox implements AutoCompleteTextFieldChangeListene
 
   public void setAllowCustomTags(boolean customTags) {
     this.customTags = customTags;
+  }
+
+  public void focus() {
+    this.inputField.requestFocus();
   }
 }

@@ -483,6 +483,16 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     });
   }
 
+
+  @FXML
+  public void onTagging() {
+    List<GameRepresentation> selectedItems = getSelections();
+    if (selectedItems.isEmpty()) {
+      return;
+    }
+    TableDialogs.openTaggingDialog(selectedItems);
+  }
+
   @FXML
   public void onStop() {
     Frontend frontend = client.getFrontendService().getFrontendCached();

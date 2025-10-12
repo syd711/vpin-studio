@@ -20,6 +20,10 @@ public class TaggingUtil {
     return result;
   }
 
+  public void resetColors() {
+    COLOR_MAP.clear();
+  }
+
   public static String getColor(List<String> tags, @NonNull String tag) {
     if (!COLOR_MAP.containsKey(tag)) {
       int index = tags.indexOf(tag) % TaggingUtil.COLORS.size();
