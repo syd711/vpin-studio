@@ -57,6 +57,10 @@ public class TableDataTabCommentsController implements Initializable {
     this.textArea.requestFocus();
   }
 
+  public void setTags(List<String> tags) {
+    tagField.setTags(tags);
+  }
+
   public void setGame(GameRepresentation game) {
     this.game = game;
     if (StringUtils.isNotEmpty(game.getComment())) {
@@ -85,4 +89,5 @@ public class TableDataTabCommentsController implements Initializable {
       tableDataController.setDialogDirty(true);
     });
   }
+
 }

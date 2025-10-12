@@ -17,6 +17,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.tagging.TaggingUtil;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -398,6 +399,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
         TableDetails tableDetails = tableDetailsBinder.getBean();
         TableDetails td = TableDialogs.openAutoFillSettingsDialog(this.stage, Arrays.asList(this.game), tableDetails, vpsTableId, vpsVersionId);
         if (td != null) {
+          tableDataTabCommentsController.setTags(TaggingUtil.getTags(td.getTags()));
           tableDetailsBinder.setBean(td, true);
           setDialogDirty(true);
         }
