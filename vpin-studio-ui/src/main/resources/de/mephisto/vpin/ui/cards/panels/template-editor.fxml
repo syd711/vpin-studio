@@ -202,7 +202,7 @@
                 </BorderPane>
             </top>
             <bottom>
-                <HBox alignment="CENTER_RIGHT" BorderPane.alignment="CENTER">
+                <HBox alignment="CENTER_RIGHT" styleClass="media-container" BorderPane.alignment="CENTER">
                     <children>
                         <Label layoutX="10.0" layoutY="15.0" text="Card Resolution: ">
                             <padding>
