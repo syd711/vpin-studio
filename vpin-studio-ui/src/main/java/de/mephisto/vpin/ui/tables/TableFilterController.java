@@ -13,7 +13,7 @@ import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
 import de.mephisto.vpin.ui.tables.models.TableStatus;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
-import de.mephisto.vpin.ui.util.TagField;
+import de.mephisto.vpin.ui.util.tags.TagField;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -182,8 +182,8 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
       withResCheckBox.setSelected(filterSettings.isWithRes());
       withNVOffsetCheckBox.setSelected(filterSettings.isWithNVOffset());
       withAliasCheckBox.setSelected(filterSettings.isWithAlias());
-      tagField.setTags(filterSettings.getTags());
     }
+    tagField.setTags(filterSettings.getTags());
   }
 
   @Override
@@ -331,17 +331,11 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
       applyFilters();
     });
 
-    FlowPane tagContainer = new FlowPane();
-    tagContainer.setHgap(8);
-    tagContainer.setVgap(8);
-    tagContainer.setMaxWidth(180);
-    tagContainer.setOpaqueInsets(new Insets(12, 0, 0, 0));
-
     List<String> initialTags = client.getTaggingService().getTags();
-    tagField = new TagField(tagContainer, initialTags);
+    tagField = new TagField(initialTags);
     tagField.setAllowCustomTags(false);
-    tagField.setPreferredWidth(180);
-    tagField.setPreferredTagWidth(180);
+    tagField.setPreferredWidth(200);
+    tagField.setPreferredTagWidth(200);
     tagField.addListener(new ListChangeListener<String>() {
       @Override
       public void onChanged(Change<? extends String> c) {
@@ -351,11 +345,14 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
       }
     });
     tagsFilter.getChildren().add(tagField);
-    tagsFilter.getChildren().add(tagContainer);
     tagField.setTags(filterSettings.getTags());
 
     client.getPreferenceService().addListener(this);
     preferencesChanged(PreferenceNames.ISCORED_SETTINGS, null);
+  }
+
+  public TagField getTagField() {
+    return tagField;
   }
 
   public void setEmulator(GameEmulatorRepresentation value) {

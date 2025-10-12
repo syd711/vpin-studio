@@ -312,11 +312,6 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     getFilterController().applyFilters();
   }
 
-
-  private BaseFilterController<GameRepresentation, GameRepresentationModel> getFilterController() {
-    return filterController;
-  }
-
   @FXML
   public void onMediaEdit() {
     GameRepresentation selectedItems = getSelection();

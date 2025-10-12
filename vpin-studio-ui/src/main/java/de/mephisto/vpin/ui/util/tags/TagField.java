@@ -1,7 +1,9 @@
-package de.mephisto.vpin.ui.util;
+package de.mephisto.vpin.ui.util.tags;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.tagging.TaggingUtil;
+import de.mephisto.vpin.ui.util.AutoCompleteTextField;
+import de.mephisto.vpin.ui.util.AutoCompleteTextFieldChangeListener;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -13,25 +15,28 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TagField extends FlowPane implements AutoCompleteTextFieldChangeListener {
+public class TagField extends VBox implements AutoCompleteTextFieldChangeListener {
 
   private final TextField inputField;
 
   private final ObservableList<String> tags = FXCollections.observableList(new ArrayList<>());
+  private final FlowPane tagContainer;
+  private final AutoCompleteTextField autoCompleteTextField;
   private double tagWidth;
   private boolean customTags = true;
 
-  public TagField(Pane tagContainer, List<String> suggestions) {
-    super(0, 0);
+  public TagField(List<String> suggestions) {
+    super(6);
     // TextField for input
     inputField = new TextField();
-    AutoCompleteTextField autoCompleteTextField = new AutoCompleteTextField(inputField, this, suggestions);
+    autoCompleteTextField = new AutoCompleteTextField(inputField, this, suggestions);
     inputField.setPrefWidth(400);
     inputField.setStyle("-fx-font-size: 14px");
     inputField.setPromptText("Hit Enter to apply new tags...");
@@ -52,6 +57,10 @@ public class TagField extends FlowPane implements AutoCompleteTextFieldChangeLis
       }
     });
 
+    tagContainer = new FlowPane();
+    tagContainer.setHgap(8);
+    tagContainer.setVgap(8);
+    tagContainer.setOpaqueInsets(new Insets(12, 0, 0, 0));
     this.getChildren().addAll(inputField, tagContainer);
     this.setPadding(new Insets(0));
 
@@ -70,7 +79,9 @@ public class TagField extends FlowPane implements AutoCompleteTextFieldChangeLis
   }
 
   public void setPreferredWidth(double width) {
-    inputField.setPrefWidth(width);
+    setPrefWidth(width);
+    inputField.setMaxWidth(width);
+    tagContainer.setMaxWidth(width);
   }
 
 
@@ -91,19 +102,27 @@ public class TagField extends FlowPane implements AutoCompleteTextFieldChangeLis
   }
 
   public void setTags(List<String> values) {
+    tags.clear();
     tags.addAll(values);
+    clearInput();
   }
 
-  // Create a tag with text and remove button
+  public void toggleTag(String tagsValue) {
+    if (!tags.contains(tagsValue)) {
+      tags.add(tagsValue);
+    }
+    else {
+      tags.remove(tagsValue);
+    }
+  }
+
   private HBox createTag(String tag) {
     HBox tagBox = new HBox();
     if (tagWidth > 0) {
       tagBox.setMaxWidth(tagWidth);
     }
 
-    int index = tags.indexOf(tag) % TaggingUtil.COLORS.size();
-    String color = TaggingUtil.COLORS.get(index);
-    tagBox.setStyle("-fx-background-color: " + color + "; -fx-background-radius: 12; -fx-padding: 3 10;");
+    tagBox.setStyle("-fx-background-color: " + TaggingUtil.getColor(getTags(), tag) + "; -fx-background-radius: 12; -fx-padding: 3 10;");
     tagBox.setSpacing(3);
 
     Label tagText = new Label(tag);
@@ -114,7 +133,10 @@ public class TagField extends FlowPane implements AutoCompleteTextFieldChangeLis
 
     FontIcon icon = WidgetFactory.createIcon("mdi2w-window-close");
     removeButton.setGraphic(icon);
-    removeButton.setOnAction(e -> tags.remove(tag));
+    removeButton.setOnAction(e -> {
+      tags.remove(tag);
+      clearInput();
+    });
 
     tagBox.getChildren().addAll(tagText, removeButton);
     return tagBox;
@@ -134,6 +156,7 @@ public class TagField extends FlowPane implements AutoCompleteTextFieldChangeLis
       Platform.runLater(() -> {
         inputField.clear();
         Platform.runLater(() -> {
+          autoCompleteTextField.reset();
           inputField.requestFocus();
         });
       });

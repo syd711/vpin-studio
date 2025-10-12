@@ -680,6 +680,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
     return tablesController.getTableOverviewController();
   }
 
+
   public void setGames(Optional<GameRepresentation> game, List<GameRepresentation> games) {
     this.pov = null;
     this.game = game;

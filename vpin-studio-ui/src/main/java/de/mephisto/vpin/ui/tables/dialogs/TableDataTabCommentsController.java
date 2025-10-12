@@ -1,11 +1,8 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
-import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.util.TagField;
-import javafx.application.Platform;
+import de.mephisto.vpin.ui.util.tags.TagField;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -78,16 +75,9 @@ public class TableDataTabCommentsController implements Initializable {
     useErrorLabel.setOnMouseClicked(mouseEvent -> appendTextAndFocus("//ERROR "));
     useOutdatedLabel.setOnMouseClicked(mouseEvent -> appendTextAndFocus("//OUTDATED "));
 
-
-    FlowPane tagContainer = new FlowPane();
-    tagContainer.setHgap(8);
-    tagContainer.setVgap(8);
-    tagContainer.setOpaqueInsets(new Insets(12, 0, 0, 0));
-
     List<String> initialTags = client.getTaggingService().getTags();
-    tagField = new TagField(tagContainer, initialTags);
+    tagField = new TagField(initialTags);
     tags.getChildren().add(tagField);
-    tags.getChildren().add(tagContainer);
   }
 
   public void initBindings(TableDataController tableDataController) {

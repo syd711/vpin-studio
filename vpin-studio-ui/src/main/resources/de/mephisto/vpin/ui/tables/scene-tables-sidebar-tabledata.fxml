@@ -241,7 +241,7 @@
                         <Insets />
                      </VBox.margin>
                       </GridPane>
-                  <BorderPane fx:id="tags">
+                  <BorderPane fx:id="tags" nodeOrientation="LEFT_TO_RIGHT">
                      <left>
                               <Label maxWidth="180.0" minWidth="180.0" prefWidth="180.0" text="Tags:" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
                                   <font>

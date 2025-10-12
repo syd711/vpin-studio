@@ -196,6 +196,7 @@ public class AutoCompleteTextField {
   }
 
   public void setText(String name) {
+    this.defaultValue = null;
     setChangeEnabled(false);
     textField.setText(name);
     defaultValue = name;

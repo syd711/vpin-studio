@@ -52,9 +52,12 @@ public class TableOverviewPredicateFactory {
           }
         }
 
-        if (!filterSettings.getTags().isEmpty() && !game.getTags().isEmpty()) {
-          for (String tag : game.getTags()) {
-            if (!filterSettings.getTags().contains(tag)) {
+        if (!filterSettings.getTags().isEmpty()) {
+          if (game.getTags().isEmpty()) {
+            return false;
+          }
+          for (String tag : filterSettings.getTags()) {
+            if (!game.getTags().contains(tag)) {
               return false;
             }
           }

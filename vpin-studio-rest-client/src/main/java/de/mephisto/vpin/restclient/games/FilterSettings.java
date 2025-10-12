@@ -216,34 +216,36 @@ public class FilterSettings extends JsonSettings {
   }
 
   public boolean isResetted(boolean vpxMode) {
-    if(vpxMode) {
+    if (vpxMode) {
       return !this.missingAssets
-        && !this.otherIssues
-        && !this.noHighscoreSettings
-        && !this.noHighscoreSupport
-        && !this.notPlayed
-        && !this.noVpsTableMapping
-        && !this.noVpsVersionMapping
-        && !this.vpsUpdates
-        && !this.versionUpdates
-        && !this.withAltColor
-        && !this.withAltSound
-        && !this.withBackglass
-        && !this.withIni
-        && !this.withPov
-        && !this.withRes
-        && !this.withPupPack
-        && !this.withNVOffset
-        && !this.withAlias
-        && !this.iScored
-        && this.noteType == null
-        && this.gameStatus == -1;
+          && !this.otherIssues
+          && !this.noHighscoreSettings
+          && !this.noHighscoreSupport
+          && !this.notPlayed
+          && !this.noVpsTableMapping
+          && !this.noVpsVersionMapping
+          && !this.vpsUpdates
+          && !this.versionUpdates
+          && !this.withAltColor
+          && !this.withAltSound
+          && !this.withBackglass
+          && !this.withIni
+          && !this.withPov
+          && !this.withRes
+          && !this.withPupPack
+          && !this.withNVOffset
+          && !this.withAlias
+          && !this.iScored
+          && this.tags.isEmpty()
+          && this.noteType == null
+          && this.gameStatus == -1;
     }
 
     return !this.missingAssets
-      && !this.notPlayed
-      && this.noteType == null
-      && this.gameStatus == -1;
+        && !this.notPlayed
+        && this.tags.isEmpty()
+        && this.noteType == null
+        && this.gameStatus == -1;
 
   }
 

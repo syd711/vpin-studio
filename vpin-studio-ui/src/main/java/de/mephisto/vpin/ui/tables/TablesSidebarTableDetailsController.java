@@ -4,7 +4,6 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.Frontend;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -13,15 +12,18 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
 import de.mephisto.vpin.ui.tables.models.TableStatus;
+import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
 import de.mephisto.vpin.ui.tables.panels.UploadsButtonController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FrontendUtil;
-import de.mephisto.vpin.ui.util.TagButton;
+import de.mephisto.vpin.ui.util.tags.TagButton;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
@@ -36,7 +38,6 @@ import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
-import static org.yaml.snakeyaml.tokens.Token.ID.Tag;
 
 public class TablesSidebarTableDetailsController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarTableDetailsController.class);
@@ -486,9 +487,15 @@ public class TablesSidebarTableDetailsController implements Initializable {
       tags.setCenter(tagsRoot);
 
       for (String tagsValue : game.getTags()) {
-        int index = game.getTags().indexOf(tagsValue) % TaggingUtil.COLORS.size();
-        String color = TaggingUtil.COLORS.get(index);
-        TagButton tagButton = new TagButton(tagsValue, color);
+        TagButton tagButton = new TagButton(client.getTaggingService().getTags(), tagsValue);
+        tagButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+          @Override
+          public void handle(MouseEvent event) {
+            BaseFilterController<GameRepresentation, GameRepresentationModel> filterController = tablesSidebarController.getTableOverviewController().getFilterController();
+            TableFilterController tableFilterController = (TableFilterController) filterController;
+            tableFilterController.getTagField().toggleTag(tagsValue);
+          }
+        });
         tagsRoot.getChildren().add(tagButton);
       }
 

@@ -280,6 +280,10 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
     }
   }
 
+  public BaseFilterController<T, M> getFilterController() {
+    return filterController;
+  }
+
   protected void applyTableCount() {
     if (labelCount != null) {
       labelCount.setText(filteredModels.size() + " " + (filteredModels.size() > 1 ? names : name));
