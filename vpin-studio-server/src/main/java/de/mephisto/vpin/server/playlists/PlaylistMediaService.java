@@ -60,7 +60,7 @@ public class PlaylistMediaService {
       if (playlist.getMediaName() != null) {
         String baseFilename = !StringUtils.isEmpty(playlist.getMediaName()) ? playlist.getMediaName().toLowerCase() : playlist.getName().toLowerCase();
         File mediaFolder = frontendService.getPlaylistMediaFolder(playlist, screen, false);
-        if (mediaFolder.exists()) {
+        if (mediaFolder != null && mediaFolder.exists()) {
           File[] mediaFiles = mediaFolder.listFiles((dir, name) -> name.toLowerCase().startsWith(baseFilename));
           if (mediaFiles != null && mediaFiles.length > 0) {
             Pattern plainMatcher = Pattern.compile(Pattern.quote(baseFilename) + "\\d{0,2}");
@@ -68,7 +68,7 @@ public class PlaylistMediaService {
           }
         }
         else {
-          LOG.error("Failed to resolve playlist media folder: " + mediaFolder.getAbsolutePath());
+          LOG.error("Failed to resolve playlist media folder: " + (mediaFolder != null ? mediaFolder.getAbsolutePath() : null));
         }
       }
       else {

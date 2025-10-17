@@ -207,7 +207,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
         break;
     }
     if (screen != null) {
-      File screenDir = client.getFrontendService().getMediaDirectory(-1, screen.name());
+      File screenDir = client.getFrontendService().getMediaDirectory(-1, screen);
       SystemUtil.openFolder(screenDir);
     }
   }

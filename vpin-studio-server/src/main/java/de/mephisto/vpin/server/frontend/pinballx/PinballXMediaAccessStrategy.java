@@ -48,6 +48,7 @@ public class PinballXMediaAccessStrategy extends DefaultMediaAccessStrategy {
       //folders.put(VPinScreen.Other2, null);
       folders.put(VPinScreen.PlayField, new String[] { "Table Videos", "Table Images" });
       folders.put(VPinScreen.Topper, new String[] { "Topper Videos", "Topper Images" });
+      folders.put(VPinScreen.Logo, new String[] { "Logos" });
       folders.put(VPinScreen.Wheel, new String[] { "Wheel Images" });
 
     // The asset types for which in pinballX could be stores as Images or Videos

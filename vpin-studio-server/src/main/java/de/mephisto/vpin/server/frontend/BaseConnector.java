@@ -531,6 +531,7 @@ public abstract class BaseConnector implements FrontendConnector {
     Playlist favs = new Playlist();
     favs.setId(PlaylistRepresentation.PLAYLIST_FAVORITE_ID);
     favs.setName("Favorites");
+    favs.setMediaName("Favorites");
     int intValue = toColorCode(uiSettings.getLocalFavsColor());
     favs.setMenuColor(intValue);
     List<PlaylistGame> favspg = gameFavs.stream().map(id -> toPlaylistGame(id)).collect(Collectors.toList());
@@ -549,6 +550,7 @@ public abstract class BaseConnector implements FrontendConnector {
     Playlist pl = new Playlist();
     pl.setId(PlaylistRepresentation.PLAYLIST_JUSTADDED_ID);
     pl.setName("Just Added");
+    pl.setMediaName("JustAdded");
     int intValue = toColorCode(uiSettings.getJustAddedColor());
     pl.setMenuColor(intValue);
     pl.setSqlPlayList(true);
@@ -564,6 +566,7 @@ public abstract class BaseConnector implements FrontendConnector {
     Playlist pl = new Playlist();
     pl.setId(PlaylistRepresentation.PLAYLIST_MOSTPLAYED_ID);
     pl.setName("Most Played");
+    pl.setMediaName("MostPlayed");
     int intValue = toColorCode(uiSettings.getMostPlayedColor());
     pl.setMenuColor(intValue);
     pl.setSqlPlayList(true);

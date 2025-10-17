@@ -272,7 +272,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   @FXML
   private void onScreenDelete(ActionEvent e) {
     if (!this.assetList.getItems().isEmpty()) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete Screen Assets", "Delete all media for screen \"" + screen.getSegment() + "\"?");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete Screen Assets", "Delete all media for screen \"" + screen.name() + "\"?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         for (FrontendMediaItemRepresentation item : assetList.getItems()) {
           if (isPlaylistMode()) {
@@ -375,7 +375,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private void onFolderBtn() {
     FrontendMediaItemRepresentation selectedItem = assetList.getSelectionModel().getSelectedItem();
     if (this.playlist != null && this.playlistsRadio != null && this.playlistsRadio.isSelected()) {
-      File screenDir = client.getFrontendService().getPlaylistMediaDirectory(this.playlist.getId(), screen.name());
+      File screenDir = client.getFrontendService().getPlaylistMediaDirectory(this.playlist.getId(), screen);
       if (selectedItem != null) {
         screenDir = new File(screenDir, selectedItem.getName());
         SystemUtil.openFile(screenDir);
@@ -384,7 +384,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       SystemUtil.openFolder(screenDir);
     }
     else if (this.game != null) {
-      File screenDir = client.getFrontendService().getMediaDirectory(this.game.getId(), screen.name());
+      File screenDir = client.getFrontendService().getMediaDirectory(this.game.getId(), screen);
       if (selectedItem != null) {
         screenDir = new File(screenDir, selectedItem.getName());
         SystemUtil.openFile(screenDir);
@@ -642,7 +642,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           serverMediaPlayer.disposeMedia();
         }
 
-        this.serverMediaPlayer = WidgetFactory.createAssetMediaPlayer(client, assetUrl, tableAsset.getScreen(), mimeType, false, false);
+        VPinScreen screen = VPinScreen.valueOfSegment(tableAsset.getScreen());
+        this.serverMediaPlayer = WidgetFactory.createAssetMediaPlayer(client, assetUrl, screen, mimeType, false, false);
         serverAssetMediaPane.setCenter(serverMediaPlayer);
       }
       catch (Exception e) {

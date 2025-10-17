@@ -417,6 +417,15 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
     }
 
+    if (isValidationEnabled(game, GameValidationCode.CODE_NO_LOGO)) {
+      if (!validScreenAssets(game, VPinScreen.Logo)) {
+        result.add(ValidationStateFactory.create(GameValidationCode.CODE_NO_LOGO));
+        if (findFirst) {
+          return result;
+        }
+      }
+    }
+
     return null;
   }
 
@@ -626,6 +635,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         || codes.contains(CODE_NO_PLAYFIELD)
         || codes.contains(CODE_NO_LOADING)
         || codes.contains(CODE_NO_OTHER2)
+        || codes.contains(CODE_NO_LOGO)
         || codes.contains(CODE_NO_WHEEL_IMAGE)) {
       return true;
     }

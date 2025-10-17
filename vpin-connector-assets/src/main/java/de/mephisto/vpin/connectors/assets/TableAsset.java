@@ -10,7 +10,7 @@ public class TableAsset {
   private String sourceId;
   private String mimeType;
   private String author;
-  private String screen;
+  private String screenSegment;
   private String emulator;
   private long length = -1;
 
@@ -31,11 +31,11 @@ public class TableAsset {
   }
 
   public String getScreen() {
-    return screen;
+    return screenSegment;
   }
 
-  public void setScreen(String screen) {
-    this.screen = screen;
+  public void setScreen(String screenSegment) {
+    this.screenSegment = screenSegment;
   }
 
   public String getAuthor() {

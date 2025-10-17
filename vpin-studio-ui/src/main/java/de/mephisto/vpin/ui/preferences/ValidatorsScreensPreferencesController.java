@@ -99,6 +99,9 @@ public class ValidatorsScreensPreferencesController implements Initializable {
       case CODE_NO_OTHER2: {
         return VPinScreen.Other2;
       }
+      case CODE_NO_LOGO: {
+        return VPinScreen.Logo;
+      }
       case CODE_NO_WHEEL_IMAGE: {
         return VPinScreen.Wheel;
       }

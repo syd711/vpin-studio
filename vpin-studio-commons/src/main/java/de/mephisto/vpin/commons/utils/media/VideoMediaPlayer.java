@@ -39,7 +39,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
     this.invertPlayfield = invertPlayfield;
   }
 
-  public void render(@NonNull String url, @Nullable String screenName, boolean usePreview)  {
+  public void render(@NonNull String url, @Nullable VPinScreen screen, boolean usePreview)  {
 
     if (StringUtils.endsWithIgnoreCase(mimeType, "/quicktime")) {
       setCenter(getEncodingNotSupportedLabel());
@@ -56,7 +56,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
           imageView.setPreserveRatio(true);
           setCenter(imageView);
 
-          scaleImageView(image, screenName);
+          scaleImageView(image, screen);
 
           // add an image on top 
           FontIcon fontIcon = new FontIcon();
@@ -94,18 +94,18 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
             else {
               getChildren().remove(playBtn);
               fontIcon.setIconLiteral("bi-stop");
-              renderVideo(url, screenName);
+              renderVideo(url, screen);
               modeVideo = true;
             }
           });
         });
     }
     else {
-      renderVideo(url, screenName);
+      renderVideo(url, screen);
     }
   }
 
-  public void renderVideo(@NonNull String url, @Nullable String screenName) {
+  public void renderVideo(@NonNull String url, @Nullable VPinScreen screen) {
 
     setLoading();
 
@@ -120,11 +120,11 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
     });
 
     mediaPlayer.setOnReady(() -> {
-      installMediaView(screenName, media);
+      installMediaView(screen, media);
     });
   }
 
-  private void installMediaView(String screenName, Media media) {
+  private void installMediaView(VPinScreen screen, Media media) {
     for (MediaPlayerListener listener : this.listeners) {
       listener.onReady(media);
     }
@@ -137,7 +137,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
     mediaView.setPreserveRatio(true);
 
     if (mediaOptions == null || mediaOptions.isAutoRotate()) {
-      scaleMediaView(media, screenName);
+      scaleMediaView(media, screen);
     }
 
     setCenter(mediaView);
@@ -146,14 +146,14 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
     }
   }
 
-  private void scaleMediaView(Media media, @Nullable String screenName) {
-    if (VPinScreen.PlayField.getSegment().equalsIgnoreCase(screenName)) {
+  private void scaleMediaView(Media media, @Nullable VPinScreen screen) {
+    if (VPinScreen.PlayField.equals(screen)) {
       if (media.getWidth() > media.getHeight()) {
         mediaView.setRotate(90 + (invertPlayfield ? 180 : 0));
         setRotated(true);
       }
     }
-    else if (VPinScreen.Loading.getSegment().equalsIgnoreCase(screenName)) {
+    else if (VPinScreen.Loading.equals(screen)) {
       if (media.getWidth() > media.getHeight()) {
         mediaView.setRotate(90);
         setRotated(true);
@@ -161,14 +161,14 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
     }
   }
 
-  private void scaleImageView(Image image,  @Nullable String screenName) {
-    if (VPinScreen.PlayField.getSegment().equalsIgnoreCase(screenName)) {
+  private void scaleImageView(Image image,  @Nullable VPinScreen screen) {
+    if (VPinScreen.PlayField.equals(screen)) {
       if (image.getWidth() > image.getHeight()) {
         imageView.setRotate(90 + (invertPlayfield ? 180 : 0));
         setRotated(true);
       }
     }
-    else if (VPinScreen.Loading.getSegment().equalsIgnoreCase(screenName)) {
+    else if (VPinScreen.Loading.equals(screen)) {
       if (image.getWidth() > image.getHeight()) {
         imageView.setRotate(90);
         setRotated(true);

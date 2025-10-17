@@ -178,6 +178,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnLoading;
 
   @FXML
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnLogo;
+
+  @FXML
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnWheel;
 
   @FXML
@@ -384,6 +387,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     columnPlayfield.setVisible(supportedScreens.contains(VPinScreen.PlayField) && assetManagerMode && !ignoredValidations.isIgnored(String.valueOf(VPinScreen.PlayField.getValidationCode())));
     columnBackglass.setVisible(supportedScreens.contains(VPinScreen.BackGlass) && assetManagerMode && !ignoredValidations.isIgnored(String.valueOf(VPinScreen.BackGlass.getValidationCode())));
     columnLoading.setVisible(supportedScreens.contains(VPinScreen.Loading) && assetManagerMode && !ignoredValidations.isIgnored(String.valueOf(VPinScreen.Loading.getValidationCode())));
+    columnLogo.setVisible(supportedScreens.contains(VPinScreen.Logo) && assetManagerMode && !ignoredValidations.isIgnored(String.valueOf(VPinScreen.Logo.getValidationCode())));
     columnWheel.setVisible(supportedScreens.contains(VPinScreen.Wheel) && assetManagerMode && !ignoredValidations.isIgnored(String.valueOf(VPinScreen.Wheel.getValidationCode())));
     columnDMD.setVisible(supportedScreens.contains(VPinScreen.DMD) && assetManagerMode && !ignoredValidations.isIgnored(String.valueOf(VPinScreen.DMD.getValidationCode())));
     columnTopper.setVisible(supportedScreens.contains(VPinScreen.Topper) && assetManagerMode && !ignoredValidations.isIgnored(String.valueOf(VPinScreen.Topper.getValidationCode())));
@@ -640,7 +644,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     if (game != null) {
       ValidationState validationState = game.getValidationState();
       int code = validationState.getCode();
-      if (code >= GameValidationCode.CODE_NO_AUDIO && code <= GameValidationCode.CODE_NO_WHEEL_IMAGE) {
+      if (code >= GameValidationCode.CODE_NO_AUDIO && code <= GameValidationCode.CODE_NO_LOGO) {
         PreferencesController.open("validators_screens");
       }
       else {
@@ -1411,6 +1415,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     BaseLoadingColumn.configureColumn(columnLoading, (value, model) -> createAssetStatus(value, model, VPinScreen.Loading, event -> {
       showAssetDetails(value, VPinScreen.Loading);
     }), this, supportedScreens.contains(VPinScreen.Loading));
+    BaseLoadingColumn.configureColumn(columnLogo, (value, model) -> createAssetStatus(value, model, VPinScreen.Logo, event -> {
+      showAssetDetails(value, VPinScreen.Logo);
+    }), this, supportedScreens.contains(VPinScreen.Logo));
     BaseLoadingColumn.configureColumn(columnWheel, (value, model) -> createAssetStatus(value, model, VPinScreen.Wheel, event -> {
       showAssetDetails(value, VPinScreen.Wheel);
     }), this, supportedScreens.contains(VPinScreen.Wheel));
@@ -1895,6 +1902,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     columnPlayfield.setVisible(false);
     columnBackglass.setVisible(false);
     columnLoading.setVisible(false);
+    columnLogo.setVisible(false);
     columnWheel.setVisible(false);
     columnDMD.setVisible(false);
     columnTopper.setVisible(false);

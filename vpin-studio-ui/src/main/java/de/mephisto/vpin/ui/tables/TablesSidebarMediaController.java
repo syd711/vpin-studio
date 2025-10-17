@@ -79,6 +79,9 @@ public class TablesSidebarMediaController implements Initializable {
   private BorderPane screenWheel;
 
   @FXML
+  private BorderPane screenLogo;
+
+  @FXML
   private BorderPane screenGameInfo;
 
   @FXML
@@ -130,6 +133,9 @@ public class TablesSidebarMediaController implements Initializable {
   private Button btn_edit_Wheel;
 
   @FXML
+  private Button btn_edit_Logo;
+
+  @FXML
   private Button btn_delete_Audio;
 
   @FXML
@@ -165,6 +171,8 @@ public class TablesSidebarMediaController implements Initializable {
   @FXML
   private Button btn_delete_Wheel;
 
+  @FXML
+  private Button btn_delete_Logo;
 
   @FXML
   private Button btn_Audio;
@@ -202,6 +210,8 @@ public class TablesSidebarMediaController implements Initializable {
   @FXML
   private Button btn_Wheel;
 
+  @FXML
+  private Button btn_Logo;
 
   @FXML
   private Button btn_view_Topper;
@@ -232,6 +242,9 @@ public class TablesSidebarMediaController implements Initializable {
 
   @FXML
   private Button btn_view_Wheel;
+
+  @FXML
+  private Button btn_view_Logo;
 
   @FXML
   private Button btn_dmdPos_DMD;
@@ -279,6 +292,9 @@ public class TablesSidebarMediaController implements Initializable {
   @FXML
   private Node top_Wheel;
 
+  @FXML
+  private Node top_Logo;
+
 //  @FXML
 //  private Node hbox_Audio;
 //
@@ -314,6 +330,9 @@ public class TablesSidebarMediaController implements Initializable {
 //
 //  @FXML
 //  private Node hbox_Wheel;
+//
+//  @FXML
+//  private Node hbox_Logo;
 
   private final Tooltip highscoreCardTooltip = new Tooltip("Highscore cards are generated for this screen.");
 
@@ -349,10 +368,11 @@ public class TablesSidebarMediaController implements Initializable {
     Button source = (Button) e.getSource();
     String id = source.getId();
     String screen = id.substring(id.indexOf("_") + 1);
+    VPinScreen vpinScreen = VPinScreen.valueOf(screen);
 
     GameRepresentation selection = tablesSidebarController.getTableOverviewController().getSelection();
     if (selection != null) {
-      File screendir = client.getFrontendService().getMediaDirectory(selection.getId(), screen);
+      File screendir = client.getFrontendService().getMediaDirectory(selection.getId(), vpinScreen);
       SystemUtil.openFolder(screendir);
     }
   }
@@ -409,6 +429,7 @@ public class TablesSidebarMediaController implements Initializable {
     btn_edit_GameHelp.setDisable(g.isEmpty());
     btn_edit_PlayField.setDisable(g.isEmpty());
     btn_edit_Wheel.setDisable(g.isEmpty());
+    btn_edit_Logo.setDisable(g.isEmpty());
 
     //FrontendMediaRepresentation frontendMedia = new FrontendMediaRepresentation();
     if (g.isPresent()) {
@@ -440,6 +461,7 @@ public class TablesSidebarMediaController implements Initializable {
           btn_view_GameHelp.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.GameHelp).isEmpty());
           btn_view_PlayField.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.PlayField).isEmpty());
           btn_view_Wheel.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.Wheel).isEmpty());
+          btn_view_Logo.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.Logo).isEmpty());
 
           btn_delete_Audio.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.Audio).isEmpty());
           btn_delete_AudioLaunch.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.AudioLaunch).isEmpty());
@@ -453,6 +475,7 @@ public class TablesSidebarMediaController implements Initializable {
           btn_delete_GameHelp.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.GameHelp).isEmpty());
           btn_delete_PlayField.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.PlayField).isEmpty());
           btn_delete_Wheel.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.Wheel).isEmpty());
+          btn_delete_Logo.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.Logo).isEmpty());
 
           boolean directb2sAvailable = g.isPresent() && g.get().getDirectB2SPath() != null;
           btn_dmdPos_DMD.setDisable(g.isEmpty() || !directb2sAvailable);
@@ -471,6 +494,7 @@ public class TablesSidebarMediaController implements Initializable {
           btn_edit_GameHelp.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.GameHelp).size()));
           btn_edit_PlayField.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.PlayField).size()));
           btn_edit_Wheel.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.Wheel).size()));  
+          btn_edit_Logo.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.Logo).size()));  
 
           refreshMedia(frontendMedia, cardScreen, preview, directB2SData);
         }
@@ -495,6 +519,7 @@ public class TablesSidebarMediaController implements Initializable {
       btn_edit_GameHelp.setText(" ");
       btn_edit_PlayField.setText(" ");
       btn_edit_Wheel.setText(" ");
+      btn_edit_Logo.setText(" ");
       resetMedia();
     }
   }
@@ -576,6 +601,9 @@ public class TablesSidebarMediaController implements Initializable {
 
     FileDragEventHandler.install(mediaRootPane, screenWheel, false, "png", "apng", "jpg")
         .setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTableOverviewController(), VPinScreen.Wheel, "png", "apng", "jpg"));
+
+    FileDragEventHandler.install(mediaRootPane, screenLogo, false, "png", "jpg")
+        .setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTableOverviewController(), VPinScreen.Logo, "png", "jpg"));
   }
 
   public void resetMedia() {
@@ -591,6 +619,7 @@ public class TablesSidebarMediaController implements Initializable {
     disposeMediaPane(screenPlayField);
     disposeMediaPane(screenOther2);
     disposeMediaPane(screenWheel);
+    disposeMediaPane(screenLogo);
   }
 
   private BorderPane getScreenBorderPaneFor(VPinScreen value) {
@@ -623,6 +652,7 @@ public class TablesSidebarMediaController implements Initializable {
     top_DMD.setVisible(false);
     top_Other2.setVisible(false);
     top_Wheel.setVisible(false);
+    top_Logo.setVisible(false);
 
     boolean isOpenFolderSupported = SystemUtil.isFolderActionSupported();
     btn_Audio.setVisible(isOpenFolderSupported);
@@ -637,6 +667,7 @@ public class TablesSidebarMediaController implements Initializable {
     btn_DMD.setVisible(isOpenFolderSupported);
     btn_Other2.setVisible(isOpenFolderSupported);
     btn_Wheel.setVisible(isOpenFolderSupported);
+    btn_Logo.setVisible(isOpenFolderSupported);
 
 
     Predicate showPredicate = o -> tablesSidebarController.getTableOverviewController().getSelection() != null;
@@ -656,6 +687,7 @@ public class TablesSidebarMediaController implements Initializable {
     screenTopper.hoverProperty().addListener(new VisibilityHoverListener(top_Topper, showPredicate));
     screenOther2.hoverProperty().addListener(new VisibilityHoverListener(top_Other2, showPredicate));
     screenWheel.hoverProperty().addListener(new VisibilityHoverListener(top_Wheel, showPredicate));
+    screenLogo.hoverProperty().addListener(new VisibilityHoverListener(top_Logo, showPredicate));
 
     screenAudio.setVisible(supportedScreens.contains(VPinScreen.Audio));
     screenAudioLaunch.setVisible(supportedScreens.contains(VPinScreen.AudioLaunch));
@@ -670,6 +702,7 @@ public class TablesSidebarMediaController implements Initializable {
     screenTopper.setVisible(supportedScreens.contains(VPinScreen.Topper));
     screenOther2.setVisible(supportedScreens.contains(VPinScreen.Other2));
     screenWheel.setVisible(supportedScreens.contains(VPinScreen.Wheel));
+    screenLogo.setVisible(supportedScreens.contains(VPinScreen.Logo));
 
     Studio.stage.focusedProperty().addListener((observable, oldValue, newValue) -> {
       try {

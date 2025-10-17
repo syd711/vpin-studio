@@ -121,6 +121,9 @@ public class TableOverviewColumnSorter implements BaseColumnSorter<GameRepresent
       else if (column.equals(tableOverviewController.columnLoading)) {
         comp = Comparator.comparing(o -> o.getStatusColor(VPinScreen.Loading, validationSettings));
       }
+      else if (column.equals(tableOverviewController.columnLogo)) {
+        comp = Comparator.comparing(o -> o.getStatusColor(VPinScreen.Logo, validationSettings));
+      }
       else if (column.equals(tableOverviewController.columnWheel)) {
         comp = Comparator.comparing(o -> o.getStatusColor(VPinScreen.Wheel, validationSettings));
       }

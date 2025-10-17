@@ -5,7 +5,6 @@ import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.vps.VpsService;
@@ -42,7 +41,7 @@ public class TableAssetsService {
 
   public List<TableAsset> search(@Nullable TableAssetSource source,
                                  @NonNull EmulatorType emulatorType,
-                                 @NonNull VPinScreen screen,
+                                 @NonNull String screenSegment,
                                  @Nullable Game game,
                                  @NonNull String term) throws Exception {
     List<TableAsset> result = new ArrayList<>();
@@ -50,7 +49,7 @@ public class TableAssetsService {
 
     List<TableAssetsAdapter<Game>> applicableAdapters = getAllAdapters().stream()
         .filter(a -> a.getAssetSource().isEnabled())
-        .filter(a -> a.getAssetSource().getLookupStrategy().equals(AssetLookupStrategy.autoDetect) || a.getAssetSource().supportsScreens(Arrays.asList(screen.getSegment(), screen.name())))
+        .filter(a -> a.getAssetSource().getLookupStrategy().equals(AssetLookupStrategy.autoDetect) || a.getAssetSource().supportsScreen(screenSegment))
         .collect(Collectors.toList());
 
     if (source != null) {
@@ -67,7 +66,7 @@ public class TableAssetsService {
     applicableAdapters.forEach(adapter -> {
       tasks.add(() -> {
         try {
-          return adapter.search(emulatorType.name(), screen.getSegment(), game, term);
+          return adapter.search(emulatorType.name(), screenSegment, game, term);
         }
         catch (Exception e) {
           LOG.error("Asset search using {} failed: {}", adapter, e.getMessage(), e);
@@ -85,14 +84,14 @@ public class TableAssetsService {
 
   public Optional<TableAsset> get(@Nullable TableAssetSource source,
                                   @NonNull EmulatorType emulatorType,
-                                  @NonNull VPinScreen screen,
+                                  @NonNull String screenSegment,
                                   @Nullable Game game,
                                   @NonNull String folder,
                                   @NonNull String name) throws Exception {
     Optional<TableAssetsAdapter<Game>> adapter = getAllAdapters().stream().filter(a -> source == null || a.getAssetSource().getId().equalsIgnoreCase(source.getId())).findFirst();
     if (adapter.isPresent()) {
       TableAssetsAdapter<Game> tableAssetsAdapter = adapter.get();
-      return tableAssetsAdapter.get(emulatorType.name(), screen.getSegment(), game, folder, name);
+      return tableAssetsAdapter.get(emulatorType.name(), screenSegment, game, folder, name);
     }
     return Optional.empty();
   }

@@ -483,6 +483,53 @@
                                 </BorderPane>
                             </top>
                         </BorderPane>
+
+                        <BorderPane fx:id="screenLogo" layoutX="412.0" layoutY="750.0" prefHeight="60.0" prefWidth="150.0" styleClass="media-container">
+                            <bottom>
+                                <Label text="Logo" textFill="WHITE" BorderPane.alignment="CENTER" />
+                            </bottom>
+                            <top>
+                                <BorderPane fx:id="top_Logo" BorderPane.alignment="TOP_RIGHT">
+                                    <BorderPane.margin>
+                                        <Insets />
+                                    </BorderPane.margin>
+                                    <right>
+                                        <HBox fx:id="hbox_Logo" spacing="3.0" BorderPane.alignment="CENTER">
+                                            <children>
+                                                <Button fx:id="btn_Logo" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="folder-component">
+                                                    <graphic>
+                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
+                                                    </graphic>
+                                                </Button>
+                                            </children>
+                                        </HBox>
+                                    </right>
+                                    <left>
+                              <HBox spacing="3.0" BorderPane.alignment="CENTER">
+                                 <children>
+                                                <Button fx:id="btn_edit_Logo" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
+                                                    <graphic>
+                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" />
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="btn_view_Logo" mnemonicParsing="false" onAction="#onMediaViewClick">
+                                                    <graphic>
+                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
+                                                    </graphic>
+                                                </Button>
+                                    <Button fx:id="btn_delete_Logo" mnemonicParsing="false" onAction="#onMediaDeleteClick" textFill="#ff3333">
+                                       <graphic>
+                                          <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                                    </left>
+                                </BorderPane>
+                            </top>
+                        </BorderPane>
+
+
                         <BorderPane fx:id="screenAudioLaunch" layoutX="3.0" layoutY="32.0" prefHeight="135.0" prefWidth="150.0" styleClass="media-container">
                             <top>
                                 <BorderPane fx:id="top_AudioLaunch" BorderPane.alignment="TOP_RIGHT">

@@ -11,26 +11,26 @@ public class ImageViewer extends AssetMediaPlayer {
 
   private ImageView imageView;
 
-  public void render(String url,  @Nullable String screenName, boolean invertPlayfield) {
+  public void render(String url,  @Nullable VPinScreen screen, boolean invertPlayfield) {
     setLoading();
     JFXFuture.supplyAsync(() -> new Image(url)).thenAcceptLater(i -> { 
-      renderImage(i, screenName, invertPlayfield);
+      renderImage(i, screen, invertPlayfield);
     });
   }
 
-  private void renderImage(@NonNull Image image, @Nullable String screenName, boolean invertPlayfield) {
+  private void renderImage(@NonNull Image image, @Nullable VPinScreen screen, boolean invertPlayfield) {
     this.imageView = new ImageView(image);
     setCenter(imageView);
     imageView.setPreserveRatio(true);
 
     boolean rotated = false;
-    if (VPinScreen.PlayField.getSegment().equalsIgnoreCase(screenName)) {
+    if (VPinScreen.PlayField.equals(screen)) {
       if (image.getWidth() > image.getHeight()) {
         imageView.setRotate(90 + (invertPlayfield ? 180 : 0));
         rotated = true;
       }
     }
-    else if (VPinScreen.Loading.getSegment().equalsIgnoreCase(screenName)) {
+    else if (VPinScreen.Loading.equals(screen)) {
       if (image.getWidth() > image.getHeight()) {
         imageView.setRotate(90);
         rotated = true;

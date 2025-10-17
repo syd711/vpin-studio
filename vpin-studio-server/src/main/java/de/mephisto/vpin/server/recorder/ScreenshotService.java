@@ -108,7 +108,7 @@ public class ScreenshotService {
           fileOutputStream.write(out.toByteArray());
           fileOutputStream.close();
 
-          String name = "screenshot-" + screen.getSegment() + ".jpg";
+          String name = "screenshot-" + screen.name() + ".jpg";
           File target = new File(file.getParentFile(), name);
           if (target.exists() && !target.delete()) {
             throw new Exception("Failed to delete temporary screenshot file " + target.getAbsolutePath());

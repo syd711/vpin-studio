@@ -54,17 +54,18 @@ public class PlaylistMediaResource {
   }
 
   @DeleteMapping("/{playlistId}/{screen}/{file}")
-  public boolean deleteMedia(@PathVariable("playlistId") int playlistId, @PathVariable("screen") VPinScreen screen, @PathVariable("file") String filename) {
+  public boolean deleteMedia(@PathVariable("playlistId") int playlistId, 
+                             @PathVariable("screen") VPinScreen screen, 
+                             @PathVariable("file") String filename) {
     return playlistMediaService.deleteMedia(playlistId, screen, filename);
   }
 
 
   @PostMapping("/{playlistId}/{screen}/{append}")
   public boolean downloadPlaylistAsset(@PathVariable("playlistId") int playlistId,
-                                       @PathVariable("screen") String screen,
+                                       @PathVariable("screen") VPinScreen screen,
                                        @PathVariable("append") boolean append,
                                        @RequestBody TableAsset asset) throws Exception {
-    VPinScreen vPinScreen = VPinScreen.valueOfSegment(screen);
     LOG.info("Starting download of " + asset.getName() + "(appending: " + append + ")");
     Playlist playlist = playlistService.getPlaylist(playlistId);
     if (playlist == null) {
@@ -73,22 +74,23 @@ public class PlaylistMediaResource {
     }
 
     String suffix = FilenameUtils.getExtension(asset.getName());
-    File out = playlistMediaService.buildMediaAsset(playlist, vPinScreen, suffix, append);
+    File out = playlistMediaService.buildMediaAsset(playlist, screen, suffix, append);
     tableAssetsService.download(asset, out);
     return true;
   }
 
   @GetMapping("/{id}/{screen}/{name}")
-  public ResponseEntity<Resource> getMedia(@PathVariable("id") int id, @PathVariable("screen") String screen, @PathVariable("name") String name) throws IOException {
-    VPinScreen vPinScreen = VPinScreen.valueOfSegment(screen);
+  public ResponseEntity<Resource> getMedia(@PathVariable("id") int id, 
+                                           @PathVariable("screen") VPinScreen screen, 
+                                           @PathVariable("name") String name) throws IOException {
     FrontendMedia frontendMedia = playlistMediaService.getPlaylistMedia(id);
     if (frontendMedia != null) {
-      FrontendMediaItem frontendMediaItem = frontendMedia.getDefaultMediaItem(vPinScreen);
+      FrontendMediaItem frontendMediaItem = frontendMedia.getDefaultMediaItem(screen);
       if (!StringUtils.isEmpty(name)) {
-        name = name.replaceAll("%(?![0-9a-fA-F]{2})", "%25");
-        name = name.replaceAll("\\+", "%2B");
+        //name = name.replaceAll("%(?![0-9a-fA-F]{2})", "%25");
+        //name = name.replaceAll("\\+", "%2B");
         name = URLDecoder.decode(name, Charset.defaultCharset());
-        frontendMediaItem = frontendMedia.getMediaItem(vPinScreen, name);
+        frontendMediaItem = frontendMedia.getMediaItem(screen, name);
       }
 
       if (frontendMediaItem != null) {

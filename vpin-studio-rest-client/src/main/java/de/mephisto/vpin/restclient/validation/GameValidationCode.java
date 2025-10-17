@@ -26,6 +26,7 @@ public interface GameValidationCode {
   int CODE_NO_LOADING = 39;
   int CODE_NO_OTHER2 = 40;
   int CODE_NO_WHEEL_IMAGE = 41;
+  int CODE_NO_LOGO = 42;
 
   int CODE_ALT_SOUND_NOT_ENABLED = 50;
   int CODE_ALT_SOUND_FILE_MISSING = 51;

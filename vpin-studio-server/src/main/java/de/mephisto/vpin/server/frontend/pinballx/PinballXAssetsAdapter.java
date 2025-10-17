@@ -119,7 +119,7 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
         asset.setSourceId(TableAssetSourceType.PinballX.name());
         asset.setAuthor("gameex");
         asset.setEmulator(emulatorType);
-        asset.setScreen(screen.name());
+        asset.setScreen(screen.getSegment());
       }
 
     }
@@ -291,6 +291,8 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
         return new String[]{"DMD Video", "DMD Image"};
       case Loading:
         return new String[]{"Loading Video", "Loading Image"};
+      case Logo:
+        return new String[]{"Logo"};
       case Wheel:
         return new String[]{"Wheel"};
       case PlayField:

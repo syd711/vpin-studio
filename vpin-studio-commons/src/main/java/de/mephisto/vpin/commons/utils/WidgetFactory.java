@@ -939,10 +939,10 @@ public class WidgetFactory {
     return createAssetMediaPlayer(client, url, mediaItem.getScreen(), mimeType, noLoading, usePreview);
   }
 
-  public static AssetMediaPlayer createAssetMediaPlayer(VPinStudioClient client, String url, @Nullable String screenName, 
+  public static AssetMediaPlayer createAssetMediaPlayer(VPinStudioClient client, String url, @Nullable VPinScreen screen, 
                                                         String mimeType, boolean noLoading, boolean usePreview) {
 
-    boolean audioOnly = VPinScreen.Audio.getSegment().equalsIgnoreCase(screenName) || VPinScreen.AudioLaunch.getSegment().equalsIgnoreCase(screenName);
+    boolean audioOnly = VPinScreen.Audio.equals(screen) || VPinScreen.AudioLaunch.equals(screen);
 
     Frontend frontend = client.getFrontendService().getFrontendCached();
 
@@ -950,7 +950,7 @@ public class WidgetFactory {
     if (baseType.equals("image") && !audioOnly) {
       ImageViewer imageViewer = new ImageViewer();
       imageViewer.setNoLoading(noLoading);
-      imageViewer.render(url, screenName, frontend.isPlayfieldMediaInverted());
+      imageViewer.render(url, screen, frontend.isPlayfieldMediaInverted());
       return imageViewer;
     }
     else if (baseType.equals("audio")) {
@@ -962,11 +962,11 @@ public class WidgetFactory {
     else if (baseType.equals("video") && !audioOnly) {
       VideoMediaPlayer videoMediaPlayer = new VideoMediaPlayer(mimeType, frontend.isPlayfieldMediaInverted());
       videoMediaPlayer.setNoLoading(noLoading);
-      videoMediaPlayer.render(url, screenName, usePreview);
+      videoMediaPlayer.render(url, screen, usePreview);
       return videoMediaPlayer;
     }
     else {
-      LOG.error("Invalid media mime type " + mimeType + " of asset used for media panel " + screenName);
+      LOG.error("Invalid media mime type " + mimeType + " of asset used for media panel " + screen);
     }
 
     return null;

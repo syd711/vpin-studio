@@ -50,6 +50,7 @@ public class TableAssetManagerPane extends Pane {
   MediaPane loading;
   MediaPane other2;
   MediaPane wheel;
+  MediaPane logo;
 
   MediaPane[] allpanes;
 
@@ -67,9 +68,10 @@ public class TableAssetManagerPane extends Pane {
     loading = new MediaPane(this, "Loading", VPinScreen.Loading, "mp4");
     other2 = new MediaPane(this, "Other2", VPinScreen.Other2, "mp4", "png", "jpg");
     wheel = new MediaPane(this, "Wheel", VPinScreen.Wheel, "apng", "png", "jpg");
+    logo = new MediaPane(this, "Logo", VPinScreen.Logo, "png", "jpg");
 
     allpanes = new MediaPane[] {
-      audioLaunch, fullDmd, gameInfo, help, topper, backglass, dmd, playfield, audio, loading, other2, wheel
+      audioLaunch, fullDmd, gameInfo, help, topper, backglass, dmd, playfield, audio, loading, other2, wheel, logo
     };
   }
 
@@ -116,7 +118,7 @@ public class TableAssetManagerPane extends Pane {
     int gutterY = 9;
 
     insideWidth -= 2 * gutterX;
-    double col13Height = insideHeight - 11 * gutterY;
+    double col13Height = insideHeight - 8 * gutterY;
     double col2Height = insideHeight - 3 * gutterY;
 
     double w13 = snapSizeX(insideWidth * 31.0 / 100.0);
@@ -126,42 +128,37 @@ public class TableAssetManagerPane extends Pane {
     double x2 = snapPositionX(insideX + w13 + gutterX);
     double x3 = snapPositionX(insideX + w13 + gutterX + w2 + gutterX);
 
-    // Start first and third column
-    double y = snapPositionY(insideY + 4 * gutterY);
-    double h = snapSizeY(col13Height * 20.0 / 100.0);
+    //------------------------------
+    // First column
+    double y = snapPositionY(insideY + 2 * gutterY);
+    double h = snapSizeY(col13Height * 16.0 / 100.0);
 
     audioLaunch.resize(w13, h);
     audioLaunch.relocate(x1, y);
 
-    audio.resize(w13, h);
-    audio.relocate(x3, y);
-
     y = snapPositionY(y + h + gutterY);
-    h = snapSizeY(col13Height * 27.0 / 100.0);
+    h = snapSizeY(col13Height * 24.0 / 100.0);
 
     fullDmd.resize(w13, h);
     fullDmd.relocate(x1, y);
 
-    loading.resize(w13, h);
-    loading.relocate(x3, y);
-
     y = snapPositionY(y + h + gutterY);
-    h = snapSizeY(col13Height * 26.0 / 100.0);
 
     gameInfo.resize(w13, h);
     gameInfo.relocate(x1, y);
-
-    other2.resize(w13, h);
-    other2.relocate(x3, y);
 
     y = snapPositionY(y + h + gutterY);
 
     help.resize(w13, h);
     help.relocate(x1, y);
 
-    wheel.resize(w13, h);
-    wheel.relocate(x3, y);
+    y = snapPositionY(y + h + gutterY);
+    h = snapSizeY(col13Height * 12.0 / 100.0 - gutterY);
 
+    logo.resize(w13, h);
+    logo.relocate(x1, y);
+
+    //------------------------------
     // Second column
     y = snapPositionY(insideY);
     h = snapSizeY(col2Height * 20.5 / 100.0);
@@ -186,6 +183,30 @@ public class TableAssetManagerPane extends Pane {
     playfield.resize(w2, h);
     playfield.relocate(x2, y);
 
+    //------------------------------
+    // Third column
+    y = snapPositionY(insideY + 2 * gutterY);
+    h = snapSizeY(col13Height * 16.0 / 100.0);
+
+    audio.resize(w13, h);
+    audio.relocate(x3, y);
+
+    y = snapPositionY(y + h + gutterY);
+    h = snapSizeY(col13Height * 36.0 / 100.0);
+
+    loading.resize(w13, h);
+    loading.relocate(x3, y);
+
+    y = snapPositionY(y + h + gutterY);
+    h = snapSizeY(col13Height * 24.0 / 100.0);
+
+    other2.resize(w13, h);
+    other2.relocate(x3, y);
+
+    y = snapPositionY(y + h + gutterY);
+
+    wheel.resize(w13, h);
+    wheel.relocate(x3, y);
   }
 
   public void addListeners(TableAssetManagerDialogController controller) {

@@ -80,19 +80,19 @@ public class FrontendServiceClient extends VPinStudioClientService {
   }
 
   public FrontendControl getPinUPControlFor(VPinScreen screen) {
-    return getRestClient().get(API + API_SEGMENT_FRONTEND + "/pincontrol/" + screen.name(), FrontendControl.class);
+    return getRestClient().get(API + API_SEGMENT_FRONTEND + "/pincontrol/" + screen, FrontendControl.class);
   }
 
   public FrontendMediaRepresentation getFrontendMedia(int gameId) {
     return getRestClient().get(API + API_SEGMENT_FRONTEND + "/media/" + gameId, FrontendMediaRepresentation.class);
   }
   public FrontendMediaItemRepresentation getDefaultFrontendMediaItem(int gameId, VPinScreen screen) {
-    return getRestClient().get(API + API_SEGMENT_FRONTEND + "/media/" + gameId + "/" + screen.name(), 
+    return getRestClient().get(API + API_SEGMENT_FRONTEND + "/media/" + gameId + "/" + screen, 
       FrontendMediaItemRepresentation.class);
   }
 
   public FrontendPlayerDisplay getScreenDisplay(VPinScreen screen) {
-    return getRestClient().get(API + API_SEGMENT_FRONTEND + "/screen/" + screen.name(), FrontendPlayerDisplay.class);
+    return getRestClient().get(API + API_SEGMENT_FRONTEND + "/screen/" + screen, FrontendPlayerDisplay.class);
   }
 
   public FrontendScreenSummary getScreenSummary(boolean forceReload) {
@@ -136,11 +136,11 @@ public class FrontendServiceClient extends VPinStudioClientService {
     }
   }
 
-  public File getMediaDirectory(int gameId, String screen) {
+  public File getMediaDirectory(int gameId, VPinScreen screen) {
     return getRestClient().get(API + API_SEGMENT_FRONTEND + "/mediadir/" + gameId + "/" + screen, File.class);
   }
 
-  public File getPlaylistMediaDirectory(int playlistId, String screen) {
+  public File getPlaylistMediaDirectory(int playlistId, VPinScreen screen) {
     return getRestClient().get(API + API_SEGMENT_FRONTEND + "/playlistmediadir/" + playlistId + "/" + screen, File.class);
   }
 

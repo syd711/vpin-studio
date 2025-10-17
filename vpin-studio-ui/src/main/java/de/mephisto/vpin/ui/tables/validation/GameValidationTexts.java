@@ -145,6 +145,11 @@ public class GameValidationTexts {
         text = NO_MEDIA_TEXT;
         break;
       }
+      case CODE_NO_LOGO: {
+        label = invalidAssetMessage("Logo");
+        text = NO_MEDIA_TEXT;
+        break;
+      }
       case CODE_NO_WHEEL_IMAGE: {
         label = invalidAssetMessage("Wheel");
         text = NO_MEDIA_TEXT;

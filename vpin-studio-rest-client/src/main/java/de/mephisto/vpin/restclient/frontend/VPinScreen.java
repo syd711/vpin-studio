@@ -18,7 +18,8 @@ public enum VPinScreen {
   DMD(1, "DMD", GameValidationCode.CODE_NO_DMD),
   Loading(7, "Loading", GameValidationCode.CODE_NO_LOADING),
   Wheel(6, "Wheel", GameValidationCode.CODE_NO_WHEEL_IMAGE),
-  PlayField(3, "PlayField", GameValidationCode.CODE_NO_PLAYFIELD);
+  PlayField(3, "PlayField", GameValidationCode.CODE_NO_PLAYFIELD),
+  Logo(99, "Wheel", GameValidationCode.CODE_NO_LOGO); // same segment as Wheel
 
   private int code;
   private String segment;
@@ -78,6 +79,9 @@ public enum VPinScreen {
     }
     if (Wheel.name().equalsIgnoreCase(name)) {
       return Wheel;
+    }
+    if (Logo.name().equalsIgnoreCase(name)) {
+      return Logo;
     }
     return null;
   }

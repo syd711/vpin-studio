@@ -104,8 +104,8 @@ public class FrontendResource {
   }
 
   @GetMapping("/pincontrol/{screen}")
-  public FrontendControl getPinUPControlFor(@PathVariable("screen") String screenName) {
-    return frontendStatusService.getPinUPControlFor(VPinScreen.valueOf(screenName));
+  public FrontendControl getPinUPControlFor(@PathVariable("screen") VPinScreen screen) {
+    return frontendStatusService.getPinUPControlFor(screen);
   }
 
   @GetMapping("/pincontrols")
@@ -134,9 +134,8 @@ public class FrontendResource {
     return gameMediaService.getTableDetails(gameId);
   }
 
-  @GetMapping("/screen/{name}")
-  public FrontendPlayerDisplay getScreen(@PathVariable("name") String name) {
-    VPinScreen screen = VPinScreen.valueOf(name);
+  @GetMapping("/screen/{screen}")
+  public FrontendPlayerDisplay getScreen(@PathVariable("screen") VPinScreen screen) {
     return vpinScreenService.getScreenDisplay(screen);
   }
 
@@ -145,9 +144,8 @@ public class FrontendResource {
     return vpinScreenService.getScreenSummary();
   }
 
-  @GetMapping("/mediadir/{gameId}/{screenName}")
-  public File getMediaDirectory(@PathVariable("gameId") int gameId, @PathVariable("screenName") String screenName) {
-    VPinScreen screen = VPinScreen.valueOf(screenName);
+  @GetMapping("/mediadir/{gameId}/{screen}")
+  public File getMediaDirectory(@PathVariable("gameId") int gameId, @PathVariable("screen") VPinScreen screen) {
     if (gameId < 0) {
       return frontendService.getDefaultMediaFolder(screen);
     }
@@ -157,9 +155,8 @@ public class FrontendResource {
     }
   }
 
-  @GetMapping("/playlistmediadir/{playlistId}/{screenName}")
-  public File getPlaylistMediaDirectory(@PathVariable("playlistId") int playlistId, @PathVariable("screenName") String name) {
-    VPinScreen screen = VPinScreen.valueOf(name);
+  @GetMapping("/playlistmediadir/{playlistId}/{screen}")
+  public File getPlaylistMediaDirectory(@PathVariable("playlistId") int playlistId, @PathVariable("screen") VPinScreen screen) {
     Playlist playList = frontendService.getPlayList(playlistId);
     return frontendService.getPlaylistMediaFolder(playList, screen, false);
   }
