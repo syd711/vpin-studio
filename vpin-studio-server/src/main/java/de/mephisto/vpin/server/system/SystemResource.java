@@ -94,6 +94,12 @@ public class SystemResource {
     return startupTime;
   }
 
+  @GetMapping("/pausemenu")
+  public boolean pauseMenu() {
+    ServerFX.getInstance().togglePauseMenu();
+    return true;
+  }
+
   @GetMapping("/pausemenu/test/{gameId}/{duration}")
   public boolean testPauseMenu(@PathVariable("gameId") int gameId, @PathVariable("duration") int duration) {
     ServerFX.getInstance().testPauseMenu(gameId, duration);
