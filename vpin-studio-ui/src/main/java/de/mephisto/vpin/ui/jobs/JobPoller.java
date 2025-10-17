@@ -85,6 +85,9 @@ public class JobPoller implements StudioEventListener {
       LOG.error("Failed to load job container: " + e.getMessage(), e);
     }
 
+    List<JobDescriptor> preload = getAllJobs();
+    List<JobDescriptor> existingFinished = preload.stream().filter(j -> j.isFinished() || j.isCancelled()).collect(Collectors.toList());
+    finishedJobs.addAll(existingFinished);
 
     service = new Service() {
       @Override
@@ -131,6 +134,13 @@ public class JobPoller implements StudioEventListener {
         finishedJobs.add(job);
         EventManager.getInstance().notifyJobFinished(job);
       }
+    }
+  }
+
+  public void notifyJobFinished(JobDescriptor jobDescriptor) {
+    if (!finishedJobs.contains(jobDescriptor)) {
+      finishedJobs.add(jobDescriptor);
+      EventManager.getInstance().notifyJobFinished(jobDescriptor.getJobType(), jobDescriptor.getGameId());
     }
   }
 

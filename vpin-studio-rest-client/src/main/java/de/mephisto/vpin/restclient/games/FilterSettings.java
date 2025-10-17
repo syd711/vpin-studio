@@ -3,6 +3,9 @@ package de.mephisto.vpin.restclient.games;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class FilterSettings extends JsonSettings {
   private int emulatorId = -1;
   private boolean missingAssets;
@@ -24,8 +27,17 @@ public class FilterSettings extends JsonSettings {
   private boolean withIni;
   private boolean withNVOffset;
   private boolean withAlias;
+  private List<String> tags = new ArrayList<>();
   private int gameStatus = -1;
   private CommentType noteType;
+
+  public List<String> getTags() {
+    return tags;
+  }
+
+  public void setTags(List<String> tags) {
+    this.tags = tags;
+  }
 
   public boolean isIScored() {
     return iScored;
@@ -204,34 +216,36 @@ public class FilterSettings extends JsonSettings {
   }
 
   public boolean isResetted(boolean vpxMode) {
-    if(vpxMode) {
+    if (vpxMode) {
       return !this.missingAssets
-        && !this.otherIssues
-        && !this.noHighscoreSettings
-        && !this.noHighscoreSupport
-        && !this.notPlayed
-        && !this.noVpsTableMapping
-        && !this.noVpsVersionMapping
-        && !this.vpsUpdates
-        && !this.versionUpdates
-        && !this.withAltColor
-        && !this.withAltSound
-        && !this.withBackglass
-        && !this.withIni
-        && !this.withPov
-        && !this.withRes
-        && !this.withPupPack
-        && !this.withNVOffset
-        && !this.withAlias
-        && !this.iScored
-        && this.noteType == null
-        && this.gameStatus == -1;
+          && !this.otherIssues
+          && !this.noHighscoreSettings
+          && !this.noHighscoreSupport
+          && !this.notPlayed
+          && !this.noVpsTableMapping
+          && !this.noVpsVersionMapping
+          && !this.vpsUpdates
+          && !this.versionUpdates
+          && !this.withAltColor
+          && !this.withAltSound
+          && !this.withBackglass
+          && !this.withIni
+          && !this.withPov
+          && !this.withRes
+          && !this.withPupPack
+          && !this.withNVOffset
+          && !this.withAlias
+          && !this.iScored
+          && this.tags.isEmpty()
+          && this.noteType == null
+          && this.gameStatus == -1;
     }
 
     return !this.missingAssets
-      && !this.notPlayed
-      && this.noteType == null
-      && this.gameStatus == -1;
+        && !this.notPlayed
+        && this.tags.isEmpty()
+        && this.noteType == null
+        && this.gameStatus == -1;
 
   }
 

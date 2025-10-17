@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.frontend;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public enum EmulatorType {
 
   VisualPinball("vpx"), VisualPinball9("vpt"),
@@ -28,8 +30,16 @@ public enum EmulatorType {
     return FuturePinball.equals(this);
   }
 
-  public boolean isFxEmulator() {
+  public boolean isPupGameImportSupported() {
+    return isZenEmulator() || isZaccariaEmulator();
+  }
+
+  public boolean isZenEmulator() {
     return ZenFX.equals(this) || ZenFX2.equals(this) || ZenFX3.equals(this) || PinballM.equals(this);
+  }
+
+  public boolean isZaccariaEmulator() {
+    return Zaccaria.equals(this);
   }
 
   public boolean isMameEmulator() {
@@ -48,6 +58,36 @@ public enum EmulatorType {
         return "FP";
       default:
         return "";
+    }
+  }
+
+  @NonNull
+  public String folderName() {
+    switch (this) {
+      case ZenFX:
+        return "Pinball FX";
+      case ZenFX2:
+        return "Pinball FX2";
+      case ZenFX3:
+        return "Pinball FX3";
+      case PinballM:
+        return "Pinball M";
+      case Zaccaria:
+        return "Zaccaria Pinball";
+      case FuturePinball:
+        return "Future Pinball";
+      case VisualPinball:
+        return "Visual Pinball X";
+      case VisualPinball9:
+        return "Visual Pinball";
+      case PinballArcade:
+        return "Pinball Arcade";
+      case MAME:
+        return "MAME";
+      case OTHER:
+        return "Other";
+      default:
+        throw new UnsupportedOperationException("No matching emulator type found for " + this);
     }
   }
 

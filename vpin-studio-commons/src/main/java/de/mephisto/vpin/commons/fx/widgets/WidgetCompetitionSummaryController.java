@@ -297,7 +297,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
               competitionWheelImage.setImage(image);
             }
             else {
-              ByteArrayInputStream gameMediaItem = client.getGameMediaItem(game.getId(), VPinScreen.Wheel);
+              ByteArrayInputStream gameMediaItem = client.getWheelIcon(game.getId(), false);
               Image image = new Image(gameMediaItem);
               competitionWheelImage.setImage(image);
             }

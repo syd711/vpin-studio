@@ -107,7 +107,7 @@ public class MenuCustomViewController implements Initializable {
       }
     }
 
-    InputStream imageStream = ServerFX.client.getGameMediaItem(game.getId(), VPinScreen.Wheel);
+    InputStream imageStream = ServerFX.client.getWheelIcon(game.getId(), false);
     if (imageStream == null) {
       imageStream = ServerFX.class.getResourceAsStream("avatar-blank.png");
     }

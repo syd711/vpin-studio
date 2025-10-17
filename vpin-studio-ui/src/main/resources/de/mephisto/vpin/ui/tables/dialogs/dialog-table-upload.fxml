@@ -175,7 +175,7 @@
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="tableNameLabel" layoutX="10.0" layoutY="181.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                    <Label fx:id="tableNameLabel" layoutX="10.0" layoutY="181.0" maxWidth="400.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                        <font>
                                           <Font size="14.0" />
                                        </font>

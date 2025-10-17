@@ -3,6 +3,7 @@ package de.mephisto.vpin.restclient.backups;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.*;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
@@ -114,7 +115,8 @@ public class BackupServiceClient extends VPinStudioClientService {
   public BackupDescriptorRepresentation getBackup(@NonNull GameRepresentation value) {
     List<BackupDescriptorRepresentation> backups = getBackups();
     for (BackupDescriptorRepresentation backup : backups) {
-      if (String.valueOf(backup.getTableDetails().getGameFileName()).equals(value.getGameFileName())) {
+      TableDetails tableDetails = backup.getTableDetails();
+      if (tableDetails != null && String.valueOf(tableDetails.getGameFileName()).equals(value.getGameFileName())) {
         return backup;
       }
     }

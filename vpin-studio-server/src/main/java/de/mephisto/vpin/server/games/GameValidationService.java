@@ -497,7 +497,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     //File mameFolder = mameService.getMameFolder();
-    File mameFolder = game.getEmulator().getMameFolder();
+    File mameFolder = mameService.getMameFolder();
     File dmdDevicedll = new File(mameFolder, "DmdDevice.dll");
     File dmdDevice64dll = new File(mameFolder, "DmdDevice64.dll");
     File dmdextexe = new File(mameFolder, "dmdext.exe");
@@ -531,6 +531,9 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
       case serum: {
         String name = game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX;
+        if (game.isZenGame()) {
+          name = "pin2dmd." + UploaderAnalysis.SERUM_SUFFIX;
+        }
         if (isValidationEnabled(game, CODE_ALT_COLOR_FILES_MISSING) && !altColor.contains(name)) {
           result.add(ValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, name));
         }
@@ -541,7 +544,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
     }
 
-    if (!StringUtils.isEmpty(game.getRom())) {
+    if (game.isVpxGame() && !StringUtils.isEmpty(game.getRom())) {
       MameOptions gameOptions = mameService.getOptions(game.getRom());
       if (gameOptions.isExistInRegistry()) {
         if (isValidationEnabled(game, CODE_ALT_COLOR_COLORIZE_DMD_ENABLED) && !gameOptions.isColorizeDmd()) {

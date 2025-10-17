@@ -6,12 +6,12 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
@@ -61,7 +61,7 @@
     <top>
         <ToolBar BorderPane.alignment="CENTER">
             <items>
-                <StackPane alignment="CENTER_LEFT" prefWidth="212.0">
+                <StackPane alignment="CENTER_LEFT" prefWidth="229.0">
                     <children>
                         <ToggleButton fx:id="templateModeBtn" mnemonicParsing="false" styleClass="custom-toggle-button" text="Template Mode">
                             <font>
@@ -71,7 +71,7 @@
                         <ToggleGroup fx:id="mode" />
                      </toggleGroup>
                         </ToggleButton>
-                        <ToggleButton fx:id="cardModeBtn" mnemonicParsing="false" selected="true" styleClass="custom-toggle-button2" text="Card Mode" toggleGroup="$mode">
+                        <ToggleButton fx:id="cardModeBtn" mnemonicParsing="false" selected="true" styleClass="custom-toggle-button2" text="Custom Mode" toggleGroup="$mode">
                             <font>
                                 <Font size="14.0" />
                             </font>

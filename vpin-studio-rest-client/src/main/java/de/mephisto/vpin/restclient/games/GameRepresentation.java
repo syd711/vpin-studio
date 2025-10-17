@@ -74,10 +74,6 @@ public class GameRepresentation {
   private Long instructionCardTemplateId;
   private Long wheelTemplateId;
 
-  private boolean vpxGame;
-  private boolean fpGame;
-  private boolean fxGame;
-
   private boolean cardDisabled;
   private boolean eventLogAvailable;
   private boolean ignoreUpdates;
@@ -93,7 +89,17 @@ public class GameRepresentation {
   private String resPath;
   private boolean altSoundAvailable;
 
+  private List<String> tags = new ArrayList<>();
+
   private int nbDirectB2S = -1;
+
+  public List<String> getTags() {
+    return tags;
+  }
+
+  public void setTags(List<String> tags) {
+    this.tags = tags;
+  }
 
   public boolean isIgnoreUpdates() {
     return ignoreUpdates;
@@ -227,30 +233,6 @@ public class GameRepresentation {
 
   public void setComment(String comment) {
     this.comment = comment;
-  }
-
-  public boolean isVpxGame() {
-    return vpxGame;
-  }
-
-  public void setVpxGame(boolean vpxGame) {
-    this.vpxGame = vpxGame;
-  }
-
-  public boolean isFpGame() {
-    return fpGame;
-  }
-
-  public void setFpGame(boolean fpGame) {
-    this.fpGame = fpGame;
-  }
-
-  public boolean isFxGame() {
-    return fxGame;
-  }
-
-  public void setFxGame(boolean fxGame) {
-    this.fxGame = fxGame;
   }
 
   public String getPupPackName() {

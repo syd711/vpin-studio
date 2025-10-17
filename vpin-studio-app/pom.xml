@@ -5,7 +5,7 @@
     <parent>
         <artifactId>studio</artifactId>
         <groupId>de.mephisto.vpin</groupId>
-        <version>4.3.1</version>
+        <version>4.3.6</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -39,11 +39,6 @@
         </dependency>
 
 
-        <dependency>
-            <groupId>org.kordamp.ikonli</groupId>
-            <artifactId>ikonli-materialdesign2-pack</artifactId>
-            <version>12.3.1</version>
-        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -116,22 +111,22 @@
         <dependency>
             <groupId>org.kordamp.ikonli</groupId>
             <artifactId>ikonli-javafx</artifactId>
-            <version>12.3.1</version>
+            <version>12.4.0</version>
         </dependency>
         <dependency>
             <groupId>org.kordamp.ikonli</groupId>
             <artifactId>ikonli-simplelineicons-pack</artifactId>
-            <version>12.3.1</version>
+            <version>12.4.0</version>
         </dependency>
         <dependency>
             <groupId>org.kordamp.ikonli</groupId>
             <artifactId>ikonli-bootstrapicons-pack</artifactId>
-            <version>12.3.1</version>
+            <version>12.4.0</version>
         </dependency>
         <dependency>
             <groupId>org.kordamp.ikonli</groupId>
             <artifactId>ikonli-materialdesign2-pack</artifactId>
-            <version>12.3.1</version>
+            <version>12.4.0</version>
         </dependency>
 
     </dependencies>

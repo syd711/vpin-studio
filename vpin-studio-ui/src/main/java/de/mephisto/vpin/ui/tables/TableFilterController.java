@@ -9,17 +9,22 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
-import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
 import de.mephisto.vpin.ui.tables.models.TableStatus;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
+import de.mephisto.vpin.ui.util.tags.TagField;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -109,6 +114,9 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
   private Node vpsFilters;
 
   @FXML
+  private Pane tagsFilter;
+
+  @FXML
   private ComboBox<TableStatus> statusCombo;
 
   @FXML
@@ -118,6 +126,7 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
   private VpsSettings vpsSettings;
 
   private TableOverviewPredicateFactory predicateFactory = new TableOverviewPredicateFactory();
+  private TagField tagField;
 
 
   public void applyFilters() {
@@ -162,6 +171,7 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
       noHighscoreSupportCheckBox.setSelected(filterSettings.isNoHighscoreSupport());
       noVpsMappingTableCheckBox.setSelected(filterSettings.isNoVpsTableMapping());
       iScoredCompetitionCheckBox.setSelected(filterSettings.isIScored());
+      iScoredCompetitionCheckBox.setSelected(filterSettings.isIScored());
       noVpsMappingVersionCheckBox.setSelected(filterSettings.isNoVpsVersionMapping());
       withBackglassCheckBox.setSelected(filterSettings.isWithBackglass());
       withPupPackCheckBox.setSelected(filterSettings.isWithPupPack());
@@ -173,6 +183,7 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
       withNVOffsetCheckBox.setSelected(filterSettings.isWithNVOffset());
       withAliasCheckBox.setSelected(filterSettings.isWithAlias());
     }
+    tagField.setTags(filterSettings.getTags());
   }
 
   @Override
@@ -320,8 +331,28 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
       applyFilters();
     });
 
+    List<String> initialTags = client.getTaggingService().getTags();
+    tagField = new TagField(initialTags);
+    tagField.setAllowCustomTags(false);
+    tagField.setPreferredWidth(200);
+    tagField.setPreferredTagWidth(200);
+    tagField.addListener(new ListChangeListener<String>() {
+      @Override
+      public void onChanged(Change<? extends String> c) {
+        ObservableList<? extends String> list = c.getList();
+        filterSettings.setTags(new ArrayList<>(list));
+        applyFilters();
+      }
+    });
+    tagsFilter.getChildren().add(tagField);
+    tagField.setTags(filterSettings.getTags());
+
     client.getPreferenceService().addListener(this);
     preferencesChanged(PreferenceNames.ISCORED_SETTINGS, null);
+  }
+
+  public TagField getTagField() {
+    return tagField;
   }
 
   public void setEmulator(GameEmulatorRepresentation value) {

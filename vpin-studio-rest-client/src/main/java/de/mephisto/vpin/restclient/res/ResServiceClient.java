@@ -32,6 +32,10 @@ public class ResServiceClient extends VPinStudioClientService {
     return getRestClient().post(API + "res/delete", params, Boolean.class);
   }
 
+  public void delete(int gameId) {
+    getRestClient().delete(API + "res/" + gameId);
+  }
+
   public UploadDescriptor uploadResFile(File file, int gameId, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "res/upload";

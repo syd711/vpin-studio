@@ -41,15 +41,15 @@ public class AutoCompleteTextField {
 
   private String defaultValue;
 
-  public AutoCompleteTextField(Stage stage, TextField textField, AutoCompleteTextFieldChangeListener listener, TreeSet<String> entries) {
-    this(stage, textField, listener, 
+  public AutoCompleteTextField(TextField textField, AutoCompleteTextFieldChangeListener listener, List<String> entries) {
+    this(textField, listener,
       input -> entries.stream()
                       .filter(e -> StringUtils.containsIgnoreCase(e, input))
                       .map(e -> new AutoMatchModel(e, e))
                       .collect(Collectors.toList()));
   }
 
-  public AutoCompleteTextField(Stage stage, TextField textField, AutoCompleteTextFieldChangeListener listener, AutoCompleteMatcher matcher) {
+  public AutoCompleteTextField(TextField textField, AutoCompleteTextFieldChangeListener listener, AutoCompleteMatcher matcher) {
     this.textField = textField;
     this.listener = listener;
     this.matcher = matcher;
@@ -65,7 +65,13 @@ public class AutoCompleteTextField {
             defaultValue = value;
             entriesPopup.hide();
             entriesPopup.getItems().clear();
-            textField.setText(String.valueOf(value));
+            if(value == null) {
+              textField.setText("");
+            }
+            else {
+              textField.setText(String.valueOf(value));
+            }
+
             listener.onChange(value);
             Platform.runLater(() -> {
               textField.getParent().requestFocus();
@@ -113,7 +119,7 @@ public class AutoCompleteTextField {
     textField.setOnKeyPressed(new EventHandler<KeyEvent>() {
       @Override
       public void handle(KeyEvent event) {
-        if (event.getCode() == KeyCode.ESCAPE) {
+        if (event.getCode() == KeyCode.ESCAPE && defaultValue != null) {
           setText(defaultValue);
         }
       }
@@ -122,7 +128,7 @@ public class AutoCompleteTextField {
     textField.focusedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        if (!newValue) {
+        if (!newValue && defaultValue != null) {
           setText(String.valueOf(defaultValue));
         }
       }
@@ -190,6 +196,7 @@ public class AutoCompleteTextField {
   }
 
   public void setText(String name) {
+    this.defaultValue = null;
     setChangeEnabled(false);
     textField.setText(name);
     defaultValue = name;

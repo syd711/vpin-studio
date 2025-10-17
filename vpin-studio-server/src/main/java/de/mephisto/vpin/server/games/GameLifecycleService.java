@@ -48,6 +48,9 @@ public class GameLifecycleService {
   }
 
   public void notifyGameDataChanged(int gameId, @NonNull TableDetails oldData, @NonNull TableDetails newData) {
+    if (oldData.equals(newData)) {
+      return;
+    }
     GameDataChangedEvent event = new GameDataChangedEvent(gameId, oldData, newData);
     for (GameDataChangedListener listener : gameDataChangedListeners) {
       listener.gameDataChanged(event);

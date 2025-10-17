@@ -218,7 +218,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
       FrontendMediaRepresentation frontendMedia = client.getFrontendService().getFrontendMedia(game.getId());
       FrontendMediaItemRepresentation mediaItem = frontendMedia.getDefaultMediaItem(VPinScreen.Wheel);
       if (mediaItem != null) {
-        ByteArrayInputStream gameMediaItem = client.getGameMediaItem(game.getId(), VPinScreen.Wheel);
+        ByteArrayInputStream gameMediaItem = client.getWheelIcon(game.getId(), false);
         Image image = new Image(gameMediaItem);
         iconPreview.setImage(image);
 

@@ -50,7 +50,7 @@ public class SystemUtil {
       }
     }
   }
-      
+
 
   public static void openFolder(File folder) {
     openFolder(folder, null);
@@ -83,6 +83,10 @@ public class SystemUtil {
   public static void openFolder(File folder, File fallback) {
     if (folder == null) {
       return;
+    }
+
+    while (!folder.exists()) {
+      folder = folder.getParentFile();
     }
 
     if (!folder.exists() && (fallback != null && !fallback.exists())) {

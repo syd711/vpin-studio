@@ -1,25 +1,27 @@
 package de.mephisto.vpin.ui.backups;
 
-import de.mephisto.vpin.restclient.backups.BackupSourceType;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.backups.BackupDescriptorRepresentation;
-import de.mephisto.vpin.restclient.backups.BackupFileInfo;
-import de.mephisto.vpin.restclient.backups.BackupSourceRepresentation;
-import de.mephisto.vpin.restclient.backups.BackupType;
+import de.mephisto.vpin.restclient.backups.*;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.*;
+import de.mephisto.vpin.ui.components.emulators.EmulatorsTableColumnSorter;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.tables.TablesController;
+import de.mephisto.vpin.ui.tables.panels.BaseColumnSorter;
+import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
+import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.SystemUtil;
+import de.mephisto.vpin.ui.vps.VpsTablesController;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
@@ -30,7 +32,6 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -50,11 +51,12 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
-public class BackupsController implements Initializable, StudioFXController, StudioEventListener {
+public class BackupsController extends BaseTableController<BackupDescriptorRepresentation, BackupModel> implements Initializable, StudioFXController, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(BackupsController.class);
   public static final String TAB_NAME = "Table Backups";
 
@@ -74,106 +76,85 @@ public class BackupsController implements Initializable, StudioFXController, Stu
   private Button downloadBtn;
 
   @FXML
-  private Button reloadBtn;
-
-  @FXML
-  private TextField searchTextField;
-
-  @FXML
   private ComboBox<BackupSourceRepresentation> sourceCombo;
 
   @FXML
-  private TableView<BackupDescriptorRepresentation> tableView;
+  private TableColumn<BackupModel, BackupModel> iconColumn;
 
   @FXML
-  private TableColumn<BackupDescriptorRepresentation, String> iconColumn;
+  TableColumn<BackupModel, BackupModel> nameColumn;
 
   @FXML
-  private TableColumn<BackupDescriptorRepresentation, String> nameColumn;
+  TableColumn<BackupModel, BackupModel> directB2SColumn;
 
   @FXML
-  private TableColumn<BackupDescriptorRepresentation, String> directB2SColumn;
+  private TableColumn<BackupModel, BackupModel> pupPackColumn;
 
   @FXML
-  private TableColumn<BackupDescriptorRepresentation, String> pupPackColumn;
+  private TableColumn<BackupModel, BackupModel> romColumn;
 
   @FXML
-  private TableColumn<BackupDescriptorRepresentation, String> romColumn;
+  private TableColumn<BackupModel, BackupModel> popperColumn;
 
   @FXML
-  private TableColumn<BackupDescriptorRepresentation, String> popperColumn;
+  private TableColumn<BackupModel, BackupModel> povColumn;
 
   @FXML
-  private TableColumn<BackupDescriptorRepresentation, String> povColumn;
+  private TableColumn<BackupModel, BackupModel> iniColumn;
 
   @FXML
-  private TableColumn<BackupDescriptorRepresentation, String> iniColumn;
+  private TableColumn<BackupModel, BackupModel> vbsColumn;
 
   @FXML
-  private TableColumn<BackupDescriptorRepresentation, String> vbsColumn;
+  private TableColumn<BackupModel, BackupModel> resColumn;
 
   @FXML
-  private TableColumn<BackupDescriptorRepresentation, String> resColumn;
+  private TableColumn<BackupModel, BackupModel> musicColumn;
 
   @FXML
-  private TableColumn<BackupDescriptorRepresentation, String> musicColumn;
+  private TableColumn<BackupModel, BackupModel> highscoreColumn;
 
   @FXML
-  private TableColumn<BackupDescriptorRepresentation, String> highscoreColumn;
+  private TableColumn<BackupModel, BackupModel> dmdColumn;
 
   @FXML
-  private TableColumn<BackupDescriptorRepresentation, String> dmdColumn;
+  private TableColumn<BackupModel, BackupModel> registryColumn;
 
   @FXML
-  private TableColumn<BackupDescriptorRepresentation, String> registryColumn;
+  private TableColumn<BackupModel, BackupModel> altSoundColumn;
 
   @FXML
-  private TableColumn<BackupDescriptorRepresentation, String> altSoundColumn;
+  private TableColumn<BackupModel, BackupModel> altColorColumn;
 
   @FXML
-  private TableColumn<BackupDescriptorRepresentation, String> altColorColumn;
+  private TableColumn<BackupModel, BackupModel> sizeColumn;
 
   @FXML
-  private TableColumn<BackupDescriptorRepresentation, String> sizeColumn;
-
-  @FXML
-  private TableColumn<BackupDescriptorRepresentation, String> createdAtColumn;
-
-  @FXML
-  private StackPane tableStack;
+  private TableColumn<BackupModel, BackupModel> createdAtColumn;
 
   @FXML
   private Separator endSeparator;
 
   @FXML
-  private Button clearBtn;
-
-  @FXML
   private ToolBar toolbar;
 
-  private Parent loadingOverlay;
 
+  private List<BackupModel> filteredData;
 
-  private ObservableList<BackupDescriptorRepresentation> data;
-  private List<BackupDescriptorRepresentation> archives;
   private TablesController tablesController;
   private ChangeListener<BackupSourceRepresentation> sourceComboChangeListener;
   private SystemSummary systemSummary;
+  private List<BackupDescriptorRepresentation> data;
 
   // Add a public no-args constructor
   public BackupsController() {
   }
 
   @FXML
-  private void onClear() {
-    searchTextField.setText("");
-  }
-
-  @FXML
   public final void onFolder() {
-    ObservableList<BackupDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
+    ObservableList<BackupModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
-      BackupDescriptorRepresentation descriptor = selectedItems.get(0);
+      BackupDescriptorRepresentation descriptor = selectedItems.get(0).getBean();
       BackupSourceRepresentation source = sourceCombo.getValue();
 
       File file = new File(source.getLocation(), descriptor.getFilename());
@@ -185,9 +166,10 @@ public class BackupsController implements Initializable, StudioFXController, Stu
 
   @FXML
   private void onRestore() {
-    ObservableList<BackupDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
+    ObservableList<BackupModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
-      BackupDialogs.openArchiveRestoreDialog(selectedItems);
+      List<BackupDescriptorRepresentation> backups = selectedItems.stream().map(s -> s.getBean()).collect(Collectors.toList());
+      BackupDialogs.openArchiveRestoreDialog(backups);
     }
   }
 
@@ -201,9 +183,10 @@ public class BackupsController implements Initializable, StudioFXController, Stu
 
   @FXML
   private void onDownload() {
-    ObservableList<BackupDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
+    ObservableList<BackupModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
-      BackupDialogs.openArchiveDownloadDialog(selectedItems);
+      List<BackupDescriptorRepresentation> backups = selectedItems.stream().map(s -> s.getBean()).collect(Collectors.toList());
+      BackupDialogs.openArchiveDownloadDialog(backups);
     }
   }
 
@@ -214,9 +197,9 @@ public class BackupsController implements Initializable, StudioFXController, Stu
 
   public void doReload(Optional<BackupDescriptorRepresentation> selection) {
     if (selection.isEmpty()) {
-      BackupDescriptorRepresentation selectedItem = this.tableView.getSelectionModel().getSelectedItem();
+      BackupModel selectedItem = this.tableView.getSelectionModel().getSelectedItem();
       if (selectedItem != null) {
-        selection = Optional.of(selectedItem);
+        selection = Optional.of(selectedItem.getBean());
       }
     }
 
@@ -226,16 +209,16 @@ public class BackupsController implements Initializable, StudioFXController, Stu
 
   public void doReload(boolean invalidate, Optional<BackupDescriptorRepresentation> value) {
     if (value.isEmpty()) {
-      BackupDescriptorRepresentation selectedItem = this.tableView.getSelectionModel().getSelectedItem();
+      BackupModel selectedItem = this.tableView.getSelectionModel().getSelectedItem();
       if (selectedItem != null) {
-        value = Optional.of(selectedItem);
+        value = Optional.of(selectedItem.getBean());
       }
     }
 
     this.searchTextField.setDisable(true);
 
     BackupSourceRepresentation selectedItem = sourceCombo.getSelectionModel().getSelectedItem();
-    final BackupDescriptorRepresentation selection = value.orElse(null);
+    final BackupDescriptorRepresentation selectedBackup = value.orElse(null);
     tableView.getSelectionModel().clearSelection();
     boolean disable = value.isEmpty();
     deleteBtn.setDisable(disable);
@@ -243,49 +226,43 @@ public class BackupsController implements Initializable, StudioFXController, Stu
 
     tableView.setVisible(false);
 
-    if (!tableStack.getChildren().contains(loadingOverlay)) {
-      tableStack.getChildren().add(loadingOverlay);
-    }
-
-
-    new Thread(() -> {
+    startReload("Loading Backups...");
+    JFXFuture.supplyAsync(() -> {
       if (selectedItem != null && invalidate) {
         client.getArchiveService().invalidateBackupCache();
       }
 
       BackupSourceRepresentation backupSource = sourceCombo.getValue();
-      archives = client.getArchiveService().getBackupsForSource(backupSource.getId());
+      data = client.getArchiveService().getBackupsForSource(backupSource.getId());
+      List<BackupDescriptorRepresentation> filteredBackups = filterArchives(data);
+      return filteredBackups;
+    }).thenAcceptLater((filteredBackups) -> {
+      setItems(filteredBackups);
+      tableView.refresh();
+      if (tableView.getItems().contains(toModel(selectedBackup))) {
+        deleteBtn.setDisable(false);
+        tableView.getSelectionModel().select(toModel(selectedBackup));
+        restoreBtn.setDisable(false);
+      }
 
-      Platform.runLater(() -> {
-        data = FXCollections.observableList(filterArchives(archives));
-        tableView.setItems(data);
-        tableView.refresh();
-        if (data.contains(selection)) {
-          deleteBtn.setDisable(false);
-          tableView.getSelectionModel().select(selection);
-          restoreBtn.setDisable(false);
-        }
-
-        this.searchTextField.setDisable(false);
-
-        tableStack.getChildren().remove(loadingOverlay);
-        tableView.setVisible(true);
-
-      });
-    }).start();
+      this.searchTextField.setDisable(false);
+      tableView.setVisible(true);
+      endReload();
+    });
   }
 
   @FXML
-  private void onDelete() {
-    List<BackupDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
+  private void onBackupDelete() {
+    List<BackupModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
       String title = "Delete the " + selectedItems.size() + " selected archives?";
       if (selectedItems.size() == 1) {
-        title = "Delete Archive \"" + selectedItems.get(0).getFilename() + "\"?";
+        title = "Delete Archive \"" + selectedItems.get(0).getName() + "\"?";
       }
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title, null, null, "Delete");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        ProgressDialog.createProgressDialog(new BackupDeleteProgressModel(selectedItems));
+        List<BackupDescriptorRepresentation> backups = selectedItems.stream().map(s -> s.getBean()).collect(Collectors.toList());
+        ProgressDialog.createProgressDialog(new BackupDeleteProgressModel(backups));
         tableView.getSelectionModel().clearSelection();
         doReload(Optional.empty());
         tablesController.getRepositorySideBarController().setArchiveDescriptor(Optional.empty());
@@ -295,6 +272,9 @@ public class BackupsController implements Initializable, StudioFXController, Stu
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    super.initialize("backup", "backups", new BackupsColumnSorter(this));
+
+    openFolderButton.setDisable(true);
     clearBtn.setVisible(false);
     endSeparator.managedProperty().bindBidirectional(endSeparator.visibleProperty());
     sourceCombo.managedProperty().bindBidirectional(sourceCombo.visibleProperty());
@@ -309,18 +289,22 @@ public class BackupsController implements Initializable, StudioFXController, Stu
 
     restoreBtn.setDisable(true);
 
-    try {
-      FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
-      loadingOverlay = loader.load();
-      WaitOverlayController ctrl = loader.getController();
-      ctrl.setLoadingMessage("Loading Archives...");
-    }
-    catch (IOException e) {
-      LOG.error("Failed to load loading overlay: " + e.getMessage());
-    }
+    searchTextField.textProperty().addListener((observableValue, s, filterValue) -> {
+      clearSelection();
+      List<BackupDescriptorRepresentation> filteredBackups = filterArchives(data);
+      setItems(filteredBackups);
+      clearBtn.setVisible(filterValue != null && !filterValue.isEmpty());
+    });
+    searchTextField.setOnKeyPressed(event -> {
+      if (event.getCode().toString().equalsIgnoreCase("ESCAPE")) {
+        searchTextField.setText("");
+        tableView.requestFocus();
+        setItems(data);
+        event.consume();
+      }
+    });
 
-    iconColumn.setCellValueFactory(cellData -> {
-      BackupDescriptorRepresentation value = cellData.getValue();
+    BaseLoadingColumn.configureColumn(iconColumn, (value, model) -> {
       if (value.getPackageInfo() != null) {
         String thumbnail = value.getPackageInfo().getThumbnail();
         if (thumbnail != null) {
@@ -331,7 +315,7 @@ public class BackupsController implements Initializable, StudioFXController, Stu
           view.setFitWidth(80);
           view.setFitHeight(80);
           CommonImageUtil.setClippedImage(view, (int) (wheel.getWidth() / 2));
-          return new SimpleObjectProperty(view);
+          return view;
         }
       }
 
@@ -340,11 +324,10 @@ public class BackupsController implements Initializable, StudioFXController, Stu
       view.setPreserveRatio(true);
       view.setFitWidth(70);
       view.setFitHeight(70);
-      return new SimpleObjectProperty(view);
-    });
+      return view;
+    }, this, true);
 
-    nameColumn.setCellValueFactory(cellData -> {
-      BackupDescriptorRepresentation value = cellData.getValue();
+    BaseLoadingColumn.configureColumn(nameColumn, (value, model) -> {
       VBox vBox = new VBox(3);
 
       TableDetails tableDetails = value.getTableDetails();
@@ -373,12 +356,11 @@ public class BackupsController implements Initializable, StudioFXController, Stu
       created.getStyleClass().add("default-text");
       created.setStyle("-fx-font-size: 12px;");
       vBox.getChildren().add(created);
+      return vBox;
+    }, this, true);
 
-      return new SimpleObjectProperty(vBox);
-    });
-
-    directB2SColumn.setCellValueFactory(cellData -> {
-      BackupDescriptorRepresentation value = cellData.getValue();
+    BaseLoadingColumn.configureColumn(directB2SColumn, (value, model) -> {
+      Label label = new Label("");
       if (value.getPackageInfo() != null) {
         BackupFileInfo directb2s = value.getPackageInfo().getDirectb2s();
         if (directb2s != null) {
@@ -393,172 +375,154 @@ public class BackupsController implements Initializable, StudioFXController, Stu
             icon = WidgetFactory.createIcon("mdi2n-numeric-" + nbVersions + "-box-multiple-outline", "#FFFFFF");
             iconLabel.setGraphic(icon);
           }
-          return new SimpleObjectProperty(iconLabel);
+          return iconLabel;
         }
       }
-      return new SimpleStringProperty("");
-    });
+      return label;
+    }, this, true);
 
-    pupPackColumn.setCellValueFactory(cellData -> {
-      BackupDescriptorRepresentation value = cellData.getValue();
+    BaseLoadingColumn.configureColumn(pupPackColumn, (value, model) -> {
       if (value.getPackageInfo() != null) {
         BackupFileInfo pupPack = value.getPackageInfo().getPupPack();
         if (pupPack != null) {
-          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon("#FFFFFF", pupPack.toString()));
+          return WidgetFactory.createCheckboxIcon("#FFFFFF", pupPack.toString());
         }
       }
+      return new Label("");
+    }, this, true);
 
-      return new SimpleStringProperty("");
-    });
-
-    popperColumn.setCellValueFactory(cellData -> {
-      BackupDescriptorRepresentation value = cellData.getValue();
+    BaseLoadingColumn.configureColumn(popperColumn, (value, model) -> {
       if (value.getPackageInfo() != null) {
         BackupFileInfo media = value.getPackageInfo().getPopperMedia();
         if (media != null) {
-          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon("#FFFFFF", media.toString()));
+          return WidgetFactory.createCheckboxIcon("#FFFFFF", media.toString());
         }
       }
+      return new Label("");
+    }, this, true);
 
-      return new SimpleStringProperty("");
-    });
-
-    povColumn.setCellValueFactory(cellData -> {
-      BackupDescriptorRepresentation value = cellData.getValue();
+    BaseLoadingColumn.configureColumn(povColumn, (value, model) -> {
       if (value.getPackageInfo() != null) {
         BackupFileInfo pov = value.getPackageInfo().getPov();
         if (pov != null) {
-          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon("#FFFFFF", pov.toString()));
+          return WidgetFactory.createCheckboxIcon("#FFFFFF", pov.toString());
         }
       }
-      return new SimpleStringProperty("");
-    });
+      return new Label("");
+    }, this, true);
 
-    iniColumn.setCellValueFactory(cellData -> {
-      BackupDescriptorRepresentation value = cellData.getValue();
+
+    BaseLoadingColumn.configureColumn(iniColumn, (value, model) -> {
       if (value.getPackageInfo() != null) {
         BackupFileInfo ini = value.getPackageInfo().getIni();
         if (ini != null) {
-          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon("#FFFFFF", ini.toString()));
+          return WidgetFactory.createCheckboxIcon("#FFFFFF", ini.toString());
         }
       }
-      return new SimpleStringProperty("");
-    });
+      return new Label("");
+    }, this, true);
 
-    vbsColumn.setCellValueFactory(cellData -> {
-      BackupDescriptorRepresentation value = cellData.getValue();
+    BaseLoadingColumn.configureColumn(vbsColumn, (value, model) -> {
       if (value.getPackageInfo() != null) {
         BackupFileInfo vbs = value.getPackageInfo().getVbs();
         if (vbs != null) {
-          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon("#FFFFFF", vbs.toString()));
+          return WidgetFactory.createCheckboxIcon("#FFFFFF", vbs.toString());
         }
       }
-      return new SimpleStringProperty("");
-    });
+      return new Label("");
+    }, this, true);
 
-    resColumn.setCellValueFactory(cellData -> {
-      BackupDescriptorRepresentation value = cellData.getValue();
+    BaseLoadingColumn.configureColumn(resColumn, (value, model) -> {
       if (value.getPackageInfo() != null) {
         BackupFileInfo res = value.getPackageInfo().getRes();
         if (res != null) {
-          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon("#FFFFFF", res.toString()));
+          return WidgetFactory.createCheckboxIcon("#FFFFFF", res.toString());
         }
       }
-      return new SimpleStringProperty("");
-    });
+      return new Label("");
+    }, this, true);
 
-    musicColumn.setCellValueFactory(cellData -> {
-      BackupDescriptorRepresentation value = cellData.getValue();
+    BaseLoadingColumn.configureColumn(musicColumn, (value, model) -> {
       if (value.getPackageInfo() != null) {
         BackupFileInfo mus = value.getPackageInfo().getMusic();
         if (mus != null) {
-          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon("#FFFFFF", mus.toString()));
+          return WidgetFactory.createCheckboxIcon("#FFFFFF", mus.toString());
         }
       }
-      return new SimpleStringProperty("");
-    });
+      return new Label("");
+    }, this, true);
 
-
-    highscoreColumn.setCellValueFactory(cellData -> {
-      BackupDescriptorRepresentation value = cellData.getValue();
+    BaseLoadingColumn.configureColumn(highscoreColumn, (value, model) -> {
       if (value.getPackageInfo() != null) {
         BackupFileInfo highscore = value.getPackageInfo().getHighscore();
         if (highscore != null) {
-          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon("#FFFFFF", highscore.toString()));
+          return WidgetFactory.createCheckboxIcon("#FFFFFF", highscore.toString());
         }
       }
-      return new SimpleStringProperty("");
-    });
+      return new Label("");
+    }, this, true);
 
-    dmdColumn.setCellValueFactory(cellData -> {
-      BackupDescriptorRepresentation value = cellData.getValue();
+    BaseLoadingColumn.configureColumn(dmdColumn, (value, model) -> {
       if (value.getPackageInfo() != null) {
         BackupFileInfo dmd = value.getPackageInfo().getDmd();
         if (dmd != null) {
-          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon("#FFFFFF", dmd.toString()));
+          return WidgetFactory.createCheckboxIcon("#FFFFFF", dmd.toString());
         }
       }
-      return new SimpleStringProperty("");
-    });
+      return new Label("");
+    }, this, true);
 
-    registryColumn.setCellValueFactory(cellData -> {
-      BackupDescriptorRepresentation value = cellData.getValue();
+    BaseLoadingColumn.configureColumn(registryColumn, (value, model) -> {
       if (value.getPackageInfo() != null) {
         BackupFileInfo reg = value.getPackageInfo().getMameData();
         if (reg != null) {
-          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon("#FFFFFF", reg.toString()));
+          return WidgetFactory.createCheckboxIcon("#FFFFFF", reg.toString());
         }
       }
-      return new SimpleStringProperty("");
-    });
+      return new Label("");
+    }, this, true);
 
-
-    altColorColumn.setCellValueFactory(cellData -> {
-      BackupDescriptorRepresentation value = cellData.getValue();
+    BaseLoadingColumn.configureColumn(altColorColumn, (value, model) -> {
       if (value.getPackageInfo() != null) {
         BackupFileInfo altColor = value.getPackageInfo().getAltColor();
         if (altColor != null) {
-          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon("#FFFFFF", altColor.toString()));
+          return WidgetFactory.createCheckboxIcon("#FFFFFF", altColor.toString());
         }
       }
-      return new SimpleStringProperty("");
-    });
+      return new Label("");
+    }, this, true);
 
-    romColumn.setCellValueFactory(cellData -> {
-      BackupDescriptorRepresentation value = cellData.getValue();
+    BaseLoadingColumn.configureColumn(romColumn, (value, model) -> {
       if (value.getPackageInfo() != null) {
         BackupFileInfo rom = value.getPackageInfo().getRom();
         if (rom != null) {
-          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon("#FFFFFF", rom.toString()));
+          return WidgetFactory.createCheckboxIcon("#FFFFFF", rom.toString());
         }
       }
-      return new SimpleStringProperty("");
-    });
+      return new Label("");
+    }, this, true);
 
-    altSoundColumn.setCellValueFactory(cellData -> {
-      BackupDescriptorRepresentation value = cellData.getValue();
+    BaseLoadingColumn.configureColumn(altSoundColumn, (value, model) -> {
       if (value.getPackageInfo() != null) {
         BackupFileInfo altSound = value.getPackageInfo().getAltSound();
         if (altSound != null) {
-          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon("#FFFFFF", altSound.toString()));
+          return WidgetFactory.createCheckboxIcon("#FFFFFF", altSound.toString());
         }
       }
+      return new Label("");
+    }, this, true);
 
-      return new SimpleStringProperty("");
-    });
-
-    sizeColumn.setCellValueFactory(cellData -> {
-      BackupDescriptorRepresentation value = cellData.getValue();
+    BaseLoadingColumn.configureColumn(sizeColumn, (value, model) -> {
       if (value.getSize() == 0) {
-        return new SimpleStringProperty("-");
+        return new Label("-");
       }
-      return new SimpleStringProperty(FileUtils.readableFileSize(value.getSize()));
-    });
+      return new Label(FileUtils.readableFileSize(value.getSize()));
+    }, this, true);
 
-    createdAtColumn.setCellValueFactory(cellData -> {
-      BackupDescriptorRepresentation value = cellData.getValue();
-      return new SimpleStringProperty(DateFormat.getInstance().format(value.getCreatedAt()));
-    });
+    BaseLoadingColumn.configureColumn(createdAtColumn, (value, model) -> {
+      return new Label(DateFormat.getInstance().format(value.getCreatedAt()));
+    }, this, true);
+
 
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
@@ -572,26 +536,18 @@ public class BackupsController implements Initializable, StudioFXController, Stu
 
 
       if (oldSelection == null || !oldSelection.equals(newSelection)) {
-        updateSelection(Optional.ofNullable(newSelection));
+        updateSelection(newSelection != null ? Optional.of(newSelection.getBean()) : Optional.empty());
       }
     });
 
     tableView.setRowFactory(tv -> {
-      TableRow<BackupDescriptorRepresentation> row = new TableRow<>();
+      TableRow<BackupModel> row = new TableRow<>();
       row.setOnMouseClicked(event -> {
         if (event.getClickCount() == 2 && (!row.isEmpty())) {
-
+          onRestore();
         }
       });
       return row;
-    });
-
-    searchTextField.textProperty().addListener((observableValue, s, filterValue) -> {
-      clearBtn.setVisible(filterValue != null && filterValue.length() > 0);
-      tableView.getSelectionModel().clearSelection();
-
-      List<BackupDescriptorRepresentation> filtered = filterArchives(this.archives);
-      tableView.setItems(FXCollections.observableList(filtered));
     });
 
     sourceComboChangeListener = (observable, oldValue, newValue) -> {
@@ -599,9 +555,9 @@ public class BackupsController implements Initializable, StudioFXController, Stu
       restoreBtn.setDisable(!newValue.getType().equals(BackupSourceType.Folder.name()));
       downloadBtn.setDisable(!newValue.getType().equals(BackupSourceType.Folder.name()));
 
-      BackupDescriptorRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
+      BackupModel selectedItem = tableView.getSelectionModel().getSelectedItem();
       tableView.getSelectionModel().clearSelection();
-      doReload(selectedItem != null ? Optional.of(selectedItem) : Optional.empty());
+      doReload(selectedItem != null ? Optional.of(selectedItem.getBean()) : Optional.empty());
     };
     refreshRepositoryCombo();
 
@@ -674,14 +630,6 @@ public class BackupsController implements Initializable, StudioFXController, Stu
     return filtered;
   }
 
-  public Optional<BackupDescriptorRepresentation> getSelection() {
-    BackupDescriptorRepresentation selection = tableView.getSelectionModel().getSelectedItem();
-    if (selection != null) {
-      return Optional.of(selection);
-    }
-    return Optional.empty();
-  }
-
   @Override
   public void jobFinished(@NonNull JobFinishedEvent event) {
     JobType jobType = event.getJobType();
@@ -708,7 +656,7 @@ public class BackupsController implements Initializable, StudioFXController, Stu
   }
 
   public int getCount() {
-    return this.archives != null ? this.archives.size() : 0;
+    return this.filteredData != null ? this.filteredData.size() : 0;
   }
 
   public void setRootController(TablesController tablesController) {
@@ -718,7 +666,6 @@ public class BackupsController implements Initializable, StudioFXController, Stu
   public void selectBackup(BackupDescriptorRepresentation backup) {
     NavigationOptions options = new NavigationOptions(backup);
     onViewActivated(options);
-    //TODO finish selection impl
   }
 
   @Override
@@ -743,5 +690,10 @@ public class BackupsController implements Initializable, StudioFXController, Stu
         onReload();
       });
     }
+  }
+
+  @Override
+  protected BackupModel toModel(BackupDescriptorRepresentation backupDescriptorRepresentation) {
+    return new BackupModel(backupDescriptorRepresentation);
   }
 }

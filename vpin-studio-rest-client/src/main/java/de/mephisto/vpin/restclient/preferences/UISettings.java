@@ -52,7 +52,6 @@ public class UISettings extends JsonSettings {
   private boolean sectionHighscore = true;
   private boolean sectionAssets = true;
   private boolean sectionPov = false; //lets remove POV be default
-  private boolean sectionIni = true;
   private boolean sectionPupPack = true;
   private boolean sectionPlaylists = true;
   private boolean sectionTableData = true;
@@ -188,14 +187,6 @@ public class UISettings extends JsonSettings {
 
   public void setAutoFillSettings(AutoFillSettings autoFillSettings) {
     this.autoFillSettings = autoFillSettings;
-  }
-
-  public boolean isSectionIni() {
-    return sectionIni;
-  }
-
-  public void setSectionIni(boolean sectionIni) {
-    this.sectionIni = sectionIni;
   }
 
   public boolean isColumnRes() {

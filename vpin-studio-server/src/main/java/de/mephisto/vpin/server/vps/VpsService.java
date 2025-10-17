@@ -18,6 +18,7 @@ import de.mephisto.vpin.server.games.GameDetails;
 import de.mephisto.vpin.server.games.GameDetailsRepository;
 import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.util.Version;
 import de.mephisto.vpin.server.vpsdb.VpsDbEntry;
 import de.mephisto.vpin.server.vpsdb.VpsEntryService;
 import de.mephisto.vpin.server.vpx.VPXService;
@@ -139,6 +140,17 @@ public class VpsService implements InitializingBean {
     if (!StringUtils.isEmpty(vpsVersion)) {
       if (gameVersion.equalsIgnoreCase(vpsVersion)) {
         return;
+      }
+
+      try {
+        Version versionVps = new Version(vpsVersion);
+        Version versionTable = new Version(gameVersion);
+        boolean updateAvailable = versionVps.compareTo(versionTable) > 0;
+        game.setUpdateAvailable(updateAvailable);
+        return;
+      }
+      catch (Exception e) {
+        //ignore
       }
     }
 

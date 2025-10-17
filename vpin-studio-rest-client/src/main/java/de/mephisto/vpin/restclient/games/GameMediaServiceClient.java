@@ -127,6 +127,13 @@ public class GameMediaServiceClient extends VPinStudioClientService {
     return search;
   }
 
+  public boolean copyMedia(VPinScreen screen, FrontendMediaItemRepresentation media) {
+    AssetCopy copy = new AssetCopy();
+    copy.setItem(media);
+    copy.setTarget(screen);
+    return getRestClient().post(API + API_SEGMENT_MEDIA + "/assets/copy", copy, Boolean.class);
+  }
+
   public boolean downloadTableAsset(TableAsset tableAsset, VPinScreen screen, GameRepresentation game, boolean append) throws Exception {
     try {
       return getRestClient().post(API + API_SEGMENT_MEDIA + "/assets/download/" + game.getId() + "/" + screen + "/" + append, tableAsset, Boolean.class);

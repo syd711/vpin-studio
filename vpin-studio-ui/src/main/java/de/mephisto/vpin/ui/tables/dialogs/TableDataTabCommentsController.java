@@ -1,19 +1,21 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
-import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.ui.Studio;
-import javafx.application.Platform;
+import de.mephisto.vpin.ui.util.tags.TagField;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -33,21 +35,16 @@ public class TableDataTabCommentsController implements Initializable {
   @FXML
   private Label useOutdatedLabel;
 
-  private GameRepresentation game;
+  @FXML
+  private Pane tags;
 
-  public boolean save() {
+  private GameRepresentation game;
+  private TagField tagField;
+
+  public boolean save(TableDetails tableDetails) {
     game.setComment(textArea.getText());
-    try {
-      client.getGameService().saveGame(game);
-      return true;
-    }
-    catch (Exception e) {
-      LOG.error("Failed to save notes: " + e.getMessage(), e);
-      Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save notes: " + e.getMessage());
-      });
-      return false;
-    }
+    tableDetails.setTags(String.join(",", tagField.getTags()));
+    return true;
   }
 
   @FXML
@@ -60,6 +57,10 @@ public class TableDataTabCommentsController implements Initializable {
     this.textArea.requestFocus();
   }
 
+  public void setTags(List<String> tags) {
+    tagField.setTags(tags);
+  }
+
   public void setGame(GameRepresentation game) {
     this.game = game;
     if (StringUtils.isNotEmpty(game.getComment())) {
@@ -68,6 +69,8 @@ public class TableDataTabCommentsController implements Initializable {
     else {
       this.textArea.clear();
     }
+
+    this.tagField.setTags(game.getTags());
   }
 
   @Override
@@ -75,6 +78,10 @@ public class TableDataTabCommentsController implements Initializable {
     useTodoLabel.setOnMouseClicked(mouseEvent -> appendTextAndFocus("//TODO "));
     useErrorLabel.setOnMouseClicked(mouseEvent -> appendTextAndFocus("//ERROR "));
     useOutdatedLabel.setOnMouseClicked(mouseEvent -> appendTextAndFocus("//OUTDATED "));
+
+    List<String> initialTags = client.getTaggingService().getTags();
+    tagField = new TagField(initialTags);
+    tags.getChildren().add(tagField);
   }
 
   public void initBindings(TableDataController tableDataController) {

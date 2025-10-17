@@ -95,8 +95,17 @@ public class Game {
   private boolean ignoreUpdates = false;
 
   private int rating = 0;
+  private List<String> tags = new ArrayList<>();
 
   public Game() {
+  }
+
+  public List<String> getTags() {
+    return tags;
+  }
+
+  public void setTags(List<String> tags) {
+    this.tags = tags;
   }
 
   public boolean isIgnoreUpdates() {
@@ -226,16 +235,29 @@ public class Game {
     this.comment = comment;
   }
 
+  @JsonIgnore
+  public boolean isZaccariaGame() {
+    return this.emulator != null && this.emulator.isZaccariaEmulator();
+  }
+
+  @JsonIgnore
   public boolean isVpxGame() {
     return this.emulator != null && this.emulator.isVpxEmulator();
   }
 
+  @JsonIgnore
+  public boolean isZenGame() {
+    return this.emulator != null && this.emulator.isZenEmulator();
+  }
+
+  @JsonIgnore
   public boolean isFpGame() {
     return this.emulator.isFpEmulator();
   }
 
+  @JsonIgnore
   public boolean isFxGame() {
-    return this.emulator.isFxEmulator();
+    return this.emulator.isZenEmulator();
   }
 
   public Long getTemplateId(CardTemplateType templateType) {

@@ -166,7 +166,7 @@ public class InstructionsCardsController  implements Initializable {
   
     VpsDebug debug = LOG_VPSMATCHING_DEBUG ? new VpsDebug() : null;
     VpsAutomatcher automatcher = new VpsAutomatcher(debug);
-    autoCompleteNameField = new AutoCompleteTextField(null, tableNameField, value -> {
+    autoCompleteNameField = new AutoCompleteTextField(tableNameField, value -> {
       VPS vps  = getVpsTables();
       Optional<VpsTable> table = vps.getTables().stream().filter(e -> e.getDisplayName().equals(value)).findFirst();
       if (table.isPresent()) {

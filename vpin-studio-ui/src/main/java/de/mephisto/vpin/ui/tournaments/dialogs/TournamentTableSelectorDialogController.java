@@ -154,8 +154,8 @@ public class TournamentTableSelectorDialogController implements DialogController
 
   public void setTournamentTable(Stage stage, Tournament tournament, TournamentTable tournamentTable) {
     List<VpsTable> tables = client.getVpsService().getTables();
-    TreeSet<String> collect = new TreeSet<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
-    autoCompleteNameField = new AutoCompleteTextField(stage, this.nameField, this, collect);
+    List<String> collect = new ArrayList<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
+    autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, collect);
 
     this.tournament = tournament;
     this.tournamentTable = tournamentTable;

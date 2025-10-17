@@ -1,6 +1,5 @@
 package de.mephisto.vpin.restclient.client;
 
-import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.pinvol.PinVolPreferences;
 import de.mephisto.vpin.restclient.pinvol.PinVolUpdate;
 import org.slf4j.Logger;

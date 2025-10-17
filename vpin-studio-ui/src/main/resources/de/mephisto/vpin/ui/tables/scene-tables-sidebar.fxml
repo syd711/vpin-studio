@@ -12,45 +12,40 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane maxWidth="600.0" prefWidth="600.0" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarController">
+<BorderPane maxWidth="600.0" prefWidth="600.0" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarController">
     <center>
         <Accordion fx:id="tableAccordion" maxHeight="-Infinity" BorderPane.alignment="CENTER">
             <panes>
-                <TitledPane fx:id="titledPaneMedia" maxHeight="1.7976931348623157E308" prefHeight="1100.0"
-                            prefWidth="600.0">
+                <TitledPane fx:id="titledPaneMedia" maxHeight="1.7976931348623157E308" prefHeight="1100.0" prefWidth="600.0">
                     <graphic>
                         <BorderPane prefWidth="560.0">
                             <left>
-                                <Label text="Table Media" BorderPane.alignment="CENTER"/>
+                                <Label text="Table Media" BorderPane.alignment="CENTER" />
                             </left>
                             <right>
-                                <HBox fx:id="frontendTitleButtonArea" alignment="CENTER_RIGHT" spacing="6.0"
-                                      BorderPane.alignment="CENTER">
+                                <HBox fx:id="frontendTitleButtonArea" alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
                                     <children>
-                                        <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false"
-                                                onAction="#onPrefsScreenValidators">
+                                        <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onPrefsScreenValidators">
                                             <font>
-                                                <Font size="10.0"/>
+                                                <Font size="10.0" />
                                             </font>
                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog"/>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" />
                                             </graphic>
                                             <tooltip>
-                                                <Tooltip text="Open Screen Validators Settings"/>
+                                                <Tooltip text="Open Screen Validators Settings" />
                                             </tooltip>
                                         </Button>
                                     </children>
                                     <BorderPane.margin>
-                                        <Insets left="6.0"/>
+                                        <Insets left="6.0" />
                                     </BorderPane.margin>
                                 </HBox>
                             </right>
                             <center>
-                                <CheckBox fx:id="mediaPreviewCheckbox" mnemonicParsing="false" selected="true"
-                                          text="Preview" textFill="WHITE" BorderPane.alignment="CENTER_RIGHT">
+                                <CheckBox fx:id="mediaPreviewCheckbox" mnemonicParsing="false" selected="true" text="Preview" textFill="WHITE" BorderPane.alignment="CENTER_RIGHT">
                                     <font>
-                                        <Font size="10.0"/>
+                                        <Font size="10.0" />
                                     </font>
                                 </CheckBox>
                             </center>
@@ -63,62 +58,60 @@
                             <right>
                                 <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
                                     <children>
-                                        <Button fx:id="tablesBtn" mnemonicParsing="false" onAction="#onTables"
-                                                styleClass="folder-component">
+                                        <Button fx:id="tablesBtn" mnemonicParsing="false" onAction="#onTables" styleClass="folder-component">
                                             <font>
-                                                <Font size="10.0"/>
+                                                <Font size="10.0" />
                                             </font>
                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open"/>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
                                             </graphic>
                                             <tooltip>
-                                                <Tooltip text="Open folder"/>
+                                                <Tooltip text="Open folder" />
                                             </tooltip>
                                         </Button>
                                     </children>
                                 </HBox>
                             </right>
                             <left>
-                                <Label text="Table Data" BorderPane.alignment="CENTER"/>
+                                <Label text="Table Data" BorderPane.alignment="CENTER" />
                             </left>
                         </BorderPane>
                     </graphic>
                 </TitledPane>
-                <TitledPane fx:id="titledPanePlaylists" expanded="false" text="Playlists"/>
+                <TitledPane fx:id="titledPanePlaylists" expanded="false" text="Playlists" />
                 <TitledPane fx:id="titledPaneDirectB2s" expanded="false">
                     <graphic>
                         <BorderPane prefWidth="560.0">
                             <right>
                                 <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
                                     <children>
-                                        <Button fx:id="directb2sBtn" mnemonicParsing="false" onAction="#onDirectB2S"
-                                                styleClass="folder-component">
+                                        <Button fx:id="directb2sBtn" mnemonicParsing="false" onAction="#onDirectB2S" styleClass="folder-component">
                                             <font>
-                                                <Font size="10.0"/>
+                                                <Font size="10.0" />
                                             </font>
                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open"/>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
                                             </graphic>
                                             <tooltip>
-                                                <Tooltip text="DirectB2S Folder"/>
+                                                <Tooltip text="DirectB2S Folder" />
                                             </tooltip>
                                         </Button>
                                         <Button mnemonicParsing="false" onAction="#onPrefsBackglass">
                                             <font>
-                                                <Font size="10.0"/>
+                                                <Font size="10.0" />
                                             </font>
                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog"/>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" />
                                             </graphic>
                                             <tooltip>
-                                                <Tooltip text="Open backglass server settings"/>
+                                                <Tooltip text="Open backglass server settings" />
                                             </tooltip>
                                         </Button>
                                     </children>
                                 </HBox>
                             </right>
                             <left>
-                                <Label text="Backglass" BorderPane.alignment="CENTER"/>
+                                <Label text="Backglass" BorderPane.alignment="CENTER" />
                             </left>
                         </BorderPane>
                     </graphic>
@@ -129,23 +122,22 @@
                             <right>
                                 <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
                                     <children>
-                                        <Button fx:id="dmdBtn" mnemonicParsing="false" onAction="#onDMD"
-                                                styleClass="folder-component">
+                                        <Button fx:id="dmdBtn" mnemonicParsing="false" onAction="#onDMD" styleClass="folder-component">
                                             <font>
-                                                <Font size="10.0"/>
+                                                <Font size="10.0" />
                                             </font>
                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open"/>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
                                             </graphic>
                                             <tooltip>
-                                                <Tooltip text="Open DMD folder"/>
+                                                <Tooltip text="Open DMD folder" />
                                             </tooltip>
                                         </Button>
                                     </children>
                                 </HBox>
                             </right>
                             <left>
-                                <Label text="DMD" BorderPane.alignment="CENTER"/>
+                                <Label text="DMD" BorderPane.alignment="CENTER" />
                             </left>
                         </BorderPane>
                     </graphic>
@@ -156,23 +148,22 @@
                             <right>
                                 <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
                                     <children>
-                                        <Button fx:id="pupBackBtn" mnemonicParsing="false" onAction="#onPupPack"
-                                                styleClass="folder-component">
+                                        <Button fx:id="pupBackBtn" mnemonicParsing="false" onAction="#onPupPack" styleClass="folder-component">
                                             <font>
-                                                <Font size="10.0"/>
+                                                <Font size="10.0" />
                                             </font>
                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open"/>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
                                             </graphic>
                                             <tooltip>
-                                                <Tooltip text="Open PUP pack folder"/>
+                                                <Tooltip text="Open PUP pack folder" />
                                             </tooltip>
                                         </Button>
                                     </children>
                                 </HBox>
                             </right>
                             <left>
-                                <Label text="PUP Pack" BorderPane.alignment="CENTER"/>
+                                <Label text="PUP Pack" BorderPane.alignment="CENTER" />
                             </left>
                         </BorderPane>
                     </graphic>
@@ -181,21 +172,20 @@
                     <graphic>
                         <BorderPane prefWidth="560.0">
                             <right>
-                                <Button fx:id="altSoundExplorerBtn" mnemonicParsing="false" onAction="#onAltSound"
-                                        styleClass="folder-component" BorderPane.alignment="CENTER">
+                                <Button fx:id="altSoundExplorerBtn" mnemonicParsing="false" onAction="#onAltSound" styleClass="folder-component" BorderPane.alignment="CENTER">
                                     <font>
-                                        <Font size="10.0"/>
+                                        <Font size="10.0" />
                                     </font>
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open"/>
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
                                     </graphic>
                                     <tooltip>
-                                        <Tooltip text="ALT Sound Folder"/>
+                                        <Tooltip text="ALT Sound Folder" />
                                     </tooltip>
                                 </Button>
                             </right>
                             <left>
-                                <Label text="ALT Sound" BorderPane.alignment="CENTER"/>
+                                <Label text="ALT Sound" BorderPane.alignment="CENTER" />
                             </left>
                         </BorderPane>
                     </graphic>
@@ -204,50 +194,22 @@
                     <graphic>
                         <BorderPane prefWidth="560.0">
                             <right>
-                                <Button fx:id="altColorExplorerBtn" mnemonicParsing="false" onAction="#onAltColor"
-                                        styleClass="folder-component" BorderPane.alignment="CENTER">
+                                <Button fx:id="altColorExplorerBtn" mnemonicParsing="false" onAction="#onAltColor" styleClass="folder-component" BorderPane.alignment="CENTER">
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open"/>
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
                                     </graphic>
                                     <tooltip>
-                                        <Tooltip text="Open ALT Color Folder"/>
+                                        <Tooltip text="Open ALT Color Folder" />
                                     </tooltip>
                                     <font>
-                                        <Font size="10.0"/>
+                                        <Font size="10.0" />
                                     </font>
                                 </Button>
                             </right>
                             <left>
                                 <Label text="ALT Color" textFill="WHITE" BorderPane.alignment="CENTER">
                                     <font>
-                                        <Font size="14.0"/>
-                                    </font>
-                                </Label>
-                            </left>
-                        </BorderPane>
-                    </graphic>
-                </TitledPane>
-                <TitledPane fx:id="titledPaneIni" expanded="false">
-                    <graphic>
-                        <BorderPane prefWidth="560.0">
-                            <right>
-                                <Button fx:id="iniExplorerBtn" mnemonicParsing="false" onAction="#onIni"
-                                        styleClass="folder-component" BorderPane.alignment="CENTER">
-                                    <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open"/>
-                                    </graphic>
-                                    <tooltip>
-                                        <Tooltip text="Open .ini File"/>
-                                    </tooltip>
-                                    <font>
-                                        <Font size="10.0"/>
-                                    </font>
-                                </Button>
-                            </right>
-                            <left>
-                                <Label text="Table .ini File" textFill="WHITE" BorderPane.alignment="CENTER">
-                                    <font>
-                                        <Font size="14.0"/>
+                                        <Font size="14.0" />
                                     </font>
                                 </Label>
                             </left>
@@ -260,23 +222,22 @@
                             <right>
                                 <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
                                     <children>
-                                        <Button fx:id="povBtn" mnemonicParsing="false" onAction="#onPov"
-                                                styleClass="folder-component">
+                                        <Button fx:id="povBtn" mnemonicParsing="false" onAction="#onPov" styleClass="folder-component">
                                             <font>
-                                                <Font size="10.0"/>
+                                                <Font size="10.0" />
                                             </font>
                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open"/>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
                                             </graphic>
                                             <tooltip>
-                                                <Tooltip text="Open Point Of View (POV) folder"/>
+                                                <Tooltip text="Open Point Of View (POV) folder" />
                                             </tooltip>
                                         </Button>
                                     </children>
                                 </HBox>
                             </right>
                             <left>
-                                <Label text="Table .pov File (Point of View)" BorderPane.alignment="CENTER"/>
+                                <Label text="Table .pov File (Point of View)" BorderPane.alignment="CENTER" />
                             </left>
                         </BorderPane>
                     </graphic>
@@ -285,32 +246,31 @@
                     <graphic>
                         <BorderPane prefWidth="560.0">
                             <left>
-                                <Label text="Highscores" BorderPane.alignment="CENTER"/>
+                                <Label text="Highscores" BorderPane.alignment="CENTER" />
                             </left>
                             <right>
                                 <HBox spacing="6.0" BorderPane.alignment="CENTER_RIGHT">
                                     <children>
-                                        <Button fx:id="nvramExplorerBtn" mnemonicParsing="false"
-                                                onAction="#onHighscores" styleClass="folder-component">
+                                        <Button fx:id="nvramExplorerBtn" mnemonicParsing="false" onAction="#onHighscores" styleClass="folder-component">
                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open"/>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
                                             </graphic>
                                             <tooltip>
-                                                <Tooltip text="Open highscore file or folder"/>
+                                                <Tooltip text="Open highscore file or folder" />
                                             </tooltip>
                                             <font>
-                                                <Font size="10.0"/>
+                                                <Font size="10.0" />
                                             </font>
                                         </Button>
                                         <Button mnemonicParsing="false" onAction="#onPrefsHighscore">
                                             <font>
-                                                <Font size="10.0"/>
+                                                <Font size="10.0" />
                                             </font>
                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog"/>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" />
                                             </graphic>
                                             <tooltip>
-                                                <Tooltip text="Open highscore settings"/>
+                                                <Tooltip text="Open highscore settings" />
                                             </tooltip>
                                         </Button>
                                     </children>
@@ -323,20 +283,20 @@
                     <graphic>
                         <BorderPane prefWidth="560.0">
                             <left>
-                                <Label text="VPin MAME" BorderPane.alignment="CENTER"/>
+                                <Label text="VPin MAME" BorderPane.alignment="CENTER" />
                             </left>
                             <right>
                                 <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
                                     <children>
                                         <Button mnemonicParsing="false" onAction="#onPrefsMame">
                                             <font>
-                                                <Font size="10.0"/>
+                                                <Font size="10.0" />
                                             </font>
                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog"/>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" />
                                             </graphic>
                                             <tooltip>
-                                                <Tooltip text="Open VPin MAME settings"/>
+                                                <Tooltip text="Open VPin MAME settings" />
                                             </tooltip>
                                         </Button>
                                     </children>
@@ -349,31 +309,30 @@
                     <graphic>
                         <BorderPane prefWidth="560.0">
                             <left>
-                                <Label text="Virtual Pinball Spreadsheet" BorderPane.alignment="CENTER"/>
+                                <Label text="Virtual Pinball Spreadsheet" BorderPane.alignment="CENTER" />
                             </left>
                             <right>
                                 <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
-                                    <Button mnemonicParsing="false" onAction="#onVpsBtn" styleClass="link-component"
-                                            BorderPane.alignment="CENTER">
+                                    <Button mnemonicParsing="false" onAction="#onVpsBtn" styleClass="link-component" BorderPane.alignment="CENTER">
                                         <font>
-                                            <Font size="10.0"/>
+                                            <Font size="10.0" />
                                         </font>
                                         <graphic>
-                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link"/>
+                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" />
                                         </graphic>
                                         <tooltip>
-                                            <Tooltip text="https://virtual-pinball-spreadsheet.web.app/"/>
+                                            <Tooltip text="https://virtual-pinball-spreadsheet.web.app/" />
                                         </tooltip>
                                     </Button>
                                     <Button mnemonicParsing="false" onAction="#onVpsPrefs">
                                         <font>
-                                            <Font size="10.0"/>
+                                            <Font size="10.0" />
                                         </font>
                                         <graphic>
-                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog"/>
+                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" />
                                         </graphic>
                                         <tooltip>
-                                            <Tooltip text="Open VPin MAME settings"/>
+                                            <Tooltip text="Open VPin MAME settings" />
                                         </tooltip>
                                     </Button>
                                 </HBox>
@@ -387,21 +346,20 @@
                             <left>
                                 <Label text="Script Details" textFill="WHITE" BorderPane.alignment="CENTER">
                                     <font>
-                                        <Font size="14.0"/>
+                                        <Font size="14.0" />
                                     </font>
                                 </Label>
                             </left>
                             <right>
-                                <Button fx:id="scriptBtn" mnemonicParsing="false" onAction="#onScript"
-                                        styleClass="external-component" BorderPane.alignment="CENTER">
+                                <Button fx:id="scriptBtn" mnemonicParsing="false" onAction="#onScript" styleClass="external-component" BorderPane.alignment="CENTER">
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new"/>
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
                                     </graphic>
                                     <tooltip>
-                                        <Tooltip text="Open script in Visual Pinball X"/>
+                                        <Tooltip text="Open script in Visual Pinball X" />
                                     </tooltip>
                                     <font>
-                                        <Font size="10.0"/>
+                                        <Font size="10.0" />
                                     </font>
                                 </Button>
                             </right>

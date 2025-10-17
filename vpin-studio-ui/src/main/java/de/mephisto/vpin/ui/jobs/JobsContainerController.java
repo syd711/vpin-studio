@@ -73,7 +73,7 @@ public class JobsContainerController implements Initializable {
     stopBtn.setDisable(true);
     setCancelled();
 
-    EventManager.getInstance().notifyJobFinished(jobDescriptor.getJobType(), jobDescriptor.getGameId());
+    poller.notifyJobFinished(jobDescriptor);
   }
 
   public void setCancelled() {
@@ -114,7 +114,6 @@ public class JobsContainerController implements Initializable {
       }
 
       if (jobDescriptor.getProgress() == 1 || jobDescriptor.getError() != null) {
-        LOG.info("Finalizing job container: " + jobDescriptor);
         finalizedJob = true;
 
         boolean error = jobDescriptor.getError() != null;
@@ -140,7 +139,7 @@ public class JobsContainerController implements Initializable {
         removeBtn.setDisable(false);
 
 
-        EventManager.getInstance().notifyJobFinished(jobDescriptor.getJobType(), jobDescriptor.getGameId());
+        poller.notifyJobFinished(jobDescriptor);
       }
       else if (jobDescriptor.getProgress() > 0) {
         progressBar.setProgress(jobDescriptor.getProgress());

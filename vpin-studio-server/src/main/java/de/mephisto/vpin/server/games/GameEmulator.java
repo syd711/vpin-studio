@@ -33,6 +33,8 @@ public class GameEmulator {
   private String nvramDirectory;
   private String cfgDirectory;
 
+  private String keepDisplays;
+
   private int id;
   private boolean enabled;
 
@@ -68,6 +70,14 @@ public class GameEmulator {
 
   public void setType(EmulatorType type) {
     this.type = type;
+  }
+
+  public String getKeepDisplays() {
+    return keepDisplays;
+  }
+
+  public void setKeepDisplays(String keepDisplays) {
+    this.keepDisplays = keepDisplays;
   }
 
   public void setSafeName(String safeName) {
@@ -149,8 +159,18 @@ public class GameEmulator {
   }
 
   @JsonIgnore
-  public boolean isFxEmulator() {
-    return type.isFxEmulator();
+  public boolean isZenEmulator() {
+    return type.isZenEmulator();
+  }
+
+  @JsonIgnore
+  public boolean isPupGameImportSupported() {
+    return type.isPupGameImportSupported();
+  }
+
+  @JsonIgnore
+  public boolean isZaccariaEmulator() {
+    return type.isZaccariaEmulator();
   }
 
   @JsonIgnore

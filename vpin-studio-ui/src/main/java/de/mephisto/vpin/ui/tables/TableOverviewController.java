@@ -11,10 +11,7 @@ import de.mephisto.vpin.restclient.backups.BackupDescriptorRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.frontend.Frontend;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
-import de.mephisto.vpin.restclient.frontend.TableDetails;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
@@ -488,6 +485,16 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         WidgetFactory.showInformation(stage, "Authentication Required", "Go to the backup settings for more details.");
       }
     });
+  }
+
+
+  @FXML
+  public void onTagging() {
+    List<GameRepresentation> selectedItems = getSelections();
+    if (selectedItems.isEmpty()) {
+      return;
+    }
+    TableDialogs.openTaggingDialog(selectedItems);
   }
 
   @FXML
@@ -1008,14 +1015,28 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
           //icon = WidgetFactory.createIcon("mdi2n-numeric-" + nbVersions + "-circle-outline", 24, getIconColor(value));
         }
         else {
-          icon = WidgetFactory.createCheckIcon(value.isDisabled() ? DISABLED_COLOR : "#FFFFFF");
+          icon = WidgetFactory.createEditIcon(value.isDisabled() ? DISABLED_COLOR : "#FFFFFF");
         }
+
+        Button button = new Button();
+        icon.setIconSize(22);
+        button.getStyleClass().add("table-media-button");
+        button.setGraphic(icon);
+        button.setOnAction(new EventHandler<ActionEvent>() {
+          @Override
+          public void handle(ActionEvent event) {
+            tablesController.switchToBackglassManagerTab(value);
+          }
+        });
+
         if (hasUpdate) {
-          return WidgetFactory.addUpdateIcon(icon, "A new backglass version or an update for the existing one is available");
+          button.setTooltip(new Tooltip("A new backglass version or an update for the existing one is available"));
         }
         else {
-          return WidgetFactory.wrapIcon(icon, value.getDirectB2SPath());
+          button.setTooltip(new Tooltip(value.getDirectB2SPath()));
         }
+
+        return button;
       }
       else if (hasUpdate) {
         return WidgetFactory.createUpdateIcon("A new backglass version or an update for the existing one is available");
@@ -1048,14 +1069,54 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     BaseLoadingColumn.configureColumn(columnINI, (value, model) -> {
       if (value.getIniPath() != null) {
-        return WidgetFactory.createCheckboxIcon(getIconColor(value), value.getIniPath());
+        Button compBtn = new Button();
+        compBtn.getStyleClass().add("table-media-button");
+        compBtn.setTooltip(new Tooltip("Edit " + value.getIniPath()));
+        FontIcon cmpIcon = WidgetFactory.createEditIcon(null);
+        cmpIcon.setIconSize(22);
+        compBtn.setGraphic(cmpIcon);
+        compBtn.setOnAction(new EventHandler<ActionEvent>() {
+          @Override
+          public void handle(ActionEvent event) {
+            try {
+              GameRepresentation gameRepresentation = value;
+              String iniPath = gameRepresentation.getIniPath();
+              Studio.editGameFile(gameRepresentation, iniPath);
+            }
+            catch (Exception e) {
+              LOG.error("Failed to open .ini file: {}", e.getMessage(), e);
+              WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open .ini file: " + e.getMessage());
+            }
+          }
+        });
+        return compBtn;
       }
       return null;
     }, this, true);
 
     BaseLoadingColumn.configureColumn(columnRES, (value, model) -> {
       if (value.getResPath() != null) {
-        return WidgetFactory.createCheckboxIcon(getIconColor(value), value.getResPath());
+        Button compBtn = new Button();
+        compBtn.getStyleClass().add("table-media-button");
+        compBtn.setTooltip(new Tooltip("Edit " + value.getResPath()));
+        FontIcon cmpIcon = WidgetFactory.createEditIcon(null);
+        cmpIcon.setIconSize(22);
+        compBtn.setGraphic(cmpIcon);
+        compBtn.setOnAction(new EventHandler<ActionEvent>() {
+          @Override
+          public void handle(ActionEvent event) {
+            try {
+              GameRepresentation gameRepresentation = value;
+              String resPath = gameRepresentation.getResPath();
+              Studio.editGameFile(gameRepresentation, resPath);
+            }
+            catch (Exception e) {
+              LOG.error("Failed to open .res file: {}", e.getMessage(), e);
+              WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open .res file: " + e.getMessage());
+            }
+          }
+        });
+        return compBtn;
       }
       return null;
     }, this, true);
@@ -1217,7 +1278,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       Label label = new Label("-");
       PinVolPreferences prefs = client.getPinVolService().getPinVolTablePreferences();
       GameRepresentation game = model.getGame();
-      PinVolTableEntry entry = prefs.getTableEntry(game.getGameFileName(), game.isVpxGame(), game.isFpGame());
+      PinVolTableEntry entry = prefs.getTableEntry(game.getGameFileName(), client.getEmulatorService().isVpxGame(game), client.getEmulatorService().isFpGame(game));
       if (entry != null) {
         StringBuilder builder = new StringBuilder();
         builder.append(entry.getPrimaryVolume());
@@ -2033,8 +2094,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     this.exportBtn.setDisable(!vpxOrFpEmulator);
     this.deleteBtn.setVisible(vpxOrFpEmulator);
     this.scanBtn.setVisible(vpxEmulator);
-    this.playButtonController.setVisible(vpxOrFpEmulator);
-    this.stopBtn.setVisible(vpxOrFpEmulator);
+//    this.playButtonController.setVisible(vpxOrFpEmulator);
+//    this.stopBtn.setVisible(vpxOrFpEmulator);
 
     this.uploadsButtonController.updateVisibility(vpxOrFpEmulator, vpxEmulator, fpEmulator);
 
@@ -2055,18 +2116,22 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     boolean vpxMode = newValue == null || newValue.isVpxEmulator();
     boolean fpMode = newValue == null || newValue.isFpEmulator();
     boolean fxMode = newValue == null || newValue.isFxEmulator();
+    boolean fx1Mode = newValue == null || newValue.getType().equals(EmulatorType.ZenFX);
+    boolean fx3Mode = newValue == null || newValue.getType().equals(EmulatorType.ZenFX3);
+    boolean pinballMMode = newValue != null && newValue.getType().equals(EmulatorType.PinballM);
+    boolean zaccariaMode = newValue == null || newValue.isZaccariaEmulator();
 
     columnVersion.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnVersion());
     columnEmulator.setVisible((vpxMode || fpMode) && !assetManagerMode && !Features.IS_STANDALONE && uiSettings.isColumnEmulator());
-    columnVPS.setVisible((vpxMode || fpMode || fxMode) && !assetManagerMode && uiSettings.isColumnVpsStatus());
+    columnVPS.setVisible((vpxMode || fpMode || fxMode || zaccariaMode) && !assetManagerMode && uiSettings.isColumnVpsStatus());
     columnPatchVersion.setVisible((vpxMode || fpMode || fxMode) && !assetManagerMode && uiSettings.isColumnPatchVersion());
-    columnRom.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnRom());
+    columnRom.setVisible(pinballMMode || fx1Mode || (vpxMode && !assetManagerMode && uiSettings.isColumnRom()));
     columnB2S.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnBackglass());
     columnRating.setVisible((vpxMode || fpMode) && !assetManagerMode && Features.RATINGS && uiSettings.isColumnRating());
     columnPUPPack.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPupPack() && Features.PUPPACKS_ENABLED);
     columnPinVol.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPinVol());
     columnAltSound.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnAltSound());
-    columnAltColor.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnAltColor());
+    columnAltColor.setVisible((vpxMode || fx1Mode || fx3Mode) && !assetManagerMode && uiSettings.isColumnAltColor());
     columnPOV.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPov());
     columnTutorials.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnTutorial());
     columnINI.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnIni());
@@ -2075,8 +2140,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     columnDateAdded.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnDateAdded());
     columnDateModified.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnDateModified());
     columnLauncher.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnLauncher());
-    columnComment.setVisible((vpxMode || fpMode || fxMode) && !assetManagerMode && uiSettings.isColumnComment());
-    columnPlaylists.setVisible((vpxMode || fpMode || fxMode) && !assetManagerMode && Features.PLAYLIST_ENABLED && uiSettings.isColumnPlaylists());
+    columnComment.setVisible((vpxMode || fpMode || fxMode || zaccariaMode) && !assetManagerMode && uiSettings.isColumnComment());
+    columnPlaylists.setVisible((vpxMode || fpMode || fxMode || zaccariaMode) && !assetManagerMode && Features.PLAYLIST_ENABLED && uiSettings.isColumnPlaylists());
   }
 
   @Override
@@ -2104,10 +2169,10 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void jobFinished(@NonNull JobFinishedEvent event) {
     JobType jobType = event.getJobType();
     if (jobType.equals(JobType.TABLE_BACKUP)) {
-      Platform.runLater(() -> {
+      new Thread(() -> {
         client.getBackupService().invalidateBackupCache();
-        EventManager.getInstance().notifyTableChange(event.getGameId(), null);
-      });
+      }).start();
+      EventManager.getInstance().notifyTableChange(event.getGameId(), null);
     }
   }
 

@@ -67,7 +67,7 @@ public class BackupDownloadDialogController implements Initializable, DialogCont
     }
     catch (Exception e) {
       LOG.error("Download failed: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Downloading archive files failed.", "Please check the log file for details.", "Error: " + e.getMessage());
+      WidgetFactory.showAlert(Studio.stage, "Downloading backup files failed.", "Please check the log file for details.", "Error: " + e.getMessage());
     }
     finally {
       stage.close();

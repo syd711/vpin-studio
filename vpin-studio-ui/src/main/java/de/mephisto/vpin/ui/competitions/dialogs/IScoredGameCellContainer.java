@@ -34,7 +34,7 @@ public class IScoredGameCellContainer extends HBox {
 
     InputStream gameMediaItem = ServerFX.class.getResourceAsStream("avatar-blank.png");
     for (GameRepresentation game : games) {
-      InputStream gameItem = client.getGameMediaItem(game.getId(), VPinScreen.Wheel);
+      InputStream gameItem = client.getWheelIcon(game.getId(), true);
       if (gameItem != null) {
         gameMediaItem = gameItem;
         break;

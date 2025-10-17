@@ -11,9 +11,7 @@ import de.mephisto.vpin.restclient.preferences.AutoFillSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.emulators.EmulatorService;
-import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameEmulator;
-import de.mephisto.vpin.server.games.GameLifecycleService;
+import de.mephisto.vpin.server.games.*;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -59,6 +57,9 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   @Autowired
   private GameLifecycleService gameLifecycleService;
+
+  @Autowired
+  private GameDetailsRepository gameDetailsRepository;
 
   private FrontendStatusService frontendStatusService;
 
@@ -401,11 +402,19 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     GameEmulator gameEmulator = emulatorService.getGameEmulator(emuId);
     String gameFileName = gameEmulator.getGameFileName(file);
     String gameDisplayName = baseName.replaceAll("-", " ").replaceAll("_", " ");
-    return getFrontendConnector().importGame(emuId, formattedBaseName, gameFileName, gameDisplayName, null, new Date(file.lastModified()));
+
+    TableDetails tableDetails = new TableDetails();
+    tableDetails.setEmulatorId(emuId);
+    tableDetails.setStatus(1);
+    tableDetails.setGameName(formattedBaseName);
+    tableDetails.setGameFileName(gameFileName);
+    tableDetails.setGameDisplayName(gameDisplayName);
+    tableDetails.setDateModified(new Date(file.lastModified()));
+    return importGame(tableDetails);
   }
 
-  public int importGame(int emulatorId, @NonNull String gameName, @NonNull String gameFileName, @NonNull String gameDisplayName, @Nullable String launchCustomVar, @NonNull java.util.Date dateFileUpdated) {
-    return getFrontendConnector().importGame(emulatorId, gameName, gameFileName, gameDisplayName, launchCustomVar, dateFileUpdated);
+  public int importGame(@NonNull TableDetails tableDetails) {
+    return getFrontendConnector().importGame(tableDetails);
   }
 
   public boolean deleteGame(int id) {
@@ -672,8 +681,20 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   }
 
   public boolean deleteEmulator(int emulatorId) {
+    List<Game> gamesByEmulator = getFrontendConnector().getGamesByEmulator(emulatorId);
     killFrontend();
-    return getFrontendConnector().deleteEmulator(emulatorId);
+    boolean result = getFrontendConnector().deleteEmulator(emulatorId);
+    if (result) {
+      LOG.info("Sucessfully deleted emulator {}, now deleting Studio game details.", emulatorId);
+      for (Game game : gamesByEmulator) {
+        GameDetails byPupId = gameDetailsRepository.findByPupId(game.getId());
+        if (byPupId != null) {
+          gameDetailsRepository.delete(byPupId);
+        }
+      }
+      LOG.info("Studio game details deletion completed, deleted {} games", gamesByEmulator.size());
+    }
+    return result;
   }
 
   @Override

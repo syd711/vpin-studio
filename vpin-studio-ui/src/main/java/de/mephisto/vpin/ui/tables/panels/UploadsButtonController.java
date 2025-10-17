@@ -162,7 +162,7 @@ public class UploadsButtonController implements Initializable {
     if (selectedItems != null && !selectedItems.isEmpty()) {
       boolean b = TableDialogs.directUpload(stage, AssetType.INI, selectedItems.get(0), null);
       if (b) {
-        tablesController.getTablesSideBarController().getTitledPaneIni().setExpanded(true);
+        tablesController.getTablesSideBarController().getTitledPaneTableData().setExpanded(true);
       }
     }
   }
@@ -301,7 +301,7 @@ public class UploadsButtonController implements Initializable {
   }
 
   public void setCompact(boolean b) {
-    if(!b) {
+    if (!b) {
       uploadTableBtn.setText("Uploads");
     }
   }

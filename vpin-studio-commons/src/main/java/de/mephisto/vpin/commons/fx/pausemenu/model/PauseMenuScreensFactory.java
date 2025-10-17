@@ -46,7 +46,7 @@ public class PauseMenuScreensFactory {
   private static FrontendScreenAsset createScreenStage(OverlayClient client, GameRepresentation game, FrontendPlayerDisplay display, VPinScreen screen, FrontendMediaRepresentation frontendMedia) {
     FrontendMediaItemRepresentation defaultMediaItem = frontendMedia.getDefaultMediaItem(screen);
     if (defaultMediaItem != null) {
-      InputStream imageStream = client.getGameMediaItem(game.getId(), screen);
+      InputStream imageStream = client.getWheelIcon(game.getId(), false);
       if (imageStream != null) {
 
         FrontendScreenAsset asset = new FrontendScreenAsset();

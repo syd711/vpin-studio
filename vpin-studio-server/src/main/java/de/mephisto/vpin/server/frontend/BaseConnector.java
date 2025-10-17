@@ -12,6 +12,7 @@ import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.tagging.TaggingUtil;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.fp.FPService;
 import de.mephisto.vpin.server.games.Game;
@@ -21,7 +22,6 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -246,6 +246,7 @@ public abstract class BaseConnector implements FrontendConnector {
     game.setVersion(details != null ? details.getGameVersion() : null);
     game.setRating(details != null && details.getGameRating() != null ? details.getGameRating() : 0);
     game.setRom(details != null && details.getRomName() != null ? details.getRomName() : null);
+    game.setTags(TaggingUtil.getTags(details.getTags()));
 
     File table = new File(emu.getGamesDirectory(), filename);
     game.setGameFile(table);
@@ -402,21 +403,11 @@ public abstract class BaseConnector implements FrontendConnector {
   }
 
   @Override
-  public int importGame(int emulatorId,
-                        @NonNull String gameName, @NonNull String gameFileName, @NonNull String gameDisplayName,
-                        @Nullable String launchCustomVar, @NonNull java.util.Date dateFileUpdated) {
-    LOG.info("Add game entry for '" + gameName + "', file name '" + gameFileName + "'");
+  public int importGame(@NonNull TableDetails tableDetails) {
+    String gameFileName = tableDetails.getGameFileName();
+    int emulatorId = tableDetails.getEmulatorId();
 
-    TableDetails details = new TableDetails();
-    details.setEmulatorId(emulatorId);
-    details.setGameName(gameName);
-    details.setGameFileName(gameFileName);
-    details.setGameDisplayName(gameDisplayName);
-    details.setDateAdded(new java.util.Date());
-    details.setLaunchCustomVar(launchCustomVar);
-    details.setStatus(1); // enable game
-
-    updateGameInDb(emulatorId, gameFileName, details);
+    updateGameInDb(emulatorId, gameFileName, tableDetails);
 
     int id = filenameToId(emulatorId, gameFileName);
     GameEntry e = new GameEntry(emulatorId, gameFileName, id);
@@ -892,6 +883,10 @@ public abstract class BaseConnector implements FrontendConnector {
                     p.info().command().get().contains("VPXStarter") ||
                     p.info().command().get().contains("VPinballX") ||
                     p.info().command().get().contains("Future Pinball") ||
+                    p.info().command().get().contains("PinballFX") ||
+                    p.info().command().get().contains("Pinball FX") ||
+                    p.info().command().get().contains("PinballM") ||
+                    p.info().command().get().contains("Zaccaria") ||
                     p.info().command().get().startsWith("VPinball") ||
                     p.info().command().get().contains("B2SBackglassServerEXE") ||
                     p.info().command().get().contains("DOF")))

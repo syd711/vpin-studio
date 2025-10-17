@@ -38,8 +38,8 @@
                                  <TableColumn fx:id="columnPatchVersion" minWidth="80.0" prefWidth="105.0" style="-fx-alignment: BASELINE_LEFT;" text="Patch Version" />
                                  <TableColumn fx:id="columnPlaylists" minWidth="51.199951171875" prefWidth="120.0" style="-fx-alignment: BASELINE_CENTER;" text="Playlists" />
                                  <TableColumn fx:id="columnRating" minWidth="51.199951171875" prefWidth="120.0" style="-fx-alignment: BASELINE_CENTER;" text="Rating" />
-                                 <TableColumn fx:id="columnB2S" minWidth="51.199951171875" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Backglass" />
                                  <TableColumn fx:id="columnPUPPack" minWidth="57.5999755859375" prefWidth="85.0" style="-fx-alignment: CENTER;" text="PUP Pack" />
+                                 <TableColumn fx:id="columnB2S" minWidth="51.199951171875" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Backglass" />
                                  <TableColumn fx:id="columnINI" minWidth="57.5999755859375" prefWidth="30.0" style="-fx-alignment: CENTER;" text="INI" />
                                  <TableColumn fx:id="columnRES" minWidth="57.5999755859375" prefWidth="30.0" style="-fx-alignment: CENTER;" text="RES" />
                                  <TableColumn fx:id="columnPOV" minWidth="57.5999755859375" prefWidth="30.0" style="-fx-alignment: CENTER;" text="POV" />
@@ -250,7 +250,7 @@
                      </children>
                   </StackPane>
                   <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
-                  <ComboBox fx:id="emulatorCombo" prefWidth="170.0" promptText="All VPX Tables" />
+                  <ComboBox fx:id="emulatorCombo" prefWidth="190.0" promptText="All VPX Tables" />
                   <Button fx:id="emulatorBtn" layoutX="704.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEmulatorManager" textFill="WHITE">
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2c-controller" iconSize="18" />

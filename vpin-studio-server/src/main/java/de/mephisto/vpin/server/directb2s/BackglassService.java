@@ -346,9 +346,11 @@ public class BackglassService implements InitializingBean {
   public DirectB2STableSettings getTableSettings(Game game) {
     String rom = game.getRom();
     if (StringUtils.isNotEmpty(rom)) {
+      rom = StringUtils.deleteWhitespace(rom);
       DirectB2STableSettings entry = cacheB2STableSettings.get(rom);
       if (entry == null && !StringUtils.isEmpty(game.getRomAlias())) {
-        entry = cacheB2STableSettings.get(game.getRomAlias());
+        String romAlias = StringUtils.deleteWhitespace(game.getRomAlias());
+        entry = cacheB2STableSettings.get(romAlias);
       }
 
       if (entry == null && !StringUtils.isEmpty(game.getTableName())) {
@@ -552,7 +554,7 @@ public class BackglassService implements InitializingBean {
   @Nullable
   private DirectB2S reloadDirectB2SAndVersions(@NonNull GameEmulator emulator, String fileName) {
     //do not check this for emulators that do not support backglasses anyway
-    if (emulator.isMameEmulator() || emulator.isOtherEmulator()) {
+    if (emulator.isMameEmulator() || emulator.isOtherEmulator() || emulator.isZaccariaEmulator() || emulator.isZenEmulator()) {
       return null;
     }
 
