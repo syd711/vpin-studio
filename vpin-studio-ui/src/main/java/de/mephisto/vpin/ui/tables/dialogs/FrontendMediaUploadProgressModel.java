@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.ProgressModel;
@@ -19,7 +20,6 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
-import static de.mephisto.vpin.restclient.jobs.JobType.POPPER_MEDIA_INSTALL;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class FrontendMediaUploadProgressModel extends ProgressModel<File> {
@@ -82,7 +82,7 @@ public class FrontendMediaUploadProgressModel extends ProgressModel<File> {
       if (gameId >= 0) {
         uploadGameMedia(progressResultModel, next);
       }
-      else if (playlistId >= 0) {
+      else {
         uploadPlaylistMedia(progressResultModel, next);
       }
       progressResultModel.addProcessed();
@@ -105,7 +105,9 @@ public class FrontendMediaUploadProgressModel extends ProgressModel<File> {
       });
     }
     else if (!iterator.hasNext()) {
-      //nothing
+      Platform.runLater(() -> {
+        EventManager.getInstance().notifyJobFinished(JobType.PLAYLIST_MEDIA_INSTALL, playlistId);
+      });
     }
   }
 
@@ -118,7 +120,7 @@ public class FrontendMediaUploadProgressModel extends ProgressModel<File> {
     }
     else if (!iterator.hasNext()) {
       Platform.runLater(() -> {
-        EventManager.getInstance().notifyJobFinished(POPPER_MEDIA_INSTALL, gameId);
+        EventManager.getInstance().notifyJobFinished(JobType.POPPER_MEDIA_INSTALL, gameId);
       });
     }
   }
