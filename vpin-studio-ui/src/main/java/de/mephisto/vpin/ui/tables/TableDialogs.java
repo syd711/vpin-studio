@@ -35,6 +35,7 @@ import de.mephisto.vpin.ui.tables.panels.BaseGameModel;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -222,8 +223,11 @@ public class TableDialogs {
       }
       Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload backglass for \"" + game.getGameDisplayName() + "\"?", help2);
       if (result.get().equals(ButtonType.OK)) {
-        DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", file, false, finalizer);
-        ProgressDialog.createProgressDialog(model);
+        DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", file, false);
+        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
+        if (/*resultModel.isSuccess() &&*/ finalizer != null) {
+          finalizer.run();
+        }
         return true;
       }
     }
@@ -239,8 +243,11 @@ public class TableDialogs {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload .res file for \"" + game.getGameDisplayName() + "\"?", help2);
       if (result.get().equals(ButtonType.OK)) {
         Platform.runLater(() -> {
-          ResUploadProgressModel model = new ResUploadProgressModel(game.getId(), "Res File Upload", file, finalizer);
-          ProgressDialog.createProgressDialog(model);
+          ResUploadProgressModel model = new ResUploadProgressModel(game.getId(), "Res File Upload", file);
+          ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
+          if (/*resultModel.isSuccess() &&*/ finalizer != null) {
+            finalizer.run();
+          }
         });
         return true;
       }
@@ -257,8 +264,11 @@ public class TableDialogs {
         }
         Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload .ini file for \"" + game.getGameDisplayName() + "\"?", help2);
         if (result.get().equals(ButtonType.OK)) {
-          IniUploadProgressModel model = new IniUploadProgressModel(game.getId(), "Ini Upload", file, finalizer);
-          ProgressDialog.createProgressDialog(model);
+          IniUploadProgressModel model = new IniUploadProgressModel(game.getId(), "Ini Upload", file);
+          ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
+          if (/*resultModel.isSuccess() &&*/ finalizer != null) {
+            finalizer.run();
+          }
         }
       });
       return true;
@@ -266,14 +276,17 @@ public class TableDialogs {
     return false;
   }
 
-  public static boolean directBamCfgUpload(Stage stage, GameRepresentation game, File file, Runnable finalizer) {
+  public static boolean _directBamCfgUpload(Stage stage, GameRepresentation game, File file, Runnable finalizer) {
     if (file != null && file.exists()) {
       Platform.runLater(() -> {
         String help2 = null;
         Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload BAM .cfg file for \"" + game.getGameDisplayName() + "\"?", help2);
         if (result.get().equals(ButtonType.OK)) {
-          BamCfgUploadProgressModel model = new BamCfgUploadProgressModel("BAM .cfg Upload", Arrays.asList(file), game.getId(), finalizer);
-          ProgressDialog.createProgressDialog(model);
+          BamCfgUploadProgressModel model = new BamCfgUploadProgressModel("BAM .cfg Upload", Arrays.asList(file), game.getId());
+          ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
+          if (/*resultModel.isSuccess() &&*/ finalizer != null) {
+            finalizer.run();
+          }
         }
       });
       return true;
@@ -290,8 +303,11 @@ public class TableDialogs {
         }
         Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload .pov file for \"" + game.getGameDisplayName() + "\"?", help2);
         if (result.get().equals(ButtonType.OK)) {
-          PovUploadProgressModel model = new PovUploadProgressModel(game.getId(), "POV Upload", file, finalizer);
-          ProgressDialog.createProgressDialog(model);
+          PovUploadProgressModel model = new PovUploadProgressModel(game.getId(), "POV Upload", file);
+          ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
+          if (/*resultModel.isSuccess() &&*/ finalizer != null) {
+            finalizer.run();
+          }
         }
       });
       return true;

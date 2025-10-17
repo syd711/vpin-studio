@@ -18,7 +18,7 @@ public class AltColorUploadController extends BaseUploadController {
 
   @Override
   protected UploadProgressModel createUploadModel() {
-    return new AltColorUploadProgressModel(this.game.getId(), "ALT Color Upload", getSelection(), "altcolor", finalizer);
+    return new AltColorUploadProgressModel(this.game.getId(), "ALT Color Upload", getSelection(), "altcolor");
   }
 
 }

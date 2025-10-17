@@ -26,7 +26,7 @@ public class BAMCfgUploadController extends BaseUploadController {
 
   @Override
   protected UploadProgressModel createUploadModel() {
-    return new BamCfgUploadProgressModel("BAM Configuration File Upload", getSelections(), game.getId(), finalizer);
+    return new BamCfgUploadProgressModel("BAM Configuration File Upload", getSelections(), game.getId());
   }
 
   protected void refreshEmulators() {

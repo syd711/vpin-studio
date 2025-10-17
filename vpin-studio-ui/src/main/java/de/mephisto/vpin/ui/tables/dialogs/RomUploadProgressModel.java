@@ -10,42 +10,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.List;
 
 public class RomUploadProgressModel extends UploadProgressModel {
   private final static Logger LOG = LoggerFactory.getLogger(RomUploadProgressModel.class);
 
-  private final Iterator<File> iterator;
   private final int emuId;
-  private final List<File> files;
   private double percentage = 0;
 
-  public RomUploadProgressModel(String title, List<File> files, int emuId, Runnable finalizer) {
-    super(files, title, finalizer);
-    this.files = files;
-    this.iterator = files.iterator();
+  public RomUploadProgressModel(String title, List<File> files, int emuId) {
+    super(files, title);
     this.emuId = emuId;
-  }
-
-  @Override
-  public boolean isShowSummary() {
-    return false;
-  }
-
-  @Override
-  public File getNext() {
-    return iterator.next();
-  }
-
-  @Override
-  public String nextToString(File file) {
-    return file.getName();
-  }
-
-  @Override
-  public int getMax() {
-    return files.size();
   }
 
   @Override
@@ -53,7 +28,7 @@ public class RomUploadProgressModel extends UploadProgressModel {
     try {
       UploadDescriptor descriptor = Studio.client.getMameService().uploadRom(emuId, next, percent -> {
         double total = percentage + percent;
-        progressResultModel.setProgress(total / this.files.size());
+        progressResultModel.setProgress(total / getMax());
       });
       progressResultModel.addProcessed();
       percentage++;
@@ -68,10 +43,5 @@ public class RomUploadProgressModel extends UploadProgressModel {
         WidgetFactory.showAlert(Studio.stage, "Error", "ROM upload failed: " + e.getMessage());
       });
     }
-  }
-
-  @Override
-  public boolean hasNext() {
-    return iterator.hasNext();
   }
 }

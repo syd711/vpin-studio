@@ -60,7 +60,7 @@ public class Directb2sUploadController extends BaseUploadController {
       stage.close();
     });
 
-    DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", getSelection(), append, finalizer);
+    DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", getSelection(), append);
     ProgressDialog.createProgressDialog(model);
   }
 

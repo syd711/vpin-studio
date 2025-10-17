@@ -11,6 +11,6 @@ public class CfgUploadController extends BaseUploadController {
 
   @Override
   protected UploadProgressModel createUploadModel() {
-    return new CfgUploadProgressModel("Config File Upload", getSelections(), getSelectedEmulatorId(), finalizer);
+    return new CfgUploadProgressModel("Config File Upload", getSelections(), getSelectedEmulatorId());
   }
 }
