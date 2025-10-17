@@ -59,6 +59,22 @@ public class CardTemplatesService {
     return getTemplateOrDefault(updatedMapping.getId());
   }
 
+  public CardTemplate createFromJson(String templateName, String json) {
+    TemplateMapping m = new TemplateMapping();
+    try {
+      CardTemplate template = CardTemplate.fromJson(CardTemplate.class, json);
+      template.setId(null);
+      template.setName(templateName);
+      m.setCardTemplate(template);
+      TemplateMapping updatedMapping = templateMappingRepository.saveAndFlush(m);
+      return getTemplateOrDefault(updatedMapping.getId());
+    }
+    catch (Exception e) {
+      LOG.error("Cannot create form json", e);
+      return null;
+    }
+  }
+
   public synchronized boolean delete(long id) {
     Optional<TemplateMapping> byId = templateMappingRepository.findById(id);
     if (byId.isPresent()) {

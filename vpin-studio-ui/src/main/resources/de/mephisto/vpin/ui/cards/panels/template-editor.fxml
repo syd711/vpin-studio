@@ -103,6 +103,19 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
                     </graphic>
                 </Button>
+
+                <!--Button fx:id="importBtn" mnemonicParsing="false" onAction="#onImport" textFill="WHITE">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                    <tooltip>
+                        <Tooltip text="Import Template" />
+                    </tooltip>
+                    <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-import-outline" iconSize="18" />
+                    </graphic>
+                </Button-->
+
                 <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" textFill="WHITE">
                     <font>
                         <Font size="14.0" />

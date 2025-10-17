@@ -227,7 +227,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   }
 
   //TODO should duplicate check be done on all templates accross templateType like here, or only on templates of same type ?
-  private boolean checkDuplicate(String s) {
+  public boolean checkDuplicate(String s) {
     List<CardTemplate> items = client.getHighscoreCardTemplatesClient().getTemplates();
     Optional<CardTemplate> duplicate = items.stream().filter(t -> t.getName().equals(s)).findFirst();
     if (duplicate.isPresent()) {
@@ -237,6 +237,22 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     return false;
   }
 
+  @FXML
+  private void onImport(ActionEvent e) {
+    String gameName = gameRepresentation.get().getGameName();
+    if (gameName.contains("(")) {
+      gameName = gameName.substring(0, gameName.indexOf("("));
+    }
+    if (gameName.contains("[")) {
+      gameName = gameName.substring(0, gameName.indexOf("["));
+    }
+    gameName = gameName.trim();
+    
+    Stage stage = Dialogs.createStudioDialogStage(DialogTemplateEditorUploadController.class, "dialog-template-editor-upload.fxml", "Cards Template Upload");
+    DialogTemplateEditorUploadController controller = (DialogTemplateEditorUploadController) stage.getUserData();
+    controller.setData(stage, this, gameName);
+    stage.showAndWait();
+  }
 
   @FXML
   private void onCreate(ActionEvent e) {
@@ -254,26 +270,24 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     String s = WidgetFactory.showInputDialog(stage, "New Template", "Enter Template Name", "Enter a meaningful name that identifies the card design.", "The values of the selected template \"" + template.getName() + "\" will be used as default.", gameName);
-    if (!StringUtils.isEmpty(s)) {
-      if (checkDuplicate(s)) {
-        return;
-      }
-
+    if (!StringUtils.isEmpty(s) && ! checkDuplicate(s)) {
       template.setName(s);
       template.setParentId(null);
       template.setId(null);
       JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().save(template))
-          .thenAcceptLater(newTemplate -> {
-            refreshTemplates(newTemplate);
-            selectTemplateInCombo(newTemplate);
-            assignTemplate(newTemplate);
-          })
+          .thenAcceptLater(newTemplate -> doOnCreate(newTemplate))
           .onErrorLater(ex -> {
             LOG.error("Failed to create new template: " + ex.getMessage(), ex);
             WidgetFactory.showAlert(Studio.stage, "Creating Template Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
           });
     }
   }
+
+  public void doOnCreate(CardTemplate newTemplate) {
+    refreshTemplates(newTemplate);
+    selectTemplateInCombo(newTemplate);
+    assignTemplate(newTemplate);
+  };
 
   @FXML
   private void onRename(ActionEvent e) {

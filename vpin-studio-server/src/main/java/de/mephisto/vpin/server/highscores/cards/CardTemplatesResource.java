@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.cards.CardTemplateType;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -39,5 +40,15 @@ public class CardTemplatesResource {
                                 @JsonArg("switchToCardMode") boolean switchToCardMode, 
                                 @JsonArg("templateType") String templateType) throws Exception {
     return cardTemplatesService.assignTemplate(gameId, templateId, switchToCardMode, CardTemplateType.valueOf(templateType));
+  }
+
+  @PostMapping("/upload")
+  public CardTemplate uploadTemplate(@RequestParam(value = "file", required = false) MultipartFile file,
+                                     @RequestParam(value = "templateName", required = true) String templateName) throws Exception {
+    if (file == null) {
+      return null;
+    }
+    String json = new String(file.getBytes());
+    return cardTemplatesService.createFromJson(templateName, json);
   }
 }

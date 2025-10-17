@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.ByteArrayInputStream;
@@ -106,7 +107,7 @@ public class HighscoreCardsServiceClient extends VPinStudioClientService {
   private boolean doUploadImage(File file, FileUploadProgressListener listener, String path) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + path;
-      HttpEntity<?> upload = createUpload(file, -1, null, AssetType.CARD_ASSET, listener);
+      HttpEntity<MultiValueMap<String, Object>> upload = createUpload(file, -1, null, AssetType.CARD_ASSET, listener);
       new RestTemplate().exchange(url, HttpMethod.POST, upload, Boolean.class);
       finalizeUpload(upload);
       return true;
