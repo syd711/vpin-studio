@@ -28,6 +28,7 @@ import de.mephisto.vpin.ui.playlistmanager.PlaylistDialogs;
 import de.mephisto.vpin.ui.preferences.dialogs.PreferencesDialogs;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
+import de.mephisto.vpin.ui.tables.dialogs.TableAssetManagerPane.MediaPane;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.StudioFolderChooser;
@@ -44,11 +45,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -59,6 +57,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.apache.commons.io.FilenameUtils;
@@ -66,13 +65,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
+import java.awt.Desktop;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
-import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -112,7 +110,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private BorderPane mediaPane;
 
   @FXML
-  private TableAssetManagerPane mediaRootPane;
+  private TableAssetManagerPane<TableAssetManagerMediaPane> mediaRootPane;
 
   @FXML
   private ToolBar installedAssetsToolbar;
@@ -832,11 +830,10 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     this.folderBtn.setVisible(SystemUtil.isFolderActionSupported());
     this.folderSeparator.setVisible(SystemUtil.isFolderActionSupported());
 
+    mediaRootPane.createPanes((rootPane, text, screen, suffixes) -> new TableAssetManagerMediaPane(rootPane, text, screen, suffixes), isEmbeddedMode());
+
     mediaRootPane.addListeners(this);
     mediaRootPane.setPanesVisibility(supportedScreens);
-    if (isEmbeddedMode()) {
-      mediaRootPane.setEmbeddedMode();
-    }
 
     downloadBtn.setVisible(false);
     webPreviewBtn.setVisible(false);
@@ -1000,6 +997,23 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           });
         }
       });
+    }
+  }
+
+  private static class TableAssetManagerMediaPane extends MediaPane {
+
+    TableAssetManagerMediaPane(TableAssetManagerPane<?> rootPane, String text, VPinScreen screen, String[] suffix) {
+      super(rootPane, text, screen, suffix);
+
+      this.getStyleClass().add("media-container");
+      Label label = new Label(text);
+      label.setTextFill(Color.WHITE);
+      this.setBottom(label);
+      BorderPane.setAlignment(label, Pos.CENTER);
+
+      BorderPane borderPane = new BorderPane();
+      this.setTop(borderPane);
+      BorderPane.setAlignment(borderPane, Pos.TOP_RIGHT);
     }
   }
 

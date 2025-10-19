@@ -11,11 +11,15 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
+<?import de.mephisto.vpin.ui.tables.dialogs.TableAssetManagerPane?>
 
 <BorderPane fx:id="mediaRoot" maxHeight="1.7976931348623157E308" prefWidth="600.0" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarMediaController">
     <center>
         <ScrollPane fitToWidth="true" maxHeight="1.7976931348623157E308" styleClass="accordion-container" BorderPane.alignment="CENTER">
             <content>
+                <TableAssetManagerPane fx:id="mediaRootPane" BorderPane.alignment="CENTER" HBox.hgrow="ALWAYS" >
+                </TableAssetManagerPane>
+<!--
                 <Pane fx:id="mediaRootPane" styleClass="accordion-container">
                     <children>
                         <BorderPane fx:id="playfieldRoot" layoutX="158.0" layoutY="566.0" prefHeight="500.0" prefWidth="250.0" styleClass="media-container">
@@ -483,7 +487,6 @@
                                 </BorderPane>
                             </top>
                         </BorderPane>
-
                         <BorderPane fx:id="screenLogo" layoutX="412.0" layoutY="750.0" prefHeight="60.0" prefWidth="150.0" styleClass="media-container">
                             <bottom>
                                 <Label text="Logo" textFill="WHITE" BorderPane.alignment="CENTER" />
@@ -528,8 +531,6 @@
                                 </BorderPane>
                             </top>
                         </BorderPane>
-
-
                         <BorderPane fx:id="screenAudioLaunch" layoutX="3.0" layoutY="32.0" prefHeight="135.0" prefWidth="150.0" styleClass="media-container">
                             <top>
                                 <BorderPane fx:id="top_AudioLaunch" BorderPane.alignment="TOP_RIGHT">
@@ -548,20 +549,20 @@
                                         </HBox>
                                     </right>
                                     <left>
-                              <HBox spacing="3.0" BorderPane.alignment="CENTER">
-                                 <children>
+                                        <HBox spacing="3.0" BorderPane.alignment="CENTER">
+                                            <children>
                                                 <Button fx:id="btn_edit_AudioLaunch" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
                                                     <graphic>
                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" />
                                                     </graphic>
                                                 </Button>
-                                    <Button fx:id="btn_delete_AudioLaunch" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onMediaDeleteClick" textFill="#ff3333">
-                                       <graphic>
-                                          <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
-                                       </graphic>
-                                    </Button>
-                                 </children>
-                              </HBox>
+                                                <Button fx:id="btn_delete_AudioLaunch" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onMediaDeleteClick" textFill="#ff3333">
+                                                <graphic>
+                                                    <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
+                                                </graphic>
+                                                </Button>
+                                            </children>
+                                        </HBox>
                                     </left>
                                 </BorderPane>
                             </top>
@@ -575,9 +576,9 @@
                                     </BorderPane.margin>
                                 </Label>
                             </center>
-                     <bottom>
-                        <Label text="Audio Launch" textFill="WHITE" BorderPane.alignment="CENTER" />
-                     </bottom>
+                            <bottom>
+                                <Label text="Audio Launch" textFill="WHITE" BorderPane.alignment="CENTER" />
+                            </bottom>
                         </BorderPane>
                         <BorderPane fx:id="screenAudio" layoutX="411.0" layoutY="32.0" prefHeight="135.0" prefWidth="150.0" styleClass="media-container">
                             <top>
@@ -597,20 +598,20 @@
                                         </HBox>
                                     </right>
                                     <left>
-                              <HBox spacing="3.0" BorderPane.alignment="CENTER">
-                                 <children>
+                                        <HBox spacing="3.0" BorderPane.alignment="CENTER">
+                                            <children>
                                                 <Button fx:id="btn_edit_Audio" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
                                                     <graphic>
                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" />
                                                     </graphic>
                                                 </Button>
-                                    <Button fx:id="btn_delete_Audio" mnemonicParsing="false" onAction="#onMediaDeleteClick" textFill="#ff3333">
-                                       <graphic>
-                                          <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
-                                       </graphic>
-                                    </Button>
-                                 </children>
-                              </HBox>
+                                                <Button fx:id="btn_delete_Audio" mnemonicParsing="false" onAction="#onMediaDeleteClick" textFill="#ff3333">
+                                                <graphic>
+                                                    <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
+                                                </graphic>
+                                                </Button>
+                                            </children>
+                                        </HBox>
                                     </left>
                                 </BorderPane>
                             </top>
@@ -624,12 +625,13 @@
                                     </BorderPane.margin>
                                 </Label>
                             </center>
-                     <bottom>
-                        <Label text="Audio" textFill="WHITE" BorderPane.alignment="CENTER" />
-                     </bottom>
+                            <bottom>
+                                <Label text="Audio" textFill="WHITE" BorderPane.alignment="CENTER" />
+                            </bottom>
                         </BorderPane>
                     </children>
                 </Pane>
+-->
             </content>
         </ScrollPane>
     </center>
