@@ -63,7 +63,7 @@ public class CardsResource {
     throw new ResponseStatusException(NOT_FOUND, "No game found for id " + gameId);
   }
 
-  @GetMapping("/preview/{gameId}/{templateType}")
+  @GetMapping("/preview/{templateType}/{gameId}")
   public ResponseEntity<byte[]> generateCardPreview(@PathVariable("gameId") int gameId, @PathVariable("templateType") CardTemplateType templateType) throws Exception {
     Game game = gameService.getGame(gameId);
     if (game != null) {
@@ -72,8 +72,9 @@ public class CardsResource {
     throw new ResponseStatusException(NOT_FOUND, "No game found for id " + gameId);
   }
 
-  @GetMapping("/preview/{gameId}/{templateId}")
-  public ResponseEntity<byte[]> generateCardPreview(@PathVariable("gameId") int gameId, @PathVariable("templateId") int templateId) throws Exception {
+  @GetMapping("/preview/{templateType}/{gameId}/{templateId}")
+  public ResponseEntity<byte[]> generateCardPreview(@PathVariable("gameId") int gameId, @PathVariable("templateType") CardTemplateType templateType, 
+                                                    @PathVariable("templateId") int templateId) throws Exception {
     Game game = gameService.getGame(gameId);
     if (game != null) {
       return RequestUtil.serializeImage(cardService.generateTemplateTableCardFile(game, templateId), "card-sample.png");
@@ -81,7 +82,7 @@ public class CardsResource {
     throw new ResponseStatusException(NOT_FOUND, "No game found for id " + gameId);
   }
 
-  @GetMapping("/generate/{gameId}/{templateType}")
+  @GetMapping("/generate/{templateType}/{gameId}")
   public boolean generateCard(@PathVariable("gameId") int gameId, @PathVariable("templateType") CardTemplateType templateType) {
     Game game = gameService.getGame(gameId);
     if (game != null) {
@@ -91,8 +92,9 @@ public class CardsResource {
   }
 
   // OLE Not used but kept in API
-  @GetMapping("/generate/{gameId}/{templateId}")
-  public boolean generateCardWithTemplate(@PathVariable("gameId") int gameId, @PathVariable("templateId") long templateId) {
+  @GetMapping("/generate/{templateType}/{gameId}/{templateId}")
+  public boolean generateCardWithTemplate(@PathVariable("gameId") int gameId, @PathVariable("templateType") CardTemplateType templateType,
+                                          @PathVariable("templateId") long templateId) {
     Game game = gameService.getGame(gameId);
     if (game != null) {
       return cardService.generateCard(game, templateId);

@@ -38,16 +38,16 @@ public class HighscoreCardsServiceClient extends VPinStudioClientService {
 
   public String getHighscoreCardUrl(GameRepresentation game, CardTemplateType templateType) {
     int gameId = game.getId();
-    return getRestClient().getBaseUrl() + API + "cards/preview/" + gameId + "/" + templateType;
+    return getRestClient().getBaseUrl() + API + "cards/preview/" + templateType + "/" + gameId ;
   }
 
   public @Nullable ByteArrayInputStream getHighscoreCardPreview(GameRepresentation game, CardTemplateType templateType) {
-    byte[] bytes = getRestClient().readBinary(API + "cards/preview/" + game.getId() + "/" + templateType);
+    byte[] bytes = getRestClient().readBinary(API + "cards/preview/" + templateType + "/" + game.getId());
     return bytes != null ? new ByteArrayInputStream(bytes) : null;
   }
 
   public ByteArrayInputStream getHighscoreCardPreview(GameRepresentation game, CardTemplate template) {
-    byte[] bytes = getRestClient().readBinary(API + "cards/preview/" + game.getId() + "/" + template.getId());
+    byte[] bytes = getRestClient().readBinary(API + "cards/preview/" + template.getTemplateType() + "/" + game.getId() + "/" + template.getId());
     return new ByteArrayInputStream(bytes != null ? bytes : new byte[] {});
   }
 
@@ -58,7 +58,7 @@ public class HighscoreCardsServiceClient extends VPinStudioClientService {
 
   public boolean generateHighscoreCard(GameRepresentation game, CardTemplateType templateType) {
     int gameId = game.getId();
-    return getRestClient().get(API + "cards/generate/" + gameId + "/" + templateType, Boolean.class);
+    return getRestClient().get(API + "cards/generate/" + templateType + "/" + gameId, Boolean.class);
   }
 
   public byte[] getHighscoreImage(GameRepresentation game, CardTemplate template, String image) {
