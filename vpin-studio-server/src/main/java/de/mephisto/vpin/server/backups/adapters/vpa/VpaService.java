@@ -29,8 +29,11 @@ import de.mephisto.vpin.server.music.MusicService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.puppack.PupPacksService;
+import de.mephisto.vpin.server.resources.ResourceLoader;
+import de.mephisto.vpin.server.util.PngFrameCapture;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import net.lingala.zip4j.ZipFile;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +41,9 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -386,20 +391,36 @@ public class VpaService implements InitializingBean {
   }
 
   private void writeWheelToPackageInfo(BackupPackageInfo packageInfo, Game game) throws IOException {
-    //store wheel icon as archive preview
-    File originalFile = frontendService.getWheelImage(game);
-    File mediaFile = originalFile;
-    if (mediaFile != null && mediaFile.exists()) {
-      //do not archive augmented icons
-      WheelAugmenter augmenter = new WheelAugmenter(mediaFile);
-      if (augmenter.getBackupWheelIcon().exists()) {
-        mediaFile = augmenter.getBackupWheelIcon();
+    try {
+      //store wheel icon as archive preview
+      File originalFile = frontendService.getWheelImage(game);
+      File mediaFile = originalFile;
+      if (mediaFile != null && mediaFile.exists()) {
+        //do not archive augmented icons
+        WheelAugmenter augmenter = new WheelAugmenter(mediaFile);
+        if (augmenter.getBackupWheelIcon().exists()) {
+          mediaFile = augmenter.getBackupWheelIcon();
+        }
+
+        String wheelFileName = FilenameUtils.getExtension(mediaFile.getName());
+        if(wheelFileName.equalsIgnoreCase("apng")) {
+          byte[] bytes = PngFrameCapture.captureFirstFrame(mediaFile);
+          BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes));
+          BufferedImage resizedImage = ImageUtil.resizeImage(image, BackupPackageInfo.TARGET_WHEEL_SIZE_WIDTH);
+          byte[] resizedBytes = ImageUtil.toBytes(resizedImage);
+          packageInfo.setThumbnail(Base64.getEncoder().encodeToString(resizedBytes));
+        }
+        else {
+          BufferedImage image = ImageUtil.loadImage(mediaFile);
+          BufferedImage resizedImage = ImageUtil.resizeImage(image, BackupPackageInfo.TARGET_WHEEL_SIZE_WIDTH);
+          byte[] bytes = ImageUtil.toBytes(resizedImage);
+          packageInfo.setThumbnail(Base64.getEncoder().encodeToString(bytes));
+        }
       }
-
-      BufferedImage image = ImageUtil.loadImage(mediaFile);
-      BufferedImage resizedImage = ImageUtil.resizeImage(image, BackupPackageInfo.TARGET_WHEEL_SIZE_WIDTH);
-
-      byte[] bytes = ImageUtil.toBytes(resizedImage);
+    } catch (Exception e) {
+      LOG.error("Failed to write original wheel png as thumbnail, using empty wheel instead: {}", e.getMessage());
+      BufferedImage wheelImage = ResourceLoader.getResource("avatar-default.png");
+      byte[] bytes = ImageUtil.toBytes(wheelImage);
       packageInfo.setThumbnail(Base64.getEncoder().encodeToString(bytes));
     }
   }
