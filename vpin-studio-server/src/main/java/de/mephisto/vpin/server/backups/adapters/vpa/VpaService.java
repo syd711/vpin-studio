@@ -403,7 +403,7 @@ public class VpaService implements InitializingBean {
         }
 
         String wheelFileName = FilenameUtils.getExtension(mediaFile.getName());
-        if(wheelFileName.equalsIgnoreCase("apng")) {
+        if (wheelFileName.equalsIgnoreCase("apng")) {
           byte[] bytes = PngFrameCapture.captureFirstFrame(mediaFile);
           BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes));
           BufferedImage resizedImage = ImageUtil.resizeImage(image, BackupPackageInfo.TARGET_WHEEL_SIZE_WIDTH);
@@ -417,7 +417,8 @@ public class VpaService implements InitializingBean {
           packageInfo.setThumbnail(Base64.getEncoder().encodeToString(bytes));
         }
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to write original wheel png as thumbnail, using empty wheel instead: {}", e.getMessage());
       BufferedImage wheelImage = ResourceLoader.getResource("avatar-default.png");
       byte[] bytes = ImageUtil.toBytes(wheelImage);

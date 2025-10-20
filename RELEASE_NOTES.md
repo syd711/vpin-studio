@@ -1,3 +1,9 @@
+## Release Notes 4.3.7
+
+- Backups: Fixed memory leak that happened when apng files have been used as preview icon for backup files.
+
+---
+
 ## Release Notes 4.3.6
 
 - Fixed delete action for backups.
