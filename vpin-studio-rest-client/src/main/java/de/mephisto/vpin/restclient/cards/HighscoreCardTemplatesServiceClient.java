@@ -61,6 +61,10 @@ public class HighscoreCardTemplatesServiceClient extends VPinStudioClientService
     }
   }
 
+  public String getCardTemplateUrl(CardTemplate cardTemplate) {
+    return getRestClient().getBaseUrl() + API + "cardtemplates/" + cardTemplate.getId();
+  }
+
   public CardTemplate save(CardTemplate template) {
     try {
       return getRestClient().post(API + "cardtemplates/save", template, CardTemplate.class);
@@ -137,4 +141,5 @@ public class HighscoreCardTemplatesServiceClient extends VPinStudioClientService
       throw e;
     }
   }
+
 }

@@ -24,6 +24,11 @@ public class CardTemplatesResource {
     return cardTemplatesService.getTemplates();
   }
 
+  @GetMapping("/{id}")
+  public CardTemplate getTemplate(@PathVariable("id") long id) throws Exception {
+    return cardTemplatesService.getTemplate(id);
+  }
+
   @PostMapping(value = "/save")
   public CardTemplate saveTemplate(@RequestBody CardTemplate cardTemplate) throws Exception {
     return cardTemplatesService.save(cardTemplate);
