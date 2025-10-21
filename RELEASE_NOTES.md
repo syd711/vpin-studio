@@ -36,6 +36,21 @@
 
       <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/table-files.png?raw=true" width="500" />
 
+- **Media management**
+    - Added a new media type: Logo. It generally corresponds to a small horizontal image. Like a wheel, it helps
+      identifying a table visually but is simpler, generally the name of the table writen with the font of the table.
+    - Added zones to upload and search logos in MediaManager and in the Table Media sidebar
+    - Added checkbox in media preference to add a validator that check presence of logo.
+
+- **Highscore cards**
+    - Added wheel generator, default template generates Tarcissio styled-wheels.
+    - The Highscore card let tab has been renamed Designer accordingly !
+    - In frame tab, added the option to upload frame images. A tarcissio wheel frame and a black wheel frame are provided by default.
+    - The logo can be used in your wheel, it is accessible in Other Media Settings. This is even the main reason behind its introduction!
+    - Added possibility to backup existing assets when gererating card. An option has been added in highscores card preferences
+    - Refactored how studio finds a previously generated card. If backup is activated, existing cards not being tagged, 
+      studio will generate new cards in duplicate of existing. Old ones can be deleted as obsolete, the new ones will 
+      be updated uppon generation going forward.
 
 ## Bugfixes
 

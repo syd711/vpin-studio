@@ -64,7 +64,8 @@ public class CardsResource {
   }
 
   @GetMapping("/preview/{templateType}/{gameId}")
-  public ResponseEntity<byte[]> generateCardPreview(@PathVariable("gameId") int gameId, @PathVariable("templateType") CardTemplateType templateType) throws Exception {
+  public ResponseEntity<byte[]> generateCardPreview(@PathVariable("gameId") int gameId, 
+                                                    @PathVariable("templateType") CardTemplateType templateType) throws Exception {
     Game game = gameService.getGame(gameId);
     if (game != null) {
       return RequestUtil.serializeImage(cardService.generateTableCardFile(game, templateType), "card-sample.png");
@@ -73,17 +74,19 @@ public class CardsResource {
   }
 
   @GetMapping("/preview/{templateType}/{gameId}/{templateId}")
-  public ResponseEntity<byte[]> generateCardPreview(@PathVariable("gameId") int gameId, @PathVariable("templateType") CardTemplateType templateType, 
+  public ResponseEntity<byte[]> generateCardPreview(@PathVariable("gameId") int gameId, 
+                                                    @PathVariable("templateType") CardTemplateType templateType, 
                                                     @PathVariable("templateId") int templateId) throws Exception {
     Game game = gameService.getGame(gameId);
     if (game != null) {
-      return RequestUtil.serializeImage(cardService.generateTemplateTableCardFile(game, templateId), "card-sample.png");
+      return RequestUtil.serializeImage(cardService.generateTemplateTableCardFile(game, templateType, templateId), "card-sample.png");
     }
     throw new ResponseStatusException(NOT_FOUND, "No game found for id " + gameId);
   }
 
   @GetMapping("/generate/{templateType}/{gameId}")
-  public boolean generateCard(@PathVariable("gameId") int gameId, @PathVariable("templateType") CardTemplateType templateType) {
+  public boolean generateCard(@PathVariable("gameId") int gameId, 
+                              @PathVariable("templateType") CardTemplateType templateType) {
     Game game = gameService.getGame(gameId);
     if (game != null) {
       return cardService.generateCard(game, templateType);
@@ -93,17 +96,20 @@ public class CardsResource {
 
   // OLE Not used but kept in API
   @GetMapping("/generate/{templateType}/{gameId}/{templateId}")
-  public boolean generateCardWithTemplate(@PathVariable("gameId") int gameId, @PathVariable("templateType") CardTemplateType templateType,
+  public boolean generateCardWithTemplate(@PathVariable("gameId") int gameId, 
+                                          @PathVariable("templateType") CardTemplateType templateType,
                                           @PathVariable("templateId") long templateId) {
     Game game = gameService.getGame(gameId);
     if (game != null) {
-      return cardService.generateCard(game, templateId);
+      return cardService.generateCard(game, templateType, templateId);
     }
     throw new ResponseStatusException(NOT_FOUND, "No game found for id " + gameId);
   }
 
   @GetMapping("/image/{name}/{gameId}/{templateId}")
-  public ResponseEntity<byte[]> getImage(@PathVariable("gameId") int gameId, @PathVariable("templateId") long templateId, @PathVariable("name") String imageName) throws Exception {
+  public ResponseEntity<byte[]> getImage(@PathVariable("gameId") int gameId, 
+                                         @PathVariable("templateId") long templateId, 
+                                         @PathVariable("name") String imageName) throws Exception {
     Game game = gameService.getGame(gameId);
     if (game != null) {
       CardTemplate template = cardService.getCardTemplate(templateId);

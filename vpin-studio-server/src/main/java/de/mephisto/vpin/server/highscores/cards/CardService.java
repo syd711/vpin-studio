@@ -96,8 +96,8 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
     return generatePreview(game, summary, template);
   }
 
-  public byte[] generateTemplateTableCardFile(Game game, long templateId) {
-    CardTemplate template = cardTemplatesService.getTemplateOrDefault(templateId);
+  public byte[] generateTemplateTableCardFile(Game game, CardTemplateType templateType, long templateId) {
+    CardTemplate template = cardTemplatesService.getTemplateOrDefault(templateId, templateType);
     ScoreSummary summary = getScoreSummary(game, template, true);
     return generatePreview(game, summary, template);
   }
@@ -111,8 +111,8 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
     return generateCard(game, template);
   }
 
-  public boolean generateCard(Game game, Long templateId) {
-    CardTemplate template = cardTemplatesService.getTemplateOrDefault(templateId);
+  public boolean generateCard(Game game, CardTemplateType templateType, Long templateId) {
+    CardTemplate template = cardTemplatesService.getTemplateOrDefault(templateId, templateType);
     return generateCard(game, template);
   }
 
@@ -179,23 +179,20 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
             BufferedImage bufferedImage = doGenerateCardImage(game, summary, template);
             if (bufferedImage != null) {
               File highscoreCard = getCardFile(game, screenName);
-              //TODO add a parameter to define the policy
-              //REPLACE => keep highscoreCard
-              //APPEND => highscoreCard = FileUtils.uniqueAssetByMarker(highscoreCard, "Highscore Card");
-              //PREPEND/BACKUP => highscoreCard = FileUtils.backupAssetByMarker(highscoreCard, "Highscore Card");
+              if (cardSettings.isBackupAsset()) {
+                //Prepend cards and Backup existing asset
+                highscoreCard = ImageUtil.backupPNGByMarker(highscoreCard, "Highscore Card");
+              }
 
               if (highscoreCard.exists() && !highscoreCard.delete()) {
                 LOG.info("Writing highscore card {} failed, file is locked.", highscoreCard.getAbsolutePath());
                 SLOG.info("Writing highscore card " + highscoreCard.getAbsolutePath() + " failed, file is locked.");
               }
               else {
-                ImageUtil.write(bufferedImage, highscoreCard);
+                ImageUtil.writePNG(bufferedImage, highscoreCard, "Highscore Card");
                 LOG.info("Written highscore card: " + highscoreCard.getAbsolutePath());
                 SLOG.info("Written highscore card: " + highscoreCard.getAbsolutePath());
               }
-
-//              FileUtils.addMarker(highscoreCard, "Highscore Card");
-
 
               return true;
             }
@@ -304,11 +301,11 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
   }
 
   public CardTemplate getCardTemplate(long templateId) {
-    return cardTemplatesService.getTemplateOrDefault(templateId);
+    return cardTemplatesService.getTemplate(templateId);
   }
 
   public CardData getCardData(Game game, long templateId, boolean withStreams) {
-    CardTemplate template = cardTemplatesService.getTemplateOrDefault(templateId);
+    CardTemplate template = cardTemplatesService.getTemplate(templateId);
     return getCardData(game, template, withStreams);
   }
 

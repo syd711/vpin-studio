@@ -56,7 +56,7 @@ public class CardTemplatesService {
     m.setCardTemplate(cardTemplate);
     TemplateMapping updatedMapping = templateMappingRepository.saveAndFlush(m);
     cardTemplate.setId(updatedMapping.getId());
-    return getTemplateOrDefault(updatedMapping.getId());
+    return getTemplate(updatedMapping.getId());
   }
 
   public CardTemplate createFromJson(String templateName, String json) {
@@ -67,7 +67,7 @@ public class CardTemplatesService {
       template.setName(templateName);
       m.setCardTemplate(template);
       TemplateMapping updatedMapping = templateMappingRepository.saveAndFlush(m);
-      return getTemplateOrDefault(updatedMapping.getId());
+      return getTemplate(updatedMapping.getId());
     }
     catch (Exception e) {
       LOG.error("Cannot create form json", e);
@@ -126,25 +126,28 @@ public class CardTemplatesService {
   }
 
   public CardTemplate getTemplateForGame(Game game, CardTemplateType templateType) {
-    return getTemplateOrDefault(game.getTemplateId(templateType));
+    return getTemplateOrDefault(game.getTemplateId(templateType), templateType);
   }
 
-  public CardTemplate getTemplateOrDefault(Long templateId) {
+  public CardTemplate getTemplateOrDefault(Long templateId, CardTemplateType templateType) {
+    CardTemplate template = getTemplate(templateId);
+    return template != null ? template : getDefaultTemplate(templateType);
+  }
+  
+  public CardTemplate getTemplate(Long templateId) {
     if (templateId != null) {
       Optional<TemplateMapping> mapping = templateMappingRepository.findById(templateId);
       if (mapping.isPresent()) {
         return mappingToTemplate(mapping.get());
       }
     }
-    // oll other cases
-    return getDefaultTemplate();
+    return null;
   }
 
-  //TODO need to be reviewed as a defaultTemplate with a type no more need anything
-  private CardTemplate getDefaultTemplate() {
+  private CardTemplate getDefaultTemplate(CardTemplateType templateType) {
     List<TemplateMapping> all = templateMappingRepository.findAll();
     return all.stream()
-      .filter(m -> m.getTemplate().isTemplate() && m.getTemplate().isDefault())
+      .filter(m -> m.getTemplate().isTemplate() && m.getTemplate().isDefault() && templateType.equals(m.getTemplate().getTemplateType()))
       .map(m -> mappingToTemplate(m))
       .findFirst()
       .orElse(null);
@@ -207,11 +210,11 @@ public class CardTemplatesService {
   private CardTemplate mergeWithParent(CardTemplate template) {
     CardTemplate parent = null;
     if (template.getParentId() != null) {
-      parent = getTemplateOrDefault(template.getParentId());
+      parent = getTemplate(template.getParentId());
     }
-    else {
+    if (parent == null) {
       // no parent, merger with DEFAULT
-      parent = getDefaultTemplate();
+      parent = getDefaultTemplate(template.getTemplateType());
     }
 
     return templateMerger._merge(template, parent);

@@ -42,6 +42,9 @@ public class CardGenerationPreferencesController implements Initializable {
   private ComboBox<String> cardTargetScreenCombo;
 
   @FXML
+  private CheckBox cardBackupAssetCheckbox;
+
+  @FXML
   private ComboBox<String> rotationCombo;
 
   @FXML
@@ -100,6 +103,14 @@ public class CardGenerationPreferencesController implements Initializable {
         cardSettings.setPopperScreen(newValue);
         client.getPreferenceService().setJsonPreference(cardSettings);
         onScreenChange();
+      });
+    });
+
+    cardBackupAssetCheckbox.setSelected(cardSettings.isBackupAsset());
+    cardBackupAssetCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      Platform.runLater(() -> {
+        cardSettings.setBackupAsset(newValue);
+        client.getPreferenceService().setJsonPreference(cardSettings);
       });
     });
 
