@@ -1,6 +1,8 @@
 ## Release Notes 4.3.7
 
 - Backups: Fixed memory leak that happened when apng files have been used as preview icon for backup files.
+- Table Overview: Changed order of status icons. The backup icons are the aligned left to the status icon.
+- DOF Preferences: Fixed error in installation check.
 
 ---
 

@@ -71,7 +71,7 @@
                            </children>
                         </HBox>
                         <Label styleClass="default-text" text="Folder:" />
-                        <Label fx:id="dofFolderErrorLabel" styleClass="error-message" text="Invalid DOF installation folder, no &quot;x64&quot; or &quot;x86&quot; folder found." GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label fx:id="dofFolderErrorLabel" styleClass="error-message" text="Invalid DOF installation folder, no &quot;DirectOutput.dll&quot; file found." GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
