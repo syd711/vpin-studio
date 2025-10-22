@@ -41,6 +41,7 @@
       identifying a table visually but is simpler, generally the name of the table writen with the font of the table.
     - Added zones to upload and search logos in MediaManager and in the Table Media sidebar
     - Added checkbox in media preference to add a validator that check presence of logo.
+    - For PinballX and PinballY, auto-invert playfield assets when copied from non PinballX assets source
 
 - **Highscore cards**
     - Added wheel generator, default template generates Tarcissio styled-wheels.

@@ -94,15 +94,10 @@ public class MediaConverterService implements InitializingBean {
       }
     }
     else if (command.getType() == MediaConversionCommand.TYPE_FFMEPG) {
-      File targetFile = FileUtils.uniqueFile(mediaFile);
-      convertWithFfmpeg(command, mediaFile, targetFile);
-      // now exchange files
-      if (mediaFile.delete() && !targetFile.renameTo(mediaFile)) {
-        operationResult.setResult("Target file renaming failed: " + mediaFile.getAbsolutePath());
-      }
+      convertWithFfmpeg(operationResult, command, mediaFile);
     }
     else if (command.getType() == MediaConversionCommand.TYPE_IMAGE) {
-      convertWithImageUtils(operationResult, command.getCommand(), mediaFile);
+      convertWithImageUtils(operationResult, ImageOp.valueOf(command.getCommand()), mediaFile);
     }
     else {
       LOG.warn("Not supported implementation of command {} for {}", command.getClass().getName(), command.getName());
@@ -157,6 +152,15 @@ public class MediaConverterService implements InitializingBean {
     LOG.info("Video conversion output:");
     LOG.info(standardOutputFromCommand.toString());
     return null;
+  }
+
+  public void convertWithFfmpeg(MediaOperationResult operationResult, MediaConversionCommand command, File mediaFile) throws Exception {
+    File targetFile = FileUtils.uniqueFile(mediaFile);
+    convertWithFfmpeg(command, mediaFile, targetFile);
+    // now exchange files
+    if (mediaFile.delete() && !targetFile.renameTo(mediaFile)) {
+      operationResult.setResult("Target file renaming failed: " + mediaFile.getAbsolutePath());
+    }
   }
 
   public void convertWithFfmpeg(MediaConversionCommand command, File mediaFile, File targetFile) throws Exception {
@@ -226,10 +230,10 @@ public class MediaConverterService implements InitializingBean {
     //LOG.info("Video conversion output: {}", standardOutputFromCommand);
   }
 
-  private void convertWithImageUtils(MediaOperationResult result, String command, File mediaFile) {
+  private void convertWithImageUtils(MediaOperationResult result, ImageOp command, File mediaFile) {
     try {
       BufferedImage img = ImageUtil.loadImage(mediaFile);
-      switch (ImageOp.valueOf(command)) {
+      switch (command) {
         case ROTATE_90:
           img = ImageUtil.rotateRight(img);
           break;
@@ -300,4 +304,19 @@ public class MediaConverterService implements InitializingBean {
   public List<MediaConversionCommand> getCommandList() {
     return commands;
   }
+
+  //-----------------------------------------------
+  // some useful conversion
+
+  public void rotateImage180(File mediaFile) {
+    MediaOperationResult result = new MediaOperationResult();
+    convertWithImageUtils(result, ImageOp.ROTATE_180, mediaFile);
+  }
+
+  public void rotateVideo180(File mediaFile) throws Exception {
+    MediaOperationResult result = new MediaOperationResult();
+    MediaConversionCommand cmd = new MediaConversionCommand().setFFmpegArgs("-vf \"transpose=2,transpose=2\"");
+    convertWithFfmpeg(result, cmd, mediaFile);
+  }
+
 }

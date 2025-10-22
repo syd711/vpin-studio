@@ -947,21 +947,22 @@ public class WidgetFactory {
     }
 
     String url = client.getURL(mediaItem.getUri()) + "/" + URLEncoder.encode(mediaItem.getName(), Charset.defaultCharset());
-    return createAssetMediaPlayer(client, url, mediaItem.getScreen(), mimeType, noLoading, usePreview);
-  }
-
-  public static AssetMediaPlayer createAssetMediaPlayer(VPinStudioClient client, String url, @Nullable VPinScreen screen, 
-                                                        String mimeType, boolean noLoading, boolean usePreview) {
-
-    boolean audioOnly = VPinScreen.Audio.equals(screen) || VPinScreen.AudioLaunch.equals(screen);
 
     Frontend frontend = client.getFrontendService().getFrontendCached();
+    boolean playfieldMediaInverted = frontend.isPlayfieldMediaInverted();
+    return createAssetMediaPlayer(client, url, mediaItem.getScreen(), mimeType, playfieldMediaInverted, noLoading, usePreview);
+  }
+
+  public static AssetMediaPlayer createAssetMediaPlayer(VPinStudioClient client, String url, @Nullable VPinScreen screen,
+                                                        String mimeType, boolean playfieldMediaInverted, boolean noLoading, boolean usePreview) {
+
+    boolean audioOnly = VPinScreen.Audio.equals(screen) || VPinScreen.AudioLaunch.equals(screen);
 
     String baseType = mimeType.split("/")[0];
     if (baseType.equals("image") && !audioOnly) {
       ImageViewer imageViewer = new ImageViewer();
       imageViewer.setNoLoading(noLoading);
-      imageViewer.render(url, screen, frontend.isPlayfieldMediaInverted());
+      imageViewer.render(url, screen, playfieldMediaInverted);
       return imageViewer;
     }
     else if (baseType.equals("audio")) {
@@ -971,7 +972,7 @@ public class WidgetFactory {
       return audioMediaPlayer;
     }
     else if (baseType.equals("video") && !audioOnly) {
-      VideoMediaPlayer videoMediaPlayer = new VideoMediaPlayer(mimeType, frontend.isPlayfieldMediaInverted());
+      VideoMediaPlayer videoMediaPlayer = new VideoMediaPlayer(mimeType, playfieldMediaInverted);
       videoMediaPlayer.setNoLoading(noLoading);
       videoMediaPlayer.render(url, screen, usePreview);
       return videoMediaPlayer;

@@ -19,6 +19,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.DownloadJobDescriptor;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.util.FileUtils;
+import de.mephisto.vpin.restclient.util.MimeTypeUtil;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
@@ -645,7 +646,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         }
 
         VPinScreen screen = VPinScreen.valueOfSegment(tableAsset.getScreen());
-        this.serverMediaPlayer = WidgetFactory.createAssetMediaPlayer(client, assetUrl, screen, mimeType, false, false);
+        boolean playfieldInverted = tableAsset.isPlayfieldMediaInverted();
+        this.serverMediaPlayer = WidgetFactory.createAssetMediaPlayer(client, assetUrl, screen, mimeType, playfieldInverted, false, false);
         serverAssetMediaPane.setCenter(serverMediaPlayer);
       }
       catch (Exception e) {
@@ -820,7 +822,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
     Frontend frontend = client.getFrontendService().getFrontendCached();
     List<VPinScreen> supportedScreens = frontend.getSupportedScreens();
-    assetSearchBox.setVisible(tableAssetSource != null);
+    //assetSearchBox.setVisible(tableAssetSource != null);
 
     this.folderSeparator.managedProperty().bindBidirectional(this.folderSeparator.visibleProperty());
     this.folderBtn.managedProperty().bindBidirectional(this.folderBtn.visibleProperty());
@@ -923,7 +925,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         // else
         FrontendMediaItemRepresentation mediaItem = list.get(0);
         String mimeType = mediaItem.getMimeType();
-        String baseType = mimeType.split("/")[0];
+        String baseType = MimeTypeUtil.mimeTypeToBaseType(mimeType);
 
         // add a condition, asset should not be the default asset already
         setDefaultBtn.setDisable(setDefaultBtn.isDisable() || FileUtils.isDefaultAsset(mediaItem.getName()));

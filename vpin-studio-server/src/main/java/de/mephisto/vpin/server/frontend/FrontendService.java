@@ -640,6 +640,8 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
         FrontendMediaItem item = new FrontendMediaItem(game.getId(), screen, file);
         itemList.add(item);
       }
+      // compare filenames ignoring case
+      Collections.sort(itemList, (i1, i2) -> i1.getName().compareToIgnoreCase(i2.getName()));
       frontendMedia.getMedia().put(screen.name(), itemList);
     }
     return frontendMedia;

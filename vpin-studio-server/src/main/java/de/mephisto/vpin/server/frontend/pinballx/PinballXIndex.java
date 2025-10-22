@@ -169,6 +169,7 @@ public class PinballXIndex {
 
       asset.setEmulator(emutype != null ? emutype.name() : null);
       asset.setScreen(screen.getSegment());
+      asset.setPlayfieldMediaInverted(true);
 
       String mimeType = URLConnection.guessContentTypeFromName(name);
       if (StringUtils.endsWithIgnoreCase(name, ".apng")) {

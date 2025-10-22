@@ -120,6 +120,7 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
         asset.setAuthor("gameex");
         asset.setEmulator(emulatorType);
         asset.setScreen(screen.getSegment());
+        asset.setPlayfieldMediaInverted(true);
       }
 
     }
@@ -222,6 +223,7 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
     TableAsset asset = new TableAsset();
     asset.setEmulator(emulator);
     asset.setScreen(screenSegment);
+    asset.setPlayfieldMediaInverted(true);
     asset.setMimeType(MimeTypeUtil.determineMimeType(FilenameUtils.getExtension(filename).toLowerCase()));
     String url = "/" + URLEncoder.encode(folder + "/" + filename, StandardCharsets.UTF_8);
     asset.setUrl(url);
