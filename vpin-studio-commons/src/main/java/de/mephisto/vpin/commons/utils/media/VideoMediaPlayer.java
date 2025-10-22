@@ -136,9 +136,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
     mediaView = new MediaView(mediaPlayer);
     mediaView.setPreserveRatio(true);
 
-    if (mediaOptions == null || mediaOptions.isAutoRotate()) {
-      scaleMediaView(media, screen);
-    }
+    scaleMediaView(media, screen);
 
     setCenter(mediaView);
     if (playBtn != null) {
@@ -147,31 +145,35 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
   }
 
   private void scaleMediaView(Media media, @Nullable VPinScreen screen) {
-    if (VPinScreen.PlayField.equals(screen)) {
-      if (media.getWidth() > media.getHeight()) {
-        mediaView.setRotate(90 + (invertPlayfield ? 180 : 0));
-        setRotated(true);
+    if (mediaOptions == null || mediaOptions.isAutoRotate()) {
+      if (VPinScreen.PlayField.equals(screen)) {
+        if (media.getWidth() > media.getHeight()) {
+          mediaView.setRotate(90 + (invertPlayfield ? 180 : 0));
+          setRotated(true);
+        }
       }
-    }
-    else if (VPinScreen.Loading.equals(screen)) {
-      if (media.getWidth() > media.getHeight()) {
-        mediaView.setRotate(90);
-        setRotated(true);
+      else if (VPinScreen.Loading.equals(screen)) {
+        if (media.getWidth() > media.getHeight()) {
+          mediaView.setRotate(90);
+          setRotated(true);
+        }
       }
     }
   }
 
   private void scaleImageView(Image image,  @Nullable VPinScreen screen) {
-    if (VPinScreen.PlayField.equals(screen)) {
-      if (image.getWidth() > image.getHeight()) {
-        imageView.setRotate(90 + (invertPlayfield ? 180 : 0));
-        setRotated(true);
+    if (mediaOptions == null || mediaOptions.isAutoRotate()) {
+      if (VPinScreen.PlayField.equals(screen)) {
+        if (image.getWidth() > image.getHeight()) {
+          imageView.setRotate(90 + (invertPlayfield ? 180 : 0));
+          setRotated(true);
+        }
       }
-    }
-    else if (VPinScreen.Loading.equals(screen)) {
-      if (image.getWidth() > image.getHeight()) {
-        imageView.setRotate(90);
-        setRotated(true);
+      else if (VPinScreen.Loading.equals(screen)) {
+        if (image.getWidth() > image.getHeight()) {
+          imageView.setRotate(90);
+          setRotated(true);
+        }
       }
     }
   }

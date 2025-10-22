@@ -23,20 +23,22 @@ public class ImageViewer extends AssetMediaPlayer {
     setCenter(imageView);
     imageView.setPreserveRatio(true);
 
-    boolean rotated = false;
-    if (VPinScreen.PlayField.equals(screen)) {
-      if (image.getWidth() > image.getHeight()) {
-        imageView.setRotate(90 + (invertPlayfield ? 180 : 0));
-        rotated = true;
+    if (mediaOptions == null || mediaOptions.isAutoRotate()) {
+      boolean rotated = false;
+      if (VPinScreen.PlayField.equals(screen)) {
+        if (image.getWidth() > image.getHeight()) {
+          imageView.setRotate(90 + (invertPlayfield ? 180 : 0));
+          rotated = true;
+        }
       }
-    }
-    else if (VPinScreen.Loading.equals(screen)) {
-      if (image.getWidth() > image.getHeight()) {
-        imageView.setRotate(90);
-        rotated = true;
+      else if (VPinScreen.Loading.equals(screen)) {
+        if (image.getWidth() > image.getHeight()) {
+          imageView.setRotate(90);
+          rotated = true;
+        }
       }
+      setRotated(rotated);
     }
-    setRotated(rotated);
   }
 
   public void scaleForTemplate(ImageView cardPreview) {
