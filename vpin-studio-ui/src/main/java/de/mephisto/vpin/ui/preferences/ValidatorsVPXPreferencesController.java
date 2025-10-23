@@ -1,15 +1,21 @@
 package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.tagging.TaggingSettings;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.restclient.validation.IgnoredValidationSettings;
 import de.mephisto.vpin.ui.PreferencesController;
+import de.mephisto.vpin.ui.util.tags.TagField;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.CheckBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 import java.net.URL;
@@ -27,6 +33,12 @@ public class ValidatorsVPXPreferencesController implements Initializable {
 
   @FXML
   private VBox pupPackValidator;
+
+  @FXML
+  private Pane tagPane;
+
+  @FXML
+  private CheckBox taggingEnabledCheckbox;
 
   private IgnoredValidationSettings ignoredValidationSettings;
 
@@ -57,6 +69,10 @@ public class ValidatorsVPXPreferencesController implements Initializable {
     findAllCheckboxes(parent, settingsCheckboxes);
     for (CheckBox checkBox : settingsCheckboxes) {
       String id = checkBox.getId();
+      if (!id.contains("_")) {
+        continue;
+      }
+
       String validationCode = id.split("_")[1];
 
       if (!Features.SCREEN_VALIDATOR) {
@@ -69,6 +85,33 @@ public class ValidatorsVPXPreferencesController implements Initializable {
       boolean ignored = ignoredValidationSettings.isIgnored(validationCode);
       checkBox.setSelected(!ignored);
     }
+
+
+    TaggingSettings taggingSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.TAGGING_SETTINGS, TaggingSettings.class);
+    List<String> suggestions = client.getTaggingService().getTags();
+    TagField tagField = new TagField(suggestions);
+    tagField.setInputDisabled(!taggingSettings.isAutoTagTablesEnabled());
+    tagField.setAllowCustomTags(true);
+    tagField.setTags(taggingSettings.getTableTags());
+    tagField.addListener(new ListChangeListener<String>() {
+      @Override
+      public void onChanged(Change<? extends String> c) {
+        List<String> list = (List<String>) c.getList();
+        taggingSettings.setTableTags(new ArrayList<>(list));
+        client.getPreferenceService().setJsonPreference(taggingSettings);
+      }
+    });
+    tagPane.getChildren().add(tagField);
+
+    taggingEnabledCheckbox.setSelected(taggingSettings.isAutoTagTablesEnabled());
+    taggingEnabledCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        taggingSettings.setAutoTagTablesEnabled(newValue);
+        tagField.setInputDisabled(!newValue);
+        client.getPreferenceService().setJsonPreference(taggingSettings);
+      }
+    });
   }
 
   private static void findAllCheckboxes(Parent parent, List<CheckBox> settingsCheckboxes) {

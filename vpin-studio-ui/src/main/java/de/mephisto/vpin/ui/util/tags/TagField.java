@@ -93,6 +93,9 @@ public class TagField extends VBox implements AutoCompleteTextFieldChangeListene
     setPreferredTagWidth(width);
   }
 
+  public void setInputDisabled(boolean b) {
+    inputField.setDisable(b);
+  }
 
   public void setPreferredTagWidth(double tagWidth) {
     this.tagWidth = tagWidth;

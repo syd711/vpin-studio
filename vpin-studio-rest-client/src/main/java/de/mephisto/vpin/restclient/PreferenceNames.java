@@ -16,6 +16,7 @@ import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.recorder.RecorderSettings;
+import de.mephisto.vpin.restclient.tagging.TaggingSettings;
 import de.mephisto.vpin.restclient.validation.IgnoredValidationSettings;
 import de.mephisto.vpin.restclient.validation.ValidationSettings;
 import de.mephisto.vpin.restclient.vpauthenticators.AuthenticationSettings;
@@ -23,6 +24,8 @@ import de.mephisto.vpin.restclient.vpf.VPFSettings;
 import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.restclient.vpu.VPUSettings;
 import de.mephisto.vpin.restclient.webhooks.WebhookSettings;
+
+import javax.swing.text.html.HTML;
 
 public interface PreferenceNames {
   String IGNORED_VALIDATION_SETTINGS = "ignoredValidations";
@@ -68,6 +71,7 @@ public interface PreferenceNames {
   String DISCORD_BOT_ALLOW_LIST = "discordBotAllowList";
   String DISCORD_BOT_COMMANDS_ENABLED = "discordBotCommandsEnabled";
   String MANIA_SETTINGS = "tournamentSettings";
+  String TAGGING_SETTINGS = "taggingSettings";
 
   String RECORDER_SETTINGS = "recorderSettings";
   String WEBHOOK_SETTINGS = "webhookSettings";
@@ -156,6 +160,9 @@ public interface PreferenceNames {
       }
       case PreferenceNames.ASSET_SOURCES_SETTINGS: {
         return AuthenticationSettings.class;
+      }
+      case PreferenceNames.TAGGING_SETTINGS: {
+        return TaggingSettings.class;
       }
       default: {
         throw new UnsupportedOperationException("JSON format not supported for preference '" + key + "'");

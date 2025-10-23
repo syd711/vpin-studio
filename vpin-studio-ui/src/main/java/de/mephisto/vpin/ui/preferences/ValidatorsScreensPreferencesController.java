@@ -6,10 +6,14 @@ import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.recorder.RecorderSettings;
 import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
-import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.restclient.tagging.TaggingSettings;
 import de.mephisto.vpin.restclient.validation.*;
 import de.mephisto.vpin.ui.PreferencesController;
+import de.mephisto.vpin.ui.util.tags.TagField;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -17,6 +21,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.layout.Pane;
 
 import java.net.URL;
 import java.util.*;
@@ -28,14 +33,24 @@ public class ValidatorsScreensPreferencesController implements Initializable {
 
   public static final String OPTIONS = "_Options";
   public static final String MEDIA = "_Media";
-  @FXML
-  private Parent preferenceList;
-  private Map<String, ComboBox> optionsCombos;
-  private Map<String, ComboBox> mediaCombos;
+
+  private Map<String, ComboBox> optionsCombos = new HashMap<>();
+  private Map<String, ComboBox> mediaCombos = new HashMap<>();
+  private Map<VPinScreen, CheckBox> taggingCheckboxes = new HashMap<>();
 
   private ValidationSettings validationSettings;
+  private TaggingSettings taggingSettings;
   private IgnoredValidationSettings ignoredValidationSettings;
   private RecorderSettings recorderSettings;
+
+  @FXML
+  private Parent preferenceList;
+
+  @FXML
+  private Pane tagPane;
+
+  @FXML
+  private CheckBox taggingEnabledCheckbox;
 
   @FXML
   private void onPreferenceChange(ActionEvent event) {
@@ -57,6 +72,8 @@ public class ValidatorsScreensPreferencesController implements Initializable {
     optionCombo.setDisable(!checked);
     ComboBox mediaCombo = mediaCombos.get(id + MEDIA);
     mediaCombo.setDisable(!checked);
+    CheckBox taggingCheckbox = taggingCheckboxes.get(screen);
+    taggingCheckbox.setDisable(!checked);
 
     ignoredValidationSettings.getIgnoredValidators().put(String.valueOf(code), !checked);
     client.getPreferenceService().setJsonPreference(ignoredValidationSettings);
@@ -64,13 +81,25 @@ public class ValidatorsScreensPreferencesController implements Initializable {
     PreferencesController.markDirty(PreferenceType.validationSettings);
   }
 
-  private VPinScreen getScreenForCode(int code) {
+  @FXML
+  private void onTaggingPreferenceChange(ActionEvent event) {
+    CheckBox checkBox = (CheckBox) event.getSource();
+    String id = checkBox.getId();
+    boolean checked = checkBox.isSelected();
+    int code = getValidationCode(id);
+    VPinScreen screen = getScreenForCode(code);
+
+    taggingSettings.getAutoTaggedScreens().put(screen.name(), !checked);
+    client.getPreferenceService().setJsonPreference(taggingSettings);
+  }
+
+  private static VPinScreen getScreenForCode(int code) {
     switch (code) {
       case CODE_NO_AUDIO: {
         return VPinScreen.Audio;
       }
       case CODE_NO_AUDIO_LAUNCH: {
-        return VPinScreen.Audio;
+        return VPinScreen.AudioLaunch;
       }
       case CODE_NO_APRON: {
         return VPinScreen.Menu;
@@ -140,22 +169,28 @@ public class ValidatorsScreensPreferencesController implements Initializable {
 
     Parent parent = preferenceList;
     List<CheckBox> settingsCheckboxes = new ArrayList<>();
-    optionsCombos = new HashMap<>();
-    mediaCombos = new HashMap<>();
 
-    findAllCheckboxes(parent, settingsCheckboxes);
+    findAllScreenCheckboxes(parent, settingsCheckboxes);
+    findAllTaggingCheckboxes(parent, taggingCheckboxes);
     findAllMediaCombos(parent, mediaCombos);
     findAllOptionsCombos(parent, optionsCombos);
 
     validationSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VALIDATION_SETTINGS, ValidationSettings.class);
+    taggingSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.TAGGING_SETTINGS, TaggingSettings.class);
     ValidationProfile defaultProfile = validationSettings.getDefaultProfile();
 
     for (CheckBox checkBox : settingsCheckboxes) {
       String id = checkBox.getId();
+      if (!id.contains("_")) {
+        continue;
+      }
+
       int validationCode = getValidationCode(id);
+      VPinScreen screenForCode = getScreenForCode(validationCode);
 
       ComboBox optionCombo = optionsCombos.get(id + OPTIONS);
       ComboBox mediaCombo = mediaCombos.get(id + MEDIA);
+      CheckBox taggingCheckbox = taggingCheckboxes.get(screenForCode);
 
       boolean ignored = frontend.getIgnoredValidations().contains(validationCode);
       if (ignored) {
@@ -173,10 +208,44 @@ public class ValidatorsScreensPreferencesController implements Initializable {
 
       optionCombo.setDisable(!checkBox.isSelected());
       mediaCombo.setDisable(!checkBox.isSelected());
+      taggingCheckbox.setDisable(!checkBox.isSelected());
 
       mediaCombo.setItems(FXCollections.observableList(new ArrayList<>(Arrays.asList(ValidatorMedia.values()))));
       initMedia(defaultProfile, mediaCombo, validationCode);
     }
+
+    List<String> suggestions = client.getTaggingService().getTags();
+    TagField tagField = new TagField(suggestions);
+    tagField.setInputDisabled(!taggingSettings.isAutoTagScreensEnabled());
+    tagField.setAllowCustomTags(true);
+    tagField.setTags(taggingSettings.getScreenTags());
+    tagField.addListener(new ListChangeListener<String>() {
+      @Override
+      public void onChanged(Change<? extends String> c) {
+        List<String> list = (List<String>) c.getList();
+        taggingSettings.setScreenTags(new ArrayList<>(list));
+        client.getPreferenceService().setJsonPreference(taggingSettings);
+      }
+    });
+    tagPane.getChildren().add(tagField);
+
+    Map<String, Boolean> autoTaggedScreens = taggingSettings.getAutoTaggedScreens();
+    for (Map.Entry<String, Boolean> entry : autoTaggedScreens.entrySet()) {
+      if (taggingCheckboxes.containsKey(entry.getKey())) {
+        CheckBox checkBox = taggingCheckboxes.get(entry.getKey());
+        checkBox.setSelected(entry.getValue());
+      }
+    }
+
+    taggingEnabledCheckbox.setSelected(taggingSettings.isAutoTagScreensEnabled());
+    taggingEnabledCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        taggingSettings.setAutoTagScreensEnabled(newValue);
+        tagField.setInputDisabled(!newValue);
+        client.getPreferenceService().setJsonPreference(taggingSettings);
+      }
+    });
   }
 
   private static int getValidationCode(String id) {
@@ -194,16 +263,32 @@ public class ValidatorsScreensPreferencesController implements Initializable {
     optionCombo.setValue(config.getOption());
   }
 
-  private static void findAllCheckboxes(Parent parent, List<CheckBox> settingsCheckboxes) {
+  private static void findAllScreenCheckboxes(Parent parent, List<CheckBox> settingsCheckboxes) {
     for (Node node : parent.getChildrenUnmodifiable()) {
       if (node instanceof CheckBox) {
         CheckBox checkBox = (CheckBox) node;
-        if (checkBox.getId() != null) {
+        if (checkBox.getId() != null && !checkBox.getId().startsWith("Tag")) {
           settingsCheckboxes.add(checkBox);
         }
       }
       if (node instanceof Parent) {
-        findAllCheckboxes((Parent) node, settingsCheckboxes);
+        findAllScreenCheckboxes((Parent) node, settingsCheckboxes);
+      }
+    }
+  }
+
+  private static void findAllTaggingCheckboxes(Parent parent, Map<VPinScreen, CheckBox> taggingCheckboxes) {
+    for (Node node : parent.getChildrenUnmodifiable()) {
+      if (node instanceof CheckBox) {
+        CheckBox checkBox = (CheckBox) node;
+        if (checkBox.getId() != null && checkBox.getId().startsWith("Tag")) {
+          int validationCode = getValidationCode(checkBox.getId());
+          VPinScreen screenForCode = getScreenForCode(validationCode);
+          taggingCheckboxes.put(screenForCode, checkBox);
+        }
+      }
+      if (node instanceof Parent) {
+        findAllTaggingCheckboxes((Parent) node, taggingCheckboxes);
       }
     }
   }

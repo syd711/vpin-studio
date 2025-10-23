@@ -6,6 +6,7 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.ValidatorsBackglassPreferencesController">
    <center>
@@ -32,6 +33,25 @@
 
                   <CheckBox fx:id="pref_1011" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="Full DMD Aspect ratio" />
                   <Label styleClass="checkbox-description" text="Checks if the full DMD B2S has an appropriate ratio." textFill="WHITE" />
+                  <VBox fx:id="tagPane" prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <Label styleClass="preference-subtitle" text="Auto Tagging">
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Label styleClass="preference-description" text="If enabled and the table is replaced, the given tags are automatically applied to the table data" textFill="WHITE" />
+                        <Label styleClass="preference-description" text="to keep track of this change (e.g. to track tables for recording)." textFill="WHITE" />
+                        <CheckBox fx:id="taggingEnabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="Auto Tagging Enabled" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets bottom="12.0" top="12.0" />
+                           </VBox.margin>
+                        </CheckBox>
+                     </children>
+                  </VBox>
 
 
                </children>
