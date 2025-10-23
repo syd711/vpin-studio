@@ -97,7 +97,7 @@
                         <Label styleClass="checkbox-description" text="Checks if files for PUP packs are missing." textFill="WHITE" />
                      </children>
                   </VBox>
-                  <VBox fx:id="tagPane" prefHeight="200.0" prefWidth="100.0">
+                  <VBox fx:id="tagPane">
                      <children>
                         <Label styleClass="preference-subtitle" text="Auto Tagging">
                            <VBox.margin>
