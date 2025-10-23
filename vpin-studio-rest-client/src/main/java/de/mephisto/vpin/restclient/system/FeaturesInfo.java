@@ -31,6 +31,9 @@ public class FeaturesInfo {
   public boolean PLAYLIST_EXTENDED = true;
   public boolean PLAYLIST_CRUD = true;
 
+  /** Whether Import and Export button are visible in TemplateEditor  */
+  public boolean TEMPLATE_EDITOR_IMPORT_EXPORT = true;
+
   public boolean BACKUPS_ENABLED = true; //highscore restore is missing!
 
   public boolean SCREEN_MANAGER_ENABLED = true;

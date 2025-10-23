@@ -20,7 +20,8 @@ public class FrontendMediaRepresentation {
   public List<FrontendMediaItemRepresentation> getMediaItems(VPinScreen screen) {
     if (media.containsKey(screen.name())) {
       List<FrontendMediaItemRepresentation> mediaItemRepresentations = this.media.get(screen.name());
-      Collections.sort(mediaItemRepresentations, Comparator.comparing(FrontendMediaItemRepresentation::getName));
+      // compare filenames ignoring case
+      Collections.sort(mediaItemRepresentations, (i1, i2) -> i1.getName().compareToIgnoreCase(i2.getName()));
       return mediaItemRepresentations;
     }
     return Collections.emptyList();

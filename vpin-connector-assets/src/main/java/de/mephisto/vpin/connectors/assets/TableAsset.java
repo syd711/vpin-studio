@@ -11,6 +11,7 @@ public class TableAsset {
   private String mimeType;
   private String author;
   private String screenSegment;
+  private boolean playfieldMediaInverted = false;
   private String emulator;
   private long length = -1;
 
@@ -36,6 +37,14 @@ public class TableAsset {
 
   public void setScreen(String screenSegment) {
     this.screenSegment = screenSegment;
+  }
+
+  public boolean isPlayfieldMediaInverted() {
+    return playfieldMediaInverted;
+  }
+
+  public void setPlayfieldMediaInverted(boolean playfieldMediaInverted) {
+    this.playfieldMediaInverted = playfieldMediaInverted;
   }
 
   public String getAuthor() {

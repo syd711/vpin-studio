@@ -20,6 +20,7 @@ import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.webhooks.WebhookSet;
 import de.mephisto.vpin.restclient.webhooks.WebhookSettings;
@@ -37,17 +38,23 @@ import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
+import de.mephisto.vpin.ui.util.StudioFolderChooser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -311,6 +318,27 @@ public class TableDialogs {
         }
       });
       return true;
+    }
+    return false;
+  }
+
+  public static boolean download(Stage stage, String filename, InputStream in) {
+    StudioFolderChooser chooser = new StudioFolderChooser();
+    chooser.setTitle("Select Target Folder");
+    File targetFolder = chooser.showOpenDialog(stage);
+
+    if (targetFolder != null) {
+      File targetFile = new File(targetFolder, filename);
+      targetFile = FileUtils.uniqueFile(targetFile);
+      try (FileOutputStream fileOutputStream = new FileOutputStream(targetFile)) {
+        IOUtils.copy(in, fileOutputStream);
+        WidgetFactory.showInformation(stage, "Export Finished", "Written \"" + targetFile.getName() + "\".");
+        return true;
+      }
+      catch (IOException e) {
+        LOG.error("Failed to download {} : {}", targetFile.getName(), e.getMessage(), e);
+        WidgetFactory.showAlert(stage, "Error", "Failed to download " + targetFile.getName() + ": " + e.getMessage());
+      }
     }
     return false;
   }

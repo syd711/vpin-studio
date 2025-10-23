@@ -104,7 +104,18 @@
                     </graphic>
                 </Button>
 
-                <!--Button fx:id="importBtn" mnemonicParsing="false" onAction="#onImport" textFill="WHITE">
+                <Button fx:id="exportBtn" mnemonicParsing="false" onAction="#onExport" textFill="WHITE">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                    <tooltip>
+                        <Tooltip text="Export current Template" />
+                    </tooltip>
+                    <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="18" />
+                    </graphic>
+                </Button>
+                <Button fx:id="importBtn" mnemonicParsing="false" onAction="#onImport" textFill="WHITE">
                     <font>
                         <Font size="14.0" />
                     </font>
@@ -112,9 +123,9 @@
                         <Tooltip text="Import Template" />
                     </tooltip>
                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-import-outline" iconSize="18" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                     </graphic>
-                </Button-->
+                </Button>
 
                 <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" textFill="WHITE">
                     <font>

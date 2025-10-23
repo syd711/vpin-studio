@@ -43,16 +43,20 @@ import javafx.scene.media.Media;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
@@ -73,6 +77,12 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
   @FXML
   private Button createBtn;
+
+  @FXML
+  private Button exportBtn;
+
+  @FXML
+  private Button importBtn;
 
   @FXML
   private Button renameBtn;
@@ -248,6 +258,20 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     DialogTemplateEditorUploadController controller = (DialogTemplateEditorUploadController) stage.getUserData();
     controller.setData(stage, this, gameName);
     stage.showAndWait();
+  }
+
+  @FXML
+  private void onExport(ActionEvent e) {
+    CardTemplate cardTemplate = getSelectedCardTemplate();
+
+    String url = client.getHighscoreCardTemplatesClient().getCardTemplateUrl(cardTemplate);
+    try (BufferedInputStream in = new BufferedInputStream(new URL(url).openStream())) {
+      TableDialogs.download(stage, "template_" + cardTemplate.getName() + ".json", in);
+    }
+    catch (IOException ioe) {
+      LOG.error("Cannot download template {}", cardTemplate.getName(), ioe);
+      WidgetFactory.showAlert(stage, "Error", "Cannot download template " + cardTemplate.getName() + ": " + ioe.getMessage());
+    }
   }
 
   @FXML
@@ -592,6 +616,12 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     Frontend frontend = client.getFrontendService().getFrontendCached();
     FrontendUtil.replaceName(folderBtn.getTooltip(), frontend);
     FrontendUtil.replaceName(stopBtn.getTooltip(), frontend);
+
+    this.exportBtn.managedProperty().bind(this.exportBtn.visibleProperty());
+    this.importBtn.managedProperty().bind(this.importBtn.visibleProperty());
+
+    this.exportBtn.setVisible(Features.TEMPLATE_EDITOR_IMPORT_EXPORT);
+    this.importBtn.setVisible(Features.TEMPLATE_EDITOR_IMPORT_EXPORT);
 
     try {
       this.deleteBtn.setDisable(true);

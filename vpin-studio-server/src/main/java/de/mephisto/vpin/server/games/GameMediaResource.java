@@ -10,8 +10,10 @@ import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.restclient.util.FileUtils;
+import de.mephisto.vpin.restclient.util.MimeTypeUtil;
 import de.mephisto.vpin.server.assets.TableAssetSourcesService;
 import de.mephisto.vpin.server.assets.TableAssetsService;
+import de.mephisto.vpin.server.converter.MediaConverterService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusEventsResource;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
@@ -64,6 +66,9 @@ public class GameMediaResource {
 
   @Autowired
   private TableAssetsService tableAssetsService;
+
+  @Autowired
+  private MediaConverterService mediaConverterService;
 
   @Autowired
   private GameLifecycleService gameLifecycleService;
@@ -121,6 +126,17 @@ public class GameMediaResource {
         target = FileUtils.uniqueAsset(target);
       }
       tableAssetsService.download(asset, target);
+
+      // for PLayfield, if the tableAsset is in a different orientation than frontend, rotate the asset
+      if (VPinScreen.PlayField.equals(screen) && frontendService.getFrontend().isPlayfieldMediaInverted() ^ asset.isPlayfieldMediaInverted()) {
+        if (MimeTypeUtil.isImage(asset.getMimeType())) {
+          mediaConverterService.rotateImage180(target);
+        }
+        else if (MimeTypeUtil.isVideo(asset.getMimeType())) {
+          mediaConverterService.rotateVideo180(target);
+        }
+      }
+
       return true;
     }
     finally {
