@@ -58,7 +58,9 @@ public class BackupSourceAdapterFolder implements BackupSourceAdapter {
             LOG.error("Failed to read " + archiveFile.getAbsolutePath() + ": " + e.getMessage(), e);
           }
         }
-        LOG.info("Loaded existing backups: {}, took " + (System.currentTimeMillis() - start) + "ms.", vpaFiles.length);
+        if (!cache.isEmpty()) {
+          LOG.info("Loaded existing backups: {}, took " + (System.currentTimeMillis() - start) + "ms.", vpaFiles.length);
+        }
       }
     }
     return new ArrayList<>(cache.values());
