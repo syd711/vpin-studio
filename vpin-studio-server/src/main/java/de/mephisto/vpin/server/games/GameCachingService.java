@@ -46,6 +46,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -415,8 +416,17 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     game.setAltSoundAvailable(altSoundService.isAltSoundAvailable(game));
     game.setAltColorType(altColorService.getAltColorType(game));
 
-    DirectB2S b2s = backglassService.getDirectB2SAndVersions(game);
-    game.setNbDirectB2S(b2s != null ? b2s.getNbVersions() : -1);
+    File directB2SFile = game.getDirectB2SFile();
+    if (directB2SFile.exists()) {
+      game.setNbDirectB2S(1);
+    }
+    else {
+      game.setNbDirectB2S(-1);
+      //TODO improve performance
+//      DirectB2S b2s = backglassService.getDirectB2SAndVersions(game);
+//      game.setNbDirectB2S(b2s != null ? b2s.getNbVersions() : -1);
+    }
+
 
     String updates = gameDetails.getUpdates();
     game.setVpsUpdates(VPSChanges.fromJson(updates));
