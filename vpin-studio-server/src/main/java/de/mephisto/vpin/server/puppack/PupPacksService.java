@@ -163,7 +163,7 @@ public class PupPacksService implements InitializingBean {
 //        LOG.info(msg);
       }
       else {
-        LOG.info("Skipped PUP pack folder \"" + packFolder.getName() + "\", no media found.");
+//        LOG.info("Skipped PUP pack folder \"" + packFolder.getName() + "\", no media found.");
       }
       return pupPack;
     }
