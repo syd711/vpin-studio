@@ -33,6 +33,7 @@
     - Switched order of the backglass and the PUP pack column.
     - Detection of included VBS scripts when parsing the table script and analysis of these scripts when scanning game.
     - Added validator when an included script is not present in the scripts folder.
+    - Added 'save globally' button to store DMD position globally
     - Removed .ini section since the .ini file can now directly be edited from the table overview.
     - Added edit, upload and delete actions for .ini, .res. and .pov files to the section "Table Data".
 

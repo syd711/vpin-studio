@@ -686,9 +686,9 @@ public class DMDPositionController extends BasePrevNextController {
     }
 
     // no global save when using registry
-    //if (!dmdinfo.isUseRegistry()) {
-    //  saveGloballyBtn.setVisible(true);
-    //}
+    if (!dmdinfo.isUseRegistry()) {
+      saveGloballyBtn.setVisible(true);
+    }
 
     // when dmd is auto positioned on grill, size can be 0x0 so turn option off 
     boolean hasDMD = dmdinfo.isSupportFullDmd();
