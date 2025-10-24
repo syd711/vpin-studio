@@ -76,7 +76,12 @@ public class TaggingService implements InitializingBean, GameDataChangedListener
 
   @Override
   public void gameCreated(int gameId) {
-
+    if (taggingSettings.isAutoTagTablesEnabled()) {
+      TableDetails tableDetails = frontendService.getTableDetails(gameId);
+      if (tableDetails != null && !taggingSettings.getTableTags().isEmpty()) {
+        autoApplyTags(gameId, tableDetails, taggingSettings.getTableTags());
+      }
+    }
   }
 
   @Override

@@ -17,10 +17,7 @@ import de.mephisto.vpin.restclient.util.MimeTypeUtil;
 import de.mephisto.vpin.restclient.util.ReturnMessage;
 import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.frontend.FrontendService;
-import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameLifecycleService;
-import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.games.UniversalUploadService;
+import de.mephisto.vpin.server.games.*;
 
 import de.mephisto.vpin.server.system.DefaultPictureService;
 
@@ -79,6 +76,9 @@ public class DirectB2SResource {
 
   @Autowired
   private GameLifecycleService gameLifecycleService;
+
+  @Autowired
+  private GameCachingService gameCachingService;
 
   //--------------------------------------------------
 
@@ -262,6 +262,7 @@ public class DirectB2SResource {
       Game game = gameService.getGameByDirectB2S(emulatorId, fileName);
       if (game != null) {
         gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.DIRECTB2S, fileName);
+        gameCachingService.invalidate(game.getId());
       }
     }
     return b;
@@ -300,6 +301,7 @@ public class DirectB2SResource {
       }
       else if (game != null) {
         gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.DIRECTB2S, fileName);
+        gameCachingService.invalidate(game.getId());
       }
     }
   }
