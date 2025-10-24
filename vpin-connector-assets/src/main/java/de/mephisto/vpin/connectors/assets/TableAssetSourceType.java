@@ -1,5 +1,5 @@
 package de.mephisto.vpin.connectors.assets;
 
 public enum TableAssetSourceType {
-  FileSystem, PinUPPopper, PinballX, TutorialVideos, SuperHacRepo
+  FileSystem, PinUPPopper, PinballX, TutorialVideos, SuperHacRepo, ManiaLogos
 }
