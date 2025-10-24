@@ -152,7 +152,7 @@ public class EvaluationContext {
   /**
    * Public method so that caller can specify a specific variable to capture
    */
-  public boolean addUndefinedVar(String var) {
+  private boolean addUndefinedVar(String var) {
     return undefinedVars.add(var);
   }
 

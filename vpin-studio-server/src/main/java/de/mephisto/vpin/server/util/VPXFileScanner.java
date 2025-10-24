@@ -4,19 +4,23 @@ import de.mephisto.vpin.server.roms.ScanResult;
 import de.mephisto.vpin.server.scripteval.EvaluationContext;
 import de.mephisto.vpin.server.vpx.VPXUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
+
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,25 +65,15 @@ public class VPXFileScanner {
     //force scan method
   }
 
-  public static ScanResult scan(@NonNull File gameFile) {
+  public static ScanResult scan(@NonNull File gameFile, @NonNull File scriptFolder) {
     ScanResult result = new ScanResult();
     Future<ScanResult> future = scheduler.submit(new Callable<ScanResult>() {
       @Override
       public ScanResult call() {
         long start = System.currentTimeMillis();
+
         String script = VPXUtil.readScript(gameFile);
-
-        result.setFoundControllerStop(script.toLowerCase().contains("controller.stop"));
-        result.setFoundTableExit(script.toLowerCase().contains("table1_exit"));
-
-        List<String> allLines = new ArrayList<>();
-        script = script.replaceAll("\r\n", "\n");
-        script = script.replaceAll("\r", "\n");
-        allLines.addAll(Arrays.asList(script.split("\n")));
-        LOG.info("Scanning {} lines for {}", allLines.size(), gameFile.getName());
-        Collections.reverse(allLines);
-
-        scanLines(gameFile, result, allLines);
+        List<String> allLines = scanLines(gameFile, scriptFolder, result, script);
 
         //---------------------
         // Post manupulations
@@ -221,7 +215,7 @@ public class VPXFileScanner {
     }
   }
 
-  public static void scanLines(File gameFile, ScanResult result, List<String> split) {
+  public static List<String> scanLines(File gameFile, File scriptFolder, ScanResult result, String script) {
     EvaluationContext evalctxt = new EvaluationContext();
 
     // so that curDir can be resolved 
@@ -231,40 +225,55 @@ public class VPXFileScanner {
     table1.put("Filename", FilenameUtils.getBaseName(gameFile.getName()));
     evalctxt.setVarValue("Table1", table1);
 
-    // for detection of these special variables (case insensitive)
-    evalctxt.addUndefinedVar("GameName");
-    evalctxt.addUndefinedVar("cGameName");
-    evalctxt.addUndefinedVar("pGameName");
-    evalctxt.addUndefinedVar("TableName");
-    evalctxt.addUndefinedVar("B2STableName");
-    evalctxt.addUndefinedVar("RomSet1");
+    return scanLines(evalctxt, gameFile, scriptFolder, result, script);
+  }
 
-    evalctxt.addUndefinedVar("vrroom");
-    evalctxt.addUndefinedVar("vr_room");
+  /**
+   * Recursive, sharing EvaluationContext
+   */
+  private static List<String> scanLines(EvaluationContext evalctxt, File gameFile, File scriptFolder, ScanResult result, String script) {
 
+    List<String> allLines = new ArrayList<>();
+    script = script.replaceAll("\r\n", "\n");
+    script = script.replaceAll("\r", "\n");
+    allLines.addAll(Arrays.asList(script.split("\n")));
+    LOG.info("Scanning {} lines for {}", allLines.size(), gameFile.getName());
+    //Collections.reverse(allLines);
 
-    int nbline = split.size();
-    String prevLine = null;
-    for (String fulline : split) {
+    List<String> includedScripts = new ArrayList<>();
+
+    int nbline = 0;
+    String prevLine = "";
+    for (String fulline : allLines) {
       String[] statements = stripComments(fulline);
       for (String statement : statements) {
         if (statement.endsWith("_")) {
-          prevLine = statement.substring(0, statement.length() - 1) + " " + prevLine;
+          prevLine += statement.substring(0, statement.length() - 1) + " ";
         }
         else {
-          if (prevLine != null) {
-            detectLine(result, evalctxt, nbline, prevLine);
-          }
-          prevLine = statement;
+          prevLine += statement;
+          detectLine(result, includedScripts, evalctxt, nbline, prevLine);
+          // new real line
+          prevLine = "";
         }
       }
-      nbline--;
-    }
-    // last line to process
-    if (prevLine != null) {
-      detectLine(result, evalctxt, nbline, prevLine);
+      nbline++;
     }
 
+    for (String included : includedScripts) {
+      File includedFile = new File(scriptFolder, included);
+      if (includedFile.exists()) {
+        try (InputStream in = new FileInputStream(includedFile)) {
+          String includedScript = IOUtils.toString(in, StandardCharsets.UTF_8);
+          result.getScripts().clear();
+          scanLines(evalctxt, gameFile, scriptFolder, result, includedScript);
+        }
+        catch (IOException ioe) {
+          LOG.error("Cannot open included script {}", included, ioe);
+        }
+      }
+    }
+    result.getScripts().addAll(includedScripts);
 
     //-------------------
     // Copy discovered variables into Scanresult
@@ -289,9 +298,11 @@ public class VPXFileScanner {
       result.setVrRoomSupport(vrroom != null);
       result.setVrRoomDisabled(vrroom == null || vrroom.toString().equals("0"));
     }
+
+    return allLines;
   }
 
-  private static void detectLine(ScanResult result, EvaluationContext evalctxt, int nbline, String line) {
+  private static void detectLine(ScanResult result, List<String> includedScripts, EvaluationContext evalctxt, int nbline, String line) {
     try {
       lineDetectWith(result, line, evalctxt);
       lineEvaluateVars(line, evalctxt);
@@ -302,10 +313,12 @@ public class VPXFileScanner {
       lineSearchNvOffset(result, line);
       lineSearchHsFileName(result, line);
       lineSearchTextFileName(result, line);
+      lineSearchControllerStop(result, line);
       //lineSearchVRRoom(result, line);
       lineSearchDMDType(result, line);
       lineSearchInitUltraDmd(result, line, evalctxt);
       lineSearchDMDProjectFolder(result, line, evalctxt);
+      lineSearchScript(includedScripts, line, evalctxt);
     }
     catch (Exception e) {
       LOG.error("error on line " + nbline, e);
@@ -366,9 +379,7 @@ public class VPXFileScanner {
       if (matcher.matches()) {
         String var = matcher.group(1);
         String varExp = matcher.group(2).trim();
-        if (evalctxt.isUndefinedVar(var)) {
-          evalctxt.setVarExpression(var, varExp);
-        }
+        evalctxt.setVarExpression(var, varExp);
       }
     }
   }
@@ -403,13 +414,13 @@ public class VPXFileScanner {
   }
 
   private static void lineSearchControllerStop(@NonNull ScanResult result, @NonNull String line) {
-    if (result.isFoundControllerStop()) {
-      return;
-    }
-
     //for some reason there are 2x variants with upper and lower case
     if (line.toLowerCase().contains("controller.stop")) {
       result.setFoundControllerStop(true);
+    }
+    //for some reason there are 2x variants with upper and lower case
+    if (line.toLowerCase().contains("table1_exit")) {
+      result.setFoundTableExit(true);
     }
   }
 
@@ -439,17 +450,12 @@ public class VPXFileScanner {
       else if (StringUtils.startsWithIgnoreCase(line, "With FlexDMD")) {
         object = "FlexDMD";
       }
-      // if a value is already known, set it
-      String value = evalctxt.removeTempValue("withGameName_Value");
-      if (value != null && object != null) {
-        setGameNameForObject(result, object, value);
+      if (object != null) {
+        evalctxt.setTempValue("withCurrentObject", object);
       }
-      else {
-        String current = evalctxt.removeTempValue("withGameName");
-        if (current != null && object != null) {
-          evalctxt.setTempValue("withGameName_" + current, object);
-        }
-      }
+    }
+    else if (line.startsWith("End With")) {
+      evalctxt.removeTempValue("withCurrentObject");
     }
   }
 
@@ -460,39 +466,25 @@ public class VPXFileScanner {
     if (line.contains(".GameName")) {
       String gameName = extractAfterPatternsValue(line, ".GameName", "=");
       gameName = StringUtils.substringBefore(gameName, ":");
+      // object if specified before
       String object = StringUtils.substringBefore(line, ".GameName").trim();
-      // Marker to identify current assignment
-      String rnd = Integer.toString(RandomUtils.nextInt());
       if (StringUtils.isEmpty(object)) {
-        // object is not specified, need to wait for the With Object statement 
-        evalctxt.setTempValue("withGameName", rnd);
-      }
-      else {
-        // object is known, register it now 
-        evalctxt.setTempValue("withGameName_" + rnd, object);
+        // object is not specified, get the With Object statement
+        object = evalctxt.getTempValue("withCurrentObject");
       }
 
       // handler when gameName is computed
-      evalctxt.onEvaluateString(gameName, res -> {
-        String with = evalctxt.removeTempValue("withGameName_" + rnd);
-        // gameName is evaluated before With Object is identified
-        if (with == null) {
-          // with object is not known yet, add the value so that it is added later
-          evalctxt.setTempValue("withGameName_Value", res);
-        }
-        else {
-          setGameNameForObject(result, with, res);
-        }
-      });
-    }
-  }
-
-  private static void setGameNameForObject(ScanResult result, String object, String value) {
-    if ("Controller".equalsIgnoreCase(object)) {
-      result.setGameName(value);
-    }
-    else if ("FlexDMD".equalsIgnoreCase(object)) {
-      result.setDMDGameName(value);
+      if (StringUtils.isNotEmpty(object)) {
+        final String with = object;
+        evalctxt.onEvaluateString(gameName, res -> {
+          if ("Controller".equalsIgnoreCase(with)) {
+            result.setGameName(res);
+          }
+          else if ("FlexDMD".equalsIgnoreCase(with)) {
+            result.setDMDGameName(res);
+          }
+        });
+      }
     }
   }
 
@@ -572,6 +564,16 @@ public class VPXFileScanner {
           res = StringUtils.removeEnd(res, "/");
         }
         result.setDMDProjectFolder(res);
+      });
+    }
+  }
+
+  private static void lineSearchScript(List<String> includedScripts, String line, EvaluationContext evalctxt) {
+    if (StringUtils.containsIgnoreCase(line, "GetTextFile")) {
+      String script = StringUtils.substringAfter(line, "GetTextFile");
+      script = StringUtils.substringBetween(script, "(", ")").trim();
+      evalctxt.onEvaluateString(script, res -> {
+        includedScripts.add(res);
       });
     }
   }
