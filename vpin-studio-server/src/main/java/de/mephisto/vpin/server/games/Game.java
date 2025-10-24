@@ -92,6 +92,8 @@ public class Game {
   private String dmdGameName;
   private String dmdProjectFolder;
 
+  private String[] scripts;
+
   private boolean ignoreUpdates = false;
 
   private int rating = 0;
@@ -761,6 +763,14 @@ public class Game {
   }
 
   // File getNvRamFile() -> MOVED IN highscoreResolver
+
+  public String[] getScripts() {
+    return scripts;
+  }
+
+  public void setScripts(String[] scripts) {
+    this.scripts = scripts;
+  }
 
   @Override
   public String toString() {

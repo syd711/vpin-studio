@@ -31,6 +31,8 @@
       directly be edited via the systems default text editor. For backglasses, the corresponding backglass is selected
       in the backglass manager.
     - Switched order of the backglass and the PUP pack column.
+    - Detection of included VBS scripts when parsing the table script and analysis of these scripts when scanning game.
+    - Added validator when an included script is not present in the scripts folder.
     - Removed .ini section since the .ini file can now directly be edited from the table overview.
     - Added edit, upload and delete actions for .ini, .res. and .pov files to the section "Table Data".
 
@@ -39,9 +41,10 @@
 - **Media management**
     - Added a new media type: Logo. It generally corresponds to a small horizontal image. Like a wheel, it helps
       identifying a table visually but is simpler, generally the name of the table writen with the font of the table.
-    - Added zones to upload and search logos in MediaManager and in the Table Media sidebar
+    - Added zones to upload and search logos in MediaManager and in the Table Media sidebar.
     - Added checkbox in media preference to add a validator that check presence of logo.
-    - For PinballX and PinballY, auto-invert playfield assets when copied from non PinballX assets source
+    - For PinballX and PinballY, auto-invert playfield assets when copied from non PinballX assets source.
+    - For PinballY, added search section on Superhac, Kongedam tutorials and personal assets sources.
 
 - **Highscore cards**
     - Added wheel generator, default template generates Tarcissio styled-wheels.

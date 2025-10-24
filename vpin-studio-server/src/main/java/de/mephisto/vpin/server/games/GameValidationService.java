@@ -159,11 +159,29 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
     if (isVPX && isValidationEnabled(game, GameValidationCode.CODE_NO_DMDFOLDER)) {
       File dmdProjectFolder = StringUtils.isNotEmpty(game.getDMDProjectFolder()) ?
-          new File(game.getEmulator().getGamesFolder(), game.getDMDProjectFolder()) : null;
+          new File(game.getGameFile().getParent(), game.getDMDProjectFolder()) : null;
       if (dmdProjectFolder != null && !dmdProjectFolder.exists()) {
-        result.add(ValidationStateFactory.create(GameValidationCode.CODE_NO_DMDFOLDER));
+        result.add(ValidationStateFactory.create(GameValidationCode.CODE_NO_DMDFOLDER, game.getDMDProjectFolder()));
         if (findFirst) {
           return result;
+        }
+      }
+    }
+
+    if (isVPX && isValidationEnabled(game, GameValidationCode.CODE_SCRIPT_FILES_MISSING)) {
+      if (game.getScripts() != null) {
+        File scriptFolder = game.getEmulator().getScriptsFolder();
+        for (String script : game.getScripts()) {
+          File scriptFile = new File(game.getGameFile().getParentFile(), script);
+          if (!scriptFile.exists()) {
+            scriptFile = new File(scriptFolder, script);
+          }
+          if (!scriptFile.exists()) {
+            result.add(ValidationStateFactory.create(GameValidationCode.CODE_SCRIPT_FILES_MISSING, script));
+            if (findFirst) {
+              return result;
+            }
+          }
         }
       }
     }
@@ -664,6 +682,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         || codes.contains(CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED)
         || codes.contains(CODE_ALT_COLOR_FILES_MISSING)
         || codes.contains(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING)
+        || codes.contains(CODE_SCRIPT_FILES_MISSING)
     ) {
       return true;
     }

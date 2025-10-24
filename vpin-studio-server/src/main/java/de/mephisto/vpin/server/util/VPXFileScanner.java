@@ -58,6 +58,8 @@ public class VPXFileScanner {
 
   private static final Pattern VAR_PATTERN = Pattern.compile("(?:Set *)?(\\w*)\\s*=\\s*(.*)");
 
+  /** all lower case ! */
+  private final static List<String> IGNORED_SCRIPTS = Arrays.asList("core.vbs", "controller.vbs", "vpmkeys.vbs");
 
   private static final ExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
@@ -260,20 +262,27 @@ public class VPXFileScanner {
       nbline++;
     }
 
+    // now parse included scripts
     for (String included : includedScripts) {
-      File includedFile = new File(scriptFolder, included);
-      if (includedFile.exists()) {
-        try (InputStream in = new FileInputStream(includedFile)) {
-          String includedScript = IOUtils.toString(in, StandardCharsets.UTF_8);
-          result.getScripts().clear();
-          scanLines(evalctxt, gameFile, scriptFolder, result, includedScript);
+      if (!IGNORED_SCRIPTS.contains(included.toLowerCase())) {
+        // search first in the table folder
+        File includedFile = new File(gameFile.getParentFile(), included);
+        if (!includedFile.exists()) {
+          includedFile = new File(scriptFolder, included);
         }
-        catch (IOException ioe) {
-          LOG.error("Cannot open included script {}", included, ioe);
+        if (includedFile.exists()) {
+          try (InputStream in = new FileInputStream(includedFile)) {
+            String includedScript = IOUtils.toString(in, StandardCharsets.UTF_8);
+            result.getScripts().clear();
+            scanLines(evalctxt, gameFile, scriptFolder, result, includedScript);
+          }
+          catch (IOException ioe) {
+            LOG.error("Cannot open included script {}", included, ioe);
+          }
         }
       }
+      result.getScripts().add(included);
     }
-    result.getScripts().addAll(includedScripts);
 
     //-------------------
     // Copy discovered variables into Scanresult
