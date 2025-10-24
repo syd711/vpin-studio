@@ -95,6 +95,10 @@ public class TableAssetSourcesService implements PreferenceChangedListener, Init
   public void afterPropertiesSet() throws Exception {
     preferenceChanged(PreferenceNames.ASSET_SOURCES_SETTINGS, null, null);
     preferencesService.addChangeListener(this);
-    tableAssetsService.invalidateMediaSources(getAssetSources());
+
+    new Thread(()->{
+      Thread.currentThread().setName("Asset Sources Initializer");
+      tableAssetsService.invalidateMediaSources(getAssetSources());
+    }).start();
   }
 }
