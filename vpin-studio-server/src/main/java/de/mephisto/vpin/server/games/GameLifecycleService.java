@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
@@ -61,6 +62,13 @@ public class GameLifecycleService {
     GameAssetChangedEvent event = new GameAssetChangedEvent(gameId, assetType, asset);
     for (GameDataChangedListener listener : gameDataChangedListeners) {
       listener.gameAssetChanged(event);
+    }
+  }
+
+  public void notifyGameScreenAssetsChanged(int gameId, @NonNull VPinScreen screen, @Nullable Object asset) {
+    GameScreenAssetChangedEvent event = new GameScreenAssetChangedEvent(gameId, screen, asset);
+    for (GameDataChangedListener listener : gameDataChangedListeners) {
+      listener.gameScreenAssetChanged(event);
     }
   }
 

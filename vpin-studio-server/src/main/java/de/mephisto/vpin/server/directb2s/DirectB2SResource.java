@@ -348,12 +348,12 @@ public class DirectB2SResource {
 
   @PostMapping("/upload")
   public UploadDescriptor uploadDirectB2s(@RequestParam(value = "file", required = false) MultipartFile file,
-                                          @RequestParam("uploadType") UploadType uploadType,
+                                          @RequestParam("uploadType") String uploadType,
                                           @RequestParam("objectId") Integer gameId) {
     UploadDescriptor descriptor = universalUploadService.create(file, gameId);
     try {
       descriptor.upload();
-      descriptor.setUploadType(uploadType);
+      descriptor.setUploadType(UploadType.valueOf(uploadType.replaceAll("\"", ""))); //????
       universalUploadService.importFileBasedAssets(descriptor, AssetType.DIRECTB2S);
       gameService.resetUpdate(gameId, VpsDiffTypes.b2s);
       backglassService.clearCache();

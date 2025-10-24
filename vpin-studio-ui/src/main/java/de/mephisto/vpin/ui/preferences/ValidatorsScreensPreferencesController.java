@@ -89,7 +89,13 @@ public class ValidatorsScreensPreferencesController implements Initializable {
     int code = getValidationCode(id);
     VPinScreen screen = getScreenForCode(code);
 
-    taggingSettings.getAutoTaggedScreens().put(screen.name(), !checked);
+    if (checked) {
+      taggingSettings.getTaggedScreens().add(screen);
+    }
+    else {
+      taggingSettings.getTaggedScreens().remove(screen);
+    }
+
     client.getPreferenceService().setJsonPreference(taggingSettings);
   }
 
@@ -229,11 +235,10 @@ public class ValidatorsScreensPreferencesController implements Initializable {
     });
     tagPane.getChildren().add(tagField);
 
-    Map<String, Boolean> autoTaggedScreens = taggingSettings.getAutoTaggedScreens();
-    for (Map.Entry<String, Boolean> entry : autoTaggedScreens.entrySet()) {
-      if (taggingCheckboxes.containsKey(entry.getKey())) {
-        CheckBox checkBox = taggingCheckboxes.get(entry.getKey());
-        checkBox.setSelected(entry.getValue());
+    for (VPinScreen taggedScreen : taggingSettings.getTaggedScreens()) {
+      if (taggingCheckboxes.containsKey(taggedScreen)) {
+        CheckBox checkBox = taggingCheckboxes.get(taggedScreen);
+        checkBox.setSelected(true);
       }
     }
 

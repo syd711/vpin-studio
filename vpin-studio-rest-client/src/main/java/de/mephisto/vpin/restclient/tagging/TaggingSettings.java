@@ -2,11 +2,10 @@ package de.mephisto.vpin.restclient.tagging;
 
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class TaggingSettings extends JsonSettings {
 
@@ -17,15 +16,7 @@ public class TaggingSettings extends JsonSettings {
   private List<String> tableTags = new ArrayList<>();
   private List<String> backglassTags = new ArrayList<>();
 
-  private Map<String, Boolean> autoTaggedScreens = new HashMap<>();
-
-//  static {
-//    autoTaggedScreens.put(VPinScreen.PlayField.name(), true)
-//  }
-
-  public Map<String, Boolean> getAutoTaggedScreens() {
-    return autoTaggedScreens;
-  }
+  private List<VPinScreen> taggedScreens = new ArrayList<>();
 
   public boolean isAutoTagBackglassEnabled() {
     return autoTagBackglassEnabled;
@@ -59,8 +50,12 @@ public class TaggingSettings extends JsonSettings {
     this.tableTags = tableTags;
   }
 
-  public void setAutoTaggedScreens(Map<String, Boolean> autoTaggedScreens) {
-    this.autoTaggedScreens = autoTaggedScreens;
+  public List<VPinScreen> getTaggedScreens() {
+    return taggedScreens;
+  }
+
+  public void setTaggedScreens(List<VPinScreen> taggedScreens) {
+    this.taggedScreens = taggedScreens;
   }
 
   public List<String> getScreenTags() {

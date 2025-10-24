@@ -396,12 +396,12 @@ public class DefaultPictureService implements ApplicationListener<ApplicationRea
   //---------------------------------------------------
 
   @Override
-  public void gameDataChanged(GameDataChangedEvent changedEvent) {
+  public void gameDataChanged(@NonNull GameDataChangedEvent changedEvent) {
     // not needed
   }
 
   @Override
-  public void gameAssetChanged(GameAssetChangedEvent changedEvent) {
+  public void gameAssetChanged(@NonNull GameAssetChangedEvent changedEvent) {
     if (AssetType.DIRECTB2S.equals(changedEvent.getAssetType())) {
       // not that clean but sufficient so save access to Game
       Game game = new Game();
