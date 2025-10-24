@@ -34,7 +34,6 @@ import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.roms.RomService;
 import de.mephisto.vpin.server.roms.ScanResult;
-import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.vps.VpsService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -142,7 +141,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     try {
       game = frontendService.getOriginalGame(gameId);
       if (game != null) {
-        applyGameDetails(game, true, true);
+        applyGameDetails(game, true, true, null);
         mameService.clearCacheFor(game.getRom());
         if (game.isVpxGame()) {
           highscoreService.scanScore(game, EventOrigin.USER_INITIATED);
@@ -171,7 +170,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     if (game == null) {
       game = frontendService.getOriginalGame(id);
       if (game != null && game.getEmulator() != null) {
-        applyGameDetails(game, false, true);
+        applyGameDetails(game, false, true, null);
         List<Game> games = allGamesByEmulatorId.computeIfAbsent(game.getEmulatorId(), k -> new ArrayList<>());
         games.add(game);
       }
@@ -194,7 +193,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
   public List<Game> getGamesByRom(int emulatorId, @NonNull String rom) {
     List<Game> games = frontendService.getGamesByEmulator(emulatorId);
     for (Game game : games) {
-      applyGameDetails(game, false, false);
+      applyGameDetails(game, false, false, null);
     }
     return games.stream()
         .filter(g ->
@@ -213,7 +212,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
       GameEmulator emulator = emulatorService.getGameEmulator(emulatorId);
       if (emulator != null && emulator.isEnabled()) {
         if (!allGamesByEmulatorId.containsKey(emulator.getId())) {
-          fetchEmulatorGames(emulator);
+          fetchEmulatorGames(emulator, Collections.emptyMap());
         }
         games.addAll(allGamesByEmulatorId.get(emulator.getId()));
       }
@@ -225,12 +224,14 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
   }
 
   private List<Game> getVpxGames() {
+    List<GameDetails> all = gameDetailsRepository.findAll();
+    Map<Integer, GameDetails> mappedGameDetails = all.stream().collect(Collectors.toMap(g -> g.getPupId(), g -> g));
     List<Game> games = new ArrayList<>();
     List<GameEmulator> gameEmulators = emulatorService.getVpxGameEmulators();
     for (GameEmulator gameEmulator : gameEmulators) {
       if (gameEmulator.isEnabled()) {
         if (!allGamesByEmulatorId.containsKey(gameEmulator.getId())) {
-          fetchEmulatorGames(gameEmulator);
+          fetchEmulatorGames(gameEmulator, mappedGameDetails);
         }
         games.addAll(allGamesByEmulatorId.get(gameEmulator.getId()));
       }
@@ -238,12 +239,13 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     return games;
   }
 
-  private void fetchEmulatorGames(GameEmulator emulator) {
+  private void fetchEmulatorGames(GameEmulator emulator, Map<Integer, GameDetails> mappedGameDetails) {
     long start = System.currentTimeMillis();
     List<Game> gamesByEmulator = frontendService.getGamesByEmulator(emulator.getId());
     boolean killFrontend = false;
     for (Game game : gamesByEmulator) {
-      boolean newGame = applyGameDetails(game, false, false);
+      GameDetails gameDetails = mappedGameDetails.get(game.getId());
+      boolean newGame = applyGameDetails(game, false, false, gameDetails);
       if (newGame) {
         gameLifecycleService.notifyGameCreated(game.getId());
         highscoreService.scanScore(game, EventOrigin.INITIAL_SCAN);
@@ -264,8 +266,10 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     LOG.info("Game fetch for emulator " + emulator.getName() + " took " + duration + "ms / " + gamesByEmulator.size() + " games / " + avg + "ms avg.");
   }
 
-  private boolean applyGameDetails(@NonNull Game game, boolean forceScan, boolean forceScoreScan) {
-    GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
+  private boolean applyGameDetails(@NonNull Game game, boolean forceScan, boolean forceScoreScan, @Nullable GameDetails gameDetails) {
+    if (gameDetails == null) {
+      gameDetails = gameDetailsRepository.findByPupId(game.getId());
+    }
     boolean newGame = (gameDetails == null);
 
     TableDetails tableDetails = null;
