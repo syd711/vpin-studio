@@ -13,7 +13,6 @@ import de.mephisto.vpin.restclient.mania.ManiaTableSyncResult;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
-import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusChangeListener;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.frontend.TableStatusChangeListener;
@@ -26,6 +25,7 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.vps.VpsService;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,9 +38,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PreDestroy;
 import javax.imageio.ImageIO;
-
-import static de.mephisto.vpin.server.VPinStudioServer.Features;
-
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
@@ -48,6 +45,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 @Service
 public class ManiaService implements InitializingBean, FrontendStatusChangeListener, PreferenceChangedListener, TableStatusChangeListener, GameDataChangedListener, GameLifecycleListener, ApplicationListener<ApplicationReadyEvent> {
@@ -274,10 +273,9 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
     }
   }
 
-  public void setOnline() {
+  public void setOnline(@Nullable Cabinet cabinet) {
     if (Features.MANIA_ENABLED) {
       try {
-        Cabinet cabinet = getClient().getCabinetClient().getCabinet();
         if (cabinet != null) {
           cabinet.getStatus().setStatus(CabinetOnlineStatus.online);
           cabinet.getStatus().setActiveGame(null);
@@ -472,12 +470,12 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
   @Override
   public void frontendLaunched() {
-    this.setOnline();
+    this.setOnline(maniaClient.getCabinetClient().getCabinetCached());
   }
 
   @Override
   public void frontendRestarted() {
-    this.setOnline();
+    this.setOnline(maniaClient.getCabinetClient().getCabinetCached());
   }
 
   @Override
@@ -576,15 +574,16 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
         synchronizeTables();
 
         preferencesService.addChangeListener(this);
-        preferenceChanged(PreferenceNames.MANIA_SETTINGS, null, null);
+        maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
+        new Thread(() -> {
+          setOnline(cabinet);
+        }).start();
       }
       catch (Exception e) {
         LOG.error("Failed to init mania services: {}", e.getMessage(), e);
         Features.MANIA_ENABLED = false;
       }
     }
-
-    setOnline();
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 
