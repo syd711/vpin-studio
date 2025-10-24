@@ -591,6 +591,10 @@ public class GameMediaService {
 
         if (PackageUtil.unpackTargetFile(tempFile, out, mediaFile)) {
           LOG.info("Created \"" + out.getAbsolutePath() + "\" for screen \"" + screen.name() + "\" from archive file \"" + mediaFile + "\"");
+
+          if (game != null) {
+            gameLifecycleService.notifyGameScreenAssetsChanged(game.getId(), screen, out);
+          }
         }
         else {
           LOG.error("Failed to unpack " + out.getAbsolutePath() + " from " + tempFile.getAbsolutePath());
@@ -811,6 +815,7 @@ public class GameMediaService {
           String suffix = FilenameUtils.getExtension(mediaFile.getName());
           File targetFile = uniqueMediaAsset(game, target, suffix);
           FileUtil.copyFile(mediaFile, targetFile);
+          gameLifecycleService.notifyGameScreenAssetsChanged(game.getId(), screen, target);
         }
       }
       return true;

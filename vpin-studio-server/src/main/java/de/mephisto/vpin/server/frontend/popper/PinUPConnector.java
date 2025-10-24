@@ -846,10 +846,10 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.setString(15, tableDetails.getGameVersion());
       preparedStatement.setString(16, tableDetails.getGameType());
       preparedStatement.setString(17, tableDetails.getGameTheme());
-      preparedStatement.setInt(18, tableDetails.getGameYear());
+      preparedStatement.setInt(18, tableDetails.getGameYear() != null ? tableDetails.getGameYear() : 0);
       preparedStatement.setString(19, tableDetails.getManufacturer());
       preparedStatement.setString(20, tableDetails.getKeepDisplays());
-      preparedStatement.setInt(21, tableDetails.getNumberOfPlayers());
+      preparedStatement.setInt(21, tableDetails.getNumberOfPlayers() != null ? tableDetails.getNumberOfPlayers() : 0);
       preparedStatement.setString(22, tableDetails.getNotes());
       preparedStatement.setString(23, tableDetails.getRomName());
 

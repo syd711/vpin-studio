@@ -7,7 +7,6 @@ import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.tagging.TaggingUtil;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
@@ -487,8 +486,8 @@ public class TablesSidebarTableDetailsController implements Initializable {
       tags.setCenter(tagsRoot);
 
       for (String tagsValue : game.getTags()) {
-        TagButton tagButton = new TagButton(client.getTaggingService().getTags(), tagsValue);
-        tagButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        TagButton tagButton = new TagButton(game.getId(), tableDetails, client.getTaggingService().getTags(), tagsValue);
+        tagButton.setButtonListener(new EventHandler<MouseEvent>() {
           @Override
           public void handle(MouseEvent event) {
             BaseFilterController<GameRepresentation, GameRepresentationModel> filterController = tablesSidebarController.getTableOverviewController().getFilterController();

@@ -1,9 +1,15 @@
 package de.mephisto.vpin.server.tagging;
 
+import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.restclient.tagging.TaggingSettings;
 import de.mephisto.vpin.restclient.tagging.TaggingUtil;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.*;
+import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
+import de.mephisto.vpin.server.preferences.PreferencesService;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 @Service
-public class TaggingService implements InitializingBean, GameDataChangedListener, GameLifecycleListener {
+public class TaggingService implements InitializingBean, GameDataChangedListener, GameLifecycleListener, PreferenceChangedListener {
   private final static Logger LOG = LoggerFactory.getLogger(TaggingService.class);
 
   @Autowired
@@ -25,6 +31,11 @@ public class TaggingService implements InitializingBean, GameDataChangedListener
 
   @Autowired
   private GameLifecycleService gameLifecycleService;
+
+  @Autowired
+  private PreferencesService preferencesService;
+
+  private TaggingSettings taggingSettings;
 
   private final static Set<String> tags = new LinkedHashSet<>();
 
@@ -39,18 +50,60 @@ public class TaggingService implements InitializingBean, GameDataChangedListener
 
   @Override
   public void gameAssetChanged(@NotNull GameAssetChangedEvent changedEvent) {
-
+    AssetType assetType = changedEvent.getAssetType();
+    switch (assetType) {
+      case DIRECTB2S: {
+        if (taggingSettings.isAutoTagBackglassEnabled()) {
+          TableDetails tableDetails = frontendService.getTableDetails(changedEvent.getGameId());
+          if (tableDetails != null && !taggingSettings.getBackglassTags().isEmpty()) {
+            autoApplyTags(changedEvent.getGameId(), tableDetails, taggingSettings.getBackglassTags());
+          }
+        }
+        break;
+      }
+    }
   }
 
+  @Override
+  public void gameScreenAssetChanged(@NotNull GameScreenAssetChangedEvent changedEvent) {
+    if (taggingSettings.isAutoTagScreensEnabled() && taggingSettings.getTaggedScreens().contains(changedEvent.getVPinScreen())) {
+      TableDetails tableDetails = frontendService.getTableDetails(changedEvent.getGameId());
+      if (tableDetails != null && !taggingSettings.getTaggedScreens().isEmpty()) {
+        autoApplyTags(changedEvent.getGameId(), tableDetails, taggingSettings.getScreenTags());
+      }
+    }
+  }
 
   @Override
   public void gameCreated(int gameId) {
-
+    if (taggingSettings.isAutoTagTablesEnabled()) {
+      TableDetails tableDetails = frontendService.getTableDetails(gameId);
+      if (tableDetails != null && !taggingSettings.getTableTags().isEmpty()) {
+        autoApplyTags(gameId, tableDetails, taggingSettings.getTableTags());
+      }
+    }
   }
 
   @Override
   public void gameUpdated(int gameId) {
 
+  }
+
+
+  private void autoApplyTags(int gameId, @NonNull TableDetails tableDetails, List<String> autoTags) {
+    List<String> gameTags = TaggingUtil.getTags(tableDetails.getTags());
+    boolean added = false;
+    for (String autoTag : autoTags) {
+      if (!gameTags.contains(autoTag)) {
+        gameTags.add(autoTag);
+        added = true;
+      }
+    }
+    if (added) {
+      LOG.info("Auto-applied new tags to {}, updating tags.", tableDetails.getGameDisplayName());
+      tableDetails.setTags(String.join(",", gameTags));
+      frontendService.saveTableDetails(gameId, tableDetails);
+    }
   }
 
   @Override
@@ -77,9 +130,18 @@ public class TaggingService implements InitializingBean, GameDataChangedListener
   }
 
   @Override
+  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
+    if (PreferenceNames.TAGGING_SETTINGS.equals(propertyName)) {
+      taggingSettings = preferencesService.getJsonPreference(PreferenceNames.TAGGING_SETTINGS);
+    }
+  }
+
+  @Override
   public void afterPropertiesSet() throws Exception {
     refreshTags();
     gameLifecycleService.addGameDataChangedListener(this);
     gameLifecycleService.addGameLifecycleListener(this);
+    preferencesService.addChangeListener(this);
+    preferenceChanged(PreferenceNames.TAGGING_SETTINGS, null, null);
   }
 }

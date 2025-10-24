@@ -24,12 +24,14 @@ public class BulkTaggingProgressModel extends ProgressModel<GameRepresentation> 
 
   private final Iterator<GameRepresentation> gameIterator;
   private final List<String> tags;
+  private final boolean addTags;
 
-  public BulkTaggingProgressModel(List<GameRepresentation> games, List<String> tags) {
+  public BulkTaggingProgressModel(List<GameRepresentation> games, List<String> tags, boolean addTags) {
     super("Tagging Tables");
     this.games = games;
     this.gameIterator = games.iterator();
     this.tags = tags;
+    this.addTags = addTags;
   }
 
   @Override
@@ -68,14 +70,24 @@ public class BulkTaggingProgressModel extends ProgressModel<GameRepresentation> 
       TableDetails tableDetails = client.getFrontendService().getTableDetails(game.getId());
       List<String> tableTags = TaggingUtil.getTags(tableDetails.getTags());
 
+      boolean updated = false;
       for (String tag : tags) {
-        if (!tableTags.contains(tag)) {
+        if (addTags && !tableTags.contains(tag)) {
+          updated = true;
           tableTags.add(tag);
         }
+
+        if (!addTags && tableTags.contains(tag)) {
+          updated = true;
+          tableTags.remove(tag);
+        }
       }
-      tableDetails.setTags(String.join(",", tableTags));
-      client.getFrontendService().saveTableDetails(tableDetails, game.getId());
-      EventManager.getInstance().notifyTableChange(game.getId(), null);
+
+      if (updated) {
+        tableDetails.setTags(String.join(",", tableTags));
+        client.getFrontendService().saveTableDetails(tableDetails, game.getId());
+        EventManager.getInstance().notifyTableChange(game.getId(), null);
+      }
     }
     catch (Exception e) {
       LOG.error("Failed to tag table: " + e.getMessage(), e);

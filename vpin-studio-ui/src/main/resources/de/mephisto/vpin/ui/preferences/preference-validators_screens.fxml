@@ -4,12 +4,15 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.ValidatorsScreensPreferencesController">
    <top>
@@ -29,10 +32,10 @@
             <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="Use the asset management view to check the validity of table assets." textFill="WHITE" />
             <GridPane alignment="BASELINE_RIGHT" vgap="3.0">
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="522.800048828125" minWidth="10.0" prefWidth="183.20000000000005" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="471.4" minWidth="10.0" prefWidth="188.7999755859375" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="326.39996948242185" minWidth="10.0" prefWidth="187.2000244140625" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="326.39996948242185" minWidth="10.0" prefWidth="94.39999999999998" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="170.0" minWidth="170.0" prefWidth="170.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="170.0" minWidth="170.0" prefWidth="170.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="326.39996948242185" minWidth="10.0" prefWidth="172.79990234374998" />
               </columnConstraints>
               <rowConstraints>
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -97,6 +100,91 @@
                   <ComboBox fx:id="Other2_40_Media" layoutX="383.0" layoutY="347.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="13" />
                   <ComboBox fx:id="Wheel_41_Media" layoutX="383.0" layoutY="380.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="11" />
                   <ComboBox fx:id="Logo_42_Media" layoutX="383.0" layoutY="380.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="12" />
+                  <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="3">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" spacing="6.0">
+                           <children>
+                              <Label styleClass="default-headline" text="Auto Tagging " />
+                              <Label>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="If the screen is checked and an asset is changed, the configured tags will be applied to the table." wrapText="true" />
+                                 </tooltip>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                              </Label>
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
+                  <CheckBox fx:id="TagAudio_30" layoutX="10.0" layoutY="49.0" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <CheckBox fx:id="TagAudioLaunch_31" layoutX="501.0" layoutY="49.0" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <CheckBox fx:id="TagMenu_32" layoutX="501.0" layoutY="83.0" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="3">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <CheckBox fx:id="TagGameInfo_33" layoutX="501.0" layoutY="116.0" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="4">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <CheckBox fx:id="TagGameHelp_34" layoutX="501.0" layoutY="150.0" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="5">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <CheckBox fx:id="TagTopper_35" layoutX="501.0" layoutY="184.0" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="6">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <CheckBox fx:id="TagDMD_37" layoutX="501.0" layoutY="217.0" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="7">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <CheckBox fx:id="TagLoading_39" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="8">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <CheckBox fx:id="TagBackGlass_36" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="9">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <CheckBox fx:id="TagPlayField_38" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="10">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <CheckBox fx:id="TagWheel_41" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="11">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <CheckBox fx:id="TagLogo_42" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="12">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <CheckBox fx:id="TagOther2_40" mnemonicParsing="false" onAction="#onTaggingPreferenceChange" styleClass="default-text" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="13">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
                </children>
                <opaqueInsets>
                   <Insets />
@@ -105,6 +193,26 @@
                   <Insets top="12.0" />
                </VBox.margin>
             </GridPane>
+            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Auto Tagging" />
+            <Label layoutX="34.0" layoutY="117.0" styleClass="preference-description" text="If enabled and assets are changed for an auto-tagged screen, the given tags are " textFill="WHITE">
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin>
+            </Label>
+            <Label layoutX="34.0" layoutY="691.0" styleClass="preference-description" text="automatically applied to the table to keep track of this change (e.g. to track tables for recording)." textFill="WHITE" />
+            <CheckBox fx:id="taggingEnabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="Auto Tagging Enabled" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin>
+            </CheckBox>
+            <VBox fx:id="tagPane">
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin>
+            </VBox>
          </children>
          <padding>
             <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />

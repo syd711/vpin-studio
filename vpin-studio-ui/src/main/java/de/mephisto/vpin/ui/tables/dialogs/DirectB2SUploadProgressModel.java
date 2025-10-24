@@ -44,7 +44,7 @@ public class DirectB2SUploadProgressModel extends UploadProgressModel {
       }
     }
     catch (Exception e) {
-      LOG.error("Res upload failed: " + e.getMessage(), e);
+      LOG.error(".directb2s upload failed: " + e.getMessage(), e);
     }
   }
 }

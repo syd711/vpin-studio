@@ -370,9 +370,9 @@ public class GameMediaResource {
 
   @GetMapping("/{id}/{screen}")
   public void getMedia(HttpServletResponse response, HttpServletRequest request,
-                      @PathVariable("id") int id, 
-                      @PathVariable("screen") VPinScreen screen,
-                      @RequestParam(value = "preview", required = false) boolean preview) 
+                       @PathVariable("id") int id,
+                       @PathVariable("screen") VPinScreen screen,
+                       @RequestParam(value = "preview", required = false) boolean preview)
       throws IOException {
     getMedia(response, request, id, screen, null, preview);
   }
@@ -400,6 +400,7 @@ public class GameMediaResource {
       File out = GameMediaService.buildMediaAsset(mediaFolder, game, suffix, append);
       LOG.info("Uploading " + out.getAbsolutePath());
       UploadUtil.upload(file, out);
+      gameLifecycleService.notifyGameScreenAssetsChanged(game.getId(), screen, out);
       return JobDescriptorFactory.empty();
     }
     catch (Exception e) {
@@ -422,7 +423,10 @@ public class GameMediaResource {
           new WheelAugmenter(media).deAugment();
           new WheelIconDelete(media).delete();
         }
-        return media.delete();
+        if (media.delete()) {
+          gameLifecycleService.notifyGameScreenAssetsChanged(game.getId(), screen, media);
+          return true;
+        }
       }
       return false;
     }
@@ -448,6 +452,7 @@ public class GameMediaResource {
           }
           if (file.delete()) {
             LOG.info("Deleted game media: {}", file.getAbsolutePath());
+            gameLifecycleService.notifyGameScreenAssetsChanged(game.getId(), screen, file);
           }
         }
       }
@@ -504,6 +509,7 @@ public class GameMediaResource {
           File defaultFile = FileUtils.uniqueAsset(file);
           if (file.renameTo(defaultFile)) {
             LOG.info("Renamed \"{}\" to \"{}\"", file.getAbsolutePath(), defaultFile.getName());
+            gameLifecycleService.notifyGameScreenAssetsChanged(game.getId(), screen, defaultFile);
           }
           else {
             LOG.warn("Cannot rename \"{}\" to \"{}\", state may be inconsistent", file.getAbsolutePath(), defaultFile.getName());
