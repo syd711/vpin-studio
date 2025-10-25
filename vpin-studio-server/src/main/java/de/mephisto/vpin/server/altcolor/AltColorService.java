@@ -91,16 +91,17 @@ public class AltColorService implements InitializingBean {
   public File getAltColorFolder(@NonNull Game game) {
     File altColorFolder = null;
     if (game.isZenGame()) {
-      altColorFolder = new File(mameService.getAltColorFolder(), game.getGameName());
+      File altColorFolderRoot = mameService.getAltColorFolder();
+      altColorFolder = new File(altColorFolderRoot, game.getGameName());
     }
     else if (!StringUtils.isEmpty(game.getRomAlias()) && game.getEmulator() != null) {
-      altColorFolder = new File(mameService.getAltColorFolder(), game.getRomAlias());
+      altColorFolder = new File(game.getEmulator().getAltColorFolder(), game.getRomAlias());
     }
     else if (!StringUtils.isEmpty(game.getRom()) && game.getEmulator() != null) {
-      altColorFolder = new File(mameService.getAltColorFolder(), game.getRom());
+      altColorFolder = new File(game.getEmulator().getAltColorFolder(), game.getRom());
     }
     if ((altColorFolder == null || !altColorFolder.exists()) && !StringUtils.isEmpty(game.getTableName()) && game.getEmulator() != null) {
-      altColorFolder = new File(mameService.getAltColorFolder(), game.getTableName());
+      altColorFolder = new File(game.getEmulator().getAltColorFolder(), game.getTableName());
     }
     return altColorFolder;
   }

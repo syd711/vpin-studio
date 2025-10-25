@@ -57,7 +57,12 @@ public class MameService implements InitializingBean {
   @Autowired
   protected SystemService systemService;
 
+  private File mameFolder;
+
   public boolean clearGamesCache(List<Game> knownGames) {
+    this.mameFolder = null;
+    getMameFolder();
+
     long l = System.currentTimeMillis();
     mameCache.clear();
     List<String> romFolders = systemService.getCurrentUserKeys(MAME_REG_FOLDER_KEY);
@@ -372,11 +377,13 @@ public class MameService implements InitializingBean {
   }
 
   public File getMameFolder() {
-    File vpxFolder = systemService.resolveVpx64InstallFolder();
-    if (vpxFolder != null && vpxFolder.exists()) {
-      return new File(vpxFolder, "VPinMAME");
+    if (mameFolder == null) {
+      File vpxFolder = systemService.resolveVpx64InstallFolder();
+      if (vpxFolder != null && vpxFolder.exists()) {
+        mameFolder = new File(vpxFolder, "VPinMAME");
+      }
     }
-    return null;
+    return mameFolder;
   }
 
   public static final String NVRAM_DIRECTORY = "nvram_directory";

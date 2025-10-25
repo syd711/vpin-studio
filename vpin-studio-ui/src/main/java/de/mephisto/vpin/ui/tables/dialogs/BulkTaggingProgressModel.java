@@ -64,6 +64,17 @@ public class BulkTaggingProgressModel extends ProgressModel<GameRepresentation> 
   }
 
   @Override
+  public void finalizeModel(ProgressResultModel progressResultModel) {
+    super.finalizeModel(progressResultModel);
+
+    List<Object> results = progressResultModel.getResults();
+    for (Object result : results) {
+      int gameId = (int) result;
+      EventManager.getInstance().notifyTableChange(gameId, null);
+    }
+  }
+
+  @Override
   public void processNext(ProgressResultModel progressResultModel, GameRepresentation game) {
     try {
       TableDetails tableDetails = client.getFrontendService().getTableDetails(game.getId());
@@ -85,7 +96,7 @@ public class BulkTaggingProgressModel extends ProgressModel<GameRepresentation> 
       if (updated) {
         tableDetails.setTags(String.join(",", tableTags));
         client.getFrontendService().saveTableDetails(tableDetails, game.getId());
-        EventManager.getInstance().notifyTableChange(game.getId(), null);
+        progressResultModel.getResults().add(game.getId());
       }
     }
     catch (Exception e) {
