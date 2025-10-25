@@ -431,7 +431,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     game.setAltSoundAvailable(altSoundService.isAltSoundAvailable(game));
     game.setAltColorType(altColorService.getAltColorType(game));
 
-    DirectB2S b2s = backglassService.getDirectB2SAndVersions(game);
+    DirectB2S b2s = backglassService.getCacheDirectB2SAndVersions(game);
     game.setNbDirectB2S(b2s != null ? b2s.getNbVersions() : -1);
 
     String updates = gameDetails.getUpdates();

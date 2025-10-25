@@ -14,9 +14,7 @@ import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameCachingService;
 import de.mephisto.vpin.server.games.GameEmulator;
-import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.system.JCodec;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -529,6 +527,14 @@ public class BackglassService implements InitializingBean {
     String gameFilename = mainBaseName + "." + gameEmulator.getGameExt();
     Game g = frontendService.getGameByFilename(gameEmulator.getId(), gameFilename);
     currentDirectB2S.setGameId(g != null ? g.getId() : -1);
+  }
+
+  public DirectB2S getCacheDirectB2SAndVersions(Game game) {
+    if (game != null) {
+      String baseName = FileUtils.baseUniqueFile(game.getGameFileName());
+      return cacheDirectB2SVersion.get(game.getEmulatorId() + "@" + baseName);
+    }
+    return null;
   }
 
   @Nullable
