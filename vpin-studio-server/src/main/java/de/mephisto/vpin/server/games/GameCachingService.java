@@ -46,7 +46,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -151,15 +150,15 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
         return getGame(gameId);
       }
       else {
-        LOG.error("No game found to be scanned with ID '" + gameId + "'");
+        LOG.error("No game found to be scanned with ID '{}'", gameId);
       }
     }
     catch (Exception e) {
       if (game != null) {
-        LOG.error("Game scan for \"" + game.getGameDisplayName() + "\" (" + gameId + ") failed: " + e.getMessage(), e);
+        LOG.error("Game scan for \"{}\" ({}) failed: {}", game.getGameDisplayName(), gameId, e.getMessage(), e);
       }
       else {
-        LOG.error("Game scan for game " + gameId + " failed: " + e.getMessage(), e);
+        LOG.error("Game scan for game {} failed: {}", gameId, e.getMessage(), e);
       }
     }
     return game;
@@ -226,7 +225,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
 
   private List<Game> getVpxGames() {
     List<GameDetails> all = gameDetailsRepository.findAll();
-    Map<Integer, GameDetails> mappedGameDetails = all.stream().collect(Collectors.toMap(g -> g.getPupId(), g -> g));
+    Map<Integer, GameDetails> mappedGameDetails = all.stream().collect(Collectors.toMap(GameDetails::getPupId, g -> g));
     List<Game> games = new ArrayList<>();
     List<GameEmulator> gameEmulators = emulatorService.getVpxGameEmulators();
     for (GameEmulator gameEmulator : gameEmulators) {
@@ -247,7 +246,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     for (GameEmulator gameEmulator : gameEmulators) {
       if (gameEmulator.isEnabled()) {
         if (!allGamesByEmulatorId.containsKey(gameEmulator.getId())) {
-          fetchEmulatorGames(gameEmulator);
+          fetchEmulatorGames(gameEmulator, Collections.emptyMap());
         }
         games.addAll(allGamesByEmulatorId.get(gameEmulator.getId()));
       }
@@ -255,7 +254,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     return games;
   }
 
-  private void fetchEmulatorGames(GameEmulator emulator, Map<Integer, GameDetails> mappedGameDetails) {
+  private void fetchEmulatorGames(@NonNull GameEmulator emulator, @NonNull Map<Integer, GameDetails> mappedGameDetails) {
     long start = System.currentTimeMillis();
     List<Game> gamesByEmulator = frontendService.getGamesByEmulator(emulator.getId());
     boolean killFrontend = false;
@@ -337,7 +336,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
       gameDetails.setUpdatedAt(new java.util.Date());
 
       gameDetailsRepository.saveAndFlush(gameDetails);
-      LOG.info("Created GameDetails for " + game.getGameDisplayName() + ", was forced: " + forceScan);
+      LOG.info("Created GameDetails for {}, was forced: {}", game.getGameDisplayName(), forceScan);
     }
 
     GameEmulator emulator = game.getEmulator();
