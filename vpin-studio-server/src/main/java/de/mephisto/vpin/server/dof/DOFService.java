@@ -51,7 +51,7 @@ public class DOFService implements InitializingBean {
   public DOFSettings getSettings() {
     try {
       DOFSettings settings = preferencesService.getJsonPreference(PreferenceNames.DOF_SETTINGS, DOFSettings.class);
-      settings.setValidDOFFolder(StringUtils.isEmpty(settings.getInstallationPath()) || new File(settings.getInstallationPath(), "DirectOutputShapes.xml").exists());
+      settings.setValidDOFFolder(StringUtils.isEmpty(settings.getInstallationPath()) || new File(settings.getInstallationPath(), "DirectOutput.dll").exists());
       return settings;
     }
     catch (Exception e) {

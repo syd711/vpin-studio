@@ -1994,16 +1994,18 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       emuName = emuName.replaceAll("'", "''");
       Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Emulators where EmuName = '" + emuName + "';");
-      rs.next();
-      script = rs.getString(LAUNCH_SCRIPT);
-      if (script == null) {
-        script = "";
+      while (rs.next()) {
+        script = rs.getString(LAUNCH_SCRIPT);
+        if (script == null) {
+          script = "";
+        }
+        break;
       }
       rs.close();
       statement.close();
     }
     catch (SQLException e) {
-      LOG.error("Failed to read startup script or " + emuName + ": " + e.getMessage(), e);
+      LOG.error("Failed to read startup script of emulator \"" + emuName + "\": " + e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -2019,10 +2021,12 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       emuName = emuName.replaceAll("'", "''");
       Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Emulators where EmuName = '" + emuName + "';");
-      rs.next();
-      script = rs.getString(POST_SCRIPT);
-      if (script == null) {
-        script = "";
+      while (rs.next()) {
+        script = rs.getString(POST_SCRIPT);
+        if (script == null) {
+          script = "";
+        }
+        break;
       }
       rs.close();
       statement.close();

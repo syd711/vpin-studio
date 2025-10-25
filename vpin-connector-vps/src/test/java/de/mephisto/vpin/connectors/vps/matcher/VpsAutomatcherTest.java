@@ -164,7 +164,7 @@ public class VpsAutomatcherTest {
     doMatch(matcher, vpsDatabase, "Getaway, The - High Speed II (Williams 1992)", null, null, "", "cCV4A6uc", null, "", debug);
     doMatch(matcher, vpsDatabase, "The Getaway High Speed II (Williams 1992) v2_0", "", null, null, "cCV4A6uc", "YoXfmzDV", "2.0", debug);
     doMatch(matcher, vpsDatabase, "The Getaway High Speed II (Williams 1992) Bigus(MOD) 2.0", "", null, null, "cCV4A6uc", "YoXfmzDV", "2.0", debug);
-    doMatch(matcher, vpsDatabase, "Getaway, The - High Speed II v1.03", null, null, "", "cCV4A6uc", "UNbB3Z3a", "1.03", debug);
+    doMatch(matcher, vpsDatabase, "Getaway, The - High Speed II v1.03", null, null, "", "cCV4A6uc", "YoXfmzDV", "1.03", debug);
     doMatch(matcher, vpsDatabase, "Getaway 1.0 - FSS", "", null, null, "cCV4A6uc", "UNbB3Z3a", "1.0", debug);
 
     doMatch(matcher, vpsDatabase, "The Who's Tommy Pinball Wizard (Data East 1994)", "tomy_500", null, null, "p3HP_P2H", null, "", debug);

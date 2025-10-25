@@ -33,7 +33,7 @@ public class BackupDeleteProgressModel extends ProgressModel<BackupDescriptorRep
 
   @Override
   public int getMax() {
-    return 1;
+    return backups.size();
   }
 
   @Override

@@ -7,7 +7,7 @@
     <parent>
         <artifactId>studio</artifactId>
         <groupId>de.mephisto.vpin</groupId>
-        <version>4.3.6</version>
+        <version>4.3.7</version>
     </parent>
     <packaging>jar</packaging>
 

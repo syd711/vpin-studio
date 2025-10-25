@@ -217,7 +217,7 @@ public class VpaArchiveUtil {
       return tmp;
     }
     catch (Exception e) {
-      LOG.error("Failed to extract from {}", zipFile.getFile().getAbsolutePath());
+      LOG.error("Failed to extract {} from vpa archive {}: {}", fileName, zipFile.getFile().getAbsolutePath(), e.getMessage());
     }
     return null;
   }
