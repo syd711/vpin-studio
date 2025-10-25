@@ -26,6 +26,10 @@ public class ValidationState {
     this.options = options;
   }
 
+  public String getOption() {
+    return options.size() > 0 ? options.get(0) : null;
+  }
+
   public static String toIdString(List<Integer> ignoredValidations) {
     if(ignoredValidations == null) {
       return "";

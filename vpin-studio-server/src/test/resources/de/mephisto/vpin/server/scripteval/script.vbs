@@ -161,12 +161,17 @@ Const myVersion = "0.81"
 Const DebugGeneral = True
 Const cAssetsFolder="SEPF"
 Const cDefaultDMDColor = "PowderBlue"	
+'ultraDmd is initialized in an included script
+Const newscript = "includedScript.vbs"
 
-Sub DMD_Init
-	If turnonultradmd = 0 then exit sub
-	ExecuteGlobal GetTextFile("UltraDMD_Options.vbs")
-	InitUltraDMD cAssetsFolder,cGameName
-End Sub
+On Error Resume Next
+ExecuteGlobal GetTextFile(newscript)    : If Err Then MsgBox "Can't open ""includedScript.vbs"""    : Exit Sub
+
+On Error Resume Next
+'ExecuteGlobal GetTextFile("PFMusic.vbs")
+If Err Then MsgBox "You need the PFMusic.vbs that accompanies this table"
+if PFMusicV> "" then if PFMusicV < 1.01 or Err then msgbox "PFMusic.vbs needs updated version"
+On Error Goto 0
 
 Sub Table1_Exit()
 	ExitUltraDMD

@@ -62,10 +62,7 @@ public class PinballYConnector extends BaseConnector {
     List<VPinScreen> screens = new ArrayList<>(Arrays.asList(VPinScreen.values()));
     screens.remove(VPinScreen.Other2);
     frontend.setSupportedScreens(screens);
-    frontend.setIgnoredValidations(Arrays.asList(GameValidationCode.CODE_NO_OTHER2,
-        GameValidationCode.CODE_PUP_PACK_FILE_MISSING,
-        GameValidationCode.CODE_ALT_SOUND_FILE_MISSING
-    ));
+    frontend.setIgnoredValidations(Arrays.asList(GameValidationCode.CODE_NO_OTHER2));
 
     frontend.setPlayfieldMediaInverted(true);
     return frontend;

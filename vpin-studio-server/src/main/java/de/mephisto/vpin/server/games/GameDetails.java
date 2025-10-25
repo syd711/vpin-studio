@@ -34,6 +34,9 @@ public class GameDetails {
   @Column(length = 4096)
   public String assets;
 
+  @Column(length = 4096)
+  public String scripts;
+
   @Column(length = 1024)
   public String updates;
 
@@ -230,6 +233,14 @@ public class GameDetails {
 
   public void setAssets(String assets) {
     this.assets = assets;
+  }
+  
+  public String getScripts() {
+    return scripts;
+  }
+
+  public void setScripts(String scripts) {
+    this.scripts = scripts;
   }
 
   public Date getCreatedAt() {

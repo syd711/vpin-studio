@@ -13,16 +13,13 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class VPXFileScannerTest {
 
+  private final static File scripts = new File("../testsystem/vPinball/VisualPinball/scripts");
   private final static File folder = new File("../testsystem/vPinball/VisualPinball/Tables");
 //  private final static File folder = new File("C:\\vPinball\\VisualPinball\\Tables");
 //  private final static File folder = new File("C:\\Visual Pinball\\tables");
@@ -53,14 +50,7 @@ public class VPXFileScannerTest {
       ScanResult scan = new ScanResult();
 
       String script = VPXUtil.readScript(p.toFile());
-
-      List<String> allLines = new ArrayList<>();
-      script = script.replaceAll("\r\n", "\n");
-      script = script.replaceAll("\r", "\n");
-      allLines.addAll(Arrays.asList(script.split("\n")));
-      Collections.reverse(allLines);
-
-      VPXFileScanner.scanLines(p.toFile(), scan, allLines);
+      VPXFileScanner.scanLines(p.toFile(), scripts, scan, script);
 
       // now log ScanResult
       bld.append(p.getFileName().toFile() + "\n");
@@ -86,12 +76,12 @@ public class VPXFileScannerTest {
   @Test
   public void testSingleScan() {
 //    File f = new File("C:\\vPinball\\VisualPinball\\Tables\\MF DOOM (GOILL773 2024) v1.1.vpx");
-    File f = new File(folder,"Twister (1996).vpx");
+    File f = new File(folder, "Twister (1996).vpx");
     //File f = new File(folder,"Austin Powers (Stern 2001).vpx");
     //File f = new File(folder,"Batman (Data East 1991).vpx");
 
     if(f.exists()) {
-      ScanResult scan = VPXFileScanner.scan(f);
+      ScanResult scan = VPXFileScanner.scan(f, scripts);
 //      assertTrue(scan.isFoundControllerStop());
       assertNotNull(scan.getRom());
 //      assertTrue(scan.isFoundTableExit());

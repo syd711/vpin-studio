@@ -324,6 +324,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
 
         gameDetails.setPupPack(scanResult.getPupPackName());
         gameDetails.setAssets(StringUtils.join(scanResult.getAssets(), ","));
+        gameDetails.setScripts(StringUtils.join(scanResult.getScripts(), ","));
       }
       else {
         if (tableDetails != null) {
@@ -388,6 +389,8 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     game.setDMDType(gameDetails.getDMDType());
     game.setDMDGameName(gameDetails.getDMDGameName());
     game.setDMDProjectFolder(gameDetails.getDMDProjectFolder());
+
+    game.setScripts(StringUtils.split(gameDetails.getScripts(), ","));
 
     game.setNvOffset(gameDetails.getNvOffset());
     game.setCardDisabled(gameDetails.isCardsDisabled() != null && gameDetails.isCardsDisabled());

@@ -336,6 +336,12 @@ public class GameEmulator {
 
   @NonNull
   @JsonIgnore
+  public File getScriptsFolder() {
+    return new File(getInstallationFolder(), "scripts");
+  }
+
+  @NonNull
+  @JsonIgnore
   public File getUserFolder() {
     return new File(getInstallationFolder(), "User");
   }

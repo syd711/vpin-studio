@@ -127,8 +127,7 @@ public class StandaloneConnector extends BaseConnector {
         GameValidationCode.CODE_NO_LOADING,
         GameValidationCode.CODE_NO_OTHER2,
         GameValidationCode.CODE_NO_LOGO,
-        GameValidationCode.CODE_NO_WHEEL_IMAGE,
-        GameValidationCode.CODE_PUP_PACK_FILE_MISSING
+        GameValidationCode.CODE_NO_WHEEL_IMAGE
     ));
 
     return frontend;

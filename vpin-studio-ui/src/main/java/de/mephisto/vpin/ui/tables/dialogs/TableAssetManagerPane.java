@@ -65,7 +65,7 @@ public class TableAssetManagerPane<P extends TableAssetManagerPane.MediaPane> ex
     topper = factory.createPane(this, "Topper", VPinScreen.Topper, "mp4", "png", "jpg");
     backglass = factory.createPane(this, "Backglass", VPinScreen.BackGlass, "mp4", "png", "jpg");
     dmd = factory.createPane(this, "DMD", VPinScreen.DMD, "mp4", "png", "jpg");
-    playfield = factory.createPane(this, "Playfield", VPinScreen.PlayField, "mp4");
+    playfield = factory.createPane(this, "Playfield", VPinScreen.PlayField, "mp4", "png", "jpg");
     audio = factory.createPane(this, "Audio", VPinScreen.Audio, "mp3");
     loading = factory.createPane(this, "Loading", VPinScreen.Loading, "mp4");
     other2 = factory.createPane(this, "Other2", VPinScreen.Other2, "mp4", "png", "jpg");
