@@ -71,11 +71,11 @@ public class TableAssetDefaultSourcesFactory {
     source.setId(ManiaLogosAssetAdapter.SOURCE_ID);
     source.setLookupStrategy(AssetLookupStrategy.screens);
     source.setType(TableAssetSourceType.ManiaLogos);
-    source.setName("Manufacturer Logos");
+    source.setName("Table Logos");
     source.setProvided(true);
     source.setEnabled(true);
     source.setLocation("vpin-mania.net");
-    source.setSupportedScreens(Arrays.asList(VPinScreen.Logo.name()));
+    source.setSupportedScreens(Arrays.asList(VPinScreen.Logo.name(), VPinScreen.Wheel.name()));
     return source;
   }
 }

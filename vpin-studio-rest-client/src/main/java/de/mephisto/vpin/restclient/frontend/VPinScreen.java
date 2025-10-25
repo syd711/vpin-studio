@@ -19,7 +19,7 @@ public enum VPinScreen {
   Loading(7, "Loading", GameValidationCode.CODE_NO_LOADING),
   Wheel(6, "Wheel", GameValidationCode.CODE_NO_WHEEL_IMAGE),
   PlayField(3, "PlayField", GameValidationCode.CODE_NO_PLAYFIELD),
-  Logo(99, "Wheel", GameValidationCode.CODE_NO_LOGO); // same segment as Wheel for assets search
+  Logo(99, "Logo", GameValidationCode.CODE_NO_LOGO); // same segment as Wheel for assets search
 
   private int code;
   private String segment;

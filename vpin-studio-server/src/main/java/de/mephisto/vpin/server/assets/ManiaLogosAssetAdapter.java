@@ -10,13 +10,19 @@ import de.mephisto.vpin.restclient.util.HttpUtils;
 import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.OutputStream;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
+
+import static de.mephisto.vpin.commons.SystemInfo.RESOURCES;
 
 /**
  * And asset search for manufacturer logos
@@ -29,6 +35,8 @@ public class ManiaLogosAssetAdapter extends DefaultTableAssetAdapter {
   public ManiaLogosAssetAdapter(@NonNull TableAssetSource source) {
     super(source);
   }
+
+  private final List<String> logos = new ArrayList<>();
 
   @Override
   public TableAssetSource getAssetSource() {
@@ -49,16 +57,22 @@ public class ManiaLogosAssetAdapter extends DefaultTableAssetAdapter {
       return Collections.emptyList();
     }
 
+    if (logos.isEmpty()) {
+      List<String> logoList = FileUtils.readLines(new File(RESOURCES, "logos.txt"), StandardCharsets.UTF_8);
+      logos.addAll(logoList);
+    }
+
     List<TableAsset> result = new ArrayList<>();
     VPinScreen screen = VPinScreen.valueOfSegment(screenSegment);
     if (screen == null) {
       return Collections.emptyList();
     }
 
-    String url = createUrl(term);
-    boolean check = HttpUtils.check(url);
-    if (check) {
-      result.add(toTableAsset(source, EmulatorType.valueOf(emulatorName), screenSegment, url, term.toLowerCase()));
+    for (String logo : logos) {
+      if (logo.toLowerCase().startsWith(term.toLowerCase())) {
+        String url = createUrl(logo);
+        result.add(toTableAsset(source, EmulatorType.valueOf(emulatorName), screenSegment, url, logo));
+      }
     }
     return result;
   }
@@ -98,7 +112,7 @@ public class ManiaLogosAssetAdapter extends DefaultTableAssetAdapter {
     asset.setMimeType("image/png");
     asset.setUrl(url);
     asset.setSourceId(SOURCE_ID);
-    asset.setName(name + ".png");
+    asset.setName(name);
     asset.setAuthor(tableAssetSource.getName());
     asset.setLength(-1);
 
@@ -106,7 +120,7 @@ public class ManiaLogosAssetAdapter extends DefaultTableAssetAdapter {
   }
 
   private static String createUrl(String name) {
-    return "https://assets.vpin-mania.net/logos/" + name.toLowerCase() + ".png";
+    return "https://assets.vpin-mania.net/logos/" + name.replaceAll(" ", "%20");
   }
 
   @Override
