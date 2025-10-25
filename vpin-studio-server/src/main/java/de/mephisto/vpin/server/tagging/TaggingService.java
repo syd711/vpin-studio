@@ -45,7 +45,14 @@ public class TaggingService implements InitializingBean, GameDataChangedListener
 
   @Override
   public void gameDataChanged(@NotNull GameDataChangedEvent changedEvent) {
-    refreshTags();
+    List<String> gameTags = TaggingUtil.getTags(changedEvent.getOldData().getTags());
+    for (String gameTag : gameTags) {
+      tags.remove(gameTag);
+    }
+    gameTags = TaggingUtil.getTags(changedEvent.getNewData().getTags());
+    for (String gameTag : gameTags) {
+      tags.add(gameTag);
+    }
   }
 
   @Override
@@ -108,25 +115,24 @@ public class TaggingService implements InitializingBean, GameDataChangedListener
 
   @Override
   public void gameDeleted(int gameId) {
-    refreshTags();
+    clearCache();
   }
 
-  private void refreshTags() {
-    new Thread(() -> {
-      tags.clear();
+  public void clearCache() {
+    tags.clear();
 
-      long start = System.currentTimeMillis();
-      //pick the games from the frontend connector to read them un-augmented
-      List<Integer> gameIds = frontendService.getGameIds();
-      for (Integer gameId : gameIds) {
-        TableDetails tableDetails = frontendService.getTableDetails(gameId);
+    long start = System.currentTimeMillis();
+    //pick the games from the frontend connector to read them un-augmented
+    List<Integer> gameIds = frontendService.getGameIds();
+    for (Integer gameId : gameIds) {
+      TableDetails tableDetails = frontendService.getTableDetails(gameId);
+      if (tableDetails != null) {
         List<String> tableTags = TaggingUtil.getTags(tableDetails.getTags());
         tags.addAll(tableTags);
       }
+    }
 
-      LOG.info("Collected {} tags from {} games in {}ms", tags.size(), gameIds.size(), System.currentTimeMillis() - start);
-
-    }).start();
+    LOG.info("Collected {} tags from {} games in {}ms", tags.size(), gameIds.size(), System.currentTimeMillis() - start);
   }
 
   @Override
@@ -138,7 +144,7 @@ public class TaggingService implements InitializingBean, GameDataChangedListener
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    refreshTags();
+    clearCache();
     gameLifecycleService.addGameDataChangedListener(this);
     gameLifecycleService.addGameLifecycleListener(this);
     preferencesService.addChangeListener(this);

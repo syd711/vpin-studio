@@ -80,7 +80,7 @@ public interface FrontendConnector {
 
   void updateTableFileUpdated(int id);
 
-  void saveTableDetails(int id, TableDetails tableDetails);
+  TableDetails saveTableDetails(int id, TableDetails tableDetails);
 
   void vpsLink(int id, String extTableId, String extTableVersionId);
 

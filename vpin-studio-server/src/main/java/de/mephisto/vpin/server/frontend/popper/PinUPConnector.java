@@ -292,7 +292,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     }
   }
 
-  public void saveTableDetails(int id, TableDetails tableDetails) {
+  public TableDetails saveTableDetails(int id, TableDetails tableDetails) {
     Connection connect = this.connect();
     try {
       StringBuilder stmtBuilder = new StringBuilder("UPDATE Games SET ");
@@ -406,6 +406,8 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     finally {
       this.disconnect(connect);
     }
+
+    return getTableDetails(id);
   }
 
   @Override

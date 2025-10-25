@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import java.util.Iterator;
 import java.util.List;
 
-import static de.mephisto.vpin.commons.fx.pausemenu.PauseMenuUIDefaults.MAX_REFRESH_COUNT;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class BulkTaggingProgressModel extends ProgressModel<GameRepresentation> {

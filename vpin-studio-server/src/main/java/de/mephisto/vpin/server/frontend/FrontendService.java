@@ -117,8 +117,8 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   }
 
   public void saveTableDetails(int id, TableDetails tableDetails) {
-    getFrontendConnector().saveTableDetails(id, tableDetails);
-    gameLifecycleService.notifyGameDataChanged(id, tableDetails, tableDetails);
+    TableDetails newTableDetails = getFrontendConnector().saveTableDetails(id, tableDetails);
+    gameLifecycleService.notifyGameDataChanged(id, tableDetails, newTableDetails);
   }
 
   public void updateTableFileUpdated(int id) {

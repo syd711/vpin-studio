@@ -148,7 +148,7 @@ public class GameMediaService {
   }
 
 
-  public TableDetails saveTableDetails(TableDetails updatedTableDetails, int gameId, boolean renamingChecks) {
+  public synchronized TableDetails saveTableDetails(TableDetails updatedTableDetails, int gameId, boolean renamingChecks) {
     //fetch existing data first
     TableDetails originalTableDetails = getTableDetails(gameId);
     Game game = frontendService.getOriginalGame(gameId);

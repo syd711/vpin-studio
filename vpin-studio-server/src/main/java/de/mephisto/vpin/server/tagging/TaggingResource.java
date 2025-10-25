@@ -20,5 +20,4 @@ public class TaggingResource {
   public List<String> getTags() {
     return taggingService.getTags();
   }
-
 }

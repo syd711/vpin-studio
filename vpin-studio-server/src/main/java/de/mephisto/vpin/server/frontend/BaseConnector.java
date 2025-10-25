@@ -342,10 +342,10 @@ public abstract class BaseConnector implements FrontendConnector {
   }
 
   @Override
-  public void saveTableDetails(int id, TableDetails tableDetails) {
+  public TableDetails saveTableDetails(int id, TableDetails tableDetails) {
     GameEntry e = mapFilenames.get(id);
     if (e == null) {
-      return;
+      return tableDetails;
     }
 
     // detection of file renamed
@@ -359,6 +359,8 @@ public abstract class BaseConnector implements FrontendConnector {
     }
     updateGameInDb(e.getEmuId(), e.getFilename(), tableDetails);
     commitDb(emulators.get(tableDetails.getEmulatorId()));
+
+    return getTableDetails(id);
   }
 
   @Override
