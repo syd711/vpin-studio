@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.preferences.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.restclient.backups.BackupDescriptor;
+import de.mephisto.vpin.restclient.backups.StudioBackupDescriptor;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.application.Platform;
@@ -23,8 +23,8 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class RestoreBackupDialogController implements Initializable, DialogController, ChangeListener<Boolean> {
-  private final static Logger LOG = LoggerFactory.getLogger(RestoreBackupDialogController.class);
+public class StudioRestoreBackupDialogController implements Initializable, DialogController, ChangeListener<Boolean> {
+  private final static Logger LOG = LoggerFactory.getLogger(StudioRestoreBackupDialogController.class);
 
   @FXML
   private TextField fileNameField;
@@ -71,7 +71,7 @@ public class RestoreBackupDialogController implements Initializable, DialogContr
   private void onCreateClick(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
 
-    BackupDescriptor descriptor = new BackupDescriptor();
+    StudioBackupDescriptor descriptor = new StudioBackupDescriptor();
     descriptor.setGameComments(gameNotesCheckbox.isSelected());
     descriptor.setPreferences(preferencesCheckbox.isSelected());
     descriptor.setVpsComments(vpsNotesCheckbox.isSelected());
@@ -89,7 +89,7 @@ public class RestoreBackupDialogController implements Initializable, DialogContr
       stage.close();
     });
 
-    ProgressDialog.createProgressDialog(new BackupRestoreProgressModel(file, descriptor));
+    ProgressDialog.createProgressDialog(new StudioBackupRestoreProgressModel(file, descriptor));
   }
 
   @FXML

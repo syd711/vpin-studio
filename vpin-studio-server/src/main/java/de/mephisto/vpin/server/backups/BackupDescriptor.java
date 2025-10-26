@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.backups.BackupPackageInfo;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class BackupDescriptor {
   private TableDetails tableDetails;
@@ -83,5 +84,17 @@ public class BackupDescriptor {
 
   public void setSource(BackupSource source) {
     this.source = source;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || getClass() != o.getClass()) return false;
+    BackupDescriptor that = (BackupDescriptor) o;
+    return size == that.size && Objects.equals(tableDetails, that.tableDetails) && Objects.equals(packageInfo, that.packageInfo) && Objects.equals(source, that.source) && Objects.equals(createdAt, that.createdAt) && Objects.equals(filename, that.filename) && Objects.equals(absoluteFileName, that.absoluteFileName);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(tableDetails, packageInfo, source, createdAt, filename, absoluteFileName, size);
   }
 }

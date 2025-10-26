@@ -4,6 +4,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 
 <BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="450.0" minHeight="-Infinity" minWidth="450.0" prefWidth="450.0" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.jobs.JobsMenuHeaderController">
    <styleClass>
@@ -16,7 +17,12 @@
             <Insets left="3.0" right="3.0" top="3.0" />
          </BorderPane.margin>
          <right>
-            <Hyperlink fx:id="clearAll" onAction="#onClearAll" text="Clear All" BorderPane.alignment="CENTER" />
+            <HBox spacing="12.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Hyperlink fx:id="cancelAll" layoutX="10.0" layoutY="10.0" onAction="#onCancelAll" text="Cancel All" />
+                  <Hyperlink fx:id="clearAll" onAction="#onClearAll" text="Clear All" />
+               </children>
+            </HBox>
          </right>
       </BorderPane>
    </top>

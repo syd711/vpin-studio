@@ -46,4 +46,8 @@ public class JobsServiceClient extends VPinStudioClientService {
   public boolean cancel(@PathVariable("uuid") String uuid) {
     return getRestClient().get(API + "jobs/cancel/" + uuid, Boolean.class);
   }
+
+  public boolean cancelAll() {
+    return getRestClient().get(API + "jobs/cancelall", Boolean.class);
+  }
 }

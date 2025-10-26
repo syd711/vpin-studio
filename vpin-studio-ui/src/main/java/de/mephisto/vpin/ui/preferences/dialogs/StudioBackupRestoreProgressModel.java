@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.preferences.dialogs;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.backups.BackupDescriptor;
+import de.mephisto.vpin.restclient.backups.StudioBackupDescriptor;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
@@ -18,16 +18,15 @@ import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class BackupRestoreProgressModel extends ProgressModel<String> {
-  private final static Logger LOG = LoggerFactory.getLogger(BackupRestoreProgressModel.class);
+public class StudioBackupRestoreProgressModel extends ProgressModel<String> {
+  private final static Logger LOG = LoggerFactory.getLogger(StudioBackupRestoreProgressModel.class);
 
   private List<String> entries;
-  @org.jetbrains.annotations.NotNull
   private final File file;
-  private final BackupDescriptor descriptor;
+  private final StudioBackupDescriptor descriptor;
   private final Iterator<String> iterator;
 
-  public BackupRestoreProgressModel(File file, BackupDescriptor descriptor) {
+  public StudioBackupRestoreProgressModel(File file, StudioBackupDescriptor descriptor) {
     super("Restoring Backup");
     this.entries = Arrays.asList("Restoring \"" + file.getName() + "\"");
     this.file = file;

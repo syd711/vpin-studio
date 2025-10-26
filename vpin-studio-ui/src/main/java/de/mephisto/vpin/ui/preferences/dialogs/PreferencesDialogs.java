@@ -86,8 +86,8 @@ public class PreferencesDialogs {
   }
 
   public static void openRestoreBackupDialog() {
-    Stage stage = Dialogs.createStudioDialogStage(RestoreBackupDialogController.class, "dialog-restore-backup.fxml", "Restore Backup");
-    RestoreBackupDialogController controller = (RestoreBackupDialogController) stage.getUserData();
+    Stage stage = Dialogs.createStudioDialogStage(StudioRestoreBackupDialogController.class, "dialog-restore-backup.fxml", "Restore Backup");
+    StudioRestoreBackupDialogController controller = (StudioRestoreBackupDialogController) stage.getUserData();
     controller.setStage(stage);
     stage.showAndWait();
 

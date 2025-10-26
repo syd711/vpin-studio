@@ -76,6 +76,9 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
   private Button downloadBtn;
 
   @FXML
+  private Label labelCount;
+
+  @FXML
   private ComboBox<BackupSourceRepresentation> sourceCombo;
 
   @FXML
@@ -225,6 +228,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
     restoreBtn.setDisable(disable);
 
     tableView.setVisible(false);
+    labelCount.setText("-");
 
     startReload("Loading Backups...");
     JFXFuture.supplyAsync(() -> {
@@ -245,6 +249,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
         restoreBtn.setDisable(false);
       }
 
+      labelCount.setText(tableView.getItems().size() + " backups");
       this.searchTextField.setDisable(false);
       tableView.setVisible(true);
       endReload();

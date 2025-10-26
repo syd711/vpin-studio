@@ -16,13 +16,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class BackupSourceAdapterFolder implements BackupSourceAdapter {
   private final static Logger LOG = LoggerFactory.getLogger(BackupSourceAdapterFolder.class);
 
   private final BackupSource source;
   private final File archiveFolder;
-  private final Map<String, BackupDescriptor> cache = new HashMap<>();
+  private final Queue<BackupDescriptor> cache = new ConcurrentLinkedQueue<>();
 
   public BackupSourceAdapterFolder(BackupSource source) {
     this.source = source;
@@ -42,7 +43,7 @@ public class BackupSourceAdapterFolder implements BackupSourceAdapter {
     return archiveFolder;
   }
 
-  public List<BackupDescriptor> getBackupDescriptors() {
+  public Collection<BackupDescriptor> getBackupDescriptors() {
     if (cache.isEmpty()) {
       long start = System.currentTimeMillis();
       File[] vpaFiles = archiveFolder.listFiles((dir, name) -> name.endsWith("." + BackupType.VPA.name().toLowerCase()));
@@ -52,7 +53,7 @@ public class BackupSourceAdapterFolder implements BackupSourceAdapter {
             TableDetails manifest = VpaArchiveUtil.readTableDetails(archiveFile);
             BackupPackageInfo packageInfo = VpaArchiveUtil.readPackageInfo(archiveFile);
             BackupDescriptor descriptor = new BackupDescriptor(source, manifest, packageInfo, new Date(archiveFile.lastModified()), archiveFile.getName(), archiveFile.getAbsolutePath(), archiveFile.length());
-            cache.put(archiveFile.getName(), descriptor);
+            cache.add(descriptor);
           }
           catch (Exception e) {
             LOG.error("Failed to read " + archiveFile.getAbsolutePath() + ": " + e.getMessage(), e);
@@ -63,7 +64,7 @@ public class BackupSourceAdapterFolder implements BackupSourceAdapter {
         }
       }
     }
-    return new ArrayList<>(cache.values());
+    return cache;
   }
 
   public BackupSource getBackupSource() {
@@ -82,7 +83,7 @@ public class BackupSourceAdapterFolder implements BackupSourceAdapter {
       }
     }
     else {
-      this.cache.remove(file.getName());
+      this.cache.remove(descriptor);
     }
     return true;
   }
@@ -95,9 +96,6 @@ public class BackupSourceAdapterFolder implements BackupSourceAdapter {
 
   @Override
   public void invalidate() {
-    long start = System.currentTimeMillis();
     cache.clear();
-    getBackupDescriptors();
-    LOG.info("Invalidated archive source {}, loaded {} backups in {}", this.getBackupSource(), this.getBackupDescriptors().size(), (System.currentTimeMillis() - start) + "ms.");
   }
 }

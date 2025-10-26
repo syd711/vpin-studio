@@ -1,3 +1,7 @@
+## Release Notes 4.3.8
+
+- Jobs Menu: Added **Cancel All** button to cancel all queued jobs.
+
 ## Release Notes 4.3.7
 
 - Backups: Fixed memory leak that happened when apng files have been used as preview icon for backup files.

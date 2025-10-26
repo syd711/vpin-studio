@@ -46,6 +46,13 @@ public class JobService {
     }
   }
 
+  public void cancelAll() {
+    List<JobDescriptor> jobList = getJobs();
+    for (JobDescriptor jobDescriptor : jobList) {
+      jobQueue.cancel(jobDescriptor);
+    }
+  }
+
   public void cancel(@NonNull JobType jobType) {
     List<JobDescriptor> jobList = getJobs();
     List<JobDescriptor> jobs = jobList.stream().filter(j -> j.getJobType().equals(jobType)).collect(Collectors.toList());

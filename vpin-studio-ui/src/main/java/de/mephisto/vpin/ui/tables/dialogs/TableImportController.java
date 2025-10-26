@@ -85,7 +85,7 @@ public class TableImportController implements Initializable, DialogController {
           break;
         }
       }
-      EventManager.getInstance().notifyJobFinished(JobType.TABLE_IMPORT);
+      EventManager.getInstance().notifyJobFinished(JobType.TABLE_IMPORT, 0, false, true);
     });
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();

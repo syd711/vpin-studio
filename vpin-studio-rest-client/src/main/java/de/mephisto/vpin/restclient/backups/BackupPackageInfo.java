@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.backups;
 
+import java.util.Objects;
+
 public class BackupPackageInfo {
   public static final int TARGET_WHEEL_SIZE_WIDTH = 100;
   public final static String PACKAGE_INFO_JSON_FILENAME = "package-info.json";
@@ -167,5 +169,17 @@ public class BackupPackageInfo {
 
   public void setThumbnail(String thumbnail) {
     this.thumbnail = thumbnail;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || getClass() != o.getClass()) return false;
+    BackupPackageInfo that = (BackupPackageInfo) o;
+    return Objects.equals(directb2s, that.directb2s) && Objects.equals(pupPack, that.pupPack) && Objects.equals(rom, that.rom) && Objects.equals(nvRam, that.nvRam) && Objects.equals(res, that.res) && Objects.equals(vbs, that.vbs) && Objects.equals(popperMedia, that.popperMedia) && Objects.equals(pov, that.pov) && Objects.equals(ini, that.ini) && Objects.equals(cfg, that.cfg) && Objects.equals(music, that.music) && Objects.equals(altSound, that.altSound) && Objects.equals(altColor, that.altColor) && Objects.equals(highscore, that.highscore) && Objects.equals(dmd, that.dmd) && Objects.equals(vpx, that.vpx) && Objects.equals(mameData, that.mameData) && Objects.equals(thumbnail, that.thumbnail);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(directb2s, pupPack, rom, nvRam, res, vbs, popperMedia, pov, ini, cfg, music, altSound, altColor, highscore, dmd, vpx, mameData, thumbnail);
   }
 }

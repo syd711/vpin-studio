@@ -1,6 +1,6 @@
 package de.mephisto.vpin.restclient.backups;
 
-public class BackupDescriptor {
+public class StudioBackupDescriptor {
   private boolean preferences;
   private boolean players;
   private boolean vpsComments;

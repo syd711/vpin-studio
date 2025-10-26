@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.restclient.RestClient;
-import de.mephisto.vpin.restclient.backups.BackupDescriptor;
+import de.mephisto.vpin.restclient.backups.StudioBackupDescriptor;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -42,7 +42,7 @@ public class SystemServiceClient extends VPinStudioClientService {
     return restTemplate.postForObject(getRestClient().getBaseUrl() + API + "system/backup/create", new HashMap<>(), String.class);
   }
 
-  public boolean restoreSystemBackup(@NonNull File file, @NonNull BackupDescriptor backupDescriptor) throws Exception {
+  public boolean restoreSystemBackup(@NonNull File file, @NonNull StudioBackupDescriptor backupDescriptor) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "system/backup/restore";
       HttpEntity upload = createUpload(file, -1, null, null, null);

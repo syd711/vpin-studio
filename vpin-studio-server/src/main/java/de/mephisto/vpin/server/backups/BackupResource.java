@@ -40,7 +40,12 @@ public class BackupResource {
 
   @PostMapping("/backup")
   public Boolean backupTable(@RequestBody BackupExportDescriptor descriptor) {
-    return backupService.backupTable(descriptor);
+    //this triggers the jobs creation and can include hundrets of new jobs, so run async
+    new Thread(() -> {
+      Thread.currentThread().setName("Backup Runner for source " + descriptor.getBackupSourceId());
+      backupService.backupTable(descriptor);
+    }).start();
+    return true;
   }
 
   @PostMapping("/restore")
@@ -50,13 +55,13 @@ public class BackupResource {
 
   @GetMapping()
   public List<BackupDescriptorRepresentation> getBackups() {
-    List<BackupDescriptor> descriptors = backupService.getBackupSourceDescriptors();
+    List<BackupDescriptor> descriptors = backupService.getBackupDescriptors();
     return toRepresentation(descriptors);
   }
 
   @GetMapping("/{sourceId}")
   public List<BackupDescriptorRepresentation> getBackups(@PathVariable("sourceId") long sourceId) {
-    List<BackupDescriptor> descriptors = backupService.getBackupSourceDescriptors(sourceId);
+    List<BackupDescriptor> descriptors = backupService.getBackupDescriptors(sourceId);
     return toRepresentation(descriptors);
   }
 
