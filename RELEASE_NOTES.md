@@ -1,6 +1,10 @@
 ## Release Notes 4.3.8
 
 - Jobs Menu: Added **Cancel All** button to cancel all queued jobs.
+- Jobs Menu: Fixed several UI freezes when hundreds of backups are started at once.
+- Recording Dialog: Added hint that the GL version is not supported for recordings.
+- Recording Dialog: Filtered the VPX GL version from the emulator combobox.
+- Backups: Fixed memory leak and possible concurrent access errors.
 
 ## Release Notes 4.3.7
 
