@@ -15,6 +15,15 @@ public class NotificationSettings extends JsonSettings {
   private boolean recordingStartNotification = true;
   private boolean recordingEndNotification = true;
   private int notificationsScreenId = -1;
+  private int margin = 0;
+
+  public int getMargin() {
+    return margin;
+  }
+
+  public void setMargin(int margin) {
+    this.margin = margin;
+  }
 
   public int getNotificationsScreenId() {
     return notificationsScreenId;

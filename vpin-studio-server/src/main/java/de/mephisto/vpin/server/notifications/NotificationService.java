@@ -67,6 +67,7 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
       if (Features.NOTIFICATIONS_ENABLED && notificationSettings.getDurationSec() > 0) {
         notification.setDesktopMode(notificationSettings.isDesktopMode());
         notification.setDurationSec(notificationSettings.getDurationSec());
+        notification.setMargin(notificationSettings.getMargin());
         notification.setWindowTitle(frontendService.getFrontendType().equals(FrontendType.Popper) && pinVolAutostart ? "PinUP Popper" : "VPin Studio Notification");
 
         if (checkEmulator) {
@@ -154,6 +155,14 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
           "Version " + systemService.getVersion());
       showNotification(notification);
     }
+  }
+
+  public boolean testNotification() {
+    Notification notification = NotificationFactory.createNotification(null,
+        "VPin Studio Server", "This is a test notification.",
+        "VPin Studio Version " + systemService.getVersion());
+    showNotification(notification);
+    return true;
   }
 
   @Override

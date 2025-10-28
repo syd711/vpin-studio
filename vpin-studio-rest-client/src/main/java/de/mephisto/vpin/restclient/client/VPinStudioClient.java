@@ -43,6 +43,7 @@ import de.mephisto.vpin.restclient.jobs.JobsServiceClient;
 import de.mephisto.vpin.restclient.mame.MameServiceClient;
 import de.mephisto.vpin.restclient.mania.ManiaServiceClient;
 import de.mephisto.vpin.restclient.assets.TableAssetSourcesServiceClient;
+import de.mephisto.vpin.restclient.notifications.NotificationsServiceClient;
 import de.mephisto.vpin.restclient.patcher.PatcherServiceClient;
 import de.mephisto.vpin.restclient.players.PlayersServiceClient;
 import de.mephisto.vpin.restclient.players.RankedPlayerRepresentation;
@@ -113,6 +114,7 @@ public class VPinStudioClient implements OverlayClient {
   private final TableAssetSourcesServiceClient tableAssetSourcesServiceClient;
   private final ManiaServiceClient maniaServiceClient;
   private final NVRamsServiceClient nvRamsServiceClient;
+  private final NotificationsServiceClient notificationsServiceClient;
   private final PlayersServiceClient playersServiceClient;
   private final FrontendServiceClient frontendServiceClient;
   private final PreferencesServiceClient preferencesServiceClient;
@@ -165,6 +167,7 @@ public class VPinStudioClient implements OverlayClient {
     this.maniaServiceClient = new ManiaServiceClient(this);
     this.tableAssetSourcesServiceClient = new TableAssetSourcesServiceClient(this);
     this.nvRamsServiceClient = new NVRamsServiceClient(this);
+    this.notificationsServiceClient = new NotificationsServiceClient(this);
     this.playersServiceClient = new PlayersServiceClient(this);
     this.resServiceClient = new ResServiceClient(this);
     this.recorderServiceClient = new RecorderServiceClient(this);
@@ -186,6 +189,10 @@ public class VPinStudioClient implements OverlayClient {
 
   public String getHost() {
     return restClient.getHost();
+  }
+
+  public NotificationsServiceClient getNotificationsService() {
+    return notificationsServiceClient;
   }
 
   public FolderChooserServiceClient getFolderChooserService() {
