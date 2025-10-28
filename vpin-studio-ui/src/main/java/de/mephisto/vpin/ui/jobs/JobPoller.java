@@ -31,7 +31,6 @@ public class JobPoller implements StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(JobPoller.class);
   private final static String ACTIVE_STYLE = "-fx-border-style: solid;-fx-border-color: #6666FFAA;-fx-border-width: 1;";
   public static final int JOB_DELAY = 800;
-  private final Debouncer debouncer = new Debouncer();
 
   private static JobPoller instance;
 
@@ -171,7 +170,6 @@ public class JobPoller implements StudioEventListener {
   }
 
   public void refreshJobsUI() {
-    debouncer.debounce("jobsRefresh", () -> {
       JFXFuture.supplyAsync(() -> {
         List<JobDescriptor> allJobs = getAllJobs();
         return allJobs;
@@ -240,7 +238,6 @@ public class JobPoller implements StudioEventListener {
           }
         });
       });
-    }, JOB_DELAY-100);
   }
 
   private List<JobDescriptor> getAllJobs() {

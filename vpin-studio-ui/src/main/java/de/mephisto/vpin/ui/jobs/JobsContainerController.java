@@ -5,11 +5,14 @@ import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.NavigationItem;
 import de.mephisto.vpin.ui.NavigationOptions;
-import de.mephisto.vpin.ui.events.EventManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.Tooltip;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,9 +106,11 @@ public class JobsContainerController implements Initializable {
         stopBtn.setTooltip(new Tooltip("This job can not be canceled."));
       }
 
+      progressBar.setVisible(!StringUtils.isEmpty(jobDescriptor.getStatus()));
+      progressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
 
       if (jobDescriptor.getProgress() <= 0) {
-        progressBar.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
+
       }
       else {
         progressBar.setProgress(jobDescriptor.getProgress());
@@ -118,6 +123,7 @@ public class JobsContainerController implements Initializable {
 
         boolean error = jobDescriptor.getError() != null;
         statusLabel.setVisible(true);
+        statusLabel.getGraphic().setVisible(true);
         if (error) {
           statusLabel.setGraphic(WidgetFactory.createExclamationIcon());
           statusLabel.setText(jobDescriptor.getError());
@@ -161,7 +167,9 @@ public class JobsContainerController implements Initializable {
     statusLabel.managedProperty().bindBidirectional(statusLabel.visibleProperty());
     infoLabel.managedProperty().bindBidirectional(infoLabel.visibleProperty());
     progressBar.managedProperty().bindBidirectional(progressBar.visibleProperty());
-    statusLabel.setVisible(false);
+    progressBar.setVisible(false);
+    statusLabel.setText("Queued...");
+    statusLabel.getGraphic().setVisible(false);
     openBtn.setDisable(true);
     removeBtn.setDisable(true);
   }

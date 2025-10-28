@@ -5,6 +5,8 @@
 - Recording Dialog: Added hint that the GL version is not supported for recordings.
 - Recording Dialog: Filtered the VPX GL version from the emulator combobox.
 - Backups: Fixed memory leak and possible concurrent access errors.
+- Notifications: Added **test button** that shows a test notification.
+- Notifications: Added **margin offset** spinner which allows you to adjust the notification position in case it is off.
 
 ## Release Notes 4.3.7
 
