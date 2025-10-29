@@ -1,13 +1,11 @@
 package de.mephisto.vpin.ui.jobs;
 
-import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
@@ -170,74 +168,80 @@ public class JobPoller implements StudioEventListener {
   }
 
   public void refreshJobsUI() {
-      JFXFuture.supplyAsync(() -> {
-        List<JobDescriptor> allJobs = getAllJobs();
-        return allJobs;
-      }).thenAcceptLater(allJobs -> {
-        List<JobDescriptor> activeJobList = allJobs.stream().filter(j -> (!j.isFinished() && !j.isCancelled())).collect(Collectors.toList());
-        polling.set(!activeJobList.isEmpty());
-        jobMenu.setDisable(allJobs.isEmpty());
-        headerController.setVisible(!allJobs.isEmpty());
+    JFXFuture.supplyAsync(() -> {
+      List<JobDescriptor> allJobs = getAllJobs();
+      return allJobs;
+    }).thenAcceptLater(allJobs -> {
+      List<JobDescriptor> activeJobList = allJobs.stream().filter(j -> (!j.isFinished() && !j.isCancelled())).collect(Collectors.toList());
+      polling.set(!activeJobList.isEmpty());
+      jobMenu.setDisable(allJobs.isEmpty());
+      headerController.setVisible(!allJobs.isEmpty());
 
-        Platform.runLater(() -> {
-          jobProgress.setProgress(activeJobList.isEmpty() ? 0 : -1);
-          jobProgress.setVisible(!activeJobList.isEmpty());
-          jobProgress.setDisable(activeJobList.isEmpty());
-          if (activeJobList.isEmpty()) {
-            jobMenu.setStyle(null);
-          }
+      jobProgress.setProgress(activeJobList.isEmpty() ? 0 : -1);
+      jobProgress.setVisible(!activeJobList.isEmpty());
+      jobProgress.setDisable(activeJobList.isEmpty());
+      if (activeJobList.isEmpty()) {
+        jobMenu.setStyle(null);
+      }
 
 
-          if (activeJobList.size() == 1) {
-            jobMenu.setText(activeJobList.size() + " active job");
-          }
-          else if (activeJobList.isEmpty()) {
-            jobMenu.setText("No active jobs");
-          }
-          else {
-            jobMenu.setText(activeJobList.size() + " active jobs");
-          }
+      if (activeJobList.size() == 1) {
+        jobMenu.setText(activeJobList.size() + " active job");
+      }
+      else if (activeJobList.isEmpty()) {
+        jobMenu.setText("No active jobs");
+      }
+      else {
+        jobMenu.setText(activeJobList.size() + " active jobs");
+      }
 
-          //remove dismissed jobs
-          List<MenuItem> items = new ArrayList<>(jobMenu.getItems());
-          for (MenuItem item : items) {
-            if (item.getUserData() == null) {
-              continue;
-            }
+      //remove dismissed jobs
+      List<MenuItem> items = new ArrayList<>(jobMenu.getItems());
+      List<MenuItem> toRemove = new ArrayList<>();
+      for (MenuItem item : items) {
+        if (item.getUserData() == null) {
+          continue;
+        }
 
-            JobDescriptor descriptor = ((JobsContainerController) item.getUserData()).getDescriptor();
-            if (!allJobs.contains(descriptor)) {
-              jobMenu.getItems().remove(item);
-              jobMenu.requestLayout();
-            }
-          }
+        JobDescriptor descriptor = ((JobsContainerController) item.getUserData()).getDescriptor();
+        if (!allJobs.contains(descriptor)) {
+          toRemove.add(item);
+        }
+      }
 
-          //update or add jobs
-          for (JobDescriptor descriptor : allJobs) {
-            Optional<MenuItem> menuItem = items.stream().filter(c -> c.getUserData() != null && ((JobsContainerController) c.getUserData()).getDescriptor().equals(descriptor)).findFirst();
-            if (menuItem.isPresent()) {
-              JobsContainerController controller = (JobsContainerController) menuItem.get().getUserData();
-              controller.setData(this, descriptor);
-              continue;
-            }
+      jobMenu.getItems().removeAll(toRemove);
+      if (jobMenu.isShowing() && !toRemove.isEmpty()) {
+        jobMenu.requestLayout();
+      }
 
-            try {
-              FXMLLoader loader = new FXMLLoader(JobsContainerController.class.getResource("jobs-container.fxml"));
-              BorderPane root = loader.load();
-              root.getStyleClass().add("dropin-menu-item");
-              JobsContainerController containerController = loader.getController();
-              containerController.setData(this, descriptor);
-              CustomMenuItem item = new CustomMenuItem();
-              item.setUserData(containerController);
-              item.setContent(root);
-              jobMenu.getItems().add(item);
-            }
-            catch (IOException e) {
-              LOG.error("Failed to load job container: " + e.getMessage(), e);
-            }
-          }
-        });
-      });
+      //update or add jobs
+      List<CustomMenuItem> itemsToAdd = new ArrayList<>();
+      for (JobDescriptor descriptor : allJobs) {
+        Optional<MenuItem> menuItem = items.stream().filter(c -> c.getUserData() != null && ((JobsContainerController) c.getUserData()).getDescriptor().equals(descriptor)).findFirst();
+        if (menuItem.isPresent()) {
+          JobsContainerController controller = (JobsContainerController) menuItem.get().getUserData();
+          controller.setData(this, descriptor);
+          continue;
+        }
+
+        try {
+          FXMLLoader loader = new FXMLLoader(JobsContainerController.class.getResource("jobs-container.fxml"));
+          BorderPane root = loader.load();
+          root.getStyleClass().add("dropin-menu-item");
+          JobsContainerController containerController = loader.getController();
+          containerController.setData(this, descriptor);
+          CustomMenuItem item = new CustomMenuItem();
+          item.setUserData(containerController);
+          item.setContent(root);
+          itemsToAdd.add(item);
+        }
+        catch (IOException e) {
+          LOG.error("Failed to load job container: " + e.getMessage(), e);
+        }
+      }
+
+      jobMenu.getItems().addAll(itemsToAdd);
+    });
   }
 
   private List<JobDescriptor> getAllJobs() {
