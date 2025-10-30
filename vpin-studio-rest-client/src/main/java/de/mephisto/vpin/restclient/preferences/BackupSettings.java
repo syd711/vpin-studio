@@ -22,6 +22,7 @@ public class BackupSettings extends JsonSettings {
   private boolean dmd = true;
   private boolean vpx = true;
   private boolean registryData = true;
+  private boolean b2sSettings = true;
 
   public boolean isAssetEnabled(AssetType assetType) {
     switch (assetType) {
@@ -70,6 +71,14 @@ public class BackupSettings extends JsonSettings {
       }
     }
     return false;
+  }
+
+  public boolean isB2sSettings() {
+    return b2sSettings;
+  }
+
+  public void setB2sSettings(boolean b2sSettings) {
+    this.b2sSettings = b2sSettings;
   }
 
   public boolean isDirectb2s() {

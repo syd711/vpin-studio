@@ -111,7 +111,7 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label layoutX="10.0" layoutY="77.0" styleClass="checkbox-description" text="Wether to create a highscore card for the table or not." textFill="WHITE" />
+                  <Label layoutX="10.0" layoutY="77.0" styleClass="checkbox-description" text="Whether to create a highscore card for the table or not." textFill="WHITE" />
                   <CheckBox fx:id="gamesVersionCheckbox" layoutX="10.0" layoutY="104.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="Table Version">
                      <VBox.margin>
                         <Insets top="6.0" />

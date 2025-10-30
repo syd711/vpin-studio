@@ -1,5 +1,14 @@
 ## Release Notes 4.3.8
 
+- Notifications: Added **text margin** spinner which allows you to adjust the notification text positions in case it is off.
+- Backups: Fixed missing backup of .directb2s files when .vpx files are located in their own sub-folder.
+- Backups: Added backup and restore of the table's **B2STableSettings.xml** data.
+
+
+--- 
+
+## Release Notes 4.3.8
+
 - Jobs Menu: Added **Cancel All** button to cancel all queued jobs.
 - Jobs Menu: Fixed several UI freezes when hundreds of backups are started at once.
 - Recording Dialog: Added hint that the GL version is not supported for recordings.
@@ -7,6 +16,8 @@
 - Backups: Fixed memory leak and possible concurrent access errors.
 - Notifications: Added **test button** that shows a test notification.
 - Notifications: Added **margin offset** spinner which allows you to adjust the notification position in case it is off.
+
+---
 
 ## Release Notes 4.3.7
 

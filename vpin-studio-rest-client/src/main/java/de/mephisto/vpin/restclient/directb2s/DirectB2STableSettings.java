@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.directb2s;
 
 public class DirectB2STableSettings implements DirectB2sConstants {
+  public final static String ARCHIVE_FILENAME = "B2STableSettings.json";
   private String rom;
 
   //private Boolean disableBuiltInEMReelSound = null;
