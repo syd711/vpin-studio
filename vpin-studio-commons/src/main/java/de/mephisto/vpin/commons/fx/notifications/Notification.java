@@ -13,8 +13,17 @@ public class Notification {
   private String title3;
   private long durationSec;
   private int margin;
+  private int textBoxMargin;
   private boolean desktopMode;
   private boolean showOnEmulatorExit = true;
+
+  public int getTextBoxMargin() {
+    return textBoxMargin;
+  }
+
+  public void setTextBoxMargin(int textBoxMargin) {
+    this.textBoxMargin = textBoxMargin;
+  }
 
   public int getMargin() {
     return margin;

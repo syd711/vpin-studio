@@ -58,6 +58,9 @@ public class NotificationsPreferencesController implements Initializable {
   private Spinner<Integer> offsetSpinner;
 
   @FXML
+  private Spinner<Integer> offsetTextSpinner;
+
+  @FXML
   private ComboBox<MonitorInfo> screenInfoComboBox;
 
   @FXML
@@ -103,15 +106,23 @@ public class NotificationsPreferencesController implements Initializable {
     factory.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
       notificationSettings.setDurationSec(t1);
       client.getPreferenceService().setJsonPreference(notificationSettings);
-    }, 300));
+    }, 100));
 
     int margin = notificationSettings.getMargin();
-    SpinnerValueFactory.IntegerSpinnerValueFactory factory2 = new SpinnerValueFactory.IntegerSpinnerValueFactory(-500, 500, margin);
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory2 = new SpinnerValueFactory.IntegerSpinnerValueFactory(-800, 800, margin);
     offsetSpinner.setValueFactory(factory2);
     factory2.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce("notificationMargin", () -> {
       notificationSettings.setMargin(t1);
       client.getPreferenceService().setJsonPreference(notificationSettings);
-    }, 300));
+    }, 100));
+
+    int textMargin = notificationSettings.getTextboxMargin();
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory3 = new SpinnerValueFactory.IntegerSpinnerValueFactory(-800, 800, textMargin);
+    offsetTextSpinner.setValueFactory(factory3);
+    factory3.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce("notificationTextBoxMargin", () -> {
+      notificationSettings.setTextboxMargin(t1);
+      client.getPreferenceService().setJsonPreference(notificationSettings);
+    }, 100));
 
     desktopCheckbox.setSelected(notificationSettings.isDesktopMode());
     desktopCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
