@@ -233,11 +233,11 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
     startReload("Loading Backups...");
     JFXFuture.supplyAsync(() -> {
       if (selectedItem != null && invalidate) {
-        client.getArchiveService().invalidateBackupCache();
+        client.getBackupService().invalidateBackupCache();
       }
 
       BackupSourceRepresentation backupSource = sourceCombo.getValue();
-      data = client.getArchiveService().getBackupsForSource(backupSource.getId());
+      data = client.getBackupService().getBackupsForSource(backupSource.getId());
       List<BackupDescriptorRepresentation> filteredBackups = filterArchives(data);
       return filteredBackups;
     }).thenAcceptLater((filteredBackups) -> {
@@ -654,7 +654,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
 
   private void refreshRepositoryCombo() {
     sourceCombo.valueProperty().removeListener(sourceComboChangeListener);
-    List<BackupSourceRepresentation> repositories = new ArrayList<>(client.getArchiveService().getBackupSources());
+    List<BackupSourceRepresentation> repositories = new ArrayList<>(client.getBackupService().getBackupSources());
     sourceCombo.setItems(FXCollections.observableList(repositories));
     sourceCombo.getSelectionModel().select(0);
     sourceCombo.valueProperty().addListener(sourceComboChangeListener);

@@ -50,7 +50,7 @@ public class BackupRestoreProgressModel extends ProgressModel<BackupDescriptorRe
   public void processNext(ProgressResultModel progressResultModel, BackupDescriptorRepresentation next) {
     try {
       descriptor.setFilename(next.getFilename());
-      Studio.client.getArchiveService().restoreTable(descriptor);
+      Studio.client.getBackupService().restoreTable(descriptor);
 
       progressResultModel.addProcessed();
       percentage++;

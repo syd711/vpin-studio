@@ -29,7 +29,7 @@ public class BackupUploadProgressModel extends ProgressModel<File> {
     this.repositoryId = repositoryId;
     this.files = files;
     this.iterator = files.iterator();
-    backupServiceClient = Studio.client.getArchiveService();
+    backupServiceClient = Studio.client.getBackupService();
   }
 
   @Override

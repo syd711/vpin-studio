@@ -103,7 +103,7 @@ public class TablesBackupDialogController implements Initializable, DialogContro
     descriptor.setBackupSourceId(source.getId());
     descriptor.setRemoveFromPlaylists(removeFromPlaylistCheckbox.isSelected());
     descriptor.getGameIds().addAll(games.stream().map(GameRepresentation::getId).collect(Collectors.toList()));
-    Studio.client.getArchiveService().backupTable(descriptor);
+    Studio.client.getBackupService().backupTable(descriptor);
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
@@ -151,7 +151,7 @@ public class TablesBackupDialogController implements Initializable, DialogContro
     pupPackCheckBox.managedProperty().bindBidirectional(pupPackCheckBox.visibleProperty());
     popperMediaCheckBox.managedProperty().bindBidirectional(popperMediaCheckBox.visibleProperty());
 
-    List<BackupSourceRepresentation> repositories = new ArrayList<>(client.getArchiveService().getBackupSources());
+    List<BackupSourceRepresentation> repositories = new ArrayList<>(client.getBackupService().getBackupSources());
     sourceCombo.setItems(FXCollections.observableList(repositories));
     sourceCombo.getSelectionModel().select(0);
 

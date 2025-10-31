@@ -335,10 +335,6 @@ public class VPinStudioClient implements OverlayClient {
     return altSoundServiceClient;
   }
 
-  public BackupServiceClient getArchiveService() {
-    return backupServiceClient;
-  }
-
   public AssetServiceClient getAssetService() {
     return assetServiceClient;
   }

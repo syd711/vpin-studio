@@ -100,7 +100,7 @@ public class BackupRestoreDialogController implements Initializable, DialogContr
   @FXML
   private ComboBox<GameEmulatorRepresentation> emulatorCombo;
 
-  private List<BackupDescriptorRepresentation> archiveDescriptors;
+  private List<BackupDescriptorRepresentation> backupDescriptors;
 
 
   @FXML
@@ -114,10 +114,10 @@ public class BackupRestoreDialogController implements Initializable, DialogContr
     new Thread(() -> {
       Platform.runLater(() -> {
         try {
-          for (BackupDescriptorRepresentation archiveDescriptor : this.archiveDescriptors) {
-            restoreDescriptor.setFilename(archiveDescriptor.getFilename());
-            restoreDescriptor.setArchiveSourceId(archiveDescriptor.getSource().getId());
-            client.getArchiveService().restoreTable(restoreDescriptor);
+          for (BackupDescriptorRepresentation descriptor : this.backupDescriptors) {
+            restoreDescriptor.setFilename(descriptor.getFilename());
+            restoreDescriptor.setArchiveSourceId(descriptor.getSource().getId());
+            client.getBackupService().restoreTable(restoreDescriptor);
           }
           JobPoller.getInstance().setPolling();
         }
@@ -142,11 +142,11 @@ public class BackupRestoreDialogController implements Initializable, DialogContr
   }
 
   public void setData(List<BackupDescriptorRepresentation> archiveDescriptors) {
-    this.archiveDescriptors = archiveDescriptors;
+    this.backupDescriptors = archiveDescriptors;
 
-    String title = "Restore " + this.archiveDescriptors.size() + " Tables?";
-    if (this.archiveDescriptors.size() == 1) {
-      title = "Restore \"" + this.archiveDescriptors.get(0).getTableDetails().getGameDisplayName() + "\"?";
+    String title = "Restore " + this.backupDescriptors.size() + " Tables?";
+    if (this.backupDescriptors.size() == 1) {
+      title = "Restore \"" + this.backupDescriptors.get(0).getTableDetails().getGameDisplayName() + "\"?";
     }
     titleLabel.setText(title);
 
