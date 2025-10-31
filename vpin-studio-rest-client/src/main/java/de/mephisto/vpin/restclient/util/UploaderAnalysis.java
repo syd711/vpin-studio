@@ -373,7 +373,12 @@ public class UploaderAnalysis {
     boolean checkReadme = analyze(formattedName, fileHeader.isDirectory(), fileHeader.getUncompressedSize());
     if (checkReadme) {
       if (formattedName.toLowerCase().endsWith(".txt") && formattedName.toLowerCase().contains("read")) {
-        this.readme = VpaArchiveUtil.readStringFromZip(zipFile, fileHeader.getFileName());
+        try {
+          this.readme = VpaArchiveUtil.readStringFromZip(zipFile, fileHeader.getFileName());
+        }
+        catch (Exception e) {
+          //ignore
+        }
       }
     }
   }

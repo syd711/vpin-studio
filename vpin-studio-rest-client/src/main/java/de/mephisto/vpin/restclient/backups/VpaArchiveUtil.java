@@ -51,6 +51,9 @@ public class VpaArchiveUtil {
         return objectMapper.readValue(text, TableDetails.class);
       }
     }
+    catch (Exception e) {
+      LOG.error("Failed to read {}: {}", TableDetails.ARCHIVE_FILENAME, e.getMessage(), e);
+    }
     finally {
       try {
         zipFile.close();
@@ -69,6 +72,9 @@ public class VpaArchiveUtil {
       if (text != null) {
         return objectMapper.readValue(text, DirectB2STableSettings.class);
       }
+    }
+    catch (Exception e) {
+      LOG.info("Failed to read {}, maybe not bundled: {}", DirectB2STableSettings.ARCHIVE_FILENAME, e.getMessage(), e);
     }
     finally {
       try {
@@ -109,22 +115,17 @@ public class VpaArchiveUtil {
   }
 
   @Nullable
-  public static String readStringFromZip(ZipFile zipFile, String fileName) {
+  public static String readStringFromZip(ZipFile zipFile, String fileName) throws Exception {
     File target = null;
     try {
       target = extractFile(zipFile, fileName);
-      String result = target != null ? FileUtils.readFileToString(target, "utf8") : null;
-      return result;
-    }
-    catch (Exception e) {
-      LOG.error("Failed to read {}: {}", fileName, e.getMessage(), e);
+      return target != null ? FileUtils.readFileToString(target, "utf8") : null;
     }
     finally {
       if (target != null && target.exists() && !target.delete()) {
         LOG.info("Failed to delete {}", fileName);
       }
     }
-    return null;
   }
 
   public static boolean extractFolder(@NonNull File archiveFile, @NonNull File targetFolder, @Nullable String archiveFolder, @NonNull List<String> suffixAllowList) {
@@ -237,7 +238,7 @@ public class VpaArchiveUtil {
       return tmp;
     }
     catch (Exception e) {
-      LOG.error("Failed to extract {} from vpa archive {}: {}", fileName, zipFile.getFile().getAbsolutePath(), e.getMessage());
+      LOG.info("Failed to extract {} from vpa archive {}: {}", fileName, zipFile.getFile().getAbsolutePath(), e.getMessage());
     }
     return null;
   }
