@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.backups;
 import de.mephisto.vpin.restclient.backups.BackupDescriptorRepresentation;
 import de.mephisto.vpin.restclient.backups.BackupPackageInfo;
 import de.mephisto.vpin.restclient.backups.BackupSourceRepresentation;
-import de.mephisto.vpin.restclient.games.descriptors.ArchiveRestoreDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.BackupRestoreDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.BackupExportDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
@@ -49,7 +49,7 @@ public class BackupResource {
   }
 
   @PostMapping("/restore")
-  public Boolean restoreBackup(@RequestBody ArchiveRestoreDescriptor descriptor) {
+  public Boolean restoreBackup(@RequestBody BackupRestoreDescriptor descriptor) {
     return backupService.restoreBackup(descriptor);
   }
 

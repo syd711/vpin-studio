@@ -1,6 +1,6 @@
 package de.mephisto.vpin.restclient.games.descriptors;
 
-public class ArchiveRestoreDescriptor {
+public class BackupRestoreDescriptor {
   private int emulatorId = -1;
   private long archiveSourceId;
   private String filename;

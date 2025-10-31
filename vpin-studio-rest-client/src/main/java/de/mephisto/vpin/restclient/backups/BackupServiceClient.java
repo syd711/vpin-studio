@@ -107,7 +107,7 @@ public class BackupServiceClient extends VPinStudioClientService {
     return getRestClient().post(API + "backups/backup", exportDescriptor, Boolean.class);
   }
 
-  public boolean restoreTable(ArchiveRestoreDescriptor descriptor) {
+  public boolean restoreTable(BackupRestoreDescriptor descriptor) {
     return getRestClient().post(API + "backups/restore", descriptor, Boolean.class);
   }
 

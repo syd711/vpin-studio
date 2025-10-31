@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.backups.dialogs;
 
-import de.mephisto.vpin.restclient.games.descriptors.ArchiveRestoreDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.BackupRestoreDescriptor;
 import de.mephisto.vpin.restclient.backups.BackupDescriptorRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
@@ -14,12 +14,12 @@ import java.util.List;
 public class BackupRestoreProgressModel extends ProgressModel<BackupDescriptorRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(BackupRestoreProgressModel.class);
 
-  private final ArchiveRestoreDescriptor descriptor;
+  private final BackupRestoreDescriptor descriptor;
   private final Iterator<BackupDescriptorRepresentation> iterator;
   private final List<BackupDescriptorRepresentation> archiveDescritors;
   private double percentage = 0;
 
-  public BackupRestoreProgressModel(String title, ArchiveRestoreDescriptor descriptor, List<BackupDescriptorRepresentation> archiveDescriptors) {
+  public BackupRestoreProgressModel(String title, BackupRestoreDescriptor descriptor, List<BackupDescriptorRepresentation> archiveDescriptors) {
     super(title);
     this.descriptor = descriptor;
     this.iterator = archiveDescriptors.iterator();

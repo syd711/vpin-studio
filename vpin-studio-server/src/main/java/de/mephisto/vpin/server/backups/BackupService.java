@@ -6,7 +6,7 @@ import de.mephisto.vpin.restclient.backups.BackupSourceType;
 import de.mephisto.vpin.restclient.backups.BackupType;
 import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
-import de.mephisto.vpin.restclient.games.descriptors.ArchiveRestoreDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.BackupRestoreDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.BackupExportDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
@@ -207,13 +207,12 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
     return updatedSource;
   }
 
-  public boolean restoreBackup(@NonNull ArchiveRestoreDescriptor installDescriptor) {
+  public boolean restoreBackup(@NonNull BackupRestoreDescriptor installDescriptor) {
     try {
       BackupDescriptor backupDescriptor = getBackupDescriptors(installDescriptor.getArchiveSourceId(), installDescriptor.getFilename());
       GameEmulator emulator = emulatorService.getGameEmulator(installDescriptor.getEmulatorId());
 
-
-      JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_INSTALL);
+      JobDescriptor jobDescriptor = new JobDescriptor(JobType.BACKUP_INSTALL);
       jobDescriptor.setTitle("Restoring \"" + backupDescriptor.getFilename() + "\"");
       BackupInstallerJob job = new BackupInstallerJob(backupDescriptor, universalUploadService, gameService, emulator, cardService);
       jobDescriptor.setJob(job);

@@ -6,7 +6,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.backups.BackupDescriptorRepresentation;
 import de.mephisto.vpin.restclient.backups.BackupType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.games.descriptors.ArchiveRestoreDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.BackupRestoreDescriptor;
 import de.mephisto.vpin.restclient.preferences.BackupSettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.jobs.JobPoller;
@@ -105,7 +105,7 @@ public class BackupRestoreDialogController implements Initializable, DialogContr
 
   @FXML
   private void onImport(ActionEvent e) {
-    ArchiveRestoreDescriptor restoreDescriptor = new ArchiveRestoreDescriptor();
+    BackupRestoreDescriptor restoreDescriptor = new BackupRestoreDescriptor();
     restoreDescriptor.setEmulatorId(emulatorCombo.getValue().getId());
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
