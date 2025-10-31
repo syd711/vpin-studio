@@ -75,7 +75,7 @@ public class BackupSourceAdapterFolder implements BackupSourceAdapter {
   public boolean delete(BackupDescriptor descriptor) {
     File file = new File(archiveFolder, descriptor.getFilename());
     LOG.info("Deleting {}", file.getAbsolutePath());
-    if (!Desktop.getDesktop().moveToTrash(file)) {
+    if (file.exists() && !Desktop.getDesktop().moveToTrash(file)) {
       LOG.error("Failed moving file to trash: " + file.getAbsolutePath());
       if (!file.delete()) {
         LOG.error("Failed to delete " + file.getAbsolutePath());

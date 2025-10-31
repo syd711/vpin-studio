@@ -169,8 +169,8 @@ public class VpaService implements InitializingBean {
         List<File> files = new ArrayList<>();
         for (String version : versions) {
           String versionFileName = version;
-          if (versionFileName.contains("\\")) {
-            versionFileName = versionFileName.substring(versionFileName.lastIndexOf("\\"));
+          if (versionFileName.contains(File.separator)) {
+            versionFileName = versionFileName.substring(versionFileName.lastIndexOf(File.separator) + 1);
           }
           File directB2SFile = new File(gameFolder, versionFileName);
           if (directB2SFile.exists()) {
