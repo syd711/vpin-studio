@@ -181,9 +181,11 @@ public class VpaService implements InitializingBean {
           }
         }
 
-        DirectB2STableSettings tableSettings = backglassService.getTableSettings(game);
-        if (tableSettings != null) {
-          zipB2STableSettings(jobDescriptor, tableSettings, zipOut);
+        if (backupSettings.isB2sSettings()) {
+          DirectB2STableSettings tableSettings = backglassService.getTableSettings(game);
+          if (tableSettings != null) {
+            zipB2STableSettings(jobDescriptor, tableSettings, zipOut);
+          }
         }
 
         if (!files.isEmpty()) {

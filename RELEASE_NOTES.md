@@ -1,8 +1,9 @@
-## Release Notes 4.3.8
+## Release Notes 4.3.9
 
 - Notifications: Added **text margin** spinner which allows you to adjust the notification text positions in case it is off.
 - Backups: Fixed missing backup of .directb2s files when .vpx files are located in their own sub-folder.
-- Backups: Added backup and restore of the table's **B2STableSettings.xml** data.
+- Backups: Added auto-detection for sub-folder based backups. Tables are now restored into their own-subfolder when they have been backed-up this way.
+- Backups: Added backup and restore of the table's **B2STableSettings.xml** data. (Note that you have to backup your tables again if you want to have this data included.)
 
 
 --- 

@@ -87,6 +87,9 @@ public class TablesBackupDialogController implements Initializable, DialogContro
   private CheckBox registryDataCheckBox;
 
   @FXML
+  private CheckBox b2sSettingsCheckbox;
+
+  @FXML
   private VBox frontendColumn;
 
   @FXML
@@ -143,6 +146,8 @@ public class TablesBackupDialogController implements Initializable, DialogContro
     dmdCheckBox.setSelected(backupSettings.isDmd());
     vpxCheckBox.setSelected(backupSettings.isVpx());
     registryDataCheckBox.setSelected(backupSettings.isRegistryData());
+    b2sSettingsCheckbox.setSelected(backupSettings.isB2sSettings());
+    b2sSettingsCheckbox.setDisable(!directb2sCheckBox.isSelected());
   }
 
   @Override
@@ -162,6 +167,7 @@ public class TablesBackupDialogController implements Initializable, DialogContro
 
     directb2sCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       backupSettings.setDirectb2s(newValue);
+      b2sSettingsCheckbox.setDisable(!newValue);
       client.getPreferenceService().setJsonPreference(backupSettings);
     });
     pupPackCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -222,6 +228,10 @@ public class TablesBackupDialogController implements Initializable, DialogContro
     });
     registryDataCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       backupSettings.setRegistryData(newValue);
+      client.getPreferenceService().setJsonPreference(backupSettings);
+    });
+    b2sSettingsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      backupSettings.setB2sSettings(newValue);
       client.getPreferenceService().setJsonPreference(backupSettings);
     });
   }
