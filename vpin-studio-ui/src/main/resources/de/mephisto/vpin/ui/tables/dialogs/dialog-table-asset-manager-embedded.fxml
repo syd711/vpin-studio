@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import de.mephisto.vpin.ui.tables.dialogs.TableAssetManagerPane?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
@@ -15,11 +16,9 @@
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
-<?import de.mephisto.vpin.ui.tables.dialogs.TableAssetManagerPane?>
 
 <BorderPane fx:id="root" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableAssetManagerDialogController">
    <center>
@@ -46,7 +45,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </TextField>
-                                        <Button mnemonicParsing="false" onAction="#onSearch" text="" textFill="WHITE">
+                                        <Button fx:id="searchBtn" mnemonicParsing="false" onAction="#onSearch" text="" textFill="WHITE">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>

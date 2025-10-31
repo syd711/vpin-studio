@@ -71,6 +71,9 @@ public class TablesSidebarTableDetailsController implements Initializable {
   private Label gameDisplayName;
 
   @FXML
+  private Label mediaSearch;
+
+  @FXML
   private Label gameTheme;
 
   @FXML
@@ -319,6 +322,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
 
       extrasPanel.setVisible(tableDetails.isPopper15());
 
+      mediaSearch.setText(!StringUtils.isEmpty(tableDetails.getMediaSearch()) ? tableDetails.getMediaSearch() : "-");
       gameType.setText(tableDetails.getGameType() != null ? tableDetails.getGameType() : "-");
       gameTheme.setText(StringUtils.isEmpty(tableDetails.getGameTheme()) ? "-" : tableDetails.getGameTheme());
       gameYear.setText(tableDetails.getGameYear() == null ? "-" : String.valueOf(tableDetails.getGameYear()));
@@ -379,6 +383,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
       labelLastPlayed.setText("-");
       labelTimesPlayed.setText("-");
 
+      mediaSearch.setText("-");
       isMod.setText("-");
       gameYear.setText("-");
       gameType.setText("-");

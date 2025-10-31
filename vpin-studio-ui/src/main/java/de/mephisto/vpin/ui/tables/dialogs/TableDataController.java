@@ -135,6 +135,9 @@ public class TableDataController extends BasePrevNextController implements AutoC
   private TextField IPDBNum;
 
   @FXML
+  private TextField mediaSearch;
+
+  @FXML
   private TextField altRunMode;
 
   @FXML
@@ -861,6 +864,9 @@ public class TableDataController extends BasePrevNextController implements AutoC
     tableDetailsBinder.bindSpinner(gameRating, "gameRating", 0, 10);
 
     tableDetailsBinder.bindTextField(IPDBNum, "IPDBNum");
+
+    tableDetailsBinder.bindTextField(mediaSearch, "mediaSearch");
+
     idpdBtn.visibleProperty().bind(Bindings.createBooleanBinding(() -> IPDBNum.getText() != null && IPDBNum.getText().startsWith("http"), IPDBNum.textProperty()));
 
     tableDetailsBinder.bindTextField(url, "url");

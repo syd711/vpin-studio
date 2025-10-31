@@ -3,6 +3,8 @@ package de.mephisto.vpin.server.frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.List;
@@ -26,14 +28,20 @@ abstract public class DefaultMediaAccessStrategy implements MediaAccessStrategy 
 
   /**
    * The logic here is the same as for all but can be adapted for frontends.
+   *
    * @param game
    * @param screen
    * @return
    */
   @Override
-  public List<File> getScreenMediaFiles(@NonNull Game game, @NonNull VPinScreen screen) {
+  public List<File> getScreenMediaFiles(@NonNull Game game, @NonNull VPinScreen screen, @Nullable String mediaSearchTerm) {
     File screenMediaFolder = getGameMediaFolder(game, screen, null, false);
     List<File> allFiles = getMediaFiles(screenMediaFolder);
+
+    if (!StringUtils.isEmpty(mediaSearchTerm) && mediaSearchTerm.contains("*")) {
+      String term = mediaSearchTerm.replaceAll("\\*", "").toLowerCase();
+      return allFiles.stream().filter(f -> f.getName().toLowerCase().startsWith(term)).collect(Collectors.toList());
+    }
 
     String baseFilename = game.getGameName();
     List<File> mediaFiles = allFiles.stream().filter(f -> f.getName().toLowerCase().startsWith(baseFilename.toLowerCase())).collect(Collectors.toList());

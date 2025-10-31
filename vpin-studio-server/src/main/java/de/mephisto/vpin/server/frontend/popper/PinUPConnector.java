@@ -2130,6 +2130,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     game.setGameName(gameName);
     game.setDateAdded(getDate(rs, "DateAdded"));
     game.setDateUpdated(getDate(rs, "DateUpdated"));
+    game.setMediaSearch(rs.getString("MediaSearch"));
 
     game.setVersion(rs.getString("GAMEVER"));
     game.setAltLauncherExe(rs.getString("ALTEXE"));

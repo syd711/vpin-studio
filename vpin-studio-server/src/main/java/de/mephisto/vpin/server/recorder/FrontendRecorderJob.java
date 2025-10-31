@@ -173,7 +173,7 @@ public class FrontendRecorderJob implements Job {
         }
 
         if (recordingScreenOption.getRecordMode().equals(RecordingWriteMode.ifMissing)) {
-          List<File> screenMediaFiles = frontend.getMediaAccessStrategy().getScreenMediaFiles(game, screen);
+          List<File> screenMediaFiles = recorderService.getGameMediaFiles(game, screen);
           if (screenMediaFiles.isEmpty()) {
             return true;
           }

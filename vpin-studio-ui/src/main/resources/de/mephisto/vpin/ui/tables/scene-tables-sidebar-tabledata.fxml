@@ -192,6 +192,7 @@
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                           </columnConstraints>
                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -208,136 +209,146 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label text="Game Type:" textFill="WHITE">
+                              <Label text="Game Type:" textFill="WHITE" GridPane.rowIndex="1">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="gameType" styleClass="default-text" text="-" GridPane.columnIndex="1">
+                              <Label fx:id="gameType" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label text="Game Theme:" textFill="WHITE" GridPane.rowIndex="1">
+                              <Label text="Game Theme:" textFill="WHITE" GridPane.rowIndex="2">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="gameTheme" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                              <Label fx:id="gameTheme" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                                    <Label text="Game Year:" textFill="WHITE" GridPane.rowIndex="2">
+                                    <Label text="Game Year:" textFill="WHITE" GridPane.rowIndex="3">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label fx:id="gameYear" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                    <Label fx:id="gameYear" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label text="Manufacturer:" textFill="WHITE" GridPane.rowIndex="3">
+                                    <Label text="Manufacturer:" textFill="WHITE" GridPane.rowIndex="4">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label fx:id="manufacturer" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                    <Label fx:id="manufacturer" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label text="Author:" textFill="WHITE" GridPane.rowIndex="4">
+                                    <Label text="Author:" textFill="WHITE" GridPane.rowIndex="5">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label fx:id="author" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                    <Label fx:id="author" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label text="Category:" textFill="WHITE" GridPane.rowIndex="5">
+                                    <Label text="Category:" textFill="WHITE" GridPane.rowIndex="6">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label fx:id="category" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                    <Label fx:id="category" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="6">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label text="Number of Players:" textFill="WHITE" GridPane.rowIndex="6">
+                                    <Label text="Number of Players:" textFill="WHITE" GridPane.rowIndex="7">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label fx:id="numberOfPlayers" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                    <Label fx:id="numberOfPlayers" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="7">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label text="Game Rating:" textFill="WHITE" GridPane.rowIndex="7">
+                                    <Label text="Game Rating:" textFill="WHITE" GridPane.rowIndex="8">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label fx:id="gameRating" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                    <Label fx:id="gameRating" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="8">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label text="IPDB Number:" textFill="WHITE" GridPane.rowIndex="8">
+                                    <Label text="IPDB Number:" textFill="WHITE" GridPane.rowIndex="9">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label fx:id="IPDBNum" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                                    <Label fx:id="IPDBNum" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="9">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label text="URL:" textFill="WHITE" GridPane.rowIndex="9">
+                                    <Label text="URL:" textFill="WHITE" GridPane.rowIndex="10">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label fx:id="url" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="9">
+                                    <Label fx:id="url" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="10">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label text="Designed By:" textFill="WHITE" GridPane.rowIndex="10">
+                                    <Label text="Designed By:" textFill="WHITE" GridPane.rowIndex="11">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label fx:id="designedBy" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="10">
+                                    <Label fx:id="designedBy" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="11">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label text="Times Played:" textFill="WHITE" GridPane.rowIndex="11">
+                                    <Label text="Times Played:" textFill="WHITE" GridPane.rowIndex="12">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label text="Last Played:" textFill="WHITE" GridPane.rowIndex="12">
+                                    <Label text="Last Played:" textFill="WHITE" GridPane.rowIndex="13">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label fx:id="labelTimesPlayed" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="11">
+                                    <Label fx:id="labelTimesPlayed" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="12">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label fx:id="labelLastPlayed" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="12">
+                                    <Label fx:id="labelLastPlayed" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="13">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
+                              <Label text="Media Search:" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="mediaSearch" styleClass="default-text" text="-" GridPane.columnIndex="1">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
                            </children>
                         </GridPane>
                      </children>

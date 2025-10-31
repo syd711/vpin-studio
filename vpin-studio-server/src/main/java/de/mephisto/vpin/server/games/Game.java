@@ -29,6 +29,7 @@ public class Game {
   private String gameName;
   private String tableName;
   private String version;
+  private String mediaSearch;
   private boolean disabled;
   private boolean updateAvailable;
   private Date dateAdded;
@@ -93,6 +94,14 @@ public class Game {
   private int rating = 0;
 
   public Game() {
+  }
+
+  public String getMediaSearch() {
+    return mediaSearch;
+  }
+
+  public void setMediaSearch(String mediaSearch) {
+    this.mediaSearch = mediaSearch;
   }
 
   public boolean isIgnoreUpdates() {

@@ -29,6 +29,7 @@ public class GameRepresentation {
   private int nvOffset;
   private String gameDisplayName;
   private String gameFileName;
+  private String mediaSearch;
   private Date dateAdded;
   private Date dateUpdated;
   private String gameName;
@@ -59,7 +60,6 @@ public class GameRepresentation {
   private boolean selected;
   private boolean romRequired;
   private String assets;
-  private boolean defaultBackgroundAvailable;
   private AltColorTypes altColorType;
   private String extTableId;
   private String extTableVersionId;
@@ -88,6 +88,14 @@ public class GameRepresentation {
   private boolean altSoundAvailable;
 
   private int nbDirectB2S = -1;
+
+  public String getMediaSearch() {
+    return mediaSearch;
+  }
+
+  public void setMediaSearch(String mediaSearch) {
+    this.mediaSearch = mediaSearch;
+  }
 
   public boolean isIgnoreUpdates() {
     return ignoreUpdates;

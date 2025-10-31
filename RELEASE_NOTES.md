@@ -17,6 +17,9 @@
 - Backups: Fixed memory leak and possible concurrent access errors.
 - Notifications: Added **test button** that shows a test notification.
 - Notifications: Added **margin offset** spinner which allows you to adjust the notification position in case it is off.
+- Table Data Section: Added missing field "Media Search".
+- Table Data Manager: Added missing field "Media Search" to the "Meta Data" tab, including a help tooltip.
+- Table Asset Manager: Added check for the field value "Media Search" which can override the asset name value.
 
 ---
 

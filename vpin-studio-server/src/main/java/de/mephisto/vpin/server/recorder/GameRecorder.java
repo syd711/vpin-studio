@@ -163,7 +163,8 @@ public class GameRecorder {
 
   private boolean isRecordingRequired(Game game, VPinScreen screen, RecordingWriteMode recordingWriteMode) {
     if (recordingWriteMode.equals(RecordingWriteMode.ifMissing)) {
-      List<File> screenMediaFiles = frontend.getMediaAccessStrategy().getScreenMediaFiles(game, screen);
+      //passing null here is ok, we are not interested in foreign assets here
+      List<File> screenMediaFiles = frontend.getMediaAccessStrategy().getScreenMediaFiles(game, screen, null);
       return screenMediaFiles.isEmpty();
     }
     return true;
@@ -201,7 +202,8 @@ public class GameRecorder {
 
       switch (recordingWriteMode) {
         case overwrite: {
-          List<File> screenMediaFiles = frontend.getMediaAccessStrategy().getScreenMediaFiles(game, screen);
+          //passing null here is ok, we are not interested in foreign assets here
+          List<File> screenMediaFiles = frontend.getMediaAccessStrategy().getScreenMediaFiles(game, screen, null);
           // delete existing files in the generated folder only whatever their format (and there maybe several, not only mp4)
           // why only in the generated folder is because pinballX has separated folders for images that need to stay
           if (!screenMediaFiles.isEmpty()) {
