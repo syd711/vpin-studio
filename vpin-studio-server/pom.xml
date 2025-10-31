@@ -6,7 +6,7 @@
 
     <groupId>de.mephisto.vpin</groupId>
     <artifactId>vpin-studio-server</artifactId>
-    <version>4.3.8</version>
+    <version>4.3.9</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
