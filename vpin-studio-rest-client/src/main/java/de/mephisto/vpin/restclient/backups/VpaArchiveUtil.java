@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -48,6 +49,25 @@ public class VpaArchiveUtil {
       String text = readStringFromZip(zipFile, TableDetails.ARCHIVE_FILENAME);
       if (text != null) {
         return objectMapper.readValue(text, TableDetails.class);
+      }
+    }
+    finally {
+      try {
+        zipFile.close();
+      }
+      catch (IOException e) {
+        //ignore
+      }
+    }
+    return null;
+  }
+
+  public static DirectB2STableSettings readB2STableSettings(File file) throws JsonProcessingException {
+    ZipFile zipFile = VpaArchiveUtil.createZipFile(file);
+    try {
+      String text = readStringFromZip(zipFile, DirectB2STableSettings.ARCHIVE_FILENAME);
+      if (text != null) {
+        return objectMapper.readValue(text, DirectB2STableSettings.class);
       }
     }
     finally {

@@ -11,6 +11,8 @@ import de.mephisto.vpin.server.games.UniversalUploadService;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+import java.io.File;
+
 public class BackupInstallerJob implements Job {
   private final BackupDescriptor backupDescriptor;
   private final UniversalUploadService universalUploadService;
@@ -41,6 +43,7 @@ public class BackupInstallerJob implements Job {
       UploadDescriptor uploadDescriptor = new UploadDescriptor();
       uploadDescriptor.setOriginalUploadFileName(backupDescriptor.getFilename());
       uploadDescriptor.setEmulatorId(gameEmulator.getId());
+      uploadDescriptor.setFolderBasedImport(backupDescriptor.getTableDetails().getGameFileName().contains(File.separator));
       uploadDescriptor.setTempFilename(backupDescriptor.getAbsoluteFileName());
       uploadDescriptor.setBackupRestoreMode(true);
       uploadDescriptor.setAutoFill(false);
