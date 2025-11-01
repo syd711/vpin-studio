@@ -82,7 +82,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <TextArea fx:id="releaseNotes" prefHeight="100.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                              <TextArea fx:id="releaseNotes" prefHeight="100.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

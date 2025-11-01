@@ -68,7 +68,7 @@ public class BackupRepositoriesPreferencesController implements Initializable {
 
       if (sourceRepresentation != null) {
         try {
-          client.getArchiveService().saveBackupSource(sourceRepresentation);
+          client.getBackupService().saveBackupSource(sourceRepresentation);
         }
         catch (Exception e) {
           WidgetFactory.showAlert(Studio.stage, "Error", "Error saving repository: " + e.getMessage());
@@ -83,7 +83,7 @@ public class BackupRepositoriesPreferencesController implements Initializable {
     BackupSourceRepresentation sourceRepresentation = BackupDialogs.openArchiveSourceHttpDialog(null);
     if (sourceRepresentation != null) {
       try {
-        client.getArchiveService().saveBackupSource(sourceRepresentation);
+        client.getBackupService().saveBackupSource(sourceRepresentation);
       }
       catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, "Error", "Error saving repository: " + e.getMessage());
@@ -97,7 +97,7 @@ public class BackupRepositoriesPreferencesController implements Initializable {
     BackupSourceRepresentation sourceRepresentation = BackupDialogs.openArchiveSourceFolderDialog(null);
     if (sourceRepresentation != null) {
       try {
-        client.getArchiveService().saveBackupSource(sourceRepresentation);
+        client.getBackupService().saveBackupSource(sourceRepresentation);
       }
       catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, "Error", "Error saving repository: " + e.getMessage());
@@ -113,7 +113,7 @@ public class BackupRepositoriesPreferencesController implements Initializable {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Repository \"" + selectedItem.getName() + "\"?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
-          client.getArchiveService().deleteBackupSource(selectedItem.getId());
+          client.getBackupService().deleteBackupSource(selectedItem.getId());
         }
         catch (Exception e) {
           WidgetFactory.showAlert(Studio.stage, "Error", "Error deleting \"" + selectedItem.getName() + "\": " + e.getMessage());
@@ -143,7 +143,7 @@ public class BackupRepositoriesPreferencesController implements Initializable {
   }
 
   private void onReload() {
-    List<BackupSourceRepresentation> sources = client.getArchiveService().getBackupSources();
+    List<BackupSourceRepresentation> sources = client.getBackupService().getBackupSources();
     tableView.setItems(FXCollections.observableList(sources));
     tableView.refresh();
     EventManager.getInstance().notifyRepositoryUpdate();

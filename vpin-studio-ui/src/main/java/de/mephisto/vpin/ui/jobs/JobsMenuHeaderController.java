@@ -29,6 +29,12 @@ public class JobsMenuHeaderController implements Initializable {
     jobPoller.refreshJobsUI();
   }
 
+  @FXML
+  private void onCancelAll() {
+    jobPoller.cancelAll();
+    jobPoller.refreshJobsUI();
+  }
+
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     root.managedProperty().bindBidirectional(root.visibleProperty());

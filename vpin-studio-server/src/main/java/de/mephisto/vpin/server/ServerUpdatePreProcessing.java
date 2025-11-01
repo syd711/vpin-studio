@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.system.NVRamsInfo;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.SystemUtil;
+import de.mephisto.vpin.server.system.SystemService;
 import net.sf.sevenzipjbinding.SevenZip;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -48,6 +49,7 @@ public class ServerUpdatePreProcessing {
         runResourcesCheck();
         runPinVolUpdateCheck();
         runVpxToolsUpdateCheck();
+        runLogosUpdateCheck();
         runPupGamesUpdateCheck();
 
         new Thread(() -> {
@@ -87,6 +89,19 @@ public class ServerUpdatePreProcessing {
       if (expectedSize != size) {
         LOG.info("Outdated vpxtool.exe found, updating...");
         Updater.download("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/vpxtool.exe", check);
+      }
+    }
+  }
+
+
+  private static void runLogosUpdateCheck() {
+    long expectedSize = 119644;
+    File check = new File(RESOURCES, "logos.txt");
+    if (check.exists()) {
+      long size = check.length();
+      if (expectedSize != size) {
+        LOG.info("Outdated logos.txt found, updating...");
+        Updater.download("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/logos.txt", check);
       }
     }
   }

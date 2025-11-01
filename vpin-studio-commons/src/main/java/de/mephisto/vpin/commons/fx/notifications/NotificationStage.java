@@ -75,7 +75,7 @@ public class NotificationStage {
         inTransition = TransitionUtil.createTranslateByYTransition(root, 300, (int) -(screenBounds.getHeight() / 2));
         outTransition = TransitionUtil.createTranslateByYTransition(root, 300, (int) (screenBounds.getHeight() / 2));
 
-        stage.setY(screenBounds.getHeight() / 2);
+        stage.setY(screenBounds.getHeight() / 2 - notification.getMargin());
         stage.setX(screenBounds.getX());
         scene = new Scene(root, screenBounds.getWidth(), screenBounds.getHeight() / 2);
       }
@@ -103,7 +103,7 @@ public class NotificationStage {
         outTransition = TransitionUtil.createTranslateByXTransition(root, 300, (int) -(screenBounds.getWidth() / 2));
 
         stage.setY(0);
-        stage.setX(screenBounds.getX());
+        stage.setX(screenBounds.getX() + notification.getMargin());
         scene = new Scene(root, screenBounds.getWidth(), screenBounds.getHeight() / 2);
       }
 

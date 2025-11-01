@@ -6,7 +6,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.backups.BackupDescriptorRepresentation;
 import de.mephisto.vpin.restclient.backups.BackupType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.games.descriptors.ArchiveRestoreDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.BackupRestoreDescriptor;
 import de.mephisto.vpin.restclient.preferences.BackupSettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.jobs.JobPoller;
@@ -91,18 +91,21 @@ public class BackupRestoreDialogController implements Initializable, DialogContr
   private CheckBox registryDataCheckBox;
 
   @FXML
+  private CheckBox b2sSettingsCheckbox;
+
+  @FXML
   private VBox frontendColumn;
 
 
   @FXML
   private ComboBox<GameEmulatorRepresentation> emulatorCombo;
 
-  private List<BackupDescriptorRepresentation> archiveDescriptors;
+  private List<BackupDescriptorRepresentation> backupDescriptors;
 
 
   @FXML
   private void onImport(ActionEvent e) {
-    ArchiveRestoreDescriptor restoreDescriptor = new ArchiveRestoreDescriptor();
+    BackupRestoreDescriptor restoreDescriptor = new BackupRestoreDescriptor();
     restoreDescriptor.setEmulatorId(emulatorCombo.getValue().getId());
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
@@ -111,10 +114,10 @@ public class BackupRestoreDialogController implements Initializable, DialogContr
     new Thread(() -> {
       Platform.runLater(() -> {
         try {
-          for (BackupDescriptorRepresentation archiveDescriptor : this.archiveDescriptors) {
-            restoreDescriptor.setFilename(archiveDescriptor.getFilename());
-            restoreDescriptor.setArchiveSourceId(archiveDescriptor.getSource().getId());
-            client.getArchiveService().restoreTable(restoreDescriptor);
+          for (BackupDescriptorRepresentation descriptor : this.backupDescriptors) {
+            restoreDescriptor.setFilename(descriptor.getFilename());
+            restoreDescriptor.setArchiveSourceId(descriptor.getSource().getId());
+            client.getBackupService().restoreTable(restoreDescriptor);
           }
           JobPoller.getInstance().setPolling();
         }
@@ -139,11 +142,11 @@ public class BackupRestoreDialogController implements Initializable, DialogContr
   }
 
   public void setData(List<BackupDescriptorRepresentation> archiveDescriptors) {
-    this.archiveDescriptors = archiveDescriptors;
+    this.backupDescriptors = archiveDescriptors;
 
-    String title = "Restore " + this.archiveDescriptors.size() + " Tables?";
-    if (this.archiveDescriptors.size() == 1) {
-      title = "Restore \"" + this.archiveDescriptors.get(0).getTableDetails().getGameDisplayName() + "\"?";
+    String title = "Restore " + this.backupDescriptors.size() + " Tables?";
+    if (this.backupDescriptors.size() == 1) {
+      title = "Restore \"" + this.backupDescriptors.get(0).getTableDetails().getGameDisplayName() + "\"?";
     }
     titleLabel.setText(title);
 
@@ -168,6 +171,7 @@ public class BackupRestoreDialogController implements Initializable, DialogContr
     dmdCheckBox.setSelected(backupSettings.isDmd());
     vpxCheckBox.setSelected(backupSettings.isVpx());
     registryDataCheckBox.setSelected(backupSettings.isRegistryData());
+    b2sSettingsCheckbox.setSelected(backupSettings.isB2sSettings());
   }
 
   @Override
@@ -249,6 +253,10 @@ public class BackupRestoreDialogController implements Initializable, DialogContr
     });
     registryDataCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       backupSettings.setRegistryData(newValue);
+      client.getPreferenceService().setJsonPreference(backupSettings);
+    });
+    b2sSettingsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      backupSettings.setB2sSettings(newValue);
       client.getPreferenceService().setJsonPreference(backupSettings);
     });
   }

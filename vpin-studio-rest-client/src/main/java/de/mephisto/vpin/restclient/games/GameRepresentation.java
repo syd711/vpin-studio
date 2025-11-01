@@ -32,6 +32,7 @@ public class GameRepresentation {
   private int nvOffset;
   private String gameDisplayName;
   private String gameFileName;
+  private String mediaSearch;
   private Date dateAdded;
   private Date dateUpdated;
   private String gameName;
@@ -99,6 +100,14 @@ public class GameRepresentation {
 
   public void setTags(List<String> tags) {
     this.tags = tags;
+  }
+
+  public String getMediaSearch() {
+    return mediaSearch;
+  }
+
+  public void setMediaSearch(String mediaSearch) {
+    this.mediaSearch = mediaSearch;
   }
 
   public boolean isIgnoreUpdates() {

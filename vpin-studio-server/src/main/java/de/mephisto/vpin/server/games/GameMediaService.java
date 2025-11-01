@@ -2,8 +2,10 @@ package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.connectors.vps.matcher.VpsMatch;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
+import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
+import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
@@ -11,6 +13,7 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
+import de.mephisto.vpin.restclient.preferences.BackupSettings;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.PackageUtil;
@@ -19,6 +22,7 @@ import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
+import de.mephisto.vpin.server.directb2s.BackglassService;
 import de.mephisto.vpin.server.dmd.DMDService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
@@ -108,6 +112,9 @@ public class GameMediaService {
 
   @Autowired
   private VpsService vpsService;
+
+  @Autowired
+  private BackglassService backglassService;
 
   public VpsMatch autoMatch(int gameId, boolean overwrite) {
     Game game = gameService.getGame(gameId);
@@ -372,7 +379,11 @@ public class GameMediaService {
     File tablesFolder = gameEmulator.getGamesFolder();
     if (uploadDescriptor.isFolderBasedImport()) {
       LOG.info("Using folder based import.");
-      tablesFolder = new File(tablesFolder, uploadDescriptor.getSubfolderName().trim());
+      String subFolderName = uploadDescriptor.getSubfolderName();
+      if (StringUtils.isEmpty(subFolderName)) {
+        subFolderName = FilenameUtils.getBaseName(uploadDescriptor.getOriginalUploadFileName());
+      }
+      tablesFolder = new File(tablesFolder, subFolderName);
     }
     File targetVPXFile = new File(tablesFolder, uploadDescriptor.getOriginalUploadFileName());
 
@@ -417,6 +428,14 @@ public class GameMediaService {
           backedUpTableDetails.setLastPlayed(null);
           backedUpTableDetails.setEmulatorId(uploadDescriptor.getEmulatorId());
           frontendService.saveTableDetails(game.getId(), backedUpTableDetails);
+
+          BackupSettings backupSettings = preferencesService.getJsonPreference(PreferenceNames.BACKUP_SETTINGS);
+          if (backupSettings.isB2sSettings()) {
+            DirectB2STableSettings tableSettings = VpaArchiveUtil.readB2STableSettings(analysis.getFile());
+            if (tableSettings != null) {
+              backglassService.saveTableSettings(game, tableSettings);
+            }
+          }
         }
 
 

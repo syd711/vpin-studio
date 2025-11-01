@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.backups.BackupMameData;
 import de.mephisto.vpin.restclient.backups.BackupPackageInfo;
 import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
+import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
@@ -167,7 +168,11 @@ public class VpaService implements InitializingBean {
         List<String> versions = directB2SAndVersions.getVersions();
         List<File> files = new ArrayList<>();
         for (String version : versions) {
-          File directB2SFile = new File(gameFolder, version);
+          String versionFileName = version;
+          if (versionFileName.contains(File.separator)) {
+            versionFileName = versionFileName.substring(versionFileName.lastIndexOf(File.separator) + 1);
+          }
+          File directB2SFile = new File(gameFolder, versionFileName);
           if (directB2SFile.exists()) {
             files.add(directB2SFile);
             if (!zipFile(jobDescriptor, directB2SFile, directB2SFile.getName(), zipOut)) {
@@ -175,6 +180,14 @@ public class VpaService implements InitializingBean {
             }
           }
         }
+
+        if (backupSettings.isB2sSettings()) {
+          DirectB2STableSettings tableSettings = backglassService.getTableSettings(game);
+          if (tableSettings != null) {
+            zipB2STableSettings(jobDescriptor, tableSettings, zipOut);
+          }
+        }
+
         if (!files.isEmpty()) {
           packageInfo.setDirectb2s(BackupFileInfoFactory.create(files.get(0), files));
         }
@@ -444,6 +457,17 @@ public class VpaService implements InitializingBean {
     zipFile(jobDescriptor, tableDetailsTmpFile, TableDetails.ARCHIVE_FILENAME, zipOut);
     if (!tableDetailsTmpFile.delete()) {
       LOG.warn("Failed to delete temporary table-details file {}", tableDetailsTmpFile.getName());
+    }
+  }
+
+  private void zipB2STableSettings(@NonNull JobDescriptor jobDescriptor, DirectB2STableSettings directB2STableSettings, BiConsumer<File, String> zipOut) throws IOException {
+    String tableDetailsJson = objectMapper.writeValueAsString(directB2STableSettings);
+    File tableDetailsTmpFile = File.createTempFile("B2STableSettings", ".json");
+    tableDetailsTmpFile.deleteOnExit();
+    Files.write(tableDetailsTmpFile.toPath(), tableDetailsJson.getBytes());
+    zipFile(jobDescriptor, tableDetailsTmpFile, DirectB2STableSettings.ARCHIVE_FILENAME, zipOut);
+    if (!tableDetailsTmpFile.delete()) {
+      LOG.warn("Failed to delete temporary B2STableSettings file {}", tableDetailsTmpFile.getName());
     }
   }
 

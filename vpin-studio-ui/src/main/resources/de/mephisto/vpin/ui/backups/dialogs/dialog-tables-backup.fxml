@@ -263,6 +263,26 @@
                                           </Label>
                                        </children>
                                     </HBox>
+                                    <HBox spacing="6.0">
+                                       <children>
+                                          <CheckBox fx:id="b2sSettingsCheckbox" mnemonicParsing="false" text="B2STableSettings" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </CheckBox>
+                                          <Label>
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip prefWidth="300.0" text="Restores the B2STableSettings.xml entry if available." wrapText="true" />
+                                             </tooltip>
+                                          </Label>
+                                       </children>
+                                    </HBox>
                                  </children>
                               </VBox>
                            </children>

@@ -1,13 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import de.mephisto.vpin.ui.tables.dialogs.TableAssetManagerPane?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SplitMenuButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-<?import org.kordamp.ikonli.javafx.*?>
-<BorderPane styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableAssetManagerDialogController">
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableAssetManagerDialogController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-pinable-header.fxml" />
    </top>
@@ -16,14 +31,14 @@
          <center>
             <HBox>
                <children>
-                  <TableAssetManagerPane fx:id="mediaRootPane" prefWidth="350.0" BorderPane.alignment="CENTER" HBox.hgrow="ALWAYS" >
+                  <TableAssetManagerPane fx:id="mediaRootPane" prefWidth="350.0" BorderPane.alignment="CENTER" HBox.hgrow="ALWAYS">
                      <padding>
                         <Insets right="24.0" top="12.0" />
                      </padding>
                   </TableAssetManagerPane>
-                  <VBox fx:id="assetsBox" BorderPane.alignment="CENTER" HBox.hgrow="ALWAYS" >
+                  <VBox fx:id="assetsBox" BorderPane.alignment="CENTER" HBox.hgrow="ALWAYS">
                      <children>
-                        <VBox fx:id="assetSearchBox" prefHeight="400" VBox.vgrow="ALWAYS" >
+                        <VBox fx:id="assetSearchBox" prefHeight="400" VBox.vgrow="ALWAYS">
                            <children>
                               <BorderPane>
                                  <VBox.margin>
@@ -42,12 +57,12 @@
                               </BorderPane>
                               <ToolBar>
                                  <items>
-                                    <TextField fx:id="searchField" >
+                                    <TextField fx:id="searchField">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </TextField>
-                                    <Button mnemonicParsing="false" onAction="#onSearch" text="" textFill="WHITE">
+                                    <Button fx:id="searchBtn" mnemonicParsing="false" onAction="#onSearch" text="" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -83,7 +98,7 @@
                               <HBox fx:id="assetSearchList" styleClass="media-list" VBox.vgrow="ALWAYS">
                                  <children>
                                     <ListView fx:id="serverAssetsList" prefWidth="400" HBox.hgrow="ALWAYS" />
-                                    <BorderPane styleClass="media-container" prefWidth="200" HBox.hgrow="ALWAYS" >
+                                    <BorderPane prefWidth="200" styleClass="media-container" HBox.hgrow="ALWAYS">
                                        <center>
                                           <BorderPane fx:id="serverAssetMediaPane" styleClass="media-container" />
                                        </center>
@@ -120,7 +135,7 @@
                               </HBox>
                            </children>
                         </VBox>
-                        <VBox fx:id="installedAssetsBox" prefHeight="400" VBox.vgrow="ALWAYS" >
+                        <VBox fx:id="installedAssetsBox" prefHeight="400" VBox.vgrow="ALWAYS">
                            <children>
                               <Label text="Installed Assets" textFill="WHITE">
                                  <font>
@@ -130,7 +145,7 @@
                                     <Insets bottom="6.0" top="6.0" />
                                  </VBox.margin>
                               </Label>
-                              <ToolBar fx:id="installedAssetsToolbar" prefWidth="500" >
+                              <ToolBar fx:id="installedAssetsToolbar" prefWidth="500">
                                  <items>
                                     <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFolderBtn" styleClass="folder-component" textFill="WHITE">
                                        <font>
@@ -272,10 +287,10 @@
                                     </Button>
                                  </items>
                               </ToolBar>
-                              <HBox styleClass="media-list" VBox.vgrow="ALWAYS" >
+                              <HBox styleClass="media-list" VBox.vgrow="ALWAYS">
                                  <children>
                                     <ListView fx:id="assetList" prefWidth="400" HBox.hgrow="ALWAYS" />
-                                    <BorderPane fx:id="mediaPane" prefWidth="200" HBox.hgrow="ALWAYS" styleClass="media-container" />
+                                    <BorderPane fx:id="mediaPane" prefWidth="200" styleClass="media-container" HBox.hgrow="ALWAYS" />
                                  </children>
                               </HBox>
                            </children>
@@ -326,7 +341,7 @@
                                              </font>
                                           </Label>
                                           <ComboBox fx:id="tablesCombo" prefWidth="407.0" />
-                                          <Button mnemonicParsing="false" onAction="#onVPSAssets" text="VPS Assets" textFill="WHITE" >
+                                          <Button mnemonicParsing="false" onAction="#onVPSAssets" text="VPS Assets" textFill="WHITE">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>

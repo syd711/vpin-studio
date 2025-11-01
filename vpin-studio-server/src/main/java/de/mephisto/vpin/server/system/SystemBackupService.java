@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.system;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import de.mephisto.vpin.restclient.backups.BackupDescriptor;
+import de.mephisto.vpin.restclient.backups.StudioBackupDescriptor;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.players.Player;
@@ -81,7 +81,7 @@ public class SystemBackupService {
 
   public boolean restore(String backupJson, String backupDescriptorJson) {
     try {
-      BackupDescriptor backupDescriptor = objectMapper.readValue(backupDescriptorJson, BackupDescriptor.class);
+      StudioBackupDescriptor backupDescriptor = objectMapper.readValue(backupDescriptorJson, StudioBackupDescriptor.class);
       Map<String, Object> map = objectMapper.readValue(backupJson, Map.class);
 
       if (backupDescriptor.isPlayers()) {

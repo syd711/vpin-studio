@@ -102,7 +102,7 @@ public class PinballXMediaAccessStrategy extends DefaultMediaAccessStrategy {
 
   //---------------------------
   @Override
-  public List<File> getScreenMediaFiles(@NonNull Game game, @NonNull VPinScreen screen) {
+  public List<File> getScreenMediaFiles(@NonNull Game game, @NonNull VPinScreen screen, @Nullable String mediaSearchTerm) {
     String mediaDirectory = game.getEmulator().getMediaDirectory();
 
     ArrayList<File> lists = new ArrayList<>();

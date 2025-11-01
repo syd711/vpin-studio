@@ -48,4 +48,10 @@ public class JobsResource {
     jobService.cancel(uuid);
     return true;
   }
+
+  @GetMapping("/cancelall")
+  public boolean cancelAll() {
+    jobService.cancelAll();
+    return true;
+  }
 }

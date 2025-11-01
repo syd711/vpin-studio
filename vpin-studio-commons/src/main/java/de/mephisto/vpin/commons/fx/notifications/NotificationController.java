@@ -62,14 +62,8 @@ public class NotificationController implements Initializable {
           rowIconImageView.setImage(image);
         }
       }
-
-      NotificationSettings notificationSettings = ServerFX.client.getJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, NotificationSettings.class);
-      MonitorInfo screen = ServerFX.client.getScreenInfo(notificationSettings.getNotificationsScreenId());
-      if (screen.getHeight() > 2000) {
-        labelContainer.setPadding(new Insets(0, 0, 0, 650));
-      }
-
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to theme notifications: " + e.getMessage(), e);
     }
   }
@@ -101,6 +95,20 @@ public class NotificationController implements Initializable {
     }
     else {
       title3.setText("");
+    }
+
+    NotificationSettings notificationSettings = ServerFX.client.getJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, NotificationSettings.class);
+    MonitorInfo screen = ServerFX.client.getScreenInfo(notificationSettings.getNotificationsScreenId());
+    int padding = 0;
+    padding += notification.getTextBoxMargin();
+
+    if (screen.getHeight() > 2000) {
+      labelContainer.setPadding(new Insets(0, 0, 0, 650 + padding));
+    }
+    if (title1.getMaxWidth() > 0 && notification.getTextBoxMargin() > 0) {
+      title1.setMaxWidth(title1.getMaxWidth() - notification.getTextBoxMargin());
+      title2.setMaxWidth(title1.getMaxWidth());
+      title3.setMaxWidth(title1.getMaxWidth());
     }
   }
 }

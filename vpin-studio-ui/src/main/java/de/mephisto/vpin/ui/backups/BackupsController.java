@@ -76,6 +76,9 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
   private Button downloadBtn;
 
   @FXML
+  private Label labelCount;
+
+  @FXML
   private ComboBox<BackupSourceRepresentation> sourceCombo;
 
   @FXML
@@ -225,15 +228,16 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
     restoreBtn.setDisable(disable);
 
     tableView.setVisible(false);
+    labelCount.setText("-");
 
     startReload("Loading Backups...");
     JFXFuture.supplyAsync(() -> {
       if (selectedItem != null && invalidate) {
-        client.getArchiveService().invalidateBackupCache();
+        client.getBackupService().invalidateBackupCache();
       }
 
       BackupSourceRepresentation backupSource = sourceCombo.getValue();
-      data = client.getArchiveService().getBackupsForSource(backupSource.getId());
+      data = client.getBackupService().getBackupsForSource(backupSource.getId());
       List<BackupDescriptorRepresentation> filteredBackups = filterArchives(data);
       return filteredBackups;
     }).thenAcceptLater((filteredBackups) -> {
@@ -245,6 +249,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
         restoreBtn.setDisable(false);
       }
 
+      labelCount.setText(tableView.getItems().size() + " backups");
       this.searchTextField.setDisable(false);
       tableView.setVisible(true);
       endReload();
@@ -649,7 +654,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
 
   private void refreshRepositoryCombo() {
     sourceCombo.valueProperty().removeListener(sourceComboChangeListener);
-    List<BackupSourceRepresentation> repositories = new ArrayList<>(client.getArchiveService().getBackupSources());
+    List<BackupSourceRepresentation> repositories = new ArrayList<>(client.getBackupService().getBackupSources());
     sourceCombo.setItems(FXCollections.observableList(repositories));
     sourceCombo.getSelectionModel().select(0);
     sourceCombo.valueProperty().addListener(sourceComboChangeListener);

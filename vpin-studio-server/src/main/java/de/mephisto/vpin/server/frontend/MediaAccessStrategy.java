@@ -22,6 +22,6 @@ public interface MediaAccessStrategy {
 
   File getGameMediaFolder(@NonNull Game game, @NonNull VPinScreen screen, @Nullable String extension, boolean create);
 
-  List<File> getScreenMediaFiles(@NonNull Game game, @NonNull VPinScreen screen);
+  List<File> getScreenMediaFiles(@NonNull Game game, @NonNull VPinScreen screen, @Nullable String mediaSearchTerm);
 
 }

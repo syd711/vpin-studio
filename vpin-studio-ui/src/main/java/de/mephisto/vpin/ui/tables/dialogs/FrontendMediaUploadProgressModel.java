@@ -120,7 +120,7 @@ public class FrontendMediaUploadProgressModel extends ProgressModel<File> {
     }
     else if (!iterator.hasNext()) {
       Platform.runLater(() -> {
-        EventManager.getInstance().notifyJobFinished(JobType.POPPER_MEDIA_INSTALL, gameId);
+        EventManager.getInstance().notifyJobFinished(JobType.POPPER_MEDIA_INSTALL, gameId, false, true);
       });
     }
   }

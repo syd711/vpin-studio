@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,8 +44,8 @@ import java.util.Optional;
 public class RecorderService {
   private final static Logger LOG = LoggerFactory.getLogger(RecorderService.class);
 
-  private final static List<VPinScreen> supportedRecodingScreens = Arrays.asList(VPinScreen.PlayField, VPinScreen.BackGlass, 
-  VPinScreen.DMD, VPinScreen.Menu, VPinScreen.Topper);
+  private final static List<VPinScreen> supportedRecodingScreens = Arrays.asList(VPinScreen.PlayField, VPinScreen.BackGlass,
+      VPinScreen.DMD, VPinScreen.Menu, VPinScreen.Topper);
 
   @Autowired
   private FrontendService frontendService;
@@ -226,7 +227,7 @@ public class RecorderService {
     }
 
     if (game.isVpxGame()) {
-      if(recorderSettings.isPrimaryParam()) {
+      if (recorderSettings.isPrimaryParam()) {
         vpxService.play(game, altExe, "primary");
       }
       else {
@@ -241,4 +242,7 @@ public class RecorderService {
     }
   }
 
+  public List<File> getGameMediaFiles(Game game, VPinScreen screen) {
+    return frontendService.getMediaFiles(game, screen);
+  }
 }

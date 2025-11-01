@@ -28,16 +28,14 @@ import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.ThreadUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -284,7 +282,8 @@ public class RecordingProgressDialogController implements Initializable, DialogC
       else {
         GameEmulatorRepresentation gameEmulator= client.getEmulatorService().getGameEmulator(game.getEmulatorId());
         List<String> altExeNames = client.getEmulatorService().getAltExeNames(gameEmulator.getId());
-        launcherCombo.setItems(FXCollections.observableList(altExeNames));
+        List<String> filteredAltExeNames = altExeNames.stream().filter(exe -> !exe.toLowerCase().contains("gl")).collect(Collectors.toList());
+        launcherCombo.setItems(FXCollections.observableList(filteredAltExeNames));
         break;
       }
     }

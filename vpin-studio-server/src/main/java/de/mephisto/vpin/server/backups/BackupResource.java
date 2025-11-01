@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.backups;
 import de.mephisto.vpin.restclient.backups.BackupDescriptorRepresentation;
 import de.mephisto.vpin.restclient.backups.BackupPackageInfo;
 import de.mephisto.vpin.restclient.backups.BackupSourceRepresentation;
-import de.mephisto.vpin.restclient.games.descriptors.ArchiveRestoreDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.BackupRestoreDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.BackupExportDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
@@ -40,23 +40,28 @@ public class BackupResource {
 
   @PostMapping("/backup")
   public Boolean backupTable(@RequestBody BackupExportDescriptor descriptor) {
-    return backupService.backupTable(descriptor);
+    //this triggers the jobs creation and can include hundrets of new jobs, so run async
+    new Thread(() -> {
+      Thread.currentThread().setName("Backup Runner for source " + descriptor.getBackupSourceId());
+      backupService.backupTable(descriptor);
+    }).start();
+    return true;
   }
 
   @PostMapping("/restore")
-  public Boolean restoreBackup(@RequestBody ArchiveRestoreDescriptor descriptor) {
+  public Boolean restoreBackup(@RequestBody BackupRestoreDescriptor descriptor) {
     return backupService.restoreBackup(descriptor);
   }
 
   @GetMapping()
   public List<BackupDescriptorRepresentation> getBackups() {
-    List<BackupDescriptor> descriptors = backupService.getBackupSourceDescriptors();
+    List<BackupDescriptor> descriptors = backupService.getBackupDescriptors();
     return toRepresentation(descriptors);
   }
 
   @GetMapping("/{sourceId}")
   public List<BackupDescriptorRepresentation> getBackups(@PathVariable("sourceId") long sourceId) {
-    List<BackupDescriptor> descriptors = backupService.getBackupSourceDescriptors(sourceId);
+    List<BackupDescriptor> descriptors = backupService.getBackupDescriptors(sourceId);
     return toRepresentation(descriptors);
   }
 

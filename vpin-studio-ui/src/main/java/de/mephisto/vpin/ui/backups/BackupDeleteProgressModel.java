@@ -66,7 +66,7 @@ public class BackupDeleteProgressModel extends ProgressModel<BackupDescriptorRep
   public void processNext(ProgressResultModel progressResultModel, BackupDescriptorRepresentation backup) {
     try {
       List<GameRepresentation> gamesByFileName = client.getGameService().getGamesByFileName(-1, backup.getTableDetails().getGameFileName());
-      boolean b = client.getArchiveService().deleteBackup(backup.getSource().getId(), backup.getFilename());
+      boolean b = client.getBackupService().deleteBackup(backup.getSource().getId(), backup.getFilename());
 
       for (GameRepresentation gameRepresentation : gamesByFileName) {
         EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);

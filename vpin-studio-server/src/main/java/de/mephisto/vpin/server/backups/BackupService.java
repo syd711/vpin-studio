@@ -6,14 +6,13 @@ import de.mephisto.vpin.restclient.backups.BackupSourceType;
 import de.mephisto.vpin.restclient.backups.BackupType;
 import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
-import de.mephisto.vpin.restclient.games.descriptors.ArchiveRestoreDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.BackupRestoreDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.BackupExportDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.vpauthenticators.AuthenticationSettings;
 import de.mephisto.vpin.server.backups.adapters.TableBackupAdapter;
 import de.mephisto.vpin.server.backups.adapters.TableBackupAdapterFactory;
-import de.mephisto.vpin.server.backups.adapters.vpa.BackupSourceAdapterFolder;
 import de.mephisto.vpin.server.backups.adapters.vpa.VpaBackupSource;
 import de.mephisto.vpin.server.backups.adapters.vpa.VpaService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
@@ -37,7 +36,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -86,7 +84,7 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
   public List<BackupDescriptor> getBackupDescriptorForGame(int gameId) {
     Game game = gameService.getGame(gameId);
 
-    return getBackupSourceDescriptors().stream().filter(backupDescriptor -> {
+    return getBackupDescriptors().stream().filter(backupDescriptor -> {
       TableDetails manifest = backupDescriptor.getTableDetails();
       if (manifest == null) {
         return false;
@@ -98,11 +96,11 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
   }
 
   @NonNull
-  public List<BackupDescriptor> getBackupSourceDescriptors() {
+  public List<BackupDescriptor> getBackupDescriptors() {
     List<BackupDescriptor> result = new ArrayList<>();
     for (BackupSourceAdapter adapter : backupSourcesCache.values()) {
       if (adapter.getBackupSource().isEnabled()) {
-        List<BackupDescriptor> descriptors = adapter.getBackupDescriptors();
+        Collection<BackupDescriptor> descriptors = adapter.getBackupDescriptors();
         result.addAll(descriptors);
       }
     }
@@ -116,13 +114,13 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
   }
 
   @NonNull
-  public List<BackupDescriptor> getBackupSourceDescriptors(long sourceId) {
+  public List<BackupDescriptor> getBackupDescriptors(long sourceId) {
     if (!vpAuthenticationService.isAuthenticated()) {
       return Collections.emptyList();
     }
 
     BackupSourceAdapter adapter = getBackupSourceAdapter(sourceId);
-    List<BackupDescriptor> backupDescriptors = adapter.getBackupDescriptors();
+    List<BackupDescriptor> backupDescriptors = new ArrayList<>(adapter.getBackupDescriptors());
     backupDescriptors.sort((o1, o2) -> {
       if (o1.getFilename() != null && o2.getFilename() != null) {
         return o1.getFilename().compareTo(o2.getFilename());
@@ -136,7 +134,7 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
   @Nullable
   public BackupDescriptor getBackupDescriptors(long sourceId, @NonNull String filename) {
     BackupSourceAdapter sourceAdapter = getBackupSourceAdapter(sourceId);
-    List<BackupDescriptor> descriptors = sourceAdapter.getBackupDescriptors();
+    Collection<BackupDescriptor> descriptors = sourceAdapter.getBackupDescriptors();
     for (BackupDescriptor descriptor : descriptors) {
       String descriptorFilename = descriptor.getFilename();
       if (filename.equals(descriptorFilename)) {
@@ -147,7 +145,7 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
   }
 
   public boolean deleteBackup(long sourceId, @NonNull String filename) {
-    List<BackupDescriptor> descriptors = backupSourcesCache.get(sourceId).getBackupDescriptors();
+    Collection<BackupDescriptor> descriptors = backupSourcesCache.get(sourceId).getBackupDescriptors();
     Optional<BackupDescriptor> first = descriptors.stream().filter(ArchiveDescriptor -> ArchiveDescriptor.getFilename().equals(filename)).findFirst();
     if (first.isPresent()) {
       BackupDescriptor descriptor = first.get();
@@ -209,13 +207,12 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
     return updatedSource;
   }
 
-  public boolean restoreBackup(@NonNull ArchiveRestoreDescriptor installDescriptor) {
+  public boolean restoreBackup(@NonNull BackupRestoreDescriptor installDescriptor) {
     try {
       BackupDescriptor backupDescriptor = getBackupDescriptors(installDescriptor.getArchiveSourceId(), installDescriptor.getFilename());
       GameEmulator emulator = emulatorService.getGameEmulator(installDescriptor.getEmulatorId());
 
-
-      JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_INSTALL);
+      JobDescriptor jobDescriptor = new JobDescriptor(JobType.BACKUP_INSTALL);
       jobDescriptor.setTitle("Restoring \"" + backupDescriptor.getFilename() + "\"");
       BackupInstallerJob job = new BackupInstallerJob(backupDescriptor, universalUploadService, gameService, emulator, cardService);
       jobDescriptor.setJob(job);

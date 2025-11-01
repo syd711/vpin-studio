@@ -30,6 +30,7 @@ public class Game {
   private String gameName;
   private String tableName;
   private String version;
+  private String mediaSearch;
   private boolean disabled;
   private boolean updateAvailable;
   private Date dateAdded;
@@ -108,6 +109,14 @@ public class Game {
 
   public void setTags(List<String> tags) {
     this.tags = tags;
+  }
+
+  public String getMediaSearch() {
+    return mediaSearch;
+  }
+
+  public void setMediaSearch(String mediaSearch) {
+    this.mediaSearch = mediaSearch;
   }
 
   public boolean isIgnoreUpdates() {

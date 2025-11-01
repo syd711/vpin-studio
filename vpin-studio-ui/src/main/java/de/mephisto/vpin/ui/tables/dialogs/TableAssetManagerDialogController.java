@@ -180,6 +180,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private Button assetSourceBtn;
 
   @FXML
+  private Button searchBtn;
+
+  @FXML
   private Button addAudioBlank;
 
   @FXML
@@ -1210,6 +1213,13 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
     this.setDefaultBtn.setVisible(true);
     this.renameBtn.setVisible(true);
+
+    boolean mediaSearchSet = !StringUtils.isEmpty(game.getMediaSearch());
+    searchField.setDisable(mediaSearchSet);
+    assetSourceComboBox.setDisable(mediaSearchSet);
+    assetSourceBtn.setDisable(mediaSearchSet);
+    clearCacheBtn.setDisable(mediaSearchSet);
+    searchBtn.setDisable(mediaSearchSet);
 
     if (!isEmbeddedMode()) {
       nextButton.setDisable(false);
