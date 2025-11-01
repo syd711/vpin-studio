@@ -24,6 +24,7 @@ import de.mephisto.vpin.restclient.vpf.VPFSettings;
 import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.restclient.vpu.VPUSettings;
 import de.mephisto.vpin.restclient.webhooks.WebhookSettings;
+import de.mephisto.vpin.restclient.wovp.WOVPSettings;
 
 import javax.swing.text.html.HTML;
 
@@ -86,6 +87,7 @@ public interface PreferenceNames {
   String PINEMHI_AUTOSTART_ENABLED = "pinemhiAutoStartEnabled";
 
   String BACKUP_SETTINGS = "backupSettings";
+  String WOVP_SETTINGS = "wovpSettings";
 
   static Class<? extends JsonSettings> getClassFromKey(String key) {
     switch (key) {
@@ -163,6 +165,9 @@ public interface PreferenceNames {
       }
       case PreferenceNames.TAGGING_SETTINGS: {
         return TaggingSettings.class;
+      }
+      case PreferenceNames.WOVP_SETTINGS: {
+        return WOVPSettings.class;
       }
       default: {
         throw new UnsupportedOperationException("JSON format not supported for preference '" + key + "'");

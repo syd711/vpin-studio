@@ -67,6 +67,7 @@ import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.restclient.vpauthenticators.VpAuthenticationServiceClient;
 import de.mephisto.vpin.restclient.vps.VpsServiceClient;
 import de.mephisto.vpin.restclient.vpx.VpxServiceClient;
+import de.mephisto.vpin.restclient.wovp.WOVPServiceClient;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -135,6 +136,7 @@ public class VPinStudioClient implements OverlayClient {
   private final MediaConversionServiceClient mediaConversionServiceClient;
   private final VpxServiceClient vpxServiceClient;
   private final VpsServiceClient vpsServiceClient;
+  private final WOVPServiceClient wovpServiceClient;
 
   public VPinStudioClient(String host) {
     restClient = RestClient.createInstance(host, SystemUtil.getPort());
@@ -189,10 +191,15 @@ public class VPinStudioClient implements OverlayClient {
     this.higscoreBackupServiceClient = new HigscoreBackupServiceClient(this);
     this.mediaConversionServiceClient = new MediaConversionServiceClient(this);
     this.tournamentsServiceClient = new TournamentsServiceClient(this);
+    this.wovpServiceClient = new WOVPServiceClient(this);
   }
 
   public String getHost() {
     return restClient.getHost();
+  }
+
+  public WOVPServiceClient getWovpService() {
+    return wovpServiceClient;
   }
 
   public TaggingServiceClient getTaggingService() {

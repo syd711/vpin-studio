@@ -88,6 +88,8 @@ public class Preferences {
 
   private String taggingSettings;
 
+  private String wovpSettings;
+
   @Column(length = 1024)
   private String doNotShowAgains;
 
@@ -116,6 +118,14 @@ public class Preferences {
 
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
+
+  public String getWovpSettings() {
+    return wovpSettings;
+  }
+
+  public void setWovpSettings(String wovpSettings) {
+    this.wovpSettings = wovpSettings;
+  }
 
   public String getTaggingSettings() {
     return taggingSettings;

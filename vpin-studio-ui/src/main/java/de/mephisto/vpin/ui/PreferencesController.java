@@ -84,6 +84,9 @@ public class PreferencesController extends SettingsSceneController implements In
   private Button vpfBtn;
 
   @FXML
+  private Button wovpBtn;
+
+  @FXML
   private Button iScoredBtn;
 
   @FXML
@@ -234,6 +237,12 @@ public class PreferencesController extends SettingsSceneController implements In
   @FXML
   private void onWebhooks(ActionEvent event) throws IOException {
     load("preference-webhooks.fxml", event);
+  }
+
+
+  @FXML
+  private void onWovp(ActionEvent event) throws IOException {
+    load("preference-wovp.fxml", event);
   }
 
   @FXML
