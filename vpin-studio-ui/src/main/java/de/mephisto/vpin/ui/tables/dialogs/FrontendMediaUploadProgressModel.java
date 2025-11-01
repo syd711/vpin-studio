@@ -106,7 +106,7 @@ public class FrontendMediaUploadProgressModel extends ProgressModel<File> {
     }
     else if (!iterator.hasNext()) {
       Platform.runLater(() -> {
-        EventManager.getInstance().notifyJobFinished(JobType.PLAYLIST_MEDIA_INSTALL, playlistId);
+        EventManager.getInstance().notifyJobFinished(JobType.PLAYLIST_MEDIA_INSTALL, playlistId, false, true);
       });
     }
   }
