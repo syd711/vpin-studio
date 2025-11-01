@@ -115,7 +115,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <TextArea fx:id="notes" editable="false" prefHeight="90.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                        <TextArea fx:id="notes" editable="false" prefHeight="90.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="8" />
                         <Label layoutX="190.0" layoutY="245.0" styleClass="default-text" text="Emulator:" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
@@ -568,25 +568,25 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <TextArea fx:id="gDetails" editable="false" prefHeight="90.0" GridPane.columnIndex="1" />
+                              <TextArea fx:id="gDetails" editable="false" prefHeight="90.0" wrapText="true" GridPane.columnIndex="1" />
                               <Label text="Notes:" textFill="WHITE" GridPane.rowIndex="1" GridPane.valignment="TOP">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <TextArea fx:id="gNotes" editable="false" prefHeight="90.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <TextArea fx:id="gNotes" editable="false" prefHeight="90.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                               <Label text="Log:" textFill="WHITE" GridPane.rowIndex="2" GridPane.valignment="TOP">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <TextArea fx:id="gLog" editable="false" prefHeight="90.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <TextArea fx:id="gLog" editable="false" prefHeight="90.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                               <Label text="Play Log:" textFill="WHITE" GridPane.rowIndex="3" GridPane.valignment="TOP">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <TextArea fx:id="gPlayLog" editable="false" prefHeight="90.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              <TextArea fx:id="gPlayLog" editable="false" prefHeight="90.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                            </children>
                         </GridPane>
                      </children>

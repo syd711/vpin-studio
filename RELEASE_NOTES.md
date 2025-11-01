@@ -5,9 +5,10 @@
 - Backups: Added auto-detection for sub-folder based backups. Tables are now restored into their own-subfolder when they have been backed-up this way.
 - Backups: Added backup and restore of the table's **B2STableSettings.xml** data. (Note that you have to backup your tables again if you want to have this data included.)
 - Table Data Section: Added missing field **Media Search**.
-- Table Media Section: Added check for the field value **Media Search** which can override the asset name value.
+- Table Media Section: Added label for value **Media Search** which can override the asset name value.
 - Table Data Manager: Added missing input field for the **Media Search** data on the "Meta Data" tab, including a help tooltip.
 - Table Asset Manager: Added check for the field value **Media Search** which can override the asset name value. (_Note that no assets can be searched for tables which have a **Media Search** set. I'm not sure if this solution is valid yet, but I found it confusing that you can download assets and they don't appear in the asset list afterwards)_.
+- Miscellaneous: Enabled text wrap for most textareas for a better readability.
 
 
 --- 

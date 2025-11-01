@@ -21,7 +21,7 @@
             </Label>
             <Label styleClass="preference-description" text="Enter personal comments for this table." />
             <Label layoutX="22.0" layoutY="49.0" styleClass="preference-description" text="They will be shown as colored markers in the status column of the table overview." />
-            <TextArea fx:id="textArea">
+            <TextArea fx:id="textArea" wrapText="true">
                <VBox.margin>
                   <Insets bottom="6.0" top="6.0" />
                </VBox.margin>

@@ -631,7 +631,7 @@
                                                             <Insets />
                                                          </GridPane.margin>
                                                       </Button>
-                                                      <TextArea fx:id="notes" prefHeight="90.0" GridPane.columnIndex="1" GridPane.rowIndex="18" />
+                                                      <TextArea fx:id="notes" prefHeight="90.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="18" />
                                                       <Label styleClass="default-text" text="Notes:*" GridPane.rowIndex="18">
                                                          <font>
                                                             <Font size="14.0" />
@@ -1013,7 +1013,7 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <TextArea fx:id="gDetails" prefHeight="170.0" GridPane.columnIndex="1">
+                                                <TextArea fx:id="gDetails" prefHeight="170.0" wrapText="true" GridPane.columnIndex="1">
                                                    <GridPane.margin>
                                                       <Insets />
                                                    </GridPane.margin>
@@ -1023,19 +1023,19 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <TextArea fx:id="gNotes" prefHeight="170.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                <TextArea fx:id="gNotes" prefHeight="170.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                                 <Label styleClass="default-text" text="Notes:*" GridPane.rowIndex="1">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <TextArea fx:id="gLog" prefHeight="100.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                <TextArea fx:id="gLog" prefHeight="100.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                                 <Label styleClass="default-text" text="Log:" GridPane.rowIndex="2">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <TextArea fx:id="gPlayLog" editable="false" prefHeight="100.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                <TextArea fx:id="gPlayLog" editable="false" prefHeight="100.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                                 <Label styleClass="default-text" text="Play Log:" GridPane.rowIndex="3">
                                                    <font>
                                                       <Font size="14.0" />
