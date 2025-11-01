@@ -224,7 +224,7 @@ public class EvaluationContext {
       return true;
     }
     catch(ParseException pe) {
-      LOG.warn("Cannot parse {},  : {}", expressionString, pe.getMessage());
+//      LOG.warn("Cannot parse {},  : {}", expressionString, pe.getMessage());
       return false;
     }
   }
