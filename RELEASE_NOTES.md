@@ -1,3 +1,9 @@
+## Release Notes 4.3.10
+
+- DOF Server: Removed installation check.
+
+---
+
 ## Release Notes 4.3.9
 
 - Notifications: Added **text margin** spinner which allows you to adjust the notification text positions in case it is off.

@@ -51,7 +51,7 @@ public class DOFService implements InitializingBean {
   public DOFSettings getSettings() {
     try {
       DOFSettings settings = preferencesService.getJsonPreference(PreferenceNames.DOF_SETTINGS, DOFSettings.class);
-      settings.setValidDOFFolder(StringUtils.isEmpty(settings.getInstallationPath()) || new File(settings.getInstallationPath(), "DirectOutput.dll").exists());
+      settings.setValidDOFFolder(StringUtils.isEmpty(settings.getInstallationPath()) || new File(settings.getInstallationPath(), "config").exists());
       return settings;
     }
     catch (Exception e) {
@@ -88,7 +88,7 @@ public class DOFService implements InitializingBean {
     if (StringUtils.isEmpty(settings.getInstallationPath())) {
       return false;
     }
-    return new File(settings.getInstallationPath(), "x64").exists() || new File(settings.getInstallationPath(), "x86").exists();
+    return new File(settings.getInstallationPath(), "config").exists();
   }
 
   private boolean doSync(String installationPath, int interval) {
@@ -125,7 +125,7 @@ public class DOFService implements InitializingBean {
 
     if (isValid()) {
       File tableMappingsfile = new File(getInstallationFolder(), "Config/tablemappings.xml");
-      if(tableMappingsfile.exists()) {
+      if (tableMappingsfile.exists()) {
         summary.addEntry("tablemappings.xml", tableMappingsfile.getAbsolutePath());
         summary.addEntry("Last Modified", DateUtil.formatDateTime(new Date(tableMappingsfile.lastModified())));
       }
