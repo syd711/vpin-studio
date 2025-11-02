@@ -1,6 +1,8 @@
 ## Release Notes 4.3.10
 
 - DOF Server: Removed installation check.
+- Backups: When a backup file already exists for a table, it is overwritten now and no complete new backup is created.
+- Backups: Fixed refresh bug that had shown duplicated entries.
 
 ---
 

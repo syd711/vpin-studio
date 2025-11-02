@@ -63,14 +63,9 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
     }
 
     File target = new File(targetFolder, baseName + "." + BackupType.VPA.name().toLowerCase());
-    target = FileUtils.uniqueFile(target);
     backupDescriptor.setFilename(target.getName());
 
     File tempFile = new File(target.getParentFile(), target.getName() + ".bak");
-
-    if (target.exists() && !target.delete()) {
-      throw new UnsupportedOperationException("Couldn't delete existing archive file " + target.getAbsolutePath());
-    }
     if (tempFile.exists() && !tempFile.delete()) {
       throw new UnsupportedOperationException("Couldn't delete existing temporary archive file " + target.getAbsolutePath());
     }
@@ -127,6 +122,10 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
       return;
     }
     finally {
+      if (target.exists() && !target.delete()) {
+        target = FileUtils.uniqueFile(target);
+        LOG.error("Failed to delete existing backup file, create new one with unique name instead: {}", target.getAbsolutePath());
+      }
       boolean renamed = tempFile.renameTo(target);
       if (renamed) {
         LOG.info("Finished packing of " + target.getAbsolutePath() + ", took " + ((System.currentTimeMillis() - start) / 1000) + " seconds, " + FileUtils.readableFileSize(target.length()));
