@@ -37,7 +37,6 @@ public class TablesBackupDialogController implements Initializable, DialogContro
   @FXML
   private CheckBox removeFromPlaylistCheckbox;
 
-
   @FXML
   private CheckBox directb2sCheckBox;
 
@@ -88,6 +87,9 @@ public class TablesBackupDialogController implements Initializable, DialogContro
 
   @FXML
   private CheckBox b2sSettingsCheckbox;
+
+  @FXML
+  private CheckBox overwriteCheckbox;
 
   @FXML
   private VBox frontendColumn;
@@ -148,6 +150,8 @@ public class TablesBackupDialogController implements Initializable, DialogContro
     registryDataCheckBox.setSelected(backupSettings.isRegistryData());
     b2sSettingsCheckbox.setSelected(backupSettings.isB2sSettings());
     b2sSettingsCheckbox.setDisable(!directb2sCheckBox.isSelected());
+
+    overwriteCheckbox.setSelected(backupSettings.isOverwriteBackup());
   }
 
   @Override
@@ -232,6 +236,11 @@ public class TablesBackupDialogController implements Initializable, DialogContro
     });
     b2sSettingsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       backupSettings.setB2sSettings(newValue);
+      client.getPreferenceService().setJsonPreference(backupSettings);
+    });
+
+    overwriteCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      backupSettings.setOverwriteBackup(newValue);
       client.getPreferenceService().setJsonPreference(backupSettings);
     });
   }

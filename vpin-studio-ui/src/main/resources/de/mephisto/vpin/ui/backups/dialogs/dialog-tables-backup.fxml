@@ -60,16 +60,23 @@
                         <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="You can configure additional backup folders in the preferences." />
                         <GridPane>
                           <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="353.2000732421875" minWidth="10.0" prefWidth="106.39997558593751" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="620.7999511718749" minWidth="10.0" prefWidth="611.2000244140625" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="353.2000732421875" minWidth="10.0" prefWidth="155.2000732421875" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="620.7999511718749" minWidth="10.0" prefWidth="563.9999267578125" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
                               <ComboBox fx:id="sourceCombo" prefHeight="30.0" prefWidth="286.0" GridPane.columnIndex="1" />
                               <Label styleClass="default-text" text="Backup Target:" />
+                              <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Overwrite Settings:" GridPane.rowIndex="1" />
+                              <CheckBox fx:id="overwriteCheckbox" mnemonicParsing="false" text="Overwrite Existing Backup Files" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
                            </children>
                            <VBox.margin>
                               <Insets top="6.0" />

@@ -232,7 +232,7 @@ public class BackglassService implements InitializingBean {
       File directB2SFile = game.getDirectB2SFile();
       String directB2SFileName = game.getDirectB2SFilename();
       DirectB2SData data = getDirectB2SData(directB2SFile, game.getEmulatorId(), directB2SFileName);
-      if (data !=  null && data.getNbScores() > 0) {
+      if (data != null && data.getNbScores() > 0) {
         try {
           DirectB2SDataUpdater updater = new DirectB2SDataUpdater();
           updater.upddateScoresDisplayState(directB2SFile, state, false);
@@ -1292,9 +1292,10 @@ public class BackglassService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
+    long start = System.currentTimeMillis();
     // force initialisation of table cache
     clearCache();
-    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
+    LOG.info("{} initialization finished, took {}ms", this.getClass().getSimpleName(), (System.currentTimeMillis() - start));
   }
 
 }

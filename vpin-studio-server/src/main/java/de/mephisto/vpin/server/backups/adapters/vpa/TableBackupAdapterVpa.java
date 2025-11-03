@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.backups.BackupPackageInfo;
 import de.mephisto.vpin.restclient.backups.BackupType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.preferences.BackupSettings;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.server.backups.BackupDescriptor;
@@ -30,17 +31,20 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
   private final BackupSource backupSource;
   private final Game game;
   private final TableDetails tableDetails;
+  private final BackupSettings backupSettings;
   private final VpaService vpaService;
   private boolean cancelled = false;
 
   public TableBackupAdapterVpa(@NonNull VpaService vpaService,
                                @NonNull BackupSource backupSource,
                                @NonNull Game game,
-                               @NonNull TableDetails tableDetails) {
+                               @NonNull TableDetails tableDetails,
+                               @NonNull BackupSettings backupSettings) {
     this.vpaService = vpaService;
     this.backupSource = backupSource;
     this.game = game;
     this.tableDetails = tableDetails;
+    this.backupSettings = backupSettings;
   }
 
   public void createBackup(JobDescriptor jobDescriptor) {
@@ -122,9 +126,16 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
       return;
     }
     finally {
-      if (target.exists() && !target.delete()) {
-        target = FileUtils.uniqueFile(target);
-        LOG.error("Failed to delete existing backup file, create new one with unique name instead: {}", target.getAbsolutePath());
+      if (target.exists()) {
+        if (backupSettings.isOverwriteBackup()) {
+          if (!target.delete()) {
+            target = FileUtils.uniqueFile(target);
+            LOG.error("Failed to delete existing backup file, create new one with unique name instead: {}", target.getAbsolutePath());
+          }
+        }
+        else {
+          target = FileUtils.uniqueFile(target);
+        }
       }
       boolean renamed = tempFile.renameTo(target);
       if (renamed) {
