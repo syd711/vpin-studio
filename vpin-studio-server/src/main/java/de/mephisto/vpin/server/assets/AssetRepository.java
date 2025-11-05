@@ -17,4 +17,7 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
 
   @Transactional
   void deleteByExternalId(String gameId);
+
+  @Transactional
+  void deleteByUuid(String gameId);
 }

@@ -222,6 +222,13 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   @FXML
   private ComboBox<PlaylistRepresentation> playlistCombo;
 
+  @FXML
+  private Tooltip mediaSearchTooltip;
+  private final static String mediaSearchTooltipText = "The selected table has the media search term \"%s\" set. You may not see downloaded assets in the \"Installed Assets\" list.";
+
+  @FXML
+  private Label mediaSearchLabel;
+
   private Stage localStage;
   private TableOverviewController overviewController;
   private GameRepresentation game;
@@ -1197,12 +1204,17 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     this.setDefaultBtn.setVisible(true);
     this.renameBtn.setVisible(true);
 
-    boolean mediaSearchSet = !StringUtils.isEmpty(game.getMediaSearch());
-    searchField.setDisable(mediaSearchSet);
-    assetSourceComboBox.setDisable(mediaSearchSet);
-    assetSourceBtn.setDisable(mediaSearchSet);
-    clearCacheBtn.setDisable(mediaSearchSet);
-    searchBtn.setDisable(mediaSearchSet);
+    boolean mediaSearchSet = game != null && !StringUtils.isEmpty(game.getMediaSearch());
+//    searchField.setDisable(mediaSearchSet);
+//    assetSourceComboBox.setDisable(mediaSearchSet);
+//    assetSourceBtn.setDisable(mediaSearchSet);
+//    clearCacheBtn.setDisable(mediaSearchSet);
+//    searchBtn.setDisable(mediaSearchSet);
+    if (mediaSearchSet) {
+      mediaSearchTooltip.setText(String.format(mediaSearchTooltipText, game.getMediaSearch()));
+    }
+
+    mediaSearchLabel.setVisible(mediaSearchSet);
 
     if (!isEmbeddedMode()) {
       nextButton.setDisable(false);

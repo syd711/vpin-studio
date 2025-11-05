@@ -165,6 +165,9 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
           result.setResult("The highscore was successfully synchronized.");
           submittedInitials.add(playerInitials);
         }
+        else {
+          result.setResult("No matching account found for initials \"" + playerInitials + "\"");
+        }
       }
       catch (Exception e) {
         LOG.error("Failed to submit mania highscore during sync: " + e.getMessage(), e);

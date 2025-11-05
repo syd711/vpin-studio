@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.restclient.mania.ManiaTableSyncResult;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
+import de.mephisto.vpin.ui.Studio;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -77,6 +78,7 @@ public class ManiaTableSynchronizationDialogController implements DialogControll
         statusIcon = WidgetFactory.createExclamationIcon();
       }
       else if (value.getAccount() == null) {
+        statusIcon = WidgetFactory.createExclamationIcon();
         statusIcon.setIconColor(Paint.valueOf("#FFFFFF"));
       }
 
@@ -103,7 +105,13 @@ public class ManiaTableSynchronizationDialogController implements DialogControll
       return new SimpleObjectProperty(value.getScore() != null ? value.getScore() : "-");
     });
 
-    accounts = maniaClient.getAccountClient().getAccounts();
+    try {
+      accounts = maniaClient.getAccountClient().getAccounts();
+    }
+    catch (Exception e) {
+      LOG.error("Failed to fetch accounts: {}", e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to fetch accounts: " + e.getMessage());
+    }
   }
 
   public void setSynchronizationResult(List<ManiaTableSyncResult> result) {

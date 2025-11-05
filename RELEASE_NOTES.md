@@ -3,6 +3,10 @@
 - DOF Server: Removed installation check.
 - Backups: Added option to overwrite existing backups, enabled by default.
 - Backups: Fixed refresh bug that had shown duplicated entries.
+- Table Asset Manager: Re-enable media search for tables that have the field 'Media Search' set.
+- Table Asset Manager: Added exclamation mark icon with hint that when the 'Media Search' field is set, downloaded assets might not be displayed in the installed assets field.
+- VPin Mania highscore synchronization dialog: Replaced the white check icon with an exclamation mark to indicate that is has a tooltip with the synchronization result and why it is white (skipped) and not green (submitted).
+- Competitions: Fixed generation of the black gradient for the background image. Note that you have to re-create a competition to fix the image if the gradient was broken before.  
 
 ---
 

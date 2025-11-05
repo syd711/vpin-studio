@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.competitions;
 
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
+import de.mephisto.vpin.server.assets.AssetService;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
@@ -50,6 +51,9 @@ public class CompetitionService implements InitializingBean {
 
   @Autowired
   private CompetitionValidator competitionValidator;
+
+  @Autowired
+  private AssetService assetService;
 
   @Autowired
   private CompetitionLifecycleService competitionLifecycleService;
@@ -277,6 +281,7 @@ public class CompetitionService implements InitializingBean {
   public boolean delete(long id) {
     Optional<Competition> c = competitionsRepository.findById(id);
     if (c.isPresent()) {
+      assetService.deleteCompetitionBackground(c.get().getGameId());
       competitionsRepository.deleteById(id);
       competitionLifecycleService.notifyCompetitionDeleted(c.get());
       LOG.error("Deleted competition " + c.get().getName());
