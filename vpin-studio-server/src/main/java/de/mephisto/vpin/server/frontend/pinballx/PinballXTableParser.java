@@ -207,6 +207,11 @@ public class PinballXTableParser extends DefaultHandler {
         detail.setDateModified(dateModified);
         break;
       }
+      case "vpsid": {
+        detail.setWebGameId(content);
+        detail.setWebLink2Url("https://virtualpinballspreadsheet.github.io/?game=" + content);
+        break;
+      }
     }
   }
 
@@ -268,6 +273,7 @@ public class PinballXTableParser extends DefaultHandler {
           appendValue(writer, "IPDBnr", detail.getIPDBNum());
           appendValue(writer, "dateadded", detail.getDateAdded());
           appendValue(writer, "datemodified", detail.getDateModified());
+          appendValue(writer, "vpsid", detail.getWebGameId());
 
           writer.append("  </game>\n");
         }

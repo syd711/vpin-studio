@@ -46,6 +46,7 @@
       in the backglass manager.
     - Switched order of the backglass and the PUP pack column.
     - Detection of included VBS scripts when parsing the table script and analysis of these scripts when scanning game.
+    - Saved vpsid in XML database file for PinballX / PinballY
     - Added VPX validator, triggered when an included script is not present in the **scripts** folder.
     - Added **Save globally** button to store DMD position globally.
     - Removed .ini section since the .ini file can now directly be edited from the table overview.
