@@ -100,6 +100,8 @@ public class CompetitionsServiceClient extends VPinStudioClientService {
   public void deleteCompetition(CompetitionRepresentation c) {
     try {
       getRestClient().delete(API + "competitions/" + c.getId());
+      String cacheId = "competition-bg-game-" + c.getGameId();
+      client.getImageCache().clear(cacheId);
     }
     catch (Exception e) {
       LOG.error("Failed to delete competition: " + e.getMessage(), e);

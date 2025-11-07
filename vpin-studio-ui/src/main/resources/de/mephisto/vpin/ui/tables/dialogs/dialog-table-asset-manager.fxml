@@ -57,11 +57,32 @@
                               </BorderPane>
                               <ToolBar>
                                  <items>
-                                    <TextField fx:id="searchField">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </TextField>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <TextField fx:id="searchField">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </TextField>
+                                          <Label fx:id="mediaSearchLabel">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <tooltip>
+                                                <Tooltip fx:id="mediaSearchTooltip" prefWidth="300.0" text="The selected table has the media search term {} set. You may not see downloaded assets in the &quot;Installed Assets&quot; list." wrapText="true" />
+                                             </tooltip>
+                                             <graphic>
+                                                <FontIcon iconLiteral="bi-exclamation-circle-fill" iconSize="18" />
+                                             </graphic>
+                                             <HBox.margin>
+                                                <Insets left="-23.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                       </children>
+                                       <padding>
+                                          <Insets right="3.0" />
+                                       </padding>
+                                    </HBox>
                                     <Button fx:id="searchBtn" mnemonicParsing="false" onAction="#onSearch" text="" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />

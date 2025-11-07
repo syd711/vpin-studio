@@ -20,6 +20,8 @@ import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
+import de.mephisto.vpin.server.assets.AssetService;
+import de.mephisto.vpin.server.backups.adapters.vpa.VpaService;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.directb2s.BackglassService;
@@ -112,6 +114,9 @@ public class GameMediaService {
 
   @Autowired
   private VpsService vpsService;
+
+  @Autowired
+  private AssetService assetService;
 
   @Autowired
   private BackglassService backglassService;
@@ -751,6 +756,8 @@ public class GameMediaService {
             success = false;
           }
         }
+
+        assetService.deleteDefaultBackground(game.getId());
 
         if (descriptor.isDeleteFromFrontend()) {
           GameDetails byPupId = gameDetailsRepository.findByPupId(game.getId());

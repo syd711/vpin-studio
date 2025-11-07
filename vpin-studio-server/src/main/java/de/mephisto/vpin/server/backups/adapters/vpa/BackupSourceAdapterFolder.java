@@ -23,7 +23,7 @@ public class BackupSourceAdapterFolder implements BackupSourceAdapter {
 
   private final BackupSource source;
   private final File archiveFolder;
-  private final Queue<BackupDescriptor> cache = new ConcurrentLinkedQueue<>();
+  private final List<BackupDescriptor> cache = new ArrayList<>();
 
   public BackupSourceAdapterFolder(BackupSource source) {
     this.source = source;
@@ -43,7 +43,7 @@ public class BackupSourceAdapterFolder implements BackupSourceAdapter {
     return archiveFolder;
   }
 
-  public Collection<BackupDescriptor> getBackupDescriptors() {
+  public synchronized Collection<BackupDescriptor> getBackupDescriptors() {
     if (cache.isEmpty()) {
       long start = System.currentTimeMillis();
       File[] vpaFiles = archiveFolder.listFiles((dir, name) -> name.endsWith("." + BackupType.VPA.name().toLowerCase()));
@@ -51,9 +51,11 @@ public class BackupSourceAdapterFolder implements BackupSourceAdapter {
         for (File archiveFile : vpaFiles) {
           try {
             TableDetails manifest = VpaArchiveUtil.readTableDetails(archiveFile);
-            BackupPackageInfo packageInfo = VpaArchiveUtil.readPackageInfo(archiveFile);
-            BackupDescriptor descriptor = new BackupDescriptor(source, manifest, packageInfo, new Date(archiveFile.lastModified()), archiveFile.getName(), archiveFile.getAbsolutePath(), archiveFile.length());
-            cache.add(descriptor);
+            if(manifest != null) {
+              BackupPackageInfo packageInfo = VpaArchiveUtil.readPackageInfo(archiveFile);
+              BackupDescriptor descriptor = new BackupDescriptor(source, manifest, packageInfo, new Date(archiveFile.lastModified()), archiveFile.getName(), archiveFile.getAbsolutePath(), archiveFile.length());
+              cache.add(descriptor);
+            }
           }
           catch (Exception e) {
             LOG.error("Failed to read " + archiveFile.getAbsolutePath() + ": " + e.getMessage(), e);
