@@ -186,6 +186,11 @@ public class VpaService implements InitializingBean {
           if (tableSettings != null) {
             zipB2STableSettings(jobDescriptor, tableSettings, zipOut);
           }
+
+          File b2STableSettingsFile = game.getB2STableSettingsFile();
+          if (b2STableSettingsFile != null && b2STableSettingsFile.exists()) {
+            zipFile(jobDescriptor, b2STableSettingsFile, DirectB2STableSettings.FILENAME, zipOut);
+          }
         }
 
         if (!files.isEmpty()) {

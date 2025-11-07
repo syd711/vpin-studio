@@ -4,7 +4,7 @@
 
 - **Tag Management**
     - The Studio comes with a comprehensive tag management now. Tags are displayed as part of the Table Data Manager
-      dialog and are also visible in the Table Data section. The support contains the following features.
+      dialog and are also visible in the Table Data section. The tagging support contains the following features:
         - Managing table tags in the Table Data Manager dialog.
         - Remove tags or filter by tags by clicking on them when shown in the Table Data section.
         - Tag filtering support for the filter section.
@@ -87,4 +87,5 @@
 - **ALT Color**: Fixed deletion of ALT color files.
 - **VPS Updates**: The VPS update indicator in the table overview is working correctly now. E.g. the VPS version **1.4**
   and the table version **1.4.0** where detected as identical now which wasn't the case before.  
+- **Backups**: Added custom B2STableSettings.xml to backups when the file is part of a separate table folder. 
 

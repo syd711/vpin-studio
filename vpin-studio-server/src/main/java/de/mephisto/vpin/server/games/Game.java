@@ -726,7 +726,7 @@ public class Game {
     }
     return null;
   }
-  
+
   @Nullable
   @JsonIgnore
   public File getRomFile() {
@@ -736,6 +736,27 @@ public class Game {
     return null;
   }
 
+
+  /**
+   * Only relevant for tables that are located in a separate folder
+   *
+   * @return
+   */
+  @Nullable
+  @JsonIgnore
+  public File getB2STableSettingsFile() {
+    File gameFile = getGameFile();
+    if (gameFile.exists()) {
+      String gamesDirectory = getEmulator().getGamesDirectory();
+      if (!StringUtils.isEmpty(gamesDirectory)) {
+        File gamesDir = new File(gamesDirectory);
+        if (!gamesDir.equals(gameFile.getParentFile())) {
+          return new File(gameFile.getParentFile(), "B2STableSettings.xml");
+        }
+      }
+    }
+    return null;
+  }
 
   public boolean isRomExists() {
     File romFile = getRomFile();
