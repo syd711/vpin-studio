@@ -40,15 +40,15 @@
             <children>
                 <Accordion fx:id="accordion">
                     <panes>
-                        <fx:include fx:id="layerEditorOverlay" source="template-editor-overlay.fxml" />
                         <fx:include fx:id="layerEditorBackground" source="template-editor-background.fxml" />
                         <fx:include fx:id="layerEditorFrame" source="template-editor-frame.fxml" />
                         <fx:include fx:id="layerEditorCanvas" source="template-editor-canvas.fxml" />
-                        <fx:include fx:id="layerEditorWheel" source="template-editor-wheel.fxml" />
-		                <fx:include fx:id="layerEditorManufacturer" source="template-editor-manufacturer.fxml" />
+                        <fx:include fx:id="layerEditorManufacturer" source="template-editor-manufacturer.fxml" />
 		                <fx:include fx:id="layerEditorOtherMedia" source="template-editor-othermedia.fxml" />
                         <fx:include fx:id="layerEditorTitle" source="template-editor-title.fxml" />
                         <fx:include fx:id="layerEditorTableName" source="template-editor-tablename.fxml" />
+                        <fx:include fx:id="layerEditorOverlay" source="template-editor-overlay.fxml" />
+                        <fx:include fx:id="layerEditorWheel" source="template-editor-wheel.fxml" />
                         <fx:include fx:id="layerEditorScores" source="template-editor-scores.fxml" />
                     </panes>
                 </Accordion>
@@ -91,7 +91,6 @@
                     </padding>
                 </Label>
                 <ComboBox fx:id="templateCombo" prefHeight="30.0" prefWidth="222.0" />
-                <Separator layoutX="665.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                 <Button fx:id="createBtn" mnemonicParsing="false" onAction="#onCreate" textFill="WHITE">
                     <font>
                         <Font size="14.0" />
@@ -103,6 +102,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
                     </graphic>
                 </Button>
+                <Separator layoutX="665.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
 
                 <Button fx:id="exportBtn" mnemonicParsing="false" onAction="#onExport" textFill="WHITE">
                     <font>
@@ -159,6 +159,17 @@
                     </tooltip>
                 </Button>
                 <Separator layoutX="307.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Button fx:id="generateWheelBtn" layoutX="856.0" layoutY="11.0" mnemonicParsing="false" onAction="#onGenerate" styleClass="submit-button" text="Generate Wheel" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-save" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Writes the given image for the selected screen and table" />
+                     </tooltip>
+                  </Button>
                 <Button fx:id="generateBtn" layoutX="565.0" layoutY="11.0" mnemonicParsing="false" onAction="#onGenerate" textFill="WHITE">
                     <font>
                         <Font size="14.0" />
@@ -167,7 +178,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="bi-image" iconSize="18" />
                     </graphic>
                     <tooltip>
-                        <Tooltip text="Generate Card" />
+                        <Tooltip text="Writes the given image for the selected screen and table" />
                     </tooltip>
                 </Button>
                 <Button fx:id="generateAllBtn" mnemonicParsing="false" onAction="#onGenerateAll" text=" Generate All" textFill="WHITE">

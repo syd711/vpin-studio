@@ -5,18 +5,17 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Tooltip?>
-<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<?import javafx.scene.control.ToggleButton?>
-<TitledPane fx:id="settingsPane" text="" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.panels.LayerEditorTableNameController">
+<TitledPane fx:id="settingsPane" stylesheets="@../../stylesheet.css" text="" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.panels.LayerEditorTableNameController">
    <graphic>
       <BorderPane prefWidth="250.0">
          <left>
@@ -55,7 +54,7 @@
    <content>
       <ScrollPane hbarPolicy="NEVER">
          <content>
-            <VBox styleClass="accordion-container" >
+            <VBox styleClass="accordion-container">
                <children>
                   <Label text="Table Font" textFill="WHITE">
                     <font>
@@ -128,7 +127,7 @@
                            <Font size="14.0" />
                         </font>
                         </Label>
-                        <ColorPicker fx:id="tableFontColorSelector" >
+                        <ColorPicker fx:id="tableFontColorSelector">
                         </ColorPicker>
                      </children>
                      <VBox.margin>
@@ -195,7 +194,7 @@
                       </Label>
                     </children>
                     <VBox.margin>
-                      <Insets left="26.0" top="6.0" bottom="12.0" />
+                      <Insets bottom="12.0" left="26.0" top="6.0" />
                     </VBox.margin>
                   </HBox>
 

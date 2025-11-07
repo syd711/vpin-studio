@@ -174,6 +174,11 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
       ScoreSummary summary = getScoreSummary(game, template, false);
       if (!summary.getScores().isEmpty() && !StringUtils.isEmpty(summary.getRaw())) {
         String screenName = cardSettings.getPopperScreen();
+
+        if (template.getTemplateType() != null && template.getTemplateType().equals(CardTemplateType.WHEEL)) {
+          screenName = VPinScreen.Wheel.getSegment();
+        }
+
         if (!StringUtils.isEmpty(screenName)) {
           if (!game.isCardDisabled()) {
             BufferedImage bufferedImage = doGenerateCardImage(game, summary, template);
@@ -349,7 +354,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
       cardData.setWheel(getImage(game, cardData, template, "wheel"));
 
       cardData.setFallbackBackground(getBytes("backgrounds", template.getBackground()));
-      if(template.getFrame() != null) {
+      if (template.getFrame() != null) {
         cardData.setFrame(getBytes("frames", template.getFrame()));
       }
 

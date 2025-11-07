@@ -65,10 +65,13 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
   @FXML
   private TabPane tabPane;
+
   @FXML
   private Tab highscoreCardsTab;
+
   @FXML
   private Tab instructionCardsTab;
+
   @FXML
   private Tab wheelsTab;
 
@@ -148,6 +151,9 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   private Button generateAllBtn;
 
   @FXML
+  private Button generateWheelBtn;
+
+  @FXML
   private Button generateBtn;
 
   @FXML
@@ -180,7 +186,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   @FXML
   private void onOpenImage() {
     if (gameRepresentation.isPresent()) {
-      TableDialogs.openMediaDialog(Studio.stage, "Preview Card", client.getHighscoreCardsService().getHighscoreCardUrl(gameRepresentation.get(), getSelectedTemplateType()), "image/png");
+      TableDialogs.openMediaDialog(Studio.stage, "Preview", client.getHighscoreCardsService().getHighscoreCardUrl(gameRepresentation.get(), getSelectedTemplateType()), "image/png");
     }
   }
 
@@ -253,7 +259,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       gameName = gameName.substring(0, gameName.indexOf("["));
     }
     gameName = gameName.trim();
-    
+
     Stage stage = Dialogs.createStudioDialogStage(DialogTemplateEditorUploadController.class, "dialog-template-editor-upload.fxml", "Cards Template Upload");
     DialogTemplateEditorUploadController controller = (DialogTemplateEditorUploadController) stage.getUserData();
     controller.setData(stage, this, gameName);
@@ -289,8 +295,8 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     gameName = gameName.trim();
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    String s = WidgetFactory.showInputDialog(stage, "New Template", "Enter Template Name", "Enter a meaningful name that identifies the card design.", "The values of the selected template \"" + template.getName() + "\" will be used as default.", gameName);
-    if (!StringUtils.isEmpty(s) && ! checkDuplicate(s)) {
+    String s = WidgetFactory.showInputDialog(stage, "New Template", "Enter Template Name", "Enter a meaningful name that describes the layout.", "The values of the selected template \"" + template.getName() + "\" will be used as default.", gameName);
+    if (!StringUtils.isEmpty(s) && !checkDuplicate(s)) {
       template.setName(s);
       template.setParentId(null);
       template.setId(null);
@@ -307,7 +313,9 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     refreshTemplates(newTemplate);
     selectTemplateInCombo(newTemplate);
     assignTemplate(newTemplate);
-  };
+  }
+
+  ;
 
   @FXML
   private void onRename(ActionEvent e) {
@@ -411,6 +419,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     deleteBtn.setDisable(true);
     renameBtn.setDisable(true);
     generateAllBtn.setDisable(true);
+    generateWheelBtn.setDisable(true);
     generateBtn.setDisable(true);
     openImageBtn.setDisable(true);
 
@@ -519,6 +528,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
         this.openImageBtn.setDisable(true);
         this.generateBtn.setDisable(true);
         this.generateAllBtn.setDisable(true);
+        this.generateWheelBtn.setDisable(true);
 
         cardPreview.setData(null, null);
         previewStack.getChildren().remove(waitOverlay);
@@ -536,12 +546,14 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
             this.openImageBtn.setDisable(false);
             this.generateBtn.setDisable(false);
             this.generateAllBtn.setDisable(false);
+            this.generateWheelBtn.setDisable(false);
           });
     }
     else {
       this.openImageBtn.setDisable(true);
       this.generateBtn.setDisable(true);
       this.generateAllBtn.setDisable(true);
+      this.generateWheelBtn.setDisable(true);
       mediaPlayerControl.setVisible(false);
 
       cardPreview.setData(null, null);
@@ -619,6 +631,9 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
     this.exportBtn.managedProperty().bind(this.exportBtn.visibleProperty());
     this.importBtn.managedProperty().bind(this.importBtn.visibleProperty());
+    this.generateBtn.managedProperty().bind(this.generateBtn.visibleProperty());
+    this.generateAllBtn.managedProperty().bind(this.generateAllBtn.visibleProperty());
+    this.generateWheelBtn.managedProperty().bind(this.generateWheelBtn.visibleProperty());
 
     this.exportBtn.setVisible(Features.TEMPLATE_EDITOR_IMPORT_EXPORT);
     this.importBtn.setVisible(Features.TEMPLATE_EDITOR_IMPORT_EXPORT);
@@ -645,9 +660,9 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
       // listener on tab selection
       this.tabPane.getSelectionModel().selectedItemProperty().addListener((ov, oldT, newT) -> {
-        selectTab(false);
+        selectTab(newT);
       });
-      selectTab(false);
+      selectTab(highscoreCardsTab);
 
       // Resize handlers
       previewStack.widthProperty().addListener((obs, o, n) -> resizeCardPreview(n.doubleValue(), previewStack.getHeight(), true));
@@ -688,7 +703,15 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     }
   }
 
-  private void selectTab(boolean forceRefresh) {
+  private void selectTab(Tab activeTab) {
+    boolean wheelMode = activeTab.equals(wheelsTab);
+    layerEditorScoresController.getSettingsPane().setVisible(!wheelMode);
+    layerEditorWheelController.getSettingsPane().setVisible(!wheelMode);
+    layerEditorOverlayController.getSettingsPane().setVisible(!wheelMode);
+    generateAllBtn.setVisible(!wheelMode);
+    generateBtn.setVisible(!wheelMode);
+    generateWheelBtn.setVisible(wheelMode);
+
     unsetTemplate();
     JFXFuture
         .supplyAsync(() -> client.getHighscoreCardsService().getCardResolution(getSelectedTemplateType()))

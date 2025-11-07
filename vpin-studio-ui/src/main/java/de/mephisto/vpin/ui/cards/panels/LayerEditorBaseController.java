@@ -45,6 +45,7 @@ public abstract class LayerEditorBaseController {
 
     int position = accordion.getPanes().indexOf(settingsPane);
     settingsPane.setUserData(position);
+    settingsPane.managedProperty().bindBidirectional(settingsPane.visibleProperty());
 
     lockBtn.managedProperty().bindBidirectional(lockBtn.visibleProperty());
 
