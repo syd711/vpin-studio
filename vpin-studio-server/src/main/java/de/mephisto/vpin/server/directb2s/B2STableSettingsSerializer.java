@@ -271,6 +271,9 @@ public class B2STableSettingsSerializer {
         // absence of settings means standard, else a boolean encoded as 0/1n which is invers from visibility (0=visible)
         return (settings.getStartBackground() == 2) ? null : settings.getStartBackground() == 1 ? "0" : "1";
       }
+      case "DualMode": {
+        return String.valueOf(settings.getDualMode());
+      }
       case "DisableFuzzyMatching": {
         return intValue(settings.isDisableFuzzyMatching());
       }

@@ -14,6 +14,7 @@ public class DirectB2SData {
   private String name;
   private int tableType;
   private int numberOfPlayers;
+  private int dualBackglass = 0;
 
   private String artwork;
   private String author;
@@ -117,6 +118,14 @@ public class DirectB2SData {
 
   public void setTableType(int tableType) {
     this.tableType = tableType;
+  }
+
+  public int getDualBackglass() {
+    return dualBackglass;
+  }
+
+  public void setDualBackglass(int dualBackglass) {
+    this.dualBackglass = dualBackglass;
   }
 
   public int getNumberOfPlayers() {
@@ -244,5 +253,4 @@ public class DirectB2SData {
   public String toString() {
     return filename + " [" + emulatorId + "]";
   }
-
 }
