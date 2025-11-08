@@ -71,6 +71,11 @@ public class DirectB2SDataExtractor extends DefaultHandler {
         }
         break;
       }
+      case "DualBackglass": {
+        String value = attr.getValue("Value");
+        data.setDualBackglass(Integer.parseInt(value));
+        break;
+      }
       case "B2SDataCount": {
         String value = attr.getValue("Value");
         if (!StringUtils.isEmpty(value)) {

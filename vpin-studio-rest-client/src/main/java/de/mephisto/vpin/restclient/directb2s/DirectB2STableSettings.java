@@ -20,7 +20,7 @@ public class DirectB2STableSettings implements DirectB2sConstants {
   private int startAsEXE = 2; // standard
   private int startBackground = 2; // standard
   private boolean disableFuzzyMatching = true;
-  private int dualMode = 2; //0 NotSet, 1 Authentic, 2 Fantasy
+  private int dualMode = 1; //0 NotSet, 1 Authentic, 2 Fantasy
 
   /**
    * 0 => FormToBack = 1
