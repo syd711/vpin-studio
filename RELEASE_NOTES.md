@@ -63,7 +63,7 @@
 
         <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/logo-asset.png?raw=true" width="600" />
 
-    - Added new default asset source: Manufacturer logos. These assets are solely for the "Logo" screen and can be used
+    - Added new default asset source: Table logos. These assets are solely for the "Logo" screen and can be used
       for the highscore card or wheel design.
 
       <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/logo-source.png?raw=true" width="600" />
