@@ -18,7 +18,7 @@ public class WOVPServiceClient extends VPinStudioClientService {
     super(client);
   }
 
-  public boolean test() {
-    return getRestClient().get(API + "wovp/test", Boolean.class);
+  public String test() {
+    return getRestClient().get(API + "wovp/test", String.class);
   }
 }

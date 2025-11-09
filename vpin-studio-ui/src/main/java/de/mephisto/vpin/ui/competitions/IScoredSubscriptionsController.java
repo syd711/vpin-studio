@@ -467,17 +467,20 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       Label fallbackLabel = new Label();
       fallbackLabel.setStyle(getLabelCss(value));
       if (value.game.isAllVersionsEnabled()) {
+        fallbackLabel.getStyleClass().add("default-text");
         fallbackLabel.setText("All versions allowed.");
         return new SimpleObjectProperty<>(fallbackLabel);
       }
 
       VpsTable vpsTable = client.getVpsService().getTableById(value.getVpsTableId());
       if (vpsTable == null) {
+        fallbackLabel.getStyleClass().add("default-text");
         fallbackLabel.setText("No matching VPS Table found.");
         return new SimpleObjectProperty<>(fallbackLabel);
       }
       VpsTableVersion vpsTableVersion = vpsTable.getTableVersionById(value.getVpsTableVersionId());
       if (vpsTableVersion == null) {
+        fallbackLabel.getStyleClass().add("default-text");
         fallbackLabel.setText("All versions allowed.");
         return new SimpleObjectProperty<>(fallbackLabel);
       }

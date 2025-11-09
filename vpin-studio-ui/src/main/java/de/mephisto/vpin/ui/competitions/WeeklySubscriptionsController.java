@@ -33,6 +33,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,13 +61,10 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
   private TableColumn<WeeklyCompetitionModel, Object> vpsTableVersionColumn;
 
   @FXML
-  private TableColumn<WeeklyCompetitionModel, String> creationDateColumn;
+  private TableColumn<WeeklyCompetitionModel, String> startDateColumn;
 
   @FXML
-  private Button deleteBtn;
-
-  @FXML
-  private Button addBtn;
+  private TableColumn<WeeklyCompetitionModel, String> endDateColumn;
 
   @FXML
   private Button reloadBtn;
@@ -142,11 +140,11 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
 
     JFXFuture.supplyAsync(() -> {
       if (this.weeklySubscriptions == null || forceReload) {
+        client.getCompetitionService().synchronizeWeeklyCompetitions();
         weeklySubscriptions = client.getCompetitionService().getWeeklyCompetitions();
       }
       return weeklySubscriptions;
     }).thenAcceptLater((weeklySubscriptions) -> {
-      PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
       filterCompetitions(weeklySubscriptions);
 
       if (selection != null && tableView.getItems().contains(selection)) {
@@ -200,19 +198,19 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
         return new SimpleObjectProperty<>(fallbackLabel);
       }
 
-      if (value.competition == null) {
-        fallbackLabel.setStyle(WidgetFactory.OK_STYLE);
-        if (value.iScoredGameRoom.isSynchronize()) {
-          fallbackLabel.setText("This game is not synchronized yet.");
-          fallbackLabel.setTooltip(new Tooltip("Synchronization is enabled but the competition has not been created yet."));
-        }
-        else {
-          fallbackLabel.setText("Table match found, but not subscribed yet.");
-          fallbackLabel.setTooltip(new Tooltip("The subscription can be create by pressing the \"+\" button."));
-        }
-
-        return new SimpleObjectProperty<>(fallbackLabel);
-      }
+//      if (value.competition == null) {
+//        fallbackLabel.setStyle(WidgetFactory.OK_STYLE);
+//        if (value.iScoredGameRoom.isSynchronize()) {
+//          fallbackLabel.setText("This game is not synchronized yet.");
+//          fallbackLabel.setTooltip(new Tooltip("Synchronization is enabled but the competition has not been created yet."));
+//        }
+//        else {
+//          fallbackLabel.setText("Table match found, but not subscribed yet.");
+//          fallbackLabel.setTooltip(new Tooltip("The subscription can be create by pressing the \"+\" button."));
+//        }
+//
+//        return new SimpleObjectProperty<>(fallbackLabel);
+//      }
 
       return new SimpleObjectProperty(new IScoredGameCellContainer(value.getMatches(), vpsTable, getLabelCss(cellData.getValue())));
     });
@@ -231,18 +229,16 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
 
       Label fallbackLabel = new Label();
       fallbackLabel.setStyle(getLabelCss(value));
-      if (value.game.isAllVersionsEnabled()) {
-        fallbackLabel.setText("All versions allowed.");
-        return new SimpleObjectProperty<>(fallbackLabel);
-      }
 
       VpsTable vpsTable = client.getVpsService().getTableById(value.getVpsTableId());
       if (vpsTable == null) {
+        fallbackLabel.getStyleClass().add("default-text");
         fallbackLabel.setText("No matching VPS Table found.");
         return new SimpleObjectProperty<>(fallbackLabel);
       }
       VpsTableVersion vpsTableVersion = vpsTable.getTableVersionById(value.getVpsTableVersionId());
       if (vpsTableVersion == null) {
+        fallbackLabel.getStyleClass().add("default-text");
         fallbackLabel.setText("All versions allowed.");
         return new SimpleObjectProperty<>(fallbackLabel);
       }
@@ -251,7 +247,7 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
       return new SimpleObjectProperty(new VpsVersionContainer(vpsTable, vpsTableVersion, getLabelCss(cellData.getValue()), downloadAction));
     });
 
-    creationDateColumn.setCellValueFactory(cellData -> {
+    startDateColumn.setCellValueFactory(cellData -> {
       WeeklyCompetitionModel value = cellData.getValue();
       Label fallbackLabel = new Label();
       fallbackLabel.getStyleClass().add("default-text");
@@ -262,6 +258,26 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
       }
       fallbackLabel.setText(DateUtil.formatDateTime(value.competition.getCreatedAt()));
       return new SimpleObjectProperty(fallbackLabel);
+    });
+
+    endDateColumn.setCellValueFactory(cellData -> {
+      WeeklyCompetitionModel value = cellData.getValue();
+
+      VBox vBox = new VBox(3);
+
+      Label endDateLabel = new Label();
+      endDateLabel.getStyleClass().add("default-text");
+      endDateLabel.setStyle(getLabelCss(value));
+      endDateLabel.setText(DateUtil.formatDateTime(value.competition.getCreatedAt()));
+
+      Label durationLabel = new Label();
+      durationLabel.getStyleClass().add("default-text");
+      durationLabel.setStyle(getLabelCss(value));
+      durationLabel.setText(DateUtil.formatDuration(value.competition.getStartDate(), value.competition.getEndDate()));
+
+      vBox.getChildren().add(endDateLabel);
+      vBox.getChildren().add(durationLabel);
+      return new SimpleObjectProperty(vBox);
     });
 
     tableView.setPlaceholder(new Label("                          Try weekly subscriptions!\n" +
@@ -317,8 +333,15 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
             }
             return true;
           }
-          else if (column.equals(creationDateColumn)) {
-            Collections.sort(tableView.getItems(), Comparator.comparing(o -> o.competition != null ? o.competition.getCreatedAt() : null));
+          else if (column.equals(startDateColumn)) {
+            Collections.sort(tableView.getItems(), Comparator.comparing(o -> o.competition != null ? o.competition.getStartDate() : null));
+            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
+              Collections.reverse(tableView.getItems());
+            }
+            return true;
+          }
+          else if (column.equals(endDateColumn)) {
+            Collections.sort(tableView.getItems(), Comparator.comparing(o -> o.competition != null ? o.competition.getEndDate() : null));
             if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
               Collections.reverse(tableView.getItems());
             }
@@ -346,9 +369,9 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
     List<WeeklyCompetitionModel> filtered = new ArrayList<>();
     String filterValue = textfieldSearch.textProperty().getValue();
 
-    List<WeeklyCompetitionModel> collectedGameRoomGames = getWeeklyCompetitionModels(weeklySubscriptions);
-    for (WeeklyCompetitionModel model : collectedGameRoomGames) {
-      if (!model.game.getName().toLowerCase().contains(filterValue.toLowerCase())) {
+    List<WeeklyCompetitionModel> models = getWeeklyCompetitionModels(weeklySubscriptions);
+    for (WeeklyCompetitionModel model : models) {
+      if (!model.getName().toLowerCase().contains(filterValue.toLowerCase())) {
         continue;
       }
 
@@ -360,15 +383,10 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
 
   private List<WeeklyCompetitionModel> getWeeklyCompetitionModels(List<CompetitionRepresentation> subscriptions) {
     List<WeeklyCompetitionModel> gameModels = new ArrayList<>();
-//      GameRoom gr = IScored.getGameRoom(gameRoom.getUrl(), false);
-//      if (gr != null) {
-//        List<IScoredGame> gameRoomGames = gr.getTaggedGames();
-//        for (IScoredGame gameRoomGame : gameRoomGames) {
-//          Optional<CompetitionRepresentation> comp = subscriptions.stream().filter(c -> gameRoomGame.matches(c.getVpsTableId(), c.getVpsTableVersionId())).findFirst();
-//          WeeklyGameRoomGameModel model = new WeeklyGameRoomGameModel(gameRoom, gr, gameRoomGame, comp.orElse(null));
-//          gameModels.add(model);
-//        }
-//    }
+    for (CompetitionRepresentation subscription : subscriptions) {
+      WeeklyCompetitionModel model = new WeeklyCompetitionModel(subscription);
+      gameModels.add(model);
+    }
     return gameModels;
   }
 
@@ -384,10 +402,7 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
     competitionsController.setCompetition(model.isPresent() ? model.get().competition : null);
 
     PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
-    deleteBtn.setDisable(defaultPlayer == null || model.isEmpty() || newSelection.competition == null);
     reloadBtn.setDisable(defaultPlayer == null);
-    addBtn.setDisable(defaultPlayer == null || model.isEmpty() || newSelection.competition != null || newSelection.getMatches().isEmpty());
-
 
     if (defaultPlayer == null) {
       tableView.setPlaceholder(new Label("                                 No default player set!\n" +
@@ -472,16 +487,20 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
       this.competition = competition;
     }
 
+    public String getName() {
+      return competition.getName();
+    }
+
     public List<GameRepresentation> getMatches() {
       return matches;
     }
 
     public String getVpsTableId() {
-      return game.getVpsTableId();
+      return competition.getVpsTableId();
     }
 
     public String getVpsTableVersionId() {
-      return game.getVpsTableVersionId();
+      return competition.getVpsTableVersionId();
     }
   }
 }

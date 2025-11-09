@@ -68,6 +68,8 @@ public class Competition {
 
   private String name;
 
+  private String mode;
+
   private String score;
 
   private String joinMode;
@@ -76,6 +78,14 @@ public class Competition {
 
   @Transient
   private ValidationState validationState;
+
+  public String getMode() {
+    return mode;
+  }
+
+  public void setMode(String mode) {
+    this.mode = mode;
+  }
 
   public String getUrl() {
     return url;

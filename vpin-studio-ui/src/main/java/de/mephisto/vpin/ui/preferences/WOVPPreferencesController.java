@@ -67,7 +67,8 @@ public class WOVPPreferencesController implements Initializable {
     if (linkText != null && linkText.startsWith("http") && desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
       try {
         desktop.browse(new URI(linkText));
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to open link: " + e.getMessage());
       }
     }
@@ -77,12 +78,12 @@ public class WOVPPreferencesController implements Initializable {
   private void onApiKeyTest() {
     String key = apiKeyText.getText().trim();
     if (!StringUtils.isEmpty(key)) {
-      boolean test = client.getWovpService().test();
-      if (test) {
+      String test = client.getWovpService().test();
+      if (test == null) {
         WidgetFactory.showInformation(Studio.stage, "Information", "API key validation successful.");
       }
       else {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Invalid API key.");
+        WidgetFactory.showAlert(Studio.stage, "Error", "API key validation failed!", test);
       }
     }
   }

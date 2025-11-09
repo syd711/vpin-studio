@@ -7,6 +7,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.players.Player;
+import de.mephisto.vpin.server.wovp.WovpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -24,6 +25,9 @@ public class CompetitionResource {
   private CompetitionService competitionService;
 
   @Autowired
+  private WovpService wovpService;
+
+  @Autowired
   private IScoredCompetitionSynchronizer competitionSynchronizer;
 
   @GetMapping("/offline")
@@ -39,6 +43,11 @@ public class CompetitionResource {
   @GetMapping("/weekly")
   public List<Competition> getWeeklyCompetitions() {
     return competitionService.getWeeklyCompetitions();
+  }
+
+  @GetMapping("/weekly/synchronize")
+  public boolean synchronizeWeekly() {
+    return wovpService.synchronize();
   }
 
   @GetMapping("/subscriptions")
