@@ -36,6 +36,11 @@ public class CompetitionResource {
     return competitionService.getDiscordCompetitions();
   }
 
+  @GetMapping("/weekly")
+  public List<Competition> getWeeklyCompetitions() {
+    return competitionService.getWeeklyCompetitions();
+  }
+
   @GetMapping("/subscriptions")
   public List<Competition> getSubscriptions() {
     return competitionService.getSubscriptions();

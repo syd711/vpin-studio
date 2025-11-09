@@ -61,6 +61,7 @@ public class CompetitionsController implements Initializable, StudioFXController
   private static final int TAB_ONLINE = 1;
   private static final int TAB_TABLE_SUBS = 2;
   private static final int TAB_ISCORED = 3;
+  private static final int TAB_WEEKLY = 4;
 
   @FXML
   private BorderPane root;
@@ -79,6 +80,9 @@ public class CompetitionsController implements Initializable, StudioFXController
 
   @FXML
   private Tab iScoredSubscriptionsTab;
+
+  @FXML
+  private Tab weeklySubscriptionsTab;
 
   @FXML
   private Label createdAtLabel;
@@ -145,6 +149,7 @@ public class CompetitionsController implements Initializable, StudioFXController
   private CompetitionsDiscordController discordController;
   private TableSubscriptionsController tableSubscriptionsController;
   private IScoredSubscriptionsController iScoredSubscriptionsController;
+  private WeeklySubscriptionsController weeklySubscriptionsController;
   private String lastDashboardUrl;
 
   private Optional<CompetitionRepresentation> competition = Optional.empty();
@@ -217,6 +222,10 @@ public class CompetitionsController implements Initializable, StudioFXController
       }
       case TAB_ISCORED: {
         PreferencesController.open("iscored");
+        break;
+      }
+      case TAB_WEEKLY: {
+        PreferencesController.open("wovp");
         break;
       }
       default: {
@@ -297,19 +306,22 @@ public class CompetitionsController implements Initializable, StudioFXController
     if (tabPane.getTabs().contains(iScoredSubscriptionsTab) && cnt++ == index) {
       return TAB_ISCORED;
     }
+    if (tabPane.getTabs().contains(weeklySubscriptionsTab) && cnt++ == index) {
+      return TAB_WEEKLY;
+    }
     // should not happen
     return -1;
   }
 
   private void refreshView(Number t1) {
-    if (t1.intValue() == 0) {
+    if (t1.intValue() == TAB_OFFLINE) {
       NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Offline Competitions"));
       Optional<CompetitionRepresentation> selection = offlineController.getSelection();
       updateSelection(selection);
       checkTitledPanes(CompetitionType.OFFLINE);
       offlineController.onReload();
     }
-    else if (t1.intValue() == 1) {
+    else if (t1.intValue() == TAB_ONLINE) {
       if (discordController != null) {
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions"));
         Optional<CompetitionRepresentation> selection = discordController.getSelection();
@@ -318,7 +330,7 @@ public class CompetitionsController implements Initializable, StudioFXController
         discordController.onReload();
       }
     }
-    else if (t1.intValue() == 2) {
+    else if (t1.intValue() == TAB_TABLE_SUBS) {
       if (tableSubscriptionsController != null) {
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Table Subscriptions"));
         Optional<CompetitionRepresentation> selection = tableSubscriptionsController.getSelection();
@@ -327,13 +339,20 @@ public class CompetitionsController implements Initializable, StudioFXController
         tableSubscriptionsController.onReload();
       }
     }
-    else if (t1.intValue() == 3) {
+    else if (t1.intValue() == TAB_ISCORED) {
       if (iScoredSubscriptionsTab != null) {
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
-        Optional<IScoredSubscriptionsController.IScoredGameRoomGameModel> selection = iScoredSubscriptionsController.getSelection();
         updateSelection(Optional.empty());
         checkTitledPanes(CompetitionType.ISCORED);
         iScoredSubscriptionsController.onViewActivated(NavigationOptions.empty());
+      }
+    }
+    else if (t1.intValue() == TAB_WEEKLY) {
+      if (weeklySubscriptionsTab != null) {
+        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Weekly Subscriptions"));
+        updateSelection(Optional.empty());
+        checkTitledPanes(CompetitionType.WEEKLY);
+        weeklySubscriptionsController.onViewActivated(NavigationOptions.empty());
       }
     }
     else {
@@ -514,6 +533,17 @@ public class CompetitionsController implements Initializable, StudioFXController
 
         break;
       }
+      case WEEKLY: {
+        competitionMembersPane.setDisable(true);
+        competitionMembersPane.setExpanded(false);
+        metaDataPane.setDisable(true);
+        metaDataPane.setExpanded(false);
+
+        dashboardPane.setDisable(false);
+        dashboardPane.setExpanded(true);
+
+        break;
+      }
       default: {
         throw new UnsupportedOperationException("Competition type " + competitionType + " is not mapped.");
       }
@@ -522,7 +552,7 @@ public class CompetitionsController implements Initializable, StudioFXController
 
   private void updateForTabSelection(Optional<CompetitionRepresentation> competitionRepresentation) {
     int index = tabPane.getSelectionModel().selectedIndexProperty().get();
-    if (index == 0) {
+    if (index == TAB_OFFLINE) {
       if (competitionRepresentation.isPresent()) {
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Offline Competitions", competitionRepresentation.get().getName()));
       }
@@ -530,7 +560,7 @@ public class CompetitionsController implements Initializable, StudioFXController
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Offline Competitions"));
       }
     }
-    else if (index == 1) {
+    else if (index == TAB_ONLINE) {
       if (competitionRepresentation.isPresent()) {
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions", competitionRepresentation.get().getName()));
       }
@@ -538,7 +568,7 @@ public class CompetitionsController implements Initializable, StudioFXController
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions"));
       }
     }
-    else if (index == 2) {
+    else if (index == TAB_TABLE_SUBS) {
       if (competitionRepresentation.isPresent()) {
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Table Subscriptions", competitionRepresentation.get().getName()));
       }
@@ -546,12 +576,20 @@ public class CompetitionsController implements Initializable, StudioFXController
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Table Subscriptions"));
       }
     }
-    else if (index == 3) {
+    else if (index == TAB_ISCORED) {
       if (competitionRepresentation.isPresent()) {
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions", competitionRepresentation.get().getName()));
       }
       else {
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
+      }
+    }
+    else if (index == TAB_WEEKLY) {
+      if (competitionRepresentation.isPresent()) {
+        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Weekly Subscriptions", competitionRepresentation.get().getName()));
+      }
+      else {
+        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Weekly Subscriptions"));
       }
     }
     else {
@@ -645,23 +683,37 @@ public class CompetitionsController implements Initializable, StudioFXController
     else {
       tabPane.getTabs().remove(iScoredSubscriptionsTab);
     }
+
+    try {
+      FXMLLoader loader = new FXMLLoader(WeeklySubscriptionsController.class.getResource("tab-competitions-weekly.fxml"));
+      Parent parent = loader.load();
+      weeklySubscriptionsController = loader.getController();
+      weeklySubscriptionsController.setCompetitionsController(this);
+      weeklySubscriptionsTab.setContent(parent);
+    }
+    catch (IOException e) {
+      LOG.error("failed to load subscriptions: " + e.getMessage(), e);
+    }
   }
 
 
   private StudioFXController getActiveController() {
     int selectedIndex = tabPane.getSelectionModel().getSelectedIndex();
     switch (selectedIndex) {
-      case 0: {
+      case TAB_OFFLINE: {
         return offlineController;
       }
-      case 1: {
+      case TAB_ONLINE: {
         return discordController;
       }
-      case 2: {
+      case TAB_TABLE_SUBS: {
         return tableSubscriptionsController;
       }
-      case 3: {
+      case TAB_ISCORED: {
         return iScoredSubscriptionsController;
+      }
+      case TAB_WEEKLY: {
+        return weeklySubscriptionsController;
       }
     }
     return null;

@@ -29,6 +29,7 @@
         <module>vpin-connector-github</module>
         <module>vpin-connector-iscored</module>
         <module>vpin-connector-vps</module>
+        <module>vpin-connector-wovp</module>
         <module>vpin-studio-commons</module>
         <module>vpin-studio-app</module>
         <module>vpin-studio-server</module>

@@ -11,7 +11,16 @@ public class WOVPSettings extends JsonSettings {
   private boolean badgeEnabled;
   private boolean enabled;
   private boolean taggingEnabled;
+  private boolean resetHighscores = true;
   private List<String> tags = new ArrayList<>();
+
+  public boolean isResetHighscores() {
+    return resetHighscores;
+  }
+
+  public void setResetHighscores(boolean resetHighscores) {
+    this.resetHighscores = resetHighscores;
+  }
 
   public boolean isTaggingEnabled() {
     return taggingEnabled;

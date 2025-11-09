@@ -3,15 +3,8 @@ package de.mephisto.vpin.ui.preferences;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.dof.DOFSettings;
-import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
-import de.mephisto.vpin.restclient.system.FolderRepresentation;
-import de.mephisto.vpin.restclient.tagging.TaggingSettings;
 import de.mephisto.vpin.restclient.wovp.WOVPSettings;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.util.FolderChooserDialog;
-import de.mephisto.vpin.ui.util.ProgressDialog;
-import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.tags.TagField;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -19,8 +12,9 @@ import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import org.apache.commons.lang3.StringUtils;
@@ -52,6 +46,9 @@ public class WOVPPreferencesController implements Initializable {
 
   @FXML
   private CheckBox badgeCheckbox;
+
+  @FXML
+  private CheckBox resetCheckbox;
 
   @FXML
   private Pane tagPane;
@@ -108,6 +105,17 @@ public class WOVPPreferencesController implements Initializable {
     badgeCheckbox.setSelected(wovpSettings.isBadgeEnabled());
     badgeCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       wovpSettings.setBadgeEnabled(newValue);
+      try {
+        client.getPreferenceService().setJsonPreference(wovpSettings);
+      }
+      catch (Exception e) {
+        WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+      }
+    });
+
+    resetCheckbox.setSelected(wovpSettings.isResetHighscores());
+    resetCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      wovpSettings.setResetHighscores(newValue);
       try {
         client.getPreferenceService().setJsonPreference(wovpSettings);
       }

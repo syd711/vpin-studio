@@ -90,25 +90,60 @@
                         <Label styleClass="preference-description" text="If a matching table is found, it will be automatically marked as competed." textFill="WHITE" />
                         <GridPane>
                           <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="402.2000732421875" minWidth="10.0" prefWidth="130.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="708.0000732421875" minWidth="10.0" prefWidth="691.999951171875" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="402.2000732421875" minWidth="10.0" prefWidth="82.4" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="766.4000244140625" minWidth="10.0" prefWidth="740.0" />
                           </columnConstraints>
                           <rowConstraints>
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label styleClass="default-text" text="Subscription:" />
-                              <CheckBox fx:id="subscriptionCheckbox" mnemonicParsing="false" text="Enable automatic &quot;Weekly Challenge&quot; subscription" textFill="WHITE" GridPane.columnIndex="1">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </CheckBox>
-                              <CheckBox fx:id="badgeCheckbox" layoutX="140.0" layoutY="15.0" mnemonicParsing="false" text="Apply &quot;Weekly Challenge&quot; badge to the active table wheel icon" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </CheckBox>
+                              <Label styleClass="default-text" text="Settings:" />
+                              <VBox GridPane.columnIndex="1">
+                                 <children>
+                                    <CheckBox fx:id="subscriptionCheckbox" mnemonicParsing="false" text="Enable automatic &quot;Weekly Challenge&quot; subscription" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <Label styleClass="checkbox-description" text="This will automatically update the weekly competitions to the latest challenges." textFill="WHITE" />
+                                 </children>
+                                 <GridPane.margin>
+                                    <Insets />
+                                 </GridPane.margin>
+                              </VBox>
+                              <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                 <children>
+                                    <CheckBox fx:id="badgeCheckbox" mnemonicParsing="false" text="Apply &quot;Weekly Challenge&quot; badge to the active table wheel icon" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <Label styleClass="checkbox-description" text="If a matching table is found, the wheel icon of the table will be augmented with the" textFill="WHITE" />
+                                    <Label layoutX="10.0" layoutY="30.0" styleClass="checkbox-description" text="logo of the organizer for the duration of the challenge." textFill="WHITE" />
+                                 </children>
+                                 <GridPane.margin>
+                                    <Insets top="6.0" />
+                                 </GridPane.margin>
+                              </VBox>
+                              <VBox GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                 <children>
+                                    <CheckBox fx:id="resetCheckbox" mnemonicParsing="false" text="Backup and reset existing table highscores on subscription" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets />
+                                       </VBox.margin>
+                                    </CheckBox>
+                                    <Label styleClass="checkbox-description" text="When a table is selected for the weekly competition, a backup is made of the existing highscore" textFill="WHITE" />
+                                    <Label layoutX="10.0" layoutY="30.0" styleClass="checkbox-description" text="and resetted, so that all new highscores can be submitted." textFill="WHITE" />
+                                 </children>
+                                 <GridPane.margin>
+                                    <Insets top="6.0" />
+                                 </GridPane.margin>
+                              </VBox>
                            </children>
                            <VBox.margin>
                               <Insets top="12.0" />

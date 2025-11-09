@@ -69,6 +69,13 @@ public class CompetitionService implements InitializingBean {
         .collect(Collectors.toList());
   }
 
+  public List<Competition> getWeeklyCompetitions() {
+    return competitionsRepository
+        .findByTypeOrderByEndDateDesc(CompetitionType.WEEKLY.name())
+        .stream().map(c -> competitionValidator.validate(c))
+        .collect(Collectors.toList());
+  }
+
   public List<Competition> getSubscriptions() {
     return competitionsRepository
         .findByTypeOrderByEndDateDesc(CompetitionType.SUBSCRIPTION.name())
