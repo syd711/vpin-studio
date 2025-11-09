@@ -15,12 +15,12 @@ import javafx.scene.control.Label;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static de.mephisto.vpin.ui.Studio.Features;
-
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import static de.mephisto.vpin.ui.Studio.Features;
 
 public class BackglassPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(BackglassPreferencesController.class);
@@ -42,6 +42,9 @@ public class BackglassPreferencesController implements Initializable {
 
   @FXML
   private CheckBox hideB2SDMDCheckbox;
+
+  @FXML
+  private CheckBox extendedSearchCheckbox;
 
   @FXML
   private CheckBox hideDMDCheckbox;
@@ -72,7 +75,7 @@ public class BackglassPreferencesController implements Initializable {
     backglassServerFolder.managedProperty().bind(backglassServerFolder.visibleProperty());
     b2STableSettingsDescr.managedProperty().bind(b2STableSettingsDescr.visibleProperty());
     b2STableSettingsFile.managedProperty().bind(b2STableSettingsFile.visibleProperty());
-    
+
     try {
       backglassServerSettings = Studio.client.getBackglassServiceClient().getServerSettings();
       boolean serverInstalled = backglassServerSettings != null;
@@ -88,6 +91,7 @@ public class BackglassPreferencesController implements Initializable {
       startModeCheckbox.setDisable(!serverInstalled);
       hideGrillCheckbox.setDisable(!serverInstalled);
       hideB2SDMDCheckbox.setDisable(!serverInstalled);
+      extendedSearchCheckbox.setDisable(!serverInstalled);
       hideDMDCheckbox.setDisable(!serverInstalled);
       formToPosition.setDisable(!serverInstalled);
       usedLEDType.setDisable(!serverInstalled);
@@ -137,6 +141,11 @@ public class BackglassPreferencesController implements Initializable {
         hideDMDCheckbox.setSelected(backglassServerSettings.isHideDMD());
         hideDMDCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
           backglassServerSettings.setHideDMDBoolean(newValue);
+          saveSettings();
+        });
+        extendedSearchCheckbox.setSelected(backglassServerSettings.isExtendedSearch());
+        extendedSearchCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+          backglassServerSettings.setExtendedSearch(newValue);
           saveSettings();
         });
 

@@ -46,7 +46,7 @@
       in the backglass manager.
     - Switched order of the backglass and the PUP pack column.
     - Detection of included VBS scripts when parsing the table script and analysis of these scripts when scanning game.
-    - Saved vpsid in XML database file for PinballX / PinballY.
+    - Saved VP-spreadsheet ID in XML database file for PinballX / PinballY.
     - Added VPX validator, triggered when an included script is not present in the **scripts** folder.
     - Added **Save globally** button to store DMD position globally.
     - Added detection of dual Backglasses and support of mode in backglass setup.
@@ -70,19 +70,24 @@
 
       <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/logo-source.png?raw=true" width="600" />
 
-- **Highscore Cards**
+- **Highscore Cards / Wheel Designer**
     - Added wheel generator, default template generates Tarcissio styled-wheels.
     - The **Highscore Card** tab has been renamed to **Designer** accordingly.
-    - In the frame sidebar section, the option to upload frame images has been added. A tarcissio wheel frame and a
-      black wheel frame are
-      provided by default.
+    - In the frame sidebar section, the option to upload frame images has been added. A Tarcissio wheel frame and a
+      black wheel frame are provided by default.
     - The **logo** media from the **Logo** media source can be used in your wheel, it is accessible in **Other Media**
       section of the designer. This is even the main reason behind its introduction.
     - Added possibility to backup existing assets when generating cards. An option has been added to the highscores card
       preferences.
-    - Refactored how studio finds a previously generated card. If backup is activated, existing cards not being tagged,
-      the Studio will generate new highscore cards in addition to the existing one. Old ones can be deleted as obsolete.
+    - Refactored how the VPin Studio finds a previously generated card. If backup is activated, existing cards not being tagged,
+      the server will generate new highscore cards in addition to the existing one. Old ones can be deleted as obsolete.
       The new ones will be updated automatically.
+
+      <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/cards/wheel-designer.png?raw=true" width="700" />
+
+- **Backglass Server Preferences**
+
+  - Added option **Extended "B2STableSettings.xml" Search** which allows to configure where to look for the B2STableSettings.xml file.
 
 ## Bugfixes
 

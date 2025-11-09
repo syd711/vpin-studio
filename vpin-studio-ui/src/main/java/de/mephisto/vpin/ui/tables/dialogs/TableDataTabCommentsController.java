@@ -1,8 +1,11 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.tags.TagField;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -44,7 +47,17 @@ public class TableDataTabCommentsController implements Initializable {
   public boolean save(TableDetails tableDetails) {
     game.setComment(textArea.getText());
     tableDetails.setTags(String.join(",", tagField.getTags()));
-    return true;
+    try {
+      client.getGameService().saveGame(game);
+      return true;
+    }
+    catch (Exception e) {
+      LOG.error("Failed to save notes: " + e.getMessage(), e);
+      Platform.runLater(() -> {
+        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save notes: " + e.getMessage());
+      });
+      return false;
+    }
   }
 
   @FXML

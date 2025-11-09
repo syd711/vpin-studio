@@ -139,6 +139,9 @@ public class TaggingService implements InitializingBean, GameDataChangedListener
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
     if (PreferenceNames.TAGGING_SETTINGS.equals(propertyName)) {
       taggingSettings = preferencesService.getJsonPreference(PreferenceNames.TAGGING_SETTINGS);
+      tags.addAll(taggingSettings.getScreenTags());
+      tags.addAll(taggingSettings.getBackglassTags());
+      tags.addAll(taggingSettings.getTableTags());
     }
   }
 

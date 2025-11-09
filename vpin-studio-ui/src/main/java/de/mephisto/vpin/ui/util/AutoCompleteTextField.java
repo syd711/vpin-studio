@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import de.mephisto.vpin.commons.utils.JFXFuture;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
@@ -36,18 +37,14 @@ public class AutoCompleteTextField {
   private final TextField textField;
   private final AutoCompleteTextFieldChangeListener listener;
   private final AutoCompleteMatcher matcher;
-
   private boolean changedEnabled = true;
 
   private String defaultValue;
 
   public AutoCompleteTextField(TextField textField, AutoCompleteTextFieldChangeListener listener, List<String> entries) {
-    this(textField, listener,
-      input -> entries.stream()
-                      .filter(e -> StringUtils.containsIgnoreCase(e, input))
-                      .map(e -> new AutoMatchModel(e, e))
-                      .collect(Collectors.toList()));
+    this(textField, listener, new DefaultAutoCompleteMatcher(entries));
   }
+
 
   public AutoCompleteTextField(TextField textField, AutoCompleteTextFieldChangeListener listener, AutoCompleteMatcher matcher) {
     this.textField = textField;
@@ -65,7 +62,7 @@ public class AutoCompleteTextField {
             defaultValue = value;
             entriesPopup.hide();
             entriesPopup.getItems().clear();
-            if(value == null) {
+            if (value == null) {
               textField.setText("");
             }
             else {
@@ -133,6 +130,10 @@ public class AutoCompleteTextField {
         }
       }
     });
+  }
+
+  public void setSuggestions(List<String> entries) {
+    this.matcher.setEntries(entries);
   }
 
   public void setChangeEnabled(boolean b) {
@@ -209,7 +210,7 @@ public class AutoCompleteTextField {
   public void selectIfMatch() {
     if (textField.getText().length() > 0) {
       JFXFuture.supplyAsync(() -> matcher.match(textField.getText()))
-        .thenAcceptLater(searchResult -> {
+          .thenAcceptLater(searchResult -> {
             if (searchResult.size() == 1) {
               AutoMatchModel match = searchResult.get(0);
               String value = match.getId();

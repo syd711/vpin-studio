@@ -508,16 +508,16 @@
                                                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                       <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
+                                                      <RowConstraints valignment="TOP" />
                                                    </rowConstraints>
                                                    <children>
-                                                      <Label styleClass="default-text" text="Tournament Id:" GridPane.rowIndex="17">
+                                                      <Label styleClass="default-text" text="Tournament Id:" GridPane.rowIndex="16">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label styleClass="default-text" text="Web DB Id:" GridPane.rowIndex="14">
+                                                      <Label styleClass="default-text" text="Web DB Id:" GridPane.rowIndex="13">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -630,22 +630,12 @@
                                                             <Insets />
                                                          </GridPane.margin>
                                                       </Button>
-                                                      <TextArea fx:id="notes" prefHeight="90.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="18" />
-                                                      <Label styleClass="default-text" text="Notes:*" GridPane.rowIndex="18">
+                                                      <TextArea fx:id="notes" prefHeight="90.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="17" />
+                                                      <Label styleClass="default-text" text="Notes:*" GridPane.rowIndex="17">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label styleClass="default-text" text="Tags:*" GridPane.rowIndex="13">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <TextField fx:id="tags" GridPane.columnIndex="1" GridPane.rowIndex="13">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </TextField>
                                                       <ComboBox fx:id="statusCombo" prefHeight="30.0" prefWidth="300.0" GridPane.columnIndex="1" />
                                                       <Label text="Status:" textFill="WHITE">
                                                          <font>
@@ -666,17 +656,17 @@
                                                             <Tooltip text="https://virtual-pinball-spreadsheet.web.app/" />
                                                          </tooltip>
                                                       </Button>
-                                                      <Label styleClass="default-text" text="Web Link:" GridPane.rowIndex="15">
+                                                      <Label styleClass="default-text" text="Web Link:" GridPane.rowIndex="14">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Label>
-                                                      <TextField fx:id="webDbId" GridPane.columnIndex="1" GridPane.rowIndex="14">
+                                                      <TextField fx:id="webDbId" GridPane.columnIndex="1" GridPane.rowIndex="13">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
                                                       </TextField>
-                                                      <Label fx:id="hintWebId" GridPane.columnIndex="2" GridPane.rowIndex="14">
+                                                      <Label fx:id="hintWebId" GridPane.columnIndex="2" GridPane.rowIndex="13">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -687,12 +677,12 @@
                                                             <Tooltip prefWidth="350.0" text="This field is reserved by the VPin Studio. Check the Server Settings for details." wrapText="true" />
                                                          </tooltip>
                                                       </Label>
-                                                      <TextField fx:id="webLink" GridPane.columnIndex="1" GridPane.rowIndex="15">
+                                                      <TextField fx:id="webLink" GridPane.columnIndex="1" GridPane.rowIndex="14">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
                                                       </TextField>
-                                                      <Button mnemonicParsing="false" onAction="#onWeblinkProperty" styleClass="link-component" GridPane.columnIndex="2" GridPane.rowIndex="15">
+                                                      <Button mnemonicParsing="false" onAction="#onWeblinkProperty" styleClass="link-component" GridPane.columnIndex="2" GridPane.rowIndex="14">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -706,17 +696,17 @@
                                                             <Insets />
                                                          </GridPane.margin>
                                                       </Button>
-                                                      <Label styleClass="default-text" text="Is Mod:" GridPane.rowIndex="16">
+                                                      <Label styleClass="default-text" text="Is Mod:" GridPane.rowIndex="15">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Label>
-                                                      <CheckBox fx:id="modCheckbox" mnemonicParsing="false" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="16">
+                                                      <CheckBox fx:id="modCheckbox" mnemonicParsing="false" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="15">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
                                                       </CheckBox>
-                                                      <TextField fx:id="tourneyId" GridPane.columnIndex="1" GridPane.rowIndex="17">
+                                                      <TextField fx:id="tourneyId" GridPane.columnIndex="1" GridPane.rowIndex="16">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
