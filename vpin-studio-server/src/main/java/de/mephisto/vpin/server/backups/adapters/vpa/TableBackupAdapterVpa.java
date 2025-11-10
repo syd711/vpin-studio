@@ -15,7 +15,6 @@ import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import net.lingala.zip4j.ZipFile;
 import org.apache.commons.io.FilenameUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +66,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
     target = FileUtils.uniqueFile(target);
     backupDescriptor.setFilename(target.getName());
 
-    File tempFile = createBackupTempFile(target);
+    File tempFile = new File(target.getParentFile(), target.getName() + ".bak");
 
     if (target.exists() && !target.delete()) {
       throw new UnsupportedOperationException("Couldn't delete existing archive file " + target.getAbsolutePath());
@@ -128,22 +127,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
       return;
     }
     finally {
-      File temporaryTarget = new File(target.getParentFile(), target.getName() + ".bak");
-      try {
-        LOG.info("Copying backup file {} to {}", tempFile.getAbsolutePath(), temporaryTarget.getAbsolutePath());
-        jobDescriptor.setStatus("Copying backup file to " + temporaryTarget.getParentFile().getAbsolutePath());
-        org.apache.commons.io.FileUtils.copyFile(tempFile, temporaryTarget);
-      }
-      catch (IOException e) {
-        LOG.error("Failed to copy temporary file to target: {}", e.getMessage(), e);
-      }
-      finally {
-        if (!tempFile.delete()) {
-          LOG.error("Failed to delete temporary target file {}", tempFile.getAbsolutePath());
-        }
-      }
-
-      boolean renamed = temporaryTarget.renameTo(target);
+      boolean renamed = tempFile.renameTo(target);
       if (renamed) {
         LOG.info("Finished packing of " + target.getAbsolutePath() + ", took " + ((System.currentTimeMillis() - start) / 1000) + " seconds, " + FileUtils.readableFileSize(target.length()));
       }
@@ -158,19 +142,6 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
 
       LOG.info("********************* /Table Backup: {} ***********************************", game.getGameDisplayName());
     }
-  }
-
-  @NotNull
-  private static File createBackupTempFile(File target) {
-    File tempFile = new File(target.getParentFile(), target.getName() + ".bak");
-    try {
-      tempFile = File.createTempFile(target.getName(), ".vpa");
-    }
-    catch (IOException e) {
-      LOG.error("Failed to create temp file: {}", e.getMessage(), e);
-    }
-    tempFile.deleteOnExit();
-    return tempFile;
   }
 
   public void simulateBackup() throws IOException {
