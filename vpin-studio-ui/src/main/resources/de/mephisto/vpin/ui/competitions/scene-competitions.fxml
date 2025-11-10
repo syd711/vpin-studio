@@ -23,97 +23,93 @@
 <?import javafx.scene.web.WebView?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="root" styleClass="base-component" stylesheets="@../stylesheet.css"
-            xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="de.mephisto.vpin.ui.competitions.CompetitionsController">
+<BorderPane fx:id="root" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.CompetitionsController">
 
     <center>
         <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
             <center>
                 <StackPane BorderPane.alignment="CENTER">
                     <BorderPane.margin>
-                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
+                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                     </BorderPane.margin>
                     <children>
                         <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE">
                             <tabs>
                                 <Tab fx:id="offlineTab" closable="false" text="Offline Competitions">
                                     <content>
-                                        <BorderPane prefHeight="200.0" prefWidth="200.0"/>
+                                        <BorderPane prefHeight="200.0" prefWidth="200.0" />
                                     </content>
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="bi-trophy"/>
+                                        <FontIcon iconColor="WHITE" iconLiteral="bi-trophy" />
                                     </graphic>
                                 </Tab>
                                 <Tab fx:id="onlineTab" text="Discord Competitions">
                                     <content>
-                                        <BorderPane prefHeight="200.0" prefWidth="200.0"/>
+                                        <BorderPane prefHeight="200.0" prefWidth="200.0" />
                                     </content>
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="bi-trophy-fill"/>
+                                        <FontIcon iconColor="WHITE" iconLiteral="bi-trophy-fill" />
                                     </graphic>
                                 </Tab>
                                 <Tab fx:id="tableSubscriptionsTab" text="Table Subscriptions">
                                     <content>
-                                        <BorderPane prefHeight="200.0" prefWidth="200.0"/>
+                                        <BorderPane prefHeight="200.0" prefWidth="200.0" />
                                     </content>
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-check"/>
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-check" />
                                     </graphic>
                                 </Tab>
                                 <Tab fx:id="iScoredSubscriptionsTab" closable="false" text="iScored Subscriptions">
                                     <content>
-                                        <BorderPane prefHeight="200.0" prefWidth="200.0"/>
+                                        <BorderPane prefHeight="200.0" prefWidth="200.0" />
                                     </content>
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-check"/>
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-check" />
                                     </graphic>
                                 </Tab>
                                 <Tab fx:id="weeklySubscriptionsTab" closable="false" text="Weekly Subscriptions">
                                     <content>
-                                        <BorderPane prefHeight="200.0" prefWidth="200.0"/>
+                                        <BorderPane prefHeight="200.0" prefWidth="200.0" />
                                     </content>
                                     <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-calendar-week"/>
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-calendar-week" />
                                     </graphic>
                                 </Tab>
                             </tabs>
                         </TabPane>
-                        <Button fx:id="toggleSidebarBtn" mnemonicParsing="false" onAction="#toggleSidebar"
-                                StackPane.alignment="TOP_RIGHT">
+                        <Button fx:id="toggleSidebarBtn" mnemonicParsing="false" onAction="#toggleSidebar" StackPane.alignment="TOP_RIGHT">
                             <font>
-                                <Font size="14.0"/>
+                                <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="mdi2a-arrow-expand-right" iconSize="18"/>
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2a-arrow-expand-right" iconSize="18" />
                             </graphic>
                             <tooltip>
-                                <Tooltip text="Toggle Sidebar [F3]"/>
+                                <Tooltip text="Toggle Sidebar [F3]" />
                             </tooltip>
                             <StackPane.margin>
-                                <Insets right="3.0" top="6.0"/>
+                                <Insets right="3.0" top="6.0" />
                             </StackPane.margin>
                         </Button>
-                        <Button fx:id="competitionSettingsBtn" mnemonicParsing="false" onAction="#onCompetitionSettings"
-                                StackPane.alignment="TOP_RIGHT">
+                        <Button fx:id="competitionSettingsBtn" mnemonicParsing="false" onAction="#onCompetitionSettings" StackPane.alignment="TOP_RIGHT">
                             <font>
-                                <Font size="14.0"/>
+                                <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18"/>
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
                             </graphic>
                             <tooltip>
-                                <Tooltip text="Open Competition Settings"/>
+                                <Tooltip text="Open Competition Settings" />
                             </tooltip>
                             <StackPane.margin>
-                                <Insets right="43.0" top="6.0"/>
+                                <Insets right="43.0" top="6.0" />
                             </StackPane.margin>
                         </Button>
                     </children>
                 </StackPane>
             </center>
             <BorderPane.margin>
-                <Insets right="12.0"/>
+                <Insets right="12.0" />
             </BorderPane.margin>
         </BorderPane>
     </center>
@@ -128,7 +124,7 @@
                                     <content>
                                         <VBox fx:id="membersBox">
                                             <padding>
-                                                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
+                                                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                                             </padding>
                                         </VBox>
                                     </content>
@@ -143,140 +139,110 @@
                                             <center>
                                                 <GridPane vgap="3.0" BorderPane.alignment="CENTER">
                                                     <columnConstraints>
-                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="285.199951171875"
-                                                                           minWidth="10.0"
-                                                                           prefWidth="144.0000244140625"/>
-                                                        <ColumnConstraints hgrow="SOMETIMES"
-                                                                           maxWidth="477.3999847412109" minWidth="10.0"
-                                                                           prefWidth="435.9999755859375"/>
+                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="285.199951171875" minWidth="10.0" prefWidth="144.0000244140625" />
+                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="477.3999847412109" minWidth="10.0" prefWidth="435.9999755859375" />
                                                     </columnConstraints>
                                                     <rowConstraints>
-                                                        <RowConstraints minHeight="10.0" prefHeight="30.0"
-                                                                        vgrow="SOMETIMES"/>
-                                                        <RowConstraints minHeight="10.0" prefHeight="30.0"
-                                                                        vgrow="SOMETIMES"/>
-                                                        <RowConstraints minHeight="10.0" prefHeight="30.0"
-                                                                        vgrow="SOMETIMES"/>
-                                                        <RowConstraints minHeight="30.0" vgrow="SOMETIMES"/>
-                                                        <RowConstraints minHeight="30.0" prefHeight="30.0"
-                                                                        vgrow="SOMETIMES"/>
-                                                        <RowConstraints minHeight="30.0" prefHeight="30.0"
-                                                                        vgrow="SOMETIMES"/>
-                                                        <RowConstraints minHeight="60.0" vgrow="SOMETIMES"/>
-                                                        <RowConstraints minHeight="60.0" vgrow="SOMETIMES"/>
-                                                        <RowConstraints minHeight="10.0" prefHeight="30.0"
-                                                                        vgrow="SOMETIMES"/>
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="60.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="60.0" vgrow="SOMETIMES" />
+                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                     </rowConstraints>
                                                     <children>
                                                         <Label text="UUID:">
                                                             <font>
-                                                                <Font name="System Bold" size="14.0"/>
+                                                                <Font name="System Bold" size="14.0" />
                                                             </font>
                                                         </Label>
-                                                        <Label layoutX="10.0" layoutY="15.0" text="Created At:"
-                                                               GridPane.rowIndex="1">
+                                                        <Label layoutX="10.0" layoutY="15.0" text="Created At:" GridPane.rowIndex="1">
                                                             <font>
-                                                                <Font name="System Bold" size="14.0"/>
+                                                                <Font name="System Bold" size="14.0" />
                                                             </font>
                                                         </Label>
-                                                        <Label layoutX="10.0" layoutY="45.0" text="Owner:"
-                                                               GridPane.rowIndex="6">
+                                                        <Label layoutX="10.0" layoutY="45.0" text="Owner:" GridPane.rowIndex="6">
                                                             <font>
-                                                                <Font name="System Bold" size="14.0"/>
+                                                                <Font name="System Bold" size="14.0" />
                                                             </font>
                                                         </Label>
                                                         <Label fx:id="uuidLabel" text="-" GridPane.columnIndex="1">
                                                             <font>
-                                                                <Font size="14.0"/>
+                                                                <Font size="14.0" />
                                                             </font>
                                                         </Label>
-                                                        <Label fx:id="createdAtLabel" layoutX="116.0" layoutY="15.0"
-                                                               text="-" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                        <Label fx:id="createdAtLabel" layoutX="116.0" layoutY="15.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                                             <font>
-                                                                <Font size="14.0"/>
+                                                                <Font size="14.0" />
                                                             </font>
                                                         </Label>
-                                                        <Label layoutX="10.0" layoutY="76.0" text="Discord Server:"
-                                                               GridPane.rowIndex="7">
+                                                        <Label layoutX="10.0" layoutY="76.0" text="Discord Server:" GridPane.rowIndex="7">
                                                             <font>
-                                                                <Font name="System Bold" size="14.0"/>
+                                                                <Font name="System Bold" size="14.0" />
                                                             </font>
                                                         </Label>
-                                                        <HBox fx:id="ownerBox" alignment="CENTER_LEFT" spacing="6.0"
-                                                              GridPane.columnIndex="1" GridPane.rowIndex="6"/>
-                                                        <Label layoutX="10.0" layoutY="49.0" text="Start Date:"
-                                                               GridPane.rowIndex="2">
+                                                        <HBox fx:id="ownerBox" alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                                        <Label layoutX="10.0" layoutY="49.0" text="Start Date:" GridPane.rowIndex="2">
                                                             <font>
-                                                                <Font name="System Bold" size="14.0"/>
+                                                                <Font name="System Bold" size="14.0" />
                                                             </font>
                                                         </Label>
-                                                        <Label layoutX="10.0" layoutY="83.0" prefHeight="0.0"
-                                                               prefWidth="70.0" text="End Date:" GridPane.rowIndex="3">
+                                                        <Label layoutX="10.0" layoutY="83.0" prefHeight="0.0" prefWidth="70.0" text="End Date:" GridPane.rowIndex="3">
                                                             <font>
-                                                                <Font name="System Bold" size="14.0"/>
+                                                                <Font name="System Bold" size="14.0" />
                                                             </font>
                                                         </Label>
-                                                        <HBox fx:id="serverBox" alignment="CENTER_LEFT" spacing="6.0"
-                                                              GridPane.columnIndex="1" GridPane.rowIndex="7"/>
-                                                        <Label fx:id="startLabel" layoutX="154.0" layoutY="49.0"
-                                                               text="-" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                                        <HBox fx:id="serverBox" alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                                                        <Label fx:id="startLabel" layoutX="154.0" layoutY="49.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                                             <font>
-                                                                <Font size="14.0"/>
+                                                                <Font size="14.0" />
                                                             </font>
                                                         </Label>
-                                                        <Label fx:id="endLabel" layoutX="154.0" layoutY="83.0" text="-"
-                                                               GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                                        <Label fx:id="endLabel" layoutX="154.0" layoutY="83.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                                             <font>
-                                                                <Font size="14.0"/>
+                                                                <Font size="14.0" />
                                                             </font>
                                                         </Label>
-                                                        <Label layoutX="10.0" layoutY="168.0" text="Discord Channel:"
-                                                               GridPane.rowIndex="8">
+                                                        <Label layoutX="10.0" layoutY="168.0" text="Discord Channel:" GridPane.rowIndex="8">
                                                             <font>
-                                                                <Font name="System Bold" size="14.0"/>
+                                                                <Font name="System Bold" size="14.0" />
                                                             </font>
                                                         </Label>
-                                                        <Label fx:id="channelLabel" layoutX="154.0" layoutY="116.0"
-                                                               text="-" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                                                        <Label fx:id="channelLabel" layoutX="154.0" layoutY="116.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="8">
                                                             <font>
-                                                                <Font size="14.0"/>
+                                                                <Font size="14.0" />
                                                             </font>
                                                         </Label>
-                                                        <Label layoutX="10.0" layoutY="116.0" prefHeight="20.0"
-                                                               prefWidth="113.0" text="Score Limit:"
-                                                               GridPane.rowIndex="4">
+                                                        <Label layoutX="10.0" layoutY="116.0" prefHeight="20.0" prefWidth="113.0" text="Score Limit:" GridPane.rowIndex="4">
                                                             <font>
-                                                                <Font name="System Bold" size="14.0"/>
+                                                                <Font name="System Bold" size="14.0" />
                                                             </font>
                                                         </Label>
-                                                        <Label layoutX="10.0" layoutY="150.0" prefHeight="20.0"
-                                                               prefWidth="113.0" text="Score Validation:"
-                                                               GridPane.rowIndex="5">
+                                                        <Label layoutX="10.0" layoutY="150.0" prefHeight="20.0" prefWidth="113.0" text="Score Validation:" GridPane.rowIndex="5">
                                                             <font>
-                                                                <Font name="System Bold" size="14.0"/>
+                                                                <Font name="System Bold" size="14.0" />
                                                             </font>
                                                         </Label>
-                                                        <Label fx:id="scoreLimitLabel" layoutX="154.0" layoutY="116.0"
-                                                               text="-" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                                        <Label fx:id="scoreLimitLabel" layoutX="154.0" layoutY="116.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                                             <font>
-                                                                <Font size="14.0"/>
+                                                                <Font size="14.0" />
                                                             </font>
                                                         </Label>
-                                                        <Label fx:id="scoreValidationLabel" layoutX="154.0"
-                                                               layoutY="150.0" text="-" GridPane.columnIndex="1"
-                                                               GridPane.rowIndex="5">
+                                                        <Label fx:id="scoreValidationLabel" layoutX="154.0" layoutY="150.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                                             <font>
-                                                                <Font size="14.0"/>
+                                                                <Font size="14.0" />
                                                             </font>
                                                         </Label>
                                                     </children>
                                                 </GridPane>
                                             </center>
                                         </BorderPane>
-                                        <ImageView fx:id="bannerImageView" fitHeight="100.0" fitWidth="100.0"
-                                                   pickOnBounds="true" preserveRatio="true">
+                                        <ImageView fx:id="bannerImageView" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
                                             <VBox.margin>
-                                                <Insets left="141.0" top="-28.0"/>
+                                                <Insets left="141.0" top="-28.0" />
                                             </VBox.margin>
                                         </ImageView>
                                     </children>
@@ -289,61 +255,54 @@
                                     <center>
                                         <ScrollPane vbarPolicy="NEVER">
                                             <content>
-                                                <VBox fx:id="membersBox1">
+                                                <VBox fx:id="dashboardBox">
                                                     <children>
-                                                        <Label fx:id="dashboardStatusLabel" styleClass="default-text"
-                                                               text="This competition has no dashboard URL.">
+                                                        <Label fx:id="dashboardStatusLabel" styleClass="default-text" text="This competition has no dashboard URL.">
                                                             <VBox.margin>
-                                                                <Insets/>
+                                                                <Insets />
                                                             </VBox.margin>
                                                             <padding>
-                                                                <Insets bottom="12.0" left="12.0" right="12.0"
-                                                                        top="12.0"/>
+                                                                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                                                             </padding>
                                                         </Label>
-                                                        <WebView fx:id="dashboardWebView" prefHeight="800.0"
-                                                                 prefWidth="580.0"/>
+                                                        <WebView fx:id="dashboardWebView" prefHeight="800.0" prefWidth="580.0" />
+                                          <VBox fx:id="scoreBox" prefHeight="200.0" prefWidth="100.0" />
                                                     </children>
                                                 </VBox>
                                             </content>
                                             <BorderPane.margin>
-                                                <Insets/>
+                                                <Insets />
                                             </BorderPane.margin>
                                         </ScrollPane>
                                     </center>
                                     <top>
                                         <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                                             <items>
-                                                <Button fx:id="dashboardBtn" mnemonicParsing="false"
-                                                        onAction="#onDashboardOpen" styleClass="external-component"
-                                                        text="Open Dashboard">
+                                                <Button fx:id="dashboardBtn" mnemonicParsing="false" onAction="#onDashboardOpen" styleClass="external-component" text="Open Dashboard">
                                                     <font>
-                                                        <Font size="14.0"/>
+                                                        <Font size="14.0" />
                                                     </font>
                                                     <graphic>
-                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new"
-                                                                  iconSize="16"/>
+                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="16" />
                                                     </graphic>
                                                 </Button>
-                                                <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0"/>
-                                                <Button fx:id="reloadBtn" mnemonicParsing="false"
-                                                        onAction="#onDashboardReload" text="Reload" textFill="WHITE">
+                                                <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                                                <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onDashboardReload" text="Reload" textFill="WHITE">
                                                     <font>
-                                                        <Font size="14.0"/>
+                                                        <Font size="14.0" />
                                                     </font>
                                                     <graphic>
-                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload"
-                                                                  iconSize="18"/>
+                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                                                     </graphic>
                                                 </Button>
                                             </items>
                                             <BorderPane.margin>
-                                                <Insets/>
+                                                <Insets />
                                             </BorderPane.margin>
                                         </ToolBar>
                                     </top>
                                     <padding>
-                                        <Insets bottom="1.0"/>
+                                        <Insets bottom="1.0" />
                                     </padding>
                                 </BorderPane>
                             </content>
@@ -352,11 +311,11 @@
                 </Accordion>
             </children>
             <BorderPane.margin>
-                <Insets right="12.0"/>
+                <Insets right="12.0" />
             </BorderPane.margin>
         </VBox>
     </right>
     <padding>
-        <Insets bottom="12.0"/>
+        <Insets bottom="12.0" />
     </padding>
 </BorderPane>

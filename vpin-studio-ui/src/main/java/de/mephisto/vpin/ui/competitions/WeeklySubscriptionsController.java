@@ -30,6 +30,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -38,6 +40,8 @@ import javafx.util.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
@@ -277,6 +281,18 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
 
       vBox.getChildren().add(endDateLabel);
       vBox.getChildren().add(durationLabel);
+
+      Image image = null;
+      try {
+        image = new Image(new FileInputStream("C:\\Users\\matth\\Downloads\\flags_png\\as.png"));
+      }
+      catch (FileNotFoundException e) {
+        throw new RuntimeException(e);
+      }
+      ImageView v = new ImageView(image);
+      v.setPreserveRatio(true);
+      v.setFitWidth(100);
+      vBox.getChildren().add(v);
       return new SimpleObjectProperty(vBox);
     });
 

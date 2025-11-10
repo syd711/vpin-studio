@@ -1,16 +1,27 @@
 package de.mephisto.vpin.server.wovp;
 
 import de.mephisto.vpin.connectors.wovp.Wovp;
+import de.mephisto.vpin.connectors.wovp.models.Challenge;
+import de.mephisto.vpin.connectors.wovp.models.Challenges;
+import de.mephisto.vpin.connectors.wovp.models.ScoreBoardItem;
+import de.mephisto.vpin.connectors.wovp.models.ScoreBoardItemPositionValues;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.competitions.CompetitionScore;
 import de.mephisto.vpin.restclient.wovp.WOVPSettings;
 import de.mephisto.vpin.server.competitions.wovp.WOVPCompetitionSynchronizer;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class WovpService implements InitializingBean, PreferenceChangedListener {
@@ -29,6 +40,39 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
     String apiKey = wovpSettings.getApiKey();
     Wovp wovp = Wovp.create(apiKey);
     return wovp.validateKey();
+  }
+
+  public List<CompetitionScore> getWeeklyScores(@NonNull String uuid) {
+    try {
+      String apiKey = wovpSettings.getApiKey();
+      Wovp wovp = Wovp.create(apiKey);
+      Challenges challenges = wovp.getChallenges();
+      Optional<Challenge> first = challenges.getItems().stream().filter(c -> c.getId().equals(uuid)).findFirst();
+      if (first.isPresent()) {
+        Challenge challenge = first.get();
+        List<ScoreBoardItem> items = challenge.getScoreBoard().getItems();
+        return items.stream().map(item -> toCompetitionScore(item)).collect(Collectors.toList());
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to load weekly scores: {}", e.getMessage(), e);
+    }
+    return Collections.emptyList();
+  }
+
+  private CompetitionScore toCompetitionScore(ScoreBoardItem item) {
+    ScoreBoardItemPositionValues values = item.getValues();
+
+    CompetitionScore score = new CompetitionScore();
+    score.setAvatarUrl("https://www.vpin-mania.net/");
+    score.setLeague(values.getParticipantDivision());
+    score.setRank(values.getPosition());
+    score.setParticipantName(values.getParticipantName());
+    score.setUserId(values.getUserId());
+    score.setScore(values.getScore());
+    score.setPlatform(values.getParticipantPlayingPlatform());
+    score.setParticipantId(values.getParticipantId());
+    return score;
   }
 
   /**

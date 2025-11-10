@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.backups;
 
 import de.mephisto.vpin.restclient.backups.BackupDescriptorRepresentation;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.ProgressModel;
@@ -65,7 +66,8 @@ public class BackupDeleteProgressModel extends ProgressModel<BackupDescriptorRep
   @Override
   public void processNext(ProgressResultModel progressResultModel, BackupDescriptorRepresentation backup) {
     try {
-      List<GameRepresentation> gamesByFileName = client.getGameService().getGamesByFileName(-1, backup.getTableDetails().getGameFileName());
+      TableDetails tableDetails = backup.getTableDetails();
+      List<GameRepresentation> gamesByFileName = client.getGameService().getGamesByFileName(-1, tableDetails.getGameFileName());
       boolean b = client.getBackupService().deleteBackup(backup.getSource().getId(), backup.getFilename());
 
       for (GameRepresentation gameRepresentation : gamesByFileName) {

@@ -33,6 +33,17 @@ public class ScoreBoardItemPositionValues {
   @JsonProperty("UserId")
   private String userId;
 
+  @JsonProperty("ParticipantPlayingPlatform")
+  private int participantPlayingPlatform;
+
+  public int getParticipantPlayingPlatform() {
+    return participantPlayingPlatform;
+  }
+
+  public void setParticipantPlayingPlatform(int participantPlayingPlatform) {
+    this.participantPlayingPlatform = participantPlayingPlatform;
+  }
+
   public String getApprovalNote() {
     return approvalNote;
   }

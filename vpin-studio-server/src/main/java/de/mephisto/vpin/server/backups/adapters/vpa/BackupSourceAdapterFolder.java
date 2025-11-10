@@ -51,9 +51,11 @@ public class BackupSourceAdapterFolder implements BackupSourceAdapter {
         for (File archiveFile : vpaFiles) {
           try {
             TableDetails manifest = VpaArchiveUtil.readTableDetails(archiveFile);
-            BackupPackageInfo packageInfo = VpaArchiveUtil.readPackageInfo(archiveFile);
-            BackupDescriptor descriptor = new BackupDescriptor(source, manifest, packageInfo, new Date(archiveFile.lastModified()), archiveFile.getName(), archiveFile.getAbsolutePath(), archiveFile.length());
-            cache.add(descriptor);
+            if(manifest != null) {
+              BackupPackageInfo packageInfo = VpaArchiveUtil.readPackageInfo(archiveFile);
+              BackupDescriptor descriptor = new BackupDescriptor(source, manifest, packageInfo, new Date(archiveFile.lastModified()), archiveFile.getName(), archiveFile.getAbsolutePath(), archiveFile.length());
+              cache.add(descriptor);
+            }
           }
           catch (Exception e) {
             LOG.error("Failed to read " + archiveFile.getAbsolutePath() + ": " + e.getMessage(), e);

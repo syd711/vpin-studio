@@ -121,7 +121,13 @@ public class CompetitionsController implements Initializable, StudioFXController
   private TitledPane dashboardPane;
 
   @FXML
+  private VBox dashboardBox;
+
+  @FXML
   private WebView dashboardWebView;
+
+  @FXML
+  private VBox scoreBox;
 
   @FXML
   private Label dashboardStatusLabel;
@@ -169,12 +175,10 @@ public class CompetitionsController implements Initializable, StudioFXController
     discordController.onViewActivated(options);
     tableSubscriptionsController.onViewActivated(options);
 
-
-    IScoredSettings iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
-
     if (options != null && options.getModel() != null) {
       if (options.getModel() instanceof CompetitionType) {
         CompetitionType competitionType = (CompetitionType) options.getModel();
+        IScoredSettings iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
 
         if (competitionType.equals(CompetitionType.OFFLINE)) {
           tabPane.getSelectionModel().select(TAB_OFFLINE);
@@ -187,6 +191,9 @@ public class CompetitionsController implements Initializable, StudioFXController
         }
         else if (competitionType.equals(CompetitionType.ISCORED) && iScoredSettings.isEnabled()) {
           tabPane.getSelectionModel().select(TAB_ISCORED);
+        }
+        else if (competitionType.equals(CompetitionType.WEEKLY)) {
+          tabPane.getSelectionModel().select(TAB_WEEKLY);
         }
       }
     }
@@ -373,21 +380,30 @@ public class CompetitionsController implements Initializable, StudioFXController
   }
 
   private void refreshDashboard(Optional<CompetitionRepresentation> competitionRepresentation) {
-    String dashboardUrl = null;
+    dashboardWebView.setVisible(false);
+    dashboardStatusLabel.setVisible(false);
+    scoreBox.setVisible(false);
+
     if (competitionRepresentation.isPresent()) {
-      dashboardUrl = competitionRepresentation.get().getUrl();
-    }
-    dashboardBtn.setDisable(dashboardUrl == null);
-    dashboardWebView.setVisible(dashboardUrl != null);
-    dashboardStatusLabel.setVisible(dashboardUrl == null);
+      CompetitionRepresentation competition = competitionRepresentation.get();
+      if(competition.getType().equals(CompetitionType.ISCORED.name())) {
+        String dashboardUrl = competitionRepresentation.get().getUrl();
+        dashboardBtn.setDisable(dashboardUrl == null);
+        dashboardWebView.setVisible(dashboardUrl != null);
+        dashboardStatusLabel.setVisible(dashboardUrl == null);
 
-    if (dashboardUrl != null) {
-      WebEngine webEngine = dashboardWebView.getEngine();
-      webEngine.setUserStyleSheetLocation(Studio.class.getResource("web-style.css").toString());
+        if (dashboardUrl != null) {
+          WebEngine webEngine = dashboardWebView.getEngine();
+          webEngine.setUserStyleSheetLocation(Studio.class.getResource("web-style.css").toString());
 
-      if (lastDashboardUrl == null || !lastDashboardUrl.equals(dashboardUrl)) {
-        lastDashboardUrl = dashboardUrl;
-        webEngine.load(dashboardUrl);
+          if (lastDashboardUrl == null || !lastDashboardUrl.equals(dashboardUrl)) {
+            lastDashboardUrl = dashboardUrl;
+            webEngine.load(dashboardUrl);
+          }
+        }
+      }
+      else if(competition.getType().equals(CompetitionType.WEEKLY.name())) {
+        scoreBox.setVisible(true);
       }
     }
   }
@@ -756,6 +772,9 @@ public class CompetitionsController implements Initializable, StudioFXController
     loadTabs();
     sidePanelRoot = root.getRight();
     sidePanelRoot.managedProperty().bindBidirectional(sidePanelRoot.visibleProperty());
+
+    dashboardWebView.managedProperty().bindBidirectional(dashboardWebView.visibleProperty());
+    dashboardStatusLabel.managedProperty().bindBidirectional(dashboardStatusLabel.visibleProperty());
 
     updateSelection(Optional.empty());
     tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {

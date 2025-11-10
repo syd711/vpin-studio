@@ -66,6 +66,10 @@ public class CompetitionsServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "competitions/weekly/synchronize", Boolean.class);
   }
 
+  public List<CompetitionScore> getWeeklyCompetitions(String uuid) {
+    return Arrays.asList(getRestClient().get(API + "competitions/weekly/scores/" + uuid, CompetitionScore[].class));
+  }
+
   public List<CompetitionRepresentation> getSubscriptions() {
     return Arrays.asList(getRestClient().get(API + "competitions/subscriptions", CompetitionRepresentation[].class));
   }
