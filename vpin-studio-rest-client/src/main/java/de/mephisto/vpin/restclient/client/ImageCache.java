@@ -8,10 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ImageCache extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
@@ -42,7 +39,8 @@ public class ImageCache extends VPinStudioClientService {
         imageCache.put(imageUrl, bytes);
         LOG.info("Cached image URL " + imageUrl + ", cache size: " + imageCache.size());
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.warn("Failed to read image from URL: " + e.getMessage());
       return null;
     }
@@ -82,5 +80,11 @@ public class ImageCache extends VPinStudioClientService {
 
   public void clear(String url) {
     this.imageCache.remove(url);
+
+    for (String key : this.imageCache.keySet()) {
+      if (key.contains(url)) {
+        this.imageCache.remove(key);
+      }
+    }
   }
 }

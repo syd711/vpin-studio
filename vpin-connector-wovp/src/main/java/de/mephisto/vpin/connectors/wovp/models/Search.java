@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class Search {
   private String cultureCode = "en";
-  private List<String> expands = Arrays.asList("challenge.scoreboard", "challenge.pinballTable.minimum");
+  private List<String> expands = Arrays.asList("challenge.scoreboard", "challenge.pinballTableVersion.minimum", "challenge.pinballTable.minimum");
   private Filters filters = new Filters();
 
   public String getCultureCode() {

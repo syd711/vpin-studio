@@ -23,7 +23,7 @@
 <?import javafx.scene.web.WebView?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="root" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.CompetitionsController">
+<BorderPane fx:id="root" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.CompetitionsController">
 
     <center>
         <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
@@ -67,7 +67,7 @@
                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-check" />
                                     </graphic>
                                 </Tab>
-                                <Tab fx:id="weeklySubscriptionsTab" closable="false" text="Weekly Subscriptions">
+                                <Tab fx:id="weeklySubscriptionsTab" closable="false" text="Weekly Challenge">
                                     <content>
                                         <BorderPane prefHeight="200.0" prefWidth="200.0" />
                                     </content>
@@ -253,7 +253,7 @@
                             <content>
                                 <BorderPane>
                                     <center>
-                                        <ScrollPane vbarPolicy="NEVER">
+                                        <ScrollPane hbarPolicy="NEVER">
                                             <content>
                                                 <VBox fx:id="dashboardBox">
                                                     <children>
@@ -266,7 +266,7 @@
                                                             </padding>
                                                         </Label>
                                                         <WebView fx:id="dashboardWebView" prefHeight="800.0" prefWidth="580.0" />
-                                          <VBox fx:id="scoreBox" prefHeight="200.0" prefWidth="100.0" />
+                                          <VBox fx:id="scoreBox" prefWidth="590.0" styleClass="media-container" />
                                                     </children>
                                                 </VBox>
                                             </content>

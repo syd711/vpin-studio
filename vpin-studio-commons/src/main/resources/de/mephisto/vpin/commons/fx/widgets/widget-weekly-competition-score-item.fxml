@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.ImageView?>
@@ -8,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="widget-item" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.widgets.WidgetWeeklyCompetitionScoreItemController">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.widgets.WidgetWeeklyCompetitionScoreItemController">
     <center>
         <VBox fx:id="highscoreVBox" BorderPane.alignment="TOP_LEFT">
             <children>
@@ -21,25 +22,17 @@
                             </children>
                         </VBox>
                     </bottom>
-                    <left>
+               <center>
                         <HBox alignment="CENTER_RIGHT" BorderPane.alignment="CENTER">
                             <children>
-                                <Label fx:id="positionLabel" text="#" textFill="WHITE">
-                                    <HBox.margin>
-                                        <Insets right="12.0" />
-                                    </HBox.margin>
-                                    <font>
-                                        <Font size="18.0" />
-                                    </font>
-                                </Label>
                                 <Label fx:id="nameLabel" text="name" textFill="WHITE">
                                     <font>
-                                        <Font size="18.0" />
+                                        <Font size="22.0" />
                                     </font>
                                 </Label>
                             </children>
                         </HBox>
-                    </left>
+               </center>
                 </BorderPane>
             </children>
         </VBox>
@@ -48,10 +41,22 @@
         <Insets bottom="6.0" left="6.0" right="24.0" top="6.0" />
     </padding>
     <left>
-        <ImageView fx:id="avatarImageView" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER_LEFT">
-            <BorderPane.margin>
-                <Insets right="24.0" />
-            </BorderPane.margin>
-        </ImageView>
+      <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER_LEFT">
+         <BorderPane.margin>
+            <Insets right="24.0" />
+         </BorderPane.margin>
+         <children>
+                    <Label fx:id="positionLabel" prefWidth="50.0" text="#" textFill="WHITE">
+                        <font>
+                            <Font size="24.0" />
+                        </font>
+                    </Label>
+              <ImageView fx:id="avatarImageView" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true" />
+         </children>
+      </HBox>
     </left>
+   <styleClass>
+      <String fx:value="widget-item" />
+      <String fx:value="widget-score-item" />
+   </styleClass>
 </BorderPane>

@@ -245,8 +245,7 @@ public class CompetitionsController implements Initializable, StudioFXController
 
   @FXML
   private void onDashboardReload() {
-    WebEngine webEngine = dashboardWebView.getEngine();
-    webEngine.reload();
+    this.refreshDashboard(this.competition);
   }
 
   public void setSidebarVisible(boolean b) {
@@ -345,20 +344,37 @@ public class CompetitionsController implements Initializable, StudioFXController
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
         updateSelection(Optional.empty());
         checkTitledPanes(CompetitionType.ISCORED);
-        iScoredSubscriptionsController.onViewActivated(NavigationOptions.empty());
       }
     }
     else if (t1.intValue() == TAB_WEEKLY) {
       if (weeklySubscriptionsTab != null) {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Weekly Subscriptions"));
+        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Weekly Challenges"));
         updateSelection(Optional.empty());
         checkTitledPanes(CompetitionType.WEEKLY);
-        weeklySubscriptionsController.onViewActivated(NavigationOptions.empty());
       }
     }
     else {
       throw new UnsupportedOperationException("Invalid tab id");
     }
+  }
+
+  private StudioFXController getControllerForTab(int tabIndex) {
+    if (tabIndex == TAB_OFFLINE) {
+      return offlineController;
+    }
+    if (tabIndex == TAB_ONLINE) {
+      return discordController;
+    }
+    if (tabIndex == TAB_TABLE_SUBS) {
+      return tableSubscriptionsController;
+    }
+    if (tabIndex == TAB_ISCORED) {
+      return iScoredSubscriptionsController;
+    }
+    if (tabIndex == TAB_WEEKLY) {
+      return weeklySubscriptionsController;
+    }
+    throw new UnsupportedOperationException("Failed to find controller for index " + tabIndex);
   }
 
   public void setCompetition(CompetitionRepresentation competition) {
@@ -384,6 +400,7 @@ public class CompetitionsController implements Initializable, StudioFXController
         String dashboardUrl = competitionRepresentation.get().getUrl();
         dashboardBtn.setDisable(dashboardUrl == null);
         dashboardWebView.setVisible(dashboardUrl != null);
+        dashboardStatusLabel.setText("This competition has no dashboard URL.");
         dashboardStatusLabel.setVisible(dashboardUrl == null);
 
         if (dashboardUrl != null) {
@@ -398,7 +415,11 @@ public class CompetitionsController implements Initializable, StudioFXController
       }
       else if (competition.getType().equals(CompetitionType.WEEKLY.name())) {
         scoreBox.getChildren().removeAll(scoreBox.getChildren());
-        scoreBox.setVisible(true);
+        scoreBox.setVisible(false);
+
+        dashboardStatusLabel.setText("Loading Highscores...");
+        dashboardStatusLabel.setVisible(true);
+
 
         JFXFuture.supplyAsync(() -> {
           List<Pane> children = new ArrayList<>();
@@ -418,7 +439,9 @@ public class CompetitionsController implements Initializable, StudioFXController
           }
           return children;
         }).thenAcceptLater(children -> {
+          dashboardStatusLabel.setVisible(false);
           scoreBox.getChildren().addAll(children);
+          scoreBox.setVisible(!children.isEmpty());
         });
       }
     }
@@ -618,10 +641,10 @@ public class CompetitionsController implements Initializable, StudioFXController
     }
     else if (index == TAB_WEEKLY) {
       if (competitionRepresentation.isPresent()) {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Weekly Subscriptions", competitionRepresentation.get().getName()));
+        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Weekly Challenges", competitionRepresentation.get().getName()));
       }
       else {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Weekly Subscriptions"));
+        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Weekly Challenges"));
       }
     }
     else {
@@ -793,8 +816,10 @@ public class CompetitionsController implements Initializable, StudioFXController
     dashboardStatusLabel.managedProperty().bindBidirectional(dashboardStatusLabel.visibleProperty());
 
     updateSelection(Optional.empty());
-    tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
-      refreshView(t1);
+    tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, oldTabIndex, newTabIndex) -> {
+      getControllerForTab(oldTabIndex.intValue()).onViewDeactivated();
+      refreshView(newTabIndex);
+      getControllerForTab(newTabIndex.intValue()).onViewActivated(null);
     });
     dashboardStatusLabel.managedProperty().bindBidirectional(dashboardStatusLabel.visibleProperty());
     checkTitledPanes(CompetitionType.OFFLINE);

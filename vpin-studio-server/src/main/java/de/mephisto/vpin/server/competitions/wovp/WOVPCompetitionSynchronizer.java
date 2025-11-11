@@ -1,10 +1,7 @@
 package de.mephisto.vpin.server.competitions.wovp;
 
 import de.mephisto.vpin.connectors.wovp.Wovp;
-import de.mephisto.vpin.connectors.wovp.models.Challenge;
-import de.mephisto.vpin.connectors.wovp.models.ChallengeTypeCode;
-import de.mephisto.vpin.connectors.wovp.models.Challenges;
-import de.mephisto.vpin.connectors.wovp.models.PinballTable;
+import de.mephisto.vpin.connectors.wovp.models.*;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.wovp.WOVPSettings;
@@ -40,17 +37,17 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
   @Autowired
   private GameService gameService;
 
-  public boolean synchronizeWovp() {
+  public synchronized boolean synchronizeWovp(boolean forceReload) {
     try {
       WOVPSettings wovpSettings = preferencesService.getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
       String apiKey = wovpSettings.getApiKey();
-      if (!StringUtils.isEmpty(apiKey)) {
+      if (!StringUtils.isEmpty(apiKey) && wovpSettings.isEnabled()) {
         Wovp wovp = Wovp.create(apiKey);
         Challenges challenges = wovp.getChallenges();
         if (challenges != null) {
           List<Competition> weeklyCompetitions = competitionService.getWeeklyCompetitions();
           for (Challenge challenge : challenges.getItems()) {
-            synchronizeChallenge(challenge, weeklyCompetitions, wovpSettings);
+            synchronizeChallenge(challenge, weeklyCompetitions, wovpSettings, forceReload);
           }
         }
         return true;
@@ -63,13 +60,14 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
   }
 
 
-  private void synchronizeChallenge(Challenge challenge, List<Competition> weeklyCompetitions, WOVPSettings wovpSettings) {
+  private void synchronizeChallenge(Challenge challenge, List<Competition> weeklyCompetitions, WOVPSettings wovpSettings, boolean forceReload) {
     String challengeId = challenge.getId();
     ChallengeTypeCode challengeTypeCode = challenge.getChallengeTypeCode();
     for (Competition competition : weeklyCompetitions) {
       if (challengeTypeCode.name().equals(competition.getMode())) {
         Game game = gameService.getGame(competition.getGameId());
-        if (!challengeId.equals(competition.getUuid()) || game == null) {
+        //the id is not matching when it is outdated
+        if (!challengeId.equals(competition.getUuid()) || game == null || forceReload) {
           updateCompetition(competition, challenge, wovpSettings, game);
         }
         return;
@@ -81,10 +79,12 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
   }
 
   private void updateCompetition(@NonNull Competition competition, @NonNull Challenge challenge, WOVPSettings wovpSettings, @Nullable Game game) {
-    competition.setUrl(challenge.getPinballTable().getBackglassImage().getMediumVariant().getUrl());
+    competition.setUrl("https://worldofvirtualpinball.com/en/challenge/ranking?tab=challenges");
     competition.setUuid(challenge.getId());
     competition.setName(challenge.getName());
+    competition.setOwner("World Of Virtual Pinball");
     competition.setVpsTableId(challenge.getPinballTable().getExternalId());
+    competition.setVpsTableVersionId(challenge.getPinballTableVersion().getExternalId());
     competition.setType(CompetitionType.WEEKLY.name());
     competition.setStartDate(challenge.getStartDateUTC());
     competition.setEndDate(challenge.getEndDateUTC());
@@ -93,7 +93,8 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
 
     if (game == null) {
       PinballTable pinballTable = challenge.getPinballTable();
-      List<Game> gameMatches = gameService.getGamesByVpsTableId(pinballTable.getExternalId(), null);
+      PinballTableVersion pinballTableVersion = challenge.getPinballTableVersion();
+      List<Game> gameMatches = gameService.getGamesByVpsTableId(pinballTable.getExternalId(), pinballTableVersion.getExternalId());
       if (gameMatches.isEmpty()) {
         LOG.info("No matching game found for weekly challenge \"{}\"", challenge.getChallengeTypeCode());
       }
@@ -116,7 +117,7 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
         long start = System.currentTimeMillis();
         Thread.currentThread().setName("Wovp Initial Sync");
         LOG.info("----------------------------- Initial WOVP Sync --------------------------------------------------");
-        synchronizeWovp();
+        synchronizeWovp(false);
         LOG.info("----------------------------- /Initial WOVP Sync -------------------------------------------------");
         LOG.info("Initial sync finished, took {}ms", (System.currentTimeMillis() - start));
       }).start();
@@ -126,7 +127,7 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
   @Override
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
     if (PreferenceNames.WOVP_SETTINGS.equals(propertyName)) {
-      synchronizeWovp();
+      synchronizeWovp(false);
     }
   }
 

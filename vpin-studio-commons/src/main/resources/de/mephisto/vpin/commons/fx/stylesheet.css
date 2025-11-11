@@ -60,6 +60,11 @@
     -fx-text-fill: #FFFFFF;
 }
 
+.widget-score-item {
+    -fx-border-style: hidden 1px 1px 1px;
+    -fx-border-color: #222222;
+}
+
 /**
  * Breadcrumb
  */

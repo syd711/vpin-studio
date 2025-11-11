@@ -34,11 +34,12 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
   private WOVPCompetitionSynchronizer wovpCompetitionSynchronizer;
 
   private WOVPSettings wovpSettings;
+  private Wovp wovp;
 
 
   public String validateKey() {
     String apiKey = wovpSettings.getApiKey();
-    Wovp wovp = Wovp.create(apiKey);
+    wovp = Wovp.create(apiKey);
     return wovp.validateKey();
   }
 
@@ -83,15 +84,17 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
    * The WOVP service does not need to return a specific value for the sync result.
    * The weekly competitions should remain abstract from the specific competition organizer.
    */
-  public boolean synchronize() {
-    return wovpCompetitionSynchronizer.synchronizeWovp();
+  public boolean synchronize(boolean forceReload) {
+    return wovpCompetitionSynchronizer.synchronizeWovp(forceReload);
   }
 
   @Override
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
     if (PreferenceNames.WOVP_SETTINGS.equals(propertyName)) {
       wovpSettings = preferencesService.getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
-      synchronize();
+      new Thread(() -> {
+        synchronize(false);
+      }).start();
     }
   }
 
@@ -99,7 +102,9 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
   public void afterPropertiesSet() throws Exception {
     wovpSettings = preferencesService.getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
     preferencesService.addChangeListener(this);
-    synchronize();
+    new Thread(() -> {
+      synchronize(false);
+    }).start();
     LOG.info("Initialized {}", this.getClass().getSimpleName());
   }
 }
