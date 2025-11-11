@@ -1,14 +1,43 @@
 package de.mephisto.vpin.restclient.competitions;
 
+import java.util.Date;
+
 public class CompetitionScore {
   private String userId;
   private String participantId;
   private String participantName;
+  private String participantCountryCode;
   private double score;
   private int rank;
   private String avatarUrl;
+  private String challengeImageUrl;
   private String league;
   private int platform;
+  private Date creationDate;
+
+  public String getParticipantCountryCode() {
+    return participantCountryCode;
+  }
+
+  public void setParticipantCountryCode(String participantCountryCode) {
+    this.participantCountryCode = participantCountryCode;
+  }
+
+  public String getChallengeImageUrl() {
+    return challengeImageUrl;
+  }
+
+  public void setChallengeImageUrl(String challengeImageUrl) {
+    this.challengeImageUrl = challengeImageUrl;
+  }
+
+  public Date getCreationDate() {
+    return creationDate;
+  }
+
+  public void setCreationDate(Date creationDate) {
+    this.creationDate = creationDate;
+  }
 
   public int getPlatform() {
     return platform;

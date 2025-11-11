@@ -2,7 +2,6 @@ package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController;
 import de.mephisto.vpin.commons.utils.JFXFuture;
-import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -12,7 +11,10 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.restclient.wovp.WOVPSettings;
-import de.mephisto.vpin.ui.*;
+import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.NavigationItem;
+import de.mephisto.vpin.ui.NavigationOptions;
+import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.competitions.dialogs.IScoredGameCellContainer;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
@@ -30,8 +32,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -40,8 +40,6 @@ import javafx.util.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
@@ -145,7 +143,7 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
     JFXFuture.supplyAsync(() -> {
       if (this.weeklySubscriptions == null || forceReload) {
         client.getCompetitionService().synchronizeWeeklyCompetitions();
-        weeklySubscriptions = client.getCompetitionService().getWeeklyCompetitions();
+        weeklySubscriptions = client.getCompetitionService().getWeeklyCompetitionScores();
       }
       return weeklySubscriptions;
     }).thenAcceptLater((weeklySubscriptions) -> {
@@ -281,18 +279,6 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
 
       vBox.getChildren().add(endDateLabel);
       vBox.getChildren().add(durationLabel);
-
-      Image image = null;
-      try {
-        image = new Image(new FileInputStream("C:\\Users\\matth\\Downloads\\flags_png\\as.png"));
-      }
-      catch (FileNotFoundException e) {
-        throw new RuntimeException(e);
-      }
-      ImageView v = new ImageView(image);
-      v.setPreserveRatio(true);
-      v.setFitWidth(100);
-      vBox.getChildren().add(v);
       return new SimpleObjectProperty(vBox);
     });
 

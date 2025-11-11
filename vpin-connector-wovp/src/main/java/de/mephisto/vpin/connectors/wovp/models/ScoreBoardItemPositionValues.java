@@ -36,6 +36,17 @@ public class ScoreBoardItemPositionValues {
   @JsonProperty("ParticipantPlayingPlatform")
   private int participantPlayingPlatform;
 
+  @JsonProperty("ParticipantCountryCode")
+  private String participantCountryCode;
+
+  public String getParticipantCountryCode() {
+    return participantCountryCode;
+  }
+
+  public void setParticipantCountryCode(String participantCountryCode) {
+    this.participantCountryCode = participantCountryCode;
+  }
+
   public int getParticipantPlayingPlatform() {
     return participantPlayingPlatform;
   }

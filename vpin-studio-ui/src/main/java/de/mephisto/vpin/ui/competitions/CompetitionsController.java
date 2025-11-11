@@ -2,11 +2,11 @@ package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.fx.discord.DiscordUserEntryController;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenuUIDefaults;
-import de.mephisto.vpin.commons.utils.CommonImageUtil;
-import de.mephisto.vpin.commons.utils.TransitionUtil;
-import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.fx.widgets.WidgetWeeklyCompetitionScoreItemController;
+import de.mephisto.vpin.commons.utils.*;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
+import de.mephisto.vpin.restclient.competitions.CompetitionScore;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.competitions.JoinMode;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
@@ -32,10 +32,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -46,10 +43,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
@@ -386,7 +380,7 @@ public class CompetitionsController implements Initializable, StudioFXController
 
     if (competitionRepresentation.isPresent()) {
       CompetitionRepresentation competition = competitionRepresentation.get();
-      if(competition.getType().equals(CompetitionType.ISCORED.name())) {
+      if (competition.getType().equals(CompetitionType.ISCORED.name())) {
         String dashboardUrl = competitionRepresentation.get().getUrl();
         dashboardBtn.setDisable(dashboardUrl == null);
         dashboardWebView.setVisible(dashboardUrl != null);
@@ -402,8 +396,30 @@ public class CompetitionsController implements Initializable, StudioFXController
           }
         }
       }
-      else if(competition.getType().equals(CompetitionType.WEEKLY.name())) {
+      else if (competition.getType().equals(CompetitionType.WEEKLY.name())) {
+        scoreBox.getChildren().removeAll(scoreBox.getChildren());
         scoreBox.setVisible(true);
+
+        JFXFuture.supplyAsync(() -> {
+          List<Pane> children = new ArrayList<>();
+          try {
+            List<CompetitionScore> weeklyCompetitionScores = client.getCompetitionService().getWeeklyCompetitionScores(competition.getUuid());
+            for (CompetitionScore score : weeklyCompetitionScores) {
+              FXMLLoader loader = new FXMLLoader(WidgetWeeklyCompetitionScoreItemController.class.getResource("widget-weekly-competition-score-item.fxml"));
+              BorderPane row = loader.load();
+              WidgetWeeklyCompetitionScoreItemController controller = loader.getController();
+              row.setMaxWidth(Double.MAX_VALUE);
+              controller.setData(score);
+              children.add(row);
+            }
+          }
+          catch (IOException e) {
+            LOG.error("Failed to load competition score panel: {}", e.getMessage(), e);
+          }
+          return children;
+        }).thenAcceptLater(children -> {
+          scoreBox.getChildren().addAll(children);
+        });
       }
     }
   }

@@ -51,7 +51,7 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
       if (first.isPresent()) {
         Challenge challenge = first.get();
         List<ScoreBoardItem> items = challenge.getScoreBoard().getItems();
-        return items.stream().map(item -> toCompetitionScore(item)).collect(Collectors.toList());
+        return items.stream().map(item -> toCompetitionScore(challenge, item)).collect(Collectors.toList());
       }
     }
     catch (Exception e) {
@@ -60,16 +60,20 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
     return Collections.emptyList();
   }
 
-  private CompetitionScore toCompetitionScore(ScoreBoardItem item) {
+  private CompetitionScore toCompetitionScore(Challenge challenge, ScoreBoardItem item) {
     ScoreBoardItemPositionValues values = item.getValues();
 
+    String backgroundImageUrl = challenge.getPinballTable().getBackglassImage().getMediumVariant().getUrl();
+
     CompetitionScore score = new CompetitionScore();
-    score.setAvatarUrl("https://www.vpin-mania.net/");
+    score.setChallengeImageUrl(backgroundImageUrl);
+    score.setAvatarUrl("https://www.vpin-mania.net/flags/" + values.getParticipantCountryCode().toLowerCase() + ".png");
     score.setLeague(values.getParticipantDivision());
     score.setRank(values.getPosition());
     score.setParticipantName(values.getParticipantName());
     score.setUserId(values.getUserId());
     score.setScore(values.getScore());
+    score.setParticipantCountryCode(values.getParticipantCountryCode());
     score.setPlatform(values.getParticipantPlayingPlatform());
     score.setParticipantId(values.getParticipantId());
     return score;
