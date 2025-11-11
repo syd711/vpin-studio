@@ -95,4 +95,5 @@
 - **VPS Updates**: The VPS update indicator in the table overview is working correctly now. E.g. the VPS version **1.4**
   and the table version **1.4.0** where detected as identical now which wasn't the case before.  
 - **Backups**: Added custom B2STableSettings.xml to backups when the file is part of a separate table folder. 
+- **Backups**: The backup is now written into a temporary local file and then copied to the target folder. This should solve issues when creating backus for a NAS device. 
 
