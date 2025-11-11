@@ -14,43 +14,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.Iterator;
 
 public class DMDUploadProgressModel extends UploadProgressModel {
   private final static Logger LOG = LoggerFactory.getLogger(DMDUploadProgressModel.class);
 
-  private final Iterator<File> iterator;
   private final int emulatorId;
-  private final File file;
   private final GameRepresentation game;
 
-  public DMDUploadProgressModel(String title, File file, int emulatorId, GameRepresentation game, Runnable finalizer) {
-    super(file, title, finalizer);
+  public DMDUploadProgressModel(String title, File file, int emulatorId, GameRepresentation game) {
+    super(file, title);
     this.emulatorId = emulatorId;
-    this.file = file;
     this.game = game;
-    this.iterator = Collections.singletonList(this.file).iterator();
-  }
-
-  @Override
-  public boolean isShowSummary() {
-    return false;
-  }
-
-  @Override
-  public int getMax() {
-    return 1;
-  }
-
-  @Override
-  public File getNext() {
-    return iterator.next();
-  }
-
-  @Override
-  public String nextToString(File file) {
-    return "Uploading " + file.getName();
   }
 
   @Override
@@ -77,10 +51,5 @@ public class DMDUploadProgressModel extends UploadProgressModel {
     catch (Exception e) {
       LOG.error("DMD bundle upload failed: " + e.getMessage(), e);
     }
-  }
-
-  @Override
-  public boolean hasNext() {
-    return iterator.hasNext();
   }
 }

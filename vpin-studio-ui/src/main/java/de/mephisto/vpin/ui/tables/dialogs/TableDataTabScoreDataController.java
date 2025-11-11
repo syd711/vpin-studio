@@ -189,7 +189,7 @@ public class TableDataTabScoreDataController implements Initializable {
       applyAltRomBtn.setDisable(false);
     }
 
-    resetBtn.setVisible(game.isVpxGame());
+    resetBtn.setVisible(client.getEmulatorService().isVpxGame(game));
 
     scannedRomName.setText(game.getScannedRom());
     applyRomBtn.setDisable(StringUtils.isEmpty(scannedRomName.getText()));
@@ -214,7 +214,7 @@ public class TableDataTabScoreDataController implements Initializable {
   }
 
   public void refreshScannedValues() {
-    if (!game.isVpxGame()) {
+    if (!client.getEmulatorService().isVpxGame(game)) {
       return;
     }
 

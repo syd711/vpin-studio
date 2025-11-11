@@ -30,6 +30,7 @@ public class CardGraphicsHighscore extends StackPane {
   private CardResolution res;
 
   CardLayerBackground backgroundLayer = new CardLayerBackground();
+  CardLayerFrame frameLayer = new CardLayerFrame();
   CardLayerCanvas canvasLayer = new CardLayerCanvas();
   CardLayerTitle titleLayer = new CardLayerTitle();
   CardLayerTableName tableNameLayer = new CardLayerTableName();
@@ -38,7 +39,7 @@ public class CardGraphicsHighscore extends StackPane {
   CardLayerOtherMedia otherMediaLayer = new CardLayerOtherMedia();
   CardLayerScores scoresLayer = new CardLayerScores();
 
-  List<CardLayer> layers = Arrays.asList(backgroundLayer, canvasLayer, manufacturerLayer, otherMediaLayer, wheelLayer, 
+  List<CardLayer> layers = Arrays.asList(backgroundLayer, frameLayer, canvasLayer, manufacturerLayer, otherMediaLayer, wheelLayer, 
       titleLayer, tableNameLayer, scoresLayer);
 
   /** Activate the layers to visualize the disposition */
@@ -120,6 +121,14 @@ public class CardGraphicsHighscore extends StackPane {
     }
     else {
       backgroundLayer.setVisible(false);
+    }
+
+    if (template.isRenderFrame()) {
+      frameLayer.setVisible(true);
+      resizeRelocate(frameLayer, 0, 0, WIDTH, HEIGHT, zoomX, zoomY);
+    }
+    else {
+      frameLayer.setVisible(false);
     }
 
     if (template.isRenderCanvas()) {

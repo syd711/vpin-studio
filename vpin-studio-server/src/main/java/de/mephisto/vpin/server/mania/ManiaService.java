@@ -525,7 +525,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   @Override
   public void gameDataChanged(@NonNull GameDataChangedEvent event) {
     if (Features.MANIA_ENABLED) {
-      synchronizeTables();
+      //do not sync for games updates as this may be an action for a lot of tables
     }
   }
 
@@ -574,7 +574,6 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
         ServerFX.maniaClient = maniaClient;
 
         cabinet = maniaClient.getCabinetClient().getCabinet();
-        synchronizeTables();
 
         preferencesService.addChangeListener(this);
         maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
@@ -599,9 +598,11 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
     if (Features.MANIA_ENABLED) {
       Cabinet cabinet = maniaClient.getCabinetClient().getCabinetCached();
       if (cabinet != null) {
-        LOG.info("Cabinet is registered on VPin-Mania");
-        Thread.currentThread().setName("VPin Mania Tables Synchronizer");
-        synchronizeTables();
+        new Thread(() -> {
+          Thread.currentThread().setName("VPin Mania Tables Synchronizer");
+          LOG.info("Cabinet is registered on VPin-Mania");
+          synchronizeTables();
+        }).start();
       }
       else {
         LOG.info("Cabinet is not registered on VPin-Mania");

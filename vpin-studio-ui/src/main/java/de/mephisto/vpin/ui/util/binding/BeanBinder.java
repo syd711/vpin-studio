@@ -4,6 +4,7 @@ import de.mephisto.vpin.ui.util.FontSelectorDialog;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -27,7 +28,7 @@ public class BeanBinder<T> {
 
   private List<Runnable> onBeanSet = new ArrayList<>();
 
-  private T bean;
+  protected T bean;
 
   private boolean paused;
 
@@ -180,8 +181,7 @@ public class BeanBinder<T> {
   public void bindSlider(Slider slider, String property, Function<Number, Object> mapperToValue, Function<Object, Number> mapperToNumber) {
     slider.valueProperty().addListener((obs, oldValue, newValue) -> {
       setProperty(property, mapperToValue.apply(newValue));
-
-  });
+    });
     onBeanSet.add(() -> {
       Object value = getProperty(property, null);
       try {
@@ -190,6 +190,16 @@ public class BeanBinder<T> {
       catch (NumberFormatException e) {
         LOG.error("Failed to convert {} {} to Number : {}", property, value, e.getMessage());
       }
+    });
+  }
+
+  //--------------------------------------
+
+  public void bindVisibility(Node node, String property) {
+    node.managedProperty().bindBidirectional(node.visibleProperty());
+    onBeanSet.add(() -> {
+      boolean value = getBooleanProperty(property, false);
+      node.setVisible(value);
     });
   }
 

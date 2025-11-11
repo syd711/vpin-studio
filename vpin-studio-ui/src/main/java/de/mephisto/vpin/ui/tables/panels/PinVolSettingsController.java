@@ -158,11 +158,11 @@ public class PinVolSettingsController implements Initializable {
 
       if (games.size() == 1) {
         GameRepresentation game = games.get(0);
-        entry = pinVolTablePreferences.getTableEntry(game.getGameFileName(), game.isVpxGame(), game.isFpGame());
+        entry = pinVolTablePreferences.getTableEntry(game.getGameFileName(), client.getEmulatorService().isVpxGame(game), client.getEmulatorService().isFpGame(game));
       }
       else {
         for (GameRepresentation game : games) {
-          entry = pinVolTablePreferences.getTableEntry(game.getGameFileName(), game.isVpxGame(), game.isFpGame());
+          entry = pinVolTablePreferences.getTableEntry(game.getGameFileName(), client.getEmulatorService().isVpxGame(game), client.getEmulatorService().isFpGame(game));
           if (entry != null) {
             break;
           }

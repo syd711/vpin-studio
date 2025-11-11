@@ -1,161 +1,99 @@
-## Release Notes 4.3.10
-
-- DOF Server: Removed installation check.
-- Backups: Added option to overwrite existing backups, enabled by default.
-- Backups: Fixed refresh bug that had shown duplicated entries.
-- Table Asset Manager: Re-enable media search for tables that have the field 'Media Search' set.
-- Table Asset Manager: Added exclamation mark icon with hint that when the 'Media Search' field is set, downloaded assets might not be displayed in the installed assets field.
-- VPin Mania highscore synchronization dialog: Replaced the white check icon with an exclamation mark to indicate that is has a tooltip with the synchronization result and why it is white (skipped) and not green (submitted).
-- Competitions: Fixed generation of the black gradient for the background image. Note that you have to re-create a competition to fix the image if the gradient was broken before.  
-
----
-
-## Release Notes 4.3.9
-
-- Notifications: Added **text margin** spinner which allows you to adjust the notification text positions in case it is off.
-- Backups: Fixed missing backup of .directb2s files when .vpx files are located in their own sub-folder.
-- Backups: Added auto-detection for sub-folder based backups. Tables are now restored into their own-subfolder when they have been backed-up this way.
-- Backups: Added backup and restore of the table's **B2STableSettings.xml** data. (Note that you have to backup your tables again if you want to have this data included.)
-- Table Data Section: Added missing field **Media Search**.
-- Table Media Section: Added label for value **Media Search** which can override the asset name value.
-- Table Data Manager: Added missing input field for the **Media Search** data on the "Meta Data" tab, including a help tooltip.
-- Table Asset Manager: Added check for the field value **Media Search** which can override the asset name value. (_Note that no assets can be searched for tables which have a **Media Search** set. I'm not sure if this solution is valid yet, but I found it confusing that you can download assets and they don't appear in the asset list afterwards)_.
-- Miscellaneous: Enabled text wrap for most textareas for a better readability.
-
-
---- 
-
-## Release Notes 4.3.8
-
-- Jobs Menu: Added **Cancel All** button to cancel all queued jobs.
-- Jobs Menu: Fixed several UI freezes when hundreds of backups are started at once.
-- Recording Dialog: Added hint that the GL version is not supported for recordings.
-- Recording Dialog: Filtered the VPX GL version from the emulator combobox.
-- Backups: Fixed memory leak and possible concurrent access errors.
-- Notifications: Added **test button** that shows a test notification.
-- Notifications: Added **margin offset** spinner which allows you to adjust the notification position in case it is off.
-
----
-
-## Release Notes 4.3.7
-
-- Backups: Fixed memory leak that happened when apng files have been used as preview icon for backup files.
-- Table Overview: Changed order of status icons. The backup icons are the aligned left to the status icon.
-- DOF Preferences: Fixed error in installation check.
-- The startup time for the server has been significantly improved. Thank you @gorgatron for helping us testing these changes. 
-
----
-
-## Release Notes 4.3.6
-
-- Fixed delete action for backups.
-- Performance optimization: Added caching for game media data which will improve the performance of the dashboard and player's score list.
-- Performance optimization: Improved all list views (dashboard, player highscores, competitions) so that only the first frame of .apng wheel icons is loaded. When shown in dialogs, competition headers or in the asset manager, the full .apng animations are loaded and shown.
-
----
-
-## Release Notes 4.3.5
+## Release Notes 4.4.0
 
 ## Changes
 
-- Improved performance of backup loading.
-- Fixed table sorting of backups.
-- Fixed some upload dialog issues that where misaligned for long filenames.
-- Fixed of PinVOL settings: If the PinVOL service is running while saving changes, it is restarted now so that the in-memory values are not used on table start.
-- Added additional "Hide Toolbar" call for frontend based recordings. The frontend itself (e.g. Popper) should take care of the, but there are reports about the Windows toolbar not hiding.
+- **Tag Management**
+    - The Studio comes with a comprehensive tag management now. Tags are displayed as part of the Table Data Manager
+      dialog and are also visible in the Table Data section. The tagging support contains the following features:
+        - Managing table tags in the Table Data Manager dialog.
+        - Remove tags or filter by tags by clicking on them when shown in the Table Data section.
+        - Tag filtering support for the filter section.
+        - Auto-tagging support for new table uploads (see Preferences -> Table Validators).
+        - Auto-tagging support for new backglass uploads (see Preferences -> Backglass Validators).
+        - Auto-tagging support for media asset changes (see Preferences -> Screen Validators).
+        - Bulk tag adding/removing via context menu action for the selected tables.
 
----
+      <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/tagging.png?raw=true" width="600" />
 
-## Release Notes 4.3.4
+- **Zen Studio and Zaccaria Tables Support**
+    - The emulator support for Zaccaria and Zen Emulators have been improved. The table overview does show now more
+      accurate table columns and sidepanels depending on the selected emulator.
+    - The play button is now shown for these emulators too. It allows launching tables via the Popper frontend or via
+      **Steam**.
 
-## Changes
+      <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/launch-steam.png?raw=true" width="500" />
 
-- Fixed VPin Mania view that was broken due to previous icon changes.
-- Fixed drag and drop issues where the drop zones for screens have not been resetted on drag-exit.
-- Added performance logging for backup to evaluate possible issues.
-- Fixed spaces in tag-names of b2STableSettings.xml.
-- Added drag and drop support for assets. You can now **copy** assets directly between screens via drag and drop. This might come in handy when you want to use the playfield video as loading video too. Note that the asset type is not checked for this operation.
+    - **ALT Color** management has been enabled for FX and FX3. Note that you need to configure the game itself in order
+      to
+      support external DMD providers.
+    - The paths information for these emulators are automatically resolved when created, including the Steam path.
+    - The Studio comes with integrated .pupgames lists now: When a new emulator is added, related games are
+      automatically added to the game library.
 
-  <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/dnd.png?raw=true" width="700" />
+      <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/system-manager/new-emulator.png?raw=true" width="500" />
 
----
+- **System Tray**
+    - Added "Restart" menu item.
 
-## Release Notes 4.3.3
+- **Discord Notifications**:
+    - Added more logging for related events. No Discord notifications are emitted when the Studio detects a
+      highscore for the first time. This should avoid sending update events for initial scores. An additional log
+      message has been added to the "Event Log" for this.
 
-## Changes
+- **Table Overview**
+    - Replaced the white "checked" icons or .ini, .res and .directb2s files with edit button. These files can now
+      directly be edited via the systems default text editor. For backglasses, the corresponding backglass is selected
+      in the backglass manager.
+    - Switched order of the backglass and the PUP pack column.
+    - Detection of included VBS scripts when parsing the table script and analysis of these scripts when scanning game.
+    - Saved VP-spreadsheet ID in XML database file for PinballX / PinballY.
+    - Added VPX validator, triggered when an included script is not present in the **scripts** folder.
+    - Added **Save globally** button to store DMD position globally.
+    - Added detection of dual Backglasses and support of mode in backglass setup.
+    - Removed .ini section since the .ini file can now directly be edited from the table overview.
+    - Added edit, upload and delete actions for .ini, .res. and .pov files to the section "Table Data".
 
-- Backups: Fixed memory leak.
+      <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/table-files.png?raw=true" width="500" />
 
----
+- **Media Management**
+    - **Added a new media type: Logo**. It generally corresponds to a small horizontal image. Like a wheel, it helps
+      to identify a table visually but is simpler, generally the name of the table written with the font of the table.
+    - Added zones to upload and search logos in MediaManager and in the Table Media sidebar.
+    - Added checkbox in media preference to add a validator that check presence of logo.
+    - For PinballX and PinballY, auto-invert playfield assets when copied from non PinballX assets source.
+    - For PinballY, added search section on Superhac, Kongedam tutorials and personal assets sources.
 
-## Release Notes 4.3.2
+        <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/logo-asset.png?raw=true" width="600" />
 
-## Changes
+    - Added new default asset source: Table logos. These assets are solely for the "Logo" screen and can be used
+      for the highscore card or wheel design.
 
-- Backups: Fixed critical refresh issue that lead to an endless reload of backups after creating a backup and restarting the Studio.
-- Backups: Added footer label to show the amount of backup files.
+      <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/logo-source.png?raw=true" width="600" />
 
----
+- **Highscore Cards / Wheel Designer**
+    - Added wheel generator, default template generates Tarcissio styled-wheels.
+    - The **Highscore Card** tab has been renamed to **Designer** accordingly.
+    - In the frame sidebar section, the option to upload frame images has been added. A Tarcissio wheel frame and a
+      black wheel frame are provided by default.
+    - The **logo** media from the **Logo** media source can be used in your wheel, it is accessible in **Other Media**
+      section of the designer. This is even the main reason behind its introduction.
+    - Added possibility to backup existing assets when generating cards. An option has been added to the highscores card
+      preferences.
+    - Refactored how the VPin Studio finds a previously generated card. If backup is activated, existing cards not being tagged,
+      the server will generate new highscore cards in addition to the existing one. Old ones can be deleted as obsolete.
+      The new ones will be updated automatically.
 
-## Release Notes 4.3.1
+      <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/cards/wheel-designer.png?raw=true" width="700" />
 
-## Changes
+- **Backglass Server Preferences**
 
-- Fixed missing icons that prevented the preferences from being loaded.
-
----
-
-## Release Notes 4.3.0
-
-## Changes
-
-- **Table Backups**
-  - The "Default Backups Folder" is not mandatory anymore and can be re-configured with another name and folder.
-  - Added backup indicator for the tables overview so that you can immediately see which tables are backed up already. 
-    
-    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/backups/indicator.png?raw=true" width="500" />
-
-- **Folder Selections**
-  - Added new dialog to select folders from the remote system. This allows the configurations at a lot of places now, where it only had been possible when the Studio was used on the cabinet itself. This also helps set up **backup folders** from remote.
-  
-     <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/misc/folder-chooser.png?raw=true" width="700" />
-
-- **Tables Overview**
-  - Support of next/previous navigation in DmdPosition tool when opened from the tables overview.
-  - Support of next/previous navigation in the Table Data dialog.
-  - Added "Save" shortcut (Ctrl+S) in Table Data dialog.
-  - Added support of puppack in studio for PinballX and PinballY
-
-- **BackglassManager**
-  - Added a frame generator directly in studio, on an idea and python script provided by @Himura95. Four different generators are provided: 
-    - Ambilight: Uses the pixels on the edge of the backglass to generate the frame.
-    - Blurred: Creates a blurred zoom of the backglass.
-    - Mirror: Creates a blurred mirror reflection with perspective.
-    - Gradient: Calculates the dominant color of the image and use it to draw a gradient to black.
-
-     <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/backglassmanager/res-default.png?raw=true" width="350" />   
-     <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/backglassmanager/res-mirror.png?raw=true" width="350" />   
-
-- **Assets and Media** 
-  - In the Table Media tab of the tables sidebar, videos are now previewed as one frame vs. the full video that is consuming lots of CPU. On mouse over, a play button is shown to start the video playback. A stop icon button stops the video.
-  - In Table Asset Manager, added "Set A Default" button to choose default asset in the list of assets.
-  - Improved streaming of table assets and frontend media.
-   
-    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/media-sidebar.png?raw=true" width="500" /> 
-
-- **Highscore Cards** 
-  - Raw highscore text is split into different columns now to fit the zone.
-
-- **PinVol Preferences** 
-  - Added possibility to change the installation folder of PinVol and switch between PinVol provided as part of Studio to an installed version.
-  - Improved monitoring of the PinVol process.
-
-- **Misc**
-  - Updated vpxtools.exe to v0.24.2. Thanks again to @francisdb here for his awesome tool!
+  - Added option **Extended "B2STableSettings.xml" Search** which allows to configure where to look for the B2STableSettings.xml file.
 
 ## Bugfixes
 
-- Fixed wrong update check that happened when one client was connected/disconnected to different servers.
-- Fixed pause menu that did not load the highscore card.
-- Fixed performance issues during re-installations for cabinets that have already been registered on vpin-mania.net.
-- Fixed refresh after table patching: The table scan is triggered after patching a table now. This will detect additional changes made by the patch, e.g. the DMD type.
+- **ALT Color**: Fixed deletion of ALT color files.
+- **VPS Updates**: The VPS update indicator in the table overview is working correctly now. E.g. the VPS version **1.4**
+  and the table version **1.4.0** where detected as identical now which wasn't the case before.  
+- **Backups**: Added custom B2STableSettings.xml to backups when the file is part of a separate table folder. 
+- **Backups**: The backup is now written into a temporary local file and then copied to the target folder. This should solve issues when creating backus for a NAS device. 
+

@@ -5,13 +5,11 @@ import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.server.AbstractVPinServerTest;
 import de.mephisto.vpin.server.frontend.popper.PinUPConnector;
 import de.mephisto.vpin.server.games.Game;
-
 import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,12 +32,19 @@ public class FrontendServiceTest extends AbstractVPinServerTest {
   public void testGameAdding() {
     int emuId = 1;
     int count = connector.getGameCount(emuId);
-    
+
     String baseName = FilenameUtils.getBaseName(EM_TABLE.getName());
 
-    int l = connector.importGame(emuId, baseName, baseName, baseName, null, new Date());
-    
-    assertEquals(count+1, connector.getGameCount(emuId));
+    TableDetails tableDetails = new TableDetails();
+    tableDetails.setEmulatorId(emuId);
+    tableDetails.setStatus(1);
+    tableDetails.setGameName(baseName);
+    tableDetails.setGameFileName(baseName);
+    tableDetails.setGameDisplayName(baseName);
+    tableDetails.setDateModified(new java.util.Date());
+    int l = connector.importGame(tableDetails);
+
+    assertEquals(count + 1, connector.getGameCount(emuId));
     if (l > 0) {
       assertTrue(connector.deleteGame(l));
     }

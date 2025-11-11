@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.MediaOptions;
+import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -44,7 +45,9 @@ public class MediaPreviewController implements Initializable, DialogController {
   public void setData(Stage dialogStage, String url, String mimeType) {
     this.dialogStage = dialogStage;
 
-    assetMediaPlayer = WidgetFactory.createAssetMediaPlayer(client, url, null, mimeType, false, false);
+    Frontend frontend = client.getFrontendService().getFrontendCached();
+    boolean playfieldMediaInverted = frontend.isPlayfieldMediaInverted();
+    assetMediaPlayer = WidgetFactory.createAssetMediaPlayer(client, url, null, mimeType, playfieldMediaInverted, false, false);
 
     mediaView.setCenter(assetMediaPlayer);
 

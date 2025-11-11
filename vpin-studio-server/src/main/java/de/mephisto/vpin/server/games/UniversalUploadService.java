@@ -517,6 +517,10 @@ public class UniversalUploadService {
         throw new UnsupportedOperationException("Unmapped upload type " + uploadType);
       }
     }
+
+    if (uploadDescriptor.getGameId() > 0) {
+      gameLifecycleService.notifyGameCreated(uploadDescriptor.getGameId());
+    }
   }
 
   //-------------------------------

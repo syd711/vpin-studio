@@ -46,7 +46,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -151,15 +150,15 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
         return getGame(gameId);
       }
       else {
-        LOG.error("No game found to be scanned with ID '" + gameId + "'");
+        LOG.error("No game found to be scanned with ID '{}'", gameId);
       }
     }
     catch (Exception e) {
       if (game != null) {
-        LOG.error("Game scan for \"" + game.getGameDisplayName() + "\" (" + gameId + ") failed: " + e.getMessage(), e);
+        LOG.error("Game scan for \"{}\" ({}) failed: {}", game.getGameDisplayName(), gameId, e.getMessage(), e);
       }
       else {
-        LOG.error("Game scan for game " + gameId + " failed: " + e.getMessage(), e);
+        LOG.error("Game scan for game {} failed: {}", gameId, e.getMessage(), e);
       }
     }
     return game;
@@ -226,7 +225,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
 
   private List<Game> getVpxGames() {
     List<GameDetails> all = gameDetailsRepository.findAll();
-    Map<Integer, GameDetails> mappedGameDetails = all.stream().collect(Collectors.toMap(g -> g.getPupId(), g -> g));
+    Map<Integer, GameDetails> mappedGameDetails = all.stream().collect(Collectors.toMap(GameDetails::getPupId, g -> g));
     List<Game> games = new ArrayList<>();
     List<GameEmulator> gameEmulators = emulatorService.getVpxGameEmulators();
     for (GameEmulator gameEmulator : gameEmulators) {
@@ -240,7 +239,22 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     return games;
   }
 
-  private void fetchEmulatorGames(GameEmulator emulator, Map<Integer, GameDetails> mappedGameDetails) {
+
+  private List<Game> getZenGames() {
+    List<Game> games = new ArrayList<>();
+    List<GameEmulator> gameEmulators = emulatorService.getZenGameEmulators();
+    for (GameEmulator gameEmulator : gameEmulators) {
+      if (gameEmulator.isEnabled()) {
+        if (!allGamesByEmulatorId.containsKey(gameEmulator.getId())) {
+          fetchEmulatorGames(gameEmulator, Collections.emptyMap());
+        }
+        games.addAll(allGamesByEmulatorId.get(gameEmulator.getId()));
+      }
+    }
+    return games;
+  }
+
+  private void fetchEmulatorGames(@NonNull GameEmulator emulator, @NonNull Map<Integer, GameDetails> mappedGameDetails) {
     long start = System.currentTimeMillis();
     List<Game> gamesByEmulator = frontendService.getGamesByEmulator(emulator.getId());
     boolean killFrontend = false;
@@ -310,6 +324,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
 
         gameDetails.setPupPack(scanResult.getPupPackName());
         gameDetails.setAssets(StringUtils.join(scanResult.getAssets(), ","));
+        gameDetails.setScripts(StringUtils.join(scanResult.getScripts(), ","));
       }
       else {
         if (tableDetails != null) {
@@ -322,7 +337,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
       gameDetails.setUpdatedAt(new java.util.Date());
 
       gameDetailsRepository.saveAndFlush(gameDetails);
-      LOG.info("Created GameDetails for " + game.getGameDisplayName() + ", was forced: " + forceScan);
+      LOG.info("Created GameDetails for {}, was forced: {}", game.getGameDisplayName(), forceScan);
     }
 
     GameEmulator emulator = game.getEmulator();
@@ -375,6 +390,8 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     game.setDMDGameName(gameDetails.getDMDGameName());
     game.setDMDProjectFolder(gameDetails.getDMDProjectFolder());
 
+    game.setScripts(StringUtils.split(gameDetails.getScripts(), ","));
+
     game.setNvOffset(gameDetails.getNvOffset());
     game.setCardDisabled(gameDetails.isCardsDisabled() != null && gameDetails.isCardsDisabled());
 
@@ -402,7 +419,10 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
       game.setVersion(gameDetails.getTableVersion());
     }
 
-    game.setTemplateId(gameDetails.getTemplateId());
+    game.setHighscoreCardTemplateId(gameDetails.getTemplateId());
+    game.setInstructionCardTemplateId(gameDetails.getInstructionCardTemplateId());
+    game.setWheelTemplateId(gameDetails.getWheelTemplateId());
+
     game.setComment(gameDetails.getNotes());
 
     //PUP pack assignment: we have to differ between the scanned name and the actual resolved one which could be different.
@@ -415,7 +435,6 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     game.setIgnoredValidations(ValidationState.toIds(gameDetails.getIgnoredValidations()));
     game.setAltSoundAvailable(altSoundService.isAltSoundAvailable(game));
     game.setAltColorType(altColorService.getAltColorType(game));
-
 
     DirectB2S b2s = backglassService.getCacheDirectB2SAndVersions(game);
     game.setNbDirectB2S(b2s != null ? b2s.getNbVersions() : -1);
@@ -495,22 +514,32 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
       case ALT_COLOR:
       case PUP_PACK:
       case ALT_SOUND: {
-        List<Game> vpxGames = getVpxGames();
         if (changedEvent.getAsset() != null) {
           Object asset = changedEvent.getAsset();
           if (asset instanceof String) {
+            List<Game> vpxGames = getVpxGames();
             String rom = String.valueOf(asset);
             for (Game vpxGame : vpxGames) {
               if (rom.equalsIgnoreCase(vpxGame.getRom()) || rom.equalsIgnoreCase(vpxGame.getTableName())) {
                 invalidate(vpxGame.getId());
               }
             }
+
+            List<Game> zenGames = getZenGames();
+            String tableName = String.valueOf(asset);
+            for (Game zenGame : zenGames) {
+              if (tableName.equalsIgnoreCase(zenGame.getGameName())) {
+                invalidate(zenGame.getId());
+              }
+            }
           }
         }
+
         return;
       }
       case INI:
       case POV:
+      case RES:
       case DIRECTB2S: {
         Object asset = changedEvent.getAsset();
         if (asset instanceof String) {

@@ -44,22 +44,22 @@ public class TableAssetSource {
   }
 
 
-  public boolean supportsScreen(String screen) {
-    return supportsScreens(Arrays.asList(screen));
+  public boolean supportsScreen(String screenSegment) {
+    return supportsScreens(Arrays.asList(screenSegment));
   }
 
-  public boolean supportsScreens(List<String> screenNames) {
+  public boolean supportsScreens(List<String> screenSegments) {
     if (supportedScreens == null || supportedScreens.isEmpty()) {
       return true;
     }
 
     for (String supportedScreen : supportedScreens) {
-      for (String screenName : screenNames) {
-        if (supportedScreen.equalsIgnoreCase("GameSelect") && screenName.equalsIgnoreCase("Other2") ||
-            supportedScreen.equalsIgnoreCase("Other2") && screenName.equalsIgnoreCase("GameSelect")) {
+      for (String screenSegment : screenSegments) {
+        if (supportedScreen.equalsIgnoreCase("GameSelect") && screenSegment.equalsIgnoreCase("Other2") ||
+            supportedScreen.equalsIgnoreCase("Other2") && screenSegment.equalsIgnoreCase("GameSelect")) {
           return true;
         }
-        if (screenName.toLowerCase().contains(supportedScreen.toLowerCase()) || supportedScreen.toLowerCase().contains(screenName.toLowerCase())) {
+        if (screenSegment.toLowerCase().contains(supportedScreen.toLowerCase()) || supportedScreen.toLowerCase().contains(screenSegment.toLowerCase())) {
           return true;
         }
       }

@@ -99,7 +99,7 @@ public class TableOverviewColumnSorter implements BaseColumnSorter<GameRepresent
       }
       else if (column.equals(tableOverviewController.columnPinVol)) {
         comp = Comparator.comparing(o -> {
-          String key = PinVolPreferences.getKey(o.getGame().getGameFileName(), o.getGame().isVpxGame(), o.getGame().isFpGame());
+          String key = PinVolPreferences.getKey(o.getGame().getGameFileName(), client.getEmulatorService().isVpxGame(o.getGame()), client.getEmulatorService().isFpGame(o.getGame()));
           return client.getPinVolService().getPinVolTablePreferences().contains(key);
         });
       }
@@ -120,6 +120,9 @@ public class TableOverviewColumnSorter implements BaseColumnSorter<GameRepresent
       }
       else if (column.equals(tableOverviewController.columnLoading)) {
         comp = Comparator.comparing(o -> o.getStatusColor(VPinScreen.Loading, validationSettings));
+      }
+      else if (column.equals(tableOverviewController.columnLogo)) {
+        comp = Comparator.comparing(o -> o.getStatusColor(VPinScreen.Logo, validationSettings));
       }
       else if (column.equals(tableOverviewController.columnWheel)) {
         comp = Comparator.comparing(o -> o.getStatusColor(VPinScreen.Wheel, validationSettings));

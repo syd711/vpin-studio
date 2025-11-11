@@ -36,6 +36,7 @@ public class LayerEditorOverlayController extends LayerEditorBaseController {
     VPinScreens.remove(VPinScreen.GameInfo);
     VPinScreens.remove(VPinScreen.GameHelp);
     VPinScreens.remove(VPinScreen.DMD);
+    VPinScreens.remove(VPinScreen.Logo);
     VPinScreens.remove(VPinScreen.Wheel);
     VPinScreens.remove(VPinScreen.Other2);
     VPinScreens.remove(VPinScreen.PlayField);

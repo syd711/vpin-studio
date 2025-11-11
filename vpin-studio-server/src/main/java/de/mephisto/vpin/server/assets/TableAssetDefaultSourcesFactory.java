@@ -24,6 +24,11 @@ public class TableAssetDefaultSourcesFactory {
     if (sourceEntry.isEmpty()) {
       updatesList.add(createSuperHacAssetSource());
     }
+
+    sourceEntry = sources.stream().filter(s -> s.getType().equals(TableAssetSourceType.ManiaLogos)).findFirst();
+    if (sourceEntry.isEmpty()) {
+      updatesList.add(createManiaLogosAssetSource());
+    }
     return updatesList;
   }
 
@@ -54,6 +59,23 @@ public class TableAssetDefaultSourcesFactory {
     source.setEnabled(true);
     source.setLocation("https://github.com/superhac/vpinmediadb");
     source.setSupportedScreens(Arrays.asList(VPinScreen.GameInfo.name(), VPinScreen.GameHelp.name(), VPinScreen.BackGlass.name(), VPinScreen.DMD.name(), VPinScreen.PlayField.name(), VPinScreen.Wheel.name()));
+    return source;
+  }
+
+  /**
+   * https://github.com/superhac/vpinmediadb/tree/main
+   * @return
+   */
+  private static TableAssetSource createManiaLogosAssetSource() {
+    TableAssetSource source = new TableAssetSource();
+    source.setId(ManiaLogosAssetAdapter.SOURCE_ID);
+    source.setLookupStrategy(AssetLookupStrategy.screens);
+    source.setType(TableAssetSourceType.ManiaLogos);
+    source.setName("Table Logos");
+    source.setProvided(true);
+    source.setEnabled(true);
+    source.setLocation("vpin-mania.net");
+    source.setSupportedScreens(Arrays.asList(VPinScreen.Logo.name(), VPinScreen.Wheel.name()));
     return source;
   }
 }

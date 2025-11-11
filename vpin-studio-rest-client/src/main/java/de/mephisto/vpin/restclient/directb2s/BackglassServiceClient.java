@@ -15,6 +15,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.io.*;
 import java.net.URL;
@@ -250,8 +251,8 @@ public class BackglassServiceClient extends VPinStudioClientService {
   public UploadDescriptor uploadDirectB2SFile(File file, int gameId, boolean append, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "directb2s/upload";
-      String uploadType = append ? UploadType.uploadAndAppend.name() : UploadType.uploadAndImport.name();
-      HttpEntity<?> upload = createUpload(file, gameId, uploadType, AssetType.DIRECTB2S, listener);
+      UploadType uploadType = append ? UploadType.uploadAndAppend : UploadType.uploadAndImport;
+      HttpEntity<MultiValueMap<String, Object>> upload = createUpload(file, gameId, uploadType, AssetType.DIRECTB2S, listener);
       ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
       finalizeUpload(upload);
       return exchange.getBody();
@@ -342,7 +343,7 @@ public class BackglassServiceClient extends VPinStudioClientService {
       map.add("emulatorId", emulatorId);
       map.add("fileName", fileName);
       String url = getRestClient().getBaseUrl() + API + suburl;
-      HttpEntity<?> upload = createUpload(map, file, -1, null, AssetType.DIRECTB2S, null);
+      HttpEntity<MultiValueMap<String, Object>> upload = createUpload(map, file, -1, null, AssetType.DIRECTB2S, null);
 
       //new RestTemplate().exchange(url, HttpMethod.POST, upload, Boolean.class);
       ResponseEntity<T> ret = createUploadTemplate().exchange(url, HttpMethod.POST, upload, responseType);

@@ -517,6 +517,7 @@
     -fx-font-size : 14px;
     -fx-background-color: #333366;
     -fx-text-fill: #fff8f8;
+    -fx-border-radius: 3px;
 }
 
 .submit-button:hover {
@@ -530,6 +531,7 @@
 }
 
 .default-button {
+    -fx-border-radius: 3px;
     -fx-border-style: solid solid solid solid;
     -fx-border-color: #111111;
     -fx-border-width: 1;
@@ -549,6 +551,7 @@
 }
 
 .warn-button {
+    -fx-border-radius: 3px;
     -fx-border-color: #663333;
     -fx-border-width: 1;
     -fx-font-size : 14px;

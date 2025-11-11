@@ -10,8 +10,10 @@ import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.restclient.util.FileUtils;
+import de.mephisto.vpin.restclient.util.MimeTypeUtil;
 import de.mephisto.vpin.server.assets.TableAssetSourcesService;
 import de.mephisto.vpin.server.assets.TableAssetsService;
+import de.mephisto.vpin.server.converter.MediaConverterService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusEventsResource;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
@@ -66,6 +68,9 @@ public class GameMediaResource {
   private TableAssetsService tableAssetsService;
 
   @Autowired
+  private MediaConverterService mediaConverterService;
+
+  @Autowired
   private GameLifecycleService gameLifecycleService;
 
   @Autowired
@@ -93,7 +98,7 @@ public class GameMediaResource {
   public boolean copyAsset(@RequestBody AssetCopy assetCopy) {
     VPinScreen target = assetCopy.getTarget();
     FrontendMediaItemRepresentation item = assetCopy.getItem();
-    return gameMediaService.copyAsset(item.getGameId(), item.getName(), VPinScreen.valueOf(item.getScreen()), target);
+    return gameMediaService.copyAsset(item.getGameId(), item.getName(), item.getScreen(), target);
   }
 
   @PostMapping("/assets/search")
@@ -102,26 +107,36 @@ public class GameMediaResource {
     EmulatorType emulatorType = game != null && game.getEmulator() != null ? game.getEmulator().getType() : EmulatorType.VisualPinball;
     TableAssetSource source = tableAssetSourcesService.getAssetSource(search.getAssetSourceId());
 
-    List<TableAsset> result = tableAssetsService.search(source, emulatorType, search.getScreen(), game, search.getTerm());
+    List<TableAsset> result = tableAssetsService.search(source, emulatorType, search.getScreen().getSegment(), game, search.getTerm());
     search.setResult(result);
     return search;
   }
 
   @PostMapping("/assets/download/{gameId}/{screen}/{append}")
   public boolean downloadTableAsset(@PathVariable("gameId") int gameId,
-                                    @PathVariable("screen") String screen,
+                                    @PathVariable("screen") VPinScreen screen,
                                     @PathVariable("append") boolean append,
                                     @RequestBody TableAsset asset) throws Exception {
     try {
-      VPinScreen vPinScreen = VPinScreen.valueOfSegment(screen);
       LOG.info("Starting download of " + asset.getName() + "(appending: " + append + ")");
       Game game = frontendService.getOriginalGame(gameId);
-      File mediaFolder = frontendService.getMediaFolder(game, vPinScreen, asset.getFileSuffix(), false);
+      File mediaFolder = frontendService.getMediaFolder(game, screen, asset.getFileSuffix(), false);
       File target = new File(mediaFolder, game.getGameName() + "." + asset.getFileSuffix());
       if (target.exists() && append) {
         target = FileUtils.uniqueAsset(target);
       }
       tableAssetsService.download(asset, target);
+
+      // for PLayfield, if the tableAsset is in a different orientation than frontend, rotate the asset
+      if (VPinScreen.PlayField.equals(screen) && frontendService.getFrontend().isPlayfieldMediaInverted() ^ asset.isPlayfieldMediaInverted()) {
+        if (MimeTypeUtil.isImage(asset.getMimeType())) {
+          mediaConverterService.rotateImage180(target);
+        }
+        else if (MimeTypeUtil.isVideo(asset.getMimeType())) {
+          mediaConverterService.rotateVideo180(target);
+        }
+      }
+
       return true;
     }
     finally {
@@ -139,13 +154,12 @@ public class GameMediaResource {
     return tableAssetsService.invalidateMediaCache(assetSourceId);
   }
 
-  @GetMapping("/assets/d/{screen}/{assetSourceId}/{gameId}/{url}")
+  @GetMapping("/assets/d/{screenSegment}/{assetSourceId}/{gameId}/{url}")
   public void getTableAsset(HttpServletResponse response, HttpServletRequest request,
-                            @PathVariable("screen") String screen,
+                            @PathVariable("screenSegment") String screenSegment,
                             @PathVariable("assetSourceId") String assetSourceId,
                             @PathVariable("gameId") int gameId,
                             @PathVariable("url") String url) throws Exception {
-    VPinScreen vPinScreen = VPinScreen.valueOfSegment(screen);
     Game game = gameService.getGame(gameId);
     EmulatorType emulatorType = game != null && game.getEmulator() != null ? game.getEmulator().getType() : EmulatorType.VisualPinball;
 
@@ -154,7 +168,7 @@ public class GameMediaResource {
     String name = decode.substring(decode.lastIndexOf("/") + 1);
 
     TableAssetSource source = tableAssetSourcesService.getAssetSource(assetSourceId);
-    Optional<TableAsset> result = tableAssetsService.get(source, emulatorType, vPinScreen, game, folder, name);
+    Optional<TableAsset> result = tableAssetsService.get(source, emulatorType, screenSegment, game, folder, name);
     if (result.isEmpty()) {
       throw new ResponseStatusException(NOT_FOUND);
     }
@@ -183,9 +197,6 @@ public class GameMediaResource {
         response.setHeader("Content-Range", "bytes " + start + "-" + end + "/" + contentLength);
         contentLength = end - start + 1;
       }
-    }
-    else {
-      System.out.println("no range");
     }
 
     if (contentLength > 0) {
@@ -228,14 +239,11 @@ public class GameMediaResource {
   @GetMapping("/{id}/{screen}/{name}")
   public void getMedia(HttpServletResponse response, HttpServletRequest request,
                        @PathVariable("id") int id,
-                       @PathVariable("screen") String screen,
+                       @PathVariable("screen") VPinScreen screen,
                        @PathVariable("name") String name,
                        @RequestParam(value = "preview", required = false) boolean preview)
       throws IOException {
-
-    screen = screen.replaceAll("@2x", "");
-    VPinScreen vPinScreen = VPinScreen.valueOfSegment(screen);
-    if (vPinScreen == null) {
+    if (screen == null) {
       LOG.error("Failed to resolve screen for value {}", screen);
     }
     Game game = frontendService.getOriginalGame(id);
@@ -246,13 +254,13 @@ public class GameMediaResource {
     FrontendMedia frontendMedia = frontendService.getGameMedia(game);
     final FrontendMediaItem frontendMediaItem;
     if (!StringUtils.isEmpty(name)) {
-      name = name.replaceAll("%(?![0-9a-fA-F]{2})", "%25");
-      name = name.replaceAll("\\+", "%2B");
+      //name = name.replaceAll("%(?![0-9a-fA-F]{2})", "%25");
+      //name = name.replaceAll("\\+", "%2B");
       name = URLDecoder.decode(name, Charset.defaultCharset());
-      frontendMediaItem = frontendMedia.getMediaItem(vPinScreen, name);
+      frontendMediaItem = frontendMedia.getMediaItem(screen, name);
     }
     else {
-      frontendMediaItem = frontendMedia.getDefaultMediaItem(vPinScreen);
+      frontendMediaItem = frontendMedia.getDefaultMediaItem(screen);
     }
 
     if (frontendMediaItem == null) {
@@ -363,7 +371,7 @@ public class GameMediaResource {
   @GetMapping("/{id}/{screen}")
   public void getMedia(HttpServletResponse response, HttpServletRequest request,
                        @PathVariable("id") int id,
-                       @PathVariable("screen") String screen,
+                       @PathVariable("screen") VPinScreen screen,
                        @RequestParam(value = "preview", required = false) boolean preview)
       throws IOException {
     getMedia(response, request, id, screen, null, preview);
@@ -392,10 +400,11 @@ public class GameMediaResource {
       File out = GameMediaService.buildMediaAsset(mediaFolder, game, suffix, append);
       LOG.info("Uploading " + out.getAbsolutePath());
       UploadUtil.upload(file, out);
+      gameLifecycleService.notifyGameScreenAssetsChanged(game.getId(), screen, out);
       return JobDescriptorFactory.empty();
     }
     catch (Exception e) {
-      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Playlist media upload failed: " + e.getMessage());
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Media upload failed: " + e.getMessage());
     }
     finally {
       gameLifecycleService.notifyGameAssetsChanged(gameId, AssetType.FRONTEND_MEDIA, null);
@@ -414,7 +423,10 @@ public class GameMediaResource {
           new WheelAugmenter(media).deAugment();
           new WheelIconDelete(media).delete();
         }
-        return media.delete();
+        if (media.delete()) {
+          gameLifecycleService.notifyGameScreenAssetsChanged(game.getId(), screen, media);
+          return true;
+        }
       }
       return false;
     }
@@ -440,6 +452,7 @@ public class GameMediaResource {
           }
           if (file.delete()) {
             LOG.info("Deleted game media: {}", file.getAbsolutePath());
+            gameLifecycleService.notifyGameScreenAssetsChanged(game.getId(), screen, file);
           }
         }
       }
@@ -496,6 +509,7 @@ public class GameMediaResource {
           File defaultFile = FileUtils.uniqueAsset(file);
           if (file.renameTo(defaultFile)) {
             LOG.info("Renamed \"{}\" to \"{}\"", file.getAbsolutePath(), defaultFile.getName());
+            gameLifecycleService.notifyGameScreenAssetsChanged(game.getId(), screen, defaultFile);
           }
           else {
             LOG.warn("Cannot rename \"{}\" to \"{}\", state may be inconsistent", file.getAbsolutePath(), defaultFile.getName());

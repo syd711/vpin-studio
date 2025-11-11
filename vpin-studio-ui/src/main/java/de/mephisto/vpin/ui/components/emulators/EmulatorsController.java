@@ -8,7 +8,9 @@ import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.system.FolderRepresentation;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.components.emulators.dialogs.EmulatorDialogs;
 import de.mephisto.vpin.ui.util.FolderChooserDialog;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFolderChooser;
 import de.mephisto.vpin.ui.util.SystemUtil;
 import javafx.application.Platform;
@@ -287,35 +289,22 @@ public class EmulatorsController implements Initializable {
       GameEmulatorRepresentation gameEmulatorRepresentation = emulator.get();
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Game Emulator", "Delete Game Emulator \"" + gameEmulatorRepresentation.getName() + "\"?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        client.getEmulatorService().deleteGameEmulator(gameEmulatorRepresentation.getId());
-        client.getGameService().clearCache(gameEmulatorRepresentation.getId());
-        onReload();
+        ProgressDialog.createProgressDialog(new EmulatorDeletionProgressModel(gameEmulatorRepresentation, this));
       }
     }
   }
 
   @FXML
   private void onCreate() {
-    String s = WidgetFactory.showInputDialog(Studio.stage, "New Emulator", "Enter the folder save name of the new emulator.", "You can edit the additional emulator parameters afterwards.", null, "Visual Pinball");
-    if (!StringUtils.isEmpty(s)) {
-      if (!FileUtils.isValidFilename(s)) {
-        WidgetFactory.showAlert(stage, "Invalid Name", "The specified name contains invalid characters.");
-        return;
-      }
+    GameEmulatorRepresentation emulatorRepresentation = EmulatorDialogs.openNewEmulatorDialog();
+    if (emulatorRepresentation != null) {
+      ProgressDialog.createProgressDialog(new EmulatorCreateProgressModel(emulatorRepresentation, this));
 
-      GameEmulatorRepresentation emu = new GameEmulatorRepresentation();
-      emu.setSafeName(s);
-      emu.setName(s);
-      emu.setType(EmulatorType.OTHER);
-      GameEmulatorRepresentation gameEmulatorRepresentation = client.getEmulatorService().saveGameEmulator(emu);
-      onReload();
-
-      tableController.select(gameEmulatorRepresentation);
     }
   }
 
   @FXML
-  private void onReload() {
+  public void onReload() {
     client.getEmulatorService().clearCache();
     tableController.reload();
   }
@@ -537,5 +526,9 @@ public class EmulatorsController implements Initializable {
 
       refreshTableWidth();
     });
+  }
+
+  public void select(GameEmulatorRepresentation gameEmulator) {
+    this.tableController.select(gameEmulator);
   }
 }

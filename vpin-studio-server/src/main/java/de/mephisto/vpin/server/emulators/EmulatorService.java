@@ -1,16 +1,22 @@
 package de.mephisto.vpin.server.emulators;
 
+import de.mephisto.vpin.restclient.emulators.EmulatorValidation;
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.server.frontend.popper.pupgames.PUPGameImporter;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameEmulatorValidationService;
+import de.mephisto.vpin.server.games.GameMediaService;
 import de.mephisto.vpin.server.mame.MameService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -27,7 +33,14 @@ public class EmulatorService {
   @Autowired
   private MameService mameService;
 
-  private List<EmulatorChangeListener> listeners = new ArrayList<>();
+  @Autowired
+  private EmulatorFactory emulatorFactory;
+
+  @Lazy
+  @Autowired
+  private GameMediaService gameMediaService;
+
+  private final List<EmulatorChangeListener> listeners = new ArrayList<>();
 
   private final Map<Integer, GameEmulator> emulators = new LinkedHashMap<>();
 
@@ -82,6 +95,10 @@ public class EmulatorService {
     return getGameEmulators().stream().filter(e -> e.isVpxEmulator() && e.isValid()).collect(Collectors.toList());
   }
 
+  public List<GameEmulator> getZenGameEmulators() {
+    return getGameEmulators().stream().filter(e -> e.isZenEmulator() && e.isValid()).collect(Collectors.toList());
+  }
+
   public List<GameEmulator> getBackglassGameEmulators() {
     return getGameEmulators().stream().filter(GameEmulator::isValid).filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
   }
@@ -94,8 +111,8 @@ public class EmulatorService {
     GameEmulator saved = frontendService.saveEmulator(emulator);
     this.emulators.remove(saved.getId());
     loadEmulator(saved);
-    synchronizeEmulator(emulator);
-    notifyEmulatorChange(emulator.getId());
+    synchronizeEmulator(saved);
+    notifyEmulatorChange(saved.getId());
     return saved;
   }
 
@@ -170,38 +187,30 @@ public class EmulatorService {
     }
   }
 
+  public EmulatorValidation validate(EmulatorType emulatorType) {
+    return emulatorFactory.create(emulatorType);
+  }
+
   private void synchronizeEmulator(GameEmulator emulator) {
     if (!emulator.isEnabled()) {
       return;
     }
 
-    if (emulator.isFxEmulator()) {
-      synchronizeEmulatorGames(emulator);
-    }
-  }
-
-  private void synchronizeEmulatorGames(GameEmulator emulator) {
     int count = 0;
-    List<Game> gamesByEmulator = frontendService.getGamesByEmulator(emulator.getId());
-    String gamesDirectory = emulator.getGamesDirectory();
-    if (gamesDirectory != null) {
-      File gamesFolder = new File(gamesDirectory);
-      if (gamesFolder.exists()) {
-        File[] files = gamesFolder.listFiles((dir, name) -> name.endsWith(emulator.getGameExt()));
-        if (files != null) {
-          for (File file : files) {
-            Optional<Game> game = gamesByEmulator.stream().filter(g -> g.getGameFile().equals(file)).findFirst();
-            if (game.isEmpty()) {
-              LOG.info("Importing \"{}\" for emulator \"{}\".", file.getAbsolutePath(), emulator.getName() + "/" + emulator.getId());
-              frontendService.importGame(file, emulator.getId());
-              count++;
-            }
+    if (emulator.isPupGameImportSupported()) {
+      List<Game> gamesByEmulator = frontendService.getGamesByEmulator(emulator.getId());
+      if (gamesByEmulator.isEmpty()) {
+        List<TableDetails> tableDetailList = PUPGameImporter.read(emulator.getType(), emulator.getId());
+        for (TableDetails tableDetails : tableDetailList) {
+          int gameId = frontendService.importGame(tableDetails);
+          if (gameId > 0) {
+            gameMediaService.autoMatch(gameId, false);
+            count++;
           }
         }
+        LOG.info("\"{}\" emulator synchronization finished, added {} games.", emulator.getName(), count);
       }
     }
-
-    LOG.info("\"{}\" emulator synchronization finished, added {} games.", emulator.getName(), count);
   }
 
   public boolean clearCache() {

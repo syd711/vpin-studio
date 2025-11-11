@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
+import de.mephisto.vpin.restclient.cards.CardTemplateType;
 import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
@@ -89,25 +90,29 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
 
   private Map<Integer, ScoreSummary> scoreCache = new LinkedHashMap<>();
 
-  public byte[] generateTableCardFile(Game game) {
-    CardTemplate template = cardTemplatesService.getTemplateForGame(game);
+  public byte[] generateTableCardFile(Game game, CardTemplateType templateType) {
+    CardTemplate template = cardTemplatesService.getTemplateForGame(game, templateType);
     ScoreSummary summary = getScoreSummary(game, template, true);
     return generatePreview(game, summary, template);
   }
 
-  public byte[] generateTemplateTableCardFile(Game game, long templateId) {
-    CardTemplate template = cardTemplatesService.getTemplateOrDefault(templateId);
+  public byte[] generateTemplateTableCardFile(Game game, CardTemplateType templateType, long templateId) {
+    CardTemplate template = cardTemplatesService.getTemplateOrDefault(templateId, templateType);
     ScoreSummary summary = getScoreSummary(game, template, true);
     return generatePreview(game, summary, template);
   }
 
-  public boolean generateCard(Game game) {
-    CardTemplate template = cardTemplatesService.getTemplateForGame(game);
+  public boolean generateHighscoreCard(Game game) {
+    return generateCard(game, CardTemplateType.HIGSCORE_CARD);
+  }
+
+  public boolean generateCard(Game game, CardTemplateType templateType) {
+    CardTemplate template = cardTemplatesService.getTemplateForGame(game, templateType);
     return generateCard(game, template);
   }
 
-  public boolean generateCard(Game game, Long templateId) {
-    CardTemplate template = cardTemplatesService.getTemplateOrDefault(templateId);
+  public boolean generateCard(Game game, CardTemplateType templateType, Long templateId) {
+    CardTemplate template = cardTemplatesService.getTemplateOrDefault(templateId, templateType);
     return generateCard(game, template);
   }
 
@@ -169,28 +174,30 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
       ScoreSummary summary = getScoreSummary(game, template, false);
       if (!summary.getScores().isEmpty() && !StringUtils.isEmpty(summary.getRaw())) {
         String screenName = cardSettings.getPopperScreen();
+
+        if (template.getTemplateType() != null && template.getTemplateType().equals(CardTemplateType.WHEEL)) {
+          screenName = VPinScreen.Wheel.getSegment();
+        }
+
         if (!StringUtils.isEmpty(screenName)) {
           if (!game.isCardDisabled()) {
             BufferedImage bufferedImage = doGenerateCardImage(game, summary, template);
             if (bufferedImage != null) {
               File highscoreCard = getCardFile(game, screenName);
-              //TODO add a parameter to define the policy
-              //REPLACE => keep highscoreCard
-              //APPEND => highscoreCard = FileUtils.uniqueAssetByMarker(highscoreCard, "Highscore Card");
-              //PREPEND/BACKUP => highscoreCard = FileUtils.backupAssetByMarker(highscoreCard, "Highscore Card");
+              if (cardSettings.isBackupAsset()) {
+                //Prepend cards and Backup existing asset
+                highscoreCard = ImageUtil.backupPNGByMarker(highscoreCard, "Highscore Card");
+              }
 
               if (highscoreCard.exists() && !highscoreCard.delete()) {
                 LOG.info("Writing highscore card {} failed, file is locked.", highscoreCard.getAbsolutePath());
                 SLOG.info("Writing highscore card " + highscoreCard.getAbsolutePath() + " failed, file is locked.");
               }
               else {
-                ImageUtil.write(bufferedImage, highscoreCard);
+                ImageUtil.writePNG(bufferedImage, highscoreCard, "Highscore Card");
                 LOG.info("Written highscore card: " + highscoreCard.getAbsolutePath());
                 SLOG.info("Written highscore card: " + highscoreCard.getAbsolutePath());
               }
-
-//              FileUtils.addMarker(highscoreCard, "Highscore Card");
-
 
               return true;
             }
@@ -230,7 +237,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
     BufferedImage[] generatedImage = {null};
     Platform.runLater(() -> {
       try {
-        CardResolution res = cardSettings.getCardResolution();
+        CardResolution res = getCardResolution(template.getTemplateType());
 
         CardGraphicsHighscore cardGraphics = new CardGraphicsHighscore(false);
         cardGraphics.setTemplate(template);
@@ -256,20 +263,54 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
     return generatedImage[0];
   }
 
+  public CardResolution getCardResolution(CardTemplateType templateType) {
+    switch (templateType) {
+      case HIGSCORE_CARD:
+        return cardSettings.getCardResolution();
+      case INSTRUCTIONS_CARD:
+        //TODO add settings like Highscore, reuse same ? 
+        return CardResolution.HDReady;
+      case WHEEL:
+        return CardResolution.WHEEL;
+    }
+    return null;
+  }
+
   //-----------------------------------------
 
-  public List<String> getBackgrounds() {
-    File folder = new File(SystemService.RESOURCES, "backgrounds");
+  public List<String> getImages(String subfolder) {
+    File folder = new File(SystemService.RESOURCES, subfolder);
     File[] files = folder.listFiles((dir, name) -> name.endsWith("jpg") || name.endsWith("png"));
     return Arrays.stream(files).sorted().map(f -> FilenameUtils.getBaseName(f.getName())).collect(Collectors.toList());
   }
 
+  public File getImage(String subfolder, String imageName) {
+    String image = imageName.replaceAll("\\+", " ");
+    File folder = new File(SystemService.RESOURCES, subfolder);
+    File[] files = folder.listFiles((dir, name) -> FilenameUtils.getBaseName(name).equalsIgnoreCase(image));
+    if (files != null && files.length > 0) {
+      return files[0];
+    }
+    return null;
+  }
+
+  public byte[] getBytes(String subfolder, String imageName) {
+    try {
+      File file = getImage(subfolder, imageName);
+      return org.apache.commons.io.FileUtils.readFileToByteArray(file);
+    }
+    catch (IOException ioe) {
+      LOG.error("Cannot open {} image {}", subfolder, imageName, ioe);
+      return null;
+    }
+  }
+
   public CardTemplate getCardTemplate(long templateId) {
-    return cardTemplatesService.getTemplateOrDefault(templateId);
+    return cardTemplatesService.getTemplate(templateId);
   }
 
   public CardData getCardData(Game game, long templateId, boolean withStreams) {
-    CardTemplate template = cardTemplatesService.getTemplateOrDefault(templateId);
+    CardTemplate template = cardTemplatesService.getTemplate(templateId);
     return getCardData(game, template, withStreams);
   }
 
@@ -310,8 +351,12 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
 
     if (withStreams) {
       cardData.setBackground(getImage(game, cardData, template, "background"));
-
       cardData.setWheel(getImage(game, cardData, template, "wheel"));
+
+      cardData.setFallbackBackground(getBytes("backgrounds", template.getBackground()));
+      if (template.getFrame() != null) {
+        cardData.setFrame(getBytes("frames", template.getFrame()));
+      }
 
       if (template.isRenderManufacturerLogo()) {
         cardData.setManufacturerLogo(getImage(game, cardData, template, "manufacturerLogo"));
@@ -396,7 +441,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
 
   @Override
   public void highscoreUpdated(@NonNull Game game, @NonNull Highscore highscore) {
-    generateCard(game);
+    generateHighscoreCard(game);
   }
 
   @Override
@@ -417,7 +462,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
   @Override
   public void tableExited(TableStatusChangedEvent event) {
     Game game = event.getGame();
-    generateCard(game);
+    generateHighscoreCard(game);
   }
 
   @Override

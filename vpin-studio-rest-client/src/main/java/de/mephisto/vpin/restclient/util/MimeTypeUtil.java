@@ -66,6 +66,24 @@ public class MimeTypeUtil {
    */
   public static String determineBaseType(String suffix) {
     String mimeType = determineMimeType(suffix);
+    return mimeTypeToBaseType(mimeType);
+  }
+
+  /** 
+   * Return audio, video or image depending on mimeType
+   */
+  public static String mimeTypeToBaseType(String mimeType) {
     return mimeType != null ? mimeType.substring(0, 5): null;
   }
+
+  public static boolean isImage(String mimeType) {
+    return "image".equalsIgnoreCase(mimeTypeToBaseType(mimeType));
+  }
+  public static boolean isAudio(String mimeType) {
+    return "audio".equalsIgnoreCase(mimeTypeToBaseType(mimeType));
+  }
+  public static boolean isVideo(String mimeType) {
+    return "video".equalsIgnoreCase(mimeTypeToBaseType(mimeType));
+  }
+
 }

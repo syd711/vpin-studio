@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server;
 
+import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.util.VersionUtil;
@@ -29,7 +30,8 @@ public class VPinStudioServerTray {
     restartItem.addActionListener(e -> {
       try {
         restartItem.setEnabled(false);
-        new VPinStudioServerStateManager().restart();
+        VPinStudioClient client = new VPinStudioClient("localhost");
+        client.getSystemService().restart();
       }
       catch (Exception ex) {
         LOG.error("Failed to restart VPin Studio Server: " + ex.getMessage());
@@ -59,6 +61,8 @@ public class VPinStudioServerTray {
     popup.add(launchItem);
     popup.add(logsItem);
     popup.add(new MenuItem("Version " + VersionUtil.getVersion()));
+    popup.addSeparator();
+    popup.add(restartItem);
     popup.addSeparator();
     popup.add(exitItem);
 

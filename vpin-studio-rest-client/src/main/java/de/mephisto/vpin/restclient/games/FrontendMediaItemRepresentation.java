@@ -2,10 +2,12 @@ package de.mephisto.vpin.restclient.games;
 
 import java.util.Date;
 
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+
 public class FrontendMediaItemRepresentation {
   private String mimeType;
   private String uri;
-  private String screen;
+  private VPinScreen screen;
   private int gameId;
   private String name;
   private Date modificationDate;
@@ -59,11 +61,11 @@ public class FrontendMediaItemRepresentation {
     this.uri = uri;
   }
 
-  public String getScreen() {
+  public VPinScreen getScreen() {
     return screen;
   }
 
-  public void setScreen(String screen) {
+  public void setScreen(VPinScreen screen) {
     this.screen = screen;
   }
 

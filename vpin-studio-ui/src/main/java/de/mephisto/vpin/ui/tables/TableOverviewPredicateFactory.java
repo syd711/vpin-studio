@@ -2,14 +2,17 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.connectors.vps.model.VPSChange;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.games.*;
+import de.mephisto.vpin.restclient.games.CommentType;
+import de.mephisto.vpin.restclient.games.FilterSettings;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
-import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.ui.tables.vps.VpsTableColumn;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.function.Predicate;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableOverviewPredicateFactory {
   /**
@@ -21,7 +24,7 @@ public class TableOverviewPredicateFactory {
       public boolean test(GameRepresentationModel model) {
         GameRepresentation game = model.getGame();
 
-        boolean vpxGame = game.isVpxGame();
+        boolean vpxGame = client.getEmulatorService().isVpxGame(game);
         if (vpxGame) {
           if (filterSettings.isNoHighscoreSettings() && (!StringUtils.isEmpty(game.getRom()) || !StringUtils.isEmpty(game.getHsFileName()) || !StringUtils.isEmpty(game.getHsFileName()))) {
             return false;
@@ -46,6 +49,17 @@ public class TableOverviewPredicateFactory {
           }
           if (filterSettings.isIScored() && game.getCompetitionTypes().isEmpty()) {
             return false;
+          }
+        }
+
+        if (!filterSettings.getTags().isEmpty()) {
+          if (game.getTags().isEmpty()) {
+            return false;
+          }
+          for (String tag : filterSettings.getTags()) {
+            if (!game.getTags().contains(tag)) {
+              return false;
+            }
           }
         }
 

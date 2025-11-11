@@ -17,7 +17,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
-import de.mephisto.vpin.restclient.system.ScoringDB;
+import de.mephisto.vpin.restclient.tagging.TaggingUtil;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -109,9 +109,6 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
   @FXML
   private Spinner<Integer> numberOfPlayers;
-
-  @FXML
-  private TextField tags;
 
   @FXML
   private ComboBox<String> category;
@@ -285,14 +282,13 @@ public class TableDataController extends BasePrevNextController implements AutoC
   private TableOverviewController tableOverviewController;
 
   private GameRepresentation game;
-  private BeanBinder<TableDetails> tableDetailsBinder = new BeanBinder<>();
+  private final BeanBinder<TableDetails> tableDetailsBinder = new BeanBinder<>();
   private String initialVpxFileName = null;
 
   private UISettings uiSettings;
   private ServerSettings serverSettings;
 
   private Stage stage;
-  private ScoringDB scoringDB;
   private TableDataTabStatisticsController tableStatisticsController;
   private TableDataTabScreensController tableScreensController;
   private TableDataTabScoreDataController tableDataTabScoreDataController;
@@ -406,6 +402,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
         TableDetails tableDetails = tableDetailsBinder.getBean();
         TableDetails td = TableDialogs.openAutoFillSettingsDialog(this.stage, Arrays.asList(this.game), tableDetails, vpsTableId, vpsVersionId);
         if (td != null) {
+          tableDataTabCommentsController.setTags(TaggingUtil.getTags(td.getTags()));
           tableDetailsBinder.setBean(td, true);
           setDialogDirty(true);
         }
@@ -542,10 +539,10 @@ public class TableDataController extends BasePrevNextController implements AutoC
     TableDetails tableDetails = tableDetailsBinder.getBean();
     if (tableDetails != null) {
       String updatedGameFileName = tableDetails.getGameFileName();
-      if (game.isVpxGame() && !updatedGameFileName.toLowerCase().endsWith(".vpx")) {
+      if (client.getEmulatorService().isVpxGame(game) && !updatedGameFileName.toLowerCase().endsWith(".vpx")) {
         updatedGameFileName = updatedGameFileName + ".vpx";
       }
-      else if (game.isFpGame() && !updatedGameFileName.toLowerCase().endsWith(".fpt")) {
+      else if (client.getEmulatorService().isFpGame(game) && !updatedGameFileName.toLowerCase().endsWith(".fpt")) {
         updatedGameFileName = updatedGameFileName + ".fpt";
       }
 
@@ -563,7 +560,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
       // do not notify TableChange as it will be done globally once all controllers are saved
       success &= pinVolController.save(false);
       success &= tableScreensController.save();
-      success &= tableDataTabCommentsController.save();
+      success &= tableDataTabCommentsController.save(tableDetails);
       success &= tableDataTabScoreDataController.save();
 
       if (tableDetails != null) {
@@ -579,7 +576,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
       EventManager.getInstance().notifyTableChange(game.getId(), null);
 
-      if (game.isVpxGame()) {
+      if (client.getEmulatorService().isVpxGame(game)) {
         tableDataTabScoreDataController.refreshScannedValues();
       }
     }
@@ -651,15 +648,14 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
     this.serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
     this.uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-    scoringDB = client.getSystemService().getScoringDatabase();
 
     boolean patchVersionEnabled = !StringUtils.isEmpty(serverSettings.getMappingPatchVersion());
     patchVersion.setDisable(!patchVersionEnabled);
     patchVersionPanel.setVisible(Features.FIELDS_EXTENDED && patchVersionEnabled);
 
     List<VpsTable> tables = client.getVpsService().getTables();
-    TreeSet<String> collect = new TreeSet<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
-    autoCompleteNameField = new AutoCompleteTextField(null, this.nameField, this, collect);
+    List<String> collect = new ArrayList<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
+    autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, collect);
   }
 
   private void loadTabs() {
@@ -759,7 +755,6 @@ public class TableDataController extends BasePrevNextController implements AutoC
   }
 
   private void initBindings() {
-
     Frontend frontend = client.getFrontendService().getFrontendCached();
 
     autoFillCheckbox.setSelected(uiSettings.isAutoApplyVpsData());
@@ -854,8 +849,6 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
     tableDetailsBinder.bindSpinner(numberOfPlayers, "numberOfPlayers", 0, 4);
 
-    tableDetailsBinder.bindTextField(tags, "tags");
-
     category.setItems(FXCollections.observableList(frontend.getFieldLookups().getCategory()));
     tableDetailsBinder.bindComboBox(category, "category");
 
@@ -946,7 +939,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
       TableDetails tableDetails = client.getFrontendService().getTableDetails(game.getId());
       tableDetailsBinder.setBean(tableDetails, true);
 
-      if (game.isVpxGame() || game.isFpGame()) {
+      if (client.getEmulatorService().isVpxGame(game) || client.getEmulatorService().isFpGame(game)) {
         autoFillBtn.setVisible(true);
         propertRenamingRoot.setVisible(true);
         if (propperRenamingController != null) {
@@ -959,7 +952,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
         propertRenamingRoot.setVisible(false);
       }
 
-      if (game.isVpxGame()) {
+      if (client.getEmulatorService().isVpxGame(game)) {
         HighscoreFiles highscoreFiles = client.getGameService().getHighscoreFiles(game.getId());
         scoreDataTab.setDisable(false);
         if (tableDataTabScoreDataController != null) {
@@ -994,10 +987,10 @@ public class TableDataController extends BasePrevNextController implements AutoC
       extrasTab.setDisable(!isPopper15);
 
       if (tableDetails != null) {
-        gameFileName.setDisable(!game.isVpxGame() && !game.isFpGame());
+        gameFileName.setDisable(!client.getEmulatorService().isVpxGame(game) && !client.getEmulatorService().isFpGame(game));
       }
       else {
-        gameFileName.setDisable(StringUtils.contains(game.getGameFileName(), "/") || StringUtils.contains(game.getGameFileName(), "\\") || !game.isVpxGame());
+        gameFileName.setDisable(StringUtils.contains(game.getGameFileName(), "/") || StringUtils.contains(game.getGameFileName(), "\\") || !client.getEmulatorService().isVpxGame(game));
       }
 
       boolean hasNoDetail = tableDetails == null;

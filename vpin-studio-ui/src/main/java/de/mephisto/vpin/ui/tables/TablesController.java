@@ -493,6 +493,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
     ) {
       Platform.runLater(() -> {
         if (event.getGameId() > 0) {
+          // force cache refresh
+          client.getFrontendService().clearCache(event.getGameId());
           EventManager.getInstance().notifyTableChange(event.getGameId(), null);
         }
         else {

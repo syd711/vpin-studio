@@ -86,6 +86,8 @@ public class Preferences {
 
   private String iScoredSettings;
 
+  private String taggingSettings;
+
   @Column(length = 1024)
   private String doNotShowAgains;
 
@@ -114,6 +116,14 @@ public class Preferences {
 
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
+
+  public String getTaggingSettings() {
+    return taggingSettings;
+  }
+
+  public void setTaggingSettings(String taggingSettings) {
+    this.taggingSettings = taggingSettings;
+  }
 
   public String getAssetSourcesSettings() {
     return assetSourcesSettings;

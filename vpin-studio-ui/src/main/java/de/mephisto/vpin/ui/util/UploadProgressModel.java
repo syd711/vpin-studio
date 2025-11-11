@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.io.File;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,19 +21,43 @@ abstract public class UploadProgressModel extends ProgressModel<File> {
 
   private File file;
   private List<File> files;
+  private Iterator<File> iterator;
 
-  private Runnable finalizer;
-
-  public UploadProgressModel(File file, String title, Runnable finalizer) {
+  public UploadProgressModel(File file, String title) {
     super(title);
     this.file = file;
-    this.finalizer = finalizer;
+    this.iterator = Collections.singletonList(this.file).iterator();
   }
 
-  public UploadProgressModel(List<File> files, String title, Runnable finalizer) {
+  public UploadProgressModel(List<File> files, String title) {
     super(title);
     this.files = files;
-    this.finalizer = finalizer;
+    this.iterator = files.iterator();
+  }
+
+  @Override
+  public boolean isShowSummary() {
+    return false;
+  }
+
+  @Override
+  public int getMax() {
+    return files != null ? files.size() : 1;
+  }
+
+  @Override
+  public File getNext() {
+    return iterator.next();
+  }
+
+  @Override
+  public String nextToString(File file) {
+    return files != null? file.getName() : "Uploading " + file.getName();
+  }
+
+  @Override
+  public boolean hasNext() {
+    return iterator.hasNext();
   }
 
   @Override
@@ -40,9 +66,6 @@ abstract public class UploadProgressModel extends ProgressModel<File> {
     FileUtils.deleteIfTempFile(files);
 
     super.finalizeModel(progressResultModel);
-    if (finalizer != null) {
-      finalizer.run();
-    }
 
     if (file != null && DropInManager.getInstance().isDropInFile(file)) {
       Platform.runLater(() -> {

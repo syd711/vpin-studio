@@ -67,20 +67,19 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
     }
 
     File target = new File(targetFolder, baseName + "." + BackupType.VPA.name().toLowerCase());
+    if (target.exists() && !backupSettings.isOverwriteBackup()) {
+      target = FileUtils.uniqueFile(target);
+    }
     backupDescriptor.setFilename(target.getName());
 
-    File tempFile = new File(target.getParentFile(), target.getName() + ".bak");
-    if (tempFile.exists() && !tempFile.delete()) {
-      throw new UnsupportedOperationException("Couldn't delete existing temporary archive file " + target.getAbsolutePath());
-    }
-
-    //---------
-    LOG.info("Packaging " + game.getGameDisplayName());
-    long start = System.currentTimeMillis();
-
-    LOG.info("Creating temporary archive file " + tempFile.getAbsolutePath());
-
     try {
+      File tempFile = File.createTempFile(target.getName(), ".bak");
+      //---------
+      LOG.info("Packaging " + game.getGameDisplayName());
+      long start = System.currentTimeMillis();
+
+      LOG.info("Creating temporary archive file " + tempFile.getAbsolutePath());
+
       ZipFile zipOut = vpaService.createProtectedArchive(tempFile);
       vpaService.createBackup(packageInfo, jobDescriptor, (fileToZip, fileName) -> {
         if (cancelled) {
@@ -119,25 +118,32 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
       jobDescriptor.setProgress(1);
 
       backupDescriptor.setSize(target.length());
-    }
-    catch (Exception e) {
-      LOG.error("Create VPA for " + game.getGameDisplayName() + " failed: " + e.getMessage(), e);
-      jobDescriptor.setError("Create VPA for " + game.getGameDisplayName() + " failed: " + e.getMessage());
-      return;
-    }
-    finally {
-      if (target.exists()) {
-        if (backupSettings.isOverwriteBackup()) {
-          if (!target.delete()) {
-            target = FileUtils.uniqueFile(target);
-            LOG.error("Failed to delete existing backup file, create new one with unique name instead: {}", target.getAbsolutePath());
-          }
-        }
-        else {
-          target = FileUtils.uniqueFile(target);
+
+      File temporaryTarget = new File(target.getParentFile(), target.getName() + ".bak");
+      try {
+        LOG.info("Copying backup file {} to {}", tempFile.getAbsolutePath(), temporaryTarget.getAbsolutePath());
+        jobDescriptor.setStatus("Copying backup file to " + temporaryTarget.getParentFile().getAbsolutePath());
+        org.apache.commons.io.FileUtils.copyFile(tempFile, temporaryTarget);
+      }
+      catch (IOException e) {
+        LOG.error("Failed to copy temporary file to target: {}", e.getMessage(), e);
+      }
+      finally {
+        if (!tempFile.delete()) {
+          LOG.error("Failed to delete temporary target file {}", tempFile.getAbsolutePath());
         }
       }
-      boolean renamed = tempFile.renameTo(target);
+
+      if (target.exists() && backupSettings.isOverwriteBackup()) {
+        target.delete();
+      }
+
+      if (target.exists() && !target.delete()) {
+        target = FileUtils.uniqueFile(target);
+        LOG.error("Failed to delete existing backup file, create new one with unique name instead: {}", target.getAbsolutePath());
+      }
+
+      boolean renamed = temporaryTarget.renameTo(target);
       if (renamed) {
         LOG.info("Finished packing of " + target.getAbsolutePath() + ", took " + ((System.currentTimeMillis() - start) / 1000) + " seconds, " + FileUtils.readableFileSize(target.length()));
       }
@@ -149,9 +155,28 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
       if (target.exists() && this.cancelled) {
         target.delete();
       }
-
+    }
+    catch (Exception e) {
+      LOG.error("Create VPA for " + game.getGameDisplayName() + " failed: " + e.getMessage(), e);
+      jobDescriptor.setError("Create VPA for " + game.getGameDisplayName() + " failed: " + e.getMessage());
+      return;
+    }
+    finally {
       LOG.info("********************* /Table Backup: {} ***********************************", game.getGameDisplayName());
     }
+  }
+
+  @NonNull
+  private static File createBackupTempFile(File target) {
+    File tempFile = new File(target.getParentFile(), target.getName() + ".bak");
+    try {
+      tempFile = File.createTempFile(target.getName(), ".vpa");
+    }
+    catch (IOException e) {
+      LOG.error("Failed to create temp file: {}", e.getMessage(), e);
+    }
+    tempFile.deleteOnExit();
+    return tempFile;
   }
 
   public void simulateBackup() throws IOException {

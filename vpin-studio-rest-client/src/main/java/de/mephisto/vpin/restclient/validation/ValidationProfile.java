@@ -54,6 +54,10 @@ public class ValidationProfile {
         newConfig.setOption(ValidatorOption.mandatory);
         break;
       }
+      case GameValidationCode.CODE_NO_LOGO: {
+        newConfig.setMedia(ValidatorMedia.image);
+        break;
+      }
       case GameValidationCode.CODE_NO_WHEEL_IMAGE: {
         newConfig.setMedia(ValidatorMedia.image);
         newConfig.setOption(ValidatorOption.mandatory);

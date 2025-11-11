@@ -29,7 +29,7 @@ public class AltSoundUploadController extends BaseUploadController {
 
   protected UploadProgressModel createUploadModel() {
     return new AltSoundUploadProgressModel(game != null ? game.getId() : -1, "ALT Sound Upload",
-        getSelection(), getSelectedEmulatorId(), game.getRom(), finalizer);
+        getSelection(), getSelectedEmulatorId(), game.getRom());
   }
 
   public void setData(Stage stage, File file, GameRepresentation game, UploaderAnalysis uploaderAnalysis, Runnable finalizer) {

@@ -656,8 +656,8 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
     List<VpsTable> tables = client.getVpsService().getTables();
     refreshSheetData(tables);
-    TreeSet<String> collect = new TreeSet<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
-    autoCompleteNameField = new AutoCompleteTextField(null, this.nameField, this, collect);
+    List<String> collect = new ArrayList<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
+    autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, collect);
 
     this.ignoreUpdatesListener = new IgnoreUpdatesChangeListener();
 

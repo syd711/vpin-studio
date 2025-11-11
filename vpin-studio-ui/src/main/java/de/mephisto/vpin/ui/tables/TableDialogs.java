@@ -20,6 +20,7 @@ import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.webhooks.WebhookSet;
 import de.mephisto.vpin.restclient.webhooks.WebhookSettings;
@@ -35,18 +36,25 @@ import de.mephisto.vpin.ui.tables.panels.BaseGameModel;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
+import de.mephisto.vpin.ui.util.StudioFolderChooser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -222,8 +230,11 @@ public class TableDialogs {
       }
       Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload backglass for \"" + game.getGameDisplayName() + "\"?", help2);
       if (result.get().equals(ButtonType.OK)) {
-        DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", file, false, finalizer);
-        ProgressDialog.createProgressDialog(model);
+        DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", file, false);
+        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
+        if (/*resultModel.isSuccess() &&*/ finalizer != null) {
+          finalizer.run();
+        }
         return true;
       }
     }
@@ -239,8 +250,11 @@ public class TableDialogs {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload .res file for \"" + game.getGameDisplayName() + "\"?", help2);
       if (result.get().equals(ButtonType.OK)) {
         Platform.runLater(() -> {
-          ResUploadProgressModel model = new ResUploadProgressModel(game.getId(), "Res File Upload", file, finalizer);
-          ProgressDialog.createProgressDialog(model);
+          ResUploadProgressModel model = new ResUploadProgressModel(game.getId(), "Res File Upload", file);
+          ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
+          if (/*resultModel.isSuccess() &&*/ finalizer != null) {
+            finalizer.run();
+          }
         });
         return true;
       }
@@ -257,8 +271,11 @@ public class TableDialogs {
         }
         Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload .ini file for \"" + game.getGameDisplayName() + "\"?", help2);
         if (result.get().equals(ButtonType.OK)) {
-          IniUploadProgressModel model = new IniUploadProgressModel(game.getId(), "Ini Upload", file, finalizer);
-          ProgressDialog.createProgressDialog(model);
+          IniUploadProgressModel model = new IniUploadProgressModel(game.getId(), "Ini Upload", file);
+          ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
+          if (/*resultModel.isSuccess() &&*/ finalizer != null) {
+            finalizer.run();
+          }
         }
       });
       return true;
@@ -266,14 +283,17 @@ public class TableDialogs {
     return false;
   }
 
-  public static boolean directBamCfgUpload(Stage stage, GameRepresentation game, File file, Runnable finalizer) {
+  public static boolean _directBamCfgUpload(Stage stage, GameRepresentation game, File file, Runnable finalizer) {
     if (file != null && file.exists()) {
       Platform.runLater(() -> {
         String help2 = null;
         Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload BAM .cfg file for \"" + game.getGameDisplayName() + "\"?", help2);
         if (result.get().equals(ButtonType.OK)) {
-          BamCfgUploadProgressModel model = new BamCfgUploadProgressModel("BAM .cfg Upload", Arrays.asList(file), game.getId(), finalizer);
-          ProgressDialog.createProgressDialog(model);
+          BamCfgUploadProgressModel model = new BamCfgUploadProgressModel("BAM .cfg Upload", Arrays.asList(file), game.getId());
+          ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
+          if (/*resultModel.isSuccess() &&*/ finalizer != null) {
+            finalizer.run();
+          }
         }
       });
       return true;
@@ -290,11 +310,35 @@ public class TableDialogs {
         }
         Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload .pov file for \"" + game.getGameDisplayName() + "\"?", help2);
         if (result.get().equals(ButtonType.OK)) {
-          PovUploadProgressModel model = new PovUploadProgressModel(game.getId(), "POV Upload", file, finalizer);
-          ProgressDialog.createProgressDialog(model);
+          PovUploadProgressModel model = new PovUploadProgressModel(game.getId(), "POV Upload", file);
+          ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
+          if (/*resultModel.isSuccess() &&*/ finalizer != null) {
+            finalizer.run();
+          }
         }
       });
       return true;
+    }
+    return false;
+  }
+
+  public static boolean download(Stage stage, String filename, InputStream in) {
+    StudioFolderChooser chooser = new StudioFolderChooser();
+    chooser.setTitle("Select Target Folder");
+    File targetFolder = chooser.showOpenDialog(stage);
+
+    if (targetFolder != null) {
+      File targetFile = new File(targetFolder, filename);
+      targetFile = FileUtils.uniqueFile(targetFile);
+      try (FileOutputStream fileOutputStream = new FileOutputStream(targetFile)) {
+        IOUtils.copy(in, fileOutputStream);
+        WidgetFactory.showInformation(stage, "Export Finished", "Written \"" + targetFile.getName() + "\".");
+        return true;
+      }
+      catch (IOException e) {
+        LOG.error("Failed to download {} : {}", targetFile.getName(), e.getMessage(), e);
+        WidgetFactory.showAlert(stage, "Error", "Failed to download " + targetFile.getName() + ": " + e.getMessage());
+      }
     }
     return false;
   }
@@ -366,6 +410,15 @@ public class TableDialogs {
   }
 
 
+  public static boolean openTaggingDialog(List<GameRepresentation> games) {
+    Stage stage = Dialogs.createStudioDialogStage(TaggingDialogController.class, "dialog-tagging.fxml", "Bulk Tagging");
+    TaggingDialogController controller = (TaggingDialogController) stage.getUserData();
+    controller.setGames(games);
+    stage.showAndWait();
+    return true;
+  }
+
+
   public static boolean openEventLogDialog(GameRepresentation game) {
     Stage stage = Dialogs.createStudioDialogStage(EventLogController.class, "dialog-event-log.fxml", "Event Log", "eventLog");
     EventLogController controller = (EventLogController) stage.getUserData();
@@ -411,7 +464,7 @@ public class TableDialogs {
   }
 
   public static void openAltColorUploadDialog(GameRepresentation game, File file, UploaderAnalysis analysis, Runnable finalizer) {
-    if (StringUtils.isEmpty(game.getRom())) {
+    if (client.getEmulatorService().isVpxGame(game) && StringUtils.isEmpty(game.getRom())) {
       WidgetFactory.showAlert(Studio.stage, "No ROM", "Table \"" + game.getGameDisplayName() + "\" has no ROM name set.", "The ROM name is required for this upload type.");
     }
 

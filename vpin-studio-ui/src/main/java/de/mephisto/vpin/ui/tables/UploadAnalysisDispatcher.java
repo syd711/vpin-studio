@@ -208,7 +208,7 @@ public class UploadAnalysisDispatcher {
           TableDialogs.openTableUploadDialog(game, analysis.getEmulatorType(), null, analysis);
         }
         else if (analysis.isPatch()) {
-          if (game == null || !game.isVpxGame()) {
+          if (game == null || !client.getEmulatorService().isVpxGame(game)) {
             WidgetFactory.showInformation(Studio.stage, "Can not apply a patch without a VPX table selected.", "Select the matching table for the patch file and try again.");
             return null;
           }

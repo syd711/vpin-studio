@@ -79,19 +79,16 @@ public class FileSystemTableAssetAdapter extends DefaultTableAssetAdapter {
     fileName = fileName.replaceAll("@2x", "");
     File source = new File(fileName);
     if (source.exists()) {
-
-Thread.sleep(1000);
-
       // exception are thrown and are caught buy caller 
-        try (InputStream fis = Files.newInputStream(source.toPath())) {
-          if (start < 0) {
-            IOUtils.copyLarge(fis, outputStream);
-          }
-          else {
-            IOUtils.copyLarge(fis, outputStream, start, length);
-          }
-          LOG.info("write {} from {}", source.getAbsolutePath(), this.source);
+      try (InputStream fis = Files.newInputStream(source.toPath())) {
+        if (start < 0) {
+          IOUtils.copyLarge(fis, outputStream);
         }
+        else {
+          IOUtils.copyLarge(fis, outputStream, start, length);
+        }
+        LOG.info("write {} from {}", source.getAbsolutePath(), this.source);
+      }
     }
     else {
       LOG.error("Failed to resolve media source file {} from source {}", source.getAbsolutePath(), getAssetSource());

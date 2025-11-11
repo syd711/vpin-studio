@@ -4,8 +4,14 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
+import de.mephisto.vpin.restclient.cards.CardTemplateType;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+
+import org.apache.commons.collections4.ListUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +21,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class CardTemplatesService {
+  private final static Logger LOG = LoggerFactory.getLogger(CardTemplatesService.class);
 
   /**
    * The current version of CardTemplate. Increment by 1 when incompatible changes
@@ -27,6 +34,9 @@ public class CardTemplatesService {
 
   @Autowired
   private PreferencesService preferencesService;
+
+  @Autowired
+  private GameService gameService;
 
   @Autowired
   private TemplateMerger templateMerger;
@@ -46,67 +56,151 @@ public class CardTemplatesService {
     m.setCardTemplate(cardTemplate);
     TemplateMapping updatedMapping = templateMappingRepository.saveAndFlush(m);
     cardTemplate.setId(updatedMapping.getId());
-    return getTemplateOrDefault(updatedMapping.getId());
+    return getTemplate(updatedMapping.getId());
   }
 
-  public synchronized boolean delete(int id) {
-    Optional<TemplateMapping> byId = templateMappingRepository.findById((long) id);
+  public CardTemplate createFromJson(String templateName, String json) {
+    TemplateMapping m = new TemplateMapping();
+    try {
+      CardTemplate template = CardTemplate.fromJson(CardTemplate.class, json);
+      template.setId(null);
+      template.setName(templateName);
+      m.setCardTemplate(template);
+      TemplateMapping updatedMapping = templateMappingRepository.saveAndFlush(m);
+      return getTemplate(updatedMapping.getId());
+    }
+    catch (Exception e) {
+      LOG.error("Cannot create form json", e);
+      return null;
+    }
+  }
+
+  public synchronized boolean delete(long id) {
+    Optional<TemplateMapping> byId = templateMappingRepository.findById(id);
     if (byId.isPresent()) {
-      TemplateMapping templateMapping = byId.get();
-      if (!templateMapping.getTemplate().getName().equals(CardTemplate.DEFAULT)) {
-        templateMappingRepository.deleteById((long) id);
+      //OLE : prevent delete DEFAULT via UI but not via service ? + delete allow sthe reset feature
+      //TemplateMapping templateMapping = byId.get();
+      //if (!templateMapping.getTemplate().getName().equals(CardTemplate.DEFAULT)) {
+        templateMappingRepository.deleteById(id);
         return true;
-      }
+      //}
     }
     return false;
   }
 
   public List<CardTemplate> getTemplates() {
-    
     List<TemplateMapping> all = templateMappingRepository.findAll();
-    if (all.isEmpty()) {
-      CardTemplate template = new CardTemplate();
-      template.setName(CardTemplate.DEFAULT);
-      save(template);
-      all = templateMappingRepository.findAll();
-    }
 
-    List<CardTemplate> results = all.stream()
-      .map(m -> mappingToTemplate(m))
-      .collect(Collectors.toList());
+    List<CardTemplate> results = all.stream().map(m -> mappingToTemplate(m)).collect(Collectors.toList());
+
+    createDefaultIfAbsent(results, CardTemplateType.HIGSCORE_CARD);
+    createDefaultIfAbsent(results, CardTemplateType.INSTRUCTIONS_CARD);
+    createDefaultIfAbsent(results, CardTemplateType.WHEEL);
 
     return results;
   }
 
-  public CardTemplate getTemplateForGame(Game game) {
-    return getTemplateOrDefault(game.getTemplateId());
+
+  private void createDefaultIfAbsent(List<CardTemplate> results, CardTemplateType templateType) {
+    if (ListUtils.indexOf(results, template -> template.isDefault() && templateType.equals(template.getTemplateType())) < 0) {
+      CardTemplate template = new CardTemplate();
+      template.setName(CardTemplate.DEFAULT);
+      template.setVersion(CURRENT_VERSION);
+      template.setTemplateType(templateType);
+      switch (templateType) {
+        case HIGSCORE_CARD:
+          template.resetDefaultHighscoreCard();
+          break;
+        case INSTRUCTIONS_CARD:
+          template.resetDefaultInstructionsCard();
+          break;
+        case WHEEL:
+          template.resetDefaultWheel();
+          break;
+      }
+
+      // save the template
+      template = save(template);
+      results.add(template);
+    }
   }
 
-  public CardTemplate getTemplateOrDefault(Long templateId) {
+  public CardTemplate getTemplateForGame(Game game, CardTemplateType templateType) {
+    return getTemplateOrDefault(game.getTemplateId(templateType), templateType);
+  }
+
+  public CardTemplate getTemplateOrDefault(Long templateId, CardTemplateType templateType) {
+    CardTemplate template = getTemplate(templateId);
+    return template != null ? template : getDefaultTemplate(templateType);
+  }
+  
+  public CardTemplate getTemplate(Long templateId) {
     if (templateId != null) {
       Optional<TemplateMapping> mapping = templateMappingRepository.findById(templateId);
       if (mapping.isPresent()) {
         return mappingToTemplate(mapping.get());
       }
     }
-    // oll other cases
-    return getDefaultTemplate();
+    return null;
   }
 
-  private CardTemplate getDefaultTemplate() {
+  private CardTemplate getDefaultTemplate(CardTemplateType templateType) {
     List<TemplateMapping> all = templateMappingRepository.findAll();
     return all.stream()
-      .filter(m -> m.getTemplate().isTemplate() && CardTemplate.DEFAULT.equals(m.getTemplate().getName()))
+      .filter(m -> m.getTemplate().isTemplate() && m.getTemplate().isDefault() && templateType.equals(m.getTemplate().getTemplateType()))
       .map(m -> mappingToTemplate(m))
       .findFirst()
       .orElse(null);
+  }
+
+  public boolean assignTemplate(int gameId, long templateId, boolean switchToCardMode, CardTemplateType templateType) throws Exception {
+    Game game = gameService.getGame(gameId);
+    if (game == null) {
+      LOG.error("Cannot assign template to game {} as the game does not exist", gameId);
+      return false;
+    }
+    
+    Optional<TemplateMapping> baseTemplateMapping = templateMappingRepository.findById(templateId);
+    if (baseTemplateMapping.isEmpty()) {
+      LOG.error("Cannot assign template {} as it does not exist", templateId);
+      return false;
+    }
+    CardTemplate baseTemplate = baseTemplateMapping.get().getTemplate();
+
+    Long oldTemplateId = game.getTemplateId(templateType);
+
+      //create new card template
+    if (switchToCardMode) {
+      //delete possible existing one
+      TemplateMapping mapping = oldTemplateId != null ? templateMappingRepository.findById(oldTemplateId).orElse(null) : null;
+      if (mapping != null) {
+        CardTemplate template = mapping.getTemplate();
+        if (!template.isTemplate()) {
+          templateMappingRepository.deleteById(oldTemplateId);
+        }
+      }
+
+      baseTemplate.setId(null);
+      baseTemplate.setParentId(templateId);
+      baseTemplate.setName(CardTemplate.CARD_TEMPLATE_PREFIX + game.getId());
+      baseTemplate = save(baseTemplate);
+
+      game.setTemplateId(templateType, baseTemplate.getId());
+      gameService.save(game);
+      return true;
+    }
+    else if (oldTemplateId != null && oldTemplateId != templateId || oldTemplateId == null && !baseTemplate.isDefault()) {
+      game.setTemplateId(templateType, templateId);
+      gameService.save(game);
+      return true;
+    }
+    return false;
   }
 
   //-------------------------------------------------- Merge of templates
 
   private CardTemplate mappingToTemplate(TemplateMapping m) {
     CardTemplate template = checkVersion(m.getTemplate());
-    template.setId(m.getId());
     if (!template.isTemplate()) {
       mergeWithParent(template);
     }
@@ -116,11 +210,11 @@ public class CardTemplatesService {
   private CardTemplate mergeWithParent(CardTemplate template) {
     CardTemplate parent = null;
     if (template.getParentId() != null) {
-      parent = getTemplateOrDefault(template.getParentId());
+      parent = getTemplate(template.getParentId());
     }
-    else {
+    if (parent == null) {
       // no parent, merger with DEFAULT
-      parent = getDefaultTemplate();
+      parent = getDefaultTemplate(template.getTemplateType());
     }
 
     return templateMerger._merge(template, parent);

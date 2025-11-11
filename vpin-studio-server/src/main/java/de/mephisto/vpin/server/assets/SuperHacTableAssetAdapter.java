@@ -17,13 +17,12 @@ import java.io.OutputStream;
 import java.util.*;
 
 /**
- * And asset search service based on the local filesystem
+ * And asset search service based on github
  */
-public class SuperHacTableAssetAdapter extends DefaultTableAssetAdapter implements TableAssetsAdapter<Game> {
+public class SuperHacTableAssetAdapter extends DefaultTableAssetAdapter  {
   private final static Logger LOG = LoggerFactory.getLogger(SuperHacTableAssetAdapter.class);
 
   public final static String SOURCE_ID = TableAssetSourceType.SuperHacRepo.name();
-
 
   public SuperHacTableAssetAdapter(@NonNull TableAssetSource source) {
     super(source);

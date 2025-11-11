@@ -3,8 +3,6 @@ package de.mephisto.vpin.commons.fx.cards;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
@@ -14,7 +12,6 @@ import javax.imageio.ImageIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.fx.ImageUtil;
 import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
@@ -54,7 +51,7 @@ public class CardLayerBackground extends Canvas implements CardLayer {
     GraphicsContext g = getGraphicsContext2D();
     g.clearRect(0, 0, width, height);
 
-    LogTime lt = new LogTime("   CardLayerBackground");
+    LogTime lt = new LogTime("CardLayerBackground");
 
     boolean imageDirty = false;
     if (hasBackroundChanged(template, data)) {
@@ -161,8 +158,7 @@ public class CardLayerBackground extends Canvas implements CardLayer {
       g.strokeRoundRect(framex + strokeWidth / 2, framey + strokeWidth / 2, framewidth - strokeWidth, frameheight -  + strokeWidth, 
           template.getBorderRadius() * 2 * zoomX, template.getBorderRadius() * 2 * zoomY);
 
-
-      lt.pulse("drawFrame()");
+      lt.pulse("drawBorder()");
     }
   }
 
@@ -186,27 +182,14 @@ public class CardLayerBackground extends Canvas implements CardLayer {
         LOG.info("Cannot load image, Using default image as fallback instead of default backgroundUrl");
       }
     }
+
     // fall back or !isUseDefaultBackground()
-    if (backgroundImage ==  null) {
-      File backgroundsFolder = new File(SystemInfo.RESOURCES + "backgrounds");
-      File sourceImage = new File(backgroundsFolder, template.getBackground() + ".jpg");
-      if (!sourceImage.exists()) {
-        sourceImage = new File(backgroundsFolder, template.getBackground() + ".png");
-      }
-      if (!sourceImage.exists()) {
-        File[] backgrounds = backgroundsFolder.listFiles((dir, name) -> name.endsWith(".png") || name.endsWith(".jpg"));
-        if (backgrounds != null && backgrounds.length > 0) {
-          sourceImage = backgrounds[0];
-        }
-      }
-      if (!sourceImage.exists()) {
-        throw new UnsupportedOperationException("No background images have been found, " +
-            "make sure that folder " + backgroundsFolder.getAbsolutePath() + " contains valid images.");
-      }
+    if (backgroundImage ==  null && data != null) {
       try {
-        backgroundImage = ImageUtil.loadImage(sourceImage);
-      } catch (IOException e) {
-        LOG.error("Cannot load image from source %s", sourceImage.getAbsolutePath(), e);
+        backgroundImage = ImageIO.read(new ByteArrayInputStream(data.getFallbackBackground()));
+      }
+      catch (Exception e) {
+        LOG.info("Cannot load image, Using default image as fallback instead of default backgroundUrl");
       }
     }
 
@@ -222,10 +205,11 @@ public class CardLayerBackground extends Canvas implements CardLayer {
       data != null ? data.getGameId() : -1,
       template.isUseDefaultBackground(),
       template.isUseColoredBackground(),
-      template.getBackgroundColor(),
-      template.getBackground()
+      template.getBackgroundColor()
     );
-    if (cacheHashTemplate == 0 || cacheHashTemplate != hashTemplate) {
+    if (cacheHashTemplate == 0 || cacheHashTemplate != hashTemplate 
+          || data != null && data.checkBackroundUpdated()
+          || data != null && data.checkFallbackBackgroundUpdated()) {
       cacheHashTemplate = hashTemplate;
       return true;
     }
@@ -235,8 +219,6 @@ public class CardLayerBackground extends Canvas implements CardLayer {
   private int cacheHashEffect = 0;
 
   private boolean hasEffectsChanged(@Nonnull CardTemplate template) {
-    boolean hasChanged = false;
-
     int hashEffect = Objects.hash(
       template.isGrayScale(),
       template.getTransparentPercentage(),
@@ -245,9 +227,9 @@ public class CardLayerBackground extends Canvas implements CardLayer {
     );
     if (cacheHashEffect == 0 || cacheHashEffect != hashEffect) {
       cacheHashEffect = hashEffect;
-      hasChanged = true;
+      return true;
     }
-    return hasChanged;
+    return false;
   }
 
   @Override

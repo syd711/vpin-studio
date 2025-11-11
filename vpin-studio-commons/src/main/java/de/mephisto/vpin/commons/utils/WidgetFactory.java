@@ -53,12 +53,14 @@ import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 
@@ -190,6 +192,17 @@ public class WidgetFactory {
     fontIcon.setIconSize(DEFAULT_ICON_SIZE);
     fontIcon.setIconLiteral("bi-check-circle");
     fontIcon.setIconColor(Paint.valueOf("#66FF66"));
+    if (color != null) {
+      fontIcon.setIconColor(Paint.valueOf(color));
+    }
+    return fontIcon;
+  }
+
+  public static FontIcon createEditIcon(@Nullable String color) {
+    FontIcon fontIcon = new FontIcon();
+    fontIcon.setIconSize(DEFAULT_ICON_SIZE);
+    fontIcon.setIconLiteral("mdi2f-file-document-edit-outline");
+    fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
     if (color != null) {
       fontIcon.setIconColor(Paint.valueOf(color));
     }
@@ -934,21 +947,22 @@ public class WidgetFactory {
     }
 
     String url = client.getURL(mediaItem.getUri()) + "/" + URLEncoder.encode(mediaItem.getName(), Charset.defaultCharset());
-    return createAssetMediaPlayer(client, url, mediaItem.getScreen(), mimeType, noLoading, usePreview);
-  }
-
-  public static AssetMediaPlayer createAssetMediaPlayer(VPinStudioClient client, String url, @Nullable String screenName, 
-                                                        String mimeType, boolean noLoading, boolean usePreview) {
-
-    boolean audioOnly = VPinScreen.Audio.getSegment().equalsIgnoreCase(screenName) || VPinScreen.AudioLaunch.getSegment().equalsIgnoreCase(screenName);
 
     Frontend frontend = client.getFrontendService().getFrontendCached();
+    boolean playfieldMediaInverted = frontend.isPlayfieldMediaInverted();
+    return createAssetMediaPlayer(client, url, mediaItem.getScreen(), mimeType, playfieldMediaInverted, noLoading, usePreview);
+  }
+
+  public static AssetMediaPlayer createAssetMediaPlayer(VPinStudioClient client, String url, @Nullable VPinScreen screen,
+                                                        String mimeType, boolean playfieldMediaInverted, boolean noLoading, boolean usePreview) {
+
+    boolean audioOnly = VPinScreen.Audio.equals(screen) || VPinScreen.AudioLaunch.equals(screen);
 
     String baseType = mimeType.split("/")[0];
     if (baseType.equals("image") && !audioOnly) {
       ImageViewer imageViewer = new ImageViewer();
       imageViewer.setNoLoading(noLoading);
-      imageViewer.render(url, screenName, frontend.isPlayfieldMediaInverted());
+      imageViewer.render(url, screen, playfieldMediaInverted);
       return imageViewer;
     }
     else if (baseType.equals("audio")) {
@@ -958,13 +972,13 @@ public class WidgetFactory {
       return audioMediaPlayer;
     }
     else if (baseType.equals("video") && !audioOnly) {
-      VideoMediaPlayer videoMediaPlayer = new VideoMediaPlayer(mimeType, frontend.isPlayfieldMediaInverted());
+      VideoMediaPlayer videoMediaPlayer = new VideoMediaPlayer(mimeType, playfieldMediaInverted);
       videoMediaPlayer.setNoLoading(noLoading);
-      videoMediaPlayer.render(url, screenName, usePreview);
+      videoMediaPlayer.render(url, screen, usePreview);
       return videoMediaPlayer;
     }
     else {
-      LOG.error("Invalid media mime type " + mimeType + " of asset used for media panel " + screenName);
+      LOG.error("Invalid media mime type " + mimeType + " of asset used for media panel " + screen);
     }
 
     return null;
@@ -982,10 +996,10 @@ public class WidgetFactory {
   }
 
   public static class HighscoreBackgroundImageListCell extends ListCell<String> {
-    private final VPinStudioClient client;
+    private final Function<String, byte[]> provider;
 
-    public HighscoreBackgroundImageListCell(VPinStudioClient client) {
-      this.client = client;
+    public HighscoreBackgroundImageListCell(Function<String, byte[]> provider) {
+      this.provider = provider;
     }
 
     protected void updateItem(String item, boolean empty) {
@@ -993,7 +1007,7 @@ public class WidgetFactory {
       setGraphic(null);
       setText(null);
       if (item != null) {
-        Image image = new Image(client.getHighscoreCardsService().getHighscoreBackgroundImage(item));
+        Image image = new Image(new ByteArrayInputStream(provider.apply(item)));
         ImageView imageView = new ImageView(image);
         imageView.setFitWidth(80);
 

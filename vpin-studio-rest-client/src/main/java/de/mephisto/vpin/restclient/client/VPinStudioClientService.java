@@ -2,6 +2,7 @@ package de.mephisto.vpin.restclient.client;
 
 import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import de.mephisto.vpin.restclient.util.ProgressableFileSystemResource;
 import org.springframework.http.HttpEntity;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
@@ -28,12 +30,12 @@ public class VPinStudioClientService {
     return client.getRestClient();
   }
 
-  protected HttpEntity createUpload(File file, int gameId, String uploadType, AssetType assetType, FileUploadProgressListener listener) throws Exception {
+  protected HttpEntity<MultiValueMap<String, Object>> createUpload(File file, int objectId, UploadType uploadType, AssetType assetType, FileUploadProgressListener listener) throws Exception {
     LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-    return createUpload(map, file, gameId, uploadType, assetType, listener);
+    return createUpload(map, file, objectId, uploadType, assetType, listener);
   }
 
-  protected HttpEntity createUpload(LinkedMultiValueMap<String, Object> map, File file, int gameOrEmulatorId, String uploadType, AssetType assetType, FileUploadProgressListener listener) {
+  protected HttpEntity<MultiValueMap<String, Object>> createUpload(MultiValueMap<String, Object> map, File file, int objectId, UploadType uploadType, AssetType assetType, FileUploadProgressListener listener) {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.MULTIPART_FORM_DATA);
     String boundary = Long.toHexString(System.currentTimeMillis());
@@ -41,7 +43,7 @@ public class VPinStudioClientService {
     ProgressableFileSystemResource rsr = new ProgressableFileSystemResource(file, listener);
 
     map.add("file", rsr);
-    map.add("objectId", gameOrEmulatorId);
+    map.add("objectId", objectId);
     map.add("uploadType", uploadType);
     map.add("assetType", assetType != null ? assetType.name() : null);
     return new HttpEntity<>(map, headers);
@@ -53,9 +55,9 @@ public class VPinStudioClientService {
     return new RestTemplate(rf);
   }
 
-  public static void finalizeUpload(HttpEntity upload) {
-    Map<String, Object> data = (Map<String, Object>) upload.getBody();
-    List fields = (List) data.get("file");
+  public static void finalizeUpload(HttpEntity<MultiValueMap<String, Object>> upload) {
+    Map<String, List<Object>> data = upload.getBody();
+    List<?> fields = data.get("file");
     ProgressableFileSystemResource resource = (ProgressableFileSystemResource) fields.get(0);
     resource.close();
   }

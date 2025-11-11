@@ -8,7 +8,6 @@ import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
 import de.mephisto.vpin.commons.utils.FXUtil;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
@@ -307,7 +306,7 @@ public class MenuController implements Initializable {
       JFXFuture
           .supplyAsync(() -> {
             try {
-              CardTemplate cardTemplate = client.getCardTemplate(game);
+              CardTemplate cardTemplate = client.getHighscoreCardTemplate(game);
               return cardTemplate;
             }
             catch (Exception e) {

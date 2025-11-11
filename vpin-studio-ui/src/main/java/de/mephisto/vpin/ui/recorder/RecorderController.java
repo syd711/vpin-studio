@@ -26,7 +26,6 @@ import de.mephisto.vpin.ui.monitor.MonitoringManager;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.recorder.panels.ScreenRecorderPanelController;
 import de.mephisto.vpin.ui.tables.*;
-import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.tables.panels.PlayButtonController;
@@ -310,11 +309,6 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
   public void refreshFilters() {
     getFilterController().applyFilters();
-  }
-
-
-  private BaseFilterController<GameRepresentation, GameRepresentationModel> getFilterController() {
-    return filterController;
   }
 
   @FXML

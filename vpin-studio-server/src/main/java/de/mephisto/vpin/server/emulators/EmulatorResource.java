@@ -1,5 +1,7 @@
 package de.mephisto.vpin.server.emulators;
 
+import de.mephisto.vpin.restclient.emulators.EmulatorValidation;
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.games.GameEmulator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,11 @@ public class EmulatorResource {
     return emulatorService.getAltExeNames(emulatorId);
   }
 
+  @GetMapping("/validate/{emulatorType}")
+  public EmulatorValidation validate(@PathVariable("emulatorType") EmulatorType emulatorType) {
+    return emulatorService.validate(emulatorType);
+  }
+
   @GetMapping("/backglassemulators")
   public List<GameEmulator> getBackglassGameEmulators() {
     return frontendStatusService.getBackglassGameEmulators();
@@ -43,6 +50,7 @@ public class EmulatorResource {
   public boolean delete(@PathVariable("emulatorId") int emulatorId) throws Exception {
     return emulatorService.delete(emulatorId);
   }
+
   @GetMapping("/clearcache")
   public boolean clearCache() {
     return emulatorService.clearCache();

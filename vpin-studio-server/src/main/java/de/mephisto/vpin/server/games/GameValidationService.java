@@ -159,11 +159,29 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
     if (isVPX && isValidationEnabled(game, GameValidationCode.CODE_NO_DMDFOLDER)) {
       File dmdProjectFolder = StringUtils.isNotEmpty(game.getDMDProjectFolder()) ?
-          new File(game.getEmulator().getGamesFolder(), game.getDMDProjectFolder()) : null;
+          new File(game.getGameFile().getParent(), game.getDMDProjectFolder()) : null;
       if (dmdProjectFolder != null && !dmdProjectFolder.exists()) {
-        result.add(ValidationStateFactory.create(GameValidationCode.CODE_NO_DMDFOLDER));
+        result.add(ValidationStateFactory.create(GameValidationCode.CODE_NO_DMDFOLDER, game.getDMDProjectFolder()));
         if (findFirst) {
           return result;
+        }
+      }
+    }
+
+    if (isVPX && isValidationEnabled(game, GameValidationCode.CODE_SCRIPT_FILES_MISSING)) {
+      if (game.getScripts() != null) {
+        File scriptFolder = game.getEmulator().getScriptsFolder();
+        for (String script : game.getScripts()) {
+          File scriptFile = new File(game.getGameFile().getParentFile(), script);
+          if (!scriptFile.exists()) {
+            scriptFile = new File(scriptFolder, script);
+          }
+          if (!scriptFile.exists()) {
+            result.add(ValidationStateFactory.create(GameValidationCode.CODE_SCRIPT_FILES_MISSING, script));
+            if (findFirst) {
+              return result;
+            }
+          }
         }
       }
     }
@@ -417,6 +435,15 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
     }
 
+    if (isValidationEnabled(game, GameValidationCode.CODE_NO_LOGO)) {
+      if (!validScreenAssets(game, VPinScreen.Logo)) {
+        result.add(ValidationStateFactory.create(GameValidationCode.CODE_NO_LOGO));
+        if (findFirst) {
+          return result;
+        }
+      }
+    }
+
     return null;
   }
 
@@ -488,7 +515,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     //File mameFolder = mameService.getMameFolder();
-    File mameFolder = game.getEmulator().getMameFolder();
+    File mameFolder = mameService.getMameFolder();
     File dmdDevicedll = new File(mameFolder, "DmdDevice.dll");
     File dmdDevice64dll = new File(mameFolder, "DmdDevice64.dll");
     File dmdextexe = new File(mameFolder, "dmdext.exe");
@@ -522,6 +549,9 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
       case serum: {
         String name = game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX;
+        if (game.isZenGame()) {
+          name = "pin2dmd." + UploaderAnalysis.SERUM_SUFFIX;
+        }
         if (isValidationEnabled(game, CODE_ALT_COLOR_FILES_MISSING) && !altColor.contains(name)) {
           result.add(ValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, name));
         }
@@ -532,7 +562,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
     }
 
-    if (!StringUtils.isEmpty(game.getRom())) {
+    if (game.isVpxGame() && !StringUtils.isEmpty(game.getRom())) {
       MameOptions gameOptions = mameService.getOptions(game.getRom());
       if (gameOptions.isExistInRegistry()) {
         if (isValidationEnabled(game, CODE_ALT_COLOR_COLORIZE_DMD_ENABLED) && !gameOptions.isColorizeDmd()) {
@@ -626,6 +656,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         || codes.contains(CODE_NO_PLAYFIELD)
         || codes.contains(CODE_NO_LOADING)
         || codes.contains(CODE_NO_OTHER2)
+        || codes.contains(CODE_NO_LOGO)
         || codes.contains(CODE_NO_WHEEL_IMAGE)) {
       return true;
     }
@@ -651,6 +682,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         || codes.contains(CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED)
         || codes.contains(CODE_ALT_COLOR_FILES_MISSING)
         || codes.contains(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING)
+        || codes.contains(CODE_SCRIPT_FILES_MISSING)
     ) {
       return true;
     }

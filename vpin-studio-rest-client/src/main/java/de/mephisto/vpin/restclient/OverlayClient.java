@@ -50,7 +50,7 @@ public interface OverlayClient {
 
   AlxSummary getAlxSummary(int gameId);
 
-  CardTemplate getCardTemplate(GameRepresentation game);
+  CardTemplate getHighscoreCardTemplate(GameRepresentation game);
 
   /** get the CardData with streams */
   CardData getCardData(GameRepresentation game, CardTemplate template);

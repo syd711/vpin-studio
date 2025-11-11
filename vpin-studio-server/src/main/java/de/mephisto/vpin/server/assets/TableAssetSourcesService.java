@@ -16,9 +16,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -64,7 +62,9 @@ public class TableAssetSourcesService implements PreferenceChangedListener, Init
 
   @NonNull
   public List<TableAssetSource> getAssetSources() {
-    return TableAssetDefaultSourcesFactory.createDefaults(tableAssetSourcesSettings.getSources());
+    List<TableAssetSource> defaults = TableAssetDefaultSourcesFactory.createDefaults(tableAssetSourcesSettings.getSources());
+    Collections.sort(defaults, Comparator.comparing(TableAssetSource::getName));
+    return defaults;
   }
 
   public boolean deleteAssetSource(String id) throws Exception {

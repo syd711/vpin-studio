@@ -34,9 +34,6 @@ import org.springframework.util.StreamUtils;
 
 import javax.imageio.ImageIO;
 import javax.xml.bind.DatatypeConverter;
-
-import static de.mephisto.vpin.server.VPinStudioServer.Features;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -47,6 +44,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
+
 @Service
 public class BackglassService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(BackglassService.class);
@@ -56,6 +55,7 @@ public class BackglassService implements InitializingBean {
 
   @Autowired
   private EmulatorService emulatorService;
+
   @Autowired
   private FrontendService frontendService;
 
@@ -314,6 +314,22 @@ public class BackglassService implements InitializingBean {
         this.cacheB2STableSettings = parser.getTableSettings();
       }
     }
+
+    if (this.serverSettings != null) {
+      this.serverSettings.setExtendedSearch(false);
+      Map<String, Object> currentUserValues = systemService.getCurrentUserValues("Software\\B2S");
+      if (currentUserValues.containsKey("B2STableSettingsExtendedPath")) {
+        Object value = currentUserValues.get("B2STableSettingsExtendedPath");
+        try {
+          if (Integer.parseInt(String.valueOf(value)) == 1) {
+            this.serverSettings.setExtendedSearch(true);
+          }
+        }
+        catch (NumberFormatException e) {
+          //ignore
+        }
+      }
+    }
   }
 
   public DirectB2STableSettings saveTableSettings(Game game, DirectB2STableSettings settings) throws VPinStudioException {
@@ -383,11 +399,19 @@ public class BackglassService implements InitializingBean {
 
   public DirectB2ServerSettings saveServerSettings(DirectB2ServerSettings settings) throws VPinStudioException {
     try {
+      if (settings.isExtendedSearch()) {
+        systemService.setUserValue("Software\\B2S\\", "B2STableSettingsExtendedPath", "1");
+      }
+      else {
+        systemService.deleteUserValue("Software\\B2S\\", "B2STableSettingsExtendedPath");
+      }
+
       if (Features.IS_STANDALONE) {
         File ini = systemService.getStandaloneConfigFile();
         if (ini != null && ini.exists()) {
           B2STableSettingsSerializer serverSettingsSerializer = new B2STableSettingsSerializer();
           serverSettingsSerializer.serializeIni(settings, new DirectB2ServerSettings(), ini);
+
           // cache
           this.serverSettings = settings;
         }
@@ -562,7 +586,7 @@ public class BackglassService implements InitializingBean {
   @Nullable
   private DirectB2S reloadDirectB2SAndVersions(@NonNull GameEmulator emulator, String fileName) {
     //do not check this for emulators that do not support backglasses anyway
-    if (emulator.isMameEmulator() || emulator.isOtherEmulator()) {
+    if (emulator.isMameEmulator() || emulator.isOtherEmulator() || emulator.isZaccariaEmulator() || emulator.isZenEmulator()) {
       return null;
     }
 

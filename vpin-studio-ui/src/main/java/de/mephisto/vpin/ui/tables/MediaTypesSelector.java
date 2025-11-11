@@ -7,12 +7,16 @@ import java.util.List;
 
 public class MediaTypesSelector {
 
-  public static List<String> getFileSelection(VPinScreen VPinScreen) {
+  public static List<String> getFileSelection(VPinScreen screen) {
     List<String> fileSelection = new ArrayList<>();
-    if (VPinScreen.equals(VPinScreen.Audio) || VPinScreen.equals(VPinScreen.AudioLaunch)) {
+    if (screen.equals(VPinScreen.Audio) || screen.equals(VPinScreen.AudioLaunch)) {
       fileSelection.add("*.mp3");
     }
-    else if (VPinScreen.equals(VPinScreen.Wheel)) {
+    else if (screen.equals(VPinScreen.Logo)) {
+      fileSelection.add("*.jpg");
+      fileSelection.add("*.png");
+    }
+    else if (screen.equals(VPinScreen.Wheel)) {
       fileSelection.add("*.jpg");
       fileSelection.add("*.png");
       fileSelection.add("*.apng");

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.games;
 
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
@@ -9,11 +10,13 @@ import de.mephisto.vpin.restclient.system.FileInfo;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.assets.AssetService;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.fp.FPService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.listeners.EventOrigin;
+import de.mephisto.vpin.server.steam.SteamService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpx.VPXService;
 import org.slf4j.Logger;
@@ -59,6 +62,12 @@ public class GamesResource {
   @Autowired
   private GameLifecycleService gameLifecycleService;
 
+  @Autowired
+  private EmulatorService emulatorService;
+
+  @Autowired
+  private SteamService steamService;
+
   @GetMapping
   public List<Game> getGames() {
     return gameService.getGames();
@@ -102,6 +111,12 @@ public class GamesResource {
       String altExe = (String) values.get("altExe");
       String option = (String) values.get("option");
 
+      GameEmulator gameEmulator = emulatorService.getGameEmulator(game.getEmulatorId());
+      if (gameEmulator == null) {
+        return false;
+      }
+
+      EmulatorType type = gameEmulator.getType();
       if (game.isVpxGame()) {
         frontendService.killFrontend();
         if (vpxService.play(game, altExe, option)) {
@@ -112,6 +127,13 @@ public class GamesResource {
       else if (game.isFpGame()) {
         frontendService.killFrontend();
         if (fpService.play(game, altExe)) {
+          gameStatusService.setActiveStatus(id);
+          return true;
+        }
+      }
+      else if (game.isZenGame() || game.isZaccariaGame()) {
+        frontendService.killFrontend();
+        if (steamService.play(game)) {
           gameStatusService.setActiveStatus(id);
           return true;
         }

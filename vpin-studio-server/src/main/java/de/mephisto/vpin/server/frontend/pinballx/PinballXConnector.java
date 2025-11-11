@@ -15,7 +15,6 @@ import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.io.ByteOrderMark;
@@ -28,11 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -104,10 +99,7 @@ public class PinballXConnector extends BaseConnector {
     List<VPinScreen> screens = new ArrayList<>(Arrays.asList(VPinScreen.values()));
     screens.remove(VPinScreen.Other2);
     frontend.setSupportedScreens(screens);
-    frontend.setIgnoredValidations(Arrays.asList(GameValidationCode.CODE_NO_OTHER2,
-        GameValidationCode.CODE_PUP_PACK_FILE_MISSING,
-        GameValidationCode.CODE_ALT_SOUND_FILE_MISSING
-    ));
+    frontend.setIgnoredValidations(Arrays.asList(GameValidationCode.CODE_NO_OTHER2));
 
     frontend.setPlayfieldMediaInverted(true);
     return frontend;
@@ -193,15 +185,19 @@ public class PinballXConnector extends BaseConnector {
       initVisualPinballXScripts(emulator, iniConfiguration);
     }
     else {
-      emulatorNode.setProperty("LaunchBeforeEnabled", emulator.getLaunchScript().isEnabled() ? "True" : "False");
-      emulatorNode.setProperty("LaunchBeforeExecutable", emulator.getLaunchScript().getExecuteable());
-      emulatorNode.setProperty("LaunchBeforeParameters", emulator.getLaunchScript().getExecuteable());
-      emulatorNode.setProperty("LaunchBeforeWorkingPath", emulator.getLaunchScript().getWorkingDirectory());
+      if (emulator.getLaunchScript() != null) {
+        emulatorNode.setProperty("LaunchBeforeEnabled", emulator.getLaunchScript().isEnabled() ? "True" : "False");
+        emulatorNode.setProperty("LaunchBeforeExecutable", emulator.getLaunchScript().getExecuteable());
+        emulatorNode.setProperty("LaunchBeforeParameters", emulator.getLaunchScript().getExecuteable());
+        emulatorNode.setProperty("LaunchBeforeWorkingPath", emulator.getLaunchScript().getWorkingDirectory());
+      }
 
-      emulatorNode.setProperty("LaunchAfterEnabled", emulator.getExitScript().isEnabled() ? "True" : "False");
-      emulatorNode.setProperty("LaunchAfterExecutable", emulator.getExitScript().getExecuteable());
-      emulatorNode.setProperty("LaunchAfterParameters", emulator.getExitScript().getExecuteable());
-      emulatorNode.setProperty("LaunchAfterWorkingPath", emulator.getExitScript().getWorkingDirectory());
+      if (emulator.getExitScript() != null) {
+        emulatorNode.setProperty("LaunchAfterEnabled", emulator.getExitScript().isEnabled() ? "True" : "False");
+        emulatorNode.setProperty("LaunchAfterExecutable", emulator.getExitScript().getExecuteable());
+        emulatorNode.setProperty("LaunchAfterParameters", emulator.getExitScript().getExecuteable());
+        emulatorNode.setProperty("LaunchAfterWorkingPath", emulator.getExitScript().getWorkingDirectory());
+      }
     }
 
     saveIni(iniConfiguration);
@@ -272,9 +268,11 @@ public class PinballXConnector extends BaseConnector {
     File pinballXFolder = getInstallationFolder();
     return new File(pinballXFolder, "/Databases/" + emu.getName());
   }
+
   private File getDatabase(GameEmulator emu) {
     return getDatabase(emu.getName());
   }
+
   private File getDatabase(String emuName) {
     File pinballXFolder = getInstallationFolder();
     return new File(pinballXFolder, "/Databases/" + emuName + "/" + emuName + ".xml");
@@ -440,12 +438,10 @@ public class PinballXConnector extends BaseConnector {
   }
 
   @Override
-  public int importGame(int emulatorId, @NonNull String gameName, @NonNull String gameFileName,
-                        @NonNull String gameDisplayName, @Nullable String launchCustomVar, @NonNull java.util.Date dateFileUpdated) {
-
+  public int importGame(@NonNull TableDetails tableDetails) {
     // pinballX does not support gameName, so force equality with gameFileName
-    String gameNameFromFileName = gameFileName;
-    return super.importGame(emulatorId, gameNameFromFileName, gameFileName, gameDisplayName, launchCustomVar, dateFileUpdated);
+    tableDetails.setGameName(tableDetails.getGameFileName());
+    return super.importGame(tableDetails);
   }
 
   //---------------------------------------------------

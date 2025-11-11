@@ -24,6 +24,9 @@ public class ScanResult {
   private String dmdGameName;
   private String dmdProjectFolder;
 
+  private List<String> assets = new ArrayList<>();
+  private List<String> scripts = new ArrayList<>();
+
   public boolean isVrRoomSupport() {
     return vrRoomSupport;
   }
@@ -80,14 +83,20 @@ public class ScanResult {
     this.tableName = tableName;
   }
 
-  private List<String> assets = new ArrayList<>();
-
   public List<String> getAssets() {
     return assets;
   }
 
   public void setAssets(List<String> assets) {
     this.assets = assets;
+  }
+
+  public List<String> getScripts() {
+    return scripts;
+  }
+
+  public void addScript(String script) {
+    this.scripts.add(script);
   }
 
   public String getHsFileName() {

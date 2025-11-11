@@ -10,10 +10,12 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
+import de.mephisto.vpin.restclient.cards.CardTemplateType;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
@@ -41,21 +43,20 @@ import javafx.scene.media.Media;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
@@ -63,7 +64,28 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   private final static Logger LOG = LoggerFactory.getLogger(TemplateEditorController.class);
 
   @FXML
+  private TabPane tabPane;
+
+  @FXML
+  private Tab highscoreCardsTab;
+
+  @FXML
+  private Tab instructionCardsTab;
+
+  @FXML
+  private Tab wheelsTab;
+
+  @FXML
   private ComboBox<CardTemplate> templateCombo;
+
+  @FXML
+  private Button createBtn;
+
+  @FXML
+  private Button exportBtn;
+
+  @FXML
+  private Button importBtn;
 
   @FXML
   private Button renameBtn;
@@ -129,6 +151,9 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   private Button generateAllBtn;
 
   @FXML
+  private Button generateWheelBtn;
+
+  @FXML
   private Button generateBtn;
 
   @FXML
@@ -161,7 +186,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   @FXML
   private void onOpenImage() {
     if (gameRepresentation.isPresent()) {
-      TableDialogs.openMediaDialog(Studio.stage, "Highscore Card", client.getHighscoreCardsService().getHighscoreCardUrl(gameRepresentation.get()), "image/png");
+      TableDialogs.openMediaDialog(Studio.stage, "Preview", client.getHighscoreCardsService().getHighscoreCardUrl(gameRepresentation.get(), getSelectedTemplateType()), "image/png");
     }
   }
 
@@ -173,18 +198,28 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       WidgetFactory.showAlert(stage, "No target screen selected.", "Select a target screen in the preferences.");
     }
     else {
-      ProgressDialog.createProgressDialog(new HighscoreGeneratorProgressModel(client, "Generating Highscore Cards"));
+      ProgressDialog.createProgressDialog(new HighscoreGeneratorProgressModel(client, "Generating Cards", getSelectedTemplateType()));
     }
   }
 
 
   @FXML
   private void onFolderBtn() {
-    CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
-    String popperScreen = cardSettings.getPopperScreen();
-    if (!StringUtils.isEmpty(popperScreen)) {
-      VPinScreen screen = VPinScreen.valueOfScreen(popperScreen);
-      File screenDir = client.getFrontendService().getMediaDirectory(-1, screen.name());
+    VPinScreen screen = null;
+    switch (getSelectedTemplateType()) {
+      case HIGSCORE_CARD:
+        CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
+        String popperScreen = cardSettings.getPopperScreen();
+        screen = StringUtils.isNotEmpty(popperScreen) ? VPinScreen.valueOfScreen(popperScreen) : null;
+        break;
+      case INSTRUCTIONS_CARD:
+        screen = VPinScreen.GameHelp;
+      case WHEEL:
+        screen = VPinScreen.Wheel;
+        break;
+    }
+    if (screen != null) {
+      File screenDir = client.getFrontendService().getMediaDirectory(-1, screen);
       SystemUtil.openFolder(screenDir);
     }
   }
@@ -203,6 +238,48 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     }
   }
 
+  //TODO should duplicate check be done on all templates accross templateType like here, or only on templates of same type ?
+  public boolean checkDuplicate(String s) {
+    List<CardTemplate> items = client.getHighscoreCardTemplatesClient().getTemplates();
+    Optional<CardTemplate> duplicate = items.stream().filter(t -> t.getName().equals(s)).findFirst();
+    if (duplicate.isPresent()) {
+      WidgetFactory.showAlert(stage, "Error", "A template with the name \"" + s + "\" already exist.");
+      return true;
+    }
+    return false;
+  }
+
+  @FXML
+  private void onImport(ActionEvent e) {
+    String gameName = gameRepresentation.get().getGameName();
+    if (gameName.contains("(")) {
+      gameName = gameName.substring(0, gameName.indexOf("("));
+    }
+    if (gameName.contains("[")) {
+      gameName = gameName.substring(0, gameName.indexOf("["));
+    }
+    gameName = gameName.trim();
+
+    Stage stage = Dialogs.createStudioDialogStage(DialogTemplateEditorUploadController.class, "dialog-template-editor-upload.fxml", "Cards Template Upload");
+    DialogTemplateEditorUploadController controller = (DialogTemplateEditorUploadController) stage.getUserData();
+    controller.setData(stage, this, gameName);
+    stage.showAndWait();
+  }
+
+  @FXML
+  private void onExport(ActionEvent e) {
+    CardTemplate cardTemplate = getSelectedCardTemplate();
+
+    String url = client.getHighscoreCardTemplatesClient().getCardTemplateUrl(cardTemplate);
+    try (BufferedInputStream in = new BufferedInputStream(new URL(url).openStream())) {
+      TableDialogs.download(stage, "template_" + cardTemplate.getName() + ".json", in);
+    }
+    catch (IOException ioe) {
+      LOG.error("Cannot download template {}", cardTemplate.getName(), ioe);
+      WidgetFactory.showAlert(stage, "Error", "Cannot download template " + cardTemplate.getName() + ": " + ioe.getMessage());
+    }
+  }
+
   @FXML
   private void onCreate(ActionEvent e) {
     CardTemplate template = getSelectedCardTemplate();
@@ -218,24 +295,13 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     gameName = gameName.trim();
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    String s = WidgetFactory.showInputDialog(stage, "New Template", "Enter Template Name", "Enter a meaningful name that identifies the card design.", "The values of the selected template \"" + template.getName() + "\" will be used as default.", gameName);
-    if (!StringUtils.isEmpty(s)) {
-      List<CardTemplate> items = client.getHighscoreCardTemplatesClient().getTemplates();
-      Optional<CardTemplate> duplicate = items.stream().filter(t -> t.getName().equals(s)).findFirst();
-      if (duplicate.isPresent()) {
-        WidgetFactory.showAlert(stage, "Error", "A template with the name \"" + s + "\" already exist.");
-        return;
-      }
-
+    String s = WidgetFactory.showInputDialog(stage, "New Template", "Enter Template Name", "Enter a meaningful name that describes the layout.", "The values of the selected template \"" + template.getName() + "\" will be used as default.", gameName);
+    if (!StringUtils.isEmpty(s) && !checkDuplicate(s)) {
       template.setName(s);
       template.setParentId(null);
       template.setId(null);
       JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().save(template))
-          .thenAcceptLater(newTemplate -> {
-            refreshTemplates(newTemplate);
-            selectTemplateInCombo(newTemplate);
-            assignTemplate(newTemplate);
-          })
+          .thenAcceptLater(newTemplate -> doOnCreate(newTemplate))
           .onErrorLater(ex -> {
             LOG.error("Failed to create new template: " + ex.getMessage(), ex);
             WidgetFactory.showAlert(Studio.stage, "Creating Template Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
@@ -243,18 +309,31 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     }
   }
 
+  public void doOnCreate(CardTemplate newTemplate) {
+    refreshTemplates(newTemplate);
+    selectTemplateInCombo(newTemplate);
+    assignTemplate(newTemplate);
+  }
+
+  ;
+
   @FXML
   private void onRename(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     CardTemplate cardTemplate = getSelectedCardTemplate();
     String s = WidgetFactory.showInputDialog(stage, "Rename Template", "Enter Template Name", "Enter the new template name.", null, cardTemplate.getName());
-    if (!StringUtils.isEmpty(s) && !cardTemplate.getName().equals(s)) {
+    if (!StringUtils.isEmpty(s)) {
+      if (checkDuplicate(s)) {
+        return;
+      }
+
       cardTemplate.setName(s);
 
       JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().save(cardTemplate))
           .thenAcceptLater(updatedTemplate -> {
             refreshTemplates(updatedTemplate);
-            assignTemplate(updatedTemplate);
+            highscoreCardsController.doReload(false);
+            //assignTemplate(updatedTemplate);
           })
           .onErrorLater(ex -> {
             LOG.error("Failed to rename template: " + ex.getMessage(), ex);
@@ -267,32 +346,45 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   private void onDelete(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     CardTemplate cardTemplate = getSelectedCardTemplate();
+
+    String title = "Delete Template";
+    String button = "Delete";
     String msg1 = "Delete template \"" + cardTemplate.getName() + "\"?";
     String msg2 = "Assigned tables will use the default template again.";
-    if (!cardTemplate.isTemplate()) {
+    if (cardTemplate.isDefault()) {
+      title = "Reset Template";
+      button = "Reset";
+      msg1 = "Reset Default template ?";
+      msg2 = "The Default template will reset to its default values.";
+    }
+    else if (!cardTemplate.isTemplate()) {
       msg1 = "Delete template for table \"" + gameRepresentation.get().getGameDisplayName() + "\"?";
       msg2 = "The table will use the default template again.";
     }
 
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete Template", msg1, msg2, "Delete");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, title, msg1, msg2, button);
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      try {
-        client.getHighscoreCardTemplatesClient().deleteTemplate(cardTemplate.getId());
-        Platform.runLater(() -> {
-          CardTemplate defaultTemplate = client.getHighscoreCardTemplatesClient().getDefaultTemplate();
-          refreshTemplates(defaultTemplate);
-          assignTemplate(defaultTemplate);
-        });
-      }
-      catch (Exception ex) {
-        LOG.error("Failed to delete template: " + ex.getMessage(), ex);
-        WidgetFactory.showAlert(Studio.stage, "Template Deletion Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
-      }
+      cardTemplateSaveDebouncer.cancel("cardTemplate");
+      JFXFuture
+          .runAsync(() -> client.getHighscoreCardTemplatesClient().deleteTemplate(cardTemplate.getId()))
+          .thenLater(() -> {
+            try {
+              CardTemplate defaultTemplate = client.getHighscoreCardTemplatesClient().getDefaultTemplate(getSelectedTemplateType());
+              refreshTemplates(defaultTemplate);
+              assignTemplate(defaultTemplate);
+            }
+            finally {
+            }
+          })
+          .onErrorLater(ex -> {
+            LOG.error("Failed to delete template: " + ex.getMessage(), ex);
+            WidgetFactory.showAlert(Studio.stage, "Template Deletion Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
+          });
     }
   }
 
   public void applyFontOnAllTemplates(Consumer<CardTemplate> font) {
-    List<CardTemplate> items = client.getHighscoreCardTemplatesClient().getTemplates();
+    List<CardTemplate> items = client.getHighscoreCardTemplatesClient().getTemplates(getSelectedTemplateType());
     for (CardTemplate item : items) {
       font.accept(item);
     }
@@ -316,12 +408,38 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     return templateBeanBinder;
   }
 
+  private void unsetTemplate() {
+    unloadDragBoxes();
+
+    templateModeBtn.setDisable(true);
+    cardModeBtn.setDisable(true);
+    templateCombo.setDisable(true);
+
+    createBtn.setDisable(true);
+    deleteBtn.setDisable(true);
+    renameBtn.setDisable(true);
+    generateAllBtn.setDisable(true);
+    generateWheelBtn.setDisable(true);
+    generateBtn.setDisable(true);
+    openImageBtn.setDisable(true);
+
+    nagBarLabel.setText("");
+    cardPreview.setData(null, null);
+    previewStack.getChildren().remove(waitOverlay);
+    previewStack.getChildren().add(waitOverlay);
+  }
+
   private void setTemplate(CardTemplate cardTemplate) {
     // deselect any element if any
     unloadDragBoxes();
 
-    deleteBtn.setDisable(cardTemplate.getName().equals(CardTemplate.DEFAULT));
-    renameBtn.setDisable(cardTemplate.getName().equals(CardTemplate.DEFAULT) || !cardTemplate.isTemplate());
+    templateModeBtn.setDisable(false);
+    cardModeBtn.setDisable(false);
+    templateCombo.setDisable(false);
+
+    createBtn.setDisable(false);
+    deleteBtn.setDisable(false); //cardTemplate.isDefault());
+    renameBtn.setDisable(cardTemplate.isDefault() || !cardTemplate.isTemplate());
 
     // interrupt property changes
     templateBeanBinder.setPaused(true);
@@ -329,17 +447,12 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     // set the selected template on the TemplateBinder
     templateBeanBinder.setBean(cardTemplate, false);
 
-    CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS);
-    CardResolution res = cardSettings.getCardResolution();
-    resolutionLabel.setText(res.toWidth() + " x " + res.toHeight());
-
-    templateBeanBinder.setResolution(res);
-
     templateModeBtn.setSelected(cardTemplate.isTemplate());
     cardModeBtn.setSelected(!cardTemplate.isTemplate());
 
     refreshNagBar(cardTemplate, this.gameRepresentation);
 
+    CardResolution res = templateBeanBinder.getResolution();
     layerEditorOverlayController.setTemplate(cardTemplate, res, this.gameRepresentation);
     layerEditorBackgroundController.setTemplate(cardTemplate, res, this.gameRepresentation);
     layerEditorFrameController.setTemplate(cardTemplate, res, this.gameRepresentation);
@@ -368,9 +481,14 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
         nagBar.setStyle("-fx-background-color: #116611;");
         Optional<CardTemplate> parent = this.templateCombo.getItems().stream().filter(t -> t.getId() == cardTemplate.getParentId()).findFirst();
         if (!parent.isPresent()) {
-          parent = this.templateCombo.getItems().stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst();
+          parent = this.templateCombo.getItems().stream().filter(t -> t.isDefault()).findFirst();
         }
-        nagBarLabel.setText("Editing highscore card for \"" + gameRepresentation.get().getGameDisplayName() + "\", using template \"" + parent.get().getName() + "\".");
+        if (parent.isPresent()) {
+          nagBarLabel.setText("Editing highscore card for \"" + gameRepresentation.get().getGameDisplayName() + "\", using template \"" + parent.get().getName() + "\".");
+        }
+        else {
+          nagBarLabel.setText("No default template");
+        }
       }
     }
   }
@@ -384,7 +502,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
         WidgetFactory.showAlert(stage, "Not target screen selected.", "Select a target screen in the preferences.");
       }
       else {
-        ProgressDialog.createProgressDialog(new HighscoreGeneratorProgressModel(client, "Generating Highscore Card", this.gameRepresentation.get()));
+        ProgressDialog.createProgressDialog(new HighscoreGeneratorProgressModel(client, "Generating Highscore Card", this.gameRepresentation.get(), getSelectedTemplateType()));
       }
       refreshPreview(this.gameRepresentation);
     }
@@ -410,13 +528,14 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
         this.openImageBtn.setDisable(true);
         this.generateBtn.setDisable(true);
         this.generateAllBtn.setDisable(true);
+        this.generateWheelBtn.setDisable(true);
 
         cardPreview.setData(null, null);
         previewStack.getChildren().remove(waitOverlay);
         previewStack.getChildren().add(waitOverlay);
       }
 
-       refreshOverlayBackgroundPreview();
+      refreshOverlayBackgroundPreview();
 
       JFXFuture.supplyAsync(() -> client.getCardData(game.get(), getSelectedCardTemplate()))
           .thenAcceptLater(cardData -> {
@@ -427,12 +546,14 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
             this.openImageBtn.setDisable(false);
             this.generateBtn.setDisable(false);
             this.generateAllBtn.setDisable(false);
+            this.generateWheelBtn.setDisable(false);
           });
     }
     else {
       this.openImageBtn.setDisable(true);
       this.generateBtn.setDisable(true);
       this.generateAllBtn.setDisable(true);
+      this.generateWheelBtn.setDisable(true);
       mediaPlayerControl.setVisible(false);
 
       cardPreview.setData(null, null);
@@ -468,9 +589,11 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     }
     else if (template.getTransparentPercentage() > 0) {
 
-      assetMediaPlayer = new AssetMediaPlayer() {};
+      assetMediaPlayer = new AssetMediaPlayer() {
+      };
       Region p = new Region() {
-        @Override public boolean isResizable() {
+        @Override
+        public boolean isResizable() {
           return false;
         }
       };
@@ -506,6 +629,15 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     FrontendUtil.replaceName(folderBtn.getTooltip(), frontend);
     FrontendUtil.replaceName(stopBtn.getTooltip(), frontend);
 
+    this.exportBtn.managedProperty().bind(this.exportBtn.visibleProperty());
+    this.importBtn.managedProperty().bind(this.importBtn.visibleProperty());
+    this.generateBtn.managedProperty().bind(this.generateBtn.visibleProperty());
+    this.generateAllBtn.managedProperty().bind(this.generateAllBtn.visibleProperty());
+    this.generateWheelBtn.managedProperty().bind(this.generateWheelBtn.visibleProperty());
+
+    this.exportBtn.setVisible(Features.TEMPLATE_EDITOR_IMPORT_EXPORT);
+    this.importBtn.setVisible(Features.TEMPLATE_EDITOR_IMPORT_EXPORT);
+
     try {
       this.deleteBtn.setDisable(true);
       this.renameBtn.setDisable(true);
@@ -525,6 +657,12 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
       // Initialize bindings between CardTemplate and sidebar
       initBindings();
+
+      // listener on tab selection
+      this.tabPane.getSelectionModel().selectedItemProperty().addListener((ov, oldT, newT) -> {
+        selectTab(newT);
+      });
+      selectTab(highscoreCardsTab);
 
       // Resize handlers
       previewStack.widthProperty().addListener((obs, o, n) -> resizeCardPreview(n.doubleValue(), previewStack.getHeight(), true));
@@ -565,6 +703,43 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     }
   }
 
+  private void selectTab(Tab activeTab) {
+    boolean wheelMode = activeTab.equals(wheelsTab);
+    layerEditorScoresController.getSettingsPane().setVisible(!wheelMode);
+    layerEditorWheelController.getSettingsPane().setVisible(!wheelMode);
+    layerEditorOverlayController.getSettingsPane().setVisible(!wheelMode);
+    generateAllBtn.setVisible(!wheelMode);
+    generateBtn.setVisible(!wheelMode);
+    generateWheelBtn.setVisible(wheelMode);
+
+    unsetTemplate();
+    JFXFuture
+        .supplyAsync(() -> client.getHighscoreCardsService().getCardResolution(getSelectedTemplateType()))
+        .thenAcceptLater(res -> {
+          templateBeanBinder.setResolution(res);
+          // If the resolution changes, the preview must be adjusted
+          resolutionLabel.setText(res.toString());
+          resizeCardPreview(previewStack.getWidth(), previewStack.getHeight(), true);
+          refreshBreadCrumb();
+        });
+
+    refreshTemplates(templates -> {
+      loadTemplates(templates, null);
+      highscoreCardsController.doReload(false);
+    });
+  }
+
+  public CardTemplateType getSelectedTemplateType() {
+    return tabToTemplateType(tabPane.getSelectionModel().getSelectedItem());
+  }
+
+  private CardTemplateType tabToTemplateType(Tab tab) {
+    return tab == highscoreCardsTab ? CardTemplateType.HIGSCORE_CARD :
+        tab == instructionCardsTab ? CardTemplateType.INSTRUCTIONS_CARD :
+            tab == wheelsTab ? CardTemplateType.WHEEL :
+                null;
+  }
+
   private void initBindings() {
     try {
       templateBeanBinder = new CardTemplateBinder();
@@ -603,21 +778,26 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   }
 
   public void refreshTemplates(CardTemplate selectedTemplate) {
-    JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().getTemplates())
+    refreshTemplates(templates -> loadTemplates(templates, selectedTemplate));
+  }
+
+  private void refreshTemplates(Consumer<List<CardTemplate>> doAfter) {
+    JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().getTemplates(getSelectedTemplateType()))
         .onErrorSupply(e -> {
           Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, "Error", "Loading templates failed: " + e.getMessage()));
           return Collections.emptyList();
         })
         .thenAcceptLater(templates -> {
-          loadTemplates(templates, selectedTemplate);
+          doAfter.accept(templates);
         });
   }
 
 
   private void resizeCardPreview(double width, double height, boolean forceWidth) {
+    CardResolution res = templateBeanBinder.getResolution();
     // make sure the panel is full size always
-    if (width > 0 && height > 0) {
-      double aspectRatio = 16.0 / 9.0;
+    if (width > 0 && height > 0 && res != null) {
+      double aspectRatio = ((double) res.toWidth()) / res.toHeight();
 
       Insets in1 = previewStack.getInsets();
       width -= in1.getRight() + in1.getLeft();
@@ -717,7 +897,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       // The canvas box
       PositionResizer dragBox = new PositionResizer();
 
-      CardResolution res = cardPreview.getCardResolution();
+      CardResolution res = templateBeanBinder.getResolution();
       double zoomX = res == null ? 1.0 : cardPreview.getWidth() / res.toWidth();
       double WIDTH = cardPreview.getWidth() / zoomX;
       double zoomY = res == null ? 1.0 : cardPreview.getHeight() / res.toHeight();
@@ -758,7 +938,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   }
 
   public void deselectLayer(LayerEditorBaseController controller) {
-    for (Iterator<PositionResizer> iter = dragBoxes.iterator(); iter.hasNext();) {
+    for (Iterator<PositionResizer> iter = dragBoxes.iterator(); iter.hasNext(); ) {
       PositionResizer dragBox = iter.next();
       if (dragBox.getUserData() instanceof CardLayer) {
         CardLayer layer = (CardLayer) dragBox.getUserData();
@@ -828,6 +1008,9 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
         return layerEditorBackgroundController;
       }
     }
+    else if (layer instanceof CardLayerFrame) {
+      return layerEditorFrameController;
+    }
     else if (layer instanceof CardLayerCanvas) {
       return layerEditorCanvasController;
     }
@@ -870,10 +1053,19 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
    * @param cardTemplate
    */
   private void assignTemplate(@Nullable CardTemplate cardTemplate) {
-    CardTemplate baseTemplate = templateCombo.getValue();
+    if (cardTemplate != null && !cardTemplate.isTemplate()) {
+      // OLE should never happen but just in case
+      return;
+    }
     List<GameRepresentation> selection = highscoreCardsController.getSelections();
-    ProgressDialog.createProgressDialog(new TemplateAssigmentProgressModel(selection, baseTemplate, cardTemplate));
-    highscoreCardsController.refreshView(this.gameRepresentation.get());
+
+    if (cardTemplate == null) {
+      CardTemplate baseTemplate = templateCombo.getValue();
+      ProgressDialog.createProgressDialog(new TemplateAssigmentProgressModel(selection, baseTemplate, true, getSelectedTemplateType()));
+    }
+    else {
+      ProgressDialog.createProgressDialog(new TemplateAssigmentProgressModel(selection, cardTemplate, false, getSelectedTemplateType()));
+    }
   }
 
   public void setCardsController(HighscoreCardsController highscoreCardsController) {
@@ -882,24 +1074,46 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
   public void selectTable(Optional<GameRepresentation> gameRepresentation) {
     this.gameRepresentation = gameRepresentation;
+    this.refreshBreadCrumb();
     if (this.gameRepresentation.isPresent()) {
       GameRepresentation game = gameRepresentation.get();
-      CardTemplate template = client.getHighscoreCardTemplatesClient().getCardTemplateForGame(game);
-      if (template != null) {
-        if (template.isTemplate()) {
-          selectTemplateInCombo(template);
-        }
-        else if (template.getParentId() != null) {
-          CardTemplate parentTemplate = client.getHighscoreCardTemplatesClient().getTemplateById(template.getParentId());
-          selectTemplateInCombo(parentTemplate);
-        }
-
-        setTemplate(template);
-      }
+      JFXFuture.supplyAllAsync(
+              () -> client.getHighscoreCardTemplatesClient().getCardTemplateForGame(game, getSelectedTemplateType()),
+              () -> client.getHighscoreCardTemplatesClient().getBaseCardTemplateForGame(game, getSelectedTemplateType())
+          )
+          .thenAcceptLater(objs -> {
+            CardTemplate template = (CardTemplate) objs[0];
+            if (template != null) {
+              CardTemplate baseTemplate = (CardTemplate) objs[1];
+              selectTemplateInCombo(baseTemplate);
+              setTemplate(template);
+            }
+          });
     }
     else {
       refreshPreview(Optional.empty());
     }
+  }
+
+  private void refreshBreadCrumb() {
+    int selectedIndex = tabPane.getSelectionModel().getSelectedIndex();
+    List<String> breadcrumb = new ArrayList<>();
+    switch (selectedIndex) {
+      case 0: {
+        breadcrumb = new ArrayList<>(Arrays.asList("Designer", "Highscore Cards"));
+        break;
+      }
+      case 1: {
+        breadcrumb = new ArrayList<>(Arrays.asList("Designer", "Wheel Designer"));
+        break;
+      }
+    }
+
+    if (this.gameRepresentation.isPresent()) {
+      breadcrumb.add(this.gameRepresentation.get().getGameDisplayName());
+    }
+
+    NavigationController.setBreadCrumb(breadcrumb);
   }
 
   private void selectTemplateInCombo(CardTemplate template) {
@@ -930,9 +1144,9 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     public void changed(ObservableValue<? extends CardTemplate> observable, CardTemplate oldValue, CardTemplate newValue) {
       if (newValue != null) {
         if (gameRepresentation.isPresent()) {
-          CardTemplate existingTemplate = client.getHighscoreCardTemplatesClient().getCardTemplateForGame(gameRepresentation.get());
+          CardTemplate existingTemplate = client.getHighscoreCardTemplatesClient().getCardTemplateForGame(gameRepresentation.get(), getSelectedTemplateType());
           if (existingTemplate != null && !existingTemplate.isTemplate()) {
-            Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Apply the template \"" + existingTemplate.getName() + "\" to the table \"" + gameRepresentation.get().getGameDisplayName() + "\"?", "This will delete the existing custom template.");
+            Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Apply the template \"" + newValue.getName() + "\" to the table \"" + gameRepresentation.get().getGameDisplayName() + "\"?", "This will delete the existing custom template.");
             if (!result.get().equals(ButtonType.OK)) {
               selectTemplateInCombo(oldValue);
               return;
@@ -940,7 +1154,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
           }
         }
         // all good, assign template
-        setTemplate(newValue);
+        unsetTemplate();
         if (gameRepresentation.isPresent()) {
           assignTemplate(newValue);
         }

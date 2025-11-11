@@ -10,6 +10,7 @@ import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
 import de.mephisto.vpin.ui.util.FileSelectorDragEventHandler;
 import de.mephisto.vpin.ui.util.FilesSelectorDropEventHandler;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import de.mephisto.vpin.ui.util.UploadProgressModel;
 import javafx.application.Platform;
@@ -83,6 +84,15 @@ public abstract class BaseUploadController implements Initializable, DialogContr
 
   protected abstract UploadProgressModel createUploadModel();
 
+  /**
+   * Upload done, 
+   */
+  protected void onUploadDone(ProgressResultModel result) {
+    if (finalizer != null) {
+      finalizer.run();
+    }
+  }
+
   //--------------
 
   @FXML
@@ -98,9 +108,15 @@ public abstract class BaseUploadController implements Initializable, DialogContr
         Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
         stage.close();
 
+        UploadProgressModel model = createUploadModel();
+        if (model == null) {
+          // ProgressModel not created, then upload is cancelled
+          return;
+        }
+
         Platform.runLater(() -> {
-          UploadProgressModel model = createUploadModel();
-          ProgressDialog.createProgressDialog(model);
+          ProgressResultModel result = ProgressDialog.createProgressDialog(model);
+          onUploadDone(result);
         });
       }
       catch (Exception e) {

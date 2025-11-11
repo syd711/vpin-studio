@@ -67,7 +67,7 @@
                                     <Button fx:id="mediaSourcesBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onMediaSources" styleClass="preference-button" text="Media Sources" />
                                  </children>
                               </VBox>
-                              <Label alignment="BASELINE_LEFT" layoutX="210.0" layoutY="256.0" styleClass="preference-section" text="VALIDATORS">
+                              <Label alignment="BASELINE_LEFT" layoutX="210.0" layoutY="256.0" styleClass="preference-section" text="VALIDATORS &amp; TAGGING">
                                  <font>
                                     <Font size="13.0" />
                                  </font>

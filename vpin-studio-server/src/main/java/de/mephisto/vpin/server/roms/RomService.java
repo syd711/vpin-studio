@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.Optional;
 
 @Service
@@ -25,7 +26,8 @@ public class RomService {
   public ScanResult scanGameFile(@NonNull Game game) {
     if (game.isVpxGame()) {
       if (game.getGameFile().exists()) {
-        ScanResult scan = VPXFileScanner.scan(game.getGameFile());
+        File scripts = game.getEmulator() != null ? game.getEmulator().getScriptsFolder() : game.getGameFile().getParentFile();
+        ScanResult scan = VPXFileScanner.scan(game.getGameFile(), scripts);
         if (!StringUtils.isEmpty(scan.getRom())) {
           ScoringDB scoringDatabase = systemService.getScoringDatabase();
           Optional<ScoringDBMapping> first = scoringDatabase.getHighscoreMappings().stream().filter(mapping -> mapping.getScannedRom() != null && mapping.getScannedRom().equals(scan.getRom())).findFirst();

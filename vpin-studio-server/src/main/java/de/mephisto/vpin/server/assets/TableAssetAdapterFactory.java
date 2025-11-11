@@ -30,6 +30,10 @@ public class TableAssetAdapterFactory {
         adapter = new SuperHacTableAssetAdapter(tableAssetSource);
         break;
       }
+      case ManiaLogos: {
+        adapter = new ManiaLogosAssetAdapter(tableAssetSource);
+        break;
+      }
       default:
         throw new IllegalStateException("Unexpected value: " + type);
     }

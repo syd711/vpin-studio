@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.cards;
 
+import de.mephisto.vpin.restclient.cards.CardTemplateType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.util.ProgressModel;
@@ -10,27 +11,29 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class HighscoreGeneratorProgressModel extends ProgressModel<GameRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreGeneratorProgressModel.class);
   private final Iterator<GameRepresentation> iterator;
   private final List<GameRepresentation> gameInfos;
+  private final CardTemplateType templateType;
 
   private final VPinStudioClient client;
 
-  public HighscoreGeneratorProgressModel(VPinStudioClient client, String title) {
+  public HighscoreGeneratorProgressModel(VPinStudioClient client, String title, CardTemplateType templateType) {
     super(title);
     this.client = client;
     this.gameInfos = client.getGameService().getVpxGamesCached();
     iterator = gameInfos.iterator();
+    this.templateType = templateType;
   }
 
-  public HighscoreGeneratorProgressModel(VPinStudioClient client, String title, GameRepresentation game) {
+  public HighscoreGeneratorProgressModel(VPinStudioClient client, String title, GameRepresentation game, CardTemplateType templateType) {
     super(title);
     this.client = client;
     this.gameInfos = Arrays.asList(game);
     iterator = gameInfos.iterator();
+    this.templateType = templateType;
   }
 
   @Override
@@ -60,7 +63,7 @@ public class HighscoreGeneratorProgressModel extends ProgressModel<GameRepresent
 
   public void processNext(ProgressResultModel progressResultModel, GameRepresentation game) {
     try {
-      boolean result = client.getHighscoreCardsService().generateHighscoreCard(game);
+      boolean result = client.getHighscoreCardsService().generateHighscoreCard(game, templateType);
       if (result) {
         progressResultModel.addProcessed();
       }

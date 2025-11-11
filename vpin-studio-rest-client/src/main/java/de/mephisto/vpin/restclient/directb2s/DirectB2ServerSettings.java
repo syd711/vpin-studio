@@ -12,6 +12,15 @@ public class DirectB2ServerSettings extends DirectB2STableSettings {
 
   private boolean pluginsOn;
   private boolean showStartupError;
+  private boolean extendedSearch;
+
+  public boolean isExtendedSearch() {
+    return extendedSearch;
+  }
+
+  public void setExtendedSearch(boolean extendedSearch) {
+    this.extendedSearch = extendedSearch;
+  }
 
   /**
    * 2 = exe

@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.system.NVRamsInfo;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.util.PackageUtil;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.server.system.SystemService;
 import net.sf.sevenzipjbinding.SevenZip;
 import org.apache.commons.io.FilenameUtils;
@@ -17,9 +18,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static de.mephisto.vpin.server.system.SystemService.RESOURCES;
 
@@ -27,6 +26,15 @@ public class ServerUpdatePreProcessing {
   private final static Logger LOG = LoggerFactory.getLogger(ServerUpdatePreProcessing.class);
   private final static List<String> resources = Arrays.asList("PinVol.exe", "ffmpeg.exe", "jptch.exe", "nircmd.exe", "downloader.vbs", "PupPackScreenTweaker.exe", "puplauncher.exe", "vpxtool.exe", "maintenance.mp4", ScoringDB.SCORING_DB_NAME, "manufacturers/manufacturers.zip");
   private final static List<String> jvmFiles = Arrays.asList("jinput-dx8_64.dll");
+
+  private final static Map<String, Long> PUP_GAMES = new HashMap<>();
+
+  static {
+    PUP_GAMES.put("pinball_fx.json", 234022L);
+    PUP_GAMES.put("pinball_fx3.json", 157062L);
+    PUP_GAMES.put("zaccaria.json", 217581L);
+    PUP_GAMES.put("pinball_m.json", 11574L);
+  }
 
   public static void execute() {
     init7zip();
@@ -43,6 +51,7 @@ public class ServerUpdatePreProcessing {
         runVpxToolsUpdateCheck();
         runLogosUpdateCheck();
         runDOFTesterCheck();
+        runPupGamesUpdateCheck();
 
         new Thread(() -> {
           Thread.currentThread().setName("ServerUpdate Async Preprocessor");
@@ -58,17 +67,7 @@ public class ServerUpdatePreProcessing {
   }
 
   private static void runDeletionChecks() {
-    File b2sRaw = new File(RESOURCES, "b2s-raw");
-    if (b2sRaw.exists() && b2sRaw.isDirectory()) {
-      FileUtils.deleteFolder(b2sRaw);
-      LOG.info("Deleted " + b2sRaw.getAbsolutePath());
-    }
 
-    File b2sCropped = new File(RESOURCES, "b2s-cropped");
-    if (b2sCropped.exists() && b2sCropped.isDirectory()) {
-      FileUtils.deleteFolder(b2sCropped);
-      LOG.info("Deleted " + b2sCropped.getAbsolutePath());
-    }
   }
 
   private static void runPinVolUpdateCheck() {
@@ -118,6 +117,18 @@ public class ServerUpdatePreProcessing {
       if (expectedSize != size) {
         LOG.info("Outdated logos.txt found, updating...");
         Updater.download("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/logos.txt", check);
+      }
+    }
+  }
+
+  private static void runPupGamesUpdateCheck() {
+    for (Map.Entry<String, Long> entry : PUP_GAMES.entrySet()) {
+      File check = new File(RESOURCES, "pupgames/" + entry.getKey());
+      long expectedSize = entry.getValue();
+      if (!check.exists() || check.length() != expectedSize) {
+        LOG.info("Outdated {} found, updating...", entry.getKey());
+        check.getParentFile().mkdirs();
+        Updater.download("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/pupgames/" + entry.getKey(), check);
       }
     }
   }

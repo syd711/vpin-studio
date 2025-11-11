@@ -11,6 +11,6 @@ public class NvRamUploadController extends BaseUploadController {
 
   @Override
   protected UploadProgressModel createUploadModel() {
-    return new NvRamUploadProgressModel("NvRAM Upload", getSelections(), getSelectedEmulatorId(), finalizer);
+    return new NvRamUploadProgressModel("NvRAM Upload", getSelections(), getSelectedEmulatorId());
   }
 }

@@ -51,6 +51,7 @@ public class LayerEditorOtherMediaController extends LayerEditorBaseController {
     //VPinScreens.remove(VPinScreen.GameHelp);
     //VPinScreens.remove(VPinScreen.Topper);
     //VPinScreens.remove(VPinScreen.DMD);
+    //VPinScreens.remove(VPinScreen.Logo);
     VPinScreens.remove(VPinScreen.Wheel);
     VPinScreens.remove(VPinScreen.Menu);
     VPinScreens.remove(VPinScreen.BackGlass);

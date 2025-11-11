@@ -195,6 +195,7 @@
  * Common Buttons
  */
 .submit-button {
+    -fx-border-radius: 3px;
     -fx-border-style: solid solid solid solid;
     -fx-border-color: #6666FF;
     -fx-border-width: 1;
@@ -214,6 +215,7 @@
 }
 
 .default-button {
+    -fx-border-radius: 3px;
     -fx-border-style: solid solid solid solid;
     -fx-border-color: #111111;
     -fx-border-width: 1;
@@ -233,6 +235,7 @@
 }
 
 .warn-button {
+    -fx-border-radius: 3px;
     -fx-border-color: #663333;
     -fx-border-width: 1;
     -fx-font-size : 14px;

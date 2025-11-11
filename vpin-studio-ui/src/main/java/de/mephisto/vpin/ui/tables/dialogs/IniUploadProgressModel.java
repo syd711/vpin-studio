@@ -12,41 +12,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.Iterator;
 
 public class IniUploadProgressModel extends UploadProgressModel {
   private final static Logger LOG = LoggerFactory.getLogger(IniUploadProgressModel.class);
 
-  private final Iterator<File> iterator;
   private final int gameId;
-  private final File file;
 
-  public IniUploadProgressModel(int gameId, String title, File file, Runnable finalizer) {
-    super(file, title, finalizer);
+  public IniUploadProgressModel(int gameId, String title, File file) {
+    super(file, title);
     this.gameId = gameId;
-    this.file = file;
-    this.iterator = Collections.singletonList(this.file).iterator();
-  }
-
-  @Override
-  public boolean isShowSummary() {
-    return false;
-  }
-
-  @Override
-  public int getMax() {
-    return 1;
-  }
-
-  @Override
-  public File getNext() {
-    return iterator.next();
-  }
-
-  @Override
-  public String nextToString(File file) {
-    return file.getName();
   }
 
   @Override
@@ -64,10 +38,5 @@ public class IniUploadProgressModel extends UploadProgressModel {
     } catch (Exception e) {
       LOG.error("Ini upload failed: " + e.getMessage(), e);
     }
-  }
-
-  @Override
-  public boolean hasNext() {
-    return iterator.hasNext();
   }
 }

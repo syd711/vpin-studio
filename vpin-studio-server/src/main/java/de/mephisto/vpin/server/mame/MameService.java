@@ -57,7 +57,12 @@ public class MameService implements InitializingBean {
   @Autowired
   protected SystemService systemService;
 
+  private File mameFolder;
+
   public boolean clearGamesCache(List<Game> knownGames) {
+    this.mameFolder = null;
+    getMameFolder();
+
     long l = System.currentTimeMillis();
     mameCache.clear();
     List<String> romFolders = systemService.getCurrentUserKeys(MAME_REG_FOLDER_KEY);
@@ -159,7 +164,7 @@ public class MameService implements InitializingBean {
         Object value = entry.getValue();
 
         if (value instanceof Integer) {
-          systemService.setUserValue(MAME_REG_FOLDER_KEY + rom, key, (Integer) value);
+          systemService.setUserIntValue(MAME_REG_FOLDER_KEY + rom, key, (Integer) value);
         }
       }
     }
@@ -173,18 +178,18 @@ public class MameService implements InitializingBean {
     }
     options.setExistInRegistry(true);
 
-    systemService.setUserValue(MAME_REG_FOLDER_KEY + rom, KEY_SKIP_STARTUP_TEST, options.isSkipPinballStartupTest() ? 1 : 0);
-    systemService.setUserValue(MAME_REG_FOLDER_KEY + rom, KEY_USE_SOUND, options.isUseSound() ? 1 : 0);
-    systemService.setUserValue(MAME_REG_FOLDER_KEY + rom, KEY_USE_SAMPLES, options.isUseSamples() ? 1 : 0);
-    systemService.setUserValue(MAME_REG_FOLDER_KEY + rom, KEY_DMD_COMPACT, options.isCompactDisplay() ? 1 : 0);
-    systemService.setUserValue(MAME_REG_FOLDER_KEY + rom, KEY_DMD_DOUBLE_SIZE, options.isDoubleDisplaySize() ? 1 : 0);
-    systemService.setUserValue(MAME_REG_FOLDER_KEY + rom, KEY_IGNORE_ROM_ERRORS, options.isIgnoreRomCrcError() ? 1 : 0);
-    systemService.setUserValue(MAME_REG_FOLDER_KEY + rom, KEY_CABINET_MODE, options.isCabinetMode() ? 1 : 0);
-    systemService.setUserValue(MAME_REG_FOLDER_KEY + rom, KEY_SHOW_DMD, options.isShowDmd() ? 1 : 0);
-    systemService.setUserValue(MAME_REG_FOLDER_KEY + rom, KEY_USER_EXTERNAL_DMD, options.isUseExternalDmd() ? 1 : 0);
-    systemService.setUserValue(MAME_REG_FOLDER_KEY + rom, KEY_COLORIZE_DMD, options.isColorizeDmd() ? 1 : 0);
-    systemService.setUserValue(MAME_REG_FOLDER_KEY + rom, KEY_SOUND_MODE, options.getSoundMode());
-    systemService.setUserValue(MAME_REG_FOLDER_KEY + rom, KEY_FORCE_STEREO, options.isForceStereo() ? 1 : 0);
+    systemService.setUserIntValue(MAME_REG_FOLDER_KEY + rom, KEY_SKIP_STARTUP_TEST, options.isSkipPinballStartupTest() ? 1 : 0);
+    systemService.setUserIntValue(MAME_REG_FOLDER_KEY + rom, KEY_USE_SOUND, options.isUseSound() ? 1 : 0);
+    systemService.setUserIntValue(MAME_REG_FOLDER_KEY + rom, KEY_USE_SAMPLES, options.isUseSamples() ? 1 : 0);
+    systemService.setUserIntValue(MAME_REG_FOLDER_KEY + rom, KEY_DMD_COMPACT, options.isCompactDisplay() ? 1 : 0);
+    systemService.setUserIntValue(MAME_REG_FOLDER_KEY + rom, KEY_DMD_DOUBLE_SIZE, options.isDoubleDisplaySize() ? 1 : 0);
+    systemService.setUserIntValue(MAME_REG_FOLDER_KEY + rom, KEY_IGNORE_ROM_ERRORS, options.isIgnoreRomCrcError() ? 1 : 0);
+    systemService.setUserIntValue(MAME_REG_FOLDER_KEY + rom, KEY_CABINET_MODE, options.isCabinetMode() ? 1 : 0);
+    systemService.setUserIntValue(MAME_REG_FOLDER_KEY + rom, KEY_SHOW_DMD, options.isShowDmd() ? 1 : 0);
+    systemService.setUserIntValue(MAME_REG_FOLDER_KEY + rom, KEY_USER_EXTERNAL_DMD, options.isUseExternalDmd() ? 1 : 0);
+    systemService.setUserIntValue(MAME_REG_FOLDER_KEY + rom, KEY_COLORIZE_DMD, options.isColorizeDmd() ? 1 : 0);
+    systemService.setUserIntValue(MAME_REG_FOLDER_KEY + rom, KEY_SOUND_MODE, options.getSoundMode());
+    systemService.setUserIntValue(MAME_REG_FOLDER_KEY + rom, KEY_FORCE_STEREO, options.isForceStereo() ? 1 : 0);
 
     mameCache.put(options.getRom().toLowerCase(), options);
     return getOptions(rom);
@@ -220,10 +225,10 @@ public class MameService implements InitializingBean {
       systemService.createUserKey(MAME_REG_FOLDER_KEY + rom);
     }
     String regkey = MAME_REG_FOLDER_KEY + rom;
-    systemService.setUserValue(regkey, "dmd_pos_x", (int) dmdinfo.getX());
-    systemService.setUserValue(regkey, "dmd_pos_y", (int) dmdinfo.getY());
-    systemService.setUserValue(regkey, "dmd_width", (int) dmdinfo.getWidth());
-    systemService.setUserValue(regkey, "dmd_height", (int) dmdinfo.getHeight());
+    systemService.setUserIntValue(regkey, "dmd_pos_x", (int) dmdinfo.getX());
+    systemService.setUserIntValue(regkey, "dmd_pos_y", (int) dmdinfo.getY());
+    systemService.setUserIntValue(regkey, "dmd_width", (int) dmdinfo.getWidth());
+    systemService.setUserIntValue(regkey, "dmd_height", (int) dmdinfo.getHeight());
     return true;
   }
 
@@ -372,11 +377,13 @@ public class MameService implements InitializingBean {
   }
 
   public File getMameFolder() {
-    File vpxFolder = systemService.resolveVpx64InstallFolder();
-    if (vpxFolder != null && vpxFolder.exists()) {
-      return new File(vpxFolder, "VPinMAME");
+    if (mameFolder == null) {
+      File vpxFolder = systemService.resolveVpx64InstallFolder();
+      if (vpxFolder != null && vpxFolder.exists()) {
+        mameFolder = new File(vpxFolder, "VPinMAME");
+      }
     }
-    return null;
+    return mameFolder;
   }
 
   public static final String NVRAM_DIRECTORY = "nvram_directory";
@@ -406,6 +413,10 @@ public class MameService implements InitializingBean {
       LOG.info("Resolved registry PinMAME cfg folder: {}", cfgFolder);
     }
     return cfgFolder;
+  }
+
+  public File getAltColorFolder() {
+    return new File(getMameFolder(), "altcolor");
   }
 
   public File getRomsFolder() {

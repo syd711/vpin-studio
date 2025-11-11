@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.util.FileUtils;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Paint;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.math3.linear.DecompositionSolver;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.QRDecomposition;
@@ -19,8 +20,23 @@ import org.apache.commons.math3.ml.clustering.KMeansPlusPlusClusterer;
 import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.metadata.IIOMetadataFormatImpl;
+import javax.imageio.metadata.IIOMetadataNode;
+import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.ImageOutputStream;
+
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Font;
@@ -39,6 +55,7 @@ import java.awt.image.ColorModel;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 public class ImageUtil {
@@ -442,10 +459,10 @@ public class ImageUtil {
 
   public static void write(BufferedImage image, File file) throws IOException {
     if (file.getName().endsWith(".png")) {
-      writePNG(image, file);
+      writeImage(image, file, "PNG");
     }
     if (file.getName().endsWith(".jpg") || file.getName().endsWith(".jpeg")) {
-      writeJPG(image, file);
+      writeImage(image, file, "JPG");
     }
   }
 
@@ -458,21 +475,14 @@ public class ImageUtil {
     return null;
   }
 
-  public static void writeJPG(BufferedImage image, File file) throws IOException {
-    FileOutputStream fileOutputStream = null;
-    try {
+  public static void writeImage(BufferedImage image, File file, String format) throws IOException {
+    try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
       long writeDuration = System.currentTimeMillis();
-      fileOutputStream = new FileOutputStream(file);
       BufferedOutputStream imageOutputStream = new BufferedOutputStream(fileOutputStream);
-      ImageIO.write(image, "JPG", imageOutputStream);
+      ImageIO.write(image, format, imageOutputStream);
       imageOutputStream.close();
       long duration = System.currentTimeMillis() - writeDuration;
       LOG.info("Writing \"" + file.getAbsolutePath() + "\" took " + duration + "ms., " + FileUtils.readableFileSize(file.length()));
-    }
-    finally {
-      if (fileOutputStream != null) {
-        fileOutputStream.close();
-      }
     }
   }
 
@@ -485,23 +495,153 @@ public class ImageUtil {
     }
   }
 
-  private static void writePNG(BufferedImage image, File file) throws IOException {
-    FileOutputStream fileOutputStream = null;
+  //---------------------------
+
+  private static final String MARKER = "VPIN-STUDIO:File Type";
+
+  /**
+   * cf https://www.silverbaytech.com/2014/06/04/iiometadata-tutorial-part-3-writing-metadata/
+   */
+  public static void writePNG(BufferedImage image, File outputFile, String marker) throws IOException {
+    IIOMetadataNode newMetadata = createMetadata(MARKER, marker);
+    ImageTypeSpecifier imageType = ImageTypeSpecifier.createFromBufferedImageType(image.getType());
+    ImageOutputStream stream = null;
     try {
-      long writeDuration = System.currentTimeMillis();
-      fileOutputStream = new FileOutputStream(file);
-      BufferedOutputStream imageOutputStream = new BufferedOutputStream(fileOutputStream);
-      ImageIO.write(image, "PNG", imageOutputStream);
-      imageOutputStream.close();
-      long duration = System.currentTimeMillis() - writeDuration;
-      LOG.info("Writing \"" + file.getAbsolutePath() + "\" took " + duration + "ms., " + FileUtils.readableFileSize(file.length()));
+      Iterator<ImageWriter> writers = ImageIO.getImageWritersBySuffix("PNG");
+      while(writers.hasNext()) {
+          ImageWriter writer = writers.next();
+          ImageWriteParam writeParam = writer.getDefaultWriteParam();
+          IIOMetadata imageMetadata = writer.getDefaultImageMetadata(imageType, writeParam);
+          if (!imageMetadata.isStandardMetadataFormatSupported()) {
+              continue;
+          }
+          if (imageMetadata.isReadOnly()) {
+              continue;
+          }
+
+          imageMetadata.mergeTree(IIOMetadataFormatImpl.standardMetadataFormatName, newMetadata);
+
+          IIOImage imageWithMetadata = new IIOImage(image, null, imageMetadata);
+
+          stream = ImageIO.createImageOutputStream(outputFile);
+          writer.setOutput(stream);
+          writer.write(null, imageWithMetadata, writeParam);
+      }
     }
     finally {
-      if (fileOutputStream != null) {
-        fileOutputStream.close();
+      if (stream != null) {
+        stream.close();
       }
     }
   }
+
+  private static IIOMetadataNode createMetadata(String name, String value) {
+    IIOMetadataNode marker = new IIOMetadataNode("TextEntry");
+    marker.setAttribute("keyword", name);
+    marker.setAttribute("value", value);
+
+    IIOMetadataNode text = new IIOMetadataNode("Text");
+    text.appendChild(marker);
+
+    IIOMetadataNode root = new IIOMetadataNode(IIOMetadataFormatImpl.standardMetadataFormatName);
+    root.appendChild(text);
+    return root;
+  }
+
+  //---
+
+  public static File backupPNGByMarker(File target, String marker) {
+    if (target.exists()) {
+      File backup = uniqueAssetByMarker(target, marker);
+      // when no marker and target exists, backup forcibly doesn't exist
+      if (backup.exists()) {
+        // when backup exists, it has been identified by marker, then returns it
+        return backup;
+      }
+      // else, rename target to backup
+      if (!target.renameTo(backup)) {
+        LOG.error("Cannot rename {} to {}, existing file will be overwritten", target, backup);
+      }
+    }
+    return target;
+  }
+
+  /**
+   * Like uniqueAsset but identify an already existing file by a marker
+   * In that case, return that file
+   */
+  public static File uniqueAssetByMarker(File target, String marker) {
+    int index = 1;
+    String originalBaseName = FilenameUtils.getBaseName(target.getName());
+    String suffix = FilenameUtils.getExtension(target.getName());
+
+    while (target.exists()) {
+      // detect previously marked file
+      if (marker != null) {
+        String mark = getAttribute(target, MARKER);
+        if (marker.equals(mark)) {
+          return target;
+        }
+      }
+      String segment = String.format("%02d", index++);
+      target = new File(target.getParentFile(), originalBaseName + segment + "." + suffix);
+    }
+    return target;
+  }
+
+  /**
+   * cf https://www.silverbaytech.com/2014/05/29/iiometadata-tutorial-part-2-retrieving-image-metadata/
+   */
+  private static String getAttribute(File file, String marker) {
+    Iterator<ImageReader> readers = ImageIO.getImageReadersByFormatName("PNG");
+    while (readers.hasNext()) {
+      ImageReader reader = readers.next();
+      ImageReaderSpi spi = reader.getOriginatingProvider();
+      if (spi.isStandardImageMetadataFormatSupported()) {
+
+        try (ImageInputStream stream = ImageIO.createImageInputStream(file)) {
+          reader.setInput(stream, true);
+          IIOMetadata metadata = reader.getImageMetadata(0);
+          Node parent = metadata.getAsTree(IIOMetadataFormatImpl.standardMetadataFormatName);
+          // Get first Text element
+          Element text = getChildElement(parent, "Text");
+          if (text != null) {
+            // Then look at TextEntry element
+            NodeList children = text.getChildNodes();
+            int count = children.getLength();
+            for (int i = 0; i < count; i++) {
+              Node child = children.item(i);
+              if (child.getNodeType() == Node.ELEMENT_NODE && child.getNodeName().equals("TextEntry")) {
+                Element textentry = (Element) child;
+                // is it our marker ?
+                if (marker.equals(textentry.getAttribute("keyword"))) {
+                  return textentry.getAttribute("value");
+                }
+              }
+            }
+          }
+        }
+        catch (IOException ioe) {
+          LOG.error("Error while parsing image: {}", ioe.getMessage());
+        }
+      }
+    }
+    return null;
+  }
+
+  private static Element getChildElement(Node parent, String name) {
+    NodeList children = parent.getChildNodes();
+    int count = children.getLength();
+    for (int i = 0; i < count; i++) {
+      Node child = children.item(i);
+      if (child.getNodeType() == Node.ELEMENT_NODE && child.getNodeName().equals(name)) {
+        return (Element)child;
+      }
+    }
+    return null;
+  }
+
+  //---------------------------------------
 
   public static BufferedImage fastBlur(BufferedImage src, int radius) {
       int width = src.getWidth();

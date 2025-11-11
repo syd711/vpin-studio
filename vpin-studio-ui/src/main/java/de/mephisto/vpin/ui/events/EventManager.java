@@ -64,8 +64,10 @@ public class EventManager {
 
   public void notifyTableChange(int tableId, @Nullable String rom, @Nullable String gameName) {
     Platform.runLater(() -> {
-      for (StudioEventListener listener : listeners) {
-        listener.tableChanged(tableId, rom, gameName);
+      synchronized (listeners) {
+        for (StudioEventListener listener : listeners) {
+          listener.tableChanged(tableId, rom, gameName);
+        }
       }
     });
   }

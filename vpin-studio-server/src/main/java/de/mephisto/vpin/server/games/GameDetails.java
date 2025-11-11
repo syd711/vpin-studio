@@ -34,6 +34,9 @@ public class GameDetails {
   @Column(length = 4096)
   public String assets;
 
+  @Column(length = 4096)
+  public String scripts;
+
   @Column(length = 1024)
   public String updates;
 
@@ -45,6 +48,8 @@ public class GameDetails {
   private String eventLog;
 
   private Long templateId;
+  private Long instructionCardTemplateId;
+  private Long wheelTemplateId;
 
   private String romName;
 
@@ -150,6 +155,22 @@ public class GameDetails {
     this.templateId = templateId;
   }
 
+  public Long getInstructionCardTemplateId() {
+    return instructionCardTemplateId;
+  }
+
+  public void setInstructionCardTemplateId(Long instructionCardTemplateId) {
+    this.instructionCardTemplateId = instructionCardTemplateId;
+  }
+
+  public Long getWheelTemplateId() {
+    return wheelTemplateId;
+  }
+
+  public void setWheelTemplateId(Long wheelTemplateId) {
+    this.wheelTemplateId = wheelTemplateId;
+  }
+
   public String getPupPack() {
     return pupPack;
   }
@@ -212,6 +233,14 @@ public class GameDetails {
 
   public void setAssets(String assets) {
     this.assets = assets;
+  }
+  
+  public String getScripts() {
+    return scripts;
+  }
+
+  public void setScripts(String scripts) {
+    this.scripts = scripts;
   }
 
   public Date getCreatedAt() {

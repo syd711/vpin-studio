@@ -87,7 +87,7 @@ public class GameValidationTexts {
       }
       case CODE_NO_DMDFOLDER: {
         label = "DMD Folder not found.";
-        text = "The table uses UltraDMD or FlexDMD but the needed DMD folder is not found.";
+        text = "The table uses UltraDMD or FlexDMD but the needed DMD folder \"" + state.getOption() + "\" is not found.";
         break;
       }
       case CODE_NO_AUDIO: {
@@ -142,6 +142,11 @@ public class GameValidationTexts {
       }
       case CODE_NO_OTHER2: {
         label = invalidAssetMessage("Other2");
+        text = NO_MEDIA_TEXT;
+        break;
+      }
+      case CODE_NO_LOGO: {
+        label = invalidAssetMessage("Logo");
         text = NO_MEDIA_TEXT;
         break;
       }
@@ -201,7 +206,7 @@ public class GameValidationTexts {
       }
       case CODE_ALT_COLOR_FILES_MISSING: {
         label = "ALT Color files missing.";
-        text = "An ALT Color file is missing: " + state.getOptions().get(0);
+        text = "An ALT Color file is missing: " + state.getOption();
         break;
       }
       case CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED: {
@@ -216,7 +221,7 @@ public class GameValidationTexts {
       }
       case CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING: {
         label = "DMD device files missing.";
-        text = "Mandatory file not found to run ALT Color: " + state.getOptions().get(0);
+        text = "Mandatory file not found to run ALT Color: " + state.getOption();
         break;
       }
       case CODE_SCRIPT_CONTROLLER_STOP_MISSING: {
@@ -224,11 +229,15 @@ public class GameValidationTexts {
         text = "The VPX script has an exit method but does not call \"Controller.stop\". This call is required so that the tables nvram file is written.";
         break;
       }
+      case CODE_SCRIPT_FILES_MISSING: {
+        label = "An included script is missing.";
+        text = "The VBS script \"" + state.getOption() + "\" is missing in the \"scripts\" folder.";
+        break;
+      }
       default: {
         throw new UnsupportedOperationException("unmapped validation state");
       }
     }
-
 
     return new LocalizedValidation(label, text);
   }

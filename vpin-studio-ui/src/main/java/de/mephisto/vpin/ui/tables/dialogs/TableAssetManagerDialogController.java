@@ -19,6 +19,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.DownloadJobDescriptor;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.util.FileUtils;
+import de.mephisto.vpin.restclient.util.MimeTypeUtil;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
@@ -28,6 +29,7 @@ import de.mephisto.vpin.ui.playlistmanager.PlaylistDialogs;
 import de.mephisto.vpin.ui.preferences.dialogs.PreferencesDialogs;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
+import de.mephisto.vpin.ui.tables.dialogs.TableAssetManagerPane.MediaPane;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.StudioFolderChooser;
@@ -44,11 +46,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -59,6 +58,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.apache.commons.io.FilenameUtils;
@@ -66,13 +66,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
+import java.awt.Desktop;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
-import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -112,7 +111,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private BorderPane mediaPane;
 
   @FXML
-  private TableAssetManagerPane mediaRootPane;
+  private TableAssetManagerPane<TableAssetManagerMediaPane> mediaRootPane;
 
   @FXML
   private ToolBar installedAssetsToolbar;
@@ -285,7 +284,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   @FXML
   private void onScreenDelete(ActionEvent e) {
     if (!this.assetList.getItems().isEmpty()) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete Screen Assets", "Delete all media for screen \"" + screen.getSegment() + "\"?");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete Screen Assets", "Delete all media for screen \"" + screen.name() + "\"?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         for (FrontendMediaItemRepresentation item : assetList.getItems()) {
           if (isPlaylistMode()) {
@@ -388,7 +387,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private void onFolderBtn() {
     FrontendMediaItemRepresentation selectedItem = assetList.getSelectionModel().getSelectedItem();
     if (this.playlist != null && this.playlistsRadio != null && this.playlistsRadio.isSelected()) {
-      File screenDir = client.getFrontendService().getPlaylistMediaDirectory(this.playlist.getId(), screen.name());
+      File screenDir = client.getFrontendService().getPlaylistMediaDirectory(this.playlist.getId(), screen);
       if (selectedItem != null) {
         screenDir = new File(screenDir, selectedItem.getName());
         SystemUtil.openFile(screenDir);
@@ -397,7 +396,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       SystemUtil.openFolder(screenDir);
     }
     else if (this.game != null) {
-      File screenDir = client.getFrontendService().getMediaDirectory(this.game.getId(), screen.name());
+      File screenDir = client.getFrontendService().getMediaDirectory(this.game.getId(), screen);
       if (selectedItem != null) {
         screenDir = new File(screenDir, selectedItem.getName());
         SystemUtil.openFile(screenDir);
@@ -656,7 +655,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           serverMediaPlayer.disposeMedia();
         }
 
-        this.serverMediaPlayer = WidgetFactory.createAssetMediaPlayer(client, assetUrl, tableAsset.getScreen(), mimeType, false, false);
+        VPinScreen screen = VPinScreen.valueOfSegment(tableAsset.getScreen());
+        boolean playfieldInverted = tableAsset.isPlayfieldMediaInverted();
+        this.serverMediaPlayer = WidgetFactory.createAssetMediaPlayer(client, assetUrl, screen, mimeType, playfieldInverted, false, false);
         serverAssetMediaPane.setCenter(serverMediaPlayer);
       }
       catch (Exception e) {
@@ -831,7 +832,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
     Frontend frontend = client.getFrontendService().getFrontendCached();
     List<VPinScreen> supportedScreens = frontend.getSupportedScreens();
-    assetSearchBox.setVisible(tableAssetSource != null);
+    //assetSearchBox.setVisible(tableAssetSource != null);
 
     this.folderSeparator.managedProperty().bindBidirectional(this.folderSeparator.visibleProperty());
     this.folderBtn.managedProperty().bindBidirectional(this.folderBtn.visibleProperty());
@@ -841,11 +842,10 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     this.folderBtn.setVisible(SystemUtil.isFolderActionSupported());
     this.folderSeparator.setVisible(SystemUtil.isFolderActionSupported());
 
+    mediaRootPane.createPanes((rootPane, text, screen, suffixes) -> new TableAssetManagerMediaPane(rootPane, text, screen, suffixes), isEmbeddedMode());
+
     mediaRootPane.addListeners(this);
     mediaRootPane.setPanesVisibility(supportedScreens);
-    if (isEmbeddedMode()) {
-      mediaRootPane.setEmbeddedMode();
-    }
 
     downloadBtn.setVisible(false);
     webPreviewBtn.setVisible(false);
@@ -935,7 +935,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         // else
         FrontendMediaItemRepresentation mediaItem = list.get(0);
         String mimeType = mediaItem.getMimeType();
-        String baseType = mimeType.split("/")[0];
+        String baseType = MimeTypeUtil.mimeTypeToBaseType(mimeType);
 
         // add a condition, asset should not be the default asset already
         setDefaultBtn.setDisable(setDefaultBtn.isDisable() || FileUtils.isDefaultAsset(mediaItem.getName()));
@@ -1009,6 +1009,23 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           });
         }
       });
+    }
+  }
+
+  private static class TableAssetManagerMediaPane extends MediaPane {
+
+    TableAssetManagerMediaPane(TableAssetManagerPane<?> rootPane, String text, VPinScreen screen, String[] suffix) {
+      super(rootPane, text, screen, suffix);
+
+      this.getStyleClass().add("media-container");
+      Label label = new Label(text);
+      label.setTextFill(Color.WHITE);
+      this.setBottom(label);
+      BorderPane.setAlignment(label, Pos.CENTER);
+
+      BorderPane borderPane = new BorderPane();
+      this.setTop(borderPane);
+      BorderPane.setAlignment(borderPane, Pos.TOP_RIGHT);
     }
   }
 

@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.games;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
+import de.mephisto.vpin.restclient.cards.CardTemplateType;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.dmd.DMDPackageTypes;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
@@ -62,11 +63,14 @@ public class Game {
 
   private int nbDirectB2S;
 
-  private boolean defaultBackgroundAvailable;
   private boolean eventLogAvailable;
 
   private String pupPackName;
-  private Long templateId;
+
+  private Long highscoreCardTemplateId;
+  private Long instructionCardTemplateId;
+  private Long wheelTemplateId;
+
   private String extTableId;
   private String extTableVersionId;
   private String extVersion;
@@ -89,11 +93,22 @@ public class Game {
   private String dmdGameName;
   private String dmdProjectFolder;
 
+  private String[] scripts;
+
   private boolean ignoreUpdates = false;
 
   private int rating = 0;
+  private List<String> tags = new ArrayList<>();
 
   public Game() {
+  }
+
+  public List<String> getTags() {
+    return tags;
+  }
+
+  public void setTags(List<String> tags) {
+    this.tags = tags;
   }
 
   public String getMediaSearch() {
@@ -231,24 +246,79 @@ public class Game {
     this.comment = comment;
   }
 
+  @JsonIgnore
+  public boolean isZaccariaGame() {
+    return this.emulator != null && this.emulator.isZaccariaEmulator();
+  }
+
+  @JsonIgnore
   public boolean isVpxGame() {
     return this.emulator != null && this.emulator.isVpxEmulator();
   }
 
+  @JsonIgnore
+  public boolean isZenGame() {
+    return this.emulator != null && this.emulator.isZenEmulator();
+  }
+
+  @JsonIgnore
   public boolean isFpGame() {
     return this.emulator.isFpEmulator();
   }
 
+  @JsonIgnore
   public boolean isFxGame() {
-    return this.emulator.isFxEmulator();
+    return this.emulator.isZenEmulator();
   }
 
-  public Long getTemplateId() {
-    return templateId;
+  public Long getTemplateId(CardTemplateType templateType) {
+    switch (templateType) {
+      case HIGSCORE_CARD:
+        return getHighscoreCardTemplateId();
+      case INSTRUCTIONS_CARD:
+        return getInstructionCardTemplateId();
+      case WHEEL:
+        return getWheelTemplateId();
+    }
+    return null;
   }
 
-  public void setTemplateId(Long templateId) {
-    this.templateId = templateId;
+  public void setTemplateId(CardTemplateType templateType, Long id) {
+    switch (templateType) {
+      case HIGSCORE_CARD:
+        this.highscoreCardTemplateId = id;
+        break;
+      case INSTRUCTIONS_CARD:
+        this.instructionCardTemplateId = id;
+        break;
+      case WHEEL:
+        this.wheelTemplateId = id;
+        break;
+    }
+  }
+
+  public Long getHighscoreCardTemplateId() {
+    return highscoreCardTemplateId;
+  }
+
+  public void setHighscoreCardTemplateId(Long highscoreCardTemplateId) {
+    this.highscoreCardTemplateId = highscoreCardTemplateId;
+  }
+
+  public Long getInstructionCardTemplateId() {
+    return instructionCardTemplateId;
+  }
+
+  public void setInstructionCardTemplateId(Long instructionCardTemplateId) {
+    this.instructionCardTemplateId = instructionCardTemplateId;
+  }
+
+  public Long getWheelTemplateId() {
+    return wheelTemplateId;
+  }
+
+  public void setWheelTemplateId(Long wheelTemplateId) {
+    this.wheelTemplateId = wheelTemplateId;
   }
 
   public Date getDateAdded() {
@@ -656,7 +726,7 @@ public class Game {
     }
     return null;
   }
-  
+
   @Nullable
   @JsonIgnore
   public File getRomFile() {
@@ -666,6 +736,27 @@ public class Game {
     return null;
   }
 
+
+  /**
+   * Only relevant for tables that are located in a separate folder
+   *
+   * @return
+   */
+  @Nullable
+  @JsonIgnore
+  public File getB2STableSettingsFile() {
+    File gameFile = getGameFile();
+    if (gameFile.exists()) {
+      String gamesDirectory = getEmulator().getGamesDirectory();
+      if (!StringUtils.isEmpty(gamesDirectory)) {
+        File gamesDir = new File(gamesDirectory);
+        if (!gamesDir.equals(gameFile.getParentFile())) {
+          return new File(gameFile.getParentFile(), "B2STableSettings.xml");
+        }
+      }
+    }
+    return null;
+  }
 
   public boolean isRomExists() {
     File romFile = getRomFile();
@@ -702,6 +793,14 @@ public class Game {
   }
 
   // File getNvRamFile() -> MOVED IN highscoreResolver
+
+  public String[] getScripts() {
+    return scripts;
+  }
+
+  public void setScripts(String[] scripts) {
+    this.scripts = scripts;
+  }
 
   @Override
   public String toString() {

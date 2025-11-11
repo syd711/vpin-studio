@@ -4,9 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -23,6 +21,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class ScriptTest {
 
+  private final static File scripts = new File("../testsystem/vPinball/VisualPinball/scripts");
+  
   /*@Test
   public void checkExotic() {
     ScanResult result = doScan("Exotic GameName");
@@ -88,6 +88,10 @@ public class ScriptTest {
     assertEquals("UltraDMD", result.getDMDType());
     assertEquals(null, result.getDMDGameName());
     assertEquals("SEPF.UltraDMD", result.getDMDProjectFolder());
+
+    assertEquals(2, result.getScripts().size());
+    assertEquals("UltraDMD_Options.vbs", result.getScripts().get(0));
+    assertEquals("includedScript.vbs", result.getScripts().get(1));
   }
 
 
@@ -115,7 +119,8 @@ public class ScriptTest {
       String script = IOUtils.toString(in, StandardCharsets.UTF_8);
       script = script.replaceAll("\r\n", "\n");
       List<String> lines = Arrays.asList(script.split("\n"));
-      List<String> scriptLines = null;
+
+      String scriptLines = null;
       int l = 0;
       while (l < lines.size()) {
         String line = lines.get(l);
@@ -127,20 +132,18 @@ public class ScriptTest {
           // else check the scenario
           line = lines.get(++l);
           if (StringUtils.containsIgnoreCase(line, scenario)) {
-            scriptLines = new ArrayList<>();
+            scriptLines = "";
           }
         }
         else if (scriptLines != null) {
-          scriptLines.add(line);
+          scriptLines += line + "\n";
         }
         l++;
       }
       // now run the check if we found our scenario
       if (scriptLines != null) {
         ScanResult result = new ScanResult();
-        Collections.reverse(scriptLines);
-
-        VPXFileScanner.scanLines(new File("c:/fake/tables/", scenario + ".vpx"), result, scriptLines);
+        VPXFileScanner.scanLines(new File("c:/fake/tables/", scenario + ".vpx"), scripts, result, scriptLines);
         return result;
       }
     }

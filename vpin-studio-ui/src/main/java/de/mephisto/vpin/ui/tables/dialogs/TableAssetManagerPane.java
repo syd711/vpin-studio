@@ -1,76 +1,84 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import java.util.Arrays;
 import java.util.List;
 
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.ui.tables.drophandler.TableMediaFileDropEventHandler;
 import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 
-public class TableAssetManagerPane extends Pane {
+public class TableAssetManagerPane<P extends TableAssetManagerPane.MediaPane> extends Pane {
+
+  @FunctionalInterface
+  public interface MediaPaneItemFactory<T> {
+    T createPane(TableAssetManagerPane<?> rootPane, String text, VPinScreen screen, String... suffixes);
+  }
 
   public static class MediaPane extends BorderPane {
-    VPinScreen screen;
-    String[] suffixes;
-    Label label;
-    BorderPane borderPane;
+    protected VPinScreen screen;
+    protected String[] suffixes;
         
-    public MediaPane(TableAssetManagerPane rootPane, String text, VPinScreen screen, String... suffix) {
+    public MediaPane(TableAssetManagerPane<?> rootPane, String text, VPinScreen screen, String... suffix) {
       this.screen = screen;
       this.suffixes = suffix;
-      this.getStyleClass().add("media-container");
-
-      label = new Label(text);
-      label.setTextFill(Color.WHITE);
-      this.setBottom(label);
-      BorderPane.setAlignment(label, Pos.CENTER);
-
-      borderPane = new BorderPane();
-      this.setTop(borderPane);
-      BorderPane.setAlignment(borderPane, Pos.TOP_RIGHT);
-
       rootPane.getChildren().add(this);
+    }
+
+    public VPinScreen getScreen() {
+      return screen;
+    }
+
+    public String[] getSuffixes() {
+      return suffixes;
     }
   }
 
-  MediaPane audioLaunch;
-  MediaPane fullDmd;
-  MediaPane gameInfo;
-  MediaPane help;
-  MediaPane topper;
-  MediaPane backglass;
-  MediaPane dmd;
-  MediaPane playfield;
-  MediaPane audio;
-  MediaPane loading;
-  MediaPane other2;
-  MediaPane wheel;
 
-  MediaPane[] allpanes;
+  P audioLaunch;
+  P fullDmd;
+  P gameInfo;
+  P help;
+  P topper;
+  P backglass;
+  P dmd;
+  P playfield;
+  P audio;
+  P loading;
+  P other2;
+  P wheel;
+  P logo;
+
+  List<P> allpanes;
 
   public TableAssetManagerPane() {
     super();
-    audioLaunch = new MediaPane(this, "Audio Launch", VPinScreen.AudioLaunch, "mp3");
-    fullDmd = new MediaPane(this, "Apron/Full DMD", VPinScreen.Menu, "mp4", "png", "jpg");
-    gameInfo = new MediaPane(this, "Info / Flyer", VPinScreen.GameInfo, "mp4", "png", "jpg");
-    help = new MediaPane(this, "Help", VPinScreen.GameHelp, "mp4", "png", "jpg");
-    topper = new MediaPane(this, "Topper", VPinScreen.Topper, "mp4", "png", "jpg");
-    backglass = new MediaPane(this, "Backglass", VPinScreen.BackGlass, "mp4", "png", "jpg");
-    dmd = new MediaPane(this, "DMD", VPinScreen.DMD, "mp4", "png", "jpg");
-    playfield = new MediaPane(this, "Playfield", VPinScreen.PlayField, "mp4");
-    audio = new MediaPane(this, "Audio", VPinScreen.Audio, "mp3");
-    loading = new MediaPane(this, "Loading", VPinScreen.Loading, "mp4");
-    other2 = new MediaPane(this, "Other2", VPinScreen.Other2, "mp4", "png", "jpg");
-    wheel = new MediaPane(this, "Wheel", VPinScreen.Wheel, "apng", "png", "jpg");
+  }
 
-    allpanes = new MediaPane[] {
-      audioLaunch, fullDmd, gameInfo, help, topper, backglass, dmd, playfield, audio, loading, other2, wheel
-    };
+  public void createPanes(MediaPaneItemFactory<P> factory, boolean embeddedMode) {
+    audioLaunch = factory.createPane(this, embeddedMode ? "Audio L." : "Audio Launch", VPinScreen.AudioLaunch, "mp3");
+    fullDmd = factory.createPane(this, embeddedMode ? "Full DMD" : "Apron/Full DMD", VPinScreen.Menu, "mp4", "png", "jpg");
+    gameInfo = factory.createPane(this, "Info / Flyer", VPinScreen.GameInfo, "mp4", "png", "jpg");
+    help = factory.createPane(this, "Help", VPinScreen.GameHelp, "mp4", "png", "jpg");
+    topper = factory.createPane(this, "Topper", VPinScreen.Topper, "mp4", "png", "jpg");
+    backglass = factory.createPane(this, "Backglass", VPinScreen.BackGlass, "mp4", "png", "jpg");
+    dmd = factory.createPane(this, "DMD", VPinScreen.DMD, "mp4", "png", "jpg");
+    playfield = factory.createPane(this, "Playfield", VPinScreen.PlayField, "mp4", "png", "jpg");
+    audio = factory.createPane(this, "Audio", VPinScreen.Audio, "mp3");
+    loading = factory.createPane(this, "Loading", VPinScreen.Loading, "mp4");
+    other2 = factory.createPane(this, "Other2", VPinScreen.Other2, "mp4", "png", "jpg");
+    wheel = factory.createPane(this, "Wheel", VPinScreen.Wheel, "apng", "png", "jpg");
+    logo = factory.createPane(this, "Logo", VPinScreen.Logo, "png", "jpg");
+
+    allpanes = Arrays.asList(
+      audioLaunch, fullDmd, gameInfo, help, topper, backglass, dmd, playfield, audio, loading, other2, wheel, logo
+    );
+  }
+
+  public List<P> getMediaPanes() {
+    return allpanes;
   }
 
   @Override protected double computeMinWidth(double height) {
@@ -116,7 +124,7 @@ public class TableAssetManagerPane extends Pane {
     int gutterY = 9;
 
     insideWidth -= 2 * gutterX;
-    double col13Height = insideHeight - 11 * gutterY;
+    double col13Height = insideHeight - 8 * gutterY;
     double col2Height = insideHeight - 3 * gutterY;
 
     double w13 = snapSizeX(insideWidth * 31.0 / 100.0);
@@ -126,42 +134,37 @@ public class TableAssetManagerPane extends Pane {
     double x2 = snapPositionX(insideX + w13 + gutterX);
     double x3 = snapPositionX(insideX + w13 + gutterX + w2 + gutterX);
 
-    // Start first and third column
-    double y = snapPositionY(insideY + 4 * gutterY);
-    double h = snapSizeY(col13Height * 20.0 / 100.0);
+    //------------------------------
+    // First column
+    double y = snapPositionY(insideY + 2 * gutterY);
+    double h = snapSizeY(col13Height * 16.0 / 100.0);
 
     audioLaunch.resize(w13, h);
     audioLaunch.relocate(x1, y);
 
-    audio.resize(w13, h);
-    audio.relocate(x3, y);
-
     y = snapPositionY(y + h + gutterY);
-    h = snapSizeY(col13Height * 27.0 / 100.0);
+    h = snapSizeY(col13Height * 24.0 / 100.0);
 
     fullDmd.resize(w13, h);
     fullDmd.relocate(x1, y);
 
-    loading.resize(w13, h);
-    loading.relocate(x3, y);
-
     y = snapPositionY(y + h + gutterY);
-    h = snapSizeY(col13Height * 26.0 / 100.0);
 
     gameInfo.resize(w13, h);
     gameInfo.relocate(x1, y);
-
-    other2.resize(w13, h);
-    other2.relocate(x3, y);
 
     y = snapPositionY(y + h + gutterY);
 
     help.resize(w13, h);
     help.relocate(x1, y);
 
-    wheel.resize(w13, h);
-    wheel.relocate(x3, y);
+    y = snapPositionY(y + h + gutterY);
+    h = snapSizeY(col13Height * 12.0 / 100.0 - gutterY);
 
+    logo.resize(w13, h);
+    logo.relocate(x1, y);
+
+    //------------------------------
     // Second column
     y = snapPositionY(insideY);
     h = snapSizeY(col2Height * 20.5 / 100.0);
@@ -186,6 +189,30 @@ public class TableAssetManagerPane extends Pane {
     playfield.resize(w2, h);
     playfield.relocate(x2, y);
 
+    //------------------------------
+    // Third column
+    y = snapPositionY(insideY + 2 * gutterY);
+    h = snapSizeY(col13Height * 16.0 / 100.0);
+
+    audio.resize(w13, h);
+    audio.relocate(x3, y);
+
+    y = snapPositionY(y + h + gutterY);
+    h = snapSizeY(col13Height * 36.0 / 100.0);
+
+    loading.resize(w13, h);
+    loading.relocate(x3, y);
+
+    y = snapPositionY(y + h + gutterY);
+    h = snapSizeY(col13Height * 24.0 / 100.0);
+
+    other2.resize(w13, h);
+    other2.relocate(x3, y);
+
+    y = snapPositionY(y + h + gutterY);
+
+    wheel.resize(w13, h);
+    wheel.relocate(x3, y);
   }
 
   public void addListeners(TableAssetManagerDialogController controller) {
@@ -213,10 +240,5 @@ public class TableAssetManagerPane extends Pane {
     for (MediaPane pane : allpanes) {
       controller.updateState(pane.screen, pane, false, screen.equals(pane.screen));
     }
-  }
-
-  public void setEmbeddedMode() {
-    audioLaunch.label.setText("Audio L.");
-    fullDmd.label.setText("Full DMD");
   }
 }

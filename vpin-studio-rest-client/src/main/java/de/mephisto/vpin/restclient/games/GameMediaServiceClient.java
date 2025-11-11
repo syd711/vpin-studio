@@ -37,7 +37,7 @@ public class GameMediaServiceClient extends VPinStudioClientService {
   }
 
   public boolean deleteMedia(int gameId, VPinScreen screen, String name) {
-    return getRestClient().delete(API + API_SEGMENT_MEDIA + "/media/" + gameId + "/" + screen.name() + "/" + name);
+    return getRestClient().delete(API + API_SEGMENT_MEDIA + "/media/" + gameId + "/" + screen + "/" + name);
   }
 
   public boolean deleteMedia(int gameId) {
@@ -47,21 +47,21 @@ public class GameMediaServiceClient extends VPinStudioClientService {
   public boolean setDefaultMedia(int gameId, VPinScreen screen, String name) throws Exception {
     Map<String, Object> params = new HashMap<>();
     params.put("setDefault", name);
-    return getRestClient().put(API + API_SEGMENT_MEDIA + "/media/" + gameId + "/" + screen.name(), params, Boolean.class);
+    return getRestClient().put(API + API_SEGMENT_MEDIA + "/media/" + gameId + "/" + screen, params, Boolean.class);
   }
 
   public boolean renameMedia(int gameId, VPinScreen screen, String name, String newName) throws Exception {
     Map<String, Object> params = new HashMap<>();
     params.put("oldName", name);
     params.put("newName", newName);
-    return getRestClient().put(API + API_SEGMENT_MEDIA + "/media/" + gameId + "/" + screen.name(), params, Boolean.class);
+    return getRestClient().put(API + API_SEGMENT_MEDIA + "/media/" + gameId + "/" + screen, params, Boolean.class);
   }
 
   public boolean toFullScreen(int gameId, VPinScreen screen) throws Exception {
     try {
       Map<String, Object> values = new HashMap<>();
       values.put("fullscreen", "true");
-      return getRestClient().put(API + API_SEGMENT_MEDIA + "/media/" + gameId + "/" + screen.name(), values);
+      return getRestClient().put(API + API_SEGMENT_MEDIA + "/media/" + gameId + "/" + screen, values);
     }
     catch (Exception e) {
       LOG.error("Applying fullscreen mode failed: " + e.getMessage(), e);
@@ -73,7 +73,7 @@ public class GameMediaServiceClient extends VPinStudioClientService {
     try {
       Map<String, Object> values = new HashMap<>();
       values.put("blank", "true");
-      return getRestClient().put(API + API_SEGMENT_MEDIA + "/media/" + gameId + "/" + screen.name(), values);
+      return getRestClient().put(API + API_SEGMENT_MEDIA + "/media/" + gameId + "/" + screen, values);
     }
     catch (Exception e) {
       LOG.error("Adding blank asset failed: " + e.getMessage(), e);
@@ -136,7 +136,7 @@ public class GameMediaServiceClient extends VPinStudioClientService {
 
   public boolean downloadTableAsset(TableAsset tableAsset, VPinScreen screen, GameRepresentation game, boolean append) throws Exception {
     try {
-      return getRestClient().post(API + API_SEGMENT_MEDIA + "/assets/download/" + game.getId() + "/" + screen.name() + "/" + append, tableAsset, Boolean.class);
+      return getRestClient().post(API + API_SEGMENT_MEDIA + "/assets/download/" + game.getId() + "/" + screen + "/" + append, tableAsset, Boolean.class);
     }
     catch (Exception e) {
       LOG.error("Failed to download asset: " + e.getMessage(), e);

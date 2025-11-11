@@ -54,7 +54,7 @@ public class BackupInstallerJob implements Job {
 
       Game game = gameService.getGame(uploadDescriptor.getGameId());
       if (game != null) {
-        cardService.generateCard(game);
+        cardService.generateHighscoreCard(game);
       }
     }
     catch (Exception e) {

@@ -121,6 +121,11 @@ public class GameMediaService {
   @Autowired
   private BackglassService backglassService;
 
+  public VpsMatch autoMatch(int gameId, boolean overwrite) {
+    Game game = gameService.getGame(gameId);
+    return autoMatch(game, overwrite, false);
+  }
+
   /**
    * moved from VpsService to break circular dependency.
    */
@@ -155,7 +160,7 @@ public class GameMediaService {
   }
 
 
-  public TableDetails saveTableDetails(TableDetails updatedTableDetails, int gameId, boolean renamingChecks) {
+  public synchronized TableDetails saveTableDetails(TableDetails updatedTableDetails, int gameId, boolean renamingChecks) {
     //fetch existing data first
     TableDetails originalTableDetails = getTableDetails(gameId);
     Game game = frontendService.getOriginalGame(gameId);
@@ -249,7 +254,7 @@ public class GameMediaService {
     if (romChanged || hsChanged) {
       LOG.info("Game highscore data fields have been changed, triggering score check.");
       highscoreService.scanScore(game, EventOrigin.USER_INITIATED);
-      cardService.generateCard(game);
+      cardService.generateHighscoreCard(game);
     }
   }
 
@@ -610,6 +615,10 @@ public class GameMediaService {
 
         if (PackageUtil.unpackTargetFile(tempFile, out, mediaFile)) {
           LOG.info("Created \"" + out.getAbsolutePath() + "\" for screen \"" + screen.name() + "\" from archive file \"" + mediaFile + "\"");
+
+          if (game != null) {
+            gameLifecycleService.notifyGameScreenAssetsChanged(game.getId(), screen, out);
+          }
         }
         else {
           LOG.error("Failed to unpack " + out.getAbsolutePath() + " from " + tempFile.getAbsolutePath());
@@ -832,6 +841,7 @@ public class GameMediaService {
           String suffix = FilenameUtils.getExtension(mediaFile.getName());
           File targetFile = uniqueMediaAsset(game, target, suffix);
           FileUtil.copyFile(mediaFile, targetFile);
+          gameLifecycleService.notifyGameScreenAssetsChanged(game.getId(), screen, target);
         }
       }
       return true;

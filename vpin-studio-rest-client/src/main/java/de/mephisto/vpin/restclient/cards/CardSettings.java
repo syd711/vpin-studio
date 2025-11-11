@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
  */
 public class CardSettings extends JsonSettings {
   private String popperScreen = null;
+  private boolean backupAsset = false;
   private int notificationTime = 0;
   private String notificationRotation = "0";
   private boolean notificationOnPopperScreen = false;
@@ -27,6 +28,14 @@ public class CardSettings extends JsonSettings {
 
   public void setPopperScreen(String popperScreen) {
     this.popperScreen = popperScreen;
+  }
+
+  public boolean isBackupAsset() {
+    return backupAsset;
+  }
+
+  public void setBackupAsset(boolean backupAsset) {
+    this.backupAsset = backupAsset;
   }
 
   public int getNotificationTime() {

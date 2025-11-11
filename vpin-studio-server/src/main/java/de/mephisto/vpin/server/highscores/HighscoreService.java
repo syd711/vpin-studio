@@ -699,7 +699,7 @@ public class HighscoreService implements InitializingBean {
 
     refreshAvailableScores();
 
-    for (HighscoreChangeListener listener : listeners) {
+    for (HighscoreChangeListener listener : new ArrayList<>(listeners)) {
       listener.highscoreUpdated(game, highscore);
     }
   }
