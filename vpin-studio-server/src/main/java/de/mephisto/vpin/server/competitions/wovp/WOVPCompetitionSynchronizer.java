@@ -4,9 +4,13 @@ import de.mephisto.vpin.connectors.wovp.Wovp;
 import de.mephisto.vpin.connectors.wovp.models.*;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.restclient.tagging.TaggingUtil;
 import de.mephisto.vpin.restclient.wovp.WOVPSettings;
 import de.mephisto.vpin.server.competitions.Competition;
+import de.mephisto.vpin.server.competitions.CompetitionLifecycleService;
 import de.mephisto.vpin.server.competitions.CompetitionService;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
@@ -22,6 +26,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -33,6 +38,12 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
 
   @Autowired
   private CompetitionService competitionService;
+
+  @Autowired
+  private CompetitionLifecycleService competitionLifecycleService;
+
+  @Autowired
+  private FrontendService frontendService;
 
   @Autowired
   private GameService gameService;
@@ -68,20 +79,28 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
         Game game = gameService.getGame(competition.getGameId());
         //the id is not matching when it is outdated
         if (!challengeId.equals(competition.getUuid()) || game == null || forceReload) {
-          updateCompetition(competition, challenge, wovpSettings, game);
+          //run de-augmentation for finished competitions
+          competition.setEndDate(new Date());
+          competitionService.save(competition);
+          competitionLifecycleService.notifyCompetitionChanged(competition);
+          competitionLifecycleService.notifyCompetitionDeleted(competition);
+          refreshTags(game, wovpSettings, false);
+
+          updateCompetition(competition, challenge, wovpSettings);
         }
         return;
       }
     }
 
     Competition competition = new Competition();
-    updateCompetition(competition, challenge, wovpSettings, null);
+    updateCompetition(competition, challenge, wovpSettings);
   }
 
-  private void updateCompetition(@NonNull Competition competition, @NonNull Challenge challenge, WOVPSettings wovpSettings, @Nullable Game game) {
+  private void updateCompetition(@NonNull Competition competition, @NonNull Challenge challenge, @NonNull WOVPSettings wovpSettings) {
     competition.setUrl("https://worldofvirtualpinball.com/en/challenge/ranking?tab=challenges");
     competition.setUuid(challenge.getId());
     competition.setName(challenge.getName());
+    competition.setBadge(wovpSettings.isBadgeEnabled() ? "wovp" : null);
     competition.setOwner("World Of Virtual Pinball");
     competition.setVpsTableId(challenge.getPinballTable().getExternalId());
     competition.setVpsTableVersionId(challenge.getPinballTableVersion().getExternalId());
@@ -91,22 +110,50 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
     competition.setMode(challenge.getChallengeTypeCode().name());
     competition.setHighscoreReset(wovpSettings.isResetHighscores());
 
-    if (game == null) {
-      PinballTable pinballTable = challenge.getPinballTable();
-      PinballTableVersion pinballTableVersion = challenge.getPinballTableVersion();
-      List<Game> gameMatches = gameService.getGamesByVpsTableId(pinballTable.getExternalId(), pinballTableVersion.getExternalId());
-      if (gameMatches.isEmpty()) {
-        LOG.info("No matching game found for weekly challenge \"{}\"", challenge.getChallengeTypeCode());
-      }
-      else {
-        game = gameMatches.get(0);
-        competition.setGameId(game.getId());
-        LOG.info("Applying game \"{}\" for weekly challenge \"{}\"", game.getGameDisplayName(), challenge.getChallengeTypeCode());
-      }
+    PinballTable pinballTable = challenge.getPinballTable();
+    PinballTableVersion pinballTableVersion = challenge.getPinballTableVersion();
+    List<Game> gameMatches = gameService.getGamesByVpsTableId(pinballTable.getExternalId(), pinballTableVersion.getExternalId());
+    if (gameMatches.isEmpty()) {
+      LOG.info("No matching game found for weekly challenge \"{}\"", challenge.getChallengeTypeCode());
+    }
+    else {
+      Game game = gameMatches.get(0);
+      competition.setGameId(game.getId());
+
+      refreshTags(game, wovpSettings, true);
+      LOG.info("Applying game \"{}\" for weekly challenge \"{}\"", game.getGameDisplayName(), challenge.getChallengeTypeCode());
     }
 
     competitionService.save(competition);
     LOG.info("Saved {}", competition);
+  }
+
+  private void refreshTags(@Nullable Game game, @NonNull WOVPSettings wovpSettings, boolean add) {
+    if (game != null) {
+      if (wovpSettings.isTaggingEnabled()) {
+        TableDetails tableDetails = frontendService.getTableDetails(game.getId());
+        String tags = tableDetails.getTags();
+        List<String> tagList = TaggingUtil.getTags(tags);
+        List<String> weeklyTags = wovpSettings.getTags();
+        boolean dirty = false;
+        for (String weeklyTag : weeklyTags) {
+          if (add && !tagList.contains(weeklyTag)) {
+            tagList.add(weeklyTag);
+            dirty = true;
+          }
+          else if (!add) {
+            if (tagList.remove(weeklyTag)) {
+              dirty = true;
+            }
+          }
+        }
+
+        if (dirty) {
+          tableDetails.setTags(String.join(",", tagList));
+          frontendService.saveTableDetails(game.getId(), tableDetails);
+        }
+      }
+    }
   }
 
   @Override
