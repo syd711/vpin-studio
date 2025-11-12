@@ -76,4 +76,10 @@ public class ScoreSummary {
     }
     return emptyClone;
   }
+
+  public void setLimit(int i) {
+    if (scores.size() > i) {
+      scores = scores.subList(0, 5);
+    }
+  }
 }
