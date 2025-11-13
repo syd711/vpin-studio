@@ -64,7 +64,7 @@
 
                 <HBox alignment="BASELINE_LEFT" spacing="6.0">
                   <children>
-                    <CheckBox fx:id="manufacturerLogoUseYearCheckBox" mnemonicParsing="false" text="Use Historical Logo" textFill="WHITE">
+                    <CheckBox fx:id="manufacturerLogoUseHistoricalCheckBox" mnemonicParsing="false" text="Use Historical Logo" textFill="WHITE">
                         <font>
                           <Font size="14.0" />
                         </font>
