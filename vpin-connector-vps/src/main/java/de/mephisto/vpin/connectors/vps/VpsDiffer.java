@@ -78,7 +78,7 @@ public class VpsDiffer {
 
     for (VpsTableVersion newVersionFile : newFiles) {
       if (isIgnored(newVersionFile.getAuthors())) {
-        LOG.info("Ignored table version \"{}\" of table \"{}\", is on deny list: \"{}\"", newVersionFile, newTable.getName(), authorDenyList);
+//        LOG.info("Ignored table version \"{}\" of table \"{}\", is on deny list: \"{}\"", newVersionFile, newTable.getName(), authorDenyList);
         return;
       }
 

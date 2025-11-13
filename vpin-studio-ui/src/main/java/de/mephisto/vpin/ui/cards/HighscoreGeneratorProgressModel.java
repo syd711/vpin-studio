@@ -42,6 +42,11 @@ public class HighscoreGeneratorProgressModel extends ProgressModel<GameRepresent
   }
 
   @Override
+  public boolean isIndeterminate() {
+    return this.gameInfos.size() == 1;
+  }
+
+  @Override
   public GameRepresentation getNext() {
     return iterator.next();
   }

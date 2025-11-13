@@ -18,6 +18,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
+import de.mephisto.vpin.ui.cards.DesignMode;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
 import de.mephisto.vpin.ui.cards.HighscoreGeneratorProgressModel;
 import de.mephisto.vpin.ui.cards.TemplateAssigmentProgressModel;
@@ -475,16 +476,16 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     if (gameRepresentation.isPresent()) {
       if (cardTemplate.isTemplate()) {
         nagBar.setStyle("-fx-background-color: #333366;");
-        nagBarLabel.setText("Editing template \"" + cardTemplate.getName() + "\", previewing game \"" + gameRepresentation.get().getGameDisplayName() + "\"");
+        nagBarLabel.setText("Editing design for \"" + gameRepresentation.get().getGameDisplayName() + "\", using template \"" + cardTemplate.getName() + "\"");
       }
       else {
         nagBar.setStyle("-fx-background-color: #116611;");
-        Optional<CardTemplate> parent = this.templateCombo.getItems().stream().filter(t -> t.getId() == cardTemplate.getParentId()).findFirst();
+        Optional<CardTemplate> parent = this.templateCombo.getItems().stream().filter(t -> t.getId().equals(cardTemplate.getParentId())).findFirst();
         if (!parent.isPresent()) {
           parent = this.templateCombo.getItems().stream().filter(t -> t.isDefault()).findFirst();
         }
         if (parent.isPresent()) {
-          nagBarLabel.setText("Editing highscore card for \"" + gameRepresentation.get().getGameDisplayName() + "\", using template \"" + parent.get().getName() + "\".");
+          nagBarLabel.setText("Editing custom design for \"" + gameRepresentation.get().getGameDisplayName() + "\", using base template \"" + parent.get().getName() + "\".");
         }
         else {
           nagBarLabel.setText("No default template");
@@ -509,13 +510,12 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   }
 
   @FXML
-  private void onGenerateClick() {
-    JFXFuture.runAsync(() -> client.getHighscoreCardTemplatesClient().save((CardTemplate) this.templateBeanBinder.getBean()))
-        .thenLater(() -> refreshPreview(this.gameRepresentation))
-        .onErrorLater(e -> {
-          LOG.error("Failed to save template: {}", e.getMessage(), e);
-          WidgetFactory.showAlert(stage, "Error", "Failed to save template: " + e.getMessage());
-        });
+  private void onGenerateWithConfirmationClick() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Generate Wheel Icon", "Generate wheel icon for \"" + this.gameRepresentation.get().getGameDisplayName() + "\"?",
+        "The existing wheel icon will be overwritten.");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      onGenerate();
+    }
   }
 
   private void refreshPreview(Optional<GameRepresentation> game) {
@@ -699,6 +699,21 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     catch (Exception e) {
       LOG.error("Failed to initialize template editor: " + e.getMessage(), e);
     }
+  }
+
+  public DesignMode getDesignMode() {
+    Tab activeTab = tabPane.getSelectionModel().getSelectedItem();
+    if (activeTab == null) {
+      return DesignMode.highscoreCard;
+    }
+    else if (activeTab.equals(wheelsTab)) {
+      return DesignMode.wheel;
+    }
+    else if (activeTab.equals(instructionCardsTab)) {
+      return DesignMode.instructionCard;
+    }
+
+    return DesignMode.highscoreCard;
   }
 
   private void selectTab(Tab activeTab) {

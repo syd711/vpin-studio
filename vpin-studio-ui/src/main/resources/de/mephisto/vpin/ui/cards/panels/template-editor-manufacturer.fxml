@@ -85,7 +85,7 @@
 
                 <fx:include fx:id="position" source="template-subeditor-position.fxml" />
 
-                <!--HBox alignment="BASELINE_LEFT" spacing="6.0">
+                <HBox alignment="BASELINE_LEFT" spacing="6.0">
                   <children>
                     <CheckBox fx:id="manufacturerLogoKeepARCheckBox" mnemonicParsing="false" text="Keep Aspect Ratio" textFill="WHITE">
                         <font>
@@ -104,7 +104,7 @@
                   <VBox.margin>
                     <Insets top="12.0" />
                   </VBox.margin>
-                </HBox-->
+                </HBox>
 
               </children>
               <padding>

@@ -171,56 +171,53 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
    */
   public synchronized boolean generateCard(Game game, CardTemplate template) {
     try {
+      String screenName = cardSettings.getPopperScreen();
+      boolean wheelTemplate = template.getTemplateType() != null && template.getTemplateType().equals(CardTemplateType.WHEEL);
+
       ScoreSummary summary = getScoreSummary(game, template, false);
-      if (!summary.getScores().isEmpty() && !StringUtils.isEmpty(summary.getRaw())) {
-        String screenName = cardSettings.getPopperScreen();
-
-        if (template.getTemplateType() != null && template.getTemplateType().equals(CardTemplateType.WHEEL)) {
-          screenName = VPinScreen.Wheel.getSegment();
-        }
-
-        if (!StringUtils.isEmpty(screenName)) {
-          if (!game.isCardDisabled()) {
-            BufferedImage bufferedImage = doGenerateCardImage(game, summary, template);
-            if (bufferedImage != null) {
-              File highscoreCard = getCardFile(game, screenName);
-              if (cardSettings.isBackupAsset()) {
-                //Prepend cards and Backup existing asset
-                highscoreCard = ImageUtil.backupPNGByMarker(highscoreCard, "Highscore Card");
-              }
-
-              if (highscoreCard.exists() && !highscoreCard.delete()) {
-                LOG.info("Writing highscore card {} failed, file is locked.", highscoreCard.getAbsolutePath());
-                SLOG.info("Writing highscore card " + highscoreCard.getAbsolutePath() + " failed, file is locked.");
-              }
-              else {
-                ImageUtil.writePNG(bufferedImage, highscoreCard, "Highscore Card");
-                LOG.info("Written highscore card: " + highscoreCard.getAbsolutePath());
-                SLOG.info("Written highscore card: " + highscoreCard.getAbsolutePath());
-              }
-
-              return true;
-            }
-          }
-          else {
-            LOG.info("Skipped card generation for \"" + game.getGameDisplayName() + "\", generation not enabled.");
-            SLOG.info("Skipped card generation for \"" + game.getGameDisplayName() + "\", generation not enabled.");
-          }
-
-        }
-        else {
-          LOG.info("Skipped card generation, no target screen set.");
-          SLOG.info("Skipped card generation, no target screen set.");
-        }
-
-        return false;
+      if (wheelTemplate) {
+        screenName = VPinScreen.Wheel.getSegment();
       }
-      else {
+
+      if (!wheelTemplate && (summary.getScores().isEmpty() || StringUtils.isEmpty(summary.getRaw()))) {
         LOG.info("Skipped card generation for \"" + game.getGameDisplayName() + "\", no scores found.");
         SLOG.info("Skipped card generation for \"" + game.getGameDisplayName() + "\", no scores found.");
+        return false;
+      }
+
+      if (StringUtils.isEmpty(screenName)) {
+        LOG.info("Skipped card generation, no target screen set.");
+        SLOG.info("Skipped card generation, no target screen set.");
+        return false;
+      }
+
+      if (!wheelTemplate && game.isCardDisabled()) {
+        LOG.info("Skipped card generation for \"" + game.getGameDisplayName() + "\", generation not enabled.");
+        SLOG.info("Skipped card generation for \"" + game.getGameDisplayName() + "\", generation not enabled.");
+        return false;
+      }
+
+      BufferedImage bufferedImage = doGenerateCardImage(game, summary, template);
+      if (bufferedImage != null) {
+        File highscoreCard = getCardFile(game, screenName);
+        if (cardSettings.isBackupAsset()) {
+          //Prepend cards and Backup existing asset
+          highscoreCard = ImageUtil.backupPNGByMarker(highscoreCard, "Highscore Card");
+        }
+
+        if (highscoreCard.exists() && !highscoreCard.delete()) {
+          LOG.info("Writing highscore card {} failed, file is locked.", highscoreCard.getAbsolutePath());
+          SLOG.info("Writing highscore card " + highscoreCard.getAbsolutePath() + " failed, file is locked.");
+        }
+        else {
+          ImageUtil.writePNG(bufferedImage, highscoreCard, "Highscore Card");
+          LOG.info("Written highscore card: " + highscoreCard.getAbsolutePath());
+          SLOG.info("Written highscore card: " + highscoreCard.getAbsolutePath());
+        }
       }
     }
-    catch (Exception e) {
+    catch (
+        Exception e) {
       LOG.error("Failed to generate highscore card: {}", e.getMessage(), e);
       SLOG.error("Failed to generate highscore card: " + e.getMessage());
     }
@@ -245,7 +242,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
         CardData data = getCardData(game, summary, template, true);
 
         cardGraphics.setData(data, res);
-        // resize the cards to the needed resolution    
+        // resize the cards to the needed resolution
         cardGraphics.resize(res.toWidth(), res.toHeight());
 
         // then export image
@@ -268,7 +265,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
       case HIGSCORE_CARD:
         return cardSettings.getCardResolution();
       case INSTRUCTIONS_CARD:
-        //TODO add settings like Highscore, reuse same ? 
+        //TODO add settings like Highscore, reuse same ?
         return CardResolution.HDReady;
       case WHEEL:
         return CardResolution.WHEEL;
@@ -276,7 +273,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
     return null;
   }
 
-  //-----------------------------------------
+//-----------------------------------------
 
   public List<String> getImages(String subfolder) {
     File folder = new File(SystemService.RESOURCES, subfolder);

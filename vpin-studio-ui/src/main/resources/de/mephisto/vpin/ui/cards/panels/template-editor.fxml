@@ -20,7 +20,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane prefHeight="900.0" prefWidth="1400.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.panels.TemplateEditorController">
+<BorderPane prefHeight="900.0" prefWidth="1400.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.panels.TemplateEditorController">
     <top>
 
         <TabPane fx:id="tabPane">
@@ -159,7 +159,7 @@
                     </tooltip>
                 </Button>
                 <Separator layoutX="307.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <Button fx:id="generateWheelBtn" layoutX="856.0" layoutY="11.0" mnemonicParsing="false" onAction="#onGenerate" styleClass="submit-button" text="Generate Wheel" textFill="WHITE">
+                  <Button fx:id="generateWheelBtn" layoutX="856.0" layoutY="11.0" mnemonicParsing="false" onAction="#onGenerateWithConfirmationClick" styleClass="submit-button" text="Generate Wheel" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
