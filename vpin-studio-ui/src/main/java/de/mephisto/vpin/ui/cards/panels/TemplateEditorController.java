@@ -519,9 +519,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   }
 
   private void refreshPreview(Optional<GameRepresentation> game) {
-
     if (game.isPresent()) {
-
       // change game, so empty and add the wait overlay
       // else full background reload
       if (!cardPreview.isForGame(game.get().getId())) {
