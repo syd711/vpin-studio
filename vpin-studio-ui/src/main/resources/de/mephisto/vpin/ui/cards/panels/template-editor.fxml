@@ -44,12 +44,12 @@
                         <fx:include fx:id="layerEditorFrame" source="template-editor-frame.fxml" />
                         <fx:include fx:id="layerEditorCanvas" source="template-editor-canvas.fxml" />
                         <fx:include fx:id="layerEditorManufacturer" source="template-editor-manufacturer.fxml" />
-		                <fx:include fx:id="layerEditorOtherMedia" source="template-editor-othermedia.fxml" />
-                        <fx:include fx:id="layerEditorTitle" source="template-editor-title.fxml" />
-                        <fx:include fx:id="layerEditorTableName" source="template-editor-tablename.fxml" />
+                        <fx:include fx:id="layerEditorOtherMedia" source="template-editor-othermedia.fxml" />
                         <fx:include fx:id="layerEditorOverlay" source="template-editor-overlay.fxml" />
-                        <fx:include fx:id="layerEditorWheel" source="template-editor-wheel.fxml" />
                         <fx:include fx:id="layerEditorScores" source="template-editor-scores.fxml" />
+                        <fx:include fx:id="layerEditorTableName" source="template-editor-tablename.fxml" />
+                        <fx:include fx:id="layerEditorTitle" source="template-editor-title.fxml" />
+                        <fx:include fx:id="layerEditorWheel" source="template-editor-wheel.fxml" />
                     </panes>
                 </Accordion>
             </children>

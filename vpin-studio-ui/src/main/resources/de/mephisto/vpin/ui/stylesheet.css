@@ -1339,12 +1339,15 @@
 }
 
 .progress-bar > .track {
-  -fx-text-box-border: #605E5E;
-  -fx-control-inner-background: #FFFFFF;
+  -fx-control-inner-background: #FFF;
+  -fx-background-radius: 3px;
+  -fx-padding: 0;
 }
 
-.progress-bar .bar {
+.progress-bar > .bar {
     -fx-background-insets: 3px;
+    -fx-background-radius: 3px;
+    -fx-padding: 0;
 }
 
 .green {

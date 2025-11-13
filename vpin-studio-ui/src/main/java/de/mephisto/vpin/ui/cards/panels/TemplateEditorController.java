@@ -649,7 +649,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
       waitOverlay = loader.load();
       WaitOverlayController ctrl = loader.getController();
-      ctrl.setLoadingMessage("Refreshing  Card...");
+      ctrl.setLoadingMessage("Loading Media...");
 
       previewStack.setBackground(new Background(new BackgroundFill(Paint.valueOf("#000000"), null, null)));
       previewPanel.setBackground(Background.EMPTY);
@@ -705,12 +705,15 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
   private void selectTab(Tab activeTab) {
     boolean wheelMode = activeTab.equals(wheelsTab);
-    layerEditorScoresController.getSettingsPane().setVisible(!wheelMode);
-    layerEditorWheelController.getSettingsPane().setVisible(!wheelMode);
-    layerEditorOverlayController.getSettingsPane().setVisible(!wheelMode);
+    layerEditorScoresController.setEditorVisibility(!wheelMode);
+    layerEditorWheelController.setEditorVisibility(!wheelMode);
+    layerEditorOverlayController.setEditorVisibility(!wheelMode);
+    layerEditorFrameController.setEditorVisibility(wheelMode);
     generateAllBtn.setVisible(!wheelMode);
     generateBtn.setVisible(!wheelMode);
     generateWheelBtn.setVisible(wheelMode);
+
+    accordion.requestLayout();
 
     unsetTemplate();
     JFXFuture

@@ -38,6 +38,8 @@ public abstract class LayerEditorBaseController {
    */
   protected TemplateEditorController templateEditorController;
 
+  private boolean editorVisibility = true;
+
   public void initialize(TemplateEditorController templateEditorController, Accordion accordion) {
     LOG.info("initBindings for {}", getClass().getSimpleName());
     this.templateEditorController = templateEditorController;
@@ -46,7 +48,7 @@ public abstract class LayerEditorBaseController {
     int position = accordion.getPanes().indexOf(settingsPane);
     settingsPane.setUserData(position);
     settingsPane.managedProperty().bindBidirectional(settingsPane.visibleProperty());
-
+    settingsPane.managedProperty().bindBidirectional(settingsPane.visibleProperty());
     lockBtn.managedProperty().bindBidirectional(lockBtn.visibleProperty());
 
     initBindings(templateEditorController.getBeanBinder());
@@ -91,6 +93,7 @@ public abstract class LayerEditorBaseController {
     return settingsPane;
   }
 
+
   //---------------------------------------- Layer visibilities ---
 
   public void setIconVisibility(boolean visible) {
@@ -123,7 +126,11 @@ public abstract class LayerEditorBaseController {
     }
   }
 
-  //---------------------------------------- Lock management ---
+  //---------------------------------------- Lock and Visibility management ---
+
+  public void setEditorVisibility(boolean editorVisibility) {
+    this.editorVisibility = editorVisibility;
+  }
 
   public void setIconLock(boolean locked, boolean isTemplate) {
     if (isTemplate) {
@@ -138,14 +145,14 @@ public abstract class LayerEditorBaseController {
     }
   }
 
-  protected void setSettingsPaneVisible(boolean b) {
+  public void setSettingsPaneVisible(boolean b) {
     List<TitledPane> panes = accordion.getPanes();
-    if (b) {
+    if (b && editorVisibility) {
       if (!panes.contains(settingsPane)) {
         panes.add(settingsPane);
         panes.sort((o1, o2) -> {
-            return String.valueOf(o1.getUserData()).compareTo(String.valueOf(o2.getUserData()));
-          });
+          return String.valueOf(o1.getUserData()).compareTo(String.valueOf(o2.getUserData()));
+        });
       }
     }
     else {

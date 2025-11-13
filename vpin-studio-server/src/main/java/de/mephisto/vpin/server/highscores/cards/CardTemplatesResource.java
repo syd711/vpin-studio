@@ -42,9 +42,9 @@ public class CardTemplatesResource {
   @PostMapping(value = "/assign")
   public Boolean assignTemplate(@JsonArg("gameId") int gameId, 
                                 @JsonArg("templateId") long templateId, 
-                                @JsonArg("switchToCardMode") boolean switchToCardMode, 
+                                @JsonArg("switchToCustom") boolean switchToCustom,
                                 @JsonArg("templateType") String templateType) throws Exception {
-    return cardTemplatesService.assignTemplate(gameId, templateId, switchToCardMode, CardTemplateType.valueOf(templateType));
+    return cardTemplatesService.assignTemplate(gameId, templateId, switchToCustom, CardTemplateType.valueOf(templateType));
   }
 
   @PostMapping("/upload")
