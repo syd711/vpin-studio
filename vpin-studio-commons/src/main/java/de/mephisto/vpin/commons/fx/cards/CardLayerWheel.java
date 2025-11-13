@@ -17,4 +17,12 @@ public class CardLayerWheel extends CardLayerBaseImage {
   protected byte[] getImage(@Nonnull CardTemplate template, @Nullable CardData data) {
     return data != null ? data.getWheel() : null;
   }
+
+  protected double getImageWidth(@Nonnull CardTemplate template) {
+    return template.getWheelSize();
+  }
+
+  protected double getImageHeight(@Nonnull CardTemplate template) {
+    return template.getWheelSize();
+  }
 }

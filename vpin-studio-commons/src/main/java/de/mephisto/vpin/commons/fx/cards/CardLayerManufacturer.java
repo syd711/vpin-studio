@@ -18,4 +18,11 @@ public class CardLayerManufacturer extends CardLayerBaseImage {
     return data != null ? data.getManufacturerLogo() : null;
   }
 
+  protected double getImageWidth(@Nonnull CardTemplate template) {
+    return template.getManufacturerLogoWidth();
+  }
+
+  protected double getImageHeight(@Nonnull CardTemplate template) {
+    return template.getManufacturerLogoHeight();
+  }
 }

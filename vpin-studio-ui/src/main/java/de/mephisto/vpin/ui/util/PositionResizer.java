@@ -876,7 +876,7 @@ public class PositionResizer {
 
   private void ensureWidthRatio(double height) {
     if (aspectRatio != null) {
-      double width = height * aspectRatio;
+      double width = Math.round(height * aspectRatio);
       if (widthProperty.get() != width) {
         if (resizeCentered) {
           xProperty.set(centerX - (int) (width / 2));

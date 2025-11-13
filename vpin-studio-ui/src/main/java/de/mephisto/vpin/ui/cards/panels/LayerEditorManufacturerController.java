@@ -24,7 +24,8 @@ public class LayerEditorManufacturerController extends LayerEditorBaseController
 
   private CardTemplate cardTemplate;
   private Optional<GameRepresentation> game;
-  private Long aspectRatio = null;
+  private Double aspectRatio = null;
+  private PositionResizer dragBox;
 
   public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
     this.cardTemplate = cardTemplate;
@@ -37,6 +38,7 @@ public class LayerEditorManufacturerController extends LayerEditorBaseController
     manufacturerLogoUseHistoricalCheckBox.setSelected(cardTemplate.isManufacturerLogoUseYear());
     manufacturerLogoKeepARCheckBox.setSelected(cardTemplate.isManufacturerLogoKeepAspectRatio());
 
+    refreshAR();
   }
 
   @Override
@@ -67,15 +69,20 @@ public class LayerEditorManufacturerController extends LayerEditorBaseController
     this.aspectRatio = null;
     if (manufacturerLogoKeepARCheckBox.isSelected() && game.isPresent()) {
       byte[] manufacturerLogos = client.getHighscoreCardsService().getHighscoreImage(game.get(), cardTemplate, "manufacturerLogo");
-      Image image = new Image(new ByteArrayInputStream(manufacturerLogos));
-      this.aspectRatio = Math.round(image.getWidth() / image.getHeight());
+      if (manufacturerLogos != null) {
+        Image image = new Image(new ByteArrayInputStream(manufacturerLogos));
+        aspectRatio = Math.round(image.getWidth() / image.getHeight() * 10.0) / 10.0;
+      }
     }
-    templateEditorController.selectLayer(this);
+
+    if (dragBox != null) {
+      dragBox.setAspectRatio(aspectRatio != null ? aspectRatio : null);
+    }
   }
 
   @Override
   public void bindDragBox(PositionResizer dragBox) {
-    dragBox.setAspectRatio(aspectRatio != null ? aspectRatio.doubleValue() : null);
+    this.dragBox = dragBox;
     positionController.bindDragBox(dragBox);
   }
 
