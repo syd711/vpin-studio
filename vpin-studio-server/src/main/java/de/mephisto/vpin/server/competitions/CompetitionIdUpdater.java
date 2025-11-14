@@ -67,11 +67,6 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
   }
 
   @Override
-  public void competitionChanged(@NonNull Competition competition) {
-    //ignore
-  }
-
-  @Override
   public void competitionFinished(@NonNull Competition competition, @Nullable Player winner, @NonNull ScoreSummary scoreSummary) {
     unsetGamesTournamentId(competition);
   }

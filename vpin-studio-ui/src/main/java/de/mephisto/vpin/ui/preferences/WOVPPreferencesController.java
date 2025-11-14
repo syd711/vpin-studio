@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.wovp.WOVPSettings;
+import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.tags.TagField;
 import javafx.beans.value.ChangeListener;
@@ -97,6 +98,7 @@ public class WOVPPreferencesController implements Initializable {
       wovpSettings.setEnabled(newValue);
       try {
         client.getPreferenceService().setJsonPreference(wovpSettings);
+        PreferencesController.markDirty(PreferenceType.competitionSettings);
       }
       catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
@@ -108,6 +110,7 @@ public class WOVPPreferencesController implements Initializable {
       wovpSettings.setBadgeEnabled(newValue);
       try {
         client.getPreferenceService().setJsonPreference(wovpSettings);
+        PreferencesController.markDirty(PreferenceType.competitionSettings);
       }
       catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
@@ -119,6 +122,7 @@ public class WOVPPreferencesController implements Initializable {
       wovpSettings.setResetHighscores(newValue);
       try {
         client.getPreferenceService().setJsonPreference(wovpSettings);
+        PreferencesController.markDirty(PreferenceType.competitionSettings);
       }
       catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
@@ -131,6 +135,7 @@ public class WOVPPreferencesController implements Initializable {
         try {
           wovpSettings.setApiKey(t1);
           client.getPreferenceService().setJsonPreference(wovpSettings);
+          PreferencesController.markDirty(PreferenceType.competitionSettings);
         }
         catch (Exception e) {
           WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());

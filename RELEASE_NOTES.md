@@ -1,0 +1,2 @@
+- Fixed kiko
+- fill up highscores to 5

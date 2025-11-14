@@ -25,20 +25,15 @@ public class NewLineAfterFirstScoreAdapter implements ScoreNvRamAdapter {
 
   @Override
   public String convert(@NonNull String nvRam, @NonNull List<String> lines) {
-    int index = 0;
-    lines = new ArrayList<>(lines);
-    lines.remove(2);
-
     //pos index contains a ","
     lines = lines.stream().map(l -> l.replaceAll(",", ")")).collect(Collectors.toList());
-
-    for (String line : new ArrayList<>(lines)) {
-      index++;
-      if (line.trim().startsWith("HIGHEST SCORES")) {
-        lines = lines.subList(index-1, lines.size());
-        break;
+    List<String> updatedLines = new ArrayList<>();
+    for (String line : lines) {
+      if (line.trim().contains("HIGHEST") || line.trim().contains("SCORES")) {
+        continue;
       }
+      updatedLines.add(line);
     }
-    return String.join("\n", lines);
+    return String.join("\n", updatedLines);
   }
 }

@@ -1,20 +1,15 @@
 package de.mephisto.vpin.ui.competitions;
 
-import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
-import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.restclient.wovp.WOVPSettings;
-import de.mephisto.vpin.ui.NavigationController;
-import de.mephisto.vpin.ui.NavigationItem;
-import de.mephisto.vpin.ui.NavigationOptions;
-import de.mephisto.vpin.ui.WaitOverlayController;
+import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.competitions.dialogs.IScoredGameCellContainer;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
@@ -30,10 +25,12 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
@@ -41,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 
@@ -55,6 +53,9 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
 
   @FXML
   private TableColumn<WeeklyCompetitionModel, Object> tableColumn;
+
+  @FXML
+  private TableColumn<WeeklyCompetitionModel, Object> hostColumn;
 
   @FXML
   private TableColumn<WeeklyCompetitionModel, String> vpsTableColumn;
@@ -72,7 +73,7 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
   private Button reloadBtn;
 
   @FXML
-  private BorderPane competitionWidget;
+  private Button synchronizeBtn;
 
   @FXML
   private Button tableNavigateBtn;
@@ -84,8 +85,6 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
   private StackPane tableStack;
 
   private Parent loadingOverlay;
-  private WidgetCompetitionSummaryController competitionWidgetController;
-  private BorderPane competitionWidgetRoot;
 
   private CompetitionsController competitionsController;
   private List<CompetitionRepresentation> weeklySubscriptions;
@@ -122,6 +121,13 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
   @FXML
   public void onReload() {
     client.clearWheelCache();
+    doReload(false);
+  }
+
+  @FXML
+  public void onSynchronize() {
+    client.clearWheelCache();
+    client.getImageCache().clear("https://worldofvirtualpinball.com/");
     doReload(true);
   }
 
@@ -133,18 +139,19 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
       tableStack.getChildren().add(loadingOverlay);
     }
 
-    WeeklyCompetitionModel selection = tableView.getSelectionModel().getSelectedItem();
     WOVPSettings wovpSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
-
-    if (forceReload) {
-//      ProgressDialog.createProgressDialog(new IScoredGameRoomLoadingProgressModel(iScoredSettings.getGameRooms(), true));
+    if (!wovpSettings.isEnabled()) {
+      tableView.setItems(FXCollections.emptyObservableList());
+      tableView.refresh();
+      tableStack.getChildren().remove(loadingOverlay);
+      tableView.setVisible(true);
+      return;
     }
 
+    WeeklyCompetitionModel selection = tableView.getSelectionModel().getSelectedItem();
     JFXFuture.supplyAsync(() -> {
-      if (this.weeklySubscriptions == null || forceReload) {
-        client.getCompetitionService().synchronizeWeeklyCompetitions();
-        weeklySubscriptions = client.getCompetitionService().getWeeklyCompetitionScores();
-      }
+      client.getCompetitionService().synchronizeWeeklyCompetitions(forceReload);
+      weeklySubscriptions = client.getCompetitionService().getWeeklyCompetitions();
       return weeklySubscriptions;
     }).thenAcceptLater((weeklySubscriptions) -> {
       filterCompetitions(weeklySubscriptions);
@@ -168,7 +175,7 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize();
     NavigationController.setBreadCrumb(List.of("Competitions"));
-    tableView.setPlaceholder(new Label("No weekly subscription found.\nClick the '+' button to join one."));
+    tableView.setPlaceholder(new Label("No weekly challenge found.\nClick the '+' button to join one."));
 
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
@@ -179,6 +186,24 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
     catch (IOException e) {
       LOG.error("Failed to load loading overlay: {}", e.getMessage(), e);
     }
+
+    hostColumn.setCellValueFactory(cellData -> {
+      WeeklyCompetitionModel value = cellData.getValue();
+      VBox box = new VBox();
+      box.setAlignment(Pos.CENTER);
+
+      InputStream in = Studio.class.getResourceAsStream("wovp.png");
+      Image image = new Image(in);
+      ImageView imageView = new ImageView(image);
+      imageView.setFitHeight(90);
+      imageView.setPreserveRatio(true);
+
+      Tooltip.install(box, new Tooltip(value.competition.getOwner()));
+
+      box.getChildren().add(imageView);
+
+      return new SimpleObjectProperty(box);
+    });
 
     tableColumn.setCellValueFactory(cellData -> {
       WeeklyCompetitionModel value = cellData.getValue();
@@ -199,20 +224,6 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
         fallbackLabel.setTooltip(new Tooltip("No matching table found. Download and install this table using the download link."));
         return new SimpleObjectProperty<>(fallbackLabel);
       }
-
-//      if (value.competition == null) {
-//        fallbackLabel.setStyle(WidgetFactory.OK_STYLE);
-//        if (value.iScoredGameRoom.isSynchronize()) {
-//          fallbackLabel.setText("This game is not synchronized yet.");
-//          fallbackLabel.setTooltip(new Tooltip("Synchronization is enabled but the competition has not been created yet."));
-//        }
-//        else {
-//          fallbackLabel.setText("Table match found, but not subscribed yet.");
-//          fallbackLabel.setTooltip(new Tooltip("The subscription can be create by pressing the \"+\" button."));
-//        }
-//
-//        return new SimpleObjectProperty<>(fallbackLabel);
-//      }
 
       return new SimpleObjectProperty(new IScoredGameCellContainer(value.getMatches(), vpsTable, getLabelCss(cellData.getValue())));
     });
@@ -282,23 +293,12 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
       return new SimpleObjectProperty(vBox);
     });
 
-    tableView.setPlaceholder(new Label("                          Try weekly subscriptions!\n" +
-        "Create new subscriptions by enabling them in the preferences."));
+    tableView.setPlaceholder(new Label("                          Try weekly challenges!\n" +
+        "Join new challenges by enabling them in the preferences."));
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       refreshView(Optional.ofNullable(newSelection));
     });
-
-    try {
-      FXMLLoader loader = new FXMLLoader(WidgetCompetitionSummaryController.class.getResource("widget-competition-summary.fxml"));
-      competitionWidgetRoot = loader.load();
-      competitionWidgetController = loader.getController();
-      competitionWidgetRoot.setMaxWidth(Double.MAX_VALUE);
-      competitionWidget.setTop(competitionWidgetRoot);
-    }
-    catch (IOException e) {
-      LOG.error("Failed to load c-widget: " + e.getMessage(), e);
-    }
 
     tableView.setRowFactory(tv -> {
       TableRow<WeeklyCompetitionModel> row = new TableRow<>();
@@ -405,22 +405,14 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
 
     PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
     reloadBtn.setDisable(defaultPlayer == null);
+    synchronizeBtn.setDisable(defaultPlayer == null);
 
     if (defaultPlayer == null) {
       tableView.setPlaceholder(new Label("                                 No default player set!\n" +
           "Go to the players section and set the default player for this cabinet!"));
     }
     else {
-      tableView.setPlaceholder(new Label("No weekly subscription found.\nClick the '+' button to join one."));
-    }
-
-    if (model.isPresent() && model.get().competition != null) {
-      competitionWidgetController.setCompetition(CompetitionType.ISCORED, newSelection.competition);
-      competitionsController.setCompetition(newSelection.competition);
-    }
-    else {
-      competitionWidgetController.setCompetition(CompetitionType.ISCORED, null);
-      competitionsController.setCompetition(null);
+      tableView.setPlaceholder(new Label("No weekly challenge found.\nClick the '+' button to join one."));
     }
   }
 

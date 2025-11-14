@@ -32,7 +32,7 @@ public class NvRamOutputToScoreTextConverter {
     adapters.add(new SinglePlayerScoreAdapter("alpok_b6.nv", 1));
     adapters.add(new FourColumnScoreAdapter("monopoly.nv"));
     adapters.add(new SkipFirstListScoreAdapter("godzilla.nv"));
-//    adapters.add(new NewLineAfterFirstScoreAdapter("kiko_a10.nv"));
+    adapters.add(new NewLineAfterFirstScoreAdapter("kiko_a10.nv"));
     adapters.add(new Anonymous5PlayerScoreAdapter("punchy.nv"));
     adapters.add(new FixTitleScoreAdapter("rs_l6.nv", "TODAY'S HIGHEST SCORES", "ALL TIME HIGHEST SCORES"));
     adapters.add(new SinglePlayerScoreAdapter());

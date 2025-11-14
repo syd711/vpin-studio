@@ -46,9 +46,9 @@ public class CompetitionResource {
     return competitionService.getWeeklyCompetitions();
   }
 
-  @GetMapping("/weekly/synchronize")
-  public boolean synchronizeWeekly() {
-    return wovpService.synchronize();
+  @GetMapping("/weekly/synchronize/{forceReload}")
+  public boolean synchronizeWeekly(@PathVariable("forceReload") boolean forceReload) {
+    return wovpService.synchronize(forceReload);
   }
 
   @GetMapping("/weekly/scores/{uuid}")

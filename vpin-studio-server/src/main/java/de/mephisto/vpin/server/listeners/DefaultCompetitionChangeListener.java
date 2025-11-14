@@ -16,32 +16,6 @@ import java.util.stream.Collectors;
 
 abstract public class DefaultCompetitionChangeListener implements CompetitionChangeListener {
 
-  @Override
-  public void competitionStarted(@NonNull Competition competition) {
-
-  }
-
-
-  @Override
-  public void competitionCreated(@NonNull Competition competition) {
-
-  }
-
-  @Override
-  public void competitionChanged(@NonNull Competition competition) {
-
-  }
-
-  @Override
-  public void competitionFinished(@NonNull Competition competition, @Nullable Player winner, @NonNull ScoreSummary scoreSummary) {
-
-  }
-
-  @Override
-  public void competitionDeleted(@NonNull Competition competition) {
-  }
-
-
   /**
    * Checks if there are any augmented wheel icons that do not belong
    * to any competition anymore.

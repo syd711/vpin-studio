@@ -235,6 +235,10 @@ public class ImageUtil {
     return Scalr.resize(originalImage, Scalr.Method.QUALITY, Scalr.Mode.AUTOMATIC, targetWidth, Scalr.OP_ANTIALIAS);
   }
 
+  public static BufferedImage crop(BufferedImage originalImage, int x, int y, int width, int height) {
+    return Scalr.crop(originalImage, x, y, width, height, Scalr.OP_ANTIALIAS);
+  }
+
   public static BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) {
     BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, originalImage.getType());
     Graphics2D g = resizedImage.createGraphics();
@@ -270,7 +274,7 @@ public class ImageUtil {
   }
 
   public static BufferedImage boxBlurImage(BufferedImage originalImage, int radius) {
-    BoxBlurFilter filter = new BoxBlurFilter(2*radius, 2*radius, 1);
+    BoxBlurFilter filter = new BoxBlurFilter(2 * radius, 2 * radius, 1);
     return filter.filter(originalImage, null);
   }
 
@@ -283,6 +287,7 @@ public class ImageUtil {
   /**
    * Iterate over every stepPx pixels of the image and calcul
    * Use the K-Means algorithm to find the dominant colors.
+   *
    * @return the [red, green, blue] values of the Color
    */
   public static int[] getDominantColor(BufferedImage image, int stepPx) {
@@ -299,13 +304,13 @@ public class ImageUtil {
     // Use DoublePoint for K-Means
     List<DoublePoint> points = new ArrayList<>();
 
-    for (int y = 0; y < height; y+=stepPx) {
-      for (int x = 0; x < width; x+=stepPx) {
+    for (int y = 0; y < height; y += stepPx) {
+      for (int x = 0; x < width; x += stepPx) {
         int rgb = image.getRGB(x, y);
-        DoublePoint p = new DoublePoint(new double[] {
-          (rgb >> 16) & 0xFF, // Red
-          (rgb >> 8) & 0xFF,  // Green
-          rgb & 0xFF          // Blue
+        DoublePoint p = new DoublePoint(new double[]{
+            (rgb >> 16) & 0xFF, // Red
+            (rgb >> 8) & 0xFF,  // Green
+            rgb & 0xFF          // Blue
         });
         points.add(p);
       }
@@ -317,8 +322,8 @@ public class ImageUtil {
     // Extract cluster centers (dominant colors)
     int[][] dominantColors = new int[nbColors][3];
     for (int i = 0; i < nbColors; i++) {
-        double[] center = clusters.get(i).getCenter().getPoint();
-        dominantColors[i] = new int[]{(int) center[0], (int) center[1], (int) center[2]};
+      double[] center = clusters.get(i).getCenter().getPoint();
+      dominantColors[i] = new int[]{(int) center[0], (int) center[1], (int) center[2]};
     }
     return dominantColors;
   }
@@ -327,8 +332,9 @@ public class ImageUtil {
 
   /**
    * Apply a perspective effect to an image
-   * @param img The Image to be transformed
-   * @param side The "left" or "right" value for the perspective
+   *
+   * @param img    The Image to be transformed
+   * @param side   The "left" or "right" value for the perspective
    * @param depthX the sheer effect of the perspective on x (good value are 0.1 or 0.2)
    * @param depthY the increase effect of Y
    */
@@ -338,20 +344,20 @@ public class ImageUtil {
 
     double[][] src, dst;
     if (side.equals("left")) {
-      src = new double[][] {{0, 0}, {w, 0}, {w, h}, {0, h}};
-      dst = new double[][] {{w * depthX, 0}, {w, - h * depthY}, {w, h + h * depthY}, {w * depthX, h}};
-    } 
+      src = new double[][]{{0, 0}, {w, 0}, {w, h}, {0, h}};
+      dst = new double[][]{{w * depthX, 0}, {w, -h * depthY}, {w, h + h * depthY}, {w * depthX, h}};
+    }
     else if (side.equals("right")) {
-      src = new double[][] {{0, 0}, {w, 0}, {w, h}, {0, h}};
-      dst = new double[][] {{0, - h * depthY}, {w - w * depthX, 0}, {w - w * depthX, h}, {0, h + h * depthY}};
+      src = new double[][]{{0, 0}, {w, 0}, {w, h}, {0, h}};
+      dst = new double[][]{{0, -h * depthY}, {w - w * depthX, 0}, {w - w * depthX, h}, {0, h + h * depthY}};
     }
     if (side.equals("top")) {
-      src = new double[][] {{0, 0}, {w, 0}, {w, h}, {0, h}};
-      dst = new double[][] {{-w * depthX, 0}, {w + w * depthX, 0}, {w, h - h * depthY}, {0, h - h * depthY}};
-    } 
+      src = new double[][]{{0, 0}, {w, 0}, {w, h}, {0, h}};
+      dst = new double[][]{{-w * depthX, 0}, {w + w * depthX, 0}, {w, h - h * depthY}, {0, h - h * depthY}};
+    }
     else if (side.equals("bottom")) {
-      src = new double[][] {{0, 0}, {w, 0}, {w, h}, {0, h}};
-      dst = new double[][] {{0, h * depthY}, {w, h * depthY}, {w + w * depthX, h}, {- w * depthX, h}};
+      src = new double[][]{{0, 0}, {w, 0}, {w, h}, {0, h}};
+      dst = new double[][]{{0, h * depthY}, {w, h * depthY}, {w + w * depthX, h}, {-w * depthX, h}};
     }
     else {
       return img;
@@ -382,11 +388,11 @@ public class ImageUtil {
   }
 
   private static double[] inversePerspectiveTransform(double x, double y, double[] coeffs) {
-      // coeffs = [a, b, c, d, e, f, g, h]
-      // Solve for (u, v) in:
-      // x = (a*u + b*v + c) / (g*u + h*v + 1)
-      // y = (d*u + e*v + f) / (g*u + h*v + 1)
-      // Here, we need to solve for u, v given x, y
+    // coeffs = [a, b, c, d, e, f, g, h]
+    // Solve for (u, v) in:
+    // x = (a*u + b*v + c) / (g*u + h*v + 1)
+    // y = (d*u + e*v + f) / (g*u + h*v + 1)
+    // Here, we need to solve for u, v given x, y
 
     double a = coeffs[0], b = coeffs[1], c = coeffs[2];
     double d = coeffs[3], e = coeffs[4], f = coeffs[5];
@@ -399,8 +405,8 @@ public class ImageUtil {
 
     double detA = A11 * A22 - A12 * A21;
     if (Math.abs(detA) < 1e-10) {
-        // Avoid division by zero; return a default or throw an exception
-        return new double[] {x, y};
+      // Avoid division by zero; return a default or throw an exception
+      return new double[]{x, y};
     }
 
     double B1 = c - x;
@@ -419,31 +425,31 @@ public class ImageUtil {
     double[] b = new double[numRows];
 
     for (int i = 0; i < numPoints; i++) {
-        double[] p1 = dstCoords[i];
-        double[] p2 = srcCoords[i];
-        int row = 2 * i;
+      double[] p1 = dstCoords[i];
+      double[] p2 = srcCoords[i];
+      int row = 2 * i;
 
-        // First row
-        matrix[row][0] = p1[0];
-        matrix[row][1] = p1[1];
-        matrix[row][2] = 1;
-        matrix[row][3] = 0;
-        matrix[row][4] = 0;
-        matrix[row][5] = 0;
-        matrix[row][6] = -p2[0] * p1[0];
-        matrix[row][7] = -p2[0] * p1[1];
-        b[row] = p2[0];
+      // First row
+      matrix[row][0] = p1[0];
+      matrix[row][1] = p1[1];
+      matrix[row][2] = 1;
+      matrix[row][3] = 0;
+      matrix[row][4] = 0;
+      matrix[row][5] = 0;
+      matrix[row][6] = -p2[0] * p1[0];
+      matrix[row][7] = -p2[0] * p1[1];
+      b[row] = p2[0];
 
-        // Second row
-        matrix[row + 1][0] = 0;
-        matrix[row + 1][1] = 0;
-        matrix[row + 1][2] = 0;
-        matrix[row + 1][3] = p1[0];
-        matrix[row + 1][4] = p1[1];
-        matrix[row + 1][5] = 1;
-        matrix[row + 1][6] = -p2[1] * p1[0];
-        matrix[row + 1][7] = -p2[1] * p1[1];
-        b[row + 1] = p2[1];
+      // Second row
+      matrix[row + 1][0] = 0;
+      matrix[row + 1][1] = 0;
+      matrix[row + 1][2] = 0;
+      matrix[row + 1][3] = p1[0];
+      matrix[row + 1][4] = p1[1];
+      matrix[row + 1][5] = 1;
+      matrix[row + 1][6] = -p2[1] * p1[0];
+      matrix[row + 1][7] = -p2[1] * p1[1];
+      b[row + 1] = p2[1];
     }
 
     RealMatrix A = MatrixUtils.createRealMatrix(matrix);
@@ -508,24 +514,24 @@ public class ImageUtil {
     ImageOutputStream stream = null;
     try {
       Iterator<ImageWriter> writers = ImageIO.getImageWritersBySuffix("PNG");
-      while(writers.hasNext()) {
-          ImageWriter writer = writers.next();
-          ImageWriteParam writeParam = writer.getDefaultWriteParam();
-          IIOMetadata imageMetadata = writer.getDefaultImageMetadata(imageType, writeParam);
-          if (!imageMetadata.isStandardMetadataFormatSupported()) {
-              continue;
-          }
-          if (imageMetadata.isReadOnly()) {
-              continue;
-          }
+      while (writers.hasNext()) {
+        ImageWriter writer = writers.next();
+        ImageWriteParam writeParam = writer.getDefaultWriteParam();
+        IIOMetadata imageMetadata = writer.getDefaultImageMetadata(imageType, writeParam);
+        if (!imageMetadata.isStandardMetadataFormatSupported()) {
+          continue;
+        }
+        if (imageMetadata.isReadOnly()) {
+          continue;
+        }
 
-          imageMetadata.mergeTree(IIOMetadataFormatImpl.standardMetadataFormatName, newMetadata);
+        imageMetadata.mergeTree(IIOMetadataFormatImpl.standardMetadataFormatName, newMetadata);
 
-          IIOImage imageWithMetadata = new IIOImage(image, null, imageMetadata);
+        IIOImage imageWithMetadata = new IIOImage(image, null, imageMetadata);
 
-          stream = ImageIO.createImageOutputStream(outputFile);
-          writer.setOutput(stream);
-          writer.write(null, imageWithMetadata, writeParam);
+        stream = ImageIO.createImageOutputStream(outputFile);
+        writer.setOutput(stream);
+        writer.write(null, imageWithMetadata, writeParam);
       }
     }
     finally {
@@ -635,7 +641,7 @@ public class ImageUtil {
     for (int i = 0; i < count; i++) {
       Node child = children.item(i);
       if (child.getNodeType() == Node.ELEMENT_NODE && child.getNodeName().equals(name)) {
-        return (Element)child;
+        return (Element) child;
       }
     }
     return null;
@@ -644,26 +650,26 @@ public class ImageUtil {
   //---------------------------------------
 
   public static BufferedImage fastBlur(BufferedImage src, int radius) {
-      int width = src.getWidth();
-      int height = src.getHeight();
+    int width = src.getWidth();
+    int height = src.getHeight();
 
-      ColorModel destCM = src.getColorModel();
-      BufferedImage dst = new BufferedImage(destCM, destCM.createCompatibleWritableRaster(src.getWidth(), src.getHeight()), 
+    ColorModel destCM = src.getColorModel();
+    BufferedImage dst = new BufferedImage(destCM, destCM.createCompatibleWritableRaster(src.getWidth(), src.getHeight()),
         destCM.isAlphaPremultiplied(), null);
 
-      int[] srcPixels = new int[width * height];
-      int[] dstPixels = new int[width * height];
+    int[] srcPixels = new int[width * height];
+    int[] dstPixels = new int[width * height];
 
-      // Unmanages the image
-      src.getRGB(0, 0, width, height, srcPixels, 0, width);
-      // horizontal pass
-      blur(srcPixels, dstPixels, width, height, radius);
-      // vertical pass
-      blur(dstPixels, srcPixels, height, width, radius);
-      // the result is now stored in srcPixels due to the 2nd pass
-      dst.setRGB(0, 0, width, height, srcPixels, 0, width);
+    // Unmanages the image
+    src.getRGB(0, 0, width, height, srcPixels, 0, width);
+    // horizontal pass
+    blur(srcPixels, dstPixels, width, height, radius);
+    // vertical pass
+    blur(dstPixels, srcPixels, height, width, radius);
+    // the result is now stored in srcPixels due to the 2nd pass
+    dst.setRGB(0, 0, width, height, srcPixels, 0, width);
 
-      return dst;
+    return dst;
   }
 
   /**
@@ -676,9 +682,9 @@ public class ImageUtil {
    *
    * @param srcPixels the source pixels
    * @param dstPixels the destination pixels
-   * @param width the width of the source picture
-   * @param height the height of the source picture
-   * @param radius the radius of the blur effect
+   * @param width     the width of the source picture
+   * @param height    the height of the source picture
+   * @param radius    the radius of the blur effect
    */
   private static void blur(int[] srcPixels, int[] dstPixels, int width, int height, int radius) {
     final int windowSize = radius * 2 + 1;
@@ -703,7 +709,8 @@ public class ImageUtil {
       for (int i = 0; i < indexLookupTable.length; i++) {
         indexLookupTable[i] = i;
       }
-    } else {
+    }
+    else {
       for (int i = 0; i < width; i++) {
         indexLookupTable[i] = i;
       }
@@ -718,23 +725,23 @@ public class ImageUtil {
 
       pixel = srcPixels[srcIndex];
       sumAlpha += radiusPlusOne * ((pixel >> 24) & 0xFF);
-      sumRed   += radiusPlusOne * ((pixel >> 16) & 0xFF);
-      sumGreen += radiusPlusOne * ((pixel >>  8) & 0xFF);
-      sumBlue  += radiusPlusOne * ( pixel        & 0xFF);
+      sumRed += radiusPlusOne * ((pixel >> 16) & 0xFF);
+      sumGreen += radiusPlusOne * ((pixel >> 8) & 0xFF);
+      sumBlue += radiusPlusOne * (pixel & 0xFF);
 
       for (int i = 1; i <= radius; i++) {
         pixel = srcPixels[srcIndex + indexLookupTable[i]];
         sumAlpha += (pixel >> 24) & 0xFF;
-        sumRed   += (pixel >> 16) & 0xFF;
-        sumGreen += (pixel >>  8) & 0xFF;
-        sumBlue  +=  pixel        & 0xFF;
+        sumRed += (pixel >> 16) & 0xFF;
+        sumGreen += (pixel >> 8) & 0xFF;
+        sumBlue += pixel & 0xFF;
       }
 
       for (int x = 0; x < width; x++) {
         dstPixels[dstIndex] = sumLookupTable[sumAlpha] << 24 |
-                              sumLookupTable[sumRed]   << 16 |
-                              sumLookupTable[sumGreen] <<  8 |
-                              sumLookupTable[sumBlue];
+            sumLookupTable[sumRed] << 16 |
+            sumLookupTable[sumGreen] << 8 |
+            sumLookupTable[sumBlue];
         dstIndex += height;
 
         int nextPixelIndex = x + radiusPlusOne;
@@ -750,13 +757,13 @@ public class ImageUtil {
         int nextPixel = srcPixels[srcIndex + nextPixelIndex];
         int previousPixel = srcPixels[srcIndex + previousPixelIndex];
 
-        sumAlpha += (nextPixel     >> 24) & 0xFF;
+        sumAlpha += (nextPixel >> 24) & 0xFF;
         sumAlpha -= (previousPixel >> 24) & 0xFF;
 
-        sumRed += (nextPixel     >> 16) & 0xFF;
+        sumRed += (nextPixel >> 16) & 0xFF;
         sumRed -= (previousPixel >> 16) & 0xFF;
 
-        sumGreen += (nextPixel     >> 8) & 0xFF;
+        sumGreen += (nextPixel >> 8) & 0xFF;
         sumGreen -= (previousPixel >> 8) & 0xFF;
 
         sumBlue += nextPixel & 0xFF;

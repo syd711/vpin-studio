@@ -211,6 +211,10 @@ public class Competition {
     return badge;
   }
 
+  /**
+   * Set the file base name here, no image suffix required
+   * @param badge
+   */
   public void setBadge(String badge) {
     this.badge = badge;
   }

@@ -12,7 +12,16 @@ public class Challenge {
   private Date endDateUTC;
   private Date startDateUTC;
   private PinballTable pinballTable;
+  private PinballTableVersion pinballTableVersion;
   private ScoreBoard scoreBoard;
+
+  public PinballTableVersion getPinballTableVersion() {
+    return pinballTableVersion;
+  }
+
+  public void setPinballTableVersion(PinballTableVersion pinballTableVersion) {
+    this.pinballTableVersion = pinballTableVersion;
+  }
 
   public String getPinballTableId() {
     return pinballTableId;

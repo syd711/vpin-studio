@@ -343,6 +343,16 @@ public class HighscoreService implements InitializingBean {
           summary.setRaw(h.getRaw());
           summary.getScores().addAll(scores);
         }
+
+        if (summary.getScores().size() < 5) {
+          List<HighscoreVersion> highscoreVersions = highscoreVersionRepository.findByGameIdOrderByCreatedAtDesc(game.getId());
+          for (HighscoreVersion highscoreVersion : highscoreVersions) {
+            List<Score> scores = parseScores(highscoreVersion.getCreatedAt(), highscoreVersion.getNewRaw(), game, serverId);
+            summary.getScores().addAll(scores);
+            summary.sortScores();
+            summary.setLimit(5);
+          }
+        }
       }
     }
     return summary;

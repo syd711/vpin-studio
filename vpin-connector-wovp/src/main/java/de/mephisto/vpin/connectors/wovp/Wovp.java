@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.connectors.wovp.models.Challenges;
+import de.mephisto.vpin.connectors.wovp.models.Participant;
+import de.mephisto.vpin.connectors.wovp.models.Participants;
 import de.mephisto.vpin.connectors.wovp.models.Search;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
@@ -35,6 +37,7 @@ public class Wovp {
     return new Wovp(apiKey);
   }
 
+
   private Wovp(String apiKey) {
     this.apiKey = apiKey;
   }
@@ -43,6 +46,20 @@ public class Wovp {
     Search search = new Search();
     String json = objectMapper.writeValueAsString(search);
     return doPost(json, Challenges.class);
+  }
+
+  public Participant getUser(@NonNull String uuid) {
+    try {
+      String query = "{\"filters\":{\"userId\":\"" + uuid + "\"},\"expands\":[\"user.roles\",\"user.profile\"]}";
+      Participants participants = doPost(query, Participants.class);
+      for (Participant item : participants.getItems()) {
+        return item;
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to load user profile: {}", e.getMessage(), e);
+    }
+    return null;
   }
 
   public String validateKey() {
