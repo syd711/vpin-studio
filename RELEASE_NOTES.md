@@ -44,6 +44,10 @@
     - Replaced the white "checked" icons or .ini, .res and .directb2s files with edit button. These files can now
       directly be edited via the systems default text editor. For backglasses, the corresponding backglass is selected
       in the backglass manager.
+
+      <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/table-buttons.png?raw=true" width="500" />
+    
+
     - Switched order of the backglass and the PUP pack column.
     - Detection of included VBS scripts when parsing the table script and analysis of these scripts when scanning game.
     - Saved VP-spreadsheet ID in XML database file for PinballX / PinballY.
