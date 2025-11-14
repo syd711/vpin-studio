@@ -61,7 +61,7 @@ public class LayerEditorScoresController extends LayerEditorBaseController {
     CardTemplateBinder.setColorPickerValue(fontColorSelector, cardTemplate, "fontColor");
     CardTemplateBinder.setColorPickerValue(friendsFontColorSelector, cardTemplate, "friendsFontColor");
 
-    positionController.setTemplate("scores", cardTemplate, res);
+    positionController.setTemplate("scores", cardTemplate, res, false);
 
     maxScoresSpinner.getValueFactory().setValue(cardTemplate.getMaxScores());
     rowSeparatorSpinner.getValueFactory().setValue(cardTemplate.getRowMargin());
@@ -85,7 +85,7 @@ public class LayerEditorScoresController extends LayerEditorBaseController {
     templateBeanBinder.bindColorPicker(fontColorSelector, "fontColor");
     templateBeanBinder.bindColorPicker(friendsFontColorSelector, "friendsFontColor");
 
-    positionController.initBindings("scores", templateBeanBinder);
+    positionController.initBindings("scores", templateBeanBinder, false);
 
     templateBeanBinder.bindCheckbox(renderPositionsCheckbox, "renderPositions");
     templateBeanBinder.bindCheckbox(renderScoreDatesCheckbox, "renderScoreDates");

@@ -9,20 +9,17 @@ import de.mephisto.vpin.restclient.cards.CardTemplate;
 public class CardLayerManufacturer extends CardLayerBaseImage {
 
   @Override
-  protected boolean keepAspectRatio(@Nonnull CardTemplate template) {
+  public boolean keepAspectRatio(@Nonnull CardTemplate template) {
     return template.isManufacturerLogoKeepAspectRatio();
+  }
+
+  @Override
+  protected int getAlignment(@Nonnull CardTemplate template) {
+    return template.getManufacturerLogoAlignment();
   }
 
   @Override
   protected byte[] getImage(@Nonnull CardTemplate template, @Nullable CardData data) {
     return data != null ? data.getManufacturerLogo() : null;
-  }
-
-  protected double getImageWidth(@Nonnull CardTemplate template) {
-    return template.getManufacturerLogoWidth();
-  }
-
-  protected double getImageHeight(@Nonnull CardTemplate template) {
-    return template.getManufacturerLogoHeight();
   }
 }

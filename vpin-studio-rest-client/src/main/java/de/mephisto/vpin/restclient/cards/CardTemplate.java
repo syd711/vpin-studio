@@ -11,6 +11,13 @@ public class CardTemplate extends JsonSettings {
 
   public final static String DEFAULT = "Default";
 
+  public final static int LEFT   = 1;
+  public final static int RIGHT  = 2;
+  public final static int CENTER = 4;
+  public final static int TOP    = 8;
+  public final static int BOTTOM = 16;
+  public final static int MIDDLE = 32;
+
   private Long id;
   private Long parentId;
 
@@ -79,6 +86,7 @@ public class CardTemplate extends JsonSettings {
   private double manufacturerLogoY = 0.05;
   private double manufacturerLogoWidth = 0.85;
   private double manufacturerLogoHeight = 0.2;
+  private int manufacturerLogoAlignment = CENTER | MIDDLE;
 
   // OTHER MEDIA SETTINGS
   private boolean otherMediaKeepAspectRatio = true;
@@ -87,6 +95,7 @@ public class CardTemplate extends JsonSettings {
   private double otherMediaY = 0.6;
   private double otherMediaWidth = 0.2;
   private double otherMediaHeight = 0.2;
+  private int otherMediaAlignment = CENTER | MIDDLE;
 
   // WHEEL SETTINGS
   private double wheelX = 0.0;
@@ -98,6 +107,7 @@ public class CardTemplate extends JsonSettings {
   private double scoresY = 0.4;
   private double scoresWidth = 0.7;
   private double scoresHeight = 0.6;
+  private int scoresAlignment = LEFT | TOP;
 
   private int rowMargin = 5;
   private boolean rawScore = true;
@@ -127,6 +137,7 @@ public class CardTemplate extends JsonSettings {
   private double tableY = 0.2;
   private double tableWidth = 1.0;
   private double tableHeight = 0.2;
+  private int tableAlignment = CENTER | MIDDLE;
 
   // TITLE SETTINGS
   private String title = "Highscores";
@@ -139,6 +150,7 @@ public class CardTemplate extends JsonSettings {
   private double titleY = 0;
   private double titleWidth = 1.0;
   private double titleHeight = 0.2;
+  private int titleAlignment = CENTER | MIDDLE;
 
   // CANVAS SETTINGS
   private double canvasX = 0.1;
@@ -497,6 +509,14 @@ public class CardTemplate extends JsonSettings {
     this.manufacturerLogoHeight = manufacturerLogoHeight;
   }
 
+  public int getManufacturerLogoAlignment() {
+    return manufacturerLogoAlignment;
+  }
+
+  public void setManufacturerLogoAlignment(int manufacturerLogoAlignment) {
+    this.manufacturerLogoAlignment = manufacturerLogoAlignment;
+  }
+
   public VPinScreen getOtherMediaScreen() {
     return otherMediaScreen;
   }
@@ -545,6 +565,14 @@ public class CardTemplate extends JsonSettings {
     this.otherMediaHeight = other2MediaHeight;
   }
 
+    public int getOtherMediaAlignment() {
+    return otherMediaAlignment;
+  }
+
+  public void setOtherMediaAlignment(int otherMediaAlignment) {
+    this.otherMediaAlignment = otherMediaAlignment;
+  }
+
   public double getScoresX() {
     return scoresX;
   }
@@ -575,6 +603,14 @@ public class CardTemplate extends JsonSettings {
 
   public void setScoresHeight(double scoreHeight) {
     this.scoresHeight = scoreHeight;
+  }
+
+  public int getScoresAlignment() {
+    return scoresAlignment;
+  }
+
+  public void setScoresAlignment(int scoresAlignment) {
+    this.scoresAlignment = scoresAlignment;
   }
 
   public int getMarginTop() {
@@ -918,6 +954,14 @@ public class CardTemplate extends JsonSettings {
     this.tableHeight = tableHeight;
   }
 
+  public int getTableAlignment() {
+    return tableAlignment;
+  }
+
+  public void setTableAlignment(int tableAlignment) {
+    this.tableAlignment = tableAlignment;
+  }
+
   public String getTitleFontName() {
     return titleFontName;
   }
@@ -998,6 +1042,14 @@ public class CardTemplate extends JsonSettings {
     this.titleHeight = titleHeight;
   }
 
+  public int getTitleAlignment() {
+    return titleAlignment;
+  }
+
+  public void setTitleAlignment(int titleAlignment) {
+    this.titleAlignment = titleAlignment;
+  }
+
   public String getBorderColor() {
     return borderColor;
   }
@@ -1042,6 +1094,20 @@ public class CardTemplate extends JsonSettings {
   @Override
   public String getSettingsName() {
     return null;
+  }
+
+  public static int setHorizontalAlignment(int alignment, int value) {
+    int valign = alignment & (TOP | MIDDLE | BOTTOM);
+    return value | valign;
+  }
+
+  public static int setVerticalAlignment(int alignment, int value) {
+    int halign = alignment & (LEFT | CENTER | RIGHT);
+    return value | halign;
+  }
+
+  public static boolean isOn(int alignment, int value) {
+    return (alignment & value) > 0;
   }
 
   //-----------------------------------------------------------
@@ -1190,7 +1256,7 @@ public class CardTemplate extends JsonSettings {
     tableY = 0.85;
     tableWidth = 1;
     tableHeight = 0.15;
+    tableAlignment = CENTER | MIDDLE;
   }
-
 
 }

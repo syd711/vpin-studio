@@ -44,6 +44,7 @@ public class CardLayerTableName extends CardLayerBaseText {
     textData.fontSIZE = template.getTableFontSize();
     textData.useDefaultColor = template.isTableUseDefaultColor();
     textData.fontColor = template.getTableColor();
+    textData.alignment = template.getTableAlignment();
     return textData;
   }
 

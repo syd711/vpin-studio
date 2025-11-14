@@ -24,7 +24,7 @@ public class LayerEditorCanvasController extends LayerEditorBaseController {
 
     CardTemplateBinder.setColorPickerValue(canvasColorSelector, cardTemplate, "canvasBackground");
 
-    positionController.setTemplate("canvas", cardTemplate, res);
+    positionController.setTemplate("canvas", cardTemplate, res, false);
     canvasBorderRadiusSpinner.getValueFactory().setValue(cardTemplate.getCanvasBorderRadius());
     canvasAlphaPercentageSlider.setValue(cardTemplate.getCanvasAlphaPercentage());
   }
@@ -37,7 +37,7 @@ public class LayerEditorCanvasController extends LayerEditorBaseController {
     templateBeanBinder.bindColorPicker(canvasColorSelector, "canvasBackground");
     templateBeanBinder.bindIntSlider(canvasAlphaPercentageSlider, "canvasAlphaPercentage");
     
-    positionController.initBindings("canvas", templateBeanBinder);
+    positionController.initBindings("canvas", templateBeanBinder, false);
     templateBeanBinder.bindSpinner(canvasBorderRadiusSpinner, "canvasBorderRadius", 0, 100);
   }
 

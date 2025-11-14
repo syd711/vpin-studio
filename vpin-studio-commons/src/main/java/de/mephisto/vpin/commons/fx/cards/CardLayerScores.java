@@ -223,7 +223,7 @@ public class CardLayerScores extends Canvas implements CardLayer {
     }
 
     public TextBlock[] splitToHeight(Font FONT, double remainingHEIGHT) {
-      int nblines = (int) (remainingHEIGHT / (FONT.getSize() + template.getRowMargin()));
+      int nblines = (int) Math.max(1, remainingHEIGHT / (FONT.getSize() + template.getRowMargin()));
       if (nblines >= lines.size()) {
         // fit so do nothing and return null
         return new TextBlock[]{this, null};

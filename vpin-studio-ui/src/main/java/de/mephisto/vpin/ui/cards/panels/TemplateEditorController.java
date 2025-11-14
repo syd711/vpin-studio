@@ -931,7 +931,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       // call this once width and height have been set
       dragBox.setBounds(0, 0, (int) WIDTH, (int) HEIGHT);
       dragBox.setAcceptOutsidePart(true, 50);
-
+      
       LayerEditorBaseController controller = layerToController(layer);
       controller.bindDragBox(dragBox);
       dragBox.setUserData(layer);

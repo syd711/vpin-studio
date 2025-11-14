@@ -9,16 +9,20 @@ import java.util.Arrays;
 
 import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
-public abstract class CardLayerBaseImage extends ImageView implements CardLayer {
+public abstract class CardLayerBaseImage extends Canvas implements CardLayer {
 
   private Image cacheImage;
 
   protected abstract byte[] getImage(@Nonnull CardTemplate template, @Nullable CardData data);
 
   protected abstract boolean keepAspectRatio(@Nonnull CardTemplate template);
+
+  protected abstract int getAlignment(@Nonnull CardTemplate template);
+
 
   @Override
   public void draw(@Nonnull CardTemplate template, @Nullable CardData data, double zoomX, double zoomY) {
@@ -27,20 +31,6 @@ public abstract class CardLayerBaseImage extends ImageView implements CardLayer 
     if (image != null) {
       if (hasChanged(image)) {
         this.cacheImage = new Image(new ByteArrayInputStream(image));
-        if (keepAspectRatio(template)) {
-          this.setPreserveRatio(true);
-          double imgwidth = cacheImage.getWidth();
-          double imgheight = cacheImage.getHeight();
-          double height = getWidth() * imgheight / imgwidth;
-          setHeight(height);
-        }
-        else {
-          this.setPreserveRatio(false);
-          double imgwidth = getImageWidth(template);
-          double imgheight = getImageHeight(template);
-          setHeight(imgwidth);
-          setHeight(imgheight);
-        }
       }
     } else {
       this.cacheImage = null;
@@ -49,30 +39,44 @@ public abstract class CardLayerBaseImage extends ImageView implements CardLayer 
 
     // draw part
 
-    // set image even when null, so that the card of a game without wheel is correctly rendered
-    super.setImage(cacheImage);
-  }
+    double x = 0;
+    double y = 0;
+    double width = getWidth();
+    double height = getHeight();
 
-  //------------------------------------ Detetection of layer changes
+    GraphicsContext g = getGraphicsContext2D();
+    g.clearRect(x, y, width, height);
 
-  @Override
-  public double getWidth() {
-    return getFitWidth();
-  }
+    if (cacheImage != null) {
 
-  @Override
-  public void setWidth(double w) {
-    setFitWidth(w);
-  }
+      int alignment = getAlignment(template);
 
-  @Override
-  public double getHeight() {
-    return getFitHeight();
-  }
+      if (keepAspectRatio(template)) {
+        double imgwidth = cacheImage.getWidth();
+        double imgheight = cacheImage.getHeight();
 
-  @Override
-  public void setHeight(double h) {
-    setFitHeight(h);
+        if (width / height > imgwidth / imgheight) {
+          // adjust width
+          width = height * imgwidth / imgheight;
+          if (CardTemplate.isOn(alignment, CardTemplate.CENTER)) {
+            x = (getWidth() - width) / 2;
+          }
+          else if (CardTemplate.isOn(alignment, CardTemplate.RIGHT)) {
+            x = getWidth() - width;
+          }
+        }
+        else {
+          height = width * imgheight / imgwidth;
+          if (CardTemplate.isOn(alignment, CardTemplate.MIDDLE)) {
+            y = (getHeight() - height) / 2;
+          }
+          else if (CardTemplate.isOn(alignment, CardTemplate.BOTTOM)) {
+            y = getHeight() - height;
+          }
+        } 
+      }
+      g.drawImage(cacheImage, x, y, width, height);
+    }
   }
 
   //------------------------------------ Detetection of layer changes
@@ -94,7 +98,4 @@ public abstract class CardLayerBaseImage extends ImageView implements CardLayer 
     cacheBytesImage = null;
   }
 
-  protected abstract double getImageWidth(@Nonnull CardTemplate template);
-
-  protected abstract double getImageHeight(@Nonnull CardTemplate template);
 }
