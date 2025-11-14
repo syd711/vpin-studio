@@ -53,6 +53,7 @@ public class ServerUpdatePreProcessing {
         runPinVolUpdateCheck();
         runVpxToolsUpdateCheck();
         runLogosUpdateCheck();
+        runDOFTesterCheck();
         runPupGamesUpdateCheck();
 
         new Thread(() -> {
@@ -96,6 +97,20 @@ public class ServerUpdatePreProcessing {
     }
   }
 
+  private static void runDOFTesterCheck() {
+    File testerFolder = new File(RESOURCES, "DOFTest");
+    if (!testerFolder.exists()) {
+      testerFolder.mkdirs();
+    }
+    List<String> dofTesterFileNames = Arrays.asList("DirectOutput.dll", "DirectOutputComObject.dll", "DirectOutputTest.exe", "DirectOutputTest.exe.config", "DirectOutputTest.pdb", "Readme.txt");
+    for (String dofTesterFileName : dofTesterFileNames) {
+      File check = new File(testerFolder, dofTesterFileName);
+      if (!check.exists()) {
+        LOG.info("Outdated {} found, updating...", check.getName());
+        Updater.download("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/DOFTest/" + dofTesterFileName, check);
+      }
+    }
+  }
 
   private static void runLogosUpdateCheck() {
     long expectedSize = 119644;

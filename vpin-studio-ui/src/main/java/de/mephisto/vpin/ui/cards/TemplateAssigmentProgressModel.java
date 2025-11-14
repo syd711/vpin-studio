@@ -24,18 +24,18 @@ public class TemplateAssigmentProgressModel extends ProgressModel<GameRepresenta
 
   private final Iterator<GameRepresentation> gameIterator;
   private final CardTemplate cardTemplate;
-  private final boolean switchToCardMode;
+  private final boolean switchToCustom;
   private final CardTemplateType templateType;
 
   /**
    * BaseTemplate is used when CardTemplate is null, the template use 
    */
-  public TemplateAssigmentProgressModel(List<GameRepresentation> games, @Nullable CardTemplate cardTemplate, boolean switchToCardMode, CardTemplateType templateType) {
+  public TemplateAssigmentProgressModel(List<GameRepresentation> games, @Nullable CardTemplate cardTemplate, boolean switchToCustom, CardTemplateType templateType) {
     super("Applying Template");
     this.games = games;
     this.gameIterator = games.iterator();
     this.cardTemplate = cardTemplate;
-    this.switchToCardMode = switchToCardMode;
+    this.switchToCustom = switchToCustom;
     this.templateType = templateType;
   }
 
@@ -72,7 +72,8 @@ public class TemplateAssigmentProgressModel extends ProgressModel<GameRepresenta
   @Override
   public void processNext(ProgressResultModel progressResultModel, GameRepresentation game) {
     try {
-      client.getHighscoreCardTemplatesClient().assignTemplate(game, cardTemplate.getId(), switchToCardMode, templateType);
+      client.getHighscoreCardTemplatesClient().assignTemplate(game, cardTemplate.getId(), switchToCustom, templateType);
+      client.getHighscoreCardTemplatesClient().getTemplates();
       EventManager.getInstance().notifyTableChange(game.getId(), null);
     }
     catch (Exception e) {

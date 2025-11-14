@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.backups.BackupPackageInfo;
 import de.mephisto.vpin.restclient.backups.BackupType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.preferences.BackupSettings;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.server.backups.BackupDescriptor;
@@ -30,17 +31,20 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
   private final BackupSource backupSource;
   private final Game game;
   private final TableDetails tableDetails;
+  private final BackupSettings backupSettings;
   private final VpaService vpaService;
   private boolean cancelled = false;
 
   public TableBackupAdapterVpa(@NonNull VpaService vpaService,
                                @NonNull BackupSource backupSource,
                                @NonNull Game game,
-                               @NonNull TableDetails tableDetails) {
+                               @NonNull TableDetails tableDetails,
+                               @NonNull BackupSettings backupSettings) {
     this.vpaService = vpaService;
     this.backupSource = backupSource;
     this.game = game;
     this.tableDetails = tableDetails;
+    this.backupSettings = backupSettings;
   }
 
   public void createBackup(JobDescriptor jobDescriptor) {
@@ -63,25 +67,19 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
     }
 
     File target = new File(targetFolder, baseName + "." + BackupType.VPA.name().toLowerCase());
-    target = FileUtils.uniqueFile(target);
+    if (target.exists() && !backupSettings.isOverwriteBackup()) {
+      target = FileUtils.uniqueFile(target);
+    }
     backupDescriptor.setFilename(target.getName());
 
-    File tempFile = new File(target.getParentFile(), target.getName() + ".bak");
-
-    if (target.exists() && !target.delete()) {
-      throw new UnsupportedOperationException("Couldn't delete existing archive file " + target.getAbsolutePath());
-    }
-    if (tempFile.exists() && !tempFile.delete()) {
-      throw new UnsupportedOperationException("Couldn't delete existing temporary archive file " + target.getAbsolutePath());
-    }
-
-    //---------
-    LOG.info("Packaging " + game.getGameDisplayName());
-    long start = System.currentTimeMillis();
-
-    LOG.info("Creating temporary archive file " + tempFile.getAbsolutePath());
-
     try {
+      File tempFile = File.createTempFile(target.getName(), ".bak");
+      //---------
+      LOG.info("Packaging " + game.getGameDisplayName());
+      long start = System.currentTimeMillis();
+
+      LOG.info("Creating temporary archive file " + tempFile.getAbsolutePath());
+
       ZipFile zipOut = vpaService.createProtectedArchive(tempFile);
       vpaService.createBackup(packageInfo, jobDescriptor, (fileToZip, fileName) -> {
         if (cancelled) {
@@ -120,14 +118,32 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
       jobDescriptor.setProgress(1);
 
       backupDescriptor.setSize(target.length());
-    }
-    catch (Exception e) {
-      LOG.error("Create VPA for " + game.getGameDisplayName() + " failed: " + e.getMessage(), e);
-      jobDescriptor.setError("Create VPA for " + game.getGameDisplayName() + " failed: " + e.getMessage());
-      return;
-    }
-    finally {
-      boolean renamed = tempFile.renameTo(target);
+
+      File temporaryTarget = new File(target.getParentFile(), target.getName() + ".bak");
+      try {
+        LOG.info("Copying backup file {} to {}", tempFile.getAbsolutePath(), temporaryTarget.getAbsolutePath());
+        jobDescriptor.setStatus("Copying backup file to " + temporaryTarget.getParentFile().getAbsolutePath());
+        org.apache.commons.io.FileUtils.copyFile(tempFile, temporaryTarget);
+      }
+      catch (IOException e) {
+        LOG.error("Failed to copy temporary file to target: {}", e.getMessage(), e);
+      }
+      finally {
+        if (!tempFile.delete()) {
+          LOG.error("Failed to delete temporary target file {}", tempFile.getAbsolutePath());
+        }
+      }
+
+      if (target.exists() && backupSettings.isOverwriteBackup()) {
+        target.delete();
+      }
+
+      if (target.exists() && !target.delete()) {
+        target = FileUtils.uniqueFile(target);
+        LOG.error("Failed to delete existing backup file, create new one with unique name instead: {}", target.getAbsolutePath());
+      }
+
+      boolean renamed = temporaryTarget.renameTo(target);
       if (renamed) {
         LOG.info("Finished packing of " + target.getAbsolutePath() + ", took " + ((System.currentTimeMillis() - start) / 1000) + " seconds, " + FileUtils.readableFileSize(target.length()));
       }
@@ -139,9 +155,28 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
       if (target.exists() && this.cancelled) {
         target.delete();
       }
-
+    }
+    catch (Exception e) {
+      LOG.error("Create VPA for " + game.getGameDisplayName() + " failed: " + e.getMessage(), e);
+      jobDescriptor.setError("Create VPA for " + game.getGameDisplayName() + " failed: " + e.getMessage());
+      return;
+    }
+    finally {
       LOG.info("********************* /Table Backup: {} ***********************************", game.getGameDisplayName());
     }
+  }
+
+  @NonNull
+  private static File createBackupTempFile(File target) {
+    File tempFile = new File(target.getParentFile(), target.getName() + ".bak");
+    try {
+      tempFile = File.createTempFile(target.getName(), ".vpa");
+    }
+    catch (IOException e) {
+      LOG.error("Failed to create temp file: {}", e.getMessage(), e);
+    }
+    tempFile.deleteOnExit();
+    return tempFile;
   }
 
   public void simulateBackup() throws IOException {

@@ -75,7 +75,7 @@ public class DiscoveryListener {
                 }
             }
         } catch (Exception e) {
-            LOG.error("Error receiving broadcast: {}", e.getMessage(), e);
+            LOG.error("Error receiving broadcast: {}", e.getMessage());
         }
     }
 

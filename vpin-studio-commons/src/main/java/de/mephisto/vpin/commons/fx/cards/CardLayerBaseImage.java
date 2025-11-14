@@ -22,18 +22,21 @@ public abstract class CardLayerBaseImage extends ImageView implements CardLayer 
 
   @Override
   public void draw(@Nonnull CardTemplate template, @Nullable CardData data, double zoomX, double zoomY) {
-
     byte[] image = getImage(template, data);
 
     if (image != null) {
       if (hasChanged(image)) {
         this.cacheImage = new Image(new ByteArrayInputStream(image));
-        /*if (keepAspectRatio(template)) {
+        if (keepAspectRatio(template)) {
+          this.setPreserveRatio(true);
           double imgwidth = cacheImage.getWidth();
           double imgheight = cacheImage.getHeight();
           double height = getWidth() * imgheight / imgwidth;
           setHeight(height);
-        }*/
+        }
+        else {
+          this.setPreserveRatio(false);
+        }
       }
     } else {
       this.cacheImage = null;

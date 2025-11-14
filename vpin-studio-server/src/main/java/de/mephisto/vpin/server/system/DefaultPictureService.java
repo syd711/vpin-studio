@@ -110,17 +110,17 @@ public class DefaultPictureService implements ApplicationListener<ApplicationRea
     if (usePreview) {
       DirectB2STableSettings tableSettings = backglassService.getTableSettings(game);
       if (tableSettings == null || !tableSettings.isHideB2SBackglass()) {
-          DirectB2SData tableData = backglassService.getDirectB2SData(game);
-          byte[] img = backglassService.getPreviewBackground(tableData, game, true);
-          if (img != null) {
-            try {
-              Files.write(target.toPath(), img);
-              return;
-            }
-            catch (IOException ioe) {
-              LOG.error("Failed to extract preview image", ioe);
-            }
+        DirectB2SData tableData = backglassService.getDirectB2SData(game);
+        byte[] img = backglassService.getPreviewBackground(tableData, game, true);
+        if (img != null) {
+          try {
+            Files.write(target.toPath(), img);
+            return;
           }
+          catch (IOException ioe) {
+            LOG.error("Failed to extract preview image", ioe);
+          }
+        }
       }
     }
     // extract Raw images
@@ -273,7 +273,7 @@ public class DefaultPictureService implements ApplicationListener<ApplicationRea
 
       Color start = new Color(0f, 0f, 0f, .1f);
       Color end = Color.decode("#111111");
-      ImageUtil.gradient(blurred, cropHeight, cropWidth, start, end);
+      ImageUtil.gradient(blurred, cropWidth, cropHeight, start, end);
       return blurred;
     }
     catch (Exception e) {

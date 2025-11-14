@@ -34,9 +34,6 @@ import org.springframework.util.StreamUtils;
 
 import javax.imageio.ImageIO;
 import javax.xml.bind.DatatypeConverter;
-
-import static de.mephisto.vpin.server.VPinStudioServer.Features;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -46,6 +43,8 @@ import java.util.List;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
+
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 @Service
 public class BackglassService implements InitializingBean {
@@ -233,7 +232,7 @@ public class BackglassService implements InitializingBean {
       File directB2SFile = game.getDirectB2SFile();
       String directB2SFileName = game.getDirectB2SFilename();
       DirectB2SData data = getDirectB2SData(directB2SFile, game.getEmulatorId(), directB2SFileName);
-      if (data !=  null && data.getNbScores() > 0) {
+      if (data != null && data.getNbScores() > 0) {
         try {
           DirectB2SDataUpdater updater = new DirectB2SDataUpdater();
           updater.upddateScoresDisplayState(directB2SFile, state, false);
@@ -315,6 +314,22 @@ public class BackglassService implements InitializingBean {
         this.cacheB2STableSettings = parser.getTableSettings();
       }
     }
+
+    if (this.serverSettings != null) {
+      this.serverSettings.setExtendedSearch(false);
+      Map<String, Object> currentUserValues = systemService.getCurrentUserValues("Software\\B2S");
+      if (currentUserValues.containsKey("B2STableSettingsExtendedPath")) {
+        Object value = currentUserValues.get("B2STableSettingsExtendedPath");
+        try {
+          if (Integer.parseInt(String.valueOf(value)) == 1) {
+            this.serverSettings.setExtendedSearch(true);
+          }
+        }
+        catch (NumberFormatException e) {
+          //ignore
+        }
+      }
+    }
   }
 
   public DirectB2STableSettings saveTableSettings(Game game, DirectB2STableSettings settings) throws VPinStudioException {
@@ -384,11 +399,19 @@ public class BackglassService implements InitializingBean {
 
   public DirectB2ServerSettings saveServerSettings(DirectB2ServerSettings settings) throws VPinStudioException {
     try {
+      if (settings.isExtendedSearch()) {
+        systemService.setUserValue("Software\\B2S\\", "B2STableSettingsExtendedPath", "1");
+      }
+      else {
+        systemService.deleteUserValue("Software\\B2S\\", "B2STableSettingsExtendedPath");
+      }
+
       if (Features.IS_STANDALONE) {
         File ini = systemService.getStandaloneConfigFile();
         if (ini != null && ini.exists()) {
           B2STableSettingsSerializer serverSettingsSerializer = new B2STableSettingsSerializer();
           serverSettingsSerializer.serializeIni(settings, new DirectB2ServerSettings(), ini);
+
           // cache
           this.serverSettings = settings;
         }
@@ -1293,9 +1316,10 @@ public class BackglassService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
+    long start = System.currentTimeMillis();
     // force initialisation of table cache
     clearCache();
-    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
+    LOG.info("{} initialization finished, took {}ms", this.getClass().getSimpleName(), (System.currentTimeMillis() - start));
   }
 
 }

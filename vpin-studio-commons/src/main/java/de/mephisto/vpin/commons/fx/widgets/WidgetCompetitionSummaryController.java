@@ -323,6 +323,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
         loadingPane.setVisible(false);
       }
 
+      topBox.setVisible(true);
       InputStream competitionBackground = client.getCompetitionBackground(game.getId());
       if (competitionBackground != null) {
         Image image = new Image(competitionBackground);
@@ -330,10 +331,10 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
             BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
             BackgroundSize.DEFAULT);
         topBox.setBackground(new Background(myBI));
+//        topBox.setBackground(null);
         emptyPanel.setVisible(false);
       }
 
-      topBox.setVisible(true);
     });
   }
 

@@ -365,9 +365,12 @@ public abstract class BaseConnector implements FrontendConnector {
 
   @Override
   public void vpsLink(int gameId, String extTableId, String extTableVersionId) {
-    //do nothing by default as this is stored in the internal database
+    TableDetails details = getTableDetails(gameId);
+    if (details != null) {
+      details.setWebGameId(extTableId);
+      saveTableDetails(gameId, details);
+    }
   }
-
 
   //------------------------------------------------------------
 

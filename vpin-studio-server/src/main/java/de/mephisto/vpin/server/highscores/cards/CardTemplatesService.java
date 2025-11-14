@@ -81,16 +81,16 @@ public class CardTemplatesService {
       //OLE : prevent delete DEFAULT via UI but not via service ? + delete allow sthe reset feature
       //TemplateMapping templateMapping = byId.get();
       //if (!templateMapping.getTemplate().getName().equals(CardTemplate.DEFAULT)) {
-        templateMappingRepository.deleteById(id);
-        return true;
+      templateMappingRepository.deleteById(id);
+      return true;
       //}
     }
     return false;
   }
 
-  public List<CardTemplate> getTemplates() {
+  public synchronized List<CardTemplate> getTemplates() {
     List<TemplateMapping> all = templateMappingRepository.findAll();
-
+    LOG.info("Loaded {} card templates.", all.size());
     List<CardTemplate> results = all.stream().map(m -> mappingToTemplate(m)).collect(Collectors.toList());
 
     createDefaultIfAbsent(results, CardTemplateType.HIGSCORE_CARD);
@@ -133,7 +133,7 @@ public class CardTemplatesService {
     CardTemplate template = getTemplate(templateId);
     return template != null ? template : getDefaultTemplate(templateType);
   }
-  
+
   public CardTemplate getTemplate(Long templateId) {
     if (templateId != null) {
       Optional<TemplateMapping> mapping = templateMappingRepository.findById(templateId);
@@ -147,19 +147,19 @@ public class CardTemplatesService {
   private CardTemplate getDefaultTemplate(CardTemplateType templateType) {
     List<TemplateMapping> all = templateMappingRepository.findAll();
     return all.stream()
-      .filter(m -> m.getTemplate().isTemplate() && m.getTemplate().isDefault() && templateType.equals(m.getTemplate().getTemplateType()))
-      .map(m -> mappingToTemplate(m))
-      .findFirst()
-      .orElse(null);
+        .filter(m -> m.getTemplate().isTemplate() && m.getTemplate().isDefault() && templateType.equals(m.getTemplate().getTemplateType()))
+        .map(m -> mappingToTemplate(m))
+        .findFirst()
+        .orElse(null);
   }
 
-  public boolean assignTemplate(int gameId, long templateId, boolean switchToCardMode, CardTemplateType templateType) throws Exception {
+  public boolean assignTemplate(int gameId, long templateId, boolean switchToCustom, CardTemplateType templateType) throws Exception {
     Game game = gameService.getGame(gameId);
     if (game == null) {
       LOG.error("Cannot assign template to game {} as the game does not exist", gameId);
       return false;
     }
-    
+
     Optional<TemplateMapping> baseTemplateMapping = templateMappingRepository.findById(templateId);
     if (baseTemplateMapping.isEmpty()) {
       LOG.error("Cannot assign template {} as it does not exist", templateId);
@@ -169,8 +169,8 @@ public class CardTemplatesService {
 
     Long oldTemplateId = game.getTemplateId(templateType);
 
-      //create new card template
-    if (switchToCardMode) {
+    //create new card template
+    if (switchToCustom) {
       //delete possible existing one
       TemplateMapping mapping = oldTemplateId != null ? templateMappingRepository.findById(oldTemplateId).orElse(null) : null;
       if (mapping != null) {
@@ -192,6 +192,15 @@ public class CardTemplatesService {
     else if (oldTemplateId != null && oldTemplateId != templateId || oldTemplateId == null && !baseTemplate.isDefault()) {
       game.setTemplateId(templateType, templateId);
       gameService.save(game);
+
+      Optional<TemplateMapping> oldTemplate = templateMappingRepository.findById(oldTemplateId);
+      if (oldTemplate.isPresent()) {
+        TemplateMapping oldTemplateMapping = oldTemplate.get();
+        CardTemplate template = oldTemplateMapping.getTemplate();
+        if (template.getName().contains(CardTemplate.CARD_TEMPLATE_PREFIX)) {
+          templateMappingRepository.delete(oldTemplateMapping);
+        }
+      }
       return true;
     }
     return false;

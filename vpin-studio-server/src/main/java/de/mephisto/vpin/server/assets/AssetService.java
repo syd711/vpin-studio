@@ -198,6 +198,20 @@ public class AssetService {
     return true;
   }
 
+  public boolean deleteCompetitionBackground(int gameId) {
+    try {
+      Optional<Asset> asset = assetRepository.findByExternalIdAndAssetType(String.valueOf(gameId), AssetType.COMPETITION.name());
+      if (asset.isPresent()) {
+        assetRepository.deleteByUuid(asset.get().getUuid());
+      }
+      return true;
+    }
+    catch (Exception e) {
+      LOG.error("Failed to delete competition background image: {}", e.getMessage(), e);
+    }
+    return false;
+  }
+
   public Boolean backgroundUpload(MultipartFile file, int gameId) throws Exception {
     if (file == null) {
       LOG.error("Upload request did not contain a file object.");
@@ -315,7 +329,7 @@ public class AssetService {
 
   public Asset getAvatar() {
     Asset avatar = (Asset) preferencesService.getPreferenceValue(PreferenceNames.AVATAR);
-    byte[] image = defaultPictureService.generateAvatarImage(avatar != null? avatar.getData() : null);
+    byte[] image = defaultPictureService.generateAvatarImage(avatar != null ? avatar.getData() : null);
     Asset clipped = new Asset();
     clipped.setAssetType(AssetType.AVATAR.name());
     clipped.setUpdatedAt(new Date());

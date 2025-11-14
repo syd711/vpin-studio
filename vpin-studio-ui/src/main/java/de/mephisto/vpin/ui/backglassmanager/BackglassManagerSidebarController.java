@@ -204,6 +204,9 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   private ComboBox<B2SLedType> usedLEDType;
 
   @FXML
+  private ComboBox<B2SDualMode> dualModes;
+
+  @FXML
   private ComboBox<B2SVisibility> startBackground;
 
   @FXML
@@ -592,6 +595,15 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       }
     });
 
+    dualModes.setItems(FXCollections.observableList(TablesSidebarDirectB2SController.DUAL_MODES));
+    dualModes.valueProperty().addListener((observableValue, aBoolean, t1) -> {
+      if (refreshingCounter == 0 && tableSettings != null) {
+        save(() -> {
+          tableSettings.setDualMode(t1 != null ? t1.getId() : 0);
+        });
+      }
+    });
+
     startBackground.setItems(FXCollections.observableList(TablesSidebarDirectB2SController.VISIBILITIES));
     startBackground.valueProperty().addListener((observableValue, aBoolean, t1) -> {
       if (refreshingCounter == 0 && tableSettings != null) {
@@ -849,6 +861,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   protected void refreshTableSettings(int gameId) {
     this.tableSettings = null;
 
+    dualModes.setDisable(true);
     usedLEDType.setDisable(true);
     lightBulbOn.setDisable(true);
     glowing.setDisable(true);
@@ -903,6 +916,8 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
             disableCombosFrames();
 
+            dualModes.setValue(TablesSidebarDirectB2SController.DUAL_MODES.stream().filter(v -> v.getId() == tableSettings.getDualMode()).findFirst().orElse(null));
+
             skipLampFrames.getValueFactory().valueProperty().set(tableSettings.getLampsSkipFrames());
             skipGIFrames.getValueFactory().valueProperty().set(tableSettings.getGiStringsSkipFrames());
             skipSolenoidFrames.getValueFactory().valueProperty().set(tableSettings.getSolenoidsSkipFrames());
@@ -924,10 +939,12 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   }
 
   protected void disableCombosFrames() {
-    skipLampFrames.setDisable(tableSettings != null && tableData != null && tableData.getIlluminations() == 0);
-    skipGIFrames.setDisable(tableSettings != null && tableData != null && tableData.getIlluminations() == 0);
-    skipSolenoidFrames.setDisable(tableSettings != null && tableData != null && tableData.getIlluminations() == 0);
-    skipLEDFrames.setDisable(tableSettings != null && tableData != null && tableData.getIlluminations() == 0);
+    skipLampFrames.setDisable(tableSettings == null || tableData == null || tableData.getIlluminations() == 0);
+    skipGIFrames.setDisable(tableSettings == null || tableData == null || tableData.getIlluminations() == 0);
+    skipSolenoidFrames.setDisable(tableSettings == null || tableData == null || tableData.getIlluminations() == 0);
+    skipLEDFrames.setDisable(tableSettings == null || tableData == null || tableData.getIlluminations() == 0);
+
+    dualModes.setDisable(tableSettings == null || tableData == null || tableData.getDualBackglass() == 0);
   }
 
   private void loadImages(int emulatorId, String fileName) {

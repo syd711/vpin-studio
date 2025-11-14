@@ -24,6 +24,8 @@ public class BackupSettings extends JsonSettings {
   private boolean registryData = true;
   private boolean b2sSettings = true;
 
+  private boolean overwriteBackup = true;
+
   public boolean isAssetEnabled(AssetType assetType) {
     switch (assetType) {
       case DIRECTB2S: {
@@ -71,6 +73,14 @@ public class BackupSettings extends JsonSettings {
       }
     }
     return false;
+  }
+
+  public boolean isOverwriteBackup() {
+    return overwriteBackup;
+  }
+
+  public void setOverwriteBackup(boolean overwriteBackup) {
+    this.overwriteBackup = overwriteBackup;
   }
 
   public boolean isB2sSettings() {

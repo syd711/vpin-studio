@@ -371,5 +371,9 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
       IScoredSettings iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
       iScoredCompetitionCheckBox.setVisible(iScoredSettings != null && iScoredSettings.isEnabled() && Features.COMPETITIONS_ENABLED);
     }
+    else if (PreferenceNames.TAGGING_SETTINGS.equals(key)) {
+      List<String> initialTags = client.getTaggingService().getTags();
+      tagField.setSuggestions(initialTags);
+    }
   }
 }

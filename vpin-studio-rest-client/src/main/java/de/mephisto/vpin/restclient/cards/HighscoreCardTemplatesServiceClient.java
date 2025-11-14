@@ -16,12 +16,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -31,20 +26,20 @@ import java.util.stream.Collectors;
 public class HighscoreCardTemplatesServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
 
-  private List<CardTemplate> cachedTemplates = new ArrayList<>();
+  private Set<CardTemplate> cachedTemplates = new LinkedHashSet<>();
 
   public HighscoreCardTemplatesServiceClient(VPinStudioClient client) {
     super(client);
   }
 
-  public List<CardTemplate> getTemplates() {
+  public synchronized List<CardTemplate> getTemplates() {
     if (cachedTemplates.isEmpty()) {
       CardTemplate[] templates = getRestClient().get(API + "cardtemplates", CardTemplate[].class);
       if (templates != null) {
-        cachedTemplates = new ArrayList<>(Arrays.asList(templates));
+        cachedTemplates = new HashSet<>(Arrays.asList(templates));
       }
     }
-    return cachedTemplates;
+    return new ArrayList<>(cachedTemplates);
   }
 
   public List<CardTemplate> getTemplates(CardTemplateType templateType) {
@@ -109,13 +104,13 @@ public class HighscoreCardTemplatesServiceClient extends VPinStudioClientService
     return template != null ? template : getDefaultTemplate(templateType);
   }
 
-  public boolean assignTemplate(GameRepresentation game, Long templateId, boolean switchToCardMode, CardTemplateType templateType) {
+  public boolean assignTemplate(GameRepresentation game, Long templateId, boolean switchToCustom, CardTemplateType templateType) {
     try {
       Map<String, Object> params = new HashMap<>();
       params.put("gameId", game.getId());
       params.put("templateId", templateId);
       params.put("templateType", templateType);
-      params.put("switchToCardMode", switchToCardMode);
+      params.put("switchToCustom", switchToCustom);
       return getRestClient().post(API + "cardtemplates/assign", params, Boolean.class);
     }
     finally {

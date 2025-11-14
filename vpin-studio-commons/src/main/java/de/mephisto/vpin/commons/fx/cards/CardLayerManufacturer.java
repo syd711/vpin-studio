@@ -17,5 +17,4 @@ public class CardLayerManufacturer extends CardLayerBaseImage {
   protected byte[] getImage(@Nonnull CardTemplate template, @Nullable CardData data) {
     return data != null ? data.getManufacturerLogo() : null;
   }
-
 }

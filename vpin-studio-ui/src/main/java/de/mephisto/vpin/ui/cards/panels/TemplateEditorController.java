@@ -18,6 +18,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
+import de.mephisto.vpin.ui.cards.DesignMode;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
 import de.mephisto.vpin.ui.cards.HighscoreGeneratorProgressModel;
 import de.mephisto.vpin.ui.cards.TemplateAssigmentProgressModel;
@@ -65,10 +66,13 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
   @FXML
   private TabPane tabPane;
+
   @FXML
   private Tab highscoreCardsTab;
+
   @FXML
   private Tab instructionCardsTab;
+
   @FXML
   private Tab wheelsTab;
 
@@ -148,6 +152,9 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   private Button generateAllBtn;
 
   @FXML
+  private Button generateWheelBtn;
+
+  @FXML
   private Button generateBtn;
 
   @FXML
@@ -180,7 +187,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   @FXML
   private void onOpenImage() {
     if (gameRepresentation.isPresent()) {
-      TableDialogs.openMediaDialog(Studio.stage, "Preview Card", client.getHighscoreCardsService().getHighscoreCardUrl(gameRepresentation.get(), getSelectedTemplateType()), "image/png");
+      TableDialogs.openMediaDialog(Studio.stage, "Preview", client.getHighscoreCardsService().getHighscoreCardUrl(gameRepresentation.get(), getSelectedTemplateType()), "image/png");
     }
   }
 
@@ -253,7 +260,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       gameName = gameName.substring(0, gameName.indexOf("["));
     }
     gameName = gameName.trim();
-    
+
     Stage stage = Dialogs.createStudioDialogStage(DialogTemplateEditorUploadController.class, "dialog-template-editor-upload.fxml", "Cards Template Upload");
     DialogTemplateEditorUploadController controller = (DialogTemplateEditorUploadController) stage.getUserData();
     controller.setData(stage, this, gameName);
@@ -289,8 +296,8 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     gameName = gameName.trim();
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    String s = WidgetFactory.showInputDialog(stage, "New Template", "Enter Template Name", "Enter a meaningful name that identifies the card design.", "The values of the selected template \"" + template.getName() + "\" will be used as default.", gameName);
-    if (!StringUtils.isEmpty(s) && ! checkDuplicate(s)) {
+    String s = WidgetFactory.showInputDialog(stage, "New Template", "Enter Template Name", "Enter a meaningful name that describes the layout.", "The values of the selected template \"" + template.getName() + "\" will be used as default.", gameName);
+    if (!StringUtils.isEmpty(s) && !checkDuplicate(s)) {
       template.setName(s);
       template.setParentId(null);
       template.setId(null);
@@ -307,7 +314,9 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     refreshTemplates(newTemplate);
     selectTemplateInCombo(newTemplate);
     assignTemplate(newTemplate);
-  };
+  }
+
+  ;
 
   @FXML
   private void onRename(ActionEvent e) {
@@ -411,6 +420,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     deleteBtn.setDisable(true);
     renameBtn.setDisable(true);
     generateAllBtn.setDisable(true);
+    generateWheelBtn.setDisable(true);
     generateBtn.setDisable(true);
     openImageBtn.setDisable(true);
 
@@ -466,16 +476,16 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     if (gameRepresentation.isPresent()) {
       if (cardTemplate.isTemplate()) {
         nagBar.setStyle("-fx-background-color: #333366;");
-        nagBarLabel.setText("Editing template \"" + cardTemplate.getName() + "\", previewing game \"" + gameRepresentation.get().getGameDisplayName() + "\"");
+        nagBarLabel.setText("Editing design for \"" + gameRepresentation.get().getGameDisplayName() + "\", using template \"" + cardTemplate.getName() + "\"");
       }
       else {
         nagBar.setStyle("-fx-background-color: #116611;");
-        Optional<CardTemplate> parent = this.templateCombo.getItems().stream().filter(t -> t.getId() == cardTemplate.getParentId()).findFirst();
+        Optional<CardTemplate> parent = this.templateCombo.getItems().stream().filter(t -> t.getId().equals(cardTemplate.getParentId())).findFirst();
         if (!parent.isPresent()) {
           parent = this.templateCombo.getItems().stream().filter(t -> t.isDefault()).findFirst();
         }
         if (parent.isPresent()) {
-          nagBarLabel.setText("Editing highscore card for \"" + gameRepresentation.get().getGameDisplayName() + "\", using template \"" + parent.get().getName() + "\".");
+          nagBarLabel.setText("Editing custom design for \"" + gameRepresentation.get().getGameDisplayName() + "\", using base template \"" + parent.get().getName() + "\".");
         }
         else {
           nagBarLabel.setText("No default template");
@@ -500,25 +510,23 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   }
 
   @FXML
-  private void onGenerateClick() {
-    JFXFuture.runAsync(() -> client.getHighscoreCardTemplatesClient().save((CardTemplate) this.templateBeanBinder.getBean()))
-        .thenLater(() -> refreshPreview(this.gameRepresentation))
-        .onErrorLater(e -> {
-          LOG.error("Failed to save template: {}", e.getMessage(), e);
-          WidgetFactory.showAlert(stage, "Error", "Failed to save template: " + e.getMessage());
-        });
+  private void onGenerateWithConfirmationClick() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Generate Wheel Icon", "Generate wheel icon for \"" + this.gameRepresentation.get().getGameDisplayName() + "\"?",
+        "The existing wheel icon will be overwritten.");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      onGenerate();
+    }
   }
 
   private void refreshPreview(Optional<GameRepresentation> game) {
-
     if (game.isPresent()) {
-
       // change game, so empty and add the wait overlay
       // else full background reload
       if (!cardPreview.isForGame(game.get().getId())) {
         this.openImageBtn.setDisable(true);
         this.generateBtn.setDisable(true);
         this.generateAllBtn.setDisable(true);
+        this.generateWheelBtn.setDisable(true);
 
         cardPreview.setData(null, null);
         previewStack.getChildren().remove(waitOverlay);
@@ -536,12 +544,14 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
             this.openImageBtn.setDisable(false);
             this.generateBtn.setDisable(false);
             this.generateAllBtn.setDisable(false);
+            this.generateWheelBtn.setDisable(false);
           });
     }
     else {
       this.openImageBtn.setDisable(true);
       this.generateBtn.setDisable(true);
       this.generateAllBtn.setDisable(true);
+      this.generateWheelBtn.setDisable(true);
       mediaPlayerControl.setVisible(false);
 
       cardPreview.setData(null, null);
@@ -619,6 +629,9 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
     this.exportBtn.managedProperty().bind(this.exportBtn.visibleProperty());
     this.importBtn.managedProperty().bind(this.importBtn.visibleProperty());
+    this.generateBtn.managedProperty().bind(this.generateBtn.visibleProperty());
+    this.generateAllBtn.managedProperty().bind(this.generateAllBtn.visibleProperty());
+    this.generateWheelBtn.managedProperty().bind(this.generateWheelBtn.visibleProperty());
 
     this.exportBtn.setVisible(Features.TEMPLATE_EDITOR_IMPORT_EXPORT);
     this.importBtn.setVisible(Features.TEMPLATE_EDITOR_IMPORT_EXPORT);
@@ -634,7 +647,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
       waitOverlay = loader.load();
       WaitOverlayController ctrl = loader.getController();
-      ctrl.setLoadingMessage("Refreshing  Card...");
+      ctrl.setLoadingMessage("Loading Media...");
 
       previewStack.setBackground(new Background(new BackgroundFill(Paint.valueOf("#000000"), null, null)));
       previewPanel.setBackground(Background.EMPTY);
@@ -645,9 +658,9 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
       // listener on tab selection
       this.tabPane.getSelectionModel().selectedItemProperty().addListener((ov, oldT, newT) -> {
-        selectTab(false);
+        selectTab(newT);
       });
-      selectTab(false);
+      selectTab(highscoreCardsTab);
 
       // Resize handlers
       previewStack.widthProperty().addListener((obs, o, n) -> resizeCardPreview(n.doubleValue(), previewStack.getHeight(), true));
@@ -688,7 +701,33 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     }
   }
 
-  private void selectTab(boolean forceRefresh) {
+  public DesignMode getDesignMode() {
+    Tab activeTab = tabPane.getSelectionModel().getSelectedItem();
+    if (activeTab == null) {
+      return DesignMode.highscoreCard;
+    }
+    else if (activeTab.equals(wheelsTab)) {
+      return DesignMode.wheel;
+    }
+    else if (activeTab.equals(instructionCardsTab)) {
+      return DesignMode.instructionCard;
+    }
+
+    return DesignMode.highscoreCard;
+  }
+
+  private void selectTab(Tab activeTab) {
+    boolean wheelMode = activeTab.equals(wheelsTab);
+    layerEditorScoresController.setEditorVisibility(!wheelMode);
+    layerEditorWheelController.setEditorVisibility(!wheelMode);
+    layerEditorOverlayController.setEditorVisibility(!wheelMode);
+    layerEditorFrameController.setEditorVisibility(wheelMode);
+    generateAllBtn.setVisible(!wheelMode);
+    generateBtn.setVisible(!wheelMode);
+    generateWheelBtn.setVisible(wheelMode);
+
+    accordion.requestLayout();
+
     unsetTemplate();
     JFXFuture
         .supplyAsync(() -> client.getHighscoreCardsService().getCardResolution(getSelectedTemplateType()))

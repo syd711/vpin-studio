@@ -81,6 +81,10 @@ public class TagField extends VBox implements AutoCompleteTextFieldChangeListene
     });
   }
 
+  public void setSuggestions(List<String> suggestions) {
+    this.autoCompleteTextField.setSuggestions(suggestions);
+  }
+
   public void setPreferredHeight(double height) {
     this.height = height;
     tagContainer.setMaxHeight(this.height);

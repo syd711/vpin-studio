@@ -1024,15 +1024,14 @@ public class CardTemplate extends JsonSettings {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     CardTemplate that = (CardTemplate) o;
-    return Objects.equals(name, that.name);
+    return Objects.equals(id, that.id) && Objects.equals(parentId, that.parentId) && Objects.equals(name, that.name) && templateType == that.templateType;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name);
+    return Objects.hash(id, parentId, name, templateType);
   }
 
   @Override
@@ -1192,4 +1191,6 @@ public class CardTemplate extends JsonSettings {
     tableWidth = 1;
     tableHeight = 0.15;
   }
+
+
 }

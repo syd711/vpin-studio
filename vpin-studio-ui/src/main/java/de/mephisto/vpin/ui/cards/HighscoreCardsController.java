@@ -75,7 +75,20 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
   private void onMediaEdit() {
     GameRepresentation selectedItems = getSelection();
     if (selectedItems != null) {
-      TableDialogs.openTableAssetsDialog(null, selectedItems, VPinScreen.BackGlass);
+      DesignMode designMode = templateEditorController.getDesignMode();
+      VPinScreen screen = VPinScreen.BackGlass;
+      switch (designMode) {
+        case wheel:
+          screen = VPinScreen.Wheel;
+          break;
+        case highscoreCard:
+          screen = VPinScreen.Other2;
+          break;
+        case instructionCard:
+          screen = VPinScreen.GameHelp;
+          break;
+      }
+      TableDialogs.openTableAssetsDialog(null, selectedItems, screen);
     }
   }
 
@@ -125,7 +138,7 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
           return new Object[]{Collections.emptyList(), Collections.emptyList()};
         })
         .thenAcceptLater(objs -> {
-          @SuppressWarnings({ "unchecked", "unused" })
+          @SuppressWarnings({"unchecked", "unused"})
           List<CardTemplate> _templates = (List<CardTemplate>) objs[0];
           @SuppressWarnings("unchecked")
           List<GameRepresentation> games = (List<GameRepresentation>) objs[1];
@@ -230,7 +243,7 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
     BaseLoadingColumn.configureColumn(columnTemplate, (value, model) -> {
       CardTemplate template = getCardTemplateForGame(value);
       Label label = new Label("");
-      if(template != null && !template.isTemplate()) {
+      if (template != null && !template.isTemplate()) {
         label.setGraphic(WidgetFactory.createCheckboxIcon(WidgetFactory.OK_COLOR, "The table has a customized highscore card"));
       }
       label.getStyleClass().add("default-text");
