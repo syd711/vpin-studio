@@ -17,12 +17,4 @@ public class CardLayerOtherMedia extends CardLayerBaseImage {
   protected byte[] getImage(@Nonnull CardTemplate template, @Nullable CardData data) {
     return data != null ? data.getOtherMedia() : null;
   }
-
-  protected double getImageWidth(@Nonnull CardTemplate template) {
-    return template.getOtherMediaWidth();
-  }
-
-  protected double getImageHeight(@Nonnull CardTemplate template) {
-    return template.getOtherMediaHeight();
-  }
  }

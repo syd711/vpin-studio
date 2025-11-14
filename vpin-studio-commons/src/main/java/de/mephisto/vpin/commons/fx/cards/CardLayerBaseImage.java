@@ -89,8 +89,4 @@ public abstract class CardLayerBaseImage extends ImageView implements CardLayer 
   public void forceRefresh() {
     cacheBytesImage = null;
   }
-
-  protected abstract double getImageWidth(@Nonnull CardTemplate template);
-
-  protected abstract double getImageHeight(@Nonnull CardTemplate template);
 }
