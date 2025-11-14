@@ -36,10 +36,6 @@ public abstract class CardLayerBaseImage extends ImageView implements CardLayer 
         }
         else {
           this.setPreserveRatio(false);
-          double imgwidth = getImageWidth(template);
-          double imgheight = getImageHeight(template);
-          setHeight(imgwidth);
-          setHeight(imgheight);
         }
       }
     } else {
