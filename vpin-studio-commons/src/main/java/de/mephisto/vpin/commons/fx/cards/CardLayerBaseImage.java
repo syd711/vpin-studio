@@ -97,5 +97,4 @@ public abstract class CardLayerBaseImage extends Canvas implements CardLayer {
   public void forceRefresh() {
     cacheBytesImage = null;
   }
-
 }

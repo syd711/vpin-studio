@@ -2,6 +2,21 @@
 
 ## Changes
 
+- **Highscore Cards / Wheel Designer**
+    - Added wheel generator, default template generates Tarcissio styled-wheels.
+    - The **Highscore Card** tab has been renamed to **Designer** accordingly.
+    - In the frame sidebar section, the option to upload frame images has been added. A Tarcissio wheel frame and a
+      black wheel frame are provided by default.
+    - The **logo** media from the **Logo** media source can be used in your wheel, it is accessible in **Other Media**
+      section of the designer. This is even the main reason behind its introduction.
+    - Added possibility to backup existing assets when generating cards. An option has been added to the highscores card
+      preferences.
+    - Refactored how the VPin Studio finds a previously generated card. If backup is activated, existing cards not being tagged,
+      the server will generate new highscore cards in addition to the existing one. Old ones can be deleted as obsolete.
+      The new ones will be updated automatically.
+
+      <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/cards/wheel-designer.png?raw=true" width="700" />
+    
 - **Tag Management**
     - The Studio comes with a comprehensive tag management now. Tags are displayed as part of the Table Data Manager
       dialog and are also visible in the Table Data section. The tagging support contains the following features:
@@ -44,6 +59,9 @@
     - Replaced the white "checked" icons or .ini, .res and .directb2s files with edit button. These files can now
       directly be edited via the systems default text editor. For backglasses, the corresponding backglass is selected
       in the backglass manager.
+
+      <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/table-buttons.png?raw=true" width="600" />
+
     - Switched order of the backglass and the PUP pack column.
     - Detection of included VBS scripts when parsing the table script and analysis of these scripts when scanning game.
     - Saved VP-spreadsheet ID in XML database file for PinballX / PinballY.
@@ -66,24 +84,9 @@
         <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/logo-asset.png?raw=true" width="600" />
 
     - Added new default asset source: Table logos. These assets are solely for the "Logo" screen and can be used
-      for the highscore card or wheel design.
+      for highscore cards or wheel designs.
 
       <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/logo-source.png?raw=true" width="600" />
-
-- **Highscore Cards / Wheel Designer**
-    - Added wheel generator, default template generates Tarcissio styled-wheels.
-    - The **Highscore Card** tab has been renamed to **Designer** accordingly.
-    - In the frame sidebar section, the option to upload frame images has been added. A Tarcissio wheel frame and a
-      black wheel frame are provided by default.
-    - The **logo** media from the **Logo** media source can be used in your wheel, it is accessible in **Other Media**
-      section of the designer. This is even the main reason behind its introduction.
-    - Added possibility to backup existing assets when generating cards. An option has been added to the highscores card
-      preferences.
-    - Refactored how the VPin Studio finds a previously generated card. If backup is activated, existing cards not being tagged,
-      the server will generate new highscore cards in addition to the existing one. Old ones can be deleted as obsolete.
-      The new ones will be updated automatically.
-
-      <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/cards/wheel-designer.png?raw=true" width="700" />
 
 - **Backglass Server Preferences**
 
