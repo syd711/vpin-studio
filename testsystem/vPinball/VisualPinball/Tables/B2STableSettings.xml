@@ -69,6 +69,9 @@
     <Animations/>
   </PUPafm_113b>
   <gldneye>
+    <HideB2SBackglass>0</HideB2SBackglass>
+    <DualMode>1</DualMode>
+    <FormToBack>0</FormToBack>
     <HideGrill>2</HideGrill>
     <HideB2SDMD>0</HideB2SDMD>
     <HideDMD>2</HideDMD>
@@ -82,7 +85,6 @@
     <StartAsEXE>1</StartAsEXE>
     <StartBackground>0</StartBackground>
     <FormToFront>0</FormToFront>
-    <Animations/>
   </gldneye>
   <HideGrill>2</HideGrill>
   <HideB2SDMD>0</HideB2SDMD>
