@@ -14,12 +14,49 @@ public class DeleteDescriptor {
   private boolean deleteAltSound = false;
   private boolean deleteAltColor = false;
   private boolean deleteCfg = false;
+  private boolean deleteRom = false;
   private boolean deleteBAMCfg = true;
   private boolean deletePov = true;
   private boolean deleteRes = true;
   private boolean deleteIni = true;
   private boolean deleteVbs = true;
   private boolean deletePinVol = true;
+  private boolean deleteAlias = true;
+  private boolean deleteB2STableSettings = true;
+  private boolean deleteDMDDeviceIni = true;
+
+  public boolean isDeleteRom() {
+    return deleteRom;
+  }
+
+  public void setDeleteRom(boolean deleteRom) {
+    this.deleteRom = deleteRom;
+  }
+
+  public boolean isDeleteAlias() {
+    return deleteAlias;
+  }
+
+  public void setDeleteAlias(boolean deleteAlias) {
+    this.deleteAlias = deleteAlias;
+  }
+
+  public boolean isDeleteB2STableSettings() {
+    return deleteB2STableSettings;
+  }
+
+  public void setDeleteB2STableSettings(boolean deleteB2STableSettings) {
+    this.deleteB2STableSettings = deleteB2STableSettings;
+  }
+
+  public boolean isDeleteDMDDeviceIni() {
+    return deleteDMDDeviceIni;
+  }
+
+  public void setDeleteDMDDeviceIni(boolean deleteDMDDeviceIni) {
+    this.deleteDMDDeviceIni = deleteDMDDeviceIni;
+  }
+
   private boolean keepAssets = false;
 
   public boolean isDeleteBAMCfg() {
