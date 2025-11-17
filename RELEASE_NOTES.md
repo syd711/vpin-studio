@@ -99,6 +99,8 @@
     - entries from the B2STableSettings.xml file.
     - entries from the VPMAlias.txt file.
     - the ROM file.
+  
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/table-delete.png?raw=true" width="500" />
 
 ## Bugfixes
 

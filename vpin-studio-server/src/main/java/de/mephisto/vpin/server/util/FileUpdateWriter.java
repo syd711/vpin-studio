@@ -1,5 +1,8 @@
 package de.mephisto.vpin.server.util;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -9,9 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * An uitility used to update lines in a file while preserving its structure and its comments
@@ -107,18 +107,19 @@ public class FileUpdateWriter {
     String sectionEntry = "[" + section + "]";
     boolean updating = false;
     for (var t = 0; t < lines.size(); t++) {
-      String line = lines.get(0);
+      String line = lines.get(t);
       if (line.equals(sectionEntry)) {
         updating = true;
         continue;
       }
 
-      if (updating && !line.isEmpty()) {
+      if (updating && !line.trim().isEmpty()) {
         continue;
       }
 
       if (updating) {
-        break;
+        updating = false;
+        continue;
       }
       updatedLines.add(line);
     }
