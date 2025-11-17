@@ -19,10 +19,6 @@
   <ScreenshotPath/>
   <ScreenshotFileType>0</ScreenshotFileType>
   <HyperpinXMLFile>Unknown</HyperpinXMLFile>
-  <HideGrill>2</HideGrill>
-  <HideB2SDMD>0</HideB2SDMD>
-  <HideDMD>2</HideDMD>
-  <FormToBack>0</FormToBack>
   <avr_200>
     <DualMode>1</DualMode>
     <HideGrill>2</HideGrill>
@@ -73,9 +69,6 @@
     <Animations/>
   </PUPafm_113b>
   <gldneye>
-    <HideB2SBackglass>0</HideB2SBackglass>
-    <DualMode>1</DualMode>
-    <FormToBack>0</FormToBack>
     <HideGrill>2</HideGrill>
     <HideB2SDMD>0</HideB2SDMD>
     <HideDMD>2</HideDMD>
@@ -89,5 +82,10 @@
     <StartAsEXE>1</StartAsEXE>
     <StartBackground>0</StartBackground>
     <FormToFront>0</FormToFront>
+    <Animations/>
   </gldneye>
+  <HideGrill>2</HideGrill>
+  <HideB2SDMD>0</HideB2SDMD>
+  <HideDMD>2</HideDMD>
+  <FormToBack>0</FormToBack>
 </B2STableSettings>

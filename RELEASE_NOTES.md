@@ -92,6 +92,14 @@
 
   - Added option **Extended "B2STableSettings.xml" Search** which allows to configure where to look for the B2STableSettings.xml file.
 
+- **Deletion Dialog**
+  - General revamp of the dialog to improve the user experience. 
+  - Added option to delete
+    - entries from the DMDDevice.ini file.
+    - entries from the B2STableSettings.xml file.
+    - entries from the VPMAlias.txt file.
+    - the ROM file.
+
 ## Bugfixes
 
 - **ALT Color**: Fixed deletion of ALT color files.

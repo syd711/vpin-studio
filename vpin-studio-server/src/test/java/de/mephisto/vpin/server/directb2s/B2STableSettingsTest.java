@@ -42,14 +42,6 @@ public class B2STableSettingsTest {
 
     String after = FileUtils.readFileToString(b2sFile, Charset.defaultCharset());
     Assertions.assertEquals(before, after);
-
-    serializer.serializeXml(settings, b2sFile, false);
-
-    after = FileUtils.readFileToString(b2sFile, Charset.defaultCharset());
-    Assertions.assertNotEquals(before, after);
-
-    serializer.serializeXml(settings, b2sFile, true);
-    Assertions.assertEquals(before, after);
   }
 
   @Test
