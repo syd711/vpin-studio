@@ -1,14 +1,5 @@
 package de.mephisto.vpin.commons.fx.cards;
 
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import org.apache.commons.lang3.StringUtils;
-
 import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
@@ -19,6 +10,14 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.awt.*;
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * As we manipulate both dimension in template coordinate system and image coordinate,
@@ -82,9 +81,27 @@ public class CardLayerScores extends Canvas implements CardLayer {
     g.setFill(Paint.valueOf(template.getFontColor()));
     g.setTextBaseline(VPos.CENTER);
 
+
+    double totalWidth = computeTotalWIDTH(textColumns, FONT);
+    int alignment = template.getScoresAlignment();
+    double x = (WIDTH / 2) - (totalWidth / 2);
+    if (CardTemplate.isOn(alignment, CardTemplate.LEFT)) {
+      x = 0;
+    }
+    else if (CardTemplate.isOn(alignment, CardTemplate.RIGHT)) {
+      x = WIDTH - totalWidth;
+    }
+
+    double totalHeight = computeTotalHEIGHT(textColumns, FONT);
+    double y = (HEIGHT / 2) - (totalHeight / 2);
+    if (CardTemplate.isOn(alignment, CardTemplate.TOP)) {
+      y = 0;
+    }
+    else if (CardTemplate.isOn(alignment, CardTemplate.BOTTOM)) {
+      y = HEIGHT - totalHeight;
+    }
+
     // one line added in columns, so put half on top and half on bottom
-    double x = 0;
-    double y = 0;
     for (TextColumn textColumn : textColumns) {
       textColumn.renderAt(g, x, y, template.getRowMargin() * zoomY);
       x += textColumn.getWIDTH(FONT) * zoomX;
@@ -108,6 +125,14 @@ public class CardLayerScores extends Canvas implements CardLayer {
       width = width + column.getWIDTH(FONT);
     }
     return width;
+  }
+
+  private int computeTotalHEIGHT(List<TextColumn> columns, Font FONT) {
+    int height = 0;
+    for (TextColumn column : columns) {
+      height = height + column.getHEIGHT(FONT);
+    }
+    return height;
   }
 
   List<TextColumn> createTextColumns(CardTemplate template, List<TextBlock> blocks, Font FONT, double HEIGHT) {
@@ -176,10 +201,10 @@ public class CardLayerScores extends Canvas implements CardLayer {
       }
     }
 
-    public double getHEIGHT(Font FONT) {
-      double HEIGHT = 0;
+    public int getHEIGHT(Font FONT) {
+      int HEIGHT = 0;
       for (TextBlock block : blocks) {
-        HEIGHT = HEIGHT + block.getHEIGHT(FONT);
+        HEIGHT = Math.max(block.getHEIGHT(FONT), HEIGHT);
       }
       return HEIGHT;
     }
@@ -202,7 +227,6 @@ public class CardLayerScores extends Canvas implements CardLayer {
     }
 
     public double renderAt(GraphicsContext g, double x, double y, double rowMargin) {
-
       for (int i = 0; i < lines.size(); i++) {
         String line = lines.get(i);
         boolean external = externals.get(i);
@@ -240,8 +264,13 @@ public class CardLayerScores extends Canvas implements CardLayer {
       return new TextBlock[]{block1, block2};
     }
 
-    public double getHEIGHT(Font FONT) {
-      return this.lines.size() * (FONT.getSize() + template.getRowMargin());
+    public int getHEIGHT(Font font) {
+      if (this.lines.isEmpty()) {
+        return 0;
+      }
+      Text theText = new Text(this.lines.get(0));
+      theText.setFont(font);
+      return (int) (theText.getBoundsInLocal().getHeight() * this.lines.size()) + (this.lines.size() * template.getRowMargin());
     }
 
     public int getWIDTH(Font FONT) {
