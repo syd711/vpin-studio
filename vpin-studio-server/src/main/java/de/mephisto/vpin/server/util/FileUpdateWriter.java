@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -103,29 +104,17 @@ public class FileUpdateWriter {
   }
 
   public void removeSection(@NonNull String section) {
-    List<String> updatedLines = new ArrayList<>();
     String sectionEntry = "[" + section + "]";
-    boolean updating = false;
-    for (var t = 0; t < lines.size(); t++) {
-      String line = lines.get(t);
-      if (line.equals(sectionEntry)) {
-        updating = true;
-        continue;
+    int sectionIndex = this.lines.indexOf(sectionEntry);
+
+    if (sectionIndex != -1) {
+      int nextSectionIndex = sectionIndex + 1;
+      while (nextSectionIndex < this.lines.size() && !this.lines.get(nextSectionIndex).startsWith("[")) {
+        nextSectionIndex++;
       }
 
-      if (updating && !line.trim().isEmpty()) {
-        continue;
-      }
-
-      if (updating) {
-        updating = false;
-        continue;
-      }
-      updatedLines.add(line);
+      this.lines.subList(sectionIndex, nextSectionIndex).clear();
     }
-
-    this.lines.clear();
-    this.lines.addAll(updatedLines);
   }
 
   public boolean removeLine(String property, String section) {
