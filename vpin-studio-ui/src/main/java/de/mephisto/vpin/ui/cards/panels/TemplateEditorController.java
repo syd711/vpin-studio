@@ -721,7 +721,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     layerEditorScoresController.setEditorVisibility(!wheelMode);
     layerEditorWheelController.setEditorVisibility(!wheelMode);
     layerEditorOverlayController.setEditorVisibility(!wheelMode);
-    layerEditorFrameController.setEditorVisibility(wheelMode);
+//    layerEditorFrameController.setEditorVisibility(wheelMode);
     generateAllBtn.setVisible(!wheelMode);
     generateBtn.setVisible(!wheelMode);
     generateWheelBtn.setVisible(wheelMode);
