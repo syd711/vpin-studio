@@ -30,14 +30,35 @@ public abstract class CardLayerBaseText extends Canvas implements CardLayer {
     Paint paint = Paint.valueOf(textData.useDefaultColor || StringUtils.isEmpty(textData.fontColor) ? template.getFontColor() : textData.fontColor);
     g.setFill(paint);
 
-
     Font font = createFont(textData.fontName, textData.fontStyle, textData.fontSIZE * zoomY);
     g.setFont(font);
 
-    g.setTextAlign(TextAlignment.CENTER);
-    g.setTextBaseline(VPos.CENTER);
+    int alignment = textData.alignment;
+    TextAlignment ta = TextAlignment.CENTER;
+    double x = width / 2;
+    if (CardTemplate.isOn(alignment, CardTemplate.LEFT)) {
+      ta = TextAlignment.LEFT;
+      x = 0;
+    }
+    else if (CardTemplate.isOn(alignment, CardTemplate.RIGHT)) {
+      ta = TextAlignment.RIGHT;
+      x= width;
+    }
+    g.setTextAlign(ta);
 
-    g.fillText(textData.text, width / 2, height / 2, width);
+    VPos vpos = VPos.CENTER;
+    double y = height / 2;
+    if (CardTemplate.isOn(alignment, CardTemplate.TOP)) {
+      y = 0;
+      vpos = VPos.TOP;
+    }
+    else if (CardTemplate.isOn(alignment, CardTemplate.BOTTOM)) {
+      vpos = VPos.BOTTOM;
+      y = height;
+    }
+    g.setTextBaseline(vpos);
+
+    g.fillText(textData.text, x, y, width);
   }
 
   protected class CardTextData {
@@ -47,6 +68,7 @@ public abstract class CardLayerBaseText extends Canvas implements CardLayer {
     String fontStyle = null;
     String fontColor = null;
     int fontSIZE = -1;
+    int alignment;
   }
 
 }

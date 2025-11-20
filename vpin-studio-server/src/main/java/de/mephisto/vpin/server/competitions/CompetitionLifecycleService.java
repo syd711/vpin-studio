@@ -8,13 +8,15 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Service
 public class CompetitionLifecycleService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(CompetitionLifecycleService.class);
 
-  private final List<CompetitionChangeListener> listeners = new ArrayList<>();
+  private final Collection<CompetitionChangeListener> listeners = new ConcurrentLinkedQueue<>();
 
 
   public void notifyCompetitionCreation(@NonNull Competition c) {

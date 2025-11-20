@@ -346,7 +346,7 @@ public class BackglassService implements InitializingBean {
       else {
         File settingsXml = getB2STableSettingsXml();
         B2STableSettingsSerializer tableSettingsSerializer = new B2STableSettingsSerializer();
-        tableSettingsSerializer.serializeXml(settings, settingsXml);
+        tableSettingsSerializer.serializeXml(settings, settingsXml, true);
         // recreate tableSettings cache
         reloadTableSettings();
       }
@@ -356,6 +356,33 @@ public class BackglassService implements InitializingBean {
       LOG.error("Failed to save table settings for \"" + game.getId() + "\": " + e.getMessage(), e);
       throw e;
     }
+  }
+
+  public boolean deleteB2STableSettings(Game game) {
+    String rom = game.getRom();
+    if (StringUtils.isNotEmpty(rom)) {
+      rom = StringUtils.deleteWhitespace(rom);
+      DirectB2STableSettings entry = cacheB2STableSettings.get(rom);
+      if (entry == null && !StringUtils.isEmpty(game.getTableName())) {
+        entry = cacheB2STableSettings.get(game.getTableName());
+      }
+
+      if (entry != null) {
+        try {
+          File settingsXml = getB2STableSettingsXml();
+          if (settingsXml.exists()) {
+            B2STableSettingsSerializer serverSettingsSerializer = new B2STableSettingsSerializer();
+            serverSettingsSerializer.serializeXml(entry, settingsXml, false);
+            // recreate cache
+            reloadTableSettings();
+          }
+        }
+        catch (VPinStudioException e) {
+          LOG.error("Failed to remote B2STableSettings.xml entry {}: {}", entry.getRom(), e.getMessage());
+        }
+      }
+    }
+    return true;
   }
 
   @Nullable
@@ -419,7 +446,7 @@ public class BackglassService implements InitializingBean {
       else {
         File settingsXml = getB2STableSettingsXml();
         B2STableSettingsSerializer serverSettingsSerializer = new B2STableSettingsSerializer();
-        serverSettingsSerializer.serializeXml(settings, settingsXml);
+        serverSettingsSerializer.serializeXml(settings, settingsXml, true);
         // recreate cache
         reloadTableSettings();
       }
@@ -1321,5 +1348,4 @@ public class BackglassService implements InitializingBean {
     clearCache();
     LOG.info("{} initialization finished, took {}ms", this.getClass().getSimpleName(), (System.currentTimeMillis() - start));
   }
-
 }

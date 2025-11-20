@@ -9,9 +9,11 @@ import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.util.FileUpdateWriter;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -251,6 +253,11 @@ public class MameService implements InitializingBean {
     return cfgFile != null && cfgFile.exists() && FileUtils.delete(cfgFile);
   }
 
+  public boolean deleteRom(@NonNull Game game) {
+    File romFile = game.getRomFile();
+    return romFile != null && romFile.exists() && FileUtils.delete(romFile);
+  }
+
   //--------------------------------
 
   public void installRom(UploadDescriptor uploadDescriptor, GameEmulator gameEmulator, File tempFile, UploaderAnalysis analysis) throws IOException {
@@ -475,6 +482,21 @@ public class MameService implements InitializingBean {
   public File getDmdDeviceIni() {
     File mameFolder = getMameFolder();
     return new File(mameFolder, "DMDDevice.ini");
+  }
+
+  public boolean deleteDMDDeviceIniEntry(@NonNull Game game) {
+    FileUpdateWriter iniConfiguration = new FileUpdateWriter();
+    try {
+      iniConfiguration.read(getDmdDeviceIni().toPath());
+      iniConfiguration.removeSection(game.getRom());
+      iniConfiguration.removeSection(game.getTableName());
+      iniConfiguration.write(getDmdDeviceIni().toPath());
+    }
+    catch (IOException e) {
+      LOG.error("Failed to write DMDDevice.ini: {}", e.getMessage(), e);
+      return false;
+    }
+    return true;
   }
 
 

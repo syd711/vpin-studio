@@ -33,6 +33,7 @@ import de.mephisto.vpin.server.frontend.WheelIconDelete;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.listeners.EventOrigin;
+import de.mephisto.vpin.server.mame.MameRomAliasService;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.music.MusicService;
 import de.mephisto.vpin.server.pinvol.PinVolService;
@@ -69,6 +70,9 @@ public class GameMediaService {
 
   @Autowired
   private DMDService dmdService;
+
+  @Autowired
+  private MameRomAliasService mameRomAliasService;
 
   @Autowired
   private PinVolService pinVolService;
@@ -653,6 +657,7 @@ public class GameMediaService {
 
       for (Integer gameId : gameIds) {
         Game game = gameService.getGame(gameId);
+        GameEmulator gameEmulator = emulatorService.getGameEmulator(game.getEmulatorId());
         if (game == null) {
           return false;
         }
@@ -726,6 +731,12 @@ public class GameMediaService {
           }
         }
 
+        if (descriptor.isDeleteAlias()) {
+          if (!mameRomAliasService.deleteAlias(gameEmulator, game.getRomAlias())) {
+            success = false;
+          }
+        }
+
         if (descriptor.isDeleteAltSound()) {
           if (!altSoundService.delete(game)) {
             success = false;
@@ -738,6 +749,27 @@ public class GameMediaService {
           }
         }
 
+        if (descriptor.isDeleteB2STableSettings()) {
+          //Only relevant for tables that are located in a separate folder
+          File b2STableSettingsFile = game.getB2STableSettingsFile();
+          if (b2STableSettingsFile != null && b2STableSettingsFile.exists()) {
+            if (!b2STableSettingsFile.delete()) {
+              success = false;
+            }
+          }
+
+          //Delete the regular entry
+          if (!backglassService.deleteB2STableSettings(game)) {
+            success = false;
+          }
+        }
+
+        if (descriptor.isDeleteDMDDeviceIni()) {
+          if (!mameService.deleteDMDDeviceIniEntry(game)) {
+            success = false;
+          }
+        }
+
         //cfg files belong to MAME
         if (descriptor.isDeleteCfg()) {
           if (!mameService.deleteCfg(game)) {
@@ -746,6 +778,14 @@ public class GameMediaService {
 
           if (!StringUtils.isEmpty(game.getRom())) {
             if (!mameService.deleteOptions(game.getRom())) {
+              success = false;
+            }
+          }
+        }
+
+        if (descriptor.isDeleteRom()) {
+          if (!StringUtils.isEmpty(game.getRom())) {
+            if (!mameService.deleteRom(game)) {
               success = false;
             }
           }

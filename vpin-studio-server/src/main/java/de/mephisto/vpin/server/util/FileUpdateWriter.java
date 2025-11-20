@@ -1,23 +1,28 @@
 package de.mephisto.vpin.server.util;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * An uitility used to update lines in a file while preserving its structure and its comments
  */
 public class FileUpdateWriter {
 
-  /** lines to update */
-  private List<String> lines;
+  /**
+   * lines to update
+   */
+  private List<String> lines = new ArrayList<>();
 
   public void read(Path filePath) throws IOException {
     this.lines = Files.readAllLines(filePath, StandardCharsets.UTF_8);
@@ -31,7 +36,7 @@ public class FileUpdateWriter {
 
     for (var t = 0; t < lines.size(); t++) {
       String line = lines.get(t).trim();
-      
+
       // ignore comments
       if (line.isEmpty() || line.startsWith(";") || line.startsWith("#")) {
       }
@@ -96,6 +101,20 @@ public class FileUpdateWriter {
       lines.add(property + " = " + newvalue);
     }
     return true;
+  }
+
+  public void removeSection(@NonNull String section) {
+    String sectionEntry = "[" + section + "]";
+    int sectionIndex = this.lines.indexOf(sectionEntry);
+
+    if (sectionIndex != -1) {
+      int nextSectionIndex = sectionIndex + 1;
+      while (nextSectionIndex < this.lines.size() && !this.lines.get(nextSectionIndex).startsWith("[")) {
+        nextSectionIndex++;
+      }
+
+      this.lines.subList(sectionIndex, nextSectionIndex).clear();
+    }
   }
 
   public boolean removeLine(String property, String section) {

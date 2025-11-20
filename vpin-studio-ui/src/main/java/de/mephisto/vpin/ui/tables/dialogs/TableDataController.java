@@ -546,7 +546,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
         updatedGameFileName = updatedGameFileName + ".fpt";
       }
 
-      if (!updatedGameFileName.trim().equalsIgnoreCase(initialVpxFileName.trim())) {
+      if (game.getGameFilePath() != null && !updatedGameFileName.trim().equalsIgnoreCase(initialVpxFileName.trim())) {
         String duplicate = findDuplicate(game.getEmulatorId(), updatedGameFileName);
         if (duplicate != null) {
           WidgetFactory.showAlert(stage, "Error", "Another file with the name \"" + duplicate + "\" already exist. Please chooser another name.");

@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
+<?import javafx.scene.control.Tooltip?>
 <VBox stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.panels.LayerSubEditorPositionController">
    <children>
       <HBox spacing="12.0">
@@ -58,6 +61,83 @@
          </children>
          <VBox.margin>
             <Insets top="3.0" />
+         </VBox.margin>
+      </HBox>
+      <HBox fx:id="alignBox" spacing="3.0">
+         <children>
+            <ToggleButton fx:id="alignLeftButton" mnemonicParsing="false"  textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <tooltip>
+                  <Tooltip text="Align content on left" />
+               </tooltip>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi-format-horizontal-align-left" iconSize="18" />
+               </graphic>
+            </ToggleButton>
+            <ToggleButton fx:id="alignCenterButton" mnemonicParsing="false"  textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <tooltip>
+                  <Tooltip text="Center content horizontally" />
+               </tooltip>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi-format-horizontal-align-center" iconSize="18" />
+               </graphic>
+            </ToggleButton>
+            <ToggleButton fx:id="alignRightButton" mnemonicParsing="false"  textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <tooltip>
+                  <Tooltip text="Align content on right" />
+               </tooltip>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi-format-horizontal-align-right" iconSize="18" />
+               </graphic>
+            </ToggleButton>
+
+            <ToggleButton fx:id="alignTopButton" mnemonicParsing="false"  textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <tooltip>
+                  <Tooltip text="Align content on top" />
+               </tooltip>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi-format-vertical-align-top" iconSize="18" />
+               </graphic>
+               <HBox.margin>
+                  <Insets left="6.0" />
+               </HBox.margin>
+            </ToggleButton>
+            <ToggleButton fx:id="alignMiddleButton" mnemonicParsing="false"  textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <tooltip>
+                  <Tooltip text="Center content vertically" />
+               </tooltip>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi-format-vertical-align-center" iconSize="18" />
+               </graphic>
+            </ToggleButton>
+            <ToggleButton fx:id="alignBottomButton" mnemonicParsing="false"  textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <tooltip>
+                  <Tooltip text="Align content on bottom" />
+               </tooltip>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi-format-vertical-align-bottom" iconSize="18" />
+               </graphic>
+            </ToggleButton>
+         </children>
+         <VBox.margin>
+            <Insets top="12.0" />
          </VBox.margin>
       </HBox>
 </children>

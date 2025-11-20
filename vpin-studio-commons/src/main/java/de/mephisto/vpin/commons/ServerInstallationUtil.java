@@ -31,19 +31,21 @@ public class ServerInstallationUtil {
       LOG.info("Written autostart file " + runFile.getAbsolutePath());
 
       String wbScript = "Dim WShell\nSet WShell = CreateObject(\"WScript.Shell\")\n" +
-        "WShell.CurrentDirectory = \"" + root.getAbsolutePath() + "\"\n" +
-        "WShell.Run \"VPin-Studio-Server.exe\", 0\n" +
-        "Set WShell = Nothing";
+          "WShell.CurrentDirectory = \"" + root.getAbsolutePath() + "\"\n" +
+          "WShell.Run \"VPin-Studio-Server.exe\", 0\n" +
+          "Set WShell = Nothing";
 
 
       if (vbsFile.exists() && !vbsFile.delete()) {
+        LOG.error("Could not delete existing vbs file {}", vbsFile.getAbsolutePath());
         throw new IOException("Could not delete existing vbs file " + vbsFile.getAbsolutePath());
       }
       FileUtils.writeStringToFile(vbsFile, wbScript, StandardCharsets.UTF_8);
       LOG.info("Written vbs file " + vbsFile.getAbsolutePath());
 
       return runFile.exists();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to install autostart: " + e.getMessage(), e);
       throw e;
     }
