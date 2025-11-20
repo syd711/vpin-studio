@@ -10,6 +10,7 @@ import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import javafx.scene.layout.VBox;
@@ -19,14 +20,16 @@ import javafx.util.StringConverter;
 import static de.mephisto.vpin.ui.Studio.client;
 
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.function.Function;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
-public class LayerEditorFrameController extends LayerEditorBaseController {
+public class LayerEditorFrameController extends LayerEditorBaseController implements Initializable {
 
   @FXML
   private Slider zoomSlider;
@@ -34,7 +37,7 @@ public class LayerEditorFrameController extends LayerEditorBaseController {
   private VBox backgroundPositionBox;
   @FXML
   private Spinner<Integer> backgroundXSpinner;
-   @FXML
+  @FXML
   private Spinner<Integer> backgroundYSpinner;
 
   @FXML
@@ -58,6 +61,9 @@ public class LayerEditorFrameController extends LayerEditorBaseController {
 
   @FXML
   private Button frameUploadBtn;
+
+  @FXML
+  private VBox frameImagePane;
 
   private ObservableList<String> imageList;
 
@@ -119,6 +125,16 @@ public class LayerEditorFrameController extends LayerEditorBaseController {
     }
   }
 
+  /**
+   * We do not want to hide the whole pane, only the wheel stuff.
+   *
+   * @param editorVisibility
+   */
+  @Override
+  public void setEditorVisibility(boolean editorVisibility) {
+    frameImagePane.setVisible(editorVisibility);
+  }
+
   @Override
   public void initBindings(CardTemplateBinder templateBeanBinder) {
     bindVisibilityIcon(templateBeanBinder, "renderFrame");
@@ -130,8 +146,9 @@ public class LayerEditorFrameController extends LayerEditorBaseController {
     StringConverter<Integer> converter = new StringConverter<>() {
       @Override
       public String toString(Integer object) {
-        return object+"%";
+        return object + "%";
       }
+
       @Override
       public Integer fromString(String str) {
         return Integer.parseInt(str.replace("%", "").trim());
@@ -177,8 +194,13 @@ public class LayerEditorFrameController extends LayerEditorBaseController {
   @Override
   public void bindDragBox(PositionResizer dragBox) {
   }
+
   @Override
   public void unbindDragBox(PositionResizer dragBox) {
   }
 
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    frameImagePane.managedProperty().bindBidirectional(frameImagePane.visibleProperty());
+  }
 }
