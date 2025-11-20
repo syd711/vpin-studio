@@ -31,6 +31,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
@@ -261,16 +262,19 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
     });
 
     startDateColumn.setCellValueFactory(cellData -> {
+      VBox vBox = new VBox(3);
       WeeklyCompetitionModel value = cellData.getValue();
-      Label fallbackLabel = new Label();
-      fallbackLabel.getStyleClass().add("default-text");
-      fallbackLabel.setStyle(getLabelCss(value));
+      Label dateLabel = new Label();
+      dateLabel.getStyleClass().add("default-text");
+      dateLabel.setStyle(getLabelCss(value));
 
       if (value.competition == null) {
         return new SimpleObjectProperty<>("-");
       }
-      fallbackLabel.setText(DateUtil.formatDateTime(value.competition.getCreatedAt()));
-      return new SimpleObjectProperty(fallbackLabel);
+      dateLabel.setText(DateUtil.formatDateTime(value.competition.getCreatedAt()));
+
+      vBox.getChildren().add(dateLabel);
+      return new SimpleObjectProperty(vBox);
     });
 
     endDateColumn.setCellValueFactory(cellData -> {
@@ -281,15 +285,33 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
       Label endDateLabel = new Label();
       endDateLabel.getStyleClass().add("default-text");
       endDateLabel.setStyle(getLabelCss(value));
-      endDateLabel.setText(DateUtil.formatDateTime(value.competition.getCreatedAt()));
+      endDateLabel.setText(DateUtil.formatDateTime(value.competition.getEndDate()));
 
+      HBox durationBox = new HBox(3);
       Label durationLabel = new Label();
+      durationLabel.setPrefWidth(80);
       durationLabel.getStyleClass().add("default-text");
       durationLabel.setStyle(getLabelCss(value));
-      durationLabel.setText(DateUtil.formatDuration(value.competition.getStartDate(), value.competition.getEndDate()));
+      durationLabel.setText("Duration:");
+      Label durationValueLabel = new Label();
+      durationValueLabel.getStyleClass().add("default-text");
+      durationValueLabel.setStyle(getLabelCss(value));
+      durationValueLabel.setText(DateUtil.formatDuration(value.competition.getStartDate(), value.competition.getEndDate()));
+      durationBox.getChildren().addAll(durationLabel, durationValueLabel);
 
-      vBox.getChildren().add(endDateLabel);
-      vBox.getChildren().add(durationLabel);
+      HBox remainingBox = new HBox(3);
+      Label timeRemainingLabel = new Label();
+      timeRemainingLabel.setPrefWidth(80);
+      timeRemainingLabel.getStyleClass().add("default-text");
+      timeRemainingLabel.setStyle(getLabelCss(value));
+      timeRemainingLabel.setText("Remaining:");
+      Label timeRemainingValueLabel = new Label();
+      timeRemainingValueLabel.getStyleClass().add("default-text");
+      timeRemainingValueLabel.setStyle(getLabelCss(value));
+      timeRemainingValueLabel.setText(DateUtil.formatDuration(new Date(), value.competition.getEndDate()));
+      remainingBox.getChildren().addAll(timeRemainingLabel, timeRemainingValueLabel);
+
+      vBox.getChildren().addAll(endDateLabel, durationBox, remainingBox);
       return new SimpleObjectProperty(vBox);
     });
 

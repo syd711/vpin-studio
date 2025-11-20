@@ -130,6 +130,9 @@ public class CompetitionsController implements Initializable, StudioFXController
   private Button dashboardBtn;
 
   @FXML
+  private Button rulesBtn;
+
+  @FXML
   private Button toggleSidebarBtn;
 
   @FXML
@@ -232,6 +235,14 @@ public class CompetitionsController implements Initializable, StudioFXController
       default: {
         PreferencesController.open("settings_client");
       }
+    }
+  }
+
+  @FXML
+  private void onRulesOpen() {
+    if (this.competition.isPresent()) {
+      String url = "https://worldofvirtualpinball.com/en/challenge/rules";
+      Studio.browse(url);
     }
   }
 
@@ -392,6 +403,7 @@ public class CompetitionsController implements Initializable, StudioFXController
   private void refreshDashboard(Optional<CompetitionRepresentation> competitionRepresentation) {
     dashboardWebView.setVisible(false);
     dashboardStatusLabel.setVisible(false);
+    rulesBtn.setVisible(competitionRepresentation.isPresent() && competition.get().getType().equals(CompetitionType.WEEKLY.name()));
     scoreBox.setVisible(false);
 
     if (competitionRepresentation.isPresent()) {

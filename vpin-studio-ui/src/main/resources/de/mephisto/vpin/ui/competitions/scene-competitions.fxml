@@ -286,6 +286,14 @@
                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="16" />
                                                     </graphic>
                                                 </Button>
+                                    <Button fx:id="rulesBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRulesOpen" styleClass="external-component" text="Open Rules">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="16" />
+                                       </graphic>
+                                    </Button>
                                                 <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                                                 <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onDashboardReload" text="Reload" textFill="WHITE">
                                                     <font>
