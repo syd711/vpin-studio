@@ -54,54 +54,61 @@ public class DiscordCompetitionService {
 
   public boolean runCompetitionCheck(long id) {
     Competition competition = competitionService.getCompetition(id);
-    if (competition != null) {
-      if (!competition.getType().equals(CompetitionType.OFFLINE.name())) {
-        Game game = gameService.getGame(competition.getGameId());
-        highscoreService.scanScore(game, EventOrigin.COMPETITION_UPDATE);
+    if (competition == null) {
+      return true;
+    }
 
-        LOG.info("Synchronizing " + competition);
-        Date startDate = competition.getCreatedAt();
-        ScoreList scoreHistory = highscoreService.getScoresBetween(game, startDate, new Date(), competition.getDiscordServerId());
-        List<ScoreSummary> versionedScores = new ArrayList<>(scoreHistory.getScores());
+    if (!competition.getType().equals(CompetitionType.OFFLINE.name())) {
+      Game game = gameService.getGame(competition.getGameId());
+      if (game == null) {
+        LOG.info("{} has no matching game, cancelling competition check.", competition.getGameId());
+        return true;
+      }
 
-        ScoreSummary latestScore = highscoreService.getScoreSummary(competition.getDiscordServerId(), game);
-        versionedScores.add(latestScore);
+      highscoreService.scanScore(game, EventOrigin.COMPETITION_UPDATE);
 
-        //oldest versionedScores first to replay in the correct order
-        Collections.sort(versionedScores, Comparator.comparing(ScoreSummary::getCreatedAt));
+      LOG.info("Synchronizing " + competition);
+      Date startDate = competition.getCreatedAt();
+      ScoreList scoreHistory = highscoreService.getScoresBetween(game, startDate, new Date(), competition.getDiscordServerId());
+      List<ScoreSummary> versionedScores = new ArrayList<>(scoreHistory.getScores());
 
-        LOG.info("Fetched " + versionedScores.size() + " highscore versions for " + competition);
-        for (int i = 0; i < versionedScores.size(); i++) {
-          ScoreSummary versionedScoreSummary = versionedScores.get(i);
-          List<Score> newScores = versionedScoreSummary.getScores();
-          List<Score> oldScores = null;
-          if (i > 0) {
-            oldScores = versionedScores.get(i - 1).getScores();
+      ScoreSummary latestScore = highscoreService.getScoreSummary(competition.getDiscordServerId(), game);
+      versionedScores.add(latestScore);
+
+      //oldest versionedScores first to replay in the correct order
+      Collections.sort(versionedScores, Comparator.comparing(ScoreSummary::getCreatedAt));
+
+      LOG.info("Fetched " + versionedScores.size() + " highscore versions for " + competition);
+      for (int i = 0; i < versionedScores.size(); i++) {
+        ScoreSummary versionedScoreSummary = versionedScores.get(i);
+        List<Score> newScores = versionedScoreSummary.getScores();
+        List<Score> oldScores = null;
+        if (i > 0) {
+          oldScores = versionedScores.get(i - 1).getScores();
+        }
+        else {
+          oldScores = versionedScoreSummary.cloneEmptyScores();
+        }
+
+        List<HighscoreChangeEvent> highscoreChangeEvents = new ArrayList<>();
+        List<Integer> changedPositions = highscoreService.calculateChangedPositions(game.getGameDisplayName(), oldScores, newScores);
+        if (!changedPositions.isEmpty()) {
+          LOG.info("Calculated " + changedPositions.size() + " score differences for score created at " + versionedScoreSummary.getCreatedAt());
+          for (Integer changedPosition : changedPositions) {
+            Score oldScore = oldScores.get(changedPosition - 1);
+            Score newScore = newScores.get(changedPosition - 1);
+
+            HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScore, newScore, versionedScoreSummary.getRaw(), oldScores.size(), false, EventOrigin.DISCORD_COMPETITION_UPDATE);
+            event.setEventReplay(true);
+            highscoreChangeEvents.add(event);
           }
-          else {
-            oldScores = versionedScoreSummary.cloneEmptyScores();
-          }
 
-          List<HighscoreChangeEvent> highscoreChangeEvents = new ArrayList<>();
-          List<Integer> changedPositions = highscoreService.calculateChangedPositions(game.getGameDisplayName(), oldScores, newScores);
-          if (!changedPositions.isEmpty()) {
-            LOG.info("Calculated " + changedPositions.size() + " score differences for score created at " + versionedScoreSummary.getCreatedAt());
-            for (Integer changedPosition : changedPositions) {
-              Score oldScore = oldScores.get(changedPosition - 1);
-              Score newScore = newScores.get(changedPosition - 1);
-
-              HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScore, newScore, versionedScoreSummary.getRaw(), oldScores.size(), false, EventOrigin.DISCORD_COMPETITION_UPDATE);
-              event.setEventReplay(true);
-              highscoreChangeEvents.add(event);
-            }
-
-            highscoreService.triggerHighscoreChange(highscoreChangeEvents);
-          }
+          highscoreService.triggerHighscoreChange(highscoreChangeEvents);
         }
       }
-      else {
-        LOG.info("Sync for " + competition + " cancelled, no channel data was found.");
-      }
+    }
+    else {
+      LOG.info("Sync for " + competition + " cancelled, no channel data was found.");
     }
     return true;
   }

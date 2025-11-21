@@ -1,13 +1,16 @@
 package de.mephisto.vpin.server.util;
 
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.server.roms.ScanResult;
 import de.mephisto.vpin.server.vpx.VPXUtil;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.StreamUtils;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -90,6 +93,32 @@ public class VPXFileScannerTest {
       doScan(bld, f.toPath());
       System.out.println(bld.toString());
     }
+  }
+
+  @Test
+  public void testScriptScan() throws IOException {
+    File f = File.createTempFile("test", ".vpx");
+    String script = "'********************\n" +
+        "' Standard definitions\n" +
+        "'********************\n" +
+        "\n" +
+        "Const cGameName = \"avs_170c\" 'Colour Rom\n" +
+        "'Const cGameName = \"avs_170\"\n" +
+        "\n" +
+        "Const UseSolenoids = 1\n" +
+        "Const UseLamps = 1\n" +
+        "Const UseSync = 1\n" +
+        "Const HandleMech = 0";
+
+    ScanResult result = new ScanResult();
+    VPXFileScanner.scanLines(f, scripts, result, script);
+    FileOutputStream fileOutputStream = new FileOutputStream(f);
+    IOUtils.write(script.getBytes(), fileOutputStream);
+    fileOutputStream.close();
+
+    assertNotNull(result.getRom());
+    assertEquals("avs_170c", result.getRom());
+    f.delete();
   }
 
 }

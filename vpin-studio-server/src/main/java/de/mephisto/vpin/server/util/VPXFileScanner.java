@@ -234,7 +234,6 @@ public class VPXFileScanner {
    * Recursive, sharing EvaluationContext
    */
   private static List<String> scanLines(EvaluationContext evalctxt, File gameFile, File scriptFolder, ScanResult result, String script) {
-
     List<String> allLines = new ArrayList<>();
     script = script.replaceAll("\r\n", "\n");
     script = script.replaceAll("\r", "\n");
