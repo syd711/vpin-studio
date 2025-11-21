@@ -59,7 +59,7 @@ public class GameEmulatorValidationTexts {
       }
       case CODE_INVALID_MEDIA_FOLDER: {
         label = "The media folder is invalid.";
-        text = "Fix the configuration by setting a valid media folder.";
+        text = "Fix the configuration by setting or creating a valid media folder.";
         break;
       }
       case CODE_NO_GAMES_FOUND: {
