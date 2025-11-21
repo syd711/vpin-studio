@@ -11,28 +11,42 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableDeleteController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableDeleteController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
    <bottom>
-      <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
-         <children>
-          <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
-               <HBox.margin>
-                  <Insets right="12.0" />
-               </HBox.margin>
-            </Button>
-            <Button fx:id="deleteBtn" defaultButton="true" disable="true" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDeleteClick" styleClass="submit-button" text="Delete">
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
-            </Button>
-         </children>
+      <BorderPane BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>
-      </HBox>
+         <center>
+            <HBox alignment="BASELINE_RIGHT">
+               <children>
+                <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+                     <HBox.margin>
+                        <Insets right="12.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="deleteBtn" defaultButton="true" disable="true" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDeleteClick" styleClass="submit-button" text="Delete">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
+         </center>
+         <left>
+            <CheckBox fx:id="confirmationCheckbox" mnemonicParsing="false" text="Yes, I know what I'm doing!" BorderPane.alignment="CENTER">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+               <BorderPane.margin>
+                  <Insets />
+               </BorderPane.margin>
+            </CheckBox>
+         </left>
+      </BorderPane>
    </bottom>
    <center>
       <VBox BorderPane.alignment="CENTER">
@@ -42,7 +56,7 @@
          <children>
             <BorderPane>
                <center>
-                  <VBox spacing="12.0">
+                  <VBox spacing="6.0">
                      <children>
                         <VBox>
                            <children>
@@ -55,6 +69,14 @@
                         </VBox>
                         <VBox fx:id="frontendSelectionField">
                            <children>
+                              <Label fx:id="titleLabel1" styleClass="default-title" text="Frontend" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets top="12.0" />
+                                 </VBox.margin>
+                              </Label>
                               <CheckBox fx:id="frontendCheckbox" mnemonicParsing="false" selected="true" text="Remove from Frontend">
                                  <font>
                                     <Font size="14.0" />
@@ -77,130 +99,202 @@
                               </CheckBox>
                            </children>
                         </VBox>
-                        <HBox spacing="72.0">
+                        <VBox>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
                            <children>
-                              <VBox spacing="12.0">
+                              <HBox spacing="72.0">
                                  <children>
-                                    <CheckBox fx:id="vpxFileCheckbox" mnemonicParsing="false" text="Delete Game File">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </CheckBox>
-                                    <CheckBox fx:id="directb2sCheckbox" mnemonicParsing="false" text="Delete .directb2s File">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </CheckBox>
-                                    <CheckBox fx:id="povCheckbox" mnemonicParsing="false" text="Delete .pov File">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </CheckBox>
-                                    <CheckBox fx:id="iniCheckbox" mnemonicParsing="false" text="Delete .ini File">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </CheckBox>
-                                    <CheckBox fx:id="resCheckbox" mnemonicParsing="false" text="Delete .res File">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </CheckBox>
-                                    <CheckBox fx:id="vbsCheckbox" mnemonicParsing="false" text="Delete .vbs File">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </CheckBox>
-                                    <HBox spacing="6.0">
-                                       <VBox.margin>
-                                          <Insets />
-                                       </VBox.margin>
+                                    <VBox spacing="6.0">
                                        <children>
-                                          <CheckBox fx:id="musicCheckbox" mnemonicParsing="false" text="Delete Music Files">
+                                          <Label fx:id="" styleClass="default-title" text="Files" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <VBox.margin>
+                                                <Insets />
+                                             </VBox.margin>
+                                          </Label>
+                                          <CheckBox fx:id="deleteAllFilesCheckbox" layoutX="10.0" layoutY="44.0" mnemonicParsing="false" text="Delete All">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                             <VBox.margin>
+                                                <Insets bottom="12.0" />
+                                             </VBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="vpxFileCheckbox" mnemonicParsing="false" text="Delete Game File">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </CheckBox>
-                                          <Label>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                             </graphic>
-                                             <tooltip>
-                                                <Tooltip prefWidth="300.0" text="Only subfolders of Visual Pinball's &quot;Music&quot; folder will be deleted." wrapText="true" />
-                                             </tooltip>
+                                          <CheckBox fx:id="directb2sCheckbox" mnemonicParsing="false" text="Delete .directb2s File">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </CheckBox>
+                                          <CheckBox fx:id="povCheckbox" mnemonicParsing="false" text="Delete .pov File">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </CheckBox>
+                                          <CheckBox fx:id="iniCheckbox" mnemonicParsing="false" text="Delete .ini File">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </CheckBox>
+                                          <CheckBox fx:id="resCheckbox" mnemonicParsing="false" text="Delete .res File">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </CheckBox>
+                                          <CheckBox fx:id="vbsCheckbox" mnemonicParsing="false" text="Delete .vbs File">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </CheckBox>
+                                          <CheckBox fx:id="romCheckbox" mnemonicParsing="false" text="Delete ROM File">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </CheckBox>
+                                       </children>
+                                    </VBox>
+                                    <VBox spacing="6.0">
+                                       <children>
+                                          <Label fx:id="titleLabel112" styleClass="default-title" text="Media" textFill="WHITE">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
+                                          <CheckBox fx:id="deleteAllMediaCheckbox" mnemonicParsing="false" text="Delete All">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                             <VBox.margin>
+                                                <Insets bottom="12.0" />
+                                             </VBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="pupPackCheckbox" mnemonicParsing="false" text="Delete PUP Pack">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </CheckBox>
+                                          <CheckBox fx:id="dmdCheckbox" mnemonicParsing="false" text="Delete Flex/Ultra DMD Files">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </CheckBox>
+                                          <CheckBox fx:id="altSoundCheckbox" mnemonicParsing="false" prefHeight="0.0" prefWidth="165.0" text="Delete &quot;altsound&quot; Files">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </CheckBox>
+                                          <CheckBox fx:id="altColorCheckbox" mnemonicParsing="false" text="Delete &quot;altcolor&quot; Files">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </CheckBox>
+                                          <HBox spacing="6.0">
+                                             <VBox.margin>
+                                                <Insets />
+                                             </VBox.margin>
+                                             <children>
+                                                <CheckBox fx:id="musicCheckbox" mnemonicParsing="false" text="Delete Music Files">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </CheckBox>
+                                                <Label>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip prefWidth="300.0" text="Only subfolders of Visual Pinball's &quot;Music&quot; folder will be deleted." wrapText="true" />
+                                                   </tooltip>
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+                                             </children>
+                                          </HBox>
                                        </children>
-                                    </HBox>
+                                    </VBox>
+                                    <VBox spacing="6.0">
+                                       <children>
+                                          <Label fx:id="titleLabel111" styleClass="default-title" text="Settings" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <CheckBox fx:id="deleteAllSettingsCheckbox" mnemonicParsing="false" text="Delete All">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                             <VBox.margin>
+                                                <Insets bottom="12.0" />
+                                             </VBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="bamCfgCheckbox" mnemonicParsing="false" text="Delete BAM .cfg File">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </CheckBox>
+                                          <CheckBox fx:id="pinVolCheckbox" mnemonicParsing="false" text="Delete PinVol Settings">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </CheckBox>
+                                           <CheckBox fx:id="aliasCheckbox" layoutX="10.0" layoutY="82.0" mnemonicParsing="false" text="Delete VPMAlias.txt Entry">
+                                               <font>
+                                                   <Font size="14.0" />
+                                               </font>
+                                           </CheckBox>
+                                          <CheckBox fx:id="mameConfigCheckbox" mnemonicParsing="false" text="Delete Mame Settings">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </CheckBox>
+                                          <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                             <children>
+                                                <CheckBox fx:id="highscoreCheckbox" mnemonicParsing="false" text="Delete Highscores">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </CheckBox>
+                                                <Label>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip prefWidth="300.0" text="This will delete the highscore history of the game and also reset existing ones." wrapText="true" />
+                                                   </tooltip>
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+                                             </children>
+                                          </HBox>
+                                          <CheckBox fx:id="dmdDeviceIniCheckbox" layoutX="10.0" layoutY="188.0" mnemonicParsing="false" text="Delete DMDDevice.ini Entry">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </CheckBox>
+                                          <CheckBox fx:id="b2sTableSettingsCheckbox" layoutX="10.0" layoutY="188.0" mnemonicParsing="false" text="Delete B2STableSettings.xml Entry">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </CheckBox>
+                                       </children>
+                                    </VBox>
                                  </children>
-                              </VBox>
-                              <VBox spacing="12.0">
-                                 <children>
-                                    <CheckBox fx:id="pinVolCheckbox" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Delete PinVol Settings">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </CheckBox>
-                                    <CheckBox fx:id="pupPackCheckbox" mnemonicParsing="false" text="Delete PUP Pack">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </CheckBox>
-                                    <CheckBox fx:id="dmdCheckbox" mnemonicParsing="false" text="Delete Flex/Ultra DMD Files">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </CheckBox>
-                                    <CheckBox fx:id="mameConfigCheckbox" mnemonicParsing="false" text="Delete Mame Settings">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </CheckBox>
-                                    <CheckBox fx:id="altSoundCheckbox" mnemonicParsing="false" prefHeight="0.0" prefWidth="165.0" text="Delete &quot;altsound&quot; Files">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </CheckBox>
-                                    <CheckBox fx:id="altColorCheckbox" mnemonicParsing="false" text="Delete &quot;altcolor&quot; Files">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </CheckBox>
-                                    <CheckBox fx:id="bamCfgCheckbox" mnemonicParsing="false" text="Delete BAM .cfg Files">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </CheckBox>
-                                 </children>
-                              </VBox>
+                                 <VBox.margin>
+                                    <Insets right="24.0" top="12.0" />
+                                 </VBox.margin>
+                              </HBox>
                            </children>
-                           <VBox.margin>
-                              <Insets top="12.0" />
-                           </VBox.margin>
-                        </HBox>
-                        <VBox />
-                        <HBox alignment="CENTER_LEFT" spacing="6.0">
-                           <children>
-                              <CheckBox fx:id="highscoreCheckbox" mnemonicParsing="false" text="Delete Highscores">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </CheckBox>
-                              <Label>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip prefWidth="300.0" text="This will delete the highscore history of the game and also reset existing ones." wrapText="true" />
-                                 </tooltip>
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                        </HBox>
+                        </VBox>
                      </children>
                      <BorderPane.margin>
                         <Insets />
@@ -220,16 +314,6 @@
                <VBox.margin>
                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                </VBox.margin>
-               <bottom>
-                  <CheckBox fx:id="confirmationCheckbox" mnemonicParsing="false" text="Yes, I know what I'm doing!" BorderPane.alignment="TOP_LEFT">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                     <BorderPane.margin>
-                        <Insets top="24.0" />
-                     </BorderPane.margin>
-                  </CheckBox>
-               </bottom>
             </BorderPane>
             <BorderPane fx:id="validationContainer">
                <top>

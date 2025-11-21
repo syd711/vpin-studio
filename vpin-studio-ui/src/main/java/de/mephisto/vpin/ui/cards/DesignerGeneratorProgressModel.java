@@ -12,15 +12,15 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-public class HighscoreGeneratorProgressModel extends ProgressModel<GameRepresentation> {
-  private final static Logger LOG = LoggerFactory.getLogger(HighscoreGeneratorProgressModel.class);
+public class DesignerGeneratorProgressModel extends ProgressModel<GameRepresentation> {
+  private final static Logger LOG = LoggerFactory.getLogger(DesignerGeneratorProgressModel.class);
   private final Iterator<GameRepresentation> iterator;
   private final List<GameRepresentation> gameInfos;
   private final CardTemplateType templateType;
 
   private final VPinStudioClient client;
 
-  public HighscoreGeneratorProgressModel(VPinStudioClient client, String title, CardTemplateType templateType) {
+  public DesignerGeneratorProgressModel(VPinStudioClient client, String title, CardTemplateType templateType) {
     super(title);
     this.client = client;
     this.gameInfos = client.getGameService().getVpxGamesCached();
@@ -28,7 +28,7 @@ public class HighscoreGeneratorProgressModel extends ProgressModel<GameRepresent
     this.templateType = templateType;
   }
 
-  public HighscoreGeneratorProgressModel(VPinStudioClient client, String title, GameRepresentation game, CardTemplateType templateType) {
+  public DesignerGeneratorProgressModel(VPinStudioClient client, String title, GameRepresentation game, CardTemplateType templateType) {
     super(title);
     this.client = client;
     this.gameInfos = Arrays.asList(game);

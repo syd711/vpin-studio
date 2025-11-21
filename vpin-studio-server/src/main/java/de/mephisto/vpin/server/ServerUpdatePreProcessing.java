@@ -24,7 +24,9 @@ import static de.mephisto.vpin.server.system.SystemService.RESOURCES;
 
 public class ServerUpdatePreProcessing {
   private final static Logger LOG = LoggerFactory.getLogger(ServerUpdatePreProcessing.class);
-  private final static List<String> resources = Arrays.asList("PinVol.exe", "ffmpeg.exe", "jptch.exe", "nircmd.exe", "downloader.vbs", "PupPackScreenTweaker.exe", "puplauncher.exe", "vpxtool.exe", "maintenance.mp4", ScoringDB.SCORING_DB_NAME, "manufacturers/manufacturers.zip");
+  private final static List<String> resources = Arrays.asList("PinVol.exe", "ffmpeg.exe", "jptch.exe", "nircmd.exe",
+      "downloader.vbs", "PupPackScreenTweaker.exe", "puplauncher.exe", "vpxtool.exe", "maintenance.mp4",
+      ScoringDB.SCORING_DB_NAME, "manufacturers/manufacturers.zip", "frames/wheel-black.png", "frames/wheel-tarcissio.png");
   private final static List<String> jvmFiles = Arrays.asList("jinput-dx8_64.dll");
 
   private final static Map<String, Long> PUP_GAMES = new HashMap<>();
@@ -189,8 +191,10 @@ public class ServerUpdatePreProcessing {
     for (String resource : resources) {
       File check = new File(RESOURCES, resource);
       if (!check.exists()) {
-        check.getParentFile().mkdirs();
-        LOG.info("Downloading missing resource file " + check.getAbsolutePath());
+        if (!check.getParentFile().mkdirs()) {
+          LOG.error("Failed to create {}", check.getAbsolutePath());
+        }
+        LOG.info("Downloading missing resource file {}", check.getAbsolutePath());
         Updater.download("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/" + resource, check);
         if (FilenameUtils.getExtension(check.getName()).equalsIgnoreCase("zip")) {
           PackageUtil.unpackTargetFolder(check, check.getParentFile(), null, Collections.emptyList(), null);
@@ -230,13 +234,13 @@ public class ServerUpdatePreProcessing {
         if (!nvramFile.exists()) {
           info.setCount(info.getCount() + 1);
           Updater.download("https://raw.githubusercontent.com/syd711/nvrams/main/" + nvramFile.getName() + "/" + nvramFile.getName(), nvramFile, true);
-          LOG.info("Downloaded nvram file " + nvramFile.getAbsolutePath());
+          LOG.info("Downloaded nvram file {}", nvramFile.getAbsolutePath());
         }
       }
-      LOG.info("Finished NVRam synchronization, there are currently " + nvRams.size() + " resetted nvrams available.");
+      LOG.info("Finished NVRam synchronization, there are currently {} resetted nvrams available.",  nvRams.size());
     }
     catch (IOException e) {
-      LOG.error("Failed to sync nvrams: " + e.getMessage(), e);
+      LOG.error("Failed to sync nvrams: {}", e.getMessage(), e);
     }
 
     return info;

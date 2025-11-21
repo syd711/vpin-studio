@@ -38,7 +38,7 @@ public class B2STableSettingsTest {
     Assertions.assertNotNull(settings);
 
     B2STableSettingsSerializer serializer = new B2STableSettingsSerializer();
-    serializer.serializeXml(settings, b2sFile);
+    serializer.serializeXml(settings, b2sFile, true);
 
     String after = FileUtils.readFileToString(b2sFile, Charset.defaultCharset());
     Assertions.assertEquals(before, after);
@@ -67,7 +67,7 @@ public class B2STableSettingsTest {
     Assertions.assertNotNull(settings);
 
     B2STableSettingsSerializer serializer = new B2STableSettingsSerializer();
-    serializer.serializeXml(settings, b2sFile);
+    serializer.serializeXml(settings, b2sFile, true);
 
     String after = FileUtils.readFileToString(b2sFile, Charset.defaultCharset());
     Assertions.assertEquals(before, after);

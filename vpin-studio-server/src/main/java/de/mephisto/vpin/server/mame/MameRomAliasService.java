@@ -64,6 +64,17 @@ public class MameRomAliasService implements InitializingBean {
     return null;
   }
 
+
+  public boolean deleteAlias(GameEmulator gameEmulator, String romAlias) {
+    if (!StringUtils.isEmpty(romAlias)) {
+      Map<String, String> mapping = loadAliasMapping(gameEmulator, romAlias);
+      saveAliasFile(gameEmulator, mapping);
+      clearCache(gameEmulator);
+      LOG.info("Removed alias entry {}", romAlias);
+    }
+    return true;
+  }
+
   public MonitoredTextFile loadAliasFile(@NonNull GameEmulator emulator) {
     MonitoredTextFile monitoredTextFile = new MonitoredTextFile();
     File vpmAliasFile = getVPMAliasFile(emulator);
@@ -127,7 +138,7 @@ public class MameRomAliasService implements InitializingBean {
     }
   }
 
-  private Map<String, String> loadAliasMapping(@NonNull GameEmulator emulator) {
+  private Map<String, String> loadAliasMapping(@NonNull GameEmulator emulator, @Nullable String skipEntry) {
     Map<String, String> aliasToRomMapping = new HashMap<>();
     File vpmAliasFile = getVPMAliasFile(emulator);
     try {
@@ -138,6 +149,10 @@ public class MameRomAliasService implements InitializingBean {
 
         for (String mapping : mappings) {
           if (mapping.contains(",")) {
+            if (skipEntry != null && mapping.contains(skipEntry)) {
+              continue;
+            }
+
             //the format is <Alias_Name>,<Real_ROM_Name>
             String[] split = mapping.split(",");
             String[] aliases = Arrays.copyOfRange(split, 0, split.length - 1);
@@ -156,23 +171,27 @@ public class MameRomAliasService implements InitializingBean {
   }
 
   public boolean clearCache(List<GameEmulator> gameEmulators) {
-    aliasNamToRom.clear();
     for (GameEmulator gameEmulator : gameEmulators) {
-      if (gameEmulator.isVpxEmulator()) {
-        aliasNamToRom.put(gameEmulator.getId(), loadAliasMapping(gameEmulator));
-      }
+      clearCache(gameEmulator);
+    }
+    return true;
+  }
+
+  private void clearCache(GameEmulator gameEmulator) {
+    aliasNamToRom.remove(gameEmulator.getId());
+    if (gameEmulator.isVpxEmulator()) {
+      aliasNamToRom.put(gameEmulator.getId(), loadAliasMapping(gameEmulator, null));
     }
     LOG.info("Loaded Alias Mappings:");
     Set<Map.Entry<Integer, Map<String, String>>> entries = aliasNamToRom.entrySet();
     for (Map.Entry<Integer, Map<String, String>> entry : entries) {
       LOG.info("Alias Mappings for emulator " + entry.getKey() + ": " + entry.getValue().size());
     }
-    return true;
   }
 
   public void writeAlias(@NonNull GameEmulator gameEmulator, String rom, String alias) {
     if (!StringUtils.isEmpty(rom) && !StringUtils.isEmpty(alias)) {
-      Map<String, String> mapping = loadAliasMapping(gameEmulator);
+      Map<String, String> mapping = loadAliasMapping(gameEmulator, null);
       mapping.put(alias, rom);
       saveAliasFile(gameEmulator, mapping);
       LOG.info("Written alias mapping {},{}", alias, rom);
