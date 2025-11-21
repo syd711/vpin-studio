@@ -68,7 +68,7 @@ public class LayerEditorTableNameController extends LayerEditorBaseController {
     tableUseDefaultColor.setSelected(cardTemplate.isRawScore());
     CardTemplateBinder.setColorPickerValue(tableFontColorSelector, cardTemplate, "tableColor");
 
-    positionController.setTemplate("table", cardTemplate, res);
+    positionController.setTemplate("table", cardTemplate, res, true);
   }
 
   @Override
@@ -93,7 +93,7 @@ public class LayerEditorTableNameController extends LayerEditorBaseController {
     });
     templateBeanBinder.bindColorPicker(tableFontColorSelector, "tableColor");
 
-    positionController.initBindings("table", templateBeanBinder);
+    positionController.initBindings("table", templateBeanBinder, true);
   }
 
   @Override

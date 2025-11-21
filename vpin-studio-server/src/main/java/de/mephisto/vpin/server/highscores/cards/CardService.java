@@ -1,11 +1,11 @@
 package de.mephisto.vpin.server.highscores.cards;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.mephisto.vpin.commons.fx.ImageUtil;
+import de.mephisto.vpin.commons.fx.cards.CardGraphicsHighscore;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.cards.CardData;
-import de.mephisto.vpin.restclient.cards.CardSettings;
-import de.mephisto.vpin.restclient.cards.CardTemplate;
-import de.mephisto.vpin.restclient.cards.CardTemplateType;
-import de.mephisto.vpin.restclient.cards.CardResolution;
+import de.mephisto.vpin.restclient.cards.*;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -17,20 +17,13 @@ import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.frontend.TableStatusChangeListener;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.TableStatusChangedEvent;
-import de.mephisto.vpin.server.highscores.Highscore;
-import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
-import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
-import de.mephisto.vpin.server.highscores.HighscoreService;
-import de.mephisto.vpin.server.highscores.Score;
+import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.mania.ManiaService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vps.VpsService;
-import de.mephisto.vpin.commons.fx.ImageUtil;
-import de.mephisto.vpin.commons.fx.cards.CardGraphicsHighscore;
-import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import org.apache.commons.io.FilenameUtils;
@@ -41,20 +34,14 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import static de.mephisto.vpin.server.VPinStudioServer.Features;
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
+
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 @Service
 public class CardService implements InitializingBean, HighscoreChangeListener, PreferenceChangedListener, TableStatusChangeListener {
@@ -277,7 +264,14 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
 
   public List<String> getImages(String subfolder) {
     File folder = new File(SystemService.RESOURCES, subfolder);
+    if (!folder.exists() && !folder.mkdirs()) {
+      LOG.error("Failed to create image subfolder {}", subfolder);
+    }
+
     File[] files = folder.listFiles((dir, name) -> name.endsWith("jpg") || name.endsWith("png"));
+    if (files == null) {
+      return Collections.emptyList();
+    }
     return Arrays.stream(files).sorted().map(f -> FilenameUtils.getBaseName(f.getName())).collect(Collectors.toList());
   }
 

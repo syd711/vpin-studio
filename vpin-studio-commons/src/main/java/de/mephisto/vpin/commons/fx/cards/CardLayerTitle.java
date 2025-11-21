@@ -17,6 +17,7 @@ public class CardLayerTitle extends CardLayerBaseText {
     textData.fontSIZE = template.getTitleFontSize();
     textData.useDefaultColor = template.isTitleUseDefaultColor();
     textData.fontColor = template.getTitleColor();
+    textData.alignment = template.getTitleAlignment();
     return textData;
   }
 

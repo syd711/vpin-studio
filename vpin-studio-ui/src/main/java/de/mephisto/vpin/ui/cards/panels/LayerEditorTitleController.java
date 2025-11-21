@@ -57,7 +57,7 @@ public class LayerEditorTitleController extends LayerEditorBaseController {
     titleUseDefaultColor.setSelected(cardTemplate.isTitleUseDefaultColor());
     CardTemplateBinder.setColorPickerValue(titleFontColorSelector, cardTemplate, "titleColor");
 
-    positionController.setTemplate("title", cardTemplate, res);
+    positionController.setTemplate("title", cardTemplate, res, true);
   }
 
   @Override
@@ -73,7 +73,7 @@ public class LayerEditorTitleController extends LayerEditorBaseController {
     });
     templateBeanBinder.bindColorPicker(titleFontColorSelector, "titleColor");
 
-    positionController.initBindings("title", templateBeanBinder);
+    positionController.initBindings("title", templateBeanBinder, true);
   }
 
   @Override

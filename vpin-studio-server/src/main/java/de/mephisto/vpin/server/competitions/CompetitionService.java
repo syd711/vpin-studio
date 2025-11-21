@@ -21,7 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -329,7 +332,11 @@ public class CompetitionService implements InitializingBean {
     if (competition.getType().equals(CompetitionType.DISCORD.name())) {
       return discordService.getScoreSummary(this.highscoreParser, competition.getUuid(), serverId, competition.getDiscordChannelId());
     }
-    return highscoreService.getScoreSummary(serverId, gameService.getGame(competition.getGameId()));
+    Game game = gameService.getGame(competition.getGameId());
+    if (game == null) {
+      return new ScoreSummary();
+    }
+    return highscoreService.getScoreSummary(serverId, game);
   }
 
   @Override

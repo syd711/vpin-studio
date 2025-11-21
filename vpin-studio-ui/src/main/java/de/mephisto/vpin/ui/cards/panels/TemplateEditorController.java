@@ -20,7 +20,7 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.cards.DesignMode;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
-import de.mephisto.vpin.ui.cards.HighscoreGeneratorProgressModel;
+import de.mephisto.vpin.ui.cards.DesignerGeneratorProgressModel;
 import de.mephisto.vpin.ui.cards.TemplateAssigmentProgressModel;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.TableDialogs;
@@ -199,7 +199,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       WidgetFactory.showAlert(stage, "No target screen selected.", "Select a target screen in the preferences.");
     }
     else {
-      ProgressDialog.createProgressDialog(new HighscoreGeneratorProgressModel(client, "Generating Cards", getSelectedTemplateType()));
+      ProgressDialog.createProgressDialog(new DesignerGeneratorProgressModel(client, "Generating Media", getSelectedTemplateType()));
     }
   }
 
@@ -503,7 +503,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
         WidgetFactory.showAlert(stage, "Not target screen selected.", "Select a target screen in the preferences.");
       }
       else {
-        ProgressDialog.createProgressDialog(new HighscoreGeneratorProgressModel(client, "Generating Highscore Card", this.gameRepresentation.get(), getSelectedTemplateType()));
+        ProgressDialog.createProgressDialog(new DesignerGeneratorProgressModel(client, "Generating Media", this.gameRepresentation.get(), getSelectedTemplateType()));
       }
       refreshPreview(this.gameRepresentation);
     }
@@ -931,7 +931,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       // call this once width and height have been set
       dragBox.setBounds(0, 0, (int) WIDTH, (int) HEIGHT);
       dragBox.setAcceptOutsidePart(true, 50);
-
+      
       LayerEditorBaseController controller = layerToController(layer);
       controller.bindDragBox(dragBox);
       dragBox.setUserData(layer);

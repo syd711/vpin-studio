@@ -25,6 +25,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -75,6 +77,27 @@ public class TableDeleteController implements Initializable, DialogController {
   private CheckBox confirmationCheckbox;
 
   @FXML
+  private CheckBox deleteAllFilesCheckbox;
+
+  @FXML
+  private CheckBox deleteAllMediaCheckbox;
+
+  @FXML
+  private CheckBox deleteAllSettingsCheckbox;
+
+  @FXML
+  private CheckBox b2sTableSettingsCheckbox;
+
+  @FXML
+  private CheckBox dmdDeviceIniCheckbox;
+
+  @FXML
+  private CheckBox romCheckbox;
+
+  @FXML
+  private CheckBox aliasCheckbox;
+
+  @FXML
   private CheckBox pupPackCheckbox;
 
   @FXML
@@ -114,6 +137,10 @@ public class TableDeleteController implements Initializable, DialogController {
 
   private TableOverviewController tableOverviewController;
 
+  private final List<CheckBox> fileChecks = new ArrayList<>();
+  private final List<CheckBox> settingsChecks = new ArrayList<>();
+  private final List<CheckBox> mediaChecks = new ArrayList<>();
+
   @FXML
   private void onDeleteClick(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
@@ -130,11 +157,15 @@ public class TableDeleteController implements Initializable, DialogController {
     descriptor.setDeleteAltColor(altColorCheckbox.isSelected());
     descriptor.setDeleteCfg(mameConfigCheckbox.isSelected());
     descriptor.setDeletePov(povCheckbox.isSelected());
+    descriptor.setDeleteRom(romCheckbox.isSelected());
     descriptor.setDeleteIni(iniCheckbox.isSelected());
     descriptor.setDeleteRes(resCheckbox.isSelected());
     descriptor.setDeleteVbs(vbsCheckbox.isSelected());
     descriptor.setDeletePinVol(pinVolCheckbox.isSelected());
     descriptor.setDeleteBAMCfg(bamCfgCheckbox.isSelected());
+    descriptor.setDeleteDMDDeviceIni(dmdDeviceIniCheckbox.isSelected());
+    descriptor.setDeleteB2STableSettings(b2sTableSettingsCheckbox.isSelected());
+    descriptor.setDeleteAlias(aliasCheckbox.isSelected());
     descriptor.setKeepAssets(keepAssetsCheckbox.isSelected());
     descriptor.setGameIds(games.stream().map(GameRepresentation::getId).collect(Collectors.toList()));
 
@@ -187,6 +218,14 @@ public class TableDeleteController implements Initializable, DialogController {
       povCheckbox.setSelected(newValue);
       pinVolCheckbox.setSelected(newValue);
       bamCfgCheckbox.setSelected(newValue);
+      dmdDeviceIniCheckbox.setSelected(newValue);
+      b2sTableSettingsCheckbox.setSelected(newValue);
+      aliasCheckbox.setSelected(newValue);
+      romCheckbox.setSelected(newValue);
+
+      deleteAllFilesCheckbox.setSelected(newValue);
+      deleteAllMediaCheckbox.setSelected(newValue);
+      deleteAllSettingsCheckbox.setSelected(newValue);
     });
 
     frontendCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -213,6 +252,35 @@ public class TableDeleteController implements Initializable, DialogController {
     povCheckbox.setSelected(savedSettings.isDeletePov());
     pinVolCheckbox.setSelected(savedSettings.isDeletePinVol());
     bamCfgCheckbox.setSelected(savedSettings.isDeleteBAMCfg());
+    dmdDeviceIniCheckbox.setSelected(savedSettings.isDeleteDMDDeviceIni());
+    b2sTableSettingsCheckbox.setSelected(savedSettings.isDeleteB2STableSettings());
+    aliasCheckbox.setSelected(savedSettings.isDeleteAlias());
+    romCheckbox.setSelected(savedSettings.isDeleteRom());
+
+    fileChecks.addAll(Arrays.asList(vpxFileCheckbox, directb2sCheckbox, vbsCheckbox, iniCheckbox, povCheckbox, resCheckbox, romCheckbox));
+    mediaChecks.addAll(Arrays.asList(pupPackCheckbox, dmdCheckbox, altColorCheckbox, altSoundCheckbox, musicCheckbox));
+    settingsChecks.addAll(Arrays.asList(bamCfgCheckbox, pinVolCheckbox, mameConfigCheckbox, highscoreCheckbox, aliasCheckbox, dmdDeviceIniCheckbox, b2sTableSettingsCheckbox));
+
+    deleteAllFilesCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        fileChecks.stream().forEach(c -> c.setSelected(newValue));
+      }
+    });
+
+    deleteAllMediaCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        mediaChecks.stream().forEach(c -> c.setSelected(newValue));
+      }
+    });
+
+    deleteAllSettingsCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        settingsChecks.stream().forEach(c -> c.setSelected(newValue));
+      }
+    });
   }
 
   @Override
@@ -252,9 +320,9 @@ public class TableDeleteController implements Initializable, DialogController {
   }
 
   private void refreshVariantsCheck(List<GameRepresentation> selectedGames, List<GameRepresentation> allGames) {
-    boolean hasNonSelectedVariant = false;
+    boolean variantExists = false;
     for (GameRepresentation selectedGame : selectedGames) {
-      if (hasNonSelectedVariant) {
+      if (variantExists) {
         break;
       }
 
@@ -263,7 +331,7 @@ public class TableDeleteController implements Initializable, DialogController {
         List<GameRepresentation> variants = allGames.stream().filter(g -> rom.equalsIgnoreCase(g.getRom())).collect(Collectors.toList());
         for (GameRepresentation variant : variants) {
           if (!selectedGames.contains(variant)) {
-            hasNonSelectedVariant = true;
+            variantExists = true;
             this.validationContainer.setVisible(true);
             this.validationTitle.setVisible(true);
             break;
@@ -272,13 +340,22 @@ public class TableDeleteController implements Initializable, DialogController {
       }
     }
 
-    this.deleteAllCheckbox.setDisable(hasNonSelectedVariant);
-    pupPackCheckbox.setDisable(hasNonSelectedVariant);
-    dmdCheckbox.setDisable(hasNonSelectedVariant);
-    musicCheckbox.setDisable(hasNonSelectedVariant);
-    mameConfigCheckbox.setDisable(hasNonSelectedVariant);
-    highscoreCheckbox.setDisable(hasNonSelectedVariant);
-    altSoundCheckbox.setDisable(hasNonSelectedVariant);
-    altColorCheckbox.setDisable(hasNonSelectedVariant);
+    updateDisabled(deleteAllCheckbox, variantExists);
+    updateDisabled(dmdCheckbox, variantExists);
+    updateDisabled(musicCheckbox, variantExists);
+    updateDisabled(mameConfigCheckbox, variantExists);
+    updateDisabled(highscoreCheckbox, variantExists);
+    updateDisabled(altSoundCheckbox, variantExists);
+    updateDisabled(altColorCheckbox, variantExists);
+    updateDisabled(dmdDeviceIniCheckbox, variantExists);
+    updateDisabled(b2sTableSettingsCheckbox, variantExists);
+    updateDisabled(romCheckbox, variantExists);
+  }
+
+  private void updateDisabled(CheckBox checkBox, boolean variantExists) {
+    if (variantExists) {
+      checkBox.setSelected(false);
+      checkBox.setDisable(true);
+    }
   }
 }

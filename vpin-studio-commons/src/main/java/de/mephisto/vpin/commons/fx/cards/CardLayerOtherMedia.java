@@ -9,8 +9,13 @@ import de.mephisto.vpin.restclient.cards.CardTemplate;
 public class CardLayerOtherMedia extends CardLayerBaseImage {
 
   @Override
-  protected boolean keepAspectRatio(@Nonnull CardTemplate template) {
+  public boolean keepAspectRatio(@Nonnull CardTemplate template) {
     return template.isOtherMediaKeepAspectRatio();
+  }
+
+  @Override
+  protected int getAlignment(@Nonnull CardTemplate template) {
+    return template.getOtherMediaAlignment();
   }
 
   @Override
