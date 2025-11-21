@@ -3,8 +3,6 @@ package de.mephisto.vpin.ui.players;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.commons.utils.JFXFuture;
-import de.mephisto.vpin.connectors.mania.model.Account;
-import de.mephisto.vpin.connectors.mania.model.TableScore;
 import de.mephisto.vpin.connectors.mania.model.TableScoreDetails;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -28,7 +26,6 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.getScoreFont;
 import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.maniaClient;
 
 public class WidgetPlayerScoreController extends WidgetController implements Initializable {
 
@@ -68,9 +65,12 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
       return frontendMedia.getDefaultMediaItem(VPinScreen.Wheel);
     }).thenAcceptLater(item -> {
       if (item != null) {
-        ByteArrayInputStream gameMediaItem = ServerFX.client.getWheelIcon(game.getId(), true);
-        Image image = new Image(gameMediaItem);
-        wheelImageView.setImage(image);
+        JFXFuture.supplyAsync(() -> {
+          return ServerFX.client.getWheelIcon(game.getId(), true);
+        }).thenAcceptLater(byteStream -> {
+          Image image = new Image(byteStream);
+          wheelImageView.setImage(image);
+        });
       }
       else {
         Image wheel = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
@@ -88,11 +88,15 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
       String date = DateFormat.getDateTimeInstance().format(score.getCreatedAt());
       changeDateLabel.setText("Updated: " + date);
 
-      Image backgroundImage = new Image(ServerFX.client.getCompetitionBackground(game.getId()));
-      BackgroundImage myBI = new BackgroundImage(backgroundImage,
-          BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
-          BackgroundSize.DEFAULT);
-      rootStack.setBackground(new Background(myBI));
+      JFXFuture.supplyAsync(() -> {
+        return ServerFX.client.getCompetitionBackground(game.getId());
+      }).thenAcceptLater(byteStream -> {
+        Image backgroundImage = new Image(byteStream);
+        BackgroundImage myBI = new BackgroundImage(backgroundImage,
+            BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+            BackgroundSize.DEFAULT);
+        rootStack.setBackground(new Background(myBI));
+      });
     });
   }
 

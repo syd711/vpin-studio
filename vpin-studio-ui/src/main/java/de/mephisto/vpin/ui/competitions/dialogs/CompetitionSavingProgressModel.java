@@ -40,7 +40,7 @@ public class CompetitionSavingProgressModel extends ProgressModel<CompetitionRep
 
   @Override
   public boolean isIndeterminate() {
-    return false;
+    return competitions.size() == 1;
   }
 
   @Override
