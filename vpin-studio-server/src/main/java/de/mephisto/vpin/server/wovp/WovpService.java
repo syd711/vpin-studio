@@ -68,7 +68,8 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
 
     CompetitionScore score = new CompetitionScore();
     score.setChallengeImageUrl(backgroundImageUrl);
-    score.setAvatarUrl("https://www.vpin-mania.net/flags/" + values.getParticipantCountryCode().toLowerCase() + ".png");
+    score.setFlagUrl("https://www.vpin-mania.net/flags/" + values.getParticipantCountryCode().toLowerCase() + ".png");
+    score.setAvatarUrl(values.getParticipantProfilePicture());
     score.setLeague(values.getParticipantDivision());
     score.setRank(values.getPosition());
     score.setParticipantName(values.getParticipantName());

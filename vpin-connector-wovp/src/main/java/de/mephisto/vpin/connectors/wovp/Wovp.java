@@ -48,20 +48,6 @@ public class Wovp {
     return doPost(json, Challenges.class);
   }
 
-  public Participant getUser(@NonNull String uuid) {
-    try {
-      String query = "{\"filters\":{\"userId\":\"" + uuid + "\"},\"expands\":[\"user.roles\",\"user.profile\"]}";
-      Participants participants = doPost(query, Participants.class);
-      for (Participant item : participants.getItems()) {
-        return item;
-      }
-    }
-    catch (Exception e) {
-      LOG.error("Failed to load user profile: {}", e.getMessage(), e);
-    }
-    return null;
-  }
-
   public String validateKey() {
     if (apiKey != null) {
       HttpClient client = HttpClient.newBuilder().build();

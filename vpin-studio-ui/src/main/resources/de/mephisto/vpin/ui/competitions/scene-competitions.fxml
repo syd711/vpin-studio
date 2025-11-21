@@ -67,7 +67,7 @@
                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-check" />
                                     </graphic>
                                 </Tab>
-                                <Tab fx:id="weeklySubscriptionsTab" closable="false" text="Weekly Challenge">
+                                <Tab fx:id="weeklySubscriptionsTab" closable="false" text="Weekly Challenges">
                                     <content>
                                         <BorderPane prefHeight="200.0" prefWidth="200.0" />
                                     </content>

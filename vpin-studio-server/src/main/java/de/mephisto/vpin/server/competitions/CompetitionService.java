@@ -113,7 +113,7 @@ public class CompetitionService implements InitializingBean {
 
   public List<Competition> getFinishedCompetitions(int limit) {
     List<Competition> competitions = competitionsRepository.findByWinnerInitialsIsNotNull();
-    if (competitions.size() > limit) {
+    if (competitions.size() > limit && limit > 0) {
       return competitions.subList(0, limit);
     }
     return competitions;
@@ -277,6 +277,16 @@ public class CompetitionService implements InitializingBean {
     return Collections.emptyList();
   }
 
+  public List<Competition> getFinishedByDateCompetitions() {
+    try {
+      return competitionsRepository.findByEndDateLessThanEqual(new Date());
+    }
+    catch (Exception e) {
+      LOG.error("Failed to read active competitions: " + e.getMessage());
+    }
+    return Collections.emptyList();
+  }
+
   public Competition getActiveCompetition(CompetitionType competitionType) {
     List<Competition> result = competitionsRepository.findByAndWinnerInitialsIsNullAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndType(new Date(), new Date(), competitionType.name());
     if (!result.isEmpty()) {
@@ -325,7 +335,6 @@ public class CompetitionService implements InitializingBean {
   @Override
   public void afterPropertiesSet() throws Exception {
     scheduler.scheduleAtFixedRate(new CompetitionCheckRunnable(this), 1000 * 60 * 2);
-
 
 
     try {

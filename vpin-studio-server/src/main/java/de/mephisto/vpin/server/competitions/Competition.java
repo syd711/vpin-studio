@@ -284,6 +284,10 @@ public class Competition {
   }
 
   public boolean isActive() {
+    if (getType().equals(CompetitionType.WEEKLY.name())) {
+      return true;
+    }
+
     if (!StringUtils.isEmpty(getWinnerInitials())) {
       return false;
     }

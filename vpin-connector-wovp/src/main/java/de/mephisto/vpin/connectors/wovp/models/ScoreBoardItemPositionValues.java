@@ -36,8 +36,19 @@ public class ScoreBoardItemPositionValues {
   @JsonProperty("ParticipantPlayingPlatform")
   private int participantPlayingPlatform;
 
+  @JsonProperty("ParticipantProfilePicture")
+  private String participantProfilePicture;
+
   @JsonProperty("ParticipantCountryCode")
   private String participantCountryCode;
+
+  public String getParticipantProfilePicture() {
+    return participantProfilePicture;
+  }
+
+  public void setParticipantProfilePicture(String participantProfilePicture) {
+    this.participantProfilePicture = participantProfilePicture;
+  }
 
   public String getParticipantCountryCode() {
     return participantCountryCode;

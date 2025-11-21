@@ -15,11 +15,10 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
-import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.competitions.dialogs.GameRoomCellContainer;
-import de.mephisto.vpin.ui.competitions.dialogs.IScoredGameCellContainer;
+import de.mephisto.vpin.ui.competitions.dialogs.VpsGameCellContainer;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
@@ -449,7 +448,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
         return new SimpleObjectProperty<>(fallbackLabel);
       }
 
-      return new SimpleObjectProperty(new IScoredGameCellContainer(value.getMatches(), vpsTable, getLabelCss(cellData.getValue())));
+      return new SimpleObjectProperty(new VpsGameCellContainer(value.getMatches(), vpsTable, getLabelCss(cellData.getValue())));
     });
 
     vpsTableColumn.setCellValueFactory(cellData -> {

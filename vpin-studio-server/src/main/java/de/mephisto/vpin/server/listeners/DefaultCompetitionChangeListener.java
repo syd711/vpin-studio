@@ -21,7 +21,7 @@ abstract public class DefaultCompetitionChangeListener implements CompetitionCha
    * to any competition anymore.
    */
   protected void runCheckedDeAugmentation(CompetitionService competitionService, GameService gameService, FrontendStatusService frontendStatusService) {
-    List<Integer> competedGameIds = competitionService.getActiveCompetitions().stream().map(Competition::getGameId).collect(Collectors.toList());
+    List<Integer> competedGameIds = competitionService.getFinishedByDateCompetitions().stream().map(Competition::getGameId).collect(Collectors.toList());
     for (Integer competedGameId : competedGameIds) {
       Game game = gameService.getGame(competedGameId);
       if (game != null) {

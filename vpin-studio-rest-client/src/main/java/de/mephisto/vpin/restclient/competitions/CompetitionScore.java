@@ -7,6 +7,7 @@ public class CompetitionScore {
   private String participantId;
   private String participantName;
   private String participantCountryCode;
+  private String flagUrl;
   private double score;
   private int rank;
   private String avatarUrl;
@@ -14,6 +15,14 @@ public class CompetitionScore {
   private String league;
   private int platform;
   private Date creationDate;
+
+  public String getFlagUrl() {
+    return flagUrl;
+  }
+
+  public void setFlagUrl(String flagUrl) {
+    this.flagUrl = flagUrl;
+  }
 
   public String getParticipantCountryCode() {
     return participantCountryCode;

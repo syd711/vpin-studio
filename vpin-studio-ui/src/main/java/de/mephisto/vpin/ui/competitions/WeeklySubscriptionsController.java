@@ -10,7 +10,7 @@ import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.restclient.wovp.WOVPSettings;
 import de.mephisto.vpin.ui.*;
-import de.mephisto.vpin.ui.competitions.dialogs.IScoredGameCellContainer;
+import de.mephisto.vpin.ui.competitions.dialogs.VpsGameCellContainer;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
@@ -100,9 +100,9 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
   private void onOpenTable(ActionEvent e) {
     WeeklyCompetitionModel value = tableView.getSelectionModel().getSelectedItem();
     if (value != null) {
-      List<GameRepresentation> matches = value.getMatches();
-      if (!matches.isEmpty()) {
-        NavigationController.navigateTo(NavigationItem.Tables, new NavigationOptions(matches.get(0).getId()));
+      GameRepresentation game = value.getGame();
+      if (game != null) {
+        NavigationController.navigateTo(NavigationItem.Tables, new NavigationOptions(game.getId()));
       }
     }
   }
@@ -111,9 +111,9 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
   private void onTableDataManager(ActionEvent e) {
     WeeklyCompetitionModel value = tableView.getSelectionModel().getSelectedItem();
     if (value != null) {
-      List<GameRepresentation> matches = value.getMatches();
-      if (!matches.isEmpty()) {
-        TableDialogs.openTableDataDialog(null, matches.get(0));
+      GameRepresentation game = value.getGame();
+      if (game != null) {
+        TableDialogs.openTableDataDialog(null, game);
       }
     }
   }
@@ -218,14 +218,14 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
         return new SimpleObjectProperty<>(fallbackLabel);
       }
 
-      if (value.getMatches().isEmpty()) {
+      if (value.getGame() == null) {
         fallbackLabel.setStyle(ERROR_STYLE);
         fallbackLabel.setText("No matching table found.");
         fallbackLabel.setTooltip(new Tooltip("No matching table found. Download and install this table using the download link."));
         return new SimpleObjectProperty<>(fallbackLabel);
       }
 
-      return new SimpleObjectProperty(new IScoredGameCellContainer(value.getMatches(), vpsTable, getLabelCss(cellData.getValue())));
+      return new SimpleObjectProperty(new VpsGameCellContainer(Arrays.asList(value.game), vpsTable, getLabelCss(cellData.getValue())));
     });
 
     vpsTableColumn.setCellValueFactory(cellData -> {
@@ -398,8 +398,8 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
       newSelection = model.get();
     }
 
-    tableNavigateBtn.setDisable(model.isEmpty() || model.get().getMatches().isEmpty());
-    dataManagerBtn.setDisable(model.isEmpty() || model.get().getMatches().isEmpty());
+    tableNavigateBtn.setDisable(model.isEmpty() || model.get().getGame() == null);
+    dataManagerBtn.setDisable(model.isEmpty() || model.get().getGame() == null);
 
     competitionsController.setCompetition(model.isPresent() ? model.get().competition : null);
 
@@ -420,9 +420,9 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
   private void onMouseClick(MouseEvent e) {
     if (e.getClickCount() == 2) {
       if (getSelection().isPresent()) {
-        WeeklyCompetitionModel gameRoomGameModel = getSelection().get();
-        if (!gameRoomGameModel.getMatches().isEmpty()) {
-          TableDialogs.openTableDataDialog(null, gameRoomGameModel.getMatches().get(0));
+        WeeklyCompetitionModel competitionModel = getSelection().get();
+        if (competitionModel.getGame() != null) {
+          TableDialogs.openTableDataDialog(null, competitionModel.game);
         }
       }
     }
@@ -475,18 +475,19 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
 
   static class WeeklyCompetitionModel {
     private final CompetitionRepresentation competition;
-    private final List<GameRepresentation> matches = new ArrayList<>();
+    private GameRepresentation game;
 
     public WeeklyCompetitionModel(CompetitionRepresentation competition) {
       this.competition = competition;
+      this.game = client.getGameService().getGame(competition.getGameId());
     }
 
     public String getName() {
       return competition.getName();
     }
 
-    public List<GameRepresentation> getMatches() {
-      return matches;
+    public GameRepresentation getGame() {
+      return game;
     }
 
     public String getVpsTableId() {

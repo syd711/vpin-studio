@@ -55,6 +55,8 @@ public class WidgetWeeklyCompetitionScoreItemController extends WidgetController
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    positionLabel.managedProperty().bindBidirectional(positionLabel.visibleProperty());
+    scoreLabel.managedProperty().bindBidirectional(scoreLabel.visibleProperty());
   }
 
   public void setData(CompetitionScore score) {
@@ -80,18 +82,28 @@ public class WidgetWeeklyCompetitionScoreItemController extends WidgetController
       avatarImageView.setClip(clip);
     });
 
-    positionLabel.setText("#" + score.getRank());
+    if (score.getRank() > 0) {
+      positionLabel.setText("#" + score.getRank());
+    }
+    else {
+      positionLabel.setVisible(false);
+    }
     nameLabel.setText(score.getParticipantName());
 
-    Font scoreFont = getScoreFont();
-    scoreLabel.setFont(scoreFont);
+    if (score.getScore() > 0) {
+      Font scoreFont = getScoreFont();
+      scoreLabel.setFont(scoreFont);
+      long l = new Double(score.getScore()).longValue();
+      scoreLabel.setText(ScoreFormatUtil.formatScore(l, Locale.getDefault()));
+    }
+    else {
+      scoreLabel.setVisible(false);
+    }
 
-    long l = new Double(score.getScore()).longValue();
-    scoreLabel.setText(ScoreFormatUtil.formatScore(l, Locale.getDefault()));
     changeDateLabel.setText(score.getLeague() != null ? score.getLeague() : "");
 
     JFXFuture.supplyAsync(() -> {
-      Image backgroundImage = new Image(client.getCachedUrlImage(score.getAvatarUrl()));
+      Image backgroundImage = new Image(client.getCachedUrlImage(score.getFlagUrl()));
       BufferedImage bufferedImage = SwingFXUtils.fromFXImage(backgroundImage, null);
       Color end = new Color(0f, 0f, 0f, .1f);
       Color start = Color.decode("#111111");

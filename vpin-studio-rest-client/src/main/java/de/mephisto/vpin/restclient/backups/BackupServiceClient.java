@@ -31,7 +31,7 @@ public class BackupServiceClient extends VPinStudioClientService {
 
   private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-  private final List<BackupDescriptorRepresentation> backupsCached = new ArrayList<>();
+  private List<BackupDescriptorRepresentation> backupsCached = new ArrayList<>();
 
   public BackupServiceClient(VPinStudioClient client) {
     super(client);
@@ -42,10 +42,16 @@ public class BackupServiceClient extends VPinStudioClientService {
   }
 
   public List<BackupDescriptorRepresentation> getBackups() {
-    if (backupsCached.isEmpty()) {
-      backupsCached.addAll(Arrays.asList(getRestClient().get(API + "backups", BackupDescriptorRepresentation[].class)));
+    if (backupsCached == null) {
+      clearCache();
     }
     return backupsCached;
+  }
+
+  private boolean clearCache() {
+    backupsCached = new ArrayList<>();
+    backupsCached.addAll(Arrays.asList(getRestClient().get(API + "backups", BackupDescriptorRepresentation[].class)));
+    return true;
   }
 
   public List<BackupSourceRepresentation> getBackupSources() {
@@ -53,8 +59,8 @@ public class BackupServiceClient extends VPinStudioClientService {
   }
 
   public boolean deleteBackup(long sourceId, String filename) {
-    backupsCached.clear();
-    return getRestClient().delete(API + "backups/" + sourceId + "/" + filename);
+    getRestClient().delete(API + "backups/" + sourceId + "/" + filename);
+    return clearCache();
   }
 
   public boolean deleteBackupSource(long id) {
@@ -63,8 +69,9 @@ public class BackupServiceClient extends VPinStudioClientService {
 
   public BackupSourceRepresentation saveBackupSource(BackupSourceRepresentation source) throws Exception {
     try {
-      backupsCached.clear();
-      return getRestClient().post(API + "backups/save", source, BackupSourceRepresentation.class);
+      BackupSourceRepresentation backup = getRestClient().post(API + "backups/save", source, BackupSourceRepresentation.class);
+      clearCache();
+      return backup;
     }
     catch (Exception e) {
       LOG.error("Failed to save archive source: " + e.getMessage(), e);
@@ -77,8 +84,8 @@ public class BackupServiceClient extends VPinStudioClientService {
   }
 
   public boolean invalidateBackupCache() {
-    this.backupsCached.clear();
-    return getRestClient().get(API + "backups/invalidate", Boolean.class);
+    getRestClient().get(API + "backups/invalidate", Boolean.class);
+    return clearCache();
   }
 
   public JobDescriptor uploadBackup(File file, int repositoryId, FileUploadProgressListener listener) throws Exception {

@@ -3,7 +3,6 @@ package de.mephisto.vpin.ui.competitions.dialogs;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import javafx.geometry.Insets;
 import javafx.geometry.NodeOrientation;
@@ -20,9 +19,9 @@ import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class IScoredGameCellContainer extends HBox {
+public class VpsGameCellContainer extends HBox {
 
-  public IScoredGameCellContainer(List<GameRepresentation> games, VpsTable vpsTable, String customStyles) {
+  public VpsGameCellContainer(List<GameRepresentation> games, VpsTable vpsTable, String customStyles) {
     super(3);
 
     setPadding(new Insets(3, 0, 6, 0));
