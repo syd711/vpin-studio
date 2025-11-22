@@ -1,3 +1,12 @@
+## Release Notes 4.4.1
+
+## Changes
+
+- Added some blind fixes for possible errors in the "Table Subscriptions" view.
+- Added missing logo index file (which fixes empty search results for logos).
+
+---
+
 ## Release Notes 4.4.0
 
 ## Changes

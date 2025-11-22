@@ -26,7 +26,7 @@ public class ServerUpdatePreProcessing {
   private final static Logger LOG = LoggerFactory.getLogger(ServerUpdatePreProcessing.class);
   private final static List<String> resources = Arrays.asList("PinVol.exe", "ffmpeg.exe", "jptch.exe", "nircmd.exe",
       "downloader.vbs", "PupPackScreenTweaker.exe", "puplauncher.exe", "vpxtool.exe", "maintenance.mp4",
-      ScoringDB.SCORING_DB_NAME, "manufacturers/manufacturers.zip", "frames/wheel-black.png", "frames/wheel-tarcissio.png");
+      ScoringDB.SCORING_DB_NAME, "manufacturers/manufacturers.zip", "logos.txt", "frames/wheel-black.png", "frames/wheel-tarcissio.png");
   private final static List<String> jvmFiles = Arrays.asList("jinput-dx8_64.dll");
 
   private final static Map<String, Long> PUP_GAMES = new HashMap<>();

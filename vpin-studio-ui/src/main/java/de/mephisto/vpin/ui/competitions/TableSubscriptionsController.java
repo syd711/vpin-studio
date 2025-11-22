@@ -221,9 +221,9 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
           help, help2, "Delete Subscription");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
-        ProgressDialog.createProgressDialog(new WaitProgressModel<>("Delete Subscription", 
-          "Deleting Subscription " + selection.getName(), 
-          () -> client.getCompetitionService().deleteCompetition(selection)));
+        ProgressDialog.createProgressDialog(new WaitProgressModel<>("Delete Subscription",
+            "Deleting Subscription " + selection.getName(),
+            () -> client.getCompetitionService().deleteCompetition(selection)));
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Table Subscriptions"));
         onReload();
       }
@@ -317,99 +317,123 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
     }
 
     columnName.setCellValueFactory(cellData -> {
-      CompetitionRepresentation value = cellData.getValue();
-      Label label = new Label(value.getName());
-      label.getStyleClass().add("default-text");
-      label.setStyle(getLabelCss(value));
-      return new SimpleObjectProperty(label);
+      try {
+        CompetitionRepresentation value = cellData.getValue();
+        Label label = new Label(value.getName());
+        label.getStyleClass().add("default-text");
+        label.setStyle(getLabelCss(value));
+        return new SimpleObjectProperty(label);
+      }
+      catch (Exception e) {
+        LOG.error("Failed to render table column: {}", e.getMessage(), e);
+        return new SimpleObjectProperty(new Label("Error: " + e.getMessage()));
+      }
     });
 
 
     columnTable.setCellValueFactory(cellData -> {
-      CompetitionRepresentation value = cellData.getValue();
-      GameRepresentation game = client.getGameCached(value.getGameId());
-      Label label = new Label("- not available anymore -");
-      label.getStyleClass().add("default-text");
-      label.setStyle(getLabelCss(value));
-      if (game != null) {
-        label = new Label(game.getGameDisplayName());
+      try {
+        CompetitionRepresentation value = cellData.getValue();
+        GameRepresentation game = client.getGameCached(value.getGameId());
+        Label label = new Label("- not available anymore -");
         label.getStyleClass().add("default-text");
-      }
-
-      HBox hBox = new HBox(6);
-      hBox.setAlignment(Pos.CENTER_LEFT);
-
-      Image image = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
-      ByteArrayInputStream gameMediaItem = ServerFX.client.getWheelIcon(game.getId(), true);
-      if (gameMediaItem != null) {
-        image = new Image(gameMediaItem);
-      }
-      ImageView view = new ImageView(image);
-      view.setPreserveRatio(true);
-      view.setSmooth(true);
-      view.setFitWidth(60);
-      view.setFitHeight(60);
-      hBox.getChildren().addAll(view, label);
-
-      return new SimpleObjectProperty(hBox);
-    });
-
-    columnServer.setCellValueFactory(cellData -> {
-      CompetitionRepresentation value = cellData.getValue();
-
-      HBox hBox = new HBox(6);
-      hBox.setAlignment(Pos.CENTER_LEFT);
-
-      DiscordServer discordServer = client.getDiscordServer(value.getDiscordServerId());
-      if (discordServer != null) {
-        String avatarUrl = discordServer.getAvatarUrl();
-        Image image = null;
-        if (avatarUrl == null) {
-          image = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
+        label.setStyle(getLabelCss(value));
+        if (game != null) {
+          label = new Label(game.getGameDisplayName());
+          label.getStyleClass().add("default-text");
         }
-        else {
-          image = new Image(avatarUrl);
+
+        HBox hBox = new HBox(6);
+        hBox.setAlignment(Pos.CENTER_LEFT);
+
+        Image image = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
+        ByteArrayInputStream gameMediaItem = ServerFX.client.getWheelIcon(game.getId(), true);
+        if (gameMediaItem != null) {
+          image = new Image(gameMediaItem);
         }
         ImageView view = new ImageView(image);
         view.setPreserveRatio(true);
-        view.setFitWidth(50);
-        view.setFitHeight(50);
-
-        CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
-        Label label = new Label(discordServer.getName());
-        label.getStyleClass().add("default-text");
-        label.setStyle(getLabelCss(value));
+        view.setSmooth(true);
+        view.setFitWidth(60);
+        view.setFitHeight(60);
         hBox.getChildren().addAll(view, label);
-      }
 
-      return new SimpleObjectProperty(hBox);
+        return new SimpleObjectProperty(hBox);
+      }
+      catch (Exception e) {
+        LOG.error("Failed to render table column: {}", e.getMessage(), e);
+        return new SimpleObjectProperty(new Label("Error: " + e.getMessage()));
+      }
+    });
+
+    columnServer.setCellValueFactory(cellData -> {
+      try {
+        CompetitionRepresentation value = cellData.getValue();
+
+        HBox hBox = new HBox(6);
+        hBox.setAlignment(Pos.CENTER_LEFT);
+
+        DiscordServer discordServer = client.getDiscordServer(value.getDiscordServerId());
+        if (discordServer != null) {
+          String avatarUrl = discordServer.getAvatarUrl();
+          Image image = null;
+          if (avatarUrl == null) {
+            image = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
+          }
+          else {
+            image = new Image(avatarUrl);
+          }
+          ImageView view = new ImageView(image);
+          view.setPreserveRatio(true);
+          view.setFitWidth(50);
+          view.setFitHeight(50);
+
+          CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
+          Label label = new Label(discordServer.getName());
+          label.getStyleClass().add("default-text");
+          label.setStyle(getLabelCss(value));
+          hBox.getChildren().addAll(view, label);
+        }
+
+        return new SimpleObjectProperty(hBox);
+      }
+      catch (Exception e) {
+        LOG.error("Failed to render table column: {}", e.getMessage(), e);
+        return new SimpleObjectProperty(new Label("Error: " + e.getMessage()));
+      }
     });
 
     columnCompetitionOwner.setCellValueFactory(cellData -> {
-      CompetitionRepresentation value = cellData.getValue();
+      try {
+        CompetitionRepresentation value = cellData.getValue();
 
-      HBox hBox = new HBox(6);
-      hBox.setAlignment(Pos.CENTER_LEFT);
-      PlayerRepresentation discordPlayer = client.getDiscordService().getDiscordPlayer(value.getDiscordServerId(), Long.valueOf(value.getOwner()));
-      if (discordPlayer != null) {
-        InputStream cachedUrlImage = client.getCachedUrlImage(discordPlayer.getAvatarUrl());
-        if (cachedUrlImage == null) {
-          cachedUrlImage = Studio.class.getResourceAsStream("avatar-blank.png");
+        HBox hBox = new HBox(6);
+        hBox.setAlignment(Pos.CENTER_LEFT);
+        PlayerRepresentation discordPlayer = client.getDiscordService().getDiscordPlayer(value.getDiscordServerId(), Long.valueOf(value.getOwner()));
+        if (discordPlayer != null) {
+          InputStream cachedUrlImage = client.getCachedUrlImage(discordPlayer.getAvatarUrl());
+          if (cachedUrlImage == null) {
+            cachedUrlImage = Studio.class.getResourceAsStream("avatar-blank.png");
+          }
+          Image image = new Image(cachedUrlImage);
+          ImageView view = new ImageView();
+          view.setPreserveRatio(true);
+          view.setFitWidth(50);
+          view.setFitHeight(50);
+          CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
+
+          Label label = new Label(discordPlayer.getName());
+          label.getStyleClass().add("default-text");
+          label.setStyle(getLabelCss(value));
+          hBox.getChildren().addAll(view, label);
         }
-        Image image = new Image(cachedUrlImage);
-        ImageView view = new ImageView();
-        view.setPreserveRatio(true);
-        view.setFitWidth(50);
-        view.setFitHeight(50);
-        CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
 
-        Label label = new Label(discordPlayer.getName());
-        label.getStyleClass().add("default-text");
-        label.setStyle(getLabelCss(value));
-        hBox.getChildren().addAll(view, label);
+        return new SimpleObjectProperty(hBox);
       }
-
-      return new SimpleObjectProperty(hBox);
+      catch (Exception e) {
+        LOG.error("Failed to render table column: {}", e.getMessage(), e);
+        return new SimpleObjectProperty(new Label("Error: " + e.getMessage()));
+      }
     });
 
     tableView.setPlaceholder(new Label("                      Try table subscriptions!\n" +
