@@ -1,3 +1,11 @@
+## Release Notes 4.4.2
+
+## Changes
+
+- Fixed saving the view state of the Table Data Manager dialog.
+
+---
+
 ## Release Notes 4.4.1
 
 ## Changes

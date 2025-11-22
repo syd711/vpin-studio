@@ -1,6 +1,8 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.commons.fx.DialogHeaderController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.matcher.VpsMatch;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
@@ -785,29 +787,29 @@ public class TableDataController extends BasePrevNextController implements AutoC
     gameName.setDisable(Features.IS_STANDALONE);
 
     tableDetailsBinder.bindTextField(gameFileName, "gameFileName", (observable, oldValue, newValue) -> {
-        if (oldValue != null && oldValue.contains("\\") && !newValue.contains("\\")) {
-          gameFileName.setText(oldValue);
+      if (oldValue != null && oldValue.contains("\\") && !newValue.contains("\\")) {
+        gameFileName.setText(oldValue);
+        return;
+      }
+
+      if (oldValue != null && oldValue.contains("\\")) {
+        String oldGameFileName = tableDetailsBinder.getProperty("gameFileName", null);
+        String oldBase = oldGameFileName != null ? oldGameFileName.substring(0, oldGameFileName.indexOf("\\") + 1) : null;
+        String newBase = newValue.substring(0, newValue.indexOf("\\") + 1);
+        if (!newBase.equals(oldBase)) {
+          String name = newValue.substring(newValue.indexOf("\\") + 1);
+          gameFileName.setText(oldBase + name);
           return;
         }
+      }
 
-        if (oldValue != null && oldValue.contains("\\")) {
-          String oldGameFileName = tableDetailsBinder.getProperty("gameFileName", null);
-          String oldBase = oldGameFileName != null? oldGameFileName.substring(0, oldGameFileName.indexOf("\\") + 1) : null;
-          String newBase = newValue.substring(0, newValue.indexOf("\\") + 1);
-          if (!newBase.equals(oldBase)) {
-            String name = newValue.substring(newValue.indexOf("\\") + 1);
-            gameFileName.setText(oldBase + name);
-            return;
-          }
-        }
-
-        if (FileUtils.isValidFilenameWithPath(newValue)) {
-          tableDetailsBinder.setProperty("gameFileName", newValue);
-        }
-        else {
-          gameFileName.setText(oldValue);
-        }
-      });
+      if (FileUtils.isValidFilenameWithPath(newValue)) {
+        tableDetailsBinder.setProperty("gameFileName", newValue);
+      }
+      else {
+        gameFileName.setText(oldValue);
+      }
+    });
 
     tableDetailsBinder.bindTextField(gameDisplayName, "gameDisplayName");
     gameDisplayName.setDisable(Features.IS_STANDALONE);
@@ -887,9 +889,9 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
     tableDetailsBinder.bindTextField(dof, "dof");
 
-    tableDetailsBinder.bindSlider(volumeSlider, "volume", 
-        value -> value != null ? String.valueOf(value.intValue()) : null, 
-        value -> value != null? Integer.parseInt((String) value) : 100);
+    tableDetailsBinder.bindSlider(volumeSlider, "volume",
+        value -> value != null ? String.valueOf(value.intValue()) : null,
+        value -> value != null ? Integer.parseInt((String) value) : 100);
 
     tableDetailsBinder.bindTextField(custom4, "custom4");
     tableDetailsBinder.bindTextField(custom5, "custom5");
@@ -909,12 +911,19 @@ public class TableDataController extends BasePrevNextController implements AutoC
     this.stage = stage;
 
     this.tableOverviewController = overviewController;
-      nextButton.setVisible(overviewController != null);
-      prevButton.setVisible(overviewController != null);
-      openAssetMgrBtn.setVisible(overviewController != null);
+    nextButton.setVisible(overviewController != null);
+    prevButton.setVisible(overviewController != null);
+    openAssetMgrBtn.setVisible(overviewController != null);
 
     loadTabs();
     initBindings();
+
+    Node header = stage.getScene().getRoot().lookup("#header");
+    Object userData = header.getUserData();
+    if (userData instanceof DialogHeaderController) {
+      DialogHeaderController dialogHeaderController = (DialogHeaderController) userData;
+      dialogHeaderController.enableStateListener(stage, this, "dialog-table-data");
+    }
 
     this.stage.setOnShowing(new EventHandler<WindowEvent>() {
       @Override
@@ -943,7 +952,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
         autoFillBtn.setVisible(true);
         propertRenamingRoot.setVisible(true);
         if (propperRenamingController != null) {
-          String gameFileName = tableDetails != null  ? tableDetails.getGameFileName() : game.getGameFileName();
+          String gameFileName = tableDetails != null ? tableDetails.getGameFileName() : game.getGameFileName();
           propperRenamingController.setGame(gameFileName);
         }
       }
