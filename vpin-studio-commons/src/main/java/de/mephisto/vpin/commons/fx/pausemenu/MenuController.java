@@ -16,6 +16,7 @@ import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
+import de.mephisto.vpin.restclient.wovp.WOVPSettings;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.animation.ParallelTransition;
@@ -97,6 +98,7 @@ public class MenuController implements Initializable {
   private VPinScreen cardScreen;
   private FrontendPlayerDisplay tutorialScreen;
   private PauseMenuSettings pauseMenuSettings;
+  private WOVPSettings wovpSettings;
   private GameRepresentation game;
   private FrontendMediaRepresentation frontendMedia;
   private PauseMenuItem activeSelection;
@@ -112,7 +114,8 @@ public class MenuController implements Initializable {
                       VpsTable vpsTable,
                       @Nullable VPinScreen cardScreen,
                       @Nullable FrontendPlayerDisplay tutorialScreen,
-                      @NonNull PauseMenuSettings pauseMenuSettings) {
+                      @NonNull PauseMenuSettings pauseMenuSettings,
+                      @NonNull WOVPSettings wovpSettings) {
     this.game = game;
     this.frontendMedia = frontendMedia;
     this.gameStatus = gameStatus;
@@ -120,6 +123,7 @@ public class MenuController implements Initializable {
     this.cardScreen = cardScreen;
     this.tutorialScreen = tutorialScreen;
     this.pauseMenuSettings = pauseMenuSettings;
+    this.wovpSettings = wovpSettings;
     this.customViewController.setGame(game, frontendMedia, gameStatus, vpsTable);
     enterMenuItemSelection();
   }
@@ -425,7 +429,7 @@ public class MenuController implements Initializable {
 
   private void loadMenuItems() {
     pauseMenuItems.clear();
-    pauseMenuItems.addAll(PauseMenuItemsFactory.createPauseMenuItems(game, pauseMenuSettings, cardScreen, frontendMedia));
+    pauseMenuItems.addAll(PauseMenuItemsFactory.createPauseMenuItems(game, pauseMenuSettings, wovpSettings, cardScreen, frontendMedia));
 
     menuItemsRow.getChildren().clear();
     selectionIndex = 0;

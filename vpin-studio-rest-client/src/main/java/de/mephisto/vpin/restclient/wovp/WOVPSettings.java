@@ -1,7 +1,9 @@
 package de.mephisto.vpin.restclient.wovp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +58,11 @@ public class WOVPSettings extends JsonSettings {
 
   public boolean isEnabled() {
     return enabled;
+  }
+
+  @JsonIgnore
+  public boolean isApiKeySet() {
+    return !StringUtils.isEmpty(apiKey);
   }
 
   public void setEnabled(boolean enabled) {

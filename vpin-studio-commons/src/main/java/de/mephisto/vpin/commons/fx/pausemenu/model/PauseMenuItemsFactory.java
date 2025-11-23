@@ -41,7 +41,7 @@ public class PauseMenuItemsFactory {
     PauseMenuItem item = new PauseMenuItem(PauseMenuItemTypes.exit, "Continue", "Continue Game", new Image(PauseMenu.class.getResourceAsStream("continue.png")));
     pauseMenuItems.add(item);
 
-    if(wovpSettings.isEnabled()) {
+    if(wovpSettings.isEnabled() && wovpSettings.isApiKeySet()) {
       PauseMenuItem scoreSubmitterItem = new PauseMenuItem(PauseMenuItemTypes.scoreSubmitter, "World Of Virtual Pinball", "Score Submitter", new Image(PauseMenu.class.getResourceAsStream("wovp.png")));
       pauseMenuItems.add(scoreSubmitterItem);
     }
