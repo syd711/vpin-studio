@@ -13,6 +13,7 @@ import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.system.FeaturesInfo;
+import de.mephisto.vpin.restclient.wovp.WOVPSettings;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.scene.image.Image;
@@ -31,7 +32,7 @@ import static de.mephisto.vpin.commons.fx.ServerFX.client;
 public class PauseMenuItemsFactory {
   private final static Logger LOG = LoggerFactory.getLogger(PauseMenuItemsFactory.class);
 
-  public static List<PauseMenuItem> createPauseMenuItems(@NonNull GameRepresentation game, @NonNull PauseMenuSettings pauseMenuSettings, @Nullable VPinScreen cardScreen, @NonNull FrontendMediaRepresentation frontendMedia) {
+  public static List<PauseMenuItem> createPauseMenuItems(@NonNull GameRepresentation game, @NonNull PauseMenuSettings pauseMenuSettings, @NonNull WOVPSettings wovpSettings, @Nullable VPinScreen cardScreen, @NonNull FrontendMediaRepresentation frontendMedia) {
 
     // get application features
     FeaturesInfo Features = ServerFX.client.getFeatures();
@@ -39,6 +40,11 @@ public class PauseMenuItemsFactory {
     List<PauseMenuItem> pauseMenuItems = new ArrayList<>();
     PauseMenuItem item = new PauseMenuItem(PauseMenuItemTypes.exit, "Continue", "Continue Game", new Image(PauseMenu.class.getResourceAsStream("continue.png")));
     pauseMenuItems.add(item);
+
+    if(wovpSettings.isEnabled()) {
+      PauseMenuItem scoreSubmitterItem = new PauseMenuItem(PauseMenuItemTypes.scoreSubmitter, "World Of Virtual Pinball", "Score Submitter", new Image(PauseMenu.class.getResourceAsStream("wovp.png")));
+      pauseMenuItems.add(scoreSubmitterItem);
+    }
 
     if (pauseMenuSettings.isShowIscoredScores() && Features.ISCORED_ENABLED) {
       List<CompetitionRepresentation> competitions = client.getIScoredSubscriptions();
