@@ -139,6 +139,12 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
     emptyPanel.setVisible(false);
     topBox.setVisible(false);
     loadingPane.setVisible(true);
+
+    scoreLabel1.setFont(getCompetitionScoreFont());
+    scoreLabel2.setFont(getCompetitionScoreFont());
+    scoreLabel3.setFont(getCompetitionScoreFont());
+    scoreLabel4.setFont(getCompetitionScoreFont());
+    scoreLabel5.setFont(getCompetitionScoreFont());
   }
 
   public void setCompetition(CompetitionType competitionType, CompetitionRepresentation competition) {
@@ -251,14 +257,12 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
         int index = 0;
         ScoreRepresentation score1 = scores.get(index);
         name1.setText(formatScoreText(score1));
-        scoreLabel1.setFont(getCompetitionScoreFont());
         scoreLabel1.setText(score1.getFormattedScore());
 
         index++;
         if (index < scores.size()) {
           ScoreRepresentation score2 = scores.get(index);
           name2.setText(formatScoreText(score2));
-          scoreLabel2.setFont(getCompetitionScoreFont());
           scoreLabel2.setText(score2.getFormattedScore());
         }
 
@@ -266,7 +270,6 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
         if (index < scores.size()) {
           ScoreRepresentation score3 = scores.get(index);
           name3.setText(formatScoreText(score3));
-          scoreLabel3.setFont(getCompetitionScoreFont());
           scoreLabel3.setText(score3.getFormattedScore());
         }
 
@@ -274,7 +277,6 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
         if (index < scores.size()) {
           ScoreRepresentation score4 = scores.get(index);
           name4.setText(formatScoreText(score4));
-          scoreLabel4.setFont(getCompetitionScoreFont());
           scoreLabel4.setText(score4.getFormattedScore());
         }
 
@@ -282,7 +284,6 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
         if (index < scores.size()) {
           ScoreRepresentation score5 = scores.get(index);
           name5.setText(formatScoreText(score5));
-          scoreLabel5.setFont(getCompetitionScoreFont());
           scoreLabel5.setText(score5.getFormattedScore());
         }
 
