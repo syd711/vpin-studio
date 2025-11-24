@@ -307,6 +307,7 @@ public class TablesSidebarPUPPackController implements Initializable {
     reloadBtn.setDisable(g.isEmpty());
     enabledCheckbox.setDisable(g.isEmpty());
     scriptOnlyCheckbox.setSelected(false);
+    pupPackEditorBtn.setDisable(g.isEmpty());
 
     screensPanel.setVisible(true);
 
@@ -359,8 +360,10 @@ public class TablesSidebarPUPPackController implements Initializable {
 
       uploadBtn.setDisable(StringUtils.isEmpty(game.getRom()));
       deleteBtn.setDisable(!pupPackAvailable);
+      pupPackEditorBtn.setDisable(!pupPackAvailable);
 
       if (pupPackAvailable) {
+        pupPackEditorBtn.setDisable(false);
         nameLabel.setText(pupPack.getName());
         enabledCheckbox.setSelected(pupPack.isEnabled());
 
