@@ -106,7 +106,6 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
   }
 
   public void renderVideo(@NonNull String url, @Nullable VPinScreen screen) {
-
     setLoading();
 
     Media media = new Media(url);

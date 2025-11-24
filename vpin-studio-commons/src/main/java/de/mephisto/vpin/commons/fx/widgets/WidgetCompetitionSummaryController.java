@@ -196,16 +196,6 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
 
     competitionLabel.setText(competition.getName());
 
-    boolean isActive = competition.isActive();
-    firstLabel.setVisible(isActive);
-    secondLabel.setVisible(isActive);
-    thirdLabel.setVisible(isActive);
-    scoreLabel1.setVisible(isActive);
-    scoreLabel2.setVisible(isActive);
-    scoreLabel3.setVisible(isActive);
-    scoreLabel4.setVisible(isActive);
-    scoreLabel5.setVisible(isActive);
-
     name1.setText("-");
     name2.setText("-");
     name3.setText("-");
@@ -217,16 +207,6 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
     scoreLabel3.setText("0");
     scoreLabel4.setText("0");
     scoreLabel5.setText("0");
-
-    name1.setVisible(isActive);
-    name2.setVisible(isActive);
-    name3.setVisible(isActive);
-    name4.setVisible(isActive);
-    name5.setVisible(isActive);
-
-    if (!competition.isActive()) {
-      return;
-    }
 
     final GameRepresentation game = competedGame;
     JFXFuture.supplyAsync(() -> {
@@ -332,7 +312,6 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
             BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
             BackgroundSize.DEFAULT);
         topBox.setBackground(new Background(myBI));
-//        topBox.setBackground(null);
         emptyPanel.setVisible(false);
       }
 

@@ -33,6 +33,8 @@ public class BackupServiceClient extends VPinStudioClientService {
 
   private final List<BackupDescriptorRepresentation> backupsCached = new ArrayList<>();
 
+  private boolean dirty = true;
+
   public BackupServiceClient(VPinStudioClient client) {
     super(client);
   }
@@ -42,8 +44,9 @@ public class BackupServiceClient extends VPinStudioClientService {
   }
 
   public List<BackupDescriptorRepresentation> getBackups() {
-    if (backupsCached.isEmpty()) {
+    if (backupsCached.isEmpty() && dirty) {
       backupsCached.addAll(Arrays.asList(getRestClient().get(API + "backups", BackupDescriptorRepresentation[].class)));
+      dirty = false;
     }
     return backupsCached;
   }
@@ -53,8 +56,13 @@ public class BackupServiceClient extends VPinStudioClientService {
   }
 
   public boolean deleteBackup(long sourceId, String filename) {
-    backupsCached.clear();
+    clearCache();
     return getRestClient().delete(API + "backups/" + sourceId + "/" + filename);
+  }
+
+  private void clearCache() {
+    backupsCached.clear();
+    dirty = true;
   }
 
   public boolean deleteBackupSource(long id) {
@@ -63,7 +71,7 @@ public class BackupServiceClient extends VPinStudioClientService {
 
   public BackupSourceRepresentation saveBackupSource(BackupSourceRepresentation source) throws Exception {
     try {
-      backupsCached.clear();
+      clearCache();
       return getRestClient().post(API + "backups/save", source, BackupSourceRepresentation.class);
     }
     catch (Exception e) {
@@ -77,7 +85,7 @@ public class BackupServiceClient extends VPinStudioClientService {
   }
 
   public boolean invalidateBackupCache() {
-    this.backupsCached.clear();
+    clearCache();
     return getRestClient().get(API + "backups/invalidate", Boolean.class);
   }
 

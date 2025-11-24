@@ -431,44 +431,49 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   }
 
   private void setTemplate(CardTemplate cardTemplate) {
-    // deselect any element if any
-    unloadDragBoxes();
+    try {
+      // deselect any element if any
+      unloadDragBoxes();
 
-    templateModeBtn.setDisable(false);
-    cardModeBtn.setDisable(false);
-    templateCombo.setDisable(false);
+      templateModeBtn.setDisable(false);
+      cardModeBtn.setDisable(false);
+      templateCombo.setDisable(false);
 
-    createBtn.setDisable(false);
-    deleteBtn.setDisable(false); //cardTemplate.isDefault());
-    renameBtn.setDisable(cardTemplate.isDefault() || !cardTemplate.isTemplate());
+      createBtn.setDisable(false);
+      deleteBtn.setDisable(false); //cardTemplate.isDefault());
+      renameBtn.setDisable(cardTemplate.isDefault() || !cardTemplate.isTemplate());
 
-    // interrupt property changes
-    templateBeanBinder.setPaused(true);
+      // interrupt property changes
+      templateBeanBinder.setPaused(true);
 
-    // set the selected template on the TemplateBinder
-    templateBeanBinder.setBean(cardTemplate, false);
+      // set the selected template on the TemplateBinder
+      templateBeanBinder.setBean(cardTemplate, false);
 
-    templateModeBtn.setSelected(cardTemplate.isTemplate());
-    cardModeBtn.setSelected(!cardTemplate.isTemplate());
+      templateModeBtn.setSelected(cardTemplate.isTemplate());
+      cardModeBtn.setSelected(!cardTemplate.isTemplate());
 
-    refreshNagBar(cardTemplate, this.gameRepresentation);
+      refreshNagBar(cardTemplate, this.gameRepresentation);
 
-    CardResolution res = templateBeanBinder.getResolution();
-    layerEditorOverlayController.setTemplate(cardTemplate, res, this.gameRepresentation);
-    layerEditorBackgroundController.setTemplate(cardTemplate, res, this.gameRepresentation);
-    layerEditorFrameController.setTemplate(cardTemplate, res, this.gameRepresentation);
-    layerEditorCanvasController.setTemplate(cardTemplate, res, this.gameRepresentation);
-    layerEditorTitleController.setTemplate(cardTemplate, res, this.gameRepresentation);
-    layerEditorTableNameController.setTemplate(cardTemplate, res, this.gameRepresentation);
-    layerEditorWheelController.setTemplate(cardTemplate, res, this.gameRepresentation);
-    layerEditorManufacturerController.setTemplate(cardTemplate, res, this.gameRepresentation);
-    layerEditorOtherMediaController.setTemplate(cardTemplate, res, this.gameRepresentation);
-    layerEditorScoresController.setTemplate(cardTemplate, res, this.gameRepresentation);
+      CardResolution res = templateBeanBinder.getResolution();
+      layerEditorOverlayController.setTemplate(cardTemplate, res, this.gameRepresentation);
+      layerEditorBackgroundController.setTemplate(cardTemplate, res, this.gameRepresentation);
+      layerEditorFrameController.setTemplate(cardTemplate, res, this.gameRepresentation);
+      layerEditorCanvasController.setTemplate(cardTemplate, res, this.gameRepresentation);
+      layerEditorTitleController.setTemplate(cardTemplate, res, this.gameRepresentation);
+      layerEditorTableNameController.setTemplate(cardTemplate, res, this.gameRepresentation);
+      layerEditorWheelController.setTemplate(cardTemplate, res, this.gameRepresentation);
+      layerEditorManufacturerController.setTemplate(cardTemplate, res, this.gameRepresentation);
+      layerEditorOtherMediaController.setTemplate(cardTemplate, res, this.gameRepresentation);
+      layerEditorScoresController.setTemplate(cardTemplate, res, this.gameRepresentation);
 
-    templateBeanBinder.setPaused(false);
+      templateBeanBinder.setPaused(false);
 
-    cardPreview.setTemplate(cardTemplate);
-    refreshPreview(this.gameRepresentation);
+      cardPreview.setTemplate(cardTemplate);
+      refreshPreview(this.gameRepresentation);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to select {}: {}", cardTemplate, e.getMessage(), e);
+    }
   }
 
   private void refreshNagBar(CardTemplate cardTemplate, Optional<GameRepresentation> gameRepresentation) {
@@ -620,23 +625,23 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    folderBtn.setVisible(SystemUtil.isFolderActionSupported());
-    nagBarLabel.setText("Loading...");
-
-    Frontend frontend = client.getFrontendService().getFrontendCached();
-    FrontendUtil.replaceName(folderBtn.getTooltip(), frontend);
-    FrontendUtil.replaceName(stopBtn.getTooltip(), frontend);
-
-    this.exportBtn.managedProperty().bind(this.exportBtn.visibleProperty());
-    this.importBtn.managedProperty().bind(this.importBtn.visibleProperty());
-    this.generateBtn.managedProperty().bind(this.generateBtn.visibleProperty());
-    this.generateAllBtn.managedProperty().bind(this.generateAllBtn.visibleProperty());
-    this.generateWheelBtn.managedProperty().bind(this.generateWheelBtn.visibleProperty());
-
-    this.exportBtn.setVisible(Features.TEMPLATE_EDITOR_IMPORT_EXPORT);
-    this.importBtn.setVisible(Features.TEMPLATE_EDITOR_IMPORT_EXPORT);
-
     try {
+      folderBtn.setVisible(SystemUtil.isFolderActionSupported());
+      nagBarLabel.setText("Loading...");
+
+      Frontend frontend = client.getFrontendService().getFrontendCached();
+      FrontendUtil.replaceName(folderBtn.getTooltip(), frontend);
+      FrontendUtil.replaceName(stopBtn.getTooltip(), frontend);
+
+      this.exportBtn.managedProperty().bind(this.exportBtn.visibleProperty());
+      this.importBtn.managedProperty().bind(this.importBtn.visibleProperty());
+      this.generateBtn.managedProperty().bind(this.generateBtn.visibleProperty());
+      this.generateAllBtn.managedProperty().bind(this.generateAllBtn.visibleProperty());
+      this.generateWheelBtn.managedProperty().bind(this.generateWheelBtn.visibleProperty());
+
+      this.exportBtn.setVisible(Features.TEMPLATE_EDITOR_IMPORT_EXPORT);
+      this.importBtn.setVisible(Features.TEMPLATE_EDITOR_IMPORT_EXPORT);
+
       this.deleteBtn.setDisable(true);
       this.renameBtn.setDisable(true);
 
@@ -778,7 +783,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       layerEditorScoresController.initialize(this, accordion);
     }
     catch (Exception e) {
-      LOG.error("Error initializing highscore editor fields:" + e.getMessage(), e);
+      LOG.error("Error initializing highscore editor fields: {}", e.getMessage(), e);
     }
   }
 
@@ -810,62 +815,67 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
 
   private void resizeCardPreview(double width, double height, boolean forceWidth) {
-    CardResolution res = templateBeanBinder.getResolution();
-    // make sure the panel is full size always
-    if (width > 0 && height > 0 && res != null) {
-      double aspectRatio = ((double) res.toWidth()) / res.toHeight();
+    try {
+      CardResolution res = templateBeanBinder.getResolution();
+      // make sure the panel is full size always
+      if (width > 0 && height > 0 && res != null) {
+        double aspectRatio = ((double) res.toWidth()) / res.toHeight();
 
-      Insets in1 = previewStack.getInsets();
-      width -= in1.getRight() + in1.getLeft();
-      height -= in1.getTop() + in1.getBottom();
+        Insets in1 = previewStack.getInsets();
+        width -= in1.getRight() + in1.getLeft();
+        height -= in1.getTop() + in1.getBottom();
 
-      previewPanel.resizeRelocate(0, 0, width, height);
+        previewPanel.resizeRelocate(0, 0, width, height);
 
-      Insets in2 = previewPanel.getInsets();
-      width -= in2.getLeft() + in2.getRight();
-      height -= in2.getTop() + in2.getBottom();
+        Insets in2 = previewPanel.getInsets();
+        width -= in2.getLeft() + in2.getRight();
+        height -= in2.getTop() + in2.getBottom();
 
-      // now adjust with aspect ratio and center in previewPanel
-      double newWidth = width;
-      double newHeight = height;
-      double offSetX = 0;
-      double offSetY = 0;
-      if (forceWidth) {
-        newHeight = newWidth / aspectRatio;
-        if (newHeight > height) {
-          newHeight = height;
-          newWidth = height * aspectRatio;
-          // constraint width and center horizontally
-          offSetX = (width - newWidth) / 2;
+        // now adjust with aspect ratio and center in previewPanel
+        double newWidth = width;
+        double newHeight = height;
+        double offSetX = 0;
+        double offSetY = 0;
+        if (forceWidth) {
+          newHeight = newWidth / aspectRatio;
+          if (newHeight > height) {
+            newHeight = height;
+            newWidth = height * aspectRatio;
+            // constraint width and center horizontally
+            offSetX = (width - newWidth) / 2;
+          }
+          else {
+            offSetY = (height - newHeight) / 2;
+          }
         }
         else {
-          offSetY = (height - newHeight) / 2;
+          newWidth = newHeight * aspectRatio;
+          if (newWidth > width) {
+            newWidth = width;
+            newHeight = width / aspectRatio;
+            // constraint width and center horizontally
+            offSetY = (height - newHeight) / 2;
+          }
+          else {
+            offSetX = (width - newWidth) / 2;
+          }
+        }
+        cardPreview.resizeRelocate(offSetX, offSetY, newWidth, newHeight);
+
+        // in case dragboxes was here, deselect it
+        unloadDragBoxes();
+
+        Rectangle cliprect = new Rectangle(newWidth, newHeight);
+        cardPreview.setClip(cliprect);
+
+        // also resize the media within the preview
+        if (assetMediaPlayer != null) {
+          assetMediaPlayer.setMediaViewSize(newWidth, newHeight);
         }
       }
-      else {
-        newWidth = newHeight * aspectRatio;
-        if (newWidth > width) {
-          newWidth = width;
-          newHeight = width / aspectRatio;
-          // constraint width and center horizontally
-          offSetY = (height - newHeight) / 2;
-        }
-        else {
-          offSetX = (width - newWidth) / 2;
-        }
-      }
-      cardPreview.resizeRelocate(offSetX, offSetY, newWidth, newHeight);
-
-      // in case dragboxes was here, deselect it
-      unloadDragBoxes();
-
-      Rectangle cliprect = new Rectangle(newWidth, newHeight);
-      cardPreview.setClip(cliprect);
-
-      // also resize the media within the preview
-      if (assetMediaPlayer != null) {
-        assetMediaPlayer.setMediaViewSize(newWidth, newHeight);
-      }
+    }
+    catch (Exception e) {
+      LOG.error("Template resizing failed: {}", e.getMessage(), e);
     }
   }
 
@@ -931,7 +941,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       // call this once width and height have been set
       dragBox.setBounds(0, 0, (int) WIDTH, (int) HEIGHT);
       dragBox.setAcceptOutsidePart(true, 50);
-      
+
       LayerEditorBaseController controller = layerToController(layer);
       controller.bindDragBox(dragBox);
       dragBox.setUserData(layer);
