@@ -18,6 +18,7 @@ import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.util.SystemUtil;
+import de.mephisto.vpin.restclient.wovp.WOVPSettings;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -182,6 +183,7 @@ public class PauseMenu extends Application {
         //reload card settings to resolve actual target screen
         CardSettings cardSettings = client.getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
         PauseMenuSettings pauseMenuSettings = client.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
+        WOVPSettings wovpSettings = client.getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
 
         GameRepresentation game = client.getGame(status.getGameId());
         emulator = client.getGameEmulator(game.getEmulatorId());
@@ -206,7 +208,7 @@ public class PauseMenu extends Application {
         String extTableId = game.getExtTableId();
         VpsTable tableById = client.getVpsTable(extTableId);
 
-        StateMananger.getInstance().setGame(game, frontendMedia, status, tableById, cardScreen, tutorialDisplay, pauseMenuSettings);
+        StateMananger.getInstance().setGame(game, frontendMedia, status, tableById, cardScreen, tutorialDisplay, pauseMenuSettings, wovpSettings);
         stage.getScene().setCursor(Cursor.NONE);
 
         JFXFuture.supplyAsync(() -> {

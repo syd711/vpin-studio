@@ -12,6 +12,7 @@ import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
+import de.mephisto.vpin.restclient.wovp.WOVPSettings;
 import javafx.application.Platform;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -118,8 +119,8 @@ public class StateMananger implements GameControllerInputListener {
     this.pauseMenuSettings = pauseMenuSettings;
   }
 
-  public void setGame(GameRepresentation game, FrontendMediaRepresentation frontendMedia, GameStatus status, VpsTable table, VPinScreen cardScreen, FrontendPlayerDisplay tutorialDisplay, PauseMenuSettings pauseMenuSettings) {
-    menuController.setGame(game, frontendMedia, status, table, cardScreen, tutorialDisplay, pauseMenuSettings);
+  public void setGame(GameRepresentation game, FrontendMediaRepresentation frontendMedia, GameStatus status, VpsTable table, VPinScreen cardScreen, FrontendPlayerDisplay tutorialDisplay, PauseMenuSettings pauseMenuSettings, WOVPSettings wovpSettings) {
+    menuController.setGame(game, frontendMedia, status, table, cardScreen, tutorialDisplay, pauseMenuSettings, wovpSettings);
 
     try {
       Thread.sleep(PauseMenuUIDefaults.SELECTION_SCALE_DURATION * 2);
