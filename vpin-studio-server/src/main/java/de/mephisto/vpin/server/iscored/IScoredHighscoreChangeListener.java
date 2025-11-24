@@ -41,9 +41,6 @@ public class IScoredHighscoreChangeListener implements HighscoreChangeListener, 
   @Autowired
   private PreferencesService preferencesService;
 
-  @Autowired
-  private ManiaService maniaService;
-
   @Override
   public void highscoreChanged(@NonNull HighscoreChangeEvent event) {
     IScoredSettings iScoredSettings = preferencesService.getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
@@ -67,13 +64,6 @@ public class IScoredHighscoreChangeListener implements HighscoreChangeListener, 
       SLOG.info("Ignored iScored highscore change, because no player set for this score.");
       return;
     }
-
-//    if (maniaService.isOnDenyList(game, newScore)) {
-//      LOG.info("Ignored iScored highscore change, because the highscore " + newScore.getFormattedScore() + " is on the deny list.");
-//      SLOG.info("Ignored iScored highscore change, because the highscore " + newScore.getFormattedScore() + " is on the deny list.");
-//      return;
-//    }
-
 
     List<IScoredGame> gameRoomGamesForTable = new ArrayList<>();
     List<IScoredGameRoom> gameRooms = iScoredSettings.getGameRooms();

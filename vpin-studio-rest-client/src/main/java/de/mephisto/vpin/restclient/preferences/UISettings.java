@@ -35,6 +35,7 @@ public class UISettings extends JsonSettings {
   private String mostPlayedColor = "#FFFFFF";
 
   private String defaultUploadMode = UploadType.uploadAndImport.name();
+  private boolean uploadMediaPreview = true;
 
   //open after upload
   private boolean autoEditTableData = true;
@@ -61,7 +62,6 @@ public class UISettings extends JsonSettings {
 
   private boolean tableSidebarVisible = true;
   private boolean competitionsSidebarVisible = true;
-  private boolean tournamentsSidebarVisible = true;
 
   //columns
   private boolean columnAltColor = true;
@@ -88,8 +88,6 @@ public class UISettings extends JsonSettings {
 
   private LaunchConfiguration launchConfiguration;
 
-
-
   public LaunchConfiguration getLaunchConfiguration() {
     return launchConfiguration;
   }
@@ -98,13 +96,12 @@ public class UISettings extends JsonSettings {
     this.launchConfiguration = launchConfiguration;
   }
 
-
-  public boolean isTournamentsSidebarVisible() {
-    return tournamentsSidebarVisible;
+  public boolean isUploadMediaPreview() {
+    return uploadMediaPreview;
   }
 
-  public void setTournamentsSidebarVisible(boolean tournamentsSidebarVisible) {
-    this.tournamentsSidebarVisible = tournamentsSidebarVisible;
+  public void setUploadMediaPreview(boolean uploadMediaPreview) {
+    this.uploadMediaPreview = uploadMediaPreview;
   }
 
   private AutoFillSettings autoFillSettings = new AutoFillSettings();
