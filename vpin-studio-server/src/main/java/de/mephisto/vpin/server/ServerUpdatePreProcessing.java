@@ -29,8 +29,6 @@ public class ServerUpdatePreProcessing {
       "nircmd.exe",
       "downloader.vbs",
       "puppacktweaker/PupPackScreenTweaker.exe",
-      "puppacktweaker/PupPackScreenTweaker.exe.config",
-      "puppacktweaker/PupPackScreenTweaker.pdb",
       "puplauncher.exe",
       "vpxtool.exe",
       "maintenance.mp4",
