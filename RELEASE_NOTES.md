@@ -5,6 +5,7 @@
 - Fixed saving the view state of the Table Data Manager dialog.
 - Fixed competition summary widget which did not render values from finished competitions.
 - Added frontend-running check for table uploads which will fail when the database is locked by the frontend management tool, e.g. PinUP Popper Setup.
+- Fixed reading and writing of backglass settings that use an aliased ROM name. 
 
 ---
 

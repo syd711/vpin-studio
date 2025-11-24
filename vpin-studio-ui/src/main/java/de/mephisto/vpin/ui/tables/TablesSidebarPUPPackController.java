@@ -283,9 +283,8 @@ public class TablesSidebarPUPPackController implements Initializable {
     dataScrollPane.setVisible(false);
     emptyDataBox.setVisible(true);
 
-    //TODO disabled for now
     pupPackEditorBtn.setDisable(!client.getSystemService().isLocal());
-    pupPackEditorBtn.setVisible(false);
+    pupPackEditorBtn.setVisible(true);
 
     optionsCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
       optionEditBtn.setDisable(StringUtils.isEmpty(newValue));

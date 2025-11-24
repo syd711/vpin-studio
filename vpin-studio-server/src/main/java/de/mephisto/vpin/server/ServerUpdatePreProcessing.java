@@ -1,12 +1,9 @@
 package de.mephisto.vpin.server;
 
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.system.NVRamsInfo;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.util.PackageUtil;
-import de.mephisto.vpin.restclient.util.SystemUtil;
-import de.mephisto.vpin.server.system.SystemService;
 import net.sf.sevenzipjbinding.SevenZip;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -24,9 +21,24 @@ import static de.mephisto.vpin.server.system.SystemService.RESOURCES;
 
 public class ServerUpdatePreProcessing {
   private final static Logger LOG = LoggerFactory.getLogger(ServerUpdatePreProcessing.class);
-  private final static List<String> resources = Arrays.asList("PinVol.exe", "ffmpeg.exe", "jptch.exe", "nircmd.exe",
-      "downloader.vbs", "PupPackScreenTweaker.exe", "puplauncher.exe", "vpxtool.exe", "maintenance.mp4",
-      ScoringDB.SCORING_DB_NAME, "manufacturers/manufacturers.zip", "logos.txt", "frames/wheel-black.png", "frames/wheel-tarcissio.png");
+  private final static List<String> deletions = Arrays.asList("PupPackScreenTweaker.exe");
+
+  private final static List<String> resources = Arrays.asList("PinVol.exe",
+      "ffmpeg.exe",
+      "jptch.exe",
+      "nircmd.exe",
+      "downloader.vbs",
+      "puppacktweaker/PupPackScreenTweaker.exe",
+      "puppacktweaker/PupPackScreenTweaker.exe.config",
+      "puppacktweaker/PupPackScreenTweaker.pdb",
+      "puplauncher.exe",
+      "vpxtool.exe",
+      "maintenance.mp4",
+      ScoringDB.SCORING_DB_NAME,
+      "manufacturers/manufacturers.zip",
+      "logos.txt",
+      "frames/wheel-black.png",
+      "frames/wheel-tarcissio.png");
   private final static List<String> jvmFiles = Arrays.asList("jinput-dx8_64.dll");
 
   private final static Map<String, Long> PUP_GAMES = new HashMap<>();
@@ -54,6 +66,7 @@ public class ServerUpdatePreProcessing {
         runLogosUpdateCheck();
         runDOFTesterCheck();
         runPupGamesUpdateCheck();
+        runDeletions();
 
         new Thread(() -> {
           Thread.currentThread().setName("ServerUpdate Async Preprocessor");
@@ -66,6 +79,15 @@ public class ServerUpdatePreProcessing {
         LOG.error("Server update failed: " + e.getMessage(), e);
       }
     }).start();
+  }
+
+  private static void runDeletions() {
+    for (String deletion : deletions) {
+      File check = new File(RESOURCES, deletion);
+      if (check.exists() && !check.delete()) {
+        LOG.error("Failed to clean up file: " + check.getAbsolutePath());
+      }
+    }
   }
 
   private static void runDeletionChecks() {
@@ -237,7 +259,7 @@ public class ServerUpdatePreProcessing {
           LOG.info("Downloaded nvram file {}", nvramFile.getAbsolutePath());
         }
       }
-      LOG.info("Finished NVRam synchronization, there are currently {} resetted nvrams available.",  nvRams.size());
+      LOG.info("Finished NVRam synchronization, there are currently {} resetted nvrams available.", nvRams.size());
     }
     catch (IOException e) {
       LOG.error("Failed to sync nvrams: {}", e.getMessage(), e);

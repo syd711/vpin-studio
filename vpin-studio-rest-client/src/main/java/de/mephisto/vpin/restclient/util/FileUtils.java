@@ -20,6 +20,21 @@ public class FileUtils {
   private final static Character[] INVALID_WINDOWS_SPECIFIC_CHARS = {'"', '*', '<', '>', '?', '|', '/', '\\', ':'};
   private final static Character[] INVALID_WINDOWS_SPECIFIC_CHARS_WITH_PATH = {'"', '*', '<', '>', '?', '|', '/', ':'};
 
+  public static void checkedCopy(@NonNull File source, @NonNull File target) {
+    try {
+      if (!target.exists() || source.length() != target.length()) {
+        if (target.exists()) {
+          target.delete();
+        }
+        org.apache.commons.io.FileUtils.copyFile(source, target);
+        LOG.info("Copied {} to {}", source.getAbsolutePath(), target.getAbsolutePath());
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to execute checked copy: {}", e.getMessage(), e);
+    }
+  }
+
   public static String replaceWindowsChars(String name) {
     for (Character invalidWindowsSpecificChar : INVALID_WINDOWS_SPECIFIC_CHARS) {
       if (name.contains(String.valueOf(invalidWindowsSpecificChar))) {
