@@ -6,6 +6,7 @@
 - Fixed competition summary widget which did not render values from finished competitions.
 - Added frontend-running check for table uploads which will fail when the database is locked by the frontend management tool, e.g. PinUP Popper Setup.
 - Fixed reading and writing of backglass settings that use an aliased ROM name. 
+- Re-enabled PUP pack editor and the 3rd party tool PUPPackTweaker (https://github.com/mat1111x/PupPackScreenTweaker). The tools are visible in the PUP packs side section. Shout out to @YabbaDabbaDoo who provided an updated version build from the latest sources.
 
 ---
 
