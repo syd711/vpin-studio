@@ -11,7 +11,7 @@
 - Re-enabled PUP pack editor and the 3rd party tool **PUPPackTweaker** (https://github.com/mat1111x/PupPackScreenTweaker). The tools are visible in the PUP packs side section. Shout out to @YabbaDabbaDoo who provided an updated version build from the latest sources.
 - Added missing frontend-running check for table uploads which will fail when the database is locked by the frontend management tool, e.g. PinUP Popper Setup.
 - Added quick-edit button to the title of the **Script Details** section. This way, you can quickly open the table script without the need to expand the section. Note that always the default system editor for .vbs files is used here!
-- Added **automatic fill-up of highscore lists**: For older pinball tables (especially EM tables) often only 1x highscore entry was shown on highscore cards. By default, the Studio increases the list with up to five values which are taking from the highscore history of the table.
+- Added **automatic fill-up of highscore lists**: For older pinball tables (especially EM tables) often only 1x highscore entry was shown on highscore cards. By default, the Studio increases the list with **up to five values** which are taking from the highscore history of the table.
 - Added preview checkbox for the media upload dialog. The status is persisted and the checkbox is enabled by default. 
 
 ---

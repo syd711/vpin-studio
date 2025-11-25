@@ -87,9 +87,9 @@ public class EmulatorServiceClient extends VPinStudioClientService {
       @Override
       public int compare(GameEmulatorRepresentation o1, GameEmulatorRepresentation o2) {
         if(o1.isVpxEmulator()) {
-          return 1;
+          return -1;
         }
-        return -1;
+        return 1;
       }
     });
 
