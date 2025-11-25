@@ -82,7 +82,15 @@ public class EmulatorServiceClient extends VPinStudioClientService {
     List<GameEmulatorRepresentation> filtered = emulators.stream().filter(e -> e.isEnabled()).filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId()))).collect(Collectors.toList());
     List<GameEmulatorRepresentation> vpxEmulators = filtered.stream().filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
 
-    Collections.sort(filtered, Comparator.comparing(GameEmulatorRepresentation::getName));
+    Collections.sort(filtered, new Comparator<GameEmulatorRepresentation>() {
+      @Override
+      public int compare(GameEmulatorRepresentation o1, GameEmulatorRepresentation o2) {
+        if(o1.isVpxEmulator()) {
+          return 1;
+        }
+        return -1;
+      }
+    });
 
     if (vpxEmulators.size() > 1) {
       filtered.add(0, createAllVpx());
