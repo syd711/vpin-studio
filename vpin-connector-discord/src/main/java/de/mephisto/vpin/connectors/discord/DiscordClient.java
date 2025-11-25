@@ -14,6 +14,7 @@ import net.dv8tion.jda.internal.utils.PermissionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
  *
  */
 public class DiscordClient {
-  private final static Logger LOG = LoggerFactory.getLogger(DiscordClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final static List<String> ALLOW_LIST = Arrays.asList("bot-test-channel", "online-competitions", "offline-competitions");
 

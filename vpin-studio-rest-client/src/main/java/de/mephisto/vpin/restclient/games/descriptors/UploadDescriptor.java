@@ -11,11 +11,12 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 
 public class UploadDescriptor {
-  private final static Logger LOG = LoggerFactory.getLogger(UploadDescriptor.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private UploadType uploadType;
   private String tempFilename;

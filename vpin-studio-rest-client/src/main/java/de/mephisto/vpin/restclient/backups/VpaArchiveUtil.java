@@ -17,10 +17,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 
 public class VpaArchiveUtil {
-  private final static Logger LOG = LoggerFactory.getLogger(VpaArchiveUtil.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private static final ObjectMapper objectMapper = new ObjectMapper();
 

@@ -14,10 +14,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 
 
 public class DMDServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(DMDServiceClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public DMDServiceClient(VPinStudioClient client) {
     super(client);

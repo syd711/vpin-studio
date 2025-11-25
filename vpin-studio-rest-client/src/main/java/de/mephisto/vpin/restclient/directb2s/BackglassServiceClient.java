@@ -18,6 +18,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.io.*;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -30,7 +31,7 @@ import java.util.Map;
  * DirectB2S
  ********************************************************************************************************************/
 public class BackglassServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public BackglassServiceClient(VPinStudioClient client) {
     super(client);

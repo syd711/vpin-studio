@@ -6,11 +6,13 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
+
 /*********************************************************************************************************************
  * Mania
  ********************************************************************************************************************/
 public class ManiaServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(ManiaServiceClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public ManiaServiceClient(VPinStudioClient client) {
     super(client);

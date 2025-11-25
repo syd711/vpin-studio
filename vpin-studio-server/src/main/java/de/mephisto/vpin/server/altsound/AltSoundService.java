@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Service
 public class AltSoundService implements InitializingBean {
-  private final static Logger LOG = LoggerFactory.getLogger(AltSoundService.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @Autowired
   private AltSoundBackupService altSoundBackupService;

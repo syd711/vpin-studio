@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FileUtils {
-  private final static Logger LOG = LoggerFactory.getLogger(FileUtils.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private final static Character[] INVALID_WINDOWS_SPECIFIC_CHARS = {'"', '*', '<', '>', '?', '|', '/', '\\', ':'};
   private final static Character[] INVALID_WINDOWS_SPECIFIC_CHARS_WITH_PATH = {'"', '*', '<', '>', '?', '|', '/', ':'};
 

@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.*;
@@ -20,7 +21,7 @@ import java.util.*;
 import static de.mephisto.vpin.server.system.SystemService.RESOURCES;
 
 public class ServerUpdatePreProcessing {
-  private final static Logger LOG = LoggerFactory.getLogger(ServerUpdatePreProcessing.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private final static List<String> deletions = Arrays.asList("PupPackScreenTweaker.exe");
 
   private final static List<String> resources = Arrays.asList("PinVol.exe",

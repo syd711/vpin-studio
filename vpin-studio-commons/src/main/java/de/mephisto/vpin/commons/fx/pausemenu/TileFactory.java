@@ -11,11 +11,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.Date;
 import java.util.List;
 
 public class TileFactory {
-  private final static Logger LOG = LoggerFactory.getLogger(TileFactory.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static MenuCustomTileEntryController createCustomTile(Pane root) {
     try {

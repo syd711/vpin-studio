@@ -12,13 +12,14 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 
 import java.awt.image.BufferedImage;
+import java.lang.invoke.MethodHandles;
 import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CardGraphicsHighscore extends StackPane {
-  protected final static Logger LOG = LoggerFactory.getLogger(CardGraphicsHighscore.class);
+  protected final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   /** Whether autosize is active or not, depends on how it is embeded ? */
   private boolean resizable;

@@ -16,9 +16,10 @@ import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.lang.invoke.MethodHandles;
 
 public class CommonImageUtil {
-  private final static Logger LOG = LoggerFactory.getLogger(CommonImageUtil.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static Image setClippedImage(ImageView imageView, int radius) {
     javafx.scene.shape.Rectangle clip = new javafx.scene.shape.Rectangle(

@@ -6,9 +6,10 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 
 public class TrashBin {
-  private final static Logger LOG = LoggerFactory.getLogger(TrashBin.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static boolean moveTo(@Nullable File file) {
     if (file != null) {

@@ -2,6 +2,7 @@ package de.mephisto.vpin.commons.fx.cards;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.lang.invoke.MethodHandles;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -18,7 +19,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
 public class CardLayerFrame extends Canvas implements CardLayer {
-  protected final static Logger LOG = LoggerFactory.getLogger(CardLayerDebug.class);
+  protected final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private Image cacheFrame;
 

@@ -18,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.invoke.MethodHandles;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
@@ -26,7 +27,7 @@ import java.util.*;
  *
  */
 public class RestClient implements ClientHttpRequestInterceptor {
-  private final static Logger LOG = LoggerFactory.getLogger(RestTemplate.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   public static final String SCHEME = "http";
   public static final String HOST = "localhost";
   public static final int PORT = 8089;

@@ -14,13 +14,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 
 /*********************************************************************************************************************
  * Alt Color
  ********************************************************************************************************************/
 public class AltColorServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(AltColorServiceClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public AltColorServiceClient(VPinStudioClient client) {
     super(client);
