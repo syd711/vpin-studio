@@ -7,6 +7,7 @@
 - Added missing frontend-running check for table uploads which will fail when the database is locked by the frontend management tool, e.g. PinUP Popper Setup.
 - Fixed reading and writing of backglass settings that use an aliased ROM name. 
 - Fixed highscore parsing for "King Kong".
+- Fixed critical data access issue where it might have happened that duplicate game details were saved in the VPin Studio database and lead to consecutive errors.  
 - Re-enabled PUP pack editor and the 3rd party tool PUPPackTweaker (https://github.com/mat1111x/PupPackScreenTweaker). The tools are visible in the PUP packs side section. Shout out to @YabbaDabbaDoo who provided an updated version build from the latest sources.
 - Added quick-edit button to the title of the **Script Details** section. This way, you can quickly open the table script without the need to expand the section. Note that always the default system editor for .vbs files is used here!
 - Added automatic fill-up of highscore lists: For older pinball tables (especially EM tables) often only 1x highscore entry was shown on highscore cards. By default, the Studio increases the list with up to five values which are taking from the highscore history of the table.

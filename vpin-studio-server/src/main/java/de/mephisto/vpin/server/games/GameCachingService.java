@@ -225,7 +225,10 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
 
   private List<Game> getVpxGames() {
     List<GameDetails> all = gameDetailsRepositoryService.findAll();
-    Map<Integer, GameDetails> mappedGameDetails = all.stream().collect(Collectors.toMap(GameDetails::getPupId, g -> g));
+    Map<Integer, GameDetails> mappedGameDetails = new LinkedHashMap<>();
+    for (GameDetails gameDetails : all) {
+      mappedGameDetails.put(gameDetails.getPupId(), gameDetails);
+    }
     List<Game> games = new ArrayList<>();
     List<GameEmulator> gameEmulators = emulatorService.getVpxGameEmulators();
     for (GameEmulator gameEmulator : gameEmulators) {

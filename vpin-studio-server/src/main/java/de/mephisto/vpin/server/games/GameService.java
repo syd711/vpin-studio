@@ -194,14 +194,9 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     List<Integer> gameIds = new ArrayList<>(getGameIds());
     List<Integer> filtered = new ArrayList<>();
     for (Integer id : gameIds) {
-      try {
-        GameDetails gameDetails = gameDetailsRepositoryService.findByPupId(id);
-        if (gameDetails == null) {
-          filtered.add(id);
-        }
-      }
-      catch (Exception e) {
-        LOG.error("Failed to fetch game with id {}: {}", id, e.getMessage());
+      GameDetails gameDetails = gameDetailsRepositoryService.findByPupId(id);
+      if (gameDetails == null) {
+        filtered.add(id);
       }
     }
     return filtered;
