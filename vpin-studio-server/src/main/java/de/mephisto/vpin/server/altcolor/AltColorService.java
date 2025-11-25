@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -36,7 +37,7 @@ import java.util.stream.Collectors;
  */
 @Service
 public class AltColorService implements InitializingBean {
-  private final static Logger LOG = LoggerFactory.getLogger(AltColorService.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @Autowired
   private MameService mameService;

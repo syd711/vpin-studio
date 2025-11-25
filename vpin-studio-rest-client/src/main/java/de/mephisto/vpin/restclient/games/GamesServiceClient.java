@@ -29,6 +29,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -37,7 +38,7 @@ import java.util.stream.Collectors;
  * Games
  ********************************************************************************************************************/
 public class GamesServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final Map<Integer, List<GameRepresentation>> allGames = new HashMap<>();
   /**

@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,7 +18,7 @@ import java.util.List;
  * Discord
  ********************************************************************************************************************/
 public class DiscordServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(DiscordServiceClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public DiscordServiceClient(VPinStudioClient client) {
     super(client);

@@ -13,12 +13,13 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 
 /*********************************************************************************************************************
  * Ini
  ********************************************************************************************************************/
 public class IniServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public IniServiceClient(VPinStudioClient client) {
     super(client);

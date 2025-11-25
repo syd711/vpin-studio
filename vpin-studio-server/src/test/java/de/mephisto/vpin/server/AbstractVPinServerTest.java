@@ -64,7 +64,7 @@ abstract public class AbstractVPinServerTest {
   protected GameService gameService;
 
   @Autowired
-  protected GameDetailsRepository gameDetailsRepository;
+  private GameDetailsRepositoryService gameDetailsRepositoryService;
 
   @Autowired
   protected SystemService systemService;
@@ -147,7 +147,7 @@ abstract public class AbstractVPinServerTest {
   }
 
   protected void clearVPinStudioDatabase() {
-    gameDetailsRepository.deleteAll();
+    gameDetailsRepositoryService.deleteAll();
     competitionsRepository.deleteAll();
     assetRepository.deleteAll();
     playerRepository.deleteAll();

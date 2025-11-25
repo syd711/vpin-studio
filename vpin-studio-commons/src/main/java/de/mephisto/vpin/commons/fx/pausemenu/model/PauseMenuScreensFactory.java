@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,7 @@ import java.util.List;
  * Factory class to create frontend screens for the assets found in the Popper resource folders.
  */
 public class PauseMenuScreensFactory {
-  private final static Logger LOG = LoggerFactory.getLogger(PauseMenuScreensFactory.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static List<FrontendScreenAsset> createAssetScreens(@NonNull GameRepresentation game, @NonNull OverlayClient client, FrontendMediaRepresentation frontendMedia) {
     List<FrontendScreenAsset> screens = new ArrayList<>();

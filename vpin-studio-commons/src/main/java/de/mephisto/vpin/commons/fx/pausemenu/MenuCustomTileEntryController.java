@@ -8,11 +8,12 @@ import javafx.scene.control.Label;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class MenuCustomTileEntryController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(MenuCustomTileEntryController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private Label titleLabel;

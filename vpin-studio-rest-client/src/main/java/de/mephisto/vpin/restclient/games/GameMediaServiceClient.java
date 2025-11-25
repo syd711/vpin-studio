@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -29,7 +30,7 @@ import java.util.Map;
  * Game Media
  ********************************************************************************************************************/
 public class GameMediaServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private static final String API_SEGMENT_MEDIA = "media";
 
   public GameMediaServiceClient(VPinStudioClient client) {

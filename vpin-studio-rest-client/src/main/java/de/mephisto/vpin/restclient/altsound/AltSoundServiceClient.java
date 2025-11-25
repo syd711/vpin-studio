@@ -15,12 +15,13 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 
 /*********************************************************************************************************************
  * Alt Sound
  ********************************************************************************************************************/
 public class AltSoundServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(AltSoundServiceClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public AltSoundServiceClient(VPinStudioClient client) {
     super(client);

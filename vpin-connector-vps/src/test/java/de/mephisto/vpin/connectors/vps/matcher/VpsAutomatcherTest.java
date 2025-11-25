@@ -11,8 +11,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 
+import java.lang.invoke.MethodHandles;
+
 public class VpsAutomatcherTest {
-  private final static Logger LOG = LoggerFactory.getLogger(VpsAutomatcherTest.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private void doMatch(VpsAutomatcher matcher, VPS vpsDatabase, String gameFileName, 
             String rom, String author, String version, 

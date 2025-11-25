@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -40,7 +41,7 @@ import java.util.ResourceBundle;
 import static de.mephisto.vpin.commons.fx.ServerFX.client;
 
 public class WidgetPlayerRankController extends WidgetController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(WidgetPlayerRankController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private BorderPane root;

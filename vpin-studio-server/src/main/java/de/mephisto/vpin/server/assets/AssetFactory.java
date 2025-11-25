@@ -21,9 +21,10 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 
 public class AssetFactory {
-  private final static Logger LOG = LoggerFactory.getLogger(AssetFactory.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   static {
     try {

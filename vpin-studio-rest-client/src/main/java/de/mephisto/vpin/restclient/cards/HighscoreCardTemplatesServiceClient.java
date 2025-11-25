@@ -16,6 +16,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
  * Highscore Card Templates
  ********************************************************************************************************************/
 public class HighscoreCardTemplatesServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private Set<CardTemplate> cachedTemplates = new LinkedHashSet<>();
 

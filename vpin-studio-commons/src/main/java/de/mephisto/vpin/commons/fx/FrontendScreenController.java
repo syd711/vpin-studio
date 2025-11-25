@@ -21,11 +21,12 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class FrontendScreenController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(FrontendScreenController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private ImageView imageView;

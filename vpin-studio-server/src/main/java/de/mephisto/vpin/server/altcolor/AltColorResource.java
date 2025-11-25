@@ -17,13 +17,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.lang.invoke.MethodHandles;
+
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @RestController
 @RequestMapping(API_SEGMENT + "altcolor")
 public class AltColorResource {
-  private final static Logger LOG = LoggerFactory.getLogger(AltColorResource.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @Autowired
   private AltColorService altColorService;

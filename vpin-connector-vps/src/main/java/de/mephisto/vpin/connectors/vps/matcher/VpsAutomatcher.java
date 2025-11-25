@@ -1,5 +1,6 @@
 package de.mephisto.vpin.connectors.vps.matcher;
 
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -12,7 +13,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class VpsAutomatcher {
-  private final static Logger LOG = LoggerFactory.getLogger(VpsAutomatcher.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private VpsDebug debug;
 

@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
@@ -20,7 +21,7 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 public class ZipUtil {
-  private final static Logger LOG = LoggerFactory.getLogger(ZipUtil.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static boolean unzip(@NonNull File archiveFile, @NonNull File destinationDir, @Nullable UnzipChangeListener listener) {
     return unzip(archiveFile, destinationDir, false, null, Collections.emptyList(), listener);

@@ -89,7 +89,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
   private MameRomAliasService mameRomAliasService;
 
   @Autowired
-  private GameDetailsRepository gameDetailsRepository;
+  private GameDetailsRepositoryService gameDetailsRepositoryService;
 
   @Autowired
   private VpsService vpsService;
@@ -305,7 +305,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
     if (isVPX && isValidationEnabled(game, CODE_NVOFFSET_MISMATCH)) {
       if (game.getNvOffset() > 0 && !StringUtils.isEmpty(game.getRom())) {
-        List<GameDetails> otherGameDetailsWithSameRom = new ArrayList<>(gameDetailsRepository.findByRomName(game.getRom())).stream().filter(g -> g.getRomName() != null && g.getPupId() != game.getId() && g.getRomName().equalsIgnoreCase(game.getRom())).collect(Collectors.toList());
+        List<GameDetails> otherGameDetailsWithSameRom = new ArrayList<>(gameDetailsRepositoryService.findByRomName(game.getRom())).stream().filter(g -> g.getRomName() != null && g.getPupId() != game.getId() && g.getRomName().equalsIgnoreCase(game.getRom())).collect(Collectors.toList());
         for (GameDetails otherGameDetails : otherGameDetailsWithSameRom) {
           if (otherGameDetails.getNvOffset() == 0 || otherGameDetails.getNvOffset() == game.getNvOffset()) {
             Game otherGame = frontendService.getOriginalGame(otherGameDetails.getPupId());

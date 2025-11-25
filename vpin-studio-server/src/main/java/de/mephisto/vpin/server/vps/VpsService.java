@@ -13,10 +13,7 @@ import de.mephisto.vpin.restclient.vps.VpsInstallLink;
 import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.restclient.vpu.VPUSettings;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
-import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameDetails;
-import de.mephisto.vpin.server.games.GameDetailsRepository;
-import de.mephisto.vpin.server.games.GameLifecycleService;
+import de.mephisto.vpin.server.games.*;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.util.Version;
 import de.mephisto.vpin.server.vpsdb.VpsDbEntry;
@@ -54,7 +51,7 @@ public class VpsService implements InitializingBean {
   private PreferencesService preferencesService;
 
   @Autowired
-  private GameDetailsRepository gameDetailsRepository;
+  private GameDetailsRepositoryService gameDetailsRepositoryService;
 
   @Autowired
   private GameLifecycleService gameLifecycleService;
@@ -242,14 +239,14 @@ public class VpsService implements InitializingBean {
       try {
         List<Game> collect = games.stream().filter(g -> String.valueOf(g.getExtTableId()).equals(tableDiff.getId())).collect(Collectors.toList());
         for (Game game : collect) {
-          GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
+          GameDetails gameDetails = gameDetailsRepositoryService.findByPupId(game.getId());
           if (gameDetails != null) {
             VPSChanges changes = tableDiff.getTableChanges();
             String json = changes.toJson();
             List<String> changeTypes = changes.getChanges().stream().map(c -> c.getDiffType().name()).collect(Collectors.toList());
             LOG.info("Updating change list for \"" + game.getGameDisplayName() + "\" (" + tableDiff.getChanges().getChanges().size() + " entries): " + String.join(", ", changeTypes));
             gameDetails.setUpdates(json);
-            gameDetailsRepository.saveAndFlush(gameDetails);
+            gameDetailsRepositoryService.saveAndFlush(gameDetails);
             gameLifecycleService.notifyGameUpdated(game.getId());
           }
         }

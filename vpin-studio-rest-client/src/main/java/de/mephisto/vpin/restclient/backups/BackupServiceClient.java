@@ -15,6 +15,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,7 +28,7 @@ import java.util.concurrent.Future;
  * Archiving
  ********************************************************************************************************************/
 public class BackupServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final ExecutorService executor = Executors.newSingleThreadExecutor();
 

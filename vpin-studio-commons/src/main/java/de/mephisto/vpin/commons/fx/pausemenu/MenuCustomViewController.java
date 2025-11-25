@@ -29,12 +29,13 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
 public class MenuCustomViewController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(MenuCustomViewController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private ImageView wheelImage;

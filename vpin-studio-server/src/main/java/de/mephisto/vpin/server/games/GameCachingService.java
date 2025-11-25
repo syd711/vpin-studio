@@ -61,7 +61,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
   private EmulatorService emulatorService;
 
   @Autowired
-  private GameDetailsRepository gameDetailsRepository;
+  private GameDetailsRepositoryService gameDetailsRepositoryService;
 
   @Autowired
   private MameRomAliasService mameRomAliasService;
@@ -224,8 +224,11 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
   }
 
   private List<Game> getVpxGames() {
-    List<GameDetails> all = gameDetailsRepository.findAll();
-    Map<Integer, GameDetails> mappedGameDetails = all.stream().collect(Collectors.toMap(GameDetails::getPupId, g -> g));
+    List<GameDetails> all = gameDetailsRepositoryService.findAll();
+    Map<Integer, GameDetails> mappedGameDetails = new LinkedHashMap<>();
+    for (GameDetails gameDetails : all) {
+      mappedGameDetails.put(gameDetails.getPupId(), gameDetails);
+    }
     List<Game> games = new ArrayList<>();
     List<GameEmulator> gameEmulators = emulatorService.getVpxGameEmulators();
     for (GameEmulator gameEmulator : gameEmulators) {
@@ -283,7 +286,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
 
   private boolean applyGameDetails(@NonNull Game game, boolean forceScan, boolean forceScoreScan, @Nullable GameDetails gameDetails) {
     if (gameDetails == null) {
-      gameDetails = gameDetailsRepository.findByPupId(game.getId());
+      gameDetails = gameDetailsRepositoryService.findByPupId(game.getId());
     }
     boolean newGame = (gameDetails == null);
 
@@ -336,7 +339,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
       gameDetails.setPupId(game.getId());
       gameDetails.setUpdatedAt(new java.util.Date());
 
-      gameDetailsRepository.saveAndFlush(gameDetails);
+      gameDetailsRepositoryService.saveAndFlush(gameDetails);
       LOG.info("Created GameDetails for {}, was forced: {}", game.getGameDisplayName(), forceScan);
     }
 

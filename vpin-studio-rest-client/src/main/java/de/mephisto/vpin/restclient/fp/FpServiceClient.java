@@ -12,12 +12,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 
 /*********************************************************************************************************************
  * FP
  ********************************************************************************************************************/
 public class FpServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public FpServiceClient(VPinStudioClient client) {
     super(client);

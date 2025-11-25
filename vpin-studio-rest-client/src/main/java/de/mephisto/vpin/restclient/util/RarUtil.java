@@ -17,12 +17,13 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.lang.invoke.MethodHandles;
 import java.util.Collections;
 import java.util.List;
 
 public class RarUtil {
 
-  private final static Logger LOG = LoggerFactory.getLogger(RarUtil.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static String contains(@NonNull File archiveFile, @NonNull String suffix) {
     String fileFound = null;

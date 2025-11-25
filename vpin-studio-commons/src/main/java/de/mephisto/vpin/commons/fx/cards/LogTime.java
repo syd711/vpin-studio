@@ -3,9 +3,11 @@ package de.mephisto.vpin.commons.fx.cards;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
+
 public class LogTime {
 
-  private final static Logger LOG = LoggerFactory.getLogger(LogTime.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private String name;
   private long startTime;
