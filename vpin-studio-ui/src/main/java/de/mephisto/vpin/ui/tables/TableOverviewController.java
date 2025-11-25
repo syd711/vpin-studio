@@ -1004,7 +1004,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     BaseLoadingColumn.configureColumn(columnB2S, (value, model) -> {
       boolean hasUpdate = this.showVpsUpdates && vpsSettings.isVpsBackglass() && value.getVpsUpdates().contains(VpsDiffTypes.b2s);
       if (value.getDirectB2SPath() != null) {
-        int nbVersions = value.getNbDirectB2S();
+        int nbVersions = value.getDirectB2SVersions().size();
         FontIcon icon = null;
         if (nbVersions > 9) {
           icon = WidgetFactory.createIcon("mdi2n-numeric-9-plus-box-multiple-outline", getIconColor(value));

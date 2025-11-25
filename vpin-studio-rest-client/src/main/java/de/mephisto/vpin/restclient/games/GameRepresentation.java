@@ -92,7 +92,7 @@ public class GameRepresentation {
 
   private List<String> tags = new ArrayList<>();
 
-  private int nbDirectB2S = -1;
+  private List<String> directB2SVersions = new ArrayList<>();
 
   public List<String> getTags() {
     return tags;
@@ -565,12 +565,12 @@ public class GameRepresentation {
     this.gameFileName = gameFileName;
   }
 
-  public int getNbDirectB2S() {
-    return nbDirectB2S;
+  public List<String> getDirectB2SVersions() {
+    return directB2SVersions;
   }
 
-  public void setNbDirectB2S(int nbDirectB2S) {
-    this.nbDirectB2S = nbDirectB2S;
+  public void setDirectB2SVersions(List<String> nbDirectB2S) {
+    this.directB2SVersions = nbDirectB2S;
   }
 
   @Override

@@ -664,7 +664,7 @@ public class BackglassService implements InitializingBean {
     addGameInfo(b2s, emulator, mainBaseName);
 
     // update cache
-    if (b2s.getNbVersions() > 0) {
+    if (b2s.getVersions().size() > 0) {
       cacheDirectB2SVersion.put(emulator.getId() + "@" + mainBaseName, b2s);
       return b2s;
     }

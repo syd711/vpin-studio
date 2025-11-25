@@ -48,15 +48,15 @@ public class BackglassServiceTest extends AbstractVPinServerTest {
 
     DirectB2S b2s1 = b2s.get(0);
     assertEquals("250 cc (Inder 1992)" + File.separatorChar + "250 cc (Inder 1992).directb2s", b2s1.getFileName());
-    assertEquals(1, b2s1.getNbVersions());
+    assertEquals(1, b2s1.getVersions().size());
 
     DirectB2S b2s2 = b2s.get(1);
     assertEquals("Baseball (1970).directb2s", b2s2.getFileName());
-    assertEquals(1, b2s2.getNbVersions());
+    assertEquals(1, b2s2.getVersions().size());
 
     DirectB2S b2s3 = b2s.get(4);
     assertEquals("Twister (1996).directb2s", b2s3.getFileName());
-    assertEquals(2, b2s3.getNbVersions());
+    assertEquals(2, b2s3.getVersions().size());
   }
 
   @Test
@@ -65,7 +65,7 @@ public class BackglassServiceTest extends AbstractVPinServerTest {
     assertNotNull(g);
     DirectB2S b2s = backglassService.getDirectB2SAndVersions(g);
     assertEquals("Twister (1996).directb2s", b2s.getFileName());
-    assertEquals(2, b2s.getNbVersions());
+    assertEquals(2, b2s.getVersions().size());
 
     DirectB2SData data = backglassService.getDirectB2SData(g);
     assertNotNull(data);
@@ -100,7 +100,7 @@ public class BackglassServiceTest extends AbstractVPinServerTest {
   public void doAllTests(String directb2s, int nbVersions) throws Exception {
     DirectB2S b2s = backglassService.getDirectB2SAndVersions(1, directb2s + ".directb2s");
     assertEquals(directb2s + ".directb2s", b2s.getFileName());
-    assertEquals(nbVersions, b2s.getNbVersions());
+    assertEquals(nbVersions, b2s.getVersions().size());
     assertTrue(b2s.isEnabled());
 
     GameEmulator emu = emulatorService.getGameEmulator(1);
@@ -113,7 +113,7 @@ public class BackglassServiceTest extends AbstractVPinServerTest {
     DirectB2S b2stest = backglassService.duplicate(emu.getId(), f);
     assertNotNull(b2stest);
 
-    assertEquals(nbVersions + 1, b2stest.getNbVersions());
+    assertEquals(nbVersions + 1, b2stest.getVersions().size());
     for (int i = 0; i < nbVersions; i++) {
       assertEquals(b2s.getVersion(i), b2stest.getVersion(i));
     }
@@ -132,14 +132,14 @@ public class BackglassServiceTest extends AbstractVPinServerTest {
 
     // set as default, flipping f and newf files 
     b2stest = backglassService.setAsDefault(emu.getId(), newF);
-    assertEquals(nbVersions + 1, b2stest.getNbVersions());
+    assertEquals(nbVersions + 1, b2stest.getVersions().size());
     // check sizes
     assertEquals(newSize, Files.size(Path.of(emu.getGamesDirectory(), f)));
     assertEquals(size, Files.size(Path.of(emu.getGamesDirectory(), newF)));
 
     // Disable the backglasses, moving the duplicated file at the end
     b2stest = backglassService.disable(emu.getId(), f);
-    assertEquals(nbVersions + 1, b2stest.getNbVersions());
+    assertEquals(nbVersions + 1, b2stest.getVersions().size());
     assertFalse(b2stest.isEnabled());
     for (int i = 0; i < nbVersions + 1; i++) {
       assertNotEquals(f, b2stest.getVersion(i));
@@ -161,7 +161,7 @@ public class BackglassServiceTest extends AbstractVPinServerTest {
     assertTrue(b2stest.isEnabled());
     assertEquals(directb2s + ".directb2s", b2stest.getFileName());
     assertEquals(directb2s + ".directb2s", b2stest.getVersion(0));
-    assertEquals(nbVersions, b2stest.getNbVersions());
+    assertEquals(nbVersions, b2stest.getVersions().size());
     for (int i = 0; i < nbVersions; i++) {
       assertEquals(b2s.getVersion(i), b2stest.getVersion(i));
     }

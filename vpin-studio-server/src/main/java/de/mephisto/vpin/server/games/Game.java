@@ -61,7 +61,7 @@ public class Game {
 
   private List<CompetitionType> competitionTypes = new ArrayList<>();
 
-  private int nbDirectB2S;
+  private List<String> directB2SVersions =  new ArrayList<>();
 
   private boolean eventLogAvailable;
 
@@ -784,12 +784,12 @@ public class Game {
     return baseName + ".directb2s";
   }
 
-  public int getNbDirectB2S() {
-    return nbDirectB2S;
+  public List<String> getDirectB2SVersions() {
+    return directB2SVersions;
   }
 
-  public void setNbDirectB2S(int nbDirectB2S) {
-    this.nbDirectB2S = nbDirectB2S;
+  public void setDirectB2SVersions(List<String> nbDirectB2S) {
+    this.directB2SVersions = nbDirectB2S;
   }
 
   // File getNvRamFile() -> MOVED IN highscoreResolver

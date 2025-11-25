@@ -740,10 +740,10 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   public String getSelectedVersion() {
     DirectB2S selection = backglassManagerController.getSelection();
     String selectedVersion = null;
-    if (selection != null && selection.getNbVersions() > 1) {
+    if (selection != null && selection.getVersions().size() > 1) {
       selectedVersion = directB2SCombo.getValue();   // alternative check:  versionSelector.isVisible()
     }
-    if (selectedVersion == null && selection != null && selection.getNbVersions() > 0) {
+    if (selectedVersion == null && selection != null && selection.getVersions().size() > 0) {
       selectedVersion = selection.getVersion(0);
     }
     return selectedVersion;

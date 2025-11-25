@@ -105,9 +105,4 @@ public class DirectB2S {
   public String getVersion(int i) {
     return i < versions.size() ? versions.get(i) : null;
   }
-
-  @JsonIgnore
-  public int getNbVersions() {
-    return versions != null ? versions.size() : 0;
-  }
 }

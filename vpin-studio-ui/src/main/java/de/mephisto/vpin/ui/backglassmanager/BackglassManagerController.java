@@ -350,7 +350,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     }, this, true);
 
     BaseLoadingColumn.configureColumn(numberDirectB2SColumn, (value, model) -> {
-      int nbVersions = value.getNbVersions();
+      int nbVersions = value.getVersions().size();
       String iconname = null;
       if (nbVersions > 9) {
         iconname = "mdi2n-numeric-9-plus-box-multiple-outline";
