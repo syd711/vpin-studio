@@ -53,7 +53,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   private FrontendService frontendService;
 
   @Autowired
-  private GameDetailsRepository gameDetailsRepository;
+  private GameDetailsRepositoryService gameDetailsRepositoryService;
 
   @Autowired
   private GameValidationService gameValidationService;
@@ -195,7 +195,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     List<Integer> filtered = new ArrayList<>();
     for (Integer id : gameIds) {
       try {
-        GameDetails gameDetails = gameDetailsRepository.findByPupId(id);
+        GameDetails gameDetails = gameDetailsRepositoryService.findByPupId(id);
         if (gameDetails == null) {
           filtered.add(id);
         }
@@ -463,7 +463,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   }
 
   public synchronized Game save(Game game) throws Exception {
-    GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
+    GameDetails gameDetails = gameDetailsRepositoryService.findByPupId(game.getId());
 
     gameDetails.setTemplateId(game.getHighscoreCardTemplateId());
     gameDetails.setInstructionCardTemplateId(game.getInstructionCardTemplateId());
@@ -478,7 +478,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
       String json = vpsUpdates.toJson();
       gameDetails.setUpdates(json);
     }
-    gameDetailsRepository.saveAndFlush(gameDetails);
+    gameDetailsRepositoryService.saveAndFlush(gameDetails);
     LOG.info("Saved \"{}\"/ID: {}", game.getGameDisplayName(), game.getId());
     gameLifecycleService.notifyGameUpdated(game.getId());
     return getGame(game.getId());
@@ -486,9 +486,9 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
 
   public synchronized void saveEventLog(HighscoreEventLog log) {
     try {
-      GameDetails gameDetails = gameDetailsRepository.findByPupId(log.getGameId());
+      GameDetails gameDetails = gameDetailsRepositoryService.findByPupId(log.getGameId());
       gameDetails.setEventLog(log.toJson());
-      gameDetailsRepository.saveAndFlush(gameDetails);
+      gameDetailsRepositoryService.saveAndFlush(gameDetails);
       gameLifecycleService.notifyGameUpdated(log.getGameId());
       LOG.info("Saved event log for " + log.getGameId());
     }
@@ -498,10 +498,10 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   }
 
   public boolean vpsLink(int gameId, String extTableId, String extTableVersionId) {
-    GameDetails gameDetails = gameDetailsRepository.findByPupId(gameId);
+    GameDetails gameDetails = gameDetailsRepositoryService.findByPupId(gameId);
     gameDetails.setExtTableId(extTableId);
     gameDetails.setExtTableVersionId(extTableVersionId);
-    gameDetailsRepository.saveAndFlush(gameDetails);
+    gameDetailsRepositoryService.saveAndFlush(gameDetails);
     LOG.info("Linked game " + gameId + " to " + extTableId + "/" + extTableVersionId);
     // update the table in the frontend
     frontendService.vpsLink(gameId, extTableId, extTableVersionId);
@@ -511,10 +511,10 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   }
 
   public boolean fixVersion(int gameId, String version, boolean overwrite) {
-    GameDetails gameDetails = gameDetailsRepository.findByPupId(gameId);
+    GameDetails gameDetails = gameDetailsRepositoryService.findByPupId(gameId);
     if (overwrite || StringUtils.isEmpty(gameDetails.getTableVersion())) {
       gameDetails.setTableVersion(version);
-      gameDetailsRepository.saveAndFlush(gameDetails);
+      gameDetailsRepositoryService.saveAndFlush(gameDetails);
       LOG.info("Version saved for " + gameId + " to " + version);
       gameLifecycleService.notifyGameUpdated(gameId);
       return true;
@@ -524,14 +524,14 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
 
   public void resetUpdate(int gameId, VpsDiffTypes diffType) {
     try {
-      GameDetails gameDetails = gameDetailsRepository.findByPupId(gameId);
+      GameDetails gameDetails = gameDetailsRepositoryService.findByPupId(gameId);
       String updates = gameDetails.getUpdates();
       if (updates != null) {
         List<String> existingUpdates = new ArrayList<>(Arrays.asList(updates.split(",")));
         existingUpdates.remove(diffType.name());
         updates = String.join(",", existingUpdates);
         gameDetails.setUpdates(updates);
-        gameDetailsRepository.saveAndFlush(gameDetails);
+        gameDetailsRepositoryService.saveAndFlush(gameDetails);
         gameLifecycleService.notifyGameUpdated(gameId);
         LOG.info("Resetted updates for " + gameId + " and removed \"" + diffType + "\", new update list: \"" + updates.trim() + "\"");
       }
@@ -544,7 +544,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   public void resetUpdate(String rom, VpsDiffTypes diffType) {
     try {
       if (!StringUtils.isEmpty(rom)) {
-        List<GameDetails> byRomName = gameDetailsRepository.findByRomName(rom);
+        List<GameDetails> byRomName = gameDetailsRepositoryService.findByRomName(rom);
         for (GameDetails gameDetails : byRomName) {
           String updates = gameDetails.getUpdates();
           if (updates != null) {
@@ -552,7 +552,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
             existingUpdates.remove(diffType.name());
             updates = String.join(",", existingUpdates);
             gameDetails.setUpdates(updates);
-            gameDetailsRepository.saveAndFlush(gameDetails);
+            gameDetailsRepositoryService.saveAndFlush(gameDetails);
             LOG.info("Resetted updates for " + gameDetails.getPupId() + " and removed \"" + diffType + "\", new update list: \"" + updates.trim() + "\"");
             gameLifecycleService.notifyGameUpdated(gameDetails.getPupId());
           }
@@ -580,7 +580,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   public HighscoreEventLog getEventLog(int id) {
     try {
       Game game = getGame(id);
-      GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
+      GameDetails gameDetails = gameDetailsRepositoryService.findByPupId(game.getId());
       String log = gameDetails.getEventLog();
       if (log != null) {
         return HighscoreEventLog.fromJson(HighscoreEventLog.class, log);
@@ -599,7 +599,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
 
   public GameScoreValidation getGameScoreValidation(int id, TableDetails tableDetails) {
     Game game = getGame(id);
-    GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
+    GameDetails gameDetails = gameDetailsRepositoryService.findByPupId(game.getId());
     return gameValidationService.validateHighscoreStatus(game, gameDetails, tableDetails, frontendService.getFrontendType(), serverSettings);
   }
 
