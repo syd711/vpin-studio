@@ -5,6 +5,8 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.cards.CardTemplateType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
+import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.cards.panels.TemplateEditorController;
@@ -15,6 +17,8 @@ import de.mephisto.vpin.ui.tables.GameRepresentationModel;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -25,7 +29,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,6 +55,9 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnBaseTemplate;
 
   @FXML
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnWheel;
+
+  @FXML
   private Button tableEditBtn;
 
   @FXML
@@ -73,23 +79,27 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
 
   @FXML
   private void onMediaEdit() {
-    GameRepresentation selectedItems = getSelection();
-    if (selectedItems != null) {
-      DesignMode designMode = templateEditorController.getDesignMode();
-      VPinScreen screen = VPinScreen.BackGlass;
-      switch (designMode) {
-        case wheel:
-          screen = VPinScreen.Wheel;
-          break;
-        case highscoreCard:
-          screen = VPinScreen.Other2;
-          break;
-        case instructionCard:
-          screen = VPinScreen.GameHelp;
-          break;
-      }
-      TableDialogs.openTableAssetsDialog(null, selectedItems, screen);
+    DesignMode designMode = templateEditorController.getDesignMode();
+    onAssetManager(designMode, getSelection());
+  }
+
+  public static void onAssetManager(@NonNull DesignMode designMode, @Nullable GameRepresentation game) {
+    if (game == null) {
+      return;
     }
+    VPinScreen screen = VPinScreen.BackGlass;
+    switch (designMode) {
+      case wheel:
+        screen = VPinScreen.Wheel;
+        break;
+      case highscoreCard:
+        screen = VPinScreen.Other2;
+        break;
+      case instructionCard:
+        screen = VPinScreen.GameHelp;
+        break;
+    }
+    TableDialogs.openTableAssetsDialog(null, game, screen);
   }
 
   @FXML
@@ -259,6 +269,17 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
       label.setTooltip(new Tooltip(templateName));
       return label;
     }, this, true);
+
+    BaseLoadingColumn.configureLoadingColumn(columnWheel, "Loading...", (value, model) -> {
+      FrontendMediaRepresentation gameMedia = client.getGameMediaService().getGameMedia(model.getGameId());
+      Label label = new Label("");
+      label.getStyleClass().add("default-text");
+      FrontendMediaItemRepresentation defaultMediaItem = gameMedia.getDefaultMediaItem(VPinScreen.Wheel);
+      if (defaultMediaItem != null) {
+        label.setGraphic(WidgetFactory.createCheckIcon());
+      }
+      return label;
+    });
 
 
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);

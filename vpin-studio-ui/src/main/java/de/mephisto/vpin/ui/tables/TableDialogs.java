@@ -734,7 +734,11 @@ public class TableDialogs {
     return controller.uploadFinished();
   }
 
-  public static void openMediaDialog(Stage parent, FrontendMediaItemRepresentation item) {
+  public static void openMediaDialog(@NonNull Stage parent, @Nullable FrontendMediaItemRepresentation item) {
+    if(item == null) {
+      return;
+    }
+
     Stage stage = Dialogs.createStudioDialogStage(parent, MediaPreviewController.class, "dialog-media-preview.fxml", item.getScreen() + " Screen", "dialog-media-preview");
     MediaPreviewController controller = (MediaPreviewController) stage.getUserData();
     controller.setData(stage, item, false);

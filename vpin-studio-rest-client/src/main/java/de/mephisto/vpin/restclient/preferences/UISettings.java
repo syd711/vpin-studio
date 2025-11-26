@@ -23,6 +23,7 @@ public class UISettings extends JsonSettings {
 
   //Hide/Show Unique Custom Vpin Studio Icons
   private boolean hideCustomIcons;
+  private boolean hideGreenMarker = true;
 
   private boolean autoApplyVpsData = true;
 
@@ -580,6 +581,14 @@ public class UISettings extends JsonSettings {
 
   public void setHideRatingSyncInfo(boolean hideRatingSyncInfo) {
     this.hideRatingSyncInfo = hideRatingSyncInfo;
+  }
+
+  public boolean isHideGreenMarker() {
+    return hideGreenMarker;
+  }
+
+  public void setHideGreenMarker(boolean hideGreenMarker) {
+    this.hideGreenMarker = hideGreenMarker;
   }
 
   public boolean isHideCustomIcons() {

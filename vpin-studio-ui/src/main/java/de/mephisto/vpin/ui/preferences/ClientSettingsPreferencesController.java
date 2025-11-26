@@ -137,6 +137,8 @@ public class ClientSettingsPreferencesController implements Initializable {
   private CheckBox columnVpsStatus;
   @FXML
   private CheckBox uiHideCustomIcons;
+  @FXML
+  private CheckBox uiHideGreenMarker;
 
   @FXML
   private VBox networkSettings;
@@ -235,9 +237,15 @@ public class ClientSettingsPreferencesController implements Initializable {
     });
 
     uiHideCustomIcons.setSelected(uiSettings.isHideCustomIcons());
-
     uiHideCustomIcons.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setHideCustomIcons(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
+    });
+
+    uiHideGreenMarker.setSelected(!uiSettings.isHideGreenMarker());
+    uiHideGreenMarker.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setHideGreenMarker(!t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
       client.getPreferenceService().setJsonPreference(uiSettings);
     });

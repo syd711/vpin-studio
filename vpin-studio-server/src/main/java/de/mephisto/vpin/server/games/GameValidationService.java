@@ -480,7 +480,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
   private List<ValidationState> validateForceStereo(Game game) {
     List<ValidationState> result = new ArrayList<>();
 
-    if (isValidationEnabled(game, CODE_FORCE_STEREO) && !StringUtils.isEmpty(game.getRom())) {
+    if (isValidationEnabled(game, CODE_FORCE_STEREO) && !StringUtils.isEmpty(game.getRom()) && !game.isAltSoundAvailable()) {
       MameOptions gameOptions = mameService.getOptions(game.getRom());
       MameOptions options = mameService.getOptions(MameOptions.DEFAULT_KEY);
 

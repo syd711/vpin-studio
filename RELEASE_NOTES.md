@@ -1,3 +1,17 @@
+## Release Notes 4.4.3
+
+## Changes
+
+- Fixed PUP Pack Tweaker menu entry so that it is only enable when working on the cab.
+- Fixed updater dialog where the progress bars had a height of 0 pixels. They are now visible again.
+- Fixed the wrong error message that setting a highscore screen is required when generating a wheel icon from the wheel designer.
+- Disabled "Force Stereo" validation when the game has an ALT sound package installed.
+- Added option to hide the green table marker icon. The icon is now hidden by default. This visual declutter cleans up the visual information of the table overview a bit. If you feel nostalgic, you can enable them again in the client preferences.
+- Added additional "Wheel" column to the designer that shows if a table has an existing wheel icon.
+
+
+---
+
 ## Release Notes 4.4.2
 
 ## Changes

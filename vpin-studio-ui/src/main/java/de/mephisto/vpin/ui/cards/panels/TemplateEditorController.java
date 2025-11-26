@@ -14,6 +14,7 @@ import de.mephisto.vpin.restclient.cards.CardTemplateType;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
+import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
@@ -22,6 +23,7 @@ import de.mephisto.vpin.ui.cards.DesignMode;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
 import de.mephisto.vpin.ui.cards.DesignerGeneratorProgressModel;
 import de.mephisto.vpin.ui.cards.TemplateAssigmentProgressModel;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.util.*;
@@ -98,6 +100,13 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   private Button stopBtn;
 
   @FXML
+  private Button assetDeleteBtn;
+  @FXML
+  private Button assetViewBtn;
+  @FXML
+  private Button assetManagerBtn;
+
+  @FXML
   private Accordion accordion;
   @FXML
   private Label resolutionLabel;
@@ -166,6 +175,9 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   @FXML
   private Pane nagBar;
 
+  @FXML
+  private BorderPane mediaPane;
+
 
   /**
    * the dragboxes, today only used at a time
@@ -188,6 +200,75 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   private void onOpenImage() {
     if (gameRepresentation.isPresent()) {
       TableDialogs.openMediaDialog(Studio.stage, "Preview", client.getHighscoreCardsService().getHighscoreCardUrl(gameRepresentation.get(), getSelectedTemplateType()), "image/png");
+    }
+  }
+
+  @FXML
+  private void onAssetManager() {
+    if (gameRepresentation.isPresent()) {
+      HighscoreCardsController.onAssetManager(getDesignMode(), gameRepresentation.get());
+    }
+  }
+
+
+  @FXML
+  private void onAssetDelete(ActionEvent e) {
+    if (gameRepresentation.isPresent()) {
+      GameRepresentation game = gameRepresentation.get();
+
+      Stage stage = (Stage) ((Labeled) e.getSource()).getScene().getWindow();
+      FrontendMediaRepresentation frontendMedia = client.getFrontendMedia(this.gameRepresentation.get().getId());
+      FrontendMediaItemRepresentation defaultMediaItem = null;
+      VPinScreen screen = VPinScreen.Wheel;
+      if (getDesignMode().equals(DesignMode.wheel)) {
+        defaultMediaItem = frontendMedia.getDefaultMediaItem(VPinScreen.Wheel);
+      }
+      else if (getDesignMode().equals(DesignMode.highscoreCard)) {
+        CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
+        String popperScreen = cardSettings.getPopperScreen();
+        screen = StringUtils.isNotEmpty(popperScreen) ? VPinScreen.valueOfScreen(popperScreen) : null;
+        if (screen != null) {
+          defaultMediaItem = frontendMedia.getDefaultMediaItem(screen);
+        }
+      }
+
+      if (defaultMediaItem != null) {
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete \"" + defaultMediaItem.getName() + "\"?", "The selected media will be deleted.", null, "Delete");
+        if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+
+          client.getGameMediaService().deleteMedia(game.getId(), screen, defaultMediaItem.getName());
+
+          Platform.runLater(() -> {
+            EventManager.getInstance().notifyTableChange(game.getId(), null);
+            Platform.runLater(() -> {
+              refreshDefaultAssetPreview();
+              refreshPreview(gameRepresentation);
+            });
+          });
+        }
+      }
+    }
+  }
+
+  @FXML
+  private void onAssetPreview() {
+    if (gameRepresentation.isPresent()) {
+      FrontendMediaRepresentation frontendMedia = client.getFrontendMedia(this.gameRepresentation.get().getId());
+      if (frontendMedia != null) {
+        if (getDesignMode().equals(DesignMode.wheel)) {
+          FrontendMediaItemRepresentation defaultMediaItem = frontendMedia.getDefaultMediaItem(VPinScreen.Wheel);
+          TableDialogs.openMediaDialog(stage, defaultMediaItem);
+        }
+        else if (getDesignMode().equals(DesignMode.highscoreCard)) {
+          CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
+          String popperScreen = cardSettings.getPopperScreen();
+          VPinScreen screen = StringUtils.isNotEmpty(popperScreen) ? VPinScreen.valueOfScreen(popperScreen) : null;
+          if (screen != null) {
+            FrontendMediaItemRepresentation defaultMediaItem = frontendMedia.getDefaultMediaItem(screen);
+            TableDialogs.openMediaDialog(stage, defaultMediaItem);
+          }
+        }
+      }
     }
   }
 
@@ -435,6 +516,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       // deselect any element if any
       unloadDragBoxes();
 
+
       templateModeBtn.setDisable(false);
       cardModeBtn.setDisable(false);
       templateCombo.setDisable(false);
@@ -469,10 +551,55 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       templateBeanBinder.setPaused(false);
 
       cardPreview.setTemplate(cardTemplate);
+      refreshDefaultAssetPreview();
       refreshPreview(this.gameRepresentation);
     }
     catch (Exception e) {
       LOG.error("Failed to select {}: {}", cardTemplate, e.getMessage(), e);
+    }
+  }
+
+  private void refreshDefaultAssetPreview() {
+    assetDeleteBtn.setDisable(true);
+    assetViewBtn.setDisable(true);
+    assetManagerBtn.setDisable(this.gameRepresentation.isEmpty());
+
+    WidgetFactory.disposeMediaPane(mediaPane);
+
+    FrontendMediaItemRepresentation defaultMediaItem = null;
+    if(this.gameRepresentation.isPresent()) {
+      GameRepresentation game = this.gameRepresentation.get();
+
+//      client.getImageCache().clearWheelCache();
+      client.getFrontendService().clearCache(game.getId());
+
+      FrontendMediaRepresentation frontendMedia = client.getFrontendMedia(this.gameRepresentation.get().getId());
+      if (frontendMedia != null) {
+        if (getDesignMode().equals(DesignMode.wheel)) {
+          defaultMediaItem = frontendMedia.getDefaultMediaItem(VPinScreen.Wheel);
+        }
+        else if (getDesignMode().equals(DesignMode.highscoreCard)) {
+          CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
+          String popperScreen = cardSettings.getPopperScreen();
+          VPinScreen screen = StringUtils.isNotEmpty(popperScreen) ? VPinScreen.valueOfScreen(popperScreen) : null;
+          if (screen != null) {
+            defaultMediaItem = frontendMedia.getDefaultMediaItem(screen);
+          }
+        }
+      }
+    }
+
+    if (defaultMediaItem == null) {
+      Label label = new Label("No media found");
+      label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
+      label.setUserData(null);
+      mediaPane.setCenter(label);
+    }
+    else {
+      assetDeleteBtn.setDisable(false);
+      assetViewBtn.setDisable(false);
+      assetMediaPlayer = WidgetFactory.createAssetMediaPlayer(client, defaultMediaItem, false, false);
+      mediaPane.setCenter(assetMediaPlayer);
     }
   }
 
@@ -502,15 +629,20 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   @FXML
   private void onGenerate() {
     if (this.gameRepresentation.isPresent()) {
-      CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
-      String targetScreen = cardSettings.getPopperScreen();
-      if (StringUtils.isEmpty(targetScreen)) {
-        WidgetFactory.showAlert(stage, "Not target screen selected.", "Select a target screen in the preferences.");
+      GameRepresentation game = this.gameRepresentation.get();
+      if (getDesignMode().equals(DesignMode.highscoreCard)) {
+        CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
+        String targetScreen = cardSettings.getPopperScreen();
+        if (StringUtils.isEmpty(targetScreen)) {
+          WidgetFactory.showAlert(stage, "Not target screen selected.", "Select a target screen in the preferences.");
+        }
+        return;
       }
-      else {
-        ProgressDialog.createProgressDialog(new DesignerGeneratorProgressModel(client, "Generating Media", this.gameRepresentation.get(), getSelectedTemplateType()));
-      }
+
+      ProgressDialog.createProgressDialog(new DesignerGeneratorProgressModel(client, "Generating Media", this.gameRepresentation.get(), getSelectedTemplateType()));
       refreshPreview(this.gameRepresentation);
+
+      EventManager.getInstance().notifyTableChange(game.getId(), null);
     }
   }
 

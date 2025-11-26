@@ -116,6 +116,15 @@
                      </VBox.margin>
                   </CheckBox>
                   <Label layoutX="34.0" layoutY="526.0" styleClass="checkbox-description" text="If checked, only Material UI icons will be used for all playlists." textFill="WHITE" />
+                  <CheckBox fx:id="uiHideGreenMarker" layoutX="34.0" layoutY="620.0" mnemonicParsing="false" styleClass="default-text" text="Use green check marker icons for tables with no issues." textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
+                  </CheckBox>
+                  <Label layoutX="34.0" layoutY="640.0" styleClass="checkbox-description" text="If checked, a green check marker icon is shown for tables with no issues." textFill="WHITE" />
                   <Label styleClass="default-headline" text="Visible Table Columns" textFill="WHITE">
                      <VBox.margin>
                         <Insets top="24.0" />
