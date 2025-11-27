@@ -198,10 +198,10 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
       if (this.game.isPresent()) {
         GameRepresentation gameRepresentation = this.game.get();
         FileInfo hsFileInfo = client.getGameService().getHighscoreFileInfo(gameRepresentation.getId());
-        if (hsFileInfo.getFile() != null && FilenameUtils.getExtension(hsFileInfo.getFile().getName()).toLowerCase().endsWith("txt")) {
+        if (hsFileInfo != null && hsFileInfo.getFile() != null && FilenameUtils.getExtension(hsFileInfo.getFile().getName()).toLowerCase().endsWith("txt")) {
           SystemUtil.open(hsFileInfo);
         }
-        else {
+        else if (hsFileInfo != null && hsFileInfo.getFile() != null) {
           SystemUtil.openFile(hsFileInfo.getFile());
         }
       }
