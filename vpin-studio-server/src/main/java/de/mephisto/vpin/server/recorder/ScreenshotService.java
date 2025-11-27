@@ -11,7 +11,6 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.commons.fx.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +59,8 @@ public class ScreenshotService {
       String dateSuffix = DateUtil.formatTimeString(new Date()) + ".zip";
       String name = game != null ? FileUtils.replaceWindowsChars(game.getGameDisplayName()) + dateSuffix : "menu-" + dateSuffix;
       File target = new File(targetFolder, name);
-      takeScreenshots(target);
+      List<File> files = takeScreenshots();
+      zipScreenshots(target, files);
     }
     catch (IOException e) {
       LOG.error("Failed to write internal screenshots: {}", e.getMessage(), e);
@@ -68,9 +68,11 @@ public class ScreenshotService {
   }
 
   public void takeScreenshots(@NonNull File targetArchive) throws IOException {
-    MonitoringSettings monitoringSettings = preferencesService.getJsonPreference(PreferenceNames.MONITORING_SETTINGS, MonitoringSettings.class);
-    List<File> screenshotFiles = takeFrontendScreenshots(monitoringSettings);
+    List<File> files = takeScreenshots();
+    zipScreenshots(targetArchive, files);
+  }
 
+  public void zipScreenshots(@NonNull File targetArchive, @NonNull List<File> screenshotFiles) throws IOException {
     FileOutputStream fos = new FileOutputStream(targetArchive);
     ZipOutputStream zipOut = new ZipOutputStream(fos);
 
@@ -88,6 +90,11 @@ public class ScreenshotService {
         LOG.info("Delete temporary screenshot {}", screenshotFile.getAbsolutePath());
       }
     }
+  }
+
+  private List<File> takeScreenshots() throws IOException {
+    MonitoringSettings monitoringSettings = preferencesService.getJsonPreference(PreferenceNames.MONITORING_SETTINGS, MonitoringSettings.class);
+    return takeFrontendScreenshots(monitoringSettings);
   }
 
   private List<File> takeFrontendScreenshots(MonitoringSettings monitoringSettings) {

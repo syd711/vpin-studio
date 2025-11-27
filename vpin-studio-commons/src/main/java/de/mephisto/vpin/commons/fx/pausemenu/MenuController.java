@@ -273,7 +273,6 @@ public class MenuController implements Initializable {
         Pane widgetRoot = loader.load();
         MenuScoreViewController customViewController = loader.getController();
         customViewController.setData(game, gameStatus, vpsTable, activeSelection, sectionImage);
-//        return widgetRoot;
         scoreView.setCenter(widgetRoot);
         scoreView.setVisible(true);
       }
@@ -289,7 +288,21 @@ public class MenuController implements Initializable {
         Pane widgetRoot = loader.load();
         MenuScoreViewController customViewController = loader.getController();
         customViewController.setData(game, gameStatus, vpsTable, activeSelection, sectionImage);
-//        return widgetRoot;
+        scoreView.setCenter(widgetRoot);
+        scoreView.setVisible(true);
+      }
+      catch (IOException e) {
+        LOG.error("Failed to init pause component: " + e.getMessage(), e);
+      }
+    }
+    else if (activeSelection.getItemType().equals(PauseMenuItemTypes.scoreSubmitter)) {
+      try {
+        Image sectionImage = new Image(PauseMenu.class.getResourceAsStream("wovp.png"));
+        String resource = "menu-submitter-view.fxml";
+        FXMLLoader loader = new FXMLLoader(MenuSubmitterViewController.class.getResource(resource));
+        Pane widgetRoot = loader.load();
+        MenuSubmitterViewController customViewController = loader.getController();
+        customViewController.setData(game, gameStatus, vpsTable, activeSelection,sectionImage);
         scoreView.setCenter(widgetRoot);
         scoreView.setVisible(true);
       }
@@ -298,7 +311,6 @@ public class MenuController implements Initializable {
       }
     }
     else if (activeSelection.getItemType().equals(PauseMenuItemTypes.highscores)) {
-
       ProgressIndicator indicator = new ProgressIndicator();
       indicator.setPrefWidth(300.0);
       indicator.setPrefHeight(300.0);
