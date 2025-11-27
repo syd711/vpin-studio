@@ -9,79 +9,107 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="header" onMouseClicked="#onMouseClick" styleClass="window-header" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.HeaderResizeableController">
-   <center>
-      <BorderPane BorderPane.alignment="TOP_LEFT">
-         <BorderPane.margin>
-            <Insets left="24.0" />
-         </BorderPane.margin>
-      </BorderPane>
-   </center>
-   <right>
-      <BorderPane stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
-         <BorderPane.margin>
-            <Insets />
-         </BorderPane.margin>
-         <padding>
-            <Insets right="6.0" />
-         </padding>
-         <left>
-            <HBox alignment="CENTER_RIGHT" BorderPane.alignment="BOTTOM_RIGHT">
-               <children>
-                  <VBox>
-                     <HBox.margin>
-                        <Insets right="24.0" />
-                     </HBox.margin>
-                     <children>
-                        <Button fx:id="maniaBtn" mnemonicParsing="false" onAction="#onMania" styleClass="bar-button" text="VPin Mania">
-                           <graphic>
-                              <Label fx:id="maniaIconLabel">
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2a-account-multiple" iconSize="18" />
-                                 </graphic>
-                              </Label>
-                           </graphic>
-                        </Button>
-                     </children>
-                  </VBox>
-                  <HBox alignment="CENTER_RIGHT">
-                     <children>
-                        <Button fx:id="minimizeBtn" mnemonicParsing="false" onAction="#onHideClick" prefHeight="24.0" prefWidth="24.0" styleClass="header-button" stylesheets="@stylesheet.css">
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-minimize" iconSize="16" />
-                           </graphic>
-                        </Button>
-                        <Button fx:id="maximizeBtn" mnemonicParsing="false" onAction="#onMaximize" prefHeight="24.0" prefWidth="24.0" styleClass="header-button" stylesheets="@stylesheet.css">
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-maximize" iconSize="16" />
-                           </graphic>
-                        </Button>
-                        <Button mnemonicParsing="false" onAction="#onCloseClick" prefHeight="24.0" prefWidth="24.0" styleClass="header-button" stylesheets="@stylesheet.css">
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-close" iconSize="16" />
-                           </graphic>
-                        </Button>
-                     </children>
-                     <HBox.margin>
-                        <Insets top="2.0" />
-                     </HBox.margin>
-                  </HBox>
-               </children>
-            </HBox>
-         </left>
-      </BorderPane>
-   </right>
-   <left>
-      <Label fx:id="titleLabel" text="VPin Studio" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
-         <font>
-            <Font name="Impact" size="18.0" />
-         </font>
-         <BorderPane.margin>
-            <Insets left="12.0" top="3.0" />
-         </BorderPane.margin>
-      </Label>
-   </left>
-   <padding>
-      <Insets bottom="4.0" />
-   </padding>
+<?import javafx.scene.control.Tooltip?>
+<BorderPane fx:id="header" onMouseClicked="#onMouseClick" styleClass="window-header" stylesheets="@stylesheet.css"
+            xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="de.mephisto.vpin.ui.HeaderResizeableController">
+    <center>
+        <BorderPane BorderPane.alignment="TOP_LEFT">
+            <BorderPane.margin>
+                <Insets left="24.0"/>
+            </BorderPane.margin>
+        </BorderPane>
+    </center>
+    <right>
+        <BorderPane stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
+            <BorderPane.margin>
+                <Insets/>
+            </BorderPane.margin>
+            <padding>
+                <Insets right="6.0"/>
+            </padding>
+            <left>
+                <HBox alignment="CENTER_RIGHT" BorderPane.alignment="BOTTOM_RIGHT">
+                    <children>
+                        <VBox>
+                            <HBox.margin>
+                                <Insets right="24.0"/>
+                            </HBox.margin>
+                            <children>
+                                <HBox alignment="CENTER_RIGHT" BorderPane.alignment="BOTTOM_RIGHT">
+                                    <children>
+                                        <Button fx:id="maniaBtn" mnemonicParsing="false" onAction="#onMania"
+                                                styleClass="bar-button-left" text="VPin Mania">
+                                            <graphic>
+                                                <Label fx:id="maniaIconLabel">
+                                                    <graphic>
+                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2a-account-multiple"
+                                                                  iconSize="18"/>
+                                                    </graphic>
+                                                </Label>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="maniaOpenBtn" mnemonicParsing="false" onAction="#onManiaOpen"
+                                                styleClass="bar-button-right" text="">
+                                            <graphic>
+                                                <Label fx:id="maniaOpenIconLabel">
+                                                    <graphic>
+                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link"
+                                                                  iconSize="18"/>
+                                                    </graphic>
+                                                    <tooltip>
+                                                        <Tooltip text="Open vpin-mania app in web browser" wrapText="true" />
+                                                    </tooltip>
+                                                </Label>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
+                        <HBox alignment="CENTER_RIGHT">
+                            <children>
+                                <Button fx:id="minimizeBtn" mnemonicParsing="false" onAction="#onHideClick"
+                                        prefHeight="24.0" prefWidth="24.0" styleClass="header-button"
+                                        stylesheets="@stylesheet.css">
+                                    <graphic>
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-minimize" iconSize="16"/>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="maximizeBtn" mnemonicParsing="false" onAction="#onMaximize"
+                                        prefHeight="24.0" prefWidth="24.0" styleClass="header-button"
+                                        stylesheets="@stylesheet.css">
+                                    <graphic>
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-maximize" iconSize="16"/>
+                                    </graphic>
+                                </Button>
+                                <Button mnemonicParsing="false" onAction="#onCloseClick" prefHeight="24.0"
+                                        prefWidth="24.0" styleClass="header-button" stylesheets="@stylesheet.css">
+                                    <graphic>
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-close" iconSize="16"/>
+                                    </graphic>
+                                </Button>
+                            </children>
+                            <HBox.margin>
+                                <Insets top="2.0"/>
+                            </HBox.margin>
+                        </HBox>
+                    </children>
+                </HBox>
+            </left>
+        </BorderPane>
+    </right>
+    <left>
+        <Label fx:id="titleLabel" text="VPin Studio" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+            <font>
+                <Font name="Impact" size="18.0"/>
+            </font>
+            <BorderPane.margin>
+                <Insets left="12.0" top="3.0"/>
+            </BorderPane.margin>
+        </Label>
+    </left>
+    <padding>
+        <Insets bottom="4.0"/>
+    </padding>
 </BorderPane>

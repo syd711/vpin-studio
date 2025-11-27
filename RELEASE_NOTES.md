@@ -9,6 +9,7 @@
 - Added **option to hide the green table marker icon**. The icon is now hidden by default. This visual declutter cleans up the visual information of the table overview a bit. If you feel nostalgic, you can enable them again in the client preferences.
 - Added **additional "Wheel" column to the Designer** that shows if a table has an existing wheel icon.
 - Added additional **default media item preview in the Designer** that shows which asset is currently used by the corresponding screen and would be overwritten.
+- Added link button that points to the https://app.vpin-mania.net dashboard next to the VPin Mania menu button.
 
 
 ---

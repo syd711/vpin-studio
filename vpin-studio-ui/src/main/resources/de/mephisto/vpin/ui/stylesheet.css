@@ -406,13 +406,28 @@
 /**
  * Friends Buttons
  */
-.bar-button {
+.bar-button-left {
     -fx-min-width: 114px;
-    -fx-padding: 2 0 1 0;
-    -fx-border-radius: 0 0 4 4;
-    -fx-background-radius: 0 0 5 5;
+    -fx-min-height: 26px;
+    -fx-padding: 2 0 0 0;
+    -fx-border-radius: 0 0 0 4;
+    -fx-background-radius: 0 0 0 5;
     -fx-background-color: #494949;
-    -fx-border-style: solid inside;
+    -fx-border-style: solid;
+    -fx-border-width: 1;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-border-color: #373737;
+    -fx-text-fill: #DDDDDD;
+}
+.bar-button-right {
+    -fx-min-width: 44px;
+    -fx-min-height: 26px;
+    -fx-padding: 2 0 0 0;
+    -fx-border-radius: 0 0 4 0;
+    -fx-background-radius: 0 0 5 0;
+    -fx-background-color: #494949;
+    -fx-border-style: solid;
     -fx-border-width: 1;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
@@ -420,7 +435,7 @@
     -fx-text-fill: #DDDDDD;
 }
 
-.bar-button:hover {
+.bar-button-left:hover,.bar-button-right:hover,.bar-button-left:selected,.bar-button-right:selected {
     -fx-background-color: -fx-font-hover;
     -fx-background-color: #5858D3;
     -fx-text-fill: #fff8f8;
