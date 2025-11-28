@@ -9,11 +9,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.lang.invoke.MethodHandles;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class TarcisioWheelsDB {
-  private final static Logger LOG = LoggerFactory.getLogger(ScoringDB.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final static ObjectMapper objectMapper;
   private final static String WHEEL_DB = "https://www.vpin-mania.net/wheels/wheels.json";

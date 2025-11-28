@@ -1061,7 +1061,7 @@
                   <Insets bottom="6.0" />
                </BorderPane.margin>
                <right>
-                  <HBox alignment="BASELINE_RIGHT" spacing="3.0" BorderPane.alignment="CENTER">
+                  <HBox alignment="CENTER" spacing="3.0" styleClass="subpanel" BorderPane.alignment="CENTER">
                      <children>
                         <CheckBox fx:id="autosaveCheckbox" mnemonicParsing="false" selected="true" text="Auto-save" textFill="WHITE">
                            <font>
@@ -1094,6 +1094,9 @@
                            </tooltip>
                         </Button>
                      </children>
+                     <padding>
+                        <Insets left="6.0" right="6.0" />
+                     </padding>
                   </HBox>
                </right>
                <left>

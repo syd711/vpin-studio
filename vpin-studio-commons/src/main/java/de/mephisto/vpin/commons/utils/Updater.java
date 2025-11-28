@@ -12,6 +12,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
@@ -23,7 +24,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Updater {
-  private final static Logger LOG = LoggerFactory.getLogger(Updater.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public final static String BASE_URL = "https://github.com/syd711/vpin-studio/releases/download/%s/";
   private final static String LATEST_RELEASE_URL = "https://github.com/syd711/vpin-studio/releases/latest";

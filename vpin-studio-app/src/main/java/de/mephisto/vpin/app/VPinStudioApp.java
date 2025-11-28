@@ -22,11 +22,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
+
 /**
  * A standalone Overlay window
  */
 public class VPinStudioApp extends Application implements GameControllerInputListener {
-  private final static Logger LOG = LoggerFactory.getLogger(VPinStudioApp.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static void main(String[] args) {
     launch(args);

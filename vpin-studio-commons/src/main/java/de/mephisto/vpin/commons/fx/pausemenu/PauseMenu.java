@@ -39,13 +39,14 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 
 import static de.mephisto.vpin.commons.fx.ServerFX.client;
 
 public class PauseMenu extends Application {
-  private final static Logger LOG = LoggerFactory.getLogger(PauseMenu.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static Stage stage;
   public static boolean visible = false;

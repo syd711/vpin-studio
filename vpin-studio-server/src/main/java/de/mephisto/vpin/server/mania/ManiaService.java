@@ -76,7 +76,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   private FrontendStatusService frontendStatusService;
 
   @Autowired
-  private GameDetailsRepository gameDetailsRepository;
+  private GameDetailsRepositoryService gameDetailsRepositoryService;
 
   @Autowired
   private PreferencesService preferencesService;
@@ -408,7 +408,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
       // The check is made for re-installation of servers that are already registered on mania
       // If the database for the GameDetails is empty, this is the initial installation boot up.
-      List<GameDetails> rawGames = gameDetailsRepository.findAll();
+      List<GameDetails> rawGames = gameDetailsRepositoryService.findAll();
       if (rawGames.isEmpty()) {
         LOG.info("Skipped table synchronization, no games have been imported yet.");
         return false;

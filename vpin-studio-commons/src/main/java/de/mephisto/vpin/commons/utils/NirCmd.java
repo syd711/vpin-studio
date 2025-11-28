@@ -5,11 +5,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.List;
 
 public class NirCmd {
-  private final static Logger LOG = LoggerFactory.getLogger(NirCmd.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static void focusWindow(String title) {
     List<String> commands = Arrays.asList("nircmd.exe", "win", "activate", "ititle", "\"" + title + "\"");

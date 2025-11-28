@@ -7,8 +7,10 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
+
 public abstract class JsonSettings {
-  private final static Logger LOG = LoggerFactory.getLogger(JsonSettings.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   public final static ObjectMapper objectMapper = new ObjectMapper();
 
   static {

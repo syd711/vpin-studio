@@ -14,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 
@@ -21,7 +22,7 @@ import java.nio.charset.Charset;
  * Assets
  ********************************************************************************************************************/
 public class AssetServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private static final String UUID_MAIN_AVATAR = "__MAIN_AVATAR__";
 
   public AssetServiceClient(VPinStudioClient client) {

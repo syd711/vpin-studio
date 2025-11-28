@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +40,7 @@ import java.util.List;
  * http://www.gnu.org/licenses/lgpl.txt
  */
 public class SystemCommandExecutor {
-  private final static Logger LOG = LoggerFactory.getLogger(SystemCommandExecutor.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private List<String> commandInformation;
   private String adminPassword;

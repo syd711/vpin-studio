@@ -71,6 +71,11 @@ public class HeaderResizeableController implements Initializable {
   }
 
   @FXML
+  private void onManiaOpen() {
+    Studio.browse("https://app.vpin-mania.net");
+  }
+
+  @FXML
   private void onMania() {
     if (ToolbarController.newVersion != null) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Update " + ToolbarController.newVersion, "You need the latest VPin Studio version to use these services.", null, "Update");
@@ -93,23 +98,23 @@ public class HeaderResizeableController implements Initializable {
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         boolean register = ManiaHelper.register();
         if (register) {
-          toggleFriendsView();
+          toggleManiaView();
         }
       }
       return;
     }
-    toggleFriendsView();
+    toggleManiaView();
   }
 
-  public static void toggleFriendsView() {
+  public static void toggleManiaView() {
     boolean open = ManiaSettingsController.toggle();
     if (open) {
-      if (!FRIENDS_BTN.getStyleClass().contains("friends-button-selected")) {
-        FRIENDS_BTN.getStyleClass().add("friends-button-selected");
+      if (!FRIENDS_BTN.getStyleClass().contains("bar-button-selected")) {
+        FRIENDS_BTN.getStyleClass().add("bar-button-selected");
       }
     }
     else {
-      FRIENDS_BTN.getStyleClass().remove("friends-button-selected");
+      FRIENDS_BTN.getStyleClass().remove("bar-button-selected");
     }
   }
 
@@ -148,7 +153,7 @@ public class HeaderResizeableController implements Initializable {
   }
 
   private void refreshWindowMaximizedState(boolean isMaximized) {
-    FontIcon icon = WidgetFactory.createIcon(isMaximized? "mdi2w-window-restore" : "mdi2w-window-maximize");
+    FontIcon icon = WidgetFactory.createIcon(isMaximized ? "mdi2w-window-restore" : "mdi2w-window-maximize");
     icon.setIconSize(16);
     maximizeBtn.setGraphic(icon);
   }

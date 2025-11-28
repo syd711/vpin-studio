@@ -8,10 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.*;
 
 public class GithubReleaseFactory {
-  private final static Logger LOG = LoggerFactory.getLogger(GithubReleaseFactory.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static List<GithubRelease> loadReleases(@NonNull String url, @NonNull List<String> allowList, @NonNull List<String> ignoreList) throws IOException {
     long start = System.currentTimeMillis();

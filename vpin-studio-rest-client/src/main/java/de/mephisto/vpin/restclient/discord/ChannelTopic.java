@@ -4,11 +4,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Base64;
 import java.util.Date;
 
 public class ChannelTopic {
-  private final static Logger LOG = LoggerFactory.getLogger(ChannelTopic.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final static String TITLE = "VPin Studio Competition Channel";
   private long timestamp = new Date().getTime();

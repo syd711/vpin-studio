@@ -99,7 +99,7 @@ public class GameMediaService {
   private HighscoreService highscoreService;
 
   @Autowired
-  private GameDetailsRepository gameDetailsRepository;
+  private GameDetailsRepositoryService gameDetailsRepositoryService;
 
   @Autowired
   private PreferencesService preferencesService;
@@ -800,9 +800,9 @@ public class GameMediaService {
         assetService.deleteDefaultBackground(game.getId());
 
         if (descriptor.isDeleteFromFrontend()) {
-          GameDetails byPupId = gameDetailsRepository.findByPupId(game.getId());
+          GameDetails byPupId = gameDetailsRepositoryService.findByPupId(game.getId());
           if (byPupId != null) {
-            gameDetailsRepository.delete(byPupId);
+            gameDetailsRepositoryService.delete(byPupId);
           }
 
           highscoreService.deleteScores(game.getId(), true);

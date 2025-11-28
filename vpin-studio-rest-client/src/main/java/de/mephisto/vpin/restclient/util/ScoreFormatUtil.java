@@ -3,6 +3,7 @@ package de.mephisto.vpin.restclient.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
@@ -10,7 +11,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public class ScoreFormatUtil {
-  private final static Logger LOG = LoggerFactory.getLogger(ScoreFormatUtil.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private static Map<Locale, DecimalFormat> formats = new HashMap<>();
 

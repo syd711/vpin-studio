@@ -12,13 +12,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.lang.invoke.MethodHandles;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
 public class SystemInfoWindows {
 
-  private final static Logger LOG = LoggerFactory.getLogger(SystemInfoWindows.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public final static String PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR = "pinupSystem.installationDir";
   public final static String PINBALLX_INSTALLATION_DIR_INST_DIR = "pinballX.installationDir";

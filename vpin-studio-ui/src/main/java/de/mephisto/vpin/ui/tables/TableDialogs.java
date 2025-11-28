@@ -510,6 +510,16 @@ public class TableDialogs {
   }
 
   public static Optional<UploadDescriptor> openTableUploadDialog(@Nullable GameRepresentation game, @Nullable EmulatorType emutype, @Nullable UploadType uploadType, UploaderAnalysis analysis) {
+    if (Studio.client.getFrontendService().isFrontendRunning()) {
+      if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
+        return openTableUploadDialogUnchecked(game, emutype, uploadType, analysis);
+      }
+      return Optional.empty();
+    }
+    return openTableUploadDialogUnchecked(game, emutype, uploadType, analysis);
+  }
+
+  private static Optional<UploadDescriptor> openTableUploadDialogUnchecked(@Nullable GameRepresentation game, @Nullable EmulatorType emutype, @Nullable UploadType uploadType, UploaderAnalysis analysis) {
     List<GameEmulatorRepresentation> gameEmulators = Studio.client.getEmulatorService().getGameEmulatorsByType(emutype);
     if (gameEmulators.isEmpty()) {
       WidgetFactory.showAlert(Studio.stage, "Error", "No game emulator found.");
@@ -724,7 +734,11 @@ public class TableDialogs {
     return controller.uploadFinished();
   }
 
-  public static void openMediaDialog(Stage parent, FrontendMediaItemRepresentation item) {
+  public static void openMediaDialog(@NonNull Stage parent, @Nullable FrontendMediaItemRepresentation item) {
+    if(item == null) {
+      return;
+    }
+
     Stage stage = Dialogs.createStudioDialogStage(parent, MediaPreviewController.class, "dialog-media-preview.fxml", item.getScreen() + " Screen", "dialog-media-preview");
     MediaPreviewController controller = (MediaPreviewController) stage.getUserData();
     controller.setData(stage, item, false);

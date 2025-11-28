@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.List;
  * Jobs
  ********************************************************************************************************************/
 public class JobsServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(JobsServiceClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public JobsServiceClient(VPinStudioClient client) {
     super(client);

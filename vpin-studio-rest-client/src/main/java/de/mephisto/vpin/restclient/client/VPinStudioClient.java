@@ -78,10 +78,11 @@ import org.springframework.util.StreamUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.*;
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 
 public class VPinStudioClient implements OverlayClient {
-  private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   public final static String API = "api/v1/";
 
   private final RestClient restClient;

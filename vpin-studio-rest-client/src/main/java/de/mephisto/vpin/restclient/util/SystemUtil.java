@@ -11,6 +11,7 @@ import javax.sound.sampled.Mixer;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.invoke.MethodHandles;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class SystemUtil {
-  private final static Logger LOG = LoggerFactory.getLogger(SystemUtil.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final static List<String> INVALID_NAMES = Arrays.asList("Default", "filled by", "Serial", "Not applicable");
 

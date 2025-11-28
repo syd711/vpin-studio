@@ -5,12 +5,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 
 public class ReleaseArtifact {
-  private final static Logger LOG = LoggerFactory.getLogger(ReleaseArtifact.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private final GithubRelease githubRelease;
 
   private String name;

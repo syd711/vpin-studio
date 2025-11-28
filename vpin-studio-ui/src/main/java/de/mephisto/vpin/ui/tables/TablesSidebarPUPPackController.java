@@ -283,9 +283,8 @@ public class TablesSidebarPUPPackController implements Initializable {
     dataScrollPane.setVisible(false);
     emptyDataBox.setVisible(true);
 
-    //TODO disabled for now
     pupPackEditorBtn.setDisable(!client.getSystemService().isLocal());
-    pupPackEditorBtn.setVisible(false);
+    pupPackEditorBtn.setVisible(true);
 
     optionsCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
       optionEditBtn.setDisable(StringUtils.isEmpty(newValue));
@@ -308,6 +307,7 @@ public class TablesSidebarPUPPackController implements Initializable {
     reloadBtn.setDisable(g.isEmpty());
     enabledCheckbox.setDisable(g.isEmpty());
     scriptOnlyCheckbox.setSelected(false);
+    pupPackEditorBtn.setDisable(g.isEmpty() || !client.getSystemService().isLocal());
 
     screensPanel.setVisible(true);
 
@@ -360,6 +360,7 @@ public class TablesSidebarPUPPackController implements Initializable {
 
       uploadBtn.setDisable(StringUtils.isEmpty(game.getRom()));
       deleteBtn.setDisable(!pupPackAvailable);
+      pupPackEditorBtn.setDisable(!pupPackAvailable || !client.getSystemService().isLocal());
 
       if (pupPackAvailable) {
         nameLabel.setText(pupPack.getName());

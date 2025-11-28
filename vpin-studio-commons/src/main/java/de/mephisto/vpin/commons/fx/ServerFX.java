@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -47,7 +48,7 @@ import java.util.concurrent.CountDownLatch;
  * -x
  */
 public class ServerFX extends Application {
-  private final static org.slf4j.Logger LOG = LoggerFactory.getLogger(ServerFX.class);
+  private final static org.slf4j.Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static final CountDownLatch latch = new CountDownLatch(1);
   public static int TO_FRONT_DELAY = 2500;

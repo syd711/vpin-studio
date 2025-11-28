@@ -1044,7 +1044,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       return null;
     }, this, true);
 
-    BaseLoadingColumn.configureLoadingColumn(columnVPS, "Loading...", (value, model) -> {
+    BaseLoadingColumn.configureLoadingColumn(columnVPS, "...", (value, model) -> {
       return new VpsTableColumn(model.getGame().getExtTableId(), model.getGame().getExtTableVersionId(), value.isDisabled(), model.getGame().isIgnoreUpdates(), model.getGame().getVpsUpdates(), vpsSettings);
     });
 
@@ -1259,7 +1259,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       }
 
       ValidationState validationState = value.getValidationState();
-      FontIcon statusIcon = WidgetFactory.createCheckIcon(getIconColor(value));
+      FontIcon statusIcon = uiSettings.isHideGreenMarker() ? null : WidgetFactory.createCheckIcon(getIconColor(value));
       Label statusLabel = new Label();
       if (value.getIgnoredValidations() != null && !value.getIgnoredValidations().contains(-1)) {
         if (validationState != null && validationState.getCode() > 0) {

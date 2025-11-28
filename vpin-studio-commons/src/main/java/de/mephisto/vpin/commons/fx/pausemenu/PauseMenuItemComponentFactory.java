@@ -11,8 +11,10 @@ import javafx.scene.layout.StackPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
+
 public class PauseMenuItemComponentFactory {
-  private final static Logger LOG = LoggerFactory.getLogger(PauseMenuItemComponentFactory.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static Pane createMenuItemFor(PauseMenuItem menuItem) {
     Image wheel = menuItem.getImage();

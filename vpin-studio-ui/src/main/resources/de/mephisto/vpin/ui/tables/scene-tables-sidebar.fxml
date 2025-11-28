@@ -12,7 +12,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane maxWidth="600.0" prefWidth="600.0" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarController">
+<BorderPane maxWidth="600.0" prefWidth="600.0" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarController">
     <center>
         <Accordion fx:id="tableAccordion" maxHeight="-Infinity" BorderPane.alignment="CENTER">
             <panes>
@@ -351,17 +351,32 @@
                                 </Label>
                             </left>
                             <right>
-                                <Button fx:id="scriptBtn" mnemonicParsing="false" onAction="#onScript" styleClass="external-component" BorderPane.alignment="CENTER">
-                                    <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
-                                    </graphic>
-                                    <tooltip>
-                                        <Tooltip text="Open script in Visual Pinball X" />
-                                    </tooltip>
-                                    <font>
-                                        <Font size="10.0" />
-                                    </font>
-                                </Button>
+                        <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
+                           <children>
+                                      <Button fx:id="scriptBtn" mnemonicParsing="false" onAction="#onScript" styleClass="external-component">
+                                          <graphic>
+                                              <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                                          </graphic>
+                                          <tooltip>
+                                              <Tooltip text="Open script in Visual Pinball X" />
+                                          </tooltip>
+                                          <font>
+                                              <Font size="10.0" />
+                                          </font>
+                                      </Button>
+                              <Button mnemonicParsing="false" onAction="#onScriptEdit">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2f-file-document-edit-outline" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="Edit script with the linked .vbs file system editor" />
+                                 </tooltip>
+                              </Button>
+                           </children>
+                        </HBox>
                             </right>
                         </BorderPane>
                     </graphic>

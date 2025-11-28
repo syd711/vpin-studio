@@ -388,14 +388,13 @@ public class BackglassService implements InitializingBean {
   @Nullable
   public DirectB2STableSettings getTableSettings(Game game) {
     String rom = game.getRom();
+    if (!StringUtils.isEmpty(game.getRomAlias())) {
+      rom = game.getRomAlias();
+    }
+
     if (StringUtils.isNotEmpty(rom)) {
       rom = StringUtils.deleteWhitespace(rom);
       DirectB2STableSettings entry = cacheB2STableSettings.get(rom);
-      if (entry == null && !StringUtils.isEmpty(game.getRomAlias())) {
-        String romAlias = StringUtils.deleteWhitespace(game.getRomAlias());
-        entry = cacheB2STableSettings.get(romAlias);
-      }
-
       if (entry == null && !StringUtils.isEmpty(game.getTableName())) {
         entry = cacheB2STableSettings.get(game.getTableName());
       }

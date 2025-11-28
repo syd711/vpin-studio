@@ -59,7 +59,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   private GameLifecycleService gameLifecycleService;
 
   @Autowired
-  private GameDetailsRepository gameDetailsRepository;
+  private GameDetailsRepositoryService gameDetailsRepositoryService;
 
   private FrontendStatusService frontendStatusService;
 
@@ -690,9 +690,9 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     if (result) {
       LOG.info("Sucessfully deleted emulator {}, now deleting Studio game details.", emulatorId);
       for (Game game : gamesByEmulator) {
-        GameDetails byPupId = gameDetailsRepository.findByPupId(game.getId());
+        GameDetails byPupId = gameDetailsRepositoryService.findByPupId(game.getId());
         if (byPupId != null) {
-          gameDetailsRepository.delete(byPupId);
+          gameDetailsRepositoryService.delete(byPupId);
         }
       }
       LOG.info("Studio game details deletion completed, deleted {} games", gamesByEmulator.size());

@@ -37,7 +37,7 @@
                         </Label>
                      </children>
                   </HBox>
-                  <ProgressBar fx:id="serverProgress" prefWidth="642.0" progress="0.0" />
+                  <ProgressBar fx:id="serverProgress" prefHeight="14.0" prefWidth="642.0" progress="0.0" />
                   <HBox alignment="TOP_RIGHT">
                      <children>
                         <Label fx:id="serverLabel" text="-" textFill="WHITE" />
@@ -52,7 +52,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <ProgressBar fx:id="remoteClientProgress" prefWidth="630.0" progress="0.0" />
+                  <ProgressBar fx:id="remoteClientProgress" prefHeight="14.0" prefWidth="630.0" progress="0.0" />
                   <HBox alignment="TOP_RIGHT">
                      <children>
                         <Label fx:id="remoteClientLabel" text="-" textFill="WHITE" />
@@ -67,7 +67,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <ProgressBar fx:id="clientProgress" prefWidth="630.0" progress="0.0" />
+                  <ProgressBar fx:id="clientProgress" prefHeight="14.0" prefWidth="630.0" progress="0.0" />
                   <HBox alignment="TOP_RIGHT">
                      <children>
                         <Label fx:id="clientLabel" text="-" textFill="WHITE" />

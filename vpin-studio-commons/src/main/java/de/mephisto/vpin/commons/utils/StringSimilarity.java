@@ -4,8 +4,10 @@ import org.apache.commons.text.similarity.JaroWinklerDistance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
+
 public class StringSimilarity {
-  private final static Logger LOG = LoggerFactory.getLogger(StringSimilarity.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static boolean isSimilarAtLeastToPercent(String s1, String s2, int percentage) {
     if (s1.equalsIgnoreCase(s2)) {

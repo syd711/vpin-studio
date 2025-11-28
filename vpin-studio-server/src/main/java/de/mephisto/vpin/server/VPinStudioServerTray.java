@@ -12,10 +12,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 
 public class VPinStudioServerTray {
-  private final static Logger LOG = LoggerFactory.getLogger(VPinStudioServerTray.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public VPinStudioServerTray() {
     //Check the SystemTray is supported

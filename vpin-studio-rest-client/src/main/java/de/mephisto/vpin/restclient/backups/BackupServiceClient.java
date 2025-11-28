@@ -15,6 +15,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,11 +28,13 @@ import java.util.concurrent.Future;
  * Archiving
  ********************************************************************************************************************/
 public class BackupServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-  private List<BackupDescriptorRepresentation> backupsCached = new ArrayList<>();
+  private final List<BackupDescriptorRepresentation> backupsCached = new ArrayList<>();
+
+  private boolean dirty = true;
 
   public BackupServiceClient(VPinStudioClient client) {
     super(client);
@@ -42,16 +45,11 @@ public class BackupServiceClient extends VPinStudioClientService {
   }
 
   public List<BackupDescriptorRepresentation> getBackups() {
-    if (backupsCached == null) {
-      clearCache();
+    if (backupsCached.isEmpty() && dirty) {
+      backupsCached.addAll(Arrays.asList(getRestClient().get(API + "backups", BackupDescriptorRepresentation[].class)));
+      dirty = false;
     }
     return backupsCached;
-  }
-
-  private boolean clearCache() {
-    backupsCached = new ArrayList<>();
-    backupsCached.addAll(Arrays.asList(getRestClient().get(API + "backups", BackupDescriptorRepresentation[].class)));
-    return true;
   }
 
   public List<BackupSourceRepresentation> getBackupSources() {
@@ -59,8 +57,13 @@ public class BackupServiceClient extends VPinStudioClientService {
   }
 
   public boolean deleteBackup(long sourceId, String filename) {
-    getRestClient().delete(API + "backups/" + sourceId + "/" + filename);
-    return clearCache();
+    clearCache();
+    return getRestClient().delete(API + "backups/" + sourceId + "/" + filename);
+  }
+
+  private void clearCache() {
+    backupsCached.clear();
+    dirty = true;
   }
 
   public boolean deleteBackupSource(long id) {
@@ -69,9 +72,8 @@ public class BackupServiceClient extends VPinStudioClientService {
 
   public BackupSourceRepresentation saveBackupSource(BackupSourceRepresentation source) throws Exception {
     try {
-      BackupSourceRepresentation backup = getRestClient().post(API + "backups/save", source, BackupSourceRepresentation.class);
       clearCache();
-      return backup;
+      return getRestClient().post(API + "backups/save", source, BackupSourceRepresentation.class);
     }
     catch (Exception e) {
       LOG.error("Failed to save archive source: " + e.getMessage(), e);
@@ -84,8 +86,8 @@ public class BackupServiceClient extends VPinStudioClientService {
   }
 
   public boolean invalidateBackupCache() {
-    getRestClient().get(API + "backups/invalidate", Boolean.class);
-    return clearCache();
+    clearCache();
+    return getRestClient().get(API + "backups/invalidate", Boolean.class);
   }
 
   public JobDescriptor uploadBackup(File file, int repositoryId, FileUploadProgressListener listener) throws Exception {

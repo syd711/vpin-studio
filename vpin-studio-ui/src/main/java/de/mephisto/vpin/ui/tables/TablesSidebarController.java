@@ -5,9 +5,9 @@ import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.Frontend;
-import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -17,7 +17,7 @@ import de.mephisto.vpin.restclient.system.FileInfo;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.panels.BaseSideBarController;
-import de.mephisto.vpin.ui.util.FrontendUtil;
+import de.mephisto.vpin.ui.tables.vbsedit.VBSManager;
 import de.mephisto.vpin.ui.util.SystemUtil;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -188,15 +188,20 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
   }
 
   @FXML
+  private void onScriptEdit() {
+    VBSManager.getInstance().edit(this.game);
+  }
+
+  @FXML
   private void onHighscores() {
     try {
       if (this.game.isPresent()) {
         GameRepresentation gameRepresentation = this.game.get();
         FileInfo hsFileInfo = client.getGameService().getHighscoreFileInfo(gameRepresentation.getId());
-        if (hsFileInfo.getFile() != null && FilenameUtils.getExtension(hsFileInfo.getFile().getName()).toLowerCase().endsWith("txt")) {
+        if (hsFileInfo != null && hsFileInfo.getFile() != null && FilenameUtils.getExtension(hsFileInfo.getFile().getName()).toLowerCase().endsWith("txt")) {
           SystemUtil.open(hsFileInfo);
         }
-        else {
+        else if (hsFileInfo != null && hsFileInfo.getFile() != null) {
           SystemUtil.openFile(hsFileInfo.getFile());
         }
       }

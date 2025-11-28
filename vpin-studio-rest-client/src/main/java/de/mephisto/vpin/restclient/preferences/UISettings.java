@@ -23,6 +23,7 @@ public class UISettings extends JsonSettings {
 
   //Hide/Show Unique Custom Vpin Studio Icons
   private boolean hideCustomIcons;
+  private boolean hideGreenMarker = true;
 
   private boolean autoApplyVpsData = true;
 
@@ -35,6 +36,7 @@ public class UISettings extends JsonSettings {
   private String mostPlayedColor = "#FFFFFF";
 
   private String defaultUploadMode = UploadType.uploadAndImport.name();
+  private boolean uploadMediaPreview = true;
 
   //open after upload
   private boolean autoEditTableData = true;
@@ -61,7 +63,6 @@ public class UISettings extends JsonSettings {
 
   private boolean tableSidebarVisible = true;
   private boolean competitionsSidebarVisible = true;
-  private boolean tournamentsSidebarVisible = true;
 
   //columns
   private boolean columnAltColor = true;
@@ -88,8 +89,6 @@ public class UISettings extends JsonSettings {
 
   private LaunchConfiguration launchConfiguration;
 
-
-
   public LaunchConfiguration getLaunchConfiguration() {
     return launchConfiguration;
   }
@@ -98,13 +97,12 @@ public class UISettings extends JsonSettings {
     this.launchConfiguration = launchConfiguration;
   }
 
-
-  public boolean isTournamentsSidebarVisible() {
-    return tournamentsSidebarVisible;
+  public boolean isUploadMediaPreview() {
+    return uploadMediaPreview;
   }
 
-  public void setTournamentsSidebarVisible(boolean tournamentsSidebarVisible) {
-    this.tournamentsSidebarVisible = tournamentsSidebarVisible;
+  public void setUploadMediaPreview(boolean uploadMediaPreview) {
+    this.uploadMediaPreview = uploadMediaPreview;
   }
 
   private AutoFillSettings autoFillSettings = new AutoFillSettings();
@@ -583,6 +581,14 @@ public class UISettings extends JsonSettings {
 
   public void setHideRatingSyncInfo(boolean hideRatingSyncInfo) {
     this.hideRatingSyncInfo = hideRatingSyncInfo;
+  }
+
+  public boolean isHideGreenMarker() {
+    return hideGreenMarker;
+  }
+
+  public void setHideGreenMarker(boolean hideGreenMarker) {
+    this.hideGreenMarker = hideGreenMarker;
   }
 
   public boolean isHideCustomIcons() {

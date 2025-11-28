@@ -348,10 +348,10 @@ public class HighscoreService implements InitializingBean {
           List<HighscoreVersion> highscoreVersions = highscoreVersionRepository.findByGameIdOrderByCreatedAtDesc(game.getId());
           for (HighscoreVersion highscoreVersion : highscoreVersions) {
             List<Score> scores = parseScores(highscoreVersion.getCreatedAt(), highscoreVersion.getNewRaw(), game, serverId);
-            summary.getScores().addAll(scores);
-            summary.sortScores();
-            summary.setLimit(5);
+            summary.addScores(scores);
           }
+          summary.sortScores();
+          summary.setLimit(5);
         }
       }
     }

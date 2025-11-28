@@ -2,11 +2,13 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -90,6 +92,9 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
   private Button cancelBtn;
 
   @FXML
+  private CheckBox previewCheckbox;
+
+  @FXML
   private Button fileBtn;
 
   @FXML
@@ -117,6 +122,7 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
   private List<String> excludedFolders = new ArrayList<>();
 
   private final Map<String, Image> previewCache = new HashMap<>();
+  private UISettings uiSettings;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -218,14 +224,16 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
 
           filteredData = allData.stream().map(d -> toModel(d)).filter(m -> m.getAssetType() != null).collect(Collectors.toList());
 
-          List<MediaUploadArchiveItem> images = filteredData.stream().filter(m -> m.isImage()).collect(Collectors.toList());
-          for (int i = 0; i < images.size(); i++) {
-            MediaUploadArchiveItem model = images.get(i);
-            String message = "Generating Previews... (" + (i + 1) + "/" + images.size() + ")";
-            Platform.runLater(() -> {
-              loadingOverlay.setMessage(message);
-            });
-            previewCache.put(model.getName(), model.getPreview());
+          if(uiSettings.isUploadMediaPreview()) {
+            List<MediaUploadArchiveItem> images = filteredData.stream().filter(m -> m.isImage()).collect(Collectors.toList());
+            for (int i = 0; i < images.size(); i++) {
+              MediaUploadArchiveItem model = images.get(i);
+              String message = "Generating Previews... (" + (i + 1) + "/" + images.size() + ")";
+              Platform.runLater(() -> {
+                loadingOverlay.setMessage(message);
+              });
+              previewCache.put(model.getName(), model.getPreview());
+            }
           }
         })
         .thenLater(() -> {
@@ -307,6 +315,8 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize("media", "media", new MediaUploaderColumnSorter(this));
+
+    uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
 
     this.tableInfo.managedProperty().bindBidirectional(tableInfo.visibleProperty());
 
@@ -390,7 +400,7 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
     }, this, true);
 
     BaseLoadingColumn.configureColumn(columnPreview, (value, model) -> {
-      if (previewCache.containsKey(model.getName())) {
+      if (uiSettings.isUploadMediaPreview() && previewCache.containsKey(model.getName())) {
         ImageView imageView = new ImageView(previewCache.get(model.getName()));
         imageView.setFitWidth(250);
         imageView.setFitHeight(140);
@@ -409,6 +419,16 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         tableView.getItems().forEach(m -> m.setSelected(newValue));
         tableView.refresh();
+      }
+    });
+
+    previewCheckbox.setSelected(uiSettings.isUploadMediaPreview());
+    previewCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        uiSettings.setUploadMediaPreview(newValue);
+        client.getPreferenceService().setJsonPreference(uiSettings);
+        refreshSelection();
       }
     });
   }

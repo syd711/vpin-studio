@@ -9,6 +9,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
  * Emulators
  ********************************************************************************************************************/
 public class EmulatorServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(EmulatorServiceClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final static String API_SEGMENT_EMULATORS = "emulators";
 
@@ -82,7 +83,15 @@ public class EmulatorServiceClient extends VPinStudioClientService {
     List<GameEmulatorRepresentation> filtered = emulators.stream().filter(e -> e.isEnabled()).filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId()))).collect(Collectors.toList());
     List<GameEmulatorRepresentation> vpxEmulators = filtered.stream().filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
 
-    Collections.sort(filtered, Comparator.comparing(GameEmulatorRepresentation::getName));
+    Collections.sort(filtered, new Comparator<GameEmulatorRepresentation>() {
+      @Override
+      public int compare(GameEmulatorRepresentation o1, GameEmulatorRepresentation o2) {
+        if(o1.isVpxEmulator()) {
+          return -1;
+        }
+        return 1;
+      }
+    });
 
     if (vpxEmulators.size() > 1) {
       filtered.add(0, createAllVpx());

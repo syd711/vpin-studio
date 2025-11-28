@@ -4,12 +4,13 @@ import de.mephisto.vpin.connectors.vps.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 public class VpsDiffer {
-  private final static Logger LOG = LoggerFactory.getLogger(VpsDiffer.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private final VpsTable oldTable;
   private final VpsTable newTable;
   private final List<String> authorDenyList;

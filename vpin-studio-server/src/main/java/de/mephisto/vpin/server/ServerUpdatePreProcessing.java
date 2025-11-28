@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.*;
@@ -20,11 +21,18 @@ import java.util.*;
 import static de.mephisto.vpin.server.system.SystemService.RESOURCES;
 
 public class ServerUpdatePreProcessing {
-  private final static Logger LOG = LoggerFactory.getLogger(ServerUpdatePreProcessing.class);
-  private final static List<String> resources = Arrays.asList("PinVol.exe", "ffmpeg.exe", "jptch.exe", "nircmd.exe",
-      "downloader.vbs", "PupPackScreenTweaker.exe", "puplauncher.exe", "vpxtool.exe", "maintenance.mp4",
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+  private final static List<String> deletions = Arrays.asList("PupPackScreenTweaker.exe");
+
+  private final static List<String> resources = Arrays.asList("PinVol.exe",
+      "ffmpeg.exe",
+      "jptch.exe",
+      "nircmd.exe",
+      "downloader.vbs",
+      "puppacktweaker/PupPackScreenTweaker.exe", "puplauncher.exe", "vpxtool.exe", "maintenance.mp4",
       ScoringDB.SCORING_DB_NAME, "manufacturers/manufacturers.zip", "logos.txt",
-      "competition-badges/wovp.png", "frames/wheel-black.png", "frames/wheel-tarcissio.png");
+      "competition-badges/wovp.png", "frames/wheel-black.png",
+      "frames/wheel-tarcissio.png");
   private final static List<String> jvmFiles = Arrays.asList("jinput-dx8_64.dll");
 
   private final static Map<String, Long> PUP_GAMES = new HashMap<>();
@@ -52,6 +60,7 @@ public class ServerUpdatePreProcessing {
         runLogosUpdateCheck();
         runDOFTesterCheck();
         runPupGamesUpdateCheck();
+        runDeletions();
 
         new Thread(() -> {
           Thread.currentThread().setName("ServerUpdate Async Preprocessor");
@@ -64,6 +73,15 @@ public class ServerUpdatePreProcessing {
         LOG.error("Server update failed: " + e.getMessage(), e);
       }
     }).start();
+  }
+
+  private static void runDeletions() {
+    for (String deletion : deletions) {
+      File check = new File(RESOURCES, deletion);
+      if (check.exists() && !check.delete()) {
+        LOG.error("Failed to clean up file: " + check.getAbsolutePath());
+      }
+    }
   }
 
   private static void runDeletionChecks() {
@@ -235,7 +253,7 @@ public class ServerUpdatePreProcessing {
           LOG.info("Downloaded nvram file {}", nvramFile.getAbsolutePath());
         }
       }
-      LOG.info("Finished NVRam synchronization, there are currently {} resetted nvrams available.",  nvRams.size());
+      LOG.info("Finished NVRam synchronization, there are currently {} resetted nvrams available.", nvRams.size());
     }
     catch (IOException e) {
       LOG.error("Failed to sync nvrams: {}", e.getMessage(), e);

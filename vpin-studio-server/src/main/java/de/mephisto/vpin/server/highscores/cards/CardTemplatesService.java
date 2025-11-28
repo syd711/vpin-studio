@@ -103,26 +103,31 @@ public class CardTemplatesService {
 
   private void createDefaultIfAbsent(List<CardTemplate> results, CardTemplateType templateType) {
     if (ListUtils.indexOf(results, template -> template.isDefault() && templateType.equals(template.getTemplateType())) < 0) {
-      CardTemplate template = new CardTemplate();
-      template.setName(CardTemplate.DEFAULT);
-      template.setVersion(CURRENT_VERSION);
-      template.setTemplateType(templateType);
-      switch (templateType) {
-        case HIGSCORE_CARD:
-          template.resetDefaultHighscoreCard();
-          break;
-        case INSTRUCTIONS_CARD:
-          template.resetDefaultInstructionsCard();
-          break;
-        case WHEEL:
-          template.resetDefaultWheel();
-          break;
-      }
-
-      // save the template
-      template = save(template);
+      CardTemplate template = createDefaultTemplate(templateType);
       results.add(template);
     }
+  }
+
+  private CardTemplate createDefaultTemplate(CardTemplateType templateType) {
+    CardTemplate template = new CardTemplate();
+    template.setName(CardTemplate.DEFAULT);
+    template.setVersion(CURRENT_VERSION);
+    template.setTemplateType(templateType);
+    switch (templateType) {
+      case HIGSCORE_CARD:
+        template.resetDefaultHighscoreCard();
+        break;
+      case INSTRUCTIONS_CARD:
+        template.resetDefaultInstructionsCard();
+        break;
+      case WHEEL:
+        template.resetDefaultWheel();
+        break;
+    }
+
+    // save the template
+    template = save(template);
+    return template;
   }
 
   public CardTemplate getTemplateForGame(Game game, CardTemplateType templateType) {
@@ -146,11 +151,17 @@ public class CardTemplatesService {
 
   private CardTemplate getDefaultTemplate(CardTemplateType templateType) {
     List<TemplateMapping> all = templateMappingRepository.findAll();
-    return all.stream()
+    CardTemplate cardTemplate = all.stream()
         .filter(m -> m.getTemplate().isTemplate() && m.getTemplate().isDefault() && templateType.equals(m.getTemplate().getTemplateType()))
         .map(m -> mappingToTemplate(m))
         .findFirst()
         .orElse(null);
+
+    if (cardTemplate == null) {
+      LOG.error("Failed to load default template, recreating it...");
+      return createDefaultTemplate(templateType);
+    }
+    return cardTemplate;
   }
 
   public boolean assignTemplate(int gameId, long templateId, boolean switchToCustom, CardTemplateType templateType) throws Exception {

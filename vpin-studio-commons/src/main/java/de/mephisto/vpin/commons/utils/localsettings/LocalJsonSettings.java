@@ -10,9 +10,10 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 
 abstract public class LocalJsonSettings {
-  private final static Logger LOG = LoggerFactory.getLogger(LocalJsonSettings.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public final static ObjectMapper objectMapper = new ObjectMapper();
 

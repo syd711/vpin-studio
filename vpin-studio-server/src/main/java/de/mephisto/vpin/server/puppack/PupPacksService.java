@@ -340,17 +340,9 @@ public class PupPacksService implements InitializingBean {
       return;
     }
 
-    try {
-      File pupPackScreenTweakerExe = new File(systemService.getPinupInstallationFolder(), PUP_PACK_TWEAKER_EXE);
-      if (!pupPackScreenTweakerExe.exists()) {
-        File source = new File(SystemService.RESOURCES, PUP_PACK_TWEAKER_EXE);
-        FileUtils.copyFile(source, pupPackScreenTweakerExe);
-        LOG.info("Copied {}", pupPackScreenTweakerExe.getAbsolutePath());
-      }
-    }
-    catch (Exception e) {
-      LOG.error("Failed to copy {}: {}", PUP_PACK_TWEAKER_EXE, e.getMessage(), e);
-    }
+    File sourceExe = new File(SystemService.RESOURCES, "puppacktweaker/" + PUP_PACK_TWEAKER_EXE);
+    File targetExe = new File(systemService.getPinupInstallationFolder(), PUP_PACK_TWEAKER_EXE);
+    de.mephisto.vpin.restclient.util.FileUtils.checkedCopy(sourceExe, targetExe);
 
     new Thread(() -> {
       try {

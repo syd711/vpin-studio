@@ -5,13 +5,14 @@ import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 
 import java.io.ByteArrayInputStream;
+import java.lang.invoke.MethodHandles;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
 public class DMDPositionServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(DMDPositionServiceClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public DMDPositionServiceClient(VPinStudioClient client) {
     super(client);

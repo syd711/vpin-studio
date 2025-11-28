@@ -4,9 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 
 public class ChromeBrowser extends Browser {
-  private final static Logger LOG = LoggerFactory.getLogger(ChromeBrowser.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @Override
   public File getBrowserExe() {

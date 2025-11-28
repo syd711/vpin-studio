@@ -11,9 +11,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileReader;
+import java.lang.invoke.MethodHandles;
 
 public class AltSoundLoaderFactory {
-  private final static Logger LOG = LoggerFactory.getLogger(AltSoundLoaderFactory.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @Nullable
   public static AltSound create(@NonNull File altSoundFolder, int emulatorId) {

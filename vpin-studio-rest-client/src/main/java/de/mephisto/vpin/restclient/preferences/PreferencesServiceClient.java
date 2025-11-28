@@ -14,13 +14,14 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.*;
 
 /*********************************************************************************************************************
  * Preferences
  ********************************************************************************************************************/
 public class PreferencesServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private Map<String, Object> jsonSettingsCache = new HashMap<>();
 
