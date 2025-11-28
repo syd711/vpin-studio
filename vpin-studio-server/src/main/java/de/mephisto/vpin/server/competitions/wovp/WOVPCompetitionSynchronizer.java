@@ -103,7 +103,9 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
     competition.setBadge(wovpSettings.isBadgeEnabled() ? "wovp" : null);
     competition.setOwner("World Of Virtual Pinball");
     competition.setVpsTableId(challenge.getPinballTable().getExternalId());
-    competition.setVpsTableVersionId(challenge.getPinballTableVersion().getExternalId());
+    if (challenge.getPinballTableVersion() != null) {
+      competition.setVpsTableVersionId(challenge.getPinballTableVersion().getExternalId());
+    }
     competition.setType(CompetitionType.WEEKLY.name());
     competition.setStartDate(challenge.getStartDateUTC());
     competition.setEndDate(challenge.getEndDateUTC());
@@ -112,7 +114,8 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
 
     PinballTable pinballTable = challenge.getPinballTable();
     PinballTableVersion pinballTableVersion = challenge.getPinballTableVersion();
-    List<Game> gameMatches = gameService.getGamesByVpsTableId(pinballTable.getExternalId(), pinballTableVersion.getExternalId());
+    String vpsVersion = pinballTableVersion != null ? pinballTableVersion.getExternalId() : null;
+    List<Game> gameMatches = gameService.getGamesByVpsTableId(pinballTable.getExternalId(), vpsVersion);
     if (gameMatches.isEmpty()) {
       LOG.info("No matching game found for weekly challenge \"{}\"", challenge.getChallengeTypeCode());
     }
