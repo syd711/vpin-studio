@@ -122,8 +122,8 @@ public class StateMananger implements GameControllerInputListener {
     this.pauseMenuSettings = pauseMenuSettings;
   }
 
-  public void setGame(GameRepresentation game, FrontendMediaRepresentation frontendMedia, GameStatus status, VpsTable table, VPinScreen cardScreen, FrontendPlayerDisplay tutorialDisplay, PauseMenuSettings pauseMenuSettings, WOVPSettings wovpSettings, InputStream screenshot) {
-    menuController.setGame(game, frontendMedia, status, table, cardScreen, tutorialDisplay, pauseMenuSettings, wovpSettings, screenshot);
+  public void setGame(GameRepresentation game, InputStream screenshot) {
+    menuController.setGame(game, screenshot);
 
     try {
       Thread.sleep(PauseMenuUIDefaults.SELECTION_SCALE_DURATION * 2);

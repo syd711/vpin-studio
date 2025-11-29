@@ -9,7 +9,9 @@ import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
 import de.mephisto.vpin.commons.utils.FXUtil;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardResolution;
+import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.cards.CardTemplateType;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
@@ -41,6 +43,7 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.scene.web.WebView;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,15 +100,8 @@ public class MenuController implements Initializable {
 
   private int selectionIndex = 0;
 
-  private GameStatus gameStatus;
-  private VpsTable vpsTable;
-  private VPinScreen cardScreen;
-  private FrontendPlayerDisplay tutorialScreen;
-  private PauseMenuSettings pauseMenuSettings;
-  private WOVPSettings wovpSettings;
   private InputStream screenshot;
   private GameRepresentation game;
-  private FrontendMediaRepresentation frontendMedia;
   private PauseMenuItem activeSelection;
 
   private final List<PauseMenuItem> pauseMenuItems = new ArrayList<>();
@@ -113,26 +109,15 @@ public class MenuController implements Initializable {
   private MenuCustomViewController customViewController;
   private Node currentSelection;
   private MenuSubmitterViewController scoreSubmitterController;
+  private VPinScreen cardScreen = null;
+  private FrontendPlayerDisplay tutorialDisplay;
+  private FrontendMediaRepresentation frontendMedia;
+  private VpsTable vpsTable;
 
   public void setGame(@NonNull GameRepresentation game,
-                      @NonNull FrontendMediaRepresentation frontendMedia,
-                      GameStatus gameStatus,
-                      VpsTable vpsTable,
-                      @Nullable VPinScreen cardScreen,
-                      @Nullable FrontendPlayerDisplay tutorialScreen,
-                      @NonNull PauseMenuSettings pauseMenuSettings,
-                      @NonNull WOVPSettings wovpSettings,
                       @Nullable InputStream screenshot) {
     this.game = game;
-    this.frontendMedia = frontendMedia;
-    this.gameStatus = gameStatus;
-    this.vpsTable = vpsTable;
-    this.cardScreen = cardScreen;
-    this.tutorialScreen = tutorialScreen;
-    this.pauseMenuSettings = pauseMenuSettings;
-    this.wovpSettings = wovpSettings;
     this.screenshot = screenshot;
-    this.customViewController.setGame(game, frontendMedia, gameStatus, vpsTable);
     enterMenuItemSelection();
   }
 
@@ -141,19 +126,43 @@ public class MenuController implements Initializable {
   }
 
   private void enterMenuItemSelection() {
-    resetGameRow();
     blueLabel.setText("Loading...");
-    TransitionUtil.createOutFader(bluePanel).play();
-    TransitionUtil.createInFader(menuItemsRow).play();
-    TransitionUtil.createInFader(loadMask).play();
-    footer.setTranslateY(310);
-    setLoadLabel("Loading...");
+    JFXFuture.supplyAsync(() -> {
+      CardSettings cardSettings = client.getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
+      PauseMenuSettings pauseMenuSettings = client.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
 
-    Platform.runLater(() -> {
-      loadMenuItems();
-      initGameBarSelection();
+      cardScreen = null;
+      if (!StringUtils.isEmpty(cardSettings.getPopperScreen())) {
+        cardScreen = VPinScreen.valueOf(cardSettings.getPopperScreen());
+      }
 
-      TransitionUtil.createOutFader(loadMask).play();
+      VPinScreen tutorialScreen = VPinScreen.BackGlass;
+      if (pauseMenuSettings.getVideoScreen() != null) {
+        tutorialScreen = pauseMenuSettings.getVideoScreen();
+      }
+      tutorialDisplay = client.getFrontendService().getScreenDisplay(tutorialScreen);
+      LOG.info("Finished fetching all screen information for pause menu.");
+
+      frontendMedia = client.getFrontendService().getFrontendMedia(game.getId());
+      String extTableId = game.getExtTableId();
+      vpsTable = client.getVpsService().getTableById(extTableId);
+
+      this.customViewController.setGame(game, vpsTable, frontendMedia);
+      return "Loading Menu for \"" + game.getGameDisplayName() + "\"";
+    }).thenAcceptLater((msg) -> {
+      resetGameRow();
+      TransitionUtil.createOutFader(bluePanel).play();
+      TransitionUtil.createInFader(menuItemsRow).play();
+      TransitionUtil.createInFader(loadMask).play();
+      footer.setTranslateY(310);
+      setLoadLabel(msg);
+
+      Platform.runLater(() -> {
+        loadMenuItems();
+        initGameBarSelection();
+
+        TransitionUtil.createOutFader(loadMask).play();
+      });
     });
   }
 
@@ -207,7 +216,7 @@ public class MenuController implements Initializable {
     animateMenuSteps(left, oldIndex, steps, duration);
   }
 
-  private AtomicBoolean animating = new AtomicBoolean(false);
+  private final AtomicBoolean animating = new AtomicBoolean(false);
 
   private synchronized void animateMenuSteps(boolean left, final int oldIndex, final int steps, int duration) {
 
@@ -280,7 +289,7 @@ public class MenuController implements Initializable {
         FXMLLoader loader = new FXMLLoader(MenuScoreViewController.class.getResource(resource));
         Pane widgetRoot = loader.load();
         MenuScoreViewController customViewController = loader.getController();
-        customViewController.setData(game, gameStatus, vpsTable, activeSelection, sectionImage);
+        customViewController.setData(game, vpsTable, activeSelection, sectionImage);
         scoreView.setCenter(widgetRoot);
         scoreView.setVisible(true);
       }
@@ -295,7 +304,7 @@ public class MenuController implements Initializable {
         FXMLLoader loader = new FXMLLoader(MenuScoreViewController.class.getResource(resource));
         Pane widgetRoot = loader.load();
         MenuScoreViewController customViewController = loader.getController();
-        customViewController.setData(game, gameStatus, vpsTable, activeSelection, sectionImage);
+        customViewController.setData(game, vpsTable, activeSelection, sectionImage);
         scoreView.setCenter(widgetRoot);
         scoreView.setVisible(true);
       }
@@ -310,7 +319,7 @@ public class MenuController implements Initializable {
         FXMLLoader loader = new FXMLLoader(MenuSubmitterViewController.class.getResource(resource));
         Pane widgetRoot = loader.load();
         scoreSubmitterController = loader.getController();
-        scoreSubmitterController.setData(game, gameStatus, vpsTable, activeSelection, sectionImage, screenshot);
+        scoreSubmitterController.setData(game, vpsTable, sectionImage, screenshot);
         scoreView.setCenter(widgetRoot);
         scoreView.setVisible(true);
       }
@@ -455,7 +464,7 @@ public class MenuController implements Initializable {
 
   private void loadMenuItems() {
     pauseMenuItems.clear();
-    pauseMenuItems.addAll(PauseMenuItemsFactory.createPauseMenuItems(game, pauseMenuSettings, wovpSettings, cardScreen, frontendMedia));
+    pauseMenuItems.addAll(PauseMenuItemsFactory.createPauseMenuItems(game, cardScreen, frontendMedia));
 
     menuItemsRow.getChildren().clear();
     selectionIndex = 0;

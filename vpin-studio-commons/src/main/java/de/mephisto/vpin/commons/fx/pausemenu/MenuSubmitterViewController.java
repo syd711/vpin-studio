@@ -50,7 +50,7 @@ public class MenuSubmitterViewController implements Initializable {
   private ImageView screenshotView;
   private static Image screenshotImage;
 
-  public void setData(GameRepresentation game, GameStatus status, VpsTable tableById, PauseMenuItem pauseMenuItem, Image sectionImage, InputStream screenshot) {
+  public void setData(GameRepresentation game, VpsTable tableById, Image sectionImage, InputStream screenshot) {
     this.nameLabel.setText(game.getGameDisplayName());
     this.versionLabel.setVisible(false);
     this.authorsLabel.setVisible(false);

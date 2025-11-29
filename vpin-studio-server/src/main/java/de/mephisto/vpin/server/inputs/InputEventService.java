@@ -27,6 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.net.InetAddress;
@@ -35,7 +37,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
-public class InputEventService implements InitializingBean, TableStatusChangeListener, FrontendStatusChangeListener, PreferenceChangedListener, GameControllerInputListener {
+public class InputEventService implements TableStatusChangeListener, FrontendStatusChangeListener, PreferenceChangedListener, GameControllerInputListener {
   private final static Logger LOG = LoggerFactory.getLogger(InputEventService.class);
 
   @Autowired
@@ -312,8 +314,8 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
     }
   }
 
-  @Override
-  public void afterPropertiesSet() {
+  @EventListener(ApplicationReadyEvent.class)
+  public void onApplicationReady() {
     ServerFX.client = new VPinStudioClient("localhost");
     new Thread(() -> {
       ServerFX.main(new String[]{});

@@ -422,7 +422,7 @@ public class VPinStudioClient {
   }
 
   public <T> T getJsonPreference(String key, Class<T> clazz) {
-    return this.preferencesServiceClient.getJsonPreference(key, clazz);
+    return this.getPreferenceService().getJsonPreference(key, clazz);
   }
 
   public ByteArrayInputStream getWheelIcon(int id, boolean skipApng) {

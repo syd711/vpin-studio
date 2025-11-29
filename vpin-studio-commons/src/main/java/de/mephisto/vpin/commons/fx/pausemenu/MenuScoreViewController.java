@@ -47,7 +47,7 @@ public class MenuScoreViewController implements Initializable {
 
   private WidgetCompetitionSummaryController competitionWidgetController;
 
-  public void setData(GameRepresentation game, GameStatus status, VpsTable tableById, PauseMenuItem pauseMenuItem, Image sectionImage) {
+  public void setData(GameRepresentation game, VpsTable tableById, PauseMenuItem pauseMenuItem, Image sectionImage) {
     this.nameLabel.setText(game.getGameDisplayName());
     this.versionLabel.setText("");
     this.authorsLabel.setText("");

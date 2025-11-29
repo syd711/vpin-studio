@@ -6,6 +6,8 @@ import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.connectors.vps.model.VpsTutorialUrls;
+import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -34,7 +36,9 @@ import static de.mephisto.vpin.commons.fx.ServerFX.client;
 public class PauseMenuItemsFactory {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  public static List<PauseMenuItem> createPauseMenuItems(@NonNull GameRepresentation game, @NonNull PauseMenuSettings pauseMenuSettings, @NonNull WOVPSettings wovpSettings, @Nullable VPinScreen cardScreen, @NonNull FrontendMediaRepresentation frontendMedia) {
+  public static List<PauseMenuItem> createPauseMenuItems(@NonNull GameRepresentation game,  @Nullable VPinScreen cardScreen, @NonNull FrontendMediaRepresentation frontendMedia) {
+    PauseMenuSettings pauseMenuSettings = client.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
+    WOVPSettings wovpSettings = client.getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
 
     // get application features
     FeaturesInfo Features = ServerFX.client.getSystemService().getFeatures();

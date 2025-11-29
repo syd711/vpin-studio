@@ -183,7 +183,6 @@ public class PauseMenu extends Application {
         togglePauseKey(0);
 
         //reload card settings to resolve actual target screen
-        CardSettings cardSettings = client.getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
         PauseMenuSettings pauseMenuSettings = client.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
         WOVPSettings wovpSettings = client.getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
 
@@ -192,31 +191,14 @@ public class PauseMenu extends Application {
 
         StateMananger.getInstance().setControls(pauseMenuSettings);
 
-        VPinScreen cardScreen = null;
-        if (!StringUtils.isEmpty(cardSettings.getPopperScreen())) {
-          cardScreen = VPinScreen.valueOf(cardSettings.getPopperScreen());
-        }
-
-        VPinScreen tutorialScreen = VPinScreen.BackGlass;
-        if (pauseMenuSettings.getVideoScreen() != null) {
-          tutorialScreen = pauseMenuSettings.getVideoScreen();
-        }
-        FrontendPlayerDisplay tutorialDisplay = client.getFrontendService().getScreenDisplay(tutorialScreen);
-        visible = true;
-        LOG.info("Finished fetching all screen information for pause menu.");
-
-        FrontendMediaRepresentation frontendMedia = client.getFrontendService().getFrontendMedia(game.getId());
-
-        String extTableId = game.getExtTableId();
-        VpsTable tableById = client.getVpsService().getTableById(extTableId);
-
+        //we need to take the screenshot before the menu is shown
         InputStream screenshot = null;
         if (wovpSettings.isEnabled() && wovpSettings.isApiKeySet() && wovpSettings.isUseScoreSubmitter()) {
           screenshot = client.getScreenshot();
         }
 
-
-        StateMananger.getInstance().setGame(game, frontendMedia, status, tableById, cardScreen, tutorialDisplay, pauseMenuSettings, wovpSettings, screenshot);
+        visible = true;
+        StateMananger.getInstance().setGame(game, screenshot);
         stage.getScene().setCursor(Cursor.NONE);
 
         ServerFX.forceShow(stage);
@@ -248,12 +230,6 @@ public class PauseMenu extends Application {
     else {
       exitPauseMenu();
     }
-  }
-
-  private static boolean isVPXGlEmulator(GameEmulatorRepresentation emulator) {
-    String name = String.valueOf(emulator.getName());
-    String desc = String.valueOf(emulator.getDescription());
-    return name.contains("GL") || desc.contains("GL");
   }
 
   public static void exitPauseMenu() {

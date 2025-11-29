@@ -7,13 +7,14 @@ import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.alx.AlxSummary;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -67,16 +68,18 @@ public class MenuCustomViewController implements Initializable {
   private MenuCustomTileEntryController tile3Controller;
   private MenuCustomTileEntryController tile4Controller;
 
-  public void setGame(GameRepresentation game, FrontendMediaRepresentation frontendMedia, GameStatus status, VpsTable tableById) {
+  public void setGame(@NonNull GameRepresentation game, @Nullable VpsTable vpsTable, @NonNull FrontendMediaRepresentation frontendMedia) {
+    GameStatus gameStatus = ServerFX.client.getGameStatusService().getStatus();
+
     this.nameLabel.setText(game.getGameDisplayName());
     this.versionLabel.setText("");
     this.authorsLabel.setText("");
     this.scoreInfoLabel.setText("");
 
     // when game is mapped to VPS Table
-    if (tableById != null) {
+    if (vpsTable != null) {
       String extVersion = game.getExtTableVersionId();
-      VpsTableVersion version = tableById.getTableVersionById(extVersion);
+      VpsTableVersion version = vpsTable.getTableVersionById(extVersion);
       if (version != null) {
         this.versionLabel.setText(version.getComment());
         List<String> authors = version.getAuthors();
@@ -85,8 +88,8 @@ public class MenuCustomViewController implements Initializable {
         }
       }
       else {
-        this.versionLabel.setText(tableById.getManufacturer() + " (" + tableById.getYear() + ")");
-        List<String> designers = tableById.getDesigners();
+        this.versionLabel.setText(vpsTable.getManufacturer() + " (" + vpsTable.getYear() + ")");
+        List<String> designers = vpsTable.getDesigners();
         if (designers != null && !designers.isEmpty()) {
           this.authorsLabel.setText(String.join(", ", designers));
         }
@@ -121,12 +124,11 @@ public class MenuCustomViewController implements Initializable {
     tile1Controller.refresh(TileFactory.toTotalGamesPlayedEntry(entries));
     tile2Controller.refresh(TileFactory.toTotalScoresEntry(entries));
     tile3Controller.refresh(TileFactory.toTotalTimeEntry(entries));
-    tile4Controller.refresh(TileFactory.toSessionDurationTile(status.getStarted()));
+    tile4Controller.refresh(TileFactory.toSessionDurationTile(gameStatus.getStarted()));
 
     JFXFuture.supplyAsync(() -> {
       ScoreSummaryRepresentation recentlyPlayedGames = ServerFX.client.getGameService().getRecentScoresByGame(3, game.getId());
-      List<ScoreRepresentation> scores = recentlyPlayedGames.getScores();
-      return scores;
+      return recentlyPlayedGames.getScores();
     }).thenAcceptLater((scores) -> {
       stats3Col.getChildren().removeAll(stats3Col.getChildren());
 
