@@ -300,27 +300,4 @@ public class AssetFactory {
     }
     return null;
   }
-
-  /* no more used
-  private static byte[] readImageUrl(String imageUrl) {
-    try {
-      URL url = new URL(imageUrl);
-      ByteArrayOutputStream bis = new ByteArrayOutputStream();
-      InputStream is = null;
-      is = url.openStream();
-      byte[] bytebuff = new byte[4096];
-      int n;
-
-      while ((n = is.read(bytebuff)) > 0) {
-        bis.write(bytebuff, 0, n);
-      }
-      is.close();
-      bis.close();
-
-      return bis.toByteArray();
-    } catch (Exception e) {
-      LOG.error("Failed to read url " + imageUrl + ": " + e.getMessage());
-    }
-    return null;
-  } */
 }

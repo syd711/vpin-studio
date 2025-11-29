@@ -2,6 +2,7 @@ package de.mephisto.vpin.commons.fx.pausemenu;
 
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoreItemController;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.alx.AlxSummary;
@@ -93,13 +94,13 @@ public class MenuCustomViewController implements Initializable {
     }
 
     GameScoreValidation scoreValidation = ServerFX.client.getGameScoreValidation(game.getId());
-   //boolean valid = scoreValidation.isValidScoreConfiguration();
+    //boolean valid = scoreValidation.isValidScoreConfiguration();
     if (!StringUtils.isEmpty(game.getRom())) {
       if (scoreValidation.getRomStatus() == null & scoreValidation.getHighscoreFilenameStatus() == null) {
         scoreInfoLabel.setText("ROM: \"" + game.getRom() + "\" (supported)");
       }
       else {
-        if(scoreValidation.getHighscoreFilenameStatus() != null) {
+        if (scoreValidation.getHighscoreFilenameStatus() != null) {
           scoreInfoLabel.setText("ROM: \"" + game.getRom() + "\" (" + scoreValidation.getHighscoreFilenameStatus() + ")");
         }
         else {
@@ -122,37 +123,41 @@ public class MenuCustomViewController implements Initializable {
     tile3Controller.refresh(TileFactory.toTotalTimeEntry(entries));
     tile4Controller.refresh(TileFactory.toSessionDurationTile(status.getStarted()));
 
-    ScoreSummaryRepresentation recentlyPlayedGames = ServerFX.client.getRecentScoresByGame(3, game.getId());
-    List<ScoreRepresentation> scores = recentlyPlayedGames.getScores();
-    stats3Col.getChildren().removeAll(stats3Col.getChildren());
+    JFXFuture.supplyAsync(() -> {
+      ScoreSummaryRepresentation recentlyPlayedGames = ServerFX.client.getRecentScoresByGame(3, game.getId());
+      List<ScoreRepresentation> scores = recentlyPlayedGames.getScores();
+      return scores;
+    }).thenAcceptLater((scores) -> {
+      stats3Col.getChildren().removeAll(stats3Col.getChildren());
 
-    stats3Col.setAlignment(Pos.CENTER);
+      stats3Col.setAlignment(Pos.CENTER);
 
-    if (scores.isEmpty()) {
-      Label noScoresLabel = new Label("No scores found.");
-      noScoresLabel.setStyle("-fx-font-size: 20px;-fx-text-fill: #FFFFFF;");
-      noScoresLabel.setPadding(new Insets(50, 0, 0, 0));
-      stats3Col.getChildren().add(noScoresLabel);
+      if (scores.isEmpty()) {
+        Label noScoresLabel = new Label("No scores found.");
+        noScoresLabel.setStyle("-fx-font-size: 20px;-fx-text-fill: #FFFFFF;");
+        noScoresLabel.setPadding(new Insets(50, 0, 0, 0));
+        stats3Col.getChildren().add(noScoresLabel);
 
-      Label info = new Label("(Note that this list may be filtered.)");
-      info.setStyle("-fx-font-size:16px;-fx-text-fill: #FFFFFF;");
-      stats3Col.getChildren().add(info);
-    }
-
-    for (ScoreRepresentation score : scores) {
-      try {
-        FXMLLoader loader = new FXMLLoader(WidgetLatestScoreItemController.class.getResource("widget-latest-score-item.fxml"));
-        Pane row = loader.load();
-        row.setPrefWidth(stats3Col.getPrefWidth() - 24);
-        WidgetLatestScoreItemController controller = loader.getController();
-        controller.setData(game, frontendMedia, score);
-
-        stats3Col.getChildren().add(row);
+        Label info = new Label("(Note that this list may be filtered.)");
+        info.setStyle("-fx-font-size:16px;-fx-text-fill: #FFFFFF;");
+        stats3Col.getChildren().add(info);
       }
-      catch (IOException e) {
-        LOG.error("Failed to load paused scores: " + e.getMessage(), e);
+
+      for (ScoreRepresentation score : scores) {
+        try {
+          FXMLLoader loader = new FXMLLoader(WidgetLatestScoreItemController.class.getResource("widget-latest-score-item.fxml"));
+          Pane row = loader.load();
+          row.setPrefWidth(stats3Col.getPrefWidth() - 24);
+          WidgetLatestScoreItemController controller = loader.getController();
+          controller.setData(game, frontendMedia, score);
+
+          stats3Col.getChildren().add(row);
+        }
+        catch (IOException e) {
+          LOG.error("Failed to load paused scores: " + e.getMessage(), e);
+        }
       }
-    }
+    });
   }
 
   @Override

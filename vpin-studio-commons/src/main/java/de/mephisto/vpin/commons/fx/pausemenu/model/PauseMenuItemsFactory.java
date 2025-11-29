@@ -2,6 +2,7 @@ package de.mephisto.vpin.commons.fx.pausemenu.model;
 
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.connectors.vps.model.VpsTutorialUrls;
@@ -42,8 +43,8 @@ public class PauseMenuItemsFactory {
     PauseMenuItem item = new PauseMenuItem(PauseMenuItemTypes.exit, "Continue", "Continue Game", new Image(PauseMenu.class.getResourceAsStream("continue.png")));
     pauseMenuItems.add(item);
 
-    if(wovpSettings.isEnabled() && wovpSettings.isApiKeySet()) {
-      PauseMenuItem scoreSubmitterItem = new PauseMenuItem(PauseMenuItemTypes.scoreSubmitter, "World Of Virtual Pinball", "Score Submitter", new Image(PauseMenu.class.getResourceAsStream("wovp.png")));
+    if (wovpSettings.isEnabled() && wovpSettings.isApiKeySet() && wovpSettings.isUseScoreSubmitter()) {
+      PauseMenuItem scoreSubmitterItem = new PauseMenuItem(PauseMenuItemTypes.scoreSubmitter, "World Of Virtual Pinball", "Score Submitter for World Of Virtual Pinball", new Image(PauseMenu.class.getResourceAsStream("wovp-wheel.png")));
       pauseMenuItems.add(scoreSubmitterItem);
     }
 
@@ -104,8 +105,7 @@ public class PauseMenuItemsFactory {
       item.setVideoUrl(videoUrl);
       LOG.info("\"" + game.getGameDisplayName() + "\": found tutorial video " + videoUrl);
       String url = "https://img.youtube.com/vi/" + videoTutorial.getYoutubeId() + "/0.jpg";
-      Image scoreImage = new Image(ServerFX.client.getCachedUrlImage(url));
-      item.setDataImage(scoreImage);
+      item.setDataImageUrl(url);
       pauseMenuItems.add(item);
     }
   }
@@ -157,8 +157,7 @@ public class PauseMenuItemsFactory {
       if (baseType.equals("image")) {
         PauseMenuItem item = new PauseMenuItem(pauseType, title, text, new Image(PauseMenu.class.getResourceAsStream(pictureImage)));
         String url = ServerFX.client.getURL(mediaItem.getUri() + "/" + URLEncoder.encode(mediaItem.getName(), Charset.defaultCharset()));
-        Image scoreImage = new Image(ServerFX.client.getCachedUrlImage(url));
-        item.setDataImage(scoreImage);
+        item.setDataImageUrl(url);
         pauseMenuItems.add(item);
       }
       else if (baseType.equals("video")) {

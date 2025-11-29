@@ -64,13 +64,24 @@ public class TransitionUtil {
   /**
    * Creates a blink out effect without playing it
    */
-  public static FadeTransition createBlink(Node node) {
-    FadeTransition fadeTransition = new FadeTransition(Duration.millis(80), node);
-    fadeTransition.setFromValue(0.1);
-    fadeTransition.setCycleCount(3);
-    fadeTransition.setToValue(1);
-    applyDefaults(node, fadeTransition);
-    return fadeTransition;
+  public static Transition createBlink(Node node) {
+    SequentialTransition sequentialTransition = new SequentialTransition(node);
+    sequentialTransition.setCycleCount(3);
+
+    FadeTransition fadeOut = new FadeTransition(Duration.millis(300), node);
+    fadeOut.setFromValue(0.1);
+    fadeOut.setCycleCount(1);
+    fadeOut.setToValue(1);
+
+    FadeTransition fadeIn = new FadeTransition(Duration.millis(300), node);
+    fadeIn.setFromValue(1);
+    fadeIn.setCycleCount(1);
+    fadeIn.setToValue(0.1);
+
+    sequentialTransition.getChildren().addAll(fadeIn, fadeOut);
+
+    applyDefaults(node, sequentialTransition);
+    return sequentialTransition;
   }
 
   public static Transition createScaleTransition(Node node, double increase, long duration) {

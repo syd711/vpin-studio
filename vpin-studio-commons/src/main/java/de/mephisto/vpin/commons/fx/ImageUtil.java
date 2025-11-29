@@ -101,21 +101,19 @@ public class ImageUtil {
     }
   }
 
-  public static void drawTimestamp(File file) throws IOException {
-    drawWatermark(file, DateUtil.formatDateTime(new Date()), Color.RED);
+  public static BufferedImage drawTimestamp(BufferedImage image) throws IOException {
+    return drawWatermark(image, DateUtil.formatDateTime(new Date()), Color.RED);
   }
 
-  public static void drawWatermark(File file, String watermark, Color color) throws IOException {
-    BufferedImage bufferedImage = loadImage(file);
+  public static BufferedImage drawWatermark(BufferedImage bufferedImage, String watermark, Color color) throws IOException {
     if (bufferedImage != null) {
       Graphics g = bufferedImage.getGraphics();
       Graphics2D g2d = (Graphics2D) g.create();
       g2d.setColor(color);
       g2d.setFont(new Font("TimesRoman", Font.BOLD, 24));
       g2d.drawString(watermark, 12, 30);
-      file.delete();
-      write(bufferedImage, file);
     }
+    return bufferedImage;
   }
 
   public static BufferedImage rotateLeft(BufferedImage image) {

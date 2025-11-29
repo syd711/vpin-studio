@@ -12,7 +12,7 @@
    <children>
       <BorderPane prefHeight="200.0" prefWidth="200.0">
          <left>
-            <ImageView fx:id="sectionIcon" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+            <ImageView fx:id="sectionIcon" fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
                <image>
                   <Image url="@rules.png" />
                </image>
@@ -21,9 +21,9 @@
                </BorderPane.margin></ImageView>
          </left>
          <center>
-            <VBox prefHeight="200.0" prefWidth="100.0" spacing="3.0" BorderPane.alignment="CENTER">
+            <VBox prefHeight="150.0" prefWidth="100.0" spacing="3.0" BorderPane.alignment="CENTER">
                <BorderPane.margin>
-                  <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+                  <Insets left="24.0" right="24.0" top="24.0" />
                </BorderPane.margin>
                <children>
                   <Label fx:id="nameLabel" text="Label" textFill="WHITE" wrapText="true">
@@ -50,13 +50,30 @@
             </VBox>
          </center>
          <bottom>
-            <BorderPane fx:id="widgetPane" styleClass="subpanel" BorderPane.alignment="CENTER">
+            <BorderPane fx:id="widgetPane" styleClass="media-container" BorderPane.alignment="CENTER">
                <BorderPane.margin>
-                  <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+                  <Insets bottom="12.0" left="24.0" right="24.0" top="12.0" />
                </BorderPane.margin>
                <padding>
-                  <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+                  <Insets bottom="12.0" left="24.0" right="24.0" top="12.0" />
                </padding>
+               <center>
+                  <ImageView fx:id="screenshotView" fitHeight="600.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
+               </center>
+               <bottom>
+                  <VBox alignment="CENTER" styleClass="info-container" BorderPane.alignment="CENTER">
+                     <children>
+                        <Label fx:id="submitBtnLabel" text="Hit the start button to submit your score to the World Of Virtual Pinball scoring system." textFill="WHITE" wrapText="true">
+                           <font>
+                              <Font size="24.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <BorderPane.margin>
+                        <Insets top="12.0" />
+                     </BorderPane.margin>
+                  </VBox>
+               </bottom>
             </BorderPane>
          </bottom>
       </BorderPane>

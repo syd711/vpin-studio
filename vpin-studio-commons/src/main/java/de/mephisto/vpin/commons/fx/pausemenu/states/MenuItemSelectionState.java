@@ -31,6 +31,9 @@ public class MenuItemSelectionState extends MenuState {
     if (item.getItemType().equals(PauseMenuItemTypes.exit)) {
       PauseMenu.exitPauseMenu();
     }
+    else {
+      menuController.enter();
+    }
     return this;
   }
 

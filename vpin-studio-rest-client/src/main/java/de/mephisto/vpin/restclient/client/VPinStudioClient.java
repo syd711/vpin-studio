@@ -79,6 +79,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.*;
 import java.lang.invoke.MethodHandles;
+import java.net.URL;
 import java.util.List;
 
 public class VPinStudioClient implements OverlayClient {
@@ -593,6 +594,17 @@ public class VPinStudioClient implements OverlayClient {
   @Override
   public ByteArrayInputStream getWheelIcon(int id, boolean skipApng) {
     return getAssetService().getWheelIcon(id, skipApng);
+  }
+
+  @Override
+  public InputStream getScreenshot() {
+    try {
+      return new URL(getURL("recorder/screenshot")).openStream();
+    }
+    catch (IOException e) {
+      LOG.error("Failed to load screenshot: {}", e.getMessage(), e);
+    }
+    return null;
   }
 
   @Override

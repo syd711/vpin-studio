@@ -205,12 +205,15 @@ public class DefaultPictureService implements ApplicationListener<ApplicationRea
   }
 
   private void addWatermark(File target, String watermark) {
-    try {
-      ImageUtil.drawWatermark(target, watermark, Color.CYAN);
-    }
-    catch (IOException ioe) {
-      LOG.warn("Cannot add watermark on {}", target.getAbsolutePath());
-    }
+    //TODO why should we do that?
+//    try {
+//      BufferedImage bufferedImage = ImageUtil.loadImage(target);
+//      bufferedImage = ImageUtil.drawWatermark(bufferedImage, watermark, Color.CYAN);
+//      ImageUtil.write(bufferedImage, target);
+//    }
+//    catch (IOException ioe) {
+//      LOG.warn("Cannot add watermark on {}", target.getAbsolutePath());
+//    }
   }
 
   private byte[] extractBytes(File file) {

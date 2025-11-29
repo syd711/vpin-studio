@@ -53,6 +53,8 @@ import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.highscores.cards.CardTemplatesService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.recorder.RecorderService;
+import de.mephisto.vpin.server.recorder.ScreenshotService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.PngFrameCapture;
 import de.mephisto.vpin.server.vps.VpsService;
@@ -116,6 +118,9 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
 
   @Autowired
   private DiscordService discordService;
+
+  @Autowired
+  private ScreenshotService screenshotService;
 
   @Autowired
   private VpsService vpsService;
@@ -359,6 +364,11 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
       LOG.error("Error reading media item: " + e.getMessage(), e);
     }
     return null;
+  }
+
+  @Override
+  public InputStream getScreenshot() {
+    return screenshotService.screenshot();
   }
 
   //---------------------------

@@ -10,6 +10,7 @@
    -fx-base-5: #605E5E;
    -fx-base-6: #222222;
    -fx-base-7: #111111;
+   -fx-info-background: #333366;
 
    -fx-font-1: #FFF8F8;
    -fx-font-2: #B0ABAB;
@@ -272,6 +273,24 @@
     -fx-background-radius: 6 6 6 6;
     -fx-border-radius: 6 6 6 6;
     -fx-background-color: #2a2a2a;
+}
+
+.media-container {
+    -fx-background-radius: 6 6 6 6;
+    -fx-border-radius: 6 6 6 6;
+    -fx-padding: 3 3 3 3;
+    -fx-background-color: -fx-base-7;
+}
+
+/**
+ * Info Container
+ */
+.info-container {
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: #FFFFFF;
+    -fx-border-width: 1;
+    -fx-border-radius: 3px;
+    -fx-background-color: -fx-info-background;
 }
 
 /**

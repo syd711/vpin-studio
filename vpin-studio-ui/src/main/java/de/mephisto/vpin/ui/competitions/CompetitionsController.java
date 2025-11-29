@@ -826,6 +826,7 @@ public class CompetitionsController implements Initializable, StudioFXController
 
     dashboardWebView.managedProperty().bindBidirectional(dashboardWebView.visibleProperty());
     dashboardStatusLabel.managedProperty().bindBidirectional(dashboardStatusLabel.visibleProperty());
+    rulesBtn.managedProperty().bindBidirectional(rulesBtn.visibleProperty());
 
     updateSelection(Optional.empty());
     tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, oldTabIndex, newTabIndex) -> {

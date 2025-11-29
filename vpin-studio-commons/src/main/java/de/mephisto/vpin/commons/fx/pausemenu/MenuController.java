@@ -1,5 +1,6 @@
 package de.mephisto.vpin.commons.fx.pausemenu;
 
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.cards.CardGraphicsHighscore;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItem;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemTypes;
@@ -43,6 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.ArrayList;
@@ -100,6 +102,7 @@ public class MenuController implements Initializable {
   private FrontendPlayerDisplay tutorialScreen;
   private PauseMenuSettings pauseMenuSettings;
   private WOVPSettings wovpSettings;
+  private InputStream screenshot;
   private GameRepresentation game;
   private FrontendMediaRepresentation frontendMedia;
   private PauseMenuItem activeSelection;
@@ -108,6 +111,7 @@ public class MenuController implements Initializable {
 
   private MenuCustomViewController customViewController;
   private Node currentSelection;
+  private MenuSubmitterViewController scoreSubmitterController;
 
   public void setGame(@NonNull GameRepresentation game,
                       @NonNull FrontendMediaRepresentation frontendMedia,
@@ -116,7 +120,8 @@ public class MenuController implements Initializable {
                       @Nullable VPinScreen cardScreen,
                       @Nullable FrontendPlayerDisplay tutorialScreen,
                       @NonNull PauseMenuSettings pauseMenuSettings,
-                      @NonNull WOVPSettings wovpSettings) {
+                      @NonNull WOVPSettings wovpSettings,
+                      @Nullable InputStream screenshot) {
     this.game = game;
     this.frontendMedia = frontendMedia;
     this.gameStatus = gameStatus;
@@ -125,6 +130,7 @@ public class MenuController implements Initializable {
     this.tutorialScreen = tutorialScreen;
     this.pauseMenuSettings = pauseMenuSettings;
     this.wovpSettings = wovpSettings;
+    this.screenshot = screenshot;
     this.customViewController.setGame(game, frontendMedia, gameStatus, vpsTable);
     enterMenuItemSelection();
   }
@@ -298,12 +304,12 @@ public class MenuController implements Initializable {
     }
     else if (activeSelection.getItemType().equals(PauseMenuItemTypes.scoreSubmitter)) {
       try {
-        Image sectionImage = new Image(PauseMenu.class.getResourceAsStream("wovp.png"));
+        Image sectionImage = new Image(PauseMenu.class.getResourceAsStream("wovp-wheel.png"));
         String resource = "menu-submitter-view.fxml";
         FXMLLoader loader = new FXMLLoader(MenuSubmitterViewController.class.getResource(resource));
         Pane widgetRoot = loader.load();
-        MenuSubmitterViewController customViewController = loader.getController();
-        customViewController.setData(game, gameStatus, vpsTable, activeSelection,sectionImage);
+        scoreSubmitterController = loader.getController();
+        scoreSubmitterController.setData(game, gameStatus, vpsTable, activeSelection, sectionImage, screenshot);
         scoreView.setCenter(widgetRoot);
         scoreView.setVisible(true);
       }
@@ -357,17 +363,23 @@ public class MenuController implements Initializable {
         LOG.info("Started streaming of {}", activeSelection.getVideoUrl());
       }
     }
-    else if (activeSelection.getDataImage() != null) {
-      screenImageView.setVisible(true);
-      screenImageView.setImage(activeSelection.getDataImage());
+    else if (activeSelection.getDataImageUrl() != null) {
+      JFXFuture.supplyAsync(() -> {
+        return new Image(ServerFX.client.getCachedUrlImage(activeSelection.getDataImageUrl()));
+      }).thenAcceptLater((image) -> {
+        screenImageView.setVisible(true);
+        screenImageView.setImage(image);
+      });
     }
-
-    StateMananger.getInstance().checkAutoPlay();
   }
 
   public void reset() {
     LOG.info("Resetting pause menu media items.");
     this.screenImageView.setImage(null);
+
+    if (scoreSubmitterController != null) {
+      scoreSubmitterController.reset();
+    }
 
     try {
       if (mediaView != null && mediaView.getMediaPlayer() != null) {
@@ -474,6 +486,16 @@ public class MenuController implements Initializable {
     }
     catch (IOException e) {
       LOG.error("Failed to init custom controller: " + e.getMessage(), e);
+    }
+  }
+
+  public void enter() {
+    PauseMenuItemTypes itemType = getSelection().getItemType();
+    switch (itemType) {
+      case scoreSubmitter: {
+        scoreSubmitterController.enter();
+        break;
+      }
     }
   }
 }

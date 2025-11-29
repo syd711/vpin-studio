@@ -20,6 +20,7 @@ import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
 
 
@@ -93,7 +94,7 @@ public class StateMananger implements GameControllerInputListener {
     else if (button.equals(pauseMenuSettings.getStartButton())) {
       enterPlayer.play();
       this.activeState = activeState.enter();
-      LOG.info("Entered " + this.activeState);
+      LOG.info("Entered {}", this.activeState);
     }
   }
 
@@ -121,8 +122,8 @@ public class StateMananger implements GameControllerInputListener {
     this.pauseMenuSettings = pauseMenuSettings;
   }
 
-  public void setGame(GameRepresentation game, FrontendMediaRepresentation frontendMedia, GameStatus status, VpsTable table, VPinScreen cardScreen, FrontendPlayerDisplay tutorialDisplay, PauseMenuSettings pauseMenuSettings, WOVPSettings wovpSettings) {
-    menuController.setGame(game, frontendMedia, status, table, cardScreen, tutorialDisplay, pauseMenuSettings, wovpSettings);
+  public void setGame(GameRepresentation game, FrontendMediaRepresentation frontendMedia, GameStatus status, VpsTable table, VPinScreen cardScreen, FrontendPlayerDisplay tutorialDisplay, PauseMenuSettings pauseMenuSettings, WOVPSettings wovpSettings, InputStream screenshot) {
+    menuController.setGame(game, frontendMedia, status, table, cardScreen, tutorialDisplay, pauseMenuSettings, wovpSettings, screenshot);
 
     try {
       Thread.sleep(PauseMenuUIDefaults.SELECTION_SCALE_DURATION * 2);
@@ -144,28 +145,5 @@ public class StateMananger implements GameControllerInputListener {
       menuController.reset();
     });
     GameController.getInstance().removeListener(StateMananger.getInstance());
-  }
-
-
-  public void checkAutoPlay() {
-    boolean autoPlay = true;
-//    if (autoPlay && menuController.isVisible()) {
-//      PauseMenuItem item = menuController.getSelection();
-//      if (item.getVideoUrl() != null) {
-//        new Thread(() -> {
-//          try {
-//            Thread.sleep(PauseMenuUIDefaults.SELECTION_SCALE_DURATION * 2);
-//          }
-//          catch (InterruptedException e) {
-//            //ignore
-//          }
-//          Platform.runLater(() -> {
-//            if (menuController.isVisible()) {
-////              menuController.showYouTubeVideo(item);
-//            }
-//          });
-//        }).start();
-//      }
-//    }
   }
 }

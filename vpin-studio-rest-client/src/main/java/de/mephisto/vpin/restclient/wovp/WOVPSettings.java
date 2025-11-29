@@ -14,7 +14,16 @@ public class WOVPSettings extends JsonSettings {
   private boolean enabled;
   private boolean taggingEnabled;
   private boolean resetHighscores = true;
+  private boolean useScoreSubmitter = true;
   private List<String> tags = new ArrayList<>();
+
+  public boolean isUseScoreSubmitter() {
+    return useScoreSubmitter;
+  }
+
+  public void setUseScoreSubmitter(boolean useScoreSubmitter) {
+    this.useScoreSubmitter = useScoreSubmitter;
+  }
 
   public boolean isResetHighscores() {
     return resetHighscores;

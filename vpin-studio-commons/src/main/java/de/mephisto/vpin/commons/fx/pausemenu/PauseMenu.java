@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +55,7 @@ public class PauseMenu extends Application {
   private static Robot robot;
   private static boolean test = false;
 
-  private static List<FrontendScreenAsset> screenAssets = new ArrayList<>();
+  private static final List<FrontendScreenAsset> screenAssets = new ArrayList<>();
   private static GameEmulatorRepresentation emulator;
 
   static {
@@ -200,18 +201,26 @@ public class PauseMenu extends Application {
         if (pauseMenuSettings.getVideoScreen() != null) {
           tutorialScreen = pauseMenuSettings.getVideoScreen();
         }
-
         FrontendPlayerDisplay tutorialDisplay = client.getScreenDisplay(tutorialScreen);
-
         visible = true;
+        LOG.info("Finished fetching all screen information for pause menu.");
+
         FrontendMediaRepresentation frontendMedia = client.getFrontendMedia(game.getId());
 
         String extTableId = game.getExtTableId();
         VpsTable tableById = client.getVpsTable(extTableId);
 
-        StateMananger.getInstance().setGame(game, frontendMedia, status, tableById, cardScreen, tutorialDisplay, pauseMenuSettings, wovpSettings);
+        InputStream screenshot = null;
+        if (wovpSettings.isEnabled() && wovpSettings.isApiKeySet() && wovpSettings.isUseScoreSubmitter()) {
+          screenshot = client.getScreenshot();
+        }
+
+
+        StateMananger.getInstance().setGame(game, frontendMedia, status, tableById, cardScreen, tutorialDisplay, pauseMenuSettings, wovpSettings, screenshot);
         stage.getScene().setCursor(Cursor.NONE);
 
+        ServerFX.forceShow(stage);
+        LOG.info("Forced showing pause stage, starting post launch processing.");
         JFXFuture.supplyAsync(() -> {
           if (pauseMenuSettings.isMuteOnPause()) {
             NirCmd.muteSystem(true);
@@ -230,14 +239,6 @@ public class PauseMenu extends Application {
           }
 
           LOG.info("Asset fetch for pause menu took {}ms", (System.currentTimeMillis() - start));
-
-          ServerFX.forceShow(stage);
-          if (emulator != null && isVPXGlEmulator(emulator)) {
-//            ServerFX.toFront(stage, visible);
-//            ServerFX.toFront(stage, visible);
-//            ServerFX.toFront(stage, visible);
-//            ServerFX.toFront(stage, visible);
-          }
         });
       }
       catch (Exception e) {
@@ -304,19 +305,21 @@ public class PauseMenu extends Application {
   }
 
   private static void togglePauseKey(long delay) {
-    try {
-      if (test) {
-        return;
-      }
+    new Thread(() -> {
+      try {
+        if (test) {
+          return;
+        }
 
-      Thread.sleep(delay);
-      robot.keyPress(KeyEvent.VK_P);
-      Thread.sleep(100);
-      robot.keyRelease(KeyEvent.VK_P);
-      LOG.info("Sending Pause key 'P'");
-    }
-    catch (Exception e) {
-      LOG.error("Failed sending pause key toggle: " + e.getMessage(), e);
-    }
+        Thread.sleep(delay);
+        robot.keyPress(KeyEvent.VK_P);
+        Thread.sleep(100);
+        robot.keyRelease(KeyEvent.VK_P);
+        LOG.info("Sending Pause key 'P'");
+      }
+      catch (Exception e) {
+        LOG.error("Failed sending pause key toggle: " + e.getMessage(), e);
+      }
+    }).start();
   }
 }

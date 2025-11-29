@@ -17,10 +17,20 @@ import java.io.OutputStream;
 public class ScreenPreviewService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(ScreenPreviewService.class);
 
+  private static Robot robot;
+
+  static {
+    try {
+      robot = new Robot();
+    }
+    catch (AWTException e) {
+      LOG.error("Failed to create robot: {}", e.getMessage());
+    }
+  }
+
   public void capture(@NonNull OutputStream out, @NonNull FrontendPlayerDisplay display) {
     try {
       Rectangle rectangle = new Rectangle(display.getX(), display.getY(), display.getWidth(), display.getHeight());
-      Robot robot = new Robot();
       BufferedImage bufferedImage = robot.createScreenCapture(rectangle);
 //      ImageUtil.write(bufferedImage, new File("c:/temp/out.jpg"));
       ImageUtil.writeJPG(bufferedImage, out);
@@ -33,13 +43,23 @@ public class ScreenPreviewService implements InitializingBean {
   public void capture(@NonNull OutputStream out, @NonNull MonitorInfo display) {
     try {
       Rectangle rectangle = new Rectangle((int) display.getX(), (int) display.getY(), display.getWidth(), display.getHeight());
-      Robot robot = new Robot();
       BufferedImage bufferedImage = robot.createScreenCapture(rectangle);
       ImageUtil.writeJPG(bufferedImage, out);
     }
     catch (Exception e) {
       LOG.error("Failed to generated screen capture for monitor #" + display + ": {}", e.getMessage(), e);
     }
+  }
+
+  public BufferedImage capture(@NonNull MonitorInfo display) {
+    try {
+      Rectangle rectangle = new Rectangle((int) display.getX(), (int) display.getY(), display.getWidth(), display.getHeight());
+      return robot.createScreenCapture(rectangle);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to generated screen capture for monitor #" + display + ": {}", e.getMessage(), e);
+    }
+    return null;
   }
 
   @Override

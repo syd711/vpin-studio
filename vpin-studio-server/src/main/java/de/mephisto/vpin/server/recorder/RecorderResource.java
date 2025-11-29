@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.List;
@@ -98,6 +99,37 @@ public class RecorderResource {
           in.close();
         }
         if (out != null) {
+          out.close();
+        }
+      }
+      catch (IOException e) {
+        LOG.error("Error closing streams: " + e.getMessage(), e);
+      }
+    }
+  }
+
+  @GetMapping("/screenshot")
+  public void takeScreenshot(HttpServletResponse response) {
+    InputStream in = null;
+    OutputStream out = null;
+    try {
+      LOG.info("Creating summary screenshot...");
+      in = screenshotService.screenshot();
+      out = response.getOutputStream();
+      IOUtils.copy(in, out);
+      LOG.info("Finished exporting summary screenshot.");
+    }
+    catch (IOException ex) {
+      LOG.info("Error writing summary screenshot: " + ex.getLocalizedMessage(), ex);
+      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "IOError writing screenshots to output stream");
+    }
+    finally {
+      try {
+        if (in != null) {
+          in.close();
+        }
+        if (out != null) {
+          out.flush();
           out.close();
         }
       }

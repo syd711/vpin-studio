@@ -81,6 +81,8 @@ public interface OverlayClient {
 
   ByteArrayInputStream getWheelIcon(int id, boolean skipApng);
 
+  InputStream getScreenshot();
+
   //--------------------------
 
   GameStatus startPause();

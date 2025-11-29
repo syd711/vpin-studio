@@ -1,10 +1,13 @@
 package de.mephisto.vpin.commons.fx.pausemenu;
 
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItem;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -14,6 +17,7 @@ import javafx.scene.layout.BorderPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -37,12 +41,19 @@ public class MenuSubmitterViewController implements Initializable {
   private Label scoreInfoLabel;
 
   @FXML
+  private Label submitBtnLabel;
+
+  @FXML
   private BorderPane widgetPane;
 
-  public void setData(GameRepresentation game, GameStatus status, VpsTable tableById, PauseMenuItem pauseMenuItem, Image sectionImage) {
+  @FXML
+  private ImageView screenshotView;
+  private static Image screenshotImage;
+
+  public void setData(GameRepresentation game, GameStatus status, VpsTable tableById, PauseMenuItem pauseMenuItem, Image sectionImage, InputStream screenshot) {
     this.nameLabel.setText(game.getGameDisplayName());
-    this.versionLabel.setText("");
-    this.authorsLabel.setText("");
+    this.versionLabel.setVisible(false);
+    this.authorsLabel.setVisible(false);
     this.scoreInfoLabel.setText("");
 
     this.sectionIcon.setImage(sectionImage);
@@ -56,19 +67,51 @@ public class MenuSubmitterViewController implements Initializable {
         List<String> authors = version.getAuthors();
         if (authors != null && !authors.isEmpty()) {
           this.authorsLabel.setText(String.join(", ", authors));
+          this.authorsLabel.setVisible(true);
         }
       }
       else {
         this.versionLabel.setText(tableById.getManufacturer() + " (" + tableById.getYear() + ")");
+        this.versionLabel.setVisible(true);
         List<String> designers = tableById.getDesigners();
         if (designers != null && !designers.isEmpty()) {
           this.authorsLabel.setText(String.join(", ", designers));
         }
       }
     }
+
+//    Platform.runLater(() -> {
+    double height = widgetPane.getHeight();
+    double width = widgetPane.getWidth();
+
+//    screenshotView.setPreserveRatio(true);
+//      screenshotView.setFitWidth(width - 60);
+//      screenshotView.setFitHeight(height - 60);
+
+    if (screenshotImage == null) {
+      screenshotImage = new Image(screenshot);
+    }
+    screenshotView.setImage(screenshotImage);
+//    });
+  }
+
+  public void enter() {
+    submitBtnLabel.setText("Sending scores...");
+    TransitionUtil.createBlink(submitBtnLabel).play();
+    JFXFuture.supplyAsync(() -> {
+      return "Scores have been submitted.";
+    }).thenAcceptLater((value) -> {
+      submitBtnLabel.setText("Scores have been submitted.");
+    });
+  }
+
+  public void reset() {
+    screenshotImage = null;
   }
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
+    authorsLabel.managedProperty().bindBidirectional(authorsLabel.visibleProperty());
+    versionLabel.managedProperty().bindBidirectional(versionLabel.visibleProperty());
   }
 }
