@@ -267,7 +267,7 @@ public class BuiltInPlayersController extends BasePlayersController implements I
         return new SimpleObjectProperty<>("");
       }
 
-      return new SimpleObjectProperty<>(AvatarFactory.create(client.getAsset(AssetType.AVATAR, value.getAvatar().getUuid())));
+      return new SimpleObjectProperty<>(AvatarFactory.create(client.getAssetService().getAsset(AssetType.AVATAR, value.getAvatar().getUuid())));
     });
 
     initialsColumn.setCellValueFactory(cellData -> {

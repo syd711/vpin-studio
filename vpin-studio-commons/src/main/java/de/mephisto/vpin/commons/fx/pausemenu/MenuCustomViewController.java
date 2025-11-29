@@ -93,7 +93,7 @@ public class MenuCustomViewController implements Initializable {
       }
     }
 
-    GameScoreValidation scoreValidation = ServerFX.client.getGameScoreValidation(game.getId());
+    GameScoreValidation scoreValidation = ServerFX.client.getGameService().getGameScoreValidation(game.getId());
     //boolean valid = scoreValidation.isValidScoreConfiguration();
     if (!StringUtils.isEmpty(game.getRom())) {
       if (scoreValidation.getRomStatus() == null & scoreValidation.getHighscoreFilenameStatus() == null) {
@@ -116,7 +116,7 @@ public class MenuCustomViewController implements Initializable {
     Image image = new Image(imageStream);
     wheelImage.setImage(image);
 
-    AlxSummary alxSummary = ServerFX.client.getAlxSummary(game.getId());
+    AlxSummary alxSummary = ServerFX.client.getAlxService().getAlxSummary(game.getId());
     List<TableAlxEntry> entries = alxSummary.getEntries();
     tile1Controller.refresh(TileFactory.toTotalGamesPlayedEntry(entries));
     tile2Controller.refresh(TileFactory.toTotalScoresEntry(entries));
@@ -124,7 +124,7 @@ public class MenuCustomViewController implements Initializable {
     tile4Controller.refresh(TileFactory.toSessionDurationTile(status.getStarted()));
 
     JFXFuture.supplyAsync(() -> {
-      ScoreSummaryRepresentation recentlyPlayedGames = ServerFX.client.getRecentScoresByGame(3, game.getId());
+      ScoreSummaryRepresentation recentlyPlayedGames = ServerFX.client.getGameService().getRecentScoresByGame(3, game.getId());
       List<ScoreRepresentation> scores = recentlyPlayedGames.getScores();
       return scores;
     }).thenAcceptLater((scores) -> {

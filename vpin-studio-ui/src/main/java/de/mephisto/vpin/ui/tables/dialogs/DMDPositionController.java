@@ -236,7 +236,7 @@ public class DMDPositionController extends BasePrevNextController {
   }
 
   private void switchGame(int gameId) {
-    JFXFuture.supplyAsync(() -> client.getGame(gameId))
+    JFXFuture.supplyAsync(() -> client.getGameService().getGame(gameId))
     .thenAcceptLater(game -> {
       if (game != null) {
         setGame(game, baseMgrController);

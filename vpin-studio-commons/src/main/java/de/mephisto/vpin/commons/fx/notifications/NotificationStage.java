@@ -50,7 +50,7 @@ public class NotificationStage {
       stage.getIcons().add(new Image(NotificationController.class.getResourceAsStream("logo-64.png")));
 
       NotificationSettings notificationSettings = ServerFX.client.getJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, NotificationSettings.class);
-      this.screenBounds = ServerFX.client.getScreenInfo(notificationSettings.getNotificationsScreenId());
+      this.screenBounds = ServerFX.client.getSystemService().getScreenInfo(notificationSettings.getNotificationsScreenId());
 
       FXMLLoader loader = new FXMLLoader(NotificationController.class.getResource("notification.fxml"));
       root = loader.load();

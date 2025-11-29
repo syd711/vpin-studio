@@ -37,7 +37,7 @@ public class PauseMenuItemsFactory {
   public static List<PauseMenuItem> createPauseMenuItems(@NonNull GameRepresentation game, @NonNull PauseMenuSettings pauseMenuSettings, @NonNull WOVPSettings wovpSettings, @Nullable VPinScreen cardScreen, @NonNull FrontendMediaRepresentation frontendMedia) {
 
     // get application features
-    FeaturesInfo Features = ServerFX.client.getFeatures();
+    FeaturesInfo Features = ServerFX.client.getSystemService().getFeatures();
 
     List<PauseMenuItem> pauseMenuItems = new ArrayList<>();
     PauseMenuItem item = new PauseMenuItem(PauseMenuItemTypes.exit, "Continue", "Continue Game", new Image(PauseMenu.class.getResourceAsStream("continue.png")));
@@ -49,7 +49,7 @@ public class PauseMenuItemsFactory {
     }
 
     if (pauseMenuSettings.isShowIscoredScores() && Features.ISCORED_ENABLED) {
-      List<CompetitionRepresentation> competitions = client.getIScoredSubscriptions();
+      List<CompetitionRepresentation> competitions = client.getCompetitionService().getIScoredSubscriptions();
       for (CompetitionRepresentation competition : competitions) {
         if (competition.isActive() && competition.getGameId() == game.getId()) {
           PauseMenuItem iScoredItem = new PauseMenuItem(PauseMenuItemTypes.iScored, "iScored", "iScored Game Room Scores", new Image(PauseMenu.class.getResourceAsStream("iscored.png")));
@@ -60,7 +60,7 @@ public class PauseMenuItemsFactory {
     }
 
     if (pauseMenuSettings.isShowManiaScores() && Features.MANIA_ENABLED) {
-      VpsTableVersion tableVersion = client.getVpsTableVersion(game.getExtTableId(), game.getExtTableVersionId());
+      VpsTableVersion tableVersion = client.getVpsService().getVpsTableVersion(game.getExtTableId(), game.getExtTableVersionId());
       if (tableVersion != null) {
         PauseMenuItem maniaItem = new PauseMenuItem(PauseMenuItemTypes.maniaScores, "VPin Mania", "VPin Mania Scores", new Image(PauseMenu.class.getResourceAsStream("mania-wheel.png")));
         pauseMenuItems.add(maniaItem);
@@ -114,7 +114,7 @@ public class PauseMenuItemsFactory {
     List<VpsTutorialUrls> tutorials = new ArrayList<>();
     String extTableId = game.getExtTableId();
     if (!StringUtils.isEmpty(extTableId)) {
-      VpsTable tableById = ServerFX.client.getVpsTable(extTableId);
+      VpsTable tableById = ServerFX.client.getVpsService().getTableById(extTableId);
       if (tableById != null) {
         List<VpsTutorialUrls> tutorialFiles = tableById.getTutorialFiles();
         if (tutorialFiles != null && !tutorialFiles.isEmpty()) {

@@ -89,7 +89,7 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
       changeDateLabel.setText("Updated: " + date);
 
       JFXFuture.supplyAsync(() -> {
-        return ServerFX.client.getCompetitionBackground(game.getId());
+        return ServerFX.client.getCompetitionService().getCompetitionBackground(game.getId());
       }).thenAcceptLater(byteStream -> {
         Image backgroundImage = new Image(byteStream);
         BackgroundImage myBI = new BackgroundImage(backgroundImage,
@@ -139,7 +139,7 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
     changeDateLabel.setText("Updated: " + date);
 
     if (game != null) {
-      Image backgroundImage = new Image(ServerFX.client.getCompetitionBackground(game.getId()));
+      Image backgroundImage = new Image(ServerFX.client.getCompetitionService().getCompetitionBackground(game.getId()));
       BackgroundImage myBI = new BackgroundImage(backgroundImage,
           BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
           BackgroundSize.DEFAULT);

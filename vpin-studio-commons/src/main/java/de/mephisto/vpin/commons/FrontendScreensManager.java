@@ -37,7 +37,7 @@ public class FrontendScreensManager {
       BorderPane root = new BorderPane();
       root.setStyle("-fx-background-color: transparent;");
 
-      MonitorInfo screen = ServerFX.client.getScreenInfo(-1);
+      MonitorInfo screen = ServerFX.client.getSystemService().getScreenInfo(-1);
       final Scene scene = new Scene(root, screen.getWidth(), screen.getHeight(), true, SceneAntialiasing.BALANCED);
       scene.setFill(Color.TRANSPARENT);
       scene.setCursor(Cursor.NONE);

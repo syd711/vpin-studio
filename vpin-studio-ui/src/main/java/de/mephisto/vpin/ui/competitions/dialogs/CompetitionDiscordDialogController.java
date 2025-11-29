@@ -323,8 +323,8 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       this.resetCheckbox.setDisable(selectedCompetition.getId() != null);
       this.resetCheckbox.setSelected(selectedCompetition.getId() != null);
 
-      GameRepresentation game = client.getGame(selectedCompetition.getGameId());
-      DiscordServer discordServer = client.getDiscordServer(selectedCompetition.getDiscordServerId());
+      GameRepresentation game = client.getGameService().getGame(selectedCompetition.getGameId());
+      DiscordServer discordServer = client.getDiscordService().getDiscordServer(selectedCompetition.getDiscordServerId());
       List<DiscordChannel> serverChannels = client.getDiscordService().getDiscordChannels(discordServer.getId());
 
       String botId = String.valueOf(botStatus.getBotId());
@@ -427,7 +427,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
+    long guildId = client.getPreferenceService().getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
     this.botStatus = client.getDiscordService().getDiscordStatus(guildId);
     this.nvRamList = client.getNvRamsService().getResettedNVRams();
 

@@ -55,7 +55,7 @@ public class FrontendScreenController implements Initializable {
         showOnDisplay(screenAsset);
       }
       else {
-        MonitorInfo screen = ServerFX.client.getScreenInfo(-1);
+        MonitorInfo screen = ServerFX.client.getSystemService().getScreenInfo(-1);
         showCentered(screenAsset, screen);
       }
     }

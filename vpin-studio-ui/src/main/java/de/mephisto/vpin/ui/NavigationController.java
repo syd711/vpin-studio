@@ -225,7 +225,7 @@ public class NavigationController implements Initializable, StudioEventListener,
     avatar.setFitWidth(100);
     avatar.setFitHeight(100);
 
-    PreferenceEntryRepresentation systemNameEntry = client.getPreference(PreferenceNames.SYSTEM_NAME);
+    PreferenceEntryRepresentation systemNameEntry = client.getPreferenceService().getPreference(PreferenceNames.SYSTEM_NAME);
     String name = UIDefaults.VPIN_NAME;
     if (systemNameEntry != null && !StringUtils.isEmpty(systemNameEntry.getValue())) {
       name = systemNameEntry.getValue();

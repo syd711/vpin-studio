@@ -56,7 +56,7 @@ public class WidgetFinishedCompetitionsController extends WidgetController imple
     competitionsVBox.getChildren().removeAll(competitionsVBox.getChildren());
 
     new Thread(() -> {
-      List<CompetitionRepresentation> competitions = ServerFX.client.getFinishedCompetitions(3);
+      List<CompetitionRepresentation> competitions = ServerFX.client.getCompetitionService().getFinishedCompetitions(3);
 
       Platform.runLater(() -> {
         root.setVisible(!competitions.isEmpty());

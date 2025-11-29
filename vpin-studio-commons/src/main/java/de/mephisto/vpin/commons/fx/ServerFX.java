@@ -6,14 +6,13 @@ import de.mephisto.vpin.commons.fx.apng.ApngImageLoaderFactory;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.commons.fx.pausemenu.model.FrontendScreenAsset;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
-import de.mephisto.vpin.restclient.OverlayClient;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
+import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.preferences.OverlaySettings;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
-import de.mephisto.vpin.restclient.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Application;
@@ -55,7 +54,7 @@ public class ServerFX extends Application {
 
   private BorderPane root;
 
-  public static OverlayClient client;
+  public static VPinStudioClient client;
   public static VPinManiaClient maniaClient;
   private OverlayController overlayController;
 
@@ -184,7 +183,7 @@ public class ServerFX extends Application {
     String resource = "uhd";
 
     OverlaySettings overlaySettings = ServerFX.client.getJsonPreference(PreferenceNames.OVERLAY_SETTINGS, OverlaySettings.class);
-    MonitorInfo screen = ServerFX.client.getScreenInfo(overlaySettings.getOverlayScreenId());
+    MonitorInfo screen = ServerFX.client.getSystemService().getScreenInfo(overlaySettings.getOverlayScreenId());
     double width = screen.getWidth();
     if (screen.getWidth() < screen.getHeight()) {
       width = screen.getHeight();
@@ -213,7 +212,7 @@ public class ServerFX extends Application {
 
     BorderPane root = new BorderPane();
     OverlaySettings overlaySettings = ServerFX.client.getJsonPreference(PreferenceNames.OVERLAY_SETTINGS, OverlaySettings.class);
-    MonitorInfo screen = ServerFX.client.getScreenInfo(overlaySettings.getOverlayScreenId());
+    MonitorInfo screen = ServerFX.client.getSystemService().getScreenInfo(overlaySettings.getOverlayScreenId());
     final Scene scene = new Scene(root, screen.getWidth(), screen.getHeight(), true, SceneAntialiasing.BALANCED);
     scene.setCursor(Cursor.NONE);
 

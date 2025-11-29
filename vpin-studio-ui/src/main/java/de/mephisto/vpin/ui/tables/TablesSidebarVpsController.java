@@ -311,7 +311,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       String vpsTableVersionId = game.getExtTableVersionId();
 
       if (StringUtils.isEmpty(vpsTableId) || StringUtils.isEmpty(vpsTableVersionId)) {
-        PreferenceEntryRepresentation entry = Studio.client.getPreference(PreferenceNames.IGNORED_VALIDATION_SETTINGS);
+        PreferenceEntryRepresentation entry = Studio.client.getPreferenceService().getPreference(PreferenceNames.IGNORED_VALIDATION_SETTINGS);
         List<String> ignoredCsvValue = entry.getCSVValue();
         if (!game.getIgnoredValidations().contains(GameValidationCode.CODE_VPS_MAPPING_MISSING) && !ignoredCsvValue.contains(String.valueOf(GameValidationCode.CODE_VPS_MAPPING_MISSING))) {
           errorBox.setVisible(games.size() == 1);
@@ -602,7 +602,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
         client.getFrontendService().saveVpsMapping(gameRepresentation.getId(), extTableId, updatedId);
 
         if (autoApplyCheckbox.isSelected()) {
-          gameRepresentation = client.getGame(gameRepresentation.getId());
+          gameRepresentation = client.getGameService().getGame(gameRepresentation.getId());
           TableDialogs.openAutoFillSettingsDialog(Studio.stage, Arrays.asList(gameRepresentation), null);
         }
         else {

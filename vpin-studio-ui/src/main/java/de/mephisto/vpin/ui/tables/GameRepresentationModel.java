@@ -42,7 +42,7 @@ public class GameRepresentationModel extends BaseLoadingModel<GameRepresentation
 
   public FrontendMediaRepresentation getFrontendMedia() {
     if (frontendMedia == null) {
-      frontendMedia = client.getFrontendMedia(bean.getId());
+      frontendMedia = client.getFrontendService().getFrontendMedia(bean.getId());
     }
     return frontendMedia;
   }

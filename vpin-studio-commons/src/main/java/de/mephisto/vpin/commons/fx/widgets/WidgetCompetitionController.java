@@ -189,7 +189,7 @@ public class WidgetCompetitionController extends WidgetController implements Ini
       }
 
       if (competition.isActive()) {
-        ScoreListRepresentation competitionScores = ServerFX.client.getCompetitionScoreList(competition.getId());
+        ScoreListRepresentation competitionScores = ServerFX.client.getCompetitionService().getCompetitionScoreList(competition.getId());
         if (!competitionScores.getScores().isEmpty()) {
           if (highscoresGraphTile != null) {
             statsWidget.getChildren().remove(highscoresGraphTile);
@@ -221,7 +221,7 @@ public class WidgetCompetitionController extends WidgetController implements Ini
                 }
                 else if (currentScore.getPlayer().getAvatar() != null) {
                   AssetRepresentation avatar = currentScore.getPlayer().getAvatar();
-                  turnoverTile.setImage(new Image(ServerFX.client.getAsset(AssetType.AVATAR, avatar.getUuid())));
+                  turnoverTile.setImage(new Image(ServerFX.client.getAssetService().getAsset(AssetType.AVATAR, avatar.getUuid())));
                 }
               }
               else {
@@ -245,7 +245,7 @@ public class WidgetCompetitionController extends WidgetController implements Ini
         root.setVisible(true);
         if (competition != null) {
           if (competition.getType().equals(CompetitionType.DISCORD.name())) {
-            DiscordServer discordServer = ServerFX.client.getDiscordServer(competition.getDiscordServerId());
+            DiscordServer discordServer = ServerFX.client.getDiscordService().getDiscordServer(competition.getDiscordServerId());
             if (discordServer != null) {
               titleLabel.setText("Discord: " + discordServer.getName());
             }

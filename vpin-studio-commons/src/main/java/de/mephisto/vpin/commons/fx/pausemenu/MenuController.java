@@ -11,6 +11,7 @@ import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
+import de.mephisto.vpin.restclient.cards.CardTemplateType;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
@@ -329,7 +330,7 @@ public class MenuController implements Initializable {
       JFXFuture
           .supplyAsync(() -> {
             try {
-              CardTemplate cardTemplate = client.getHighscoreCardTemplate(game);
+              CardTemplate cardTemplate = client.getHighscoreCardTemplatesClient().getCardTemplateForGame(game, CardTemplateType.HIGSCORE_CARD);
               return cardTemplate;
             }
             catch (Exception e) {

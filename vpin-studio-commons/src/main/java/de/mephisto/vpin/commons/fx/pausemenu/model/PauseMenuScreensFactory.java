@@ -1,7 +1,7 @@
 package de.mephisto.vpin.commons.fx.pausemenu.model;
 
 import de.mephisto.vpin.commons.FrontendScreensManager;
-import de.mephisto.vpin.restclient.OverlayClient;
+import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -23,19 +23,19 @@ import java.util.List;
 public class PauseMenuScreensFactory {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  public static List<FrontendScreenAsset> createAssetScreens(@NonNull GameRepresentation game, @NonNull OverlayClient client, FrontendMediaRepresentation frontendMedia) {
+  public static List<FrontendScreenAsset> createAssetScreens(@NonNull GameRepresentation game, @NonNull VPinStudioClient client, FrontendMediaRepresentation frontendMedia) {
     List<FrontendScreenAsset> screens = new ArrayList<>();
-    FrontendPlayerDisplay display = client.getScreenDisplay(VPinScreen.GameHelp);
+    FrontendPlayerDisplay display = client.getFrontendService().getScreenDisplay(VPinScreen.GameHelp);
     FrontendScreenAsset screenStage = createScreenStage(client, game, display, VPinScreen.GameHelp, frontendMedia);
     if (screenStage != null) {
       screens.add(screenStage);
     }
-    display = client.getScreenDisplay(VPinScreen.GameInfo);
+    display = client.getFrontendService().getScreenDisplay(VPinScreen.GameInfo);
     screenStage = createScreenStage(client, game, display, VPinScreen.GameInfo, frontendMedia);
     if (screenStage != null) {
       screens.add(screenStage);
     }
-    display = client.getScreenDisplay(VPinScreen.Other2);
+    display = client.getFrontendService().getScreenDisplay(VPinScreen.Other2);
     screenStage = createScreenStage(client, game, display, VPinScreen.Other2, frontendMedia);
     if (screenStage != null) {
       screens.add(screenStage);
@@ -44,7 +44,7 @@ public class PauseMenuScreensFactory {
   }
 
   @Nullable
-  private static FrontendScreenAsset createScreenStage(OverlayClient client, GameRepresentation game, FrontendPlayerDisplay display, VPinScreen screen, FrontendMediaRepresentation frontendMedia) {
+  private static FrontendScreenAsset createScreenStage(VPinStudioClient client, GameRepresentation game, FrontendPlayerDisplay display, VPinScreen screen, FrontendMediaRepresentation frontendMedia) {
     FrontendMediaItemRepresentation defaultMediaItem = frontendMedia.getDefaultMediaItem(screen);
     if (defaultMediaItem != null) {
       InputStream imageStream = client.getWheelIcon(game.getId(), false);

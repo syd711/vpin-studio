@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.controller.GameController;
 import de.mephisto.vpin.commons.utils.controller.GameControllerInputListener;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.preferences.OverlaySettings;
@@ -42,9 +43,6 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
 
   @Autowired
   private FrontendStatusService frontendStatusService;
-
-  @Autowired
-  private OverlayClientImpl overlayClient;
 
   @Autowired
   private PreferencesService preferencesService;
@@ -316,8 +314,7 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
 
   @Override
   public void afterPropertiesSet() {
-
-    ServerFX.client = overlayClient;
+    ServerFX.client = new VPinStudioClient("localhost");
     new Thread(() -> {
       ServerFX.main(new String[]{});
       LOG.info("Overlay listener started.");

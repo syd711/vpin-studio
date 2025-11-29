@@ -505,7 +505,7 @@ public class CompetitionsController implements Initializable, StudioFXController
 
           createdAtLabel.setText(SimpleDateFormat.getDateTimeInstance().format(competition.getCreatedAt()));
 
-          DiscordServer discordServer = client.getDiscordServer(competition.getDiscordServerId());
+          DiscordServer discordServer = client.getDiscordService().getDiscordServer(competition.getDiscordServerId());
           if (discordServer != null) {
             String avatarUrl = discordServer.getAvatarUrl();
             Image image = null;

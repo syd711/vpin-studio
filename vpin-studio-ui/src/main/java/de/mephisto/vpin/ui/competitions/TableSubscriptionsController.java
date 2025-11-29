@@ -146,7 +146,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
 
   @FXML
   private void onCompetitionCreate() {
-    long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
+    long guildId = client.getPreferenceService().getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
     discordStatus = client.getDiscordService().getDiscordStatus(guildId);
     if (discordStatus.getServerId() == 0 || discordStatus.getCategoryId() == 0) {
       WidgetFactory.showAlert(Studio.stage, "Invalid Discord Configuration", "No default Discord server and category for subscriptions found.", "Open the Bot Settings in the preferences to configure the subscription settings.");
@@ -241,7 +241,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
       tableStack.getChildren().add(loadingOverlay);
     }
 
-    long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
+    long guildId = client.getPreferenceService().getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
     discordStatus = client.getDiscordService().getDiscordStatus(guildId);
     if (!discordStatus.isValid()) {
       textfieldSearch.setDisable(true);
@@ -334,7 +334,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
     columnTable.setCellValueFactory(cellData -> {
       try {
         CompetitionRepresentation value = cellData.getValue();
-        GameRepresentation game = client.getGameCached(value.getGameId());
+        GameRepresentation game = client.getGameService().getGameCached(value.getGameId());
         Label label = new Label("- not available anymore -");
         label.getStyleClass().add("default-text");
         label.setStyle(getLabelCss(value));
@@ -373,7 +373,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
         HBox hBox = new HBox(6);
         hBox.setAlignment(Pos.CENTER_LEFT);
 
-        DiscordServer discordServer = client.getDiscordServer(value.getDiscordServerId());
+        DiscordServer discordServer = client.getDiscordService().getDiscordServer(value.getDiscordServerId());
         if (discordServer != null) {
           String avatarUrl = discordServer.getAvatarUrl();
           Image image = null;
@@ -481,7 +481,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
             return true;
           }
           else if (column.equals(columnTable)) {
-            Collections.sort(tableView.getItems(), Comparator.comparing(o -> client.getGameCached(o.getGameId()).getGameDisplayName()));
+            Collections.sort(tableView.getItems(), Comparator.comparing(o -> client.getGameService().getGameCached(o.getGameId()).getGameDisplayName()));
             if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
               Collections.reverse(tableView.getItems());
             }
@@ -565,7 +565,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
 
   @Override
   public void onViewActivated(NavigationOptions options) {
-    long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
+    long guildId = client.getPreferenceService().getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
     this.discordBotId = client.getDiscordService().getDiscordStatus(guildId).getBotId();
     if (this.competitionsController != null) {
       refreshView(Optional.empty());

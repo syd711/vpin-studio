@@ -28,7 +28,7 @@ public class MaintenanceController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     OverlaySettings overlaySettings = ServerFX.client.getJsonPreference(PreferenceNames.OVERLAY_SETTINGS, OverlaySettings.class);
-    MonitorInfo screen = ServerFX.client.getScreenInfo(overlaySettings.getOverlayScreenId());
+    MonitorInfo screen = ServerFX.client.getSystemService().getScreenInfo(overlaySettings.getOverlayScreenId());
 
     String maintenanceUrl = ServerFX.client.getURL("assets/maintenance");
     Media media = new Media(maintenanceUrl);

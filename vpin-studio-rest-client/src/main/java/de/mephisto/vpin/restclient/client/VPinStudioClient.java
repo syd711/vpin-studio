@@ -1,63 +1,45 @@
 package de.mephisto.vpin.restclient.client;
 
-import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
-import de.mephisto.vpin.restclient.OverlayClient;
 import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.altcolor.AltColorServiceClient;
 import de.mephisto.vpin.restclient.altsound.AltSoundServiceClient;
 import de.mephisto.vpin.restclient.alx.AlxServiceClient;
-import de.mephisto.vpin.restclient.alx.AlxSummary;
-import de.mephisto.vpin.restclient.backups.BackupServiceClient;
 import de.mephisto.vpin.restclient.assets.AssetServiceClient;
-import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.assets.TableAssetSourcesServiceClient;
+import de.mephisto.vpin.restclient.backups.BackupServiceClient;
 import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.cards.HighscoreCardTemplatesServiceClient;
 import de.mephisto.vpin.restclient.cards.HighscoreCardsServiceClient;
-import de.mephisto.vpin.restclient.cards.CardTemplateType;
-import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
-import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.competitions.CompetitionsServiceClient;
 import de.mephisto.vpin.restclient.components.ComponentServiceClient;
 import de.mephisto.vpin.restclient.converter.MediaConversionServiceClient;
 import de.mephisto.vpin.restclient.directb2s.BackglassServiceClient;
-import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.discord.DiscordServiceClient;
 import de.mephisto.vpin.restclient.dmd.DMDPositionServiceClient;
 import de.mephisto.vpin.restclient.dmd.DMDServiceClient;
 import de.mephisto.vpin.restclient.dof.DOFServiceClient;
 import de.mephisto.vpin.restclient.doflinx.DOFLinxServiceClient;
 import de.mephisto.vpin.restclient.emulators.EmulatorServiceClient;
-import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.fp.FpServiceClient;
-import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.FrontendServiceClient;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.highscores.HigscoreBackupServiceClient;
-import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
-import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.hooks.HooksServiceClient;
 import de.mephisto.vpin.restclient.ini.IniServiceClient;
 import de.mephisto.vpin.restclient.jobs.JobsServiceClient;
 import de.mephisto.vpin.restclient.mame.MameServiceClient;
 import de.mephisto.vpin.restclient.mania.ManiaServiceClient;
-import de.mephisto.vpin.restclient.assets.TableAssetSourcesServiceClient;
 import de.mephisto.vpin.restclient.notifications.NotificationsServiceClient;
 import de.mephisto.vpin.restclient.patcher.PatcherServiceClient;
 import de.mephisto.vpin.restclient.players.PlayersServiceClient;
-import de.mephisto.vpin.restclient.players.RankedPlayerRepresentation;
 import de.mephisto.vpin.restclient.playlists.PlaylistMediaServiceClient;
 import de.mephisto.vpin.restclient.playlists.PlaylistsServiceClient;
 import de.mephisto.vpin.restclient.preferences.PreferencesServiceClient;
 import de.mephisto.vpin.restclient.puppacks.PupPackServiceClient;
 import de.mephisto.vpin.restclient.recorder.RecorderServiceClient;
-import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.res.ResServiceClient;
-import de.mephisto.vpin.restclient.system.FeaturesInfo;
 import de.mephisto.vpin.restclient.system.FolderChooserServiceClient;
-import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.restclient.system.SystemServiceClient;
 import de.mephisto.vpin.restclient.tagging.TaggingServiceClient;
 import de.mephisto.vpin.restclient.textedit.TextEditorServiceClient;
@@ -73,16 +55,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.*;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
-import java.util.List;
 
-public class VPinStudioClient implements OverlayClient {
+public class VPinStudioClient {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   public final static String API = "api/v1/";
 
@@ -408,66 +388,47 @@ public class VPinStudioClient implements OverlayClient {
     return vpxServiceClient;
   }
 
-  @Override
-  public DiscordServer getDiscordServer(long serverId) {
-    return discordServiceClient.getDiscordServer(serverId);
+  public void clearDiscordCache() {
+    restClient.clearCache("discord/");
   }
 
-  @Override
-  public List<CompetitionRepresentation> getFinishedCompetitions(int limit) {
-    return getCompetitionService().getFinishedCompetitions(limit);
-  }
-
-  @Override
-  public CompetitionRepresentation getActiveCompetition(CompetitionType type) {
-    return getCompetitionService().getActiveCompetition(type);
-  }
-
-  @Override
-  public GameRepresentation getGame(int id) {
-    return getGameService().getGame(id);
-  }
-
-  @Override
-  public GameEmulatorRepresentation getGameEmulator(int emulatorId) {
-    return getEmulatorService().getGameEmulator(emulatorId);
-  }
-
-  @Override
-  public GameScoreValidation getGameScoreValidation(int gameId) {
-    return getGameService().getGameScoreValidation(gameId);
-  }
-
-  @Override
-  public AlxSummary getAlxSummary(int gameId) {
-    return getAlxService().getAlxSummary(gameId);
-  }
-
-  @Override
-  public FrontendMediaRepresentation getFrontendMedia(int id) {
-    return getFrontendService().getFrontendMedia(id);
-  }
-
-  @Override
-  public FrontendPlayerDisplay getScreenDisplay(VPinScreen tutorialScreen) {
-    return getFrontendService().getScreenDisplay(tutorialScreen);
-  }
-
-  /**
-   * @param id
-   * @return
+  /*********************************************************************************************************************
+   * Utils
    */
-  @Override
-  public GameRepresentation getGameCached(int id) {
-    return getGameService().getVpxGameCached(id);
-  }
-
-  @Override
   public InputStream getCachedUrlImage(String url) {
     return getImageCache().getCachedUrlImage(url);
   }
+  public CardData getCardData(GameRepresentation game, CardTemplate template) {
+    try {
+      CardData cardData = highscoreCardsServiceClient.getHighscoreCardData(game, template);
+      cardData.setWheel(highscoreCardsServiceClient.getHighscoreImage(game, template, "wheel"));
+      cardData.setBackground(highscoreCardsServiceClient.getHighscoreImage(game, template, "background"));
 
-  @Override
+      cardData.setFallbackBackground(highscoreCardsServiceClient.getCardsBackgroundImage(template.getBackground()));
+      cardData.setFrame(highscoreCardsServiceClient.getCardsFrameImage(template.getFrame()));
+
+      if (template.isRenderManufacturerLogo()) {
+        cardData.setManufacturerLogo(highscoreCardsServiceClient.getHighscoreImage(game, template, "manufacturerLogo"));
+      }
+      if (template.isRenderOtherMedia() && template.getOtherMediaScreen() != null) {
+        cardData.setOtherMedia(highscoreCardsServiceClient.getHighscoreImage(game, template, "otherMedia"));
+      }
+      return cardData;
+    }
+    catch (Exception e) {
+      LOG.error("Failed to read card data: {}", e.getMessage(), e);
+    }
+    return null;
+  }
+
+  public <T> T getJsonPreference(String key, Class<T> clazz) {
+    return this.preferencesServiceClient.getJsonPreference(key, clazz);
+  }
+
+  public ByteArrayInputStream getWheelIcon(int id, boolean skipApng) {
+    return getAssetService().getWheelIcon(id, skipApng);
+  }
+
   public InputStream getPersistentCachedUrlImage(String cache, String url) {
     try {
       String asset = url.substring(url.lastIndexOf("/") + 1, url.length());
@@ -508,95 +469,10 @@ public class VPinStudioClient implements OverlayClient {
     return null;
   }
 
-  @Override
-  public CardTemplate getHighscoreCardTemplate(GameRepresentation game) {
-    return getHighscoreCardTemplatesClient().getCardTemplateForGame(game, CardTemplateType.HIGSCORE_CARD);
+  public RestClient getRestClient() {
+    return restClient;
   }
 
-  @Override
-  public CardData getCardData(GameRepresentation game, CardTemplate template) {
-    try {
-      CardData cardData = highscoreCardsServiceClient.getHighscoreCardData(game, template);
-      cardData.setWheel(highscoreCardsServiceClient.getHighscoreImage(game, template, "wheel"));
-      cardData.setBackground(highscoreCardsServiceClient.getHighscoreImage(game, template, "background"));
-
-      cardData.setFallbackBackground(highscoreCardsServiceClient.getCardsBackgroundImage(template.getBackground()));
-      cardData.setFrame(highscoreCardsServiceClient.getCardsFrameImage(template.getFrame()));
-
-      if (template.isRenderManufacturerLogo()) {
-        cardData.setManufacturerLogo(highscoreCardsServiceClient.getHighscoreImage(game, template, "manufacturerLogo"));
-      }
-      if (template.isRenderOtherMedia() && template.getOtherMediaScreen() != null) {
-        cardData.setOtherMedia(highscoreCardsServiceClient.getHighscoreImage(game, template, "otherMedia"));
-      }
-      return cardData;
-    }
-    catch (Exception e) {
-      LOG.error("Failed to read card data: {}", e.getMessage(), e);
-    }
-    return null;
-  }
-
-  @Override
-  public ScoreSummaryRepresentation getCompetitionScore(long id) {
-    return getCompetitionService().getCompetitionScore(id);
-  }
-
-  @Override
-  public VpsTable getVpsTable(String tableId) {
-    return getVpsService().getTableById(tableId);
-  }
-
-  @Override
-  public VpsTableVersion getVpsTableVersion(@Nullable String tableId, @Nullable String versionId) {
-    VpsTable table = getVpsService().getTableById(tableId);
-    if (table != null && versionId != null) {
-      return table.getTableVersionById(versionId);
-    }
-    return null;
-  }
-
-  @Override
-  public GameRepresentation getGameByVpsId(@Nullable String vpsTableId, @Nullable String vpsTableVersionId) {
-    return getGameService().getGameByVpsTable(vpsTableId, vpsTableVersionId);
-  }
-
-  @Override
-  public List<CompetitionRepresentation> getIScoredSubscriptions() {
-    return getCompetitionService().getIScoredSubscriptions();
-  }
-
-  @Override
-  public ByteArrayInputStream getCompetitionBackground(long gameId) {
-    return getCompetitionService().getCompetitionBackground(gameId);
-  }
-
-  @Override
-  public ScoreListRepresentation getCompetitionScoreList(long id) {
-    return getCompetitionService().getCompetitionScoreList(id);
-  }
-
-  @Override
-  public ByteArrayInputStream getAsset(AssetType assetType, String uuid) {
-    return getAssetService().getAsset(assetType, uuid);
-  }
-
-  @Override
-  public ScoreSummaryRepresentation getRecentScores(int count) {
-    return getGameService().getRecentScores(count);
-  }
-
-  @Override
-  public ScoreSummaryRepresentation getRecentScoresByGame(int count, int gameId) {
-    return getGameService().getRecentScoresByGame(count, gameId);
-  }
-
-  @Override
-  public ByteArrayInputStream getWheelIcon(int id, boolean skipApng) {
-    return getAssetService().getWheelIcon(id, skipApng);
-  }
-
-  @Override
   public InputStream getScreenshot() {
     try {
       return new URL(getURL("recorder/screenshot")).openStream();
@@ -605,67 +481,6 @@ public class VPinStudioClient implements OverlayClient {
       LOG.error("Failed to load screenshot: {}", e.getMessage(), e);
     }
     return null;
-  }
-
-  @Override
-  public MonitorInfo getScreenInfo(int id) {
-    return getSystemService().getScreenInfo(id);
-  }
-
-  //---------------------
-
-  @Override
-  public void clearPreferenceCache() {
-    getPreferenceService().clearCache();
-  }
-
-  @Override
-  public PreferenceEntryRepresentation getPreference(String key) {
-    return this.preferencesServiceClient.getPreference(key);
-  }
-
-  @Override
-  public <T> T getJsonPreference(String key, Class<T> clazz) {
-    return this.preferencesServiceClient.getJsonPreference(key, clazz);
-  }
-
-  @Override
-  public List<RankedPlayerRepresentation> getRankedPlayers() {
-    return getPlayerService().getRankedPlayers();
-  }
-
-  //--------------------------
-
-  @Override
-  public GameStatus startPause() {
-    return getGameStatusService().startPause();
-  }
-
-  @Override
-  public GameStatus getPauseStatus() {
-    return getGameStatusService().getStatus();
-  }
-
-  @Override
-  public GameStatus finishPause() {
-    return getGameStatusService().finishPause();
-  }
-
-  @Override
-  public FeaturesInfo getFeatures() {
-    return getSystemService().getFeatures();
-  }
-
-  public void clearDiscordCache() {
-    restClient.clearCache("discord/");
-  }
-
-  /*********************************************************************************************************************
-   * Utils
-   */
-
-  public RestClient getRestClient() {
-    return restClient;
   }
 
   public void download(@NonNull String url, @NonNull File target) throws Exception {

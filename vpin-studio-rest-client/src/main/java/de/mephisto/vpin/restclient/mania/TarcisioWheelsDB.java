@@ -3,8 +3,7 @@ package de.mephisto.vpin.restclient.mania;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import de.mephisto.vpin.restclient.OverlayClient;
-import de.mephisto.vpin.restclient.system.ScoringDB;
+import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +26,7 @@ public class TarcisioWheelsDB {
 
   private static TarcisioWheels wheels = new TarcisioWheels();
 
-  public static InputStream getWheelImage(Class resourceClass, OverlayClient client, String vpsTableId) {
+  public static InputStream getWheelImage(Class resourceClass, VPinStudioClient client, String vpsTableId) {
     String wheelImage = getWheelIcon(vpsTableId);
     if (wheelImage == null) {
       return resourceClass.getResourceAsStream("avatar-blank.png");

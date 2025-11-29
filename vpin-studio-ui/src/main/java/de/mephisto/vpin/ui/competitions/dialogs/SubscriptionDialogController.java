@@ -89,7 +89,7 @@ public class SubscriptionDialogController implements Initializable, DialogContro
   public void initialize(URL url, ResourceBundle resourceBundle) {
     this.nvRamList = client.getNvRamsService().getResettedNVRams();
 
-    long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
+    long guildId = client.getPreferenceService().getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
     this.botStatus = client.getDiscordService().getDiscordStatus(guildId);
 
     competition = new CompetitionRepresentation();

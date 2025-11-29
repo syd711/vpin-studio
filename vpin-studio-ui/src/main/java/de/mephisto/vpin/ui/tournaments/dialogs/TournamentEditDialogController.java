@@ -399,10 +399,10 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
 
     InputStream in = null;
-    PreferenceEntryRepresentation avatarEntry = client.getPreference(PreferenceNames.AVATAR);
+    PreferenceEntryRepresentation avatarEntry = client.getPreferenceService().getPreference(PreferenceNames.AVATAR);
     if (tournament.getUuid() == null) {
       editable = true;
-      in = client.getAsset(AssetType.VPIN_AVATAR, avatarEntry.getValue());
+      in = client.getAssetService().getAsset(AssetType.VPIN_AVATAR, avatarEntry.getValue());
     }
     else {
       in = client.getCachedUrlImage(maniaClient.getTournamentClient().getBadgeUrl(tournament));

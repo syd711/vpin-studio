@@ -217,7 +217,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       GameRepresentation game = gameRepresentation.get();
 
       Stage stage = (Stage) ((Labeled) e.getSource()).getScene().getWindow();
-      FrontendMediaRepresentation frontendMedia = client.getFrontendMedia(this.gameRepresentation.get().getId());
+      FrontendMediaRepresentation frontendMedia = client.getFrontendService().getFrontendMedia(this.gameRepresentation.get().getId());
       FrontendMediaItemRepresentation defaultMediaItem = null;
       VPinScreen screen = VPinScreen.Wheel;
       if (getDesignMode().equals(DesignMode.wheel)) {
@@ -253,7 +253,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   @FXML
   private void onAssetPreview() {
     if (gameRepresentation.isPresent()) {
-      FrontendMediaRepresentation frontendMedia = client.getFrontendMedia(this.gameRepresentation.get().getId());
+      FrontendMediaRepresentation frontendMedia = client.getFrontendService().getFrontendMedia(this.gameRepresentation.get().getId());
       if (frontendMedia != null) {
         if (getDesignMode().equals(DesignMode.wheel)) {
           FrontendMediaItemRepresentation defaultMediaItem = frontendMedia.getDefaultMediaItem(VPinScreen.Wheel);
@@ -573,7 +573,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 //      client.getImageCache().clearWheelCache();
       client.getFrontendService().clearCache(game.getId());
 
-      FrontendMediaRepresentation frontendMedia = client.getFrontendMedia(this.gameRepresentation.get().getId());
+      FrontendMediaRepresentation frontendMedia = client.getFrontendService().getFrontendMedia(this.gameRepresentation.get().getId());
       if (frontendMedia != null) {
         if (getDesignMode().equals(DesignMode.wheel)) {
           defaultMediaItem = frontendMedia.getDefaultMediaItem(VPinScreen.Wheel);

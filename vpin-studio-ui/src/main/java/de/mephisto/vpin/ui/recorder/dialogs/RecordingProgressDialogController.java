@@ -270,7 +270,7 @@ public class RecordingProgressDialogController implements Initializable, DialogC
 
     List<RecordingData> recordingData = recordingDataSummary.getRecordingData();
     for (RecordingData data : recordingData) {
-      GameRepresentation game = client.getGame(data.getGameId());
+      GameRepresentation game = client.getGameService().getGame(data.getGameId());
       if (!client.getEmulatorService().isVpxGame(game)) {
         frontendRecordingRadio.setSelected(true);
         emulatorRecordingRadio.setDisable(true);

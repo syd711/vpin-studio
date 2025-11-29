@@ -464,7 +464,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
       dofSyncEntry.setDisable(!valid);
     }
     else if (key.equals(PreferenceNames.PINVOL_AUTOSTART_ENABLED)) {
-      PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.PINVOL_AUTOSTART_ENABLED);
+      PreferenceEntryRepresentation preference = client.getPreferenceService().getPreference(PreferenceNames.PINVOL_AUTOSTART_ENABLED);
       pinVolStartItem.setVisible(client.getSystemService().isLocal() && preference.getBooleanValue());
       pinVolStopItem.setVisible(client.getSystemService().isLocal() && preference.getBooleanValue());
 

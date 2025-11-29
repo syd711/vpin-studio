@@ -160,16 +160,16 @@ public class PauseMenu extends Application {
   }
 
   public static void togglePauseMenu(@Nullable GameStatus status, boolean test) {
-    client.clearPreferenceCache();
+    client.getPreferenceService().clearCache();
     PauseMenu.test = test;
 
     if (!visible) {
       if (!test) {
-        status = client.startPause();
+        status = client.getGameStatusService().startPause();
       }
       try {
         if (status == null) {
-          status = client.getPauseStatus();
+          status = client.getGameStatusService().getStatus();
         }
         if (!status.isActive()) {
           LOG.info("Skipped showing start menu: no game status found.");
@@ -187,8 +187,8 @@ public class PauseMenu extends Application {
         PauseMenuSettings pauseMenuSettings = client.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
         WOVPSettings wovpSettings = client.getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
 
-        GameRepresentation game = client.getGame(status.getGameId());
-        emulator = client.getGameEmulator(game.getEmulatorId());
+        GameRepresentation game = client.getGameService().getGame(status.getGameId());
+        emulator = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
 
         StateMananger.getInstance().setControls(pauseMenuSettings);
 
@@ -201,14 +201,14 @@ public class PauseMenu extends Application {
         if (pauseMenuSettings.getVideoScreen() != null) {
           tutorialScreen = pauseMenuSettings.getVideoScreen();
         }
-        FrontendPlayerDisplay tutorialDisplay = client.getScreenDisplay(tutorialScreen);
+        FrontendPlayerDisplay tutorialDisplay = client.getFrontendService().getScreenDisplay(tutorialScreen);
         visible = true;
         LOG.info("Finished fetching all screen information for pause menu.");
 
-        FrontendMediaRepresentation frontendMedia = client.getFrontendMedia(game.getId());
+        FrontendMediaRepresentation frontendMedia = client.getFrontendService().getFrontendMedia(game.getId());
 
         String extTableId = game.getExtTableId();
-        VpsTable tableById = client.getVpsTable(extTableId);
+        VpsTable tableById = client.getVpsService().getTableById(extTableId);
 
         InputStream screenshot = null;
         if (wovpSettings.isEnabled() && wovpSettings.isApiKeySet() && wovpSettings.isUseScoreSubmitter()) {
@@ -258,7 +258,7 @@ public class PauseMenu extends Application {
 
   public static void exitPauseMenu() {
     if (!PauseMenu.test) {
-      client.finishPause();
+      client.getGameStatusService().finishPause();
     }
 
     StateMananger.getInstance().exit();

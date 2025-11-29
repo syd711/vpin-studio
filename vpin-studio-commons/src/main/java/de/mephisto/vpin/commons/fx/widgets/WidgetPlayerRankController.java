@@ -123,7 +123,7 @@ public class WidgetPlayerRankController extends WidgetController implements Init
           in = client.getCachedUrlImage(value.getAvatarUrl());
         }
         else if (value.getAvatarUuid() != null) {
-          in = new ByteArrayInputStream(client.getAsset(AssetType.AVATAR, value.getAvatarUuid()).readAllBytes());
+          in = new ByteArrayInputStream(client.getAssetService().getAsset(AssetType.AVATAR, value.getAvatarUuid()).readAllBytes());
         }
 
         if (in == null) {
@@ -143,7 +143,7 @@ public class WidgetPlayerRankController extends WidgetController implements Init
     });
 
     OverlaySettings overlaySettings = ServerFX.client.getJsonPreference(PreferenceNames.OVERLAY_SETTINGS, OverlaySettings.class);
-    MonitorInfo screenBounds = ServerFX.client.getScreenInfo(overlaySettings.getOverlayScreenId());
+    MonitorInfo screenBounds = ServerFX.client.getSystemService().getScreenInfo(overlaySettings.getOverlayScreenId());
     if (screenBounds.getWidth() < 2600) {
       columnName.setPrefWidth(280);
     }
@@ -196,7 +196,7 @@ public class WidgetPlayerRankController extends WidgetController implements Init
 
   public void refresh() {
     new Thread(() -> {
-      List<RankedPlayerRepresentation> rankedPlayers = client.getRankedPlayers();
+      List<RankedPlayerRepresentation> rankedPlayers = client.getPlayerService().getRankedPlayers();
 
       Platform.runLater(() -> {
         ObservableList<RankedPlayerRepresentation> data = FXCollections.observableList(rankedPlayers);

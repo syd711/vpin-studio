@@ -284,7 +284,7 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
 
     columnTable.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
-      GameRepresentation game = client.getGame(value.getGameId());
+      GameRepresentation game = client.getGameService().getGame(value.getGameId());
       Label label = new Label("- not available anymore -");
       if (game != null) {
         label = new Label(game.getGameDisplayName());

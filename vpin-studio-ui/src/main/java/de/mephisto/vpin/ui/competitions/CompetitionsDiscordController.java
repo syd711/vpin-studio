@@ -321,7 +321,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
     tableView.setVisible(false);
     tableStack.getChildren().add(loadingOverlay);
 
-    long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
+    long guildId = client.getPreferenceService().getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
     DiscordBotStatus discordStatus = client.getDiscordService().getDiscordStatus(guildId);
     if (!discordStatus.isValid()) {
       textfieldSearch.setDisable(true);
@@ -409,7 +409,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
 
     columnTable.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
-      GameRepresentation game = client.getGame(value.getGameId());
+      GameRepresentation game = client.getGameService().getGame(value.getGameId());
       Label label = new Label("- not available anymore -");
       if (game != null) {
         label = new Label(game.getGameDisplayName());
@@ -437,7 +437,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
 
     columnServer.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
-      DiscordServer discordServer = client.getDiscordServer(value.getDiscordServerId());
+      DiscordServer discordServer = client.getDiscordService().getDiscordServer(value.getDiscordServerId());
       if (discordServer != null) {
         HBox hBox = new HBox(6);
         hBox.setAlignment(Pos.CENTER_LEFT);
@@ -669,7 +669,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
   @Override
   public void onViewActivated(NavigationOptions options) {
     JFXFuture.runAsync(() -> {
-      long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
+      long guildId = client.getPreferenceService().getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
       this.discordBotId = client.getDiscordService().getDiscordStatus(guildId).getBotId();
     }).thenLater(() -> {
       if (this.competitionsController != null) {

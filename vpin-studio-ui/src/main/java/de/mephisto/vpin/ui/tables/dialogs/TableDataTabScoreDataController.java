@@ -103,7 +103,7 @@ public class TableDataTabScoreDataController implements Initializable {
   @FXML
   private void onTableScan() {
     ProgressDialog.createProgressDialog(new TableScanProgressModel("Scanning \"" + game.getGameDisplayName() + "\"", Arrays.asList(game)));
-    this.game = client.getGame(this.game.getId());
+    this.game = client.getGameService().getGame(this.game.getId());
     refreshScannedValues();
   }
 

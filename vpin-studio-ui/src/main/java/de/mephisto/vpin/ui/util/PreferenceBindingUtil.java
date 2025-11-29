@@ -20,7 +20,7 @@ public class PreferenceBindingUtil {
   public static Debouncer debouncer = new Debouncer();
 
   public static void bindTextField(TextField textField, String preference, String defaultValue) {
-    PreferenceEntryRepresentation systemNameEntry = client.getPreference(preference);
+    PreferenceEntryRepresentation systemNameEntry = client.getPreferenceService().getPreference(preference);
     StringProperty stringProperty = new SimpleStringProperty();
     stringProperty.setValue(defaultValue);
     if (!StringUtils.isEmpty(systemNameEntry.getValue())) {
@@ -34,7 +34,7 @@ public class PreferenceBindingUtil {
   }
 
   public static void bindComboBox(ComboBox<String> comboBox, String preference) {
-    PreferenceEntryRepresentation entry = client.getPreference(preference);
+    PreferenceEntryRepresentation entry = client.getPreferenceService().getPreference(preference);
     String value = entry.getValue();
     StringProperty stringProperty = new SimpleStringProperty();
     Bindings.bindBidirectional(stringProperty, comboBox.valueProperty());
@@ -45,7 +45,7 @@ public class PreferenceBindingUtil {
   }
 
   public static void bindCheckbox(CheckBox checkbox, String preference, boolean defaultValue) {
-    PreferenceEntryRepresentation entry = client.getPreference(preference);
+    PreferenceEntryRepresentation entry = client.getPreferenceService().getPreference(preference);
     boolean checked = entry.getBooleanValue(defaultValue);
     BooleanProperty booleanProperty = new SimpleBooleanProperty();
     Bindings.bindBidirectional(booleanProperty, checkbox.selectedProperty());

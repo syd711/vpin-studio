@@ -41,7 +41,7 @@ public class VPinStudioApp extends Application implements GameControllerInputLis
     try {
       Platform.setImplicitExit(false);
       OverlaySettings overlaySettings = ServerFX.client.getJsonPreference(PreferenceNames.OVERLAY_SETTINGS, OverlaySettings.class);
-      MonitorInfo screen = ServerFX.client.getScreenInfo(overlaySettings.getOverlayScreenId());
+      MonitorInfo screen = ServerFX.client.getSystemService().getScreenInfo(overlaySettings.getOverlayScreenId());
 
       BorderPane root = new BorderPane();
       final Scene scene = new Scene(root, screen.getWidth(), screen.getHeight(), true, SceneAntialiasing.BALANCED);

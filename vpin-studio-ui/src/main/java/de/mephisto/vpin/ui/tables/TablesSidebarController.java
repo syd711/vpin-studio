@@ -590,7 +590,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
-    PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.PREVIEW_ENABLED);
+    PreferenceEntryRepresentation preference = client.getPreferenceService().getPreference(PreferenceNames.PREVIEW_ENABLED);
     mediaPreviewCheckbox.setSelected(preference.getBooleanValue());
 
     Platform.runLater(() -> {

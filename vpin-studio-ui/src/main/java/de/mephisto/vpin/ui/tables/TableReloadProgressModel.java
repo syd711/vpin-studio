@@ -60,7 +60,7 @@ public class TableReloadProgressModel extends ProgressModel<Integer> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, Integer next) {
     try {
-      GameRepresentation gameRepresentation = client.getGame(next);
+      GameRepresentation gameRepresentation = client.getGameService().getGame(next);
       lastScannedName = null;
       if (gameRepresentation != null) {
         lastScannedName = gameRepresentation.getGameDisplayName();

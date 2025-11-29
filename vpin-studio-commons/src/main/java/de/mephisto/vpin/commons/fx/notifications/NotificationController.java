@@ -99,7 +99,7 @@ public class NotificationController implements Initializable {
     }
 
     NotificationSettings notificationSettings = ServerFX.client.getJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, NotificationSettings.class);
-    MonitorInfo screen = ServerFX.client.getScreenInfo(notificationSettings.getNotificationsScreenId());
+    MonitorInfo screen = ServerFX.client.getSystemService().getScreenInfo(notificationSettings.getNotificationsScreenId());
     int padding = 0;
     padding += notification.getTextBoxMargin();
 
