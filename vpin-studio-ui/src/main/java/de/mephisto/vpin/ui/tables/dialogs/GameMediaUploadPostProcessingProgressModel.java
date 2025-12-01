@@ -9,11 +9,12 @@ import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.Iterator;
 
 public class GameMediaUploadPostProcessingProgressModel extends ProgressModel<UploadDescriptor> {
-  private final static Logger LOG = LoggerFactory.getLogger(GameMediaUploadPostProcessingProgressModel.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final Iterator<UploadDescriptor> iterator;
   private final UploadDescriptor uploadDescriptor;

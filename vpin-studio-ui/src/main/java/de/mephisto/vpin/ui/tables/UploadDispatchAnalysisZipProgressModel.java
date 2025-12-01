@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -16,7 +17,7 @@ import java.util.zip.ZipInputStream;
 import static de.mephisto.vpin.ui.Studio.Features;
 
 public class UploadDispatchAnalysisZipProgressModel extends ProgressModel<ZipEntry> {
-  private final static Logger LOG = LoggerFactory.getLogger(UploadDispatchAnalysisZipProgressModel.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private ZipEntry zipEntry;
   private final ZipInputStream zis;
   private final FileInputStream fileInputStream;

@@ -1,13 +1,13 @@
 package de.mephisto.vpin.ui.tables.drophandler;
 
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.games.AssetCopy;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.List;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableMediaCopyProgressModel extends ProgressModel<FrontendMediaItemRepresentation> {
-  private final static Logger LOG = LoggerFactory.getLogger(TableMediaCopyProgressModel.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final Iterator<FrontendMediaItemRepresentation> iterator;
   private final VPinScreen screen;

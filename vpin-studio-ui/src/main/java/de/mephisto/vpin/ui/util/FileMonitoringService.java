@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.HashMap;
@@ -21,7 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class FileMonitoringService {
-  private final static Logger LOG = LoggerFactory.getLogger(FileMonitoringService.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private final AtomicBoolean running = new AtomicBoolean(false);
   private final AtomicBoolean paused = new AtomicBoolean(false);
 

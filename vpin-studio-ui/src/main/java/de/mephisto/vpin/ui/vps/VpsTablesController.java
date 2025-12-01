@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -46,7 +47,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 public class VpsTablesController extends BaseTableController<VpsTable, VpsTableModel>
     implements Initializable, StudioFXController, StudioEventListener {
 
-  private final static Logger LOG = LoggerFactory.getLogger(VpsTablesController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private ComboBox<VpsTableFormat> emulatorCombo;

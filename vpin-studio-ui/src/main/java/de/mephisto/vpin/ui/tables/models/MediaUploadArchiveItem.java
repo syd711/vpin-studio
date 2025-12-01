@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -21,7 +22,7 @@ import java.util.Objects;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUploadArchiveItem> {
-  private final static Logger LOG = LoggerFactory.getLogger(MediaUploadArchiveItem.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private AssetType assetType;
   private String targetDisplayName;

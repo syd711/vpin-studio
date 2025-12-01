@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import de.mephisto.vpin.commons.utils.JFXFuture;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,7 +33,7 @@ import java.util.stream.Collectors;
  * @author Caleb Brinkman
  */
 public class AutoCompleteTextField {
-  private final static Logger LOG = LoggerFactory.getLogger(AutoCompleteTextField.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private final ContextMenu entriesPopup;
   private final TextField textField;
   private final AutoCompleteTextFieldChangeListener listener;

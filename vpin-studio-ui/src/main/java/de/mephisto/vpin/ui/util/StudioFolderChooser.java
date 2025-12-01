@@ -7,9 +7,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 
 public class StudioFolderChooser {
-  private final static Logger LOG = LoggerFactory.getLogger(StudioFolderChooser.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private DirectoryChooser folderChooser;
 

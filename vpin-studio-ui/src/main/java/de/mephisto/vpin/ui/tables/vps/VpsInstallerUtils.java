@@ -13,12 +13,13 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
 public class VpsInstallerUtils {
-  private final static Logger LOG = LoggerFactory.getLogger(VpsInstallerUtils.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static boolean installOrBrowse(@Nullable GameRepresentation game, String link, VpsDiffTypes type) {
     ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new VpsInstallerProgressModel(link));

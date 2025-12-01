@@ -22,6 +22,7 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -32,7 +33,7 @@ import java.util.stream.Collectors;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TournamentTableSelectorDialogController implements DialogController, AutoCompleteTextFieldChangeListener, Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(TournamentTableSelectorDialogController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private TextField nameField;

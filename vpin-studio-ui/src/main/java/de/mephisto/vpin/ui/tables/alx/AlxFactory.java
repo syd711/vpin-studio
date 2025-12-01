@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.text.DateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -26,7 +27,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 public class AlxFactory {
-  private final static Logger LOG = LoggerFactory.getLogger(AlxFactory.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final static int COLUMN_COUNT = 5;
 

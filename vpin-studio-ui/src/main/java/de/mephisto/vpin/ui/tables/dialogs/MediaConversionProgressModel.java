@@ -8,13 +8,14 @@ import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Iterator;
 import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class MediaConversionProgressModel extends ProgressModel<FrontendMediaItemRepresentation> {
-  private final static Logger LOG = LoggerFactory.getLogger(MediaConversionProgressModel.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final Iterator<FrontendMediaItemRepresentation> iterator;
   private final int gameId;

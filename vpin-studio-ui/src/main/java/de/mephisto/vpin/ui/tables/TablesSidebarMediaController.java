@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
@@ -43,7 +44,7 @@ import java.util.function.Predicate;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablesSidebarMediaController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarMediaController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private TableAssetManagerPane<TablesSidebarMediaItemPane> mediaRootPane;

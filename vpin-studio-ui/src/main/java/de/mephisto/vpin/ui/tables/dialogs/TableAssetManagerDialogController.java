@@ -68,6 +68,7 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.Desktop;
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -79,7 +80,7 @@ import static de.mephisto.vpin.ui.Studio.*;
 
 
 public class TableAssetManagerDialogController implements Initializable, DialogController, StudioEventListener {
-  private final static Logger LOG = LoggerFactory.getLogger(TableAssetManagerDialogController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   public static final String MODAL_STATE_ID = "tableAssetManagerDialog";
   public static Stage INSTANCE = null;
 

@@ -10,11 +10,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.Iterator;
 import java.util.List;
 
 public class VpsDBDownloadProgressModel extends ProgressModel<File> {
-  private final static Logger LOG = LoggerFactory.getLogger(VpsDBDownloadProgressModel.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final Iterator<File> iterator;
 

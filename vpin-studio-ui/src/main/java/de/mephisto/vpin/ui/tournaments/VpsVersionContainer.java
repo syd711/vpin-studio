@@ -16,12 +16,13 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 
 public class VpsVersionContainer extends VBox {
-  private final static Logger LOG = LoggerFactory.getLogger(VpsVersionContainer.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private final static int TITLE_WIDTH = 100;
 
   public VpsVersionContainer(VpsTable vpsTable, VpsTableVersion item, String customStyle, boolean downloadAction) {

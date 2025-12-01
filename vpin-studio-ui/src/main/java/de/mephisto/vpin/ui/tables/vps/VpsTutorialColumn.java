@@ -16,12 +16,13 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 public class VpsTutorialColumn extends HBox {
-  private final static Logger LOG = LoggerFactory.getLogger(VpsTutorialColumn.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public VpsTutorialColumn(@Nullable String vpsTableId) {
     super(0);

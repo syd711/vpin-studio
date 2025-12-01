@@ -16,10 +16,11 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 
 public class VpsTableColumn extends HBox {
-  private final static Logger LOG = LoggerFactory.getLogger(VpsTableColumn.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public VpsTableColumn(@Nullable String vpsTableId, @Nullable String vpsTableVersionId, boolean disabled, boolean ignoreUpdates, @Nullable VPSChanges updates, VpsSettings vpsSettings) {
     super(3);

@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,7 +32,7 @@ import java.util.ResourceBundle;
 import static de.mephisto.vpin.commons.utils.WidgetFactory.ERROR_STYLE;
 
 public class AltSoundEditorController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(AltSoundEditorController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private GameRepresentation game;
   private AltSound altSound;
