@@ -1,3 +1,15 @@
+## Release Notes 4.4.4
+
+## Changes
+
+- Fixed PUP pack dialog: Improved the check which table is actually matching against the selected PUP pack file.
+- Fixed deleting multiple assets in the Asset Manager dialog.
+- Added helper tooltip to the PUP upload dialog.
+- Added helper tooltip to input configuration dialog, explaining how to bind the pause key.
+
+
+---
+
 ## Release Notes 4.4.3
 
 ## Changes

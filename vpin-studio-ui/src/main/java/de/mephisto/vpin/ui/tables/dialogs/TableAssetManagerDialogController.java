@@ -476,16 +476,18 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   @FXML
   private void onDelete(ActionEvent e) {
     Stage stage = (Stage) ((Labeled) e.getSource()).getScene().getWindow();
-    FrontendMediaItemRepresentation selectedItem = assetList.getSelectionModel().getSelectedItem();
-    if (selectedItem != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete \"" + selectedItem.getName() + "\"?", "The selected media will be deleted.", null, "Delete");
+    List<FrontendMediaItemRepresentation> selectedItems = assetList.getSelectionModel().getSelectedItems();
+    if (!selectedItems.isEmpty()) {
+      String msg = selectedItems.size() == 1 ? ("Delete \"" + selectedItems.get(0).getName() + "\"?") : ("Delete " + selectedItems.size() + " items?");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, msg, "The selected media will be deleted.", null, "Delete");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-
-        if (isPlaylistMode()) {
-          client.getPlaylistMediaService().deleteMedia(playlist.getId(), screen, selectedItem.getName());
-        }
-        else {
-          client.getGameMediaService().deleteMedia(game.getId(), screen, selectedItem.getName());
+        for (FrontendMediaItemRepresentation selectedItem : selectedItems) {
+          if (isPlaylistMode()) {
+            client.getPlaylistMediaService().deleteMedia(playlist.getId(), screen, selectedItem.getName());
+          }
+          else {
+            client.getGameMediaService().deleteMedia(game.getId(), screen, selectedItem.getName());
+          }
         }
 
         Platform.runLater(() -> {
