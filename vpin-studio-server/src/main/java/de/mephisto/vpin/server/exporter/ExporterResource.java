@@ -8,10 +8,13 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.OutputStream;
+
 import java.util.Map;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.charset.StandardCharsets;
+
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 
@@ -34,49 +37,64 @@ public class ExporterResource {
     @RequestMapping(
             method = RequestMethod.GET,
             path = "/tables",
-            produces = MediaType.APPLICATION_OCTET_STREAM_VALUE
+            produces = MediaType.TEXT_PLAIN_VALUE
     )
     public void export(
             @RequestParam Map<String, String> customQuery,
             @RequestParam(name = "filepath", required = false) String filepath,
+            @RequestParam(name = "filetype", defaultValue = "csv") String filetype,
             HttpServletResponse response) throws Exception {
 
-        String export = exporterService.export(customQuery);
-        byte[] data = export.getBytes();
+        String csv = exporterService.export(customQuery);
+
+        // Normalize slashes
+        if (filepath != null) {
+            filepath = filepath.replace("\\", "/");
+        }
+
+        // If no filepath → browser download fallback
+        boolean sendToBrowser = (filepath == null || filepath.isBlank());
+
+        // Ensure extension if filetype=html
+        String content = csv;
+
+        // Convert if HTML was requested
+        if ("html".equalsIgnoreCase(filetype)) {
+            content = CsvHtmlConverter.convertCsvToEnhancedHtml(csv);
+        }
+
+        byte[] bytes = content.getBytes(StandardCharsets.UTF_8);
 
         // -------------------------------------------
-        // CASE 1: filepath IS PROVIDED → write to disk
+        // CASE 1 — Write file to disk
         // -------------------------------------------
-        if (filepath != null && !filepath.isBlank()) {
+        if (!sendToBrowser) {
+            Path path = Paths.get(filepath).normalize();
 
-            // SECURITY: normalize and validate the path
-            Path outputPath = Paths.get(filepath).normalize();
+            Files.createDirectories(path.getParent());
+            Files.write(path, bytes);
 
-            // Write file to server
-            Files.createDirectories(outputPath.getParent());  // ensure directory exists
-            Files.write(outputPath, data);
-
-            // Respond with confirmation message (NOT a file download)
-           // response.reset();
-          //  response.setContentType(MediaType.TEXT_PLAIN_VALUE);
-           // response.getWriter().write("Exported to: " + outputPath.toAbsolutePath());
+            response.getWriter().write("Exported to: " + path.toAbsolutePath());
             return;
         }
 
-        // ----------------------------------------------------
-        // CASE 2: NO filepath → behave as before (browser download)
-        // ----------------------------------------------------
-
-        String defaultFilename = "export.xls";
+        // -------------------------------------------
+        // CASE 2 — Browser download fallback
+        // -------------------------------------------
+        String filename = "export." + filetype;
 
         response.reset();
-        response.setHeader("Content-Disposition", "attachment; filename=\"" + defaultFilename + "\"");
-        response.setContentType("application/vnd.ms-excel");
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
 
-        try (OutputStream out = response.getOutputStream()) {
-            out.write(data);
+        if (filetype.equalsIgnoreCase("html")) {
+            response.setContentType("text/html");
+        } else {
+            response.setContentType("text/csv");
         }
+
+        response.getOutputStream().write(bytes);
     }
+
 
     @RequestMapping("/tables/plain")
   public String exportPlain(@RequestParam Map<String, String> customQuery, HttpServletResponse response) throws Exception {
