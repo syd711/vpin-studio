@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.OutputStream;
 import java.util.Map;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 
@@ -28,21 +31,54 @@ public class ExporterResource {
   @Autowired
   private MediaExportService mediaExportService;
 
-  @RequestMapping(method = RequestMethod.GET, path = "/tables", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-  public @ResponseBody byte[] export(@RequestParam Map<String, String> customQuery, HttpServletResponse response) throws Exception {
-    OutputStream output = response.getOutputStream();
-    response.reset();
-    response.setHeader("Content-disposition", "attachment; filename=export.xls");
-    response.setContentType("application/msexcel");
+    @RequestMapping(
+            method = RequestMethod.GET,
+            path = "/tables",
+            produces = MediaType.APPLICATION_OCTET_STREAM_VALUE
+    )
+    public void export(
+            @RequestParam Map<String, String> customQuery,
+            @RequestParam(name = "filepath", required = false) String filepath,
+            HttpServletResponse response) throws Exception {
 
-    String export = exporterService.export(customQuery);
-    output.write(export.getBytes());
-    output.close();
+        String export = exporterService.export(customQuery);
+        byte[] data = export.getBytes();
 
-    return IOUtils.toByteArray(new ByteArrayInputStream(export.getBytes()));
-  }
+        // -------------------------------------------
+        // CASE 1: filepath IS PROVIDED → write to disk
+        // -------------------------------------------
+        if (filepath != null && !filepath.isBlank()) {
 
-  @RequestMapping("/tables/plain")
+            // SECURITY: normalize and validate the path
+            Path outputPath = Paths.get(filepath).normalize();
+
+            // Write file to server
+            Files.createDirectories(outputPath.getParent());  // ensure directory exists
+            Files.write(outputPath, data);
+
+            // Respond with confirmation message (NOT a file download)
+           // response.reset();
+          //  response.setContentType(MediaType.TEXT_PLAIN_VALUE);
+           // response.getWriter().write("Exported to: " + outputPath.toAbsolutePath());
+            return;
+        }
+
+        // ----------------------------------------------------
+        // CASE 2: NO filepath → behave as before (browser download)
+        // ----------------------------------------------------
+
+        String defaultFilename = "export.xls";
+
+        response.reset();
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + defaultFilename + "\"");
+        response.setContentType("application/vnd.ms-excel");
+
+        try (OutputStream out = response.getOutputStream()) {
+            out.write(data);
+        }
+    }
+
+    @RequestMapping("/tables/plain")
   public String exportPlain(@RequestParam Map<String, String> customQuery, HttpServletResponse response) throws Exception {
     response.setContentType("text/csv");
     return exporterService.export(customQuery);
