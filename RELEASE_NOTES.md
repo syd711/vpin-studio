@@ -6,6 +6,8 @@
 - Fixed deleting multiple assets in the Asset Manager dialog.
 - Added helper tooltip to the PUP upload dialog.
 - Added helper tooltip to input configuration dialog, explaining how to bind the pause key.
+- Added ability to specifiy custom name and path to table export
+- Added ability to export table list to html page with table formatting
 
 
 ---
