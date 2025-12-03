@@ -8,7 +8,13 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.OutputStream;
+
 import java.util.Map;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.charset.StandardCharsets;
+
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 
@@ -28,21 +34,69 @@ public class ExporterResource {
   @Autowired
   private MediaExportService mediaExportService;
 
-  @RequestMapping(method = RequestMethod.GET, path = "/tables", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-  public @ResponseBody byte[] export(@RequestParam Map<String, String> customQuery, HttpServletResponse response) throws Exception {
-    OutputStream output = response.getOutputStream();
-    response.reset();
-    response.setHeader("Content-disposition", "attachment; filename=export.xls");
-    response.setContentType("application/msexcel");
+    @RequestMapping(
+            method = RequestMethod.GET,
+            path = "/tables",
+            produces = MediaType.TEXT_PLAIN_VALUE
+    )
+    public void export(
+            @RequestParam Map<String, String> customQuery,
+            @RequestParam(name = "filepath", required = false) String filepath,
+            @RequestParam(name = "filetype", defaultValue = "csv") String filetype,
+            HttpServletResponse response) throws Exception {
 
-    String export = exporterService.export(customQuery);
-    output.write(export.getBytes());
-    output.close();
+        String csv = exporterService.export(customQuery);
 
-    return IOUtils.toByteArray(new ByteArrayInputStream(export.getBytes()));
-  }
+        // Normalize slashes
+        if (filepath != null) {
+            filepath = filepath.replace("\\", "/");
+        }
 
-  @RequestMapping("/tables/plain")
+        // If no filepath → browser download fallback
+        boolean sendToBrowser = (filepath == null || filepath.isBlank());
+
+        // Ensure extension if filetype=html
+        String content = csv;
+
+        // Convert if HTML was requested
+        if ("html".equalsIgnoreCase(filetype)) {
+            content = CsvHtmlConverter.convertCsvToEnhancedHtml(csv);
+        }
+
+        byte[] bytes = content.getBytes(StandardCharsets.UTF_8);
+
+        // -------------------------------------------
+        // CASE 1 — Write file to disk
+        // -------------------------------------------
+        if (!sendToBrowser) {
+            Path path = Paths.get(filepath).normalize();
+
+            Files.createDirectories(path.getParent());
+            Files.write(path, bytes);
+
+            response.getWriter().write("Exported to: " + path.toAbsolutePath());
+            return;
+        }
+
+        // -------------------------------------------
+        // CASE 2 — Browser download fallback
+        // -------------------------------------------
+        String filename = "export." + filetype;
+
+        response.reset();
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+
+        if (filetype.equalsIgnoreCase("html")) {
+            response.setContentType("text/html");
+        } else {
+            response.setContentType("text/csv");
+        }
+
+        response.getOutputStream().write(bytes);
+    }
+
+
+    @RequestMapping("/tables/plain")
   public String exportPlain(@RequestParam Map<String, String> customQuery, HttpServletResponse response) throws Exception {
     response.setContentType("text/csv");
     return exporterService.export(customQuery);
