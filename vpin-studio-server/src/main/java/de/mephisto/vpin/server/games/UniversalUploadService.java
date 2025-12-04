@@ -43,9 +43,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.awt.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Optional;
 
 import static de.mephisto.vpin.server.VPinStudioServer.Features;
@@ -185,8 +185,8 @@ public class UniversalUploadService {
           analysis.analyze();
         }
 
-        String fileNameForAssetType = analysis.getFileNameForAssetType(assetType);
-        if (fileNameForAssetType != null) {
+        List<String> fileNameForAssetTypes = analysis.getFileNamesForAssetType(assetType);
+        for (String fileNameForAssetType : fileNameForAssetTypes) {
           File temporaryAssetArchiveFile = writeTableFilenameBasedEntry(uploadDescriptor, fileNameForAssetType);
           uploadDescriptor.getTempFiles().add(temporaryAssetArchiveFile);
           copyGameFileAsset(temporaryAssetArchiveFile, game, assetType, uploadDescriptor.getUploadType());
@@ -222,6 +222,11 @@ public class UniversalUploadService {
     // For backup imports, check if the AssetType was enabled
     if (!isImportEnabled(uploadDescriptor, assetType)) {
       LOG.info("Skipped import of asset type \"{}\", disabled for backup imports.", assetType.name());
+      return;
+    }
+
+    if (AssetType.PUP_PACK.equals(assetType) && analysis != null && uploadDescriptor.isExcluded(analysis.getPUPPackFolder())) {
+      LOG.info("Skipped import of asset type \"{}\", excluded path: {}", assetType.name(), analysis.getPUPPackFolder());
       return;
     }
 
@@ -279,6 +284,15 @@ public class UniversalUploadService {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.DMD_PACK) == null) {
           if (game != null) {
             dmdService.installDMDPackage(tempFile, analysis, game);
+            gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, updatedAssetName);
+          }
+        }
+        break;
+      }
+      case FP_MODEL_PACK: {
+        if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.FP_MODEL_PACK) == null) {
+          if (game != null) {
+            futurePinballService.installModelPackage(tempFile, analysis, game);
             gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, updatedAssetName);
           }
         }
@@ -381,7 +395,7 @@ public class UniversalUploadService {
   }
 
   private static void copyGameFileAsset(File temporaryUploadDescriptorBundleFile, Game game, AssetType assetType, @Nullable UploadType uploadType) throws IOException {
-    String fileName = FilenameUtils.getBaseName(game.getGameFileName()) + "." + assetType.name().toLowerCase();
+    String fileName = FilenameUtils.getBaseName(game.getGameFileName()) + "." + assetType.getExtension();
     File gameAssetFile = new File(game.getGameFile().getParentFile(), fileName);
 
     if (UploadType.uploadAndAppend.equals(uploadType)) {
@@ -414,6 +428,7 @@ public class UniversalUploadService {
       importFileBasedAssets(uploadDescriptor, analysis, AssetType.INI);
       importFileBasedAssets(uploadDescriptor, analysis, AssetType.RES);
       importFileBasedAssets(uploadDescriptor, analysis, AssetType.VBS);
+      importFileBasedAssets(uploadDescriptor, analysis, AssetType.FP_MODEL_PACK);
     }
     else {
       LOG.info("Skipped table based assets since no gameId was set for the upload.");
@@ -427,6 +442,7 @@ public class UniversalUploadService {
     importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.MUSIC, true);
     importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.ROM, true);
     importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.NV, true);
+    importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.FPL, true);
 
     if (analysis.isVpxTable()) {
       importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.CFG, true);
@@ -495,7 +511,7 @@ public class UniversalUploadService {
         else {
           embed.addField("Table Updated", "", false);
         }
-        embed.setColor(Color.GREEN);
+        embed.setColor(java.awt.Color.GREEN);
         MessageEmbed build = embed.build();
 
         discordService.sendMessage(serverId, channelId, build);

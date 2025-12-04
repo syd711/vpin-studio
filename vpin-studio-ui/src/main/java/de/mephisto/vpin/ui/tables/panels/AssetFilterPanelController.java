@@ -81,7 +81,9 @@ public class AssetFilterPanelController implements Initializable {
     }
 
     assetFilterBtn.setText("Filter Selection");
+    assetFilterBtn.getStyleClass().remove("error-title");
     if (!uploaderAnalysis.getExclusions().isEmpty()) {
+      assetFilterBtn.getStyleClass().add("error-title");
       if (uploaderAnalysis.getExclusions().size() == 1) {
         assetFilterBtn.setText("Filter Selection (" + uploaderAnalysis.getExclusions().size() + " excluded asset)");
       }

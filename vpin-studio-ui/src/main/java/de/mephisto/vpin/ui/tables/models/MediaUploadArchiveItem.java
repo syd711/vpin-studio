@@ -172,7 +172,12 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
         this.targetDisplayName = "VPin MAME \"nvram\" folder";
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
-      else if (asset.equals(AssetType.ROM) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.ROM) == null) {
+      else if (asset.equals(AssetType.FPL) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.FPL) == null) {
+        this.assetType = asset;
+        this.targetDisplayName = "Future Pinball \"Libraries\" folder";
+        LOG.info(fileNameWithPath + ": " + assetType.name());
+      }
+      else if (asset.equals(AssetType.ROM) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.ROM) == null && !uploaderAnalysis.isFpTable()) {
         this.assetType = asset;
         this.targetDisplayName = "VPin MAME \"roms\" folder";
         LOG.info(fileNameWithPath + ": " + assetType.name());
@@ -182,9 +187,14 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
         this.targetDisplayName = "VPin MAME \"altcolor\" folder";
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
-      else if (asset.equals(AssetType.ZIP) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.ROM) == null) {
+      else if (asset.equals(AssetType.ZIP) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.ROM) == null && !uploaderAnalysis.isFpTable()) {
         this.assetType = AssetType.ROM;
         this.targetDisplayName = "VPin MAME \"roms\" folder";
+        LOG.info(fileNameWithPath + ": " + assetType.name());
+      }
+      else if (asset.equals(AssetType.ZIP) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.FRONTEND_MEDIA) == null && uploaderAnalysis.isFpTable()) {
+        this.assetType = AssetType.FP_MODEL_PACK;
+        this.targetDisplayName = "FP Table Model Pack";
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
       else if (asset.equals(AssetType.DIF) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.DIF) == null) {

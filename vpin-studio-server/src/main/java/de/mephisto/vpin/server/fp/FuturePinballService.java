@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.server.dmd.DMDInstallationUtil;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -81,7 +83,7 @@ public class FuturePinballService {
           if (fplFileName.contains("/")) {
             fplFileName = fplFileName.substring(fplFileName.lastIndexOf("/") + 1);
           }
-          File out = new File(installationFolder, fplFileName);
+          File out = new File(libFolder, fplFileName);
           if (out.exists() && !out.delete()) {
             throw new IOException("Failed to delete existing " + fplFileName + " file " + out.getAbsolutePath());
           }
@@ -101,6 +103,22 @@ public class FuturePinballService {
     }
     else {
       LOG.error("Failed to install fpl file, no game found for id {}", uploadDescriptor.getGameId());
+    }
+  }
+
+  public void installModelPackage(File tempFile, UploaderAnalysis analysis, Game game) throws IOException {
+    if (game != null) {
+      File gameFolder = game.getGameFile().getParentFile();
+      String fileName = FilenameUtils.getBaseName(game.getGameFileName()) + ".zip";
+      File out = new File(gameFolder, fileName);
+      if (out.exists() && !out.delete()) {
+        throw new IOException("Failed to delete existing " + fileName + " file " + out.getAbsolutePath());
+      }
+      org.apache.commons.io.FileUtils.copyFile(tempFile, out);
+      LOG.info("Installed {}: {}", fileName, out.getAbsolutePath());
+    }
+    else {
+      LOG.error("Failed to install FP model file, no game found");
     }
   }
 }

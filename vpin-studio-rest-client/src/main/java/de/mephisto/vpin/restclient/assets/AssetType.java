@@ -27,6 +27,7 @@ public enum AssetType {
   ALT_SOUND,
   PUP_PACK,
   DMD_PACK,
+  FP_MODEL_PACK,
   FRONTEND_MEDIA,
   ROM,
   MUSIC,
@@ -124,6 +125,9 @@ public enum AssetType {
       case DMD_PACK: {
         return "DMD Pack";
       }
+      case FP_MODEL_PACK: {
+        return "FP Model Pack";
+      }
       case CRZ: {
         return ".cRZ File";
       }
@@ -208,6 +212,9 @@ public enum AssetType {
       case DMD_PACK: {
         return "DMD Pack";
       }
+      case FP_MODEL_PACK: {
+        return "FP Model Pack";
+      }
       case CRZ: {
         return ".cRZ";
       }
@@ -231,5 +238,14 @@ public enum AssetType {
         return null;
       }
     }
+  }
+
+  public String getExtension() {
+    switch (this) {
+      case FP_MODEL_PACK: {
+        return "zip";
+      }
+    }
+    return name().toLowerCase();
   }
 }
