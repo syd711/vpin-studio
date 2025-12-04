@@ -37,6 +37,7 @@ public class UploaderAnalysis {
   public final static String PAC_SUFFIX = "pac";
   public final static String SERUM_SUFFIX = "cRZ";
   public final static String NVRAM_SUFFIX = "nv";
+  public final static String FPL_SUFFIX = "fpl";
   public final static String CFG_SUFFIX = "cfg";
   public final static String BAM_CFG_SUFFIX = "cfg";
 
@@ -556,6 +557,12 @@ public class UploaderAnalysis {
         }
         return "This archive does not have a .nv file.";
       }
+      case FPL: {
+        if (hasFileWithSuffix(FPL_SUFFIX)) {
+          return null;
+        }
+        return "This archive does not have a .fpl file.";
+      }
       case CFG: {
         if (hasFileWithSuffix(CFG_SUFFIX)) {
           return null;
@@ -627,6 +634,10 @@ public class UploaderAnalysis {
 
     if (hasFileWithSuffix("fpt") && hasFileWithSuffix("cfg")) {
       result.add(AssetType.BAM_CFG);
+    }
+
+    if (hasFileWithSuffix("fpl")) {
+      result.add(AssetType.FPL);
     }
 
     if (hasFileWithSuffix("vpx") && hasFileWithSuffix("cfg")) {

@@ -14,6 +14,7 @@ public enum AssetType {
   DIF,
   NV,
   DIRECTB2S,
+  FPL,
   INI,
   PAL,
   PAC,
@@ -42,7 +43,7 @@ public enum AssetType {
   CARD_ASSET;
 
   static final AssetType[] INSTALLABLE_ASSET_TYPES = {
-      ZIP, RAR, SEVENZIP, RES, DIF, INI, POV, DIRECTB2S, VNI, VPA, VPX, FPT, PAL, PAC, CRZ, CFG, BAM_CFG, NV
+      ZIP, RAR, SEVENZIP, RES, DIF, INI, POV, DIRECTB2S, VNI, VPA, VPX, FPT, PAL, PAC, CRZ, CFG, BAM_CFG, NV, FPL
   };
 
   public static AssetType fromExtension(@Nullable EmulatorType emulatorType, String extension) {
@@ -107,6 +108,9 @@ public enum AssetType {
       }
       case FPT: {
         return "FP Table";
+      }
+      case FPL: {
+        return "FP Library";
       }
       case ROM: {
         return "ROM";
@@ -188,6 +192,9 @@ public enum AssetType {
       }
       case FPT: {
         return "*.fpt";
+      }
+      case FPL: {
+        return "*.fpl";
       }
       case ROM: {
         return "*.zip";

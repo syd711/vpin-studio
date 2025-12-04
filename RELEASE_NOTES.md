@@ -4,6 +4,7 @@
 
 - Fixed PUP pack dialog: Improved the check which table is actually matching against the selected PUP pack file.
 - Fixed deleting multiple assets in the Asset Manager dialog.
+- Added support for .fpl file uploads (Future Pinball library files).
 - Added helper tooltip to the PUP upload dialog.
 - Added helper tooltip to input configuration dialog, explaining how to bind the pause key.
 - Added ability to specifiy custom name and path to table export

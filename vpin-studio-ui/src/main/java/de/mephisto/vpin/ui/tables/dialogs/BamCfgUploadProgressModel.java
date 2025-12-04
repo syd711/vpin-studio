@@ -27,7 +27,7 @@ public class BamCfgUploadProgressModel extends UploadProgressModel {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      UploadDescriptor descriptor = Studio.client.getFpService().uploadCfg(gameId, next, percent -> {
+      UploadDescriptor descriptor = Studio.client.getFuturePinballService().uploadCfg(gameId, next, percent -> {
         double total = percentage + percent;
         progressResultModel.setProgress(total / getMax());
       });

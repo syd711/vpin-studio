@@ -75,6 +75,10 @@ public class UploadAnalysisDispatcher {
         TableDialogs.openCfgUploads(file, finalizer);
         return;
       }
+      case FPL: {
+        TableDialogs.openFplUploads(file, finalizer);
+        return;
+      }
       case DIF: {
         TableDialogs.openPatchUpload(game, file, analysis, finalizer);
         return;

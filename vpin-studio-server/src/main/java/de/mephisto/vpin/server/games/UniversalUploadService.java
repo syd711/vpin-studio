@@ -18,11 +18,10 @@ import de.mephisto.vpin.restclient.vps.VpsInstallLink;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.backups.adapters.vpa.VpaService;
-import de.mephisto.vpin.server.directb2s.BackglassService;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.dmd.DMDService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
-import de.mephisto.vpin.server.fp.FPService;
+import de.mephisto.vpin.server.fp.FuturePinballService;
 import de.mephisto.vpin.server.highscores.HighscoreBackupService;
 import de.mephisto.vpin.server.mame.MameRomAliasService;
 import de.mephisto.vpin.server.mame.MameService;
@@ -65,7 +64,7 @@ public class UniversalUploadService {
   private MameService mameService;
 
   @Autowired
-  private FPService fpService;
+  private FuturePinballService futurePinballService;
 
   @Autowired
   private AltColorService altColorService;
@@ -321,6 +320,13 @@ public class UniversalUploadService {
         }
         break;
       }
+      case FPL: {
+        if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.FPL) == null) {
+          futurePinballService.installLibrary(uploadDescriptor, gameEmulator, tempFile, analysis);
+          gameLifecycleService.notifyGameAssetsChanged(assetType, updatedAssetName);
+        }
+        break;
+      }
       case NV: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.NV) == null) {
           mameService.installNvRam(uploadDescriptor, gameEmulator, tempFile, analysis);
@@ -337,7 +343,7 @@ public class UniversalUploadService {
       }
       case BAM_CFG: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.BAM_CFG) == null) {
-          fpService.installBAMCfg(uploadDescriptor, game, gameEmulator, tempFile, analysis);
+          futurePinballService.installBAMCfg(uploadDescriptor, game, gameEmulator, tempFile, analysis);
           if (game != null) {
             gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, updatedAssetName);
           }
