@@ -512,6 +512,9 @@ public class GamesServiceClient extends VPinStudioClientService {
   public GameRepresentation getVpxGameCached(int gameId) {
     List<GameRepresentation> games = this.getVpxGamesCached();
     Optional<GameRepresentation> first = games.stream().filter(g -> g.getId() == gameId).findFirst();
+    if(first.isEmpty()) {
+      return getGame(gameId);
+    }
     return first.orElse(null);
   }
 

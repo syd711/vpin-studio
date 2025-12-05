@@ -2,12 +2,15 @@
 
 ## Changes
 
+- Fixed critical server startup issue caused for other frontends than PinUP Popper.
 - Fixed PUP pack dialog: Improved the check which table is actually matching against the selected PUP pack file.
 - Fixed deleting multiple assets in the Asset Manager dialog.
+- Fixed displaying **null** values in the Asset Manager search results.
 - Added helper tooltip to the PUP upload dialog.
 - Added helper tooltip to input configuration dialog, explaining how to bind the pause key.
-- Added ability to specifiy custom name and path to table export
-- Added ability to export table list to html page with table formatting
+- Added ability to specify custom name and path to the table data exporter.
+- Added ability to the table data exporter to download a table list sa html page with a formatted table.
+- Updates Pinball FX game list for the automated emulator setup in the system manager (Thanks to @brewedVFX providing these!).
 
 
 ---
