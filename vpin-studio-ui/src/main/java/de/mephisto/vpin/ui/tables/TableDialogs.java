@@ -174,6 +174,13 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
+  public static void openFplUploads(File file, Runnable finalizer) {
+    Stage stage = Dialogs.createStudioDialogStage(NvRamUploadController.class, "dialog-fpl-upload.fxml", ".fpl File Upload");
+    FplUploadController controller = (FplUploadController) stage.getUserData();
+    controller.setFile(stage, file, null, finalizer);
+    stage.showAndWait();
+  }
+
   public static void onRomUploads(File file, Runnable finalizer) {
     TableDialogs.openRomUploadDialog(file, () -> {
       EventManager.getInstance().notifyTablesChanged();

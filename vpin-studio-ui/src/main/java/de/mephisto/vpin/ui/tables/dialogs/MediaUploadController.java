@@ -225,7 +225,7 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
 
           filteredData = allData.stream().map(d -> toModel(d)).filter(m -> m.getAssetType() != null).collect(Collectors.toList());
 
-          if(uiSettings.isUploadMediaPreview()) {
+          if (uiSettings.isUploadMediaPreview()) {
             List<MediaUploadArchiveItem> images = filteredData.stream().filter(m -> m.isImage()).collect(Collectors.toList());
             for (int i = 0; i < images.size(); i++) {
               MediaUploadArchiveItem model = images.get(i);

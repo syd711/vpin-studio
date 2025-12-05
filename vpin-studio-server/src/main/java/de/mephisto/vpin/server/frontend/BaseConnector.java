@@ -14,7 +14,7 @@ import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.tagging.TaggingUtil;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
-import de.mephisto.vpin.server.fp.FPService;
+import de.mephisto.vpin.server.fp.FuturePinballService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.playlists.Playlist;
@@ -43,7 +43,7 @@ public abstract class BaseConnector implements FrontendConnector {
   private VPXService vpxService;
 
   @Autowired
-  private FPService fpService;
+  private FuturePinballService futurePinballService;
 
   @Autowired
   protected GameEntryRepository gameEntryRepository;
@@ -958,7 +958,7 @@ public abstract class BaseConnector implements FrontendConnector {
       return false;
     }
     else if (game.isFpGame()) {
-      return fpService.play(game, null);
+      return futurePinballService.play(game, null);
     }
     else {
       LOG.error("Emulator {} for Game \"{}\" cannot be started", game.getEmulator(), game.getGameFileName());

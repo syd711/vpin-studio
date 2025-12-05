@@ -86,7 +86,7 @@ public abstract class BaseUploadController implements Initializable, DialogContr
   protected abstract UploadProgressModel createUploadModel();
 
   /**
-   * Upload done, 
+   * Upload done,
    */
   protected void onUploadDone(ProgressResultModel result) {
     if (finalizer != null) {
@@ -177,6 +177,9 @@ public abstract class BaseUploadController implements Initializable, DialogContr
 
   protected void refreshEmulators() {
     List<GameEmulatorRepresentation> gameEmulators = Studio.client.getEmulatorService().getVpxGameEmulators();
+    if (isFpOnly()) {
+      gameEmulators = Studio.client.getEmulatorService().getFpGameEmulators();
+    }
     emulator = gameEmulators.get(0);
     ObservableList<GameEmulatorRepresentation> emulators = FXCollections.observableList(gameEmulators);
     emulatorCombo.setItems(emulators);
@@ -185,6 +188,10 @@ public abstract class BaseUploadController implements Initializable, DialogContr
       emulator = t1;
       refreshSelection(null);
     });
+  }
+
+  protected boolean isFpOnly() {
+    return false;
   }
 
   @Override

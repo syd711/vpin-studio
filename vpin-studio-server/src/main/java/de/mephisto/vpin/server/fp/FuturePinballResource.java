@@ -15,8 +15,8 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @RestController
 @RequestMapping(API_SEGMENT + "fp")
-public class FpResource {
-  private final static Logger LOG = LoggerFactory.getLogger(FpResource.class);
+public class FuturePinballResource {
+  private final static Logger LOG = LoggerFactory.getLogger(FuturePinballResource.class);
 
   @Autowired
   private UniversalUploadService universalUploadService;
@@ -33,6 +33,24 @@ public class FpResource {
     catch (Exception e) {
       LOG.error(AssetType.BAM_CFG.name() + " upload failed: " + e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.BAM_CFG + " upload failed: " + e.getMessage());
+    }
+    finally {
+      descriptor.finalizeUpload();
+    }
+  }
+
+  @PostMapping("/upload/fpl/{emulatorId}")
+  public UploadDescriptor uploadFpl(@PathVariable("emulatorId") int emulatorId, @RequestParam(value = "file", required = false) MultipartFile file) {
+    UploadDescriptor descriptor = universalUploadService.create(file);
+    descriptor.setEmulatorId(emulatorId);
+    try {
+      descriptor.upload();
+      universalUploadService.importArchiveBasedAssets(descriptor, null, AssetType.FPL);
+      return descriptor;
+    }
+    catch (Exception e) {
+      LOG.error(AssetType.FPL.name() + " upload failed: " + e.getMessage(), e);
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.FPL + " upload failed: " + e.getMessage());
     }
     finally {
       descriptor.finalizeUpload();

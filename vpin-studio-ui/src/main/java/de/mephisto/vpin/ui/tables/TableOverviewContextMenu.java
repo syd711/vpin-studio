@@ -311,6 +311,11 @@ public class TableOverviewContextMenu {
       dmdItem.setOnAction(actionEvent -> tableOverviewController.getUploadsButtonController().onDMDUpload());
       uploadMenu.getItems().add(dmdItem);
 
+      MenuItem fplItem = new MenuItem("Upload .fpl File");
+      fplItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
+      fplItem.setOnAction(actionEvent -> tableOverviewController.getUploadsButtonController().onFplUpload());
+      uploadMenu.getItems().add(fplItem);
+
       MenuItem iniItem = new MenuItem("Upload .ini File");
       iniItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
       iniItem.setOnAction(actionEvent -> tableOverviewController.getUploadsButtonController().onIniUpload());

@@ -17,10 +17,10 @@ import java.lang.invoke.MethodHandles;
 /*********************************************************************************************************************
  * FP
  ********************************************************************************************************************/
-public class FpServiceClient extends VPinStudioClientService {
+public class FuturePinballServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  public FpServiceClient(VPinStudioClient client) {
+  public FuturePinballServiceClient(VPinStudioClient client) {
     super(client);
   }
 
@@ -32,7 +32,20 @@ public class FpServiceClient extends VPinStudioClientService {
       return exchange.getBody();
     }
     catch (Exception e) {
-      LOG.error("Rom upload failed: " + e.getMessage(), e);
+      LOG.error(".cfg upload failed: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
+  public UploadDescriptor uploadFpl(int emulatorId, File file, FileUploadProgressListener listener) throws Exception {
+    try {
+      String url = getRestClient().getBaseUrl() + API + "fp/upload/fpl/" + emulatorId;
+      LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(map, file, emulatorId, null, AssetType.FPL, listener), UploadDescriptor.class);
+      return exchange.getBody();
+    }
+    catch (Exception e) {
+      LOG.error(".fpl upload failed: " + e.getMessage(), e);
       throw e;
     }
   }

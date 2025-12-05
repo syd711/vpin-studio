@@ -30,7 +30,7 @@ import de.mephisto.vpin.restclient.dof.DOFServiceClient;
 import de.mephisto.vpin.restclient.doflinx.DOFLinxServiceClient;
 import de.mephisto.vpin.restclient.emulators.EmulatorServiceClient;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.fp.FpServiceClient;
+import de.mephisto.vpin.restclient.fp.FuturePinballServiceClient;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.FrontendServiceClient;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -101,7 +101,7 @@ public class VPinStudioClient implements OverlayClient {
   private final DOFServiceClient dofServiceClient;
   private final DOFLinxServiceClient dofLinxServiceClient;
   private final EmulatorServiceClient emulatorServiceClient;
-  private final FpServiceClient fpServiceClient;
+  private final FuturePinballServiceClient futurePinballServiceClient;
   private final FolderChooserServiceClient folderChooserServiceClient;
   private final GamesServiceClient gamesServiceClient;
   private final GameMediaServiceClient gameMediaServiceClient;
@@ -156,7 +156,7 @@ public class VPinStudioClient implements OverlayClient {
     this.dofLinxServiceClient = new DOFLinxServiceClient(this);
     this.discordServiceClient = new DiscordServiceClient(this);
     this.emulatorServiceClient = new EmulatorServiceClient(this);
-    this.fpServiceClient = new FpServiceClient(this);
+    this.futurePinballServiceClient = new FuturePinballServiceClient(this);
     this.folderChooserServiceClient = new FolderChooserServiceClient(this);
     this.gamesServiceClient = new GamesServiceClient(this);
     this.gameMediaServiceClient = new GameMediaServiceClient(this);
@@ -220,8 +220,8 @@ public class VPinStudioClient implements OverlayClient {
     return backupServiceClient;
   }
 
-  public FpServiceClient getFpService() {
-    return fpServiceClient;
+  public FuturePinballServiceClient getFuturePinballService() {
+    return futurePinballServiceClient;
   }
 
   public EmulatorServiceClient getEmulatorService() {

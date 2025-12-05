@@ -13,21 +13,21 @@ import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 
-public class BamCfgUploadProgressModel extends UploadProgressModel {
+public class FplUploadProgressModel extends UploadProgressModel {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
+  private final int emuId;
   private double percentage = 0;
-  private final int gameId;
 
-  public BamCfgUploadProgressModel(String title, List<File> files, int gameId) {
+  public FplUploadProgressModel(String title, List<File> files, int emuId) {
     super(files, title);
-    this.gameId = gameId;
+    this.emuId = emuId;
   }
 
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      UploadDescriptor descriptor = Studio.client.getFuturePinballService().uploadCfg(gameId, next, percent -> {
+      UploadDescriptor descriptor = Studio.client.getFuturePinballService().uploadFpl(emuId, next, percent -> {
         double total = percentage + percent;
         progressResultModel.setProgress(total / getMax());
       });
@@ -39,9 +39,9 @@ public class BamCfgUploadProgressModel extends UploadProgressModel {
       }
     }
     catch (Exception e) {
-      LOG.error("BAM Cfg upload failed: " + e.getMessage(), e);
+      LOG.error(".fpl file upload failed: " + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, "Error", "BAM Cfg upload failed: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, "Error", ".fpl file upload failed: " + e.getMessage());
       });
     }
   }
