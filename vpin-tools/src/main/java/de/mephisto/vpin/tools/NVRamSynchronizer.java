@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.nio.charset.Charset;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -23,7 +24,7 @@ import java.util.zip.ZipOutputStream;
  * - push changes of the nvrams project
  */
 public class NVRamSynchronizer {
-  private final static Logger LOG = LoggerFactory.getLogger(NVRamSynchronizer.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public final static File NVRAM_REPO = new File("../nvrams/");
 

@@ -68,6 +68,7 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.Desktop;
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -79,7 +80,7 @@ import static de.mephisto.vpin.ui.Studio.*;
 
 
 public class TableAssetManagerDialogController implements Initializable, DialogController, StudioEventListener {
-  private final static Logger LOG = LoggerFactory.getLogger(TableAssetManagerDialogController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   public static final String MODAL_STATE_ID = "tableAssetManagerDialog";
   public static Stage INSTANCE = null;
 
@@ -475,16 +476,18 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   @FXML
   private void onDelete(ActionEvent e) {
     Stage stage = (Stage) ((Labeled) e.getSource()).getScene().getWindow();
-    FrontendMediaItemRepresentation selectedItem = assetList.getSelectionModel().getSelectedItem();
-    if (selectedItem != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete \"" + selectedItem.getName() + "\"?", "The selected media will be deleted.", null, "Delete");
+    List<FrontendMediaItemRepresentation> selectedItems = assetList.getSelectionModel().getSelectedItems();
+    if (!selectedItems.isEmpty()) {
+      String msg = selectedItems.size() == 1 ? ("Delete \"" + selectedItems.get(0).getName() + "\"?") : ("Delete " + selectedItems.size() + " items?");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, msg, "The selected media will be deleted.", null, "Delete");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-
-        if (isPlaylistMode()) {
-          client.getPlaylistMediaService().deleteMedia(playlist.getId(), screen, selectedItem.getName());
-        }
-        else {
-          client.getGameMediaService().deleteMedia(game.getId(), screen, selectedItem.getName());
+        for (FrontendMediaItemRepresentation selectedItem : selectedItems) {
+          if (isPlaylistMode()) {
+            client.getPlaylistMediaService().deleteMedia(playlist.getId(), screen, selectedItem.getName());
+          }
+          else {
+            client.getGameMediaService().deleteMedia(game.getId(), screen, selectedItem.getName());
+          }
         }
 
         Platform.runLater(() -> {

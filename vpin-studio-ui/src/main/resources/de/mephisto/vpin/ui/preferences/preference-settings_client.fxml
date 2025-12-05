@@ -350,7 +350,7 @@
                               <Insets top="24.0" />
                            </VBox.margin>
                         </Label>
-                        <Label styleClass="preference-description" text="Using windows network share (e.g. \\localhost\vPinball) allows to to access remote folders of your VPin." textFill="WHITE" />
+                        <Label styleClass="preference-description" text="Using windows network share (e.g. \\localhost\vPinball) allows to access remote folders of your VPin." textFill="WHITE" />
                         <Label styleClass="preference-description" text="Note that this feature is only supported for Windows clients. The share should be the root folder of the frontend installation." textFill="WHITE" />
                         <Label styleClass="preference-description" text="You have to restart the Studio after applying changes." textFill="WHITE" />
                         <GridPane alignment="BASELINE_RIGHT">

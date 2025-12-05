@@ -31,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -39,7 +40,7 @@ import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablesSidebarMameController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarMameController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public final static java.util.List<SoundMode> SOUND_MODES = Arrays.asList(
       new SoundMode(0, "0 - Standard built-in PinMAME emulation"),

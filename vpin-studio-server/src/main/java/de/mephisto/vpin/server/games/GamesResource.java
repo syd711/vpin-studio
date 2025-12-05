@@ -8,10 +8,9 @@ import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
 import de.mephisto.vpin.restclient.system.FileInfo;
 import de.mephisto.vpin.restclient.validation.ValidationState;
-import de.mephisto.vpin.server.assets.AssetService;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.emulators.EmulatorService;
-import de.mephisto.vpin.server.fp.FPService;
+import de.mephisto.vpin.server.fp.FuturePinballService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.ScoreList;
@@ -51,7 +50,7 @@ public class GamesResource {
   private FrontendService frontendService;
 
   @Autowired
-  private FPService fpService;
+  private FuturePinballService futurePinballService;
 
   @Autowired
   private SystemService systemService;
@@ -126,7 +125,7 @@ public class GamesResource {
       }
       else if (game.isFpGame()) {
         frontendService.killFrontend();
-        if (fpService.play(game, altExe)) {
+        if (futurePinballService.play(game, altExe)) {
           gameStatusService.setActiveStatus(id);
           return true;
         }

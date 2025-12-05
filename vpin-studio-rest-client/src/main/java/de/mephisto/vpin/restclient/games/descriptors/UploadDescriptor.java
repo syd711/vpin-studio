@@ -2,6 +2,7 @@ package de.mephisto.vpin.restclient.games.descriptors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -148,6 +149,13 @@ public class UploadDescriptor {
 
   public void setExcludedFolders(List<String> excludedFolders) {
     this.excludedFolders = excludedFolders;
+  }
+
+  public boolean isExcluded(@Nullable String path) {
+    if (path == null) {
+      return true;
+    }
+    return excludedFiles.contains(path) || excludedFolders.contains(path);
   }
 
   @JsonIgnore

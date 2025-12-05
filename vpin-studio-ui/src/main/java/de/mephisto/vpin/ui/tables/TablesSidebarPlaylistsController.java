@@ -32,6 +32,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +43,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
 public class TablesSidebarPlaylistsController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarPlaylistsController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   public static final int FAV_PADDING_LEFT = 118;
   public static final int FAV_WIDTH = 392;
 

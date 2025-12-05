@@ -157,8 +157,16 @@ public class GamesServiceClient extends VPinStudioClientService {
   public GameRepresentation getFirstGameByRom(String rom) {
     List<GameRepresentation> gamesCached = this.getVpxGamesCached();
     for (GameRepresentation gameRepresentation : gamesCached) {
+      String pupPackName = gameRepresentation.getPupPackName();
+      if (!StringUtils.isEmpty(pupPackName) && pupPackName.equalsIgnoreCase(rom)) {
+        return gameRepresentation;
+      }
       String gameRom = gameRepresentation.getRom();
       if (!StringUtils.isEmpty(gameRom) && gameRom.equalsIgnoreCase(rom)) {
+        return gameRepresentation;
+      }
+      String gameTableName = gameRepresentation.getTableName();
+      if (!StringUtils.isEmpty(gameTableName) && gameTableName.equalsIgnoreCase(rom)) {
         return gameRepresentation;
       }
     }
@@ -504,6 +512,9 @@ public class GamesServiceClient extends VPinStudioClientService {
   public GameRepresentation getVpxGameCached(int gameId) {
     List<GameRepresentation> games = this.getVpxGamesCached();
     Optional<GameRepresentation> first = games.stream().filter(g -> g.getId() == gameId).findFirst();
+    if(first.isEmpty()) {
+      return getGame(gameId);
+    }
     return first.orElse(null);
   }
 

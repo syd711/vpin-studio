@@ -52,6 +52,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,7 +63,7 @@ import java.util.function.Function;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class DMDPositionController extends BasePrevNextController {
-  private final static Logger LOG = LoggerFactory.getLogger(DMDPositionController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private BaseTableController<?, ? extends BaseGameModel> baseMgrController;
 

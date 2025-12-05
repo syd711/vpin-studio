@@ -338,19 +338,20 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
         Label label = new Label("- not available anymore -");
         label.getStyleClass().add("default-text");
         label.setStyle(getLabelCss(value));
+
+        Image image = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
         if (game != null) {
           label = new Label(game.getGameDisplayName());
           label.getStyleClass().add("default-text");
+          ByteArrayInputStream gameMediaItem = ServerFX.client.getWheelIcon(game.getId(), true);
+          if (gameMediaItem != null) {
+            image = new Image(gameMediaItem);
+          }
         }
 
         HBox hBox = new HBox(6);
         hBox.setAlignment(Pos.CENTER_LEFT);
 
-        Image image = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
-        ByteArrayInputStream gameMediaItem = ServerFX.client.getWheelIcon(game.getId(), true);
-        if (gameMediaItem != null) {
-          image = new Image(gameMediaItem);
-        }
         ImageView view = new ImageView(image);
         view.setPreserveRatio(true);
         view.setSmooth(true);

@@ -77,9 +77,10 @@ public class TableAssetsService {
 
     List<Future<List<TableAsset>>> searches = executorService.invokeAll(tasks);
     for (Future<List<TableAsset>> search : searches) {
-      result.addAll(search.get(15, TimeUnit.SECONDS));
+      List<TableAsset> tableAssets = search.get(15, TimeUnit.SECONDS);
+      result.addAll(tableAssets);
     }
-    return result;
+    return result.stream().filter(Objects::nonNull).collect(Collectors.toList());
   }
 
   public Optional<TableAsset> get(@Nullable TableAssetSource source,

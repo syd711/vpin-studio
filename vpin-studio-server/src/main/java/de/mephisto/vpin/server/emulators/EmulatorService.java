@@ -16,7 +16,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -132,10 +134,6 @@ public class EmulatorService {
       loadEmulator(emulator);
     }
 
-    for (GameEmulator emulator : ems) {
-      synchronizeEmulator(emulator);
-    }
-
     if (this.emulators.isEmpty()) {
       LOG.error("*****************************************************************************************");
       LOG.error("No valid game emulators folder, fill all(!) emulator directory settings in your frontend.");
@@ -191,6 +189,19 @@ public class EmulatorService {
     return emulatorFactory.create(emulatorType);
   }
 
+
+  @EventListener(ApplicationReadyEvent.class)
+  public void synchronizeEmulators() {
+    for (GameEmulator emulator : this.emulators.values()) {
+      synchronizeEmulator(emulator);
+    }
+  }
+
+  /**
+   * Used to synchronize emulators with .pupgames files to the latest lists.
+   *
+   * @param emulator
+   */
   private void synchronizeEmulator(GameEmulator emulator) {
     if (!emulator.isEnabled()) {
       return;

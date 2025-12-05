@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -34,7 +35,7 @@ import java.util.Optional;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class Dialogs {
-  private final static Logger LOG = LoggerFactory.getLogger(Dialogs.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static void editFile(File file) {
     if (file != null) {

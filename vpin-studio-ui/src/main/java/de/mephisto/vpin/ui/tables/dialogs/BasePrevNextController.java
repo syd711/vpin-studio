@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -23,7 +24,7 @@ import javafx.scene.input.KeyEvent;
  * A base dialog class that support Next / prev and autosave buttons
  */
 public abstract class BasePrevNextController implements Initializable, DialogController {
-  private final static Logger LOG = LoggerFactory.getLogger(BaseUploadController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   protected DialogHeaderController headerController;  //fxml magic! Not unused -> id + "Controller"

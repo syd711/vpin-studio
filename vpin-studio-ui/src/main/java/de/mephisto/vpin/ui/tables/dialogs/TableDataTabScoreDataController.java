@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.List;
 import java.util.*;
@@ -39,7 +40,7 @@ import java.util.*;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableDataTabScoreDataController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(TableDataTabScoreDataController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   public static final String UNPLAYED_STATUS_ICON = "bi-check2-circle";
   private final static int DEBOUNCE_MS = 300;
 

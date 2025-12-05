@@ -22,13 +22,14 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class UploadAnalysisDispatcher {
-  private final static Logger LOG = LoggerFactory.getLogger(UploadAnalysisDispatcher.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static void dispatch(@NonNull File file, @Nullable GameRepresentation game, @Nullable Runnable finalizer) {
     String extension = FilenameUtils.getExtension(file.getName());
@@ -72,6 +73,10 @@ public class UploadAnalysisDispatcher {
       }
       case CFG: {
         TableDialogs.openCfgUploads(file, finalizer);
+        return;
+      }
+      case FPL: {
+        TableDialogs.openFplUploads(file, finalizer);
         return;
       }
       case DIF: {

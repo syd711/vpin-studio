@@ -20,8 +20,10 @@ import javafx.scene.layout.HBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -30,7 +32,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
 public class UploadsButtonController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(UploadsButtonController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private HBox root;
@@ -61,6 +63,9 @@ public class UploadsButtonController implements Initializable {
 
   @FXML
   private MenuItem altColorUploadItem;
+
+  @FXML
+  private MenuItem fplItem;
 
   @FXML
   private MenuItem dmdUploadItem;
@@ -195,6 +200,11 @@ public class UploadsButtonController implements Initializable {
   }
 
   @FXML
+  public void onFplUpload() {
+    TableDialogs.directUpload(stage, AssetType.FPL, null, null);
+  }
+
+  @FXML
   public void onBamCfgUpload() {
     List<GameRepresentation> selectedItems = getSelections();
     if (selectedItems != null && !selectedItems.isEmpty()) {
@@ -269,6 +279,7 @@ public class UploadsButtonController implements Initializable {
     altSoundUploadItem.setVisible(vpxEmulator);
     altColorUploadItem.setVisible(vpxEmulator);
     dmdUploadItem.setVisible(vpxEmulator);
+    fplItem.setVisible(fpEmulator);
     patchItem.setVisible(vpxEmulator);
     iniUploadMenuItem.setVisible(vpxEmulator);
     povItem.setVisible(vpxEmulator);

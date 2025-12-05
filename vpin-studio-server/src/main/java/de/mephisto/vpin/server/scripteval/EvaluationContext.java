@@ -180,7 +180,8 @@ public class EvaluationContext {
       onEvalVars.add(var);
     } 
     else {
-//      LOG.error("Expression for variable '{}'' cannot be evaluated, the variable remains undefined !", var);
+      //...a bit too verbose
+      //LOG.error("Expression for variable '{}'' cannot be evaluated, the variable remains undefined !", var);
     }
   }
 

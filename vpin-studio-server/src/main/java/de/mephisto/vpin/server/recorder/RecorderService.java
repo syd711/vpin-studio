@@ -12,7 +12,7 @@ import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
 import de.mephisto.vpin.restclient.recorder.*;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
-import de.mephisto.vpin.server.fp.FPService;
+import de.mephisto.vpin.server.fp.FuturePinballService;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
@@ -76,7 +76,7 @@ public class RecorderService {
   private VPXService vpxService;
 
   @Autowired
-  private FPService fpService;
+  private FuturePinballService futurePinballService;
 
   @Autowired
   private NotificationService notificationService;
@@ -236,7 +236,7 @@ public class RecorderService {
       }
     }
     else if (game.isFpGame()) {
-      fpService.play(game, altExe);
+      futurePinballService.play(game, altExe);
     }
     else {
       throw new UnsupportedOperationException("Unsupported emulator: " + game.getEmulator());

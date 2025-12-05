@@ -13,13 +13,14 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
 import java.util.Optional;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class VBSManager {
-  private final static Logger LOG = LoggerFactory.getLogger(VBSManager.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private static final VBSManager instance = new VBSManager();
 

@@ -79,6 +79,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -92,7 +93,7 @@ import static de.mephisto.vpin.ui.Studio.*;
 public class TableOverviewController extends BaseTableController<GameRepresentation, GameRepresentationModel>
     implements Initializable, StudioFXController, ListChangeListener<GameRepresentationModel>, PreferenceChangeListener, StudioEventListener {
 
-  private final static Logger LOG = LoggerFactory.getLogger(TableOverviewController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static final int ALL_VPX_ID = -10;
 
