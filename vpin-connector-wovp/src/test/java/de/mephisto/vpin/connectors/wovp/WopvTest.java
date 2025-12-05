@@ -19,6 +19,15 @@ public class WopvTest {
   }
 
   @Test
+  public void testWovpSubmit() throws Exception {
+    String key = System.getenv("WOVP_KEY");
+    if (!StringUtils.isEmpty(key)) {
+      Wovp wovp = Wovp.create(key);
+
+    }
+  }
+
+  @Test
   public void testApiKey() {
     String key = System.getenv("WOVP_KEY");
     if (!StringUtils.isEmpty(key)) {

@@ -376,7 +376,6 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
       }
     });
     bindSearchField();
-    onViewActivated(null);
 
     EventManager.getInstance().addListener(this);
   }
@@ -502,6 +501,10 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
     public WeeklyCompetitionModel(CompetitionRepresentation competition) {
       this.competition = competition;
       this.game = client.getGameService().getGame(competition.getGameId());
+    }
+
+    public CompetitionRepresentation getCompetition() {
+      return competition;
     }
 
     public String getName() {

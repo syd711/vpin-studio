@@ -15,6 +15,7 @@ import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.wovp.WOVPSettings;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionDiscordDialogController;
 import javafx.animation.TranslateTransition;
@@ -51,11 +52,11 @@ import static de.mephisto.vpin.ui.Studio.client;
 public class CompetitionsController implements Initializable, StudioFXController, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(CompetitionsController.class);
 
-  private static final int TAB_OFFLINE = 0;
-  private static final int TAB_ONLINE = 1;
-  private static final int TAB_TABLE_SUBS = 2;
-  private static final int TAB_ISCORED = 3;
-  private static final int TAB_WEEKLY = 4;
+  private static final String TAB_OFFLINE = "Offline Competitions";
+  private static final String TAB_ONLINE = "Online Competitions";
+  private static final String TAB_TABLE_SUBS = "Table Subscriptions";
+  private static final String TAB_ISCORED = "iScored Competitions";
+  private static final String TAB_WEEKLY = "Weekly Competitions";
 
   @FXML
   private BorderPane root;
@@ -168,7 +169,7 @@ public class CompetitionsController implements Initializable, StudioFXController
   public void onViewActivated(NavigationOptions options) {
     refreshUsers(competition);
     competitionMembersPane.setExpanded(competition.isPresent() && competition.get().getType().equals(CompetitionType.DISCORD.name()));
-    refreshView(tabPane.getSelectionModel().selectedIndexProperty().get());
+    refreshView(tabPane.getSelectionModel().getSelectedItem());
     discordController.onViewActivated(options);
     tableSubscriptionsController.onViewActivated(options);
 
@@ -176,21 +177,22 @@ public class CompetitionsController implements Initializable, StudioFXController
       if (options.getModel() instanceof CompetitionType) {
         CompetitionType competitionType = (CompetitionType) options.getModel();
         IScoredSettings iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
+        WOVPSettings wovpSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
 
         if (competitionType.equals(CompetitionType.OFFLINE)) {
-          tabPane.getSelectionModel().select(TAB_OFFLINE);
+          tabPane.getSelectionModel().select(offlineTab);
         }
         else if (competitionType.equals(CompetitionType.DISCORD)) {
-          tabPane.getSelectionModel().select(TAB_ONLINE);
+          tabPane.getSelectionModel().select(onlineTab);
         }
         else if (competitionType.equals(CompetitionType.SUBSCRIPTION)) {
-          tabPane.getSelectionModel().select(TAB_TABLE_SUBS);
+          tabPane.getSelectionModel().select(tableSubscriptionsTab);
         }
         else if (competitionType.equals(CompetitionType.ISCORED) && iScoredSettings.isEnabled()) {
-          tabPane.getSelectionModel().select(TAB_ISCORED);
+          tabPane.getSelectionModel().select(iScoredSubscriptionsTab);
         }
-        else if (competitionType.equals(CompetitionType.WEEKLY)) {
-          tabPane.getSelectionModel().select(TAB_WEEKLY);
+        else if (competitionType.equals(CompetitionType.WEEKLY) && wovpSettings.isEnabled() && wovpSettings.isApiKeySet()) {
+          tabPane.getSelectionModel().select(weeklySubscriptionsTab);
         }
       }
     }
@@ -210,8 +212,9 @@ public class CompetitionsController implements Initializable, StudioFXController
 
   @FXML
   private void onCompetitionSettings() {
-    int selectedTab = getSelectedTab();
-    switch (selectedTab) {
+    Tab selectedTab = getSelectedTab();
+    String title = selectedTab.getText();
+    switch (title) {
       case TAB_OFFLINE: {
         PreferencesController.open("player_rankings");
         break;
@@ -294,45 +297,20 @@ public class CompetitionsController implements Initializable, StudioFXController
     }
   }
 
-  private int getSelectedTab() {
-    int selectedIndex = tabPane.getSelectionModel().getSelectedIndex();
-    return getSelectedTab(selectedIndex);
+  private Tab getSelectedTab() {
+    return tabPane.getSelectionModel().getSelectedItem();
   }
 
-
-  /**
-   * Convert the selected tab index into TAB id, managing invisible tabs
-   */
-  private int getSelectedTab(int index) {
-    int cnt = 0;
-    if (tabPane.getTabs().contains(offlineTab) && cnt++ == index) {
-      return TAB_OFFLINE;
-    }
-    if (tabPane.getTabs().contains(onlineTab) && cnt++ == index) {
-      return TAB_ONLINE;
-    }
-    if (tabPane.getTabs().contains(tableSubscriptionsTab) && cnt++ == index) {
-      return TAB_TABLE_SUBS;
-    }
-    if (tabPane.getTabs().contains(iScoredSubscriptionsTab) && cnt++ == index) {
-      return TAB_ISCORED;
-    }
-    if (tabPane.getTabs().contains(weeklySubscriptionsTab) && cnt++ == index) {
-      return TAB_WEEKLY;
-    }
-    // should not happen
-    return -1;
-  }
-
-  private void refreshView(Number t1) {
-    if (t1.intValue() == TAB_OFFLINE) {
+  private void refreshView(Tab tab) {
+    String title = tab.getText();
+    if (title.equals(TAB_OFFLINE)) {
       NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Offline Competitions"));
       Optional<CompetitionRepresentation> selection = offlineController.getSelection();
       updateSelection(selection);
       checkTitledPanes(CompetitionType.OFFLINE);
       offlineController.onReload();
     }
-    else if (t1.intValue() == TAB_ONLINE) {
+    else if (title.equals(TAB_ONLINE)) {
       if (discordController != null) {
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions"));
         Optional<CompetitionRepresentation> selection = discordController.getSelection();
@@ -341,7 +319,7 @@ public class CompetitionsController implements Initializable, StudioFXController
         discordController.onReload();
       }
     }
-    else if (t1.intValue() == TAB_TABLE_SUBS) {
+    else if (title.equals(TAB_TABLE_SUBS)) {
       if (tableSubscriptionsController != null) {
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Table Subscriptions"));
         Optional<CompetitionRepresentation> selection = tableSubscriptionsController.getSelection();
@@ -350,17 +328,23 @@ public class CompetitionsController implements Initializable, StudioFXController
         tableSubscriptionsController.onReload();
       }
     }
-    else if (t1.intValue() == TAB_ISCORED) {
+    else if (title.equals(TAB_ISCORED)) {
       if (iScoredSubscriptionsTab != null) {
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
         updateSelection(Optional.empty());
         checkTitledPanes(CompetitionType.ISCORED);
       }
     }
-    else if (t1.intValue() == TAB_WEEKLY) {
+    else if (title.equals(TAB_WEEKLY)) {
       if (weeklySubscriptionsTab != null) {
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Weekly Challenges"));
-        updateSelection(Optional.empty());
+        Optional<WeeklySubscriptionsController.WeeklyCompetitionModel> selection = weeklySubscriptionsController.getSelection();
+        if (selection.isPresent()) {
+          updateSelection(Optional.of(selection.get().getCompetition()));
+        }
+        else {
+          updateSelection(Optional.empty());
+        }
         checkTitledPanes(CompetitionType.WEEKLY);
       }
     }
@@ -369,23 +353,24 @@ public class CompetitionsController implements Initializable, StudioFXController
     }
   }
 
-  private StudioFXController getControllerForTab(int tabIndex) {
-    if (tabIndex == TAB_OFFLINE) {
+  private StudioFXController getControllerForTab(Tab tab) {
+    String title = tab.getText();
+    if (title.equals(TAB_OFFLINE)) {
       return offlineController;
     }
-    if (tabIndex == TAB_ONLINE) {
+    if (title.equals(TAB_ONLINE)) {
       return discordController;
     }
-    if (tabIndex == TAB_TABLE_SUBS) {
+    if (title.equals(TAB_TABLE_SUBS)) {
       return tableSubscriptionsController;
     }
-    if (tabIndex == TAB_ISCORED) {
+    if (title.equals(TAB_ISCORED)) {
       return iScoredSubscriptionsController;
     }
-    if (tabIndex == TAB_WEEKLY) {
+    if (title.equals(TAB_WEEKLY)) {
       return weeklySubscriptionsController;
     }
-    throw new UnsupportedOperationException("Failed to find controller for index " + tabIndex);
+    throw new UnsupportedOperationException("Failed to find controller for tab " + title);
   }
 
   public void setCompetition(CompetitionRepresentation competition) {
@@ -403,10 +388,12 @@ public class CompetitionsController implements Initializable, StudioFXController
   private void refreshDashboard(Optional<CompetitionRepresentation> competitionRepresentation) {
     dashboardWebView.setVisible(false);
     dashboardStatusLabel.setVisible(false);
-    rulesBtn.setVisible(competitionRepresentation.isPresent() && competition.get().getType().equals(CompetitionType.WEEKLY.name()));
+    rulesBtn.setVisible(competitionRepresentation.isPresent() && competitionRepresentation.get().getType().equals(CompetitionType.WEEKLY.name()));
     scoreBox.setVisible(false);
+    scoreBox.getChildren().removeAll(scoreBox.getChildren());
 
     if (competitionRepresentation.isPresent()) {
+      rulesBtn.setVisible(competitionRepresentation.isPresent() && competitionRepresentation.get().getType().equals(CompetitionType.WEEKLY.name()));
       CompetitionRepresentation competition = competitionRepresentation.get();
       if (competition.getType().equals(CompetitionType.ISCORED.name())) {
         String dashboardUrl = competitionRepresentation.get().getUrl();
@@ -432,7 +419,6 @@ public class CompetitionsController implements Initializable, StudioFXController
         dashboardStatusLabel.setText("Loading Highscores...");
         dashboardStatusLabel.setVisible(true);
 
-
         JFXFuture.supplyAsync(() -> {
           List<Pane> children = new ArrayList<>();
           try {
@@ -452,8 +438,10 @@ public class CompetitionsController implements Initializable, StudioFXController
           return children;
         }).thenAcceptLater(children -> {
           dashboardStatusLabel.setVisible(false);
-          scoreBox.getChildren().addAll(children);
-          scoreBox.setVisible(!children.isEmpty());
+          if (tabPane.getSelectionModel().getSelectedItem().equals(weeklySubscriptionsTab)) {
+            scoreBox.getChildren().addAll(children);
+            scoreBox.setVisible(!children.isEmpty());
+          }
         });
       }
     }
@@ -466,12 +454,13 @@ public class CompetitionsController implements Initializable, StudioFXController
     endLabel.setText("-");
     scoreValidationLabel.setText("-");
     scoreLimitLabel.setText("-");
+    serverBox.getChildren().removeAll(serverBox.getChildren());
 
     if (competitionRepresentation.isPresent()) {
       String type = competitionRepresentation.get().getType();
-      if (type.equals(CompetitionType.DISCORD.name()) || type.equals(CompetitionType.SUBSCRIPTION.name())) {
+      if (type.equals(CompetitionType.DISCORD.name()) || type.equals(CompetitionType.SUBSCRIPTION.name()) || type.equals(CompetitionType.WEEKLY.name())) {
         CompetitionRepresentation competition = competitionRepresentation.get();
-        if (metaDataPane.isVisible() && metaDataPane.isDisabled()) {
+        if (metaDataPane.isVisible() && !metaDataPane.isDisabled()) {
           uuidLabel.setText(competition.getUuid());
           serverBox.getChildren().removeAll(serverBox.getChildren());
           ownerBox.getChildren().removeAll(ownerBox.getChildren());
@@ -505,51 +494,56 @@ public class CompetitionsController implements Initializable, StudioFXController
 
           createdAtLabel.setText(SimpleDateFormat.getDateTimeInstance().format(competition.getCreatedAt()));
 
-          DiscordServer discordServer = client.getDiscordService().getDiscordServer(competition.getDiscordServerId());
-          if (discordServer != null) {
-            String avatarUrl = discordServer.getAvatarUrl();
-            Image image = null;
-            if (avatarUrl == null) {
-              image = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
-            }
-            else {
-              image = new Image(avatarUrl);
+          //TODO mpf
+          if (type.equals(CompetitionType.DISCORD.name()) || type.equals(CompetitionType.SUBSCRIPTION.name())) {
+            DiscordServer discordServer = client.getDiscordService().getDiscordServer(competition.getDiscordServerId());
+            if (discordServer != null) {
+              String avatarUrl = discordServer.getAvatarUrl();
+              Image image = null;
+              if (avatarUrl == null) {
+                image = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
+              }
+              else {
+                image = new Image(avatarUrl);
+              }
+
+              ImageView view = new ImageView(image);
+              view.setPreserveRatio(true);
+              view.setFitWidth(50);
+              view.setFitHeight(50);
+              serverBox.getChildren().removeAll(serverBox.getChildren());
+              Label label = new Label(discordServer.getName());
+              label.setStyle("-fx-font-size: 14px;");
+
+              CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
+              serverBox.getChildren().addAll(view, label);
             }
 
-            ImageView view = new ImageView(image);
-            view.setPreserveRatio(true);
-            view.setFitWidth(50);
-            view.setFitHeight(50);
-            serverBox.getChildren().removeAll(serverBox.getChildren());
-            Label label = new Label(discordServer.getName());
-            label.setStyle("-fx-font-size: 14px;");
+            List<DiscordChannel> discordChannels = client.getDiscordService().getDiscordChannels(competition.getDiscordServerId());
+            Optional<DiscordChannel> first = discordChannels.stream().filter(channel -> channel.getId() == competition.getDiscordChannelId()).findFirst();
+            first.ifPresent(discordChannel -> channelLabel.setText(discordChannel.getName()));
 
-            CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
-            serverBox.getChildren().addAll(view, label);
+
+            PlayerRepresentation discordPlayer = client.getDiscordService().getDiscordPlayer(competition.getDiscordServerId(), Long.valueOf(competition.getOwner()));
+            if (discordPlayer != null) {
+              HBox hBox = new HBox(6);
+              hBox.setAlignment(Pos.CENTER_LEFT);
+              hBox = new HBox(6);
+              hBox.setAlignment(Pos.CENTER_LEFT);
+              Image image = new Image(client.getCachedUrlImage(discordPlayer.getAvatarUrl()));
+              ImageView view = new ImageView(image);
+              view.setPreserveRatio(true);
+              view.setFitWidth(50);
+              view.setFitHeight(50);
+              ownerBox.getChildren().removeAll(ownerBox.getChildren());
+              Label label = new Label(discordPlayer.getName());
+              label.setStyle("-fx-font-size: 14px;");
+
+              CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
+              ownerBox.getChildren().addAll(view, label);
+            }
           }
 
-          List<DiscordChannel> discordChannels = client.getDiscordService().getDiscordChannels(competition.getDiscordServerId());
-          Optional<DiscordChannel> first = discordChannels.stream().filter(channel -> channel.getId() == competition.getDiscordChannelId()).findFirst();
-          first.ifPresent(discordChannel -> channelLabel.setText(discordChannel.getName()));
-
-          PlayerRepresentation discordPlayer = client.getDiscordService().getDiscordPlayer(competition.getDiscordServerId(), Long.valueOf(competition.getOwner()));
-          if (discordPlayer != null) {
-            HBox hBox = new HBox(6);
-            hBox.setAlignment(Pos.CENTER_LEFT);
-            hBox = new HBox(6);
-            hBox.setAlignment(Pos.CENTER_LEFT);
-            Image image = new Image(client.getCachedUrlImage(discordPlayer.getAvatarUrl()));
-            ImageView view = new ImageView(image);
-            view.setPreserveRatio(true);
-            view.setFitWidth(50);
-            view.setFitHeight(50);
-            ownerBox.getChildren().removeAll(ownerBox.getChildren());
-            Label label = new Label(discordPlayer.getName());
-            label.setStyle("-fx-font-size: 14px;");
-
-            CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
-            ownerBox.getChildren().addAll(view, label);
-          }
 
           if (competition.getStartDate() != null) {
             startLabel.setText(DateFormat.getDateInstance().format(competition.getStartDate()));
@@ -603,7 +597,7 @@ public class CompetitionsController implements Initializable, StudioFXController
       case WEEKLY: {
         competitionMembersPane.setDisable(true);
         competitionMembersPane.setExpanded(false);
-        metaDataPane.setDisable(true);
+        metaDataPane.setDisable(false);
         metaDataPane.setExpanded(false);
 
         dashboardPane.setDisable(false);
@@ -618,8 +612,9 @@ public class CompetitionsController implements Initializable, StudioFXController
   }
 
   private void updateForTabSelection(Optional<CompetitionRepresentation> competitionRepresentation) {
-    int index = tabPane.getSelectionModel().selectedIndexProperty().get();
-    if (index == TAB_OFFLINE) {
+    Tab tab = tabPane.getSelectionModel().getSelectedItem();
+    String title = tab.getText();
+    if (title.equals(TAB_OFFLINE)) {
       if (competitionRepresentation.isPresent()) {
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Offline Competitions", competitionRepresentation.get().getName()));
       }
@@ -627,7 +622,7 @@ public class CompetitionsController implements Initializable, StudioFXController
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Offline Competitions"));
       }
     }
-    else if (index == TAB_ONLINE) {
+    else if (title.equals(TAB_ONLINE)) {
       if (competitionRepresentation.isPresent()) {
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions", competitionRepresentation.get().getName()));
       }
@@ -635,7 +630,7 @@ public class CompetitionsController implements Initializable, StudioFXController
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions"));
       }
     }
-    else if (index == TAB_TABLE_SUBS) {
+    else if (title.equals(TAB_TABLE_SUBS)) {
       if (competitionRepresentation.isPresent()) {
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Table Subscriptions", competitionRepresentation.get().getName()));
       }
@@ -643,7 +638,7 @@ public class CompetitionsController implements Initializable, StudioFXController
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Table Subscriptions"));
       }
     }
-    else if (index == TAB_ISCORED) {
+    else if (title.equals(TAB_ISCORED)) {
       if (competitionRepresentation.isPresent()) {
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions", competitionRepresentation.get().getName()));
       }
@@ -651,7 +646,7 @@ public class CompetitionsController implements Initializable, StudioFXController
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
       }
     }
-    else if (index == TAB_WEEKLY) {
+    else if (title.equals(TAB_WEEKLY)) {
       if (competitionRepresentation.isPresent()) {
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Weekly Challenges", competitionRepresentation.get().getName()));
       }
@@ -703,6 +698,7 @@ public class CompetitionsController implements Initializable, StudioFXController
       offlineController = loader.getController();
       offlineController.setCompetitionsController(this);
       offlineTab.setContent(parent);
+      offlineTab.setText(TAB_OFFLINE);
     }
     catch (IOException e) {
       LOG.error("failed to load offline: " + e.getMessage(), e);
@@ -714,6 +710,7 @@ public class CompetitionsController implements Initializable, StudioFXController
       discordController = loader.getController();
       discordController.setCompetitionsController(this);
       onlineTab.setContent(parent);
+      onlineTab.setText(TAB_ONLINE);
     }
     catch (IOException e) {
       LOG.error("failed to load online: " + e.getMessage(), e);
@@ -725,6 +722,7 @@ public class CompetitionsController implements Initializable, StudioFXController
       tableSubscriptionsController = loader.getController();
       tableSubscriptionsController.setCompetitionsController(this);
       tableSubscriptionsTab.setContent(parent);
+      tableSubscriptionsTab.setText(TAB_TABLE_SUBS);
     }
     catch (IOException e) {
       LOG.error("failed to load subscriptions: " + e.getMessage(), e);
@@ -737,6 +735,7 @@ public class CompetitionsController implements Initializable, StudioFXController
         iScoredSubscriptionsController = loader.getController();
         iScoredSubscriptionsController.setCompetitionsController(this);
         iScoredSubscriptionsTab.setContent(parent);
+        iScoredSubscriptionsTab.setText(TAB_ISCORED);
       }
       catch (IOException e) {
         LOG.error("failed to load subscriptions: " + e.getMessage(), e);
@@ -757,16 +756,23 @@ public class CompetitionsController implements Initializable, StudioFXController
       weeklySubscriptionsController = loader.getController();
       weeklySubscriptionsController.setCompetitionsController(this);
       weeklySubscriptionsTab.setContent(parent);
+      weeklySubscriptionsTab.setText(TAB_WEEKLY);
+
+      WOVPSettings wovpSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
+      if (!wovpSettings.isEnabled() || !wovpSettings.isApiKeySet()) {
+        tabPane.getTabs().remove(weeklySubscriptionsTab);
+      }
     }
     catch (IOException e) {
-      LOG.error("failed to load subscriptions: " + e.getMessage(), e);
+      LOG.error("failed to load weekly: " + e.getMessage(), e);
     }
   }
 
 
   private StudioFXController getActiveController() {
-    int selectedIndex = tabPane.getSelectionModel().getSelectedIndex();
-    switch (selectedIndex) {
+    Tab selectedTab = getSelectedTab();
+    String title = selectedTab.getText();
+    switch (title) {
       case TAB_OFFLINE: {
         return offlineController;
       }
@@ -796,11 +802,12 @@ public class CompetitionsController implements Initializable, StudioFXController
 
   @Override
   public void preferencesChanged(String key, Object value) {
-    if (PreferenceNames.ISCORED_SETTINGS.equals(key)) {
+    if (PreferenceNames.ISCORED_SETTINGS.equals(key) || PreferenceNames.WOVP_SETTINGS.equals(key)) {
       IScoredSettings iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
+      WOVPSettings wovpSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
 
       Platform.runLater(() -> {
-        int selectedIndex = tabPane.getSelectionModel().getSelectedIndex();
+        Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
 
         if (iScoredSettings.isEnabled()) {
           if (!tabPane.getTabs().contains(iScoredSubscriptionsTab)) {
@@ -809,11 +816,20 @@ public class CompetitionsController implements Initializable, StudioFXController
         }
         else {
           tabPane.getTabs().remove(iScoredSubscriptionsTab);
+          selectedTab = offlineTab;
         }
 
-        if (selectedIndex == 3 && !iScoredSettings.isEnabled()) {
-          tabPane.getSelectionModel().select(0);
+        if (wovpSettings.isEnabled() && wovpSettings.isApiKeySet()) {
+          if (!tabPane.getTabs().contains(weeklySubscriptionsTab)) {
+            tabPane.getTabs().add(weeklySubscriptionsTab);
+          }
         }
+        else {
+          tabPane.getTabs().remove(weeklySubscriptionsTab);
+          selectedTab = offlineTab;
+        }
+
+        tabPane.getSelectionModel().select(selectedTab);
       });
     }
   }
@@ -829,10 +845,10 @@ public class CompetitionsController implements Initializable, StudioFXController
     rulesBtn.managedProperty().bindBidirectional(rulesBtn.visibleProperty());
 
     updateSelection(Optional.empty());
-    tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, oldTabIndex, newTabIndex) -> {
-      getControllerForTab(oldTabIndex.intValue()).onViewDeactivated();
+    tabPane.getSelectionModel().selectedItemProperty().addListener((observableValue, oldTabIndex, newTabIndex) -> {
+      getControllerForTab(oldTabIndex).onViewDeactivated();
       refreshView(newTabIndex);
-      getControllerForTab(newTabIndex.intValue()).onViewActivated(null);
+      getControllerForTab(newTabIndex).onViewActivated(null);
     });
     dashboardStatusLabel.managedProperty().bindBidirectional(dashboardStatusLabel.visibleProperty());
     checkTitledPanes(CompetitionType.OFFLINE);

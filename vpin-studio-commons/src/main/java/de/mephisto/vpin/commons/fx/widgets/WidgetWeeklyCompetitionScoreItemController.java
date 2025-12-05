@@ -8,11 +8,13 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import org.apache.commons.lang3.StringUtils;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -46,6 +48,9 @@ public class WidgetWeeklyCompetitionScoreItemController extends WidgetController
   private Label scoreLabel;
 
   @FXML
+  private Label statusLabel;
+
+  @FXML
   private Label changeDateLabel;
 
   // Add a public no-args constructor
@@ -57,6 +62,8 @@ public class WidgetWeeklyCompetitionScoreItemController extends WidgetController
   public void initialize(URL url, ResourceBundle resourceBundle) {
     positionLabel.managedProperty().bindBidirectional(positionLabel.visibleProperty());
     scoreLabel.managedProperty().bindBidirectional(scoreLabel.visibleProperty());
+    statusLabel.managedProperty().bindBidirectional(statusLabel.visibleProperty());
+    statusLabel.setVisible(false);
   }
 
   public void setData(CompetitionScore score) {
@@ -101,6 +108,15 @@ public class WidgetWeeklyCompetitionScoreItemController extends WidgetController
     }
 
     changeDateLabel.setText(score.getLeague() != null ? score.getLeague() : "");
+
+    if (score.isPending()) {
+      statusLabel.setVisible(true);
+      String tt = "Score has not been approved yet.";
+      if (!StringUtils.isEmpty(score.getNote())) {
+        tt = tt + "\n\n\"" + score.getNote() + "\"";
+      }
+      statusLabel.setTooltip(new Tooltip(tt));
+    }
 
     JFXFuture.supplyAsync(() -> {
       Image backgroundImage = new Image(client.getCachedUrlImage(score.getFlagUrl()));

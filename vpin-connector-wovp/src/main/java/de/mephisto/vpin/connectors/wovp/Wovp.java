@@ -48,6 +48,10 @@ public class Wovp {
     return doPost(json, Challenges.class);
   }
 
+  public void submitScore() {
+
+  }
+
   public String validateKey() {
     if (apiKey != null) {
       HttpClient client = HttpClient.newBuilder().build();
@@ -106,5 +110,4 @@ public class Wovp {
       throw e;
     }
   }
-
 }

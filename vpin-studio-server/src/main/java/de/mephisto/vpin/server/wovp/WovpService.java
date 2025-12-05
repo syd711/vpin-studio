@@ -1,10 +1,7 @@
 package de.mephisto.vpin.server.wovp;
 
 import de.mephisto.vpin.connectors.wovp.Wovp;
-import de.mephisto.vpin.connectors.wovp.models.Challenge;
-import de.mephisto.vpin.connectors.wovp.models.Challenges;
-import de.mephisto.vpin.connectors.wovp.models.ScoreBoardItem;
-import de.mephisto.vpin.connectors.wovp.models.ScoreBoardItemPositionValues;
+import de.mephisto.vpin.connectors.wovp.models.*;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.competitions.CompetitionScore;
 import de.mephisto.vpin.restclient.wovp.WOVPSettings;
@@ -63,8 +60,11 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
 
   private CompetitionScore toCompetitionScore(Challenge challenge, ScoreBoardItem item) {
     ScoreBoardItemPositionValues values = item.getValues();
-
-    String backgroundImageUrl = challenge.getPinballTable().getBackglassImage().getMediumVariant().getUrl();
+    BackglassImage backglassImage = challenge.getPinballTable().getBackglassImage();
+    String backgroundImageUrl = null;
+    if (backglassImage != null) {
+      backgroundImageUrl = backglassImage.getMediumVariant().getUrl();
+    }
 
     CompetitionScore score = new CompetitionScore();
     score.setChallengeImageUrl(backgroundImageUrl);
@@ -78,6 +78,8 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
     score.setParticipantCountryCode(values.getParticipantCountryCode());
     score.setPlatform(values.getParticipantPlayingPlatform());
     score.setParticipantId(values.getParticipantId());
+    score.setPending(values.isPending());
+    score.setNote(values.getApprovalNote());
     return score;
   }
 

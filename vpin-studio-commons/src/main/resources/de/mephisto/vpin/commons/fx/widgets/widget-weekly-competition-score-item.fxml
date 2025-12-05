@@ -8,8 +8,9 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.widgets.WidgetWeeklyCompetitionScoreItemController">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.widgets.WidgetWeeklyCompetitionScoreItemController">
     <center>
         <VBox fx:id="highscoreVBox" BorderPane.alignment="TOP_LEFT">
             <children>
@@ -18,7 +19,16 @@
                         <VBox alignment="CENTER_RIGHT" BorderPane.alignment="BOTTOM_RIGHT">
                             <children>
                                 <Label fx:id="scoreLabel" text="score" textFill="WHITE" />
-                                <Label fx:id="changeDateLabel" text="Label" textFill="WHITE" />
+                        <HBox alignment="CENTER_RIGHT" spacing="6.0">
+                           <children>
+                                      <Label fx:id="changeDateLabel" text="Label" textFill="WHITE" />
+                              <Label fx:id="statusLabel" layoutX="10.0" layoutY="10.0" textFill="WHITE">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2p-progress-question" iconSize="18" />
+                                 </graphic>
+                              </Label>
+                           </children>
+                        </HBox>
                             </children>
                         </VBox>
                     </bottom>

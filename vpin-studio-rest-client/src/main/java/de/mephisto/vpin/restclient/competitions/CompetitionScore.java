@@ -15,6 +15,24 @@ public class CompetitionScore {
   private String league;
   private int platform;
   private Date creationDate;
+  private String note;
+  private boolean pending = false;
+
+  public String getNote() {
+    return note;
+  }
+
+  public void setNote(String note) {
+    this.note = note;
+  }
+
+  public boolean isPending() {
+    return pending;
+  }
+
+  public void setPending(boolean pending) {
+    this.pending = pending;
+  }
 
   public String getFlagUrl() {
     return flagUrl;
