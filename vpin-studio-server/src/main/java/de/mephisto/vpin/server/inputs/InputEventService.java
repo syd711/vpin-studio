@@ -28,6 +28,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PreDestroy;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
@@ -359,5 +360,10 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
     GameController.getInstance().addListener(this);
     LOG.info("Server startup finished, running version is " + systemService.getVersion());
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
+  }
+
+  @PreDestroy
+  public void onExit() {
+    ServerFX.getInstance().shutdown();
   }
 }

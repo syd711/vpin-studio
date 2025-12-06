@@ -1,3 +1,12 @@
+## Release Notes 4.4.5
+
+## Changes 
+
+- Improved logo search
+- Added shutdown
+
+---
+
 ## Release Notes 4.4.4
 
 ## Changes

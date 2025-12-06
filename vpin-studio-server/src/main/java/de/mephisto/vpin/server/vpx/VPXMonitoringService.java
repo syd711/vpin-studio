@@ -3,7 +3,6 @@ package de.mephisto.vpin.server.vpx;
 import com.sun.jna.platform.DesktopWindow;
 import com.sun.jna.platform.WindowUtils;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
@@ -18,13 +17,14 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static de.mephisto.vpin.server.VPinStudioServer.Features;
-
+import javax.annotation.PreDestroy;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 @Service
 public class VPXMonitoringService implements InitializingBean, PreferenceChangedListener, Runnable {
@@ -119,16 +119,6 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
   }
 
   @Override
-  public void afterPropertiesSet() throws Exception {
-    if (Features.VPX_MONITORING) {
-      scheduler.scheduleAtFixedRate(this, 0, 5, TimeUnit.SECONDS);
-      preferencesService.addChangeListener(this);
-      preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
-    }
-    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
-  }
-
-  @Override
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
     try {
       if (PreferenceNames.SERVER_SETTINGS.equalsIgnoreCase(propertyName)) {
@@ -146,5 +136,20 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
     catch (Exception e) {
       LOG.error("Failed to update VPX monitoring: " + e.getMessage(), e);
     }
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    if (Features.VPX_MONITORING) {
+      scheduler.scheduleAtFixedRate(this, 0, 5, TimeUnit.SECONDS);
+      preferencesService.addChangeListener(this);
+      preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
+    }
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
+  }
+
+  @PreDestroy
+  public void onExit() {
+    scheduler.shutdownNow();
   }
 }
