@@ -317,7 +317,6 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
 
   @Override
   public void afterPropertiesSet() {
-
     ServerFX.client = overlayClient;
     new Thread(() -> {
       ServerFX.main(new String[]{});
@@ -362,8 +361,7 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 
-  @PreDestroy
-  public void onExit() {
-    ServerFX.getInstance().shutdown();
+  public void shutdown() {
+    shutdownThread.shutdown();
   }
 }

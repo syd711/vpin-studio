@@ -148,8 +148,7 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 
-  @PreDestroy
-  public void onExit() {
+  public void shutdown() {
     scheduler.shutdownNow();
   }
 }

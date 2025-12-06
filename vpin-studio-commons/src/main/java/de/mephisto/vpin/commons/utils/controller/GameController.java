@@ -17,6 +17,8 @@ public class GameController {
 
   private final List<GameControllerInputListener> listeners = new ArrayList<>();
 
+  private boolean running = true;
+
   private GameController() {
     new Thread(() -> {
       Controller[] controllers = null;
@@ -38,7 +40,7 @@ public class GameController {
 
       LOG.info("Starting GameController");
       Event event = new Event();
-      while (true) {
+      while (running) {
         for (Controller controller : filteredControllers) {
           if (controller.getType().equals(Controller.Type.MOUSE)) {
             continue;
@@ -81,6 +83,10 @@ public class GameController {
       INSTANCE = new GameController();
     }
     return INSTANCE;
+  }
+
+  public void shutdown() {
+    running = false;
   }
 
   public void addListener(GameControllerInputListener listener) {

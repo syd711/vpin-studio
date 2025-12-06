@@ -610,8 +610,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
     }
   }
 
-  @PreDestroy
-  public void onShutdown() {
+  public void shutdown() {
     this.setOffline();
   }
 }

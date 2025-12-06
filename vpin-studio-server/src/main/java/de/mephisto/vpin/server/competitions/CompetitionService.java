@@ -343,8 +343,7 @@ public class CompetitionService implements InitializingBean {
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 
-  @PreDestroy
-  public void onExit() {
+  public void shutdown() {
     scheduler.shutdown();
   }
 }
