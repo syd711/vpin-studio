@@ -20,8 +20,8 @@ import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.cards.DesignMode;
-import de.mephisto.vpin.ui.cards.HighscoreCardsController;
 import de.mephisto.vpin.ui.cards.DesignerGeneratorProgressModel;
+import de.mephisto.vpin.ui.cards.HighscoreCardsController;
 import de.mephisto.vpin.ui.cards.TemplateAssigmentProgressModel;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
@@ -46,7 +46,6 @@ import javafx.scene.media.Media;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,9 +58,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import static de.mephisto.vpin.ui.Studio.Features;
-import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.stage;
+import static de.mephisto.vpin.ui.Studio.*;
 
 public class TemplateEditorController implements Initializable, MediaPlayerListener, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(TemplateEditorController.class);
@@ -566,40 +563,43 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
     WidgetFactory.disposeMediaPane(mediaPane);
 
-    FrontendMediaItemRepresentation defaultMediaItem = null;
-    if(this.gameRepresentation.isPresent()) {
+    if (this.gameRepresentation.isPresent()) {
       GameRepresentation game = this.gameRepresentation.get();
 
 //      client.getImageCache().clearWheelCache();
       client.getFrontendService().clearCache(game.getId());
 
-      FrontendMediaRepresentation frontendMedia = client.getFrontendMedia(this.gameRepresentation.get().getId());
-      if (frontendMedia != null) {
-        if (getDesignMode().equals(DesignMode.wheel)) {
-          defaultMediaItem = frontendMedia.getDefaultMediaItem(VPinScreen.Wheel);
-        }
-        else if (getDesignMode().equals(DesignMode.highscoreCard)) {
-          CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
-          String popperScreen = cardSettings.getPopperScreen();
-          VPinScreen screen = StringUtils.isNotEmpty(popperScreen) ? VPinScreen.valueOfScreen(popperScreen) : null;
-          if (screen != null) {
-            defaultMediaItem = frontendMedia.getDefaultMediaItem(screen);
+      JFXFuture.supplyAsync(() -> {
+        FrontendMediaRepresentation frontendMedia = client.getFrontendMedia(this.gameRepresentation.get().getId());
+        if (frontendMedia != null) {
+          FrontendMediaItemRepresentation defaultMediaItem = null;
+          if (getDesignMode().equals(DesignMode.wheel)) {
+            return frontendMedia.getDefaultMediaItem(VPinScreen.Wheel);
+          }
+          else if (getDesignMode().equals(DesignMode.highscoreCard)) {
+            CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
+            String popperScreen = cardSettings.getPopperScreen();
+            VPinScreen screen = StringUtils.isNotEmpty(popperScreen) ? VPinScreen.valueOfScreen(popperScreen) : null;
+            if (screen != null) {
+              return frontendMedia.getDefaultMediaItem(screen);
+            }
           }
         }
-      }
-    }
-
-    if (defaultMediaItem == null) {
-      Label label = new Label("No media found");
-      label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
-      label.setUserData(null);
-      mediaPane.setCenter(label);
-    }
-    else {
-      assetDeleteBtn.setDisable(false);
-      assetViewBtn.setDisable(false);
-      assetMediaPlayer = WidgetFactory.createAssetMediaPlayer(client, defaultMediaItem, false, false);
-      mediaPane.setCenter(assetMediaPlayer);
+        return null;
+      }).thenAcceptLater((defaultMediaItem) -> {
+        if (defaultMediaItem == null) {
+          Label label = new Label("No media found");
+          label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
+          label.setUserData(null);
+          mediaPane.setCenter(label);
+        }
+        else {
+          assetDeleteBtn.setDisable(false);
+          assetViewBtn.setDisable(false);
+          assetMediaPlayer = WidgetFactory.createAssetMediaPlayer(client, defaultMediaItem, false, false);
+          mediaPane.setCenter(assetMediaPlayer);
+        }
+      });
     }
   }
 

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -8,10 +9,8 @@ import de.mephisto.vpin.ui.util.tags.TagField;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -19,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -93,9 +93,14 @@ public class TableDataTabCommentsController implements Initializable {
     useErrorLabel.setOnMouseClicked(mouseEvent -> appendTextAndFocus("//ERROR "));
     useOutdatedLabel.setOnMouseClicked(mouseEvent -> appendTextAndFocus("//OUTDATED "));
 
-    List<String> initialTags = client.getTaggingService().getTags();
-    tagField = new TagField(initialTags);
+    tagField = new TagField(Collections.emptyList());
     tags.getChildren().add(tagField);
+
+    JFXFuture.supplyAsync(() -> {
+      return client.getTaggingService().getTags();
+    }).thenAcceptLater((initialTags) -> {
+      tagField.setSuggestions(initialTags);
+    });
   }
 
   public void initBindings(TableDataController tableDataController) {

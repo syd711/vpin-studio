@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogHeaderController;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.connectors.vps.VPS;
@@ -32,6 +33,7 @@ import de.mephisto.vpin.ui.tables.panels.PropperRenamingController;
 import de.mephisto.vpin.ui.tables.vps.VpsTableVersionCell;
 import de.mephisto.vpin.ui.util.AutoCompleteTextField;
 import de.mephisto.vpin.ui.util.AutoCompleteTextFieldChangeListener;
+import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.binding.BeanBinder;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -944,9 +946,17 @@ public class TableDataController extends BasePrevNextController implements AutoC
   }
 
   protected void switchGame(GameRepresentation game) {
+    this.game = game;
+
+    JFXFuture.supplyAsync(() -> {
+      return client.getFrontendService().getTableDetails(game.getId());
+    }).thenAcceptLater((tableDetails) -> {
+      switchGame(game, tableDetails);
+    });
+  }
+
+  protected void switchGame(GameRepresentation game, TableDetails tableDetails) {
     try {
-      this.game = game;
-      TableDetails tableDetails = client.getFrontendService().getTableDetails(game.getId());
       tableDetailsBinder.setBean(tableDetails, true);
 
       if (client.getEmulatorService().isVpxGame(game) || client.getEmulatorService().isFpGame(game)) {
@@ -963,10 +973,9 @@ public class TableDataController extends BasePrevNextController implements AutoC
       }
 
       if (client.getEmulatorService().isVpxGame(game)) {
-        HighscoreFiles highscoreFiles = client.getGameService().getHighscoreFiles(game.getId());
         scoreDataTab.setDisable(false);
         if (tableDataTabScoreDataController != null) {
-          tableDataTabScoreDataController.setGame(game, tableDetails, highscoreFiles, serverSettings);
+          tableDataTabScoreDataController.setGame(game, tableDetails, serverSettings);
         }
       }
       else {

@@ -437,13 +437,17 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void onTableEdit() {
     GameRepresentation selectedItems = getSelection();
     if (selectedItems != null) {
-      if (Studio.client.getFrontendService().isFrontendRunning()) {
-        if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
-          TableDialogs.openTableDataDialog(this, selectedItems);
+      JFXFuture.supplyAsync(() -> {
+        return Studio.client.getFrontendService().isFrontendRunning();
+      }).thenAcceptLater((running) -> {
+        if (running) {
+          if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
+            TableDialogs.openTableDataDialog(this, selectedItems);
+          }
+          return;
         }
-        return;
-      }
-      TableDialogs.openTableDataDialog(this, selectedItems);
+        TableDialogs.openTableDataDialog(this, selectedItems);
+      });
     }
   }
 
