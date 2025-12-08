@@ -43,7 +43,7 @@ public class ServerUpdatePreProcessing {
   private final static Map<String, Long> PUP_GAMES = new HashMap<>();
 
   static {
-    PUP_GAMES.put("pinball_fx.json", 234022L);
+    PUP_GAMES.put("pinball_fx.json", 229247L);
     PUP_GAMES.put("pinball_fx3.json", 157062L);
     PUP_GAMES.put("zaccaria.json", 217581L);
     PUP_GAMES.put("pinball_m.json", 11574L);
@@ -133,7 +133,7 @@ public class ServerUpdatePreProcessing {
   }
 
   private static void runLogosUpdateCheck() {
-    long expectedSize = 119644;
+    long expectedSize = 119776;
     File check = new File(RESOURCES, "logos.txt");
     if (check.exists()) {
       long size = check.length();
@@ -182,6 +182,7 @@ public class ServerUpdatePreProcessing {
 
   private static void init7zip() {
     try {
+      LOG.info("Initializing 7z.");
       File sevenZipTempFolder = new File(System.getProperty("java.io.tmpdir"), "sevenZipServer/");
       sevenZipTempFolder.mkdirs();
       SevenZip.initSevenZipFromPlatformJAR(sevenZipTempFolder);
