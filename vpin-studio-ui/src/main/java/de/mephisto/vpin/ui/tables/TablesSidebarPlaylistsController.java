@@ -40,6 +40,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
@@ -96,6 +97,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
   private TableOverviewController tableOverviewController;
 
   private boolean dialogMode = false;
+  private AtomicBoolean refreshDirty = new AtomicBoolean(false);
 
   // Add a public no-args constructor
   public TablesSidebarPlaylistsController() {
@@ -138,6 +140,10 @@ public class TablesSidebarPlaylistsController implements Initializable {
   }
 
   public void refreshView(List<GameRepresentation> games) {
+    if (refreshDirty.get()) {
+      return;
+    }
+    refreshDirty.set(true);
     dataBox.getChildren().removeAll(dataBox.getChildren());
 
     assetManagerBtn.setDisable(games.size() != 1);
@@ -181,6 +187,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
           for (PlaylistRepresentation playlist : playlists) {
             renderPlaylist(games, playlist, uiSettings);
           }
+          refreshDirty.set(false);
         });
       });
     }

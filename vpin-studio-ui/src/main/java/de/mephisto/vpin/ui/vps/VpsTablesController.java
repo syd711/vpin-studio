@@ -109,8 +109,6 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
   @FXML
   private Button tableDataBtn;
 
-  private Map<String, VpsTutorialColumn> columnCache = new ConcurrentHashMap<>();
-
   //------------------------
 
   // calculated global KPIs on vpsTables
@@ -193,7 +191,7 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
     VpsTableModel selection = tableView.getSelectionModel().getSelectedItem();
 
     if (forceReload) {
-      columnCache.clear();
+      super.clearViewCache();
       ProgressDialog.createProgressDialog(new VpsDBDownloadProgressModel("Download VPS Database", Arrays.asList(new File("<vpsdb.json>"))));
     }
 
@@ -311,11 +309,8 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
     BaseLoadingColumn.configureColumn(altColorColumn, (value, model) ->
         VpsUtil.isDataAvailable(value.getAltColorFiles()) ? WidgetFactory.createCheckboxIcon() : null, this, true);
 
-    BaseLoadingColumn.configureLoadingColumn(tutorialColumn, "Loading...", (value, model) -> {
-      if(!columnCache.containsKey(value.getId())) {
-        columnCache.put(value.getId(), new VpsTutorialColumn(value.getId()));
-      }
-      return columnCache.get(value.getId());
+    BaseLoadingColumn.configureLoadingColumn(this, tutorialColumn, "Loading...", "vpsTableTutorialColumn", (value, model) -> {
+      return new VpsTutorialColumn(value.getId());
     });
 
     BaseLoadingColumn.configureColumn(updatedColumn, (value, model) -> {

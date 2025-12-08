@@ -113,6 +113,9 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
       }
       refresh();
     }
+    else {
+      tableView.setItems(FXCollections.emptyObservableList());
+    }
   }
 
   private void refresh() {

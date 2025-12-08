@@ -9,7 +9,6 @@ import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.WaitOverlay;
-import de.mephisto.vpin.ui.backglassmanager.DirectB2SModel;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.util.Keys;
@@ -24,6 +23,7 @@ import javafx.collections.transformation.SortedList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -34,9 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -103,6 +101,27 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
   //----------------------
   // UI Settings
   private BaseTableSettings baseTableSettings;
+
+  //----------------------
+  // Caching
+  private final ViewCache<T, M> viewCache = new ViewCache<>();
+
+  @Nullable
+  public Node getCachedComponent(@NonNull String cacheKey, @NonNull M model) {
+    return viewCache.getCachedComponent(cacheKey, model);
+  }
+
+  public void cacheComponent(@NonNull String cacheKey, @NonNull M model, @NonNull Node node) {
+    viewCache.cacheComponent(cacheKey, model, node);
+  }
+
+  public void clearViewCache(@NonNull M model) {
+    this.viewCache.clear(model);
+  }
+
+  public void clearViewCache() {
+    this.viewCache.clear();
+  }
 
   //----------------------
 
@@ -334,6 +353,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
             // refresh views too if the game is selected
             T selected = getSelection();
             if (selected != null && model.sameBean(selected)) {
+              clearViewCache(model);
               refreshView(model);
             }
           });
@@ -461,7 +481,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
   }
 
   public M selectNextModel() {
-    return selectNextModel(m-> true);
+    return selectNextModel(m -> true);
   }
 
   public M selectNextModel(Predicate<M> filter) {
