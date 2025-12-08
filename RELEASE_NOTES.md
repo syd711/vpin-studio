@@ -4,6 +4,8 @@
 
 - Fixed logo search which allows now full text search.
 - Fixed loading of the Table Data Manager dialog by loading data asynchronously. 
+- Fixed hiding and showing of columns via preferences in the VPS table overview.
+- Fixed performance issues scrolling in the VPS table overview.
 - Improved graceful shutdown of the server. Most of the services are now terminated before the system exit.
 - Added fallback lookup for PinballY in case the VPX tables folder is not found.
 - Added asynchronous loading for media items used by the wheel and highscore card designer.
