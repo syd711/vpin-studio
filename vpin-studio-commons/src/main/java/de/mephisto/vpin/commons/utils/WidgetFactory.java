@@ -389,7 +389,7 @@ public class WidgetFactory {
           iconLiteral = determineIconLiteral(nameLower);
         }
         catch (Exception e) {
-          LOG.error("Error loading icon literal: " + iconLiteral, e);
+          LOG.error("Error loading icon literal {}: {}", iconLiteral, e.getMessage());
           iconLiteral = "mdi2v-view-list";
         }
       }
@@ -561,6 +561,9 @@ public class WidgetFactory {
 
     char firstChar = nameLower.charAt(0);
     // Default fallback: alphabet letter, number, or standard list
+    if (firstChar == '#') {
+      return "mdi2v-view-list";
+    }
     if (Character.isLetter(firstChar)) {
       return "mdi2a-alpha-" + nameLower.charAt(0) + "-circle";
     }
@@ -571,8 +574,6 @@ public class WidgetFactory {
       // Do something for symbols, punctuation, etc.
       return "mdi2v-view-list";
     }
-
-
   }
 
   public static Stage createStage() {
@@ -939,7 +940,7 @@ public class WidgetFactory {
     parent.setCenter(label);
   }
 
-  public static AssetMediaPlayer createAssetMediaPlayer(VPinStudioClient client, FrontendMediaItemRepresentation mediaItem, 
+  public static AssetMediaPlayer createAssetMediaPlayer(VPinStudioClient client, FrontendMediaItemRepresentation mediaItem,
                                                         boolean noLoading, boolean usePreview) {
     String mimeType = mediaItem.getMimeType();
     if (mimeType == null) {
