@@ -1,5 +1,7 @@
 package de.mephisto.vpin.ui.tables.panels;
 
+import de.mephisto.vpin.ui.tables.GameRepresentationModel;
+import de.mephisto.vpin.ui.vps.VpsTablesController;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.scene.Node;
@@ -26,7 +28,7 @@ public class ViewCache<T, M extends BaseLoadingModel<T, M>> {
   public <M extends BaseLoadingModel<T, M>> void cacheComponent(@NonNull String cacheKey, @NonNull M model, @NonNull Node node) {
     String key = getKey(model);
     cache.put(key, new ViewCacheEntry(cacheKey, node));
-    System.out.println(cache.size());
+//    System.out.println(cache.size());
   }
 
   public void clear(M model) {
@@ -35,7 +37,13 @@ public class ViewCache<T, M extends BaseLoadingModel<T, M>> {
   }
 
   private <M extends BaseLoadingModel<T, M>> String getKey(M model) {
-    return String.valueOf(model.getBean().hashCode());
+    if (model instanceof GameRepresentationModel) {
+      return String.valueOf(((GameRepresentationModel) model).getGameId());
+    }
+    if (model instanceof VpsTablesController.VpsTableModel) {
+      return String.valueOf(((VpsTablesController.VpsTableModel) model).getVpsTableId());
+    }
+    throw new UnsupportedOperationException("Unsupported caching view model: " + model);
   }
 
   public void clear() {
