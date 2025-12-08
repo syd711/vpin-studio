@@ -1325,7 +1325,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       return label;
     }, this, true);
 
-    BaseLoadingColumn.configureLoadingColumn(columnTutorials, "", (value, model) -> {
+    BaseLoadingColumn.configureLoadingColumn(this, columnTutorials, "", "tablesTutorialColumn", (value, model) -> {
       String vpsTableId = value.getExtTableId();
       return new VpsTutorialColumn(vpsTableId);
     });
