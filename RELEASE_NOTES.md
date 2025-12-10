@@ -9,6 +9,7 @@
 - Improved graceful shutdown of the server. Most of the services are now terminated before the system exit.
 - Added fallback lookup for PinballY in case the VPX tables folder is not found.
 - Added asynchronous loading for media items used by the wheel and highscore card designer.
+- Removed the VPX GL filtering from the recorder launcher options in case GL recordings are no problem anymore.
 
 ---
 
