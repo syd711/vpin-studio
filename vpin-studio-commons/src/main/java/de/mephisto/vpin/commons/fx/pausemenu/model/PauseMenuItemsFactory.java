@@ -93,7 +93,7 @@ public class PauseMenuItemsFactory {
       loadMedia(game, pauseMenuItems, PauseMenuItemTypes.help, VPinScreen.GameHelp, frontendMedia, "Rules", "Table Rules", "rules.png", "rules.png");
     }
 
-    if (pauseMenuSettings.isShowTutorials()) {
+    if (pauseMenuSettings.isShowTutorials() && !pauseMenuSettings.isTutorialsOnScreen()) {
       createTutorialEntries(game, pauseMenuSettings, pauseMenuItems);
     }
 
@@ -105,13 +105,17 @@ public class PauseMenuItemsFactory {
     List<VpsTutorialUrls> videoTutorials = getVideoTutorials(game, pauseMenuSettings);
     for (VpsTutorialUrls videoTutorial : videoTutorials) {
       item = new PauseMenuItem(PauseMenuItemTypes.help, "Tutorial", "Tutorial: " + videoTutorial.getTitle(), new Image(PauseMenu.class.getResourceAsStream("tutorial.png")));
-      String videoUrl = "https://assets.vpin-mania.net/tutorials/kongedam/" + game.getExtTableId() + ".mp4";
+      String videoUrl = createVideoUrl(game);
       item.setVideoUrl(videoUrl);
       LOG.info("\"" + game.getGameDisplayName() + "\": found tutorial video " + videoUrl);
       String url = "https://img.youtube.com/vi/" + videoTutorial.getYoutubeId() + "/0.jpg";
       item.setDataImageUrl(url);
       pauseMenuItems.add(item);
     }
+  }
+
+  public static String createVideoUrl(GameRepresentation game) {
+    return "https://assets.vpin-mania.net/tutorials/kongedam/" + game.getExtTableId() + ".mp4";
   }
 
   public static List<VpsTutorialUrls> getVideoTutorials(@NonNull GameRepresentation game, @NonNull PauseMenuSettings pauseMenuSettings) {

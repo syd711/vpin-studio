@@ -3,29 +3,33 @@ package de.mephisto.vpin.commons.fx.pausemenu;
 import de.mephisto.vpin.commons.MonitorInfoUtil;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.pausemenu.model.FrontendScreenAsset;
+import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemsFactory;
+import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuScreensFactory;
 import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.NirCmd;
+import de.mephisto.vpin.connectors.vps.model.VpsTutorialUrls;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
+import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
-import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.restclient.wovp.WOVPSettings;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.slf4j.Logger;
@@ -135,7 +139,7 @@ public class PauseMenu extends Application {
         LOG.info("Window Mode: Desktop");
         rootPane.setTranslateY(0);
         rootPane.setTranslateX(0);
-        stage.setX(PauseMenuUIDefaults.getScreenX());
+        stage.setX(PauseMenuUIDefaults.getScaledScreenX());
         stage.setY(PauseMenuUIDefaults.getScreenHeight() / 2 / 2 / 2);
         scene = new Scene(rootPane, PauseMenuUIDefaults.getScreenWidth(), PauseMenuUIDefaults.getScreenHeight());
       }
@@ -196,10 +200,30 @@ public class PauseMenu extends Application {
         }
 
         //reload card settings to resolve actual target screen
+        GameRepresentation game = client.getGameService().getGame(status.getGameId());
         PauseMenuSettings pauseMenuSettings = client.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
         WOVPSettings wovpSettings = client.getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
 
-        GameRepresentation game = client.getGameService().getGame(status.getGameId());
+        screenAssets.clear();
+        if (pauseMenuSettings.isTutorialsOnScreen() && pauseMenuSettings.isShowTutorials()) {
+          VPinScreen tutorialScreen = pauseMenuSettings.getTutorialsScreen();
+          List<VpsTutorialUrls> videoTutorials = PauseMenuItemsFactory.getVideoTutorials(game, pauseMenuSettings);
+          if (!videoTutorials.isEmpty()) {
+            String videoUrl = PauseMenuItemsFactory.createVideoUrl(game);
+            FrontendPlayerDisplay screenDisplay = client.getFrontendService().getScreenDisplay(VPinScreen.Other2);
+            FrontendMediaItemRepresentation tutorialItem = new FrontendMediaItemRepresentation();
+            tutorialItem.setMimeType("video/mp4");
+            tutorialItem.setScreen(tutorialScreen);
+            tutorialItem.setGameId(game.getId());
+            tutorialItem.setUri(videoUrl);
+
+            FrontendScreenAsset assetScreen = PauseMenuScreensFactory.createScreenStage(client, game, screenDisplay, tutorialScreen, tutorialItem);
+            if (assetScreen != null) {
+              screenAssets.add(assetScreen);
+            }
+          }
+        }
+
         StateMananger.getInstance().setControls(pauseMenuSettings);
 
         //we need to take the screenshot before the menu is shown
@@ -226,8 +250,6 @@ public class PauseMenu extends Application {
           try {
             LOG.info("Pause menu screens preparation finished, using {} screen assets.", screenAssets.size());
             screenAssets.clear();
-            //TODO show no additional screens for now
-            //screenAssets.addAll(PauseMenuScreensFactory.createAssetScreens(game, client, frontendMedia));
           }
           catch (Exception e) {
             LOG.error("Failed to prepare pause menu screens: {}", e.getMessage(), e);

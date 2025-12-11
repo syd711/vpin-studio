@@ -26,7 +26,7 @@ import java.lang.invoke.MethodHandles;
 public class FrontendScreensManager {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  private static FrontendScreensManager instance = new FrontendScreensManager();
+  private static final FrontendScreensManager instance = new FrontendScreensManager();
 
   public static FrontendScreensManager getInstance() {
     return instance;

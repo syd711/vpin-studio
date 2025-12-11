@@ -61,7 +61,7 @@ public class MonitorInfoUtil {
       User32.INSTANCE.EnumDisplayMonitors(null, null, new MONITORENUMPROC() {
         @Override
         public int apply(HMONITOR hMonitor, HDC hdc, RECT rect, LPARAM lparam) {
-          MonitorInfo mon = enumerate(hMonitor, index[0]);
+          MonitorInfo mon = enumerate(hMonitor, index[0], monitors);
           monitors.add(mon);
           index[0]++;
           return 1;
@@ -82,7 +82,7 @@ public class MonitorInfoUtil {
     return monitors;
   }
 
-  private static MonitorInfo enumerate(HMONITOR hMonitor, int index) {
+  private static MonitorInfo enumerate(HMONITOR hMonitor, int index, List<MonitorInfo> monitors) {
     MonitorInfo monitor = new MonitorInfo();
 
     MONITORINFOEX info = new MONITORINFOEX();
@@ -102,13 +102,36 @@ public class MonitorInfoUtil {
     else {
       List<Screen> screens = Screen.getScreens().stream().filter(s -> !Screen.getPrimary().equals(s)).collect(Collectors.toList());
       for (Screen s : screens) {
-        if (s.getBounds().getMinX() == monitor.getX()) {
+        double screenX = s.getBounds().getMinX();
+        if (s.getOutputScaleX() > 0) {
+          screenX = screenX * s.getOutputScaleX();
+        }
+        if (screenX == monitor.getX()) {
           monitor.setScaling(s.getOutputScaleX());
           break;
         }
       }
     }
     monitor.setPortraitMode(monitor.getWidth() < monitor.getHeight());
+
+
+    if (monitors.isEmpty()) {
+      if (monitor.getScaling() > 0) {
+        monitor.setScaledX(screen.left / monitor.getScaling());
+      }
+      else {
+        monitor.setScaledX(screen.left);
+      }
+    }
+    else {
+      double scaledX = 0;
+      for (MonitorInfo monitorInfo : monitors) {
+        if (monitorInfo.getX() >= 0) {
+          scaledX += (Math.abs(monitorInfo.getWidth()) / monitorInfo.getScaling());
+        }
+      }
+      monitor.setScaledX(scaledX);
+    }
 
     String deviceName = new String(info.szDevice);
     monitor.setName(deviceName.trim());

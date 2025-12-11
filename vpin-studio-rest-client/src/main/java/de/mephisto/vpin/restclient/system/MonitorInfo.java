@@ -12,10 +12,19 @@ public class MonitorInfo {
   private double y;
   private String name;
   private double scaling;
+  private double scaledX;
 
   @JsonIgnore
   public String getFormattedName() {
     return String.valueOf(name).replaceAll("\\\\", "").replaceAll("\\.", "");
+  }
+
+  public double getScaledX() {
+    return scaledX;
+  }
+
+  public void setScaledX(double scaledX) {
+    this.scaledX = scaledX;
   }
 
   public double getScaling() {

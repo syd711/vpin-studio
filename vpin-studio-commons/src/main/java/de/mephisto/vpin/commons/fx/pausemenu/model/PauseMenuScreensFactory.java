@@ -23,46 +23,54 @@ import java.util.List;
 public class PauseMenuScreensFactory {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  public static List<FrontendScreenAsset> createAssetScreens(@NonNull GameRepresentation game, @NonNull VPinStudioClient client, FrontendMediaRepresentation frontendMedia) {
-    List<FrontendScreenAsset> screens = new ArrayList<>();
-    FrontendPlayerDisplay display = client.getFrontendService().getScreenDisplay(VPinScreen.GameHelp);
-    FrontendScreenAsset screenStage = createScreenStage(client, game, display, VPinScreen.GameHelp, frontendMedia);
-    if (screenStage != null) {
-      screens.add(screenStage);
-    }
-    display = client.getFrontendService().getScreenDisplay(VPinScreen.GameInfo);
-    screenStage = createScreenStage(client, game, display, VPinScreen.GameInfo, frontendMedia);
-    if (screenStage != null) {
-      screens.add(screenStage);
-    }
-    display = client.getFrontendService().getScreenDisplay(VPinScreen.Other2);
-    screenStage = createScreenStage(client, game, display, VPinScreen.Other2, frontendMedia);
-    if (screenStage != null) {
-      screens.add(screenStage);
-    }
-    return screens;
-  }
+//  public static List<FrontendScreenAsset> createAssetScreens(@NonNull GameRepresentation game, @NonNull VPinStudioClient client, FrontendMediaRepresentation frontendMedia) {
+//    List<FrontendScreenAsset> screens = new ArrayList<>();
+//    FrontendPlayerDisplay display = client.getFrontendService().getScreenDisplay(VPinScreen.GameHelp);
+//    FrontendScreenAsset screenStage = createScreenStage(client, game, display, VPinScreen.GameHelp, frontendMedia);
+//    if (screenStage != null) {
+//      screens.add(screenStage);
+//    }
+//    display = client.getFrontendService().getScreenDisplay(VPinScreen.GameInfo);
+//    screenStage = createScreenStage(client, game, display, VPinScreen.GameInfo, frontendMedia);
+//    if (screenStage != null) {
+//      screens.add(screenStage);
+//    }
+//    display = client.getFrontendService().getScreenDisplay(VPinScreen.Other2);
+//    screenStage = createScreenStage(client, game, display, VPinScreen.Other2, frontendMedia);
+//    if (screenStage != null) {
+//      screens.add(screenStage);
+//    }
+//    return screens;
+//  }
+
+//  @Nullable
+//  public static FrontendScreenAsset createScreenStage(VPinStudioClient client, GameRepresentation game, FrontendPlayerDisplay display, VPinScreen screen, FrontendMediaRepresentation frontendMedia) {
+//    FrontendMediaItemRepresentation defaultMediaItem = frontendMedia.getDefaultMediaItem(screen);
+//    if (defaultMediaItem != null) {
+//      FrontendScreenAsset asset = createScreenStage(client, game, display, screen, defaultMediaItem);
+//      if (asset != null) {
+//        return asset;
+//      }
+//    }
+//    return null;
+//  }
 
   @Nullable
-  private static FrontendScreenAsset createScreenStage(VPinStudioClient client, GameRepresentation game, FrontendPlayerDisplay display, VPinScreen screen, FrontendMediaRepresentation frontendMedia) {
-    FrontendMediaItemRepresentation defaultMediaItem = frontendMedia.getDefaultMediaItem(screen);
-    if (defaultMediaItem != null) {
-      InputStream imageStream = client.getWheelIcon(game.getId(), false);
-      if (imageStream != null) {
+  public static FrontendScreenAsset createScreenStage(VPinStudioClient client, GameRepresentation game, FrontendPlayerDisplay display, VPinScreen screen, FrontendMediaItemRepresentation defaultMediaItem) {
+    InputStream imageStream = client.getWheelIcon(game.getId(), false);
+    if (imageStream != null) {
+      FrontendScreenAsset asset = new FrontendScreenAsset();
+      asset.setDisplay(display);
+      asset.setRotation(0);
+      asset.setDuration(0);
+      asset.setMimeType(defaultMediaItem.getMimeType());
+      asset.setInputStream(imageStream);
+      asset.setName(defaultMediaItem.getName());
+      asset.setUrl(client.getURL(defaultMediaItem.getUri()));
 
-        FrontendScreenAsset asset = new FrontendScreenAsset();
-        asset.setDisplay(display);
-        asset.setRotation(0);
-        asset.setDuration(0);
-        asset.setMimeType(defaultMediaItem.getMimeType());
-        asset.setInputStream(imageStream);
-        asset.setName(defaultMediaItem.getName());
-        asset.setUrl(client.getURL(defaultMediaItem.getUri()));
-
-        FrontendScreensManager.getInstance().showScreen(asset);
-        LOG.info("Created stage for screen " + screen + ", asset \"" + defaultMediaItem.getName() + "\"");
-        return asset;
-      }
+      FrontendScreensManager.getInstance().showScreen(asset);
+      LOG.info("Created stage for screen " + screen + ", asset \"" + defaultMediaItem.getName() + "\"");
+      return asset;
     }
     return null;
   }
