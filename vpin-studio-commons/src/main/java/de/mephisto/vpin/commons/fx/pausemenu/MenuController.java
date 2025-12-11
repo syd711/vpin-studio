@@ -18,10 +18,8 @@ import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.util.SystemUtil;
-import de.mephisto.vpin.restclient.wovp.WOVPSettings;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.animation.ParallelTransition;
@@ -44,7 +42,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
-import javafx.scene.web.WebView;
 import javafx.stage.Screen;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -140,8 +137,8 @@ public class MenuController implements Initializable {
       }
 
       VPinScreen tutorialScreen = VPinScreen.BackGlass;
-      if (pauseMenuSettings.getVideoScreen() != null) {
-        tutorialScreen = pauseMenuSettings.getVideoScreen();
+      if (pauseMenuSettings.getTutorialsScreen() != null) {
+        tutorialScreen = pauseMenuSettings.getTutorialsScreen();
       }
       tutorialDisplay = client.getFrontendService().getScreenDisplay(tutorialScreen);
       LOG.info("Finished fetching all screen information for pause menu.");
@@ -482,11 +479,7 @@ public class MenuController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    PauseMenuSettings pauseMenuSettings = ServerFX.client.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
-    Screen playfieldScreen = SystemUtil.getScreenById(pauseMenuSettings.getPauseMenuScreenId());
-    Rectangle2D screenBounds = playfieldScreen.getBounds();
-    rowImage.setFitWidth(screenBounds.getWidth());
-    LOG.info("Settings pause menu width to {}", screenBounds.getWidth());
+    rowImage.setFitWidth(PauseMenuUIDefaults.getScreenWidth());
 
     try {
       String resource = "menu-custom-view.fxml";

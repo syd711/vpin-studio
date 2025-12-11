@@ -11,10 +11,19 @@ public class MonitorInfo {
   private double x;
   private double y;
   private String name;
+  private double scaling;
 
   @JsonIgnore
   public String getFormattedName() {
     return String.valueOf(name).replaceAll("\\\\", "").replaceAll("\\.", "");
+  }
+
+  public double getScaling() {
+    return scaling;
+  }
+
+  public void setScaling(double scaling) {
+    this.scaling = scaling;
   }
 
   public String getName() {

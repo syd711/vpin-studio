@@ -107,12 +107,8 @@ public class PauseMenu extends Application {
       int pauseMenuScreenId = pauseMenuSettings.getPauseMenuScreenId();
 
       Optional<MonitorInfo> first = MonitorInfoUtil.getMonitors().stream().filter(m -> m.getId() == pauseMenuScreenId).findFirst();
-      if (first.isPresent()) {
-        PauseMenuUIDefaults.init(first.get());
-      }
-      else {
-        PauseMenuUIDefaults.init(MonitorInfoUtil.getPrimaryMonitor());
-      }
+      MonitorInfo monitorInfo = first.orElseGet(MonitorInfoUtil::getPrimaryMonitor);
+      PauseMenuUIDefaults.init(monitorInfo);
 
       FXMLLoader loader = new FXMLLoader(MenuController.class.getResource("menu-main.fxml"));
       BorderPane rootPane = loader.load();
@@ -139,7 +135,7 @@ public class PauseMenu extends Application {
         LOG.info("Window Mode: Desktop");
         rootPane.setTranslateY(0);
         rootPane.setTranslateX(0);
-        stage.setX(0);
+        stage.setX(PauseMenuUIDefaults.getScreenX());
         stage.setY(PauseMenuUIDefaults.getScreenHeight() / 2 / 2 / 2);
         scene = new Scene(rootPane, PauseMenuUIDefaults.getScreenWidth(), PauseMenuUIDefaults.getScreenHeight());
       }

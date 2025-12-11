@@ -10,11 +10,13 @@ import com.sun.jna.platform.win32.WinUser.MONITORENUMPROC;
 import com.sun.jna.platform.win32.WinUser.MONITORINFOEX;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.restclient.util.OSUtil;
+import javafx.stage.Screen;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * A small demo that tests the Win32 monitor API.
@@ -94,12 +96,25 @@ public class MonitorInfoUtil {
 
     boolean isPrimary = (info.dwFlags & WinUser.MONITORINFOF_PRIMARY) != 0;
     monitor.setPrimary(isPrimary);
+    if (isPrimary) {
+      monitor.setScaling(Screen.getPrimary().getOutputScaleX());
+    }
+    else {
+      List<Screen> screens = Screen.getScreens().stream().filter(s -> !Screen.getPrimary().equals(s)).collect(Collectors.toList());
+      for (Screen s : screens) {
+        if (s.getBounds().getMinX() == monitor.getX()) {
+          monitor.setScaling(s.getOutputScaleX());
+          break;
+        }
+      }
+    }
     monitor.setPortraitMode(monitor.getWidth() < monitor.getHeight());
 
     String deviceName = new String(info.szDevice);
     monitor.setName(deviceName.trim());
     // index starts with 1
     monitor.setId(index);
+
 
     return monitor;
   }

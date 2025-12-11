@@ -2,6 +2,8 @@ package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.ui.Studio;
@@ -18,6 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -57,6 +61,15 @@ public class PauseMenuPreferencesController implements Initializable {
 
   @FXML
   private ComboBox<MonitorInfo> screenInfoComboBox;
+
+  @FXML
+  private ComboBox<VPinScreen> screenTutorialComboBox;
+
+  @FXML
+  private RadioButton tutorialScreenRadio;
+
+  @FXML
+  private RadioButton tutorialItemRadio;
 
   @FXML
   private void onPauseTest() {
@@ -139,5 +152,51 @@ public class PauseMenuPreferencesController implements Initializable {
       pauseMenuSettings.setUnpauseDelay(t1);
       client.getPreferenceService().setJsonPreference(pauseMenuSettings);
     }, 300));
+
+
+    screenTutorialComboBox.setDisable(!pauseMenuSettings.isTutorialsOnScreen());
+    Frontend frontend = client.getFrontendService().getFrontend();
+    List<VPinScreen> screens = new ArrayList<>(frontend.getSupportedScreens());
+    screens.remove(VPinScreen.Audio);
+    screens.remove(VPinScreen.AudioLaunch);
+    screens.remove(VPinScreen.Wheel);
+    screens.remove(VPinScreen.Menu);
+    screens.remove(VPinScreen.BackGlass);
+    screens.remove(VPinScreen.PlayField);
+    screens.remove(VPinScreen.Loading);
+    screens.remove(VPinScreen.Logo);
+    screenTutorialComboBox.setItems(FXCollections.observableList(screens));
+    screenTutorialComboBox.setValue(pauseMenuSettings.getTutorialsScreen());
+    screenTutorialComboBox.valueProperty().addListener(new ChangeListener<VPinScreen>() {
+      @Override
+      public void changed(ObservableValue<? extends VPinScreen> observable, VPinScreen oldValue, VPinScreen newValue) {
+        pauseMenuSettings.setTutorialsScreen(newValue);
+        client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+      }
+    });
+
+    tutorialItemRadio.setSelected(!pauseMenuSettings.isTutorialsOnScreen());
+    tutorialItemRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if(newValue) {
+          screenTutorialComboBox.setDisable(true);
+          pauseMenuSettings.setTutorialsOnScreen(false);
+          client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+        }
+      }
+    });
+
+    tutorialScreenRadio.setSelected(pauseMenuSettings.isTutorialsOnScreen());
+    tutorialScreenRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if(newValue) {
+          screenTutorialComboBox.setDisable(false);
+          pauseMenuSettings.setTutorialsOnScreen(true);
+          client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+        }
+      }
+    });
   }
 }

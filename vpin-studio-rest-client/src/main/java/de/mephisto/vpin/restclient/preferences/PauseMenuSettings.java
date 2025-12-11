@@ -7,7 +7,8 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 public class PauseMenuSettings extends JsonSettings {
   private boolean useOverlayKey;
   private int inputDebounceMs = 0;
-  private VPinScreen videoScreen = VPinScreen.Topper;
+  private VPinScreen tutorialsScreen = VPinScreen.Topper;
+  private boolean tutorialsOnScreen = false;
 
   private int testDuration = 8;
   private int testGameId = -1;
@@ -29,6 +30,14 @@ public class PauseMenuSettings extends JsonSettings {
   private String resetButton;
   private String recordingButton;
   private String inputFilterList;
+
+  public boolean isTutorialsOnScreen() {
+    return tutorialsOnScreen;
+  }
+
+  public void setTutorialsOnScreen(boolean tutorialsOnScreen) {
+    this.tutorialsOnScreen = tutorialsOnScreen;
+  }
 
   public int getRotation() {
     return rotation;
@@ -186,12 +195,12 @@ public class PauseMenuSettings extends JsonSettings {
     this.inputDebounceMs = inputDebounceMs;
   }
 
-  public VPinScreen getVideoScreen() {
-    return videoScreen;
+  public VPinScreen getTutorialsScreen() {
+    return tutorialsScreen;
   }
 
-  public void setVideoScreen(VPinScreen videoScreen) {
-    this.videoScreen = videoScreen;
+  public void setTutorialsScreen(VPinScreen videoScreen) {
+    this.tutorialsScreen = videoScreen;
   }
 
   public boolean isUseOverlayKey() {

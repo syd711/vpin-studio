@@ -5,14 +5,19 @@ import de.mephisto.vpin.restclient.system.MonitorInfo;
 import java.awt.*;
 
 public class PauseMenuUIDefaults {
+  private static double screenX = 0;
   private static double screenWidth = 0;
   private static double screenHeight = 0;
 
   public static void init(MonitorInfo monitorInfo) {
-    int screenResolution = Toolkit.getDefaultToolkit().getScreenResolution();
-    double scaling = (double) screenResolution / 96;
+    double scaling = monitorInfo.getScaling();
     screenWidth = (int) (monitorInfo.getWidth() / scaling);
     screenHeight = (int) (monitorInfo.getHeight() / scaling);
+    screenX = (int) (monitorInfo.getX() / scaling);
+  }
+
+  public static double getScreenX() {
+    return screenX;
   }
 
   public static double getScreenWidth() {
