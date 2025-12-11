@@ -30,7 +30,7 @@ public class ShutdownThread extends Thread {
       try {
         Thread.sleep(60 * 1000);
 
-        boolean uiRunning = ServerFX.getInstance().isOverlayVisible() || PauseMenu.isVisible();
+        boolean uiRunning = ServerFX.getInstance().isOverlayVisible() || PauseMenu.getInstance().isVisible();
         if (uiRunning) {
           idleMinutes = 0;
           continue;

@@ -13,6 +13,9 @@ public class PauseMenuSettings extends JsonSettings {
   private int testGameId = -1;
   private int unpauseDelay = 1000;
 
+  //default is 90 degree rotation
+  private int rotation = 90;
+
   private boolean showIscoredScores = true;
   private boolean showManiaScores = true;
   private boolean showTutorials = true;
@@ -26,6 +29,14 @@ public class PauseMenuSettings extends JsonSettings {
   private String resetButton;
   private String recordingButton;
   private String inputFilterList;
+
+  public int getRotation() {
+    return rotation;
+  }
+
+  public void setRotation(int rotation) {
+    this.rotation = rotation;
+  }
 
   public boolean isShowTutorials() {
     return showTutorials;

@@ -79,7 +79,7 @@ public abstract class Browser {
         }).start();
       }
 
-      ServerFX.toFront(PauseMenu.stage, true);
+      ServerFX.toFront(PauseMenu.getInstance().getStage(), true);
     }
     catch (Exception e) {
       LOG.error("Failed to show YT video: " + e.getMessage(), e);

@@ -31,6 +31,8 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
@@ -99,6 +101,9 @@ public class CompetitionsController implements Initializable, StudioFXController
 
   @FXML
   private Label channelLabel;
+
+  @FXML
+  private Button copyBtn;
 
   @FXML
   private HBox serverBox;
@@ -255,6 +260,15 @@ public class CompetitionsController implements Initializable, StudioFXController
       String dashboardUrl = competition.get().getUrl();
       Studio.browse(dashboardUrl);
     }
+  }
+
+  @FXML
+  private void onCopy() {
+    String text = uuidLabel.getText();
+    Clipboard clipboard = Clipboard.getSystemClipboard();
+    ClipboardContent content = new ClipboardContent();
+    content.putString(text);
+    clipboard.setContent(content);
   }
 
   @FXML
@@ -450,6 +464,7 @@ public class CompetitionsController implements Initializable, StudioFXController
 
   private void refreshMetaData(Optional<CompetitionRepresentation> competitionRepresentation) {
     uuidLabel.setText("-");
+    copyBtn.setVisible(false);
     startLabel.setText("-");
     endLabel.setText("-");
     scoreValidationLabel.setText("-");
@@ -462,6 +477,7 @@ public class CompetitionsController implements Initializable, StudioFXController
         CompetitionRepresentation competition = competitionRepresentation.get();
         if (metaDataPane.isVisible() && !metaDataPane.isDisabled()) {
           uuidLabel.setText(competition.getUuid());
+          copyBtn.setVisible(true);
           serverBox.getChildren().removeAll(serverBox.getChildren());
           ownerBox.getChildren().removeAll(ownerBox.getChildren());
 
@@ -843,6 +859,7 @@ public class CompetitionsController implements Initializable, StudioFXController
     dashboardWebView.managedProperty().bindBidirectional(dashboardWebView.visibleProperty());
     dashboardStatusLabel.managedProperty().bindBidirectional(dashboardStatusLabel.visibleProperty());
     rulesBtn.managedProperty().bindBidirectional(rulesBtn.visibleProperty());
+    copyBtn.managedProperty().bindBidirectional(copyBtn.visibleProperty());
 
     updateSelection(Optional.empty());
     tabPane.getSelectionModel().selectedItemProperty().addListener((observableValue, oldTabIndex, newTabIndex) -> {

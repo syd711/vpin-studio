@@ -1,2 +1,2 @@
-- Fixed kiko
-- fill up highscores to 5
+- pause menu desktop
+- 

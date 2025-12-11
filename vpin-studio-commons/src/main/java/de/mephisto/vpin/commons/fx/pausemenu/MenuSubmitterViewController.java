@@ -22,6 +22,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.commons.fx.ServerFX.client;
+
 public class MenuSubmitterViewController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MenuSubmitterViewController.class);
 
@@ -88,7 +90,7 @@ public class MenuSubmitterViewController implements Initializable {
 //      screenshotView.setFitWidth(width - 60);
 //      screenshotView.setFitHeight(height - 60);
 
-    if (screenshotImage == null) {
+    if (screenshotImage == null && screenshot != null) {
       screenshotImage = new Image(screenshot);
     }
     screenshotView.setImage(screenshotImage);
@@ -97,12 +99,14 @@ public class MenuSubmitterViewController implements Initializable {
 
   public void enter() {
     submitBtnLabel.setText("Sending scores...");
-    TransitionUtil.createBlink(submitBtnLabel).play();
     JFXFuture.supplyAsync(() -> {
+      client.getWovpService().submitScore();
       return "Scores have been submitted.";
     }).thenAcceptLater((value) -> {
       submitBtnLabel.setText("Scores have been submitted.");
     });
+
+    TransitionUtil.createBlink(submitBtnLabel).play();
   }
 
   public void reset() {

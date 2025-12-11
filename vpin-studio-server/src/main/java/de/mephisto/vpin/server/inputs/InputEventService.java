@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.inputs;
 
 import de.mephisto.vpin.commons.fx.ServerFX;
+import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.commons.utils.controller.GameController;
 import de.mephisto.vpin.commons.utils.controller.GameControllerInputListener;
 import de.mephisto.vpin.restclient.PreferenceNames;

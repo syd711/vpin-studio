@@ -20,6 +20,7 @@ import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.restclient.wovp.WOVPSettings;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -30,6 +31,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
@@ -43,6 +45,7 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.scene.web.WebView;
+import javafx.stage.Screen;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,13 +93,13 @@ public class MenuController implements Initializable {
   private MediaView mediaView;
 
   @FXML
-  private WebView webView;
-
-  @FXML
   private BorderPane customView;
 
   @FXML
   private BorderPane scoreView;
+
+  @FXML
+  private ImageView rowImage;
 
   private int selectionIndex = 0;
 
@@ -146,10 +149,9 @@ public class MenuController implements Initializable {
       frontendMedia = client.getFrontendService().getFrontendMedia(game.getId());
       String extTableId = game.getExtTableId();
       vpsTable = client.getVpsService().getTableById(extTableId);
-
-      this.customViewController.setGame(game, vpsTable, frontendMedia);
       return "Loading Menu for \"" + game.getGameDisplayName() + "\"";
     }).thenAcceptLater((msg) -> {
+      this.customViewController.setGame(game, vpsTable, frontendMedia);
       resetGameRow();
       TransitionUtil.createOutFader(bluePanel).play();
       TransitionUtil.createInFader(menuItemsRow).play();
@@ -219,8 +221,6 @@ public class MenuController implements Initializable {
   private final AtomicBoolean animating = new AtomicBoolean(false);
 
   private synchronized void animateMenuSteps(boolean left, final int oldIndex, final int steps, int duration) {
-
-
     animating.set(true);
     final Node node = menuItemsRow.getChildren().get(oldIndex);
     Transition t1 = TransitionUtil.createTranslateByXTransition(node, duration, left ? PauseMenuUIDefaults.SCROLL_OFFSET : -PauseMenuUIDefaults.SCROLL_OFFSET);
@@ -259,7 +259,6 @@ public class MenuController implements Initializable {
 
   private void updateSelection(Node oldNode, Node node) {
     if (oldNode != null) {
-      PauseMenuItem oldSelection = (PauseMenuItem) node.getUserData();
       if (activeSelection.getVideoUrl() != null && mediaView != null && mediaView.getMediaPlayer() != null) {
         try {
           mediaView.getMediaPlayer().stop();
@@ -275,7 +274,6 @@ public class MenuController implements Initializable {
     nameLabel.setText(activeSelection.getDescription());
     screenImageView.setVisible(false);
     mediaView.setVisible(false);
-    webView.setVisible(false);
     customView.setVisible(false);
     scoreView.setVisible(false);
 
@@ -424,9 +422,6 @@ public class MenuController implements Initializable {
       this.mediaView.setMediaPlayer(null);
       this.mediaView.setVisible(false);
     });
-
-    this.webView.setVisible(false);
-    this.webView.getEngine().load(null);
   }
 
   public PauseMenuItem getSelection() {
@@ -441,10 +436,11 @@ public class MenuController implements Initializable {
       return;
     }
 
+    //ensures that the scrolling row is centered to the screen.
     Pane node = (Pane) menuItemsRow.getChildren().get(0);
     int size = menuItemsRow.getChildren().size() * PauseMenuUIDefaults.THUMBNAIL_SIZE;
-    if (size < PauseMenuUIDefaults.SCREEN_WIDTH) {
-      menuItemsRow.setTranslateX(PauseMenuUIDefaults.SCREEN_WIDTH / 2 + PauseMenuUIDefaults.THUMBNAIL_SIZE + SCROLL_OFFSET);
+    if (size < PauseMenuUIDefaults.getScreenWidth()) {
+      menuItemsRow.setTranslateX(PauseMenuUIDefaults.getScreenWidth() / 2);
     }
     else {
       menuItemsRow.setTranslateX(size / 2);
@@ -467,25 +463,30 @@ public class MenuController implements Initializable {
     pauseMenuItems.addAll(PauseMenuItemsFactory.createPauseMenuItems(game, cardScreen, frontendMedia));
 
     menuItemsRow.getChildren().clear();
+//    menuItemsRow.getStyleClass().add("debug");
     selectionIndex = 0;
     for (PauseMenuItem pItem : pauseMenuItems) {
       menuItemsRow.getChildren().add(PauseMenuItemComponentFactory.createMenuItemFor(pItem));
     }
 
-    while (menuItemsRow.getChildren().size() * PauseMenuUIDefaults.THUMBNAIL_SIZE < PauseMenuUIDefaults.SCREEN_WIDTH * 2) {
-      Label label = new Label();
-      label.setMinWidth(THUMBNAIL_SIZE);
-      menuItemsRow.getChildren().add(label);
-    }
+//    while (menuItemsRow.getChildren().size() * PauseMenuUIDefaults.THUMBNAIL_SIZE < PauseMenuUIDefaults.getScreenWidth() * 2) {
+//      Label label = new Label();
+//      label.setMinWidth(THUMBNAIL_SIZE);
+//      menuItemsRow.getChildren().add(label);
+//    }
   }
 
   public boolean isVisible() {
-    return PauseMenu.visible;
+    return PauseMenu.getInstance().isVisible();
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    webView.getEngine().setUserStyleSheetLocation(PauseMenu.class.getResource("web-style.css").toString());
+    PauseMenuSettings pauseMenuSettings = ServerFX.client.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
+    Screen playfieldScreen = SystemUtil.getScreenById(pauseMenuSettings.getPauseMenuScreenId());
+    Rectangle2D screenBounds = playfieldScreen.getBounds();
+    rowImage.setFitWidth(screenBounds.getWidth());
+    LOG.info("Settings pause menu width to {}", screenBounds.getWidth());
 
     try {
       String resource = "menu-custom-view.fxml";

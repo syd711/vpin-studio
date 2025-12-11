@@ -169,11 +169,23 @@
                                                                 <Font name="System Bold" size="14.0" />
                                                             </font>
                                                         </Label>
-                                                        <Label fx:id="uuidLabel" text="-" GridPane.columnIndex="1">
-                                                            <font>
-                                                                <Font size="14.0" />
-                                                            </font>
-                                                        </Label>
+                                          <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
+                                             <children>
+                                                              <Label fx:id="uuidLabel" text="-">
+                                                                  <font>
+                                                                      <Font size="14.0" />
+                                                                  </font>
+                                                              </Label>
+                                                <Button fx:id="copyBtn" mnemonicParsing="false" onAction="#onCopy">
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="16" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="Copy ID to clipboard" />
+                                                   </tooltip>
+                                                </Button>
+                                             </children>
+                                          </HBox>
                                                         <Label fx:id="createdAtLabel" layoutX="116.0" layoutY="15.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                                             <font>
                                                                 <Font size="14.0" />

@@ -21,4 +21,8 @@ public class WOVPServiceClient extends VPinStudioClientService {
   public String test() {
     return getRestClient().get(API + "wovp/test", String.class);
   }
+
+  public void submitScore() {
+
+  }
 }

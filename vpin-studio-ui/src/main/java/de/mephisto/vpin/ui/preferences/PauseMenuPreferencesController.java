@@ -1,9 +1,12 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.preferences.dialogs.PreferencesDialogs;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -15,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.Features;
@@ -43,6 +47,9 @@ public class PauseMenuPreferencesController implements Initializable {
   private CheckBox pauseMenuMuteCheckbox;
 
   @FXML
+  private CheckBox pauseMenuOrientation;
+
+  @FXML
   private CheckBox tutorialsCheckbox;
 
   @FXML
@@ -56,6 +63,16 @@ public class PauseMenuPreferencesController implements Initializable {
     PreferencesDialogs.openPauseMenuTestDialog();
   }
 
+
+  @FXML
+  private void onRestart() {
+    Optional<ButtonType> result = WidgetFactory.showAlertOption(Studio.stage, "Server Restart", "Cancel", "Restart Server", "Are you sure you want to restart the VPin Studio Server?", null);
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      client.getSystemService().restart();
+      ProgressDialog.createProgressDialog(new RestartProgressModel());
+    }
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
@@ -65,12 +82,12 @@ public class PauseMenuPreferencesController implements Initializable {
     iScoredScoresBox.managedProperty().bindBidirectional(iScoredScoresBox.visibleProperty());
     iScoredScoresBox.setVisible(Features.ISCORED_ENABLED && pauseMenuSettings.isShowIscoredScores());
 
-    screenInfoComboBox.setItems(FXCollections.observableList(client.getSystemService().getSystemSummary().getScreenInfos()));
+    screenInfoComboBox.setItems(FXCollections.observableList(client.getSystemService().getSystemSummary().getMonitorInfos()));
     if (pauseMenuSettings.getPauseMenuScreenId() == -1) {
-      screenInfoComboBox.setValue(client.getSystemService().getSystemSummary().getPrimaryScreen());
+      screenInfoComboBox.setValue(client.getSystemService().getSystemSummary().getPrimaryMonitor());
     }
     else {
-      screenInfoComboBox.setValue(client.getSystemService().getSystemSummary().getScreenInfo(pauseMenuSettings.getPauseMenuScreenId()));
+      screenInfoComboBox.setValue(client.getSystemService().getSystemSummary().getMonitorInfo(pauseMenuSettings.getPauseMenuScreenId()));
     }
     screenInfoComboBox.valueProperty().addListener(new ChangeListener<MonitorInfo>() {
       @Override
@@ -107,6 +124,12 @@ public class PauseMenuPreferencesController implements Initializable {
     pauseMenuMuteCheckbox.setSelected(pauseMenuSettings.isMuteOnPause());
     pauseMenuMuteCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       pauseMenuSettings.setMuteOnPause(newValue);
+      client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+    });
+
+    pauseMenuOrientation.setSelected(pauseMenuSettings.getRotation() != 90);
+    pauseMenuOrientation.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      pauseMenuSettings.setRotation(newValue ? 0 : 90);
       client.getPreferenceService().setJsonPreference(pauseMenuSettings);
     });
 

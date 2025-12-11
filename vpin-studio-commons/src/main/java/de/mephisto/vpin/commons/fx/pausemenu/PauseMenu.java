@@ -1,22 +1,18 @@
 package de.mephisto.vpin.commons.fx.pausemenu;
 
+import de.mephisto.vpin.commons.MonitorInfoUtil;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.pausemenu.model.FrontendScreenAsset;
 import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.NirCmd;
-import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
-import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
+import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.restclient.wovp.WOVPSettings;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -29,11 +25,9 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
-import javafx.scene.transform.Rotate;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,27 +37,38 @@ import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import static de.mephisto.vpin.commons.fx.ServerFX.client;
 
 public class PauseMenu extends Application {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  public static Stage stage;
-  public static boolean visible = false;
-
   private static Robot robot;
-  private static boolean test = false;
 
-  private static final List<FrontendScreenAsset> screenAssets = new ArrayList<>();
-  private static GameEmulatorRepresentation emulator;
+  private Stage stage;
+  private boolean visible = false;
+  private boolean test = false;
+
+  private final List<FrontendScreenAsset> screenAssets = new ArrayList<>();
+
+  private static PauseMenu INSTANCE = null;
+
+
+  public static PauseMenu getInstance() {
+    if (INSTANCE == null) {
+      INSTANCE = new PauseMenu();
+    }
+    return INSTANCE;
+  }
 
   static {
     try {
       robot = new Robot();
     }
     catch (AWTException e) {
-      LOG.error("Failed to create robot: " + e.getMessage());
+      LOG.error("Failed to create robot: {}", e.getMessage());
     }
   }
 
@@ -74,64 +79,72 @@ public class PauseMenu extends Application {
   @Override
   public void start(Stage stage) {
     ServerFX.client = new VPinStudioClient("localhost");
-    loadPauseMenu();
-    togglePauseMenu(null, true);
+    INSTANCE = new PauseMenu();
+    INSTANCE.loadPauseMenu();
+    INSTANCE.togglePauseMenu(null, true);
   }
 
-  public static boolean isVisible() {
+  public Stage getStage() {
+    return stage;
+  }
+
+  public boolean isVisible() {
     return visible;
   }
 
-  public static void loadPauseMenu() {
+  public void loadPauseMenu() {
     try {
       Stage pauseMenuStage = new Stage();
       pauseMenuStage.setTitle("VPin UI");
       pauseMenuStage.initStyle(StageStyle.TRANSPARENT);
       pauseMenuStage.setAlwaysOnTop(true);
-      PauseMenu.stage = pauseMenuStage;
+      stage = pauseMenuStage;
 
       Scene scene = null;
-      stage.getIcons().add(new Image(PauseMenu.class.getResourceAsStream("logo-64.png")));
+      stage.getIcons().add(new Image(Objects.requireNonNull(PauseMenu.class.getResourceAsStream("logo-64.png"))));
 
       PauseMenuSettings pauseMenuSettings = ServerFX.client.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
-      //do use the screen and not the monitor here because the resolution != capable screen size!!!!
-      Screen playfieldScreen = SystemUtil.getScreenById(pauseMenuSettings.getPauseMenuScreenId());
-      LOG.info("Pause Menu is using screen {}", playfieldScreen);
-      Rectangle2D screenBounds = playfieldScreen.getBounds();
-      FXMLLoader loader = new FXMLLoader(MenuController.class.getResource("menu-main.fxml"));
-      BorderPane root = loader.load();
+      int pauseMenuScreenId = pauseMenuSettings.getPauseMenuScreenId();
 
-      if (screenBounds.getWidth() > screenBounds.getHeight()) {
-        LOG.info("Window Mode: Landscape");
-        root.setTranslateY(0);
-        root.setTranslateX(0);
-        root.setRotate(-90);
-        stage.setY((screenBounds.getHeight() - root.getPrefWidth()) / 2);
-        stage.setX(screenBounds.getMinX() + (screenBounds.getWidth() / 2 / 2));
-        double max = Math.max(screenBounds.getWidth(), screenBounds.getHeight());
-        if (max > 2560) {
-          stage.setX(stage.getX() + 600);
-          root.setTranslateX(400);
-        }
-        else if (max > 2000) {
-          root.setTranslateX(400);
-        }
-        scene = new Scene(root, root.getPrefWidth(), root.getPrefWidth());
+      Optional<MonitorInfo> first = MonitorInfoUtil.getMonitors().stream().filter(m -> m.getId() == pauseMenuScreenId).findFirst();
+      if (first.isPresent()) {
+        PauseMenuUIDefaults.init(first.get());
       }
       else {
-        LOG.info("Window Mode: Portrait");
-        root.setTranslateY(0);
-        root.setTranslateX(0);
-        stage.setX(screenBounds.getMinX() + ((screenBounds.getWidth() - root.getPrefWidth()) / 2));
-        stage.setY(screenBounds.getHeight() / 2 / 2);
-        double max = Math.max(screenBounds.getWidth(), screenBounds.getHeight());
-        if (max > 2560) {
-          root.setTranslateY(400);
-        }
-        scene = new Scene(root, root.getPrefWidth(), root.getPrefWidth());
+        PauseMenuUIDefaults.init(MonitorInfoUtil.getPrimaryMonitor());
       }
 
-      scalePauseMenuStage(root, screenBounds);
+      FXMLLoader loader = new FXMLLoader(MenuController.class.getResource("menu-main.fxml"));
+      BorderPane rootPane = loader.load();
+
+      //a bit confusing, for the default landscape view, the default rotation value of -90 is used => cabinet mode
+      if (pauseMenuSettings.getRotation() != 0) {
+        LOG.info("Window Mode: Landscape");
+        rootPane.setTranslateY(0);
+        rootPane.setTranslateX(0);
+        rootPane.setRotate(-(pauseMenuSettings.getRotation()));
+        stage.setY(PauseMenuUIDefaults.getScreenHeight() / 2 / 2);
+        stage.setX(0);
+        double max = Math.max(PauseMenuUIDefaults.getScreenWidth(), PauseMenuUIDefaults.getScreenHeight());
+        if (max > 2560) {
+          stage.setX(stage.getX() + 600);
+          rootPane.setTranslateX(400);
+        }
+        else if (max > 2000) {
+          rootPane.setTranslateX(400);
+        }
+        scene = new Scene(rootPane, rootPane.getPrefWidth(), rootPane.getPrefWidth());
+      }
+      else {
+        LOG.info("Window Mode: Desktop");
+        rootPane.setTranslateY(0);
+        rootPane.setTranslateX(0);
+        stage.setX(0);
+        stage.setY(PauseMenuUIDefaults.getScreenHeight() / 2 / 2 / 2);
+        scene = new Scene(rootPane, PauseMenuUIDefaults.getScreenWidth(), PauseMenuUIDefaults.getScreenHeight());
+      }
+
+      scalePauseMenuStage(rootPane, pauseMenuSettings);
       scene.setFill(Color.TRANSPARENT);
       stage.setScene(scene);
 
@@ -142,26 +155,28 @@ public class PauseMenu extends Application {
     }
   }
 
-  private static void scalePauseMenuStage(BorderPane root, Rectangle2D screenBounds) {
-    double max = Math.max(screenBounds.getWidth(), screenBounds.getHeight());
-    double scaling = 1;
-    if (max > 2560) {
-      scaling = 1.4;
+  private static void scalePauseMenuStage(BorderPane root, PauseMenuSettings pauseMenuSettings) {
+    if (pauseMenuSettings.getRotation() != 0) {
+      double max = Math.max(PauseMenuUIDefaults.getScreenWidth(), PauseMenuUIDefaults.getScreenHeight());
+      double scaling = 1;
+      if (max > 2560) {
+        scaling = 1.4;
+      }
+      else if (max < 2000) {
+        scaling = 0.7;
+      }
+      root.setScaleX(scaling);
+      root.setScaleY(scaling);
     }
-    else if (max < 2000) {
-      scaling = 0.7;
-    }
-    root.setScaleX(scaling);
-    root.setScaleY(scaling);
   }
 
-  public static void togglePauseMenu() {
+  public void togglePauseMenu() {
     togglePauseMenu(null, false);
   }
 
-  public static void togglePauseMenu(@Nullable GameStatus status, boolean test) {
+  public void togglePauseMenu(@Nullable GameStatus status, boolean test) {
+    this.test = test;
     client.getPreferenceService().clearCache();
-    PauseMenu.test = test;
 
     if (!visible) {
       if (!test) {
@@ -180,21 +195,23 @@ public class PauseMenu extends Application {
           SLOG.info("Found game status for " + status.getGameId());
         }
 
-        togglePauseKey(0);
+        if (!test) {
+          togglePauseKey(0);
+        }
 
         //reload card settings to resolve actual target screen
         PauseMenuSettings pauseMenuSettings = client.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
         WOVPSettings wovpSettings = client.getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
 
         GameRepresentation game = client.getGameService().getGame(status.getGameId());
-        emulator = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
-
         StateMananger.getInstance().setControls(pauseMenuSettings);
 
         //we need to take the screenshot before the menu is shown
         InputStream screenshot = null;
-        if (wovpSettings.isEnabled() && wovpSettings.isApiKeySet() && wovpSettings.isUseScoreSubmitter()) {
-          screenshot = client.getScreenshot();
+        if (!test) {
+          if (wovpSettings.isEnabled() && wovpSettings.isApiKeySet() && wovpSettings.isUseScoreSubmitter()) {
+            screenshot = client.getScreenshot();
+          }
         }
 
         visible = true;
@@ -211,13 +228,13 @@ public class PauseMenu extends Application {
         }).thenAcceptLater((result) -> {
           long start = System.currentTimeMillis();
           try {
+            LOG.info("Pause menu screens preparation finished, using {} screen assets.", screenAssets.size());
             screenAssets.clear();
             //TODO show no additional screens for now
             //screenAssets.addAll(PauseMenuScreensFactory.createAssetScreens(game, client, frontendMedia));
-            LOG.info("Pause menu screens preparation finished, using " + screenAssets.size() + " screen assets.");
           }
           catch (Exception e) {
-            LOG.error("Failed to prepare pause menu screens: " + e.getMessage(), e);
+            LOG.error("Failed to prepare pause menu screens: {}", e.getMessage(), e);
           }
 
           LOG.info("Asset fetch for pause menu took {}ms", (System.currentTimeMillis() - start));
@@ -232,8 +249,8 @@ public class PauseMenu extends Application {
     }
   }
 
-  public static void exitPauseMenu() {
-    if (!PauseMenu.test) {
+  public void exitPauseMenu() {
+    if (!test) {
       client.getGameStatusService().finishPause();
     }
 
@@ -259,13 +276,16 @@ public class PauseMenu extends Application {
 
 
     try {
-      NirCmd.focusWindow("Visual Pinball Player");
+      if (!test) {
+        NirCmd.focusWindow("Visual Pinball Player");
+      }
+
       if (pauseMenuSettings.isMuteOnPause()) {
         NirCmd.muteSystem(false);
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to execute focus command: " + e.getMessage(), e);
+      LOG.error("Failed to execute focus command: {}", e.getMessage(), e);
     }
 
     if (visible) {
@@ -274,7 +294,9 @@ public class PauseMenu extends Application {
         if (pauseMenuSettings.getUnpauseDelay() > 0) {
           delay = pauseMenuSettings.getUnpauseDelay();
         }
-        togglePauseKey(delay);
+        if (!test) {
+          togglePauseKey(delay);
+        }
       }).start();
     }
     visible = false;
@@ -283,10 +305,6 @@ public class PauseMenu extends Application {
   private static void togglePauseKey(long delay) {
     new Thread(() -> {
       try {
-        if (test) {
-          return;
-        }
-
         Thread.sleep(delay);
         robot.keyPress(KeyEvent.VK_P);
         Thread.sleep(100);
@@ -294,7 +312,7 @@ public class PauseMenu extends Application {
         LOG.info("Sending Pause key 'P'");
       }
       catch (Exception e) {
-        LOG.error("Failed sending pause key toggle: " + e.getMessage(), e);
+        LOG.error("Failed sending pause key toggle: {}", e.getMessage(), e);
       }
     }).start();
   }

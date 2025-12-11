@@ -245,7 +245,7 @@ public class ServerFX extends Application {
 
   public void togglePauseMenu() {
     Platform.runLater(() -> {
-      PauseMenu.togglePauseMenu();
+      PauseMenu.getInstance().togglePauseMenu();
     });
   }
 
@@ -256,7 +256,7 @@ public class ServerFX extends Application {
     Platform.runLater(() -> {
       LOG.info("Received pause menu test event for game id " + gameId);
 
-      PauseMenu.togglePauseMenu(gameStatus, true);
+      PauseMenu.getInstance().togglePauseMenu(gameStatus, true);
     });
 
     try {
@@ -267,13 +267,13 @@ public class ServerFX extends Application {
     }
 
     Platform.runLater(() -> {
-      PauseMenu.togglePauseMenu(gameStatus, true);
+      PauseMenu.getInstance().togglePauseMenu(gameStatus, true);
     });
   }
 
   public void exitPauseMenu() {
     Platform.runLater(() -> {
-      PauseMenu.exitPauseMenu();
+      PauseMenu.getInstance().exitPauseMenu();
     });
   }
 
@@ -333,7 +333,7 @@ public class ServerFX extends Application {
     overlayStage.setFullScreen(true);
     overlayStage.getScene().getStylesheets().add(ServerFX.class.getResource("stylesheet.css").toExternalForm());
 
-    PauseMenu.loadPauseMenu();
+    PauseMenu.getInstance().loadPauseMenu();
     latch.countDown();
   }
 }

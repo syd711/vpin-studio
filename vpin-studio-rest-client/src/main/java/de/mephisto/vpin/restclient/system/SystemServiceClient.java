@@ -161,10 +161,10 @@ public class SystemServiceClient extends VPinStudioClientService {
 
   public MonitorInfo getScreenInfo(int screenId) {
     if (screenId == -1) {
-      return getSystemSummary().getPrimaryScreen();
+      return getSystemSummary().getPrimaryMonitor();
     }
     else {
-      return getSystemSummary().getScreenInfo(screenId);
+      return getSystemSummary().getMonitorInfo(screenId);
     }
   }
 

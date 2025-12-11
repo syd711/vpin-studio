@@ -17,7 +17,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.PauseMenuPreferencesController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.PauseMenuPreferencesController">
    <center>
       <ScrollPane hbarPolicy="NEVER" hmin="800.0" BorderPane.alignment="CENTER">
          <content>
@@ -50,11 +50,12 @@
                   </Label>
                   <GridPane alignment="BASELINE_RIGHT" hgap="3.0" vgap="3.0">
                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="209.5999755859375" prefWidth="190.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="650.0" minWidth="350.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="160.0" prefWidth="160.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="650.0" minWidth="350.0" prefWidth="546.6000732421875" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="145.199951171875" minWidth="1.6000244140625455" prefWidth="3.2000732421875" />
                      </columnConstraints>
                      <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
@@ -62,7 +63,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <children>
                               <CheckBox fx:id="pauseMenuCheckbox" mnemonicParsing="false" styleClass="default-text" text="Show pause menu instead of overlay" textFill="WHITE">
                                  <font>
@@ -76,7 +77,7 @@
                               <Label styleClass="checkbox-description" text="the pause menu will be shown instead. This saves one key binding." textFill="WHITE" />
                            </children>
                         </VBox>
-                        <Label layoutX="10.0" layoutY="46.0" styleClass="preference-label" text="Pause Menu Visibility:" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label layoutX="10.0" layoutY="46.0" styleClass="preference-label" text="Pause Menu Visibility:" textFill="WHITE" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -97,27 +98,27 @@
                                     <FontIcon iconColor="#ff3333" iconLiteral="mdi2r-restart-alert" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="400.0" text="The server needs to be restarted to apply this change. You can restart the server in the &quot;Server Settings&quot; section." wrapText="true" />
+                                    <Tooltip prefWidth="400.0" text="The server needs to be restarted to apply this change." wrapText="true" />
                                  </tooltip>
                               </Label>
                            </children>
                         </HBox>
-                        <CheckBox fx:id="pauseMenuMuteCheckbox" mnemonicParsing="false" styleClass="default-text" text="Mute system on pause" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <CheckBox fx:id="pauseMenuMuteCheckbox" mnemonicParsing="false" styleClass="default-text" text="Mute system on pause" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="9.0" layoutY="15.0" styleClass="preference-label" text="Pause System Volume:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="9.0" layoutY="15.0" styleClass="preference-label" text="System Volume:" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="9.0" layoutY="77.0" styleClass="preference-label" text="Resume Delay:" textFill="WHITE" GridPane.rowIndex="3">
+                        <Label layoutX="9.0" layoutY="77.0" styleClass="preference-label" text="Resume Delay:" textFill="WHITE" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                            <children>
                               <Spinner fx:id="delaySpinner" />
                               <Label styleClass="preference-label" text="ms." textFill="WHITE">
@@ -138,16 +139,41 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Label styleClass="preference-label" text="Tutorial Videos:" textFill="WHITE" GridPane.rowIndex="4">
+                        <Label styleClass="preference-label" text="Tutorial Videos:" textFill="WHITE" GridPane.rowIndex="5">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <CheckBox fx:id="tutorialsCheckbox" layoutX="198.0" layoutY="49.0" mnemonicParsing="false" styleClass="default-text" text="Show Tutorial Videos" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                        <CheckBox fx:id="tutorialsCheckbox" layoutX="198.0" layoutY="49.0" mnemonicParsing="false" styleClass="default-text" text="Show Tutorial Videos" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <CheckBox fx:id="pauseMenuOrientation" mnemonicParsing="false" styleClass="default-text" text="Desktop Mode" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <Label>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="#ff3333" iconLiteral="mdi2r-restart-alert" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="400.0" text="The server needs to be restarted to apply this change." wrapText="true" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <Label layoutX="9.0" layoutY="15.0" styleClass="preference-label" text="Screen Orientation:" textFill="WHITE" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
                      </children>
                      <opaqueInsets>
                         <Insets />
@@ -158,7 +184,7 @@
                   </GridPane>
                   <GridPane fx:id="iScoredScoresBox" hgap="3.0" vgap="3.0">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="416.6000732421875" minWidth="10.0" prefWidth="208.1999267578125" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="160.0" prefWidth="160.0" />
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="594.1999816894531" minWidth="10.0" prefWidth="540.2000732421875" />
                     </columnConstraints>
                     <rowConstraints>
@@ -182,8 +208,8 @@
                   </GridPane>
                   <GridPane fx:id="maniaScoresBox" hgap="3.0" vgap="3.0">
                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="416.6000732421875" minWidth="10.0" prefWidth="208.00006713867185" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="594.1999816894531" minWidth="10.0" prefWidth="539.9999328613283" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="160.0" prefWidth="160.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="594.1999816894531" minWidth="10.0" prefWidth="577.5999755859375" />
                      </columnConstraints>
                      <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -203,21 +229,30 @@
                   </GridPane>
                   <GridPane hgap="3.0" layoutX="34.0" layoutY="434.0" vgap="3.0">
                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="416.6000732421875" minWidth="10.0" prefWidth="190.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="594.1999816894531" minWidth="10.0" prefWidth="561.3999328613281" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="160.0" prefWidth="160.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="594.1999816894531" minWidth="10.0" prefWidth="537.99990234375" />
                      </columnConstraints>
                      <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Button mnemonicParsing="false" onAction="#onPauseTest" text="Test Pause Menu" textFill="WHITE" GridPane.columnIndex="1">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                            <GridPane.margin>
                               <Insets top="12.0" />
                            </GridPane.margin>
-                        </Button>
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#onPauseTest" text="Test Pause Menu" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Button>
+                              <Button fx:id="restartBtn" mnemonicParsing="false" onAction="#onRestart" styleClass="error-title" text="Restart Server" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Button>
+                           </children>
+                        </HBox>
                      </children>
                   </GridPane>
                </children>

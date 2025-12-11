@@ -621,7 +621,10 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   @NonNull
   public FrontendMedia getGameMedia(int gameId) {
     Game game = getOriginalGame(gameId);
-    return getGameMedia(game);
+    if (game != null) {
+      return getGameMedia(game);
+    }
+    return new FrontendMedia();
   }
 
   public boolean clearCache() {

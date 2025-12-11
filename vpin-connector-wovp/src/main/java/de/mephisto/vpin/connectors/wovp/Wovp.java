@@ -1,21 +1,32 @@
 package de.mephisto.vpin.connectors.wovp;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import de.mephisto.vpin.connectors.wovp.models.Challenges;
-import de.mephisto.vpin.connectors.wovp.models.Participant;
-import de.mephisto.vpin.connectors.wovp.models.Participants;
-import de.mephisto.vpin.connectors.wovp.models.Search;
+import de.mephisto.vpin.connectors.wovp.models.*;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.ContentBody;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Map;
 
 public class Wovp {
   private final static Logger LOG = LoggerFactory.getLogger(Wovp.class);
@@ -23,6 +34,10 @@ public class Wovp {
   private final static ObjectMapper objectMapper;
 
   public static final String URL = "https://worldofvirtualpinball.com/api/whsc/v1/";
+  public static final String SCORE_PHOTO_URL = URL + "scores/submit-photo";
+  public static final String SCORE_SUBMIT_URL = URL + "scores/submit";
+  public static final String VALIDATION_URL = URL + "validate-apikey";
+  public static final String CHALLENGES_URL = URL + "challenges/search";
 
   static {
     objectMapper = new ObjectMapper();
@@ -45,11 +60,55 @@ public class Wovp {
   public Challenges getChallenges() throws Exception {
     Search search = new Search();
     String json = objectMapper.writeValueAsString(search);
-    return doPost(json, Challenges.class);
+    return doPost(json, Challenges.class, CHALLENGES_URL);
   }
 
-  public void submitScore() {
+  public void submitScore(@NonNull File screenshots, @NonNull String challengeId, long score, @Nullable String note) throws Exception {
+    UploadResponse uploadResponse = submitPhoto(screenshots);
+    if (uploadResponse != null && uploadResponse.getData().getErrors().isEmpty()) {
+      LOG.info("Resolved temporary photo id {}", uploadResponse.getData().getPhotoTempId());
+      ScoreSubmit scoreSubmit = new ScoreSubmit();
+      scoreSubmit.setScore(score);
+      scoreSubmit.setNote(note);
+      scoreSubmit.setPlayingPlatform(0);
+      scoreSubmit.setChallengeId(challengeId);
+      scoreSubmit.setPhotoTempId(uploadResponse.getData().getPhotoTempId());
 
+      String json = objectMapper.writeValueAsString(scoreSubmit);
+      doPost(json, UploadResponse.class, SCORE_SUBMIT_URL);
+    }
+  }
+
+  private UploadResponse submitPhoto(File screenshot) throws Exception {
+    try {
+      CloseableHttpResponse response;
+      try (DefaultHttpClient httpclient = new DefaultHttpClient()) {
+
+        HttpPost httppost = new HttpPost(SCORE_PHOTO_URL);
+        MultipartEntity entity = new MultipartEntity();
+
+        ContentBody contentBody = new FileBody(screenshot, ContentType.APPLICATION_OCTET_STREAM);
+
+        entity.addPart("file", contentBody);
+        httppost.setEntity(entity);
+        httppost.setHeader("X-Client-ID", "vpin-studio");
+        httppost.setHeader("Authorization", "Bearer " + apiKey);
+
+        response = httpclient.execute(httppost);
+      }
+      HttpEntity responseEntity = response.getEntity();
+      String body = IOUtils.toString(responseEntity.getContent(), "UTF-8");
+
+      if (response.getStatusLine().getStatusCode() != 200) {
+        throw new UnsupportedOperationException("WOVP image upload failed with code " + response.getStatusLine().getStatusCode());
+      }
+
+      return objectMapper.readValue(body, UploadResponse.class);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to post score image to wovp: {}", e.getMessage(), e);
+      throw e;
+    }
   }
 
   public String validateKey() {
@@ -58,7 +117,7 @@ public class Wovp {
       String json = "{\"apikey\": \"" + apiKey + "\"}";
 
       HttpRequest request = HttpRequest.newBuilder()
-          .uri(URI.create(URL + "validate-apikey"))
+          .uri(URI.create(VALIDATION_URL))
           .header("Content-Type", "application/json")
           .header("X-Client-ID", "vpin-studio")
           .POST(HttpRequest.BodyPublishers.ofString(json))
@@ -83,11 +142,11 @@ public class Wovp {
     return "No API key set.";
   }
 
-  private <T> T doPost(String json, Class<T> clazz) throws Exception {
+  private <T> T doPost(String json, Class<T> clazz, String url) throws Exception {
     HttpClient client = HttpClient.newBuilder().build();
 
     HttpRequest request = HttpRequest.newBuilder()
-        .uri(URI.create(URL + "challenges/search"))
+        .uri(URI.create(url))
         .header("Content-Type", "application/json")
         .header("X-Client-ID", "vpin-studio")
         .header("Authorization", "Bearer " + apiKey)
@@ -98,9 +157,8 @@ public class Wovp {
       // Send the request and get the response
       HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
       String responseJson = response.body();
-
       if (response.statusCode() != 200) {
-        throw new UnsupportedOperationException("WOVP return status code " + response.statusCode() + " [" + responseJson + "]");
+        throw new UnsupportedOperationException("WOVP return status code " + response.statusCode() + " [" + responseJson + "/" + response.body() + "]");
       }
 
       return objectMapper.readValue(responseJson, clazz);

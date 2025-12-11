@@ -860,8 +860,13 @@ public abstract class BaseConnector implements FrontendConnector {
 
   protected File resolveExe(EmulatorType type) {
     switch (type) {
-      case VisualPinball:
-        return systemService.resolveVpx64Exe();
+      case VisualPinball: {
+        File f = systemService.resolveVpx64Exe();
+        if (f == null) {
+          f = systemService.resolveVpxExe();
+        }
+        return f;
+      }
       case VisualPinball9:
         return systemService.resolveVptExe();
       case FuturePinball:

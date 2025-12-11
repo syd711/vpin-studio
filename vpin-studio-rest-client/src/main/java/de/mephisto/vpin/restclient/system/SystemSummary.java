@@ -26,7 +26,7 @@ public class SystemSummary {
 
   private List<MonitorInfo> monitorInfos;
 
-  public List<MonitorInfo> getScreenInfos() {
+  public List<MonitorInfo> getMonitorInfos() {
     return monitorInfos;
   }
 
@@ -34,11 +34,11 @@ public class SystemSummary {
     this.monitorInfos = monitorInfos;
   }
 
-  public MonitorInfo getPrimaryScreen() {
-    return getScreenInfo(-1);
+  public MonitorInfo getPrimaryMonitor() {
+    return getMonitorInfo(-1);
   }
 
-  public MonitorInfo getScreenInfo(int id) {
+  public MonitorInfo getMonitorInfo(int id) {
     for (MonitorInfo monitorInfo : monitorInfos) {
       if (id == -1 && monitorInfo.isPrimary()) {
         return monitorInfo;
