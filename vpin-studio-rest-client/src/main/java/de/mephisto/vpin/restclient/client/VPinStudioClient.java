@@ -50,11 +50,11 @@ import de.mephisto.vpin.restclient.vpauthenticators.VpAuthenticationServiceClien
 import de.mephisto.vpin.restclient.vps.VpsServiceClient;
 import de.mephisto.vpin.restclient.vpx.VpxServiceClient;
 import de.mephisto.vpin.restclient.wovp.WOVPServiceClient;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
-import org.springframework.lang.NonNull;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.client.RestTemplate;
 
@@ -398,6 +398,7 @@ public class VPinStudioClient {
   public InputStream getCachedUrlImage(String url) {
     return getImageCache().getCachedUrlImage(url);
   }
+
   public CardData getCardData(GameRepresentation game, CardTemplate template) {
     try {
       CardData cardData = highscoreCardsServiceClient.getHighscoreCardData(game, template);
@@ -431,7 +432,7 @@ public class VPinStudioClient {
 
   public InputStream getPersistentCachedUrlImage(String cache, String url) {
     try {
-      String asset = url.substring(url.lastIndexOf("/") + 1, url.length());
+      String asset = url.substring(url.lastIndexOf("/") + 1);
       File folder;
 
       if (!OSUtil.isMac()) {
@@ -473,9 +474,13 @@ public class VPinStudioClient {
     return restClient;
   }
 
+  private String latestScreenshot = null;
+
   public InputStream getScreenshot() {
     try {
-      return new URL(getURL("recorder/screenshot")).openStream();
+      if(latestScreenshot != null) {
+        return new URL(getURL("recorder/screenshot/" + latestScreenshot)).openStream();
+      }
     }
     catch (IOException e) {
       LOG.error("Failed to load screenshot: {}", e.getMessage(), e);
@@ -483,23 +488,27 @@ public class VPinStudioClient {
     return null;
   }
 
+  public void clearScreenshot() {
+    this.latestScreenshot = null;
+  }
+
+  public void takeScreenshot() {
+    try {
+      final RestTemplate restTemplate = RestClient.createTimeoutBasedTemplate(2000);
+      latestScreenshot = restTemplate.getForObject(getRestClient().getBaseUrl() + API + "recorder/screenshot", String.class);
+    }
+    catch (Exception e) {
+      LOG.info("Take screenshot failed for {} ({})", getRestClient().getBaseUrl(), e.getMessage());
+    }
+  }
+
   public void download(@NonNull String url, @NonNull File target) throws Exception {
     RestTemplate template = new RestTemplate();
     LOG.info("HTTP Download " + restClient.getBaseUrl() + VPinStudioClientService.API + url);
     template.execute(restClient.getBaseUrl() + VPinStudioClientService.API + url, HttpMethod.GET, null, clientHttpResponse -> {
-      FileOutputStream out = null;
-      try {
-        out = new FileOutputStream(target);
+      try (FileOutputStream out = new FileOutputStream(target)) {
         StreamUtils.copy(clientHttpResponse.getBody(), out);
         return target;
-      }
-      catch (Exception e) {
-        throw e;
-      }
-      finally {
-        if (out != null) {
-          out.close();
-        }
       }
     });
   }

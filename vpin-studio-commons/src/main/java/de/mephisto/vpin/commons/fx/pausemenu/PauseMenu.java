@@ -227,15 +227,14 @@ public class PauseMenu extends Application {
         StateMananger.getInstance().setControls(pauseMenuSettings);
 
         //we need to take the screenshot before the menu is shown
-        InputStream screenshot = null;
-        if (!test) {
+//        if (!test) {
           if (wovpSettings.isEnabled() && wovpSettings.isApiKeySet() && wovpSettings.isUseScoreSubmitter()) {
-            screenshot = client.getScreenshot();
+            client.takeScreenshot();
           }
-        }
+//        }
 
         visible = true;
-        StateMananger.getInstance().setGame(game, screenshot);
+        StateMananger.getInstance().setGame(game);
         stage.getScene().setCursor(Cursor.NONE);
 
         ServerFX.forceShow(stage);

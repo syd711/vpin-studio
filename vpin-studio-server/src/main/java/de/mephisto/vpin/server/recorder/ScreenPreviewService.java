@@ -53,7 +53,22 @@ public class ScreenPreviewService implements InitializingBean {
 
   public BufferedImage capture(@NonNull MonitorInfo display) {
     try {
-      Rectangle rectangle = new Rectangle((int) display.getX(), (int) display.getY(), display.getWidth(), display.getHeight());
+      double width = display.getWidth();
+      double height = display.getHeight();
+      double x = display.getX();
+      double y = display.getY();
+
+      if (display.getScaling() > 0) {
+        width = width / display.getScaling();
+        height = height / display.getScaling();
+        x = display.getScaledX();
+
+        if(x < 0) {
+          x = display.getX();
+        }
+      }
+
+      Rectangle rectangle = new Rectangle((int) x, (int) y, (int) width, (int) height);
       return robot.createScreenCapture(rectangle);
     }
     catch (Exception e) {

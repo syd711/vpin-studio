@@ -100,7 +100,6 @@ public class MenuController implements Initializable {
 
   private int selectionIndex = 0;
 
-  private InputStream screenshot;
   private GameRepresentation game;
   private PauseMenuItem activeSelection;
 
@@ -110,14 +109,11 @@ public class MenuController implements Initializable {
   private Node currentSelection;
   private MenuSubmitterViewController scoreSubmitterController;
   private VPinScreen cardScreen = null;
-  private FrontendPlayerDisplay tutorialDisplay;
   private FrontendMediaRepresentation frontendMedia;
   private VpsTable vpsTable;
 
-  public void setGame(@NonNull GameRepresentation game,
-                      @Nullable InputStream screenshot) {
+  public void setGame(@NonNull GameRepresentation game) {
     this.game = game;
-    this.screenshot = screenshot;
     enterMenuItemSelection();
   }
 
@@ -135,12 +131,6 @@ public class MenuController implements Initializable {
       if (!StringUtils.isEmpty(cardSettings.getPopperScreen())) {
         cardScreen = VPinScreen.valueOf(cardSettings.getPopperScreen());
       }
-
-      VPinScreen tutorialScreen = VPinScreen.BackGlass;
-      if (pauseMenuSettings.getTutorialsScreen() != null) {
-        tutorialScreen = pauseMenuSettings.getTutorialsScreen();
-      }
-      tutorialDisplay = client.getFrontendService().getScreenDisplay(tutorialScreen);
       LOG.info("Finished fetching all screen information for pause menu.");
 
       frontendMedia = client.getFrontendService().getFrontendMedia(game.getId());
@@ -314,7 +304,7 @@ public class MenuController implements Initializable {
         FXMLLoader loader = new FXMLLoader(MenuSubmitterViewController.class.getResource(resource));
         Pane widgetRoot = loader.load();
         scoreSubmitterController = loader.getController();
-        scoreSubmitterController.setData(game, vpsTable, sectionImage, screenshot);
+        scoreSubmitterController.setData(game, vpsTable, sectionImage);
         scoreView.setCenter(widgetRoot);
         scoreView.setVisible(true);
       }

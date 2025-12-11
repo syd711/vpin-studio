@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.recorder.RecordingDataSummary;
 import de.mephisto.vpin.server.util.RequestUtil;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,13 +109,25 @@ public class RecorderResource {
   }
 
   @GetMapping("/screenshot")
-  public void takeScreenshot(HttpServletResponse response) {
+  public String takeScreenshot() {
+    return screenshotService.screenshot();
+  }
+
+  @GetMapping("/screenshot/{uuid}")
+  public void getScreenshot(@PathVariable("uuid") String uuid, HttpServletResponse response) {
     InputStream in = null;
     OutputStream out = null;
     try {
       LOG.info("Creating summary screenshot...");
-      in = screenshotService.screenshot();
       out = response.getOutputStream();
+      File screenshotFile = screenshotService.getScreenshotFile(uuid);
+      if (screenshotFile.exists()) {
+        in = new FileInputStream(screenshotFile);
+      }
+      else {
+        in = screenshotService.takeScreenshot();
+      }
+
       IOUtils.copy(in, out);
       LOG.info("Finished exporting summary screenshot.");
     }

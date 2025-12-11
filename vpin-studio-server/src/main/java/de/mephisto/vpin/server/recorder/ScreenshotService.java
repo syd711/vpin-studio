@@ -14,6 +14,7 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ import java.util.*;
 import java.util.List;
 import java.util.zip.ZipOutputStream;
 
+import static de.mephisto.vpin.commons.SystemInfo.RESOURCES;
 import static de.mephisto.vpin.commons.fx.ImageUtil.*;
 
 @Service
@@ -48,7 +50,8 @@ public class ScreenshotService {
   @Autowired
   private ScreenPreviewService screenPreviewService;
 
-  public InputStream screenshot() {
+
+  public InputStream takeScreenshot() {
     try {
       BufferedImage bufferedImage = takeMonitorsScreenshots();
       byte[] bytes = toBytes(bufferedImage);
@@ -59,6 +62,37 @@ public class ScreenshotService {
     }
     return new ByteArrayInputStream(new byte[]{});
   }
+
+  public String screenshot() {
+    String screenShotId = UUID.randomUUID().toString();
+    BufferedImage bufferedImage = takeMonitorsScreenshots();
+    //return as fast as possible to speed up pause menu show
+    new Thread(() -> {
+      try {
+        Thread.currentThread().setName("Screenshot Writer " + screenShotId);
+        byte[] bytes = toBytes(bufferedImage);
+        File screenshot = getScreenshotFile(screenShotId);
+        FileOutputStream out = new FileOutputStream(screenshot);
+        IOUtils.write(bytes, out);
+        out.close();
+      }
+      catch (IOException e) {
+        LOG.error("Failed to write screenshot: {}", e.getMessage(), e);
+      }
+    }).start();
+    return screenShotId;
+  }
+
+  public File getScreenshotFile(@NonNull String uuid) {
+    File screenshotFolder = new File(RESOURCES, "screenshots");
+    if (!screenshotFolder.exists()) {
+      screenshotFolder.mkdirs();
+    }
+    File screenshot = new File(screenshotFolder, uuid + ".jpg");
+    screenshot.deleteOnExit();
+    return screenshot;
+  }
+
 
   /**
    * The not streamed version

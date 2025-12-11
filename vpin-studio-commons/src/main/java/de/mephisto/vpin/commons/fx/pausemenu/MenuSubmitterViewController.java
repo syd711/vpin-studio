@@ -1,13 +1,9 @@
 package de.mephisto.vpin.commons.fx.pausemenu;
 
-import de.mephisto.vpin.commons.fx.ServerFX;
-import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItem;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.GameStatus;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -52,7 +48,7 @@ public class MenuSubmitterViewController implements Initializable {
   private ImageView screenshotView;
   private static Image screenshotImage;
 
-  public void setData(GameRepresentation game, VpsTable tableById, Image sectionImage, InputStream screenshot) {
+  public void setData(GameRepresentation game, VpsTable tableById, Image sectionImage) {
     this.nameLabel.setText(game.getGameDisplayName());
     this.versionLabel.setVisible(false);
     this.authorsLabel.setVisible(false);
@@ -82,19 +78,13 @@ public class MenuSubmitterViewController implements Initializable {
       }
     }
 
-//    Platform.runLater(() -> {
     double height = widgetPane.getHeight();
     double width = widgetPane.getWidth();
-
-//    screenshotView.setPreserveRatio(true);
-//      screenshotView.setFitWidth(width - 60);
-//      screenshotView.setFitHeight(height - 60);
-
+    InputStream screenshot = client.getScreenshot();
     if (screenshotImage == null && screenshot != null) {
       screenshotImage = new Image(screenshot);
     }
     screenshotView.setImage(screenshotImage);
-//    });
   }
 
   public void enter() {
