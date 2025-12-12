@@ -15,7 +15,7 @@ public class WopvTest {
     String key = System.getenv("WOVP_KEY");
     if (!StringUtils.isEmpty(key)) {
       Wovp wovp = Wovp.create(key);
-      Challenges challenges = wovp.getChallenges();
+      Challenges challenges = wovp.getChallenges(true);
       assertFalse(challenges.getItems().isEmpty());
     }
   }

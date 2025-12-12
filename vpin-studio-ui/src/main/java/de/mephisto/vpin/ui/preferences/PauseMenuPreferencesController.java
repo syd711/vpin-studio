@@ -57,6 +57,9 @@ public class PauseMenuPreferencesController implements Initializable {
   private CheckBox tutorialsCheckbox;
 
   @FXML
+  private CheckBox triggerCheckbox;
+
+  @FXML
   private Spinner<Integer> delaySpinner;
 
   @FXML
@@ -154,6 +157,15 @@ public class PauseMenuPreferencesController implements Initializable {
     }, 300));
 
 
+    triggerCheckbox.setSelected(pauseMenuSettings.isPressPause());
+    delaySpinner.setDisable(!pauseMenuSettings.isPressPause());
+    triggerCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      pauseMenuSettings.setPressPause(newValue);
+      delaySpinner.setDisable(!newValue);
+      client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+    });
+
+
     screenTutorialComboBox.setDisable(!pauseMenuSettings.isTutorialsOnScreen());
     Frontend frontend = client.getFrontendService().getFrontend();
     List<VPinScreen> screens = new ArrayList<>(frontend.getSupportedScreens());
@@ -179,7 +191,7 @@ public class PauseMenuPreferencesController implements Initializable {
     tutorialItemRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        if(newValue) {
+        if (newValue) {
           screenTutorialComboBox.setDisable(true);
           pauseMenuSettings.setTutorialsOnScreen(false);
           client.getPreferenceService().setJsonPreference(pauseMenuSettings);
@@ -191,7 +203,7 @@ public class PauseMenuPreferencesController implements Initializable {
     tutorialScreenRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        if(newValue) {
+        if (newValue) {
           screenTutorialComboBox.setDisable(false);
           pauseMenuSettings.setTutorialsOnScreen(true);
           client.getPreferenceService().setJsonPreference(pauseMenuSettings);

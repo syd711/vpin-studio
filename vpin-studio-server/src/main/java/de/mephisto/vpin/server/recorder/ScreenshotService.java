@@ -14,18 +14,18 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.zip.ZipOutputStream;
 
 import static de.mephisto.vpin.commons.SystemInfo.RESOURCES;
@@ -50,6 +50,7 @@ public class ScreenshotService {
   @Autowired
   private ScreenPreviewService screenPreviewService;
 
+  private String lastScreenShotId = null;
 
   public InputStream takeScreenshot() {
     try {
@@ -64,14 +65,14 @@ public class ScreenshotService {
   }
 
   public String screenshot() {
-    String screenShotId = UUID.randomUUID().toString();
+    lastScreenShotId = UUID.randomUUID().toString();
     BufferedImage bufferedImage = takeMonitorsScreenshots();
     //return as fast as possible to speed up pause menu show
     new Thread(() -> {
       try {
-        Thread.currentThread().setName("Screenshot Writer " + screenShotId);
+        Thread.currentThread().setName("Screenshot Writer " + lastScreenShotId);
         byte[] bytes = toBytes(bufferedImage);
-        File screenshot = getScreenshotFile(screenShotId);
+        File screenshot = getScreenshotFile(lastScreenShotId);
         FileOutputStream out = new FileOutputStream(screenshot);
         IOUtils.write(bytes, out);
         out.close();
@@ -80,15 +81,16 @@ public class ScreenshotService {
         LOG.error("Failed to write screenshot: {}", e.getMessage(), e);
       }
     }).start();
-    return screenShotId;
+    return lastScreenShotId;
   }
 
-  public File getScreenshotFile(@NonNull String uuid) {
+  public File getScreenshotFile(@Nullable String uuid) {
     File screenshotFolder = new File(RESOURCES, "screenshots");
     if (!screenshotFolder.exists()) {
       screenshotFolder.mkdirs();
     }
-    File screenshot = new File(screenshotFolder, uuid + ".jpg");
+    String id = uuid != null ? uuid : lastScreenShotId;
+    File screenshot = new File(screenshotFolder, id + ".jpg");
     screenshot.deleteOnExit();
     return screenshot;
   }

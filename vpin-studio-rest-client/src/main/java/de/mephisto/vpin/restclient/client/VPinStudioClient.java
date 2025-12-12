@@ -478,7 +478,7 @@ public class VPinStudioClient {
 
   public InputStream getScreenshot() {
     try {
-      if(latestScreenshot != null) {
+      if (latestScreenshot != null) {
         return new URL(getURL("recorder/screenshot/" + latestScreenshot)).openStream();
       }
     }

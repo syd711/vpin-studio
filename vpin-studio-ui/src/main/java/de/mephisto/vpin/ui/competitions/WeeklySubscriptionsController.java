@@ -15,6 +15,7 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.tables.TableDialogs;
+import de.mephisto.vpin.ui.tables.panels.PlayButtonController;
 import de.mephisto.vpin.ui.tournaments.VpsTableContainer;
 import de.mephisto.vpin.ui.tournaments.VpsVersionContainer;
 import javafx.application.Platform;
@@ -85,8 +86,13 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
   @FXML
   private StackPane tableStack;
 
+  @FXML
+  private ToolBar toolbar;
+
   private Parent loadingOverlay;
 
+
+  private PlayButtonController playButtonController;
   private CompetitionsController competitionsController;
   private List<CompetitionRepresentation> weeklySubscriptions;
 
@@ -375,6 +381,19 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
         return true;
       }
     });
+
+
+    try {
+      FXMLLoader loader = new FXMLLoader(PlayButtonController.class.getResource("play-btn.fxml"));
+      Parent playBtnRoot = loader.load();
+      playButtonController = loader.getController();
+      playButtonController.setDisable(true);
+      toolbar.getItems().add(playBtnRoot);
+    }
+    catch (IOException e) {
+      LOG.error("Failed to load play button: " + e.getMessage(), e);
+    }
+
     bindSearchField();
 
     EventManager.getInstance().addListener(this);
@@ -415,8 +434,13 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
 
   private void refreshView(Optional<WeeklyCompetitionModel> model) {
     WeeklyCompetitionModel newSelection = null;
+    playButtonController.setData(null);
+
     if (model.isPresent()) {
       newSelection = model.get();
+      if (newSelection.getGame() != null) {
+        playButtonController.setData(newSelection.getGame());
+      }
     }
 
     tableNavigateBtn.setDisable(model.isEmpty() || model.get().getGame() == null);

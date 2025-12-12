@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.competitions;
 import de.mephisto.vpin.restclient.competitions.CompetitionScore;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.competitions.IScoredSyncModel;
+import de.mephisto.vpin.restclient.wovp.ScoreSubmitResult;
 import de.mephisto.vpin.server.competitions.iscored.IScoredCompetitionSynchronizer;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
@@ -54,6 +55,16 @@ public class CompetitionResource {
   @GetMapping("/weekly/scores/{uuid}")
   public List<CompetitionScore> getWeeklyScore(@PathVariable("uuid") String uuid) {
     return wovpService.getWeeklyScores(uuid);
+  }
+
+  @GetMapping("/submitter/enabled")
+  public boolean isScoreSubmitEnabled() {
+    return wovpService.isScoreSubmitEnabled();
+  }
+
+  @GetMapping("/weekly/submit/{simulate}")
+  public ScoreSubmitResult submitScore(boolean simulate) {
+    return wovpService.submitScore(simulate);
   }
 
   @GetMapping("/subscriptions")

@@ -1,15 +1,19 @@
 package de.mephisto.vpin.commons.fx.pausemenu;
 
 import de.mephisto.vpin.commons.utils.JFXFuture;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.wovp.ScoreSubmitResult;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +43,25 @@ public class MenuSubmitterViewController implements Initializable {
   private Label scoreInfoLabel;
 
   @FXML
-  private Label submitBtnLabel;
+  private Label errorMsg;
+
+  @FXML
+  private VBox errorContainer;
+
+  @FXML
+  private Label infoLabel;
+
+  @FXML
+  private Label playerScoreLabel;
+
+  @FXML
+  private Label playerInitialsLabel;
+
+  @FXML
+  private Label playerNameLabel;
+
+  @FXML
+  private Button submitBtn;
 
   @FXML
   private BorderPane widgetPane;
@@ -78,25 +100,49 @@ public class MenuSubmitterViewController implements Initializable {
       }
     }
 
-    double height = widgetPane.getHeight();
-    double width = widgetPane.getWidth();
-    InputStream screenshot = client.getScreenshot();
-    if (screenshotImage == null && screenshot != null) {
-      screenshotImage = new Image(screenshot);
+    ScoreSubmitResult scoreSubmitResult = client.getCompetitionService().submitScore(true);
+    if (scoreSubmitResult.getErrorMessage() == null) {
+      InputStream screenshot = client.getScreenshot();
+      if (screenshotImage == null && screenshot != null) {
+        screenshotImage = new Image(screenshot);
+      }
+      screenshotView.setImage(screenshotImage);
     }
-    screenshotView.setImage(screenshotImage);
+    else {
+      screenshotView.setVisible(false);
+    }
+
+    JFXFuture.supplyAsync(() -> {
+      return client.getCompetitionService().submitScore(true);
+    }).thenAcceptLater((result) -> {
+      playerInitialsLabel.setText(result.getPlayerInitials() != null ? result.getPlayerInitials() : "-");
+      playerNameLabel.setText(result.getPlayerName() != null ? result.getPlayerName() : "-");
+      playerScoreLabel.setText(result.getScore() > 0 ? String.valueOf(result.getScore()) : "-");
+      submitBtn.setDisable(result.getErrorMessage() != null);
+      if (result.getErrorMessage() != null) {
+        errorContainer.setVisible(true);
+        errorMsg.setText(result.getErrorMessage());
+      }
+    });
   }
 
   public void enter() {
-    submitBtnLabel.setText("Sending scores...");
-    JFXFuture.supplyAsync(() -> {
-      client.getWovpService().submitScore();
-      return "Scores have been submitted.";
-    }).thenAcceptLater((value) -> {
-      submitBtnLabel.setText("Scores have been submitted.");
-    });
+    if (submitBtn.isDisabled()) {
+      return;
+    }
 
-    TransitionUtil.createBlink(submitBtnLabel).play();
+    submitBtn.setText("Sending scores...");
+    JFXFuture.supplyAsync(() -> {
+      return client.getCompetitionService().submitScore(false);
+    }).thenAcceptLater((result) -> {
+      submitBtn.setDisable(true);
+      if (result.getErrorMessage() != null) {
+        errorContainer.setVisible(true);
+        errorMsg.setText(result.getErrorMessage());
+      }
+      infoLabel.setText("Scores have been submitted.");
+    });
+    TransitionUtil.createBlink(submitBtn).play();
   }
 
   public void reset() {
@@ -105,7 +151,13 @@ public class MenuSubmitterViewController implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
+    playerScoreLabel.setFont(WidgetFactory.getScoreFont());
+
+    errorContainer.managedProperty().bindBidirectional(errorContainer.visibleProperty());
     authorsLabel.managedProperty().bindBidirectional(authorsLabel.visibleProperty());
     versionLabel.managedProperty().bindBidirectional(versionLabel.visibleProperty());
+    screenshotView.managedProperty().bindBidirectional(screenshotView.visibleProperty());
+
+    errorContainer.setVisible(false);
   }
 }

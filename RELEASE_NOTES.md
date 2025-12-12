@@ -1,2 +1,3 @@
-- pause menu desktop
+- pause menu desktop, tutorial screens, P key
+- competition launch btn
 - 

@@ -3,16 +3,10 @@ package de.mephisto.vpin.commons.fx.pausemenu.states;
 import de.mephisto.vpin.commons.fx.pausemenu.MenuController;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenuUIDefaults;
+import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuState;
 import de.mephisto.vpin.commons.utils.controller.GameController;
 import de.mephisto.vpin.commons.utils.controller.GameControllerInputListener;
-import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.GameStatus;
-import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
-import de.mephisto.vpin.restclient.wovp.WOVPSettings;
 import javafx.application.Platform;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -20,7 +14,6 @@ import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
 
 
@@ -122,8 +115,8 @@ public class StateMananger implements GameControllerInputListener {
     this.pauseMenuSettings = pauseMenuSettings;
   }
 
-  public void setGame(GameRepresentation game) {
-    menuController.setGame(game);
+  public void setState(PauseMenuState state) {
+    menuController.setInitialState(state);
 
     try {
       Thread.sleep(PauseMenuUIDefaults.SELECTION_SCALE_DURATION * 2);

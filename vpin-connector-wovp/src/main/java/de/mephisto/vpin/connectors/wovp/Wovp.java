@@ -26,6 +26,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Date;
 import java.util.Map;
 
 public class Wovp {
@@ -47,6 +48,7 @@ public class Wovp {
   }
 
   private final String apiKey;
+  private static Challenges challenges;
 
   public static Wovp create(@NonNull String apiKey) {
     return new Wovp(apiKey);
@@ -57,10 +59,13 @@ public class Wovp {
     this.apiKey = apiKey;
   }
 
-  public Challenges getChallenges() throws Exception {
-    Search search = new Search();
-    String json = objectMapper.writeValueAsString(search);
-    return doPost(json, Challenges.class, CHALLENGES_URL);
+  public Challenges getChallenges(boolean forceReload) throws Exception {
+    if (challenges == null || forceReload) {
+      Search search = new Search();
+      String json = objectMapper.writeValueAsString(search);
+      challenges = doPost(json, Challenges.class, CHALLENGES_URL);
+    }
+    return challenges;
   }
 
   public void submitScore(@NonNull File screenshots, @NonNull String challengeId, long score, @Nullable String note) throws Exception {

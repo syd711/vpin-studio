@@ -9,6 +9,7 @@ public class PauseMenuSettings extends JsonSettings {
   private int inputDebounceMs = 0;
   private VPinScreen tutorialsScreen = VPinScreen.Topper;
   private boolean tutorialsOnScreen = false;
+  private boolean pressPause = true;
 
   private int testDuration = 8;
   private int testGameId = -1;
@@ -30,6 +31,14 @@ public class PauseMenuSettings extends JsonSettings {
   private String resetButton;
   private String recordingButton;
   private String inputFilterList;
+
+  public boolean isPressPause() {
+    return pressPause;
+  }
+
+  public void setPressPause(boolean pressPause) {
+    this.pressPause = pressPause;
+  }
 
   public boolean isTutorialsOnScreen() {
     return tutorialsOnScreen;

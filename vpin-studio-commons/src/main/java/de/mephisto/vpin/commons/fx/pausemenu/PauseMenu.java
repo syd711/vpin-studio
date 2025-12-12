@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.pausemenu.model.FrontendScreenAsset;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemsFactory;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuScreensFactory;
+import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuState;
 import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.NirCmd;
@@ -14,7 +15,6 @@ import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
-import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
@@ -37,7 +37,6 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
@@ -195,14 +194,13 @@ public class PauseMenu extends Application {
           SLOG.info("Found game status for " + status.getGameId());
         }
 
-        if (!test) {
-          togglePauseKey(0);
-        }
-
         //reload card settings to resolve actual target screen
         GameRepresentation game = client.getGameService().getGame(status.getGameId());
         PauseMenuSettings pauseMenuSettings = client.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
-        WOVPSettings wovpSettings = client.getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
+
+        if (!test && pauseMenuSettings.isPressPause()) {
+          togglePauseKey(0);
+        }
 
         screenAssets.clear();
         if (pauseMenuSettings.isTutorialsOnScreen() && pauseMenuSettings.isShowTutorials()) {
@@ -227,14 +225,18 @@ public class PauseMenu extends Application {
         StateMananger.getInstance().setControls(pauseMenuSettings);
 
         //we need to take the screenshot before the menu is shown
-//        if (!test) {
-          if (wovpSettings.isEnabled() && wovpSettings.isApiKeySet() && wovpSettings.isUseScoreSubmitter()) {
-            client.takeScreenshot();
-          }
-//        }
+        boolean scoreSubmitterEnabled = client.getCompetitionService().isScoreSubmitterEnabled();
+        if (!test & scoreSubmitterEnabled) {
+          client.takeScreenshot();
+        }
 
         visible = true;
-        StateMananger.getInstance().setGame(game);
+
+        PauseMenuState state = new PauseMenuState();
+        state.setGame(game);
+        state.setScoreSubmitterEnabled(scoreSubmitterEnabled);
+
+        StateMananger.getInstance().setState(state);
         stage.getScene().setCursor(Cursor.NONE);
 
         ServerFX.forceShow(stage);
@@ -305,7 +307,7 @@ public class PauseMenu extends Application {
       LOG.error("Failed to execute focus command: {}", e.getMessage(), e);
     }
 
-    if (visible) {
+    if (visible && pauseMenuSettings.isPressPause()) {
       new Thread(() -> {
         long delay = 1000;
         if (pauseMenuSettings.getUnpauseDelay() > 0) {

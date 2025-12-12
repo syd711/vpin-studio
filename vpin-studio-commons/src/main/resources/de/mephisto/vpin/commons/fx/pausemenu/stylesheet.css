@@ -23,6 +23,25 @@
    -fx-blue: #333366;
 }
 
+.error-container {
+    -fx-border-radius: 3px;
+    -fx-padding: 6 12 6 12;
+    -fx-background-color: #FF3333;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size : 14px;
+    -fx-font-weight : bold;
+}
+
+.submit-button {
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: #6666FF;
+    -fx-border-width: 1;
+    -fx-font-size : 14px;
+    -fx-background-color: #333366;
+    -fx-text-fill: #fff8f8;
+    -fx-border-radius: 3px;
+}
+
 
 .debug {
     -fx-border-style: solid;

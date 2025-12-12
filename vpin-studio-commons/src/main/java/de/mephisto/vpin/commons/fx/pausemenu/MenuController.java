@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.fx.cards.CardGraphicsHighscore;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItem;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemTypes;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemsFactory;
+import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuState;
 import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
 import de.mephisto.vpin.commons.utils.FXUtil;
 import de.mephisto.vpin.commons.utils.JFXFuture;
@@ -101,6 +102,7 @@ public class MenuController implements Initializable {
   private int selectionIndex = 0;
 
   private GameRepresentation game;
+  private PauseMenuState state;
   private PauseMenuItem activeSelection;
 
   private final List<PauseMenuItem> pauseMenuItems = new ArrayList<>();
@@ -112,8 +114,9 @@ public class MenuController implements Initializable {
   private FrontendMediaRepresentation frontendMedia;
   private VpsTable vpsTable;
 
-  public void setGame(@NonNull GameRepresentation game) {
-    this.game = game;
+  public void setInitialState(@NonNull PauseMenuState state) {
+    this.game = state.getGame();
+    this.state = state;
     enterMenuItemSelection();
   }
 
@@ -125,8 +128,6 @@ public class MenuController implements Initializable {
     blueLabel.setText("Loading...");
     JFXFuture.supplyAsync(() -> {
       CardSettings cardSettings = client.getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
-      PauseMenuSettings pauseMenuSettings = client.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
-
       cardScreen = null;
       if (!StringUtils.isEmpty(cardSettings.getPopperScreen())) {
         cardScreen = VPinScreen.valueOf(cardSettings.getPopperScreen());
@@ -447,7 +448,7 @@ public class MenuController implements Initializable {
 
   private void loadMenuItems() {
     pauseMenuItems.clear();
-    pauseMenuItems.addAll(PauseMenuItemsFactory.createPauseMenuItems(game, cardScreen, frontendMedia));
+    pauseMenuItems.addAll(PauseMenuItemsFactory.createPauseMenuItems(state, cardScreen, frontendMedia));
 
     menuItemsRow.getChildren().clear();
 //    menuItemsRow.getStyleClass().add("debug");

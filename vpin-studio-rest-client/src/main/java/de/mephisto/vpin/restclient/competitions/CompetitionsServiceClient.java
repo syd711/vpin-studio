@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
+import de.mephisto.vpin.restclient.wovp.ScoreSubmitResult;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,11 @@ public class CompetitionsServiceClient extends VPinStudioClientService {
 
   public CompetitionsServiceClient(VPinStudioClient client) {
     super(client);
+  }
+
+
+  public ScoreSubmitResult submitScore(boolean simulate) {
+    return getRestClient().get(API + "competitions/weekly/submit/" + simulate, ScoreSubmitResult.class);
   }
 
   public boolean hasManagePermissions(long serverId, long channelId) {
@@ -202,5 +208,15 @@ public class CompetitionsServiceClient extends VPinStudioClientService {
 
     byte[] imageBytes = client.getImageCache().get(name);
     return new ByteArrayInputStream(imageBytes);
+  }
+
+  public boolean isScoreSubmitterEnabled() {
+    try {
+      return getRestClient().get(API + "competitions/submitter/enabled", Boolean.class);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to get submitter state: " + e.getMessage(), e);
+      throw e;
+    }
   }
 }

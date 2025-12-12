@@ -36,7 +36,8 @@ import static de.mephisto.vpin.commons.fx.ServerFX.client;
 public class PauseMenuItemsFactory {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  public static List<PauseMenuItem> createPauseMenuItems(@NonNull GameRepresentation game,  @Nullable VPinScreen cardScreen, @NonNull FrontendMediaRepresentation frontendMedia) {
+  public static List<PauseMenuItem> createPauseMenuItems(@NonNull PauseMenuState state,  @Nullable VPinScreen cardScreen, @NonNull FrontendMediaRepresentation frontendMedia) {
+    GameRepresentation game = state.getGame();
     PauseMenuSettings pauseMenuSettings = client.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
     WOVPSettings wovpSettings = client.getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
 
@@ -47,7 +48,7 @@ public class PauseMenuItemsFactory {
     PauseMenuItem item = new PauseMenuItem(PauseMenuItemTypes.exit, "Continue", "Continue Game", new Image(PauseMenu.class.getResourceAsStream("continue.png")));
     pauseMenuItems.add(item);
 
-    if (wovpSettings.isEnabled() && wovpSettings.isApiKeySet() && wovpSettings.isUseScoreSubmitter()) {
+    if (state.isScoreSubmitterEnabled()) {
       PauseMenuItem scoreSubmitterItem = new PauseMenuItem(PauseMenuItemTypes.scoreSubmitter, "World Of Virtual Pinball", "Score Submitter for World Of Virtual Pinball", new Image(PauseMenu.class.getResourceAsStream("wovp-wheel.png")));
       pauseMenuItems.add(scoreSubmitterItem);
     }

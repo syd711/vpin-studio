@@ -63,6 +63,7 @@
                         <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
                         <VBox GridPane.columnIndex="1" GridPane.rowIndex="3">
@@ -115,12 +116,12 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="9.0" layoutY="77.0" styleClass="preference-label" text="Resume Delay:" textFill="WHITE" GridPane.rowIndex="4">
+                        <Label layoutX="9.0" layoutY="77.0" styleClass="preference-label" text="Resume Delay:" textFill="WHITE" GridPane.rowIndex="5">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
                            <children>
                               <Spinner fx:id="delaySpinner" />
                               <Label styleClass="preference-label" text="ms." textFill="WHITE">
@@ -166,6 +167,31 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
+                        <Label layoutX="10.0" layoutY="220.0" styleClass="preference-label" text="Pause Trigger:" textFill="WHITE" GridPane.rowIndex="4">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                           <children>
+                              <CheckBox fx:id="triggerCheckbox" mnemonicParsing="false" styleClass="default-text" text="Let VPin Studio Server press 'P' on pause menu show and resume." textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <Label fx:id="publicReadAPIHint112" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="This will give the option to resume the game with a bit more delay. Otherwise the game will continue after the emulator has the focus again." wrapText="true" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </HBox>
                      </children>
                      <opaqueInsets>
                         <Insets />

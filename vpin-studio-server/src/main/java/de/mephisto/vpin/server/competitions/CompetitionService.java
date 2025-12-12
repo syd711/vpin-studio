@@ -61,7 +61,6 @@ public class CompetitionService implements InitializingBean {
   @Autowired
   private CompetitionLifecycleService competitionLifecycleService;
 
-
   public List<Competition> getOfflineCompetitions() {
     return competitionsRepository
         .findByTypeOrderByEndDateDesc(CompetitionType.OFFLINE.name())

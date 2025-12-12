@@ -54,7 +54,7 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
       String apiKey = wovpSettings.getApiKey();
       if (!StringUtils.isEmpty(apiKey) && wovpSettings.isEnabled()) {
         Wovp wovp = Wovp.create(apiKey);
-        Challenges challenges = wovp.getChallenges();
+        Challenges challenges = wovp.getChallenges(true);
         if (challenges != null) {
           List<Competition> weeklyCompetitions = competitionService.getWeeklyCompetitions();
           for (Challenge challenge : challenges.getItems()) {
@@ -118,6 +118,7 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
     List<Game> gameMatches = gameService.getGamesByVpsTableId(pinballTable.getExternalId(), vpsVersion);
     if (gameMatches.isEmpty()) {
       LOG.info("No matching game found for weekly challenge \"{}\"", challenge.getChallengeTypeCode());
+      competition.setGameId(-1);
     }
     else {
       Game game = gameMatches.get(0);
@@ -167,7 +168,7 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
         long start = System.currentTimeMillis();
         Thread.currentThread().setName("Wovp Initial Sync");
         LOG.info("----------------------------- Initial WOVP Sync --------------------------------------------------");
-        synchronizeWovp(false);
+        synchronizeWovp(true);
         LOG.info("----------------------------- /Initial WOVP Sync -------------------------------------------------");
         LOG.info("Initial sync finished, took {}ms", (System.currentTimeMillis() - start));
       }).start();
