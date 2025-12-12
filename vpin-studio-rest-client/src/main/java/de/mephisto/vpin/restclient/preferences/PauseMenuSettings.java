@@ -11,6 +11,8 @@ public class PauseMenuSettings extends JsonSettings {
   private boolean tutorialsOnScreen = false;
   private boolean pressPause = true;
 
+  private boolean desktopUser = false;
+
   private int testDuration = 8;
   private int testGameId = -1;
   private int unpauseDelay = 1000;
@@ -31,6 +33,14 @@ public class PauseMenuSettings extends JsonSettings {
   private String resetButton;
   private String recordingButton;
   private String inputFilterList;
+
+  public boolean isDesktopUser() {
+    return desktopUser;
+  }
+
+  public void setDesktopUser(boolean desktopUser) {
+    this.desktopUser = desktopUser;
+  }
 
   public boolean isPressPause() {
     return pressPause;

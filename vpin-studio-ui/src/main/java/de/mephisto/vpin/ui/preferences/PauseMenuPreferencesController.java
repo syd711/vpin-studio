@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
+import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.preferences.dialogs.PreferencesDialogs;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -58,6 +59,9 @@ public class PauseMenuPreferencesController implements Initializable {
 
   @FXML
   private CheckBox triggerCheckbox;
+
+  @FXML
+  private CheckBox desktopModeCheckbox;
 
   @FXML
   private Spinner<Integer> delaySpinner;
@@ -163,6 +167,18 @@ public class PauseMenuPreferencesController implements Initializable {
       pauseMenuSettings.setPressPause(newValue);
       delaySpinner.setDisable(!newValue);
       client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+    });
+
+    desktopModeCheckbox.setSelected(pauseMenuSettings.isDesktopUser());
+    desktopModeCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      pauseMenuSettings.setDesktopUser(newValue);
+      try {
+        client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+        PreferencesController.markDirty(PreferenceType.competitionSettings);
+      }
+      catch (Exception e) {
+        WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+      }
     });
 
 

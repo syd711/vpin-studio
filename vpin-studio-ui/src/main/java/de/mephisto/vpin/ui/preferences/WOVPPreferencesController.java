@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.preferences;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.wovp.WOVPSettings;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
@@ -52,12 +53,16 @@ public class WOVPPreferencesController implements Initializable {
   private CheckBox resetCheckbox;
 
   @FXML
+  private CheckBox desktopModeCheckbox;
+
+  @FXML
   private Pane tagPane;
 
   @FXML
   private CheckBox taggingEnabledCheckbox;
 
 
+  private PauseMenuSettings pauseMenuSettings;
   private WOVPSettings wovpSettings;
 
   @FXML
@@ -92,6 +97,7 @@ public class WOVPPreferencesController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     wovpSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
+    pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
 
     subscriptionCheckbox.setSelected(wovpSettings.isEnabled());
     subscriptionCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -122,6 +128,18 @@ public class WOVPPreferencesController implements Initializable {
       wovpSettings.setResetHighscores(newValue);
       try {
         client.getPreferenceService().setJsonPreference(wovpSettings);
+        PreferencesController.markDirty(PreferenceType.competitionSettings);
+      }
+      catch (Exception e) {
+        WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+      }
+    });
+
+    desktopModeCheckbox.setSelected(pauseMenuSettings.isDesktopUser());
+    desktopModeCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      pauseMenuSettings.setDesktopUser(newValue);
+      try {
+        client.getPreferenceService().setJsonPreference(pauseMenuSettings);
         PreferencesController.markDirty(PreferenceType.competitionSettings);
       }
       catch (Exception e) {

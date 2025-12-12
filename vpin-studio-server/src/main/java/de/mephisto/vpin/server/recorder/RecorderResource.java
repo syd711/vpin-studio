@@ -144,7 +144,7 @@ public class RecorderResource {
         }
       }
       catch (IOException e) {
-        LOG.error("Error closing streams: " + e.getMessage(), e);
+        LOG.error("Error closing streams: " + e.getMessage());
       }
     }
   }

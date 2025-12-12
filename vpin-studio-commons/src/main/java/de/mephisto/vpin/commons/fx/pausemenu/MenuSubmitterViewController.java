@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.restclient.wovp.ScoreSubmitResult;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -20,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.commons.fx.ServerFX.client;
@@ -64,6 +66,9 @@ public class MenuSubmitterViewController implements Initializable {
   private Button submitBtn;
 
   @FXML
+  private VBox loadingIndicator;
+
+  @FXML
   private BorderPane widgetPane;
 
   @FXML
@@ -99,25 +104,26 @@ public class MenuSubmitterViewController implements Initializable {
         }
       }
     }
-
-    ScoreSubmitResult scoreSubmitResult = client.getCompetitionService().submitScore(true);
-    if (scoreSubmitResult.getErrorMessage() == null) {
-      InputStream screenshot = client.getScreenshot();
-      if (screenshotImage == null && screenshot != null) {
-        screenshotImage = new Image(screenshot);
-      }
-      screenshotView.setImage(screenshotImage);
-    }
-    else {
-      screenshotView.setVisible(false);
-    }
-
+    loadingIndicator.setVisible(true);
     JFXFuture.supplyAsync(() -> {
-      return client.getCompetitionService().submitScore(true);
-    }).thenAcceptLater((result) -> {
+      ScoreSubmitResult scoreSubmitResult = client.getCompetitionService().submitScore(true);
+      return scoreSubmitResult;
+    }).thenAcceptLater(result -> {
+      loadingIndicator.setVisible(false);
+      if (result.getErrorMessage() == null) {
+        InputStream screenshot = client.getScreenshot();
+        if (screenshotImage == null && screenshot != null) {
+          screenshotImage = new Image(screenshot);
+        }
+        screenshotView.setImage(screenshotImage);
+      }
+      else {
+        screenshotView.setVisible(false);
+      }
+
       playerInitialsLabel.setText(result.getPlayerInitials() != null ? result.getPlayerInitials() : "-");
       playerNameLabel.setText(result.getPlayerName() != null ? result.getPlayerName() : "-");
-      playerScoreLabel.setText(result.getScore() > 0 ? String.valueOf(result.getScore()) : "-");
+      playerScoreLabel.setText(result.getScore() > 0 ? ScoreFormatUtil.formatScore(result.getScore(), Locale.getDefault()) : "-");
       submitBtn.setDisable(result.getErrorMessage() != null);
       if (result.getErrorMessage() != null) {
         errorContainer.setVisible(true);
@@ -136,6 +142,7 @@ public class MenuSubmitterViewController implements Initializable {
       return client.getCompetitionService().submitScore(false);
     }).thenAcceptLater((result) -> {
       submitBtn.setDisable(true);
+      submitBtn.setVisible(false);
       if (result.getErrorMessage() != null) {
         errorContainer.setVisible(true);
         errorMsg.setText(result.getErrorMessage());
@@ -153,6 +160,7 @@ public class MenuSubmitterViewController implements Initializable {
   public void initialize(URL location, ResourceBundle resources) {
     playerScoreLabel.setFont(WidgetFactory.getScoreFont());
 
+    loadingIndicator.managedProperty().bindBidirectional(loadingIndicator.visibleProperty());
     errorContainer.managedProperty().bindBidirectional(errorContainer.visibleProperty());
     authorsLabel.managedProperty().bindBidirectional(authorsLabel.visibleProperty());
     versionLabel.managedProperty().bindBidirectional(versionLabel.visibleProperty());

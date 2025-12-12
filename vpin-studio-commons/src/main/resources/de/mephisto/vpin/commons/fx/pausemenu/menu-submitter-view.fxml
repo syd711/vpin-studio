@@ -3,9 +3,11 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -80,6 +82,9 @@
                                  <font>
                                     <Font size="18.0" />
                                  </font>
+                                 <VBox.margin>
+                                    <Insets top="12.0" />
+                                 </VBox.margin>
                               </Label>
                               <Label fx:id="playerInitialsLabel" layoutX="22.0" layoutY="37.0" text="-" textFill="WHITE" wrapText="true">
                                  <font>
@@ -90,6 +95,9 @@
                                  <font>
                                     <Font size="18.0" />
                                  </font>
+                                 <VBox.margin>
+                                    <Insets top="12.0" />
+                                 </VBox.margin>
                               </Label>
                               <Label fx:id="playerNameLabel" layoutX="22.0" layoutY="37.0" text="-" textFill="WHITE" wrapText="true">
                                  <font>
@@ -100,7 +108,21 @@
                         </VBox>
                      </center>
                      <left>
-                        <ImageView fx:id="screenshotView" fitHeight="410.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
+                        <StackPane BorderPane.alignment="CENTER">
+                           <children>
+                              <ImageView fx:id="screenshotView" fitHeight="390.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="true" />
+                              <VBox fx:id="loadingIndicator" alignment="CENTER">
+                                 <children>
+                                    <ProgressIndicator />
+                                    <Label text="Loading Screenshot" textFill="WHITE" wrapText="true">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </StackPane>
                      </left>
                   </BorderPane>
                </center>
@@ -122,7 +144,7 @@
                               <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                            </padding>
                         </VBox>
-                        <Button fx:id="submitBtn" mnemonicParsing="false" style="-fx-font-size: 24px;" styleClass="submit-button" text="Submit Highscore">
+                        <Button fx:id="submitBtn" mnemonicParsing="false" style="-fx-font-size: 24px;" styleClass="submit-button" text="Press &quot;Start&quot; to Submit Highscore">
                            <font>
                               <Font size="18.0" />
                            </font>

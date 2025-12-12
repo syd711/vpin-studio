@@ -81,6 +81,7 @@ public class Wovp {
 
       String json = objectMapper.writeValueAsString(scoreSubmit);
       doPost(json, UploadResponse.class, SCORE_SUBMIT_URL);
+      LOG.info("WOVP score submission finished, submitted score of {}", score);
     }
   }
 

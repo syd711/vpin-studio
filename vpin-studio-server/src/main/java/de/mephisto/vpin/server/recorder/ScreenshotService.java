@@ -1,10 +1,12 @@
 package de.mephisto.vpin.server.recorder;
 
+import de.mephisto.vpin.commons.MonitorInfoUtil;
 import de.mephisto.vpin.commons.fx.ImageUtil;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.monitor.MonitoringSettings;
+import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.restclient.util.FileUtils;
@@ -194,8 +196,17 @@ public class ScreenshotService {
 
   private BufferedImage takeMonitorsScreenshots() {
     long start = System.currentTimeMillis();
+    PauseMenuSettings pauseMenuSettings = preferencesService.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
+
     List<BufferedImage> images = new ArrayList<>();
-    List<MonitorInfo> monitorInfos = systemService.getMonitorInfos();
+    List<MonitorInfo> monitorInfos = new ArrayList<>();
+    if (pauseMenuSettings.isDesktopUser()) {
+      monitorInfos.add(MonitorInfoUtil.getPrimaryMonitor());
+    }
+    else {
+      monitorInfos.addAll(systemService.getMonitorInfos());
+    }
+
     Collections.sort(monitorInfos, new Comparator<MonitorInfo>() {
       @Override
       public int compare(MonitorInfo o1, MonitorInfo o2) {
@@ -209,7 +220,7 @@ public class ScreenshotService {
     for (MonitorInfo monitorInfo : monitorInfos) {
       try {
         BufferedImage bufferedImage = screenPreviewService.capture(monitorInfo);
-        if (monitorInfo.isPrimary()) {
+        if (monitorInfo.isPrimary() && !pauseMenuSettings.isDesktopUser()) {
           bufferedImage = ImageUtil.rotateRight(bufferedImage);
         }
         images.add(bufferedImage);
@@ -220,10 +231,18 @@ public class ScreenshotService {
       }
     }
 
-    BufferedImage summaryImage = generateSummaryImage(images);
-    int width = summaryImage.getWidth() / 2;
-    int height = summaryImage.getHeight() / 2;
-    summaryImage = ImageUtil.resizeImage(summaryImage, width, height);
+    BufferedImage summaryImage = null;
+    if (pauseMenuSettings.isDesktopUser()) {
+      summaryImage = images.get(0);
+      summaryImage = ImageUtil.resizeImage(summaryImage, 1920, 1080);
+    }
+    else {
+      summaryImage = generateSummaryImage(images);
+      int width = summaryImage.getWidth() / 2;
+      int height = summaryImage.getHeight() / 2;
+      summaryImage = ImageUtil.resizeImage(summaryImage, width, height);
+    }
+
     LOG.info("Screenshot generation took {}ms.", (System.currentTimeMillis() - start));
     return summaryImage;
   }

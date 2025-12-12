@@ -165,6 +165,7 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
     if (!simulate) {
       try {
         wovp.submitScore(screenshotFile, c.getId(), s.getScore(), getNote(game));
+        SLOG.info("[WOVP simulate=" + simulate + "] " + "WOVP score submit finished. Submitted a score of " + s.getFormattedScore() + " for player " + c.getName());
       }
       catch (Exception e) {
         SLOG.info("[WOVP simulate=" + simulate + "] " + "Failed to submit WOVP highscore: " + e.getMessage());
@@ -185,10 +186,12 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
     builder.append("ROM: ");
     builder.append(game.getRom());
     builder.append("\n");
-    builder.append("ROM Alias: ");
-    builder.append(game.getRomAlias());
-    builder.append("\n");
-    builder.append("Highscore Type");
+    if (!StringUtils.isEmpty(game.getRomAlias())) {
+      builder.append("ROM Alias: ");
+      builder.append(game.getRomAlias());
+      builder.append("\n");
+    }
+    builder.append("Highscore Type: ");
     builder.append(game.getHighscoreType());
     builder.append("\n");
     return builder.toString();
