@@ -137,17 +137,17 @@ public class MenuSubmitterViewController implements Initializable {
       return;
     }
 
-    submitBtn.setText("Sending scores...");
+    submitBtn.setDisable(true);
+    infoLabel.setText("Sending highscore to WOVP...");
     JFXFuture.supplyAsync(() -> {
       return client.getCompetitionService().submitScore(false);
     }).thenAcceptLater((result) -> {
-      submitBtn.setDisable(true);
       submitBtn.setVisible(false);
       if (result.getErrorMessage() != null) {
         errorContainer.setVisible(true);
         errorMsg.setText(result.getErrorMessage());
       }
-      infoLabel.setText("Scores have been submitted.");
+      infoLabel.setText("Your highscore has been submitted.");
     });
     TransitionUtil.createBlink(submitBtn).play();
   }

@@ -111,7 +111,7 @@
                         <StackPane BorderPane.alignment="CENTER">
                            <children>
                               <ImageView fx:id="screenshotView" fitHeight="390.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="true" />
-                              <VBox fx:id="loadingIndicator" alignment="CENTER">
+                              <VBox fx:id="loadingIndicator" alignment="CENTER" spacing="6.0">
                                  <children>
                                     <ProgressIndicator />
                                     <Label text="Loading Screenshot" textFill="WHITE" wrapText="true">
