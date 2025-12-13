@@ -120,13 +120,6 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
       return result;
     }
 
-    Optional<Score> score = scoreSummary.getScores().stream().filter(s -> s.getPlayer() != null && s.getPlayer().equals(adminPlayer)).findFirst();
-    if (score.isEmpty()) {
-      SLOG.info("[WOVP simulate=" + simulate + "] " + "No matching table score found for player " + adminPlayer.getInitials());
-      result.setErrorMessage("No matching table score found for player " + adminPlayer.getInitials());
-      return result;
-    }
-
     List<Competition> weeklyCompetitions = competitionService.getWeeklyCompetitions();
     Optional<Competition> competition = weeklyCompetitions.stream().filter(c -> c.getGameId() == game.getId()).findFirst();
     if (competition.isEmpty()) {
@@ -154,15 +147,36 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
       return result;
     }
 
-    File screenshotFile = screenshotService.getScreenshotFile(null);
-    Challenge c = challenge.get();
-    Score s = score.get();
-
-    result.setScore(s.getScore());
-    result.setPlayerInitials(adminPlayer.getInitials());
-    result.setPlayerName(adminPlayer.getName());
-
     if (!simulate) {
+      Optional<Score> score = scoreSummary.getScores().stream().filter(s -> s.getPlayer() != null && s.getPlayer().equals(adminPlayer)).findFirst();
+      if (score.isEmpty()) {
+        SLOG.info("[WOVP simulate=" + simulate + "] " + "No matching table score found for player " + adminPlayer.getInitials());
+        result.setErrorMessage("No matching table score found for player " + adminPlayer.getInitials());
+        return result;
+      }
+      Challenge c = challenge.get();
+      Score s = score.get();
+
+      List<ScoreBoardItem> scoreBoardItems = c.getScoreBoard().getItems();
+      for (ScoreBoardItem scoreBoardItem : scoreBoardItems) {
+        ScoreBoardItemPositionValues values = scoreBoardItem.getValues();
+        String participantName = values.getParticipantName();
+        double participantScore = values.getScore();
+        if (adminPlayer.getName().equals(participantName) && s.getScore() == participantScore) {
+          SLOG.info("[WOVP simulate=" + simulate + "] " + "The score " + s.getFormattedScore() + " has already been posted for player " + participantName);
+          result.setErrorMessage("The score " + s.getFormattedScore() + " has already been posted for player " + participantName);
+          return result;
+        }
+      }
+
+
+      File screenshotFile = screenshotService.getScreenshotFile(null);
+
+
+      result.setScore(s.getScore());
+      result.setPlayerInitials(adminPlayer.getInitials());
+      result.setPlayerName(adminPlayer.getName());
+
       try {
         wovp.submitScore(screenshotFile, c.getId(), s.getScore(), getNote(game));
         SLOG.info("[WOVP simulate=" + simulate + "] " + "WOVP score submit finished. Submitted a score of " + s.getFormattedScore() + " for player " + c.getName());
