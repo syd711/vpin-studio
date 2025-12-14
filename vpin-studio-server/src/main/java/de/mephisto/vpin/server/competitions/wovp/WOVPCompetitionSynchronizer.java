@@ -75,14 +75,14 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
     String challengeId = challenge.getId();
     ChallengeTypeCode challengeTypeCode = challenge.getChallengeTypeCode();
     for (Competition competition : weeklyCompetitions) {
+      //The competition ids and games might change, but the mode remains
       if (challengeTypeCode.name().equals(competition.getMode())) {
         Game game = gameService.getGame(competition.getGameId());
-        //the id is not matching when it is outdated
+        //When the challenge id has changed, it means that the existing competition is outdated.
         if (!challengeId.equals(competition.getUuid()) || game == null || forceReload) {
           //run de-augmentation for finished competitions
           competition.setEndDate(new Date());
           competitionService.save(competition);
-          competitionLifecycleService.notifyCompetitionChanged(competition);
           competitionLifecycleService.notifyCompetitionDeleted(competition);
           refreshTags(game, wovpSettings, false);
 

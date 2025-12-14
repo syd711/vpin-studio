@@ -91,6 +91,9 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
   private Button addBtn;
 
   @FXML
+  private Button eventLogBtn;
+
+  @FXML
   private Button reloadBtn;
 
   @FXML
@@ -135,6 +138,20 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       List<GameRepresentation> matches = value.getMatches();
       if (!matches.isEmpty()) {
         NavigationController.navigateTo(NavigationItem.Tables, new NavigationOptions(matches.get(0).getId()));
+      }
+    }
+  }
+
+  @FXML
+  private void onEventLog(ActionEvent e) {
+    IScoredGameRoomGameModel value = tableView.getSelectionModel().getSelectedItem();
+    if (value != null) {
+      List<GameRepresentation> matches = value.getMatches();
+      if (!matches.isEmpty()) {
+        GameRepresentation gameRepresentation = matches.get(0);
+        if (gameRepresentation.isEventLogAvailable()) {
+          TableDialogs.openEventLogDialog(gameRepresentation);
+        }
       }
     }
   }
@@ -655,6 +672,20 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
     IScoredGameRoomGameModel newSelection = null;
     if (model.isPresent()) {
       newSelection = model.get();
+    }
+
+    eventLogBtn.setDisable(model.isEmpty());
+    if (model.isPresent()) {
+      List<GameRepresentation> matches = newSelection.getMatches();
+      if (!matches.isEmpty()) {
+        GameRepresentation gameRepresentation = matches.get(0);
+        if (gameRepresentation.isEventLogAvailable()) {
+          eventLogBtn.setDisable(false);
+        }
+        else {
+          eventLogBtn.setDisable(true);
+        }
+      }
     }
 
     tableNavigateBtn.setDisable(model.isEmpty() || model.get().getMatches().isEmpty());

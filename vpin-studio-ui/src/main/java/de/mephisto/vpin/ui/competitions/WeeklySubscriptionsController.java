@@ -29,18 +29,16 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 
@@ -57,7 +55,7 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
   private TableColumn<WeeklyCompetitionModel, Object> tableColumn;
 
   @FXML
-  private TableColumn<WeeklyCompetitionModel, Object> hostColumn;
+  private TableColumn<WeeklyCompetitionModel, Object> typeColumn;
 
   @FXML
   private TableColumn<WeeklyCompetitionModel, String> vpsTableColumn;
@@ -87,6 +85,9 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
   private StackPane tableStack;
 
   @FXML
+  private Button eventLogBtn;
+
+  @FXML
   private ToolBar toolbar;
 
   private Parent loadingOverlay;
@@ -101,6 +102,17 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
 
   // Add a public no-args constructor
   public WeeklySubscriptionsController() {
+  }
+
+  @FXML
+  private void onEventLog(ActionEvent e) {
+    WeeklyCompetitionModel value = tableView.getSelectionModel().getSelectedItem();
+    if (value != null) {
+      GameRepresentation gameRepresentation = value.getGame();
+      if (gameRepresentation.isEventLogAvailable()) {
+        TableDialogs.openEventLogDialog(gameRepresentation);
+      }
+    }
   }
 
   @FXML
@@ -194,20 +206,26 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
       LOG.error("Failed to load loading overlay: {}", e.getMessage(), e);
     }
 
-    hostColumn.setCellValueFactory(cellData -> {
+    typeColumn.setCellValueFactory(cellData -> {
       WeeklyCompetitionModel value = cellData.getValue();
       VBox box = new VBox();
       box.setAlignment(Pos.CENTER);
 
-      InputStream in = Studio.class.getResourceAsStream("wovp.png");
-      Image image = new Image(in);
-      ImageView imageView = new ImageView(image);
-      imageView.setFitHeight(90);
-      imageView.setPreserveRatio(true);
+//      InputStream in = Studio.class.getResourceAsStream("wovp.png");
+//      Image image = new Image(in);
+//      ImageView imageView = new ImageView(image);
+//      imageView.setFitHeight(90);
+//      imageView.setPreserveRatio(true);
+//
+//      Tooltip.install(box, new Tooltip(value.competition.getOwner()));
+//
+//      box.getChildren().add(imageView);
+      Label modeLabel = new Label();
+      modeLabel.getStyleClass().add("default-text");
+      modeLabel.setStyle(getLabelCss(value));
+      modeLabel.setText(value.getMode());
 
-      Tooltip.install(box, new Tooltip(value.competition.getOwner()));
-
-      box.getChildren().add(imageView);
+      box.getChildren().add(modeLabel);
 
       return new SimpleObjectProperty(box);
     });
@@ -305,7 +323,7 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
       durationValueLabel.setText(DateUtil.formatDuration(value.competition.getStartDate(), value.competition.getEndDate()));
       durationBox.getChildren().addAll(durationLabel, durationValueLabel);
 
-      HBox remainingBox = new HBox(3);
+      VBox remainingBox = new VBox(3);
       Label timeRemainingLabel = new Label();
       timeRemainingLabel.setPrefWidth(80);
       timeRemainingLabel.getStyleClass().add("default-text");
@@ -443,6 +461,18 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
       }
     }
 
+
+    eventLogBtn.setDisable(model.isEmpty());
+    if (model.isPresent()) {
+      GameRepresentation gameRepresentation = model.get().getGame();
+      if (gameRepresentation != null && gameRepresentation.isEventLogAvailable()) {
+        eventLogBtn.setDisable(false);
+      }
+      else {
+        eventLogBtn.setDisable(true);
+      }
+    }
+
     tableNavigateBtn.setDisable(model.isEmpty() || model.get().getGame() == null);
     dataManagerBtn.setDisable(model.isEmpty() || model.get().getGame() == null);
 
@@ -545,6 +575,13 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
 
     public String getVpsTableVersionId() {
       return competition.getVpsTableVersionId();
+    }
+
+    public String getMode() {
+      if (competition.getMode().equals("tournament")) {
+        return "KO";
+      }
+      return StringUtils.capitalize(competition.getMode());
     }
   }
 }

@@ -7,6 +7,7 @@ import de.mephisto.vpin.commons.utils.controller.GameControllerInputListener;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
+import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.preferences.OverlaySettings;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
@@ -15,6 +16,7 @@ import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusChangeListener;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.frontend.TableStatusChangeListener;
+import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.TableStatusChangedEvent;
 import de.mephisto.vpin.server.jobs.JobQueue;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
@@ -55,6 +57,9 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
 
   @Autowired
   private RecorderService recorderService;
+
+  @Autowired
+  private GameService gameService;
 
   @Autowired
   private ScreenshotService screenshotService;
@@ -99,6 +104,14 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
     String recordBtn = pauseMenuSettings.getRecordingButton();
     String screenshotBtn = pauseMenuSettings.getScreenshotButton();
     String resetBtn = pauseMenuSettings.getResetButton();
+
+    if (name.equals("Q")) {
+      HighscoreEventLog highscoreEventLog = SLOG.finalizeEventLog();
+      if (highscoreEventLog != null) {
+        gameService.saveEventLog(highscoreEventLog);
+      }
+      return;
+    }
 
     if (name.equals(recordBtn)) {
       if (frontendStatusService.getGameStatus().isActive()) {

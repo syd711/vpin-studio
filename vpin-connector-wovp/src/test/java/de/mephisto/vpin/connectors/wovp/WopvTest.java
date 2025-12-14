@@ -1,10 +1,13 @@
 package de.mephisto.vpin.connectors.wovp;
 
+import de.mephisto.vpin.connectors.wovp.models.Challenge;
 import de.mephisto.vpin.connectors.wovp.models.Challenges;
+import de.mephisto.vpin.connectors.wovp.models.ScoreBoardItem;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,6 +20,17 @@ public class WopvTest {
       Wovp wovp = Wovp.create(key);
       Challenges challenges = wovp.getChallenges(true);
       assertFalse(challenges.getItems().isEmpty());
+
+      List<Challenge> items = challenges.getItems();
+      for (Challenge item : items) {
+        List<ScoreBoardItem> scores = item.getScoreBoard().getItems();
+        for (ScoreBoardItem score : scores) {
+          if (score.getValues().getParticipantName().contains("Faust")) {
+            System.out.println(score.getValues().getParticipantName() + ": " + score.getValues().getScore());
+          }
+        }
+      }
+
     }
   }
 

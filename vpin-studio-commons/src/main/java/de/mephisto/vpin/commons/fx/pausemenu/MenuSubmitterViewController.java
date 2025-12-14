@@ -104,27 +104,24 @@ public class MenuSubmitterViewController implements Initializable {
         }
       }
     }
+
     loadingIndicator.setVisible(true);
     JFXFuture.supplyAsync(() -> {
       ScoreSubmitResult scoreSubmitResult = client.getCompetitionService().submitScore(true);
       return scoreSubmitResult;
     }).thenAcceptLater(result -> {
       loadingIndicator.setVisible(false);
-      if (result.getErrorMessage() == null) {
-        InputStream screenshot = client.getScreenshot();
-        if (screenshotImage == null && screenshot != null) {
-          screenshotImage = new Image(screenshot);
-        }
-        screenshotView.setImage(screenshotImage);
+      InputStream screenshot = client.getScreenshot();
+      if (screenshotImage == null && screenshot != null) {
+        screenshotImage = new Image(screenshot);
       }
-      else {
-        screenshotView.setVisible(false);
-      }
+      screenshotView.setImage(screenshotImage);
 
       playerInitialsLabel.setText(result.getPlayerInitials() != null ? result.getPlayerInitials() : "-");
       playerNameLabel.setText(result.getPlayerName() != null ? result.getPlayerName() : "-");
       playerScoreLabel.setText(result.getScore() > 0 ? ScoreFormatUtil.formatScore(result.getScore(), Locale.getDefault()) : "-");
-      submitBtn.setDisable(result.getErrorMessage() != null);
+      submitBtn.setVisible(false);
+
       if (result.getErrorMessage() != null) {
         errorContainer.setVisible(true);
         errorMsg.setText(result.getErrorMessage());
@@ -144,6 +141,7 @@ public class MenuSubmitterViewController implements Initializable {
     }).thenAcceptLater((result) -> {
       submitBtn.setVisible(false);
       if (result.getErrorMessage() != null) {
+        submitBtn.setVisible(false);
         errorContainer.setVisible(true);
         errorMsg.setText(result.getErrorMessage());
       }
@@ -160,6 +158,7 @@ public class MenuSubmitterViewController implements Initializable {
   public void initialize(URL location, ResourceBundle resources) {
     playerScoreLabel.setFont(WidgetFactory.getScoreFont());
 
+    submitBtn.managedProperty().bindBidirectional(submitBtn.visibleProperty());
     loadingIndicator.managedProperty().bindBidirectional(loadingIndicator.visibleProperty());
     errorContainer.managedProperty().bindBidirectional(errorContainer.visibleProperty());
     authorsLabel.managedProperty().bindBidirectional(authorsLabel.visibleProperty());

@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
+import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.system.FileInfo;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
@@ -115,9 +116,9 @@ public class GamesResource {
         return false;
       }
 
-      EmulatorType type = gameEmulator.getType();
       if (game.isVpxGame()) {
         frontendService.killFrontend();
+        SLOG.initLog(game.getId());
         if (vpxService.play(game, altExe, option)) {
           gameStatusService.setActiveStatus(id);
           return true;
@@ -125,6 +126,7 @@ public class GamesResource {
       }
       else if (game.isFpGame()) {
         frontendService.killFrontend();
+        SLOG.initLog(game.getId());
         if (futurePinballService.play(game, altExe)) {
           gameStatusService.setActiveStatus(id);
           return true;
@@ -132,6 +134,7 @@ public class GamesResource {
       }
       else if (game.isZenGame() || game.isZaccariaGame()) {
         frontendService.killFrontend();
+        SLOG.initLog(game.getId());
         if (steamService.play(game)) {
           gameStatusService.setActiveStatus(id);
           return true;

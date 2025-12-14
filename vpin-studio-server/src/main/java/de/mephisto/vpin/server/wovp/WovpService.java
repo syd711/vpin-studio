@@ -120,6 +120,9 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
       return result;
     }
 
+    result.setPlayerInitials(adminPlayer.getInitials());
+    result.setPlayerName(adminPlayer.getName());
+
     List<Competition> weeklyCompetitions = competitionService.getWeeklyCompetitions();
     Optional<Competition> competition = weeklyCompetitions.stream().filter(c -> c.getGameId() == game.getId()).findFirst();
     if (competition.isEmpty()) {
@@ -132,7 +135,7 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
     Wovp wovp = Wovp.create(apiKey);
     Challenges challenges = null;
     try {
-      challenges = wovp.getChallenges(false);
+      challenges = wovp.getChallenges(true);
     }
     catch (Exception e) {
       SLOG.info("[WOVP simulate=" + simulate + "] " + "Fetching challenges failed: " + e.getMessage());
@@ -156,6 +159,7 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
       }
       Challenge c = challenge.get();
       Score s = score.get();
+      result.setScore(s.getScore());
 
       List<ScoreBoardItem> scoreBoardItems = c.getScoreBoard().getItems();
       for (ScoreBoardItem scoreBoardItem : scoreBoardItems) {
@@ -163,23 +167,17 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
         String participantName = values.getParticipantName();
         double participantScore = values.getScore();
         if (adminPlayer.getName().equals(participantName) && s.getScore() == participantScore) {
-          SLOG.info("[WOVP simulate=" + simulate + "] " + "The score " + s.getFormattedScore() + " has already been posted for player " + participantName);
-          result.setErrorMessage("The score " + s.getFormattedScore() + " has already been posted for player " + participantName);
+          SLOG.info("[WOVP simulate=" + simulate + "] " + "The score " + s.getFormattedScore() + " has already been posted for player \"" + participantName + "\"");
+          result.setErrorMessage("The score " + s.getFormattedScore() + " has already been posted for player \"" + participantName + "\"");
           return result;
         }
       }
 
 
       File screenshotFile = screenshotService.getScreenshotFile(null);
-
-
-      result.setScore(s.getScore());
-      result.setPlayerInitials(adminPlayer.getInitials());
-      result.setPlayerName(adminPlayer.getName());
-
       try {
         wovp.submitScore(screenshotFile, c.getId(), s.getScore(), getNote(game));
-        SLOG.info("[WOVP simulate=" + simulate + "] " + "WOVP score submit finished. Submitted a score of " + s.getFormattedScore() + " for player " + c.getName());
+        SLOG.info("[WOVP simulate=" + simulate + "] " + "WOVP score submit finished. Submitted a score of " + s.getFormattedScore() + " for player \"" + c.getName() + "\"");
       }
       catch (Exception e) {
         SLOG.info("[WOVP simulate=" + simulate + "] " + "Failed to submit WOVP highscore: " + e.getMessage());
@@ -196,14 +194,14 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
     StringBuilder builder = new StringBuilder();
     builder.append("VPX File: ");
     builder.append(game.getGameFileName());
-    builder.append("\n");
+    builder.append(", \n");
     builder.append("ROM: ");
     builder.append(game.getRom());
-    builder.append("\n");
+    builder.append(", \n");
     if (!StringUtils.isEmpty(game.getRomAlias())) {
       builder.append("ROM Alias: ");
       builder.append(game.getRomAlias());
-      builder.append("\n");
+      builder.append(", \n");
     }
     builder.append("Highscore Type: ");
     builder.append(game.getHighscoreType());

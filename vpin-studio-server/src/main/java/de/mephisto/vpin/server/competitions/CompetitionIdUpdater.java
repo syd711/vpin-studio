@@ -13,6 +13,7 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -74,6 +75,14 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
   @Override
   public void competitionDeleted(@NonNull Competition competition) {
     unsetGamesTournamentId(competition);
+  }
+
+  @Override
+  public void competitionChanged(@NotNull Competition competition) {
+    TableDetails tableDetails = gameMediaService.getTableDetails(competition.getGameId());
+    if (tableDetails != null) {
+      setTourneyId(competition, tableDetails, competition.getGameId());
+    }
   }
 
   private void setGamesTournamentId(@NonNull Competition competition) {

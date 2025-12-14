@@ -58,7 +58,7 @@ public class CompetitionsController implements Initializable, StudioFXController
   private static final String TAB_ONLINE = "Online Competitions";
   private static final String TAB_TABLE_SUBS = "Table Subscriptions";
   private static final String TAB_ISCORED = "iScored Competitions";
-  private static final String TAB_WEEKLY = "Weekly Competitions";
+  private static final String TAB_WEEKLY = "WOVP Competitions";
 
   @FXML
   private BorderPane root;
@@ -351,7 +351,7 @@ public class CompetitionsController implements Initializable, StudioFXController
     }
     else if (title.equals(TAB_WEEKLY)) {
       if (weeklySubscriptionsTab != null) {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Weekly Challenges"));
+        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "WOVP Challenges"));
         Optional<WeeklySubscriptionsController.WeeklyCompetitionModel> selection = weeklySubscriptionsController.getSelection();
         if (selection.isPresent()) {
           updateSelection(Optional.of(selection.get().getCompetition()));
@@ -664,10 +664,10 @@ public class CompetitionsController implements Initializable, StudioFXController
     }
     else if (title.equals(TAB_WEEKLY)) {
       if (competitionRepresentation.isPresent()) {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Weekly Challenges", competitionRepresentation.get().getName()));
+        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "WOVP Challenges", competitionRepresentation.get().getName()));
       }
       else {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Weekly Challenges"));
+        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "WOVP Challenges"));
       }
     }
     else {
@@ -773,6 +773,7 @@ public class CompetitionsController implements Initializable, StudioFXController
       weeklySubscriptionsController.setCompetitionsController(this);
       weeklySubscriptionsTab.setContent(parent);
       weeklySubscriptionsTab.setText(TAB_WEEKLY);
+//      weeklySubscriptionsTab.setGraphic(new ImageView(Studio.class.getResourceAsStream("wovp.png")));
 
       WOVPSettings wovpSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
       if (!wovpSettings.isEnabled() || !wovpSettings.isApiKeySet()) {

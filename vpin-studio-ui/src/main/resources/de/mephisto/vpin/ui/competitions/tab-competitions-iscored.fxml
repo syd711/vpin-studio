@@ -87,7 +87,7 @@
                   </StackPane>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                   <Label styleClass="default-text" text="Game Room: " />
-                  <ComboBox fx:id="gameRoomsCombo" prefWidth="280.0" />
+                  <ComboBox fx:id="gameRoomsCombo" prefWidth="260.0" />
                   <Button fx:id="syncBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onSync" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
@@ -163,6 +163,18 @@
                      </font>
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-edit" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Show table in table overview" />
+                     </tooltip>
+                  </Button>
+                  <Separator layoutX="946.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Button fx:id="eventLogBtn" layoutX="1004.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEventLog" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-message-text-clock-outline" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="Show table in table overview" />
