@@ -773,9 +773,13 @@ public class CompetitionsController implements Initializable, StudioFXController
       weeklySubscriptionsController.setCompetitionsController(this);
       weeklySubscriptionsTab.setContent(parent);
       weeklySubscriptionsTab.setText(TAB_WEEKLY);
-//      weeklySubscriptionsTab.setGraphic(new ImageView(Studio.class.getResourceAsStream("wovp.png")));
 
+      Image image = new Image(Studio.class.getResourceAsStream("wovp.png"));
+      ImageView view = new ImageView(image);
+      view.setFitWidth(18);
+      view.setFitHeight(18);
       WOVPSettings wovpSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
+      weeklySubscriptionsTab.setGraphic(view);
       if (!wovpSettings.isEnabled() || !wovpSettings.isApiKeySet()) {
         tabPane.getTabs().remove(weeklySubscriptionsTab);
       }
