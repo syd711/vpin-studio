@@ -33,6 +33,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
   private Button playBtn;
 
   private boolean invertPlayfield;
+  private int retryCount = 0;
 
 
   public VideoMediaPlayer(@NonNull String mimeType, boolean invertPlayfield) {
@@ -41,8 +42,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
     this.invertPlayfield = invertPlayfield;
   }
 
-  public void render(@NonNull String url, @Nullable VPinScreen screen, boolean usePreview)  {
-
+  public void render(@NonNull String url, @Nullable VPinScreen screen, boolean usePreview) {
     if (StringUtils.endsWithIgnoreCase(mimeType, "/quicktime")) {
       setCenter(getEncodingNotSupportedLabel());
       return;
@@ -52,55 +52,55 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
 
     if (usePreview) {
       JFXFuture.supplyAsync(() -> new Image(url + "?preview=true", false))
-        .thenAcceptLater(image -> {
-          // create an ImageView with a play button
-          this.imageView = new ImageView(image);
-          imageView.setPreserveRatio(true);
-          setCenter(imageView);
+          .thenAcceptLater(image -> {
+            // create an ImageView with a play button
+            this.imageView = new ImageView(image);
+            imageView.setPreserveRatio(true);
+            setCenter(imageView);
 
-          scaleImageView(image, screen);
+            scaleImageView(image, screen);
 
-          // add an image on top 
-          FontIcon fontIcon = new FontIcon();
-          fontIcon.setIconSize(48);
-          fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
-          fontIcon.setIconLiteral("bi-play");
-          this.playBtn = new Button();
-          playBtn.setGraphic(fontIcon);
-          playBtn.setVisible(false);
-          getChildren().add(playBtn);
-          playBtn.managedProperty().bind(playBtn.visibleProperty());
-
-          this.setOnMouseEntered(me -> {
-            playBtn.setVisible(true);
-          });
-          this.setOnMouseExited(me -> {
+            // add an image on top
+            FontIcon fontIcon = new FontIcon();
+            fontIcon.setIconSize(48);
+            fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+            fontIcon.setIconLiteral("bi-play");
+            this.playBtn = new Button();
+            playBtn.setGraphic(fontIcon);
             playBtn.setVisible(false);
-          });
+            getChildren().add(playBtn);
+            playBtn.managedProperty().bind(playBtn.visibleProperty());
 
-          playBtn.setOnMouseReleased(me -> {
-            // in video mode, switch back to the imageView
-            if (modeVideo) {
-              mediaView.getMediaPlayer().stop();
-              setCenter(imageView);            
-              fontIcon.setIconLiteral("bi-play");
-              modeVideo = false;
-            }
-            // in audio mode, when mediaPLayer has already been created, just switch to it
-            else if (mediaPlayer != null) {
-              setCenter(mediaView);
-              mediaView.getMediaPlayer().play();
-              fontIcon.setIconLiteral("bi-stop");
-              modeVideo = true;
-            }
-            else {
-              getChildren().remove(playBtn);
-              fontIcon.setIconLiteral("bi-stop");
-              renderVideo(url, screen);
-              modeVideo = true;
-            }
+            this.setOnMouseEntered(me -> {
+              playBtn.setVisible(true);
+            });
+            this.setOnMouseExited(me -> {
+              playBtn.setVisible(false);
+            });
+
+            playBtn.setOnMouseReleased(me -> {
+              // in video mode, switch back to the imageView
+              if (modeVideo) {
+                mediaView.getMediaPlayer().stop();
+                setCenter(imageView);
+                fontIcon.setIconLiteral("bi-play");
+                modeVideo = false;
+              }
+              // in audio mode, when mediaPLayer has already been created, just switch to it
+              else if (mediaPlayer != null) {
+                setCenter(mediaView);
+                mediaView.getMediaPlayer().play();
+                fontIcon.setIconLiteral("bi-stop");
+                modeVideo = true;
+              }
+              else {
+                getChildren().remove(playBtn);
+                fontIcon.setIconLiteral("bi-stop");
+                renderVideo(url, screen);
+                modeVideo = true;
+              }
+            });
           });
-        });
     }
     else {
       renderVideo(url, screen);
@@ -108,21 +108,47 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
   }
 
   public void renderVideo(@NonNull String url, @Nullable VPinScreen screen) {
+    retryCount = 0;
+    renderVideoWithRetries(url, screen);
+  }
+
+  public void renderVideoWithRetries(@NonNull String url, @Nullable VPinScreen screen) {
     setLoading();
 
-    Media media = new Media(url);
-    LOG.info("Streaming media: " + url);
-    mediaPlayer = new MediaPlayer(media);
+    retryCount++;
+    new Thread(() -> {
+      try {
+        Thread.currentThread().setName("Video Player for " + url);
+        Media media = new Media(url);
+        LOG.info("Streaming media: " + url);
+        mediaPlayer = new MediaPlayer(media);
 
-    mediaPlayer.setOnError(() -> {
-      LOG.warn("Media player error: " + mediaPlayer.getError() + ", URL: " + mediaPlayer.getMedia().getSource());
-      disposeMedia();
-      setCenter(getErrorLabel());
-    });
+        mediaPlayer.setOnError(() -> {
+          LOG.warn("Media player error: " + mediaPlayer.getError() + ", URL: " + mediaPlayer.getMedia().getSource());
+          try {
+            Thread.sleep(100);
+          }
+          catch (InterruptedException e) {
+            //ignore
+          }
 
-    mediaPlayer.setOnReady(() -> {
-      installMediaView(screen, media);
-    });
+          if (retryCount > 20 || !url.contains("api/v1")) { //TODO we do not want too much load on remote servers
+            disposeMedia();
+            setCenter(getErrorLabel());
+          }
+          else {
+            renderVideoWithRetries(url, screen);
+          }
+        });
+
+        mediaPlayer.setOnReady(() -> {
+          installMediaView(screen, media);
+        });
+      }
+      catch (Exception e) {
+        LOG.error("Failed to play video: {}", e.getMessage());
+      }
+    }).start();
   }
 
   private void installMediaView(VPinScreen screen, Media media) {
@@ -162,7 +188,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
     }
   }
 
-  private void scaleImageView(Image image,  @Nullable VPinScreen screen) {
+  private void scaleImageView(Image image, @Nullable VPinScreen screen) {
     if (mediaOptions == null || mediaOptions.isAutoRotate()) {
       if (VPinScreen.PlayField.equals(screen)) {
         if (image.getWidth() > image.getHeight()) {

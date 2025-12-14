@@ -86,7 +86,7 @@ public class MediaConverterService implements InitializingBean {
     if (command.getType() == MediaConversionCommand.TYPE_FILE) {
       File batFile = new File(command.getCommand());
       if (batFile.exists()) {
-        convertWithScript(batFile, mediaFile);
+        operationResult.setResult(convertWithScript(batFile, mediaFile));
       }
       else {
         LOG.warn("No matching conversion .bat file found for {}", command.getName());
@@ -94,7 +94,7 @@ public class MediaConverterService implements InitializingBean {
       }
     }
     else if (command.getType() == MediaConversionCommand.TYPE_FFMEPG) {
-      convertWithFfmpeg(operationResult, command, mediaFile);
+      operationResult.setResult(convertWithFfmpeg(operationResult, command, mediaFile));
     }
     else if (command.getType() == MediaConversionCommand.TYPE_IMAGE) {
       convertWithImageUtils(operationResult, ImageOp.valueOf(command.getCommand()), mediaFile);
@@ -147,25 +147,24 @@ public class MediaConverterService implements InitializingBean {
     StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
     if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
       LOG.info("Conversion: {}", standardErrorFromCommand);
-      return null; //"Conversion failed: " + standardErrorFromCommand;
+      return standardErrorFromCommand.toString();
     }
     LOG.info("Video conversion output:");
     LOG.info(standardOutputFromCommand.toString());
-    return null;
+    return standardOutputFromCommand.toString();
   }
 
-  public void convertWithFfmpeg(MediaOperationResult operationResult, MediaConversionCommand command, File mediaFile) throws Exception {
+  public String convertWithFfmpeg(MediaOperationResult operationResult, MediaConversionCommand command, File mediaFile) throws Exception {
     File targetFile = FileUtils.uniqueFile(mediaFile);
-    convertWithFfmpeg(command, mediaFile, targetFile);
+    String output = convertWithFfmpeg(command, mediaFile, targetFile);
     // now exchange files
     if (mediaFile.delete() && !targetFile.renameTo(mediaFile)) {
       operationResult.setResult("Target file renaming failed: " + mediaFile.getAbsolutePath());
     }
+    return output;
   }
 
-  public void convertWithFfmpeg(MediaConversionCommand command, File mediaFile, File targetFile) throws Exception {
-    // "%_curloc%\ffmpeg" -y -i %1 -vf "transpose=1" "%2"
-
+  public String convertWithFfmpeg(MediaConversionCommand command, File mediaFile, File targetFile) throws Exception {
     String[] args = StringUtils.split(command.getCommand());
 
     File resources = new File(SystemService.RESOURCES);
@@ -188,16 +187,21 @@ public class MediaConverterService implements InitializingBean {
     SystemCommandExecutor executor = new SystemCommandExecutor(commandList, false);
 
     executor = new SystemCommandExecutor(commandList);
-//      executor.enableLogging(true);
+    executor.enableLogging(true);
     executor.setDir(resources);
     executor.executeCommand();
 
-    //StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
-    //LOG.info("Conversion failed: {}", standardErrorFromCommand);
-    //StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
-    //LOG.info("Video conversion output: {}", standardOutputFromCommand);
+    StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
+    LOG.info("Conversion failed: {}", standardErrorFromCommand);
+    StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
+    LOG.info("Video conversion output: {}", standardOutputFromCommand);
 
+    if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
+      return standardOutputFromCommand.toString();
+    }
+    return standardOutputFromCommand.toString();
   }
+
   public void convertWithFfmpeg(File mediaFile, File targetFile) throws Exception {
     // "%_curloc%\ffmpeg" -y -i %1 "%2"
     //Simple convert (can be used to convert apng (Animated PNG) to gif (Animated GIF))
