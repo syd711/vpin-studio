@@ -60,7 +60,7 @@ public abstract class BasePrevNextController implements Initializable, DialogCon
       autosave(onSuccess);
     }
     else if (headerController.isDirty()) {
-      Optional<ButtonType> result = WidgetFactory.showYesNoConfirmation(Studio.stage, "You have unsaved changes.", "Do you want to save them ?");
+      Optional<ButtonType> result = WidgetFactory.showYesNoConfirmation(Studio.stage, "You have unsaved changes.", "Do you want to save them?");
       if (result.isPresent() && result.get().equals(ButtonType.YES)) {
         autosave(onSuccess);
         return;

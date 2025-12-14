@@ -271,13 +271,16 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
     }, this, true);
 
     BaseLoadingColumn.configureLoadingColumn(columnWheel, "Loading...", (value, model) -> {
-      FrontendMediaRepresentation gameMedia = client.getGameMediaService().getGameMedia(model.getGameId());
       Label label = new Label("");
       label.getStyleClass().add("default-text");
-      FrontendMediaItemRepresentation defaultMediaItem = gameMedia.getDefaultMediaItem(VPinScreen.Wheel);
-      if (defaultMediaItem != null) {
-        label.setGraphic(WidgetFactory.createCheckIcon());
-      }
+      JFXFuture.supplyAsync(() -> {
+        FrontendMediaRepresentation gameMedia = client.getGameMediaService().getGameMedia(model.getGameId());
+        return gameMedia.getDefaultMediaItem(VPinScreen.Wheel);
+      }).thenAcceptLater((image) -> {
+        if (image != null) {
+          label.setGraphic(WidgetFactory.createCheckIcon());
+        }
+      });
       return label;
     });
 

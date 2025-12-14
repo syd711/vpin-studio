@@ -96,14 +96,20 @@ public class Updater {
       fileOutputStream.close();
 
       if (overwrite && target.exists() && !target.delete()) {
-        LOG.error("Failed to overwrite target file \"" + target.getAbsolutePath() + "\"");
+        LOG.error("Failed to overwrite target file \"{}\"", target.getAbsolutePath());
         return;
       }
 
-      if (!tmp.renameTo(target)) {
-        LOG.error("Failed to rename download temp file to " + target.getAbsolutePath());
+      if (!FileUtils.checkedCopy(tmp, target)) {
+        LOG.error("Failed to copy  download temp file {} to {}", tmp.getAbsolutePath(), target.getAbsolutePath());
       }
-      LOG.info("Downloaded file " + target.getAbsolutePath());
+      LOG.info("Downloaded file {}", target.getAbsolutePath());
+      if (tmp.delete()) {
+        LOG.info("Downloaded temp file {}", tmp.getAbsolutePath());
+      }
+      else {
+        LOG.info("Failed to deleted downloaded temp file {}", tmp.getAbsolutePath());
+      }
     }
     catch (Exception e) {
       LOG.error("Updater Failed to execute download: " + e.getMessage(), e);

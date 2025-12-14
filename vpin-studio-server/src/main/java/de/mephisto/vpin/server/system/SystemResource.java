@@ -315,10 +315,10 @@ public class SystemResource {
   @GetMapping("/update/install")
   public boolean installServerUpdate() throws IOException {
     File serverUpdate = new File("./VPin-Studio-Server.zip");
-    if (!serverUpdate.exists()) {
-      return false;
-    }
-    Updater.installServerUpdate();
+//    if (!serverUpdate.exists()) {
+//      return false;
+//    }
+//    Updater.installServerUpdate();
     new Thread(() -> {
       try {
         Thread.sleep(2000);

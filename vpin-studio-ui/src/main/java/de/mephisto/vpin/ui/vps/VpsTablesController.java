@@ -8,9 +8,11 @@ import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
+import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingModel;
@@ -41,6 +43,7 @@ import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -81,6 +84,9 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
 
   @FXML
   TableColumn<VpsTableModel, VpsTableModel> povColumn;
+
+  @FXML
+  TableColumn<VpsTableModel, VpsTableModel> soundColumn;
 
   @FXML
   TableColumn<VpsTableModel, VpsTableModel> altSoundColumn;
@@ -185,6 +191,7 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
     VpsTableModel selection = tableView.getSelectionModel().getSelectedItem();
 
     if (forceReload) {
+      super.clearViewCache();
       ProgressDialog.createProgressDialog(new VpsDBDownloadProgressModel("Download VPS Database", Arrays.asList(new File("<vpsdb.json>"))));
     }
 
@@ -243,7 +250,7 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
     }, this, true);
 
     BaseLoadingColumn.configureLoadingColumn(statusColumn, "Loading...", (value, model) -> {
-      return model.isInstalled() ? new VpsTableColumn(value.getId(), model.getVersionId(), false, false, model.getUpdates(),null) : null;
+      return model.isInstalled() ? new VpsTableColumn(value.getId(), model.getVersionId(), false, false, model.getUpdates(), null) : null;
     });
 
     BaseLoadingColumn.configureLoadingColumn(commentColumn, "Loading...", (value, model) -> {
@@ -296,10 +303,13 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
     BaseLoadingColumn.configureColumn(altSoundColumn, (value, model) ->
         VpsUtil.isDataAvailable(value.getAltSoundFiles()) ? WidgetFactory.createCheckboxIcon() : null, this, true);
 
+    BaseLoadingColumn.configureColumn(soundColumn, (value, model) ->
+        VpsUtil.isDataAvailable(value.getSoundFiles()) ? WidgetFactory.createCheckboxIcon() : null, this, true);
+
     BaseLoadingColumn.configureColumn(altColorColumn, (value, model) ->
         VpsUtil.isDataAvailable(value.getAltColorFiles()) ? WidgetFactory.createCheckboxIcon() : null, this, true);
 
-    BaseLoadingColumn.configureLoadingColumn(tutorialColumn, "Loading...", (value, model) -> {
+    BaseLoadingColumn.configureLoadingColumn(this, tutorialColumn, "Loading...", "vpsTableTutorialColumn", (value, model) -> {
       return new VpsTutorialColumn(value.getId());
     });
 
@@ -334,6 +344,17 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
     emulatorCombo.setItems(FXCollections.observableList(tableFormats));
     emulatorCombo.getSelectionModel().select(0);
     ((VpsTablesFilterController) filterController).bindEmulatorCombo(emulatorCombo);
+
+    VpsSettings vpsSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPS_SETTINGS, VpsSettings.class);
+    directB2SColumn.setVisible(vpsSettings.isVpsBackglass());
+    pupPackColumn.setVisible(vpsSettings.isVpsPUPPack());
+    romColumn.setVisible(vpsSettings.isVpsRom());
+    topperColumn.setVisible(vpsSettings.isVpsToppper());
+    povColumn.setVisible(vpsSettings.isVpsPOV());
+    soundColumn.setVisible(vpsSettings.isVpsSound());
+    altSoundColumn.setVisible(vpsSettings.isVpsAltSound());
+    altColorColumn.setVisible(vpsSettings.isVpsAltColor());
+    tutorialColumn.setVisible(vpsSettings.isVpsTutorial());
 
     EventManager.getInstance().addListener(this);
   }
@@ -372,6 +393,22 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
     VpsTable vpsTable = newSelection != null ? newSelection.getVpsTable() : null;
     VpsTablesPredicateFactory predicates = ((VpsTablesFilterController) filterController).getPredicateFactory();
     tablesController.getVpsTablesSidebarController().setTable(Optional.ofNullable(vpsTable), predicates);
+  }
+
+  @Override
+  public void preferencesChanged(PreferenceType preferenceType) {
+    if (PreferenceType.vpsSettings.equals(preferenceType)) {
+      VpsSettings vpsSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPS_SETTINGS, VpsSettings.class);
+      directB2SColumn.setVisible(vpsSettings.isVpsBackglass());
+      pupPackColumn.setVisible(vpsSettings.isVpsPUPPack());
+      romColumn.setVisible(vpsSettings.isVpsRom());
+      topperColumn.setVisible(vpsSettings.isVpsToppper());
+      povColumn.setVisible(vpsSettings.isVpsPOV());
+      soundColumn.setVisible(vpsSettings.isVpsSound());
+      altSoundColumn.setVisible(vpsSettings.isVpsAltSound());
+      altColorColumn.setVisible(vpsSettings.isVpsAltColor());
+      tutorialColumn.setVisible(vpsSettings.isVpsTutorial());
+    }
   }
 
   static class VpsTableFormat {

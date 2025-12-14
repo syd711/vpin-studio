@@ -185,6 +185,9 @@ public class GamesResource {
     return gameService.getGameScoreValidation(id);
   }
 
+  /**
+   * Checks if the scoring settings of the table details match with the files found for these settings.
+   */
   @PostMapping("/scorevalidation/{id}")
   public GameScoreValidation getGameScoreValidation(@PathVariable("id") int id, @RequestBody TableDetails tableDetails) {
     return gameService.getGameScoreValidation(id, tableDetails);

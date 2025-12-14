@@ -382,6 +382,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     mediaNameText.setText("");
     passcodeText.setDisable(value.isEmpty());
     passcodeText.setText("");
+    saveSQLBtn.setDisable(value.isEmpty());
     templateSelector.setDisable(value.isEmpty() || !value.get().isSqlPlayList());
 
     errorContainer.setVisible(false);
@@ -413,6 +414,9 @@ public class PlaylistManagerController implements Initializable, DialogControlle
       }
 
       colorPicker.setValue(Color.web(WidgetFactory.hexColor(plList.getMenuColor())));
+    }
+    else {
+      playlistTableController.setData(Optional.empty());
     }
 
     saveDisabled = false;
@@ -516,7 +520,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
           @Override
           public void handle(ActionEvent event) {
             sqlText.setText(formatQuery(entry.getValue()));
-            savePlaylist();
+            onSQLSave(event);
           }
 
           private String formatQuery(String value) {
@@ -894,6 +898,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     }
 
     TreeItem<PlaylistRepresentation> selectedItem = treeView.getSelectionModel().getSelectedItem();
+    playlistTableController.setData(Optional.empty());
     if (selectedItem != null) {
       PlaylistRepresentation value = selectedItem.getValue();
       try {

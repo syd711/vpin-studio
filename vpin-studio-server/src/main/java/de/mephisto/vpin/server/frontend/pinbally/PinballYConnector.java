@@ -238,8 +238,8 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
       e.setExeName(exe.getName());
     }
     else {
-      LOG.error("Executable '" + executable + "' not or wrongly set for " + emuname + " in pinballY options "
-          + "default exe couldn't be determined. studio won't be able to lauch tables. "
+      LOG.error("Executable '" + executable + "' not or wrongly set for " + emuname + " in PinballY options "
+          + "default exe couldn't be determined. VPin Studio won't be able to launch tables. "
           + "Please fill in the full path to executable !");
     }
 
@@ -257,6 +257,16 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
 
     if (dirGames != null) {
       e.setGamesDirectory(dirGames.getAbsolutePath());
+    }
+    else if (exe != null && exe.exists() && (EmulatorType.VisualPinball.equals(type) || EmulatorType.VisualPinball9.equals(type))) {
+      File tablesDir = new File(exe.getParentFile(), tablePath);
+      if (tablesDir.exists()) {
+        e.setGamesDirectory(tablesDir.getAbsolutePath());
+        LOG.warn("PinballY is using default fallback folder {} as games directory.", tablesDir.getAbsolutePath());
+      }
+      else {
+        LOG.warn("No games directory set for {}", emuname);
+      }
     }
     else {
       LOG.warn("No games directory set for {}", emuname);

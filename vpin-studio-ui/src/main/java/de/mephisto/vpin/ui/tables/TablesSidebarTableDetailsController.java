@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
@@ -16,6 +17,7 @@ import de.mephisto.vpin.ui.tables.panels.UploadsButtonController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.util.tags.TagButton;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -473,10 +475,16 @@ public class TablesSidebarTableDetailsController implements Initializable {
       this.povFileLabel.setText("-");
     }
 
+    JFXFuture.supplyAsync(() -> {
+      return game != null ? Studio.client.getFrontendService().getTableDetails(game.getId()) : null;
+    }).thenAcceptLater((tableDetails) -> {
+      refreshTableDetails(tableDetails);
+    });
+  }
 
-    TableDetails tableDetails = game != null ? Studio.client.getFrontendService().getTableDetails(game.getId()) : null;
-    if (tableDetails != null) {
-
+  private void refreshTableDetails(@Nullable TableDetails tableDetails) {
+    if (tableDetails != null && game.isPresent()) {
+      GameRepresentation g = game.get();
       extrasPanel.setVisible(tableDetails.isPopper15());
 
       mediaSearch.setText(!StringUtils.isEmpty(tableDetails.getMediaSearch()) ? tableDetails.getMediaSearch() : "-");
@@ -490,18 +498,23 @@ public class TablesSidebarTableDetailsController implements Initializable {
       FlowPane tagsRoot = new FlowPane(3, 3);
       tags.setCenter(tagsRoot);
 
-      for (String tagsValue : game.getTags()) {
-        TagButton tagButton = new TagButton(game.getId(), tableDetails, client.getTaggingService().getTags(), tagsValue);
-        tagButton.setButtonListener(new EventHandler<MouseEvent>() {
-          @Override
-          public void handle(MouseEvent event) {
-            BaseFilterController<GameRepresentation, GameRepresentationModel> filterController = tablesSidebarController.getTableOverviewController().getFilterController();
-            TableFilterController tableFilterController = (TableFilterController) filterController;
-            tableFilterController.getTagField().toggleTag(tagsValue);
-          }
-        });
-        tagsRoot.getChildren().add(tagButton);
-      }
+      JFXFuture.supplyAsync(() -> {
+        return client.getTaggingService().getTags();
+      }).thenAcceptLater((allTags) -> {
+        for (String tagsValue : g.getTags()) {
+          TagButton tagButton = new TagButton(g.getId(), tableDetails, allTags, tagsValue);
+          tagButton.setButtonListener(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+              BaseFilterController<GameRepresentation, GameRepresentationModel> filterController = tablesSidebarController.getTableOverviewController().getFilterController();
+              TableFilterController tableFilterController = (TableFilterController) filterController;
+              tableFilterController.getTagField().toggleTag(tagsValue);
+            }
+          });
+          tagsRoot.getChildren().add(tagButton);
+        }
+      });
+
 
       category.setText(StringUtils.isEmpty(tableDetails.getCategory()) ? "-" : tableDetails.getCategory());
       author.setText(StringUtils.isEmpty(tableDetails.getAuthor()) ? "-" : tableDetails.getAuthor());

@@ -101,6 +101,23 @@ public class PropperRenamingController implements Initializable {
     displayNameCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> refreshNames());
     fileNameCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> refreshNames());
     gameNameCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> refreshNames());
+  }
+
+  /**
+   * Do this once after initialize method is called
+   */
+  public void initBindings(int width, UISettings uiSettings, TextField screenNameField, TextField fileNameField, TextField gameNameField) {
+    root.setMinWidth(width);
+    this.uiSettings = uiSettings;
+
+    this.screenNameField = screenNameField;
+    this.fileNameField = fileNameField;
+    this.gameNameField = gameNameField;
+
+    authorBtn.setSelected(uiSettings.isPropperAuthorField());
+    versionBtn.setSelected(uiSettings.isPropperVersionField());
+    modBtn.setSelected(uiSettings.isPropperModField());
+    vrBtn.setSelected(uiSettings.isPropperVRField());
 
     authorBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
       uiSettings.setPropperAuthorField(newValue);
@@ -122,23 +139,6 @@ public class PropperRenamingController implements Initializable {
       client.getPreferenceService().setJsonPreference(uiSettings);
       refreshNames();
     });
-  }
-
-  /**
-   * Do this once after initialize method is called
-   */
-  public void initBindings(int width, UISettings uiSettings, TextField screenNameField, TextField fileNameField, TextField gameNameField) {
-    root.setMinWidth(width);
-    this.uiSettings = uiSettings;
-
-    this.screenNameField = screenNameField;
-    this.fileNameField = fileNameField;
-    this.gameNameField = gameNameField;
-
-    authorBtn.setSelected(uiSettings.isPropperAuthorField());
-    versionBtn.setSelected(uiSettings.isPropperVersionField());
-    modBtn.setSelected(uiSettings.isPropperModField());
-    vrBtn.setSelected(uiSettings.isPropperVRField());  
   }
 
   public void setGame(String gameFileName) {

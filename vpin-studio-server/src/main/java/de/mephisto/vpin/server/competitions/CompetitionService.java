@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.competitions;
 
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.server.assets.AssetService;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PreDestroy;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -355,5 +357,9 @@ public class CompetitionService implements InitializingBean {
       LOG.error("iScored summary failed: {}", e.getMessage(), e);
     }
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
+  }
+
+  public void shutdown() {
+    scheduler.shutdown();
   }
 }

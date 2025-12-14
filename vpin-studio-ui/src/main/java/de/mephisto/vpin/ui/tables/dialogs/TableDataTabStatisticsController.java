@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.restclient.alx.AlxSummary;
 import de.mephisto.vpin.restclient.alx.AlxTileEntry;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
@@ -7,8 +8,11 @@ import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.alx.AlxDialogs;
 import de.mephisto.vpin.ui.tables.alx.AlxTileEntryController;
+import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FrontendUtil;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -66,54 +70,59 @@ public class TableDataTabStatisticsController implements Initializable {
     this.stage = stage;
     this.game = game;
     this.tableDetails = tableDetails;
-    Platform.runLater(() -> refreshView());
+    refreshView();
   }
 
   private void refreshView() {
-    AlxSummary alxSummary = client.getAlxService().getAlxSummary(game.getId());
-    Frontend frontend = client.getFrontendService().getFrontendCached();
+    JFXFuture.supplyAsync(() -> {
+      return client.getAlxService().getAlxSummary(game.getId());
+    }).thenAcceptLater((alxSummary) -> {
+      Frontend frontend = client.getFrontendService().getFrontendCached();
+      int played = 0;
 
-    int played = 0;
+      if (!alxSummary.getEntries().isEmpty()) {
+        TableAlxEntry entry = alxSummary.getEntries().get(0);
 
-    if (!alxSummary.getEntries().isEmpty()) {
-      TableAlxEntry entry = alxSummary.getEntries().get(0);
+        // may be overriden by TableDetail below
+        played = entry.getNumberOfPlays();
 
-      // may be overriden by TableDetail below
-      played = entry.getNumberOfPlays();
-
-      String totalTimeFormatted = null;
-      try {
-        if (entry.getTimePlayedSecs() < 60 * 60) {
-          totalTimeFormatted = DurationFormatUtils.formatDuration(entry.getTimePlayedSecs() * 1000, "mm 'mins'", false);
+        String totalTimeFormatted = null;
+        try {
+          if (entry.getTimePlayedSecs() < 60 * 60) {
+            totalTimeFormatted = DurationFormatUtils.formatDuration(entry.getTimePlayedSecs() * 1000, "mm 'mins'", false);
+          }
+          else {
+            totalTimeFormatted = DurationFormatUtils.formatDuration(entry.getTimePlayedSecs() * 1000, "HH 'hrs'", false);
+          }
         }
-        else {
-          totalTimeFormatted = DurationFormatUtils.formatDuration(entry.getTimePlayedSecs() * 1000, "HH 'hrs'", false);
+        catch (Exception e) {
+          LOG.error("Error calculating total play time: " + e.getMessage());
+        }
+        timePlayedTile.refresh(stage, new AlxTileEntry("Total Time Played", "(The total emulation time of this table)", totalTimeFormatted));
+      }
+      else {
+        timePlayedTile.refresh(stage, new AlxTileEntry("Total Time Played", "(The total emulation time of this table)", "-"));
+      }
+
+
+      if (client.getFrontendService().getFrontendType().equals(FrontendType.PinballX)) {
+        // Override statistics by TableDetails when numberPlays is set
+        // TODO why?
+        if (tableDetails != null && tableDetails.getNumberPlays() != null) {
+          played = tableDetails.getNumberPlays();
         }
       }
-      catch (Exception e) {
-        LOG.error("Error calculating total play time: " + e.getMessage());
-      }
-      timePlayedTile.refresh(stage, new AlxTileEntry("Total Time Played", "(The total emulation time of this table)", totalTimeFormatted));
-    }
-    else {
-      timePlayedTile.refresh(stage, new AlxTileEntry("Total Time Played", "(The total emulation time of this table)", "-"));
-    }
+      timesPlayedTile.refresh(stage, new AlxTileEntry("Total Times Played",
+          FrontendUtil.replaceName("(The total number of table launches from [Frontend])", frontend),
+          String.valueOf(played)));
+    });
 
-    if(client.getFrontendService().getFrontendType().equals(FrontendType.PinballX)) {
-      // Override statistics by TableDetails when numberPlays is set
-      // TODO why?
-      if (tableDetails != null && tableDetails.getNumberPlays() != null) {
-        played = tableDetails.getNumberPlays();
-      }
-    }
-
-    int scores = client.getGameService().getGameScores(game.getId()).getScores().size();
-    AlxTileEntry entry = new AlxTileEntry("Recorded Scores", "(Total number of scores recorded by the VPin Studio)", String.valueOf(scores));
-    scoresCountTile.refresh(stage, entry);
-
-    timesPlayedTile.refresh(stage, new AlxTileEntry("Total Times Played",
-        FrontendUtil.replaceName("(The total number of table launches from [Frontend])", frontend),
-        String.valueOf(played)));
+    JFXFuture.supplyAsync(() -> {
+      return client.getGameService().getGameScores(game.getId()).getScores().size();
+    }).thenAcceptLater((scores) -> {
+      AlxTileEntry entry = new AlxTileEntry("Recorded Scores", "(Total number of scores recorded by the VPin Studio)", String.valueOf(scores));
+      scoresCountTile.refresh(stage, entry);
+    });
   }
 
   @Override

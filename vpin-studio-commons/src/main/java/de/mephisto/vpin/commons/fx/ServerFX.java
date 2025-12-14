@@ -336,4 +336,8 @@ public class ServerFX extends Application {
     PauseMenu.getInstance().loadPauseMenu();
     latch.countDown();
   }
+
+  public void shutdown() {
+    Platform.exit();
+  }
 }

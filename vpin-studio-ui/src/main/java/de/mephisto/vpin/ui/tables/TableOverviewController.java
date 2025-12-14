@@ -437,13 +437,17 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void onTableEdit() {
     GameRepresentation selectedItems = getSelection();
     if (selectedItems != null) {
-      if (Studio.client.getFrontendService().isFrontendRunning()) {
-        if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
-          TableDialogs.openTableDataDialog(this, selectedItems);
+      JFXFuture.supplyAsync(() -> {
+        return Studio.client.getFrontendService().isFrontendRunning();
+      }).thenAcceptLater((running) -> {
+        if (running) {
+          if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
+            TableDialogs.openTableDataDialog(this, selectedItems);
+          }
+          return;
         }
-        return;
-      }
-      TableDialogs.openTableDataDialog(this, selectedItems);
+        TableDialogs.openTableDataDialog(this, selectedItems);
+      });
     }
   }
 
@@ -1321,10 +1325,10 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       return label;
     }, this, true);
 
-    BaseLoadingColumn.configureColumn(columnTutorials, (value, model) -> {
+    BaseLoadingColumn.configureLoadingColumn(this, columnTutorials, "", "tablesTutorialColumn", (value, model) -> {
       String vpsTableId = value.getExtTableId();
       return new VpsTutorialColumn(vpsTableId);
-    }, this, true);
+    });
 
     BaseLoadingColumn.configureColumn(columnDateAdded, (value, model) -> {
       Label label = null;

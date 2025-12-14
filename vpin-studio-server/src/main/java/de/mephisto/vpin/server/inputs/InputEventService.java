@@ -34,6 +34,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PreDestroy;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
@@ -372,5 +373,9 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
     GameController.getInstance().addListener(this);
     LOG.info("Server startup finished, running version is " + systemService.getVersion());
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
+  }
+
+  public void shutdown() {
+    shutdownThread.shutdown();
   }
 }

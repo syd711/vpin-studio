@@ -47,47 +47,47 @@ public class VpsTutorialColumn extends HBox {
       });
 
       for (VpsTutorialUrls tutorialFile : tutorialFiles) {
-        Button btn = new Button();
-        btn.getStyleClass().add("table-media-button");
-        String authors = String.join(", ", tutorialFile.getAuthors());
-
-        if (tutorialFile.getAuthors().contains("Kongedam")) {
-          FontIcon icon = WidgetFactory.createIcon("mdi2a-alpha-k-box-outline");
-          icon.setIconColor(Paint.valueOf(WidgetFactory.UPDATE_COLOR));
-          icon.setIconSize(iconSize);
-          String videoUrl = "https://assets.vpin-mania.net/tutorials/kongedam/" + vpsTable.getId() + ".mp4";
-          boolean check = HttpUtils.check(videoUrl);
-          if (check) {
-            btn.setTooltip(new Tooltip("Michael Kongedam tutorial, available on vpin-mania.net"));
-            icon.setIconColor(Paint.valueOf(WidgetFactory.OK_COLOR));
-          }
-          else {
-            btn.setTooltip(new Tooltip("The Kongedam tutorial video has not been uploaded to VPin Mania yet."));
-            icon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
-          }
-          btn.setGraphic(icon);
-        }
-        else {
-          FontIcon icon = WidgetFactory.createIcon("mdi2v-video-box");
-          if (authors.contains("PAPA")) {
-            icon = WidgetFactory.createIcon("mdi2a-alpha-p-box-outline");
-          }
-          else if (authors.contains("Majestic")) {
-            icon = WidgetFactory.createIcon("mdi2a-alpha-m-box-outline");
-          }
-          else if (authors.contains("Digital")) {
-            icon = WidgetFactory.createIcon("mdi2a-alpha-d-box-outline");
-          }
-          if (tutorialFile.getAuthors() != null) {
-            btn.setTooltip(new Tooltip(authors));
-          }
-          icon.setIconSize(iconSize);
-          btn.setGraphic(icon);
-        }
-
         if (tutorialFile.getUrls() != null && !tutorialFile.getUrls().isEmpty()) {
           VpsUrl vpsUrl = tutorialFile.getUrls().get(0);
           if (!vpsUrl.isBroken()) {
+            Button btn = new Button();
+            btn.getStyleClass().add("table-media-button");
+            String authors = String.join(", ", tutorialFile.getAuthors());
+
+            if (tutorialFile.getAuthors().contains("Kongedam")) {
+              FontIcon icon = WidgetFactory.createIcon("mdi2a-alpha-k-box-outline");
+              icon.setIconColor(Paint.valueOf(WidgetFactory.UPDATE_COLOR));
+              icon.setIconSize(iconSize);
+              String videoUrl = "https://assets.vpin-mania.net/tutorials/kongedam/" + vpsTable.getId() + ".mp4";
+              boolean check = HttpUtils.check(videoUrl);
+              if (check) {
+                btn.setTooltip(new Tooltip("Michael Kongedam tutorial, available on vpin-mania.net"));
+                icon.setIconColor(Paint.valueOf(WidgetFactory.OK_COLOR));
+              }
+              else {
+                btn.setTooltip(new Tooltip("The Kongedam tutorial video has not been uploaded to VPin Mania yet."));
+                icon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
+              }
+              btn.setGraphic(icon);
+            }
+            else {
+              FontIcon icon = WidgetFactory.createIcon("mdi2v-video-box");
+              if (authors.contains("PAPA")) {
+                icon = WidgetFactory.createIcon("mdi2a-alpha-p-box-outline");
+              }
+              else if (authors.contains("Majestic")) {
+                icon = WidgetFactory.createIcon("mdi2a-alpha-m-box-outline");
+              }
+              else if (authors.contains("Digital")) {
+                icon = WidgetFactory.createIcon("mdi2a-alpha-d-box-outline");
+              }
+              if (tutorialFile.getAuthors() != null) {
+                btn.setTooltip(new Tooltip(authors));
+              }
+              icon.setIconSize(iconSize);
+              btn.setGraphic(icon);
+            }
+
             btn.setOnAction((actionEvent) -> {
               Studio.browse(vpsUrl.getUrl());
             });
@@ -95,7 +95,6 @@ public class VpsTutorialColumn extends HBox {
           }
         }
       }
-
     }
     catch (Exception e) {
       LOG.error("Failed to render VPS table container: " + e.getMessage(), e);
