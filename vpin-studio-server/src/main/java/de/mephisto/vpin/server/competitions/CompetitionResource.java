@@ -61,7 +61,7 @@ public class CompetitionResource {
   }
 
   @GetMapping("/weekly/submit/{simulate}")
-  public ScoreSubmitResult submitScore(boolean simulate) {
+  public ScoreSubmitResult submitScore(@PathVariable("simulate") boolean simulate) {
     return wovpService.submitScore(simulate);
   }
 
@@ -79,6 +79,7 @@ public class CompetitionResource {
   public IScoredSyncModel synchronize(@RequestBody IScoredSyncModel syncModel) {
     return competitionSynchronizer.synchronize(syncModel);
   }
+
   @PostMapping("/iscored/synchronize")
   public boolean synchronize() {
     return competitionSynchronizer.synchronizeGameRooms();

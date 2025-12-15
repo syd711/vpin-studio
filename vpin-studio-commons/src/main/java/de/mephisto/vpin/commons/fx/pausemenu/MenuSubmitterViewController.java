@@ -15,6 +15,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,11 +121,12 @@ public class MenuSubmitterViewController implements Initializable {
       playerInitialsLabel.setText(result.getPlayerInitials() != null ? result.getPlayerInitials() : "-");
       playerNameLabel.setText(result.getPlayerName() != null ? result.getPlayerName() : "-");
       playerScoreLabel.setText(result.getScore() > 0 ? ScoreFormatUtil.formatScore(result.getScore(), Locale.getDefault()) : "-");
-      submitBtn.setVisible(false);
+      submitBtn.setVisible(result.getErrorMessage() == null);
 
       if (result.getErrorMessage() != null) {
         errorContainer.setVisible(true);
         errorMsg.setText(result.getErrorMessage());
+
       }
     });
   }
@@ -144,8 +146,11 @@ public class MenuSubmitterViewController implements Initializable {
         submitBtn.setVisible(false);
         errorContainer.setVisible(true);
         errorMsg.setText(result.getErrorMessage());
+        infoLabel.setText("If your recent highscore is not shown, restart the game so that it is saved.");
       }
-      infoLabel.setText("Your highscore has been submitted.");
+      else {
+        infoLabel.setText("Your highscore has been submitted.");
+      }
     });
     TransitionUtil.createBlink(submitBtn).play();
   }

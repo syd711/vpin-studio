@@ -156,6 +156,17 @@
                         </Button>
                         <Separator layoutX="252.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0"
                                    prefWidth="12.0"/>
+                        <Button fx:id="stopBtn" layoutX="700.0" layoutY="11.0" mnemonicParsing="false" onAction="#onStop" textFill="#ff3333">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                            <graphic>
+                                <FontIcon iconColor="#ff3333" iconLiteral="mdi2s-stop" iconSize="18" />
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="Kill all emulator and [Frontend] processes (Ctrl + K)" />
+                            </tooltip>
+                        </Button>
                     </items>
                 </ToolBar>
             </top>

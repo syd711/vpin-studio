@@ -120,6 +120,11 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
       return result;
     }
 
+    Optional<Score> score = scoreSummary.getScores().stream().filter(s -> s.getPlayer() != null && s.getPlayer().equals(adminPlayer)).findFirst();
+    if (score.isPresent()) {
+      result.setScore(score.get().getScore());
+    }
+
     result.setPlayerInitials(adminPlayer.getInitials());
     result.setPlayerName(adminPlayer.getName());
 
@@ -151,16 +156,14 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
     }
 
     if (!simulate) {
-      Optional<Score> score = scoreSummary.getScores().stream().filter(s -> s.getPlayer() != null && s.getPlayer().equals(adminPlayer)).findFirst();
       if (score.isEmpty()) {
         SLOG.info("[WOVP simulate=" + simulate + "] " + "No matching table score found for player " + adminPlayer.getInitials());
         result.setErrorMessage("No matching table score found for player " + adminPlayer.getInitials());
         return result;
       }
-      Challenge c = challenge.get();
-      Score s = score.get();
-      result.setScore(s.getScore());
 
+      Score s = score.get();
+      Challenge c = challenge.get();
       List<ScoreBoardItem> scoreBoardItems = c.getScoreBoard().getItems();
       for (ScoreBoardItem scoreBoardItem : scoreBoardItems) {
         ScoreBoardItemPositionValues values = scoreBoardItem.getValues();

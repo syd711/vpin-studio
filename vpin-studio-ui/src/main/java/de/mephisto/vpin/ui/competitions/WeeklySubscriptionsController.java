@@ -1,10 +1,12 @@
 package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.utils.JFXFuture;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
+import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
@@ -18,6 +20,7 @@ import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.panels.PlayButtonController;
 import de.mephisto.vpin.ui.tournaments.VpsTableContainer;
 import de.mephisto.vpin.ui.tournaments.VpsVersionContainer;
+import de.mephisto.vpin.ui.util.FrontendUtil;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -73,6 +76,9 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
   private Button reloadBtn;
 
   @FXML
+  private Button stopBtn;
+
+  @FXML
   private Button synchronizeBtn;
 
   @FXML
@@ -102,6 +108,20 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
 
   // Add a public no-args constructor
   public WeeklySubscriptionsController() {
+  }
+
+  @FXML
+  public void onStop() {
+    Frontend frontend = client.getFrontendService().getFrontendCached();
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage,
+        FrontendUtil.replaceNames("Stop all emulators and [Frontend] processes?", frontend, null));
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      JFXFuture.supplyAsync(() -> {
+        return client.getFrontendService().terminateFrontend();
+      }).thenAcceptLater((requestResult) -> {
+        LOG.info("Kill frontend request finished.");
+      });
+    }
   }
 
   @FXML
@@ -210,16 +230,6 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
       WeeklyCompetitionModel value = cellData.getValue();
       VBox box = new VBox();
       box.setAlignment(Pos.CENTER);
-
-//      InputStream in = Studio.class.getResourceAsStream("wovp.png");
-//      Image image = new Image(in);
-//      ImageView imageView = new ImageView(image);
-//      imageView.setFitHeight(90);
-//      imageView.setPreserveRatio(true);
-//
-//      Tooltip.install(box, new Tooltip(value.competition.getOwner()));
-//
-//      box.getChildren().add(imageView);
       Label modeLabel = new Label();
       modeLabel.getStyleClass().add("default-text");
       modeLabel.setStyle(getLabelCss(value));
@@ -406,13 +416,16 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
       Parent playBtnRoot = loader.load();
       playButtonController = loader.getController();
       playButtonController.setDisable(true);
-      toolbar.getItems().add(playBtnRoot);
+      toolbar.getItems().add(toolbar.getItems().size() - 1, playBtnRoot);
     }
     catch (IOException e) {
       LOG.error("Failed to load play button: " + e.getMessage(), e);
     }
 
     bindSearchField();
+
+    Frontend frontend = client.getFrontendService().getFrontend();
+    FrontendUtil.replaceName(stopBtn.getTooltip(), frontend);
 
     EventManager.getInstance().addListener(this);
   }
