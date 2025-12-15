@@ -69,6 +69,7 @@ public class Wovp {
   }
 
   public void submitScore(@NonNull File screenshots, @NonNull String challengeId, long score, @Nullable String note) throws Exception {
+    long start = System.currentTimeMillis();
     UploadResponse uploadResponse = submitPhoto(screenshots);
     if (uploadResponse != null && uploadResponse.getData().getErrors().isEmpty()) {
       LOG.info("Resolved temporary photo id {}", uploadResponse.getData().getPhotoTempId());
@@ -81,7 +82,8 @@ public class Wovp {
 
       String json = objectMapper.writeValueAsString(scoreSubmit);
       doPost(json, UploadResponse.class, SCORE_SUBMIT_URL);
-      LOG.info("WOVP score submission finished, submitted score of {}", score);
+      long duration = System.currentTimeMillis() - start;
+      LOG.info("WOVP score submission finished, submitted score of {}, took {}ms.", score, duration);
     }
   }
 
