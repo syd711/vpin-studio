@@ -25,6 +25,7 @@ import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.recorder.ScreenshotService;
+import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -66,6 +67,9 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
 
   @Autowired
   private PlayerService playerService;
+
+  @Autowired
+  private SystemService systemService;
 
   private WOVPSettings wovpSettings;
 
@@ -195,6 +199,9 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
 
   private String getNote(@NonNull Game game) {
     StringBuilder builder = new StringBuilder();
+    builder.append("VPin Studio Version: ");
+    builder.append(systemService.getVersion());
+    builder.append(", \n");
     builder.append("VPX File: ");
     builder.append(game.getGameFileName());
     builder.append(", \n");
