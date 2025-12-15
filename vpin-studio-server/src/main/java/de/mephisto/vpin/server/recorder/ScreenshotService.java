@@ -5,14 +5,22 @@ import de.mephisto.vpin.commons.fx.ImageUtil;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.monitor.MonitoringSettings;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.ZipUtil;
+import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.games.GameStatusService;
+import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.highscores.Score;
+import de.mephisto.vpin.server.listeners.EventOrigin;
+import de.mephisto.vpin.server.players.Player;
+import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -47,7 +55,16 @@ public class ScreenshotService {
   private GameService gameService;
 
   @Autowired
+  private GameStatusService gameStatusService;
+
+  @Autowired
   private SystemService systemService;
+
+  @Autowired
+  private PlayerService playerService;
+
+  @Autowired
+  private HighscoreService highscoreService;
 
   @Autowired
   private ScreenPreviewService screenPreviewService;
@@ -68,11 +85,13 @@ public class ScreenshotService {
 
   public String screenshot() {
     lastScreenShotId = UUID.randomUUID().toString();
+
     BufferedImage bufferedImage = takeMonitorsScreenshots();
     //return as fast as possible to speed up pause menu show
     new Thread(() -> {
       try {
         Thread.currentThread().setName("Screenshot Writer " + lastScreenShotId);
+        writeScore(bufferedImage);
         byte[] bytes = toBytes(bufferedImage);
         File screenshot = getScreenshotFile(lastScreenShotId);
         FileOutputStream out = new FileOutputStream(screenshot);
@@ -84,6 +103,28 @@ public class ScreenshotService {
       }
     }).start();
     return lastScreenShotId;
+  }
+
+  private void writeScore(BufferedImage bufferedImage) {
+    Player adminPlayer = playerService.getAdminPlayer();
+    if (adminPlayer != null) {
+      if (gameStatusService.getStatus() != null) {
+        GameStatus status = gameStatusService.getStatus();
+        Game game = gameService.getGame(status.getGameId());
+        if (game != null) {
+          highscoreService.scanScore(game, EventOrigin.COMPETITION_UPDATE);
+          ScoreSummary scoreSummary = highscoreService.getScoreSummary(-1, game);
+          Optional<Score> score = scoreSummary.getScores().stream().filter(s -> s.getPlayer() != null && s.getPlayer().equals(adminPlayer)).findFirst();
+          if (score.isPresent()) {
+            Graphics g = bufferedImage.getGraphics();
+            Graphics2D g2d = (Graphics2D) g.create();
+            g2d.setColor(Color.WHITE);
+            g2d.setFont(new Font("Digital Counter 7", Font.BOLD, 48));
+            g2d.drawString(score.get().getFormattedScore(), 12, 60);
+          }
+        }
+      }
+    }
   }
 
   public File getScreenshotFile(@Nullable String uuid) {

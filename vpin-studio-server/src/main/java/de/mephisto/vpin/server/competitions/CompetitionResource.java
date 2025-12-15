@@ -5,8 +5,6 @@ import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.competitions.IScoredSyncModel;
 import de.mephisto.vpin.restclient.wovp.ScoreSubmitResult;
 import de.mephisto.vpin.server.competitions.iscored.IScoredCompetitionSynchronizer;
-import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.wovp.WovpService;
