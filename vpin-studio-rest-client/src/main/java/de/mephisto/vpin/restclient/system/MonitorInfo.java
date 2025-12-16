@@ -1,6 +1,10 @@
 package de.mephisto.vpin.restclient.system;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import javafx.stage.Screen;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class MonitorInfo {
   private boolean portraitMode;
@@ -21,6 +25,22 @@ public class MonitorInfo {
 
   public double getScaledX() {
     return scaledX;
+  }
+
+  @JsonIgnore
+  public Screen getMatchingScreen() {
+    if (isPrimary()) {
+      return Screen.getPrimary();
+    }
+
+    List<Screen> screens = Screen.getScreens().stream().filter(s -> !Screen.getPrimary().equals(s)).collect(Collectors.toList());
+    for (Screen s : screens) {
+      double screenX = s.getBounds().getMinX();
+      if (screenX == getX()) {
+        return s;
+      }
+    }
+    throw new UnsupportedOperationException("No matching monitor found for " + this);
   }
 
   public void setScaledX(double scaledX) {
@@ -102,9 +122,9 @@ public class MonitorInfo {
   @Override
   public String toString() {
     if (primary) {
-      return "Monitor " + (id + 1) + " (primary) [" + getWidth() + "x" + getHeight() + "]";
+      return "Monitor " + (id + 1) + " (primary) [" + getWidth() + "x" + getHeight() + "/" + scaledX + "]";
     }
-    return "Monitor " + (id + 1) + " [" + getWidth() + "x" + getHeight() + "]";
+    return "Monitor " + (id + 1) + " [" + getWidth() + "x" + getHeight() + "/" + scaledX + "]";
   }
 
   @Override

@@ -149,6 +149,7 @@
       </StackPane>
    </center>
    <styleClass>
+      <String fx:value="debug" />
       <String fx:value="root" />
    </styleClass>
 </BorderPane>

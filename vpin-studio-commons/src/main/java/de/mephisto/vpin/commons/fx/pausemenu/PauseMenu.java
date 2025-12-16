@@ -2,7 +2,6 @@ package de.mephisto.vpin.commons.fx.pausemenu;
 
 import de.mephisto.vpin.commons.MonitorInfoUtil;
 import de.mephisto.vpin.commons.fx.ServerFX;
-import de.mephisto.vpin.commons.fx.notifications.NotificationStageService;
 import de.mephisto.vpin.commons.fx.pausemenu.model.FrontendScreenAsset;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemsFactory;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuScreensFactory;
@@ -21,7 +20,6 @@ import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
-import de.mephisto.vpin.restclient.wovp.WOVPSettings;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -31,6 +29,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.slf4j.Logger;
@@ -58,6 +57,7 @@ public class PauseMenu extends Application {
   private final List<FrontendScreenAsset> screenAssets = new ArrayList<>();
 
   private static PauseMenu INSTANCE = null;
+  private MenuController menuController;
 
 
   public static PauseMenu getInstance() {
@@ -100,11 +100,10 @@ public class PauseMenu extends Application {
     try {
       Stage pauseMenuStage = new Stage();
       pauseMenuStage.setTitle("VPin UI");
-      pauseMenuStage.initStyle(StageStyle.TRANSPARENT);
+      pauseMenuStage.initStyle(StageStyle.UNIFIED);
       pauseMenuStage.setAlwaysOnTop(true);
       stage = pauseMenuStage;
 
-      Scene scene = null;
       stage.getIcons().add(new Image(Objects.requireNonNull(PauseMenu.class.getResourceAsStream("logo-64.png"))));
 
       PauseMenuSettings pauseMenuSettings = ServerFX.client.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
@@ -116,58 +115,63 @@ public class PauseMenu extends Application {
 
       FXMLLoader loader = new FXMLLoader(MenuController.class.getResource("menu-main.fxml"));
       BorderPane rootPane = loader.load();
+      menuController = loader.getController();
 
-      //a bit confusing, for the default landscape view, the default rotation value of -90 is used => cabinet mode
-      if (pauseMenuSettings.getRotation() != 0) {
-        LOG.info("Window Mode: Landscape");
-        rootPane.setTranslateY(0);
-        rootPane.setTranslateX(0);
-        rootPane.setRotate(-(pauseMenuSettings.getRotation()));
-        stage.setY(PauseMenuUIDefaults.getScreenHeight() / 2 / 2);
-        stage.setX(0);
-        double max = Math.max(PauseMenuUIDefaults.getScreenWidth(), PauseMenuUIDefaults.getScreenHeight());
-        if (max > 2560) {
-          stage.setX(stage.getX() + 600);
-          rootPane.setTranslateX(400);
-        }
-        else if (max > 2000) {
-          rootPane.setTranslateX(400);
-        }
-        scene = new Scene(rootPane, rootPane.getPrefWidth(), rootPane.getPrefWidth());
-      }
-      else {
-        LOG.info("Window Mode: Desktop");
-        rootPane.setTranslateY(0);
-        rootPane.setTranslateX(0);
-        stage.setX(PauseMenuUIDefaults.getScaledScreenX());
-        stage.setY(PauseMenuUIDefaults.getScreenHeight() / 2 / 2 / 2);
-        scene = new Scene(rootPane, PauseMenuUIDefaults.getScreenWidth(), PauseMenuUIDefaults.getScreenHeight());
-      }
-
-      scalePauseMenuStage(rootPane, pauseMenuSettings);
+      Scene scene = scalePauseMenuStage(monitorInfo, rootPane, pauseMenuSettings);
       scene.setFill(Color.TRANSPARENT);
       stage.setScene(scene);
 
-      StateMananger.getInstance().init(loader.getController());
+      StateMananger.getInstance().init(menuController);
     }
     catch (Exception e) {
       LOG.error("Failed to load launcher: " + e.getMessage(), e);
     }
   }
 
-  private static void scalePauseMenuStage(BorderPane root, PauseMenuSettings pauseMenuSettings) {
+  private Scene scalePauseMenuStage(MonitorInfo monitorInfo, BorderPane rootPane, PauseMenuSettings pauseMenuSettings) {
+    double scaling = 1;
+    double max = Math.max(PauseMenuUIDefaults.getScreenWidth(), PauseMenuUIDefaults.getScreenHeight());
+    Scene scene = new Scene(rootPane, PauseMenuUIDefaults.getScreenWidth(), PauseMenuUIDefaults.getScreenHeight());
+
+    stage.setY(monitorInfo.getMatchingScreen().getVisualBounds().getMinY());
+
     if (pauseMenuSettings.getRotation() != 0) {
-      double max = Math.max(PauseMenuUIDefaults.getScreenWidth(), PauseMenuUIDefaults.getScreenHeight());
-      double scaling = 1;
+      LOG.info("Window Mode: Cab"); //scaling is ignored here!!!
+      rootPane.setRotate(-(pauseMenuSettings.getRotation()));
+      stage.setX(PauseMenuUIDefaults.getScaledScreenX() + PauseMenuUIDefaults.getScreenWidth() / 2 / 2);
+
       if (max > 2560) {
         scaling = 1.4;
       }
-      else if (max < 2000) {
+      else if (max > 2000) {
+        scaling = 0.9;
+      }
+      else {
+        //falls down too much
+        stage.setX(PauseMenuUIDefaults.getScaledScreenX() + PauseMenuUIDefaults.getScreenWidth() / 2 / 2 / 2);
         scaling = 0.7;
       }
-      root.setScaleX(scaling);
-      root.setScaleY(scaling);
     }
+    else {
+      LOG.info("Window Mode: Desktop");
+      stage.setX(PauseMenuUIDefaults.getScaledScreenX());
+      if (max > 2560) {
+        rootPane.setTranslateY(500);
+        scaling = 1.4;
+      }
+      else if (max > 2000) {
+        scaling = 1;
+      }
+      else {
+        //falls down too much
+        scaling = 0.7;
+        stage.setY(Screen.getScreens().get(1).getBounds().getMinY());
+      }
+    }
+
+    rootPane.setScaleX(scaling);
+    rootPane.setScaleY(scaling);
+    return scene;
   }
 
   public void togglePauseMenu() {
