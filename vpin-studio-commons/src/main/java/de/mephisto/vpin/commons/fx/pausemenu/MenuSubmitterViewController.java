@@ -7,6 +7,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.restclient.wovp.ScoreSubmitResult;
+import javafx.animation.Transition;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -15,11 +16,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.List;
 import java.util.Locale;
@@ -28,7 +29,7 @@ import java.util.ResourceBundle;
 import static de.mephisto.vpin.commons.fx.ServerFX.client;
 
 public class MenuSubmitterViewController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(MenuSubmitterViewController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private ImageView sectionIcon;
@@ -56,9 +57,6 @@ public class MenuSubmitterViewController implements Initializable {
 
   @FXML
   private Label playerScoreLabel;
-
-  @FXML
-  private Label playerInitialsLabel;
 
   @FXML
   private Label playerNameLabel;
@@ -118,15 +116,13 @@ public class MenuSubmitterViewController implements Initializable {
       }
       screenshotView.setImage(screenshotImage);
 
-      playerInitialsLabel.setText(result.getPlayerInitials() != null ? result.getPlayerInitials() : "-");
       playerNameLabel.setText(result.getPlayerName() != null ? result.getPlayerName() : "-");
-      playerScoreLabel.setText(result.getScore() > 0 ? ScoreFormatUtil.formatScore(result.getScore(), Locale.getDefault()) : "-");
+      playerScoreLabel.setText(result.getLatestScore() > 0 ? ScoreFormatUtil.formatScore(result.getLatestScore(), Locale.getDefault()) : "-");
       submitBtn.setVisible(result.getErrorMessage() == null);
 
       if (result.getErrorMessage() != null) {
         errorContainer.setVisible(true);
         errorMsg.setText(result.getErrorMessage());
-
       }
     });
   }
@@ -136,23 +132,25 @@ public class MenuSubmitterViewController implements Initializable {
       return;
     }
 
+    Transition blink = TransitionUtil.createBlink(submitBtn);
+    blink.play();
+
+    submitBtn.setText("Sending Highscores...");
     submitBtn.setDisable(true);
-    infoLabel.setText("Sending highscore to WOVP...");
     JFXFuture.supplyAsync(() -> {
       return client.getCompetitionService().submitScore(false);
     }).thenAcceptLater((result) -> {
+      blink.stop();
       submitBtn.setVisible(false);
       if (result.getErrorMessage() != null) {
         submitBtn.setVisible(false);
         errorContainer.setVisible(true);
         errorMsg.setText(result.getErrorMessage());
-        infoLabel.setText("If your recent highscore is not shown, restart the game so that it is saved.");
       }
       else {
-        infoLabel.setText("Your highscore has been submitted.");
+        submitBtn.setText("Your highscore has been submitted.");
       }
     });
-    TransitionUtil.createBlink(submitBtn).play();
   }
 
   public void reset() {
@@ -163,12 +161,9 @@ public class MenuSubmitterViewController implements Initializable {
   public void initialize(URL location, ResourceBundle resources) {
     playerScoreLabel.setFont(WidgetFactory.getScoreFont());
 
-    submitBtn.managedProperty().bindBidirectional(submitBtn.visibleProperty());
     loadingIndicator.managedProperty().bindBidirectional(loadingIndicator.visibleProperty());
-    errorContainer.managedProperty().bindBidirectional(errorContainer.visibleProperty());
     authorsLabel.managedProperty().bindBidirectional(authorsLabel.visibleProperty());
     versionLabel.managedProperty().bindBidirectional(versionLabel.visibleProperty());
-    screenshotView.managedProperty().bindBidirectional(screenshotView.visibleProperty());
 
     errorContainer.setVisible(false);
   }

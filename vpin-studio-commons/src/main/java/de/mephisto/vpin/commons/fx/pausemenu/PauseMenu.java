@@ -100,7 +100,7 @@ public class PauseMenu extends Application {
     try {
       Stage pauseMenuStage = new Stage();
       pauseMenuStage.setTitle("VPin UI");
-      pauseMenuStage.initStyle(StageStyle.UNIFIED);
+      pauseMenuStage.initStyle(StageStyle.TRANSPARENT);
       pauseMenuStage.setAlwaysOnTop(true);
       stage = pauseMenuStage;
 

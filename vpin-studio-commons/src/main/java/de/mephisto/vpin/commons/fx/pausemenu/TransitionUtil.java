@@ -6,6 +6,8 @@ import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
+import static javafx.animation.Animation.INDEFINITE;
+
 /**
  * Utility class for creating transitions with default values.
  */
@@ -66,7 +68,7 @@ public class TransitionUtil {
    */
   public static Transition createBlink(Node node) {
     SequentialTransition sequentialTransition = new SequentialTransition(node);
-    sequentialTransition.setCycleCount(3);
+    sequentialTransition.setCycleCount(INDEFINITE);
 
     FadeTransition fadeOut = new FadeTransition(Duration.millis(300), node);
     fadeOut.setFromValue(0.1);

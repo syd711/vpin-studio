@@ -1,11 +1,8 @@
 package de.mephisto.vpin.restclient.wovp;
 
-import de.mephisto.vpin.restclient.players.PlayerRepresentation;
-
 public class ScoreSubmitResult {
-  private long score;
+  private long latestScore;
   private String playerName;
-  private String playerInitials;
   private String errorMessage;
 
   public String getPlayerName() {
@@ -16,20 +13,12 @@ public class ScoreSubmitResult {
     this.playerName = playerName;
   }
 
-  public String getPlayerInitials() {
-    return playerInitials;
+  public long getLatestScore() {
+    return latestScore;
   }
 
-  public void setPlayerInitials(String playerInitials) {
-    this.playerInitials = playerInitials;
-  }
-
-  public long getScore() {
-    return score;
-  }
-
-  public void setScore(long score) {
-    this.score = score;
+  public void setLatestScore(long latestScore) {
+    this.latestScore = latestScore;
   }
 
   public String getErrorMessage() {

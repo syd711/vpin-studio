@@ -55,7 +55,7 @@
          <bottom>
             <BorderPane fx:id="widgetPane" styleClass="media-container" BorderPane.alignment="CENTER">
                <BorderPane.margin>
-                  <Insets bottom="12.0" left="24.0" right="24.0" top="12.0" />
+                  <Insets bottom="6.0" left="24.0" right="24.0" top="6.0" />
                </BorderPane.margin>
                <padding>
                   <Insets bottom="12.0" left="24.0" right="24.0" top="12.0" />
@@ -68,30 +68,7 @@
                               <Insets left="12.0" right="12.0" />
                            </padding>
                            <children>
-                              <Label text="Your Highscore" textFill="WHITE" wrapText="true">
-                                 <font>
-                                    <Font size="18.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="playerScoreLabel" layoutX="22.0" layoutY="10.0" text="-" textFill="WHITE" wrapText="true">
-                                 <font>
-                                    <Font size="24.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="22.0" layoutY="10.0" text="Initials" textFill="WHITE" wrapText="true">
-                                 <font>
-                                    <Font size="18.0" />
-                                 </font>
-                                 <VBox.margin>
-                                    <Insets top="12.0" />
-                                 </VBox.margin>
-                              </Label>
-                              <Label fx:id="playerInitialsLabel" layoutX="22.0" layoutY="37.0" text="-" textFill="WHITE" wrapText="true">
-                                 <font>
-                                    <Font size="24.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="22.0" layoutY="45.0" text="Full Name" textFill="WHITE" wrapText="true">
+                              <Label layoutX="22.0" layoutY="10.0" text="Player Name" textFill="WHITE" wrapText="true">
                                  <font>
                                     <Font size="18.0" />
                                  </font>
@@ -104,13 +81,23 @@
                                     <Font size="24.0" />
                                  </font>
                               </Label>
+                              <Label text="Your Latest Highscore" textFill="WHITE" wrapText="true">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="playerScoreLabel" layoutX="22.0" layoutY="10.0" text="-" textFill="WHITE" wrapText="true">
+                                 <font>
+                                    <Font size="24.0" />
+                                 </font>
+                              </Label>
                            </children>
                         </VBox>
                      </center>
                      <left>
                         <StackPane BorderPane.alignment="CENTER">
                            <children>
-                              <ImageView fx:id="screenshotView" fitHeight="390.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="true" />
+                              <ImageView fx:id="screenshotView" fitHeight="370.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="true" />
                               <VBox fx:id="loadingIndicator" alignment="CENTER" spacing="6.0">
                                  <children>
                                     <ProgressIndicator />
@@ -129,7 +116,7 @@
                <bottom>
                   <VBox alignment="CENTER" spacing="6.0" BorderPane.alignment="CENTER">
                      <BorderPane.margin>
-                        <Insets top="36.0" />
+                        <Insets top="12.0" />
                      </BorderPane.margin>
                      <children>
                         <VBox fx:id="errorContainer" alignment="CENTER" styleClass="error-container">
@@ -144,14 +131,9 @@
                               <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                            </padding>
                         </VBox>
-                        <Button fx:id="submitBtn" mnemonicParsing="false" style="-fx-font-size: 24px;" styleClass="submit-button" text="Press &quot;Start&quot; to Submit Highscore">
-                           <font>
-                              <Font size="18.0" />
-                           </font>
-                        </Button>
-                        <VBox alignment="CENTER" styleClass="info-container">
+                        <VBox alignment="CENTER" minHeight="50.0" styleClass="info-container">
                            <children>
-                              <Label fx:id="infoLabel" text="If your recent highscore is not shown, restart the game so that it is saved." textFill="WHITE" wrapText="true">
+                              <Label fx:id="infoLabel" maxWidth="620.0" text="Your highscore will be extracted from the screenshot taken at the moment you press the pause key. If your screenshot does not display your score, please reopen the pause menu before submitting it." textAlignment="CENTER" textFill="WHITE" wrapText="true">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -161,6 +143,11 @@
                               <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                            </padding>
                         </VBox>
+                        <Button fx:id="submitBtn" minWidth="400.0" mnemonicParsing="false" style="-fx-font-size: 24px;" styleClass="submit-button" text="Press &quot;Start&quot; to Submit Highscore">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Button>
                      </children>
                   </VBox>
                </bottom>

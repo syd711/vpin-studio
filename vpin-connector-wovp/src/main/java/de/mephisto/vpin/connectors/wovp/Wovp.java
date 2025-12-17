@@ -1,11 +1,13 @@
 package de.mephisto.vpin.connectors.wovp;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import de.mephisto.vpin.connectors.wovp.models.*;
+import de.mephisto.vpin.connectors.wovp.models.Challenges;
+import de.mephisto.vpin.connectors.wovp.models.ScoreSubmit;
+import de.mephisto.vpin.connectors.wovp.models.Search;
+import de.mephisto.vpin.connectors.wovp.models.UploadResponse;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.IOUtils;
@@ -21,16 +23,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Date;
-import java.util.Map;
 
 public class Wovp {
-  private final static Logger LOG = LoggerFactory.getLogger(Wovp.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final static ObjectMapper objectMapper;
 

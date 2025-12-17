@@ -44,6 +44,7 @@ import static de.mephisto.vpin.commons.fx.ImageUtil.*;
 @Service
 public class ScreenshotService {
   private final static Logger LOG = LoggerFactory.getLogger(RecorderService.class);
+  public static final boolean WRITE_SCORE = false;
 
   @Autowired
   private PreferencesService preferencesService;
@@ -106,6 +107,10 @@ public class ScreenshotService {
   }
 
   private void writeScore(BufferedImage bufferedImage) {
+    if (WRITE_SCORE) {
+      return;
+    }
+
     Player adminPlayer = playerService.getAdminPlayer();
     if (adminPlayer != null) {
       if (gameStatusService.getStatus() != null) {

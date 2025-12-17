@@ -2,11 +2,16 @@ package de.mephisto.vpin.restclient.system;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import javafx.stage.Screen;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class MonitorInfo {
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
   private boolean portraitMode;
   private boolean primary;
   private int width;
@@ -36,11 +41,14 @@ public class MonitorInfo {
     List<Screen> screens = Screen.getScreens().stream().filter(s -> !Screen.getPrimary().equals(s)).collect(Collectors.toList());
     for (Screen s : screens) {
       double screenX = s.getBounds().getMinX();
-      if (screenX == getX()) {
+      if (screenX == getScaledX()) {
         return s;
       }
     }
-    throw new UnsupportedOperationException("No matching monitor found for " + this);
+
+    LOG.error("No matching monitor found for " + this);
+
+    return screens.get(0);
   }
 
   public void setScaledX(double scaledX) {
