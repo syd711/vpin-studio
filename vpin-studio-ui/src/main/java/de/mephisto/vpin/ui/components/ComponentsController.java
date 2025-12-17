@@ -151,12 +151,9 @@ public class ComponentsController implements Initializable, StudioFXController, 
       NavigationController.setBreadCrumb(Arrays.asList("System Manager", "FlexDMD"));
     }
     else if (index == 6) {
-      NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Serum"));
-    }
-    else if (index == 7) {
       NavigationController.setBreadCrumb(Arrays.asList("System Manager", "DOFLinx"));
     }
-    else if (index == 8) {
+    else if (index == 7) {
       NavigationController.setBreadCrumb(Arrays.asList("System Manager", "DOF"));
     }
   }

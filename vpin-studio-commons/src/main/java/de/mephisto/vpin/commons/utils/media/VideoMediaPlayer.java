@@ -125,12 +125,12 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
 
         mediaPlayer.setOnError(() -> {
           LOG.warn("Media player error: " + mediaPlayer.getError() + ", URL: " + mediaPlayer.getMedia().getSource());
-          try {
-            Thread.sleep(100);
-          }
-          catch (InterruptedException e) {
-            //ignore
-          }
+//          try {
+//            Thread.sleep(100);
+//          }
+//          catch (InterruptedException e) {
+//            //ignore
+//          }
 
           if (retryCount > 20 || !url.contains("api/v1")) { //TODO we do not want too much load on remote servers
             disposeMedia();

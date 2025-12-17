@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.panels;
 
+import de.mephisto.vpin.ui.backglassmanager.DirectB2SModel;
 import de.mephisto.vpin.ui.tables.GameRepresentationModel;
 import de.mephisto.vpin.ui.vps.VpsTablesController;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -42,6 +43,9 @@ public class ViewCache<T, M extends BaseLoadingModel<T, M>> {
     }
     if (model instanceof VpsTablesController.VpsTableModel) {
       return String.valueOf(((VpsTablesController.VpsTableModel) model).getVpsTableId());
+    }
+    if (model instanceof DirectB2SModel) {
+      return String.valueOf(((DirectB2SModel) model).get().getFileName());
     }
     throw new UnsupportedOperationException("Unsupported caching view model: " + model);
   }

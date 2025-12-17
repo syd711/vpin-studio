@@ -1,3 +1,14 @@
+## Release Notes 4.4.6
+
+## Changes
+
+- Fixed caching issues for backglass management.
+- Improved video playback: Changed threading for video playback as a possible fix for scaling issues in the Designer. 
+- Improved video playback. tltr: installed(!) videos, the messages like "video available but playable" should happen less often now. _(This playback issue was a problem right from the beginning and has its roots in the underlying Java framework. It is now tried repetitively n-times until it succeeds. This workaround is only used for installed assets to avoid additional load on external sources like the PinUP Popper media server.)_
+
+
+---
+
 ## Release Notes 4.4.5
 
 ## Changes 
