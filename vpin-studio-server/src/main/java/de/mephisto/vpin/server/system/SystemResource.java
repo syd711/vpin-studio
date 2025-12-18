@@ -40,6 +40,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.zip.ZipOutputStream;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
@@ -111,7 +112,9 @@ public class SystemResource {
   public String logs() {
     try {
       Path filePath = Path.of("./vpin-studio-server.log");
-      return Files.readString(filePath);
+      List<String> lines = Files.readAllLines(filePath);
+      List<String> filtered = lines.stream().filter(l -> l.trim().startsWith("at ") || l.trim().contains("ERROR")).collect(Collectors.toList());
+      return String.join("\n", filtered);
     }
     catch (IOException e) {
       LOG.error("Error reading log: " + e.getMessage(), e);

@@ -8,12 +8,14 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlay;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.util.Keys;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -369,6 +371,9 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
       }
       catch (Exception ex) {
         LOG.error("Reload of item failed: " + ex.getMessage(), ex);
+        Platform.runLater(() -> {
+          WidgetFactory.showAlert(Studio.stage, "Error", "Reload of item failed: " + ex.getMessage());
+        });
       }
     }
   }
