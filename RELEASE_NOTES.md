@@ -1,3 +1,15 @@
+## Release Notes 4.4.7
+
+## Changes
+
+- Fixed shutdown issues which caused the server process not to terminate properly, therefore blocking updates. 
+
+If you automatic update did not succeed, please perform a manual update as described here:
+https://github.com/syd711/vpin-studio/wiki#manual-updates
+
+
+---
+
 ## Release Notes 4.4.6
 
 ## Changes

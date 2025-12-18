@@ -572,31 +572,52 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public void shutdown() {
     try {
-      ServerFX.getInstance().shutdown();
+      ExecutorService executor = Executors.newSingleThreadExecutor();
+      Future<?> submit = executor.submit(new Runnable() {
+        @Override
+        public void run() {
+          try {
+            Thread.currentThread().setName("VPin Studio Shutdown Thread");
+            ServerFX.getInstance().shutdown();
 
-      GameController.getInstance().shutdown();
+            GameController.getInstance().shutdown();
 
-      InputEventService inputEventService = context.getBean(InputEventService.class);
-      inputEventService.shutdown();
+            InputEventService inputEventService = context.getBean(InputEventService.class);
+            inputEventService.shutdown();
 
-      CompetitionService competitionService = context.getBean(CompetitionService.class);
-      competitionService.shutdown();
+            CompetitionService competitionService = context.getBean(CompetitionService.class);
+            competitionService.shutdown();
 
-      ManiaService maniaService = context.getBean(ManiaService.class);
-      maniaService.shutdown();
+            ManiaService maniaService = context.getBean(ManiaService.class);
+            maniaService.shutdown();
 
-      VPXMonitoringService monitoringService = context.getBean(VPXMonitoringService.class);
-      monitoringService.shutdown();
+            VPXMonitoringService monitoringService = context.getBean(VPXMonitoringService.class);
+            monitoringService.shutdown();
 
-      HikariDataSource dataSource = (HikariDataSource) context.getBean("dataSource");
-      dataSource.close();
+            HikariDataSource dataSource = (HikariDataSource) context.getBean("dataSource");
+            dataSource.close();
+          }
+          catch (Exception e) {
+            LOG.error("Shutdown failed: {}", e.getMessage());
+          }
+
+          try {
+            ((ConfigurableApplicationContext) context).close();
+          }
+          catch (Exception e) {
+            LOG.error("Server Context Shutdown failed: {}", e.getMessage());
+          }
+        }
+      });
+
+      submit.get(5, TimeUnit.SECONDS);
     }
     catch (Exception e) {
-      LOG.error("Shutdown failed: {}", e.getMessage());
+      LOG.error("Server Shutdown Error: {}", e.getMessage());
     }
-
-    ((ConfigurableApplicationContext) context).close();
-    System.exit(0);
+    finally {
+      System.exit(0);
+    }
   }
 
   public void systemShutdown() {
