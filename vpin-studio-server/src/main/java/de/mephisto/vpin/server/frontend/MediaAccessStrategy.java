@@ -24,4 +24,6 @@ public interface MediaAccessStrategy {
 
   List<File> getScreenMediaFiles(@NonNull Game game, @NonNull VPinScreen screen, @Nullable String mediaSearchTerm);
 
+  void stopMonitoring();
+
 }

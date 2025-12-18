@@ -103,7 +103,7 @@ public class TournamentsService implements InitializingBean, TableStatusChangeLi
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    if (Features.MANIA_ENABLED) {
+    if (Features.MANIA_TOURNAMENTS_ENABLED) {
       try {
         Cabinet cabinet = maniaService.getClient().getCabinetClient().getCabinetCached();
         if (cabinet != null) {

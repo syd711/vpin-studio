@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.wovp.models.ApiKeyValidationResponse;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.wovp.WOVPSettings;
@@ -84,12 +85,12 @@ public class WOVPPreferencesController implements Initializable {
   private void onApiKeyTest() {
     String key = apiKeyText.getText().trim();
     if (!StringUtils.isEmpty(key)) {
-      String test = client.getWovpService().test();
-      if (test == null) {
+      ApiKeyValidationResponse test = client.getWovpService().test();
+      if (test != null && test.isSuccess()) {
         WidgetFactory.showInformation(Studio.stage, "Information", "API key validation successful.");
       }
       else {
-        WidgetFactory.showAlert(Studio.stage, "Error", "API key validation failed!", test);
+        WidgetFactory.showAlert(Studio.stage, "Error", "API key validation failed!");
       }
     }
   }

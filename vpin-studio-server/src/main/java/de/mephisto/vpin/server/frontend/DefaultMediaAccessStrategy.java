@@ -7,6 +7,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,6 +25,14 @@ abstract public class DefaultMediaAccessStrategy implements MediaAccessStrategy 
       monitors.put(key, gameMediaMonitor);
     }
     return monitors.get(key).getFiles();
+  }
+
+  @Override
+  public void stopMonitoring() {
+    Collection<MediaMonitor> values = monitors.values();
+    for (MediaMonitor value : values) {
+      value.stopMonitoring();
+    }
   }
 
   /**

@@ -22,6 +22,8 @@ import de.mephisto.vpin.server.ServerUpdatePreProcessing;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.competitions.CompetitionService;
+import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import de.mephisto.vpin.server.inputs.InputEventService;
 import de.mephisto.vpin.server.inputs.ShutdownThread;
 import de.mephisto.vpin.server.mania.ManiaService;
@@ -38,11 +40,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import static de.mephisto.vpin.server.VPinStudioServer.Features;
@@ -97,6 +101,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   @Value("${server.port}")
   private int port;
+
+  @Lazy
+  @Autowired
+  private FrontendService frontendService;
 
   private ScoringDB db;
 
@@ -575,6 +583,9 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       ServerFX.getInstance().shutdown();
 
       GameController.getInstance().shutdown();
+
+      MediaAccessStrategy mediaStrategy = frontendService.getFrontendConnector().getMediaAccessStrategy();
+      mediaStrategy.stopMonitoring();
 
       InputEventService inputEventService = context.getBean(InputEventService.class);
       inputEventService.shutdown();

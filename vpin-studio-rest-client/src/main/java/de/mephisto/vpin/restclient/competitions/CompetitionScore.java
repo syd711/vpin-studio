@@ -17,6 +17,15 @@ public class CompetitionScore {
   private Date creationDate;
   private String note;
   private boolean pending = false;
+  private boolean myScore = false;
+
+  public boolean isMyScore() {
+    return myScore;
+  }
+
+  public void setMyScore(boolean myScore) {
+    this.myScore = myScore;
+  }
 
   public String getNote() {
     return note;

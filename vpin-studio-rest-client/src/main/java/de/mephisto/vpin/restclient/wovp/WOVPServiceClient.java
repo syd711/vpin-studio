@@ -1,10 +1,8 @@
 package de.mephisto.vpin.restclient.wovp;
 
+import de.mephisto.vpin.connectors.wovp.models.ApiKeyValidationResponse;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
-import de.mephisto.vpin.restclient.components.ComponentSummary;
-import de.mephisto.vpin.restclient.dof.DOFSettings;
-import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +16,7 @@ public class WOVPServiceClient extends VPinStudioClientService {
     super(client);
   }
 
-  public String test() {
-    return getRestClient().get(API + "wovp/test", String.class);
+  public ApiKeyValidationResponse test() {
+    return getRestClient().get(API + "wovp/test", ApiKeyValidationResponse.class);
   }
 }

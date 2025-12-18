@@ -1,3 +1,5 @@
 - pause menu desktop, tutorial screens, P key
 - competition launch btn
-- 
+- log btn
+- shutdown
+- removed tournaments

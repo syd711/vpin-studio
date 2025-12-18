@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.wovp;
 
+import de.mephisto.vpin.connectors.wovp.models.ApiKeyValidationResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ public class WOVPResource {
   private WovpService wovpService;
 
   @GetMapping("/test")
-  public String isValid() {
+  public ApiKeyValidationResponse isValid() {
     return wovpService.validateKey();
   }
 }

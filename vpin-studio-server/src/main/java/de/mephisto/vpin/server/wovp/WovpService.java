@@ -65,10 +65,16 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
 
   private WOVPSettings wovpSettings;
 
-  public String validateKey() {
+  private String userId;
+
+  public ApiKeyValidationResponse validateKey() {
     String apiKey = wovpSettings.getApiKey();
     Wovp wovp = Wovp.create(apiKey);
-    return wovp.validateKey();
+    ApiKeyValidationResponse response = wovp.validateKey();
+    if (response != null && response.isSuccess()) {
+      userId = response.getUserId();
+    }
+    return response;
   }
 
   public ScoreSubmitResult submitScore(boolean simulate) {
@@ -137,7 +143,7 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
 
     if (!simulate) {
       File screenshotFile = screenshotService.getScreenshotFile(null);
-      if(screenshotFile == null || !screenshotFile.exists()) {
+      if (screenshotFile == null || !screenshotFile.exists()) {
         SLOG.info("[WOVP simulate=" + simulate + "] " + "No matching screenshot found.");
         result.setErrorMessage("No matching screenshot found.");
         return result;
@@ -220,6 +226,7 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
     score.setParticipantId(values.getParticipantId());
     score.setPending(values.isPending());
     score.setNote(values.getApprovalNote());
+    score.setMyScore(values.getUserId().equals(this.userId));
     return score;
   }
 
@@ -252,6 +259,7 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
     wovpSettings = preferencesService.getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
     preferencesService.addChangeListener(this);
     new Thread(() -> {
+      validateKey();
       synchronize(false);
     }).start();
     LOG.info("Initialized {}", this.getClass().getSimpleName());

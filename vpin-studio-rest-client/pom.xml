@@ -54,6 +54,11 @@
         </dependency>
         <dependency>
             <groupId>de.mephisto.vpin</groupId>
+            <artifactId>vpin-connector-wovp</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.mephisto.vpin</groupId>
             <artifactId>vpin-connector-iscored</artifactId>
             <version>${project.version}</version>
         </dependency>

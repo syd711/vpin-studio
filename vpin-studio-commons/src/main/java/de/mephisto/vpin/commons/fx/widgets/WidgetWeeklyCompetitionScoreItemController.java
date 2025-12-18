@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -87,6 +88,15 @@ public class WidgetWeeklyCompetitionScoreItemController extends WidgetController
       avatarImageView.setFitWidth(DEFAULT_AVATARSIZE);
       avatarImageView.setImage(image);
       avatarImageView.setClip(clip);
+
+      if (score.isMyScore()) {
+        root.setStyle("-fx-border-style: solid solid solid solid;\n" +
+            "    -fx-border-color: #333366;\n" +
+            "    -fx-border-width: 1 1 1 6;");
+      }
+      else {
+        root.setPadding(new Insets(0, 0, 0, 6));
+      }
     });
 
     if (score.getRank() > 0) {

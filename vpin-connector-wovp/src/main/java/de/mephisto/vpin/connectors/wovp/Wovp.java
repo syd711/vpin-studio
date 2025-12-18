@@ -4,10 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import de.mephisto.vpin.connectors.wovp.models.Challenges;
-import de.mephisto.vpin.connectors.wovp.models.ScoreSubmit;
-import de.mephisto.vpin.connectors.wovp.models.Search;
-import de.mephisto.vpin.connectors.wovp.models.UploadResponse;
+import de.mephisto.vpin.connectors.wovp.models.*;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.IOUtils;
@@ -119,7 +116,8 @@ public class Wovp {
     }
   }
 
-  public String validateKey() {
+  public ApiKeyValidationResponse validateKey() {
+    ApiKeyValidationResponse r = new ApiKeyValidationResponse();
     if (apiKey != null) {
       HttpClient client = HttpClient.newBuilder().build();
       String json = "{\"apikey\": \"" + apiKey + "\"}";
@@ -137,17 +135,18 @@ public class Wovp {
         String responseJson = response.body();
 
         if (response.statusCode() != 200) {
-          return responseJson;
+          r.setSuccess(false);
+          return r;
         }
-
-        return null;
+        return objectMapper.readValue(responseJson, ApiKeyValidationResponse.class);
       }
       catch (Exception e) {
         LOG.error("Failed to validate wovp API key: {}", e.getMessage(), e);
-        return "Failed to validate wovp API key: " + e.getMessage();
       }
     }
-    return "No API key set.";
+
+    r.setSuccess(false);
+    return r;
   }
 
   private <T> T doPost(String json, Class<T> clazz, String url) throws Exception {
