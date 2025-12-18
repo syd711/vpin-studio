@@ -460,6 +460,14 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     }
   }
 
+  public void shutdown() {
+    if(this.discordClient != null) {
+      this.discordClient.close();
+    }
+  }
+
+  //------------------------------ Model Helper ------------------------------------------------------------------------
+
   private Player toPlayer(@NonNull DiscordMember member) {
     DiscordPlayer player = new DiscordPlayer();
     player.setId(member.getId());

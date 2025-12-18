@@ -639,6 +639,11 @@ public class DiscordClient {
     return null;
   }
 
+  public void close() {
+    jda.shutdownNow();
+    LOG.info("Discord client shutdown finished.");
+  }
+
   public void clearCache() {
     this.messageCacheById.clear();
     this.pinnedMessagesCache.clear();

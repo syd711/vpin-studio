@@ -6,9 +6,6 @@ import com.zaxxer.hikari.HikariDataSource;
 import de.mephisto.vpin.commons.MonitorInfoUtil;
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.fx.ServerFX;
-import de.mephisto.vpin.commons.fx.notifications.Notification;
-import de.mephisto.vpin.commons.fx.notifications.NotificationStageService;
-import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.commons.utils.controller.GameController;
 import de.mephisto.vpin.restclient.backups.BackupType;
@@ -22,6 +19,7 @@ import de.mephisto.vpin.server.ServerUpdatePreProcessing;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.competitions.CompetitionService;
+import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import de.mephisto.vpin.server.inputs.InputEventService;
@@ -33,6 +31,7 @@ import de.mephisto.vpin.server.vpx.VPXMonitoringService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
+import okio.AsyncTimeout;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -42,14 +41,11 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-
-import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 import java.awt.*;
 import java.io.File;
@@ -64,6 +60,8 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 @Service
 public class SystemService extends SystemInfo implements InitializingBean, ApplicationContextAware {
@@ -105,6 +103,9 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   @Lazy
   @Autowired
   private FrontendService frontendService;
+  @Lazy
+  @Autowired
+  private DiscordService discordService;
 
   private ScoringDB db;
 
@@ -580,7 +581,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public void shutdown() {
     try {
+      LOG.info("******************************** System Shutdown initialized ****************************************");
       ServerFX.getInstance().shutdown();
+
+      discordService.shutdown();
 
       GameController.getInstance().shutdown();
 
