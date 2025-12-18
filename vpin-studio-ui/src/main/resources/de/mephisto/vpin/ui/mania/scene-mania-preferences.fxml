@@ -47,15 +47,19 @@
                                     </Label>
                                     <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onFriendsList" styleClass="preference-button" text="All" />
                                     <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onFriendsPendingInvites" styleClass="preference-button" text="Pending Invites" />
-                                    <Label alignment="BASELINE_LEFT" styleClass="preference-section" text="TOURNAMENTS">
-                                       <font>
-                                          <Font size="13.0" />
-                                       </font>
+                                    <VBox fx:id="tournamentsBox">
+                                       <children>
+                                          <Label alignment="BASELINE_LEFT" styleClass="preference-section" text="TOURNAMENTS">
+                                             <font>
+                                                <Font size="13.0" />
+                                             </font>
+                                          </Label>
+                                          <Button fx:id="tournamentsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onTournaments" styleClass="preference-button" text="Tournament Settings" />
+                                       </children>
                                        <VBox.margin>
                                           <Insets top="24.0" />
                                        </VBox.margin>
-                                    </Label>
-                                    <Button fx:id="tournamentsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onTournaments" styleClass="preference-button" text="Tournament Settings" />
+                                    </VBox>
                                  </children>
                               </VBox>
                            </children>

@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class ManiaSettingsController extends SettingsSceneController implements Initializable, PreferenceChangeListener {
@@ -73,6 +74,9 @@ public class ManiaSettingsController extends SettingsSceneController implements 
 
   @FXML
   private VBox menuItemsPanel;
+
+  @FXML
+  private VBox tournamentsBox;
 
   private Button lastSelection;
 
@@ -245,6 +249,9 @@ public class ManiaSettingsController extends SettingsSceneController implements 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     INSTANCE = this;
+
+    tournamentsBox.managedProperty().bindBidirectional(tournamentsBox.visibleProperty());
+    tournamentsBox.setVisible(Features.MANIA_TOURNAMENTS_ENABLED);
 
     client.getPreferenceService().addListener(this);
     menuItemsPanel.setVisible(ManiaHelper.isRegistered());
