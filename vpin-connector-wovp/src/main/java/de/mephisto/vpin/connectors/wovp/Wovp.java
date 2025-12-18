@@ -65,14 +65,14 @@ public class Wovp {
     return challenges;
   }
 
-  public void submitScore(@NonNull File screenshots, @NonNull String challengeId, long score, @Nullable String note) throws Exception {
+  public void submitScore(@NonNull File screenshots, @NonNull String challengeId, long score, @NonNull ScoreSubmitMetadata scoreSubmitMetadata) throws Exception {
     long start = System.currentTimeMillis();
     UploadResponse uploadResponse = submitPhoto(screenshots);
     if (uploadResponse != null && uploadResponse.getData().getErrors().isEmpty()) {
       LOG.info("Resolved temporary photo id {}", uploadResponse.getData().getPhotoTempId());
       ScoreSubmit scoreSubmit = new ScoreSubmit();
+      scoreSubmit.setMetadata(scoreSubmitMetadata);
       scoreSubmit.setScore(score);
-      scoreSubmit.setNote(note);
       scoreSubmit.setPlayingPlatform(0);
       scoreSubmit.setChallengeId(challengeId);
       scoreSubmit.setPhotoTempId(uploadResponse.getData().getPhotoTempId());

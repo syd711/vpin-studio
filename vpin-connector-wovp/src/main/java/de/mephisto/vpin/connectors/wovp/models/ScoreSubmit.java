@@ -4,8 +4,16 @@ public class ScoreSubmit {
   private String challengeId;
   private String photoTempId;
   private long score;
-  private String note;
+  private ScoreSubmitMetadata metadata = new ScoreSubmitMetadata();
   private int playingPlatform = 0;
+
+  public ScoreSubmitMetadata getMetadata() {
+    return metadata;
+  }
+
+  public void setMetadata(ScoreSubmitMetadata metadata) {
+    this.metadata = metadata;
+  }
 
   public String getChallengeId() {
     return challengeId;
@@ -29,14 +37,6 @@ public class ScoreSubmit {
 
   public void setScore(long score) {
     this.score = score;
-  }
-
-  public String getNote() {
-    return note;
-  }
-
-  public void setNote(String note) {
-    this.note = note;
   }
 
   public int getPlayingPlatform() {

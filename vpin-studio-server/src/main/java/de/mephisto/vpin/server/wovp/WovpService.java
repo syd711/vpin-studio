@@ -150,7 +150,7 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
       }
 
       try {
-        wovp.submitScore(screenshotFile, challenge.get().getId(), 0, getNote(game));
+        wovp.submitScore(screenshotFile, challenge.get().getId(), 0, getMetadata(game));
         SLOG.info("[WOVP simulate=" + simulate + "] " + "WOVP score submit finished. Submitted a score of "); //TODO
       }
       catch (Exception e) {
@@ -164,26 +164,12 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
     return result;
   }
 
-  private String getNote(@NonNull Game game) {
-    StringBuilder builder = new StringBuilder();
-    builder.append("VPin Studio Version: ");
-    builder.append(systemService.getVersion());
-    builder.append(", \n");
-    builder.append("VPX File: ");
-    builder.append(game.getGameFileName());
-    builder.append(", \n");
-    builder.append("ROM: ");
-    builder.append(game.getRom());
-    builder.append(", \n");
-    if (!StringUtils.isEmpty(game.getRomAlias())) {
-      builder.append("ROM Alias: ");
-      builder.append(game.getRomAlias());
-      builder.append(", \n");
-    }
-    builder.append("Highscore Type: ");
-    builder.append(game.getHighscoreType());
-    builder.append("\n");
-    return builder.toString();
+  private ScoreSubmitMetadata getMetadata(@NonNull Game game) {
+    ScoreSubmitMetadata metadata = new ScoreSubmitMetadata();
+    metadata.setVpinStudioVersion(systemService.getVersion());
+    metadata.setVpxFile(game.getGameFileName());
+    metadata.setRom(game.getRom());
+    return metadata;
   }
 
   public List<CompetitionScore> getWeeklyScores(@NonNull String uuid) {
