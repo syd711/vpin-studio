@@ -6,6 +6,9 @@ import com.zaxxer.hikari.HikariDataSource;
 import de.mephisto.vpin.commons.MonitorInfoUtil;
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.fx.ServerFX;
+import de.mephisto.vpin.commons.fx.notifications.Notification;
+import de.mephisto.vpin.commons.fx.notifications.NotificationStageService;
+import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.commons.utils.controller.GameController;
 import de.mephisto.vpin.restclient.backups.BackupType;
@@ -19,9 +22,6 @@ import de.mephisto.vpin.server.ServerUpdatePreProcessing;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.competitions.CompetitionService;
-import de.mephisto.vpin.server.discord.DiscordService;
-import de.mephisto.vpin.server.frontend.FrontendService;
-import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import de.mephisto.vpin.server.inputs.InputEventService;
 import de.mephisto.vpin.server.inputs.ShutdownThread;
 import de.mephisto.vpin.server.mania.ManiaService;
@@ -31,7 +31,6 @@ import de.mephisto.vpin.server.vpx.VPXMonitoringService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
-import okio.AsyncTimeout;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -39,13 +38,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 import java.awt.*;
 import java.io.File;
@@ -60,8 +60,6 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
-import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 @Service
 public class SystemService extends SystemInfo implements InitializingBean, ApplicationContextAware {
@@ -99,13 +97,6 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   @Value("${server.port}")
   private int port;
-
-  @Lazy
-  @Autowired
-  private FrontendService frontendService;
-  @Lazy
-  @Autowired
-  private DiscordService discordService;
 
   private ScoringDB db;
 
@@ -581,37 +572,52 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public void shutdown() {
     try {
-      LOG.info("******************************** System Shutdown initialized ****************************************");
-      ServerFX.getInstance().shutdown();
+      ExecutorService executor = Executors.newSingleThreadExecutor();
+      Future<?> submit = executor.submit(new Runnable() {
+        @Override
+        public void run() {
+          try {
+            Thread.currentThread().setName("VPin Studio Shutdown Thread");
+            ServerFX.getInstance().shutdown();
 
-      discordService.shutdown();
+            GameController.getInstance().shutdown();
 
-      GameController.getInstance().shutdown();
+            InputEventService inputEventService = context.getBean(InputEventService.class);
+            inputEventService.shutdown();
 
-      MediaAccessStrategy mediaStrategy = frontendService.getFrontendConnector().getMediaAccessStrategy();
-      mediaStrategy.stopMonitoring();
+            CompetitionService competitionService = context.getBean(CompetitionService.class);
+            competitionService.shutdown();
 
-      InputEventService inputEventService = context.getBean(InputEventService.class);
-      inputEventService.shutdown();
+            ManiaService maniaService = context.getBean(ManiaService.class);
+            maniaService.shutdown();
 
-      CompetitionService competitionService = context.getBean(CompetitionService.class);
-      competitionService.shutdown();
+            VPXMonitoringService monitoringService = context.getBean(VPXMonitoringService.class);
+            monitoringService.shutdown();
 
-      ManiaService maniaService = context.getBean(ManiaService.class);
-      maniaService.shutdown();
+            HikariDataSource dataSource = (HikariDataSource) context.getBean("dataSource");
+            dataSource.close();
+          }
+          catch (Exception e) {
+            LOG.error("Shutdown failed: {}", e.getMessage());
+          }
 
-      VPXMonitoringService monitoringService = context.getBean(VPXMonitoringService.class);
-      monitoringService.shutdown();
+          try {
+            ((ConfigurableApplicationContext) context).close();
+          }
+          catch (Exception e) {
+            LOG.error("Server Context Shutdown failed: {}", e.getMessage());
+          }
+        }
+      });
 
-      HikariDataSource dataSource = (HikariDataSource) context.getBean("dataSource");
-      dataSource.close();
+      submit.get(5, TimeUnit.SECONDS);
     }
     catch (Exception e) {
-      LOG.error("Shutdown failed: {}", e.getMessage());
+      LOG.error("Server Shutdown Error: {}", e.getMessage());
     }
-
-    ((ConfigurableApplicationContext) context).close();
-    System.exit(0);
+    finally {
+      System.exit(0);
+    }
   }
 
   public void systemShutdown() {

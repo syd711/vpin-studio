@@ -208,8 +208,8 @@ public class ServerUpdatePreProcessing {
     for (String resource : resources) {
       File check = new File(RESOURCES, resource);
       if (!check.exists()) {
-        if (!check.getParentFile().mkdirs()) {
-          LOG.error("Failed to create {}", check.getAbsolutePath());
+        if (!check.getParentFile().exists() && !check.getParentFile().mkdirs()) {
+          LOG.error("Failed to create {}", check.getParentFile().getAbsolutePath());
         }
         LOG.info("Downloading missing resource file {}", check.getAbsolutePath());
         Updater.download("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/" + resource, check);
