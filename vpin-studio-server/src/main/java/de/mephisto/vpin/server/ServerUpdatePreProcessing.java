@@ -128,7 +128,7 @@ public class ServerUpdatePreProcessing {
   }
 
   private static void runLogosUpdateCheck() {
-    long expectedSize = 119776;
+    long expectedSize = 119856;
     File check = new File(RESOURCES, "logos.txt");
     if (check.exists()) {
       long size = check.length();

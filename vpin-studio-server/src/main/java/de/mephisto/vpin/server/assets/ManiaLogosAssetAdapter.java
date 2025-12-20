@@ -49,7 +49,7 @@ public class ManiaLogosAssetAdapter extends DefaultTableAssetAdapter {
       return Collections.emptyList();
     }
 
-    if (game == null || StringUtils.isEmpty(game.getExtTableId())) {
+    if (game != null && StringUtils.isEmpty(game.getExtTableId())) {
       return Collections.emptyList();
     }
 

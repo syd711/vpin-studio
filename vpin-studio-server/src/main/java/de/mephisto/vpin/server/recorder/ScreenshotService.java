@@ -107,7 +107,7 @@ public class ScreenshotService {
   }
 
   private void writeScore(BufferedImage bufferedImage) {
-    if (WRITE_SCORE) {
+    if (!WRITE_SCORE) {
       return;
     }
 
@@ -270,7 +270,7 @@ public class ScreenshotService {
           bufferedImage = ImageUtil.rotateRight(bufferedImage);
         }
         images.add(bufferedImage);
-        drawTimestamp(bufferedImage);
+//        drawTimestamp(bufferedImage);
       }
       catch (Exception e) {
         LOG.error("Error writing monitor screenshot: {}", e.getMessage(), e);

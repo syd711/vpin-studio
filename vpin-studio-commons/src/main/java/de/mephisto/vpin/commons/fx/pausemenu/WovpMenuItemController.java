@@ -128,7 +128,7 @@ public class WovpMenuItemController implements Initializable {
   }
 
   public void enter() {
-    if (submitBtn.isDisabled()) {
+    if (submitBtn.isDisabled() || !submitBtn.isVisible()) {
       return;
     }
 
@@ -141,10 +141,9 @@ public class WovpMenuItemController implements Initializable {
       return client.getCompetitionService().submitScore(false);
     }).thenAcceptLater((result) -> {
       blink.stop();
-      submitBtn.setVisible(false);
+      submitBtn.setVisible(true);
       if (result.getErrorMessage() != null) {
         submitBtn.setVisible(false);
-        errorContainer.setVisible(true);
         errorMsg.setText(result.getErrorMessage());
       }
       else {

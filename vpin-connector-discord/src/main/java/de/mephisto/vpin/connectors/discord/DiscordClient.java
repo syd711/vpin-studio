@@ -28,7 +28,7 @@ public class DiscordClient {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final static List<String> ALLOW_LIST = Arrays.asList("bot-test-channel", "online-competitions", "offline-competitions");
-  public static final int CHANNEL_LIMIT = 5;
+  public static final int CHANNEL_LIMIT = 50;
 
   private final JDA jda;
   private final DiscordListenerAdapter listenerAdapter;

@@ -59,7 +59,7 @@
                                  <items>
                                     <HBox alignment="CENTER_LEFT">
                                        <children>
-                                          <TextField fx:id="searchField">
+                                          <TextField fx:id="searchField" promptText="Enter search term here...">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
