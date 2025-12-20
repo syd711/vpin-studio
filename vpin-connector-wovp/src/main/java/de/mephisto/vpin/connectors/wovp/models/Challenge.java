@@ -1,6 +1,8 @@
 package de.mephisto.vpin.connectors.wovp.models;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Challenge {
   private String id;
@@ -8,12 +10,21 @@ public class Challenge {
   private String seasonChallengeId;
   private String name;
   private String description;
+  private List<String> scriptMatchKeywords = new ArrayList<>();
   private ChallengeTypeCode challengeTypeCode;
   private Date endDateUTC;
   private Date startDateUTC;
   private PinballTable pinballTable;
   private PinballTableVersion pinballTableVersion;
   private ScoreBoard scoreBoard;
+
+  public List<String> getScriptMatchKeywords() {
+    return scriptMatchKeywords;
+  }
+
+  public void setScriptMatchKeywords(List<String> scriptMatchKeywords) {
+    this.scriptMatchKeywords = scriptMatchKeywords;
+  }
 
   public PinballTableVersion getPinballTableVersion() {
     return pinballTableVersion;

@@ -137,15 +137,15 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
       }
 
       Game game = gameMatches.get(0);
-      String term = null;
-      if (validateGameScript(game, term)) {
-        LOG.info("WOVP game validation successful, found phrase \"{}\" in VPX file {}", term, game.getGameFileName());
+      List<String> scriptMatchKeywords = challenge.getScriptMatchKeywords();
+      if (validateGameScript(game, scriptMatchKeywords)) {
+        LOG.info("WOVP game validation successful, found phrase \"{}\" in VPX file {}", scriptMatchKeywords, game.getGameFileName());
         competition.setGameId(game.getId());
         refreshTags(game, wovpSettings, true);
         LOG.info("Applying game \"{}\" for weekly challenge \"{}\"", game.getGameDisplayName(), challenge.getChallengeTypeCode());
       }
       else {
-        LOG.warn("WOVP game validation failed, did not find phrase \"{}\" in {}", term, game.getGameFileName());
+        LOG.warn("WOVP game validation failed, did not find phrase \"{}\" in {}", scriptMatchKeywords, game.getGameFileName());
       }
 
     }
@@ -154,16 +154,17 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
     LOG.info("Saved {}", competition);
   }
 
-  private boolean validateGameScript(Game game, String term) {
-    if (StringUtils.isEmpty(term)) {
-      return true;
+  private boolean validateGameScript(Game game, @Nullable List<String> terms) {
+    if (terms != null) {
+      String s = VPXUtil.readScript(game.getGameFile());
+      for (String term : terms) {
+        if (!s.contains(term)) {
+          return false;
+        }
+      }
     }
 
-    String s = VPXUtil.readScript(game.getGameFile());
-    if (s.contains(term)) {
-      return true;
-    }
-    return false;
+    return true;
   }
 
   private void refreshTags(@Nullable Game game, @NonNull WOVPSettings wovpSettings, boolean add) {

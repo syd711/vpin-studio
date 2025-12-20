@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.competitions;
 
-import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.server.assets.AssetService;
@@ -19,10 +18,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PreDestroy;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -342,9 +342,6 @@ public class CompetitionService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    scheduler.scheduleAtFixedRate(new CompetitionCheckRunnable(this), 1000 * 60 * 2);
-
-
     try {
       List<Competition> iScoredSubscriptions = getIScoredSubscriptions();
       LOG.info("---------------------------------- iScored Competitions -----------------------------------------------");
@@ -357,6 +354,12 @@ public class CompetitionService implements InitializingBean {
       LOG.error("iScored summary failed: {}", e.getMessage(), e);
     }
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
+  }
+
+
+  @EventListener(ApplicationReadyEvent.class)
+  public void scheduleCompetitionCheck() {
+    scheduler.scheduleAtFixedRate(new CompetitionCheckRunnable(this), 1000 * 60 * 2);
   }
 
   public void shutdown() {
