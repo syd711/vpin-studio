@@ -79,9 +79,6 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
   private Button stopBtn;
 
   @FXML
-  private Button synchronizeBtn;
-
-  @FXML
   private Button tableNavigateBtn;
 
   @FXML
@@ -159,12 +156,6 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
 
   @FXML
   public void onReload() {
-    client.clearWheelCache();
-    doReload(false);
-  }
-
-  @FXML
-  public void onSynchronize() {
     client.clearWheelCache();
     client.getImageCache().clear("https://worldofvirtualpinball.com/");
     doReload(true);
@@ -493,7 +484,6 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
 
     PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
     reloadBtn.setDisable(defaultPlayer == null);
-    synchronizeBtn.setDisable(defaultPlayer == null);
 
     if (defaultPlayer == null) {
       tableView.setPlaceholder(new Label("                                 No default player set!\n" +

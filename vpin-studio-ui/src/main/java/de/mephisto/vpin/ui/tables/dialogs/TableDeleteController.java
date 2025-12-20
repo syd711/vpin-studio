@@ -265,7 +265,11 @@ public class TableDeleteController implements Initializable, DialogController {
     deleteAllFilesCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        fileChecks.stream().forEach(c -> c.setSelected(newValue));
+        fileChecks.stream().forEach(c -> {
+          if (!c.equals(romCheckbox)) {
+            c.setSelected(newValue);
+          }
+        });
       }
     });
 

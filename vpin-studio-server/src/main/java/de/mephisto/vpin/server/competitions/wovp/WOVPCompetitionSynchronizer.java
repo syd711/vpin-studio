@@ -50,6 +50,7 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
 
   public synchronized boolean synchronizeWovp(boolean forceReload) {
     try {
+      LOG.info("------------------------------- WOVP SYNC -----------------------------------------------------------");
       WOVPSettings wovpSettings = preferencesService.getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
       String apiKey = wovpSettings.getApiKey();
       if (!StringUtils.isEmpty(apiKey) && wovpSettings.isEnabled()) {
@@ -58,6 +59,7 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
         if (challenges != null) {
           List<Competition> weeklyCompetitions = competitionService.getWeeklyCompetitions();
           for (Challenge challenge : challenges.getItems()) {
+            LOG.info("------------------------------> Sync of {}", challenge.getName());
             synchronizeChallenge(challenge, weeklyCompetitions, wovpSettings, forceReload);
           }
         }
@@ -66,6 +68,9 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
     }
     catch (Exception e) {
       LOG.error("Failed to synchronize with WOVP: {}", e.getMessage(), e);
+    }
+    finally {
+      LOG.info("------------------------------- /WOVP SYNC ----------------------------------------------------------");
     }
     return false;
   }
@@ -103,8 +108,13 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
     competition.setBadge(wovpSettings.isBadgeEnabled() ? "wovp" : null);
     competition.setOwner("World Of Virtual Pinball");
     competition.setVpsTableId(challenge.getPinballTable().getExternalId());
-    if (challenge.getPinballTableVersion() != null) {
-      competition.setVpsTableVersionId(challenge.getPinballTableVersion().getExternalId());
+
+    String tableChallengeVersion = challenge.getPinballTableVersion().getExternalId();
+    if (tableChallengeVersion != null) {
+      competition.setVpsTableVersionId(tableChallengeVersion);
+    }
+    else {
+      LOG.warn("WOVP did not set a VPS version id for challenge {}", challenge.getName());
     }
     competition.setType(CompetitionType.WEEKLY.name());
     competition.setStartDate(challenge.getStartDateUTC());
@@ -121,6 +131,10 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
       competition.setGameId(-1);
     }
     else {
+      for (Game gameMatch : gameMatches) {
+        LOG.info("Found matching wovp game for {}: {} / {} / {}", challenge.getName(), gameMatch.getGameDisplayName(), gameMatch.getExtTableId(), gameMatch.getExtTableVersionId());
+      }
+
       Game game = gameMatches.get(0);
       competition.setGameId(game.getId());
 
