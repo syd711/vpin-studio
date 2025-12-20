@@ -141,6 +141,13 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
       return result;
     }
 
+    Optional<ScoreBoardItem> first = challenge.get().getScoreBoard().getItems().stream().filter(s -> s.getValues().getUserId().equals(this.userId)).findFirst();
+    if (first.isPresent()) {
+      ScoreBoardItemPositionValues item = first.get().getValues();
+      result.setLatestScore((long) item.getScore());
+      result.setPlayerName(item.getParticipantName());
+    }
+
     if (!simulate) {
       File screenshotFile = screenshotService.getScreenshotFile(null);
       if (screenshotFile == null || !screenshotFile.exists()) {

@@ -102,7 +102,7 @@ public class MenuController implements Initializable {
 
   private MenuCustomViewController customViewController;
   private Node currentSelection;
-  private MenuSubmitterViewController scoreSubmitterController;
+  private WovpMenuItemController wovpMenuItemController;
   private VPinScreen cardScreen = null;
   private FrontendMediaRepresentation frontendMedia;
   private VpsTable vpsTable;
@@ -291,14 +291,14 @@ public class MenuController implements Initializable {
         LOG.error("Failed to init pause component: " + e.getMessage(), e);
       }
     }
-    else if (activeSelection.getItemType().equals(PauseMenuItemTypes.scoreSubmitter)) {
+    else if (activeSelection.getItemType().equals(PauseMenuItemTypes.wovp)) {
       try {
         Image sectionImage = new Image(PauseMenu.class.getResourceAsStream("wovp-wheel.png"));
         String resource = "menu-submitter-view.fxml";
-        FXMLLoader loader = new FXMLLoader(MenuSubmitterViewController.class.getResource(resource));
+        FXMLLoader loader = new FXMLLoader(WovpMenuItemController.class.getResource(resource));
         Pane widgetRoot = loader.load();
-        scoreSubmitterController = loader.getController();
-        scoreSubmitterController.setData(game, vpsTable, sectionImage);
+        wovpMenuItemController = loader.getController();
+        wovpMenuItemController.setData(game, vpsTable, sectionImage);
         scoreView.setCenter(widgetRoot);
         scoreView.setVisible(true);
       }
@@ -366,8 +366,8 @@ public class MenuController implements Initializable {
     LOG.info("Resetting pause menu media items.");
     this.screenImageView.setImage(null);
 
-    if (scoreSubmitterController != null) {
-      scoreSubmitterController.reset();
+    if (wovpMenuItemController != null) {
+      wovpMenuItemController.reset();
     }
 
     try {
@@ -480,8 +480,8 @@ public class MenuController implements Initializable {
   public void enter() {
     PauseMenuItemTypes itemType = getSelection().getItemType();
     switch (itemType) {
-      case scoreSubmitter: {
-        scoreSubmitterController.enter();
+      case wovp: {
+        wovpMenuItemController.enter();
         break;
       }
     }

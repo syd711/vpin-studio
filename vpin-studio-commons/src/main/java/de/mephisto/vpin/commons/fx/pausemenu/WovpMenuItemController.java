@@ -28,7 +28,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.commons.fx.ServerFX.client;
 
-public class MenuSubmitterViewController implements Initializable {
+public class WovpMenuItemController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML

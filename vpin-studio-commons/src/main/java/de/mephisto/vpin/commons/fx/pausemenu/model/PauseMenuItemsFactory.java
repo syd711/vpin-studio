@@ -2,12 +2,10 @@ package de.mephisto.vpin.commons.fx.pausemenu.model;
 
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
-import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.connectors.vps.model.VpsTutorialUrls;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -24,7 +22,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
@@ -49,7 +46,7 @@ public class PauseMenuItemsFactory {
     pauseMenuItems.add(item);
 
     if (state.isScoreSubmitterEnabled()) {
-      PauseMenuItem scoreSubmitterItem = new PauseMenuItem(PauseMenuItemTypes.scoreSubmitter, "World Of Virtual Pinball", "Score Submitter for World Of Virtual Pinball", new Image(PauseMenu.class.getResourceAsStream("wovp-wheel.png")));
+      PauseMenuItem scoreSubmitterItem = new PauseMenuItem(PauseMenuItemTypes.wovp, "World Of Virtual Pinball", "Score Submitter for World Of Virtual Pinball", new Image(PauseMenu.class.getResourceAsStream("wovp-wheel.png")));
       pauseMenuItems.add(scoreSubmitterItem);
     }
 
