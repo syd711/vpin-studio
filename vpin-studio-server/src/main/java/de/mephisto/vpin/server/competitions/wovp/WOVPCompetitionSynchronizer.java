@@ -15,6 +15,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.vpx.VPXUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -136,14 +137,33 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
       }
 
       Game game = gameMatches.get(0);
-      competition.setGameId(game.getId());
+      String term = null;
+      if (validateGameScript(game, term)) {
+        LOG.info("WOVP game validation successful, found phrase \"{}\" in VPX file {}", term, game.getGameFileName());
+        competition.setGameId(game.getId());
+        refreshTags(game, wovpSettings, true);
+        LOG.info("Applying game \"{}\" for weekly challenge \"{}\"", game.getGameDisplayName(), challenge.getChallengeTypeCode());
+      }
+      else {
+        LOG.warn("WOVP game validation failed, did not find phrase \"{}\" in {}", term, game.getGameFileName());
+      }
 
-      refreshTags(game, wovpSettings, true);
-      LOG.info("Applying game \"{}\" for weekly challenge \"{}\"", game.getGameDisplayName(), challenge.getChallengeTypeCode());
     }
 
     competitionService.save(competition);
     LOG.info("Saved {}", competition);
+  }
+
+  private boolean validateGameScript(Game game, String term) {
+    if (StringUtils.isEmpty(term)) {
+      return true;
+    }
+
+    String s = VPXUtil.readScript(game.getGameFile());
+    if (s.contains(term)) {
+      return true;
+    }
+    return false;
   }
 
   private void refreshTags(@Nullable Game game, @NonNull WOVPSettings wovpSettings, boolean add) {
