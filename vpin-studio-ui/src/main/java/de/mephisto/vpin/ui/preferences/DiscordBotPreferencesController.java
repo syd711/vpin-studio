@@ -87,12 +87,19 @@ public class DiscordBotPreferencesController implements Initializable {
     Platform.runLater(() -> {
       Studio.client.getDiscordService().clearCache();
       DiscordBotStatus status = client.getDiscordService().validateSettings();
-      if (!status.isValid()) {
+      if (status.getError() != null) {
         validateDefaultSettings();
-        WidgetFactory.showAlert(Studio.stage, "Issues Detected", "There have been issues detected with you Discord settings.", "One or more values have been resetted.");
+        WidgetFactory.showAlert(Studio.stage, "Issues Detected", "There have been issues detected with you Discord settings.", status.getError());
       }
       else {
-        WidgetFactory.showInformation(Studio.stage, "Information", "No issues found.");
+        if (!status.isCanManageCategories()) {
+          WidgetFactory.showInformation(Studio.stage, "Information", "The bot configuration is valid, but your bot has no permission to manage channels.", "Discord allows a maximum of 50 channels for a category. " +
+              "With the channel permission, the bot can automatically create new categories for additional table subscriptions.");
+        }
+        else {
+          WidgetFactory.showInformation(Studio.stage, "Information", "No issues found.");
+        }
+
       }
       validateBtn.setDisable(false);
     });
@@ -121,14 +128,15 @@ public class DiscordBotPreferencesController implements Initializable {
       resetToken();
       client.getPreferenceService().setPreference(PreferenceNames.DISCORD_BOT_TOKEN, token.trim());
       DiscordBotStatus status = client.getDiscordService().validateSettings();
-      if (!status.isValid()) {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Invalid bot configuration found, check your token and retry.");
+      if (status.getError() != null) {
+        WidgetFactory.showAlert(Studio.stage, "Error", "Invalid bot configuration found, check your token and retry.", "Error: " + status.getError());
       }
       else {
         botTokenLabel.setText(token.trim());
         validateDefaultSettings();
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       WidgetFactory.showAlert(Studio.stage, e.getMessage());
     }
   }
@@ -249,7 +257,7 @@ public class DiscordBotPreferencesController implements Initializable {
 
     botNameLabel.setText("-");
     DiscordBotStatus status = client.getDiscordService().validateSettings();
-    if (status.isValid()) {
+    if (status.getError() == null) {
       List<DiscordServer> servers = client.getDiscordService().getAdministratedDiscordServers();
       ObservableList<DiscordServer> discordServers = FXCollections.observableArrayList(servers);
       serverCombo.setItems(FXCollections.observableList(discordServers));

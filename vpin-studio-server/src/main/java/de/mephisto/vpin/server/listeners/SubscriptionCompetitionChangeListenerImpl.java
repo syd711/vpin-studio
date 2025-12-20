@@ -96,7 +96,9 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
               subscriptionChannel = discordService.createSubscriptionChannel(competition, game);
             }
             else {
+              competition.setDiscordChannelId(subscriptionChannel.getId());
               joinCompetition(competition, bot);
+              competitionService.save(competition);
               return;
             }
 

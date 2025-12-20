@@ -243,7 +243,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
 
     long guildId = client.getPreferenceService().getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
     discordStatus = client.getDiscordService().getDiscordStatus(guildId);
-    if (!discordStatus.isValid()) {
+    if (discordStatus.getError() != null) {
       textfieldSearch.setDisable(true);
       addBtn.setDisable(true);
       deleteBtn.setDisable(true);

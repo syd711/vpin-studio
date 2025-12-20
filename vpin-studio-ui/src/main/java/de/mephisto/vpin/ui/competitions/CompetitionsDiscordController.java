@@ -323,7 +323,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
 
     long guildId = client.getPreferenceService().getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
     DiscordBotStatus discordStatus = client.getDiscordService().getDiscordStatus(guildId);
-    if (!discordStatus.isValid()) {
+    if (discordStatus.getError() != null) {
       textfieldSearch.setDisable(true);
       addBtn.setDisable(true);
       editBtn.setDisable(true);

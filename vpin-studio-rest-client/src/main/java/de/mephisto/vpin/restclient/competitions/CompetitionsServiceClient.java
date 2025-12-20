@@ -37,12 +37,12 @@ public class CompetitionsServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "competitions/weekly/submit/" + simulate, ScoreSubmitResult.class);
   }
 
-  public boolean hasManagePermissions(long serverId, long channelId) {
-    return getRestClient().get(API + "discord/permissions/competitions/manage/" + serverId + "/" + channelId, Boolean.class);
+  public boolean hasChannelManagePermissions(long serverId, long channelId) {
+    return getRestClient().get(API + "discord/permissions/competitions/managechannel/" + serverId + "/" + channelId, Boolean.class);
   }
 
-  public boolean hasManagePermissions(long serverId) {
-    return getRestClient().get(API + "discord/permissions/competitions/manage/" + serverId, Boolean.class);
+  public boolean hasChannelManagePermissions(long serverId) {
+    return getRestClient().get(API + "discord/permissions/competitions/managechannel/" + serverId, Boolean.class);
   }
 
   public boolean hasJoinPermissions(long serverId, long channelId) {

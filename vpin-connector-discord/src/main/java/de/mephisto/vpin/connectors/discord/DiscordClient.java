@@ -1,6 +1,7 @@
 package de.mephisto.vpin.connectors.discord;
 
 
+import edu.umd.cs.findbugs.annotations.Nullable;
 import net.dv8tion.jda.api.*;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
@@ -27,6 +28,7 @@ public class DiscordClient {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final static List<String> ALLOW_LIST = Arrays.asList("bot-test-channel", "online-competitions", "offline-competitions");
+  public static final int CHANNEL_LIMIT = 5;
 
   private final JDA jda;
   private final DiscordListenerAdapter listenerAdapter;
@@ -88,15 +90,50 @@ public class DiscordClient {
     Guild guild = getGuild(serverId);
     if (guild != null) {
       List<Category> categories = guild.getCategories();
-      return categories.stream().map(category -> toCategory(category)).collect(Collectors.toList());
+      return categories.stream().map(this::toCategory).collect(Collectors.toList());
     }
     return Collections.emptyList();
   }
 
+  @Nullable
   public Category getCategory(long serverId, long categoryId) {
     Guild guild = getGuild(serverId);
     if (guild != null) {
-      return guild.getCategoryById(categoryId);
+      Category categoryById = guild.getCategoryById(categoryId);
+      if (categoryById == null) {
+        return null;
+      }
+
+      //return the default category if it is not full yet
+      if (categoryById.getChannels().size() < CHANNEL_LIMIT) {
+        return categoryById;
+      }
+
+      //return the next free category
+      List<Category> categories = guild.getCategories();
+      for (Category category : categories) {
+        if (category.getName().startsWith(categoryById.getName()) && category.getChannels().size() < CHANNEL_LIMIT) {
+          return category;
+        }
+      }
+
+      //the follow-up check will create a new one
+      return categoryById;
+    }
+    return null;
+  }
+
+  @Nullable
+  private Category getSubscriptionCategory(long serverId, long categoryId) {
+    Guild guild = getGuild(serverId);
+    if (guild != null) {
+      Category category = getCategory(serverId, categoryId);
+      List<GuildChannel> textChannels = category.getChannels();
+      if (textChannels.size() >= CHANNEL_LIMIT) {
+        category = createCategory(guild, category);
+      }
+
+      return category;
     }
     return null;
   }
@@ -104,7 +141,7 @@ public class DiscordClient {
   public DiscordTextChannel createChannel(long serverId, long categoryId, String name, String topic) {
     Guild guild = getGuild(serverId);
     if (guild != null) {
-      Category category = getCategory(serverId, categoryId);
+      Category category = getSubscriptionCategory(serverId, categoryId);
       ChannelAction<TextChannel> textChannel = guild.createTextChannel(name, category);
       try {
         TextChannel channel = textChannel.submit().get();
@@ -120,8 +157,29 @@ public class DiscordClient {
         return t;
       }
       catch (Exception e) {
-        LOG.error("Failed to create text channel \"" + name + "\": " + e.getMessage(), e);
+        LOG.error("Failed to create text channel \"{}\": {}", name, e.getMessage(), e);
       }
+    }
+    return null;
+  }
+
+  private Category createCategory(Guild guild, Category existingCategory) {
+    try {
+      int index = 2;
+      String name = existingCategory.getName() + " " + index;
+      List<Category> categoriesByName = guild.getCategoriesByName(name, true);
+
+      while (!categoriesByName.isEmpty()) {
+        index++;
+        name = existingCategory.getName() + " " + index;
+        categoriesByName = guild.getCategoriesByName(name, true);
+      }
+
+      ChannelAction<Category> category = guild.createCategory(name);
+      return category.submit().get();
+    }
+    catch (Exception e) {
+      LOG.error("Failed to create new category: {}", e.getMessage(), e);
     }
     return null;
   }
@@ -181,16 +239,8 @@ public class DiscordClient {
   public List<GuildInfo> getGuilds() {
     return jda.getGuilds().stream().map(guild -> {
       Member memberById = guild.getMemberById(botId);
-      return new GuildInfo(guild, PermissionUtil.checkPermission(memberById, Permission.ADMINISTRATOR));
+      return new GuildInfo(guild, PermissionUtil.checkPermission(memberById, Permission.VIEW_CHANNEL));
     }).collect(Collectors.toList());
-  }
-
-  public List<GuildInfo> getAdministratedGuilds() {
-    long botId = jda.getSelfUser().getIdLong();
-    return jda.getGuilds().stream().filter(guild -> {
-      Member memberById = guild.getMemberById(botId);
-      return PermissionUtil.checkPermission(memberById, Permission.ADMINISTRATOR);
-    }).map(guild -> new GuildInfo(guild, true)).collect(Collectors.toList());
   }
 
   public long getBotId() {
@@ -271,7 +321,7 @@ public class DiscordClient {
         }
       }
       else {
-        LOG.error("No discord channel found for id '" + channelId + "'");
+        LOG.error("No discord channel found for id '" + channelId + "' to pin messages on.");
       }
     }
   }
@@ -290,7 +340,7 @@ public class DiscordClient {
         }
       }
       else {
-        LOG.error("No discord channel found for id '" + channelId + "'");
+        LOG.error("No discord channel found for id '" + channelId + "' to unpin message from.");
       }
     }
   }
@@ -310,7 +360,7 @@ public class DiscordClient {
         }
       }
       else {
-        LOG.error("No discord channel found for id '" + channelId + "'");
+        LOG.error("No discord channel found for id '" + channelId + "' to set topic for.");
       }
     }
   }
@@ -403,7 +453,7 @@ public class DiscordClient {
         return complete.getIdLong();
       }
       else {
-        LOG.error("No discord channel found for id '" + channelId + "'");
+        LOG.error("No discord channel found for id '" + channelId + "' to send message to.");
       }
     }
     else {
@@ -428,7 +478,7 @@ public class DiscordClient {
         }
       }
       else {
-        LOG.error("No discord channel found for id '" + channelId + "'");
+        LOG.error("No discord channel found for id '" + channelId + "' to send embedded message to.");
       }
     }
     else {

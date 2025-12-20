@@ -209,7 +209,7 @@ public class JoinSubscriptionDialogController implements Initializable, DialogCo
     }
 
     //check Discord permissions
-    if (!client.getCompetitionService().hasManagePermissions(competition.getDiscordServerId())) {
+    if (!client.getCompetitionService().hasChannelManagePermissions(competition.getDiscordServerId())) {
       validationTitle.setText("Insufficient Permissions");
       validationDescription.setText("Your Discord bot has insufficient permissions to create posts for that subscription. Please check the documentation for details.");
       return;
