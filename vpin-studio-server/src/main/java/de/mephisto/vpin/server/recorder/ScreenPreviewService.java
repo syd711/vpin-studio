@@ -42,7 +42,7 @@ public class ScreenPreviewService implements InitializingBean {
 
   public void capture(@NonNull OutputStream out, @NonNull MonitorInfo display) {
     try {
-      Rectangle rectangle = new Rectangle((int) display.getX(), (int) display.getY(), display.getWidth(), display.getHeight());
+      Rectangle rectangle = new Rectangle((int) display.getScaledX(), (int) display.getY(), display.getScaledWidth(), display.getScaledHeight());
       BufferedImage bufferedImage = robot.createScreenCapture(rectangle);
       ImageUtil.writeJPG(bufferedImage, out);
     }

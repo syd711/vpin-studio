@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.assets;
 
 import de.mephisto.vpin.restclient.assets.AssetRequest;
+import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.RequestUtil;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FilenameUtils;
@@ -49,6 +50,10 @@ public class AssetsResource {
   @GetMapping("/competition/{gameId}")
   public ResponseEntity<byte[]> getCompetitionBackground(@PathVariable("gameId") int gameId) {
     Asset competitionBackground = assetService.getCompetitionBackground(gameId);
+    if (competitionBackground == null) {
+      File defaultAsset = new File(SystemService.RESOURCES, "competition-bg-default.png");
+      return serializeFile(defaultAsset);
+    }
     return serializeAsset(competitionBackground);
   }
 

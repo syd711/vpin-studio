@@ -1,13 +1,10 @@
 package de.mephisto.vpin.restclient.system;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import javafx.stage.Screen;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class MonitorInfo {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -21,7 +18,16 @@ public class MonitorInfo {
   private double y;
   private String name;
   private double scaling;
-  private double scaledX;
+  private double minY;
+
+
+  public double getMinY() {
+    return minY;
+  }
+
+  public void setMinY(double minY) {
+    this.minY = minY;
+  }
 
   @JsonIgnore
   public String getFormattedName() {
@@ -29,30 +35,10 @@ public class MonitorInfo {
   }
 
   public double getScaledX() {
-    return scaledX;
-  }
-
-  @JsonIgnore
-  public Screen getMatchingScreen() {
-    if (isPrimary()) {
-      return Screen.getPrimary();
+    if (scaling != 0 && x != 0) {
+      return x / scaling;
     }
-
-    List<Screen> screens = Screen.getScreens().stream().filter(s -> !Screen.getPrimary().equals(s)).collect(Collectors.toList());
-    for (Screen s : screens) {
-      double screenX = s.getBounds().getMinX();
-      if (screenX == getScaledX()) {
-        return s;
-      }
-    }
-
-    LOG.error("No matching monitor found for " + this);
-
-    return screens.get(0);
-  }
-
-  public void setScaledX(double scaledX) {
-    this.scaledX = scaledX;
+    return x;
   }
 
   public double getScaling() {
@@ -127,12 +113,26 @@ public class MonitorInfo {
     this.height = height;
   }
 
+  public int getScaledWidth() {
+    if (this.scaling != 0) {
+      return (int) (this.getWidth() / this.scaling);
+    }
+    return this.getWidth();
+  }
+
+  public int getScaledHeight() {
+    if (this.scaling != 0) {
+      return (int) (this.getHeight() / this.scaling);
+    }
+    return this.getHeight();
+  }
+
   @Override
   public String toString() {
     if (primary) {
-      return "Monitor " + (id + 1) + " (primary) [" + getWidth() + "x" + getHeight() + "] Scaled X: " + scaledX + ", Scaling: " + scaling;
+      return "Monitor " + (id + 1) + " (primary) [" + getWidth() + "x" + getHeight() + "] Scaled X: " + getScaledX() + ", Scaling: " + scaling + ", MinY: " +getMinY();
     }
-    return "Monitor " + (id + 1) + " [" + getWidth() + "x" + getHeight() + "] Scaled X: " + scaledX + ", Scaling: " + scaling;
+    return "Monitor " + (id + 1) + " [" + getWidth() + "x" + getHeight() + "] Scaled X: " + getScaledX() + ", Scaling: " + scaling + ", MinY: " +getMinY();
   }
 
   @Override

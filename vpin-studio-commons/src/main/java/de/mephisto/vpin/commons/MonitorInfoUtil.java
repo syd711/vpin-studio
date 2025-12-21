@@ -13,21 +13,18 @@ import de.mephisto.vpin.restclient.util.OSUtil;
 import javafx.stage.Screen;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * A small demo that tests the Win32 monitor API.
- * All available physical and virtual monitors are enumerated and
- * their capabilities printed to stdout
  *
- * @author Martin Steiger
  */
 public class MonitorInfoUtil {
 
-  private static boolean FORCE_USE_GRAPHICS_ENVIRONMENT = false;
+  private static final boolean FORCE_USE_GRAPHICS_ENVIRONMENT = true;
 
   /**
    * List monitors
@@ -36,15 +33,10 @@ public class MonitorInfoUtil {
    */
   public static void main(String[] args) {
     List<MonitorInfo> monitors = getMonitors();
-
-    System.out.println("Monitors: " + monitors.size());
     for (MonitorInfo monitor : monitors) {
-      System.out.println(monitor.getName()
-          + (monitor.isPrimary() ? " (Primary)" : "")
-          + " : " + monitor.getX() + "," + monitor.getY()
-          + " - " + monitor.getWidth() + "x" + monitor.getHeight()
-          + " - " + monitor.isPortraitMode());
+      System.out.println(monitor);
     }
+
   }
 
   public static MonitorInfo getPrimaryMonitor() {
@@ -56,12 +48,11 @@ public class MonitorInfoUtil {
   public static List<MonitorInfo> getMonitors() {
     List<MonitorInfo> monitors = new ArrayList<>();
     if (OSUtil.isWindows() && !FORCE_USE_GRAPHICS_ENVIRONMENT) {
-
       int[] index = {1};
       User32.INSTANCE.EnumDisplayMonitors(null, null, new MONITORENUMPROC() {
         @Override
         public int apply(HMONITOR hMonitor, HDC hdc, RECT rect, LPARAM lparam) {
-          MonitorInfo mon = enumerate(hMonitor, index[0], monitors);
+          MonitorInfo mon = enumerate(hMonitor, rect, index[0]);
           monitors.add(mon);
           index[0]++;
           return 1;
@@ -82,17 +73,16 @@ public class MonitorInfoUtil {
     return monitors;
   }
 
-  private static MonitorInfo enumerate(HMONITOR hMonitor, int index, List<MonitorInfo> monitors) {
+  private static MonitorInfo enumerate(HMONITOR hMonitor, RECT rect, int index) {
     MonitorInfo monitor = new MonitorInfo();
 
     MONITORINFOEX info = new MONITORINFOEX();
     User32.INSTANCE.GetMonitorInfo(hMonitor, info);
-    RECT screen = info.rcMonitor;
     //RECT workArea = info.rcWork;
-    monitor.setX(screen.left);
-    monitor.setY(screen.top);
-    monitor.setWidth(screen.right - screen.left);
-    monitor.setHeight(screen.bottom - screen.top);
+    monitor.setX(rect.left);
+    monitor.setY(rect.top);
+    monitor.setWidth(rect.right - rect.left);
+    monitor.setHeight(rect.bottom - rect.top);
 
     boolean isPrimary = (info.dwFlags & WinUser.MONITORINFOF_PRIMARY) != 0;
     monitor.setPrimary(isPrimary);
@@ -115,23 +105,23 @@ public class MonitorInfoUtil {
     monitor.setPortraitMode(monitor.getWidth() < monitor.getHeight());
 
 
-    if (monitors.isEmpty()) {
-      if (monitor.getScaling() > 0) {
-        monitor.setScaledX(screen.left / monitor.getScaling());
-      }
-      else {
-        monitor.setScaledX(screen.left);
-      }
-    }
-    else {
-      double scaledX = 0;
-      for (MonitorInfo monitorInfo : monitors) {
-        if (monitorInfo.getX() >= 0) {
-          scaledX += (Math.abs(monitorInfo.getWidth()) / monitorInfo.getScaling());
-        }
-      }
-      monitor.setScaledX(scaledX);
-    }
+//    if (monitors.isEmpty()) {
+//      if (monitor.getScaling() > 0) {
+//        monitor.setScaledX(screen.left / monitor.getScaling());
+//      }
+//      else {
+//        monitor.setScaledX(screen.left);
+//      }
+//    }
+//    else {
+//      double scaledX = 0;
+//      for (MonitorInfo monitorInfo : monitors) {
+//        if (monitorInfo.getX() >= 0) {
+//          scaledX += (Math.abs(monitorInfo.getWidth()) / monitorInfo.getScaling());
+//        }
+//      }
+//      monitor.setScaledX(scaledX);
+//    }
 
     String deviceName = new String(info.szDevice);
     monitor.setName(deviceName.trim());
@@ -150,6 +140,15 @@ public class MonitorInfoUtil {
     monitor.setY(bounds.y);
     monitor.setWidth(bounds.width);
     monitor.setHeight(bounds.height);
+    monitor.setMinY(bounds.getMinY());
+
+    AffineTransform tx = gd.getDefaultConfiguration().getDefaultTransform();
+    monitor.setScaling(tx.getScaleX());
+
+    if (tx.getScaleX() > 1) {
+      monitor.setWidth((int) (bounds.width * tx.getScaleX()));
+      monitor.setHeight((int) (bounds.height * tx.getScaleY()));
+    }
 
     boolean isPrimary = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice() == gd;
     monitor.setPrimary(isPrimary);
@@ -165,5 +164,4 @@ public class MonitorInfoUtil {
 
     return monitor;
   }
-
 }

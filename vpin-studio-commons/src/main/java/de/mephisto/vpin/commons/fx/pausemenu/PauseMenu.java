@@ -133,7 +133,7 @@ public class PauseMenu extends Application {
     double max = Math.max(PauseMenuUIDefaults.getScreenWidth(), PauseMenuUIDefaults.getScreenHeight());
     Scene scene = new Scene(rootPane, PauseMenuUIDefaults.getScreenWidth(), PauseMenuUIDefaults.getScreenHeight());
 
-    stage.setY(monitorInfo.getMatchingScreen().getVisualBounds().getMinY());
+    stage.setY(monitorInfo.getMinY());
 
     if (pauseMenuSettings.getRotation() != 0) {
       LOG.info("Window Mode: Cab"); //scaling is ignored here!!!
