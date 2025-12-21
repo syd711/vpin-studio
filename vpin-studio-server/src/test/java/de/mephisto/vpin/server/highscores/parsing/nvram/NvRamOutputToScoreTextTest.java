@@ -167,10 +167,10 @@ public class NvRamOutputToScoreTextTest {
 //         "#1 ???   1,867,500");
 
     doTestSingle("kiko_a10.nv",
-         "#1 DAK   3,032,500\r\n" +
-             "#2 DAK   2,665,940\r\n" +
-             "#3 DAK   1,856,200\r\n" +
-             "#4 DAK   1,067,570\r\n");
+        "#1 DAK   3,032,500\r\n" +
+            "#2 DAK   2,665,940\r\n" +
+            "#3 DAK   1,856,200\r\n" +
+            "#4 DAK   1,067,570\r\n");
   }
 
 
@@ -201,7 +201,7 @@ public class NvRamOutputToScoreTextTest {
       scores.append(score.toString(Locale.US));
     }
 
-    assertFalse(parse.isEmpty(), "Parsed scores is empty");
+    assertFalse(parse.isEmpty(), "Parsed scores is empty for nvram '" + nv + "'");
     if (expected != null) {
       assertEquals(expected.trim(), scores.toString().trim());
     }
