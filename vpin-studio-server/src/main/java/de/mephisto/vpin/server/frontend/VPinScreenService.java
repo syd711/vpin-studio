@@ -1,27 +1,26 @@
 package de.mephisto.vpin.server.frontend;
 
 import de.mephisto.vpin.restclient.directb2s.DirectB2sScreenRes;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.FrontendScreenSummary;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
-import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.server.directb2s.BackglassService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static de.mephisto.vpin.server.directb2s.BackglassService.parseIntSafe;
 
@@ -244,7 +243,7 @@ public class VPinScreenService {
   private void createVpxPlayfieldDisplay(Configuration vpxConfiguration, List<FrontendPlayerDisplay> players) {
     try {
       FrontendPlayerDisplay player = new FrontendPlayerDisplay(VPinScreen.PlayField);
-      
+
       // the windows index, but how to match it with MonitorInfoUtils.getMonitor(), this is still unknows
       int monitor = safeGetInteger(vpxConfiguration, "Display", 0);
       MonitorInfo monitorInfo = systemService.getMonitorFromOS(monitor);

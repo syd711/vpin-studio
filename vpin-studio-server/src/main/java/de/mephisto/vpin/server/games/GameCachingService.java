@@ -27,6 +27,7 @@ import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.listeners.EventOrigin;
 import de.mephisto.vpin.server.mame.MameRomAliasService;
 import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.pinemhi.PINemHiService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -34,6 +35,7 @@ import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.roms.RomService;
 import de.mephisto.vpin.server.roms.ScanResult;
+import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vps.VpsService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -101,6 +103,9 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
 
   @Autowired
   private CompetitionLifecycleService competitionLifecycleService;
+
+  @Autowired
+  private SystemService systemService;
 
   private ServerSettings serverSettings;
 
@@ -450,7 +455,14 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     if (game.isVpxGame()) {
       if (!newGame) {
         Optional<Highscore> highscore = this.highscoreService.getHighscore(game, forceScoreScan, EventOrigin.USER_INITIATED);
-        highscore.ifPresent(value -> game.setHighscoreType(value.getType() != null ? HighscoreType.valueOf(value.getType()) : null));
+        if (highscore.isPresent()) {
+          Highscore hscr = highscore.get();
+          game.setHighscoreType(hscr.getType() != null ? HighscoreType.valueOf(hscr.getType()) : null);
+        }
+
+        if (game.getHighscoreType() == null && systemService.getScoringDatabase().isNvRam(game.getRom())) {
+          game.setHighscoreType(HighscoreType.NVRam);
+        }
       }
     }
 

@@ -63,7 +63,7 @@ public class ScreenPreviewService implements InitializingBean {
         height = height / display.getScaling();
         x = display.getScaledX();
 
-        if(x < 0) {
+        if (x < 0) {
           x = display.getX();
         }
       }

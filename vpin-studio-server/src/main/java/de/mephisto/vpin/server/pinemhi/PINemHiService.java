@@ -42,6 +42,7 @@ public class PINemHiService implements InitializingBean {
 
 
   private boolean enabled = false;
+  private List<String> romList = new ArrayList<>();
 
   public boolean getAutoStart() {
     return preferencesService.getPreferences().getPinemhiAutoStartEnabled();
@@ -57,6 +58,10 @@ public class PINemHiService implements InitializingBean {
       LOG.error("Failed to set PINemHi autostart flag: " + e.getMessage(), e);
     }
     return false;
+  }
+
+  public List<String> getRomList() {
+    return romList;
   }
 
   public boolean isRunning() {
@@ -214,26 +219,6 @@ public class PINemHiService implements InitializingBean {
     }
   }
 
-  @Override
-  public void afterPropertiesSet() throws Exception {
-    new Thread(() -> {
-      Thread.currentThread().setName("PinemHi Updater");
-      checkForUpdates();
-    }).start();
-
-    this.enabled = getAutoStart();
-    if (enabled) {
-      startMonitor();
-      LOG.info("Auto-started Pinemhi " + PROCESS_NAME);
-    }
-
-    File nvramFolder = mameService.getNvRamFolder();
-    if (nvramFolder != null && nvramFolder.exists()) {
-      adjustVPPathForEmulator(nvramFolder, getPinemhiIni(), true);
-    }
-    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
-  }
-
   /**
    * Load pinhemi.ini, update the VP path with the nvRam foldr of the emulator
    * and save
@@ -259,5 +244,26 @@ public class PINemHiService implements InitializingBean {
         LOG.error("Failed to update VP path in pinemhi.ini: " + e.getMessage(), e);
       }
     }
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    new Thread(() -> {
+      Thread.currentThread().setName("PinemHi Updater");
+      checkForUpdates();
+    }).start();
+
+    this.enabled = getAutoStart();
+    if (enabled) {
+      startMonitor();
+      LOG.info("Auto-started Pinemhi " + PROCESS_NAME);
+    }
+
+    File nvramFolder = mameService.getNvRamFolder();
+    if (nvramFolder != null && nvramFolder.exists()) {
+      adjustVPPathForEmulator(nvramFolder, getPinemhiIni(), true);
+    }
+
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

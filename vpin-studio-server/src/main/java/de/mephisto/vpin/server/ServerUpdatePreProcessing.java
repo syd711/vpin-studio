@@ -24,7 +24,7 @@ public class ServerUpdatePreProcessing {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private final static List<String> deletions = Arrays.asList("PupPackScreenTweaker.exe");
 
-  private final static List<String> resources = Arrays.asList("PinVol.exe",
+  private final static List<String> CHECKLIST = Arrays.asList("PinVol.exe",
       "ffmpeg.exe",
       "jptch.exe",
       "nircmd.exe",
@@ -205,7 +205,7 @@ public class ServerUpdatePreProcessing {
   }
 
   private static void runResourcesCheck() {
-    for (String resource : resources) {
+    for (String resource : CHECKLIST) {
       File check = new File(RESOURCES, resource);
       if (!check.exists()) {
         if (!check.getParentFile().exists() && !check.getParentFile().mkdirs()) {
