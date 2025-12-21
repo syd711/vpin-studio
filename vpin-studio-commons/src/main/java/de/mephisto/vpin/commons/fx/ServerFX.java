@@ -93,6 +93,15 @@ public class ServerFX extends Application {
     try {
       latch.await();
       LOG.info("OverlayFX creation finished.");
+      Platform.runLater(() -> {
+        LOG.info("########################## Screen Summary #####################################");
+        List<MonitorInfo> monitors = MonitorInfoUtil.getMonitors();
+        for (MonitorInfo monitor : monitors) {
+          LOG.info(monitor.toString());
+        }
+        LOG.info("######################### /Screen Summary #####################################");
+      });
+
       for (ServerFXListener listener : listeners) {
         listener.fxInitialized();
       }
@@ -230,7 +239,8 @@ public class ServerFX extends Application {
       String resource = "scene-maintenance.fxml";
       FXMLLoader loader = new FXMLLoader(MaintenanceController.class.getResource(resource));
       Parent widgetRoot = loader.load();
-      /*MaintenanceController controller =*/ loader.getController();
+      /*MaintenanceController controller =*/
+      loader.getController();
       root.setCenter(widgetRoot);
     }
     catch (IOException e) {

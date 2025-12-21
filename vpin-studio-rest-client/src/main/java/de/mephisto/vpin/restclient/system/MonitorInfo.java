@@ -130,9 +130,9 @@ public class MonitorInfo {
   @Override
   public String toString() {
     if (primary) {
-      return "Monitor " + (id + 1) + " (primary) [" + getWidth() + "x" + getHeight() + "/" + scaledX + "]";
+      return "Monitor " + (id + 1) + " (primary) [" + getWidth() + "x" + getHeight() + "] Scaled X: " + scaledX + ", Scaling: " + scaling;
     }
-    return "Monitor " + (id + 1) + " [" + getWidth() + "x" + getHeight() + "/" + scaledX + "]";
+    return "Monitor " + (id + 1) + " [" + getWidth() + "x" + getHeight() + "] Scaled X: " + scaledX + ", Scaling: " + scaling;
   }
 
   @Override
