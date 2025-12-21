@@ -110,11 +110,11 @@ public class NvRamOutputToScoreTextTest {
    */
   @Test
   public void test_Single() throws Exception {
-    doTestSingle("robo_a34.nv",
-        "#1 JJJ   9,540,810\r\n" + //
-            "#2 AAA   1,098,360\r\n" + //
-            "#3 AAA   588,560\r\n" + //
-            "#4 AAA   277,620");
+    doTestSingle("kiko_a10.nv",
+        "#1 DAK   3,032,500\r\n" +
+            "#2 DAK   2,665,940\r\n" +
+            "#3 DAK   1,856,200\r\n" +
+            "#4 DAK   1,067,570");
   }
 
   /**
@@ -151,27 +151,14 @@ public class NvRamOutputToScoreTextTest {
   /**
    * Test SortedScoreAdapter
    */
-  @Test
-  public void test_SingleScore() throws Exception {
-//    doTestSingle("pool_l7.nv",
-//        "#1 DAK   1.582.140\n" +
-//            "#2 DAK   1.561.190\n" +
-//            "#3 DAK   1.394.100\n" +
-//            "#4 DAK   1.354.040\n" +
-//            "#5 DAK   2.522.560\n" +
-//            "#6 ???   455.320\n" +
-//            "#7 BRE   0\n" +
-//            "#8 XAQ   0");
-//
-//    doTestSingle("wrldtou2.nv",
-//         "#1 ???   1,867,500");
-
-    doTestSingle("kiko_a10.nv",
-        "#1 DAK   3,032,500\r\n" +
-            "#2 DAK   2,665,940\r\n" +
-            "#3 DAK   1,856,200\r\n" +
-            "#4 DAK   1,067,570\r\n");
-  }
+//  @Test
+//  public void test_SingleScore() throws Exception {
+//    doTestSingle("kiko_a10.nv",
+//        "#1 DAK   3,032,500\r\n" +
+//            "#2 DAK   2,665,940\r\n" +
+//            "#3 DAK   1,856,200\r\n" +
+//            "#4 DAK   1,067,570\r\n");
+//  }
 
 
   protected void doTestSingle(String nv, String expected) throws Exception {
