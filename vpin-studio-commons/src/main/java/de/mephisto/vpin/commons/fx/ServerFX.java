@@ -108,7 +108,7 @@ public class ServerFX extends Application {
       }
     }
     catch (InterruptedException e) {
-      LOG.warn("Overlay wating failed: {}", e.getMessage());
+      LOG.warn("Overlay waiting failed: {}", e.getMessage());
     }
   }
 
