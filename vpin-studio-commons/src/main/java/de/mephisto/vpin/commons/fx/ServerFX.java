@@ -27,6 +27,7 @@ import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -329,21 +330,26 @@ public class ServerFX extends Application {
     this.overlayStage = primaryStage;
     Platform.setImplicitExit(false);
 
-    root = new BorderPane();
-    MonitorInfo screen = MonitorInfoUtil.getPrimaryMonitor();
-    final Scene scene = new Scene(root, screen.getWidth(), screen.getHeight(), true, SceneAntialiasing.BALANCED);
-    scene.setCursor(Cursor.NONE);
+    try {
+      root = new BorderPane();
+      MonitorInfo screen = MonitorInfoUtil.getPrimaryMonitor();
+      final Scene scene = new Scene(root, screen.getWidth(), screen.getHeight(), true, SceneAntialiasing.BALANCED);
+      scene.setCursor(Cursor.NONE);
 
-    overlayStage.setX(screen.getX());
-    overlayStage.setY(screen.getY());
+      overlayStage.setX(screen.getX());
+      overlayStage.setY(screen.getY());
 
-    overlayStage.setScene(scene);
-    overlayStage.setFullScreenExitHint("");
-    overlayStage.setAlwaysOnTop(true);
-    overlayStage.setFullScreen(true);
-    overlayStage.getScene().getStylesheets().add(ServerFX.class.getResource("stylesheet.css").toExternalForm());
+      overlayStage.setScene(scene);
+      overlayStage.setFullScreenExitHint("");
+      overlayStage.setAlwaysOnTop(true);
+      overlayStage.setFullScreen(true);
+      overlayStage.getScene().getStylesheets().add(ServerFX.class.getResource("stylesheet.css").toExternalForm());
 
-    PauseMenu.getInstance().loadPauseMenu();
+      PauseMenu.getInstance().loadPauseMenu();
+    }
+    catch (Exception e) {
+      LOG.error("ServerFX startup error: {}", e.getMessage());
+    }
     latch.countDown();
   }
 
