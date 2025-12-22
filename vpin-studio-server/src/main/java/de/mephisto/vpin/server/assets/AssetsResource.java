@@ -65,6 +65,10 @@ public class AssetsResource {
   @GetMapping("/defaultbackground/{id}")
   public ResponseEntity<byte[]> getRaw(@PathVariable("id") int id) throws Exception {
     byte[] raw = assetService.getRaw(id);
+    if (raw == null) {
+      File defaultAsset = new File(SystemService.RESOURCES, "competition-bg-default.png");
+      return serializeFile(defaultAsset);
+    }
     return RequestUtil.serializeImage(raw, "background-" + id + ".png");
   }
 

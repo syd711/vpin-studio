@@ -453,6 +453,7 @@ public class CompetitionsController implements Initializable, StudioFXController
         }).thenAcceptLater(children -> {
           dashboardStatusLabel.setVisible(false);
           if (tabPane.getSelectionModel().getSelectedItem().equals(weeklySubscriptionsTab)) {
+            scoreBox.getChildren().removeAll(scoreBox.getChildren());
             scoreBox.getChildren().addAll(children);
             scoreBox.setVisible(!children.isEmpty());
           }
