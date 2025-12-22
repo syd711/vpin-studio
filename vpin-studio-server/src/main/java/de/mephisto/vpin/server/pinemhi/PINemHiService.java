@@ -101,10 +101,6 @@ public class PINemHiService implements InitializingBean {
 
         Set<String> sections = iniConfiguration.getSections();
         for (String section : sections) {
-          if ("romfind".equals(section)) {
-            continue;
-          }
-
           SubnodeConfiguration s = iniConfiguration.getSection(section);
           if (s.containsKey(key)) {
             //changeCounter++;
@@ -147,10 +143,6 @@ public class PINemHiService implements InitializingBean {
       Map<String, Object> entries = new HashMap<>();
       Set<String> sections = iniConfiguration.getSections();
       for (String section : sections) {
-        if ("romfind".equals(section)) {
-          continue;
-        }
-
         SubnodeConfiguration s = iniConfiguration.getSection(section);
         Iterator<String> keys = s.getKeys();
         while (keys.hasNext()) {
