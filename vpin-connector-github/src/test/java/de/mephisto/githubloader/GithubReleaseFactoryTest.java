@@ -146,16 +146,16 @@ public class GithubReleaseFactoryTest {
   }
 
   //TODO @Test  recativate later
-  public void testFlexDMD() throws Exception {
-    GithubRelease githubRelease = GithubReleaseFactory.loadRelease("https://github.com/vbousquet/flexdmd/releases", Collections.emptyList(), Arrays.asList("Source"));
-    assertNotNull(githubRelease);
-
-    ReleaseArtifact artifact = githubRelease.getArtifacts().get(0);
-    ReleaseArtifactActionLog install = artifact.install(new File(TEST_FOLDER), Arrays.asList("FlexDMDUI.exe"), Collections.emptyList(), Collections.emptyList());
-    assertNotNull(install);
-    assertNull(install.getStatus());
-    assertFalse(install.getLogs().isEmpty());
-  }
+//  public void testFlexDMD() throws Exception {
+//    GithubRelease githubRelease = GithubReleaseFactory.loadRelease("https://github.com/vbousquet/flexdmd/releases", Collections.emptyList(), Arrays.asList("Source"));
+//    assertNotNull(githubRelease);
+//
+//    ReleaseArtifact artifact = githubRelease.getArtifacts().get(0);
+//    ReleaseArtifactActionLog install = artifact.install(new File(TEST_FOLDER), Arrays.asList("FlexDMDUI.exe"), Collections.emptyList(), Collections.emptyList());
+//    assertNotNull(install);
+//    assertNull(install.getStatus());
+//    assertFalse(install.getLogs().isEmpty());
+//  }
 
   @Test
   public void testFreezy() throws Exception {
