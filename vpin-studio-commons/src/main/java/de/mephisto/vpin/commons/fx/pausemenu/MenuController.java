@@ -52,6 +52,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static de.mephisto.vpin.commons.fx.ServerFX.client;
 import static de.mephisto.vpin.commons.fx.pausemenu.PauseMenuUIDefaults.SELECTION_SCALE_DURATION;
+import static de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemTypes.wovp;
 
 public class MenuController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -154,12 +155,28 @@ public class MenuController implements Initializable {
     label.setText(text);
   }
 
-  public void scrollGameBarRight() {
-    scroll(false);
+  public void enter() {
+    PauseMenuItemTypes itemType = getSelection().getItemType();
+    switch (itemType) {
+      case wovp: {
+        wovpMenuItemController.enter();
+        break;
+      }
+    }
   }
 
-  public void scrollGameBarLeft() {
-    scroll(true);
+  public void right() {
+    PauseMenuItemTypes itemType = getSelection().getItemType();
+    if (!itemType.equals(wovp) || !wovpMenuItemController.right()) {
+      scroll(false);
+    }
+  }
+
+  public void left() {
+    PauseMenuItemTypes itemType = getSelection().getItemType();
+    if (!itemType.equals(wovp) || !wovpMenuItemController.left()) {
+      scroll(true);
+    }
   }
 
   private synchronized void scroll(boolean left) {
@@ -291,7 +308,7 @@ public class MenuController implements Initializable {
         LOG.error("Failed to init pause component: " + e.getMessage(), e);
       }
     }
-    else if (activeSelection.getItemType().equals(PauseMenuItemTypes.wovp)) {
+    else if (activeSelection.getItemType().equals(wovp)) {
       try {
         Image sectionImage = new Image(PauseMenu.class.getResourceAsStream("wovp-wheel.png"));
         String resource = "menu-submitter-view.fxml";
@@ -474,16 +491,6 @@ public class MenuController implements Initializable {
     }
     catch (IOException e) {
       LOG.error("Failed to init custom controller: " + e.getMessage(), e);
-    }
-  }
-
-  public void enter() {
-    PauseMenuItemTypes itemType = getSelection().getItemType();
-    switch (itemType) {
-      case wovp: {
-        wovpMenuItemController.enter();
-        break;
-      }
     }
   }
 }

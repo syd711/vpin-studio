@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.wovp.models.ApiKeyValidationResponse;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -39,10 +40,29 @@ public class WOVPPreferencesController implements Initializable {
   private final Debouncer debouncer = new Debouncer();
 
   @FXML
-  private TextField apiKeyText;
+  private Button testBtn1;
+  @FXML
+  private Button testBtn2;
+  @FXML
+  private Button testBtn3;
+  @FXML
+  private Button testBtn4;
+  @FXML
+  private Button testBtn5;
 
   @FXML
-  private Button testBtn;
+  private Button invalidateAllBtn;
+
+  @FXML
+  private TextField apiKeyText1;
+  @FXML
+  private TextField apiKeyText2;
+  @FXML
+  private TextField apiKeyText3;
+  @FXML
+  private TextField apiKeyText4;
+  @FXML
+  private TextField apiKeyText5;
 
   @FXML
   private CheckBox subscriptionCheckbox;
@@ -67,6 +87,16 @@ public class WOVPPreferencesController implements Initializable {
   private WOVPSettings wovpSettings;
 
   @FXML
+  private void onClearCache() {
+    invalidateAllBtn.setDisable(true);
+    JFXFuture.supplyAsync(() -> {
+      return client.getWovpService().clearCache();
+    }).thenAcceptLater(success -> {
+      invalidateAllBtn.setDisable(false);
+    });
+  }
+
+  @FXML
   private void onLink(ActionEvent event) {
     Hyperlink link = (Hyperlink) event.getSource();
     String linkText = link.getText();
@@ -82,15 +112,19 @@ public class WOVPPreferencesController implements Initializable {
   }
 
   @FXML
-  private void onApiKeyTest() {
-    String key = apiKeyText.getText().trim();
-    if (!StringUtils.isEmpty(key)) {
-      ApiKeyValidationResponse test = client.getWovpService().test();
-      if (test != null && test.isSuccess()) {
-        WidgetFactory.showInformation(Studio.stage, "Information", "API key validation successful.");
-      }
-      else {
-        WidgetFactory.showAlert(Studio.stage, "Error", "API key validation failed!");
+  private void onApiKeyTest(ActionEvent event) {
+    Button btn = (Button) event.getSource();
+    TextField source = (TextField) btn.getUserData();
+    if (!StringUtils.isEmpty(source.getText())) {
+      String key = source.getText().trim();
+      if (!StringUtils.isEmpty(key)) {
+        ApiKeyValidationResponse test = client.getWovpService().test(key);
+        if (test != null && test.isSuccess()) {
+          WidgetFactory.showInformation(Studio.stage, "Information", "API key validation successful.", "The user \"" + test.getName() + "\" has been authenticated.");
+        }
+        else {
+          WidgetFactory.showAlert(Studio.stage, "Error", "API key validation failed!");
+        }
       }
     }
   }
@@ -99,6 +133,12 @@ public class WOVPPreferencesController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     wovpSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
     pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
+
+    testBtn1.setUserData(apiKeyText1);
+    testBtn2.setUserData(apiKeyText2);
+    testBtn3.setUserData(apiKeyText3);
+    testBtn4.setUserData(apiKeyText4);
+    testBtn5.setUserData(apiKeyText5);
 
     subscriptionCheckbox.setSelected(wovpSettings.isEnabled());
     subscriptionCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -148,11 +188,63 @@ public class WOVPPreferencesController implements Initializable {
       }
     });
 
-    apiKeyText.setText(wovpSettings.getApiKey());
-    apiKeyText.textProperty().addListener((observableValue, integer, t1) -> {
+    apiKeyText1.setText(wovpSettings.getApiKey1());
+    apiKeyText1.textProperty().addListener((observableValue, integer, t1) -> {
       debouncer.debounce("apiKeyText", () -> {
         try {
-          wovpSettings.setApiKey(t1);
+          wovpSettings.setApiKey1(t1);
+          client.getPreferenceService().setJsonPreference(wovpSettings);
+          PreferencesController.markDirty(PreferenceType.competitionSettings);
+        }
+        catch (Exception e) {
+          WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+        }
+      }, 100);
+    });
+    apiKeyText2.setText(wovpSettings.getApiKey2());
+    apiKeyText2.textProperty().addListener((observableValue, integer, t1) -> {
+      debouncer.debounce("apiKeyText", () -> {
+        try {
+          wovpSettings.setApiKey2(t1);
+          client.getPreferenceService().setJsonPreference(wovpSettings);
+          PreferencesController.markDirty(PreferenceType.competitionSettings);
+        }
+        catch (Exception e) {
+          WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+        }
+      }, 100);
+    });
+    apiKeyText3.setText(wovpSettings.getApiKey3());
+    apiKeyText3.textProperty().addListener((observableValue, integer, t1) -> {
+      debouncer.debounce("apiKeyText", () -> {
+        try {
+          wovpSettings.setApiKey3(t1);
+          client.getPreferenceService().setJsonPreference(wovpSettings);
+          PreferencesController.markDirty(PreferenceType.competitionSettings);
+        }
+        catch (Exception e) {
+          WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+        }
+      }, 100);
+    });
+    apiKeyText4.setText(wovpSettings.getApiKey4());
+    apiKeyText4.textProperty().addListener((observableValue, integer, t1) -> {
+      debouncer.debounce("apiKeyText", () -> {
+        try {
+          wovpSettings.setApiKey4(t1);
+          client.getPreferenceService().setJsonPreference(wovpSettings);
+          PreferencesController.markDirty(PreferenceType.competitionSettings);
+        }
+        catch (Exception e) {
+          WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+        }
+      }, 100);
+    });
+    apiKeyText5.setText(wovpSettings.getApiKey5());
+    apiKeyText5.textProperty().addListener((observableValue, integer, t1) -> {
+      debouncer.debounce("apiKeyText", () -> {
+        try {
+          wovpSettings.setApiKey5(t1);
           client.getPreferenceService().setJsonPreference(wovpSettings);
           PreferencesController.markDirty(PreferenceType.competitionSettings);
         }

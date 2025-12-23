@@ -56,6 +56,16 @@ public class CompetitionRepresentation {
 
   private String rom;
 
+  private String issues;
+
+  public String getIssues() {
+    return issues;
+  }
+
+  public void setIssues(String issues) {
+    this.issues = issues;
+  }
+
   public String getMode() {
     return mode;
   }

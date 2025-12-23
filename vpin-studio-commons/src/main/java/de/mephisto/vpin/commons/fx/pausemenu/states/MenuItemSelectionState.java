@@ -15,13 +15,13 @@ public class MenuItemSelectionState extends MenuState {
 
   @Override
   MenuState left() {
-    menuController.scrollGameBarLeft();
+    menuController.left();
     return this;
   }
 
   @Override
   MenuState right() {
-    menuController.scrollGameBarRight();
+    menuController.right();
     return this;
   }
 

@@ -233,10 +233,13 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
 
     tableColumn.setCellValueFactory(cellData -> {
       WeeklyCompetitionModel value = cellData.getValue();
+      String issues = value.getCompetition().getIssues();
 
       Label fallbackLabel = new Label();
       fallbackLabel.getStyleClass().add("default-text");
       fallbackLabel.setStyle(getLabelCss(value));
+      fallbackLabel.setWrapText(true);
+      fallbackLabel.setPrefWidth(300);
       VpsTable vpsTable = client.getVpsService().getTableById(value.getVpsTableId());
       if (vpsTable == null) {
         fallbackLabel.setStyle(ERROR_STYLE);
@@ -244,10 +247,13 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
         return new SimpleObjectProperty<>(fallbackLabel);
       }
 
+
       if (value.getGame() == null) {
+        issues = issues.replaceAll("\\|", "\n");
+
         fallbackLabel.setStyle(ERROR_STYLE);
-        fallbackLabel.setText("No matching table found.");
-        fallbackLabel.setTooltip(new Tooltip("No matching table found. Download and install this table using the download link."));
+        fallbackLabel.setText(issues);
+        fallbackLabel.setTooltip(new Tooltip(issues));
         return new SimpleObjectProperty<>(fallbackLabel);
       }
 

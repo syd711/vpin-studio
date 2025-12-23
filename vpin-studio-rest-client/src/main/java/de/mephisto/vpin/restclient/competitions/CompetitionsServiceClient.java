@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.competitions;
 
 import de.mephisto.vpin.connectors.iscored.IScoredGame;
+import de.mephisto.vpin.connectors.wovp.models.WovpPlayer;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
@@ -33,8 +34,8 @@ public class CompetitionsServiceClient extends VPinStudioClientService {
   }
 
 
-  public ScoreSubmitResult submitScore(boolean simulate) {
-    return getRestClient().get(API + "competitions/weekly/submit/" + simulate, ScoreSubmitResult.class);
+  public ScoreSubmitResult submitScore(WovpPlayer player, boolean simulate) {
+    return getRestClient().get(API + "competitions/weekly/submit/" + player.getId() + "/" + simulate, ScoreSubmitResult.class);
   }
 
   public boolean hasChannelManagePermissions(long serverId, long channelId) {

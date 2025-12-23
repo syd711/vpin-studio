@@ -25,6 +25,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.*;
 
 public class Wovp {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -36,6 +37,8 @@ public class Wovp {
   public static final String SCORE_SUBMIT_URL = URL + "scores/submit";
   public static final String VALIDATION_URL = URL + "validate-apikey";
   public static final String CHALLENGES_URL = URL + "challenges/search";
+
+  private static Map<String, WovpPlayer> players = new HashMap<>();
 
   static {
     objectMapper = new ObjectMapper();
@@ -54,6 +57,18 @@ public class Wovp {
 
   private Wovp(String apiKey) {
     this.apiKey = apiKey;
+  }
+
+  public static List<WovpPlayer> getPlayers() {
+    return new ArrayList<>(players.values());
+  }
+
+  public static WovpPlayer getPlayer(@NonNull String id) {
+    return players.get(id);
+  }
+
+  public static void clearCache() {
+    players.clear();
   }
 
   public Challenges getChallenges(boolean forceReload) throws Exception {
@@ -75,6 +90,7 @@ public class Wovp {
       scoreSubmit.setScore(score);
       scoreSubmit.setPlayingPlatform(0);
       scoreSubmit.setChallengeId(challengeId);
+      scoreSubmit.setPlayingPlatform(scoreSubmitMetadata.getPlatform());
       scoreSubmit.setPhotoTempId(uploadResponse.getData().getPhotoTempId());
 
       String json = objectMapper.writeValueAsString(scoreSubmit);
@@ -138,10 +154,20 @@ public class Wovp {
           r.setSuccess(false);
           return r;
         }
-        return objectMapper.readValue(responseJson, ApiKeyValidationResponse.class);
+
+        r = objectMapper.readValue(responseJson, ApiKeyValidationResponse.class);
+
+        WovpPlayer player = new WovpPlayer();
+        player.setId(r.getUserId());
+        player.setName(r.getName());
+        player.setApiKey(apiKey);
+        players.put(player.getId(), player);
+
+        LOG.info("Validated WOVP player \"{}\"", player.getName());
+        return r;
       }
       catch (Exception e) {
-        LOG.error("Failed to validate wovp API key: {}", e.getMessage(), e);
+        LOG.error("Failed to validate WOVP API key: {}", e.getMessage(), e);
       }
     }
 

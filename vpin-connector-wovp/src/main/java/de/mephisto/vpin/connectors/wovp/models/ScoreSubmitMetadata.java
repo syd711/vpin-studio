@@ -12,6 +12,16 @@ public class ScoreSubmitMetadata {
 
   private String rom;
 
+  private int platform = 0;
+
+  public int getPlatform() {
+    return platform;
+  }
+
+  public void setPlatform(int platform) {
+    this.platform = platform;
+  }
+
   public String getVpinStudioVersion() {
     return vpinStudioVersion;
   }

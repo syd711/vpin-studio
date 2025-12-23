@@ -49,11 +49,10 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
   @Autowired
   private GameService gameService;
 
-  public synchronized boolean synchronizeWovp(boolean forceReload) {
+  public synchronized boolean synchronizeWovp(String apiKey, boolean forceReload) {
     try {
       LOG.info("------------------------------- WOVP SYNC -----------------------------------------------------------");
       WOVPSettings wovpSettings = preferencesService.getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
-      String apiKey = wovpSettings.getApiKey();
       if (!StringUtils.isEmpty(apiKey) && wovpSettings.isEnabled()) {
         Wovp wovp = Wovp.create(apiKey);
         Challenges challenges = wovp.getChallenges(true);
@@ -103,6 +102,7 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
   }
 
   private void updateCompetition(@NonNull Competition competition, @NonNull Challenge challenge, @NonNull WOVPSettings wovpSettings) {
+    competition.setIssues(null);
     competition.setUrl("https://worldofvirtualpinball.com/en/challenge/ranking?tab=challenges");
     competition.setUuid(challenge.getId());
     competition.setName(challenge.getName());
@@ -116,6 +116,7 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
     }
     else {
       LOG.warn("WOVP did not set a VPS version id for challenge {}", challenge.getName());
+      addIssue(competition, "WOVP did not set a VPS version id for this challenge.");
     }
     competition.setType(CompetitionType.WEEKLY.name());
     competition.setStartDate(challenge.getStartDateUTC());
@@ -129,6 +130,8 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
     List<Game> gameMatches = gameService.getGamesByVpsTableId(pinballTable.getExternalId(), vpsVersion);
     if (gameMatches.isEmpty()) {
       LOG.info("No matching game found for weekly challenge \"{}\"", challenge.getChallengeTypeCode());
+      addIssue(competition, "No matching game found for weekly challenge \"" + getModeName(challenge) + "\".");
+      addIssue(competition, "Please check the VPS matching of the table or download the correct version.");
       competition.setGameId(-1);
     }
     else {
@@ -146,12 +149,22 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
       }
       else {
         LOG.warn("WOVP game validation failed, did not find phrase \"{}\" in {}", scriptMatchKeywords, game.getGameFileName());
+        addIssue(competition, "WOVP game validation failed, required phrases not found in " + game.getGameFileName() + ", invalid table version.");
+        addIssue(competition, "Please check the VPS matching of the existing table or download the correct version.");
       }
-
     }
 
     competitionService.save(competition);
     LOG.info("Saved {}", competition);
+  }
+
+  private static void addIssue(@NonNull Competition competition, @NonNull String msg) {
+    String issue = competition.getIssues() != null ? competition.getIssues() : "";
+    if (!issue.isEmpty()) {
+      issue += "|";
+    }
+    issue += msg;
+    competition.setIssues(issue);
   }
 
   private boolean validateGameScript(Game game, @Nullable List<String> terms) {
@@ -195,6 +208,13 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
     }
   }
 
+  private String getModeName(Challenge challenge) {
+    if (challenge.getChallengeTypeCode().name().equals("tournament")) {
+      return "KO";
+    }
+    return StringUtils.capitalize(challenge.getChallengeTypeCode().name());
+  }
+
   @Override
   public void onApplicationEvent(ApplicationReadyEvent event) {
     WOVPSettings settings = preferencesService.getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
@@ -203,7 +223,7 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
         long start = System.currentTimeMillis();
         Thread.currentThread().setName("Wovp Initial Sync");
         LOG.info("----------------------------- Initial WOVP Sync --------------------------------------------------");
-        synchronizeWovp(true);
+        synchronizeWovp(settings.getAnyApiKey(), true);
         LOG.info("----------------------------- /Initial WOVP Sync -------------------------------------------------");
         LOG.info("Initial sync finished, took {}ms", (System.currentTimeMillis() - start));
       }).start();
@@ -213,7 +233,8 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
   @Override
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
     if (PreferenceNames.WOVP_SETTINGS.equals(propertyName)) {
-      synchronizeWovp(false);
+      WOVPSettings settings = preferencesService.getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
+      synchronizeWovp(settings.getAnyApiKey(), false);
     }
   }
 

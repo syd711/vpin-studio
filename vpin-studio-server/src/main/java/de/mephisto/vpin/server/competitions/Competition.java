@@ -76,6 +76,16 @@ public class Competition {
 
   private String rom;
 
+  private String issues;
+
+  public String getIssues() {
+    return issues;
+  }
+
+  public void setIssues(String issues) {
+    this.issues = issues;
+  }
+
   @Transient
   private ValidationState validationState;
 

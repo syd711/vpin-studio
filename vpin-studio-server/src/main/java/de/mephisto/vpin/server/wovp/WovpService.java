@@ -6,25 +6,21 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.competitions.CompetitionScore;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
+import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.wovp.ScoreSubmitResult;
 import de.mephisto.vpin.restclient.wovp.WOVPSettings;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionService;
-import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.competitions.wovp.WOVPCompetitionSynchronizer;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.GameStatusService;
-import de.mephisto.vpin.server.highscores.HighscoreService;
-import de.mephisto.vpin.server.highscores.Score;
-import de.mephisto.vpin.server.listeners.EventOrigin;
-import de.mephisto.vpin.server.players.Player;
-import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.recorder.ScreenshotService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,9 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -65,19 +59,22 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
 
   private WOVPSettings wovpSettings;
 
-  private String userId;
-
-  public ApiKeyValidationResponse validateKey() {
-    String apiKey = wovpSettings.getApiKey();
-    Wovp wovp = Wovp.create(apiKey);
-    ApiKeyValidationResponse response = wovp.validateKey();
-    if (response != null && response.isSuccess()) {
-      userId = response.getUserId();
+  public ApiKeyValidationResponse validateKey(@Nullable String apiKey) {
+    if (StringUtils.isEmpty(apiKey)) {
+      ApiKeyValidationResponse response = new ApiKeyValidationResponse();
+      response.setSuccess(false);
+      return response;
     }
-    return response;
+
+    Wovp wovp = Wovp.create(apiKey);
+    return wovp.validateKey();
   }
 
-  public ScoreSubmitResult submitScore(boolean simulate) {
+  public WovpPlayer getPlayer(@NonNull String userId) {
+    return Wovp.getPlayer(userId);
+  }
+
+  public ScoreSubmitResult submitScore(@NonNull WovpPlayer wovpPlayer, boolean simulate) {
     ScoreSubmitResult result = new ScoreSubmitResult();
     if (!wovpSettings.isEnabled()) {
       SLOG.info("[WOVP simulate=" + simulate + "] " + "WOVP not enabled");
@@ -91,7 +88,9 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
       return result;
     }
 
-    String apiKey = wovpSettings.getApiKey();
+    //the serialized player does not have the api key
+    WovpPlayer cachedPlayer = getPlayer(wovpPlayer.getId());
+    String apiKey = cachedPlayer.getApiKey();
     if (StringUtils.isEmpty(apiKey)) {
       SLOG.info("[WOVP simulate=" + simulate + "] " + "No API key set.");
       result.setErrorMessage("No API key set.");
@@ -106,14 +105,6 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
     }
 
     Game game = gameService.getGame(status.getGameId());
-
-//    Optional<Score> score = scoreSummary.getScores().stream().filter(s -> s.getPlayer() != null && s.getPlayer().equals(adminPlayer)).findFirst();
-//    if (score.isPresent()) {
-//      result.setLatestScore(score.get().getScore());
-//    }
-//
-//    result.setPlayerName(adminPlayer.getName());
-
     List<Competition> weeklyCompetitions = competitionService.getWeeklyCompetitions();
     Optional<Competition> competition = weeklyCompetitions.stream().filter(c -> c.getGameId() == game.getId()).findFirst();
     if (competition.isEmpty()) {
@@ -141,7 +132,7 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
       return result;
     }
 
-    Optional<ScoreBoardItem> first = challenge.get().getScoreBoard().getItems().stream().filter(s -> s.getValues().getUserId().equals(this.userId)).findFirst();
+    Optional<ScoreBoardItem> first = challenge.get().getScoreBoard().getItems().stream().filter(s -> s.getValues().getUserId().equals(wovpPlayer.getId())).findFirst();
     if (first.isPresent()) {
       ScoreBoardItemPositionValues item = first.get().getValues();
       result.setLatestScore((long) item.getScore());
@@ -158,7 +149,8 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
 
       try {
         wovp.submitScore(screenshotFile, challenge.get().getId(), 0, getMetadata(game));
-        SLOG.info("[WOVP simulate=" + simulate + "] " + "WOVP score submit finished. Submitted a score of "); //TODO
+        LOG.info("[WOVP simulate=" + simulate + "] " + "WOVP score submit finished. Submitted a score for " + cachedPlayer.getName());
+        SLOG.info("[WOVP simulate=" + simulate + "] " + "WOVP score submit finished. Submitted a score for " + cachedPlayer.getName());
       }
       catch (Exception e) {
         SLOG.info("[WOVP simulate=" + simulate + "] " + "Failed to submit WOVP highscore: " + e.getMessage());
@@ -172,23 +164,28 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
   }
 
   private ScoreSubmitMetadata getMetadata(@NonNull Game game) {
+    PauseMenuSettings pauseMenuSettings = preferencesService.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
+
     ScoreSubmitMetadata metadata = new ScoreSubmitMetadata();
     metadata.setVpinStudioVersion(systemService.getVersion());
     metadata.setVpxFile(game.getGameFileName());
     metadata.setRom(game.getRom());
+    metadata.setPlatform(pauseMenuSettings.isDesktopUser() ? 1 : 0);
     return metadata;
   }
 
   public List<CompetitionScore> getWeeklyScores(@NonNull String uuid) {
     try {
-      String apiKey = wovpSettings.getApiKey();
-      Wovp wovp = Wovp.create(apiKey);
-      Challenges challenges = wovp.getChallenges(true);
-      Optional<Challenge> first = challenges.getItems().stream().filter(c -> c.getId().equals(uuid)).findFirst();
-      if (first.isPresent()) {
-        Challenge challenge = first.get();
-        List<ScoreBoardItem> items = challenge.getScoreBoard().getItems();
-        return items.stream().map(item -> toCompetitionScore(challenge, item)).collect(Collectors.toList());
+      String anyApiKey = wovpSettings.getAnyApiKey();
+      if (anyApiKey != null) {
+        Wovp wovp = Wovp.create(anyApiKey);
+        Challenges challenges = wovp.getChallenges(true);
+        Optional<Challenge> first = challenges.getItems().stream().filter(c -> c.getId().equals(uuid)).findFirst();
+        if (first.isPresent()) {
+          Challenge challenge = first.get();
+          List<ScoreBoardItem> items = challenge.getScoreBoard().getItems();
+          return items.stream().map(item -> toCompetitionScore(challenge, item)).collect(Collectors.toList());
+        }
       }
     }
     catch (Exception e) {
@@ -219,14 +216,18 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
     score.setParticipantId(values.getParticipantId());
     score.setPending(values.isPending());
     score.setNote(values.getApprovalNote());
-    score.setMyScore(values.getUserId().equals(this.userId));
+    score.setMyScore(getPlayer(values.getUserId()) != null);
     return score;
   }
 
   public boolean isScoreSubmitEnabled() {
     wovpSettings = preferencesService.getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
-    ScoreSubmitResult scoreSubmitResult = submitScore(true);
-    return scoreSubmitResult.getErrorMessage() == null;
+    List<WovpPlayer> players = Wovp.getPlayers();
+    if (!players.isEmpty()) {
+      ScoreSubmitResult scoreSubmitResult = submitScore(players.get(0), true);
+      return scoreSubmitResult.getErrorMessage() == null;
+    }
+    return false;
   }
 
   /**
@@ -234,7 +235,11 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
    * The weekly competitions should remain abstract from the specific competition organizer.
    */
   public boolean synchronize(boolean forceReload) {
-    return wovpCompetitionSynchronizer.synchronizeWovp(forceReload);
+    return wovpCompetitionSynchronizer.synchronizeWovp(wovpSettings.getAnyApiKey(), forceReload);
+  }
+
+  public List<WovpPlayer> getPlayers() {
+    return Wovp.getPlayers();
   }
 
   @Override
@@ -252,9 +257,22 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
     wovpSettings = preferencesService.getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
     preferencesService.addChangeListener(this);
     new Thread(() -> {
-      validateKey();
+      List<String> apiKeys = wovpSettings.getApiKeys();
+      for (String apiKey : apiKeys) {
+        validateKey(apiKey);
+      }
       synchronize(false);
     }).start();
     LOG.info("Initialized {}", this.getClass().getSimpleName());
+  }
+
+  public boolean clearCache() {
+    Wovp.clearCache();
+    wovpSettings = preferencesService.getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
+    List<String> apiKeys = wovpSettings.getApiKeys();
+    for (String apiKey : apiKeys) {
+      validateKey(apiKey);
+    }
+    return true;
   }
 }

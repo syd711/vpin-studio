@@ -1,5 +1,7 @@
 package de.mephisto.vpin.server.competitions;
 
+import de.mephisto.vpin.connectors.wovp.Wovp;
+import de.mephisto.vpin.connectors.wovp.models.WovpPlayer;
 import de.mephisto.vpin.restclient.competitions.CompetitionScore;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.competitions.IScoredSyncModel;
@@ -60,9 +62,10 @@ public class CompetitionResource {
     return wovpService.isScoreSubmitEnabled();
   }
 
-  @GetMapping("/weekly/submit/{simulate}")
-  public ScoreSubmitResult submitScore(@PathVariable("simulate") boolean simulate) {
-    return wovpService.submitScore(simulate);
+  @GetMapping("/weekly/submit/{userId}/{simulate}")
+  public ScoreSubmitResult submitScore(@PathVariable("userId") String userId, @PathVariable("simulate") boolean simulate) {
+    WovpPlayer player = wovpService.getPlayer(userId);
+    return wovpService.submitScore(player, simulate);
   }
 
   @GetMapping("/subscriptions")

@@ -34,13 +34,27 @@
 }
 
 .submit-button {
-    -fx-font-color: #FFFFFF;
-    -fx-text-fill: #FFFFFF;
-    -fx-background-color: #338800;
-    -fx-border-color: #33AA00;
-    -fx-border-style: solid;
-    -fx-border-width: 1;
     -fx-border-radius: 3px;
+    -fx-text-fill: #FFFFFF;
+    -fx-base : #111111;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: #6666FF;
+    -fx-border-width: 1;
+    -fx-font-size : 20px;
+    -fx-background-color: #333366;
+    -fx-text-fill: #fff8f8;
+}
+
+.default-button {
+    -fx-border-radius: 3px;
+    -fx-text-fill: #FFFFFF;
+    -fx-base : #111111;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: #111111;
+    -fx-border-width: 1;
+    -fx-font-size : 20px;
+    -fx-background-color: #272b2f;
+    -fx-text-fill: #fff8f8;
 }
 
 
