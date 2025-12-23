@@ -130,6 +130,14 @@ public class MonitorInfo {
   @Override
   public String toString() {
     if (primary) {
+      return "Monitor " + (id + 1) + " (primary) [" + getWidth() + "x" + getHeight() + "]";
+    }
+    return "Monitor " + (id + 1) + " [" + getWidth() + "x" + getHeight() + "]";
+  }
+
+  @JsonIgnore
+  public String toDetailsString() {
+    if (primary) {
       return "Monitor " + (id + 1) + " (primary) [" + getWidth() + "x" + getHeight() + "] Scaled X: " + getScaledX() + ", Scaling: " + scaling + ", MinY: " +getMinY();
     }
     return "Monitor " + (id + 1) + " [" + getWidth() + "x" + getHeight() + "] Scaled X: " + getScaledX() + ", Scaling: " + scaling + ", MinY: " +getMinY();

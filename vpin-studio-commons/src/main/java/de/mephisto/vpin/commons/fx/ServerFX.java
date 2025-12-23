@@ -98,7 +98,7 @@ public class ServerFX extends Application {
         LOG.info("########################## Screen Summary #####################################");
         List<MonitorInfo> monitors = MonitorInfoUtil.getMonitors();
         for (MonitorInfo monitor : monitors) {
-          LOG.info(monitor.toString());
+          LOG.info(monitor.toDetailsString());
         }
         LOG.info("######################### /Screen Summary #####################################");
       });

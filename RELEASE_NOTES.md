@@ -6,7 +6,7 @@ Note that there are breaking changes in the pause menu preferences. Please revis
 
 - **World Of Virtual Pinball Competitions**
   - The VPin Studio has supports **World Of Virtual Pinball** competitions now (https://worldofvirtualpinball.com/en).
-  - A new tab **WOVP Competitions** has been added to the competition section. Note that the tab is only visible after you have added a valid API key on the corresponding preferences section. More details are described on YouTube (https://www.youtube.com/channel/UCs8ecXBMCUtYAaa0abpA6Xw).
+  - A new tab **WOVP Competitions** has been added to the competition section. Note that the tab is only visible after you have added a valid API key on the corresponding preferences section. More details are described on YouTube (https://youtu.be/f8E_v081ciQ).
    
 - **Pause Menu**
   - The pause menu supports **desktop environments** too.
@@ -20,7 +20,5 @@ Note that there are breaking changes in the pause menu preferences. Please revis
 
 ## Bugfixes
 
-- **Discord Table Subscriptions**: categories up to 500
-- **Discord Bot Settings**:  
-  - admin check disable
-  - Improved validator
+- **Discord Table Subscriptions**: Solved the channel limit issue for table subscriptions. Discord allows only 50 channels for every category and up to 500 channels in total. The VPin Studio bot can now automatically create new categories and create additional subscription channels if you have already reached the first 50 entries. Note that you bot needs the **"Manage Channel" permission** for this. So you might need to re-add the bot to your server with more permissions that before. (For help, see: https://github.com/syd711/vpin-studio/wiki/Discord-Integration#discord-permissions-for-adding-a-bot-to-your-server)
+- **Discord Bot Settings**: Fixed issues with the issues checker and improved validation.
