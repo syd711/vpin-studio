@@ -95,12 +95,7 @@ public class ServerFX extends Application {
       latch.await();
       LOG.info("OverlayFX creation finished.");
       Platform.runLater(() -> {
-        LOG.info("########################## Screen Summary #####################################");
-        List<MonitorInfo> monitors = MonitorInfoUtil.getMonitors();
-        for (MonitorInfo monitor : monitors) {
-          LOG.info(monitor.toDetailsString());
-        }
-        LOG.info("######################### /Screen Summary #####################################");
+        MonitorInfoUtil.logScreenSummary();
       });
 
       for (ServerFXListener listener : listeners) {

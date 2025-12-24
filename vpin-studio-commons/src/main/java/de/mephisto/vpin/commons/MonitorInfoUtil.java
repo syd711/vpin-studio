@@ -1,9 +1,11 @@
 package de.mephisto.vpin.commons;
 
 import de.mephisto.vpin.restclient.system.MonitorInfo;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +14,7 @@ import java.util.Optional;
  *
  */
 public class MonitorInfoUtil {
+  private final static org.slf4j.Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   /**
    * List monitors
@@ -76,5 +79,19 @@ public class MonitorInfoUtil {
     monitor.setId(index);
 
     return monitor;
+  }
+
+  public static void logScreenSummary() {
+    try {
+      LOG.info("########################## Screen Summary #####################################");
+      List<MonitorInfo> monitors = MonitorInfoUtil.getMonitors();
+      for (MonitorInfo monitor : monitors) {
+        LOG.info(monitor.toDetailsString());
+      }
+      LOG.info("######################### /Screen Summary #####################################");
+    }
+    catch (Exception e) {
+      LOG.error("Logging monitor information failed: {}", e.getMessage());
+    }
   }
 }

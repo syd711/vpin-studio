@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.commons.MonitorInfoUtil;
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.apng.ApngImageLoaderFactory;
@@ -250,6 +251,8 @@ public class Studio extends Application {
 
       // run later to let the splash render properly
       JFXFuture.runAsync(() -> {
+            MonitorInfoUtil.logScreenSummary();
+
             //force pre-caching, this way, the table overview does not need to execute single GET requests
             new Thread(() -> {
               Studio.client.getVpsService().invalidateAll();
