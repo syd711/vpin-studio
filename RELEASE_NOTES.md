@@ -2,19 +2,28 @@
 
 Note that there are breaking changes in the pause menu preferences. Please revisit these settings!
 
+## Updater Issues
+
+In case the updater stalls and the server update (happens because of issues introduced with version 4.4.5), please replace the server .exe file manually:
+https://github.com/syd711/vpin-studio/releases/download/4.5.0/VPin-Studio-Server.zip
+
+Additional instructions regarding manual updates can be found here:
+https://github.com/syd711/vpin-studio/wiki#manual-updates
+
+
 ## Changes
 
 - **World Of Virtual Pinball Competitions**
   - The VPin Studio has supports **World Of Virtual Pinball** competitions now (https://worldofvirtualpinball.com/en).
-  - A new tab **WOVP Competitions** has been added to the competition section. Note that the tab is only visible after you have added a valid API key on the corresponding preferences section. More details are described on YouTube (https://youtu.be/f8E_v081ciQ).
+  - A new tab **WOVP Competitions** has been added to the competition section. Note that the tab is only visible after you have added a valid API key on the corresponding preferences section. More details are described on YouTube (https://www.youtube.com/watch?v=a2phlDiCSEY).
    
 - **Pause Menu**
-  - The pause menu supports **desktop environments** too.
+  - The pause menu supports **desktop environments** too (there are layout issues for HD resolutions not fixed yet).
   - The **tutorial** video can be shown on a separate frontend screen now (again).
-  - The **P key** configuration is now optional. You will lose the "one second" delay on resume, otherwise the focus management should ensure that the game will continue once the pause menu is closed.
+  - The **P key** configuration is now optional. You will lose the "one second"/configurable delay on resume, otherwise the focus management should ensure that the game will continue once the pause menu is closed.
   - Added menu entry for the score submission of **World Of Virtual Pinball** competitions.
 
-- **VPin Tournaments**
+- **VPin Mania Tournaments**
   - The feature has been removed from the Studio. The focus of the tool will remain the table management and smaller competitions. This will include 3rd party systems and improvements regarding the existing Discord based solutions.
 
 
