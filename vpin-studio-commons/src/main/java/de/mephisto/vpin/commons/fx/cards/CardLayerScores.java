@@ -273,12 +273,59 @@ public class CardLayerScores extends Canvas implements CardLayer {
       return (int) (theText.getBoundsInLocal().getHeight() * this.lines.size()) + (this.lines.size() * template.getRowMargin());
     }
 
-    public int getWIDTH(Font FONT) {
+    public int getWIDTH(Font font) {
+      int offset = getOffsetForFont(font);
       int maxWIDTH = 0;
       for (String line : lines) {
-        maxWIDTH = Math.max(maxWIDTH, getTextWidth(line + "   ", FONT));
+        maxWIDTH = Math.max(maxWIDTH, getTextWidth(line, font));
       }
-      return maxWIDTH;
+      return maxWIDTH + offset;
+    }
+
+    /**
+     * We try to fix the width calculation manually here, depending on the font size
+     *
+     * @param font
+     * @return
+     */
+    private int getOffsetForFont(Font font) {
+      //TODO more guessed :-/
+      double size = font.getSize();
+      double offset = 10;
+      if (size < 30) {
+        offset = size * 2.50;
+      }
+      else if (size < 40) {
+        offset = size * 1.5;
+      }
+      else if (size < 50) {
+        offset = size * 1.0;
+      }
+      else if (size < 60) {
+        offset = size * 0.9;
+      }
+      else if (size < 80) {
+        offset = size * 0.5;
+      }
+      else if (size < 90) {
+        offset = size * 0.25;
+      }
+      else if (size < 100) {
+        offset = size * 0.25;
+      }
+      else if (size < 110) {
+        offset = size * 0.10;
+      }
+      else if (size < 120) {
+        offset = size * 0.09;
+      }
+      else if (size < 130) {
+        offset = size * 0.15;
+      }
+      else if (size < 170) {
+        offset = size * 0.01;
+      }
+      return (int) offset;
     }
 
     protected int getTextWidth(String text, Font font) {

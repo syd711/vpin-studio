@@ -13,6 +13,8 @@ import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.highscores.HighscoreBackupService;
+import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.vpx.VPXUtil;
@@ -45,6 +47,12 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
 
   @Autowired
   private FrontendService frontendService;
+
+  @Autowired
+  private HighscoreBackupService highscoreBackupService;
+
+  @Autowired
+  private HighscoreService highscoreService;
 
   @Autowired
   private GameService gameService;
@@ -92,6 +100,11 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
           refreshTags(game, wovpSettings, false);
 
           updateCompetition(competition, challenge, wovpSettings);
+          if (game != null && competition.isHighscoreReset() && !challengeId.equals(competition.getUuid())) {
+            if (highscoreBackupService.backup(game) != null) {
+              highscoreService.resetHighscore(game);
+            }
+          }
         }
         return;
       }

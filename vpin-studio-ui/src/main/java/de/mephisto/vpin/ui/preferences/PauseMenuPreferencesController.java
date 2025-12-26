@@ -26,8 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import static de.mephisto.vpin.ui.Studio.Features;
-import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.Studio.*;
 import static de.mephisto.vpin.ui.util.PreferenceBindingUtil.debouncer;
 
 public class PauseMenuPreferencesController implements Initializable {
@@ -98,7 +97,7 @@ public class PauseMenuPreferencesController implements Initializable {
     PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
 
     maniaScoresBox.managedProperty().bindBidirectional(maniaScoresBox.visibleProperty());
-    maniaScoresBox.setVisible(Features.MANIA_ENABLED && pauseMenuSettings.isShowManiaScores());
+    maniaScoresBox.setVisible(Features.MANIA_ENABLED && maniaClient.getCabinetClient() != null);
     iScoredScoresBox.managedProperty().bindBidirectional(iScoredScoresBox.visibleProperty());
     iScoredScoresBox.setVisible(Features.ISCORED_ENABLED && pauseMenuSettings.isShowIscoredScores());
 

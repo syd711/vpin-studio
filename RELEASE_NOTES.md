@@ -1,3 +1,14 @@
+## Release Notes 4.5.1
+
+## Changes 
+
+- Designer: Improved the centered/right calculation for texts when drawn on the canvas. (_Note that this calculation is only a best approach, depends on the font size and not pixel perfect!_)
+- Pause Menu: Fixed VPin Mania menu entry settings that vanished. Thanks @JRVirtual34 for helping here!
+- WOVP Integration: Added missing highscore backup + reset on automatic competition change.
+
+---
+
+
 ## Release Notes 4.5.0
 
 Note that there are breaking changes in the pause menu preferences. Please revisit these settings!
