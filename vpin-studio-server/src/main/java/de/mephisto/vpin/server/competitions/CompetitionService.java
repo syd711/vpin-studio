@@ -364,5 +364,6 @@ public class CompetitionService implements InitializingBean {
 
   public void shutdown() {
     scheduler.shutdown();
+    LOG.info("Competition scheduler has been shut down.");
   }
 }

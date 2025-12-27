@@ -596,6 +596,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
             HikariDataSource dataSource = (HikariDataSource) context.getBean("dataSource");
             dataSource.close();
+            LOG.info("Database connection has been closed.");
           }
           catch (Exception e) {
             LOG.error("Shutdown failed: {}", e.getMessage());
@@ -610,7 +611,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
         }
       });
 
-      submit.get(5, TimeUnit.SECONDS);
+      submit.get(3, TimeUnit.SECONDS);
     }
     catch (Exception e) {
       LOG.error("Server Shutdown Error: {}", e.getMessage());

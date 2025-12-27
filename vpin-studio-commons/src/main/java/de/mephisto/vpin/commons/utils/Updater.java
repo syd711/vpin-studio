@@ -101,11 +101,11 @@ public class Updater {
       }
 
       if (!FileUtils.checkedCopy(tmp, target)) {
-        LOG.error("Failed to copy  download temp file {} to {}", tmp.getAbsolutePath(), target.getAbsolutePath());
+        LOG.error("Failed to copy download temp file {} to {}", tmp.getAbsolutePath(), target.getAbsolutePath());
       }
-      LOG.info("Downloaded file {}", target.getAbsolutePath());
+      LOG.info("Downloaded file to overwrite {}", target.getAbsolutePath());
       if (tmp.delete()) {
-        LOG.info("Downloaded temp file {}", tmp.getAbsolutePath());
+        LOG.info("Deleted downloaded temp file {}", tmp.getAbsolutePath());
       }
       else {
         LOG.info("Failed to deleted downloaded temp file {}", tmp.getAbsolutePath());

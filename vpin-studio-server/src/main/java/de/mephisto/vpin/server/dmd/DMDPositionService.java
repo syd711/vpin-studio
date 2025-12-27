@@ -48,6 +48,8 @@ import java.util.List;
 public class DMDPositionService {
   private final static Logger LOG = LoggerFactory.getLogger(DMDPositionService.class);
 
+  public static final String DMD_DEVICE_INI = "DmdDevice.ini";
+
   @Autowired
   private GameService gameService;
   @Autowired
@@ -573,7 +575,7 @@ public class DMDPositionService {
     if (dmdinfo.getDmdStoreName().contains(".")) {
       dmdStoreName = dmdStoreName.replace(".", "..");
     }
-    
+
     SubnodeConfiguration virtualdmdConf = iniConfiguration.getSection("virtualdmd");
     SubnodeConfiguration alphaNumericConf = iniConfiguration.getSection("alphanumeric");
     //SubnodeConfiguration conf = iniConfiguration.getSection();
@@ -654,7 +656,7 @@ public class DMDPositionService {
   // Utilities
 
   private INIConfiguration loadDmdDeviceIni(GameEmulator emulator) {
-    File iniFile = new File(emulator.getMameFolder(), "DmdDevice.ini");
+    File iniFile = new File(emulator.getMameFolder(), DMD_DEVICE_INI);
     if (!iniFile.exists()) {
       return null;
     }
@@ -688,7 +690,7 @@ public class DMDPositionService {
   }
 
   private boolean saveDmdDeviceIni(GameEmulator emulator, INIConfiguration iniConfiguration) {
-    File iniFile = new File(emulator.getMameFolder(), "DmdDevice.ini");
+    File iniFile = new File(emulator.getMameFolder(), DMD_DEVICE_INI);
     if (!iniFile.exists()) {
       return false;
     }
@@ -697,6 +699,7 @@ public class DMDPositionService {
          BufferedWriter writer = new BufferedWriter(osw)) {
       writer.write('\ufeff');
       iniConfiguration.write(writer);
+      LOG.info("Written DMD configuration {}", iniFile.getAbsolutePath());
       return true;
     }
     catch (Exception e) {

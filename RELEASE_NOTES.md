@@ -1,3 +1,14 @@
+## Release Notes 4.5.2
+
+
+
+## Changes 
+
+- **Fixed automatic updates**. You need to install this update manually to fix the automatic updater and be able to install future updates.
+- Pause Menu: Added quick-fix for 4k/21:9 resolutions.
+
+---
+
 ## Release Notes 4.5.1
 
 ## Changes 

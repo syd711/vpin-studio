@@ -150,5 +150,6 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
 
   public void shutdown() {
     scheduler.shutdownNow();
+    LOG.info("Folder monitoring scheduler has been shut down.");
   }
 }

@@ -612,5 +612,6 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
   public void shutdown() {
     this.setOffline();
+    LOG.info("Cabinet has been set into offline mode.");
   }
 }

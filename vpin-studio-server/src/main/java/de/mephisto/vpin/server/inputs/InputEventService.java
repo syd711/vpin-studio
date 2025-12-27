@@ -377,5 +377,6 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
 
   public void shutdown() {
     shutdownThread.shutdown();
+    LOG.info("Shutdown watcher has been shut down.");
   }
 }

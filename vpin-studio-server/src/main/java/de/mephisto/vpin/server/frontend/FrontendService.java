@@ -712,6 +712,13 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
       getFrontendConnector().getFrontendPlayerDisplays();
       preferencesService.addChangeListener(this);
+
+      List<FrontendPlayerDisplay> displays = getFrontendPlayerDisplays(false);
+      LOG.info("########################## Frontend Screen Summary #####################################");
+      for (FrontendPlayerDisplay frontendPlayerDisplay : displays) {
+        LOG.info(frontendPlayerDisplay.toString());
+      }
+      LOG.info("######################### /Frontend Screen Summary #####################################");
     }
     catch (Exception e) {
       LOG.info("FrontendService initialization failed: {}", e.getMessage(), e);

@@ -155,7 +155,12 @@ public class PauseMenu extends Application {
     else {
       LOG.info("Window Mode: Desktop");
       stage.setX(PauseMenuUIDefaults.getScaledScreenX());
-      if (max > 2560) {
+
+      double screenHeight = PauseMenuUIDefaults.getScreenHeight();
+      if (screenHeight == 1440) {
+        scaling = 0.9;
+      }
+      else if (max > 2560) {
         rootPane.setTranslateY(500);
         scaling = 1.4;
       }
