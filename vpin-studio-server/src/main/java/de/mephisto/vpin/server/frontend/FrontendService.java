@@ -28,9 +28,11 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.awt.*;
 import java.io.File;
 import java.sql.Date;
 import java.util.*;
+import java.util.List;
 
 @Service
 public class FrontendService implements InitializingBean, PreferenceChangedListener {
@@ -713,12 +715,15 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
       getFrontendConnector().getFrontendPlayerDisplays();
       preferencesService.addChangeListener(this);
 
-      List<FrontendPlayerDisplay> displays = getFrontendPlayerDisplays(false);
-      LOG.info("########################## Frontend Screen Summary #####################################");
-      for (FrontendPlayerDisplay frontendPlayerDisplay : displays) {
-        LOG.info(frontendPlayerDisplay.toString());
+      boolean isHeadless = GraphicsEnvironment.isHeadless();
+      if (!isHeadless) {
+        List<FrontendPlayerDisplay> displays = getFrontendPlayerDisplays(false);
+        LOG.info("########################## Frontend Screen Summary #####################################");
+        for (FrontendPlayerDisplay frontendPlayerDisplay : displays) {
+          LOG.info(frontendPlayerDisplay.toString());
+        }
+        LOG.info("######################### /Frontend Screen Summary #####################################");
       }
-      LOG.info("######################### /Frontend Screen Summary #####################################");
     }
     catch (Exception e) {
       LOG.info("FrontendService initialization failed: {}", e.getMessage(), e);

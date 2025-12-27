@@ -22,6 +22,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -492,15 +493,18 @@ public class VPinScreenService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() {
-    List<FrontendPlayerDisplay> displays = getScreenResDisplays();
-    LOG.info("######################## Offset Frontend Screen Summary ##################################");
-    DirectB2sScreenRes screenres = backglassService.getGlobalScreenRes();
-    MonitorInfo backglassMonitor = getBackglassMonitor(screenres, MonitorInfoUtil.getMonitors());
-    LOG.info("Backglass Monitor: {}", backglassMonitor);
-    LOG.info("------------------------------------------------------------------------------------------");
-    for (FrontendPlayerDisplay frontendPlayerDisplay : displays) {
-      LOG.info(frontendPlayerDisplay.toString());
+    boolean isHeadless = GraphicsEnvironment.isHeadless();
+    if (!isHeadless) {
+      List<FrontendPlayerDisplay> displays = getScreenResDisplays();
+      LOG.info("######################## Offset Frontend Screen Summary ##################################");
+      DirectB2sScreenRes screenres = backglassService.getGlobalScreenRes();
+      MonitorInfo backglassMonitor = getBackglassMonitor(screenres, MonitorInfoUtil.getMonitors());
+      LOG.info("Backglass Monitor: {}", backglassMonitor);
+      LOG.info("------------------------------------------------------------------------------------------");
+      for (FrontendPlayerDisplay frontendPlayerDisplay : displays) {
+        LOG.info(frontendPlayerDisplay.toString());
+      }
+      LOG.info("####################### /Offset  Frontend Screen Summary #################################");
     }
-    LOG.info("####################### /Offset  Frontend Screen Summary #################################");
   }
 }
