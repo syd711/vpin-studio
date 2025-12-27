@@ -1,11 +1,14 @@
 ## Release Notes 4.5.2
 
+### Unfortunately the previous attempt to fix the updater issue was not resolved. But the issue has been fixed now. If you have a version larger than 4.4.6 installed, you need to install this(!) release manually.
 
+**Download https://github.com/syd711/vpin-studio/releases/download/4.5.2/VPin-Studio-Server.zip and follow these instructions:**
+**https://github.com/syd711/vpin-studio/wiki#manual-updates**
 
 ## Changes 
 
-- **Fixed automatic updates**. You need to install this update manually to fix the automatic updater and be able to install future updates.
 - Pause Menu: Added quick-fix for 4k/21:9 resolutions.
+- Added more logging to resolve broken DMD positioning issue (not fixed yet!).
 
 ---
 
