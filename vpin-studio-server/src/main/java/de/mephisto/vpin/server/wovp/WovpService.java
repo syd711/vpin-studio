@@ -117,7 +117,7 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
     Wovp wovp = Wovp.create(apiKey);
     Challenges challenges = null;
     try {
-      challenges = wovp.getChallenges(true);
+      challenges = wovp.getChallenges(!simulate);
     }
     catch (Exception e) {
       SLOG.info("[WOVP simulate=" + simulate + "] " + "Fetching challenges failed: " + e.getMessage());

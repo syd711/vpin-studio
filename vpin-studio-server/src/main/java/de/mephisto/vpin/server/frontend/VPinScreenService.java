@@ -442,8 +442,7 @@ public class VPinScreenService implements InitializingBean {
     }
     else {
       for (MonitorInfo m : monitors) {
-        //TODO why?? the backglassDisplay only contains the X coordinate from the backglass - so not name related.
-        if (m.getName().endsWith(backglassDisplay)) {
+        if (String.valueOf(m.getId()).equals(backglassDisplay)) {
           monitor = m;
         }
       }
@@ -495,6 +494,7 @@ public class VPinScreenService implements InitializingBean {
   public void afterPropertiesSet() {
     boolean isHeadless = GraphicsEnvironment.isHeadless();
     if (!isHeadless) {
+      MonitorInfoUtil.logScreenSummary();
       List<FrontendPlayerDisplay> displays = getScreenResDisplays();
       LOG.info("######################## Offset Frontend Screen Summary ##################################");
       DirectB2sScreenRes screenres = backglassService.getGlobalScreenRes();

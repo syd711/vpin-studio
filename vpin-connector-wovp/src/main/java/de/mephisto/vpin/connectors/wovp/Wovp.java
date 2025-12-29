@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.connectors.wovp.models.*;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -49,6 +49,7 @@ public class Wovp {
 
   private final String apiKey;
   private static Challenges challenges;
+  private static Date refreshDate = null;
 
   public static Wovp create(@NonNull String apiKey) {
     return new Wovp(apiKey);
@@ -72,7 +73,8 @@ public class Wovp {
   }
 
   public Challenges getChallenges(boolean forceReload) throws Exception {
-    if (challenges == null || forceReload) {
+    if (challenges == null || forceReload || refreshDate == null || !DateUtils.isSameDay(new Date(), refreshDate)) {
+      refreshDate = new Date();
       Search search = new Search();
       String json = objectMapper.writeValueAsString(search);
       challenges = doPost(json, Challenges.class, CHALLENGES_URL);

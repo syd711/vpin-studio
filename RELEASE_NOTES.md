@@ -1,3 +1,13 @@
+## Release Notes 4.5.3
+
+## Changes
+
+- Media Recorder: Removed hint that the GL version of VPX can't be used for recordings.
+- Pause Menu: Reduced delay of the menu showing up.
+
+--- 
+
+
 ## Release Notes 4.5.2
 
 ### Unfortunately the previous attempt to fix the updater issue was not resolved. But the issue has been fixed now. If you have a version larger than 4.4.6 installed, you need to install this(!) release manually.

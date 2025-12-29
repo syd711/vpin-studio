@@ -63,7 +63,7 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
       WOVPSettings wovpSettings = preferencesService.getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
       if (!StringUtils.isEmpty(apiKey) && wovpSettings.isEnabled()) {
         Wovp wovp = Wovp.create(apiKey);
-        Challenges challenges = wovp.getChallenges(true);
+        Challenges challenges = wovp.getChallenges(forceReload);
         if (challenges != null) {
           List<Competition> weeklyCompetitions = competitionService.getWeeklyCompetitions();
           for (Challenge challenge : challenges.getItems()) {

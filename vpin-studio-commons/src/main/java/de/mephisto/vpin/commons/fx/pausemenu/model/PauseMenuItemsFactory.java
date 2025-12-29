@@ -33,10 +33,9 @@ import static de.mephisto.vpin.commons.fx.ServerFX.client;
 public class PauseMenuItemsFactory {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  public static List<PauseMenuItem> createPauseMenuItems(@NonNull PauseMenuState state,  @Nullable VPinScreen cardScreen, @NonNull FrontendMediaRepresentation frontendMedia) {
+  public static List<PauseMenuItem> createPauseMenuItems(@NonNull PauseMenuState state, @Nullable VPinScreen cardScreen, @NonNull FrontendMediaRepresentation frontendMedia) {
     GameRepresentation game = state.getGame();
     PauseMenuSettings pauseMenuSettings = client.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
-    WOVPSettings wovpSettings = client.getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
 
     // get application features
     FeaturesInfo Features = ServerFX.client.getSystemService().getFeatures();

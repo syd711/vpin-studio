@@ -224,16 +224,26 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
   public long sendMessage(long serverId, long channelId, String message) {
     if (this.discordClient != null) {
-      SLOG.info("Sending discord message to channel " + channelId);
-      return this.discordClient.sendMessage(serverId, channelId, message);
+      try {
+        SLOG.info("Sending discord message to channel " + channelId);
+        return this.discordClient.sendMessage(serverId, channelId, message);
+      }
+      catch (Exception e) {
+        LOG.error("Failed to send Discord message: {}", e.getMessage(), e);
+      }
     }
     return -1;
   }
 
   public long sendMessage(long serverId, long channelId, MessageEmbed message) {
     if (this.discordClient != null) {
-      SLOG.info("Sending discord message to channel " + channelId);
-      return this.discordClient.sendMessage(serverId, channelId, message);
+      try {
+        SLOG.info("Sending discord message to channel " + channelId);
+        return this.discordClient.sendMessage(serverId, channelId, message);
+      }
+      catch (Exception e) {
+        LOG.error("Failed to send Discord message: {}", e.getMessage(), e);
+      }
     }
     return -1;
   }

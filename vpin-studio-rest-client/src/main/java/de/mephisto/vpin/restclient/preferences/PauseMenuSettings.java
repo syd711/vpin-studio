@@ -22,6 +22,7 @@ public class PauseMenuSettings extends JsonSettings {
 
   private boolean showIscoredScores = true;
   private boolean showManiaScores = true;
+  private boolean showWovpScores = true;
   private boolean showTutorials = true;
 
   private String pauseButton;
@@ -64,6 +65,14 @@ public class PauseMenuSettings extends JsonSettings {
 
   public void setRotation(int rotation) {
     this.rotation = rotation;
+  }
+
+  public boolean isShowWovpScores() {
+    return showWovpScores;
+  }
+
+  public void setShowWovpScores(boolean showWovpScores) {
+    this.showWovpScores = showWovpScores;
   }
 
   public boolean isShowTutorials() {
