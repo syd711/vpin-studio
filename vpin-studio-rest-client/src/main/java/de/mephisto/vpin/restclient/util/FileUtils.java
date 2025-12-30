@@ -25,6 +25,7 @@ public class FileUtils {
     try {
       if (!target.exists() || source.length() != target.length()) {
         if (target.exists() && !target.delete()) {
+          LOG.error("Failed to delete target file {} of checked copy {}", target.getAbsolutePath(), source.getAbsolutePath());
           return false;
         }
         org.apache.commons.io.FileUtils.copyFile(source, target);
@@ -35,7 +36,7 @@ public class FileUtils {
     catch (Exception e) {
       LOG.error("Failed to execute checked copy: {}", e.getMessage(), e);
     }
-    return false;
+    return true;
   }
 
   public static String replaceWindowsChars(String name) {
