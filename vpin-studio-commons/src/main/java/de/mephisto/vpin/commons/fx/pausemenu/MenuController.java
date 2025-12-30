@@ -315,7 +315,7 @@ public class MenuController implements Initializable {
         FXMLLoader loader = new FXMLLoader(WovpMenuItemController.class.getResource(resource));
         Pane widgetRoot = loader.load();
         wovpMenuItemController = loader.getController();
-        wovpMenuItemController.setData(game, vpsTable, sectionImage);
+        wovpMenuItemController.setData(game, activeSelection, vpsTable, sectionImage);
         scoreView.setCenter(widgetRoot);
         scoreView.setVisible(true);
       }

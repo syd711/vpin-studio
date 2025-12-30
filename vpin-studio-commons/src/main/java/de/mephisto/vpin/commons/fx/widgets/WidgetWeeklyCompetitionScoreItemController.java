@@ -1,6 +1,7 @@
 package de.mephisto.vpin.commons.fx.widgets;
 
 import de.mephisto.vpin.commons.fx.ImageUtil;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.restclient.competitions.CompetitionScore;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
@@ -15,6 +16,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import org.apache.commons.lang3.StringUtils;
 
 import java.awt.*;
@@ -31,7 +34,8 @@ import static de.mephisto.vpin.commons.utils.WidgetFactory.getScoreFontSmall;
 public class WidgetWeeklyCompetitionScoreItemController extends WidgetController implements Initializable {
   private final static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy / hh:mm");
 
-  private final static int DEFAULT_AVATARSIZE = 60;
+  private static int DEFAULT_AVATARSIZE = 60;
+  private static int COMPACT_DEFAULT_AVATARSIZE = 40;
 
   @FXML
   private BorderPane root;
@@ -54,6 +58,8 @@ public class WidgetWeeklyCompetitionScoreItemController extends WidgetController
   @FXML
   private Label changeDateLabel;
 
+  private boolean compactMode = false;
+
   // Add a public no-args constructor
   public WidgetWeeklyCompetitionScoreItemController() {
   }
@@ -62,15 +68,28 @@ public class WidgetWeeklyCompetitionScoreItemController extends WidgetController
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     positionLabel.managedProperty().bindBidirectional(positionLabel.visibleProperty());
+    changeDateLabel.managedProperty().bindBidirectional(changeDateLabel.visibleProperty());
     scoreLabel.managedProperty().bindBidirectional(scoreLabel.visibleProperty());
     statusLabel.managedProperty().bindBidirectional(statusLabel.visibleProperty());
     statusLabel.setVisible(false);
+    Font scoreFont = getScoreFont();
+    scoreLabel.setFont(scoreFont);
   }
 
   public void setData(CompetitionScore score) {
+    if (compactMode) {
+      root.setPadding(new Insets(6, 6, 6, 6));
+      Font posFont = Font.font("System", FontPosture.findByName("regular"), 16);
+      positionLabel.setFont(posFont);
+    }
+
     JFXFuture.supplyAsync(() -> {
       Image image = new Image(client.getCachedUrlImage(score.getAvatarUrl()));
       BufferedImage avatarImage = SwingFXUtils.fromFXImage(image, null);
+      if (avatarImage.getWidth() == 40) {
+        image = new Image(ServerFX.class.getResourceAsStream("avatar-blank.png"));
+        avatarImage = SwingFXUtils.fromFXImage(image, null);
+      }
       avatarImage = ImageUtil.crop(avatarImage, (avatarImage.getWidth() - avatarImage.getHeight()) / 2, 0, avatarImage.getHeight(), avatarImage.getHeight());
       return SwingFXUtils.toFXImage(avatarImage, null);
     }).thenAcceptLater((image) -> {
@@ -90,11 +109,21 @@ public class WidgetWeeklyCompetitionScoreItemController extends WidgetController
       avatarImageView.setClip(clip);
 
       if (score.isMyScore()) {
-        root.setStyle("-fx-border-style: solid solid solid solid;\n" +
-            "    -fx-border-color: #333366;\n" +
-            "    -fx-border-width: 1 1 1 6;");
+        if (compactMode) {
+          root.setStyle("-fx-border-style: solid solid solid solid;\n" +
+              "    -fx-border-color: transparent;\n" +
+              "    -fx-border-width: 1 1 1 6;");
+
+          Font posFont = Font.font("System", FontWeight.BOLD, FontPosture.findByName("bold"), 16);
+          positionLabel.setFont(posFont);
+        }
+        else {
+          root.setStyle("-fx-border-style: solid solid solid solid;\n" +
+              "    -fx-border-color: #333366;\n" +
+              "    -fx-border-width: 1 1 1 6;");
+        }
       }
-      else{
+      else {
         root.setStyle("-fx-border-style: solid solid solid solid;\n" +
             "    -fx-border-color: transparent;\n" +
             "    -fx-border-width: 1 1 1 6;");
@@ -110,8 +139,6 @@ public class WidgetWeeklyCompetitionScoreItemController extends WidgetController
     nameLabel.setText(score.getParticipantName());
 
     if (score.getScore() > 0) {
-      Font scoreFont = getScoreFont();
-      scoreLabel.setFont(scoreFont);
       long l = new Double(score.getScore()).longValue();
       scoreLabel.setText(ScoreFormatUtil.formatScore(l, Locale.getDefault()));
     }
@@ -120,6 +147,7 @@ public class WidgetWeeklyCompetitionScoreItemController extends WidgetController
     }
 
     changeDateLabel.setText(score.getLeague() != null ? score.getLeague() : "");
+    changeDateLabel.setVisible(!compactMode);
 
     if (score.isPending()) {
       statusLabel.setVisible(true);
@@ -146,5 +174,12 @@ public class WidgetWeeklyCompetitionScoreItemController extends WidgetController
     }).thenAcceptLater((image) -> {
       root.setBackground(new Background(image));
     });
+  }
+
+  public void setCompact() {
+    compactMode = true;
+    DEFAULT_AVATARSIZE = COMPACT_DEFAULT_AVATARSIZE;
+    Font scoreFont = getScoreFontSmall();
+    scoreLabel.setFont(scoreFont);
   }
 }

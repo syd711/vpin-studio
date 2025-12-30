@@ -4,6 +4,8 @@
 
 - Media Recorder: Removed hint that the GL version of VPX can't be used for recordings.
 - Pause Menu: Reduced delay of the menu showing up.
+- Pause Menu: Revamped the WOVP score submit entry which shows the top scores now too.
+- DMD Positioner: Fixed detection of the correct backglass monitor.
 
 --- 
 

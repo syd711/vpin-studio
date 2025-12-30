@@ -27,6 +27,7 @@ import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static de.mephisto.vpin.commons.fx.ServerFX.client;
 
@@ -45,7 +46,9 @@ public class PauseMenuItemsFactory {
     pauseMenuItems.add(item);
 
     if (state.isScoreSubmitterEnabled()) {
+      Optional<CompetitionRepresentation> first = client.getCompetitionService().getWeeklyCompetitions().stream().filter(c -> c.getGameId() == game.getId()).findFirst();
       PauseMenuItem scoreSubmitterItem = new PauseMenuItem(PauseMenuItemTypes.wovp, "World Of Virtual Pinball", "Score Submitter for World Of Virtual Pinball", new Image(PauseMenu.class.getResourceAsStream("wovp-wheel.png")));
+      scoreSubmitterItem.setCompetition(first.get());
       pauseMenuItems.add(scoreSubmitterItem);
     }
 

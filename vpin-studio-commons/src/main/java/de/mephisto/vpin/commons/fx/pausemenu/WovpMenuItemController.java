@@ -1,25 +1,35 @@
 package de.mephisto.vpin.commons.fx.pausemenu;
 
+import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItem;
+import de.mephisto.vpin.commons.fx.widgets.WidgetWeeklyCompetitionScoreItemController;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.connectors.wovp.models.WovpPlayer;
+import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
+import de.mephisto.vpin.restclient.competitions.CompetitionScore;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.restclient.wovp.ScoreSubmitResult;
 import javafx.animation.Transition;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import org.jetbrains.annotations.NotNull;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
@@ -49,12 +59,6 @@ public class WovpMenuItemController implements Initializable {
   private VBox errorContainer;
 
   @FXML
-  private Label playerScoreLabel;
-
-  @FXML
-  private Label playerNameLabel;
-
-  @FXML
   private Button submitBtn;
 
   @FXML
@@ -73,14 +77,24 @@ public class WovpMenuItemController implements Initializable {
   private BorderPane widgetPane;
 
   @FXML
+  private Pane playerSelectorBox;
+
+  @FXML
+  private Pane scoresBox;
+
+  @FXML
+  private Pane scoresLoader;
+
+  @FXML
   private ImageView screenshotView;
 
   private static List<WovpPlayer> players;
   private WovpPlayer wovpPlayer;
   private int playerSelectionIndex = 0;
   private static Image screenshotImage;
+  private PauseMenuItem pauseMenuItem;
 
-  public void setData(GameRepresentation game, VpsTable tableById, Image sectionImage) {
+  public void setData(GameRepresentation game, PauseMenuItem pauseMenuItem, VpsTable tableById, Image sectionImage) {
     this.nameLabel.setText(game.getGameDisplayName());
     this.versionLabel.setVisible(false);
     this.authorsLabel.setVisible(false);
@@ -121,16 +135,74 @@ public class WovpMenuItemController implements Initializable {
       if (this.wovpPlayer == null) {
         this.wovpPlayer = players.get(0);
       }
-      this.playerBtn.setVisible(players.size() > 1);
+      this.playerSelectorBox.setVisible(players.size() > 1);
       this.rightBtn.setVisible(players.size() > 1);
 
-      if (this.playerBtn.isVisible()) {
+      if (this.playerSelectorBox.isVisible()) {
         activate(this.playerBtn, this.submitBtn);
         activate(this.leftBtn, this.submitBtn);
         activate(this.rightBtn, this.submitBtn);
       }
+
+      refreshScores(pauseMenuItem);
       refreshViewForPlayer();
     });
+  }
+
+  private void refreshScores(PauseMenuItem pauseMenuItem) {
+    this.pauseMenuItem = pauseMenuItem;
+    scoresLoader.setVisible(true);
+    JFXFuture.supplyAsync(() -> {
+      List<Pane> children = new ArrayList<>();
+      try {
+        CompetitionRepresentation competition = pauseMenuItem.getCompetition();
+        List<CompetitionScore> weeklyCompetitionScores = client.getCompetitionService().getWeeklyCompetitionScores(competition.getUuid());
+        Optional<CompetitionScore> myScore = weeklyCompetitionScores.stream().filter(s -> s.isMyScore()).findFirst();
+        int myScoreIndex = -1;
+        if (myScore.isPresent()) {
+          myScoreIndex = weeklyCompetitionScores.indexOf(myScore.get());
+        }
+
+        for (CompetitionScore score : weeklyCompetitionScores) {
+          Pane row = createScoreItem(score);
+          children.add(row);
+
+          if (children.size() == 2 && myScoreIndex > children.size()) {
+            children.add(getPlaceholder());
+            if (myScoreIndex - 1 != 2) {
+              children.add(createScoreItem(weeklyCompetitionScores.get(myScoreIndex - 1)));
+            }
+            children.add(createScoreItem(weeklyCompetitionScores.get(myScoreIndex)));
+            break;
+          }
+
+          if (children.size() > 4) {
+            break;
+          }
+        }
+      }
+      catch (IOException e) {
+        LOG.error("Failed to load competition score panel: {}", e.getMessage(), e);
+      }
+      return children;
+    }).thenAcceptLater(children -> {
+      scoresBox.getChildren().removeAll(scoresBox.getChildren());
+      scoresBox.getChildren().addAll(children);
+      scoresBox.setVisible(!children.isEmpty());
+      scoresLoader.setVisible(false);
+    });
+  }
+
+  @NotNull
+  private static BorderPane createScoreItem(CompetitionScore score) throws IOException {
+    FXMLLoader loader = new FXMLLoader(WidgetWeeklyCompetitionScoreItemController.class.getResource("widget-weekly-competition-score-item.fxml"));
+    BorderPane row = loader.load();
+    WidgetWeeklyCompetitionScoreItemController controller = loader.getController();
+    row.setMaxWidth(Double.MAX_VALUE);
+    row.setMaxHeight(100);
+    controller.setCompact();
+    controller.setData(score);
+    return row;
   }
 
   private void activate(Button b1, Button b2) {
@@ -144,8 +216,6 @@ public class WovpMenuItemController implements Initializable {
   private void refreshViewForPlayer() {
     submitBtn.setDisable(true);
     loadingIndicator.setVisible(true);
-    playerNameLabel.setText(this.wovpPlayer.getName());
-    playerScoreLabel.setText("-");
     errorContainer.setVisible(false);
     errorMsg.setText("");
 
@@ -163,8 +233,6 @@ public class WovpMenuItemController implements Initializable {
       screenshotView.setImage(screenshotImage);
 
       submitBtn.setDisable(false);
-      playerNameLabel.setText(wovpPlayer.getName());
-      playerScoreLabel.setText(result.getLatestScore() > 0 ? ScoreFormatUtil.formatScore(result.getLatestScore(), Locale.getDefault()) : "-");
       submitBtn.setVisible(result.getErrorMessage() == null);
 
       if (result.getErrorMessage() != null) {
@@ -245,6 +313,8 @@ public class WovpMenuItemController implements Initializable {
       else {
         submitBtn.setText("Your highscore has been submitted.");
       }
+
+//      refreshScores(pauseMenuItem);
     });
   }
 
@@ -256,13 +326,26 @@ public class WovpMenuItemController implements Initializable {
     screenshotImage = null;
   }
 
+  private Pane getPlaceholder() {
+    Label label = new Label();
+    FontIcon icon = WidgetFactory.createIcon("mdi2a-arrow-down");
+    icon.setIconSize(45);
+    label.setGraphic(icon);
+
+    HBox ph = new HBox();
+    ph.setAlignment(Pos.CENTER);
+    ph.getChildren().add(label);
+    ph.setMinHeight(100);
+    return ph;
+  }
+
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    playerScoreLabel.setFont(WidgetFactory.getScoreFont());
-
     leftBtn.setVisible(false);
     rightBtn.setVisible(false);
+    scoresLoader.setVisible(true);
 
+    playerSelectorBox.managedProperty().bindBidirectional(playerSelectorBox.visibleProperty());
     playerBtn.managedProperty().bindBidirectional(playerBtn.visibleProperty());
     loadingIndicator.managedProperty().bindBidirectional(loadingIndicator.visibleProperty());
     authorsLabel.managedProperty().bindBidirectional(authorsLabel.visibleProperty());

@@ -75,12 +75,17 @@ public class PinVolService implements InitializingBean, FileChangeListener {
     try {
       File pinVolExe = getPinVolExe();
       if (pinVolExe.exists()) {
-        FileUtils.writeBatch(SystemService.RESOURCES + "PinVol.bat", "start /min " + pinVolExe.getAbsolutePath() + "\nexit\n");
-        List<String> commands = Arrays.asList("cmd", "/c", "start", "PinVol.bat");
-        SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-        executor.setDir(new File(SystemService.RESOURCES));
-        executor.executeCommand();
-        LOG.info("Executed PinVol command: " + String.join(" ", commands));
+        File file = FileUtils.writeBatch(SystemService.RESOURCES + "PinVol.bat", "start /min " + pinVolExe.getAbsolutePath() + "\nexit\n");
+        if (file.exists()) {
+          List<String> commands = Arrays.asList("cmd", "/c", "start", "PinVol.bat");
+          SystemCommandExecutor executor = new SystemCommandExecutor(commands);
+          executor.setDir(new File(SystemService.RESOURCES));
+          executor.executeCommand();
+          LOG.info("Executed PinVol command: " + String.join(" ", commands));
+        }
+        else {
+          LOG.error("Failed to start PinVol.bat, file does not exist: {}", file.getAbsolutePath());
+        }
       }
       else {
         LOG.warn("{} does not exist; couldn't start it", pinVolExe.getAbsolutePath());

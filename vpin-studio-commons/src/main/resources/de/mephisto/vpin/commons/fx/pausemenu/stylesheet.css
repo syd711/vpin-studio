@@ -135,3 +135,13 @@
     -fx-border-radius: 3px;
     -fx-background-color: -fx-info-background;
 }
+/**
+ * Scores Container
+ */
+.scores-container {
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: #FFFFFF;
+    -fx-border-width: 1;
+    -fx-border-radius: 3px;
+    -fx-background-color: #000000;
+}

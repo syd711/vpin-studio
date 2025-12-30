@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.competitions;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class CompetitionScore {
   private String userId;
@@ -140,4 +141,15 @@ public class CompetitionScore {
   }
 
 
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || getClass() != o.getClass()) return false;
+    CompetitionScore score1 = (CompetitionScore) o;
+    return Double.compare(score, score1.score) == 0 && Objects.equals(userId, score1.userId) && Objects.equals(participantId, score1.participantId);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(userId, participantId, score);
+  }
 }

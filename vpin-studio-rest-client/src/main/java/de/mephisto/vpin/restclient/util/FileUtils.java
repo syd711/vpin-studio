@@ -199,10 +199,11 @@ public class FileUtils {
       path = new File(System.getProperty("MAC_WRITE_PATH") + name);
     }
 
-    if (path.exists()) {
-      path.delete();
+    if (path.exists() && !path.delete()) {
+      LOG.error("Failed to delete existing .bat file {}", path.getAbsolutePath());
     }
     Files.write(path.toPath(), content.getBytes());
+    LOG.info("Written .bat file {}", path.getAbsolutePath());
     return path;
   }
 
