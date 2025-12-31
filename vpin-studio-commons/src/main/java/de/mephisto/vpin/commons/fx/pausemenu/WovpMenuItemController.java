@@ -327,15 +327,16 @@ public class WovpMenuItemController implements Initializable {
   }
 
   private Pane getPlaceholder() {
-    Label label = new Label();
-    FontIcon icon = WidgetFactory.createIcon("mdi2a-arrow-down");
-    icon.setIconSize(45);
-    label.setGraphic(icon);
+    Label label1 = new Label(".  .");
+    label1.setWrapText(true);
+    label1.setMaxWidth(3);
+    label1.getStyleClass().add("default-title");
 
-    HBox ph = new HBox();
+    VBox ph = new VBox();
     ph.setAlignment(Pos.CENTER);
-    ph.getChildren().add(label);
+    ph.getChildren().addAll(label1);
     ph.setMinHeight(100);
+    ph.setMaxHeight(100);
     return ph;
   }
 

@@ -1,3 +1,9 @@
+## Release Notes 4.5.4
+
+## Changes
+
+- Fixed rendering issue in the WOVP pause menu item.
+
 ## Release Notes 4.5.3
 
 ## Changes
