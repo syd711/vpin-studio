@@ -1,4 +1,4 @@
-## Release Notes 4.5.4
+## Release Notes 4.5.5
 
 ## Changes
 
@@ -8,6 +8,7 @@
 - Fixed WOVP multi-player mode for the pause menu that got broken during the last revamp.
 - Added auto-scrolling to the WOVP players score in the competitions dashboard section.
 
+---
 
 ## Release Notes 4.5.4
 
