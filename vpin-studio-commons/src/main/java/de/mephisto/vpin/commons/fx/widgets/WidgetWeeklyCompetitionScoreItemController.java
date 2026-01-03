@@ -33,7 +33,6 @@ import java.io.FileNotFoundException;
 import java.lang.invoke.MethodHandles;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -44,7 +43,6 @@ import static de.mephisto.vpin.commons.utils.WidgetFactory.getScoreFontSmall;
 
 public class WidgetWeeklyCompetitionScoreItemController extends WidgetController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-  private final static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy / hh:mm");
 
   private static int DEFAULT_AVATARSIZE = 60;
   private static int COMPACT_DEFAULT_AVATARSIZE = 40;

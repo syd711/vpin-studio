@@ -152,10 +152,11 @@ public class WovpMenuItemController implements Initializable {
     this.pauseMenuItem = pauseMenuItem;
     scoresLoader.setVisible(true);
     JFXFuture.supplyAsync(() -> {
+      CompetitionRepresentation competition = pauseMenuItem.getCompetition();
+      return client.getCompetitionService().getWeeklyCompetitionScores(competition.getUuid());
+    }).thenAcceptLater(weeklyCompetitionScores -> {
       List<Pane> children = new ArrayList<>();
       try {
-        CompetitionRepresentation competition = pauseMenuItem.getCompetition();
-        List<CompetitionScore> weeklyCompetitionScores = client.getCompetitionService().getWeeklyCompetitionScores(competition.getUuid());
         Optional<CompetitionScore> myScore = weeklyCompetitionScores.stream().filter(s -> s.isMyScore()).findFirst();
         int myScoreIndex = -1;
         if (myScore.isPresent()) {
@@ -183,8 +184,7 @@ public class WovpMenuItemController implements Initializable {
       catch (IOException e) {
         LOG.error("Failed to load competition score panel: {}", e.getMessage(), e);
       }
-      return children;
-    }).thenAcceptLater(children -> {
+
       scoresBox.getChildren().removeAll(scoresBox.getChildren());
       scoresBox.getChildren().addAll(children);
       scoresBox.setVisible(!children.isEmpty());
