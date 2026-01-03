@@ -302,7 +302,9 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
   }
 
   public void resetShutdownTimer() {
-    shutdownThread.reset();
+    if (shutdownThread != null) {
+      shutdownThread.reset();
+    }
   }
 
   @Override

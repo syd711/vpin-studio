@@ -82,7 +82,7 @@ public class Dialogs {
   }
 
   public static boolean openUpdateDialog(VPinStudioClient client) {
-    Stage stage = createStudioDialogStage("dialog-update.fxml", "VPin Studio Updater");
+    Stage stage = createStudioDialogStage("dialog-updater.fxml", "VPin Studio Updater");
     UpdateDialogController controller = (UpdateDialogController) stage.getUserData();
     controller.setClient(client);
     stage.showAndWait();
