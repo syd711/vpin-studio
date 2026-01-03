@@ -99,7 +99,6 @@ public class WovpMenuItemController implements Initializable {
     this.versionLabel.setVisible(false);
     this.authorsLabel.setVisible(false);
 
-    this.playerBtn.setVisible(false);
     this.sectionIcon.setImage(sectionImage);
 
     // when game is mapped to VPS Table
@@ -303,10 +302,8 @@ public class WovpMenuItemController implements Initializable {
       blink.stop();
       submitBtn.setVisible(true);
       if (result.getErrorMessage() != null) {
-        rightBtn.setVisible(false);
-        leftBtn.setVisible(false);
         submitBtn.setVisible(false);
-        playerBtn.setVisible(false);
+        playerSelectorBox.setVisible(false);
         errorContainer.setVisible(true);
         errorMsg.setText(result.getErrorMessage());
       }
@@ -342,17 +339,18 @@ public class WovpMenuItemController implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    leftBtn.setVisible(false);
-    rightBtn.setVisible(false);
     scoresLoader.setVisible(true);
 
     playerSelectorBox.managedProperty().bindBidirectional(playerSelectorBox.visibleProperty());
+    playerSelectorBox.setVisible(false);
+    leftBtn.setVisible(false);
+
     playerBtn.managedProperty().bindBidirectional(playerBtn.visibleProperty());
     loadingIndicator.managedProperty().bindBidirectional(loadingIndicator.visibleProperty());
     authorsLabel.managedProperty().bindBidirectional(authorsLabel.visibleProperty());
     versionLabel.managedProperty().bindBidirectional(versionLabel.visibleProperty());
+    errorContainer.managedProperty().bindBidirectional(errorContainer.visibleProperty());
 
     errorContainer.setVisible(false);
-    playerBtn.setVisible(false);
   }
 }

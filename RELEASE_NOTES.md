@@ -2,6 +2,17 @@
 
 ## Changes
 
+- Fixed rendering issue in the WOVP pause menu item (again).
+- Fixed layout issues with the WOVP scores on the dashboard.
+- Added persistent caching for the WOVP flag images to speed up the loading process. 
+- Fixed WOVP multi-player mode for the pause menu that got broken during the last revamp.
+- Added auto-scrolling to the WOVP players score in the competitions dashboard section.
+
+
+## Release Notes 4.5.4
+
+## Changes
+
 - Fixed rendering issue in the WOVP pause menu item.
 
 ## Release Notes 4.5.3

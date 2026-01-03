@@ -3,6 +3,7 @@ package de.mephisto.vpin.commons.fx.widgets;
 import de.mephisto.vpin.commons.fx.ImageUtil;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.JFXFuture;
+import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.competitions.CompetitionScore;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import javafx.embed.swing.SwingFXUtils;
@@ -18,20 +19,31 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.lang.invoke.MethodHandles;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.commons.SystemInfo.RESOURCES;
 import static de.mephisto.vpin.commons.fx.ServerFX.client;
 import static de.mephisto.vpin.commons.utils.WidgetFactory.getScoreFont;
 import static de.mephisto.vpin.commons.utils.WidgetFactory.getScoreFontSmall;
 
 public class WidgetWeeklyCompetitionScoreItemController extends WidgetController implements Initializable {
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private final static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy / hh:mm");
 
   private static int DEFAULT_AVATARSIZE = 60;
@@ -159,21 +171,53 @@ public class WidgetWeeklyCompetitionScoreItemController extends WidgetController
     }
 
     JFXFuture.supplyAsync(() -> {
-      Image backgroundImage = new Image(client.getCachedUrlImage(score.getFlagUrl()));
-      BufferedImage bufferedImage = SwingFXUtils.fromFXImage(backgroundImage, null);
-      Color end = new Color(0f, 0f, 0f, .1f);
-      Color start = Color.decode("#111111");
-      ImageUtil.gradient(bufferedImage, 200, 200, start, end);
-      ImageUtil.gradient(bufferedImage, 200, 200, end, start);
+      try {
+        BufferedImage bufferedImage = getFlagBackground(score);
+        if (bufferedImage == null) {
+          return null;
+        }
+        Image backgroundImage;
+        Color end = new Color(0f, 0f, 0f, .1f);
+        Color start = Color.decode("#111111");
+        ImageUtil.gradient(bufferedImage, 200, 200, start, end);
+        ImageUtil.gradient(bufferedImage, 200, 200, end, start);
 
-      backgroundImage = SwingFXUtils.toFXImage(bufferedImage, null);
-      BackgroundImage myBI = new BackgroundImage(backgroundImage,
-          BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER,
-          BackgroundSize.DEFAULT);
-      return myBI;
+        backgroundImage = SwingFXUtils.toFXImage(bufferedImage, null);
+        BackgroundImage myBI = new BackgroundImage(backgroundImage,
+            BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER,
+            BackgroundSize.DEFAULT);
+        return myBI;
+      }
+      catch (Exception e) {
+        LOG.error("Failed to load flag file: {}", e.getMessage(), e);
+      }
+      return null;
     }).thenAcceptLater((image) -> {
-      root.setBackground(new Background(image));
+      if (image != null) {
+        root.setBackground(new Background(image));
+      }
     });
+  }
+
+  @Nullable
+  private static BufferedImage getFlagBackground(CompetitionScore score) throws MalformedURLException, FileNotFoundException {
+    URL url = new URL(score.getFlagUrl());
+    String flagFileName = FilenameUtils.getName(url.getFile());
+    File flagsFolder = new File(RESOURCES, "flags/");
+    if (!flagsFolder.exists() && !flagsFolder.mkdirs()) {
+      LOG.error("Failed to create flags folder");
+      return null;
+    }
+    File flagFile = new File(flagsFolder, flagFileName);
+    if (!flagFile.exists()) {
+      Updater.download(score.getFlagUrl(), flagFile, true);
+    }
+    Image backgroundImage = new Image(new FileInputStream(flagFile));
+    BufferedImage bufferedImage = SwingFXUtils.fromFXImage(backgroundImage, null);
+    if (backgroundImage == null && flagFile.delete()) {
+      return getFlagBackground(score);
+    }
+    return bufferedImage;
   }
 
   public void setCompact() {

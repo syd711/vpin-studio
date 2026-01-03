@@ -71,12 +71,12 @@
                      <center>
                         <StackPane BorderPane.alignment="CENTER">
                            <children>
-                              <VBox fx:id="scoresBox" maxHeight="376.0" maxWidth="450.0" minWidth="450.0" prefHeight="376.0" styleClass="scores-container">
+                              <VBox fx:id="scoresBox" maxHeight="386.0" maxWidth="450.0" minWidth="450.0" prefHeight="386.0" styleClass="scores-container">
                                  <padding>
                                     <Insets left="12.0" right="12.0" />
                                  </padding>
                               </VBox>
-                              <VBox fx:id="scoresLoader" alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+                              <VBox fx:id="scoresLoader" alignment="CENTER">
                                  <children>
                                     <ProgressIndicator />
                                     <Label text="Loading Top Scores" textFill="WHITE" wrapText="true">
