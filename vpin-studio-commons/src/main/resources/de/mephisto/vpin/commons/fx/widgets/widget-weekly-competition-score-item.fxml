@@ -8,7 +8,6 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.widgets.WidgetWeeklyCompetitionScoreItemController">
     <center>
@@ -22,10 +21,7 @@
                         <HBox alignment="CENTER_RIGHT" spacing="6.0">
                            <children>
                                       <Label fx:id="changeDateLabel" text="Label" textFill="WHITE" />
-                              <Label fx:id="statusLabel" layoutX="10.0" layoutY="10.0" textFill="WHITE">
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2p-progress-question" iconSize="18" />
-                                 </graphic>
+                              <Label fx:id="statusLabel" layoutX="10.0" layoutY="10.0" text="?" textFill="WHITE">
                               </Label>
                            </children>
                         </HBox>

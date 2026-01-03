@@ -242,7 +242,7 @@ public class WovpMenuItemController implements Initializable {
   }
 
   public boolean right() {
-    if (submitBtn.isDisabled() || !submitBtn.isVisible() || players == null || players.size() <= 1) {
+    if (submitBtn.isDisabled() || isActive(submitBtn) || !submitBtn.isVisible() || players == null || players.size() <= 1) {
       return false;
     }
     if ((playerSelectionIndex + 1) < players.size()) {
@@ -259,7 +259,7 @@ public class WovpMenuItemController implements Initializable {
   }
 
   public boolean left() {
-    if (submitBtn.isDisabled() || !submitBtn.isVisible() || players == null || players.size() <= 1) {
+    if (submitBtn.isDisabled() || isActive(submitBtn) || !submitBtn.isVisible() || players == null || players.size() <= 1) {
       return false;
     }
     if (playerSelectionIndex > 0) {

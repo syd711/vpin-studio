@@ -41,6 +41,7 @@
     -fx-border-color: #6666FF;
     -fx-border-width: 1;
     -fx-font-size : 20px;
+    -fx-font-weight: bold;
     -fx-background-color: #333366;
     -fx-text-fill: #fff8f8;
 }

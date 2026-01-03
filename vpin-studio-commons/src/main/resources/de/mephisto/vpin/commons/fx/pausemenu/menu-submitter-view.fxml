@@ -11,7 +11,6 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <VBox prefHeight="700.0" prefWidth="1200.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.pausemenu.WovpMenuItemController">
    <children>
@@ -136,26 +135,20 @@
                            <children>
                               <HBox fx:id="playerSelectorBox" alignment="CENTER" spacing="6.0">
                                  <children>
-                                    <Button fx:id="leftBtn" minWidth="50.0" mnemonicParsing="false" styleClass="submit-button">
+                                    <Button fx:id="leftBtn" minWidth="50.0" mnemonicParsing="false" styleClass="submit-button" text="&lt;">
                                        <font>
                                           <Font size="16.0" />
                                        </font>
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2a-arrow-left-bold-circle-outline" iconSize="30" />
-                                       </graphic>
                                     </Button>
                                     <Button fx:id="playerBtn" maxWidth="600.0" minWidth="600.0" mnemonicParsing="false" styleClass="default-button" stylesheets="@stylesheet.css" text="Player:">
                                        <font>
                                           <Font size="16.0" />
                                        </font>
                                     </Button>
-                                    <Button fx:id="rightBtn" layoutX="234.0" layoutY="10.0" minWidth="50.0" mnemonicParsing="false" styleClass="submit-button">
+                                    <Button fx:id="rightBtn" layoutX="234.0" layoutY="10.0" minWidth="50.0" mnemonicParsing="false" styleClass="submit-button" text="&gt;">
                                        <font>
                                           <Font size="16.0" />
                                        </font>
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2a-arrow-right-bold-circle-outline" iconSize="30" />
-                                       </graphic>
                                     </Button>
                                  </children>
                               </HBox>
