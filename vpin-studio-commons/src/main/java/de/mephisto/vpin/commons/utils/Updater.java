@@ -78,9 +78,6 @@ public class Updater {
       connection.setReadTimeout(5000);
       connection.setDoOutput(true);
       BufferedInputStream in = new BufferedInputStream(url.openStream());
-      String CheckBasePath = getWriteableBaseFolder().getAbsolutePath();
-      LOG.info("Setting tmp File at Base Path : " + CheckBasePath + ":" + target.getName() + ":" + DOWNLOAD_SUFFIX);
-
       File tmp = new File(getWriteableBaseFolder(), target.getName() + DOWNLOAD_SUFFIX);
 
       if (tmp.exists()) {
@@ -103,7 +100,7 @@ public class Updater {
       if (!FileUtils.checkedCopy(tmp, target)) {
         LOG.error("Failed to copy download temp file {} to {}", tmp.getAbsolutePath(), target.getAbsolutePath());
       }
-      LOG.info("Downloaded file to overwrite {}", target.getAbsolutePath());
+      LOG.info("Download of {}/({}) finished", target.getAbsolutePath(), target.length());
       if (tmp.delete()) {
         LOG.info("Deleted downloaded temp file {}", tmp.getAbsolutePath());
       }

@@ -1,3 +1,18 @@
+## Release Notes 4.5.6
+
+## Changes
+
+- Fixed update check for several files that haven't been properly updated (e.g. the .pupgames files to import game data for non VPX emulators.)
+- Fixed the server shutdown which was blocked (again) and therefore **updates did not run properly**.
+
+**If you face the issue that the server is not updating, please follow these steps - again :-/**
+
+**Download https://github.com/syd711/vpin-studio/releases/download/4.5.6/VPin-Studio-Server.zip and follow these instructions:**
+**https://github.com/syd711/vpin-studio/wiki#manual-updates**
+
+
+---
+
 ## Release Notes 4.5.5
 
 ## Changes
