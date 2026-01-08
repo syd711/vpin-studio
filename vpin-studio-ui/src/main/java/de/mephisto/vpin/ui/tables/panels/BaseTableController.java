@@ -6,8 +6,10 @@ import de.mephisto.vpin.commons.utils.localsettings.BaseTableSettings;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.recorder.RecorderFilterSettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlay;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
@@ -203,6 +205,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
       loader.load();
       filterController = loader.getController();
       filterController.setTableController(this);
+      filterController.loadFilterSettings(getFilterSettings());
       filterController.setupDrawer(filterBtn, tableStack, tableView);
       filterController.bindSearchField(searchTextField, clearBtn);
     }
@@ -213,6 +216,10 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
 
   protected void loadFilterPanel(String resource) {
     loadFilterPanel(this.getClass(), resource);
+  }
+
+  protected FilterSettings getFilterSettings() {
+    return client.getPreferenceService().getJsonPreference(PreferenceNames.FILTER_SETTINGS, FilterSettings.class);
   }
 
   @FXML

@@ -218,17 +218,16 @@ public class PauseMenu extends Application {
           List<VpsTutorialUrls> videoTutorials = PauseMenuItemsFactory.getVideoTutorials(game, pauseMenuSettings);
           if (!videoTutorials.isEmpty()) {
             String videoUrl = PauseMenuItemsFactory.createVideoUrl(game);
-            FrontendPlayerDisplay screenDisplay = client.getFrontendService().getScreenDisplay(VPinScreen.Other2);
+            VPinScreen tutorialsScreen = pauseMenuSettings.getTutorialsScreen();
+            FrontendPlayerDisplay screenDisplay = client.getFrontendService().getScreenDisplay(tutorialsScreen);
             FrontendMediaItemRepresentation tutorialItem = new FrontendMediaItemRepresentation();
             tutorialItem.setMimeType("video/mp4");
             tutorialItem.setScreen(tutorialScreen);
             tutorialItem.setGameId(game.getId());
             tutorialItem.setUri(videoUrl);
 
-            FrontendScreenAsset assetScreen = PauseMenuScreensFactory.createScreenStage(client, game, screenDisplay, tutorialScreen, tutorialItem);
-            if (assetScreen != null) {
-              screenAssets.add(assetScreen);
-            }
+            FrontendScreenAsset assetScreen = PauseMenuScreensFactory.createScreenStage(client, game, screenDisplay, tutorialScreen, tutorialItem, pauseMenuSettings.getTutorialsRotation());
+            screenAssets.add(assetScreen);
           }
         }
 

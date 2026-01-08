@@ -64,9 +64,8 @@ public class FrontendScreenController implements Initializable {
   }
 
   private void showCentered(FrontendScreenAsset asset, MonitorInfo screen) throws IOException {
-    InputStream in = asset.getInputStream();
-    Image image = new Image(in);
-    in.close();
+    URL url = asset.getUrl();
+    Image image = new Image(url.openStream());
     LOG.info("Showing asset centered on playfield (" + image.getWidth() + "/" + image.getHeight() + ")");
 
     imageView.setImage(image);
@@ -102,11 +101,11 @@ public class FrontendScreenController implements Initializable {
     String mimeType = asset.getMimeType();
 
     LOG.info("Showing asset on display \"" + display + "\"");
-    InputStream inputStream = asset.getInputStream();
-    image = new Image(inputStream, display.getWidth(), display.getHeight(), false, true);
-    inputStream.close();
-
     if (mimeType.startsWith("image")) {
+      InputStream inputStream = asset.getUrl().openStream();
+      image = new Image(inputStream, display.getWidth(), display.getHeight(), false, true);
+      inputStream.close();
+
       mediaView.setVisible(false);
       imageView.setPreserveRatio(false);
       imageView.setFitWidth(display.getWidth());
@@ -116,7 +115,7 @@ public class FrontendScreenController implements Initializable {
     else if (mimeType.startsWith("video")) {
       imageView.setVisible(false);
 
-      Media media = new Media(asset.getUrl());
+      Media media = new Media(asset.getUrl().toExternalForm());
       MediaPlayer mediaPlayer = new MediaPlayer(media);
       mediaPlayer.setAutoPlay(true);
       mediaPlayer.setCycleCount(-1);
@@ -135,6 +134,7 @@ public class FrontendScreenController implements Initializable {
     }
 
     Stage screenStage = asset.getScreenStage();
+    screenStage.setTitle("VPin UI");
     screenStage.setX(display.getX());
     screenStage.setY(display.getY());
     screenStage.setHeight(display.getHeight());

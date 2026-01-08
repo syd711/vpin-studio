@@ -72,6 +72,8 @@ public class Preferences {
 
   private String filterSettings;
 
+  private String recordingsFilterSettings;
+
   private String vpuSettings;
 
   private String vpfSettings;
@@ -219,6 +221,14 @@ public class Preferences {
   }
   public void setVpfSettings(String vpfSettings) {
     this.vpfSettings = vpfSettings;
+  }
+
+  public String getRecordingsFilterSettings() {
+    return recordingsFilterSettings;
+  }
+
+  public void setRecordingsFilterSettings(String recordingsFilterSettings) {
+    this.recordingsFilterSettings = recordingsFilterSettings;
   }
 
   public String getFilterSettings() {

@@ -9,6 +9,7 @@ public class PauseMenuSettings extends JsonSettings {
   private int inputDebounceMs = 0;
   private VPinScreen tutorialsScreen = VPinScreen.Topper;
   private boolean tutorialsOnScreen = false;
+  private int tutorialsRotation = 0;
   private boolean pressPause = true;
 
   private boolean desktopUser = false;
@@ -34,6 +35,14 @@ public class PauseMenuSettings extends JsonSettings {
   private String resetButton;
   private String recordingButton;
   private String inputFilterList;
+
+  public int getTutorialsRotation() {
+    return tutorialsRotation;
+  }
+
+  public void setTutorialsRotation(int tutorialsRotation) {
+    this.tutorialsRotation = tutorialsRotation;
+  }
 
   public boolean isDesktopUser() {
     return desktopUser;

@@ -358,15 +358,7 @@
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="preference-label" text="Tutorial Videos Display:" textFill="WHITE" GridPane.rowIndex="1">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <GridPane.margin>
-                              <Insets top="3.0" />
-                           </GridPane.margin>
-                        </Label>
-                        <VBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <VBox fx:id="tutorialDetailsBox" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
                               <RadioButton fx:id="tutorialItemRadio" mnemonicParsing="false" styleClass="default-text" text="Display Tutorial Videos as Menu Item">
                                  <toggleGroup>
@@ -379,6 +371,16 @@
                                     <Insets left="24.0" />
                                  </VBox.margin>
                               </ComboBox>
+                              <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                 <children>
+                                    <Label styleClass="default-text" text="Rotate Screen:" textFill="WHITE" />
+                                    <ComboBox fx:id="rotationComboBox" prefWidth="90.0" />
+                                    <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="degrees" textFill="WHITE" />
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets left="26.0" />
+                                 </VBox.margin>
+                              </HBox>
                            </children>
                            <GridPane.margin>
                               <Insets top="3.0" />

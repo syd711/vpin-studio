@@ -21,10 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.*;
 import static de.mephisto.vpin.ui.util.PreferenceBindingUtil.debouncer;
@@ -72,10 +69,16 @@ public class PauseMenuPreferencesController implements Initializable {
   private ComboBox<VPinScreen> screenTutorialComboBox;
 
   @FXML
+  private ComboBox<Integer> rotationComboBox;
+
+  @FXML
   private RadioButton tutorialScreenRadio;
 
   @FXML
   private RadioButton tutorialItemRadio;
+
+  @FXML
+  private Pane tutorialDetailsBox;
 
   @FXML
   private void onPauseTest() {
@@ -129,8 +132,10 @@ public class PauseMenuPreferencesController implements Initializable {
     });
 
     tutorialsCheckbox.setSelected(pauseMenuSettings.isShowTutorials());
+    tutorialDetailsBox.setVisible(tutorialsCheckbox.isSelected());
     tutorialsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       pauseMenuSettings.setShowTutorials(newValue);
+      tutorialDetailsBox.setVisible(newValue);
       client.getPreferenceService().setJsonPreference(pauseMenuSettings);
     });
 
@@ -182,6 +187,7 @@ public class PauseMenuPreferencesController implements Initializable {
 
 
     screenTutorialComboBox.setDisable(!pauseMenuSettings.isTutorialsOnScreen());
+    rotationComboBox.setDisable(!pauseMenuSettings.isTutorialsOnScreen());
     Frontend frontend = client.getFrontendService().getFrontend();
     List<VPinScreen> screens = new ArrayList<>(frontend.getSupportedScreens());
     screens.remove(VPinScreen.Audio);
@@ -192,6 +198,7 @@ public class PauseMenuPreferencesController implements Initializable {
     screens.remove(VPinScreen.PlayField);
     screens.remove(VPinScreen.Loading);
     screens.remove(VPinScreen.Logo);
+
     screenTutorialComboBox.setItems(FXCollections.observableList(screens));
     screenTutorialComboBox.setValue(pauseMenuSettings.getTutorialsScreen());
     screenTutorialComboBox.valueProperty().addListener(new ChangeListener<VPinScreen>() {
@@ -202,12 +209,23 @@ public class PauseMenuPreferencesController implements Initializable {
       }
     });
 
+    rotationComboBox.setItems(FXCollections.observableList(Arrays.asList(0, 90, 180)));
+    rotationComboBox.setValue(pauseMenuSettings.getTutorialsRotation());
+    rotationComboBox.valueProperty().addListener(new ChangeListener<Integer>() {
+      @Override
+      public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
+        pauseMenuSettings.setTutorialsRotation(newValue);
+        client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+      }
+    });
+
     tutorialItemRadio.setSelected(!pauseMenuSettings.isTutorialsOnScreen());
     tutorialItemRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         if (newValue) {
           screenTutorialComboBox.setDisable(true);
+          rotationComboBox.setDisable(true);
           pauseMenuSettings.setTutorialsOnScreen(false);
           client.getPreferenceService().setJsonPreference(pauseMenuSettings);
         }
@@ -220,6 +238,7 @@ public class PauseMenuPreferencesController implements Initializable {
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         if (newValue) {
           screenTutorialComboBox.setDisable(false);
+          rotationComboBox.setDisable(false);
           pauseMenuSettings.setTutorialsOnScreen(true);
           client.getPreferenceService().setJsonPreference(pauseMenuSettings);
         }

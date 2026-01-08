@@ -1,3 +1,12 @@
+## Release Notes 4.5.7
+
+## Changes
+
+- **Screenshots**: Added service URL to fetch latest pause menu screenshot (http://localhost:8089/api/v1/recorder/screenshot/latest)
+- **Table Filtering**: Fixed issue that the media recorder used the filter settings from the table overview. 
+
+---
+
 ## Release Notes 4.5.6
 
 ## Changes
