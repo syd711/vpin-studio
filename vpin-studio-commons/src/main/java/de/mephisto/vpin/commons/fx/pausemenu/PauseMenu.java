@@ -167,9 +167,12 @@ public class PauseMenu extends Application {
       else if (max > 2000) {
         scaling = 1;
       }
+      else if (max > 1200) {
+        scaling = 0.9;
+      }
       else {
         //falls down too much
-        scaling = 0.8;
+        scaling = 0.65;
         stage.setY(Screen.getScreens().get(1).getBounds().getMinY());
       }
     }
