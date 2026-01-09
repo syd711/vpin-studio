@@ -4,7 +4,16 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 
 public class PauseMenuState {
   private GameRepresentation game;
+  private boolean apronMode;
   private boolean scoreSubmitterEnabled;
+
+  public boolean isApronMode() {
+    return apronMode;
+  }
+
+  public void setApronMode(boolean apronMode) {
+    this.apronMode = apronMode;
+  }
 
   public GameRepresentation getGame() {
     return game;

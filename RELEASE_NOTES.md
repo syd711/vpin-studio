@@ -3,7 +3,11 @@
 ## Changes
 
 - **Screenshots**: Added service URL to fetch latest pause menu screenshot (http://localhost:8089/api/v1/recorder/screenshot/latest)
-- **Table Filtering**: Fixed issue that the media recorder used the filter settings from the table overview. 
+- **Table Filtering**: Fixed issue that the media recorder used the filter settings from the table overview.
+- **Pause Menu**: 
+  - Fixed screen configuration that can be used for showing the tutorials video.
+  - Added rotation option for the tutorials screen.
+  - Added margin options to position the tutorials screen pixel perfect.
 
 ---
 

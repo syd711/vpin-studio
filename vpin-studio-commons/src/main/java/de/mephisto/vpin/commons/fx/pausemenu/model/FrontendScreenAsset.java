@@ -14,6 +14,8 @@ public class FrontendScreenAsset {
   private URL url;
   private int duration;
   private String name;
+  private int offsetX;
+  private int offsetY;
 
   private MediaPlayer mediaPlayer;
 
@@ -23,6 +25,22 @@ public class FrontendScreenAsset {
         mediaPlayer.dispose();
       }).start();
     }
+  }
+
+  public int getOffsetX() {
+    return offsetX;
+  }
+
+  public void setOffsetX(int offsetX) {
+    this.offsetX = offsetX;
+  }
+
+  public int getOffsetY() {
+    return offsetY;
+  }
+
+  public void setOffsetY(int offsetY) {
+    this.offsetY = offsetY;
   }
 
   public String getName() {

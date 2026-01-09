@@ -169,13 +169,17 @@ public class PauseMenu extends Application {
       }
       else {
         //falls down too much
-        scaling = 0.7;
+        scaling = 0.8;
         stage.setY(Screen.getScreens().get(1).getBounds().getMinY());
       }
     }
 
     rootPane.setScaleX(scaling);
     rootPane.setScaleY(scaling);
+
+    stage.setX(stage.getX() + pauseMenuSettings.getStageOffsetX());
+    stage.setY(stage.getY() + pauseMenuSettings.getStageOffsetY());
+
     return scene;
   }
 
@@ -226,7 +230,7 @@ public class PauseMenu extends Application {
             tutorialItem.setGameId(game.getId());
             tutorialItem.setUri(videoUrl);
 
-            FrontendScreenAsset assetScreen = PauseMenuScreensFactory.createScreenStage(client, game, screenDisplay, tutorialScreen, tutorialItem, pauseMenuSettings.getTutorialsRotation());
+            FrontendScreenAsset assetScreen = PauseMenuScreensFactory.createScreenStage(client, game, screenDisplay, tutorialScreen, tutorialItem, pauseMenuSettings);
             screenAssets.add(assetScreen);
           }
         }
@@ -244,6 +248,7 @@ public class PauseMenu extends Application {
         PauseMenuState state = new PauseMenuState();
         state.setGame(game);
         state.setScoreSubmitterEnabled(scoreSubmitterEnabled);
+        state.setApronMode(pauseMenuSettings.isApronMode());
 
         StateMananger.getInstance().setState(state);
         stage.getScene().setCursor(Cursor.NONE);
@@ -259,7 +264,6 @@ public class PauseMenu extends Application {
           long start = System.currentTimeMillis();
           try {
             LOG.info("Pause menu screens preparation finished, using {} screen assets.", screenAssets.size());
-            screenAssets.clear();
           }
           catch (Exception e) {
             LOG.error("Failed to prepare pause menu screens: {}", e.getMessage(), e);
@@ -300,6 +304,7 @@ public class PauseMenu extends Application {
         asset.getScreenStage().hide();
         asset.dispose();
       });
+      screenAssets.clear();
     });
 
 

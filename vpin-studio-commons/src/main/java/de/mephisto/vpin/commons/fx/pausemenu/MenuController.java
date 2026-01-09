@@ -35,6 +35,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
@@ -67,6 +68,9 @@ public class MenuController implements Initializable {
   private HBox menuItemsRow;
 
   @FXML
+  private ImageView wheelImage;
+
+  @FXML
   private Label blueLabel;
 
   @FXML
@@ -93,6 +97,12 @@ public class MenuController implements Initializable {
   @FXML
   private ImageView rowImage;
 
+  @FXML
+  private BorderPane baseSelector;
+
+  @FXML
+  private StackPane footerStack;
+
   private int selectionIndex = 0;
 
   private GameRepresentation game;
@@ -112,6 +122,16 @@ public class MenuController implements Initializable {
     this.game = state.getGame();
     this.state = state;
     enterMenuItemSelection();
+    if (state.isApronMode()) {
+      footerStack.setVisible(false);
+      rowImage.setVisible(false);
+      baseSelector.setVisible(false);
+      bluePanel.setVisible(false);
+      bluePanel.setVisible(false);
+      loadMask.setVisible(false);
+      menuItemsRow.setVisible(false);
+      wheelImage.setVisible(false);
+    }
   }
 
   public void setVisible(boolean b) {
@@ -481,6 +501,10 @@ public class MenuController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     rowImage.setFitWidth(PauseMenuUIDefaults.getScreenWidth());
+
+    if (PauseMenuUIDefaults.getScreenWidth() < 2000) {
+      footerStack.setVisible(false);
+    }
 
     try {
       String resource = "menu-custom-view.fxml";

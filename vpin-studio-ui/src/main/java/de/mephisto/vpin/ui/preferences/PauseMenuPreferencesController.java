@@ -60,7 +60,22 @@ public class PauseMenuPreferencesController implements Initializable {
   private CheckBox desktopModeCheckbox;
 
   @FXML
+  private CheckBox apronModeCheckbox;
+
+  @FXML
   private Spinner<Integer> delaySpinner;
+
+  @FXML
+  private Spinner<Integer> stageMarginLeftSpinner;
+
+  @FXML
+  private Spinner<Integer> stageMarginTopSpinner;
+
+  @FXML
+  private Spinner<Integer> marginTopSpinner;
+
+  @FXML
+  private Spinner<Integer> marginLeftSpinner;
 
   @FXML
   private ComboBox<MonitorInfo> screenInfoComboBox;
@@ -100,6 +115,7 @@ public class PauseMenuPreferencesController implements Initializable {
     PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
 
     maniaScoresBox.managedProperty().bindBidirectional(maniaScoresBox.visibleProperty());
+    tutorialDetailsBox.managedProperty().bindBidirectional(tutorialDetailsBox.visibleProperty());
     maniaScoresBox.setVisible(Features.MANIA_ENABLED && maniaClient.getCabinetClient() != null);
     iScoredScoresBox.managedProperty().bindBidirectional(iScoredScoresBox.visibleProperty());
     iScoredScoresBox.setVisible(Features.ISCORED_ENABLED && pauseMenuSettings.isShowIscoredScores());
@@ -164,6 +180,34 @@ public class PauseMenuPreferencesController implements Initializable {
       client.getPreferenceService().setJsonPreference(pauseMenuSettings);
     }, 300));
 
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory2 = new SpinnerValueFactory.IntegerSpinnerValueFactory(-10000, 10000, pauseMenuSettings.getTutorialMarginTop());
+    marginTopSpinner.setValueFactory(factory2);
+    factory2.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce("marginTopSpinner", () -> {
+      pauseMenuSettings.setTutorialMarginTop(t1);
+      client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+    }, 300));
+
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory3 = new SpinnerValueFactory.IntegerSpinnerValueFactory(-10000, 8000, pauseMenuSettings.getTutorialMarginLeft());
+    marginLeftSpinner.setValueFactory(factory3);
+    factory3.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce("marginLeftSpinner", () -> {
+      pauseMenuSettings.setTutorialMarginLeft(t1);
+      client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+    }, 300));
+
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory4 = new SpinnerValueFactory.IntegerSpinnerValueFactory(-10000, 8000, pauseMenuSettings.getStageOffsetY());
+    stageMarginTopSpinner.setValueFactory(factory4);
+    factory4.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce("stageMarginTopSpinner", () -> {
+      pauseMenuSettings.setStageOffsetY(t1);
+      client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+    }, 300));
+
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory5 = new SpinnerValueFactory.IntegerSpinnerValueFactory(-10000, 8000, pauseMenuSettings.getStageOffsetY());
+    stageMarginLeftSpinner.setValueFactory(factory5);
+    factory5.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce("stageMarginLeftSpinner", () -> {
+      pauseMenuSettings.setStageOffsetX(t1);
+      client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+    }, 300));
+
 
     triggerCheckbox.setSelected(pauseMenuSettings.isPressPause());
     delaySpinner.setDisable(!pauseMenuSettings.isPressPause());
@@ -185,9 +229,22 @@ public class PauseMenuPreferencesController implements Initializable {
       }
     });
 
+    apronModeCheckbox.setSelected(pauseMenuSettings.isApronMode());
+    apronModeCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      pauseMenuSettings.setApronMode(newValue);
+      try {
+        client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+      }
+      catch (Exception e) {
+        WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+      }
+    });
+
 
     screenTutorialComboBox.setDisable(!pauseMenuSettings.isTutorialsOnScreen());
     rotationComboBox.setDisable(!pauseMenuSettings.isTutorialsOnScreen());
+    marginLeftSpinner.setDisable(!pauseMenuSettings.isTutorialsOnScreen());
+    marginTopSpinner.setDisable(!pauseMenuSettings.isTutorialsOnScreen());
     Frontend frontend = client.getFrontendService().getFrontend();
     List<VPinScreen> screens = new ArrayList<>(frontend.getSupportedScreens());
     screens.remove(VPinScreen.Audio);
@@ -209,7 +266,7 @@ public class PauseMenuPreferencesController implements Initializable {
       }
     });
 
-    rotationComboBox.setItems(FXCollections.observableList(Arrays.asList(0, 90, 180)));
+    rotationComboBox.setItems(FXCollections.observableList(Arrays.asList(0, 90, 180, 270)));
     rotationComboBox.setValue(pauseMenuSettings.getTutorialsRotation());
     rotationComboBox.valueProperty().addListener(new ChangeListener<Integer>() {
       @Override
@@ -226,6 +283,8 @@ public class PauseMenuPreferencesController implements Initializable {
         if (newValue) {
           screenTutorialComboBox.setDisable(true);
           rotationComboBox.setDisable(true);
+          marginLeftSpinner.setDisable(true);
+          marginTopSpinner.setDisable(true);
           pauseMenuSettings.setTutorialsOnScreen(false);
           client.getPreferenceService().setJsonPreference(pauseMenuSettings);
         }
@@ -239,6 +298,8 @@ public class PauseMenuPreferencesController implements Initializable {
         if (newValue) {
           screenTutorialComboBox.setDisable(false);
           rotationComboBox.setDisable(false);
+          marginLeftSpinner.setDisable(false);
+          marginTopSpinner.setDisable(false);
           pauseMenuSettings.setTutorialsOnScreen(true);
           client.getPreferenceService().setJsonPreference(pauseMenuSettings);
         }

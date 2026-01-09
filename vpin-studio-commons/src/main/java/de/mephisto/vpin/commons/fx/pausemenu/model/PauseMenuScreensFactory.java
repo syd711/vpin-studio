@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,10 +54,12 @@ public class PauseMenuScreensFactory {
 //  }
 
   @NonNull
-  public static FrontendScreenAsset createScreenStage(VPinStudioClient client, GameRepresentation game, FrontendPlayerDisplay display, VPinScreen screen, FrontendMediaItemRepresentation defaultMediaItem, int rotation) throws MalformedURLException {
+  public static FrontendScreenAsset createScreenStage(VPinStudioClient client, GameRepresentation game, FrontendPlayerDisplay display, VPinScreen screen, FrontendMediaItemRepresentation defaultMediaItem, PauseMenuSettings pauseMenuSettings) throws MalformedURLException {
     FrontendScreenAsset asset = new FrontendScreenAsset();
     asset.setDisplay(display);
-    asset.setRotation(rotation);
+    asset.setRotation(pauseMenuSettings.getTutorialsRotation());
+    asset.setOffsetX(pauseMenuSettings.getTutorialMarginLeft());
+    asset.setOffsetY(pauseMenuSettings.getTutorialMarginTop());
     asset.setDuration(0);
     asset.setMimeType(defaultMediaItem.getMimeType());
     asset.setName(defaultMediaItem.getName());
