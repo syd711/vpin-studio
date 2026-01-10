@@ -15,7 +15,6 @@ import de.mephisto.vpin.server.assets.TableAssetSourcesService;
 import de.mephisto.vpin.server.assets.TableAssetsService;
 import de.mephisto.vpin.server.converter.MediaConverterService;
 import de.mephisto.vpin.server.frontend.FrontendService;
-import de.mephisto.vpin.server.frontend.FrontendStatusEventsResource;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.frontend.WheelIconDelete;
 import de.mephisto.vpin.server.system.JCodec;
@@ -190,18 +189,21 @@ public class GameMediaResource {
     if (rangeHeader != null) {
       List<HttpRange> ranges = HttpRange.parseRanges(rangeHeader);
       if (ranges.size() == 1) {
-        status = HttpStatus.PARTIAL_CONTENT;
         HttpRange range = ranges.get(0);
         start = range.getRangeStart(contentLength);
         end = range.getRangeEnd(contentLength);
-        response.setHeader("Content-Range", "bytes " + start + "-" + end + "/" + contentLength);
-        contentLength = end - start + 1;
+
+        if (start > 0 || end > 0) {
+          status = HttpStatus.PARTIAL_CONTENT;
+          response.setHeader("Content-Range", "bytes " + start + "-" + end + "/" + contentLength);
+          contentLength = end - start + 1;
+        } else {
+          start = -1;
+        }
       }
     }
 
-    if (contentLength > 0) {
-      response.setContentLength((int) contentLength);
-    }
+    response.setContentLength((int) contentLength);
     response.setHeader("Access-Control-Allow-Origin", "*");
     response.setHeader("Access-Control-Expose-Headers", "origin, range");
     response.setHeader("Cache-Control", "public, max-age=36000");
@@ -228,7 +230,6 @@ public class GameMediaResource {
     }
     catch (ClientAbortException cae) {
       LOG.info("Connection aborted while streaming media {} from {}", name, assetSourceId);
-      response.sendError(HttpStatus.REQUEST_TIMEOUT.value(), "connection aborted");
     }
     catch (IOException e) {
       LOG.error("Failed to stream media {} from {}: {}", name, assetSourceId, e.getMessage(), e);
@@ -294,18 +295,21 @@ public class GameMediaResource {
     if (rangeHeader != null) {
       List<HttpRange> ranges = HttpRange.parseRanges(rangeHeader);
       if (ranges.size() == 1) {
-        status = HttpStatus.PARTIAL_CONTENT;
         HttpRange range = ranges.get(0);
         start = range.getRangeStart(contentLength);
         end = range.getRangeEnd(contentLength);
-        response.setHeader("Content-Range", "bytes " + start + "-" + end + "/" + contentLength);
-        contentLength = end - start + 1;
+
+        if (start > 0 || end > 0) {
+          status = HttpStatus.PARTIAL_CONTENT;
+          response.setHeader("Content-Range", "bytes " + start + "-" + end + "/" + contentLength);
+          contentLength = end - start + 1;
+        } else {
+          start = -1;
+        }
       }
     }
 
-    if (contentLength > 0) {
-      response.setContentLength((int) contentLength);
-    }
+    response.setContentLength((int) contentLength);
     response.setHeader("Access-Control-Allow-Origin", "*");
     response.setHeader("Access-Control-Expose-Headers", "origin, range");
     response.setHeader("Cache-Control", "public, max-age=36000");
