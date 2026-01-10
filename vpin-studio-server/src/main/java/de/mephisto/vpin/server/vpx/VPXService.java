@@ -7,12 +7,10 @@ import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameCachingService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.INIConfiguration;
-import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
@@ -52,10 +50,12 @@ public class VPXService implements InitializingBean {
   private Map<String, Object> vpxControllerValues = new HashMap<>();
 
   public boolean isForceDisableB2S() {
-    SubnodeConfiguration section = iniConfiguration.getSection("Controller");
-    String forceDisableB2S = section.getString("ForceDisableB2S");
-    if (forceDisableB2S != null) {
-      return forceDisableB2S.trim().equalsIgnoreCase("1");
+    Configuration section = getControllerConfiguration(false);
+    if (section != null) {
+      String forceDisableB2S = section.getString("ForceDisableB2S");
+      if (forceDisableB2S != null) {
+        return forceDisableB2S.trim().equalsIgnoreCase("1");
+      }
     }
 
     if (vpxControllerValues.containsKey("ForceDisableB2S")) {
@@ -73,6 +73,13 @@ public class VPXService implements InitializingBean {
   }
 
   public @Nullable Configuration getPlayerConfiguration(boolean forceReload) {
+    if (forceReload) {
+      loadIni();
+    }
+    return iniConfiguration != null ? iniConfiguration.getSection("Player") : null;
+  }
+
+  public @Nullable Configuration getControllerConfiguration(boolean forceReload) {
     if (forceReload) {
       loadIni();
     }
