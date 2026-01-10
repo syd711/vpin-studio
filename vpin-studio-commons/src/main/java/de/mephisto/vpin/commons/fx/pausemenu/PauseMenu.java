@@ -9,6 +9,7 @@ import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuState;
 import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.NirCmd;
+import de.mephisto.vpin.commons.utils.WindowsVolumeControl;
 import de.mephisto.vpin.connectors.vps.model.VpsTutorialUrls;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
@@ -53,6 +54,7 @@ public class PauseMenu extends Application {
   private Stage stage;
   private boolean visible = false;
   private boolean test = false;
+  private boolean alreadyMuted = false;
 
   private final List<FrontendScreenAsset> screenAssets = new ArrayList<>();
 
@@ -177,8 +179,16 @@ public class PauseMenu extends Application {
       }
     }
 
-    rootPane.setScaleX(scaling);
-    rootPane.setScaleY(scaling);
+    int scalingSetting = pauseMenuSettings.getScaling();
+    if (scalingSetting != 0) {
+      scaling = (double) scalingSetting / 100;
+      rootPane.setScaleX(scaling);
+      rootPane.setScaleY(scaling);
+    }
+    else {
+      rootPane.setScaleX(scaling);
+      rootPane.setScaleY(scaling);
+    }
 
     stage.setX(stage.getX() + pauseMenuSettings.getStageOffsetX());
     stage.setY(stage.getY() + pauseMenuSettings.getStageOffsetY());
@@ -259,7 +269,10 @@ public class PauseMenu extends Application {
         ServerFX.forceShow(stage);
         LOG.info("Forced showing pause stage, starting post launch processing.");
         JFXFuture.supplyAsync(() -> {
-          if (pauseMenuSettings.isMuteOnPause()) {
+          Boolean isMuted = WindowsVolumeControl.isMuted();
+          alreadyMuted = isMuted != null && isMuted;
+
+          if (pauseMenuSettings.isMuteOnPause() && !alreadyMuted) {
             NirCmd.muteSystem(true);
           }
           return true;
@@ -316,7 +329,7 @@ public class PauseMenu extends Application {
         NirCmd.focusWindow("Visual Pinball Player");
       }
 
-      if (pauseMenuSettings.isMuteOnPause()) {
+      if (pauseMenuSettings.isMuteOnPause() && !alreadyMuted) {
         NirCmd.muteSystem(false);
       }
     }

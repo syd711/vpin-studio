@@ -433,6 +433,7 @@
                     </columnConstraints>
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
@@ -462,9 +463,9 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Label styleClass="default-text" text="Margin Top:" textFill="WHITE" GridPane.rowIndex="1" />
-                        <Label layoutX="10.0" layoutY="48.0" styleClass="default-text" text="Margin Left:" textFill="WHITE" GridPane.rowIndex="2" />
-                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label styleClass="default-text" text="Margin Top:" textFill="WHITE" GridPane.rowIndex="2" />
+                        <Label layoutX="10.0" layoutY="48.0" styleClass="default-text" text="Margin Left:" textFill="WHITE" GridPane.rowIndex="3" />
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <children>
                               <Spinner fx:id="stageMarginTopSpinner" editable="true" prefWidth="90.0">
                                  <HBox.margin>
@@ -474,7 +475,7 @@
                               <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="pixel" textFill="WHITE" />
                            </children>
                         </HBox>
-                        <HBox alignment="CENTER_LEFT" layoutX="173.0" layoutY="43.0" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <HBox alignment="CENTER_LEFT" layoutX="173.0" layoutY="43.0" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <children>
                               <Spinner fx:id="stageMarginLeftSpinner" editable="true" prefWidth="90.0">
                                  <HBox.margin>
@@ -482,6 +483,32 @@
                                  </HBox.margin>
                               </Spinner>
                               <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="pixel" textFill="WHITE" />
+                           </children>
+                        </HBox>
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="preference-label" text="UI Scaling:" textFill="WHITE" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <Spinner fx:id="scalingSpinner" editable="true" prefWidth="90.0" />
+                              <Label styleClass="preference-label" text="\% (0 will use the system defaults)" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="publicReadAPIHint11121" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="This settings allows to scale the size of the complete pause menu. The Studio tries to adjust the scaling by itself depending on the resolution. Changing this setting will overwrite the default." wrapText="true" />
+                                 </tooltip>
+                              </Label>
                            </children>
                         </HBox>
                      </children>

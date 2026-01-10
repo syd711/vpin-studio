@@ -31,6 +31,7 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vps.VpsService;
+import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -94,6 +95,9 @@ public class GameValidationService implements InitializingBean, PreferenceChange
   @Autowired
   private VpsService vpsService;
 
+  @Autowired
+  private VPXService vpxService;
+
   private ValidationSettings validationSettings;
   private IgnoredValidationSettings ignoredValidationSettings;
 
@@ -151,6 +155,15 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     if (isVPX && isValidationEnabled(game, GameValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK)) {
       if (game.getDirectB2SPath() == null && !pupPacksService.isScanActive() && !pupPacksService.hasPupPack(game)) {
         result.add(ValidationStateFactory.create(GameValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK));
+        if (findFirst) {
+          return result;
+        }
+      }
+    }
+
+    if (isVPX && isValidationEnabled(game, GameValidationCode.CODE_BACKGLASS_AND_BACKGLASSES_DISABLED)) {
+      if (game.getDirectB2SPath() != null && vpxService.isForceDisableB2S()) {
+        result.add(ValidationStateFactory.create(GameValidationCode.CODE_BACKGLASS_AND_BACKGLASSES_DISABLED));
         if (findFirst) {
           return result;
         }
@@ -671,6 +684,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
     if (codes.contains(CODE_NO_DIRECTB2S_OR_PUPPACK)
         || codes.contains(CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED)
+        || codes.contains(CODE_BACKGLASS_AND_BACKGLASSES_DISABLED)
         || codes.contains(CODE_NO_ROM)
         || codes.contains(CODE_ROM_NOT_EXISTS)
         || codes.contains(CODE_VPX_NOT_EXISTS)

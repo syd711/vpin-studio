@@ -5,7 +5,7 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
-import de.mephisto.vpin.server.score.DMDScoreWebSocketHandler;
+import de.mephisto.vpin.server.dmdscore.DMDScoreWebSocketHandler;
 
 @Configuration
 @EnableWebSocket

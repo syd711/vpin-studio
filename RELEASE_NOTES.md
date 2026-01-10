@@ -4,10 +4,15 @@
 
 - **Screenshots**: Added service URL to fetch latest pause menu screenshot (http://localhost:8089/api/v1/recorder/screenshot/latest)
 - **Table Filtering**: Fixed issue that the media recorder used the filter settings from the table overview.
+- **Table Validators**: Introduced new table validator which checks if the table has a backglass, but the backglasses are disabled in the VPX settings. (I assume it is an edge case, but can be annoying to trouble-shoot).
 - **Pause Menu**: 
-  - Fixed screen configuration that can be used for showing the tutorials video.
+  - Fixed screen configuration that can be used for showing the tutorials video (@kongedam It is finally there!).
+  - Fixed mute on pause: If the system was already muted, the pause menu does not unmute on exit anymore.
   - Added rotation option for the tutorials screen.
   - Added margin options to position the tutorials screen pixel perfect.
+  - Added scaling option to adjust the size of the pause menu.
+  - Added "Apron Mode" setting which hide the navigation from the pause menu in case you have a screen too small to display the full pause menu.
+  - Added offset settings to fix the positioning of the pause menu (might be required for the apron mode).
 
 ---
 

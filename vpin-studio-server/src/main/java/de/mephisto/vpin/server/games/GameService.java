@@ -24,6 +24,7 @@ import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.vps.VpsService;
+import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
@@ -72,6 +73,9 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
 
   @Autowired
   private VpsService vpsService;
+
+  @Autowired
+  private VPXService vpxService;
 
   @Autowired
   private ScoreFilter scoreFilter;
@@ -155,6 +159,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
    * Pre-reload triggered before an actual manual table reload (server service cache reset)
    */
   public boolean reload() {
+    vpxService.clearCache();
     gameCachingService.clearCache();
     emulatorService.loadEmulators();
     List<GameEmulator> emulators = emulatorService.getValidGameEmulators();

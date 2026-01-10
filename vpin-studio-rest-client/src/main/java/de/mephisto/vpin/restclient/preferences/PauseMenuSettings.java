@@ -22,6 +22,7 @@ public class PauseMenuSettings extends JsonSettings {
   private int testDuration = 8;
   private int testGameId = -1;
   private int unpauseDelay = 1000;
+  private int scaling = 0;
 
   //default is 90 degree rotation
   private int rotation = 90;
@@ -40,6 +41,14 @@ public class PauseMenuSettings extends JsonSettings {
   private String resetButton;
   private String recordingButton;
   private String inputFilterList;
+
+  public int getScaling() {
+    return scaling;
+  }
+
+  public void setScaling(int scaling) {
+    this.scaling = scaling;
+  }
 
   public boolean isApronMode() {
     return apronMode;

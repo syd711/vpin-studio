@@ -66,6 +66,9 @@ public class PauseMenuPreferencesController implements Initializable {
   private Spinner<Integer> delaySpinner;
 
   @FXML
+  private Spinner<Integer> scalingSpinner;
+
+  @FXML
   private Spinner<Integer> stageMarginLeftSpinner;
 
   @FXML
@@ -177,6 +180,13 @@ public class PauseMenuPreferencesController implements Initializable {
     delaySpinner.setValueFactory(factory1);
     factory1.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce("delaySpinner", () -> {
       pauseMenuSettings.setUnpauseDelay(t1);
+      client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+    }, 300));
+
+    SpinnerValueFactory.IntegerSpinnerValueFactory factoryScaling = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, pauseMenuSettings.getScaling());
+    scalingSpinner.setValueFactory(factoryScaling);
+    factoryScaling.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce("scalingSpinner", () -> {
+      pauseMenuSettings.setScaling(t1);
       client.getPreferenceService().setJsonPreference(pauseMenuSettings);
     }, 300));
 

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.commons.utils;
 
+import com.sun.jna.ptr.FloatByReference;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import org.slf4j.Logger;
@@ -36,27 +37,11 @@ public class NirCmd {
   }
 
   public static int getSystemVolume() {
-    String cmd = "@echo off\n" +
-        "for /f %%V in ('\n" +
-        "  powershell -NoProfile -Command ^\n" +
-        "    \"Add-Type -AssemblyName presentationcore; ^\n" +
-        "     [math]::Round([System.Windows.Media.SystemParameters]::Volume * 100)\"\n" +
-        "') do (\n" +
-        "  echo System volume: %%V%%\n" +
-        ")\n";
-    try {
-      File batFile = FileUtils.writeBatch("getSystemVolume.bat", cmd);
-      List<String> strings = Arrays.asList(batFile.getName());
-      SystemCommandExecutor executor = new SystemCommandExecutor(strings);
-      executor.setDir(batFile.getParentFile());
-      executor.executeCommand();
-
-      System.out.println(executor.getStandardOutputFromCommand());
-    }
-    catch (Exception e) {
-      //ignore
-    }
-    return -1;
+    // This is a simplified example - full implementation requires
+    // proper COM interface definitions
+    FloatByReference volume = new FloatByReference();
+    // You'd need to properly define COM interfaces for Core Audio API
+    return (int) volume.getValue();
   }
 
   public static void setVolume(int volume) {
@@ -80,6 +65,6 @@ public class NirCmd {
   public static void main(String[] args) {
 //    NirCmd.setTopMost("Chrome");
 //    NirCmd.setTopMost("Edge");
-    NirCmd.getSystemVolume();
+    System.out.println(NirCmd.getSystemVolume());
   }
 }
