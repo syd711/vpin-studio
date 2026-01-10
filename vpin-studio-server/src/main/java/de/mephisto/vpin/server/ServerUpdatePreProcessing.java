@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.system.NVRamsInfo;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.util.PackageUtil;
+import de.mephisto.vpin.server.util.WindowsVolumeControl;
 import net.sf.sevenzipjbinding.SevenZip;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -46,11 +47,14 @@ public class ServerUpdatePreProcessing {
 
   public static void execute() {
     init7zip();
+    runVolumeCheck();
 
     new Thread(() -> {
       try {
         Thread.currentThread().setName("ServerUpdatePreProcessing");
         long start = System.currentTimeMillis();
+
+
         runJvmCheck();
         runScriptCheck();
         runDeletionChecks();
@@ -61,6 +65,7 @@ public class ServerUpdatePreProcessing {
         runDOFTesterCheck();
         runPupGamesUpdateCheck();
         runDeletions();
+
 
         new Thread(() -> {
           Thread.currentThread().setName("ServerUpdate Async Preprocessor");
@@ -259,4 +264,11 @@ public class ServerUpdatePreProcessing {
 
     return info;
   }
+
+    private static void runVolumeCheck() {
+        LOG.info("CHECKING VOLUME-------------------------------------");
+        float vol = WindowsVolumeControl.getMasterVolume();
+        LOG.info("--------------------------------volume: " + vol);
+    }
+
 }
