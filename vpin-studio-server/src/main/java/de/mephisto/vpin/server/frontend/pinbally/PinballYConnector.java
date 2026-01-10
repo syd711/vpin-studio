@@ -96,7 +96,7 @@ public class PinballYConnector extends BaseConnector {
     List<GameEmulator> emulators = new ArrayList<>();
     mapTableDetails = new HashMap<>();
 
-    var settingsFileLines = readSettingsFileLines();
+    List<String> settingsFileLines = readSettingsFileLines();
 
     Boolean settingsFileChanged = false;
     // Add specific ones
@@ -111,8 +111,8 @@ public class PinballYConnector extends BaseConnector {
             continue;
 
           // Update RunBefore en RunAfter in settings.txt for VPX emulators
-          for (var runType : new String[]{"RunBefore", "RunAfter"}) {
-            var settingValue = settings.getProperty("System" + emuId + "." + runType);
+          for (String runType : new String[] {"RunBefore", "RunAfter"}) {
+            String settingValue = settings.getProperty("System" + emuId + "." + runType);
             if (StringUtils.isAllBlank(settingValue) || settingValue.endsWith("& :: Added by VPin Studio")) {
               settingsFileChanged |= updateSetting(settingsFileLines, emuId, system, runType);
             }
@@ -522,12 +522,12 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
     newSettingsLine.append(" --data-urlencode \"emu=" + emulatorName + "\"");
     newSettingsLine.append(" & :: Added by VPin Studio"); /* used to detect earlier update by VPin Studio */
 
-    var updateAt = -1; // to find the "SystemX.RunBefore" / "SystemX.RunAfter" line to update
-    var insertAfter = -1; // to find the last "SystemX" line to insert after
+    int updateAt = -1; // to find the "SystemX.RunBefore" / "SystemX.RunAfter" line to update
+    int insertAfter = -1; // to find the last "SystemX" line to insert after
 
-    for (var t = 0; t < lines.size(); t++) {
+    for (int t = 0; t < lines.size(); t++) {
 
-      var regex = "^System" + emuId + "\\." + runType + "\\s*=.*";
+      String regex = "^System" + emuId + "\\." + runType + "\\s*=.*";
       if (lines.get(t).matches(regex)) {
         updateAt = t;
       }

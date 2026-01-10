@@ -33,7 +33,7 @@ public class DMDPositionServiceTest {
 
   @Test
   public void saveIni() throws Exception {
-      var authSvn = new INIConfiguration();     
+      INIConfiguration authSvn = new INIConfiguration();     
       //var groups = authSvn.getSection("sec.sec");
       authSvn.setProperty("sec..sec.p1", "val1");
       authSvn.setProperty("sec..sec.p2", "val2");     
