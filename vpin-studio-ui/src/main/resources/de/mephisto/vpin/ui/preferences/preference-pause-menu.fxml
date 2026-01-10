@@ -342,7 +342,6 @@
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <VBox.margin>
                         <Insets />
@@ -358,15 +357,7 @@
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="preference-label" text="Tutorial Videos Display:" textFill="WHITE" GridPane.rowIndex="1">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <GridPane.margin>
-                              <Insets top="3.0" />
-                           </GridPane.margin>
-                        </Label>
-                        <VBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <VBox fx:id="tutorialDetailsBox" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
                               <RadioButton fx:id="tutorialItemRadio" mnemonicParsing="false" styleClass="default-text" text="Display Tutorial Videos as Menu Item">
                                  <toggleGroup>
@@ -379,12 +370,151 @@
                                     <Insets left="24.0" />
                                  </VBox.margin>
                               </ComboBox>
+                              <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                 <children>
+                                    <Label styleClass="default-text" text="Rotate Screen:" textFill="WHITE" />
+                                    <ComboBox fx:id="rotationComboBox" prefWidth="90.0" />
+                                    <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="degrees" textFill="WHITE" />
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets left="26.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <HBox>
+                                 <children>
+                                    <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                       <children>
+                                          <Label styleClass="default-text" text="Margin Top:" textFill="WHITE" />
+                                          <Spinner fx:id="marginTopSpinner" editable="true" prefWidth="90.0">
+                                             <HBox.margin>
+                                                <Insets left="14.0" />
+                                             </HBox.margin>
+                                          </Spinner>
+                                          <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="pixel" textFill="WHITE" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets left="26.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                 <children>
+                                    <Label styleClass="default-text" text="Margin Left:" textFill="WHITE" />
+                                    <Spinner fx:id="marginLeftSpinner" editable="true" prefWidth="90.0">
+                                       <HBox.margin>
+                                          <Insets left="14.0" />
+                                       </HBox.margin>
+                                    </Spinner>
+                                    <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="pixel" textFill="WHITE" />
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets left="26.0" />
+                                 </VBox.margin>
+                              </HBox>
                            </children>
                            <GridPane.margin>
                               <Insets top="3.0" />
                            </GridPane.margin>
                         </VBox>
                      </children>
+                  </GridPane>
+                  <Label layoutX="34.0" layoutY="535.0" styleClass="preference-subtitle" text="Visual Settings" />
+                  <Label layoutX="34.0" layoutY="117.0" styleClass="preference-description" text="This section allows you to adjust some visual settings in case the pause menu layout does not fit." textFill="WHITE">
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label layoutX="34.0" layoutY="946.0" styleClass="preference-description" text="For default 16:9 monitors (backglass or playfields) changing these settings is usually not required." textFill="WHITE" />
+                  <GridPane hgap="3.0" vgap="3.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="130.0" prefWidth="160.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="574.0" minWidth="10.0" prefWidth="574.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label styleClass="preference-label" text="Apron Mode:" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
+                           <children>
+                              <CheckBox fx:id="apronModeCheckbox" mnemonicParsing="false" styleClass="default-text" text="Use Apron Mode" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <Label fx:id="publicReadAPIHint1112" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="The navigation bar is not shown, but you can still navigate. This is useful for small screens." wrapText="true" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <Label styleClass="default-text" text="Margin Top:" textFill="WHITE" GridPane.rowIndex="2" />
+                        <Label layoutX="10.0" layoutY="48.0" styleClass="default-text" text="Margin Left:" textFill="WHITE" GridPane.rowIndex="3" />
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <children>
+                              <Spinner fx:id="stageMarginTopSpinner" editable="true" prefWidth="90.0">
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                              </Spinner>
+                              <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="pixel" textFill="WHITE" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" layoutX="173.0" layoutY="43.0" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                           <children>
+                              <Spinner fx:id="stageMarginLeftSpinner" editable="true" prefWidth="90.0">
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                              </Spinner>
+                              <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="pixel" textFill="WHITE" />
+                           </children>
+                        </HBox>
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="preference-label" text="UI Scaling:" textFill="WHITE" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <Spinner fx:id="scalingSpinner" editable="true" prefWidth="90.0" />
+                              <Label styleClass="preference-label" text="\% (0 will use the system defaults)" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="publicReadAPIHint11121" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="This settings allows to scale the size of the complete pause menu. The Studio tries to adjust the scaling by itself depending on the resolution. Changing this setting will overwrite the default." wrapText="true" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </HBox>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
                   </GridPane>
                </children>
                <padding>

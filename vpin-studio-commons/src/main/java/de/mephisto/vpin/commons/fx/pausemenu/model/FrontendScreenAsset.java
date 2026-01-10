@@ -4,17 +4,18 @@ import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
-import java.io.InputStream;
+import java.net.URL;
 
 public class FrontendScreenAsset {
   private Stage screenStage;
   private int rotation;
   private FrontendPlayerDisplay display;
   private String mimeType;
-  private InputStream inputStream;
-  private String url;
+  private URL url;
   private int duration;
   private String name;
+  private int offsetX;
+  private int offsetY;
 
   private MediaPlayer mediaPlayer;
 
@@ -24,6 +25,22 @@ public class FrontendScreenAsset {
         mediaPlayer.dispose();
       }).start();
     }
+  }
+
+  public int getOffsetX() {
+    return offsetX;
+  }
+
+  public void setOffsetX(int offsetX) {
+    this.offsetX = offsetX;
+  }
+
+  public int getOffsetY() {
+    return offsetY;
+  }
+
+  public void setOffsetY(int offsetY) {
+    this.offsetY = offsetY;
   }
 
   public String getName() {
@@ -82,19 +99,11 @@ public class FrontendScreenAsset {
     this.mimeType = mimeType;
   }
 
-  public InputStream getInputStream() {
-    return inputStream;
-  }
-
-  public void setInputStream(InputStream inputStream) {
-    this.inputStream = inputStream;
-  }
-
-  public String getUrl() {
+  public URL getUrl() {
     return url;
   }
 
-  public void setUrl(String url) {
+  public void setUrl(URL url) {
     this.url = url;
   }
 }

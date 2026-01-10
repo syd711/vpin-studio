@@ -57,13 +57,15 @@ public class FrontendScreensManager {
         FrontendScreenController screenController = loader.getController();
         screenController.setMediaAsset(asset);
         root.setCenter(widgetRoot);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.error("Failed to frontend screen: " + e.getMessage(), e);
       }
 
       showStage(screenStage, asset.getDuration());
       return screenStage;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to open screen stage: " + e.getMessage(), e);
     }
     return null;
@@ -86,7 +88,8 @@ public class FrontendScreensManager {
         else {
           ServerFX.toFront(stage, stage.isShowing());
         }
-      } catch (InterruptedException e) {
+      }
+      catch (InterruptedException e) {
         //ignore
       }
     }).start();

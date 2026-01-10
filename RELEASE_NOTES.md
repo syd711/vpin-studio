@@ -1,3 +1,48 @@
+## Release Notes 4.5.7
+
+## Changes
+
+- **Screenshots**: Added service URL to fetch latest pause menu screenshot (http://localhost:8089/api/v1/recorder/screenshot/latest)
+- **Table Filtering**: Fixed issue that the media recorder used the filter settings from the table overview.
+- **Table Validators**: Introduced new table validator which checks if the table has a backglass, but the backglasses are disabled in the VPX settings. (I assume it is an edge case, but can be annoying to trouble-shoot).
+- **Pause Menu**: 
+  - Fixed screen configuration that can be used for showing the tutorials video (@kongedam It is finally there!).
+  - Fixed mute on pause: If the system was already muted, the pause menu does not unmute on exit anymore.
+  - Added rotation option for the tutorials screen.
+  - Added margin options to position the tutorials screen pixel perfect.
+  - Added scaling option to adjust the size of the pause menu.
+  - Added "Apron Mode" setting which hide the navigation from the pause menu in case you have a screen too small to display the full pause menu.
+  - Added offset settings to fix the positioning of the pause menu (might be required for the apron mode).
+
+---
+
+## Release Notes 4.5.6
+
+## Changes
+
+- Fixed update check for several files that haven't been properly updated (e.g. the .pupgames files to import game data for non VPX emulators.)
+- Fixed the server shutdown which was blocked (again) and therefore **updates did not run properly**.
+
+**If you face the issue that the server is not updating, please follow these steps - again :-/**
+
+**Download https://github.com/syd711/vpin-studio/releases/download/4.5.6/VPin-Studio-Server.zip and follow these instructions:**
+**https://github.com/syd711/vpin-studio/wiki#manual-updates**
+
+
+---
+
+## Release Notes 4.5.5
+
+## Changes
+
+- Fixed rendering issue in the WOVP pause menu item (again).
+- Fixed layout issues with the WOVP scores on the dashboard.
+- Added persistent caching for the WOVP flag images to speed up the loading process. 
+- Fixed WOVP multi-player mode for the pause menu that got broken during the last revamp.
+- Added auto-scrolling to the WOVP players score in the competitions dashboard section.
+
+---
+
 ## Release Notes 4.5.4
 
 ## Changes

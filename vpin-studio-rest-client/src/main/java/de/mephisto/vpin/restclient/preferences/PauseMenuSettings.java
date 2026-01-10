@@ -9,13 +9,20 @@ public class PauseMenuSettings extends JsonSettings {
   private int inputDebounceMs = 0;
   private VPinScreen tutorialsScreen = VPinScreen.Topper;
   private boolean tutorialsOnScreen = false;
+  private int tutorialMarginLeft = 0;
+  private int tutorialMarginTop = 0;
+  private int tutorialsRotation = 0;
   private boolean pressPause = true;
 
+  private boolean apronMode = false;
+  private int stageOffsetX = 0;
+  private int stageOffsetY = 0;
   private boolean desktopUser = false;
 
   private int testDuration = 8;
   private int testGameId = -1;
   private int unpauseDelay = 1000;
+  private int scaling = 0;
 
   //default is 90 degree rotation
   private int rotation = 90;
@@ -34,6 +41,62 @@ public class PauseMenuSettings extends JsonSettings {
   private String resetButton;
   private String recordingButton;
   private String inputFilterList;
+
+  public int getScaling() {
+    return scaling;
+  }
+
+  public void setScaling(int scaling) {
+    this.scaling = scaling;
+  }
+
+  public boolean isApronMode() {
+    return apronMode;
+  }
+
+  public void setApronMode(boolean apronMode) {
+    this.apronMode = apronMode;
+  }
+
+  public int getStageOffsetX() {
+    return stageOffsetX;
+  }
+
+  public void setStageOffsetX(int stageOffsetX) {
+    this.stageOffsetX = stageOffsetX;
+  }
+
+  public int getStageOffsetY() {
+    return stageOffsetY;
+  }
+
+  public void setStageOffsetY(int stageOffsetY) {
+    this.stageOffsetY = stageOffsetY;
+  }
+
+  public int getTutorialMarginLeft() {
+    return tutorialMarginLeft;
+  }
+
+  public void setTutorialMarginLeft(int tutorialMarginLeft) {
+    this.tutorialMarginLeft = tutorialMarginLeft;
+  }
+
+  public int getTutorialMarginTop() {
+    return tutorialMarginTop;
+  }
+
+  public void setTutorialMarginTop(int tutorialMarginTop) {
+    this.tutorialMarginTop = tutorialMarginTop;
+  }
+
+  public int getTutorialsRotation() {
+    return tutorialsRotation;
+  }
+
+  public void setTutorialsRotation(int tutorialsRotation) {
+    this.tutorialsRotation = tutorialsRotation;
+  }
 
   public boolean isDesktopUser() {
     return desktopUser;

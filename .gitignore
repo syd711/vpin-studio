@@ -70,6 +70,7 @@ hs_err_pid*
 /resources/vpin-studio.sqbpro
 /resources/b2s-raw/
 /resources/b2s-cropped/
+/resources/flags/
 resources/media-raw/
 resources/media-cropped/
 /resources/overlay.png

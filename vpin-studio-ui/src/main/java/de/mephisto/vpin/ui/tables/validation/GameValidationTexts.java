@@ -80,6 +80,11 @@ public class GameValidationTexts {
         text = "Check the \"Virtual Pinball Spreadsheet\" section to download a \"directb2s\" file for this table.";
         break;
       }
+      case CODE_BACKGLASS_AND_BACKGLASSES_DISABLED: {
+        label = "directb2s file found, but backglasses are not enabled.";
+        text = "The table has a backglass, but you have force disabled the backglasses in your VPX settings.";
+        break;
+      }
       case CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED: {
         label = "PUP Pack not enabled.";
         text = "The table does not have a backglass and the PUP pack is not enabled.";

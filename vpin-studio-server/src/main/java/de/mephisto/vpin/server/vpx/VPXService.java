@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.vpx;
 
 import de.mephisto.vpin.commons.POV;
 import de.mephisto.vpin.commons.utils.VPXKeyManager;
+import de.mephisto.vpin.commons.utils.WinRegistry;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.VPinStudioException;
@@ -11,6 +12,7 @@ import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.INIConfiguration;
+import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
@@ -25,10 +27,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -50,29 +49,27 @@ public class VPXService implements InitializingBean {
 
   private VPXKeyManager keyManager;
 
+  private Map<String, Object> vpxControllerValues = new HashMap<>();
+
+  public boolean isForceDisableB2S() {
+    SubnodeConfiguration section = iniConfiguration.getSection("Controller");
+    String forceDisableB2S = section.getString("ForceDisableB2S");
+    if (forceDisableB2S != null) {
+      return forceDisableB2S.trim().equalsIgnoreCase("1");
+    }
+
+    if (vpxControllerValues.containsKey("ForceDisableB2S")) {
+      Object o = vpxControllerValues.get("ForceDisableB2S");
+      if (o instanceof Integer) {
+        return ((Integer) o) == 1;
+      }
+    }
+    return false;
+  }
 
   public File getVPXFile() {
     String userhome = System.getProperty("user.home");
     return new File(userhome, "AppData/Roaming/VPinballX/VPinballX.ini");
-  }
-
-  private void loadIni() {
-    File vpxInFile = getVPXFile();
-    if (vpxInFile.exists()) {
-      try (FileReader fileReader = new FileReader(vpxInFile)) {
-        this.iniConfiguration = new INIConfiguration();
-        iniConfiguration.setCommentLeadingCharsUsedInInput(";");
-        iniConfiguration.setSeparatorUsedInOutput("=");
-        iniConfiguration.setSeparatorUsedInInput("=");
-        iniConfiguration.read(fileReader);
-        LOG.info("loaded VPX ini file {}", vpxInFile.getAbsolutePath());
-
-        this.keyManager = new VPXKeyManager(getPlayerConfiguration(false));
-      }
-      catch (Exception e) {
-        LOG.error("Failed to read VPX ini file: " + e.getMessage(), e);
-      }
-    }
   }
 
   public @Nullable Configuration getPlayerConfiguration(boolean forceReload) {
@@ -326,11 +323,46 @@ public class VPXService implements InitializingBean {
     return false;
   }
 
+  //-------------- Config Loading -------------------------------------
+
+  private void loadIni() {
+    File vpxInFile = getVPXFile();
+    if (vpxInFile.exists()) {
+      try (FileReader fileReader = new FileReader(vpxInFile)) {
+        this.iniConfiguration = new INIConfiguration();
+        iniConfiguration.setCommentLeadingCharsUsedInInput(";");
+        iniConfiguration.setSeparatorUsedInOutput("=");
+        iniConfiguration.setSeparatorUsedInInput("=");
+        iniConfiguration.read(fileReader);
+        LOG.info("loaded VPX ini file {}", vpxInFile.getAbsolutePath());
+
+        this.keyManager = new VPXKeyManager(getPlayerConfiguration(false));
+      }
+      catch (Exception e) {
+        LOG.error("Failed to read VPX ini file: " + e.getMessage(), e);
+      }
+    }
+  }
+
+  private void loadRegistration() {
+    try {
+      vpxControllerValues = WinRegistry.getCurrentUserValues("Software\\Visual Pinball\\Controller");
+    }
+    catch (Exception e) {
+      LOG.warn("Failed to read VPX registry values: {}", e.getMessage());
+    }
+  }
+
   //------------------------------------------
+
+  public void clearCache() {
+    loadIni();
+    loadRegistration();
+  }
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    loadIni();
+    clearCache();
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

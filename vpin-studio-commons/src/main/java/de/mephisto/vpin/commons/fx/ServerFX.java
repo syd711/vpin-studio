@@ -301,7 +301,7 @@ public class ServerFX extends Application {
         asset.setRotation(rotation);
         asset.setDuration(notificationTime);
         asset.setMimeType(mimeType);
-        asset.setInputStream(new FileInputStream(file));
+        asset.setUrl(file.toURI().toURL());
 
         FrontendScreensManager.getInstance().showScreen(asset);
       }

@@ -130,6 +130,9 @@ public class CompetitionsController implements Initializable, StudioFXController
   private VBox scoreBox;
 
   @FXML
+  private ScrollPane dashboardScrollPane;
+
+  @FXML
   private Label dashboardStatusLabel;
 
   @FXML
@@ -442,6 +445,7 @@ public class CompetitionsController implements Initializable, StudioFXController
               BorderPane row = loader.load();
               WidgetWeeklyCompetitionScoreItemController controller = loader.getController();
               row.setMaxWidth(Double.MAX_VALUE);
+              row.setUserData(score);
               controller.setData(score);
               children.add(row);
             }
@@ -456,10 +460,36 @@ public class CompetitionsController implements Initializable, StudioFXController
             scoreBox.getChildren().removeAll(scoreBox.getChildren());
             scoreBox.getChildren().addAll(children);
             scoreBox.setVisible(!children.isEmpty());
+
+            focusMyScore();
           }
         });
       }
     }
+  }
+
+  private void focusMyScore() {
+    JFXFuture.supplyAsync(() -> {
+      List<Node> children = scoreBox.getChildren();
+      Optional<Node> myScorePanel = children.stream().filter(s -> ((CompetitionScore) s.getUserData()).isMyScore()).findFirst();
+      if (myScorePanel.isPresent()) {
+        int myScoreIndex = scoreBox.getChildren().indexOf(myScorePanel.get());
+        double height = ((Pane) myScorePanel.get()).getHeight();
+        if (height == 0) {
+          Platform.runLater(() -> {
+            focusMyScore();
+          });
+        }
+        return (int) (myScoreIndex * height);
+      }
+      return 0;
+    }).thenAcceptLater(scroll -> {
+      if (scroll > 0) {
+        Platform.runLater(() -> {
+          dashboardScrollPane.setVvalue(scroll);
+        });
+      }
+    });
   }
 
 

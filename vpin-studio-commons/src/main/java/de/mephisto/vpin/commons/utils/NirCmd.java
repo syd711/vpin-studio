@@ -1,10 +1,13 @@
 package de.mephisto.vpin.commons.utils;
 
+import com.sun.jna.ptr.FloatByReference;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.List;
@@ -33,6 +36,14 @@ public class NirCmd {
     executor.executeCommandAsync();
   }
 
+  public static int getSystemVolume() {
+    // This is a simplified example - full implementation requires
+    // proper COM interface definitions
+    FloatByReference volume = new FloatByReference();
+    // You'd need to properly define COM interfaces for Core Audio API
+    return (int) volume.getValue();
+  }
+
   public static void setVolume(int volume) {
     int vol = 65535 * volume / 100;
     List<String> commands = Arrays.asList("nircmd.exe", "setvolume", "0", String.valueOf(vol), String.valueOf(vol));
@@ -54,6 +65,6 @@ public class NirCmd {
   public static void main(String[] args) {
 //    NirCmd.setTopMost("Chrome");
 //    NirCmd.setTopMost("Edge");
-    NirCmd.muteSystem(true);
+    System.out.println(NirCmd.getSystemVolume());
   }
 }

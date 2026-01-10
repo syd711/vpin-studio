@@ -15,6 +15,7 @@ import de.mephisto.vpin.restclient.preferences.OverlaySettings;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.recorder.RecorderFilterSettings;
 import de.mephisto.vpin.restclient.recorder.RecorderSettings;
 import de.mephisto.vpin.restclient.tagging.TaggingSettings;
 import de.mephisto.vpin.restclient.validation.IgnoredValidationSettings;
@@ -52,6 +53,7 @@ public interface PreferenceNames {
   String SERVER_SETTINGS = "serverSettings";
   String NOTIFICATION_SETTINGS = "notificationSettings";
   String FILTER_SETTINGS = "filterSettings";
+  String RECORDINGS_FILTER_SETTINGS = "recordingsFilterSettings";
   String MONITORING_SETTINGS = "monitoringSettings";
 
   String PINBALLX_SETTINGS = "pinballXSettings";
@@ -129,6 +131,9 @@ public interface PreferenceNames {
       }
       case PreferenceNames.FILTER_SETTINGS: {
         return FilterSettings.class;
+      }
+      case PreferenceNames.RECORDINGS_FILTER_SETTINGS: {
+        return RecorderFilterSettings.class;
       }
       case PreferenceNames.VPU_SETTINGS: {
         return VPUSettings.class;

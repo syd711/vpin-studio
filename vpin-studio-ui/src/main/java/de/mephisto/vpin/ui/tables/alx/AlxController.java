@@ -203,8 +203,8 @@ public class AlxController implements Initializable, StudioFXController, StudioE
           });
     }
     catch (Exception e) {
-      LOG.error("Failed to initialize ALX dashboard: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to initialize dashboard: " + e.getMessage(), "Please submit a bug report with log files on github for this.");
+      LOG.error("Failed to initialize ALX data: " + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to initialize ALX data: " + e.getMessage(), "Please submit a bug report with log files on github for this.");
     }
   }
 
@@ -238,7 +238,7 @@ public class AlxController implements Initializable, StudioFXController, StudioE
     }
     catch (Exception e) {
       LOG.error("Failed to initialize ALX dashboard: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to initialize dashboard: " + e.getMessage(), "Please submit a bug report with log files on github for this.");
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to initialize ALX dashboard: " + e.getMessage(), "Please submit a bug report with log files on github for this.");
     }
   }
 

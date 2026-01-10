@@ -39,9 +39,9 @@ public class ServerUpdatePreProcessing {
 
   static {
     PUP_GAMES.put("pinball_fx.json", 229247L);
-    PUP_GAMES.put("pinball_fx3.json", 157062L);
-    PUP_GAMES.put("zaccaria.json", 217581L);
-    PUP_GAMES.put("pinball_m.json", 11574L);
+    PUP_GAMES.put("pinball_fx3.json", 152207L);
+    PUP_GAMES.put("zaccaria.json", 209785L);
+    PUP_GAMES.put("pinball_m.json", 11143L);
   }
 
   public static void execute() {
@@ -51,6 +51,8 @@ public class ServerUpdatePreProcessing {
       try {
         Thread.currentThread().setName("ServerUpdatePreProcessing");
         long start = System.currentTimeMillis();
+
+
         runJvmCheck();
         runScriptCheck();
         runDeletionChecks();
@@ -61,6 +63,7 @@ public class ServerUpdatePreProcessing {
         runDOFTesterCheck();
         runPupGamesUpdateCheck();
         runDeletions();
+
 
         new Thread(() -> {
           Thread.currentThread().setName("ServerUpdate Async Preprocessor");
@@ -95,7 +98,7 @@ public class ServerUpdatePreProcessing {
       long size = check.length();
       if (expectedSize != size) {
         LOG.info("Outdated PinVol.exe found, updating...");
-        Updater.download("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/PinVol.exe", check);
+        Updater.downloadAndOverwrite("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/PinVol.exe", check, true);
       }
     }
   }
@@ -107,7 +110,7 @@ public class ServerUpdatePreProcessing {
       long size = check.length();
       if (expectedSize != size) {
         LOG.info("Outdated vpxtool.exe found, updating...");
-        Updater.download("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/vpxtool.exe", check);
+        Updater.downloadAndOverwrite("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/vpxtool.exe", check, true);
       }
     }
   }
@@ -130,12 +133,9 @@ public class ServerUpdatePreProcessing {
   private static void runLogosUpdateCheck() {
     long expectedSize = 119856;
     File check = new File(RESOURCES, "logos.txt");
-    if (check.exists()) {
-      long size = check.length();
-      if (expectedSize != size) {
-        LOG.info("Outdated logos.txt found, updating...");
-        Updater.download("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/logos.txt", check);
-      }
+    if (!check.exists() || expectedSize != check.length()) {
+      LOG.info("Outdated logos.txt found, updating...");
+      Updater.downloadAndOverwrite("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/logos.txt", check, true);
     }
   }
 
@@ -144,9 +144,9 @@ public class ServerUpdatePreProcessing {
       File check = new File(RESOURCES, "pupgames/" + entry.getKey());
       long expectedSize = entry.getValue();
       if (!check.exists() || check.length() != expectedSize) {
-        LOG.info("Outdated {} found, updating...", entry.getKey());
+        LOG.info("Outdated pupgames file {}/({}) found, updating...", entry.getKey(), check.length() + "/" + expectedSize);
         check.getParentFile().mkdirs();
-        Updater.download("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/pupgames/" + entry.getKey(), check);
+        Updater.downloadAndOverwrite("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/pupgames/" + entry.getKey(), check, true);
       }
     }
   }

@@ -56,7 +56,7 @@
             <Insets right="24.0" />
          </BorderPane.margin>
          <children>
-                    <Label fx:id="positionLabel" prefWidth="50.0" text="#" textFill="WHITE">
+                    <Label fx:id="positionLabel" prefWidth="60.0" text="#" textFill="WHITE">
                         <font>
                             <Font size="24.0" />
                         </font>

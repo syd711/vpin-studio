@@ -140,7 +140,7 @@
                   </StackPane>
                </center>
             </BorderPane>
-            <ImageView fitHeight="550.0" fitWidth="550.0" pickOnBounds="true" preserveRatio="true" styleClass="main">
+            <ImageView fx:id="wheelImage" fitHeight="550.0" fitWidth="550.0" pickOnBounds="true" preserveRatio="true" styleClass="main">
                <image>
                   <Image url="@wheel.png" />
                </image>

@@ -29,7 +29,7 @@ public class FileUtils {
           return false;
         }
         org.apache.commons.io.FileUtils.copyFile(source, target);
-        LOG.info("Copied {} to {}", source.getAbsolutePath(), target.getAbsolutePath());
+        LOG.info("Copied {}/({}) to {}", source.getAbsolutePath(), source.length(), target.getAbsolutePath());
         return true;
       }
     }

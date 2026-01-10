@@ -265,7 +265,7 @@
                             <content>
                                 <BorderPane>
                                     <center>
-                                        <ScrollPane hbarPolicy="NEVER">
+                                        <ScrollPane fx:id="dashboardScrollPane" hbarPolicy="NEVER">
                                             <content>
                                                 <VBox fx:id="dashboardBox">
                                                     <children>

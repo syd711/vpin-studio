@@ -48,7 +48,6 @@ public class FrontendScreenController implements Initializable {
   public void setMediaAsset(FrontendScreenAsset screenAsset) {
     try {
       root.setPadding(new Insets(0, 0, 0, 0)); //reset of the other options
-      root.setRotate(0);//reset of the other options
 
       if (screenAsset.getDisplay() != null) {
         showOnDisplay(screenAsset);
@@ -64,9 +63,8 @@ public class FrontendScreenController implements Initializable {
   }
 
   private void showCentered(FrontendScreenAsset asset, MonitorInfo screen) throws IOException {
-    InputStream in = asset.getInputStream();
-    Image image = new Image(in);
-    in.close();
+    URL url = asset.getUrl();
+    Image image = new Image(url.openStream());
     LOG.info("Showing asset centered on playfield (" + image.getWidth() + "/" + image.getHeight() + ")");
 
     imageView.setImage(image);
@@ -86,7 +84,6 @@ public class FrontendScreenController implements Initializable {
     int targetRotation = asset.getRotation() + (-90);
     root.setRotate(targetRotation);
     root.setPadding(new Insets(0, 0, 0, 0));
-
     if (targetRotation == -90 || targetRotation == 90) {
       //move the image a bit up for more distance to the wheel selector
       root.setPadding(new Insets(0, 0, image.getHeight() / 2 + image.getHeight() / 2 / 2, 0));
@@ -102,11 +99,11 @@ public class FrontendScreenController implements Initializable {
     String mimeType = asset.getMimeType();
 
     LOG.info("Showing asset on display \"" + display + "\"");
-    InputStream inputStream = asset.getInputStream();
-    image = new Image(inputStream, display.getWidth(), display.getHeight(), false, true);
-    inputStream.close();
-
     if (mimeType.startsWith("image")) {
+      InputStream inputStream = asset.getUrl().openStream();
+      image = new Image(inputStream, display.getWidth(), display.getHeight(), false, true);
+      inputStream.close();
+
       mediaView.setVisible(false);
       imageView.setPreserveRatio(false);
       imageView.setFitWidth(display.getWidth());
@@ -116,7 +113,7 @@ public class FrontendScreenController implements Initializable {
     else if (mimeType.startsWith("video")) {
       imageView.setVisible(false);
 
-      Media media = new Media(asset.getUrl());
+      Media media = new Media(asset.getUrl().toExternalForm());
       MediaPlayer mediaPlayer = new MediaPlayer(media);
       mediaPlayer.setAutoPlay(true);
       mediaPlayer.setCycleCount(-1);
@@ -125,8 +122,8 @@ public class FrontendScreenController implements Initializable {
       mediaView.setPreserveRatio(false);
       mediaView.setFitWidth(display.getWidth());
       mediaView.setFitHeight(display.getHeight());
-      mediaView.setMediaPlayer(mediaPlayer);
 
+      mediaView.setMediaPlayer(mediaPlayer);
       asset.setMediaPlayer(mediaPlayer);
     }
     else {
@@ -135,18 +132,26 @@ public class FrontendScreenController implements Initializable {
     }
 
     Stage screenStage = asset.getScreenStage();
-    screenStage.setX(display.getX());
-    screenStage.setY(display.getY());
+    screenStage.setTitle("VPin UI");
+    screenStage.setX(display.getX() + asset.getOffsetX());
+    screenStage.setY(display.getY() + asset.getOffsetY());
     screenStage.setHeight(display.getHeight());
     screenStage.setWidth(display.getWidth());
 
-    root.setRotate(display.getRotation());
+    if (asset.getRotation() == 90 || asset.getRotation() == 270) {
+      screenStage.setX(screenStage.getX() + ((double) display.getWidth() / 2) - ((double) display.getHeight() / 2));
+      screenStage.setY(screenStage.getY() - ((double) display.getHeight() / 2) + ((double) display.getHeight() / 2));
+      screenStage.setHeight(display.getWidth());
+      screenStage.setWidth(display.getHeight());
+    }
+    else  if (asset.getRotation() == 180) {
+      screenStage.setY(screenStage.getY() + display.getHeight());
+    }
 
-    if (display.getRotation() == 90 || display.getRotation() == 270) {
-      root.setPadding(new Insets(display.getHeight() / 2 + display.getHeight() / 2 / 2, 0, 0, 0));
-      if (display.getRotation() == 270) {
-        root.setPadding(new Insets(0, 0, display.getHeight() / 2 + display.getHeight() / 2 / 2, 0));
-      }
+    root.setRotate(asset.getRotation());
+
+    if (asset.getRotation() == 90 || asset.getRotation() == 270) {
+      root.translateXProperty().setValue(-( display.getHeight() + (display.getHeight()/2)));
     }
   }
 

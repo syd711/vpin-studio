@@ -120,6 +120,10 @@ public class RecorderResource {
     try {
       LOG.info("Creating summary screenshot...");
       out = response.getOutputStream();
+
+      if (uuid != null && uuid.equalsIgnoreCase("latest")) {
+        uuid = null;
+      }
       File screenshotFile = screenshotService.getScreenshotFile(uuid);
       if (screenshotFile.exists()) {
         in = new FileInputStream(screenshotFile);

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.utils.FXUtil;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
@@ -9,11 +10,13 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
+import de.mephisto.vpin.restclient.recorder.RecorderFilterSettings;
 import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
 import de.mephisto.vpin.ui.tables.models.TableStatus;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
 import de.mephisto.vpin.ui.util.tags.TagField;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -23,9 +26,11 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TabPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,6 +42,9 @@ import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableFilterController extends BaseFilterController<GameRepresentation, GameRepresentationModel> implements Initializable, PreferenceChangeListener {
+
+  @FXML
+  private Node filterRoot;
 
   @FXML
   private CheckBox missingAssetsCheckBox;
@@ -122,7 +130,6 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
   @FXML
   private ComboBox<CommentType> commentsCombo;
 
-  private FilterSettings filterSettings;
   private VpsSettings vpsSettings;
 
   private TableOverviewPredicateFactory predicateFactory = new TableOverviewPredicateFactory();
@@ -158,7 +165,12 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
   protected void resetFilters() {
     GameEmulatorRepresentation emulatorSelection = getEmulatorSelection();
     if (!filterSettings.isResetted(emulatorSelection == null || emulatorSelection.isVpxEmulator())) {
-      this.filterSettings = new FilterSettings();
+      try {
+        this.filterSettings = this.filterSettings.getClass().getConstructor().newInstance();
+      }
+      catch (Exception e) {
+        //ignore
+      }
 
       statusCombo.setValue(null);
       commentsCombo.setValue(null);
@@ -203,8 +215,11 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
     statusSettings.setVisible(!Features.IS_STANDALONE);
     notPlayedSettings.setVisible(Features.STATISTICS_ENABLED);
     missingAssetsCheckBox.setVisible(Features.MEDIA_ENABLED);
+  }
 
-    filterSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.FILTER_SETTINGS, FilterSettings.class);
+  public void loadFilterSettings(@NonNull FilterSettings filterSettings) {
+    this.filterSettings = filterSettings;
+
     missingAssetsCheckBox.setSelected(filterSettings.isMissingAssets());
     missingAssetsCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       filterSettings.setMissingAssets(newValue);

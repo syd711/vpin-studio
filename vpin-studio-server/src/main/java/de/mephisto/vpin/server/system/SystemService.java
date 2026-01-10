@@ -571,8 +571,8 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   }
 
   public void shutdown() {
+    ExecutorService executor = Executors.newSingleThreadExecutor();
     try {
-      ExecutorService executor = Executors.newSingleThreadExecutor();
       Future<?> submit = executor.submit(new Runnable() {
         @Override
         public void run() {
@@ -601,24 +601,27 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
           catch (Exception e) {
             LOG.error("Shutdown failed: {}", e.getMessage());
           }
-
-          try {
-            ((ConfigurableApplicationContext) context).close();
-          }
-          catch (Exception e) {
-            LOG.error("Server Context Shutdown failed: {}", e.getMessage());
-          }
         }
       });
 
       submit.get(3, TimeUnit.SECONDS);
     }
     catch (Exception e) {
-      LOG.error("Server Shutdown Error: {}", e.getMessage());
+      LOG.error("Server Shutdown Error: {}", e.getMessage(), e);
     }
     finally {
-      System.exit(0);
+      executor.shutdownNow();
     }
+
+    try {
+      SpringApplication.exit(context, () -> 0);
+      ((ConfigurableApplicationContext) context).close();
+    }
+    catch (Exception e) {
+      LOG.error("Server Context Shutdown failed: {}", e.getMessage());
+    }
+
+    System.exit(0);
   }
 
   public void systemShutdown() {

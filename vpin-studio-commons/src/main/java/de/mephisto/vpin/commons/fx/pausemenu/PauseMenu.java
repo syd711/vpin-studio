@@ -9,6 +9,7 @@ import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuState;
 import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.NirCmd;
+import de.mephisto.vpin.commons.utils.WindowsVolumeControl;
 import de.mephisto.vpin.connectors.vps.model.VpsTutorialUrls;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
@@ -53,6 +54,7 @@ public class PauseMenu extends Application {
   private Stage stage;
   private boolean visible = false;
   private boolean test = false;
+  private boolean alreadyMuted = false;
 
   private final List<FrontendScreenAsset> screenAssets = new ArrayList<>();
 
@@ -167,15 +169,30 @@ public class PauseMenu extends Application {
       else if (max > 2000) {
         scaling = 1;
       }
+      else if (max > 1200) {
+        scaling = 0.9;
+      }
       else {
         //falls down too much
-        scaling = 0.7;
+        scaling = 0.65;
         stage.setY(Screen.getScreens().get(1).getBounds().getMinY());
       }
     }
 
-    rootPane.setScaleX(scaling);
-    rootPane.setScaleY(scaling);
+    int scalingSetting = pauseMenuSettings.getScaling();
+    if (scalingSetting != 0) {
+      scaling = (double) scalingSetting / 100;
+      rootPane.setScaleX(scaling);
+      rootPane.setScaleY(scaling);
+    }
+    else {
+      rootPane.setScaleX(scaling);
+      rootPane.setScaleY(scaling);
+    }
+
+    stage.setX(stage.getX() + pauseMenuSettings.getStageOffsetX());
+    stage.setY(stage.getY() + pauseMenuSettings.getStageOffsetY());
+
     return scene;
   }
 
@@ -218,17 +235,16 @@ public class PauseMenu extends Application {
           List<VpsTutorialUrls> videoTutorials = PauseMenuItemsFactory.getVideoTutorials(game, pauseMenuSettings);
           if (!videoTutorials.isEmpty()) {
             String videoUrl = PauseMenuItemsFactory.createVideoUrl(game);
-            FrontendPlayerDisplay screenDisplay = client.getFrontendService().getScreenDisplay(VPinScreen.Other2);
+            VPinScreen tutorialsScreen = pauseMenuSettings.getTutorialsScreen();
+            FrontendPlayerDisplay screenDisplay = client.getFrontendService().getScreenDisplay(tutorialsScreen);
             FrontendMediaItemRepresentation tutorialItem = new FrontendMediaItemRepresentation();
             tutorialItem.setMimeType("video/mp4");
             tutorialItem.setScreen(tutorialScreen);
             tutorialItem.setGameId(game.getId());
             tutorialItem.setUri(videoUrl);
 
-            FrontendScreenAsset assetScreen = PauseMenuScreensFactory.createScreenStage(client, game, screenDisplay, tutorialScreen, tutorialItem);
-            if (assetScreen != null) {
-              screenAssets.add(assetScreen);
-            }
+            FrontendScreenAsset assetScreen = PauseMenuScreensFactory.createScreenStage(client, game, screenDisplay, tutorialScreen, tutorialItem, pauseMenuSettings);
+            screenAssets.add(assetScreen);
           }
         }
 
@@ -245,6 +261,7 @@ public class PauseMenu extends Application {
         PauseMenuState state = new PauseMenuState();
         state.setGame(game);
         state.setScoreSubmitterEnabled(scoreSubmitterEnabled);
+        state.setApronMode(pauseMenuSettings.isApronMode());
 
         StateMananger.getInstance().setState(state);
         stage.getScene().setCursor(Cursor.NONE);
@@ -252,7 +269,10 @@ public class PauseMenu extends Application {
         ServerFX.forceShow(stage);
         LOG.info("Forced showing pause stage, starting post launch processing.");
         JFXFuture.supplyAsync(() -> {
-          if (pauseMenuSettings.isMuteOnPause()) {
+          Boolean isMuted = WindowsVolumeControl.isMuted();
+          alreadyMuted = isMuted != null && isMuted;
+
+          if (pauseMenuSettings.isMuteOnPause() && !alreadyMuted) {
             NirCmd.muteSystem(true);
           }
           return true;
@@ -260,7 +280,6 @@ public class PauseMenu extends Application {
           long start = System.currentTimeMillis();
           try {
             LOG.info("Pause menu screens preparation finished, using {} screen assets.", screenAssets.size());
-            screenAssets.clear();
           }
           catch (Exception e) {
             LOG.error("Failed to prepare pause menu screens: {}", e.getMessage(), e);
@@ -288,7 +307,10 @@ public class PauseMenu extends Application {
 
     LOG.info("Exited pause menu");
     SLOG.info("Exited pause menu");
-    stage.hide();
+    if (stage != null) {
+      //null for headless tests
+      stage.hide();
+    }
 
     Platform.runLater(() -> {
       try {
@@ -301,6 +323,7 @@ public class PauseMenu extends Application {
         asset.getScreenStage().hide();
         asset.dispose();
       });
+      screenAssets.clear();
     });
 
 
@@ -309,7 +332,7 @@ public class PauseMenu extends Application {
         NirCmd.focusWindow("Visual Pinball Player");
       }
 
-      if (pauseMenuSettings.isMuteOnPause()) {
+      if (pauseMenuSettings.isMuteOnPause() && !alreadyMuted) {
         NirCmd.muteSystem(false);
       }
     }

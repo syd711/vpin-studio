@@ -3,7 +3,6 @@ package de.mephisto.vpin.commons.fx.pausemenu;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItem;
 import de.mephisto.vpin.commons.fx.widgets.WidgetWeeklyCompetitionScoreItemController;
 import de.mephisto.vpin.commons.utils.JFXFuture;
-import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.connectors.wovp.models.WovpPlayer;
@@ -21,11 +20,9 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.jetbrains.annotations.NotNull;
-import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +30,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.commons.fx.ServerFX.client;
 
@@ -99,7 +99,6 @@ public class WovpMenuItemController implements Initializable {
     this.versionLabel.setVisible(false);
     this.authorsLabel.setVisible(false);
 
-    this.playerBtn.setVisible(false);
     this.sectionIcon.setImage(sectionImage);
 
     // when game is mapped to VPS Table
@@ -153,10 +152,11 @@ public class WovpMenuItemController implements Initializable {
     this.pauseMenuItem = pauseMenuItem;
     scoresLoader.setVisible(true);
     JFXFuture.supplyAsync(() -> {
+      CompetitionRepresentation competition = pauseMenuItem.getCompetition();
+      return client.getCompetitionService().getWeeklyCompetitionScores(competition.getUuid());
+    }).thenAcceptLater(weeklyCompetitionScores -> {
       List<Pane> children = new ArrayList<>();
       try {
-        CompetitionRepresentation competition = pauseMenuItem.getCompetition();
-        List<CompetitionScore> weeklyCompetitionScores = client.getCompetitionService().getWeeklyCompetitionScores(competition.getUuid());
         Optional<CompetitionScore> myScore = weeklyCompetitionScores.stream().filter(s -> s.isMyScore()).findFirst();
         int myScoreIndex = -1;
         if (myScore.isPresent()) {
@@ -184,8 +184,7 @@ public class WovpMenuItemController implements Initializable {
       catch (IOException e) {
         LOG.error("Failed to load competition score panel: {}", e.getMessage(), e);
       }
-      return children;
-    }).thenAcceptLater(children -> {
+
       scoresBox.getChildren().removeAll(scoresBox.getChildren());
       scoresBox.getChildren().addAll(children);
       scoresBox.setVisible(!children.isEmpty());
@@ -243,7 +242,7 @@ public class WovpMenuItemController implements Initializable {
   }
 
   public boolean right() {
-    if (submitBtn.isDisabled() || !submitBtn.isVisible() || players == null || players.size() <= 1) {
+    if (submitBtn.isDisabled() || isActive(submitBtn) || !submitBtn.isVisible() || players == null || players.size() <= 1) {
       return false;
     }
     if ((playerSelectionIndex + 1) < players.size()) {
@@ -260,7 +259,7 @@ public class WovpMenuItemController implements Initializable {
   }
 
   public boolean left() {
-    if (submitBtn.isDisabled() || !submitBtn.isVisible() || players == null || players.size() <= 1) {
+    if (submitBtn.isDisabled() || isActive(submitBtn) || !submitBtn.isVisible() || players == null || players.size() <= 1) {
       return false;
     }
     if (playerSelectionIndex > 0) {
@@ -303,10 +302,8 @@ public class WovpMenuItemController implements Initializable {
       blink.stop();
       submitBtn.setVisible(true);
       if (result.getErrorMessage() != null) {
-        rightBtn.setVisible(false);
-        leftBtn.setVisible(false);
         submitBtn.setVisible(false);
-        playerBtn.setVisible(false);
+        playerSelectorBox.setVisible(false);
         errorContainer.setVisible(true);
         errorMsg.setText(result.getErrorMessage());
       }
@@ -342,17 +339,18 @@ public class WovpMenuItemController implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    leftBtn.setVisible(false);
-    rightBtn.setVisible(false);
     scoresLoader.setVisible(true);
 
     playerSelectorBox.managedProperty().bindBidirectional(playerSelectorBox.visibleProperty());
+    playerSelectorBox.setVisible(false);
+    leftBtn.setVisible(false);
+
     playerBtn.managedProperty().bindBidirectional(playerBtn.visibleProperty());
     loadingIndicator.managedProperty().bindBidirectional(loadingIndicator.visibleProperty());
     authorsLabel.managedProperty().bindBidirectional(authorsLabel.visibleProperty());
     versionLabel.managedProperty().bindBidirectional(versionLabel.visibleProperty());
+    errorContainer.managedProperty().bindBidirectional(errorContainer.visibleProperty());
 
     errorContainer.setVisible(false);
-    playerBtn.setVisible(false);
   }
 }
