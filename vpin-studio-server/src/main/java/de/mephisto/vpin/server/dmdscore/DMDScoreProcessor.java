@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.score;
+package de.mephisto.vpin.server.dmdscore;
 
 public interface DMDScoreProcessor {
   

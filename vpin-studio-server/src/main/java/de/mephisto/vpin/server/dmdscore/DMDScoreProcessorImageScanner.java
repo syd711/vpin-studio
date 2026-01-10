@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.score;
+package de.mephisto.vpin.server.dmdscore;
 
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.system.SystemService;

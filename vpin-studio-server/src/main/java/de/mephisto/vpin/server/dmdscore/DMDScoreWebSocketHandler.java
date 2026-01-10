@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.score;
+package de.mephisto.vpin.server.dmdscore;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
