@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /*********************************************************************************************************************
@@ -22,7 +23,8 @@ public class TableAssetSourcesServiceClient extends VPinStudioClientService {
   }
 
   public List<TableAssetSource> getAssetSource(String id) {
-    return Arrays.asList(getRestClient().get(API + "assetsources/" + id, TableAssetSource[].class));
+    TableAssetSource[] sources = getRestClient().get(API + "assetsources/" + id, TableAssetSource[].class);
+    return sources != null ? Arrays.asList(sources) : Collections.emptyList();
   }
 
   @Nullable
@@ -31,7 +33,8 @@ public class TableAssetSourcesServiceClient extends VPinStudioClientService {
   }
 
   public List<TableAssetSource> getAssetSources() {
-    return Arrays.asList(getRestClient().get(API + "assetsources", TableAssetSource[].class));
+    TableAssetSource[] sources = getRestClient().get(API + "assetsources", TableAssetSource[].class);
+    return sources != null ? Arrays.asList(sources) : Collections.emptyList();
   }
 
   public boolean deleteAssetSource(String id) {
