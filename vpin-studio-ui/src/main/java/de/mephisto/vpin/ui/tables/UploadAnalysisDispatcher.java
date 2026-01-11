@@ -88,11 +88,11 @@ public class UploadAnalysisDispatcher {
         return;
       }
       case VPX: {
-        TableDialogs.openTableUploadDialog(game, EmulatorType.VisualPinball, null, analysis);
+        TableDialogs.openTableUploadDialog(game, EmulatorType.VisualPinball, null, analysis, finalizer);
         return;
       }
       case FPT: {
-        TableDialogs.openTableUploadDialog(game, EmulatorType.FuturePinball, null, analysis);
+        TableDialogs.openTableUploadDialog(game, EmulatorType.FuturePinball, null, analysis, finalizer);
         return;
       }
       default: {
@@ -210,7 +210,7 @@ public class UploadAnalysisDispatcher {
       List<AssetType> assetTypes = analysis.getAssetTypes();
       if (!assetTypes.isEmpty()) {
         if (analysis.isVpxOrFpTable()) {
-          TableDialogs.openTableUploadDialog(game, analysis.getEmulatorType(), null, analysis);
+          TableDialogs.openTableUploadDialog(game, analysis.getEmulatorType(), null, analysis, finalizer);
         }
         else if (analysis.isPatch()) {
           if (game == null || !client.getEmulatorService().isVpxGame(game)) {

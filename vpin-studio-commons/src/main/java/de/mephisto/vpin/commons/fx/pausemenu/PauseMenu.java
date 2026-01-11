@@ -307,7 +307,10 @@ public class PauseMenu extends Application {
 
     LOG.info("Exited pause menu");
     SLOG.info("Exited pause menu");
-    stage.hide();
+    if (stage != null) {
+      //null for headless tests
+      stage.hide();
+    }
 
     Platform.runLater(() -> {
       try {

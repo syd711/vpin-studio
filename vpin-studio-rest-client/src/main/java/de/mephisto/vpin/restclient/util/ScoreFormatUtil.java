@@ -32,7 +32,12 @@ public class ScoreFormatUtil {
         formats.put(loc, decimalFormat);
       }
 
-      return decimalFormat.format(score);
+      String formattedScore = decimalFormat.format(score);
+      // for french locale replace non-breaking spaces with normal spaces
+      // see https://bugs.openjdk.org/browse/JDK-8274768, french whitespace separators changed in Java17
+      formattedScore = formattedScore.replace('\u00A0', ' ');
+      formattedScore = formattedScore.replace('\u202F', ' ');
+      return formattedScore;
     }
     catch (NumberFormatException e) {
       LOG.error("Failed to read number from '" + score + "': " + e.getMessage());

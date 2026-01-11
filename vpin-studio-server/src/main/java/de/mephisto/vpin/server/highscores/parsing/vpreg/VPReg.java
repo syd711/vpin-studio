@@ -235,7 +235,7 @@ public class VPReg {
     try {
       ObjectMapper objectMapper = new ObjectMapper();
       objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-      TypeReference<HashMap<String, String>> typeRef = new TypeReference<>() {
+      TypeReference<HashMap<String, String>> typeRef = new TypeReference<HashMap<String, String>>() {
       };
       HashMap<String, String> values = objectMapper.readValue(data, typeRef);
 

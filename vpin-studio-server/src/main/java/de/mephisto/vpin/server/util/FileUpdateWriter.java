@@ -8,7 +8,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -34,7 +33,7 @@ public class FileUpdateWriter {
     boolean inSection = section == null;
     int insertAfter = -1;
 
-    for (var t = 0; t < lines.size(); t++) {
+    for (int t = 0; t < lines.size(); t++) {
       String line = lines.get(t).trim();
 
       // ignore comments

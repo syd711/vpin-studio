@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Objects;
 
 public class VpsTableVersion extends VpsAuthoredUrls {
-  private String id;
-  private String comment;
   private String imgUrl;
   private List<String> features;
   private String tableFormat;
@@ -28,28 +26,12 @@ public class VpsTableVersion extends VpsAuthoredUrls {
     this.tableFormat = tableFormat;
   }
 
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
   public List<String> getFeatures() {
     return features;
   }
 
   public void setFeatures(List<String> features) {
     this.features = features;
-  }
-
-  public String getComment() {
-    return comment;
-  }
-
-  public void setComment(String comment) {
-    this.comment = comment;
   }
 
   @Override
@@ -87,11 +69,11 @@ public class VpsTableVersion extends VpsAuthoredUrls {
 
     VpsTableVersion that = (VpsTableVersion) o;
 
-    return Objects.equals(id, that.id);
+    return Objects.equals(getId(), that.getId());
   }
 
   @Override
   public int hashCode() {
-    return id != null ? id.hashCode() : 0;
+    return getId() != null ? getId().hashCode() : 0;
   }
 }

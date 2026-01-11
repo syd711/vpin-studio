@@ -178,6 +178,7 @@ public class TableUploadController implements Initializable, DialogController {
   private UploaderAnalysis uploaderAnalysis;
   private Stage stage;
   private UISettings uiSettings;
+  private Runnable finalizer;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -223,6 +224,11 @@ public class TableUploadController implements Initializable, DialogController {
 
         GameMediaUploadPostProcessingProgressModel progressModel = new GameMediaUploadPostProcessingProgressModel("Importing Game Media", uploadDescriptor);
         result = UniversalUploadUtil.postProcess(progressModel);
+
+        if (finalizer != null) {
+          finalizer.run();
+        }
+
         if (result.isPresent()) {
           // notify listeners of table import done
           EventManager.getInstance().notifyTableUploaded(result.get());
@@ -714,8 +720,9 @@ public class TableUploadController implements Initializable, DialogController {
     assetCfgLabel.setVisible(false);
   }
 
-  public void setGame(@NonNull Stage stage, @Nullable GameRepresentation game, @Nullable UploadType uploadType, UploaderAnalysis analysis) {
+  public void setGame(@NonNull Stage stage, @Nullable GameRepresentation game, @Nullable UploadType uploadType, UploaderAnalysis analysis, @Nullable Runnable finalizer) {
     this.stage = stage;
+    this.finalizer = finalizer;
     this.uploaderAnalysis = analysis;
 
     if (!StringUtils.isEmpty(uiSettings.getDefaultUploadMode()) && uploadType == null) {

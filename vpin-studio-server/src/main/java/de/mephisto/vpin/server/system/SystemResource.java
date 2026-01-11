@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.NirCmd;
 import de.mephisto.vpin.commons.utils.Updater;
+import de.mephisto.vpin.commons.utils.WindowsVolumeControl;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.system.*;
@@ -216,6 +217,11 @@ public class SystemResource {
   public boolean muteSystem(@PathVariable("mute") int mute) {
     NirCmd.muteSystem(mute == 1);
     return true;
+  }
+
+  @GetMapping("/muted")
+  public boolean isMuted() {
+    return WindowsVolumeControl.isMuted();
   }
 
 

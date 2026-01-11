@@ -23,7 +23,7 @@ public class SortedScoreAdapter extends ScoreListAdapterBase implements ScoreLis
   // Followed by one or more spaces
   // Followed by decimals which might include dots and comma's => score
   // Followed by an <eol> (so no more characters)
-  static Pattern scorePattern = Pattern.compile("(?:^|#\\d+ |\\d+# |\\d+\\) )([\\S ]{1,3})\\s+(\\d+([.,\u00a0\ufffd\u00ff]\\d{3})*)$");
+  static Pattern scorePattern = Pattern.compile("(?:^|#\\d+ |\\d+# |\\d+\\) )([\\S ]{1,3})\\s+(\\d+([.,?\u00a0\u202f\ufffd\u00ff]\\d{3})*)$");
 
   public SortedScoreAdapter(String name) {
     this.name = name;

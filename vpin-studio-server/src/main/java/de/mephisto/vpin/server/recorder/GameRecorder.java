@@ -75,7 +75,7 @@ public class GameRecorder {
         }
 
         if (option.isEnabled()) {
-          Callable<RecordingResult> screenRecordable = new Callable<>() {
+          Callable<RecordingResult> screenRecordable = new Callable<RecordingResult>() {
             @Override
             public RecordingResult call() {
               LOG.info("Starting recording for \"" + game.getGameDisplayName() + "\", " + screen.name() + ": " + recordingTempFile.getAbsolutePath());
