@@ -44,7 +44,7 @@
                               </VBox.margin>
                           </VBox>
       
-                                      <Label text="Version" textFill="WHITE">
+                          <Label text="Version" textFill="WHITE">
                               <font>
                                   <Font name="System Bold" size="14.0" />
                               </font>
@@ -53,7 +53,7 @@
                               </VBox.margin>
                           </Label>
       
-                                      <Label fx:id="directB2SLabel" prefHeight="30.0" styleClass="default-text" text="--">
+                        <Label fx:id="directB2SLabel" prefHeight="30.0" styleClass="default-text" text="--">
                     </Label>
                           <ComboBox fx:id="directB2SCombo" prefHeight="30.0" />
       
@@ -160,9 +160,9 @@
                                                                               <graphic>
                                                                                   <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="14" />
                                                                               </graphic>
-                                                               <tooltip>
-                                                                  <Tooltip text="Download the DMD image." />
-                                                               </tooltip>
+                                                                              <tooltip>
+                                                                                <Tooltip prefWidth="400.0" text="Export the DMD image and save it on disk." wrapText="true" />
+                                                                              </tooltip>
                                                                           </Button>
                                                                           <Button fx:id="useAsMediaDMDBtn" mnemonicParsing="false" onAction="#onDMDUseAsMedia" textFill="WHITE" BorderPane.alignment="CENTER">
                                                                               <graphic>
@@ -176,9 +176,9 @@
                                                                               <graphic>
                                                                                   <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="14" />
                                                                               </graphic>
-                                                               <tooltip>
-                                                                  <Tooltip onCloseRequest="#onBackglassDelete" text="Delete backglass file" />
-                                                               </tooltip>
+                                                                              <tooltip>
+                                                                                  <Tooltip onCloseRequest="#onBackglassDelete" text="Delete backglass file" />
+                                                                              </tooltip>
                                                                           </Button>
                                                                       </HBox>
                                                                   </right>
