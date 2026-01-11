@@ -450,11 +450,12 @@ public class GameMediaService {
 
           if (backupSettings.isStudioData()) {
             BackupDataStudio backupDataStudio = VpaArchiveUtil.readStudioDetails(analysis.getFile());
-            game.setComment(backupDataStudio.getComment());
-            game.setCardDisabled(backupDataStudio.isCardsDisabled());
-            game.setIgnoredValidations(ValidationState.toIds(backupDataStudio.getIgnoredValidations()));
-
-            gameService.save(game);
+            if (backupDataStudio != null) {
+              game.setComment(backupDataStudio.getComment());
+              game.setCardDisabled(backupDataStudio.isCardsDisabled());
+              game.setIgnoredValidations(ValidationState.toIds(backupDataStudio.getIgnoredValidations()));
+              gameService.save(game);
+            }
           }
         }
 
