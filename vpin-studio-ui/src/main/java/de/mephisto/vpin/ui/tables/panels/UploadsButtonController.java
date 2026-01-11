@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -243,14 +242,14 @@ public class UploadsButtonController implements Initializable {
     GameRepresentation game = getSelection();
     if (game != null) {
       GameEmulatorRepresentation emu = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
-      TableDialogs.openTableUploadDialog(game, emu.getType(), uploadType, null);
+      TableDialogs.openTableUploadDialog(game, emu.getType(), uploadType, null, null);
     }
     else {
       if (gameEmulator != null) {
-        TableDialogs.openTableUploadDialog(null, gameEmulator.getType(), uploadType, null);
+        TableDialogs.openTableUploadDialog(null, gameEmulator.getType(), uploadType, null, null);
       }
       else {
-        TableDialogs.openTableUploadDialog(null, null, uploadType, null);
+        TableDialogs.openTableUploadDialog(null, null, uploadType, null, null);
       }
     }
   }

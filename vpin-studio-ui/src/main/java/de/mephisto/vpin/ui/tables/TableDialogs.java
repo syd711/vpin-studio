@@ -516,17 +516,17 @@ public class TableDialogs {
     return controller.uploadFinished();
   }
 
-  public static Optional<UploadDescriptor> openTableUploadDialog(@Nullable GameRepresentation game, @Nullable EmulatorType emutype, @Nullable UploadType uploadType, UploaderAnalysis analysis) {
+  public static Optional<UploadDescriptor> openTableUploadDialog(@Nullable GameRepresentation game, @Nullable EmulatorType emutype, @Nullable UploadType uploadType, UploaderAnalysis analysis, @Nullable Runnable finalizer) {
     if (Studio.client.getFrontendService().isFrontendRunning()) {
       if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
-        return openTableUploadDialogUnchecked(game, emutype, uploadType, analysis);
+        return openTableUploadDialogUnchecked(game, emutype, uploadType, analysis, finalizer);
       }
       return Optional.empty();
     }
-    return openTableUploadDialogUnchecked(game, emutype, uploadType, analysis);
+    return openTableUploadDialogUnchecked(game, emutype, uploadType, analysis, finalizer);
   }
 
-  private static Optional<UploadDescriptor> openTableUploadDialogUnchecked(@Nullable GameRepresentation game, @Nullable EmulatorType emutype, @Nullable UploadType uploadType, UploaderAnalysis analysis) {
+  private static Optional<UploadDescriptor> openTableUploadDialogUnchecked(@Nullable GameRepresentation game, @Nullable EmulatorType emutype, @Nullable UploadType uploadType, UploaderAnalysis analysis, @Nullable Runnable finalizer) {
     List<GameEmulatorRepresentation> gameEmulators = Studio.client.getEmulatorService().getGameEmulatorsByType(emutype);
     if (gameEmulators.isEmpty()) {
       WidgetFactory.showAlert(Studio.stage, "Error", "No game emulator found.");
@@ -535,7 +535,7 @@ public class TableDialogs {
 
     Stage stage = Dialogs.createStudioDialogStage(TableUploadController.class, "dialog-table-upload.fxml", emutype.shortName() + " Table Upload");
     TableUploadController controller = (TableUploadController) stage.getUserData();
-    controller.setGame(stage, game, uploadType, analysis);
+    controller.setGame(stage, game, uploadType, analysis, finalizer);
     stage.showAndWait();
 
     return controller.uploadFinished();

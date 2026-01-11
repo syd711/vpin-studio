@@ -28,6 +28,8 @@ import javafx.scene.paint.Paint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -229,7 +231,14 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
 
   public void install(File file) {
     UploadAnalysisDispatcher.dispatch(file, gameSelection, () -> {
-      //TODO move to installed folder
+
+      Platform.runLater(() -> {
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete \"" + file.getAbsolutePath() + "\"?", "The file will be moved to the trash bin.");
+        if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+          Desktop.getDesktop().moveToTrash(file);
+        }
+      });
+
     });
   }
 

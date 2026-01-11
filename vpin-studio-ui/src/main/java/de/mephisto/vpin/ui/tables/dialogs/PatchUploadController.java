@@ -11,7 +11,6 @@ import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.panels.AssetFilterPanelController;
-import de.mephisto.vpin.ui.tables.panels.PropperRenamingController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.UploadProgressModel;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -128,6 +127,12 @@ public class PatchUploadController extends BaseUploadController {
         LOG.info("Starting Game Patcher");
         GamePatcherUploadPostProcessingProgressModel progressModel = new GamePatcherUploadPostProcessingProgressModel("Patching Game", uploadDescriptor, game);
         result = UniversalUploadUtil.postProcess(progressModel);
+
+        // call finalizer
+        if (finalizer != null) {
+          finalizer.run();
+        }
+
         if (result.isPresent()) {
           // notify listeners of table import done
           EventManager.getInstance().notifyTableUploaded(result.get());
