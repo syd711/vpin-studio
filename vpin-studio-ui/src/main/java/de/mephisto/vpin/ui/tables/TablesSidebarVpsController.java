@@ -437,26 +437,26 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
     List<Node> entries = new ArrayList<>();
     for (VpsAuthoredUrls authoredUrl : urls) {
-      List<VpsUrl> authoredUrlUrls = authoredUrl.getUrls();
-      if (authoredUrlUrls != null && !authoredUrlUrls.isEmpty()) {
-        String version = authoredUrl.getVersion();
-        long updatedAt = authoredUrl.getCreatedAt();
-        List<String> authors = authoredUrl.getAuthors();
+      String version = authoredUrl.getVersion();
+      long updatedAt = authoredUrl.getCreatedAt();
+      List<String> authors = authoredUrl.getAuthors();
 
-        String updateText = null;
-        if (game != null && showUpdates) {
-          List<VPSChange> changes = game.getVpsUpdates().getChanges();
-          for (VPSChange change : changes) {
-            if (change.getId() != null && authoredUrl.getId() != null && change.getId().equals(authoredUrl.getId())) {
-              VpsTable gameTable = client.getVpsService().getTableById(game.getExtTableId());
-              updateText = change.toString(gameTable);
-              break;
-            }
+      String updateText = null;
+      if (game != null && showUpdates) {
+        List<VPSChange> changes = game.getVpsUpdates().getChanges();
+        for (VPSChange change : changes) {
+          if (change.getId() != null && authoredUrl.getId() != null && change.getId().equals(authoredUrl.getId())) {
+            VpsTable gameTable = client.getVpsService().getTableById(game.getExtTableId());
+            updateText = change.toString(gameTable);
+            break;
           }
         }
+      }
 
-        boolean isFiltered = filterPredicate != null ? filterPredicate.test(authoredUrl) : true;
+      boolean isFiltered = filterPredicate != null ? filterPredicate.test(authoredUrl) : true;
 
+      List<VpsUrl> authoredUrlUrls = authoredUrl.getUrls();
+      if (authoredUrlUrls != null && !authoredUrlUrls.isEmpty()) {
         for (VpsUrl vpsUrl : authoredUrlUrls) {
           String url = vpsUrl.getUrl();
           VpsEntry vpsEntry = new VpsEntry(game, diffTypes, null, null, version, authors, url, updatedAt, updateText, false, isFiltered);
@@ -464,13 +464,16 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
             entries.add(vpsEntry);
           }
         }
-
-        if (authoredUrl instanceof VpsBackglassFile) {
-          VpsBackglassFile backglassFile = (VpsBackglassFile) authoredUrl;
-          if (!StringUtils.isEmpty(backglassFile.getComment())) {
-            entries.add(new VpsEntryComment(backglassFile.getComment()));
-          }
+      }
+      else {
+        VpsEntry vpsEntry = new VpsEntry(game, diffTypes, null, null, version, authors, null, updatedAt, updateText, false, isFiltered);
+        if (!entries.contains(vpsEntry)) {
+          entries.add(vpsEntry);
         }
+      }
+
+      if (!StringUtils.isEmpty(authoredUrl.getComment())) {
+        entries.add(new VpsEntryComment(authoredUrl.getComment()));
       }
     }
 
@@ -545,6 +548,10 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
           if (!entries.contains(vpsEntry)) {
             entries.add(vpsEntry);
           }
+        }
+
+        if (!StringUtils.isEmpty(vpsTableVersion.getComment())) {
+          entries.add(new VpsEntryComment(vpsTableVersion.getComment()));
         }
       }
 
