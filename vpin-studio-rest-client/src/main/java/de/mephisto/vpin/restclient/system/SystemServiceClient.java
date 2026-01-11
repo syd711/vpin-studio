@@ -90,6 +90,11 @@ public class SystemServiceClient extends VPinStudioClientService {
     restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/mute/" + (mute ? "1" : "0"), Boolean.class);
   }
 
+  public boolean isMuted() {
+    final RestTemplate restTemplate = new RestTemplate();
+    return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/muted", Boolean.class);
+  }
+
   public void systemShutdown() {
     final RestTemplate restTemplate = new RestTemplate();
     restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/systemshutdown", Boolean.class);
