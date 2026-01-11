@@ -445,6 +445,7 @@ public class GameMediaService {
             DirectB2STableSettings tableSettings = VpaArchiveUtil.readB2STableSettings(analysis.getFile());
             if (tableSettings != null) {
               backglassService.saveTableSettings(game, tableSettings);
+              LOG.info("Restored updated table details for {}", game.getGameDisplayName());
             }
           }
 
@@ -455,6 +456,7 @@ public class GameMediaService {
               game.setCardDisabled(backupDataStudio.isCardsDisabled());
               game.setIgnoredValidations(ValidationState.toIds(backupDataStudio.getIgnoredValidations()));
               gameService.save(game);
+              LOG.info("Restored VPin-Studio data for {}", game.getGameDisplayName());
             }
           }
         }
