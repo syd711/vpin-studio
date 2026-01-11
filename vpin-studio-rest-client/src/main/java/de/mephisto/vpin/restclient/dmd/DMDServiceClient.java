@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.components.ComponentSummary;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import org.slf4j.Logger;
@@ -35,7 +36,8 @@ public class DMDServiceClient extends VPinStudioClientService {
       ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
       finalizeUpload(upload);
       return exchange.getBody();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("DMD upload failed: " + e.getMessage(), e);
       throw e;
     }
@@ -48,5 +50,19 @@ public class DMDServiceClient extends VPinStudioClientService {
   public boolean clearCache() {
     final RestTemplate restTemplate = new RestTemplate();
     return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "dmd/clearcache", Boolean.class);
+  }
+
+  public DMDDeviceIniConfiguration getDMDDeviceIniConfiguration(int emulatorId) {
+    return getRestClient().get(API + "dmd/dmddeviceini/" + emulatorId, DMDDeviceIniConfiguration.class);
+  }
+
+  public DMDDeviceIniConfiguration saveDmdDeviceIni(DMDDeviceIniConfiguration dmdDeviceIni) {
+    try {
+      return getRestClient().post(API + "dmd/dmddeviceini", dmdDeviceIni, DMDDeviceIniConfiguration.class);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to save DMDDeviceIniConfiguration: {}", e.getMessage(), e);
+      throw e;
+    }
   }
 }

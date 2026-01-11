@@ -27,7 +27,7 @@ public class VpsAutomatcherTest {
 
     // first run a match with findClosest
     VpsMatch vpsMatch = matcher.autoMatch(vpsDatabase, tableFormats, gameFileName, rom, author, version);
-    LOG.error(debug.toString());
+//    LOG.error(debug.toString());
 
     assertEquals(expectedTableId, vpsMatch.getExtTableId());
     assertEquals(expectedVersionId, vpsMatch.getExtTableVersionId());

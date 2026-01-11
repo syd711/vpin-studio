@@ -90,6 +90,9 @@ public class PreferencesController extends SettingsSceneController implements In
   private Button iScoredBtn;
 
   @FXML
+  private Button dmdDeviceBtn;
+
+  @FXML
   private Button vpsBtn;
 
   @FXML
@@ -317,6 +320,11 @@ public class PreferencesController extends SettingsSceneController implements In
   }
 
   @FXML
+  private void onDMD(ActionEvent event) throws IOException {
+    load("preference-dmd.fxml", event);
+  }
+
+  @FXML
   private void onDOFLinx(ActionEvent event) throws IOException {
     load("preference-doflinx.fxml", event);
   }
@@ -481,8 +489,10 @@ public class PreferencesController extends SettingsSceneController implements In
     vpuBtn.managedProperty().bindBidirectional(vpuBtn.visibleProperty());
     vpfBtn.managedProperty().bindBidirectional(vpfBtn.visibleProperty());
     webhooksBtn.managedProperty().bindBidirectional(webhooksBtn.visibleProperty());
+    dmdDeviceBtn.managedProperty().bindBidirectional(dmdDeviceBtn.visibleProperty());
 
     repositoriesBtn.setVisible(Features.BACKUPS_ENABLED);
+    dmdDeviceBtn.setVisible(Features.DMD_DEVICE_INI);
 
     // activation of custom options according to installed frontend
     FrontendType frontendType = client.getFrontendService().getFrontendType();
