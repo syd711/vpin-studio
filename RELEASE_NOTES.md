@@ -14,6 +14,7 @@
   - Added "Apron Mode" setting which hide the navigation from the pause menu in case you have a screen too small to display the full pause menu.
   - Added offset settings to fix the positioning of the pause menu (might be required for the apron mode).
 - **DropIn Menu**: Propose deletion of all assets (not only backglasses) when installed from drop In menu
+- **VPS Entries**: Generalized the display of comments accross assets in VPS views
 ---
 
 ## Release Notes 4.5.6
