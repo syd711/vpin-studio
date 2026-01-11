@@ -34,7 +34,7 @@
                               </Button>
                               <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="500.0" mnemonicParsing="false" onAction="#onServiceInfo" styleClass="preference-button" text="Server Settings" />
                               <Button fx:id="repositoriesBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="709.0" mnemonicParsing="false" onAction="#onVpaRepositories" styleClass="preference-button" text="Backup Settings" />
-                              <Button fx:id="webhooksBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="133.0" mnemonicParsing="false" onAction="#onWebhooks" styleClass="preference-button" text="Webhooks" />
+                              <Button fx:id="webhooksBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="133.0" mnemonicParsing="false" onAction="#onWebhooks" styleClass="preference-button" text="Integration Settings" />
                               <Label alignment="BASELINE_LEFT" layoutX="34.0" layoutY="10.0" styleClass="preference-section" text="VPIN STUDIO FRONTEND PREFERENCES">
                                  <font>
                                     <Font size="13.0" />

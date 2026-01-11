@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
@@ -10,6 +11,9 @@
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
@@ -19,10 +23,16 @@
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
             <Label styleClass="preference-title" text="VPIN STUDIO PREFERENCES" textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Integration Settings" />
+            <Label layoutX="34.0" layoutY="156.0" styleClass="preference-description" text="Settings on this page are only relevant for 3rd party integrations, that use the REST API from the Studio server." textFill="WHITE">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </Label>
             <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Webhooks" />
             <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="Webhooks can be used to integrate VPin Studio into other system." textFill="WHITE">
                <VBox.margin>
-                  <Insets top="12.0" />
+                  <Insets />
                </VBox.margin>
             </Label>
             <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="You can configure sets of webhooks below. These are called on the corresponding events then." textFill="WHITE">
@@ -76,7 +86,7 @@
                 <TableColumn fx:id="nameColumn" prefWidth="508.00001525878906" style="-fx-alignment: BASELINE_LEFT;" text="Webhook Set Name" />
               </columns>
             </TableView>
-            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="VPin Studio Server - Public API Endpoints">
+            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Public API Endpoints">
                <VBox.margin>
                   <Insets top="24.0" />
                </VBox.margin>
@@ -84,6 +94,39 @@
             <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="The VPin Studio Server supports a public API endpoints to read game, highscore and player data." textFill="WHITE" />
             <Label layoutX="34.0" layoutY="669.0" styleClass="preference-description" text="A detailled description can be found here:" textFill="WHITE" />
             <Hyperlink onAction="#onLinkClick" text="https://github.com/syd711/vpin-studio/wiki/Webhooks" />
+            <Label layoutX="34.0" layoutY="703.0" styleClass="preference-subtitle" text="Additional Settings">
+               <VBox.margin>
+                  <Insets top="24.0" />
+               </VBox.margin>
+            </Label>
+            <Label layoutX="34.0" layoutY="742.0" styleClass="preference-description" text="Miscellaneous settings used by integrations can be configured here." textFill="WHITE">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </Label>
+            <GridPane>
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="370.199951171875" minWidth="10.0" prefWidth="147.200048828125" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="639.0" minWidth="10.0" prefWidth="603.199951171875" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin>
+               <children>
+                  <Label styleClass="default-text" text="Pause Menu:" textFill="WHITE" />
+                  <VBox GridPane.columnIndex="1">
+                     <children>
+                        <CheckBox fx:id="pauseMenuScreenshotCheckbox" mnemonicParsing="false" styleClass="default-text" text="Alway take a screenshot before opening the pause menu." />
+                        <Label styleClass="checkbox-description" text="The screenshot can be read from the URL:" textFill="WHITE" />
+                        <Label layoutX="10.0" layoutY="30.0" styleClass="checkbox-description" text="http://&lt;HOST&gt;:8089/api/v1/recorder/screenshot/latest" textFill="WHITE" />
+                     </children>
+                  </VBox>
+               </children>
+            </GridPane>
          </children>
          <padding>
             <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
