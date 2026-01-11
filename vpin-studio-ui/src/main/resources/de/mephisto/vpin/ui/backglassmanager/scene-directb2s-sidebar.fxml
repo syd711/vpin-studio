@@ -20,7 +20,6 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-
 <BorderPane xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.backglassmanager.BackglassManagerSidebarController">
    <center>
       <ScrollPane styleClass="base-component" stylesheets="@../stylesheet.css">
@@ -153,9 +152,9 @@
                                                                               <graphic>
                                                                                   <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="14" />
                                                                               </graphic>
-                                                                              <tooltip>
-                                                                                <Tooltip prefWidth="400.0" text="Upload a DMD Image that will be integrated into the backglass." wrapText="true" />
-                                                                              </tooltip>
+                                                               <tooltip>
+                                                                  <Tooltip text="Uploads a new image used as DMD background. The existing image will be replaced." />
+                                                               </tooltip>
                                                                           </Button>
                                                                           <Button fx:id="downloadDMDBtn" mnemonicParsing="false" onAction="#onDMDDownload" textFill="WHITE" BorderPane.alignment="CENTER">
                                                                               <graphic>

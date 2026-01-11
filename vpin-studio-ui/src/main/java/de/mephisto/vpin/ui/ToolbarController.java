@@ -177,7 +177,10 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
   private void onMute() {
     client.getSystemService().mute(!muted);
     muted = !muted;
+    refreshMuteState();
+  }
 
+  private void refreshMuteState() {
     if (muted) {
       muteSystemEntry.setText("Unmute System");
       muteSystemEntry.setGraphic(WidgetFactory.createIcon("mdi2v-volume-high"));
@@ -432,10 +435,19 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
         }
       }
     }
+
     jobBtn.setOnShowing(new EventHandler<Event>() {
       @Override
       public void handle(Event event) {
         JobPoller.getInstance().refreshJobsUI();
+      }
+    });
+
+    preferencesBtn.setOnShowing(new EventHandler<Event>() {
+      @Override
+      public void handle(Event event) {
+        muted = client.getSystemService().isMuted();
+        refreshMuteState();
       }
     });
   }

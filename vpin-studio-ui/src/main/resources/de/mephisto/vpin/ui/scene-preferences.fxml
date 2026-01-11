@@ -34,7 +34,7 @@
                               </Button>
                               <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="500.0" mnemonicParsing="false" onAction="#onServiceInfo" styleClass="preference-button" text="Server Settings" />
                               <Button fx:id="repositoriesBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="709.0" mnemonicParsing="false" onAction="#onVpaRepositories" styleClass="preference-button" text="Backup Settings" />
-                              <Button fx:id="webhooksBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="133.0" mnemonicParsing="false" onAction="#onWebhooks" styleClass="preference-button" text="Webhooks" />
+                              <Button fx:id="webhooksBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="133.0" mnemonicParsing="false" onAction="#onWebhooks" styleClass="preference-button" text="Integration Settings" />
                               <Label alignment="BASELINE_LEFT" layoutX="34.0" layoutY="10.0" styleClass="preference-section" text="VPIN STUDIO FRONTEND PREFERENCES">
                                  <font>
                                     <Font size="13.0" />
@@ -122,6 +122,7 @@
                               </Label>
                               <Button fx:id="backglassBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onBackglassServer" styleClass="preference-button" text="Backglass Server" />
                               <Button fx:id="dofBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="130.0" layoutY="213.0" mnemonicParsing="false" onAction="#onDOF" styleClass="preference-button" text="Direct Output Framework (DOF)" />
+                              <Button fx:id="dmdDeviceBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="1105.0" mnemonicParsing="false" onAction="#onDMD" styleClass="preference-button" text="DMD Device" />
                               <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="1049.0" mnemonicParsing="false" onAction="#onDOFLinx" styleClass="preference-button" text="DOFLinx" />
                               <Button fx:id="iScoredBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="1116.0" mnemonicParsing="false" onAction="#onIScored" styleClass="preference-button" text="iScored Game Rooms" />
                               <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="133.0" mnemonicParsing="false" onAction="#onPINemHi" styleClass="preference-button" text="PINemHi" />

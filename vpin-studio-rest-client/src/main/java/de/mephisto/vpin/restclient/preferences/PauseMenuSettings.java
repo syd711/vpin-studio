@@ -13,6 +13,7 @@ public class PauseMenuSettings extends JsonSettings {
   private int tutorialMarginTop = 0;
   private int tutorialsRotation = 0;
   private boolean pressPause = true;
+  private boolean alwaysTakeScreenshot = false;
 
   private boolean apronMode = false;
   private int stageOffsetX = 0;
@@ -41,6 +42,14 @@ public class PauseMenuSettings extends JsonSettings {
   private String resetButton;
   private String recordingButton;
   private String inputFilterList;
+
+  public boolean isAlwaysTakeScreenshot() {
+    return alwaysTakeScreenshot;
+  }
+
+  public void setAlwaysTakeScreenshot(boolean alwaysTakeScreenshot) {
+    this.alwaysTakeScreenshot = alwaysTakeScreenshot;
+  }
 
   public int getScaling() {
     return scaling;

@@ -659,6 +659,8 @@ public class WidgetFactory {
 
     Node header = root.lookup("#header");
     Object userData = header.getUserData();
+    boolean resizeable = userData instanceof DialogHeaderResizeableController;
+
     if (userData instanceof DialogHeaderController) {
       DialogHeaderController dialogHeaderController = (DialogHeaderController) userData;
       dialogHeaderController.setStage(stage);
@@ -673,7 +675,8 @@ public class WidgetFactory {
         }
       });
     }
-    if (userData instanceof DialogHeaderResizeableController) {
+
+    if (resizeable) {
       DialogHeaderResizeableController dialogHeaderController = (DialogHeaderResizeableController) userData;
       dialogHeaderController.setMaximizeable(LocalUISettings.isMaximizeable(stateId));
     }
@@ -699,7 +702,7 @@ public class WidgetFactory {
         stage.setX(position.getX());
         stage.setY(position.getY());
 
-        if (position.getWidth() > 0 && position.getHeight() > 0) {
+        if (position.getWidth() > 0 && position.getHeight() > 0 && resizeable) {
           stage.setWidth(position.getWidth());
           stage.setHeight(position.getHeight());
         }
