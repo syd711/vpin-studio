@@ -94,6 +94,9 @@ public class BackupRestoreDialogController implements Initializable, DialogContr
   private CheckBox b2sSettingsCheckbox;
 
   @FXML
+  private CheckBox studioDataCheckBox;
+
+  @FXML
   private VBox frontendColumn;
 
 
@@ -172,6 +175,7 @@ public class BackupRestoreDialogController implements Initializable, DialogContr
     vpxCheckBox.setSelected(backupSettings.isVpx());
     registryDataCheckBox.setSelected(backupSettings.isRegistryData());
     b2sSettingsCheckbox.setSelected(backupSettings.isB2sSettings());
+    studioDataCheckBox.setSelected(backupSettings.isStudioData());
   }
 
   @Override
@@ -257,6 +261,10 @@ public class BackupRestoreDialogController implements Initializable, DialogContr
     });
     b2sSettingsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       backupSettings.setB2sSettings(newValue);
+      client.getPreferenceService().setJsonPreference(backupSettings);
+    });
+    studioDataCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      backupSettings.setStudioData(newValue);
       client.getPreferenceService().setJsonPreference(backupSettings);
     });
   }

@@ -290,6 +290,26 @@
                                           </Label>
                                        </children>
                                     </HBox>
+                                    <HBox layoutX="10.0" layoutY="86.0" spacing="6.0">
+                                       <children>
+                                          <CheckBox fx:id="studioDataCheckBox" mnemonicParsing="false" text="VPin Studio Data" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </CheckBox>
+                                          <Label>
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip prefWidth="300.0" text="This contains additional table data and comments." wrapText="true" />
+                                             </tooltip>
+                                          </Label>
+                                       </children>
+                                    </HBox>
                                  </children>
                               </VBox>
                            </children>

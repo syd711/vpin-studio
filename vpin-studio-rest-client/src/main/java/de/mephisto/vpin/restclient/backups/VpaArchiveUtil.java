@@ -66,6 +66,28 @@ public class VpaArchiveUtil {
     return null;
   }
 
+  public static BackupDataStudio readStudioDetails(File file) throws JsonProcessingException {
+    ZipFile zipFile = VpaArchiveUtil.createZipFile(file);
+    try {
+      String text = readStringFromZip(zipFile, BackupDataStudio.BACKUP_FILENAME);
+      if (text != null) {
+        return objectMapper.readValue(text, BackupDataStudio.class);
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to read {}: {}", BackupDataStudio.BACKUP_FILENAME, e.getMessage(), e);
+    }
+    finally {
+      try {
+        zipFile.close();
+      }
+      catch (IOException e) {
+        //ignore
+      }
+    }
+    return null;
+  }
+
   public static DirectB2STableSettings readB2STableSettings(File file) throws JsonProcessingException {
     ZipFile zipFile = VpaArchiveUtil.createZipFile(file);
     try {

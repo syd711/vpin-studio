@@ -23,6 +23,7 @@ public class BackupSettings extends JsonSettings {
   private boolean vpx = true;
   private boolean registryData = true;
   private boolean b2sSettings = true;
+  private boolean studioData = true;
 
   private boolean overwriteBackup = true;
 
@@ -73,6 +74,14 @@ public class BackupSettings extends JsonSettings {
       }
     }
     return false;
+  }
+
+  public boolean isStudioData() {
+    return studioData;
+  }
+
+  public void setStudioData(boolean studioData) {
+    this.studioData = studioData;
   }
 
   public boolean isOverwriteBackup() {

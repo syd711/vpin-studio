@@ -4,6 +4,7 @@ import de.mephisto.vpin.connectors.vps.matcher.VpsMatch;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.backups.BackupDataStudio;
 import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
@@ -18,6 +19,7 @@ import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.assets.AssetService;
@@ -444,6 +446,15 @@ public class GameMediaService {
             if (tableSettings != null) {
               backglassService.saveTableSettings(game, tableSettings);
             }
+          }
+
+          if (backupSettings.isStudioData()) {
+            BackupDataStudio backupDataStudio = VpaArchiveUtil.readStudioDetails(analysis.getFile());
+            game.setComment(backupDataStudio.getComment());
+            game.setCardDisabled(backupDataStudio.isCardsDisabled());
+            game.setIgnoredValidations(ValidationState.toIds(backupDataStudio.getIgnoredValidations()));
+
+            gameService.save(game);
           }
         }
 

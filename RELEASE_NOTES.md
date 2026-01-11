@@ -15,9 +15,11 @@
   - Added offset settings to fix the positioning of the pause menu (might be required for the apron mode).
 - **DropIn Menu**: The deletion of an asset is proposed for all asset types now when installed from the drop-in menu (not only for backglasses).
 - **VPS Entries**: Generalized the display of comments across assets in Virtual-Pinball-Spreadsheet views.
-- **Dialogs**: Fixed issue that sometimes the contents of dialogs were cropped.
+- **Dialogs**: Fixed issue that after releasing changes on dialogs the contents of these were cropped.
 - **Preferences Menu**: The **Mute System** entry detects the mute state of the cabinet and reflects it by its toggle state.
-- **Preferences**: Added the new entry **DMD Device** which lets you configure some settings for the file DMDDevice.ini.
+- **Preferences**: Added the new entry **DMD Device** which lets you configure some settings for the file **DMDDevice.ini** file.
+- **Backups**:
+  - Added VPin Studio settings to table backups. These settings include e.g. comments which are saved and restored as part of the backup now. 
 
 ---
 

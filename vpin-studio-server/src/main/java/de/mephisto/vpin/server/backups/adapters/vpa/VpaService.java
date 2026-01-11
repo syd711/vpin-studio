@@ -5,10 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.commons.fx.ImageUtil;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.backups.BackupFileInfoFactory;
-import de.mephisto.vpin.restclient.backups.BackupMameData;
-import de.mephisto.vpin.restclient.backups.BackupPackageInfo;
-import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
+import de.mephisto.vpin.restclient.backups.*;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
@@ -17,6 +14,7 @@ import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.preferences.BackupSettings;
+import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.directb2s.BackglassService;
@@ -304,6 +302,16 @@ public class VpaService implements InitializingBean {
       }
     }
 
+    if (backupSettings.isStudioData()) {
+      BackupDataStudio studioData = new BackupDataStudio();
+      studioData.setComment(game.getComment());
+      studioData.setCardsDisabled(game.isCardDisabled());
+      studioData.setIgnoredValidations(ValidationState.toIdString(game.getIgnoredValidations()));
+      if (!zipStudioDetails(jobDescriptor, studioData, zipOut)) {
+        return;
+      }
+    }
+
     if (!jobDescriptor.isCancelled()) {
       writeWheelToPackageInfo(packageInfo, game);
     }
@@ -404,6 +412,21 @@ public class VpaService implements InitializingBean {
     }
     if (!tableDetailsTmpFile.delete()) {
       LOG.warn("Failed to delete temporary registry.json file {}", tableDetailsTmpFile.getName());
+    }
+    return true;
+  }
+
+  private boolean zipStudioDetails(@NonNull JobDescriptor jobDescriptor, @NonNull BackupDataStudio backupDataStudio, BiConsumer<File, String> zipOut) throws IOException {
+    String studioDataJson = objectMapper.writeValueAsString(backupDataStudio);
+
+    File tmpStudioDataJson = File.createTempFile("vpin-studio", ".json");
+    tmpStudioDataJson.deleteOnExit();
+    Files.write(tmpStudioDataJson.toPath(), studioDataJson.getBytes());
+    if (!zipFile(jobDescriptor, tmpStudioDataJson, BackupDataStudio.BACKUP_FILENAME, zipOut)) {
+      return false;
+    }
+    if (!tmpStudioDataJson.delete()) {
+      LOG.warn("Failed to delete temporary file {}", tmpStudioDataJson.getName());
     }
     return true;
   }
