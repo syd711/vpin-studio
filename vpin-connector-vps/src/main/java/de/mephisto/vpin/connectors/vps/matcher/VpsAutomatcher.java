@@ -84,9 +84,6 @@ public class VpsAutomatcher {
       // Step 1, decompose the filename in elements:
       // tablename (manuf year) author version extra
       TableNameParts parts = tableNameSplitter.parseFilename(gameFileName);
-
-      LOG.info("parsed : Table=" + parts.tableName + " | Manuf=" + parts.manufacturer + " | year=" + parts.year + " | extra=" + parts.extra);
-
       //------------------------------------------------------
       // Step 2, match the table elements with VPS database
 
@@ -211,8 +208,6 @@ public class VpsAutomatcher {
       if (StringUtils.isNotEmpty(version) && (StringUtils.isEmpty(vpsMatch.getVersion()) || overwrite)) {
         vpsMatch.setVersion(version);
       }
-
-      LOG.info("Finished auto-match for \"" + gameFileName + "\"");
     }
     catch (Exception e) {
       LOG.error("Error auto-matching table data: " + e.getMessage(), e);
