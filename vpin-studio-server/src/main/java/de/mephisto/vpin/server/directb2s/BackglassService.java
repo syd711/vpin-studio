@@ -925,7 +925,17 @@ public class BackglassService implements InitializingBean {
     }
 
     if (target == null || !target.exists()) {
-      return null;
+      LOG.error("Failed to read Screenres.txt, unable to determine backglass server folder, trying first VPX emulator instead.");
+      List<GameEmulator> vpxGameEmulators = emulatorService.getVpxGameEmulators();
+      if (!vpxGameEmulators.isEmpty()) {
+        GameEmulator emulator = vpxGameEmulators.get(0);
+        target = new File(emulator.getGamesDirectory(), "ScreenRes.txt");
+
+        if (!target.exists()) {
+          LOG.error("Unable to determine ScreenRes.txt, giving up.");
+          return null;
+        }
+      }
     }
 
     try (BufferedReader reader = new BufferedReader(new FileReader(target))) {

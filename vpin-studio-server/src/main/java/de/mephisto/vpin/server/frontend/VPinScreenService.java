@@ -498,11 +498,16 @@ public class VPinScreenService implements InitializingBean {
       List<FrontendPlayerDisplay> displays = getScreenResDisplays();
       LOG.info("######################## Offset Frontend Screen Summary ##################################");
       DirectB2sScreenRes screenres = backglassService.getGlobalScreenRes();
-      MonitorInfo backglassMonitor = getBackglassMonitor(screenres, MonitorInfoUtil.getMonitors());
-      LOG.info("Backglass Monitor: {}", backglassMonitor);
-      LOG.info("------------------------------------------------------------------------------------------");
-      for (FrontendPlayerDisplay frontendPlayerDisplay : displays) {
-        LOG.info(frontendPlayerDisplay.toString());
+      if (screenres != null) {
+        MonitorInfo backglassMonitor = getBackglassMonitor(screenres, MonitorInfoUtil.getMonitors());
+        LOG.info("Backglass Monitor: {}", backglassMonitor);
+        LOG.info("------------------------------------------------------------------------------------------");
+        for (FrontendPlayerDisplay frontendPlayerDisplay : displays) {
+          LOG.info(frontendPlayerDisplay.toString());
+        }
+      }
+      else {
+        LOG.error("Reading frontend screen summary failed.");
       }
       LOG.info("####################### /Offset  Frontend Screen Summary #################################");
     }
