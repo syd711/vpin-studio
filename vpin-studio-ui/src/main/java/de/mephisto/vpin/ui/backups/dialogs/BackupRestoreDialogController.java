@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.backups.BackupType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.BackupRestoreDescriptor;
 import de.mephisto.vpin.restclient.preferences.BackupSettings;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import javafx.application.Platform;
@@ -83,6 +84,9 @@ public class BackupRestoreDialogController implements Initializable, DialogContr
 
   @FXML
   private CheckBox dmdCheckBox;
+
+  @FXML
+  private CheckBox dmdDataCheckBox;
 
   @FXML
   private CheckBox vpxCheckBox;
@@ -176,11 +180,15 @@ public class BackupRestoreDialogController implements Initializable, DialogContr
     registryDataCheckBox.setSelected(backupSettings.isRegistryData());
     b2sSettingsCheckbox.setSelected(backupSettings.isB2sSettings());
     studioDataCheckBox.setSelected(backupSettings.isStudioData());
+    dmdDataCheckBox.setSelected(backupSettings.isDmdDeviceData());
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    List<GameEmulatorRepresentation> emulators = client.getEmulatorService().getVpxGameEmulators();
+    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    BackupSettings backupSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.BACKUP_SETTINGS, BackupSettings.class);
+
+    List<GameEmulatorRepresentation> emulators = client.getEmulatorService().getFilteredEmulatorsWithAllVpx(uiSettings);
     ObservableList<GameEmulatorRepresentation> data = FXCollections.observableList(emulators);
     this.emulatorCombo.setItems(data);
     this.emulatorCombo.setValue(data.get(0));
@@ -191,8 +199,6 @@ public class BackupRestoreDialogController implements Initializable, DialogContr
     popperMediaCheckBox.managedProperty().bindBidirectional(popperMediaCheckBox.visibleProperty());
 
     frontendColumn.setVisible(!Features.IS_STANDALONE);
-
-    BackupSettings backupSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.BACKUP_SETTINGS, BackupSettings.class);
     refreshImportsSelection(backupSettings);
 
     directb2sCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -265,6 +271,10 @@ public class BackupRestoreDialogController implements Initializable, DialogContr
     });
     studioDataCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       backupSettings.setStudioData(newValue);
+      client.getPreferenceService().setJsonPreference(backupSettings);
+    });
+    dmdDataCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      backupSettings.setDmdDeviceData(newValue);
       client.getPreferenceService().setJsonPreference(backupSettings);
     });
   }

@@ -1,8 +1,6 @@
 package de.mephisto.vpin.server.dmd;
 
-import de.mephisto.vpin.restclient.dmd.DMDDeviceIniConfiguration;
-import de.mephisto.vpin.restclient.dmd.DMDInfo;
-import de.mephisto.vpin.restclient.dmd.DMDInfoZone;
+import de.mephisto.vpin.restclient.dmd.*;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
@@ -12,6 +10,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.io.ByteOrderMark;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -26,6 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+import static de.mephisto.vpin.server.ini.IniUtil.safeGet;
 import static de.mephisto.vpin.server.ini.IniUtil.safeGetBoolean;
 
 @Service
@@ -235,6 +235,43 @@ public class DMDDeviceIniService {
   }
 
   @Nullable
+  public DMDBackupData getBackupData(Game game) {
+    String storeName = getStoreName(game);
+    if (!StringUtils.isEmpty(storeName)) {
+      INIConfiguration iniConfiguration = getIniConfiguration(game);
+      if (iniConfiguration != null) {
+        SubnodeConfiguration conf = iniConfiguration.getSection(storeName);
+        if (conf != null) {
+          DMDBackupData data = new DMDBackupData();
+          data.setX(safeGet(conf, "virtualdmd left", safeGet(conf, "left")));
+          data.setY(safeGet(conf, "virtualdmd top", safeGet(conf, "top")));
+          data.setWidth(safeGet(conf, "virtualdmd width", safeGet(conf, "width")));
+          data.setHeight(safeGet(conf, "virtualdmd height", safeGet(conf, "height")));
+          return data;
+        }
+      }
+    }
+    return null;
+  }
+
+
+  public String getStoreName(Game game) {
+    String rom = StringUtils.defaultString(game.getRomAlias(), game.getRom());
+    String storeName = rom;
+    if (DMDPackageTypes.UltraDMD.equals(game.getDMDType())) {
+      storeName = FilenameUtils.getBaseName(game.getGameFileName());
+      // cf https://github.com/vbousquet/flexdmd/blob/6357c1874e896777a53348094eafa86f386dd8fe/FlexDMD/FlexDMD.cs#L188
+      storeName = storeName.replaceAll("[\\s_vV][\\d_\\.]+[a-z]?(-DOF)?\\*?$", "").trim();
+    }
+    else if (DMDPackageTypes.FlexDMD.equals(game.getDMDType())) {
+      storeName = game.getDMDGameName();
+      // cf https://github.com/vbousquet/flexdmd/blob/6357c1874e896777a53348094eafa86f386dd8fe/FlexDMD/FlexDMD.cs#L188
+      storeName = storeName.replaceAll("[\\s_vV][\\d_\\.]+[a-z]?(-DOF)?\\*?$", "").trim();
+    }
+    return storeName;
+  }
+
+  @Nullable
   public INIConfiguration getIniConfiguration(Game game) {
     GameEmulator gameEmulator = game.getEmulator();
 
@@ -262,6 +299,30 @@ public class DMDDeviceIniService {
     catch (Exception e) {
       LOG.error("Failed to write dmddevice.ini", e);
       return false;
+    }
+  }
+
+  public void restore(Game game, DMDBackupData dmdBackupData) {
+    GameEmulator emulator = game.getEmulator();
+    if (emulator != null) {
+      DMDDeviceIniConfiguration dmdDeviceIni = getDmdDeviceIni(emulator);
+      if (!dmdDeviceIni.isUseRegistry()) {
+        INIConfiguration iniConfiguration = getIniConfiguration(game);
+        if (iniConfiguration != null) {
+          String dmdStoreName = getStoreName(game);
+
+          LOG.info("Restoring DMDDevice.ini entry {}", dmdDeviceIni);
+          iniConfiguration.setProperty(dmdStoreName + ".virtualdmd left", (int) dmdBackupData.getX());
+          iniConfiguration.setProperty(dmdStoreName + ".virtualdmd top", (int) dmdBackupData.getY());
+          iniConfiguration.setProperty(dmdStoreName + ".virtualdmd width", (int) dmdBackupData.getWidth());
+          iniConfiguration.setProperty(dmdStoreName + ".virtualdmd height", (int) dmdBackupData.getHeight());
+
+          saveDmdDeviceIni(game.getEmulator(), iniConfiguration);
+        }
+      }
+      else {
+        LOG.info("Skipped restoring DMDDevice.ini settings for {}, because the registry storage is used.", game.getGameDisplayName());
+      }
     }
   }
 

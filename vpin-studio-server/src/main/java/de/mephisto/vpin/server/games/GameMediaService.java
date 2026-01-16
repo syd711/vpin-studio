@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.backups.BackupDataStudio;
 import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
+import de.mephisto.vpin.restclient.dmd.DMDBackupData;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
@@ -27,6 +28,7 @@ import de.mephisto.vpin.server.backups.adapters.vpa.VpaService;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.directb2s.BackglassService;
+import de.mephisto.vpin.server.dmd.DMDDeviceIniService;
 import de.mephisto.vpin.server.dmd.DMDService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
@@ -72,6 +74,9 @@ public class GameMediaService {
 
   @Autowired
   private DMDService dmdService;
+
+  @Autowired
+  private DMDDeviceIniService dmdDeviceIniService;
 
   @Autowired
   private MameRomAliasService mameRomAliasService;
@@ -457,6 +462,13 @@ public class GameMediaService {
               game.setIgnoredValidations(ValidationState.toIds(backupDataStudio.getIgnoredValidations()));
               gameService.save(game);
               LOG.info("Restored VPin-Studio data for {}", game.getGameDisplayName());
+            }
+          }
+
+          if (backupSettings.isDmdDeviceData()) {
+            DMDBackupData dmdBackupData = VpaArchiveUtil.readDMDDeviceData(analysis.getFile());
+            if (dmdBackupData != null) {
+              dmdDeviceIniService.restore(game, dmdBackupData);
             }
           }
         }

@@ -68,7 +68,7 @@ public class DMDPositionService {
   public DMDInfo getDMDInfo(int gameId) {
     Game game = gameService.getGame(gameId);
     String rom = StringUtils.defaultString(game.getRomAlias(), game.getRom());
-    String storeName = getStoreName(game);
+    String storeName = dmdDeviceIniService.getStoreName(game);
 
     DMDInfo dmdinfo = new DMDInfo();
     dmdinfo.setGameId(game.getId());
@@ -113,7 +113,6 @@ public class DMDPositionService {
   }
 
   private DMDInfo loadDMDInfo(DMDInfo dmdinfo, Game game, DMDType type) {
-
     List<FrontendPlayerDisplay> screenResDisplays = screenService.getScreenResDisplays(game);
 
     DMDInfoZone mainZone = new DMDInfoZone();
@@ -408,7 +407,7 @@ public class DMDPositionService {
   public boolean saveDMDInfo(DMDInfo dmdinfo) {
     Game game = gameService.getGame(dmdinfo.getGameId());
     String rom = StringUtils.defaultString(game.getRomAlias(), game.getRom());
-    String storeName = getStoreName(game);
+    String storeName = dmdDeviceIniService.getStoreName(game);
 
     dmdinfo.setDmdStoreName(storeName);
 
@@ -521,23 +520,6 @@ public class DMDPositionService {
 
   //------------------------------------
   // Utilities
-
-
-  public String getStoreName(Game game) {
-    String rom = StringUtils.defaultString(game.getRomAlias(), game.getRom());
-    String storeName = rom;
-    if (DMDPackageTypes.UltraDMD.equals(game.getDMDType())) {
-      storeName = FilenameUtils.getBaseName(game.getGameFileName());
-      // cf https://github.com/vbousquet/flexdmd/blob/6357c1874e896777a53348094eafa86f386dd8fe/FlexDMD/FlexDMD.cs#L188
-      storeName = storeName.replaceAll("[\\s_vV][\\d_\\.]+[a-z]?(-DOF)?\\*?$", "").trim();
-    }
-    else if (DMDPackageTypes.FlexDMD.equals(game.getDMDType())) {
-      storeName = game.getDMDGameName();
-      // cf https://github.com/vbousquet/flexdmd/blob/6357c1874e896777a53348094eafa86f386dd8fe/FlexDMD/FlexDMD.cs#L188
-      storeName = storeName.replaceAll("[\\s_vV][\\d_\\.]+[a-z]?(-DOF)?\\*?$", "").trim();
-    }
-    return storeName;
-  }
 
   private boolean isShowDmd(String rom) {
     return rom != null ? mameService.getOptions(rom).isShowDmd() : false;

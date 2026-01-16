@@ -482,7 +482,7 @@ public class DiscordClient {
       }
     }
     else {
-      throw new UnsupportedOperationException("No guild found for default guildId '" + serverId + "'");
+      LOG.error("No guild found for default guildId '{}'", serverId);
     }
     return -1;
   }

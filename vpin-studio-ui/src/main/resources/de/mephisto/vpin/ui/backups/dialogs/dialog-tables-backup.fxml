@@ -310,6 +310,26 @@
                                           </Label>
                                        </children>
                                     </HBox>
+                                    <HBox layoutX="10.0" layoutY="109.0" spacing="6.0">
+                                       <children>
+                                          <CheckBox fx:id="dmdDataCheckBox" mnemonicParsing="false" text="DMDDevice.ini Entry" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </CheckBox>
+                                          <Label>
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip prefWidth="300.0" text="This contains the DMD position if stored there and not in the registry." wrapText="true" />
+                                             </tooltip>
+                                          </Label>
+                                       </children>
+                                    </HBox>
                                  </children>
                               </VBox>
                            </children>

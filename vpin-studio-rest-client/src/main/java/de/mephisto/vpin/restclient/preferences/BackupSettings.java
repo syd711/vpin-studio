@@ -23,6 +23,7 @@ public class BackupSettings extends JsonSettings {
   private boolean vpx = true;
   private boolean registryData = true;
   private boolean b2sSettings = true;
+  private boolean dmdDeviceData = true;
   private boolean studioData = true;
 
   private boolean overwriteBackup = true;
@@ -74,6 +75,14 @@ public class BackupSettings extends JsonSettings {
       }
     }
     return false;
+  }
+
+  public boolean isDmdDeviceData() {
+    return dmdDeviceData;
+  }
+
+  public void setDmdDeviceData(boolean dmdDeviceData) {
+    this.dmdDeviceData = dmdDeviceData;
   }
 
   public boolean isStudioData() {

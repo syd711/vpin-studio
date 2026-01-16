@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.backups.*;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
+import de.mephisto.vpin.restclient.dmd.DMDBackupData;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
@@ -18,6 +19,7 @@ import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.directb2s.BackglassService;
+import de.mephisto.vpin.server.dmd.DMDDeviceIniService;
 import de.mephisto.vpin.server.dmd.DMDService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
@@ -87,6 +89,9 @@ public class VpaService implements InitializingBean {
 
   @Autowired
   private DMDService dmdService;
+
+  @Autowired
+  private DMDDeviceIniService dmdDeviceIniService;
 
   @Autowired
   private MameService mameService;
@@ -312,6 +317,13 @@ public class VpaService implements InitializingBean {
       }
     }
 
+    if (backupSettings.isDmdDeviceData()) {
+      DMDBackupData backupData = dmdDeviceIniService.getBackupData(game);
+      if (!zipDmdDeviceIni(jobDescriptor, backupData, zipOut)) {
+        return;
+      }
+    }
+
     if (!jobDescriptor.isCancelled()) {
       writeWheelToPackageInfo(packageInfo, game);
     }
@@ -427,6 +439,21 @@ public class VpaService implements InitializingBean {
     }
     if (!tmpStudioDataJson.delete()) {
       LOG.warn("Failed to delete temporary file {}", tmpStudioDataJson.getName());
+    }
+    return true;
+  }
+
+  private boolean zipDmdDeviceIni(@NonNull JobDescriptor jobDescriptor, @NonNull DMDBackupData data, BiConsumer<File, String> zipOut) throws IOException {
+    String studioDataJson = objectMapper.writeValueAsString(data);
+
+    File tmpDmdDeviceData = File.createTempFile("dmddevice", ".json");
+    tmpDmdDeviceData.deleteOnExit();
+    Files.write(tmpDmdDeviceData.toPath(), studioDataJson.getBytes());
+    if (!zipFile(jobDescriptor, tmpDmdDeviceData, DMDBackupData.BACKUP_FILENAME, zipOut)) {
+      return false;
+    }
+    if (!tmpDmdDeviceData.delete()) {
+      LOG.warn("Failed to delete temporary file {}", tmpDmdDeviceData.getName());
     }
     return true;
   }
