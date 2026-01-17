@@ -3,6 +3,7 @@ package de.mephisto.vpin.commons.fx;
 import de.mephisto.vpin.commons.fx.pausemenu.model.FrontendScreenAsset;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -113,18 +114,12 @@ public class FrontendScreenController implements Initializable {
     else if (mimeType.startsWith("video")) {
       imageView.setVisible(false);
 
-      Media media = new Media(asset.getUrl().toExternalForm());
-      MediaPlayer mediaPlayer = new MediaPlayer(media);
-      mediaPlayer.setAutoPlay(true);
-      mediaPlayer.setCycleCount(-1);
-      mediaPlayer.setMute(false);
-
       mediaView.setPreserveRatio(false);
       mediaView.setFitWidth(display.getWidth());
       mediaView.setFitHeight(display.getHeight());
 
-      mediaView.setMediaPlayer(mediaPlayer);
-      asset.setMediaPlayer(mediaPlayer);
+      Media media = new Media(asset.getUrl().toExternalForm());
+      renderMediaPlayer(media, 0);
     }
     else {
       LOG.error("Unsupported mime type for screen asset: " + mimeType);
@@ -144,15 +139,37 @@ public class FrontendScreenController implements Initializable {
       screenStage.setHeight(display.getWidth());
       screenStage.setWidth(display.getHeight());
     }
-    else  if (asset.getRotation() == 180) {
+    else if (asset.getRotation() == 180) {
       screenStage.setY(screenStage.getY() + display.getHeight());
     }
 
     root.setRotate(asset.getRotation());
 
     if (asset.getRotation() == 90 || asset.getRotation() == 270) {
-      root.translateXProperty().setValue(-( display.getHeight() + (display.getHeight()/2)));
+      root.translateXProperty().setValue(-(display.getHeight() + (display.getHeight() / 2)));
     }
+  }
+
+  private void renderMediaPlayer(Media media, int attempt) {
+    if (attempt == 100) {
+      return;
+    }
+    int attemptCount = attempt + 1;
+    MediaPlayer mediaPlayer = new MediaPlayer(media);
+    mediaPlayer.setCycleCount(-1);
+    mediaPlayer.setMute(false);
+    mediaPlayer.setOnError(() -> {
+      LOG.warn("Pause Menu Media player error:{}/{}, URL: {}", mediaPlayer.getError(), attemptCount, mediaPlayer.getMedia().getSource());
+      mediaPlayer.stop();
+      mediaPlayer.dispose();
+      mediaView.setMediaPlayer(null);
+      renderMediaPlayer(media, attemptCount);
+    });
+    mediaView.setMediaPlayer(mediaPlayer);
+
+    Platform.runLater(() -> {
+      mediaPlayer.play();
+    });
   }
 
   public Node getRoot() {

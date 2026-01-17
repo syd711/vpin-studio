@@ -51,14 +51,6 @@ public class FrontendScreenAsset {
     this.name = name;
   }
 
-  public MediaPlayer getMediaPlayer() {
-    return mediaPlayer;
-  }
-
-  public void setMediaPlayer(MediaPlayer mediaPlayer) {
-    this.mediaPlayer = mediaPlayer;
-  }
-
   public int getDuration() {
     return duration;
   }

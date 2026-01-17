@@ -55,7 +55,10 @@ public class PauseMenuItemsFactory {
     if (pauseMenuSettings.isShowIscoredScores() && Features.ISCORED_ENABLED) {
       List<CompetitionRepresentation> competitions = client.getCompetitionService().getIScoredSubscriptions();
       for (CompetitionRepresentation competition : competitions) {
-        if (competition.isActive() && competition.getGameId() == game.getId()) {
+        if (competition.isActive()
+            && !StringUtils.isEmpty(game.getExtTableId())
+            && String.valueOf(competition.getVpsTableId()).equalsIgnoreCase(String.valueOf(game.getExtTableId()))
+            && String.valueOf(competition.getVpsTableVersionId()).equals(String.valueOf(game.getExtTableVersionId()))) {
           PauseMenuItem iScoredItem = new PauseMenuItem(PauseMenuItemTypes.iScored, "iScored", "iScored Game Room Scores", new Image(PauseMenu.class.getResourceAsStream("iscored.png")));
           iScoredItem.setCompetition(competition);
           pauseMenuItems.add(iScoredItem);

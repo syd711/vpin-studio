@@ -17,6 +17,7 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.TableStatusChangedEvent;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -145,25 +146,31 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
         continue;
       }
 
-      IScoredGame game = gameRoom.getGameByVps(iScoredSubscription.getVpsTableId(), iScoredSubscription.getVpsTableVersionId());
+      IScoredGame iScoredGame = gameRoom.getGameByVps(iScoredSubscription.getVpsTableId(), iScoredSubscription.getVpsTableVersionId());
 
       //no matching game found in the game room, so it has been removed
-      if (game == null) {
+      if (iScoredGame == null) {
         deleteSubscription(iScoredSubscriptions, iScoredSubscription);
         LOG.info("Deleted competition {} because no matching Game Room game found for VPS table/version: {}/{}", iScoredSubscription, iScoredSubscription.getVpsTableId(), iScoredSubscription.getVpsTableVersionId());
         continue;
       }
 
       IScoredGameRoom iScoredGameRoom = anyGameRoomMatch.get();
-      if (game.isGameHidden() && iScoredGameRoom.isIgnoreHidden()) {
+      if (iScoredGame.isGameHidden() && iScoredGameRoom.isIgnoreHidden()) {
         deleteSubscription(iScoredSubscriptions, iScoredSubscription);
         LOG.info("Deleted competition {} because the matching game is hidden", iScoredSubscription);
         continue;
       }
 
+      if (iScoredGame.isAllVersionsEnabled() && !StringUtils.isEmpty(iScoredSubscription.getVpsTableVersionId())) {
+        deleteSubscription(iScoredSubscriptions, iScoredSubscription);
+        LOG.info("Deleted competition {} because the it has a VPS version id, but all versions are enabled.", iScoredSubscription);
+        continue;
+      }
+
       //get game depending on if versions are enabled.
       Game gameByVpsTable = null;
-      if (game.isAllVersionsEnabled()) {
+      if (iScoredGame.isAllVersionsEnabled()) {
         gameByVpsTable = gameService.getGameByVpsTable(knownGames, iScoredSubscription.getVpsTableId(), null);
       }
       else {

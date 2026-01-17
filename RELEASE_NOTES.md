@@ -3,7 +3,7 @@
 ## Changes
 
 - **Table Validators**: Introduced new table validator which checks if the table has a backglass, but the backglasses are disabled in the VPX settings. (I assume it is an edge case, but can be annoying to trouble-shoot).
-- **ALT Color**: Added support for .cROMc files, which includes uploading and the backup of .cROMc files.
+- **ALT Color**: Added support for .cROMc files, which includes uploading, backup and backup on replace of .cROMc files.
 - **Pause Menu**: 
   - Added rotation option for the tutorials screen.
   - Added margin options to position the tutorials screen pixel perfect.
@@ -23,9 +23,11 @@
 ## Bugfixes
 
 - **Server Startup**: Fixed critical error that lead to a server crash when the **ScreenRes.txt** file location could no be determined.
-- **Table Filtering**: Fixed issue that the media recorder used the filter settings from the table overview.
+- **Media Recorder Table Filtering**: Fixed issue that the media recorder used the filter settings from the table overview.
 - **Table Data Manager**: The "Auto-save" flag for the dialog is not remembered.
 - **Pause Menu**:
   - Fixed screen configuration that can be used for showing the tutorials video (@kongedam It is finally there!).
   - Fixed mute on pause: If the system was already muted, the pause menu does not unmute on exit anymore.
+  - Fixed **iScored** pause menu item that was always ignored.
+  - Added retry attempts in case the video rendering for tutorials fails. Hopefully this fixes the issue that videos are not starting.
 - **Dialogs**: Fixed issue that after releasing changes on dialogs the contents of these were cropped.
