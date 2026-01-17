@@ -27,6 +27,8 @@ public class UISettings extends JsonSettings {
 
   private boolean autoApplyVpsData = true;
 
+  private boolean autoSaveEnabled = false;
+
   /** Whether DMD position are auto-saved */
   private boolean autoSaveDmdPosition = true;
 
@@ -88,6 +90,14 @@ public class UISettings extends JsonSettings {
   private boolean columnTutorial = false;
 
   private LaunchConfiguration launchConfiguration;
+
+  public boolean isAutoSaveEnabled() {
+    return autoSaveEnabled;
+  }
+
+  public void setAutoSaveEnabled(boolean autoSaveEnabled) {
+    this.autoSaveEnabled = autoSaveEnabled;
+  }
 
   public LaunchConfiguration getLaunchConfiguration() {
     return launchConfiguration;

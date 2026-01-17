@@ -126,6 +126,7 @@ public class AltColorService implements InitializingBean {
       Optional<File> pacFile = Arrays.stream(altColorFiles).filter(f -> f.getName().endsWith(UploaderAnalysis.PAC_SUFFIX)).findFirst();
       Optional<File> palFile = Arrays.stream(altColorFiles).filter(f -> f.getName().endsWith(UploaderAnalysis.PAL_SUFFIX)).findFirst();
       Optional<File> crzFile = Arrays.stream(altColorFiles).filter(f -> f.getName().endsWith(UploaderAnalysis.SERUM_SUFFIX)).findFirst();
+      Optional<File> cROMcFile = Arrays.stream(altColorFiles).filter(f -> f.getName().endsWith(UploaderAnalysis.CROMC_SUFFIX)).findFirst();
 
       if (pacFile.isPresent()) {
         altColor.setModificationDate(new Date(pacFile.get().lastModified()));
@@ -138,6 +139,10 @@ public class AltColorService implements InitializingBean {
       else if (crzFile.isPresent()) {
         altColor.setModificationDate(new Date(crzFile.get().lastModified()));
         type = AltColorTypes.serum;
+      }
+      else if (cROMcFile.isPresent()) {
+        altColor.setModificationDate(new Date(cROMcFile.get().lastModified()));
+        type = AltColorTypes.cROMc;
       }
       altColor.setAltColorType(type);
     }
@@ -167,9 +172,11 @@ public class AltColorService implements InitializingBean {
 
     if (game.isZenGame()) {
       installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.CRZ, "pin2dmd." + UploaderAnalysis.SERUM_SUFFIX);
+      installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.CROMC, "pin2dmd." + UploaderAnalysis.CROMC_SUFFIX);
     }
     else {
       installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.CRZ, game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX);
+      installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.CROMC, game.getRom() + "." + UploaderAnalysis.CROMC_SUFFIX);
     }
 
     setAltColorEnabled(game, true);
@@ -200,9 +207,11 @@ public class AltColorService implements InitializingBean {
         installAltColorFromFile(name, folder, out, "pin2dmd.pal");
         if (game.isZenGame()) {
           installAltColorFromFile(name, folder, out, "pin2dmd." + UploaderAnalysis.SERUM_SUFFIX);
+          installAltColorFromFile(name, folder, out, "pin2dmd." + UploaderAnalysis.CROMC_SUFFIX);
         }
         else {
           installAltColorFromFile(name, folder, out, game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX);
+          installAltColorFromFile(name, folder, out, game.getRom() + "." + UploaderAnalysis.CROMC_SUFFIX);
         }
       }
       catch (IOException e) {
@@ -286,6 +295,10 @@ public class AltColorService implements InitializingBean {
           }
           case UploaderAnalysis.SERUM_SUFFIX: {
             backupFolder(folder, UploaderAnalysis.SERUM_SUFFIX);
+            break;
+          }
+          case UploaderAnalysis.CROMC_SUFFIX: {
+            backupFolder(folder, UploaderAnalysis.CROMC_SUFFIX);
             break;
           }
         }

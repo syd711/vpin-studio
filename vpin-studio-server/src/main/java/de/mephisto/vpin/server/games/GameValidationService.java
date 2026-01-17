@@ -570,6 +570,16 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         }
         break;
       }
+      case cROMc: {
+        String name = game.getRom() + "." + UploaderAnalysis.CROMC_SUFFIX;
+        if (game.isZenGame()) {
+          name = "pin2dmd." + UploaderAnalysis.CROMC_SUFFIX;
+        }
+        if (isValidationEnabled(game, CODE_ALT_COLOR_FILES_MISSING) && !altColor.contains(name)) {
+          result.add(ValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, name));
+        }
+        break;
+      }
       default: {
         //ignore
       }

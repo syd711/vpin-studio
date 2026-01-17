@@ -133,6 +133,7 @@ public class UploadAnalysisDispatcher {
       case PAC:
       case PAL:
       case VNI:
+      case CROMC:
       case CRZ: {
         TableDialogs.openAltColorUploadDialog(game, file, analysis, finalizer);
         break;

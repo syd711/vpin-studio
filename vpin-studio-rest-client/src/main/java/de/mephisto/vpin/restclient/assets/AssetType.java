@@ -19,6 +19,7 @@ public enum AssetType {
   PAL,
   PAC,
   CRZ,
+  CROMC,
   RES,
   VNI,
   VPA,
@@ -44,7 +45,7 @@ public enum AssetType {
   CARD_ASSET;
 
   static final AssetType[] INSTALLABLE_ASSET_TYPES = {
-      ZIP, RAR, SEVENZIP, RES, DIF, INI, POV, DIRECTB2S, VNI, VPA, VPX, FPT, PAL, PAC, CRZ, CFG, BAM_CFG, NV, FPL
+      ZIP, RAR, SEVENZIP, RES, DIF, INI, POV, DIRECTB2S, VNI, VPA, VPX, FPT, PAL, PAC, CROMC, CRZ, CFG, BAM_CFG, NV, FPL
   };
 
   public static AssetType fromExtension(@Nullable EmulatorType emulatorType, String extension) {
@@ -130,6 +131,9 @@ public enum AssetType {
       }
       case CRZ: {
         return ".cRZ File";
+      }
+      case CROMC: {
+        return ".cROMc File";
       }
       case PAC: {
         return ".pac File";
@@ -217,6 +221,9 @@ public enum AssetType {
       }
       case CRZ: {
         return ".cRZ";
+      }
+      case CROMC: {
+        return ".cROMc";
       }
       case PAC: {
         return ".pac";

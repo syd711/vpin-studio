@@ -182,7 +182,7 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
         this.targetDisplayName = "VPin MAME \"roms\" folder";
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
-      else if (uploaderAnalysis.validateAssetTypeInArchive(AssetType.ALT_COLOR) == null && (asset.equals(AssetType.PAL) || asset.equals(AssetType.PAC) || asset.equals(AssetType.CRZ) || asset.equals(AssetType.VNI))) {
+      else if (uploaderAnalysis.validateAssetTypeInArchive(AssetType.ALT_COLOR) == null && (asset.equals(AssetType.PAL) || asset.equals(AssetType.PAC) || asset.equals(AssetType.CRZ) || asset.equals(AssetType.CROMC) || asset.equals(AssetType.VNI))) {
         this.assetType = asset;
         this.targetDisplayName = "VPin MAME \"altcolor\" folder";
         LOG.info(fileNameWithPath + ": " + assetType.name());

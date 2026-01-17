@@ -3,7 +3,6 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.fx.DialogHeaderController;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.matcher.VpsMatch;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
@@ -17,7 +16,6 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.tagging.TaggingUtil;
@@ -33,7 +31,6 @@ import de.mephisto.vpin.ui.tables.panels.PropperRenamingController;
 import de.mephisto.vpin.ui.tables.vps.VpsTableVersionCell;
 import de.mephisto.vpin.ui.util.AutoCompleteTextField;
 import de.mephisto.vpin.ui.util.AutoCompleteTextFieldChangeListener;
-import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.binding.BeanBinder;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -96,6 +93,9 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
   @FXML
   private GridPane patchVersionPanel;
+
+  @FXML
+  private CheckBox autosaveCheckbox;
 
   @FXML
   private ComboBox<String> gameTypeCombo;
@@ -653,6 +653,15 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
     this.serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
     this.uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+
+    autosaveCheckbox.setSelected(uiSettings.isAutoSaveEnabled());
+    autosaveCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        uiSettings.setAutoSaveEnabled(newValue);
+        client.getPreferenceService().setJsonPreference(uiSettings);
+      }
+    });
 
     boolean patchVersionEnabled = !StringUtils.isEmpty(serverSettings.getMappingPatchVersion());
     patchVersion.setDisable(!patchVersionEnabled);

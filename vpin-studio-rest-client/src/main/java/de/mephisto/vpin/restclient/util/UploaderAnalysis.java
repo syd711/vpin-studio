@@ -36,6 +36,7 @@ public class UploaderAnalysis {
   public final static String VNI_SUFFIX = "vni";
   public final static String PAC_SUFFIX = "pac";
   public final static String SERUM_SUFFIX = "cRZ";
+  public final static String CROMC_SUFFIX = "cROMc";
   public final static String NVRAM_SUFFIX = "nv";
   public final static String FPL_SUFFIX = "fpl";
   public final static String CFG_SUFFIX = "cfg";
@@ -590,6 +591,7 @@ public class UploaderAnalysis {
       case PAC:
       case VNI:
       case CRZ:
+      case CROMC:
       case PAL: {
         if (isAltColor()) {
           return null;
@@ -662,6 +664,10 @@ public class UploaderAnalysis {
 
     if (hasFileWithSuffix("cRZ")) {
       result.add(AssetType.CRZ);
+    }
+
+    if (hasFileWithSuffix("cROMc")) {
+      result.add(AssetType.CROMC);
     }
 
     if (hasFileWithSuffix("directb2s")) {
