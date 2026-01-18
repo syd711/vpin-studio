@@ -4,6 +4,11 @@
 
 - **DMDDevice.ini**: Added possibility to change ignorear setting
 
+## Bugfixes
+
+- **Preferences**: Added scrollbar in backglass preferences
+
+
 
 ## Release Notes 4.6.0
 
