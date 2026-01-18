@@ -24,8 +24,6 @@ import static de.mephisto.vpin.ui.Studio.client;
 public class DMDPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(DMDPreferencesController.class);
 
-  private final Debouncer debouncer = new Debouncer();
-
   @FXML
   private ComboBox<GameEmulatorRepresentation> emulatorCombo;
 
@@ -39,6 +37,8 @@ public class DMDPreferencesController implements Initializable {
   private CheckBox virtualdmdEnabledCheckbox;
   @FXML
   private CheckBox virtualdmdStayOnTopCheckbox;
+  @FXML
+  private CheckBox virtualdmdIgnoreAspectRatioCheckbox;
   @FXML
   private CheckBox virtualdmdUseRegistryCheckbox;
 
@@ -76,6 +76,11 @@ public class DMDPreferencesController implements Initializable {
       client.getDmdService().saveDmdDeviceIni(dmdDeviceIni);
     });
 
+    virtualdmdIgnoreAspectRatioCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      dmdDeviceIni.setIgnoreAspectRatio(t1);
+      client.getDmdService().saveDmdDeviceIni(dmdDeviceIni);
+    });
+
     virtualdmdUseRegistryCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       dmdDeviceIni.setUseRegistry(t1);
       client.getDmdService().saveDmdDeviceIni(dmdDeviceIni);
@@ -85,6 +90,7 @@ public class DMDPreferencesController implements Initializable {
     networkStreamCheckbox.setDisable(true);
     virtualdmdEnabledCheckbox.setDisable(true);
     virtualdmdStayOnTopCheckbox.setDisable(true);
+    virtualdmdIgnoreAspectRatioCheckbox.setDisable(true);
     virtualdmdUseRegistryCheckbox.setDisable(true);
 
     if (!filtered.isEmpty()) {
@@ -96,6 +102,7 @@ public class DMDPreferencesController implements Initializable {
     networkStreamCheckbox.setDisable(dmdDeviceIni == null);
     virtualdmdEnabledCheckbox.setDisable(dmdDeviceIni == null);
     virtualdmdStayOnTopCheckbox.setDisable(dmdDeviceIni == null);
+    virtualdmdIgnoreAspectRatioCheckbox.setDisable(dmdDeviceIni == null);
     virtualdmdUseRegistryCheckbox.setDisable(dmdDeviceIni == null);
 
     if (dmdDeviceIni != null) {
@@ -104,6 +111,7 @@ public class DMDPreferencesController implements Initializable {
 
       virtualdmdEnabledCheckbox.setSelected(dmdDeviceIni.isEnabled());
       virtualdmdStayOnTopCheckbox.setSelected(dmdDeviceIni.isStayOnTop());
+      virtualdmdIgnoreAspectRatioCheckbox.setSelected(dmdDeviceIni.isIgnoreAspectRatio());
       virtualdmdUseRegistryCheckbox.setSelected(dmdDeviceIni.isUseRegistry());
     }
   }

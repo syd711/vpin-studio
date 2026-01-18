@@ -7,7 +7,8 @@ public class DMDDeviceIniConfiguration {
 
   private boolean useRegistry = false;
   private boolean stayOnTop = false;
-  private boolean enabled = false;
+  private boolean ignoreAspectRatio = false;
+  private boolean enabled = true;
 
   public boolean isStayOnTop() {
     return stayOnTop;
@@ -17,6 +18,14 @@ public class DMDDeviceIniConfiguration {
     this.stayOnTop = stayOnTop;
   }
 
+  public boolean isIgnoreAspectRatio() {
+    return ignoreAspectRatio;
+  }
+
+  public void setIgnoreAspectRatio(boolean ignoreAR) {
+    this.ignoreAspectRatio = ignoreAR;
+  }
+  
   public boolean isEnabled() {
     return enabled;
   }

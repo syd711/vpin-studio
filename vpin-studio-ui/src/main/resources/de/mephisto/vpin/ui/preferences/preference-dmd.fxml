@@ -95,14 +95,17 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
                         <Label styleClass="default-text" text="Enabled:" />
                         <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Stay On Top:" GridPane.rowIndex="1" />
-                        <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="Use Registry:" GridPane.rowIndex="2" />
+                        <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="Ignore Aspect Ratio:" GridPane.rowIndex="2" />
+                        <Label layoutX="10.0" layoutY="75.0" styleClass="default-text" text="Use Registry:" GridPane.rowIndex="3" />
                         <CheckBox fx:id="virtualdmdEnabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="Virtual DMD Enabled" GridPane.columnIndex="1" />
                         <CheckBox fx:id="virtualdmdStayOnTopCheckbox" layoutX="148.0" layoutY="15.0" mnemonicParsing="false" styleClass="default-text" text="DMD Always On Top" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <CheckBox fx:id="virtualdmdUseRegistryCheckbox" layoutX="148.0" layoutY="45.0" mnemonicParsing="false" styleClass="default-text" text="Save Into Windows registry (not the DMDevice.ini file)" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <CheckBox fx:id="virtualdmdIgnoreAspectRatioCheckbox" layoutX="148.0" layoutY="45.0" mnemonicParsing="false" styleClass="default-text" text="DMD Ignore Aspect Ratio" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <CheckBox fx:id="virtualdmdUseRegistryCheckbox" layoutX="148.0" layoutY="75.0" mnemonicParsing="false" styleClass="default-text" text="Save Into Windows registry (not the DMDevice.ini file)" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                      </children>
                   </GridPane>
                </children>

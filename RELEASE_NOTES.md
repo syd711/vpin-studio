@@ -1,3 +1,10 @@
+## Release Notes 4.6.1
+
+## Changes
+
+- **DMDDevice.ini**: Added possibility to change ignorear setting
+
+
 ## Release Notes 4.6.0
 
 ## Changes

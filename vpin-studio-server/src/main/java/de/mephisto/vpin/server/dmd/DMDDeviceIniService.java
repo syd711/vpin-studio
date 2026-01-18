@@ -62,7 +62,8 @@ public class DMDDeviceIniService {
     if (section != null) {
       config.setUseRegistry(section.getBoolean("useregistry", false));
       config.setStayOnTop(section.getBoolean("stayontop", false));
-      config.setEnabled(section.getBoolean("enabled", false));
+      config.setIgnoreAspectRatio(section.getBoolean("ignorear", false));
+      config.setEnabled(section.getBoolean("enabled", true));
     }
     return config;
   }
@@ -86,6 +87,7 @@ public class DMDDeviceIniService {
     if (section != null) {
       section.setProperty("useregistry", dmddeviceini.isUseRegistry());
       section.setProperty("stayontop", dmddeviceini.isStayOnTop());
+      section.setProperty("ignorear", dmddeviceini.isIgnoreAspectRatio());
       section.setProperty("enabled", dmddeviceini.isEnabled());
       dirty = true;
     }
