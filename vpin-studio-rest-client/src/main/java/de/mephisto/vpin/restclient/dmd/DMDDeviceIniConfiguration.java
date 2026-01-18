@@ -1,10 +1,14 @@
 package de.mephisto.vpin.restclient.dmd;
 
 public class DMDDeviceIniConfiguration {
+
+  public static final String WEBSOCKET_DMD_PATH = "/dmd";
+
   private int emulatorId;
   private boolean networkStreamEnabled = false;
   private String webSocketUrl;
-
+  private boolean webSocketUrlInvalid = false;
+  
   private boolean useRegistry = false;
   private boolean stayOnTop = false;
   private boolean ignoreAspectRatio = false;
@@ -64,5 +68,13 @@ public class DMDDeviceIniConfiguration {
 
   public void setWebSocketUrl(String webSocketUrl) {
     this.webSocketUrl = webSocketUrl;
+  }
+
+  public boolean isWebSocketUrlInvalid() {
+    return webSocketUrlInvalid;
+  }
+
+  public void setWebSocketUrlInvalid(boolean webSocketUrlInvalid) {
+    this.webSocketUrlInvalid = webSocketUrlInvalid;
   }
 }

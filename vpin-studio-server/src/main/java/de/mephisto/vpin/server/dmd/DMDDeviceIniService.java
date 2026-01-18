@@ -55,7 +55,10 @@ public class DMDDeviceIniService {
     SubnodeConfiguration section = dmdDeviceIni.getSection("networkstream");
     if (section != null) {
       config.setNetworkStreamEnabled(section.getBoolean("enabled", false));
-      config.setWebSocketUrl(section.getString("url", "ws://127.0.0.1/dmd"));
+      String existingWebSocketUrl = section.getString("url", "");
+      String webSocketUrl = "ws://127.0.0.1" + DMDDeviceIniConfiguration.WEBSOCKET_DMD_PATH;
+      config.setWebSocketUrl(existingWebSocketUrl);
+      config.setWebSocketUrlInvalid(!webSocketUrl.equals(existingWebSocketUrl));
     }
 
     section = dmdDeviceIni.getSection("virtualdmd");
@@ -79,7 +82,11 @@ public class DMDDeviceIniService {
     boolean dirty = false;
     if (section != null) {
       section.setProperty("enabled", dmddeviceini.isNetworkStreamEnabled());
-      section.setProperty("url", dmddeviceini.getWebSocketUrl());
+      // update the url only if the stream is enabled and the url change confirmed
+      if (dmddeviceini.isNetworkStreamEnabled() && dmddeviceini.getWebSocketUrl() == null) {
+        String webSocketUrl = "ws://127.0.0.1" + DMDDeviceIniConfiguration.WEBSOCKET_DMD_PATH;
+        section.setProperty("url", webSocketUrl);
+      }
       dirty = true;
     }
 
