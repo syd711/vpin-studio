@@ -3,6 +3,8 @@ package de.mephisto.vpin.server.dmdscore;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -27,9 +29,16 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
    
   private int[] palette;
 
-  private GameToProcessorFactory factory = new GameToProcessorFactory();
+  private List<DMDScoreProcessor> processors = new ArrayList<>();
 
-  private DMDScoreProcessor processor;
+
+  public void addDMDScoreProcessor(DMDScoreProcessor processor) {
+    processors.add(processor);
+  }
+
+  public void removeDMDScoreProcessor(DMDScoreProcessor processor) {
+    processors.remove(processor);
+  }
 
   @Override
   protected void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
@@ -105,10 +114,11 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
       processGameStop();
 
       this.gameName = newGameName;
-      processor = factory.getProcessor(gameName);
-      if (processor != null) {
+
+      for (DMDScoreProcessor processor : processors) {
         processor.onFrameStart(gameName);
       }
+
       LOG.info("Game name started : {}", gameName);
     }
   }
@@ -123,18 +133,20 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
       firstTimeStamp = timeStamp;
     }
 
-    if (processor != null) {
-      byte[] frameBytes = DmdImageUtils.toPlane(planes, nbPlanes, width, height);
-      Frame frame = new Frame(type, timeStamp - firstTimeStamp, frameBytes);
-      processor.onFrameReceived(frame, palette, width, height);
+    byte[] frameBytes = DmdImageUtils.toPlane(planes, nbPlanes, width, height);
+    Frame frame = new Frame(type, timeStamp - firstTimeStamp, frameBytes, width, height, palette);
+    for (DMDScoreProcessor processor : processors) {
+      processor.onFrameReceived(frame);
     }
   }
 
   private void processGameStop() {
     if (gameName != null) {
-      if (processor != null) {
+
+      for (DMDScoreProcessor processor : processors) {
         processor.onFrameStop(gameName);
       }
+
       this.gameName = null;
       this.firstTimeStamp = -1;
     }

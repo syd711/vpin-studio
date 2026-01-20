@@ -5,7 +5,6 @@ import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.wovp.models.ApiKeyValidationResponse;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.wovp.WOVPSettings;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
@@ -26,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
@@ -73,8 +73,6 @@ public class WOVPPreferencesController implements Initializable {
   @FXML
   private CheckBox resetCheckbox;
 
-  @FXML
-  private CheckBox desktopModeCheckbox;
 
   @FXML
   private Pane tagPane;
@@ -83,7 +81,6 @@ public class WOVPPreferencesController implements Initializable {
   private CheckBox taggingEnabledCheckbox;
 
 
-  private PauseMenuSettings pauseMenuSettings;
   private WOVPSettings wovpSettings;
 
   @FXML
@@ -112,6 +109,11 @@ public class WOVPPreferencesController implements Initializable {
   }
 
   @FXML
+  private void onPauseMenuLink(ActionEvent event) {
+    PreferencesController.navigate("pause-menu");
+  }
+
+  @FXML
   private void onApiKeyTest(ActionEvent event) {
     Button btn = (Button) event.getSource();
     TextField source = (TextField) btn.getUserData();
@@ -132,7 +134,6 @@ public class WOVPPreferencesController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     wovpSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
-    pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
 
     testBtn1.setUserData(apiKeyText1);
     testBtn2.setUserData(apiKeyText2);
@@ -169,18 +170,6 @@ public class WOVPPreferencesController implements Initializable {
       wovpSettings.setResetHighscores(newValue);
       try {
         client.getPreferenceService().setJsonPreference(wovpSettings);
-        PreferencesController.markDirty(PreferenceType.competitionSettings);
-      }
-      catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
-      }
-    });
-
-    desktopModeCheckbox.setSelected(pauseMenuSettings.isDesktopUser());
-    desktopModeCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      pauseMenuSettings.setDesktopUser(newValue);
-      try {
-        client.getPreferenceService().setJsonPreference(pauseMenuSettings);
         PreferencesController.markDirty(PreferenceType.competitionSettings);
       }
       catch (Exception e) {

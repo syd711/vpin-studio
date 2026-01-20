@@ -3,6 +3,8 @@
 ## Changes
 
 - **DMDDevice.ini**: Added possibility to change ignorear setting
+- **DMDDevice.ini**: Added update button to update the network stream url so that the server gets the DMD frames
+- **Pause Menu Preferences**: Added option to include DMD frame capture, useful for cabs with a real DMD
 
 ## Bugfixes
 

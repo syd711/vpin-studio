@@ -16,13 +16,23 @@ public class DMDScoreProcessorFrameDump implements DMDScoreProcessor {
 
   private final static Logger LOG = LoggerFactory.getLogger(DMDScoreProcessorFrameDump.class);
 
+  /** Th eroot folder */
+  private File root;
+
   private Writer writer;
+
+
+  public DMDScoreProcessorFrameDump(File root) {
+    this.root = root;
+  }
+
 
   @Override
   public void onFrameStart(String gameName) {
     try {
-      File file = new File("c:/temp/" + gameName + "/dump.txt");
+      File file = new File(root, gameName);
       file.mkdirs(); 
+      file = new File(file, "dump.txt");
       this.writer = new BufferedWriter(new FileWriter(file));
       writer.append(gameName + "\n\n");
     } 
@@ -31,10 +41,21 @@ public class DMDScoreProcessorFrameDump implements DMDScoreProcessor {
   }
 
   @Override
-  public void onFrameReceived(Frame frame, int[] palette, int width, int height) {
+  public void onFrameReceived(Frame frame) {
+
+    int width = frame.getWidth();
+    int height = frame.getHeight();
 
     try {
-      writer.append(frame.getType() + " / " + frame.getTimeStamp() + "\n");
+      writer.append(frame.getTimeStamp() + " / " + frame.getType() + " / " + width + " / " + height + "\n");
+
+      int[] palette = frame.getPalette();
+      for (int p = 0; p < palette.length; p++) {
+        if (p != 0) writer.append(",");
+        writer.append(Integer.toString(palette[p]));
+      }
+      writer.append("\n");
+
       byte[] plane  = frame.getPlane();
       for (int j = 0; j < height; j++) {
         for (int i = 0; i < width; i++) {

@@ -5,6 +5,7 @@ import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
@@ -43,6 +44,8 @@ public class DMDDeviceIniService {
   @Autowired
   private MameService mameService;
 
+  @Autowired
+  private SystemService systemService;
 
   public DMDDeviceIniConfiguration getDmdDeviceIni(@NonNull GameEmulator gameEmulator) {
     loadDmdDeviceIni(gameEmulator);
@@ -56,7 +59,7 @@ public class DMDDeviceIniService {
     if (section != null) {
       config.setNetworkStreamEnabled(section.getBoolean("enabled", false));
       String existingWebSocketUrl = section.getString("url", "");
-      String webSocketUrl = "ws://127.0.0.1" + DMDDeviceIniConfiguration.WEBSOCKET_DMD_PATH;
+      String webSocketUrl = "ws://127.0.0.1:" + systemService.getServerPort() + DMDDeviceIniConfiguration.WEBSOCKET_DMD_PATH;
       config.setWebSocketUrl(existingWebSocketUrl);
       config.setWebSocketUrlInvalid(!webSocketUrl.equals(existingWebSocketUrl));
     }
@@ -84,7 +87,7 @@ public class DMDDeviceIniService {
       section.setProperty("enabled", dmddeviceini.isNetworkStreamEnabled());
       // update the url only if the stream is enabled and the url change confirmed
       if (dmddeviceini.isNetworkStreamEnabled() && dmddeviceini.getWebSocketUrl() == null) {
-        String webSocketUrl = "ws://127.0.0.1" + DMDDeviceIniConfiguration.WEBSOCKET_DMD_PATH;
+        String webSocketUrl = "ws://127.0.0.1:" + systemService.getServerPort() + DMDDeviceIniConfiguration.WEBSOCKET_DMD_PATH;
         section.setProperty("url", webSocketUrl);
       }
       dirty = true;
