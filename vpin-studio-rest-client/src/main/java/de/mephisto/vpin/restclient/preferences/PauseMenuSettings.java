@@ -19,6 +19,7 @@ public class PauseMenuSettings extends JsonSettings {
   private int stageOffsetX = 0;
   private int stageOffsetY = 0;
   private boolean desktopUser = false;
+  private boolean includeDmdFrame = false;
 
   private int testDuration = 8;
   private int testGameId = -1;
@@ -113,6 +114,14 @@ public class PauseMenuSettings extends JsonSettings {
 
   public void setDesktopUser(boolean desktopUser) {
     this.desktopUser = desktopUser;
+  }
+
+  public boolean isIncludeDmdFrame() {
+    return includeDmdFrame;
+  }
+
+  public void setIncludeDmdFrame(boolean includeDmdFrame) {
+    this.includeDmdFrame = includeDmdFrame;
   }
 
   public boolean isPressPause() {

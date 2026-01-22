@@ -2,8 +2,13 @@
 
 ## Changes
 
+- **DMDDevice.ini Preferences**: 
+  - Added possibility to change ignore settings.
+  - Added update button to update the network stream url so that the server gets the DMD frames.
+- **Pause Menu Preferences**: Added option to include DMD frame capture, useful for cabs with a real DMD.
 - **Controller Setup**: Added expert mode for the controller bindings dialog that allows manual input of key values. This might be necessary in case the VPin Studio server detected different key codes than Windows.
 - **cROMC Support**: Added missing file filter in the ALTColor upload dialog.
+- **Preferences**: Added missing scrollbar to the backglass preferences.
 
 ---
 

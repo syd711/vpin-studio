@@ -18,9 +18,12 @@ public class DMDScoreProcessor2Sides extends DMDScoreProcessorImageScanner {
   }
 
   @Override
-  public void onFrameReceived(Frame frame, int[] palette, int width, int height) {
+  public void onFrameReceived(Frame frame) {
 
     // Resize images
+    int width = frame.getWidth();
+    int height = frame.getHeight();
+
     int scale = 3;
     int H = height * scale;
     // Blur effect

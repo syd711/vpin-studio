@@ -41,9 +41,12 @@ public class DMDScoreProcessorImageScanner implements DMDScoreProcessor {
   }
 
   @Override
-  public void onFrameReceived(Frame frame, int[] palette, int width, int height) {
+  public void onFrameReceived(Frame frame) {
 
     // Resize our image
+    int width = frame.getWidth();
+    int height = frame.getHeight();
+
     int scale = 3;
     int W = width * scale;
     int H = height * scale;

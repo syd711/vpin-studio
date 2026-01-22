@@ -151,7 +151,6 @@
                             <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
                               <Label styleClass="default-text" text="Settings:" />
@@ -199,28 +198,26 @@
                                     <Insets top="6.0" />
                                  </GridPane.margin>
                               </VBox>
-                              <VBox GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                 <children>
-                                    <CheckBox fx:id="desktopModeCheckbox" mnemonicParsing="false" text="Only use primary screen for screenshots (Desktop Mode)" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets />
-                                       </VBox.margin>
-                                    </CheckBox>
-                                    <Label styleClass="checkbox-description" text="The score submitter in the pause menu will take a screenshot of all screens." textFill="WHITE" />
-                                    <Label layoutX="10.0" layoutY="30.0" styleClass="checkbox-description" text="If you are a desktop user, you can limit the screenshot to your primary screen." textFill="WHITE" />
-                                 </children>
-                                 <GridPane.margin>
-                                    <Insets top="6.0" />
-                                 </GridPane.margin>
-                              </VBox>
                            </children>
                            <VBox.margin>
                               <Insets top="12.0" />
                            </VBox.margin>
                         </GridPane>
+                     </children>
+                  </VBox>
+                  <VBox fx:id="tagPane">
+                     <children>
+                        <Label styleClass="preference-subtitle" text="Score Submission">
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Label styleClass="preference-description" text="Scores are submitted via the Pause Menu, check the settings :" textFill="WHITE" />
+                        <Hyperlink onAction="#onPauseMenuLink" text="go to Pause Menu">
+                           <VBox.margin>
+                              <Insets bottom="12.0" />
+                           </VBox.margin>
+                        </Hyperlink>
                      </children>
                   </VBox>
                   <VBox fx:id="tagPane">

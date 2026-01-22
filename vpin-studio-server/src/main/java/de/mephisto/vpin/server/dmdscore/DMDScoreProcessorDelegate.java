@@ -14,8 +14,8 @@ public class DMDScoreProcessorDelegate implements DMDScoreProcessor {
   }
 
   @Override
-  public void onFrameReceived(Frame frame, int[] palette, int width, int height) {
-    delegate.onFrameReceived(frame, palette, width, height);
+  public void onFrameReceived(Frame frame) {
+    delegate.onFrameReceived(frame);
   }
 
   @Override

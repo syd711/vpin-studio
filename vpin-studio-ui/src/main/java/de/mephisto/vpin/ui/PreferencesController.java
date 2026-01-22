@@ -415,6 +415,12 @@ public class PreferencesController extends SettingsSceneController implements In
     load("preference-discord_faq.fxml", event);
   }
 
+  public static void navigate(String preferenceType) {
+    if (instance != null) {
+      instance.load("preference-" + preferenceType + ".fxml", null, preferenceType + "Btn");
+    }
+  }
+
   public static void open(String preferenceType) {
     open();
     Platform.runLater(() -> {
@@ -432,7 +438,7 @@ public class PreferencesController extends SettingsSceneController implements In
     Studio.browse("https://ko-fi.com/syd711");
   }
 
-  private void load(String screen, ActionEvent event) throws IOException {
+  private void load(String screen, ActionEvent event) {
     load(screen, event, null);
   }
 

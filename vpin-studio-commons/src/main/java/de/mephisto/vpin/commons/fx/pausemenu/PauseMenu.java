@@ -87,7 +87,14 @@ public class PauseMenu extends Application {
     ServerFX.client = new VPinStudioClient("localhost");
     INSTANCE = new PauseMenu();
     INSTANCE.loadPauseMenu();
-    INSTANCE.togglePauseMenu(null, true);
+
+    GameStatus gameStatus = null;
+
+    //gameStatus = new GameStatus();
+    //gameStatus.setGameId(1786095766);
+    //gameStatus.setStarted(new java.util.Date());
+
+    INSTANCE.togglePauseMenu(gameStatus, true);
   }
 
   public Stage getStage() {

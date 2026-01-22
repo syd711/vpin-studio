@@ -5,6 +5,7 @@ import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
@@ -43,6 +44,8 @@ public class DMDDeviceIniService {
   @Autowired
   private MameService mameService;
 
+  @Autowired
+  private SystemService systemService;
 
   public DMDDeviceIniConfiguration getDmdDeviceIni(@NonNull GameEmulator gameEmulator) {
     loadDmdDeviceIni(gameEmulator);
@@ -55,14 +58,18 @@ public class DMDDeviceIniService {
     SubnodeConfiguration section = dmdDeviceIni.getSection("networkstream");
     if (section != null) {
       config.setNetworkStreamEnabled(section.getBoolean("enabled", false));
-      config.setWebSocketUrl(section.getString("url", "ws://127.0.0.1/dmd"));
+      String existingWebSocketUrl = section.getString("url", "");
+      String webSocketUrl = "ws://127.0.0.1:" + systemService.getServerPort() + DMDDeviceIniConfiguration.WEBSOCKET_DMD_PATH;
+      config.setWebSocketUrl(existingWebSocketUrl);
+      config.setWebSocketUrlInvalid(!webSocketUrl.equals(existingWebSocketUrl));
     }
 
     section = dmdDeviceIni.getSection("virtualdmd");
     if (section != null) {
       config.setUseRegistry(section.getBoolean("useregistry", false));
       config.setStayOnTop(section.getBoolean("stayontop", false));
-      config.setEnabled(section.getBoolean("enabled", false));
+      config.setIgnoreAspectRatio(section.getBoolean("ignorear", false));
+      config.setEnabled(section.getBoolean("enabled", true));
     }
     return config;
   }
@@ -78,7 +85,11 @@ public class DMDDeviceIniService {
     boolean dirty = false;
     if (section != null) {
       section.setProperty("enabled", dmddeviceini.isNetworkStreamEnabled());
-      section.setProperty("url", dmddeviceini.getWebSocketUrl());
+      // update the url only if the stream is enabled and the url change confirmed
+      if (dmddeviceini.isNetworkStreamEnabled() && dmddeviceini.getWebSocketUrl() == null) {
+        String webSocketUrl = "ws://127.0.0.1:" + systemService.getServerPort() + DMDDeviceIniConfiguration.WEBSOCKET_DMD_PATH;
+        section.setProperty("url", webSocketUrl);
+      }
       dirty = true;
     }
 
@@ -86,6 +97,7 @@ public class DMDDeviceIniService {
     if (section != null) {
       section.setProperty("useregistry", dmddeviceini.isUseRegistry());
       section.setProperty("stayontop", dmddeviceini.isStayOnTop());
+      section.setProperty("ignorear", dmddeviceini.isIgnoreAspectRatio());
       section.setProperty("enabled", dmddeviceini.isEnabled());
       dirty = true;
     }

@@ -5,6 +5,7 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Spinner?>
@@ -64,7 +65,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
                         <VBox GridPane.columnIndex="1" GridPane.rowIndex="3">
@@ -218,6 +219,35 @@
                               <Insets top="3.0" />
                            </GridPane.margin>
                         </Label>
+                        <Label styleClass="preference-label" text="Real DMD:" textFill="WHITE" GridPane.rowIndex="7">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <GridPane.margin>
+                              <Insets top="3.0" />
+                           </GridPane.margin>
+                        </Label>
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="7">
+                           <children>
+                              <CheckBox fx:id="includeDmdCheckbox" mnemonicParsing="false" text="Include a DMD frame capture (For cab with real DMD)" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                              </CheckBox>
+                              <Label styleClass="checkbox-description" text="The DMD frame capture needs Network Stream enabled in DMDDevice.ini !" textFill="WHITE" />
+                              <Hyperlink onAction="#onDMDDeviceLink" text="check DMD Device Settings">
+                                 <VBox.margin>
+                                    <Insets bottom="12.0" left="21" />
+                                 </VBox.margin>
+                              </Hyperlink>
+                           </children>
+                           <GridPane.margin>
+                              <Insets top="3.0" />
+                           </GridPane.margin>
+                        </VBox>
                      </children>
                      <opaqueInsets>
                         <Insets />

@@ -53,6 +53,9 @@ public class ScreenshotService {
   private RecorderService recorderService;
 
   @Autowired
+  private ScreenDmdRecorder screenDmdRecorder;
+
+  @Autowired
   private GameService gameService;
 
   @Autowired
@@ -69,6 +72,7 @@ public class ScreenshotService {
 
   @Autowired
   private ScreenPreviewService screenPreviewService;
+
 
   private String lastScreenShotId = null;
 
@@ -138,7 +142,7 @@ public class ScreenshotService {
       screenshotFolder.mkdirs();
     }
     String id = uuid != null ? uuid : lastScreenShotId;
-    File screenshot = new File(screenshotFolder, id + ".jpg");
+    File screenshot = new File(screenshotFolder, id + ".png");
     screenshot.deleteOnExit();
     return screenshot;
   }
@@ -274,6 +278,15 @@ public class ScreenshotService {
       }
       catch (Exception e) {
         LOG.error("Error writing monitor screenshot: {}", e.getMessage(), e);
+      }
+    }
+
+    // add DMD capture image
+    if (pauseMenuSettings.isIncludeDmdFrame() && !pauseMenuSettings.isDesktopUser()) {
+      BufferedImage dmdImage = screenDmdRecorder.getCurrentImage();
+      // when network stream is not enabled or DMDDevice is not used, the dmdImage is null
+      if (dmdImage != null) {
+        images.add(dmdImage);
       }
     }
 

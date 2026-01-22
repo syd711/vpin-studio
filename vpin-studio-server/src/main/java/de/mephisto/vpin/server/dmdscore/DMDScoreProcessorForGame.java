@@ -1,16 +1,35 @@
 package de.mephisto.vpin.server.dmdscore;
 
-public class GameToProcessorFactory {
+public class DMDScoreProcessorForGame implements DMDScoreProcessor {
+
+  private DMDScoreProcessor currentForGame;
+
+
+  @Override
+  public void onFrameStart(String gameName) {
+    currentForGame = getProcessor(gameName);
+    if (currentForGame != null) {
+      currentForGame.onFrameStart(gameName);
+    }
+  }
+
+  @Override
+  public void onFrameReceived(Frame frame) {
+    if (currentForGame != null) {
+      currentForGame.onFrameReceived(frame);
+    }
+  }
+  
+  @Override
+  public void onFrameStop(String gameName) {
+    if (currentForGame != null) {
+      currentForGame.onFrameStop(gameName);
+    }
+    currentForGame = null;
+  }
 
   public DMDScoreProcessor getProcessor(String gameName) {
     return getImage2SidesProcessor();
-  }
-
-  /**
-   * A processor that dump all frames in dump.txt, no filtering
-   */
-  public DMDScoreProcessor getFrameDumpProcessor() {
-    return new DMDScoreProcessorFrameDump();    
   }
 
   /**

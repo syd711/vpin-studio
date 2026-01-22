@@ -30,9 +30,10 @@ public class DMDScoreProcessorImageDump implements DMDScoreProcessor {
   }
 
   @Override
-  public void onFrameReceived(Frame frame, int[] palette, int width, int height) {
+  public void onFrameReceived(Frame frame) {
 
     // Create a ARGB palette
+    int[] palette = frame.getPalette();
     int[] argbPalette = new int[palette.length];
     for (int i = 0; i < palette.length; i++) {
       argbPalette[i] = (255 << 24) | palette[i];
@@ -40,6 +41,9 @@ public class DMDScoreProcessorImageDump implements DMDScoreProcessor {
     PixelFormat<ByteBuffer> format = PixelFormat.createByteIndexedInstance(argbPalette);
 
     // generate our new image
+    int width = frame.getWidth();
+    int height = frame.getHeight();
+
     WritableImage img = new WritableImage(width, height);
     PixelWriter pw = img.getPixelWriter();
     pw.setPixels(0, 0, width, height, format, frame.getPlane(), 0, width);

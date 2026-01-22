@@ -13,6 +13,7 @@ import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -60,6 +61,9 @@ public class PauseMenuPreferencesController implements Initializable {
   private CheckBox desktopModeCheckbox;
 
   @FXML
+  private CheckBox includeDmdCheckbox;
+
+  @FXML
   private CheckBox apronModeCheckbox;
 
   @FXML
@@ -103,6 +107,10 @@ public class PauseMenuPreferencesController implements Initializable {
     PreferencesDialogs.openPauseMenuTestDialog();
   }
 
+  @FXML
+  private void onDMDDeviceLink(ActionEvent event) {
+    PreferencesController.navigate("dmd");
+  }
 
   @FXML
   private void onRestart() {
@@ -230,6 +238,18 @@ public class PauseMenuPreferencesController implements Initializable {
     desktopModeCheckbox.setSelected(pauseMenuSettings.isDesktopUser());
     desktopModeCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       pauseMenuSettings.setDesktopUser(newValue);
+      try {
+        client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+        PreferencesController.markDirty(PreferenceType.competitionSettings);
+      }
+      catch (Exception e) {
+        WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+      }
+    });
+
+    includeDmdCheckbox.setSelected(pauseMenuSettings.isIncludeDmdFrame());
+    includeDmdCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      pauseMenuSettings.setIncludeDmdFrame(newValue);
       try {
         client.getPreferenceService().setJsonPreference(pauseMenuSettings);
         PreferencesController.markDirty(PreferenceType.competitionSettings);
