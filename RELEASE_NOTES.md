@@ -2,22 +2,22 @@
 
 ## Changes
 
-- **DMDDevice.ini**: Added possibility to change ignorear setting
-- **DMDDevice.ini**: Added update button to update the network stream url so that the server gets the DMD frames
-- **Pause Menu Preferences**: Added option to include DMD frame capture, useful for cabs with a real DMD
 - **Drop-in folder**: Added configuration for a post-action after a file in drop-in folder is installed. Possible options are:
-  - Do nothing, the file is left in the folder
-  - Move the file in a configured target folder
+  - Do nothing, the file is left in the folder.
+  - Move the file in a configured target folder.
   - Move the file in a sub-folder of a target folder. The sub-folder name is the name of the Game associated with the asset.
-  - Choose a folder and move the file into it
-  - Move the file in trash bin
-  - Delete the file, the file cannot be recovered
+  - Choose a folder and move the file into it.
+  - Move the file in trash bin.
+  - Delete the file, the file cannot be recovered.
+- **DMDDevice.ini Preferences**: 
+  - Added possibility to change ignore settings.
+  - Added update button to update the network stream url so that the server gets the DMD frames.
+- **Pause Menu Preferences**: Added option to include DMD frame capture, useful for cabs with a real DMD.
+- **Controller Setup**: Added expert mode for the controller bindings dialog that allows manual input of key values. This might be necessary in case the VPin Studio server detected different key codes than Windows.
+- **cROMC Support**: Added missing file filter in the ALTColor upload dialog.
+- **Preferences**: Added missing scrollbar to the backglass preferences.
 
-## Bugfixes
-
-- **Preferences**: Added scrollbar in backglass preferences
-
-
+---
 
 ## Release Notes 4.6.0
 
