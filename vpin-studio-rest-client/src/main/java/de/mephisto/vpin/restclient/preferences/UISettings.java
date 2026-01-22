@@ -40,6 +40,18 @@ public class UISettings extends JsonSettings {
   private String defaultUploadMode = UploadType.uploadAndImport.name();
   private boolean uploadMediaPreview = true;
 
+  // dropins setup
+  public static final int DROP_IN_POSTACTION_DONOTHING = 0;
+  public static final int DROP_IN_POSTACTION_MOVETOFOLDER = 1;
+  public static final int DROP_IN_POSTACTION_MOVETOTABLEFOLDER = 2;
+  public static final int DROP_IN_POSTACTION_MOVETO = 3;
+  public static final int DROP_IN_POSTACTION_MOVETOTRASH = 4;
+  public static final int DROP_IN_POSTACTION_DELETE = 5;
+
+  private int dropinPostAction = DROP_IN_POSTACTION_MOVETOTRASH;
+  private String dropinPostTargetFolder;
+  private boolean dropinConfirmPostAction = true;
+
   //open after upload
   private boolean autoEditTableData = true;
 
@@ -607,6 +619,30 @@ public class UISettings extends JsonSettings {
 
   public void setHideCustomIcons(boolean hideCustomIcons) {
     this.hideCustomIcons = hideCustomIcons;
+  }
+  
+  public int getDropinPostAction() {
+    return dropinPostAction;
+  }
+
+  public void setDropinPostAction(int dropinPostAction) {
+    this.dropinPostAction = dropinPostAction;
+  }
+
+  public String getDropinPostTargetFolder() {
+    return dropinPostTargetFolder;
+  }
+
+  public void setDropinPostTargetFolder(String dropinPostTargetFolder) {
+    this.dropinPostTargetFolder = dropinPostTargetFolder;
+  }
+
+  public boolean isDropinConfirmPostAction() {
+    return dropinConfirmPostAction;
+  }
+
+  public void setDropinConfirmPostAction(boolean dropinConfirmPostAction) {
+    this.dropinConfirmPostAction = dropinConfirmPostAction;
   }
 
   @Override

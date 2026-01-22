@@ -2,16 +2,20 @@ package de.mephisto.vpin.ui.dropins;
 
 import de.mephisto.vpin.commons.utils.FolderChangeListener;
 import de.mephisto.vpin.commons.utils.FolderMonitoringThread;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.TrashBin;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.localsettings.LocalSettingsChangeListener;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.FileUtils;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
+import de.mephisto.vpin.ui.util.StudioFolderChooser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
@@ -28,6 +32,7 @@ import javafx.scene.paint.Paint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static de.mephisto.vpin.ui.Studio.client;
 
 import java.awt.Desktop;
 import java.io.File;
@@ -232,14 +237,90 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
   public void install(File file) {
     UploadAnalysisDispatcher.dispatch(file, gameSelection, () -> {
 
-      Platform.runLater(() -> {
-        Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete \"" + file.getAbsolutePath() + "\"?", "The file will be moved to the trash bin.");
-        if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-          Desktop.getDesktop().moveToTrash(file);
-        }
-      });
+      JFXFuture
+        .supplyAsync(() -> client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class))
+        .thenAcceptLater(uiSettings -> {
+          int postAction = uiSettings.getDropinPostAction();
+          boolean confirmed = true;  
+          switch (postAction) {
+            case UISettings.DROP_IN_POSTACTION_DONOTHING:
+              break;
 
+            case UISettings.DROP_IN_POSTACTION_MOVETOFOLDER:
+              moveFile(file, new File(uiSettings.getDropinPostTargetFolder()), null);
+              break;
+
+            case UISettings.DROP_IN_POSTACTION_MOVETOTABLEFOLDER:
+              if (gameSelection != null) {
+                moveFile(file, new File(uiSettings.getDropinPostTargetFolder()), gameSelection.getGameDisplayName());
+              } else {
+                WidgetFactory.showAlert(Studio.stage, "No game selected !", "No game selected so cannot determine target folder !");
+              }
+              break;
+
+            case UISettings.DROP_IN_POSTACTION_MOVETO:
+              StudioFolderChooser chooser = new StudioFolderChooser();
+              chooser.setTitle("Select Target Folder");
+              File targetFolder = chooser.showOpenDialog(Studio.stage);
+              moveFile(file, targetFolder, null);
+              break;
+
+            case UISettings.DROP_IN_POSTACTION_MOVETOTRASH:
+              if (uiSettings.isDropinConfirmPostAction()) {
+                Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete file ?", "Delete \"" + file.getAbsolutePath() + "\"?", "The file will be moved to the trash bin.");
+                confirmed = result.isPresent() && result.get().equals(ButtonType.OK);
+              }
+              if (confirmed && ! Desktop.getDesktop().moveToTrash(file)) {
+                WidgetFactory.showAlert(Studio.stage, "Cannot move file to trash !", "The file \"" + file.getAbsolutePath() + "\" couldn't be moved to trash !");
+              }
+              break;
+
+            case UISettings.DROP_IN_POSTACTION_DELETE:
+              if (uiSettings.isDropinConfirmPostAction()) {
+                Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete file ?", "Delete file \"" + file.getAbsolutePath() + "\"?", "The file cannot be recovered.");
+                confirmed = result.isPresent() && result.get().equals(ButtonType.OK);
+              }
+              if (confirmed && !file.delete()) {
+                WidgetFactory.showAlert(Studio.stage, "Cannot delete file !", "The file \"" + file.getAbsolutePath() + "\" couldn't be deleted !");
+              }
+              break;
+          }
+        });
     });
+  }
+
+  private boolean moveFile(File file, File target, String subfolder) {
+    if (!target.exists()) {
+      WidgetFactory.showAlert(Studio.stage, "Target folder doesn't exist !", "The target folder \"" + target.getAbsolutePath() + "\" doesn't exist !");
+      return false;
+    }
+    if (subfolder != null) {
+      target = new File(target, subfolder);
+      if (!target.exists() && !target.mkdirs()) {
+        WidgetFactory.showAlert(Studio.stage, "Cannot create target table folder !", "The target table folder \"" + target.getAbsolutePath() + "\" couldn't be created !");
+        return false;
+      }
+    }
+    File targetFile = new File(target, file.getName());
+    if (targetFile.exists()) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Overwrite file ?", "A file with same name \"" + file.getName() + "\" already exists in target folder !", "Do you want to overwrite it ?");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        targetFile.delete();
+      } else {
+        return false;
+      }
+    }
+    Platform.runLater(() -> {
+      try {
+        Files.copy(file.toPath(), targetFile.toPath());
+        Files.delete(file.toPath());
+      }
+      catch(IOException ioe) {
+        LOG.error("Cannot move file " + file.getName(), ioe);
+        WidgetFactory.showAlert(Studio.stage, "File cannot be copied", "The file \"" + file.getName() + "\" couldn't be copied in target folder !");
+      }
+    });
+    return false;
   }
 
   @Override
