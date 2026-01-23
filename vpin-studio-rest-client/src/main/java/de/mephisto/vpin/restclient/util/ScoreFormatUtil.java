@@ -46,7 +46,8 @@ public class ScoreFormatUtil {
   }
 
   public static String cleanScore(String score) {
-    return score.replace(".", "")
+    return score
+        .replace(".", "")
         .replace(",", "")
         .replace("?", "")
         .replace("\u00ff", "")
@@ -55,6 +56,13 @@ public class ScoreFormatUtil {
         .replace("\ufffd", "")
         .replace(" ", "");
   }
+
+    public static String cleanInitials(String initials) {
+    return initials
+        .replace("\ufffd", " ");
+  }
+
+
 
   /**
    * Apply minimal transformation on raw highscore text
