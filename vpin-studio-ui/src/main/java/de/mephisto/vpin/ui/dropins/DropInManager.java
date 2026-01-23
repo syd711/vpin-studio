@@ -241,7 +241,6 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
         .supplyAsync(() -> client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class))
         .thenAcceptLater(uiSettings -> {
           int postAction = uiSettings.getDropinPostAction();
-          boolean confirmed = true;  
           switch (postAction) {
             case UISettings.DROP_IN_POSTACTION_DONOTHING:
               break;
@@ -266,21 +265,17 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
               break;
 
             case UISettings.DROP_IN_POSTACTION_MOVETOTRASH:
-              if (uiSettings.isDropinConfirmPostAction()) {
-                Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete file ?", "Delete \"" + file.getAbsolutePath() + "\"?", "The file will be moved to the trash bin.");
-                confirmed = result.isPresent() && result.get().equals(ButtonType.OK);
-              }
-              if (confirmed && ! Desktop.getDesktop().moveToTrash(file)) {
+              Optional<ButtonType> result1 = WidgetFactory.showConfirmation(Studio.stage, "Delete file ?", "Delete \"" + file.getAbsolutePath() + "\"?", "The file will be moved to the trash bin.");
+              boolean confirmed1 = result1.isPresent() && result1.get().equals(ButtonType.OK);
+              if (confirmed1 && ! Desktop.getDesktop().moveToTrash(file)) {
                 WidgetFactory.showAlert(Studio.stage, "Cannot move file to trash !", "The file \"" + file.getAbsolutePath() + "\" couldn't be moved to trash !");
               }
               break;
 
             case UISettings.DROP_IN_POSTACTION_DELETE:
-              if (uiSettings.isDropinConfirmPostAction()) {
-                Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete file ?", "Delete file \"" + file.getAbsolutePath() + "\"?", "The file cannot be recovered.");
-                confirmed = result.isPresent() && result.get().equals(ButtonType.OK);
-              }
-              if (confirmed && !file.delete()) {
+              Optional<ButtonType> result2 = WidgetFactory.showConfirmation(Studio.stage, "Delete file ?", "Delete file \"" + file.getAbsolutePath() + "\"?", "The file cannot be recovered.");
+              boolean confirmed2 = result2.isPresent() && result2.get().equals(ButtonType.OK);
+              if (confirmed2 && !file.delete()) {
                 WidgetFactory.showAlert(Studio.stage, "Cannot delete file !", "The file \"" + file.getAbsolutePath() + "\" couldn't be deleted !");
               }
               break;

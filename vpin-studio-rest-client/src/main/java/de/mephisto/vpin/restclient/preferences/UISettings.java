@@ -50,7 +50,6 @@ public class UISettings extends JsonSettings {
 
   private int dropinPostAction = DROP_IN_POSTACTION_MOVETOTRASH;
   private String dropinPostTargetFolder;
-  private boolean dropinConfirmPostAction = true;
 
   //open after upload
   private boolean autoEditTableData = true;
@@ -635,14 +634,6 @@ public class UISettings extends JsonSettings {
 
   public void setDropinPostTargetFolder(String dropinPostTargetFolder) {
     this.dropinPostTargetFolder = dropinPostTargetFolder;
-  }
-
-  public boolean isDropinConfirmPostAction() {
-    return dropinConfirmPostAction;
-  }
-
-  public void setDropinConfirmPostAction(boolean dropinConfirmPostAction) {
-    this.dropinConfirmPostAction = dropinConfirmPostAction;
   }
 
   @Override

@@ -83,8 +83,6 @@ public class ClientSettingsPreferencesController implements Initializable {
   private CheckBox dropInMoveTargetCheckbox;
   @FXML
   private CheckBox dropInMoveTrashCheckbox;
-  @FXML
-  private CheckBox dropInDeleteConfirmCheckbox;
 
   @FXML
   private TextField dropInTextField;
@@ -274,7 +272,6 @@ public class ClientSettingsPreferencesController implements Initializable {
       dropInMoveTargetButton.setDisable(t!=radioMoveToFolder);
       dropInMoveTargetTextField.setDisable(t!=radioMoveToFolder);
       dropInMoveTrashCheckbox.setDisable(t!=radioDoDelete);
-      dropInDeleteConfirmCheckbox.setDisable(t!=radioDoDelete);
 
       if (t==radioDoNothing) {
         uiSettings.setDropinPostAction(UISettings.DROP_IN_POSTACTION_DONOTHING);
@@ -338,12 +335,6 @@ public class ClientSettingsPreferencesController implements Initializable {
 
     dropInMoveTrashCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setDropinPostAction(t1 ? UISettings.DROP_IN_POSTACTION_MOVETOTRASH : UISettings.DROP_IN_POSTACTION_DELETE);
-      PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(uiSettings);
-    });
-    dropInDeleteConfirmCheckbox.setSelected(uiSettings.isDropinConfirmPostAction());
-    dropInDeleteConfirmCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      uiSettings.setDropinConfirmPostAction(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
       client.getPreferenceService().setJsonPreference(uiSettings);
     });
