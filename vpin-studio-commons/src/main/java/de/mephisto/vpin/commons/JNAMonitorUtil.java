@@ -106,6 +106,7 @@ public class JNAMonitorUtil {
     monitor.setY(rect.top);
     monitor.setWidth(rect.right - rect.left);
     monitor.setHeight(rect.bottom - rect.top);
+    monitor.setMinY(rect.top);
 
     boolean isPrimary = (info.dwFlags & WinUser.MONITORINFOF_PRIMARY) != 0;
     monitor.setPrimary(isPrimary);

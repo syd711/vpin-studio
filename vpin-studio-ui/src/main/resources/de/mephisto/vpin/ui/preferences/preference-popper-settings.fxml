@@ -405,12 +405,9 @@
                </content>
             </ScrollPane>
          </children>
-         <BorderPane.margin>
+         <padding>
             <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
-         </BorderPane.margin>
-               <padding>
-                  <Insets bottom="24.0" left="24.0" top="24.0" />
-               </padding>
+         </padding>
       </VBox>
 
          </content>

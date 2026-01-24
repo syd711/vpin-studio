@@ -158,7 +158,9 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
 
     mediaPlayer.setAutoPlay(true);
     mediaPlayer.setCycleCount(-1);
-    mediaPlayer.setMute(true);
+    if (mediaOptions == null || mediaOptions.isMuted()) {
+      mediaPlayer.setMute(true);
+    }
 
     mediaView = new MediaView(mediaPlayer);
     mediaView.setPreserveRatio(true);
