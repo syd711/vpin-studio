@@ -104,7 +104,7 @@
                                     </CheckBox>
                                  </children>
                               </HBox>
-                              <RadioButton fx:id="radioDoMove" mnemonicParsing="false" text="Ask for a folder and Move the file into it" textFill="WHITE" >
+                              <RadioButton fx:id="radioDoMove" mnemonicParsing="false" text="Ask for a folder and move the file into it" textFill="WHITE" >
                                  <font>
                                     <Font size="14.0" />
                                  </font>
