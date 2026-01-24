@@ -49,7 +49,7 @@ public class WinRegistry {
       return Advapi32Util.registryGetValues(WinReg.HKEY_CLASSES_ROOT, path);
     }
     catch (Exception e) {
-      LOG.error("Failed to read registry key '" + path + "': " + e.getMessage());
+      LOG.info("Failed to read registry key '" + path + "': " + e.getMessage());
     }
     return Collections.emptyMap();
   }
@@ -60,7 +60,7 @@ public class WinRegistry {
       return Advapi32Util.registryGetValues(WinReg.HKEY_CURRENT_USER, path);
     }
     catch (Exception e) {
-      LOG.error("Failed to read registry key '" + path + "': " + e.getMessage());
+      LOG.info("Failed to read registry key '" + path + "': " + e.getMessage());
     }
     return Collections.emptyMap();
   }
@@ -70,7 +70,7 @@ public class WinRegistry {
       return Advapi32Util.registryGetStringValue(WinReg.HKEY_CURRENT_USER, path, key);
     }
     catch (Exception e) {
-      LOG.error("Failed to read registry key '" + path + "': " + e.getMessage());
+      LOG.info("Failed to read registry key '" + path + "': " + e.getMessage());
     }
     return null;
   }

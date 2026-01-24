@@ -494,7 +494,6 @@ public class VPinScreenService implements InitializingBean {
   public void afterPropertiesSet() {
     boolean isHeadless = GraphicsEnvironment.isHeadless();
     if (!isHeadless) {
-      MonitorInfoUtil.logScreenSummary();
       List<FrontendPlayerDisplay> displays = getScreenResDisplays();
       LOG.info("######################## Offset Frontend Screen Summary ##################################");
       DirectB2sScreenRes screenres = backglassService.getGlobalScreenRes();
