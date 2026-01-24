@@ -9,6 +9,7 @@
     - Choose a folder and move the file into it.
     - Move the file in trash bin.
     - Delete the file, the file cannot be recovered.
+- **Asset Manager**: Asset manager dialog can be maximized and its dimension restored from saved positions
 - **Frontend Media View**: Frontend video are no more muted in preview dialogs
 - **Global DMDDevice.ini Settings**: 
   - Added possibility to change ignore settings.
