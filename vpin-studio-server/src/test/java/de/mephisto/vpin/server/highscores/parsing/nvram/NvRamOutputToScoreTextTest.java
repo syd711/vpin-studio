@@ -37,9 +37,9 @@ public class NvRamOutputToScoreTextTest {
     int created = 0;
     List<String> failedList = new ArrayList<>();
     for (File entry : files) {
-//      if (!entry.getName().equals("simp_a27.nv")) {
-//        continue;
-//      }
+      if (!entry.getName().equals("tmac_a24.nv")) {
+        continue;
+      }
 
       if (ignoreList.contains(entry.getName())) {
         continue;
@@ -52,6 +52,11 @@ public class NvRamOutputToScoreTextTest {
 
       LOG.info("Reading '" + entry.getName() + "'");
       String raw = NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(getPinemhiExe(), entry);
+
+      if (entry.getName().equals("tmac_a24.nv")) {
+        int c = (int) raw.charAt(19);
+         System.out.println("for tmac_a24.nv : " + c);
+      }
 
       assertNotNull(raw);
       List<Score> parse = ScoreListFactory.create(raw, new Date(entry.length()), null, scoringDB);
