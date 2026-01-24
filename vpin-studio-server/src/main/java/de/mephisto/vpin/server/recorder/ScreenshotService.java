@@ -182,7 +182,9 @@ public class ScreenshotService {
     ZipOutputStream zipOut = new ZipOutputStream(fos);
 
     for (File screenshotFile : screenshotFiles) {
-      ZipUtil.zipFile(screenshotFile, screenshotFile.getName(), zipOut);
+      if (screenshotFile.exists()) {
+        ZipUtil.zipFile(screenshotFile, screenshotFile.getName(), zipOut);
+      }
     }
     zipOut.close();
     fos.close();

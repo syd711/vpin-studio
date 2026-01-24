@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.inputs;
 
 import de.mephisto.vpin.commons.fx.ServerFX;
-import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.commons.utils.controller.GameController;
 import de.mephisto.vpin.commons.utils.controller.GameControllerInputListener;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -28,13 +27,11 @@ import javafx.application.Platform;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PreDestroy;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
@@ -73,7 +70,7 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
   private boolean launchOverlayOnStartup = false;
 
   private boolean frontendIsRunning = false;
-  private boolean vpxIsRunning = false;
+  private boolean emulatorRunning = false;
 
   private final Map<String, Long> timingMap = new ConcurrentHashMap<>();
   private PauseMenuSettings pauseMenuSettings;
@@ -142,7 +139,7 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
 
     if (overlayBtn != null) {
       if (name.equals(overlayBtn) || (showPauseInsteadOfOverlay && name.equals(pauseBtn))) {
-        if (showPauseInsteadOfOverlay && vpxIsRunning) {
+        if (showPauseInsteadOfOverlay && emulatorRunning) {
           onTogglePauseMenu();
           return;
         }
@@ -197,7 +194,7 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
 
   private void onResetEvent() {
     frontendIsRunning = false;
-    vpxIsRunning = false;
+    emulatorRunning = false;
     new Thread(() -> {
       frontendService.restartFrontend();
       frontendStatusService.notifyFrontendRestart();
@@ -277,20 +274,22 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
 
   @Override
   public void tableLaunched(TableStatusChangedEvent event) {
-    vpxIsRunning = true;
+    emulatorRunning = true;
     frontendIsRunning = true;
   }
 
   @Override
   public void tableExited(TableStatusChangedEvent event) {
-    vpxIsRunning = false;
+    emulatorRunning = systemService.isPinballEmulatorRunning();
     frontendIsRunning = true;
-    ServerFX.getInstance().exitPauseMenu();
+    if (!emulatorRunning) {
+      ServerFX.getInstance().exitPauseMenu();
+    }
   }
 
   @Override
   public void frontendExited() {
-    vpxIsRunning = false;
+    emulatorRunning = false;
     frontendIsRunning = false;
     ServerFX.getInstance().exitPauseMenu();
   }
@@ -298,7 +297,7 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
   @Override
   public void frontendRestarted() {
     frontendIsRunning = true;
-    vpxIsRunning = false;
+    emulatorRunning = false;
   }
 
   public void resetShutdownTimer() {
