@@ -42,7 +42,7 @@ public class PINemHiService implements InitializingBean {
 
 
   private boolean enabled = false;
-  private List<String> romList = new ArrayList<>();
+  private final List<String> romList = new ArrayList<>();
 
   public boolean getAutoStart() {
     return preferencesService.getPreferences().getPinemhiAutoStartEnabled();
@@ -76,6 +76,10 @@ public class PINemHiService implements InitializingBean {
     File exe = new File(PINEMHI_FOLDER, PROCESS_NAME + ".exe");
     List<String> commands = Arrays.asList("start", "/min", exe.getAbsolutePath());
     SystemCommandExecutor executor = new SystemCommandExecutor(commands);
+    executor.setEnv("LANG", "en_US.UTF-8");
+    executor.setEnv("LC_ALL", "en_US.UTF-8");
+    executor.setEnv("LC_CTYPE", "en_US.UTF-8");
+    executor.setCodePage("65001");
     executor.setDir(new File(PINEMHI_FOLDER));
     executor.executeCommandAsync();
     LOG.info("Executed " + PROCESS_NAME + " command: " + String.join(" ", commands));

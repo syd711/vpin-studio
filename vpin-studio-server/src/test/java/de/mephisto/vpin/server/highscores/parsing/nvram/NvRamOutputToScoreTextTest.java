@@ -24,7 +24,7 @@ public class NvRamOutputToScoreTextTest {
 
   private static ScoringDB scoringDB = ScoringDB.load();
 
-  private final static List<String> ignoreList = Arrays.asList("kiko_a10.nv", "dh_lx2.nv");
+  private final static List<String> ignoreList = Arrays.asList("dh_lx2.nv");
 
   @Test
   public void testAllFiles() throws Exception {
@@ -110,25 +110,34 @@ public class NvRamOutputToScoreTextTest {
    */
   @Test
   public void test_Single() throws Exception {
-//    doTestSingle("kiko_a10.nv",
-//        "#1 DAK   3,032,500\r\n" +
-//            "#2 DAK   2,665,940\r\n" +
-//            "#3 DAK   1,856,200\r\n" +
-//            "#4 DAK   1,067,570");
+    doTestSingle("kiko_a10.nv",
+        "#1 DAK   3,032,500\r\n" +
+            "#2 DAK   2,665,940\r\n" +
+            "#3 DAK   1,856,200\r\n" +
+            "#4 DAK   1,067,570");
   }
 
   /**
    * Test DefaultAdapter
    */
   @Test
-  public void test_dh_lx2() throws Exception {
+  public void test_Single2() throws Exception {
+    doTestSingle("blackblt.nv",
+        "#1 ???   0");
+  }
+
+//  /**
+//   * Test DefaultAdapter
+//   */
+//  @Test
+//  public void test_dh_lx2() throws Exception {
 //    doTestSingle("dh_lx2.nv",
 //        "#1 2.9   2,961,835,010\r\n" +
 //            "#2 ???   1,507,170,530\r\n" +
 //            "#3 DAD   1,167,255,510\r\n" +
 //            "#4 DAD   1,050,455,400\r\n" +
 //            "#5 DAD   1,016,950,110");
-  }
+//  }
 
   /**
    * Test DefaultAdapter

@@ -74,12 +74,16 @@ public class NvRamOutputToScoreTextConverter {
       List<String> commands = Arrays.asList(commandFile.getName(), originalNVRamFile.getName().toLowerCase());
 //      LOG.info("PinemHI: " + String.join(" ", commands));
       SystemCommandExecutor executor = new SystemCommandExecutor(commands);
+      executor.setEnv("LANG", "en_US.UTF-8");
+      executor.setEnv("LC_ALL", "en_US.UTF-8");
+      executor.setEnv("LC_CTYPE", "en_US.UTF-8");
+      executor.setCodePage("65001");
       executor.setDir(commandFile.getParentFile());
       executor.executeCommand();
       StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
       if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-        String error = "Pinemhi command (" + commandFile.getCanonicalPath() + " " + pinemHiSupportedNVRamName + ") failed. Error output:\n" + standardErrorFromCommand + "\nStandard output:\n" +standardOutputFromCommand;
+        String error = "Pinemhi command (" + commandFile.getCanonicalPath() + " " + pinemHiSupportedNVRamName + ") failed. Error output:\n" + standardErrorFromCommand + "\nStandard output:\n" + standardOutputFromCommand;
 //        String error = "Pinemhi command (" + commandFile.getCanonicalPath() + " " + pinemHiSupportedNVRamName + ") failed (details skipped).";
         SLOG.error(error);
         LOG.error(error);
@@ -111,6 +115,16 @@ public class NvRamOutputToScoreTextConverter {
 
     //check for pre-formatting
     List<String> lines = Arrays.asList(stdOut.trim().split("\n"));
+    if (!lines.isEmpty()) {
+      //remove active codepage line
+      lines = lines.subList(1, lines.size());
+    }
+
+    //remove empty lines since we expect the highscore title first
+    while (!lines.isEmpty() && StringUtils.isEmpty(lines.get(0).trim())) {
+      lines = lines.subList(1, lines.size());
+    }
+
     for (ScoreNvRamAdapter adapter : adapters) {
       if (adapter.isApplicable(nvRamFileName, lines)) {
         LOG.info("Converted score using {}", adapter.getClass().getSimpleName());

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient.util;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,7 +10,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class can be used to execute a system command from a Java application.
@@ -42,8 +45,8 @@ import java.util.List;
 public class SystemCommandExecutor {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  private List<String> commandInformation;
-  private String adminPassword;
+  private final List<String> commandInformation;
+  private final String adminPassword;
   private ThreadedStreamHandler inputStreamHandler;
   private ThreadedStreamHandler errorStreamHandler;
   private Process process;
@@ -51,11 +54,14 @@ public class SystemCommandExecutor {
   private String commandError;
   private File dir;
   private boolean ignoreError;
+  private final Map<String,String> env = new HashMap<>();
+  private String codePage;
+  private final boolean prependCmd;
 
   /**
    * Pass in the system command you want to run as a List of Strings, as shown here:
    * <p/>
-   * List<String> commands = new ArrayList<String>();
+   * List<String> commands = new ArrayList<>();
    * commands.add("/sbin/ping");
    * commands.add("-c");
    * commands.add("5");
@@ -75,16 +81,26 @@ public class SystemCommandExecutor {
   }
 
   public SystemCommandExecutor(final List<String> commandInformation, boolean prependCmd) {
+    this.prependCmd = prependCmd;
     if (commandInformation == null) {
       throw new NullPointerException("The commandInformation is required.");
     }
     this.commandInformation = new ArrayList<>(commandInformation);
     this.adminPassword = null;
+  }
 
-    if (prependCmd && !commandInformation.get(0).equalsIgnoreCase("cmd.exe")) {
-      this.commandInformation.add(0, "/c");
-      this.commandInformation.add(0, "cmd.exe");
-    }
+  public void setEnv(@NonNull String key, @NonNull String value) {
+    env.put(key, value);
+  }
+
+  /**
+   * When you run cmd.exe, it has its own encoding/codepage settings
+   * that can override or interfere with the environment variables you set.
+   * Windows uses code pages rather than the Unix-style locale system.
+   * @param codePage e.g. 65001 = UTF-8
+   */
+  public void setCodePage(@NonNull String codePage) {
+    this.codePage = codePage;
   }
 
   public void setIgnoreError(boolean ignoreError) {
@@ -119,9 +135,21 @@ public class SystemCommandExecutor {
     int exitValue = -99;
 
     try {
+      if (prependCmd && !commandInformation.get(0).equalsIgnoreCase("cmd.exe")) {
+        this.commandInformation.add(0, "/c");
+        this.commandInformation.add(0, "cmd.exe");
+
+        if(this.codePage != null) {
+          this.commandInformation.add(2, "chcp");
+          this.commandInformation.add(3, codePage);
+          this.commandInformation.add(4, "&&");
+        }
+      }
+
       LOG.info("System Command: " + (this.dir != null ? dir.getAbsolutePath() : "") + "> " + String.join(" ", commandInformation));
 
       ProcessBuilder pb = new ProcessBuilder(commandInformation);
+      pb.environment().putAll(env);
 
       if (dir != null) {
         pb.directory(dir);
