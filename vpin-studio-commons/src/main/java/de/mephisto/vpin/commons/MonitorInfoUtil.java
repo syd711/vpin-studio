@@ -24,7 +24,7 @@ public class MonitorInfoUtil {
       List<MonitorInfo> monitorsGde = getMonitors(true);
       logScreenSummary("GDE Monitor List", monitorsGde);
       List<MonitorInfo> monitorsJna = getMonitors(false);
-      logScreenSummary("JNA Monitor List", monitorsGde);
+      logScreenSummary("JNA Monitor List", monitorsJna);
 
       if (monitorsJna.size() > monitorsGde.size()) {
         monitors.addAll(monitorsJna);
