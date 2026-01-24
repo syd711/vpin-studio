@@ -60,8 +60,7 @@ public class ScoreFormatUtil {
   public static String cleanInitials(String initials) {
     return initials
         .replace("\ufffd", " ")
-        .replace("ª", " ")
-        .replace((char) 166, ' ');
+        .replace("ª", " ");
   }
 
 

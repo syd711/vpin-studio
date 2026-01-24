@@ -123,7 +123,10 @@ public class NvRamOutputToScoreTextTest {
   @Test
   public void test_Single2() throws Exception {
     doTestSingle("blackblt.nv",
-        "#1 ???   0");
+        "#1 ???   4,000,000\r\n" +
+        "#2 ???   3,000,000\r\n" +
+        "#3 ???   2,000,000\r\n" +
+        "#4 ???   900,000");
   }
 
 //  /**
