@@ -405,6 +405,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return windows.stream().anyMatch(wdw -> StringUtils.containsIgnoreCase(wdw.getTitle(), name));
   }
 
+  public static void main(String[] args) {
+    System.out.println(new SystemService().isProcessRunning("Visual Pinball Player"));
+  }
+
 
   public boolean isPinballEmulatorRunning() {
     return isVPXRunning(getProcesses()) || isFPRunning(getProcesses());

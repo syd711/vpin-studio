@@ -18,6 +18,7 @@
 - **cROMC Support**: Added missing file filter in the ALTColor upload dialog.
 - **Preferences**: Added missing vertival scrollbars (backglass, pinvol, ...)
 - **Highscore Parsing**: Added **en_US** encoding and **UTF-8** codepage for the execution of the **pinemhi.exe**.
+- **Pause Menu / Overlay**: Fixed issue that sometimes the overlay opened instead of the pause menu.
 
 ---
 
