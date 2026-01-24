@@ -125,6 +125,9 @@ public class NvRamOutputToScoreTextConverter {
       lines = lines.subList(1, lines.size());
     }
 
+    //restore the original formatted string in case no custom adapter is needed
+    stdOut = String.join("\n", lines);
+
     for (ScoreNvRamAdapter adapter : adapters) {
       if (adapter.isApplicable(nvRamFileName, lines)) {
         LOG.info("Converted score using {}", adapter.getClass().getSimpleName());

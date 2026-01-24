@@ -57,24 +57,25 @@ public class ScoreFormatUtil {
         .replace(" ", "");
   }
 
-    public static String cleanInitials(String initials) {
+  public static String cleanInitials(String initials) {
     return initials
         .replace("\ufffd", " ")
+        .replace("ª", " ")
         .replace((char) 166, ' ');
   }
 
 
-
   /**
    * Apply minimal transformation on raw highscore text
+   *
    * @param raw Th eraw text to be "formatted"
-    * @return The formatted text
+   * @return The formatted text
    */
   public static String formatRaw(String raw) {
     // escape french space character
     return raw
-      .replace("\ufffd", " ")
-      .replace("\u00ff", " ")
-      .trim();
+        .replace("\ufffd", " ")
+        .replace("\u00ff", " ")
+        .trim();
   }
 }
