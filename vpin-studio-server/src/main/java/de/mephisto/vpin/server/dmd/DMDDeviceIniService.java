@@ -268,14 +268,13 @@ public class DMDDeviceIniService {
 
 
   public String getStoreName(Game game) {
-    String rom = StringUtils.defaultString(game.getRomAlias(), game.getRom());
-    String storeName = rom;
+    String storeName = StringUtils.defaultString(game.getRomAlias(), game.getRom());;
     if (DMDPackageTypes.UltraDMD.equals(game.getDMDType())) {
       storeName = FilenameUtils.getBaseName(game.getGameFileName());
       // cf https://github.com/vbousquet/flexdmd/blob/6357c1874e896777a53348094eafa86f386dd8fe/FlexDMD/FlexDMD.cs#L188
       storeName = storeName.replaceAll("[\\s_vV][\\d_\\.]+[a-z]?(-DOF)?\\*?$", "").trim();
     }
-    else if (DMDPackageTypes.FlexDMD.equals(game.getDMDType())) {
+    else if (DMDPackageTypes.FlexDMD.equals(game.getDMDType()) && !StringUtils.isEmpty(game.getDMDGameName())) {
       storeName = game.getDMDGameName();
       // cf https://github.com/vbousquet/flexdmd/blob/6357c1874e896777a53348094eafa86f386dd8fe/FlexDMD/FlexDMD.cs#L188
       storeName = storeName.replaceAll("[\\s_vV][\\d_\\.]+[a-z]?(-DOF)?\\*?$", "").trim();

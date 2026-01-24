@@ -618,6 +618,7 @@ public class Game {
     this.dmdType = dmdType;
   }
 
+  @Nullable
   public String getDMDGameName() {
     return dmdGameName;
   }
