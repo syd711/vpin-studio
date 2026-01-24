@@ -62,6 +62,7 @@ public class MediaPreviewController implements Initializable, DialogController {
     assetMediaPlayer = WidgetFactory.createAssetMediaPlayer(client, item, false, usePreview);
     MediaOptions mediaOptions = new MediaOptions();
     mediaOptions.setAutoRotate(false);
+    mediaOptions.setMuted(false);
     assetMediaPlayer.setMediaOptions(mediaOptions);
 
     mediaView.setCenter(assetMediaPlayer);

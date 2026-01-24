@@ -9,6 +9,7 @@
     - Choose a folder and move the file into it.
     - Move the file in trash bin.
     - Delete the file, the file cannot be recovered.
+- **Frontend Media View**: Frontend video are no more muted in preview dialogs
 - **Global DMDDevice.ini Settings**: 
   - Added possibility to change ignore settings.
   - Added update button to update the network stream url so that the server gets the DMD frames.
