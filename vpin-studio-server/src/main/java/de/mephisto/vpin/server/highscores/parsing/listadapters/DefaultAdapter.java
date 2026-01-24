@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.highscores.parsing.listadapters;
 
+import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.ScoreListAdapter;
@@ -131,8 +132,9 @@ public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAda
 
     if (scoreLineSegments.size() == 3) {
       String score = scoreLineSegments.get(2);
-      String initials = scoreLineSegments.get(1);
       long v = toNumericScore(score, source, true);
+      String initials = scoreLineSegments.get(1);
+      initials = ScoreFormatUtil.cleanInitials(initials);
       if (v == -1) {
         return null;
       }
