@@ -17,7 +17,7 @@
 - **Controller Setup**: Added expert mode for the controller bindings dialog that allows manual input of key values. This might be necessary in case the VPin Studio server detected different key codes than Windows.
 - **cROMC Support**: Added missing file filter in the ALTColor upload dialog.
 - **Preferences**: Added missing vertival scrollbars (backglass, pinvol, ...)
-- **Highscore Parsing**: Added **en_US** encoding and **UTF-8** codepage for the execution of the **pinemhi.exe**. This should solve the remaining encoding issues of some tables, e.g. for the **kiko_a10.nv** (King Kong).
+- **Highscore Parsing**: Added **en_US** encoding and **UTF-8** codepage for the execution of the **pinemhi.exe**.
 
 ---
 
