@@ -238,8 +238,8 @@
                                     <Insets />
                                  </VBox.margin>
                               </CheckBox>
-                              <Label styleClass="checkbox-description" text="The DMD frame capture needs Network Stream enabled in DMDDevice.ini !" textFill="WHITE" />
-                              <Hyperlink onAction="#onDMDDeviceLink" text="check DMD Device Settings">
+                              <Label styleClass="checkbox-description" text="The DMD frame capture needs network stream enabled in DMDDevice.ini." textFill="WHITE" />
+                              <Hyperlink onAction="#onDMDDeviceLink" text="Open DMD Device Settings">
                                  <VBox.margin>
                                     <Insets bottom="12.0" left="21" />
                                  </VBox.margin>

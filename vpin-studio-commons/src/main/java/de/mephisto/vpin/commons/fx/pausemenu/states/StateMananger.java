@@ -68,7 +68,6 @@ public class StateMananger implements GameControllerInputListener {
   public void init(MenuController controller) {
     this.menuController = controller;
     this.activeState = new MenuItemSelectionState(controller);
-
   }
 
   public void handle(String button) {

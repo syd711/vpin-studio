@@ -14,6 +14,8 @@
   - Added update button to update the network stream url so that the server gets the DMD frames.
 - **Table DMDDevice.ini Settings**: Fixed error that happened during resolving the section name for the DMDDevice.ini for a table entry. For some tables this entry name was not resolved during the table scan and the fallback ROM name was not used. 
 - **Pause Menu Preferences / WOVP Integration**: Added option to include DMD frame capture, useful for cabs with a real DMD.
+- **Pause Menu**:
+  - For the test mode, the whole pause menu is rebuild. This way, you do not need to restart the server and changes are reflected immediately.
 - **Controller Setup**: Added expert mode for the controller bindings dialog that allows manual input of key values. This might be necessary in case the VPin Studio server detected different key codes than Windows.
 - **cROMC Support**: Added missing file filter in the ALTColor upload dialog.
 - **Preferences**: Added missing vertival scrollbars (backglass, pinvol, ...)
