@@ -763,7 +763,6 @@ public abstract class BaseConnector implements FrontendConnector {
   }
 
   protected TableAlxEntry getGameStat(int gameId) {
-    loadStats();
     return gameStats.get(gameId);
   }
 
@@ -788,6 +787,7 @@ public abstract class BaseConnector implements FrontendConnector {
 
   @Override
   public final List<TableAlxEntry> getAlxData(int gameId) {
+    loadStats();
     List<TableAlxEntry> result = new ArrayList<>();
     TableAlxEntry stat = getGameStat(gameId);
     if (stat != null) {
