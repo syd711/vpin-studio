@@ -155,10 +155,6 @@ public class NvRamOutputToScoreTextTest {
   }
 
 
-  
-
-
-
   /**
    * Test SortedScoreAdapter
    */
