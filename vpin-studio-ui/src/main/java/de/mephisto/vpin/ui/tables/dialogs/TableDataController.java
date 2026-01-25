@@ -22,6 +22,7 @@ import de.mephisto.vpin.restclient.tagging.TaggingUtil;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.tables.GameRepresentationModel;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.TablesSidebarPlaylistsController;
@@ -462,18 +463,26 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
   @Override
   protected void openNext() {
+    this.nextButton.setDisable(true);
+    this.prevButton.setDisable(true);
     tableOverviewController.selectNextModel();
     GameRepresentation selection = tableOverviewController.getSelection();
+    GameRepresentationModel selectedModel = tableOverviewController.getSelectedModel();
     if (selection != null && !selection.equals(this.game)) {
+      tableOverviewController.scrollTo(selectedModel);
       switchGame(selection);
     }
   }
 
   @Override
   protected void openPrev() {
+    this.nextButton.setDisable(true);
+    this.prevButton.setDisable(true);
     tableOverviewController.selectPreviousModel();
     GameRepresentation selection = tableOverviewController.getSelection();
+    GameRepresentationModel selectedModel = tableOverviewController.getSelectedModel();
     if (selection != null && !selection.equals(this.game)) {
+      tableOverviewController.scrollTo(selectedModel);
       switchGame(selection);
     }
   }
@@ -961,6 +970,9 @@ public class TableDataController extends BasePrevNextController implements AutoC
       return client.getFrontendService().getTableDetails(game.getId());
     }).thenAcceptLater((tableDetails) -> {
       switchGame(game, tableDetails);
+
+      this.nextButton.setDisable(false);
+      this.prevButton.setDisable(false);
     });
   }
 

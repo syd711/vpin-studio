@@ -23,7 +23,8 @@
 - **Preferences**: Added missing vertival scrollbars (backglass, pinvol, ...)
 - **Highscore Parsing**: Added **en_US** encoding and **UTF-8** codepage for the execution of the **pinemhi.exe**.
 - **Pause Menu / Overlay**: Fixed issue that sometimes the overlay opened instead of the pause menu.
-- **Stop Button**: The stop button that kills all frontend and emulator processes tries to exit the emulator (if active) by emitting the "Q" key event now. This should gracefully shutdown VPX now. An additional process kill is executed with a delay anyway. 
+- **Stop Button**: The stop button that kills all frontend and emulator processes tries to exit the emulator (if active) by emitting the "Q" key event now. This should gracefully shutdown VPX now. An additional process kill is executed with a delay anyway.
+- **Table Data Manager** Fixed refresh issues on previous/next button clicks by synchronizing the actions.
 
 ---
 
