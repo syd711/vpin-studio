@@ -213,8 +213,8 @@
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Label>
-                        <Label styleClass="preference-description" text="Scores are submitted via the Pause Menu, check the settings :" textFill="WHITE" />
-                        <Hyperlink onAction="#onPauseMenuLink" text="go to Pause Menu">
+                        <Label styleClass="preference-description" text="Scores are submitted via the Pause Menu, check the settings:" textFill="WHITE" />
+                        <Hyperlink onAction="#onPauseMenuLink" text="Open Pause Menu Preferences">
                            <VBox.margin>
                               <Insets bottom="12.0" />
                            </VBox.margin>
