@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,6 +72,10 @@ public class MonitorInfoUtil {
       monitors.addAll(JNAMonitorUtil.getMonitors());
     }
     else {
+      if (GraphicsEnvironment.isHeadless()) {
+        return Collections.emptyList();
+      }
+
       int index = 1;
       GraphicsDevice[] gds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
       for (GraphicsDevice gd : gds) {
