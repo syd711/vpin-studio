@@ -34,6 +34,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -2438,6 +2439,18 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   public boolean killFrontend() {
     NirCmd.setTaskBarVisible(true);
     pupEventEmitter.sendPupEvent(11, 2);
+
+    if (systemService.isPinballEmulatorRunning()) {
+      systemService.sendKey(KeyEvent.VK_Q);
+      //give vpx time to quit
+      try {
+        Thread.sleep(300);
+      }
+      catch (InterruptedException e) {
+        //ignore
+      }
+    }
+
     List<ProcessHandle> pinUpProcesses = ProcessHandle
         .allProcesses()
         .filter(p -> p.info().command().isPresent() &&
