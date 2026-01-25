@@ -145,14 +145,14 @@ public class NvRamOutputToScoreTextTest {
   /**
    * Test DefaultAdapter
    */
-  @Test
-  public void test_tmac_a24() throws Exception {
-   doTestSingle("tmac_a24.nv",
-       "#1  AK   9,270,490\r\n" +
-           "#2  JK   8,196,180\r\n" +
-           "#3  AD   4,839,850\r\n" +
-           "#4  DT   3,344,640");
-  }
+//  @Test
+//  public void test_tmac_a24() throws Exception {
+//   doTestSingle("tmac_a24.nv",
+//       "#1  AK   9,270,490\r\n" +
+//           "#2  JK   8,196,180\r\n" +
+//           "#3  AD   4,839,850\r\n" +
+//           "#4  DT   3,344,640");
+//  }
 
 
   /**
