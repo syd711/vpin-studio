@@ -9,8 +9,8 @@
     - Choose a folder and move the file into it.
     - Move the file in trash bin.
     - Delete the file, the file cannot be recovered.
-- **Asset Manager**: Asset manager dialog can be maximized and its dimension restored from saved positions
-- **Frontend Media View**: Frontend video are no more muted in preview dialogs
+- **Asset Manager**: The asset manager dialog can be maximized and its dimensions are restored from the saved position.
+- **Frontend Media View**: Frontend videos are no more muted in preview dialogs.
 - **Global DMDDevice.ini Settings**: 
   - Added possibility to change ignore settings.
   - Added update button to update the network stream url so that the server gets the DMD frames.
@@ -18,12 +18,13 @@
 - **Pause Menu Preferences / WOVP Integration**: Added option to include DMD frame capture, useful for cabs with a real DMD.
 - **Pause Menu**:
   - For the test mode, the whole pause menu is rebuild. This way, you do not need to restart the server and changes are reflected immediately.
+  - Fixed clipped display when repositioned in apron mode.
 - **Controller Setup**: Added expert mode for the controller bindings dialog that allows manual input of key values. This might be necessary in case the VPin Studio server detected different key codes than Windows.
 - **cROMC Support**: Added missing file filter in the ALTColor upload dialog.
-- **Preferences**: Added missing vertival scrollbars (backglass, pinvol, ...)
+- **Preferences**: Added missing vertical scrollbars (backglass, pinvol, ...).
 - **Highscore Parsing**: Added **en_US** encoding and **UTF-8** codepage for the execution of the **pinemhi.exe**.
 - **Pause Menu / Overlay**: Fixed issue that sometimes the overlay opened instead of the pause menu.
-- **Stop Button**: The stop button that kills all frontend and emulator processes tries to exit the emulator (if active) by emitting the "Q" key event now. This should gracefully shutdown VPX now. An additional process kill is executed with a delay anyway.
+- **Stop Button**: The stop button that kills all frontend and emulator processes tries to exit the emulator (if active) by emitting the "Q" key event now. This should gracefully shutdown VPX now. An additional process kill is executed with a delay anyway (always double tap!).
 - **Table Data Manager** Fixed refresh issues on previous/next button clicks by synchronizing the actions.
 
 ---
