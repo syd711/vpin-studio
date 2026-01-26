@@ -28,9 +28,11 @@ public class MonitorInfoUtil {
       logScreenSummary("JNA Monitor List", monitorsJna);
 
       if (monitorsJna.size() > monitorsGde.size()) {
+        LOG.info("Using JNA Monitors");
         monitors.addAll(monitorsJna);
       }
       else {
+        LOG.info("Using GDE Monitors");
         monitors.addAll(monitorsGde);
       }
     }
