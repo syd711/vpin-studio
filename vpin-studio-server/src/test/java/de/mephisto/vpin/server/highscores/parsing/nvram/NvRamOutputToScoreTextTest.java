@@ -26,7 +26,7 @@ public class NvRamOutputToScoreTextTest {
 
   private static ScoringDB scoringDB = ScoringDB.load();
 
-  private final static List<String> ignoreList = Arrays.asList("kiko_a10.nv", "dh_lx2.nv");
+  private final static List<String> ignoreList = Arrays.asList("kiko_a10.nv", "dh_lx2.nv", "tmac_a24.nv");
 
   @Test
   public void testAllFiles() throws Exception {

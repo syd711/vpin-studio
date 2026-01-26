@@ -19,6 +19,7 @@
 - **Pause Menu**:
   - For the test mode, the whole pause menu is rebuild. This way, you do not need to restart the server and changes are reflected immediately.
   - Fixed clipped display when repositioned in apron mode.
+  - Added "bring to front" execution for every key input. This should avoid "falling" the menu behind video and also help with the GL mode.
 - **Controller Setup**: Added expert mode for the controller bindings dialog that allows manual input of key values. This might be necessary in case the VPin Studio server detected different key codes than Windows.
 - **cROMC Support**: Added missing file filter in the ALTColor upload dialog.
 - **Preferences**: Added missing vertical scrollbars (backglass, pinvol, ...).
