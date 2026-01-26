@@ -6,6 +6,8 @@ import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.ScoreListFactory;
 import de.mephisto.vpin.server.pinemhi.PINemHiService;
 import org.apache.commons.io.FilenameUtils;
+import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,14 +147,15 @@ public class NvRamOutputToScoreTextTest {
   /**
    * Test DefaultAdapter
    */
-//  @Test
-//  public void test_tmac_a24() throws Exception {
-//   doTestSingle("tmac_a24.nv",
-//       "#1  AK   9,270,490\r\n" +
-//           "#2  JK   8,196,180\r\n" +
-//           "#3  AD   4,839,850\r\n" +
-//           "#4  DT   3,344,640");
-//  }
+  @Disabled("The test is correct, but run with win-1252 on github - ignore this for now")
+  @Test
+  public void test_tmac_a24() throws Exception {
+   doTestSingle("tmac_a24.nv",
+       "#1  AK   9,270,490\r\n" +
+           "#2  JK   8,196,180\r\n" +
+           "#3  AD   4,839,850\r\n" +
+           "#4  DT   3,344,640");
+  }
 
 
   /**
