@@ -229,7 +229,7 @@ public class Updater {
       return LATEST_VERSION;
     }
     catch (Exception e) {
-      LOG.error("Update check failed: " + e.getMessage(), e);
+      LOG.error("Update check failed: " + e.getMessage());
     }
     return null;
   }
