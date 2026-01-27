@@ -2,7 +2,7 @@
 
 ## Changes
 
-
+- **Highscore Parsing**: Reverted the **en_US** encoding and **UTF-8** codepage for the execution of the **pinemhi.exe** as it is causing issues for other locales.
 
 ---
 
