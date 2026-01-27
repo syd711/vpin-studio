@@ -6,7 +6,6 @@ import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.ScoreListFactory;
 import de.mephisto.vpin.server.pinemhi.PINemHiService;
 import org.apache.commons.io.FilenameUtils;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -19,7 +18,8 @@ import java.nio.file.Files;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class NvRamOutputToScoreTextTest {
   private final static Logger LOG = LoggerFactory.getLogger(NvRamOutputToScoreTextTest.class);
