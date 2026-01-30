@@ -8,11 +8,13 @@ import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
@@ -62,7 +64,9 @@ public class MameServiceClient extends VPinStudioClientService {
       String url = getRestClient().getBaseUrl() + API + "mame/upload/rom/" + emuId;
       LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
       map.add("emuId", emuId);
-      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(map, file, -1, null, AssetType.TABLE, listener), UploadDescriptor.class);
+      HttpEntity<MultiValueMap<String, Object>> upload = createUpload(map, file, -1, null, AssetType.TABLE, listener);
+      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
+      finalizeUpload(upload);
       return exchange.getBody();
     }
     catch (Exception e) {
@@ -76,7 +80,9 @@ public class MameServiceClient extends VPinStudioClientService {
       String url = getRestClient().getBaseUrl() + API + "mame/upload/cfg/" + emuId;
       LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
       map.add("emuId", emuId);
-      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(map, file, -1, null, AssetType.CFG, listener), UploadDescriptor.class);
+      HttpEntity<MultiValueMap<String, Object>> upload = createUpload(map, file, -1, null, AssetType.CFG, listener);
+      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
+      finalizeUpload(upload);
       return exchange.getBody();
     }
     catch (Exception e) {
@@ -90,7 +96,9 @@ public class MameServiceClient extends VPinStudioClientService {
       String url = getRestClient().getBaseUrl() + API + "mame/upload/nvram/" + emuId;
       LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
       map.add("emuId", emuId);
-      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(map, file, -1, null, AssetType.NV, listener), UploadDescriptor.class);
+      HttpEntity<MultiValueMap<String, Object>> upload = createUpload(map, file, -1, null, AssetType.NV, listener);
+      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
+      finalizeUpload(upload);
       return exchange.getBody();
     }
     catch (Exception e) {
