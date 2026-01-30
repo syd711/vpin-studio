@@ -3,6 +3,7 @@
 ## Changes
 
 - **Server Startup**: Handled possible error in the screen resolving which caused the server not to start for some users. 
+- **File Uploads** Fixed issue that various files have been locked from the Studio client after uploading.
 
 --- 
 
