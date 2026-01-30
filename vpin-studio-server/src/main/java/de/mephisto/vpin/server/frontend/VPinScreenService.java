@@ -492,23 +492,28 @@ public class VPinScreenService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() {
-    boolean isHeadless = GraphicsEnvironment.isHeadless();
-    if (!isHeadless) {
-      List<FrontendPlayerDisplay> displays = getScreenResDisplays();
-      LOG.info("######################## Offset Frontend Screen Summary ##################################");
-      DirectB2sScreenRes screenres = backglassService.getGlobalScreenRes();
-      if (screenres != null) {
-        MonitorInfo backglassMonitor = getBackglassMonitor(screenres, MonitorInfoUtil.getMonitors());
-        LOG.info("Backglass Monitor: {}", backglassMonitor);
-        LOG.info("------------------------------------------------------------------------------------------");
-        for (FrontendPlayerDisplay frontendPlayerDisplay : displays) {
-          LOG.info(frontendPlayerDisplay.toString());
+    try {
+      boolean isHeadless = GraphicsEnvironment.isHeadless();
+      if (!isHeadless) {
+        List<FrontendPlayerDisplay> displays = getScreenResDisplays();
+        LOG.info("######################## Offset Frontend Screen Summary ##################################");
+        DirectB2sScreenRes screenres = backglassService.getGlobalScreenRes();
+        if (screenres != null) {
+          MonitorInfo backglassMonitor = getBackglassMonitor(screenres, MonitorInfoUtil.getMonitors());
+          LOG.info("Backglass Monitor: {}", backglassMonitor);
+          LOG.info("------------------------------------------------------------------------------------------");
+          for (FrontendPlayerDisplay frontendPlayerDisplay : displays) {
+            LOG.info(frontendPlayerDisplay.toString());
+          }
         }
+        else {
+          LOG.error("Reading frontend screen summary failed.");
+        }
+        LOG.info("####################### /Offset  Frontend Screen Summary #################################");
       }
-      else {
-        LOG.error("Reading frontend screen summary failed.");
-      }
-      LOG.info("####################### /Offset  Frontend Screen Summary #################################");
+    }
+    catch (Exception e) {
+      LOG.error("Failed to initialize screen displays: {}", e.getMessage(), e);
     }
   }
 }

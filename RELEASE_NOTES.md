@@ -1,3 +1,11 @@
+## Release Notes 4.6.3
+
+## Changes
+
+- **Server Startup**: Handled possible error in the screen resolving which caused the server not to start for some users. 
+
+--- 
+
 ## Release Notes 4.6.2
 
 ## Changes
