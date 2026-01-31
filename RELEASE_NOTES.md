@@ -1,9 +1,10 @@
 ## Release Notes 4.6.3
 
-## Changes
+## Changes (including a breaking one!)
 
 - **Server Startup**: Handled possible error in the screen resolving which caused the server not to start for some users. 
 - **File Uploads** Fixed issue that various files have been locked from the Studio client after uploading.
+- **Monitor Detection**: Fixed possible issue where the order of monitors changed. **Unfortunately this is a breaking change and you might need to reconfigure the monitor for the overlay, pause menu and notifications!**
 
 --- 
 

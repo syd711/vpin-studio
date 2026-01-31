@@ -36,10 +36,13 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PreDestroy;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -51,6 +54,9 @@ import static de.mephisto.vpin.server.VPinStudioServer.Features;
 @Service
 public class ManiaService implements InitializingBean, FrontendStatusChangeListener, PreferenceChangedListener, TableStatusChangeListener, GameDataChangedListener, GameLifecycleListener, ApplicationListener<ApplicationReadyEvent> {
   private final static Logger LOG = LoggerFactory.getLogger(ManiaService.class);
+
+  //the file contains the UUID of the cabinet
+  public static final String VPIN_MANIA_ID_TXT = ".vpin-mania-id.txt";
 
   @Value("${vpinmania.server.host}")
   private String maniaHost;
@@ -493,6 +499,9 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
     if (propertyName.equals(PreferenceNames.MANIA_SETTINGS)) {
       maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
       cabinet = maniaClient.getCabinetClient().getCabinet();
+      if (cabinet != null) {
+        updateIdFile(cabinet.getUuid());
+      }
     }
   }
 
@@ -577,6 +586,11 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
         preferencesService.addChangeListener(this);
         maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
+
+        if (cabinet != null) {
+          updateIdFile(cabinet.getUuid());
+        }
+
         new Thread(() -> {
           setOnline(cabinet);
         }).start();
@@ -587,6 +601,23 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
       }
     }
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
+  }
+
+  private static void updateIdFile(@NonNull String uuid) {
+    try {
+      String localAppData = System.getenv("LOCALAPPDATA");
+      Path appDataPath = Paths.get(localAppData, "VPin-Studio");
+      Files.createDirectories(appDataPath);
+      File idFile = new File(appDataPath.toFile(), VPIN_MANIA_ID_TXT);
+      if (idFile.exists() && !idFile.delete()) {
+        LOG.error("Failed to delete mania id file");
+        return;
+      }
+      Files.writeString(idFile.toPath(), uuid);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to write mania id file: {}", e.getMessage());
+    }
   }
 
   public Cabinet getCabinet() {
