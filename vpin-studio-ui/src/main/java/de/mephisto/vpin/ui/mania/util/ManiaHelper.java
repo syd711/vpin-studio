@@ -9,7 +9,6 @@ import de.mephisto.vpin.restclient.mania.ManiaRegistration;
 import de.mephisto.vpin.restclient.mania.ManiaSettings;
 import de.mephisto.vpin.restclient.mania.ManiaTableSyncResult;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
-import de.mephisto.vpin.restclient.system.SystemId;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.mania.VPinManiaScoreSynchronizeProgressModel;
 import de.mephisto.vpin.ui.mania.VPinManiaTablesSynchronizeProgressModel;
@@ -20,7 +19,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -41,12 +39,6 @@ public class ManiaHelper {
   }
 
   public static boolean register() {
-    SystemId systemId = client.getSystemService().getSystemId();
-    if (StringUtils.isEmpty(systemId.getSystemId())) {
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to retrieve unique system id. Please report this problem.");
-      return false;
-    }
-
     ManiaRegistration registration = ManiaDialogs.openRegistrationDialog();
     if (registration != null) {
       try {

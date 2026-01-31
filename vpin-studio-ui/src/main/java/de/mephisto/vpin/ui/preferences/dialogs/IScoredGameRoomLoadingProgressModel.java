@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui.tournaments.dialogs;
+package de.mephisto.vpin.ui.preferences.dialogs;
 
 import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScored;

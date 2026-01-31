@@ -6,15 +6,7 @@ import java.util.List;
 
 public class SystemSummary {
   private BackupType backupType;
-  private String systemId;
-
-  public String getSystemId() {
-    return systemId;
-  }
-
-  public void setSystemId(String systemId) {
-    this.systemId = systemId;
-  }
+  private List<MonitorInfo> monitorInfos;
 
   public BackupType getBackupType() {
     return backupType;
@@ -23,8 +15,6 @@ public class SystemSummary {
   public void setBackupType(BackupType backupType) {
     this.backupType = backupType;
   }
-
-  private List<MonitorInfo> monitorInfos;
 
   public List<MonitorInfo> getMonitorInfos() {
     return monitorInfos;

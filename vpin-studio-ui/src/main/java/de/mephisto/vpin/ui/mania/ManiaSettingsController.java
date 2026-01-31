@@ -75,9 +75,6 @@ public class ManiaSettingsController extends SettingsSceneController implements 
   @FXML
   private VBox menuItemsPanel;
 
-  @FXML
-  private VBox tournamentsBox;
-
   private Button lastSelection;
 
   private Node preferencesRoot;
@@ -86,17 +83,6 @@ public class ManiaSettingsController extends SettingsSceneController implements 
   private String lastScreen = "mania-account-settings.fxml";
   private static boolean open = false;
   private static ManiaSettingsController INSTANCE = null;
-
-  public static void open(String preferenceType) {
-    if(!open) {
-      toggle();
-    }
-
-    Platform.runLater(() -> {
-      //TODO btn
-      instance.load("mania-" + preferenceType + ".fxml", null, "tournamentsBtn");
-    });
-  }
 
   public static void navigateTo(String id) {
     try {
@@ -152,12 +138,6 @@ public class ManiaSettingsController extends SettingsSceneController implements 
   @FXML
   private void onAccount(ActionEvent event) throws IOException {
     load("mania-account-settings.fxml", event);
-  }
-
-
-  @FXML
-  private void onTournaments(ActionEvent event) throws IOException {
-    load("mania-tournament-settings.fxml", event);
   }
 
   @FXML
@@ -249,9 +229,6 @@ public class ManiaSettingsController extends SettingsSceneController implements 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     INSTANCE = this;
-
-    tournamentsBox.managedProperty().bindBidirectional(tournamentsBox.visibleProperty());
-    tournamentsBox.setVisible(Features.MANIA_TOURNAMENTS_ENABLED);
 
     client.getPreferenceService().addListener(this);
     menuItemsPanel.setVisible(ManiaHelper.isRegistered());

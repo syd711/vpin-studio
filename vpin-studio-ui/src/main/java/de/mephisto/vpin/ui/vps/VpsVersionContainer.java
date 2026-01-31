@@ -1,10 +1,9 @@
-package de.mephisto.vpin.ui.tournaments;
+package de.mephisto.vpin.ui.vps;
 
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.vps.VpsUtil;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;

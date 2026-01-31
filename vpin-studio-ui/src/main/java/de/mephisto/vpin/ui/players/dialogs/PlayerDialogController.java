@@ -64,7 +64,7 @@ public class PlayerDialogController implements Initializable, DialogController {
   private CheckBox adminRoleCheckbox;
 
   @FXML
-  private CheckBox tournamentPlayerCheckbox;
+  private CheckBox vpinManiaPlayerCheckbox;
 
   @FXML
   private CheckBox visibilityCheckbox;
@@ -103,8 +103,8 @@ public class PlayerDialogController implements Initializable, DialogController {
       if (Features.MANIA_ENABLED) {
         if (!StringUtils.isEmpty(player.getTournamentUserUuid())) {
           Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(player.getTournamentUserUuid());
-          if (accountByUuid != null && !this.tournamentPlayerCheckbox.isSelected()) {
-            Optional<ButtonType> result2 = WidgetFactory.showConfirmation(stage, "Tournament Player", "The player \"" + this.player.getName() + "\" is a registered tournament player and the \"Tournament Player\" checkbox is unchecked.", "This will delete the online account and all related highscores and subscribed tournaments too.");
+          if (accountByUuid != null && !this.vpinManiaPlayerCheckbox.isSelected()) {
+            Optional<ButtonType> result2 = WidgetFactory.showConfirmation(stage, "VPin Mania Player", "The player \"" + this.player.getName() + "\" is a registered VPin Mania player and the \"VPin Mania\" checkbox is unchecked.", "This will delete the online account and all related highscores and data.");
             if (!result2.isPresent() || !result2.get().equals(ButtonType.OK)) {
               return;
             }
@@ -112,7 +112,7 @@ public class PlayerDialogController implements Initializable, DialogController {
         }
       }
 
-      boolean maniaAccount = this.tournamentPlayerCheckbox.isSelected();
+      boolean maniaAccount = this.vpinManiaPlayerCheckbox.isSelected();
       String maniaName = this.maniaNameField.getText();
       AccountVisibility visibility = visibilityCheckbox.isSelected() ? AccountVisibility.searchable : AccountVisibility.hidden;
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(stage, new PlayerSaveProgressModel(stage, this.player, maniaAccount, maniaName, visibility, this.avatarFile, this.avatarStack));
@@ -225,14 +225,14 @@ public class PlayerDialogController implements Initializable, DialogController {
       initialsField.setText(this.player.getInitials());
       adminRoleCheckbox.setSelected(player.isAdministrative());
 
-      tournamentPlayerCheckbox.setSelected(false);
-      tournamentPlayerCheckbox.setDisable(cabinet == null);
+      vpinManiaPlayerCheckbox.setSelected(false);
+      vpinManiaPlayerCheckbox.setDisable(cabinet == null);
       visibilityCheckbox.setSelected(cabinet != null);
       visibilityCheckbox.setDisable(cabinet == null);
       String tournamentUserUuid = player.getTournamentUserUuid();
       if (!StringUtils.isEmpty(tournamentUserUuid)) {
         Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(tournamentUserUuid);
-        this.tournamentPlayerCheckbox.setSelected(accountByUuid != null);
+        this.vpinManiaPlayerCheckbox.setSelected(accountByUuid != null);
         if(accountByUuid != null) {
           this.visibilityCheckbox.setSelected(AccountVisibility.searchable.equals(accountByUuid.getVisibility()));
           this.maniaNameField.setText(accountByUuid.getDisplayName());
@@ -295,8 +295,8 @@ public class PlayerDialogController implements Initializable, DialogController {
     this.adminRoleCheckbox.setSelected(player.isAdministrative());
     this.adminRoleCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> player.setAdministrative(newValue));
 
-    this.tournamentPlayerCheckbox.setDisable(cabinet == null);
-    this.tournamentPlayerCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+    this.vpinManiaPlayerCheckbox.setDisable(cabinet == null);
+    this.vpinManiaPlayerCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         maniaNameField.setDisable(!newValue);
@@ -309,7 +309,7 @@ public class PlayerDialogController implements Initializable, DialogController {
     });
 
     this.maniaNameField.setDisable(true);
-    this.tournamentPlayerCheckbox.setSelected(false);
+    this.vpinManiaPlayerCheckbox.setSelected(false);
     this.nameField.requestFocus();
   }
 }

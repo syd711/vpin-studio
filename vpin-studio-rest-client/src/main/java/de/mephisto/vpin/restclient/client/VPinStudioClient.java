@@ -43,7 +43,6 @@ import de.mephisto.vpin.restclient.system.FolderChooserServiceClient;
 import de.mephisto.vpin.restclient.system.SystemServiceClient;
 import de.mephisto.vpin.restclient.tagging.TaggingServiceClient;
 import de.mephisto.vpin.restclient.textedit.TextEditorServiceClient;
-import de.mephisto.vpin.restclient.tournaments.TournamentsServiceClient;
 import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.restclient.vpauthenticators.VpAuthenticationServiceClient;
@@ -107,7 +106,6 @@ public class VPinStudioClient {
   private final PupPackServiceClient pupPackServiceClient;
   private final PatcherServiceClient patcherServiceClient;
   private final SystemServiceClient systemServiceClient;
-  private final TournamentsServiceClient tournamentsServiceClient;
   private final TaggingServiceClient taggingServiceClient;
   private final TextEditorServiceClient textEditorServiceClient;
   private final PinVolServiceClient pinVolServiceClient;
@@ -172,7 +170,6 @@ public class VPinStudioClient {
     this.playlistMediaServiceClient = new PlaylistMediaServiceClient(this);
     this.higscoreBackupServiceClient = new HigscoreBackupServiceClient(this);
     this.mediaConversionServiceClient = new MediaConversionServiceClient(this);
-    this.tournamentsServiceClient = new TournamentsServiceClient(this);
     this.wovpServiceClient = new WOVPServiceClient(this);
   }
 
@@ -266,10 +263,6 @@ public class VPinStudioClient {
 
   public GameStatusServiceClient getGameStatusService() {
     return gameStatusServiceClient;
-  }
-
-  public TournamentsServiceClient getTournamentsService() {
-    return tournamentsServiceClient;
   }
 
   public void setErrorHandler(VPinStudioClientErrorHandler errorHandler) {

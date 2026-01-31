@@ -47,6 +47,9 @@ public class HeaderResizeableController implements Initializable {
   private Button minimizeBtn;
 
   @FXML
+  private Button maniaOpenBtn;
+
+  @FXML
   private Button maniaBtn;
 
   @FXML
@@ -175,6 +178,7 @@ public class HeaderResizeableController implements Initializable {
 
     maniaBtn.managedProperty().bindBidirectional(maniaBtn.visibleProperty());
     maniaBtn.setVisible(Features.MANIA_SOCIAL_ENABLED && Features.MANIA_ENABLED);
+    maniaOpenBtn.setVisible(Features.MANIA_SOCIAL_ENABLED && Features.MANIA_ENABLED);
     Image maniaImage = new Image(Studio.class.getResourceAsStream("mania.png"));
     ImageView iconMedia = new ImageView(maniaImage);
     iconMedia.setFitWidth(18);

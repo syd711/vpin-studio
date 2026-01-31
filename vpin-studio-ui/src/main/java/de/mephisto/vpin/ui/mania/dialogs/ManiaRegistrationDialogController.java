@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -35,6 +36,9 @@ public class ManiaRegistrationDialogController implements DialogController, Init
   private VBox playersRoot;
 
   @FXML
+  private VBox dataBox;
+
+  @FXML
   private CheckBox registrationCheckbox;
 
   @FXML
@@ -45,6 +49,9 @@ public class ManiaRegistrationDialogController implements DialogController, Init
 
   @FXML
   private CheckBox synchronizeRatingsCheckbox;
+
+  @FXML
+  private TextField apiKeyText;
 
   private final List<CheckBox> playerCheckboxes = new ArrayList<>();
 
@@ -67,6 +74,7 @@ public class ManiaRegistrationDialogController implements DialogController, Init
     maniaRegistration.setSubmitRatings(synchronizeRatingsCheckbox.isSelected());
     maniaRegistration.setSubmitPlayCount(synchronizeRatingsCheckbox.isSelected());
     maniaRegistration.setSubmitTables(synchronizeTablesCheckbox.isSelected());
+    maniaRegistration.setApiKey(apiKeyText.getText());
 
     for (CheckBox playerCheckbox : playerCheckboxes) {
       if (playerCheckbox.isSelected()) {
@@ -83,6 +91,7 @@ public class ManiaRegistrationDialogController implements DialogController, Init
   public void initialize(URL location, ResourceBundle resources) {
     playerList.managedProperty().bindBidirectional(playerList.visibleProperty());
     playersRoot.managedProperty().bindBidirectional(playersRoot.visibleProperty());
+    apiKeyText.setDisable(true);
 
     synchronizeRatingsCheckbox.setDisable(true);
     synchronizeRatingsCheckbox.setSelected(true);
@@ -98,6 +107,7 @@ public class ManiaRegistrationDialogController implements DialogController, Init
         synchronizePlayCountCheckbox.setDisable(!newValue);
         synchronizeTablesCheckbox.setDisable(!newValue);
         okButton.setDisable(!newValue);
+        apiKeyText.setDisable(!newValue);
 
         for (CheckBox playerCheckbox : playerCheckboxes) {
           playerCheckbox.setDisable(!newValue);

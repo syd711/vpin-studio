@@ -36,7 +36,6 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PreDestroy;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -185,7 +184,6 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   public ManiaConfig getConfig() throws Exception {
     ManiaConfig config = new ManiaConfig();
     config.setUrl(maniaHost);
-    config.setSystemId(SystemUtil.getUniqueSystemId());
     return config;
   }
 
@@ -492,6 +490,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
     if (propertyName.equals(PreferenceNames.MANIA_SETTINGS)) {
       maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
+      maniaClient = new VPinManiaClient(getConfig().getUrl(), maniaSettings.getApiKey());
       cabinet = maniaClient.getCabinetClient().getCabinet();
     }
   }
@@ -561,29 +560,29 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   public void afterPropertiesSet() throws Exception {
     if (Features.MANIA_ENABLED) {
       try {
-        LOG.info("Initializing VPin Mania Service, using unique id: {}", SystemUtil.getUniqueSystemId());
+        LOG.info("Initializing VPin Mania Service");
         frontendStatusService.addFrontendStatusChangeListener(this);
         frontendStatusService.addTableStatusChangeListener(this);
         gameLifecycleService.addGameDataChangedListener(this);
         gameLifecycleService.addGameLifecycleListener(this);
 
+        preferencesService.addChangeListener(this);
+        maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
 
         ManiaConfig config = getConfig();
-        maniaClient = new VPinManiaClient(config.getUrl(), config.getSystemId());
+        maniaClient = new VPinManiaClient(config.getUrl(), maniaSettings.getApiKey());
         maniaServiceCache.setManiaService(this);
         ServerFX.maniaClient = maniaClient;
 
         cabinet = maniaClient.getCabinetClient().getCabinet();
 
-        preferencesService.addChangeListener(this);
-        maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
         new Thread(() -> {
           setOnline(cabinet);
         }).start();
       }
       catch (Exception e) {
         LOG.error("Failed to init mania services: {}", e.getMessage(), e);
-        Features.MANIA_ENABLED = false;
+//        Features.MANIA_ENABLED = false;
       }
     }
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
@@ -595,18 +594,23 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
   @Override
   public void onApplicationEvent(ApplicationReadyEvent event) {
-    if (Features.MANIA_ENABLED) {
-      Cabinet cabinet = maniaClient.getCabinetClient().getCabinetCached();
-      if (cabinet != null) {
-        new Thread(() -> {
-          Thread.currentThread().setName("VPin Mania Tables Synchronizer");
-          LOG.info("Cabinet is registered on VPin-Mania");
-          synchronizeTables();
-        }).start();
+    try {
+      if (Features.MANIA_ENABLED) {
+        Cabinet cabinet = maniaClient.getCabinetClient().getCabinetCached();
+        if (cabinet != null) {
+          new Thread(() -> {
+            Thread.currentThread().setName("VPin Mania Tables Synchronizer");
+            LOG.info("Cabinet is registered on VPin-Mania");
+            synchronizeTables();
+          }).start();
+        }
+        else {
+          LOG.info("Cabinet is not registered on VPin-Mania");
+        }
       }
-      else {
-        LOG.info("Cabinet is not registered on VPin-Mania");
-      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to initialize mania service after startup: {}", e.getMessage(), e);
     }
   }
 

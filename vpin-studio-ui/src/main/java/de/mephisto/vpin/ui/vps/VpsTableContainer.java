@@ -1,8 +1,7 @@
-package de.mephisto.vpin.ui.tournaments;
+package de.mephisto.vpin.ui.vps;
 
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;

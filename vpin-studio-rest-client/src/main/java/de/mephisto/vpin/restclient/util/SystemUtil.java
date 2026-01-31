@@ -8,9 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Mixer;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.invoke.MethodHandles;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
@@ -52,93 +49,6 @@ public class SystemUtil {
     return RestClient.PORT;
   }
 
-  private static String getWindowsSystemId() {
-    try {
-      Process process = Runtime.getRuntime().exec("wmic csproduct get UUID");
-      BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-      String line;
-      while ((line = reader.readLine()) != null) {
-        if (!line.isEmpty() && !line.contains("UUID")) {
-          reader.close();
-          return line.trim();
-        }
-      }
-      reader.close();
-    }
-    catch (Exception e) {
-      //ignore
-    }
-    return null;
-  }
-
-  private static String getSystemId() {
-    if (systemId == null) {
-      String firstSegment = NetworkUtil.getMacAddress() != null ? NetworkUtil.getMacAddress().trim() : "#";
-      if (StringUtils.isEmpty(firstSegment)) {
-        firstSegment = getWindowsSystemId();
-      }
-      String driveId = getDriveId() != null ? getDriveId().trim() : "#";
-      String boardId = getBoardSerialNumber() != null ? getBoardSerialNumber().trim() : "#";
-      String id = firstSegment + "~" + driveId + "~" + boardId;
-      if (id.length() > 100) {
-        id = id.substring(0, 99);
-      }
-
-      systemId = id;
-    }
-
-    return systemId;
-  }
-
-  public static String getUniqueSystemId() {
-    return getSystemId();
-  }
-
-  public static String getDriveId() {
-    try {
-      Process process = Runtime.getRuntime().exec("wmic diskdrive get serialnumber");
-      BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-      List<String> lines = new ArrayList<>();
-      String line = null;
-      while ((line = reader.readLine()) != null) {
-        if (StringUtils.isEmpty(line) || line.trim().equals("SerialNumber")) {
-          continue;
-        }
-        lines.add(line.trim());
-      }
-
-      if (!lines.isEmpty()) {
-        return lines.get(lines.size() - 1);
-      }
-    }
-    catch (IOException e) {
-      //ignore
-    }
-    return null;
-  }
-
-  private static String getBoardSerialNumber() {
-    try {
-      SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("wmic", "baseboard", "get", "serialnumber"), false);
-      executor.setIgnoreError(true);
-      executor.executeCommand();
-      StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
-      if (standardOutputFromCommand != null) {
-        String[] split = standardOutputFromCommand.toString().trim().split("\n");
-        String serial = split[split.length - 1];
-        if (!isNotValid(serial)) {
-          return null;
-        }
-
-        return serial;
-      }
-    }
-    catch (Exception e) {
-      //ignore
-    }
-    return null;
-  }
-
   public static Screen getScreenById(int id) {
     if (id == -1) {
       return Screen.getPrimary();
@@ -171,9 +81,5 @@ public class SystemUtil {
       names.add(info.getName());
     }
     return names;
-  }
-
-  public static void main(String[] args) {
-    System.out.println(getSystemId());
   }
 }

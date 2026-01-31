@@ -62,7 +62,7 @@ public class BuiltInPlayersController extends BasePlayersController implements I
   private TableColumn<PlayerRepresentation, Object> avatarColumn;
 
   @FXML
-  private TableColumn<PlayerRepresentation, Label> tournamentColumn;
+  private TableColumn<PlayerRepresentation, Label> maniaPlayerColumn;
 
   @FXML
   private TableColumn<PlayerRepresentation, String> columnCreatedAt;
@@ -144,7 +144,7 @@ public class BuiltInPlayersController extends BasePlayersController implements I
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Player '" + selection.getName() + "'?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         if (Features.MANIA_ENABLED && selection.getTournamentUserUuid() != null) {
-          Optional<ButtonType> result2 = WidgetFactory.showConfirmation(Studio.stage, "Tournament Player", "The player \"" + selection.getName() + "\" is a registered tournament player.", "This will delete the online account and all related highscores and subscribed tournaments too.");
+          Optional<ButtonType> result2 = WidgetFactory.showConfirmation(Studio.stage, "VPin Mania Player", "The player \"" + selection.getName() + "\" is a registered VPin Mania player.", "This will delete the online account and all related highscores and data.");
           if (result2.isPresent() && result2.get().equals(ButtonType.OK)) {
             client.getPlayerService().deletePlayer(selection);
 
@@ -223,7 +223,7 @@ public class BuiltInPlayersController extends BasePlayersController implements I
     }
 
 
-    tournamentColumn.setCellValueFactory(cellData -> {
+    maniaPlayerColumn.setCellValueFactory(cellData -> {
       PlayerRepresentation value = cellData.getValue();
       if (!StringUtils.isEmpty(value.getTournamentUserUuid()) && Features.MANIA_ENABLED) {
         try {
@@ -329,13 +329,13 @@ public class BuiltInPlayersController extends BasePlayersController implements I
 
   @Override
   public void preferencesChanged(String key, Object value) {
-    tournamentColumn.setVisible(Features.MANIA_ENABLED);
+    maniaPlayerColumn.setVisible(Features.MANIA_ENABLED);
 
     if (PreferenceNames.MANIA_SETTINGS.equals(key)) {
       ManiaSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
 
       if (Features.MANIA_ENABLED) {
-        tournamentColumn.setVisible(settings.isEnabled());
+        maniaPlayerColumn.setVisible(settings.isEnabled());
       }
     }
   }
