@@ -45,7 +45,7 @@
                                           <Insets top="24.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onFriendsList" styleClass="preference-button" text="All" />
+                                    <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onFriendsList" styleClass="preference-button" text="Overview" />
                                     <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onFriendsPendingInvites" styleClass="preference-button" text="Pending Invites" />
                                  </children>
                               </VBox>
