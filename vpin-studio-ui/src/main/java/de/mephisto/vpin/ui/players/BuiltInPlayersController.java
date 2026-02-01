@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.players;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Account;
+import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
@@ -143,14 +144,15 @@ public class BuiltInPlayersController extends BasePlayersController implements I
     if (selection != null) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Player '" + selection.getName() + "'?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        if (Features.MANIA_ENABLED && selection.getTournamentUserUuid() != null) {
+        if (Features.MANIA_ENABLED && selection.getManiaAccountUuid() != null) {
           Optional<ButtonType> result2 = WidgetFactory.showConfirmation(Studio.stage, "VPin Mania Player", "The player \"" + selection.getName() + "\" is a registered VPin Mania player.", "This will delete the online account and all related highscores and data.");
           if (result2.isPresent() && result2.get().equals(ButtonType.OK)) {
             client.getPlayerService().deletePlayer(selection);
 
-            Account acc = maniaClient.getAccountClient().getAccountByUuid(selection.getTournamentUserUuid());
+            Account acc = maniaClient.getAccountClient().getAccountByUuid(selection.getManiaAccountUuid());
             if (acc != null) {
-              maniaClient.getAccountClient().deleteAccount(acc.getId());
+              Cabinet cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
+              maniaClient.getAccountClient().deleteAccount(cabinet.getId(), acc.getId());
             }
             tableView.getSelectionModel().clearSelection();
             onReload();
@@ -225,9 +227,9 @@ public class BuiltInPlayersController extends BasePlayersController implements I
 
     maniaPlayerColumn.setCellValueFactory(cellData -> {
       PlayerRepresentation value = cellData.getValue();
-      if (!StringUtils.isEmpty(value.getTournamentUserUuid()) && Features.MANIA_ENABLED) {
+      if (!StringUtils.isEmpty(value.getManiaAccountUuid()) && Features.MANIA_ENABLED) {
         try {
-          Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(value.getTournamentUserUuid());
+          Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(value.getManiaAccountUuid());
           if (accountByUuid != null) {
             Label label = new Label();
             label.setGraphic(WidgetFactory.createCheckIcon());
@@ -335,7 +337,7 @@ public class BuiltInPlayersController extends BasePlayersController implements I
       ManiaSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
 
       if (Features.MANIA_ENABLED) {
-        maniaPlayerColumn.setVisible(settings.isEnabled());
+        maniaPlayerColumn.setVisible(!StringUtils.isEmpty(settings.getCabinetUuid()));
       }
     }
   }

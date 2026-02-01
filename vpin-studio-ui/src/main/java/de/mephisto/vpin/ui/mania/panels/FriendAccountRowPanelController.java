@@ -4,7 +4,7 @@ import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.AccountVisibility;
-import de.mephisto.vpin.connectors.mania.model.CabinetContact;
+import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.mania.FriendsListController;
 import de.mephisto.vpin.ui.mania.util.ManiaAvatarCache;
@@ -51,7 +51,7 @@ public class FriendAccountRowPanelController implements Initializable {
   public void setData(FriendsListController friendsListController, String cabinetUuid, Account account) {
     this.friendsListController = friendsListController;
     this.account = account;
-    this.toolbar.setVisible(String.valueOf(cabinetUuid).equals(maniaClient.getCabinetClient().getCabinetCached().getUuid()));
+    this.toolbar.setVisible(String.valueOf(cabinetUuid).equals(maniaClient.getCabinetClient().getDefaultCabinetCached().getUuid()));
 
     visibilityCheckbox.setSelected(AccountVisibility.searchable.equals(account.getVisibility()));
     visibilityCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -59,7 +59,8 @@ public class FriendAccountRowPanelController implements Initializable {
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         try {
           account.setVisibility(newValue ? AccountVisibility.searchable : AccountVisibility.hidden);
-          maniaClient.getAccountClient().update(account);
+          Cabinet defaultCabinetCached = maniaClient.getCabinetClient().getDefaultCabinetCached();
+          maniaClient.getAccountClient().update(defaultCabinetCached.getId(), account);
         }
         catch (Exception e) {
           LOG.error("Failed to save mania account: " + e.getMessage(), e);

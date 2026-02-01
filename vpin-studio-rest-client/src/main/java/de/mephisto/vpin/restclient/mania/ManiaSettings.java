@@ -4,8 +4,8 @@ import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 
 public class ManiaSettings extends JsonSettings {
-  private boolean enabled;
   private String apiKey;
+  private String cabinetUuid;
 
   private boolean submitAllScores = true;
   private boolean submitRatings = true;
@@ -13,6 +13,14 @@ public class ManiaSettings extends JsonSettings {
   private boolean submitTables = true;
   private boolean showOnlineStatus = true;
   private boolean showActiveGameStatus = true;
+
+  public String getCabinetUuid() {
+    return cabinetUuid;
+  }
+
+  public void setCabinetUuid(String cabinetUuid) {
+    this.cabinetUuid = cabinetUuid;
+  }
 
   public String getApiKey() {
     return apiKey;
@@ -68,13 +76,6 @@ public class ManiaSettings extends JsonSettings {
 
   public void setSubmitAllScores(boolean submitAllScores) {
     this.submitAllScores = submitAllScores;
-  }
-  public boolean isEnabled() {
-    return enabled;
-  }
-
-  public void setEnabled(boolean enabled) {
-    this.enabled = enabled;
   }
 
   @Override

@@ -71,12 +71,13 @@ public class FriendCabinetRowPanelController implements Initializable {
   private String cabinetUuid;
   private String displayName;
   private CabinetStatus status;
+  private Cabinet cabinet;
 
   @FXML
   private void onDelete() {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete friendship to \"" + displayName + "\"?");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      maniaClient.getContactClient().deleteContact(cabinetUuid);
+      maniaClient.getContactClient().deleteContact(cabinet.getId(), cabinetUuid);
       if (invitesController != null) {
         invitesController.reload();
       }
@@ -88,7 +89,7 @@ public class FriendCabinetRowPanelController implements Initializable {
 
   @FXML
   private void onAccept() {
-    maniaClient.getContactClient().acceptInvite(cabinetUuid);
+    maniaClient.getContactClient().acceptInvite(cabinet.getId(), cabinetUuid);
     invitesController.reload();
     ManiaSettingsController.navigateTo("mania-friends-list");
   }
@@ -161,7 +162,7 @@ public class FriendCabinetRowPanelController implements Initializable {
         }
 
         nameLabel.setText(displayName);
-        List<Account> accounts = maniaClient.getCabinetClient().getAccounts(cabinetUuid);
+        List<Account> accounts = maniaClient.getCabinetClient().getAccounts(cabinet.getId(), cabinetUuid);
         playerList.setVisible(!accounts.isEmpty());
 
         for (Account account : accounts) {
@@ -188,5 +189,7 @@ public class FriendCabinetRowPanelController implements Initializable {
     acceptBtn.managedProperty().bindBidirectional(acceptBtn.visibleProperty());
     deleteBtn.managedProperty().bindBidirectional(deleteBtn.visibleProperty());
     playerList.managedProperty().bindBidirectional(playerList.visibleProperty());
+
+    cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
   }
 }

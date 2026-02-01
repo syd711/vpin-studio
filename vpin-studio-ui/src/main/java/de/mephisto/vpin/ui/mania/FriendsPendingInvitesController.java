@@ -4,9 +4,11 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.connectors.mania.model.CabinetContact;
 import de.mephisto.vpin.connectors.mania.model.CabinetSettings;
+import de.mephisto.vpin.ui.HeaderResizeableController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.ui.mania.panels.FriendCabinetRowPanelController;
+import de.mephisto.vpin.ui.mania.util.ManiaHelper;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -45,6 +47,11 @@ public class FriendsPendingInvitesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    if (!ManiaHelper.isRegistered()) {
+      HeaderResizeableController.toggleManiaView();
+      return;
+    }
+
     dataBox.managedProperty().bindBidirectional(dataBox.visibleProperty());
     emptyBox.managedProperty().bindBidirectional(emptyBox.visibleProperty());
     loadingBox.managedProperty().bindBidirectional(loadingBox.visibleProperty());
@@ -53,7 +60,9 @@ public class FriendsPendingInvitesController implements Initializable {
   }
 
   public void reload() {
-    Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
+    ManiaHelper.isRegistered();
+
+    Cabinet cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
     CabinetSettings cabinetSettings = cabinet.getSettings();
 
     dataBox.getChildren().removeAll(dataBox.getChildren());
@@ -69,7 +78,7 @@ public class FriendsPendingInvitesController implements Initializable {
     }
 
     JFXFuture.supplyAsync(() -> {
-          List<CabinetContact> contacts = Studio.maniaClient.getContactClient().getInvites();
+          List<CabinetContact> contacts = Studio.maniaClient.getContactClient().getInvites(maniaClient.getCabinetClient().getDefaultCabinetCached().getId());
           List<Node> friendPanels = new ArrayList<>();
           for (CabinetContact contact : contacts) {
             try {

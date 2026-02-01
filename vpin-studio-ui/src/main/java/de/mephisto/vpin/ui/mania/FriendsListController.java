@@ -4,10 +4,12 @@ import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.connectors.mania.model.CabinetContact;
+import de.mephisto.vpin.ui.HeaderResizeableController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.ui.mania.dialogs.ManiaDialogs;
 import de.mephisto.vpin.ui.mania.panels.FriendCabinetRowPanelController;
+import de.mephisto.vpin.ui.mania.util.ManiaHelper;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -63,6 +65,11 @@ public class FriendsListController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    if (!ManiaHelper.isRegistered()) {
+      HeaderResizeableController.toggleManiaView();
+      return;
+    }
+
     dataBox.managedProperty().bindBidirectional(dataBox.visibleProperty());
     emptyBox.managedProperty().bindBidirectional(emptyBox.visibleProperty());
     loadingBox.managedProperty().bindBidirectional(loadingBox.visibleProperty());
@@ -136,7 +143,7 @@ public class FriendsListController implements Initializable {
   }
 
   private List<CabinetContact> getFilteredContacts() {
-    List<CabinetContact> contacts = maniaClient.getContactClient().getContacts();
+    List<CabinetContact> contacts = maniaClient.getContactClient().getContacts(maniaClient.getCabinetClient().getDefaultCabinetCached().getId());
     String term = textfieldSearch.getText();
     if (!StringUtils.isEmpty(term)) {
       return contacts.stream().filter(c -> c.getDisplayName().toLowerCase().contains(term.toLowerCase())).collect(Collectors.toList());

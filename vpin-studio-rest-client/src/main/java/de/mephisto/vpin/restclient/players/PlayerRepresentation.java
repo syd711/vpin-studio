@@ -2,7 +2,6 @@ package de.mephisto.vpin.restclient.players;
 
 import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.restclient.assets.AssetRepresentation;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.NonNull;
 
 import java.util.Date;
@@ -32,23 +31,23 @@ public class PlayerRepresentation {
   private boolean administrative;
 
   //the uuid of the account on mania.net
-  private String tournamentUserUuid;
+  private String maniaAccountUuid;
 
   @NonNull
   public Account toManiaAccount() {
     Account account = new Account();
     account.setInitials(this.getInitials());
     account.setDisplayName(this.getName());
-    account.setUuid(this.getTournamentUserUuid());
+    account.setUuid(this.getManiaAccountUuid());
     return account;
   }
 
-  public String getTournamentUserUuid() {
-    return tournamentUserUuid;
+  public String getManiaAccountUuid() {
+    return maniaAccountUuid;
   }
 
-  public void setTournamentUserUuid(String tournamentUserUuid) {
-    this.tournamentUserUuid = tournamentUserUuid;
+  public void setManiaAccountUuid(String maniaAccountUuid) {
+    this.maniaAccountUuid = maniaAccountUuid;
   }
 
   public boolean isAdministrative() {

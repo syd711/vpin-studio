@@ -135,7 +135,7 @@ public class PlayerService {
     model.setName(player.getName());
     model.setInitials(player.getInitials());
     model.setAdministrative(player.isAdministrative());
-    model.setTournamentUserUuid(player.getTournamentUserUuid());
+    model.setManiaAccountUuid(player.getManiaAccountUuid());
 
     Player updated = playerRepository.saveAndFlush(model);
     LOG.info("Saved " + updated);

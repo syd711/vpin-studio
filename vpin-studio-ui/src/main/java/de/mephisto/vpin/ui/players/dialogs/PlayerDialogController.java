@@ -101,8 +101,8 @@ public class PlayerDialogController implements Initializable, DialogController {
 
     Platform.runLater(() -> {
       if (Features.MANIA_ENABLED) {
-        if (!StringUtils.isEmpty(player.getTournamentUserUuid())) {
-          Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(player.getTournamentUserUuid());
+        if (!StringUtils.isEmpty(player.getManiaAccountUuid())) {
+          Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(player.getManiaAccountUuid());
           if (accountByUuid != null && !this.vpinManiaPlayerCheckbox.isSelected()) {
             Optional<ButtonType> result2 = WidgetFactory.showConfirmation(stage, "VPin Mania Player", "The player \"" + this.player.getName() + "\" is a registered VPin Mania player and the \"VPin Mania\" checkbox is unchecked.", "This will delete the online account and all related highscores and data.");
             if (!result2.isPresent() || !result2.get().equals(ButtonType.OK)) {
@@ -229,7 +229,7 @@ public class PlayerDialogController implements Initializable, DialogController {
       vpinManiaPlayerCheckbox.setDisable(cabinet == null);
       visibilityCheckbox.setSelected(cabinet != null);
       visibilityCheckbox.setDisable(cabinet == null);
-      String tournamentUserUuid = player.getTournamentUserUuid();
+      String tournamentUserUuid = player.getManiaAccountUuid();
       if (!StringUtils.isEmpty(tournamentUserUuid)) {
         Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(tournamentUserUuid);
         this.vpinManiaPlayerCheckbox.setSelected(accountByUuid != null);
@@ -262,7 +262,7 @@ public class PlayerDialogController implements Initializable, DialogController {
     tournamentGroup.setVisible(Features.MANIA_ENABLED);
 
     if (Features.MANIA_ENABLED) {
-      cabinet = maniaClient.getCabinetClient().getCabinetCached();
+      cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
       tournamentGroup.setVisible(cabinet != null);
     }
 

@@ -23,7 +23,7 @@
                            <children>
                               <VBox fx:id="maniaGroup">
                                  <children>
-                                    <Label alignment="BASELINE_LEFT" layoutX="10.0" layoutY="10.0" styleClass="preference-section" text="ACCOUNT">
+                                    <Label alignment="BASELINE_LEFT" layoutX="10.0" layoutY="10.0" styleClass="preference-section" text="CABINET">
                                        <font>
                                           <Font size="13.0" />
                                        </font>
@@ -31,7 +31,7 @@
                                           <Insets top="24.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <Button fx:id="initialButton" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onAccount" styleClass="preference-button" text="Account Settings" />
+                                    <Button fx:id="initialButton" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onAccount" styleClass="preference-button" text="Cabinet Settings" />
                                  </children>
                               </VBox>
                               <VBox fx:id="menuItemsPanel">

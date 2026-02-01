@@ -1,7 +1,9 @@
 package de.mephisto.vpin.ui.mania.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.mania.ManiaRegistration;
+import de.mephisto.vpin.restclient.mania.ManiaSettings;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -128,6 +130,9 @@ public class ManiaRegistrationDialogController implements DialogController, Init
       playerList.getChildren().add(checkBox);
       playerCheckboxes.add(checkBox);
     }
+
+    ManiaSettings maniaSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
+    apiKeyText.setText(maniaSettings.getApiKey());
   }
 
   public ManiaRegistration getManiaRegistration() {

@@ -46,8 +46,8 @@ public class FriendSearchDialogController implements DialogController {
 
     String text = nameField.getText();
     if (!StringUtils.isEmpty(text)) {
-      Cabinet myCabinet = maniaClient.getCabinetClient().getCabinetCached();
-      if(myCabinet.getUuid().equalsIgnoreCase(text) || myCabinet.getDisplayName().equalsIgnoreCase(text)) {
+      Cabinet myCabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
+      if (myCabinet == null || myCabinet.getUuid().equalsIgnoreCase(text) || myCabinet.getDisplayName().equalsIgnoreCase(text)) {
         WidgetFactory.showInformation(stage, "Invalid Cabinet Id", "You can not invite yourself.");
         return;
       }
@@ -59,7 +59,7 @@ public class FriendSearchDialogController implements DialogController {
       }
       if (search.size() == 1) {
         stage.close();
-        maniaClient.getContactClient().createInvite(search.get(0));
+        maniaClient.getContactClient().createInvite(myCabinet.getId(), search.get(0));
         Platform.runLater(() -> {
           WidgetFactory.showInformation(Studio.stage, "Invite Sent", "An invite has been sent.", "The friend will appear in the friends list once the invite has been accepted.");
         });
