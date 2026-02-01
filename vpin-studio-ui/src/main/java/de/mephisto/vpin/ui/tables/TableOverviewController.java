@@ -1834,6 +1834,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     return status;
   }
 
+  public void scrollTo(GameRepresentationModel model) {
+    this.tableView.scrollTo(model);
+  }
 
   public void selectGameInModel(int gameId) {
     Optional<GameRepresentationModel> model = models.stream().filter(m -> m.getGame().getId() == gameId).findFirst();

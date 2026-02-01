@@ -9,7 +9,7 @@ public class AltColorUploadController extends BaseUploadController {
   private GameRepresentation game;
 
   public AltColorUploadController() {
-    super(AssetType.ALT_COLOR, false, false, "zip", "pac", "rar", "vni", "pal", "cRZ");
+    super(AssetType.ALT_COLOR, false, false, "zip", "pac", "rar", "vni", "pal", "cRZ", "cROMc");
   }
 
   public void setGame(GameRepresentation game) {

@@ -200,6 +200,11 @@ public class PauseMenu extends Application {
     stage.setX(stage.getX() + pauseMenuSettings.getStageOffsetX());
     stage.setY(stage.getY() + pauseMenuSettings.getStageOffsetY());
 
+    if (pauseMenuSettings.isApronMode()) {
+      stage.setHeight(monitorInfo.getHeight() + Math.abs(pauseMenuSettings.getStageOffsetY()));
+      stage.setWidth(monitorInfo.getWidth() + Math.abs(pauseMenuSettings.getStageOffsetX()));
+    }
+
     return scene;
   }
 
@@ -215,6 +220,10 @@ public class PauseMenu extends Application {
       if (!test) {
         status = client.getGameStatusService().startPause();
       }
+      else {
+        loadPauseMenu();
+      }
+
       try {
         if (status == null) {
           status = client.getGameStatusService().getStatus();

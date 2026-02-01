@@ -48,6 +48,7 @@ import org.springframework.stereotype.Service;
 import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -76,6 +77,20 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   public static final String DEFAULT_BACKGROUND = "background.png";
   public static final String PREVIEW = "preview.png";
   public static final String DMD = "dmd.png";
+
+
+  private static Robot robot;
+  static {
+    try {
+      boolean isHeadless = GraphicsEnvironment.isHeadless();
+      if (!isHeadless) {
+        robot = new Robot();
+      }
+    }
+    catch (AWTException e) {
+      LOG.error("Failed to create robot: {}", e.getMessage());
+    }
+  }
 
   private File pinupInstallationFolder;
   private File pinballXInstallationFolder;
@@ -630,6 +645,20 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public void systemShutdown() {
     ShutdownThread.shutdownSystem();
+  }
+
+  /**
+   * e.g. KeyEvent.VK_P
+   */
+  public void sendKey(int keyCode) {
+    robot.keyPress(keyCode);
+    try {
+      Thread.sleep(100);
+    }
+    catch (InterruptedException ex) {
+      //ignore
+    }
+    robot.keyRelease(keyCode);
   }
 
   public File getComponentArchiveFolder(ComponentType type) {

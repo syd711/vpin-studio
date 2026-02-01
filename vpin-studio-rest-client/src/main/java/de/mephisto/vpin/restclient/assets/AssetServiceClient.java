@@ -10,6 +10,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.ByteArrayInputStream;
@@ -111,7 +112,9 @@ public class AssetServiceClient extends VPinStudioClientService {
     try {
       String url = getRestClient().getBaseUrl() + API + "assets/" + id + "/upload/" + maxSize;
       LOG.info("HTTP POST " + url);
-      ResponseEntity<AssetRepresentation> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, assetType, listener), AssetRepresentation.class);
+      HttpEntity<MultiValueMap<String, Object>> upload = createUpload(file, -1, null, assetType, listener);
+      ResponseEntity<AssetRepresentation> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, AssetRepresentation.class);
+      finalizeUpload(upload);
       return exchange.getBody();
     }
     catch (Exception e) {

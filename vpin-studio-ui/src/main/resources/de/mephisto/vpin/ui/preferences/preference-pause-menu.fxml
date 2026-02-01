@@ -220,7 +220,7 @@
                               <Insets top="3.0" />
                            </GridPane.margin>
                         </Label>
-                        <Label styleClass="preference-label" text="Real DMD:" textFill="WHITE" GridPane.rowIndex="7">
+                        <Label styleClass="preference-label" text="Real DMD Support:" textFill="WHITE" GridPane.rowIndex="7">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -230,7 +230,7 @@
                         </Label>
                         <VBox GridPane.columnIndex="1" GridPane.rowIndex="7">
                            <children>
-                              <CheckBox fx:id="includeDmdCheckbox" mnemonicParsing="false" text="Include a DMD frame capture (For cab with real DMD)" textFill="WHITE">
+                              <CheckBox fx:id="includeDmdCheckbox" mnemonicParsing="false" text="Include a DMD frame capture (for cabinets with a real DMD)" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -238,8 +238,8 @@
                                     <Insets />
                                  </VBox.margin>
                               </CheckBox>
-                              <Label styleClass="checkbox-description" text="The DMD frame capture needs Network Stream enabled in DMDDevice.ini !" textFill="WHITE" />
-                              <Hyperlink onAction="#onDMDDeviceLink" text="check DMD Device Settings">
+                              <Label styleClass="checkbox-description" text="The DMD frame capture needs network stream enabled in DMDDevice.ini." textFill="WHITE" />
+                              <Hyperlink onAction="#onDMDDeviceLink" text="Open DMD Device Settings">
                                  <VBox.margin>
                                     <Insets bottom="12.0" left="21" />
                                  </VBox.margin>

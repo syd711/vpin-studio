@@ -1,5 +1,6 @@
 package de.mephisto.vpin.commons.fx.pausemenu.states;
 
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.pausemenu.MenuController;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenuUIDefaults;
@@ -68,7 +69,6 @@ public class StateMananger implements GameControllerInputListener {
   public void init(MenuController controller) {
     this.menuController = controller;
     this.activeState = new MenuItemSelectionState(controller);
-
   }
 
   public void handle(String button) {
@@ -77,14 +77,17 @@ public class StateMananger implements GameControllerInputListener {
     }
 
     if (button.equals(pauseMenuSettings.getLeftButton())) {
+      ServerFX.forceShow(PauseMenu.getInstance().getStage());
       this.activeState = activeState.left();
       navPlayer.play();
     }
     else if (button.equals(pauseMenuSettings.getRightButton())) {
+      ServerFX.forceShow(PauseMenu.getInstance().getStage());
       this.activeState = activeState.right();
       navPlayer.play();
     }
     else if (button.equals(pauseMenuSettings.getStartButton())) {
+      ServerFX.forceShow(PauseMenu.getInstance().getStage());
       enterPlayer.play();
       this.activeState = activeState.enter();
       LOG.info("Entered {}", this.activeState);
