@@ -173,6 +173,11 @@ public class HeaderResizeableController implements Initializable {
     maniaBtn.managedProperty().bindBidirectional(maniaBtn.visibleProperty());
     maniaBtn.setVisible(Features.MANIA_SOCIAL_ENABLED && Features.MANIA_ENABLED);
     maniaOpenBtn.setVisible(Features.MANIA_SOCIAL_ENABLED && Features.MANIA_ENABLED);
+
+    if (Features.MANIA_SOCIAL_ENABLED && Features.MANIA_ENABLED) {
+      ManiaHelper.isRegistered();
+    }
+
     Image maniaImage = new Image(Studio.class.getResourceAsStream("mania.png"));
     ImageView iconMedia = new ImageView(maniaImage);
     iconMedia.setFitWidth(18);

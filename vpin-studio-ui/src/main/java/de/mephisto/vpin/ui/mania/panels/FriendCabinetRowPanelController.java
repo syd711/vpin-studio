@@ -75,7 +75,7 @@ public class FriendCabinetRowPanelController implements Initializable {
 
   @FXML
   private void onDelete() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete friendship to \"" + displayName + "\"?");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Ignore invite from to \"" + displayName + "\"?");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       maniaClient.getContactClient().deleteContact(cabinet.getId(), cabinetUuid);
       if (invitesController != null) {

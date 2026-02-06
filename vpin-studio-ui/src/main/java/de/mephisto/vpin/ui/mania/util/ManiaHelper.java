@@ -16,8 +16,10 @@ import de.mephisto.vpin.ui.mania.dialogs.ManiaDialogs;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tools.ant.taskdefs.optional.Cab;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.NonNull;
 
 import java.util.List;
 
@@ -26,6 +28,10 @@ import static de.mephisto.vpin.ui.Studio.maniaClient;
 
 public class ManiaHelper {
   private final static Logger LOG = LoggerFactory.getLogger(ManiaHelper.class);
+
+  public static String getCabinetAvatarUrl(@NonNull Cabinet cabinet) {
+    return "https://vpin-mania.net/api/cabinet/avatar/" + cabinet.getUuid();
+  }
 
   public static boolean isRegistered() {
     try {

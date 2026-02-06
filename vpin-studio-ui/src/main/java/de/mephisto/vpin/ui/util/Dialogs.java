@@ -13,6 +13,8 @@ import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.launcher.InstallationDialogController;
+import de.mephisto.vpin.ui.mania.dialogs.ManiaDialogs;
+import de.mephisto.vpin.ui.mania.util.ManiaHelper;
 import de.mephisto.vpin.ui.players.dialogs.PlayerDialogController;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.fxml.FXMLLoader;

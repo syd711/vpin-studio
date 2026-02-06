@@ -4,7 +4,8 @@
       "Bash(ls:*)",
       "Bash(cat:*)",
       "Bash(mvn:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(curl:*)"
     ]
   }
 }
