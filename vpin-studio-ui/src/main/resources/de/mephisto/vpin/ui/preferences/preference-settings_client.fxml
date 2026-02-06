@@ -57,7 +57,7 @@
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <VBox fx:id="dropInSetupBox" spacing="6.0">
+                        <VBox spacing="6.0">
                            <children>
                               <Label styleClass="preference-description" text="If checked, new files of the selected drop-in folder will be shown in the menu once the download is finished." textFill="WHITE" />
                               <HBox alignment="CENTER_LEFT" spacing="6.0">
