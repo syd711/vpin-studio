@@ -6,7 +6,7 @@
 - Fixed error reading the global screenres.txt.
 - Fixed missing UI disabled state update when the drop-in folder checkbox was toggled.
 - Fixed broken "Generate" button in the template editor.
-
+- Fixed builds for MacOS.
 
 ---
 
