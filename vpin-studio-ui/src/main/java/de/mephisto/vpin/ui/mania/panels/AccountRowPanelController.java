@@ -6,7 +6,6 @@ import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.AccountVisibility;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.mania.FriendsListController;
 import de.mephisto.vpin.ui.mania.util.ManiaAvatarCache;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -27,8 +26,8 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.maniaClient;
 
-public class FriendAccountRowPanelController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(FriendAccountRowPanelController.class);
+public class AccountRowPanelController implements Initializable {
+  private final static Logger LOG = LoggerFactory.getLogger(AccountRowPanelController.class);
 
   @FXML
   private BorderPane root;
@@ -45,11 +44,9 @@ public class FriendAccountRowPanelController implements Initializable {
   @FXML
   private ImageView avatarView;
 
-  private FriendsListController friendsListController;
   private Account account;
 
-  public void setData(FriendsListController friendsListController, String cabinetUuid, Account account) {
-    this.friendsListController = friendsListController;
+  public void setData(String cabinetUuid, Account account) {
     this.account = account;
     this.toolbar.setVisible(String.valueOf(cabinetUuid).equals(maniaClient.getCabinetClient().getDefaultCabinetCached().getUuid()));
 

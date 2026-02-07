@@ -164,16 +164,6 @@ public class ManiaSettingsController extends SettingsSceneController implements 
   }
 
   @FXML
-  private void onFriendsList(ActionEvent event) throws IOException {
-    load("mania-friends-list.fxml", event);
-  }
-
-  @FXML
-  private void onFriendsPendingInvites(ActionEvent event) throws IOException {
-    load("mania-friends-pending-invites.fxml", event);
-  }
-
-  @FXML
   private void onPrivacySettings(ActionEvent event) throws IOException {
     load("mania-privacy-settings.fxml", event);
   }

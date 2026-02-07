@@ -20,13 +20,6 @@ public class ManiaDialogs {
     return controller.getManiaRegistration();
   }
 
-  public static void openAccountSearchDialog() {
-    Stage stage = Dialogs.createStudioDialogStage(FriendSearchDialogController.class, "dialog-friend-search.fxml", "VPin Mania Cabinet Search");
-    FriendSearchDialogController controller = (FriendSearchDialogController) stage.getUserData();
-    controller.setStage(stage);
-    stage.showAndWait();
-  }
-
   public static void openTableSyncResult(List<ManiaTableSyncResult> results) {
     Stage stage = Dialogs.createStudioDialogStage(ManiaTableSynchronizationDialogController.class, "dialog-mania-table-sync.fxml", "VPin Mania Synchronization Results");
     ManiaTableSynchronizationDialogController controller = (ManiaTableSynchronizationDialogController) stage.getUserData();

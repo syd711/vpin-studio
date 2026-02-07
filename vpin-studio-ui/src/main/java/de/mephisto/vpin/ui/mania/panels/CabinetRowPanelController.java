@@ -4,18 +4,12 @@ import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.*;
-import de.mephisto.vpin.ui.mania.FriendsListController;
-import de.mephisto.vpin.ui.mania.FriendsPendingInvitesController;
 import de.mephisto.vpin.ui.mania.ManiaPrivacySettingsController;
-import de.mephisto.vpin.ui.mania.ManiaSettingsController;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
-import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -29,13 +23,12 @@ import org.slf4j.LoggerFactory;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.*;
 
-public class FriendCabinetRowPanelController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(FriendCabinetRowPanelController.class);
+public class CabinetRowPanelController implements Initializable {
+  private final static Logger LOG = LoggerFactory.getLogger(CabinetRowPanelController.class);
 
   @FXML
   private BorderPane root;
@@ -53,54 +46,19 @@ public class FriendCabinetRowPanelController implements Initializable {
   private ImageView avatarView;
 
   @FXML
-  private ToolBar toolbar;
-
-  @FXML
-  private Button deleteBtn;
-
-  @FXML
-  private Button acceptBtn;
-
-  @FXML
   private VBox playerList;
 
-  private FriendsPendingInvitesController invitesController;
   private ManiaPrivacySettingsController privacySettingsController;
-  private FriendsListController friendsListController;
 
   private String cabinetUuid;
   private String displayName;
   private CabinetStatus status;
   private Cabinet cabinet;
 
-  @FXML
-  private void onDelete() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Ignore invite from to \"" + displayName + "\"?");
-    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      maniaClient.getContactClient().deleteContact(cabinet.getId(), cabinetUuid);
-      if (invitesController != null) {
-        invitesController.reload();
-      }
-      else if (friendsListController != null) {
-        friendsListController.reload();
-      }
-    }
-  }
-
-  @FXML
-  private void onAccept() {
-    maniaClient.getContactClient().acceptInvite(cabinet.getId(), cabinetUuid);
-    invitesController.reload();
-    ManiaSettingsController.navigateTo("mania-friends-list");
-  }
-
-  public void setData(FriendsPendingInvitesController invitesController, CabinetContact contact) {
+  public void setData(CabinetContact contact) {
     this.cabinetUuid = contact.getUuid();
     this.status = contact.getStatus();
     this.displayName = contact.getDisplayName();
-
-    this.invitesController = invitesController;
-    acceptBtn.setVisible(true);
     refresh(contact.getUuid());
   }
 
@@ -110,20 +68,7 @@ public class FriendCabinetRowPanelController implements Initializable {
     this.status = cabinet.getStatus();
     this.displayName = cabinet.getDisplayName();
     this.privacySettingsController = privacySettingsController;
-    acceptBtn.setVisible(false);
-    deleteBtn.setVisible(false);
-    toolbar.setVisible(false);
     refresh(cabinet.getUuid());
-  }
-
-  public void setData(FriendsListController friendsListController, CabinetContact contact) {
-    this.cabinetUuid = contact.getUuid();
-    this.status = contact.getStatus();
-    this.displayName = contact.getDisplayName();
-
-    this.friendsListController = friendsListController;
-    acceptBtn.setVisible(false);
-    refresh(contact.getUuid());
   }
 
   private void refresh(String cUuid) {
@@ -167,16 +112,16 @@ public class FriendCabinetRowPanelController implements Initializable {
 
         for (Account account : accounts) {
           try {
-            FXMLLoader loader = new FXMLLoader(FriendAccountRowPanelController.class.getResource("friend-account-row-panel.fxml"));
+            FXMLLoader loader = new FXMLLoader(AccountRowPanelController.class.getResource("account-row-panel.fxml"));
             Pane node = loader.load();
-            FriendAccountRowPanelController friendController = loader.getController();
-            friendController.setData(friendsListController, cabinetUuid, account);
+            AccountRowPanelController friendController = loader.getController();
+            friendController.setData(cabinetUuid, account);
             playerList.getChildren().add(node);
           }
           catch (Exception e) {
-            LOG.error("Failed to loading friends data: " + e.getMessage(), e);
+            LOG.error("Failed to loading account row data: " + e.getMessage(), e);
             Platform.runLater(() -> {
-              WidgetFactory.showAlert(stage, "Error", "Error loading friends data: " + e.getMessage());
+              WidgetFactory.showAlert(stage, "Error", "Error loading account data: " + e.getMessage());
             });
           }
         }
@@ -186,8 +131,6 @@ public class FriendCabinetRowPanelController implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    acceptBtn.managedProperty().bindBidirectional(acceptBtn.visibleProperty());
-    deleteBtn.managedProperty().bindBidirectional(deleteBtn.visibleProperty());
     playerList.managedProperty().bindBidirectional(playerList.visibleProperty());
 
     cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();

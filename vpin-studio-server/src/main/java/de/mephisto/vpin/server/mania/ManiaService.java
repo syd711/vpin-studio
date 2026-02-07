@@ -40,6 +40,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -703,10 +704,6 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
     catch (Exception e) {
       LOG.error("Failed to write mania id file: {}", e.getMessage());
     }
-  }
-
-  public Cabinet getCabinet() {
-    return this.cabinet;
   }
 
   @Override
