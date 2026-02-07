@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.alx.AlxServiceClient;
 import de.mephisto.vpin.restclient.assets.AssetServiceClient;
 import de.mephisto.vpin.restclient.assets.TableAssetSourcesServiceClient;
 import de.mephisto.vpin.restclient.backups.BackupServiceClient;
+import de.mephisto.vpin.restclient.vpxz.VPXZServiceClient;
 import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.cards.HighscoreCardTemplatesServiceClient;
@@ -71,6 +72,7 @@ public class VPinStudioClient {
   private final AltColorServiceClient altColorServiceClient;
   private final VpAuthenticationServiceClient authenticationServiceClient;
   private final BackupServiceClient backupServiceClient;
+  private final VPXZServiceClient VPXZServiceClient;
   private final AlxServiceClient alxServiceClient;
   private final AssetServiceClient assetServiceClient;
   private final CompetitionsServiceClient competitions;
@@ -127,6 +129,7 @@ public class VPinStudioClient {
     this.altColorServiceClient = new AltColorServiceClient(this);
     this.altSoundServiceClient = new AltSoundServiceClient(this);
     this.backupServiceClient = new BackupServiceClient(this);
+    this.VPXZServiceClient = new VPXZServiceClient(this);
     this.assetServiceClient = new AssetServiceClient(this);
     this.competitions = new CompetitionsServiceClient(this);
     this.componentServiceClient = new ComponentServiceClient(this);
@@ -203,6 +206,10 @@ public class VPinStudioClient {
 
   public BackupServiceClient getBackupService() {
     return backupServiceClient;
+  }
+
+  public VPXZServiceClient getVPXMobileService() {
+    return VPXZServiceClient;
   }
 
   public FuturePinballServiceClient getFuturePinballService() {

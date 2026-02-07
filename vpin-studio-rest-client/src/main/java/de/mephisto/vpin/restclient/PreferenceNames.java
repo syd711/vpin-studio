@@ -89,6 +89,7 @@ public interface PreferenceNames {
   String PINEMHI_AUTOSTART_ENABLED = "pinemhiAutoStartEnabled";
 
   String BACKUP_SETTINGS = "backupSettings";
+  String VPXZ_SETTINGS = "vpxzSettings";
   String WOVP_SETTINGS = "wovpSettings";
 
   static Class<? extends JsonSettings> getClassFromKey(String key) {

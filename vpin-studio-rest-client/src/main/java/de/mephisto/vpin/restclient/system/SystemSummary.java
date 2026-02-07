@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.system;
 
 import de.mephisto.vpin.restclient.backups.BackupType;
+import de.mephisto.vpin.restclient.vpxz.VPXZType;
 
 import java.util.List;
 

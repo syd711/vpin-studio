@@ -71,4 +71,6 @@ public class FeaturesInfo {
     /** Specific flag for standalone mode */
   public boolean IS_STANDALONE = false;
 
+  public boolean VPXZ_ENABLED  = true;
+
 }

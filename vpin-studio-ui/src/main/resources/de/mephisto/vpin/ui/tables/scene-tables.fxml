@@ -79,6 +79,17 @@
                                         <Tooltip text="Table Backups (F6)" />
                                     </tooltip>
                                 </Tab>
+                                <Tab fx:id="vpxMobileTab" text=" VPX Mobile">
+                                    <content>
+                                        <BorderPane />
+                                    </content>
+                                    <graphic>
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cellphone" iconSize="18" />
+                                    </graphic>
+                                    <tooltip>
+                                        <Tooltip text="VPX Mobile (F7)" />
+                                    </tooltip>
+                                </Tab>
                                 <Tab fx:id="recorderTab" text=" Media Recorder">
                                 <content>
                                     <BorderPane />
@@ -87,7 +98,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2v-video-outline" iconSize="18" />
                                 </graphic>
                                 <tooltip>
-                                    <Tooltip text="Media Recorder (F7)" />
+                                    <Tooltip text="Media Recorder (F8)" />
                                 </tooltip>
                                 </Tab>
                             </tabs>
@@ -134,6 +145,7 @@
                 <fx:include fx:id="assetViewSideBar" source="scene-tables-assetview-sidebar.fxml" />
                 <fx:include fx:id="tablesSideBar" source="scene-tables-sidebar.fxml" />
                 <fx:include fx:id="backupsSideBar" source="../backups/scene-backups-sidebar.fxml" />
+                <fx:include fx:id="vpxzSidebar" source="../vpxz/scene-vpxz-sidebar.fxml" />
                 <fx:include fx:id="vpsTablesSidebar" source="../vps/scene-vps-tables-sidebar.fxml" />
             </children>
             <padding>

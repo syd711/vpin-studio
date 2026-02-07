@@ -96,6 +96,9 @@ public class PreferencesController extends SettingsSceneController implements In
   private Button vpsBtn;
 
   @FXML
+  private Button vpxzBtn;
+
+  @FXML
   private Button validators_screensBtn;
 
   @FXML
@@ -287,6 +290,11 @@ public class PreferencesController extends SettingsSceneController implements In
   @FXML
   private void onVpaRepositories(ActionEvent event) throws IOException {
     load("preference-backups.fxml", event);
+  }
+
+  @FXML
+  private void onVpxzRepositories(ActionEvent event) throws IOException {
+    load("preference-vpxz.fxml", event);
   }
 
   @FXML
@@ -496,7 +504,9 @@ public class PreferencesController extends SettingsSceneController implements In
     vpfBtn.managedProperty().bindBidirectional(vpfBtn.visibleProperty());
     webhooksBtn.managedProperty().bindBidirectional(webhooksBtn.visibleProperty());
     dmdDeviceBtn.managedProperty().bindBidirectional(dmdDeviceBtn.visibleProperty());
+    vpxzBtn.managedProperty().bindBidirectional(vpxzBtn.visibleProperty());
 
+    vpxzBtn.setVisible(Features.VPXZ_ENABLED);
     repositoriesBtn.setVisible(Features.BACKUPS_ENABLED);
     dmdDeviceBtn.setVisible(Features.DMD_DEVICE_INI);
 
