@@ -40,7 +40,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -524,7 +523,6 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
     if (propertyName.equals(PreferenceNames.MANIA_SETTINGS)) {
       maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
-      maniaClient.getRestClient().setApiKey(maniaSettings.getApiKey());
 
       refreshDefaultCabinet();
       Cabinet cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
@@ -674,6 +672,10 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
         }
         preferencesService.addChangeListener(this);
 
+        if (cabinet != null) {
+          updateIdFile(cabinet.getUuid());
+        }
+
         new Thread(() -> {
           setOnline(cabinet);
         }).start();
@@ -684,6 +686,27 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
       }
     }
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
+  }
+
+  private static void updateIdFile(@NonNull String uuid) {
+    try {
+      String localAppData = System.getenv("LOCALAPPDATA");
+      Path appDataPath = Paths.get(localAppData, "VPin-Studio");
+      Files.createDirectories(appDataPath);
+      File idFile = new File(appDataPath.toFile(), VPIN_MANIA_ID_TXT);
+      if (idFile.exists() && !idFile.delete()) {
+        LOG.error("Failed to delete mania id file");
+        return;
+      }
+      Files.writeString(idFile.toPath(), uuid);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to write mania id file: {}", e.getMessage());
+    }
+  }
+
+  public Cabinet getCabinet() {
+    return this.cabinet;
   }
 
   @Override

@@ -64,9 +64,6 @@ public class ClientSettingsPreferencesController implements Initializable {
   private Button dropInFolderButton;
 
   @FXML
-  private VBox dropInSetupBox;
-
-  @FXML
   private RadioButton radioDoNothing;
   @FXML
   private RadioButton radioMoveToFolder;
@@ -234,12 +231,11 @@ public class ClientSettingsPreferencesController implements Initializable {
 
     dropInFolderCheckbox.setSelected(LocalUISettings.getBoolean(LocalUISettings.DROP_IN_FOLDER_ENABLED));
     dropInFolderCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      setDropInFieldEnabled(t1);
       LocalUISettings.saveProperty(LocalUISettings.DROP_IN_FOLDER_ENABLED, t1.toString());
-      dropInTextField.setDisable(!t1);
-      dropInFolderButton.setDisable(!t1);
     });
 
-    dropInSetupBox.setDisable(!dropInFolderCheckbox.isSelected());
+    setDropInFieldEnabled(dropInFolderCheckbox.isSelected());
     dropInTextField.setText(LocalUISettings.getString(LocalUISettings.DROP_IN_FOLDER));
 
     sectionPlaylists.managedProperty().bindBidirectional(sectionPlaylists.visibleProperty());
@@ -662,6 +658,20 @@ public class ClientSettingsPreferencesController implements Initializable {
       client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
+  }
+
+  private void setDropInFieldEnabled(Boolean enabled) {
+    dropInTextField.setDisable(!enabled);
+    dropInFolderButton.setDisable(!enabled);
+    radioDoNothing.setDisable(!enabled);
+    radioMoveToFolder.setDisable(!enabled);
+    radioDoMove.setDisable(!enabled);
+    radioDoDelete.setDisable(!enabled);
+    dropInMoveTargetTextField.setDisable(!enabled);
+    dropInFolderButton.setDisable(!enabled);
+    dropInMoveTargetCheckbox.setDisable(!enabled);
+    dropInMoveTrashCheckbox.setDisable(!enabled);
+    dropInMoveTargetButton.setDisable(!enabled);
   }
 
   private void refreshNetworkStatusLabel(String newValue) {
