@@ -101,7 +101,7 @@
                       </tooltip>
                   </Button>
                   <Separator layoutX="1022.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
-                  <Button fx:id="deleteBtn" layoutX="379.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBackupDelete" text="Delete" textFill="#ff3333">
+                  <Button fx:id="deleteBtn" layoutX="379.0" layoutY="11.0" mnemonicParsing="false" onAction="#onVpxzDelete" text="Delete" textFill="#ff3333">
                       <font>
                           <Font size="14.0" />
                       </font>
@@ -118,7 +118,7 @@
                           <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
                       </graphic>
                       <tooltip>
-                          <Tooltip text="Open Backups folder" />
+                          <Tooltip text="Open VPXZ folder" />
                       </tooltip>
                   </Button>
               </items>

@@ -230,7 +230,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
   }
 
   @FXML
-  private void onBackupDelete() {
+  private void onVpxzDelete() {
     List<VPXZModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
       String title = "Delete the " + selectedItems.size() + " selected archives?";
