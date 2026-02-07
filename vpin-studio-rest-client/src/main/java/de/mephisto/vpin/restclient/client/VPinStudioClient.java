@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.alx.AlxServiceClient;
 import de.mephisto.vpin.restclient.assets.AssetServiceClient;
 import de.mephisto.vpin.restclient.assets.TableAssetSourcesServiceClient;
 import de.mephisto.vpin.restclient.backups.BackupServiceClient;
+import de.mephisto.vpin.restclient.vpxz.VPXZServiceClient;
 import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.cards.HighscoreCardTemplatesServiceClient;
@@ -43,7 +44,6 @@ import de.mephisto.vpin.restclient.system.FolderChooserServiceClient;
 import de.mephisto.vpin.restclient.system.SystemServiceClient;
 import de.mephisto.vpin.restclient.tagging.TaggingServiceClient;
 import de.mephisto.vpin.restclient.textedit.TextEditorServiceClient;
-import de.mephisto.vpin.restclient.tournaments.TournamentsServiceClient;
 import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.restclient.vpauthenticators.VpAuthenticationServiceClient;
@@ -72,6 +72,7 @@ public class VPinStudioClient {
   private final AltColorServiceClient altColorServiceClient;
   private final VpAuthenticationServiceClient authenticationServiceClient;
   private final BackupServiceClient backupServiceClient;
+  private final VPXZServiceClient VPXZServiceClient;
   private final AlxServiceClient alxServiceClient;
   private final AssetServiceClient assetServiceClient;
   private final CompetitionsServiceClient competitions;
@@ -107,7 +108,6 @@ public class VPinStudioClient {
   private final PupPackServiceClient pupPackServiceClient;
   private final PatcherServiceClient patcherServiceClient;
   private final SystemServiceClient systemServiceClient;
-  private final TournamentsServiceClient tournamentsServiceClient;
   private final TaggingServiceClient taggingServiceClient;
   private final TextEditorServiceClient textEditorServiceClient;
   private final PinVolServiceClient pinVolServiceClient;
@@ -129,6 +129,7 @@ public class VPinStudioClient {
     this.altColorServiceClient = new AltColorServiceClient(this);
     this.altSoundServiceClient = new AltSoundServiceClient(this);
     this.backupServiceClient = new BackupServiceClient(this);
+    this.VPXZServiceClient = new VPXZServiceClient(this);
     this.assetServiceClient = new AssetServiceClient(this);
     this.competitions = new CompetitionsServiceClient(this);
     this.componentServiceClient = new ComponentServiceClient(this);
@@ -172,7 +173,6 @@ public class VPinStudioClient {
     this.playlistMediaServiceClient = new PlaylistMediaServiceClient(this);
     this.higscoreBackupServiceClient = new HigscoreBackupServiceClient(this);
     this.mediaConversionServiceClient = new MediaConversionServiceClient(this);
-    this.tournamentsServiceClient = new TournamentsServiceClient(this);
     this.wovpServiceClient = new WOVPServiceClient(this);
   }
 
@@ -206,6 +206,10 @@ public class VPinStudioClient {
 
   public BackupServiceClient getBackupService() {
     return backupServiceClient;
+  }
+
+  public VPXZServiceClient getVPXMobileService() {
+    return VPXZServiceClient;
   }
 
   public FuturePinballServiceClient getFuturePinballService() {
@@ -266,10 +270,6 @@ public class VPinStudioClient {
 
   public GameStatusServiceClient getGameStatusService() {
     return gameStatusServiceClient;
-  }
-
-  public TournamentsServiceClient getTournamentsService() {
-    return tournamentsServiceClient;
   }
 
   public void setErrorHandler(VPinStudioClientErrorHandler errorHandler) {

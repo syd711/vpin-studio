@@ -6,9 +6,6 @@ import com.zaxxer.hikari.HikariDataSource;
 import de.mephisto.vpin.commons.MonitorInfoUtil;
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.fx.ServerFX;
-import de.mephisto.vpin.commons.fx.notifications.Notification;
-import de.mephisto.vpin.commons.fx.notifications.NotificationStageService;
-import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.commons.utils.controller.GameController;
 import de.mephisto.vpin.restclient.backups.BackupType;
@@ -18,6 +15,7 @@ import de.mephisto.vpin.restclient.system.FeaturesInfo;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.restclient.system.NVRamsInfo;
 import de.mephisto.vpin.restclient.system.ScoringDB;
+import de.mephisto.vpin.restclient.vpxz.VPXZType;
 import de.mephisto.vpin.server.ServerUpdatePreProcessing;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.VPinStudioServer;
@@ -45,10 +43,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
 
-import static de.mephisto.vpin.server.VPinStudioServer.Features;
-
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -56,11 +51,13 @@ import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 @Service
 public class SystemService extends SystemInfo implements InitializingBean, ApplicationContextAware {
@@ -740,5 +737,4 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     }
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
-
 }

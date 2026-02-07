@@ -8,7 +8,6 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
-import de.mephisto.vpin.restclient.mania.ManiaSettings;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
@@ -18,8 +17,6 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.players.PlayersController;
 import de.mephisto.vpin.ui.tables.TablesController;
-import de.mephisto.vpin.ui.tournaments.TournamentsController;
-import de.mephisto.vpin.ui.util.Dialogs;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -29,7 +26,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -67,9 +63,6 @@ public class NavigationController implements Initializable, StudioEventListener,
 
   @FXML
   private Pane systemManagerOverlay;
-
-  @FXML
-  private Pane tournamentsBtn;
 
   @FXML
   private Pane playersBtn;
@@ -128,19 +121,6 @@ public class NavigationController implements Initializable, StudioEventListener,
   @FXML
   private void onDashboardClick() {
     navigateTo(NavigationItem.Dashboard);
-  }
-
-  @FXML
-  private void onTournamentsClick() {
-    if (ToolbarController.newVersion != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Update " + ToolbarController.newVersion, "You need the latest VPin Studio version to use these services.", null, "Update");
-      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        Dialogs.openUpdateDialog();
-      }
-    }
-    else {
-      navigateTo(NavigationItem.Tournaments);
-    }
   }
 
   @FXML
@@ -275,15 +255,11 @@ public class NavigationController implements Initializable, StudioEventListener,
 
   @Override
   public void preferencesChanged(String key, Object value) {
-    if (PreferenceNames.MANIA_SETTINGS.equals(key)) {
-      ManiaSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
-      tournamentsBtn.setVisible(settings.isEnabled() && settings.isTournamentsEnabled());
-    }
+
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    tournamentsBtn.managedProperty().bindBidirectional(tournamentsBtn.visibleProperty());
     cardsBtn.managedProperty().bindBidirectional(cardsBtn.visibleProperty());
 
     staticAvatarPane = this.avatarPane;
@@ -296,24 +272,12 @@ public class NavigationController implements Initializable, StudioEventListener,
 
     cardsBtn.setVisible(Features.MEDIA_ENABLED);
 
-    tournamentsBtn.setVisible(false);
-    try {
-      ManiaSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
-      if (Features.MANIA_ENABLED && Studio.maniaClient != null && Studio.maniaClient.getCabinetClient().getCabinet() != null && settings.isTournamentsEnabled()) {
-        tournamentsBtn.setVisible(settings.isEnabled());
-      }
-    }
-    catch (Exception e) {
-      LOG.error("Mania initialization failed: {}", e.getMessage(), e);
-    }
-
     this.buttons.add(tablesBtn);
     this.buttons.add(dashboardBtn);
     this.buttons.add(cardsBtn);
 
     this.buttons.add(competitionsBtn);
     this.buttons.add(playersBtn);
-    this.buttons.add(tournamentsBtn);
 
     this.buttons.add(systemManagerBtn);
 
@@ -323,7 +287,6 @@ public class NavigationController implements Initializable, StudioEventListener,
 
     navigationItemMap.put(NavigationItem.Competitions, new NavigationView(NavigationItem.Competitions, CompetitionsController.class, competitionsBtn, "scene-competitions.fxml"));
     navigationItemMap.put(NavigationItem.HighscoreCards, new NavigationView(NavigationItem.HighscoreCards, HighscoreCardsController.class, cardsBtn, "scene-highscore-cards.fxml"));
-    navigationItemMap.put(NavigationItem.Tournaments, new NavigationView(NavigationItem.Tournaments, TournamentsController.class, tournamentsBtn, "scene-tournaments.fxml"));
 
     navigationItemMap.put(NavigationItem.SystemManager, new NavigationView(NavigationItem.SystemManager, ComponentsController.class, systemManagerBtn, "scene-components.fxml"));
 

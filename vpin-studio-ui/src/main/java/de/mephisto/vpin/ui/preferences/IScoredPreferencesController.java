@@ -10,7 +10,7 @@ import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableDialogs;
-import de.mephisto.vpin.ui.tournaments.dialogs.IScoredGameRoomLoadingProgressModel;
+import de.mephisto.vpin.ui.preferences.dialogs.IScoredGameRoomLoadingProgressModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;

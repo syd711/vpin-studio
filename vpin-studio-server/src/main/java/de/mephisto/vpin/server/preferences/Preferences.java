@@ -271,8 +271,7 @@ public class Preferences {
     this.serverSettings = serverSettings;
   }
 
-  @Column(length = 8192)
-  private String tournamentSettings;
+  private String maniaSettings;
 
   public String getPauseMenuSettings() {
     return pauseMenuSettings;
@@ -282,12 +281,12 @@ public class Preferences {
     this.pauseMenuSettings = pauseMenuSettings;
   }
 
-  public String getTournamentSettings() {
-    return tournamentSettings;
+  public String getManiaSettings() {
+    return maniaSettings;
   }
 
-  public void setTournamentSettings(String tournamentSettings) {
-    this.tournamentSettings = tournamentSettings;
+  public void setManiaSettings(String maniaSettings) {
+    this.maniaSettings = maniaSettings;
   }
 
   public String getHighscoreCardSettings() {

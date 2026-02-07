@@ -21,7 +21,7 @@
                         <TableColumn fx:id="nameColumn" prefWidth="280" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
                         <TableColumn fx:id="initialsColumn" minWidth="0.0" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Initials" />
                         <TableColumn fx:id="adminColumn" prefWidth="150.0" style="-fx-alignment: CENTER;" text="VPin Default Player" />
-                        <TableColumn fx:id="tournamentColumn" prefWidth="150.0" style="-fx-alignment: CENTER;" text="VPin Mania Account" />
+                        <TableColumn fx:id="maniaPlayerColumn" prefWidth="150.0" style="-fx-alignment: CENTER;" text="VPin Mania Account" />
                         <TableColumn fx:id="columnCreatedAt" minWidth="2.39996337890625" prefWidth="200.0" style="-fx-alignment: CENTER;" text="Created At" />
                     </columns>
                 </TableView>

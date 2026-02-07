@@ -1201,18 +1201,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         compBtn.setOnAction(event -> {
           Platform.runLater(() -> {
             CompetitionType competitionType = value.getCompetitionTypes().get(0);
-            if (competitionType.equals(CompetitionType.MANIA)) {
-              ManiaSettings maniaSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
-              if (maniaSettings.isTournamentsEnabled()) {
-                NavigationController.navigateTo(NavigationItem.Tournaments, new NavigationOptions(-1));
-              }
-              else {
-                WidgetFactory.showInformation(stage, "Tournaments not enabled!", "You must enable the Mania Tournaments view to navigate there.");
-              }
-            }
-            else {
-              NavigationController.navigateTo(NavigationItem.Competitions, new NavigationOptions(competitionType));
-            }
+            NavigationController.navigateTo(NavigationItem.Competitions, new NavigationOptions(competitionType));
           });
         });
       }

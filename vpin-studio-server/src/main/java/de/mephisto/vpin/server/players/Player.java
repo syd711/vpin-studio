@@ -47,17 +47,18 @@ public class Player {
 
   private String email;
 
-  private String tournamentUserUuid;
+  @Column(name = "tournamentUserUuid", nullable = true)
+  private String maniaAccountUuid;
 
   @Column(name = "administrative", nullable = false, columnDefinition = "boolean default false")
   private boolean administrative;
 
-  public String getTournamentUserUuid() {
-    return tournamentUserUuid;
+  public String getManiaAccountUuid() {
+    return maniaAccountUuid;
   }
 
-  public void setTournamentUserUuid(String tournamentUserUuid) {
-    this.tournamentUserUuid = tournamentUserUuid;
+  public void setManiaAccountUuid(String maniaAccountUuid) {
+    this.maniaAccountUuid = maniaAccountUuid;
   }
 
   public boolean isAdministrative() {

@@ -83,7 +83,7 @@ public class CabinetSettingsPreferencesController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     if (Features.MANIA_ENABLED) {
       try {
-        cabinet = maniaClient.getCabinetClient().getCabinet();
+        cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
       }
       catch (Exception e) {
         LOG.error("Failed to read cabinet info: {}", e.getMessage());

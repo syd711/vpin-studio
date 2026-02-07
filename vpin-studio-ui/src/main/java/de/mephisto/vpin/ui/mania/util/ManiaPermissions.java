@@ -42,7 +42,7 @@ public class ManiaPermissions {
         loadAccount();
       }
 
-      Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
+      Cabinet cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
       if (cabinet != null && ADMIN_IDS.contains(cabinet.getUuid())) {
         return true;
       }
@@ -57,10 +57,10 @@ public class ManiaPermissions {
 
   private static void loadAccount() {
     List<PlayerRepresentation> players = Studio.client.getPlayerService().getPlayers();
-    List<PlayerRepresentation> collect = players.stream().filter(p -> !StringUtils.isEmpty(p.getTournamentUserUuid()) && p.isAdministrative()).collect(Collectors.toList());
+    List<PlayerRepresentation> collect = players.stream().filter(p -> !StringUtils.isEmpty(p.getManiaAccountUuid()) && p.isAdministrative()).collect(Collectors.toList());
     if (!collect.isEmpty()) {
       PlayerRepresentation playerRepresentation = collect.get(0);
-      adminAccount = maniaClient.getAccountClient().getAccountByUuid(playerRepresentation.getTournamentUserUuid());
+      adminAccount = maniaClient.getAccountClient().getAccountByUuid(playerRepresentation.getManiaAccountUuid());
     }
   }
 

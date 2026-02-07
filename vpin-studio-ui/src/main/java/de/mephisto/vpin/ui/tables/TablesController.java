@@ -13,6 +13,8 @@ import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.backups.BackupsController;
 import de.mephisto.vpin.ui.backups.BackupsSidebarController;
+import de.mephisto.vpin.ui.vpxz.VPXZController;
+import de.mephisto.vpin.ui.vpxz.VPXZSidebarController;
 import de.mephisto.vpin.ui.backglassmanager.BackglassManagerController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
@@ -53,7 +55,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
@@ -67,12 +68,14 @@ public class TablesController implements Initializable, StudioFXController, Stud
   private static final int TAB_STATISTICS = 3;
   private static final int TAB_RECORDER = 4;
   private static final int TAB_BACKUPS = 5;
+  private static final int TAB_VPXZ = 6;
 
   private TableOverviewController tableOverviewController;
   private BackglassManagerController backglassManagerController;
   private VpsTablesController vpsTablesController;
   private AlxController alxController;
   private BackupsController backupsController;
+  private VPXZController vpxzController;
 
   public static TablesController INSTANCE;
 
@@ -109,10 +112,16 @@ public class TablesController implements Initializable, StudioFXController, Stud
   private Tab recorderTab;
 
   @FXML
+  private Tab vpxMobileTab;
+
+  @FXML
   private TablesSidebarController tablesSideBarController; //fxml magic! Not unused
 
   @FXML
   private BackupsSidebarController backupsSideBarController; //fxml magic! Not unused
+
+  @FXML
+  private VPXZSidebarController vpxzSidebarController; //fxml magic! Not unused
 
   @FXML
   private VpsTablesSidebarController vpsTablesSidebarController; //fxml magic! Not unused
@@ -169,6 +178,10 @@ public class TablesController implements Initializable, StudioFXController, Stud
         PreferencesController.open("backups");
         break;
       }
+      case TAB_VPXZ: {
+        PreferencesController.open("settings_vpxz");
+        break;
+      }
       case TAB_RECORDER: {
         PreferencesController.open("validators_screens");
         break;
@@ -203,6 +216,9 @@ public class TablesController implements Initializable, StudioFXController, Stud
     }
     if (!Features.BACKUPS_ENABLED) {
       tabPane.getTabs().remove(tableBackupsTab);
+    }
+    if (!Features.VPXZ_ENABLED) {
+      tabPane.getTabs().remove(vpxMobileTab);
     }
 
     try {
@@ -260,9 +276,19 @@ public class TablesController implements Initializable, StudioFXController, Stud
       }
     }
     catch (IOException e) {
-      LOG.error("failed to load repositoy tab: " + e.getMessage(), e);
+      LOG.error("failed to load repository tab: " + e.getMessage(), e);
     }
 
+    try {
+      FXMLLoader loader = new FXMLLoader(VPXZController.class.getResource("scene-vpxz.fxml"));
+      Parent vpxMobileRoot = loader.load();
+      vpxzController = loader.getController();
+      vpxzController.setRootController(this);
+      vpxMobileTab.setContent(vpxMobileRoot);
+    }
+    catch (IOException e) {
+      LOG.error("failed to load VPX Mobile tab: " + e.getMessage(), e);
+    }
 
     try {
       FXMLLoader loader = new FXMLLoader(VpsTablesController.class.getResource("scene-vps-tables.fxml"));
@@ -304,6 +330,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
     tablesSideBarController.setVisible(true);
     backupsSideBarController.setVisible(false);
+    vpxzSidebarController.setVisible(false);
     vpsTablesSidebarController.setVisible(false);
 
     Platform.runLater(() -> {
@@ -367,6 +394,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
     Platform.runLater(() -> {
       tableOverviewController.setVisible(selectedTab == TAB_TABLE);
       backupsSideBarController.setVisible(selectedTab == TAB_BACKUPS);
+      vpxzSidebarController.setVisible(selectedTab == TAB_VPXZ);
       vpsTablesSidebarController.setVisible(selectedTab == TAB_VPS);
 
       if (selectedTab == TAB_TABLE) {
@@ -391,6 +419,11 @@ public class TablesController implements Initializable, StudioFXController, Stud
       }
       else if (selectedTab == TAB_BACKUPS) {
         backupsController.onViewActivated(null);
+        root.setRight(sidePanelRoot);
+        toggleSidebarBtn.setDisable(false);
+      }
+      else if (selectedTab == TAB_VPXZ) {
+        vpxzController.onViewActivated(null);
         root.setRight(sidePanelRoot);
         toggleSidebarBtn.setDisable(false);
       }
@@ -427,6 +460,9 @@ public class TablesController implements Initializable, StudioFXController, Stud
     if (tabPane.getTabs().contains(tableBackupsTab) && cnt++ == index) {
       return TAB_BACKUPS;
     }
+    if (tabPane.getTabs().contains(vpxMobileTab) && cnt++ == index) {
+      return TAB_VPXZ;
+    }
     if (tabPane.getTabs().contains(recorderTab) && cnt++ == index) {
       return TAB_RECORDER;
     }
@@ -440,6 +476,10 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   public BackupsSidebarController getRepositorySideBarController() {
     return backupsSideBarController;
+  }
+
+  public VPXZSidebarController getVpxzSidebarController() {
+    return vpxzSidebarController;
   }
 
   public TableOverviewController getTableOverviewController() {
@@ -625,7 +665,10 @@ public class TablesController implements Initializable, StudioFXController, Stud
     else if (ke.getCode() == KeyCode.F6) {
       tabPane.getSelectionModel().select(tableBackupsTab);
     }
-    else if (ke.getCode() == KeyCode.F7 && Features.RECORDER) {
+    else if (ke.getCode() == KeyCode.F7) {
+      tabPane.getSelectionModel().select(vpxMobileTab);
+    }
+    else if (ke.getCode() == KeyCode.F8 && Features.RECORDER) {
       tabPane.getSelectionModel().select(recorderTab);
     }
 
@@ -644,6 +687,10 @@ public class TablesController implements Initializable, StudioFXController, Stud
     return backupsController;
   }
 
+  public VPXZController getVPXMobileController() {
+    return vpxzController;
+  }
+
   private StudioFXController getController(int tab) {
     switch (tab) {
       case TAB_TABLE: {
@@ -660,6 +707,9 @@ public class TablesController implements Initializable, StudioFXController, Stud
       }
       case TAB_BACKUPS: {
         return backupsController;
+      }
+      case TAB_VPXZ: {
+        return vpxzController;
       }
       case TAB_RECORDER: {
         return recorderController;

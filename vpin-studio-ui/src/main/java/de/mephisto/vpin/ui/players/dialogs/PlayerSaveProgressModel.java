@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.players.dialogs;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.AccountVisibility;
+import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.restclient.assets.AssetRepresentation;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
@@ -127,8 +128,10 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
     //post process tournament player creation
     if (maniaPlayer) {
       Account maniaAccount = null;
-      if (!StringUtils.isEmpty(player.getTournamentUserUuid())) {
-        maniaAccount = maniaClient.getAccountClient().getAccountByUuid(player.getTournamentUserUuid());
+      Cabinet cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
+
+      if (!StringUtils.isEmpty(player.getManiaAccountUuid())) {
+        maniaAccount = maniaClient.getAccountClient().getAccountByUuid(player.getManiaAccountUuid());
       }
 
       //the user is already registered
@@ -142,15 +145,15 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
         maniaAccount.setDisplayName(accountName);
         maniaAccount.setInitials(player.getInitials());
 
-        Account update = maniaClient.getAccountClient().update(maniaAccount);
+        Account update = maniaClient.getAccountClient().update(cabinet.getId(), maniaAccount);
         if (update == null) {
-          update = maniaClient.getAccountClient().create(maniaAccount, this.avatarFile, null);
-          player.setTournamentUserUuid(update.getUuid());
+          update = maniaClient.getAccountClient().create(cabinet.getId(), maniaAccount, this.avatarFile, null);
+          player.setManiaAccountUuid(update.getUuid());
           client.getPlayerService().savePlayer(player);
         }
         else {
           if (avatarFile != null) {
-            maniaClient.getAccountClient().updateAvatar(maniaAccount, avatarFile, null);
+            maniaClient.getAccountClient().updateAvatar(cabinet.getId(), maniaAccount, avatarFile, null);
           }
         }
       }
@@ -162,24 +165,25 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
         if(!StringUtils.isEmpty(maniaName)) {
           maniaAccount.setDisplayName(maniaName);
         }
-        Account register = maniaClient.getAccountClient().create(maniaAccount, avatarFile, null);
-        player.setTournamentUserUuid(register.getUuid());
+        Account register = maniaClient.getAccountClient().create(cabinet.getId(), maniaAccount, avatarFile, null);
+        player.setManiaAccountUuid(register.getUuid());
         client.getPlayerService().savePlayer(player);
       }
     }
     else {
-      if (!StringUtils.isEmpty(player.getTournamentUserUuid())) {
+      if (!StringUtils.isEmpty(player.getManiaAccountUuid())) {
         try {
-          String accountUuId = player.getTournamentUserUuid();
+          String accountUuId = player.getManiaAccountUuid();
           Account acc = maniaClient.getAccountClient().getAccountByUuid(accountUuId);
           if (acc != null) {
-            maniaClient.getAccountClient().deleteAccount(acc.getId());
+            Cabinet cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
+            maniaClient.getAccountClient().deleteAccount(cabinet.getId(), acc.getId());
           }
         }
         catch (Exception e) {
           LOG.error("VPin Mania account deletion failed: " + e.getMessage(), e);
         }
-        player.setTournamentUserUuid(null);
+        player.setManiaAccountUuid(null);
         client.getPlayerService().savePlayer(player);
       }
     }

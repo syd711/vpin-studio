@@ -130,7 +130,7 @@
                         </Label>
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                            <children>
-                              <CheckBox fx:id="tournamentPlayerCheckbox" mnemonicParsing="false" textFill="WHITE">
+                              <CheckBox fx:id="vpinManiaPlayerCheckbox" mnemonicParsing="false" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
