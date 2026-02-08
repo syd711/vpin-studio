@@ -32,9 +32,7 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import static de.mephisto.vpin.ui.Studio.Features;
-import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.maniaClient;
+import static de.mephisto.vpin.ui.Studio.*;
 
 public class HeaderResizeableController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(HeaderResizeableController.class);
@@ -45,6 +43,9 @@ public class HeaderResizeableController implements Initializable {
 
   @FXML
   private Button minimizeBtn;
+
+  @FXML
+  private Button maniaOpenBtn;
 
   @FXML
   private Button maniaBtn;
@@ -85,15 +86,7 @@ public class HeaderResizeableController implements Initializable {
       return;
     }
 
-    Cabinet cabinet = null;
-    try {
-      cabinet = maniaClient.getCabinetClient().getCabinet();
-    }
-    catch (Exception e) {
-      LOG.error("Failed to load cabinet setting: {}", e.getMessage());
-    }
-
-    if (cabinet == null) {
+    if (!ManiaHelper.isRegistered()) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Registration Required", "You need to register your cabinet for the VPin Mania services.", null, "Register Cabinet");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         boolean register = ManiaHelper.register();
@@ -103,7 +96,11 @@ public class HeaderResizeableController implements Initializable {
       }
       return;
     }
-    toggleManiaView();
+
+    Cabinet cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
+    if (cabinet != null) {
+      toggleManiaView();
+    }
   }
 
   public static void toggleManiaView() {
@@ -175,6 +172,12 @@ public class HeaderResizeableController implements Initializable {
 
     maniaBtn.managedProperty().bindBidirectional(maniaBtn.visibleProperty());
     maniaBtn.setVisible(Features.MANIA_SOCIAL_ENABLED && Features.MANIA_ENABLED);
+    maniaOpenBtn.setVisible(Features.MANIA_SOCIAL_ENABLED && Features.MANIA_ENABLED);
+
+    if (Features.MANIA_SOCIAL_ENABLED && Features.MANIA_ENABLED) {
+      ManiaHelper.isRegistered();
+    }
+
     Image maniaImage = new Image(Studio.class.getResourceAsStream("mania.png"));
     ImageView iconMedia = new ImageView(maniaImage);
     iconMedia.setFitWidth(18);

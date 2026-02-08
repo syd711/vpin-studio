@@ -737,6 +737,15 @@ public class Game {
     return null;
   }
 
+  @Nullable
+  @JsonIgnore
+  public File getNvramFile() {
+    if (!StringUtils.isEmpty(this.getRom()) && emulator.getNvramDirectory() != null) {
+      return new File(emulator.getNvramDirectory(), this.getRom() + ".nv");
+    }
+    return null;
+  }
+
 
   /**
    * Only relevant for tables that are located in a separate folder

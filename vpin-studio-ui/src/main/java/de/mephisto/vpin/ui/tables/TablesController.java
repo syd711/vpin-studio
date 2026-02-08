@@ -9,10 +9,14 @@ import de.mephisto.vpin.restclient.backups.BackupDescriptorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
+import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.preferences.VPXZSettings;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.backups.BackupsController;
 import de.mephisto.vpin.ui.backups.BackupsSidebarController;
+import de.mephisto.vpin.ui.vpxz.VPXZController;
+import de.mephisto.vpin.ui.vpxz.VPXZSidebarController;
 import de.mephisto.vpin.ui.backglassmanager.BackglassManagerController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
@@ -53,12 +57,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class TablesController implements Initializable, StudioFXController, StudioEventListener {
+public class TablesController implements Initializable, StudioFXController, StudioEventListener, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private static final int TAB_TABLE = 0;
@@ -67,12 +70,14 @@ public class TablesController implements Initializable, StudioFXController, Stud
   private static final int TAB_STATISTICS = 3;
   private static final int TAB_RECORDER = 4;
   private static final int TAB_BACKUPS = 5;
+  private static final int TAB_VPXZ = 6;
 
   private TableOverviewController tableOverviewController;
   private BackglassManagerController backglassManagerController;
   private VpsTablesController vpsTablesController;
   private AlxController alxController;
   private BackupsController backupsController;
+  private VPXZController vpxzController;
 
   public static TablesController INSTANCE;
 
@@ -109,10 +114,16 @@ public class TablesController implements Initializable, StudioFXController, Stud
   private Tab recorderTab;
 
   @FXML
+  private Tab vpxMobileTab;
+
+  @FXML
   private TablesSidebarController tablesSideBarController; //fxml magic! Not unused
 
   @FXML
   private BackupsSidebarController backupsSideBarController; //fxml magic! Not unused
+
+  @FXML
+  private VPXZSidebarController vpxzSidebarController; //fxml magic! Not unused
 
   @FXML
   private VpsTablesSidebarController vpsTablesSidebarController; //fxml magic! Not unused
@@ -169,6 +180,10 @@ public class TablesController implements Initializable, StudioFXController, Stud
         PreferencesController.open("backups");
         break;
       }
+      case TAB_VPXZ: {
+        PreferencesController.open("vpxz");
+        break;
+      }
       case TAB_RECORDER: {
         PreferencesController.open("validators_screens");
         break;
@@ -203,6 +218,11 @@ public class TablesController implements Initializable, StudioFXController, Stud
     }
     if (!Features.BACKUPS_ENABLED) {
       tabPane.getTabs().remove(tableBackupsTab);
+    }
+
+    VPXZSettings vpxzSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPXZ_SETTINGS, VPXZSettings.class);
+    if (!Features.VPXZ_ENABLED || !vpxzSettings.isEnabled()) {
+      tabPane.getTabs().remove(vpxMobileTab);
     }
 
     try {
@@ -260,9 +280,19 @@ public class TablesController implements Initializable, StudioFXController, Stud
       }
     }
     catch (IOException e) {
-      LOG.error("failed to load repositoy tab: " + e.getMessage(), e);
+      LOG.error("failed to load repository tab: " + e.getMessage(), e);
     }
 
+    try {
+      FXMLLoader loader = new FXMLLoader(VPXZController.class.getResource("scene-vpxz.fxml"));
+      Parent vpxMobileRoot = loader.load();
+      vpxzController = loader.getController();
+      vpxzController.setRootController(this);
+      vpxMobileTab.setContent(vpxMobileRoot);
+    }
+    catch (IOException e) {
+      LOG.error("failed to load VPX Mobile tab: " + e.getMessage(), e);
+    }
 
     try {
       FXMLLoader loader = new FXMLLoader(VpsTablesController.class.getResource("scene-vps-tables.fxml"));
@@ -304,6 +334,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
     tablesSideBarController.setVisible(true);
     backupsSideBarController.setVisible(false);
+    vpxzSidebarController.setVisible(false);
     vpsTablesSidebarController.setVisible(false);
 
     Platform.runLater(() -> {
@@ -317,6 +348,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
     });
 
     sidePanelRoot.managedProperty().bindBidirectional(sidePanelRoot.visibleProperty());
+
+    client.getPreferenceService().addListener(this);
   }
 
   public void setSidebarVisible(boolean b) {
@@ -367,6 +400,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
     Platform.runLater(() -> {
       tableOverviewController.setVisible(selectedTab == TAB_TABLE);
       backupsSideBarController.setVisible(selectedTab == TAB_BACKUPS);
+      vpxzSidebarController.setVisible(selectedTab == TAB_VPXZ);
       vpsTablesSidebarController.setVisible(selectedTab == TAB_VPS);
 
       if (selectedTab == TAB_TABLE) {
@@ -391,6 +425,11 @@ public class TablesController implements Initializable, StudioFXController, Stud
       }
       else if (selectedTab == TAB_BACKUPS) {
         backupsController.onViewActivated(null);
+        root.setRight(sidePanelRoot);
+        toggleSidebarBtn.setDisable(false);
+      }
+      else if (selectedTab == TAB_VPXZ) {
+        vpxzController.onViewActivated(null);
         root.setRight(sidePanelRoot);
         toggleSidebarBtn.setDisable(false);
       }
@@ -427,6 +466,9 @@ public class TablesController implements Initializable, StudioFXController, Stud
     if (tabPane.getTabs().contains(tableBackupsTab) && cnt++ == index) {
       return TAB_BACKUPS;
     }
+    if (tabPane.getTabs().contains(vpxMobileTab) && cnt++ == index) {
+      return TAB_VPXZ;
+    }
     if (tabPane.getTabs().contains(recorderTab) && cnt++ == index) {
       return TAB_RECORDER;
     }
@@ -440,6 +482,10 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   public BackupsSidebarController getRepositorySideBarController() {
     return backupsSideBarController;
+  }
+
+  public VPXZSidebarController getVpxzSidebarController() {
+    return vpxzSidebarController;
   }
 
   public TableOverviewController getTableOverviewController() {
@@ -538,28 +584,28 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
     for (Integer gameId : refreshList) {
       JFXFuture.supplyAsync(() -> client.getGameService().getGame(gameId))
-      .thenAcceptLater(game -> {
-        if (game != null) {
-          this.tableOverviewController.reloadItem(game);
-          if (recorderController != null) {
-            this.recorderController.reloadItem(game);
-          }
-        }
-        else {
-          Optional<GameRepresentationModel> first = this.tableOverviewController.getTableView().getItems().stream().filter(t -> t.getGameId() == gameId).findFirst();
-          if (first.isPresent()) {
-            this.tableOverviewController.getTableView().getItems().remove(first.get());
-            this.tableOverviewController.getTableView().refresh();
-          }
-          if (recorderController != null) {
-            first = this.recorderController.getTableView().getItems().stream().filter(t -> t.getGameId() == gameId).findFirst();
-            if (first.isPresent()) {
-              this.recorderController.getTableView().getItems().remove(first.get());
-              this.recorderController.getTableView().refresh();
+          .thenAcceptLater(game -> {
+            if (game != null) {
+              this.tableOverviewController.reloadItem(game);
+              if (recorderController != null) {
+                this.recorderController.reloadItem(game);
+              }
             }
-          }
-        }
-      });
+            else {
+              Optional<GameRepresentationModel> first = this.tableOverviewController.getTableView().getItems().stream().filter(t -> t.getGameId() == gameId).findFirst();
+              if (first.isPresent()) {
+                this.tableOverviewController.getTableView().getItems().remove(first.get());
+                this.tableOverviewController.getTableView().refresh();
+              }
+              if (recorderController != null) {
+                first = this.recorderController.getTableView().getItems().stream().filter(t -> t.getGameId() == gameId).findFirst();
+                if (first.isPresent()) {
+                  this.recorderController.getTableView().getItems().remove(first.get());
+                  this.recorderController.getTableView().refresh();
+                }
+              }
+            }
+          });
     }
 
     // also refresh playlists as the addition/modification of tables may impact them
@@ -625,7 +671,10 @@ public class TablesController implements Initializable, StudioFXController, Stud
     else if (ke.getCode() == KeyCode.F6) {
       tabPane.getSelectionModel().select(tableBackupsTab);
     }
-    else if (ke.getCode() == KeyCode.F7 && Features.RECORDER) {
+    else if (ke.getCode() == KeyCode.F7) {
+      tabPane.getSelectionModel().select(vpxMobileTab);
+    }
+    else if (ke.getCode() == KeyCode.F8 && Features.RECORDER) {
       tabPane.getSelectionModel().select(recorderTab);
     }
 
@@ -642,6 +691,10 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   public BackupsController getTableBackupsController() {
     return backupsController;
+  }
+
+  public VPXZController getVPXMobileController() {
+    return vpxzController;
   }
 
   private StudioFXController getController(int tab) {
@@ -661,10 +714,26 @@ public class TablesController implements Initializable, StudioFXController, Stud
       case TAB_BACKUPS: {
         return backupsController;
       }
+      case TAB_VPXZ: {
+        return vpxzController;
+      }
       case TAB_RECORDER: {
         return recorderController;
       }
     }
     return null;
+  }
+
+  @Override
+  public void preferencesChanged(String key, Object value) {
+    if (PreferenceNames.VPXZ_SETTINGS.equalsIgnoreCase(key)) {
+      VPXZSettings vpxzSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPXZ_SETTINGS, VPXZSettings.class);
+      if(vpxzSettings.isEnabled()) {
+        tabPane.getTabs().add(5, vpxMobileTab);
+      }
+      else {
+        tabPane.getTabs().remove(vpxMobileTab);
+      }
+    }
   }
 }

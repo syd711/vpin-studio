@@ -47,8 +47,12 @@ public class FolderMonitoringThread {
   public void stopMonitoring() {
     try {
       this.running.set(false);
-      watchService.close();
-      monitorThread.interrupt();
+      if (watchService != null) {
+        watchService.close();
+      }
+      if (monitorThread != null) {
+        monitorThread.interrupt();
+      }
     }
     catch (IOException e) {
       LOG.error("Failed to close watch service: " + e.getMessage(), e);

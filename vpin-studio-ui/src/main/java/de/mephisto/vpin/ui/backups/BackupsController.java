@@ -5,39 +5,31 @@ import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.backups.*;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.*;
-import de.mephisto.vpin.ui.components.emulators.EmulatorsTableColumnSorter;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.tables.TablesController;
-import de.mephisto.vpin.ui.tables.panels.BaseColumnSorter;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.SystemUtil;
-import de.mephisto.vpin.ui.vps.VpsTablesController;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.io.FilenameUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -46,7 +38,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -140,7 +131,6 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
 
   @FXML
   private ToolBar toolbar;
-
 
   private List<BackupModel> filteredData;
 
@@ -285,7 +275,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
     sourceCombo.managedProperty().bindBidirectional(sourceCombo.visibleProperty());
     openFolderButton.managedProperty().bindBidirectional(openFolderButton.visibleProperty());
     downloadBtn.managedProperty().bindBidirectional(downloadBtn.visibleProperty());
-    tableView.setPlaceholder(new Label("This backup source does contains any files."));
+    tableView.setPlaceholder(new Label("This backup source does not contain any files."));
 
     systemSummary = client.getSystemService().getSystemSummary();
     openFolderButton.setVisible(client.getSystemService().isLocal());

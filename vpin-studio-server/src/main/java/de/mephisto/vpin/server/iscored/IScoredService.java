@@ -6,10 +6,6 @@ import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScored;
 import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.connectors.iscored.IScoredResult;
-import de.mephisto.vpin.connectors.mania.model.Account;
-import de.mephisto.vpin.connectors.mania.model.TableScore;
-import de.mephisto.vpin.connectors.mania.model.Tournament;
-import de.mephisto.vpin.connectors.mania.model.TournamentTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
@@ -44,51 +40,6 @@ public class IScoredService implements PreferenceChangedListener, InitializingBe
   private GameService gameService;
 
   private NotificationSettings notificationSettings;
-
-  public void submitTournamentScore(@NonNull Tournament tournament, @NonNull TournamentTable tournamentTable, @NonNull TableScore tableScore, @NonNull Account account) {
-    if (!Features.ISCORED_ENABLED) {
-      LOG.warn("iScored is not enabled");
-      return;
-    }
-    String dashboardUrl = tournament.getDashboardUrl();
-    if (!IScored.isIScoredGameRoomUrl(dashboardUrl)) {
-      LOG.info("Not a tournament url for iScored: {}", dashboardUrl);
-      return;
-    }
-
-    try {
-      GameRoom gameRoom = IScored.getGameRoom(dashboardUrl, true);
-      if (gameRoom != null) {
-        if (!gameRoom.getSettings().isPublicScoreEnteringEnabled()) {
-          LOG.warn("Cancelling iScored score submission, public score submissions are not enabled!");
-          SLOG.warn("Cancelling iScored score submission, public score submissions are not enabled!");
-          return;
-        }
-
-        String vpsTableId = tournamentTable.getVpsTableId();
-        String vpsVersionId = tournamentTable.getVpsVersionId();
-
-        IScoredGame gameRoomGame = gameRoom.getGameByVps(vpsTableId, vpsVersionId);
-        if (gameRoomGame == null) {
-          LOG.info("Skipped iScored score submission, because no game was found for " + tournament);
-          SLOG.info("Skipped iScored score submission, because no game was found for " + tournament);
-          return;
-        }
-
-        if (gameRoomGame.isDisabled()) {
-          LOG.info("Skipped iScored score submission, because table " + gameRoomGame + " has disabled flag set.");
-          SLOG.info("Skipped iScored score submission, because table " + gameRoomGame + " has disabled flag set.");
-          return;
-        }
-
-        IScored.submitScore(gameRoom, gameRoomGame, account.getDisplayName(), account.getInitials(), tableScore.getScore());
-      }
-    }
-    catch (Exception e) {
-      LOG.error("Failed to load game room from " + tournament.getDashboardUrl() + ": " + e.getMessage(), e);
-      SLOG.error("Failed to load game room from " + tournament.getDashboardUrl() + ": " + e.getMessage());
-    }
-  }
 
   public void submitScore(@NonNull IScoredGame iScoredGame, Score newScore) {
     GameRoom gameRoom = IScored.getGameRoom(iScoredGame.getGameRoomUrl(), true);

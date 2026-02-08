@@ -8,7 +8,17 @@ public class ManiaRegistration {
   private boolean submitRatings = false;
   private boolean submitPlayCount = false;
   private boolean submitTables = false;
+  private String apiKey;
+
   private String result;
+
+  public String getApiKey() {
+    return apiKey;
+  }
+
+  public void setApiKey(String apiKey) {
+    this.apiKey = apiKey;
+  }
 
   public boolean isSubmitPlayCount() {
     return submitPlayCount;

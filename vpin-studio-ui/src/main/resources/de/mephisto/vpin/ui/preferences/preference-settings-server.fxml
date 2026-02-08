@@ -6,7 +6,6 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -16,7 +15,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.ServerSettingsPreferencesController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.ServerSettingsPreferencesController">
    <center>
       <ScrollPane hbarPolicy="NEVER" hmin="800.0" BorderPane.alignment="CENTER">
          <content>
@@ -44,7 +43,6 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
                         <Label prefHeight="20.0" styleClass="preference-label" text="Startup Time:" textFill="WHITE">
@@ -67,36 +65,15 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label styleClass="preference-label" text="VPin Studio Server Restart:" textFill="WHITE" GridPane.rowIndex="3">
+                        <Label styleClass="preference-label" text="VPin Studio Server Restart:" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Button fx:id="restartBtn" mnemonicParsing="false" onAction="#onRestart" styleClass="error-title" text="Restart Server" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <Button fx:id="restartBtn" mnemonicParsing="false" onAction="#onRestart" styleClass="error-title" text="Restart Server" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
-                        </Button>
-                        <Label layoutX="9.0" layoutY="46.0" prefHeight="20.0" styleClass="preference-label" text="System Id:" textFill="WHITE" GridPane.rowIndex="2">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="systemIdLabel" layoutX="209.0" layoutY="15.0" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Button mnemonicParsing="false" onAction="#onCopySystemId" GridPane.columnIndex="2" GridPane.rowIndex="2">
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="18" />
-                           </graphic>
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <tooltip>
-                              <Tooltip text="Copy VPS Table URL" />
-                           </tooltip>
                         </Button>
                      </children>
                      <opaqueInsets>
