@@ -35,7 +35,7 @@ public class VPXZDialogs {
     VPXZSourceFolderDialogController controller = (VPXZSourceFolderDialogController) stage.getUserData();
     controller.setSource(source);
     stage.showAndWait();
-    return controller.getArchiveSource();
+    return controller.getVpxzSource();
   }
 
   public static boolean openVpxzUploadDialog() {

@@ -5,8 +5,8 @@ import de.mephisto.vpin.ui.tables.panels.BaseLoadingModel;
 
 public class VPXZModel extends BaseLoadingModel<VPXZDescriptorRepresentation, VPXZModel> {
 
-  public VPXZModel(VPXZDescriptorRepresentation backup) {
-    super(backup);
+  public VPXZModel(VPXZDescriptorRepresentation descriptor) {
+    super(descriptor);
   }
 
   @Override

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.vpxz;
 
+import de.mephisto.vpin.restclient.games.descriptors.VPXZExportDescriptor;
 import de.mephisto.vpin.restclient.vpxz.VPXZDescriptorRepresentation;
 import de.mephisto.vpin.restclient.vpxz.VPXZPackageInfo;
 import de.mephisto.vpin.restclient.vpxz.VPXZSourceRepresentation;
@@ -37,7 +38,7 @@ public class VPXZResource {
   private VPXZService vpxzService;
 
   @PostMapping("/create")
-  public Boolean createVPXZ(@RequestBody VPXZDescriptor descriptor) {
+  public Boolean createVPXZ(@RequestBody VPXZExportDescriptor descriptor) {
     //this triggers the jobs creation and can include hundrets of new jobs, so run async
     new Thread(() -> {
       Thread.currentThread().setName("VPXZ Runner for source " + descriptor.getFilename());

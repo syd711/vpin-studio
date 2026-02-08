@@ -1,11 +1,12 @@
 package de.mephisto.vpin.ui.vpxz;
 
-import de.mephisto.vpin.restclient.vpxz.VPXZDescriptorRepresentation;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.vpxz.VPXZDescriptorRepresentation;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,13 +19,13 @@ public class VPXZDeleteProgressModel extends ProgressModel<VPXZDescriptorReprese
   private final static Logger LOG = LoggerFactory.getLogger(VPXZDeleteProgressModel.class);
 
   private final Iterator<VPXZDescriptorRepresentation> iterator;
-  @org.jetbrains.annotations.NotNull
-  private final List<VPXZDescriptorRepresentation> backups;
+  @NonNull
+  private final List<VPXZDescriptorRepresentation> vpxzFiles;
 
-  public VPXZDeleteProgressModel(List<VPXZDescriptorRepresentation> backups) {
-    super("Backup Deletion");
-    this.iterator = backups.iterator();
-    this.backups = backups;
+  public VPXZDeleteProgressModel(List<VPXZDescriptorRepresentation> vpxzFiles) {
+    super(".vpxz Deletion");
+    this.iterator = vpxzFiles.iterator();
+    this.vpxzFiles = vpxzFiles;
   }
 
   @Override
@@ -34,7 +35,7 @@ public class VPXZDeleteProgressModel extends ProgressModel<VPXZDescriptorReprese
 
   @Override
   public int getMax() {
-    return backups.size();
+    return vpxzFiles.size();
   }
 
   @Override
@@ -49,7 +50,7 @@ public class VPXZDeleteProgressModel extends ProgressModel<VPXZDescriptorReprese
 
   @Override
   public boolean isIndeterminate() {
-    return backups.size() == 1;
+    return vpxzFiles.size() == 1;
   }
 
   @Override
@@ -64,18 +65,18 @@ public class VPXZDeleteProgressModel extends ProgressModel<VPXZDescriptorReprese
   }
 
   @Override
-  public void processNext(ProgressResultModel progressResultModel, VPXZDescriptorRepresentation backup) {
+  public void processNext(ProgressResultModel progressResultModel, VPXZDescriptorRepresentation descriptor) {
     try {
-      TableDetails tableDetails = backup.getTableDetails();
+      TableDetails tableDetails = descriptor.getTableDetails();
       List<GameRepresentation> gamesByFileName = client.getGameService().getGamesByFileName(-1, tableDetails.getGameFileName());
-      boolean b = client.getVpxzService().deleteVPXZ(backup.getSource().getId(), backup.getFilename());
+      boolean b = client.getVpxzService().deleteVPXZ(descriptor.getSource().getId(), descriptor.getFilename());
 
       for (GameRepresentation gameRepresentation : gamesByFileName) {
         EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
       }
     }
     catch (Exception e) {
-      LOG.error("Error deleting backup file: " + e.getMessage(), e);
+      LOG.error("Error deleting .vpxz file: " + e.getMessage(), e);
     }
   }
 }

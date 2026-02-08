@@ -58,7 +58,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="nameField" promptText="Enter the display name of the backup folder here." GridPane.columnIndex="1">
+                  <TextField fx:id="nameField" promptText="Enter the display name of the .vpxz folder here." GridPane.columnIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font></TextField>
@@ -67,7 +67,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="folderField" prefHeight="30.0" promptText="Enter the location for the backup folder here." GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <TextField fx:id="folderField" prefHeight="30.0" promptText="Enter the location for the .vpxz folder here." GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -97,7 +97,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="Enter the folder path of the backup folder on your cabinet here." wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="Enter the folder path of the .vpxz folder on your cabinet here." wrapText="true" />
                            </tooltip>
                         </Label>
                      </children>

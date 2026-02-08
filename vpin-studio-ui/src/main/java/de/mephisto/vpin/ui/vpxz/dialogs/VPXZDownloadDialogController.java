@@ -43,7 +43,7 @@ public class VPXZDownloadDialogController implements Initializable, DialogContro
   private static File targetFolder;
 
   private boolean result = false;
-  private List<VPXZDescriptorRepresentation> archiveDescriptors;
+  private List<VPXZDescriptorRepresentation> descriptors;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -56,18 +56,18 @@ public class VPXZDownloadDialogController implements Initializable, DialogContro
     Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
     result = true;
     try {
-      for (VPXZDescriptorRepresentation selectedItem : archiveDescriptors) {
+      for (VPXZDescriptorRepresentation selectedItem : descriptors) {
         long repositoryId = selectedItem.getSource().getId();
         File asset = new File(targetFolder, selectedItem.getFilename());
         File uniqueTarget = FileUtils.uniqueFile(asset);
-        DownloadJobDescriptor job = new DownloadJobDescriptor("archives/download/file/" + repositoryId + "/" + URLEncoder.encode(selectedItem.getFilename(), StandardCharsets.UTF_8), uniqueTarget);
+        DownloadJobDescriptor job = new DownloadJobDescriptor("vpxz/download/file/" + repositoryId + "/" + URLEncoder.encode(selectedItem.getFilename(), StandardCharsets.UTF_8), uniqueTarget);
         job.setTitle("Download of \"" + selectedItem.getFilename() + "\"");
         JobPoller.getInstance().queueJob(job);
       }
     }
     catch (Exception e) {
       LOG.error("Download failed: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Downloading backup files failed.", "Please check the log file for details.", "Error: " + e.getMessage());
+      WidgetFactory.showAlert(Studio.stage, "Downloading .vpxz files failed.", "Please check the log file for details.", "Error: " + e.getMessage());
     }
     finally {
       stage.close();
@@ -113,13 +113,13 @@ public class VPXZDownloadDialogController implements Initializable, DialogContro
     result = false;
   }
 
-  public void setData(List<VPXZDescriptorRepresentation> archiveDescriptors) {
-    this.archiveDescriptors = archiveDescriptors;
-    if (archiveDescriptors.size() == 1) {
-      this.titleLabel.setText("Download \"" + archiveDescriptors.get(0).getFilename() + "\"");
+  public void setData(List<VPXZDescriptorRepresentation> descriptors) {
+    this.descriptors = descriptors;
+    if (descriptors.size() == 1) {
+      this.titleLabel.setText("Download \"" + descriptors.get(0).getFilename() + "\"");
     }
     else {
-      this.titleLabel.setText("Download " + archiveDescriptors.size() + " Archives");
+      this.titleLabel.setText("Download " + descriptors.size() + " files");
     }
   }
 }

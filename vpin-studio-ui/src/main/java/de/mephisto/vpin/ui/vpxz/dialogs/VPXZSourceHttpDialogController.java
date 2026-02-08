@@ -1,10 +1,9 @@
 package de.mephisto.vpin.ui.vpxz.dialogs;
 
-import de.mephisto.vpin.commons.BackupSourceAuthenticationType;
-import de.mephisto.vpin.restclient.vpxz.VPXZSourceType;
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.restclient.vpxz.VPXZSourceRepresentation;
 import de.mephisto.vpin.restclient.util.PasswordUtil;
+import de.mephisto.vpin.restclient.vpxz.VPXZSourceRepresentation;
+import de.mephisto.vpin.restclient.vpxz.VPXZSourceType;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -63,7 +62,7 @@ public class VPXZSourceHttpDialogController implements Initializable, DialogCont
     this.source.setEnabled(enabledCheckbox.isSelected());
 
     if(basicAuthCheckbox.isSelected()) {
-      this.source.setAuthenticationType(BackupSourceAuthenticationType.Basic.name());
+
     }
 
     this.source.setPassword(PasswordUtil.encrypt(passwordField.getText()));
@@ -112,7 +111,7 @@ public class VPXZSourceHttpDialogController implements Initializable, DialogCont
     this.source = null;
   }
 
-  public VPXZSourceRepresentation getArchiveSource() {
+  public VPXZSourceRepresentation getVpxzSource() {
     return source;
   }
 
@@ -123,7 +122,6 @@ public class VPXZSourceHttpDialogController implements Initializable, DialogCont
       urlField.setText(source.getLocation());
       enabledCheckbox.setSelected(source.isEnabled());
       loginField.setText(source.getLogin());
-      basicAuthCheckbox.setSelected(source.getAuthenticationType() != null & source.getAuthenticationType().equals(BackupSourceAuthenticationType.Basic.name()));
       passwordField.setText(PasswordUtil.decrypt(source.getPassword()));
     }
     validateInput();

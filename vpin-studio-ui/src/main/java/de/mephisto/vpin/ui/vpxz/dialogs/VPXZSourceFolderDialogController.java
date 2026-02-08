@@ -102,7 +102,7 @@ public class VPXZSourceFolderDialogController implements Initializable, DialogCo
     this.source = null;
   }
 
-  public VPXZSourceRepresentation getArchiveSource() {
+  public VPXZSourceRepresentation getVpxzSource() {
     return source;
   }
 

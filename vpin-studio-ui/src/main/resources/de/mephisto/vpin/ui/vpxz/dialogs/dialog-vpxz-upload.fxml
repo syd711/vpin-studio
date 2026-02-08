@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.vpxz.dialogs.VPXZUploadController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.vpxz.dialogs.VPXZUploadController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
@@ -41,11 +41,10 @@
          <center>
             <VBox>
                <children>
-                  <Label layoutX="10.0" layoutY="37.0" styleClass="preference-description" text="The tables will be added to the backup and can be installed from there.">
+                  <Label layoutX="10.0" layoutY="37.0" styleClass="preference-description" text="The tables will be added to the selected .vpxz folder.">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin></Label>
-                  <Label layoutX="10.0" layoutY="37.0" styleClass="preference-description" text="To install an archive directly, drop it on the tables overview or into the drop-in folder." />
                   <GridPane vgap="3.0">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="213.5999755859375" minWidth="10.0" prefWidth="148.8" />
@@ -58,7 +57,7 @@
                      <children>
                         <HBox GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
-                              <TextField fx:id="fileNameField" prefHeight="30.0" prefWidth="293.0" promptText="Select .vpa files to upload.">
+                              <TextField fx:id="fileNameField" prefHeight="30.0" prefWidth="293.0" promptText="Select .vpxz files to upload.">
                                  <HBox.margin>
                                     <Insets right="12.0" />
                                  </HBox.margin>
@@ -74,12 +73,12 @@
                            </children>
                         </HBox>
                         <ComboBox fx:id="repositoryCombo" GridPane.columnIndex="1" />
-                        <Label text="Archive Folder:" textFill="WHITE">
+                        <Label text="Folder:" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="15.0" text="Archive Files:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="15.0" text=".vpxz Files:" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>

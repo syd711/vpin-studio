@@ -58,7 +58,7 @@ public class VPXZServiceClient extends VPinStudioClientService {
 
   public boolean deleteVPXZ(long sourceId, String filename) {
     clearCache();
-    return getRestClient().delete(API + "vpxmobile/" + sourceId + "/" + filename);
+    return getRestClient().delete(API + "vpxz/" + sourceId + "/" + filename);
   }
 
   private void clearCache() {
@@ -112,19 +112,7 @@ public class VPXZServiceClient extends VPinStudioClientService {
     return executor.submit(task);
   }
 
-  public boolean vpxMobileTable(BackupExportDescriptor exportDescriptor) {
+  public boolean createVpxzFile(VPXZExportDescriptor exportDescriptor) {
     return getRestClient().post(API + "vpxz/create", exportDescriptor, Boolean.class);
-  }
-
-  @Nullable
-  public VPXZDescriptorRepresentation getBackup(@NonNull GameRepresentation value) {
-    List<VPXZDescriptorRepresentation> backups = getVPXZ();
-    for (VPXZDescriptorRepresentation backup : backups) {
-      TableDetails tableDetails = backup.getTableDetails();
-      if (tableDetails != null && String.valueOf(tableDetails.getGameFileName()).equals(value.getGameFileName())) {
-        return backup;
-      }
-    }
-    return null;
   }
 }

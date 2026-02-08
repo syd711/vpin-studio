@@ -65,7 +65,7 @@ public class VPXZUploadProgressModel extends ProgressModel<File> {
       percentage++;
     } catch (Exception e) {
       if (!currentUploadFuture.isCancelled()) {
-        LOG.error("Archive upload failed: " + e.getMessage(), e);
+        LOG.error(".vpxz upload failed: " + e.getMessage(), e);
       }
     }
   }

@@ -48,7 +48,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.stage;
 
 public class VPXZController extends BaseTableController<VPXZDescriptorRepresentation, VPXZModel> implements Initializable, StudioFXController, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(VPXZController.class);
@@ -61,7 +60,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
   private Button openFolderButton;
 
   @FXML
-  private Button addArchiveBtn;
+  private Button addVpxzButton;
 
   @FXML
   private Button downloadBtn;
@@ -163,8 +162,8 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
   private void onDownload() {
     ObservableList<VPXZModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
-      List<VPXZDescriptorRepresentation> backups = selectedItems.stream().map(s -> s.getBean()).collect(Collectors.toList());
-      VPXZDialogs.openVpxzDownloadDialog(backups);
+      List<VPXZDescriptorRepresentation> vpxzFiles = selectedItems.stream().map(s -> s.getBean()).collect(Collectors.toList());
+      VPXZDialogs.openVpxzDownloadDialog(vpxzFiles);
     }
   }
 
@@ -196,7 +195,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
     this.searchTextField.setDisable(true);
 
     VPXZSourceRepresentation selectedItem = sourceCombo.getSelectionModel().getSelectedItem();
-    final VPXZDescriptorRepresentation selectedBackup = value.orElse(null);
+    final VPXZDescriptorRepresentation selectedVpxz = value.orElse(null);
     tableView.getSelectionModel().clearSelection();
     boolean disable = value.isEmpty();
     deleteBtn.setDisable(disable);
@@ -204,7 +203,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
     tableView.setVisible(false);
     labelCount.setText("-");
 
-    startReload("Loading Backups...");
+    startReload("Loading .vpxz Files...");
     JFXFuture.supplyAsync(() -> {
       if (selectedItem != null && invalidate) {
         client.getVpxzService().invalidateVPXZCache();
@@ -212,17 +211,17 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
 
       VPXZSourceRepresentation vpxMobileSource = sourceCombo.getValue();
       data = client.getVpxzService().getVPXZForSource(vpxMobileSource.getId());
-      List<VPXZDescriptorRepresentation> filteredBackups = filterArchives(data);
-      return filteredBackups;
-    }).thenAcceptLater((filteredBackups) -> {
-      setItems(filteredBackups);
+      List<VPXZDescriptorRepresentation> filteredVpxz = filterFiles(data);
+      return filteredVpxz;
+    }).thenAcceptLater((filtered) -> {
+      setItems(filtered);
       tableView.refresh();
-      if (tableView.getItems().contains(toModel(selectedBackup))) {
+      if (tableView.getItems().contains(toModel(selectedVpxz))) {
         deleteBtn.setDisable(false);
-        tableView.getSelectionModel().select(toModel(selectedBackup));
+        tableView.getSelectionModel().select(toModel(selectedVpxz));
       }
 
-      labelCount.setText(tableView.getItems().size() + " backups");
+      labelCount.setText(tableView.getItems().size() + " .vpxz files");
       this.searchTextField.setDisable(false);
       tableView.setVisible(true);
       endReload();
@@ -233,24 +232,24 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
   private void onVpxzDelete() {
     List<VPXZModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
-      String title = "Delete the " + selectedItems.size() + " selected archives?";
+      String title = "Delete the " + selectedItems.size() + " selected files?";
       if (selectedItems.size() == 1) {
-        title = "Delete Archive \"" + selectedItems.get(0).getName() + "\"?";
+        title = "Delete File \"" + selectedItems.get(0).getName() + "\"?";
       }
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title, null, null, "Delete");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        List<VPXZDescriptorRepresentation> backups = selectedItems.stream().map(s -> s.getBean()).collect(Collectors.toList());
-        ProgressDialog.createProgressDialog(new VPXZDeleteProgressModel(backups));
+        List<VPXZDescriptorRepresentation> vpxzDescriptors = selectedItems.stream().map(s -> s.getBean()).collect(Collectors.toList());
+        ProgressDialog.createProgressDialog(new VPXZDeleteProgressModel(vpxzDescriptors));
         tableView.getSelectionModel().clearSelection();
         doReload(Optional.empty());
-        tablesController.getRepositorySideBarController().setArchiveDescriptor(Optional.empty());
+        tablesController.getVpxzSidebarController().setVPXZDescriptor(Optional.empty());
       }
     }
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    super.initialize("backup", "backups", new VPXZColumnSorter(this));
+    super.initialize("vpxz", "vpxz", new VPXZColumnSorter(this));
 
     openFolderButton.setDisable(true);
     clearBtn.setVisible(false);
@@ -267,8 +266,8 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
 
     searchTextField.textProperty().addListener((observableValue, s, filterValue) -> {
       clearSelection();
-      List<VPXZDescriptorRepresentation> filteredBackups = filterArchives(data);
-      setItems(filteredBackups);
+      List<VPXZDescriptorRepresentation> filteredVpxz = filterFiles(data);
+      setItems(filteredVpxz);
       clearBtn.setVisible(filterValue != null && !filterValue.isEmpty());
     });
     searchTextField.setOnKeyPressed(event -> {
@@ -482,11 +481,11 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
 
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-      VPXZSourceRepresentation archiveSource = sourceCombo.getValue();
+      VPXZSourceRepresentation vpxzSource = sourceCombo.getValue();
 
-      deleteBtn.setDisable(!archiveSource.getType().equals(VPXZSourceType.Folder.name()) || newSelection == null);
-      addArchiveBtn.setDisable(!archiveSource.getType().equals(VPXZSourceType.Folder.name()));
-      downloadBtn.setDisable(!archiveSource.getType().equals(VPXZSourceType.Folder.name()) || tableView.getSelectionModel().getSelectedItems().size() == 0);
+      deleteBtn.setDisable(!vpxzSource.getType().equals(VPXZSourceType.Folder.name()) || newSelection == null);
+      addVpxzButton.setDisable(!vpxzSource.getType().equals(VPXZSourceType.Folder.name()));
+      downloadBtn.setDisable(!vpxzSource.getType().equals(VPXZSourceType.Folder.name()) || tableView.getSelectionModel().getSelectedItems().size() == 0);
       openFolderButton.setDisable(newSelection == null);
 
 
@@ -506,7 +505,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
     });
 
     sourceComboChangeListener = (observable, oldValue, newValue) -> {
-      addArchiveBtn.setDisable(!newValue.getType().equals(VPXZSourceType.Folder.name()));
+      addVpxzButton.setDisable(!newValue.getType().equals(VPXZSourceType.Folder.name()));
       downloadBtn.setDisable(!newValue.getType().equals(VPXZSourceType.Folder.name()));
 
       VPXZModel selectedItem = tableView.getSelectionModel().getSelectedItem();
@@ -533,17 +532,9 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
   }
 
   public void refreshView(Optional<VPXZDescriptorRepresentation> selection) {
-    toolbar.getItems().stream().forEach(i -> i.setDisable(true));
-    JFXFuture.supplyAsync(() -> {
-      return client.getAuthenticationService().isAuthenticated();
-    }).thenAcceptLater(authenticated -> {
-      if (authenticated) {
-        toolbar.getItems().stream().forEach(i -> i.setDisable(false));
-        this.doReload(selection);
-      }
-      else {
-        WidgetFactory.showInformation(stage, "Authentication Required", "Go to the backup settings for more details.");
-      }
+    Platform.runLater(() -> {
+      toolbar.getItems().stream().forEach(i -> i.setDisable(false));
+      this.doReload(selection);
     });
   }
 
@@ -561,22 +552,22 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
     tablesController.getVpxzSidebarController().setVPXZDescriptor(newSelection);
   }
 
-  private List<VPXZDescriptorRepresentation> filterArchives(List<VPXZDescriptorRepresentation> archives) {
+  private List<VPXZDescriptorRepresentation> filterFiles(List<VPXZDescriptorRepresentation> descriptors) {
     List<VPXZDescriptorRepresentation> filtered = new ArrayList<>();
     String filterValue = searchTextField.textProperty().getValue();
     if (filterValue == null) {
       filterValue = "";
     }
 
-    for (VPXZDescriptorRepresentation archive : archives) {
-      if (archive.getFilename() != null) {
-        String filename = archive.getFilename().toLowerCase();
+    for (VPXZDescriptorRepresentation descriptor : descriptors) {
+      if (descriptor.getFilename() != null) {
+        String filename = descriptor.getFilename().toLowerCase();
         if (!filename.endsWith("." + VPXZType.VPXZ.name().toLowerCase())) {
           continue;
         }
 
         if (filename.contains(filterValue.toLowerCase())) {
-          filtered.add(archive);
+          filtered.add(descriptor);
         }
       }
     }
@@ -614,11 +605,6 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
 
   public void setRootController(TablesController tablesController) {
     this.tablesController = tablesController;
-  }
-
-  public void selectBackup(VPXZDescriptorRepresentation backup) {
-    NavigationOptions options = new NavigationOptions(backup);
-    onViewActivated(options);
   }
 
   @Override

@@ -66,7 +66,7 @@ public class VPXZUploadController implements Initializable, DialogController {
         });
 
         VPXZSourceRepresentation selectedItem = this.repositoryCombo.getSelectionModel().getSelectedItem();
-        VPXZUploadProgressModel model = new VPXZUploadProgressModel("Backup Upload", selectedItem.getId(), selection);
+        VPXZUploadProgressModel model = new VPXZUploadProgressModel(".vpxz File Upload", selectedItem.getId(), selection);
         ProgressResultModel progressResult = ProgressDialog.createProgressDialog(model);
 
         // Cancelling the upload progress doesn't actually cancel the HTTP request, however we still do not want to continue to the next step.
@@ -76,7 +76,7 @@ public class VPXZUploadController implements Initializable, DialogController {
       }
       catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
-        WidgetFactory.showAlert(stage, "Uploading archive failed", "Please check the log file for details", "Error: " + e.getMessage());
+        WidgetFactory.showAlert(stage, "Uploading .vpxz failed", "Please check the log file for details", "Error: " + e.getMessage());
       }
     }
   }
@@ -87,9 +87,9 @@ public class VPXZUploadController implements Initializable, DialogController {
 
     List<String> filters = Arrays.asList("*." + VPXZType.VPXZ.name().toLowerCase());
     StudioFileChooser fileChooser = new StudioFileChooser();
-    fileChooser.setTitle("Select Archives");
+    fileChooser.setTitle("Select Files");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("Visual Pinball Archive", filters));
+        new FileChooser.ExtensionFilter(".vpxz File", filters));
 
     this.selection = fileChooser.showOpenMultipleDialog(stage);
     if (this.selection != null && !this.selection.isEmpty()) {
