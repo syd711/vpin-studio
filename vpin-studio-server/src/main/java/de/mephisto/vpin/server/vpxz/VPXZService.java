@@ -1,13 +1,16 @@
 package de.mephisto.vpin.server.vpxz;
 
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.VPXZExportDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
+import de.mephisto.vpin.restclient.preferences.VPXZSettings;
 import de.mephisto.vpin.restclient.vpxz.VPXZSourceRepresentation;
 import de.mephisto.vpin.restclient.vpxz.VPXZSourceType;
 import de.mephisto.vpin.restclient.vpxz.VPXZType;
 import de.mephisto.vpin.server.backups.BackupSource;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.jobs.JobService;
@@ -35,6 +38,9 @@ public class VPXZService implements InitializingBean {
 
   @Autowired
   private VPXZSourceRepository vpxzSourceRepository;
+
+  @Autowired
+  private FrontendService frontendService;
 
   @Autowired
   private JobService jobService;
@@ -200,18 +206,21 @@ public class VPXZService implements InitializingBean {
     descriptor.setTitle("Creating .vpxz for \"" + game.getGameDisplayName() + "\"");
     descriptor.setGameId(game.getId());
 
-//    Optional<VPXZSource> byId = vpxzSourceRepository.findById(vpxzDescriptor.getSource().getId());
+    Optional<VPXZSource> source = vpxzSourceRepository.findById(vpxzDescriptor.getSourceId());
+    if (source.isPresent()) {
+      TableDetails tableDetails = frontendService.getTableDetails(game.getId());
+      VPXZSettings vpxzSettings = preferencesService.getJsonPreference(PreferenceNames.VPXZ_SETTINGS, VPXZSettings.class);
 
-//    VPXZType backupType = systemService.getVPXMobileType();
-//    TableDetails tableDetails = frontendService.getTableDetails(game.getId());
-//    VPXZSettings vpxzSettings = preferencesService.getJsonPreference(PreferenceNames.VPXZ_SETTINGS, VPXZSettings.class);
-//    VPXZArchivingJob adapter = new VPXZArchivingJob(vpxzFileService, VPXZSource, game, tableDetails, vpxzSettings);
-//    VPXZSourceAdapter VPXZSourceAdapter = VPXZSourceAdapterFactory.create(this, byId.get(), vpxzFileService);
+      descriptor.setJob(new VPXZCreationJob(vpxzFileService, source.get(), game, tableDetails, vpxzSettings));
+      jobService.offer(descriptor);
+      LOG.info("Offered vpxz export job for '" + game.getGameDisplayName() + "'");
+      return true;
+    }
+    else {
+      LOG.error("No matching vps source found for {}", vpxzDescriptor.getSourceId());
+    }
 
-//    descriptor.setJob(new VPXZArchivingJob(frontendService, VPXZSourceAdapter, adapter, vpxzDescriptor, game.getId()));
-    jobService.offer(descriptor);
-    LOG.info("Offered vpxz export job for '" + game.getGameDisplayName() + "'");
-    return true;
+    return false;
   }
 
   @Override

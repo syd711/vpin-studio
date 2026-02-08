@@ -23,9 +23,6 @@ public class VPXZColumnSorter implements BaseColumnSorter<VPXZModel> {
       if (column.equals(tableOverviewController.nameColumn)) {
         comp = Comparator.comparing(o -> o.getName().toLowerCase());
       }
-      else if (column.equals(tableOverviewController.directB2SColumn)) {
-        comp = Comparator.comparing(o -> o.getBean().getPackageInfo() != null && o.getBean().getPackageInfo().getDirectb2s() != null);
-      }
       // optionally reverse order
       if (comp != null && column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
         comp = comp.reversed();

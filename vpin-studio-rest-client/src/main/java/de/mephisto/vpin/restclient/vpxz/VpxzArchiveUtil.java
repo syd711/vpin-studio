@@ -26,23 +26,13 @@ public class VpxzArchiveUtil {
 
   private static final ObjectMapper objectMapper = new ObjectMapper();
 
-  private static String PASSWORD = null;
-
   static {
     objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
   }
 
-  public static void setPassword(String password) {
-    PASSWORD = password;
-    LOG.info("Updated backup password.");
-  }
-
   public static ZipFile createZipFile(File target) {
-    if (PASSWORD == null) {
-      return new ZipFile(target);
-    }
-    return new ZipFile(target, PASSWORD.toCharArray());
+    return new ZipFile(target);
   }
 
   public static TableDetails readTableDetails(File file) throws JsonProcessingException {
@@ -77,19 +67,6 @@ public class VpxzArchiveUtil {
     }
     finally {
       zipFile.close();
-    }
-    return null;
-  }
-
-  public static VPXZMameData readMameData(ZipFile file) {
-    try {
-      String text = readStringFromZip(file, VPXZPackageInfo.REGISTRY_FILENAME);
-      if (text != null) {
-        return objectMapper.readValue(text, VPXZMameData.class);
-      }
-    }
-    catch (Exception e) {
-      LOG.error("Failed to read Windows registry entries: {}", e.getMessage(), e);
     }
     return null;
   }

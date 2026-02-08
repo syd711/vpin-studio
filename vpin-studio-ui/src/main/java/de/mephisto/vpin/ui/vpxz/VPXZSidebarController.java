@@ -48,9 +48,6 @@ public class VPXZSidebarController implements Initializable, StudioFXController 
   private Label lastModifiedLabel;
 
   @FXML
-  private Label directb2sLabel;
-
-  @FXML
   private Label romLabel;
 
   @FXML
@@ -67,18 +64,6 @@ public class VPXZSidebarController implements Initializable, StudioFXController 
 
   @FXML
   private Label resLabel;
-
-  @FXML
-  private Label dmdLabel;
-
-  @FXML
-  private Label musicLabel;
-
-  @FXML
-  private Label altSoundLabel;
-
-  @FXML
-  private Label altColorLabel;
 
   @FXML
   private Label povLabel;
@@ -170,16 +155,11 @@ public class VPXZSidebarController implements Initializable, StudioFXController 
 
   public void setVPXZDescriptor(Optional<VPXZDescriptorRepresentation> selection) {
     vpxLabel.setText(applyValue(vpxLabel, null));
-    directb2sLabel.setText(applyValue(directb2sLabel, null));
     romLabel.setText(applyValue(romLabel, null));
     nvramLabel.setText(applyValue(nvramLabel, null));
     resLabel.setText(applyValue(resLabel, null));
     iniLabel.setText(applyValue(iniLabel, null));
     vbsLabel.setText(applyValue(vbsLabel, null));
-    dmdLabel.setText(applyValue(dmdLabel, null));
-    musicLabel.setText(applyValue(musicLabel, null));
-    altSoundLabel.setText(applyValue(altSoundLabel, null));
-    altColorLabel.setText(applyValue(altColorLabel, null));
     povLabel.setText(applyValue(povLabel, null));
 
     filenameLabel.setText("-");
@@ -202,16 +182,11 @@ public class VPXZSidebarController implements Initializable, StudioFXController 
 
       if (packageInfo != null) {
         vpxLabel.setText(applyValue(vpxLabel, packageInfo.getVpx()));
-        directb2sLabel.setText(applyValue(directb2sLabel, packageInfo.getDirectb2s()));
         romLabel.setText(applyValue(romLabel, packageInfo.getRom()));
         nvramLabel.setText(applyValue(nvramLabel, packageInfo.getNvRam()));
         resLabel.setText(applyValue(resLabel, packageInfo.getRes()));
         iniLabel.setText(applyValue(iniLabel, packageInfo.getIni()));
         vbsLabel.setText(applyValue(vbsLabel, packageInfo.getVbs()));
-        dmdLabel.setText(applyValue(dmdLabel, packageInfo.getDmd()));
-        musicLabel.setText(applyValue(musicLabel, packageInfo.getMusic()));
-        altSoundLabel.setText(applyValue(altSoundLabel, packageInfo.getAltSound()));
-        altColorLabel.setText(applyValue(altColorLabel, packageInfo.getAltColor()));
         povLabel.setText(applyValue(povLabel, packageInfo.getPov()));
       }
 

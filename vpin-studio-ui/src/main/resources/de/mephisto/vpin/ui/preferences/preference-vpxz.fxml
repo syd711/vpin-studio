@@ -10,6 +10,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
@@ -22,6 +23,17 @@
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
             <Label styleClass="preference-title" text="VPIN STUDIO PREFERENCES" textFill="WHITE" />
+                  <HBox prefWidth="200.0" styleClass="info-container">
+                     <children>
+                        <Label styleClass="default-headline" text="This feature is still in an experimental state and needs more testing." />
+                     </children>
+                     <padding>
+                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets top="24.0" />
+                     </VBox.margin>
+                  </HBox>
                   <Label layoutX="34.0" layoutY="110.0" styleClass="preference-subtitle" text="VPX Mobile Settings" />
             <Label layoutX="34.0" layoutY="105.0" styleClass="preference-description" text="This section configures the settings for the .vpxz file manager." textFill="WHITE" />
                   <Label layoutX="34.0" layoutY="105.0" styleClass="preference-description" text="These files are only used when you intend to play VPX on mobile devices." textFill="WHITE" />

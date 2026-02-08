@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.vpxz;
 
-import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
@@ -29,17 +28,13 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import org.apache.commons.io.FilenameUtils;
-import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.net.URL;
 import java.text.DateFormat;
@@ -72,13 +67,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
   private ComboBox<VPXZSourceRepresentation> sourceCombo;
 
   @FXML
-  private TableColumn<VPXZModel, VPXZModel> iconColumn;
-
-  @FXML
   TableColumn<VPXZModel, VPXZModel> nameColumn;
-
-  @FXML
-  TableColumn<VPXZModel, VPXZModel> directB2SColumn;
 
   @FXML
   private TableColumn<VPXZModel, VPXZModel> romColumn;
@@ -94,24 +83,6 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
 
   @FXML
   private TableColumn<VPXZModel, VPXZModel> resColumn;
-
-  @FXML
-  private TableColumn<VPXZModel, VPXZModel> musicColumn;
-
-  @FXML
-  private TableColumn<VPXZModel, VPXZModel> highscoreColumn;
-
-  @FXML
-  private TableColumn<VPXZModel, VPXZModel> dmdColumn;
-
-  @FXML
-  private TableColumn<VPXZModel, VPXZModel> registryColumn;
-
-  @FXML
-  private TableColumn<VPXZModel, VPXZModel> altSoundColumn;
-
-  @FXML
-  private TableColumn<VPXZModel, VPXZModel> altColorColumn;
 
   @FXML
   private TableColumn<VPXZModel, VPXZModel> sizeColumn;
@@ -279,29 +250,6 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
       }
     });
 
-    BaseLoadingColumn.configureColumn(iconColumn, (value, model) -> {
-      if (value.getPackageInfo() != null) {
-        String thumbnail = value.getPackageInfo().getThumbnail();
-        if (thumbnail != null) {
-          byte[] decode = Base64.getDecoder().decode(thumbnail);
-          Image wheel = new Image(new ByteArrayInputStream(decode));
-          ImageView view = new ImageView(wheel);
-          view.setPreserveRatio(true);
-          view.setFitWidth(80);
-          view.setFitHeight(80);
-          CommonImageUtil.setClippedImage(view, (int) (wheel.getWidth() / 2));
-          return view;
-        }
-      }
-
-      Image wheel = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
-      ImageView view = new ImageView(wheel);
-      view.setPreserveRatio(true);
-      view.setFitWidth(70);
-      view.setFitHeight(70);
-      return view;
-    }, this, true);
-
     BaseLoadingColumn.configureColumn(nameColumn, (value, model) -> {
       VBox vBox = new VBox(3);
 
@@ -332,28 +280,6 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
       created.setStyle("-fx-font-size: 12px;");
       vBox.getChildren().add(created);
       return vBox;
-    }, this, true);
-
-    BaseLoadingColumn.configureColumn(directB2SColumn, (value, model) -> {
-      Label label = new Label("");
-      if (value.getPackageInfo() != null) {
-        VPXZFileInfo directb2s = value.getPackageInfo().getDirectb2s();
-        if (directb2s != null) {
-          Label iconLabel = WidgetFactory.createCheckboxIcon("#FFFFFF", directb2s.toString());
-          int nbVersions = directb2s.getFiles();
-          FontIcon icon = null;
-          if (nbVersions > 9) {
-            icon = WidgetFactory.createIcon("mdi2n-numeric-9-plus-box-multiple-outline", "#FFFFFF");
-            iconLabel.setGraphic(icon);
-          }
-          else if (nbVersions > 1) {
-            icon = WidgetFactory.createIcon("mdi2n-numeric-" + nbVersions + "-box-multiple-outline", "#FFFFFF");
-            iconLabel.setGraphic(icon);
-          }
-          return iconLabel;
-        }
-      }
-      return label;
     }, this, true);
 
     BaseLoadingColumn.configureColumn(povColumn, (value, model) -> {
@@ -397,71 +323,11 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
       return new Label("");
     }, this, true);
 
-    BaseLoadingColumn.configureColumn(musicColumn, (value, model) -> {
-      if (value.getPackageInfo() != null) {
-        VPXZFileInfo mus = value.getPackageInfo().getMusic();
-        if (mus != null) {
-          return WidgetFactory.createCheckboxIcon("#FFFFFF", mus.toString());
-        }
-      }
-      return new Label("");
-    }, this, true);
-
-    BaseLoadingColumn.configureColumn(highscoreColumn, (value, model) -> {
-      if (value.getPackageInfo() != null) {
-        VPXZFileInfo highscore = value.getPackageInfo().getHighscore();
-        if (highscore != null) {
-          return WidgetFactory.createCheckboxIcon("#FFFFFF", highscore.toString());
-        }
-      }
-      return new Label("");
-    }, this, true);
-
-    BaseLoadingColumn.configureColumn(dmdColumn, (value, model) -> {
-      if (value.getPackageInfo() != null) {
-        VPXZFileInfo dmd = value.getPackageInfo().getDmd();
-        if (dmd != null) {
-          return WidgetFactory.createCheckboxIcon("#FFFFFF", dmd.toString());
-        }
-      }
-      return new Label("");
-    }, this, true);
-
-    BaseLoadingColumn.configureColumn(registryColumn, (value, model) -> {
-      if (value.getPackageInfo() != null) {
-        VPXZFileInfo reg = value.getPackageInfo().getMameData();
-        if (reg != null) {
-          return WidgetFactory.createCheckboxIcon("#FFFFFF", reg.toString());
-        }
-      }
-      return new Label("");
-    }, this, true);
-
-    BaseLoadingColumn.configureColumn(altColorColumn, (value, model) -> {
-      if (value.getPackageInfo() != null) {
-        VPXZFileInfo altColor = value.getPackageInfo().getAltColor();
-        if (altColor != null) {
-          return WidgetFactory.createCheckboxIcon("#FFFFFF", altColor.toString());
-        }
-      }
-      return new Label("");
-    }, this, true);
-
     BaseLoadingColumn.configureColumn(romColumn, (value, model) -> {
       if (value.getPackageInfo() != null) {
         VPXZFileInfo rom = value.getPackageInfo().getRom();
         if (rom != null) {
           return WidgetFactory.createCheckboxIcon("#FFFFFF", rom.toString());
-        }
-      }
-      return new Label("");
-    }, this, true);
-
-    BaseLoadingColumn.configureColumn(altSoundColumn, (value, model) -> {
-      if (value.getPackageInfo() != null) {
-        VPXZFileInfo altSound = value.getPackageInfo().getAltSound();
-        if (altSound != null) {
-          return WidgetFactory.createCheckboxIcon("#FFFFFF", altSound.toString());
         }
       }
       return new Label("");
