@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.vpxz;
 
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.VPXZExportDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.vpxz.VPXZSourceRepresentation;
 import de.mephisto.vpin.restclient.vpxz.VPXZSourceType;
@@ -175,31 +176,31 @@ public class VPXZService implements InitializingBean {
     return updatedSource;
   }
 
-  public boolean createVpxz(@NonNull VPXZDescriptor vpxzDescriptor) {
+  public boolean createVpxz(@NonNull VPXZExportDescriptor vpxzDescriptor) {
     boolean result = true;
-//    List<Integer> gameIds = vpxzDescriptor.getGameIds();
-//    for (Integer gameId : gameIds) {
-//      Game game = gameService.getGame(gameId);
-//      if (game != null && game.getGameFile().exists()) {
-//        if (!createVpxz(game, vpxzDescriptor)) {
-//          result = false;
-//        }
-//      }
-//      else {
-//        LOG.error("Cancelled backup for id " + game + ", invalid game data.");
-//        result = false;
-//      }
-//    }
+    List<Integer> gameIds = vpxzDescriptor.getGameIds();
+    for (Integer gameId : gameIds) {
+      Game game = gameService.getGame(gameId);
+      if (game != null && game.getGameFile().exists()) {
+        if (!createVpxz(game, vpxzDescriptor)) {
+          result = false;
+        }
+      }
+      else {
+        LOG.error("Cancelled backup for id " + game + ", invalid game data.");
+        result = false;
+      }
+    }
     return result;
   }
 
-  private boolean createVpxz(@NonNull Game game, @NonNull VPXZDescriptor vpxzDescriptor) {
+  private boolean createVpxz(@NonNull Game game, @NonNull VPXZExportDescriptor vpxzDescriptor) {
     JobDescriptor descriptor = new JobDescriptor(JobType.VPXZ_EXPORT);
     descriptor.setCancelable(true);
     descriptor.setTitle("Creating .vpxz for \"" + game.getGameDisplayName() + "\"");
     descriptor.setGameId(game.getId());
 
-    Optional<VPXZSource> byId = vpxzSourceRepository.findById(vpxzDescriptor.getSource().getId());
+//    Optional<VPXZSource> byId = vpxzSourceRepository.findById(vpxzDescriptor.getSource().getId());
 
 //    VPXZType backupType = systemService.getVPXMobileType();
 //    TableDetails tableDetails = frontendService.getTableDetails(game.getId());

@@ -41,7 +41,7 @@ public class VPXZResource {
   public Boolean createVPXZ(@RequestBody VPXZExportDescriptor descriptor) {
     //this triggers the jobs creation and can include hundrets of new jobs, so run async
     new Thread(() -> {
-      Thread.currentThread().setName("VPXZ Runner for source " + descriptor.getFilename());
+      Thread.currentThread().setName("VPXZ Runner for source " + descriptor.getSourceId());
       vpxzService.createVpxz(descriptor);
     }).start();
     return true;
