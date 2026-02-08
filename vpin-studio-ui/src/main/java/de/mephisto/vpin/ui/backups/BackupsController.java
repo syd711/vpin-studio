@@ -275,7 +275,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
     sourceCombo.managedProperty().bindBidirectional(sourceCombo.visibleProperty());
     openFolderButton.managedProperty().bindBidirectional(openFolderButton.visibleProperty());
     downloadBtn.managedProperty().bindBidirectional(downloadBtn.visibleProperty());
-    tableView.setPlaceholder(new Label("This backup source does contains any files."));
+    tableView.setPlaceholder(new Label("This backup source does not contain any files."));
 
     systemSummary = client.getSystemService().getSystemSummary();
     openFolderButton.setVisible(client.getSystemService().isLocal());

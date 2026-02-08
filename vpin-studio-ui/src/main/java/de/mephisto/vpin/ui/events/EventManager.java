@@ -120,7 +120,7 @@ public class EventManager {
 
   public void notifyPreferenceChanged(PreferenceType preferenceType) {
     new Thread(() -> {
-      for (StudioEventListener listener : listeners) {
+      for (StudioEventListener listener : new ArrayList<>(listeners)) {
         listener.preferencesChanged(preferenceType);
       }
     }).start();

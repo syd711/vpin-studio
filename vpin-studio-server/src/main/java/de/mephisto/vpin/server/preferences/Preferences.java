@@ -92,6 +92,8 @@ public class Preferences {
 
   private String wovpSettings;
 
+  private String vpxzSettings;
+
   @Column(length = 1024)
   private String doNotShowAgains;
 
@@ -120,6 +122,14 @@ public class Preferences {
 
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
+
+  public String getVpxzSettings() {
+    return vpxzSettings;
+  }
+
+  public void setVpxzSettings(String vpxzSettings) {
+    this.vpxzSettings = vpxzSettings;
+  }
 
   public String getWovpSettings() {
     return wovpSettings;

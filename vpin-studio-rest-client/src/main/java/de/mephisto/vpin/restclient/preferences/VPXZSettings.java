@@ -23,47 +23,14 @@ public class VPXZSettings extends JsonSettings {
 
   private boolean isOverwriteFile = true;
 
-  public boolean isAssetEnabled(AssetType assetType) {
-    switch (assetType) {
-      case DIRECTB2S: {
-        return directb2s;
-      }
-      case NV: {
-        return nvRam;
-      }
-      case RES: {
-        return res;
-      }
-      case VBS: {
-        return vbs;
-      }
-      case POV: {
-        return pov;
-      }
-      case INI: {
-        return ini;
-      }
-      case MUSIC:
-      case MUSIC_BUNDLE: {
-        return music;
-      }
-      case ALT_SOUND: {
-        return altSound;
-      }
-      case ALT_COLOR: {
-        return altColor;
-      }
-      case DMD_PACK: {
-        return dmd;
-      }
-      case VPX: {
-        return vpx;
-      }
-      case ROM: {
-        return rom;
-      }
-    }
-    return false;
+  private boolean enabled;
+
+  public boolean isEnabled() {
+    return enabled;
+  }
+
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
   }
 
   public boolean isDmdDeviceData() {
@@ -196,6 +163,6 @@ public class VPXZSettings extends JsonSettings {
 
   @Override
   public String getSettingsName() {
-    return PreferenceNames.BACKUP_SETTINGS;
+    return PreferenceNames.VPXZ_SETTINGS;
   }
 }

@@ -152,8 +152,8 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
   }
 
   @FXML
-  private void onArchiveAdd() {
-    boolean uploaded = VPXZDialogs.openArchiveUploadDialog();
+  private void onVPXZUpload() {
+    boolean uploaded = VPXZDialogs.openVpxzUploadDialog();
     if (uploaded) {
       doReload(Optional.empty());
     }
@@ -164,7 +164,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
     ObservableList<VPXZModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
       List<VPXZDescriptorRepresentation> backups = selectedItems.stream().map(s -> s.getBean()).collect(Collectors.toList());
-      VPXZDialogs.openArchiveDownloadDialog(backups);
+      VPXZDialogs.openVpxzDownloadDialog(backups);
     }
   }
 
@@ -207,11 +207,11 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
     startReload("Loading Backups...");
     JFXFuture.supplyAsync(() -> {
       if (selectedItem != null && invalidate) {
-        client.getVPXMobileService().invalidateVPXZCache();
+        client.getVpxzService().invalidateVPXZCache();
       }
 
       VPXZSourceRepresentation vpxMobileSource = sourceCombo.getValue();
-      data = client.getVPXMobileService().getVPXZForSource(vpxMobileSource.getId());
+      data = client.getVpxzService().getVPXZForSource(vpxMobileSource.getId());
       List<VPXZDescriptorRepresentation> filteredBackups = filterArchives(data);
       return filteredBackups;
     }).thenAcceptLater((filteredBackups) -> {
@@ -258,7 +258,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
     sourceCombo.managedProperty().bindBidirectional(sourceCombo.visibleProperty());
     openFolderButton.managedProperty().bindBidirectional(openFolderButton.visibleProperty());
     downloadBtn.managedProperty().bindBidirectional(downloadBtn.visibleProperty());
-    tableView.setPlaceholder(new Label("This backup source does contains any files."));
+    tableView.setPlaceholder(new Label("This VPXZ source does not contain any files."));
 
     systemSummary = client.getSystemService().getSystemSummary();
     openFolderButton.setVisible(client.getSystemService().isLocal());
@@ -602,7 +602,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
 
   private void refreshRepositoryCombo() {
     sourceCombo.valueProperty().removeListener(sourceComboChangeListener);
-    List<VPXZSourceRepresentation> repositories = new ArrayList<>(client.getVPXMobileService().getVPXZSources());
+    List<VPXZSourceRepresentation> repositories = new ArrayList<>(client.getVpxzService().getVPXZSources());
     sourceCombo.setItems(FXCollections.observableList(repositories));
     sourceCombo.getSelectionModel().select(0);
     sourceCombo.valueProperty().addListener(sourceComboChangeListener);
@@ -638,7 +638,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
 
   @Override
   public void preferencesChanged(PreferenceType preferenceType) {
-    if (preferenceType.equals(PreferenceType.backups)) {
+    if (preferenceType.equals(PreferenceType.vpxz)) {
       Platform.runLater(() -> {
         onReload();
       });

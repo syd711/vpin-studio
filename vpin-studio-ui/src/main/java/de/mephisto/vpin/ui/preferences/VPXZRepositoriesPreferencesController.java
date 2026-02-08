@@ -2,14 +2,14 @@ package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.backups.BackupSourceRepresentation;
-import de.mephisto.vpin.restclient.backups.BackupSourceType;
-import de.mephisto.vpin.restclient.vpauthenticators.AuthenticationProvider;
-import de.mephisto.vpin.restclient.vpauthenticators.AuthenticationSettings;
+import de.mephisto.vpin.restclient.preferences.VPXZSettings;
+import de.mephisto.vpin.restclient.vpxz.VPXZSourceRepresentation;
+import de.mephisto.vpin.restclient.vpxz.VPXZSourceType;
+import de.mephisto.vpin.restclient.vpxz.VPXZType;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.backups.BackupDialogs;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.vpxz.VPXZDialogs;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -19,23 +19,25 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 
 import java.net.URL;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class VPXZRepositoriesPreferencesController implements Initializable {
 
   @FXML
-  private TableView<BackupSourceRepresentation> tableView;
+  private TableView<VPXZSourceRepresentation> tableView;
 
   @FXML
-  private TableColumn<BackupSourceRepresentation, String> nameColumn;
+  private TableColumn<VPXZSourceRepresentation, String> nameColumn;
 
   @FXML
-  private TableColumn<BackupSourceRepresentation, String> urlColumn;
+  private TableColumn<VPXZSourceRepresentation, String> urlColumn;
 
   @FXML
-  private TableColumn<BackupSourceRepresentation, String> enabledColumn;
+  private TableColumn<VPXZSourceRepresentation, String> enabledColumn;
 
   @FXML
   private Button deleteBtn;
@@ -44,28 +46,31 @@ public class VPXZRepositoriesPreferencesController implements Initializable {
   private Button editBtn;
 
   @FXML
+  private CheckBox enabledCheckbox;
+
+  @FXML
   private void onEdit() {
-    BackupSourceRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
+    VPXZSourceRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
-      BackupSourceRepresentation sourceRepresentation = null;
-      BackupSourceType backupSourceType = BackupSourceType.valueOf(selectedItem.getType());
-      switch (backupSourceType) {
+      VPXZSourceRepresentation sourceRepresentation = null;
+      VPXZSourceType sourceType = VPXZSourceType.valueOf(selectedItem.getType());
+      switch (sourceType) {
         case Folder: {
-          sourceRepresentation = BackupDialogs.openArchiveSourceFolderDialog(selectedItem);
+          sourceRepresentation = VPXZDialogs.openVpxzSourceFolderDialog(selectedItem);
           break;
         }
         default: {
-          sourceRepresentation = BackupDialogs.openArchiveSourceHttpDialog(selectedItem);
+//          sourceRepresentation = VPXZDialogs.openArchiveSourceHttpDialog(selectedItem);
           break;
         }
       }
 
       if (sourceRepresentation != null) {
         try {
-          client.getBackupService().saveBackupSource(sourceRepresentation);
+          client.getVpxzService().saveVPXZSource(sourceRepresentation);
         }
         catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, "Error", "Error saving repository: " + e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, "Error", "Error saving vpxz repository: " + e.getMessage());
         }
         onReload();
       }
@@ -74,13 +79,13 @@ public class VPXZRepositoriesPreferencesController implements Initializable {
 
   @FXML
   private void onHttpAdd() {
-    BackupSourceRepresentation sourceRepresentation = BackupDialogs.openArchiveSourceHttpDialog(null);
+    VPXZSourceRepresentation sourceRepresentation = null; //BackupDialogs.openArchiveSourceHttpDialog(null);
     if (sourceRepresentation != null) {
       try {
-        client.getBackupService().saveBackupSource(sourceRepresentation);
+        client.getVpxzService().saveVPXZSource(sourceRepresentation);
       }
       catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Error saving repository: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, "Error", "Error saving vpxz repository: " + e.getMessage());
       }
       onReload();
     }
@@ -88,13 +93,13 @@ public class VPXZRepositoriesPreferencesController implements Initializable {
 
   @FXML
   private void onFolderAdd() {
-    BackupSourceRepresentation sourceRepresentation = BackupDialogs.openArchiveSourceFolderDialog(null);
+    VPXZSourceRepresentation sourceRepresentation = VPXZDialogs.openVpxzSourceFolderDialog(null);
     if (sourceRepresentation != null) {
       try {
-        client.getBackupService().saveBackupSource(sourceRepresentation);
+        client.getVpxzService().saveVPXZSource(sourceRepresentation);
       }
       catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Error saving repository: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, "Error", "Error saving VPXZ repository: " + e.getMessage());
       }
       onReload();
     }
@@ -102,12 +107,12 @@ public class VPXZRepositoriesPreferencesController implements Initializable {
 
   @FXML
   private void onDelete() {
-    BackupSourceRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
+    VPXZSourceRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Repository \"" + selectedItem.getName() + "\"?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
-          client.getBackupService().deleteBackupSource(selectedItem.getId());
+          client.getVpxzService().deleteVPXZSource(selectedItem.getId());
         }
         catch (Exception e) {
           WidgetFactory.showAlert(Studio.stage, "Error", "Error deleting \"" + selectedItem.getName() + "\": " + e.getMessage());
@@ -120,34 +125,42 @@ public class VPXZRepositoriesPreferencesController implements Initializable {
   }
 
   private void onReload() {
-    List<BackupSourceRepresentation> sources = client.getBackupService().getBackupSources();
+    List<VPXZSourceRepresentation> sources = client.getVpxzService().getVPXZSources();
     tableView.setItems(FXCollections.observableList(sources));
     tableView.refresh();
     EventManager.getInstance().notifyRepositoryUpdate();
-    PreferencesController.markDirty(PreferenceType.backups);
+    PreferencesController.markDirty(PreferenceType.vpxz);
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    tableView.setPlaceholder(new Label("              No table repository found.\nAdd a table repository to download tables from."));
+    tableView.setPlaceholder(new Label("              No VPXZ repository found.\nAdd a VPXZ repository to manage .vpxz files."));
     deleteBtn.setDisable(true);
     editBtn.setDisable(true);
 
-    List<AuthenticationProvider> providers = new ArrayList<>(Arrays.asList(AuthenticationProvider.VPF, AuthenticationProvider.VPU));
-    providers.add(0, null);
+    VPXZSettings vpxzSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPXZ_SETTINGS, VPXZSettings.class);
+
+    enabledCheckbox.selectedProperty().setValue(vpxzSettings.isEnabled());
+    enabledCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        vpxzSettings.setEnabled(newValue);
+        client.getPreferenceService().setJsonPreference(vpxzSettings);
+      }
+    });
 
     nameColumn.setCellValueFactory(cellData -> {
-      BackupSourceRepresentation value = cellData.getValue();
+      VPXZSourceRepresentation value = cellData.getValue();
       return new SimpleObjectProperty(value.getName());
     });
 
     urlColumn.setCellValueFactory(cellData -> {
-      BackupSourceRepresentation value = cellData.getValue();
+      VPXZSourceRepresentation value = cellData.getValue();
       return new SimpleObjectProperty(value.getLocation());
     });
 
     enabledColumn.setCellValueFactory(cellData -> {
-      BackupSourceRepresentation value = cellData.getValue();
+      VPXZSourceRepresentation value = cellData.getValue();
       if (value.isEnabled()) {
         return new SimpleObjectProperty(WidgetFactory.createCheckIcon());
       }
@@ -162,7 +175,7 @@ public class VPXZRepositoriesPreferencesController implements Initializable {
     });
 
     tableView.setRowFactory(tv -> {
-      TableRow<BackupSourceRepresentation> row = new TableRow<>();
+      TableRow<VPXZSourceRepresentation> row = new TableRow<>();
       row.setOnMouseClicked(event -> {
         if (event.getClickCount() == 2 && (!row.isEmpty())) {
           onEdit();

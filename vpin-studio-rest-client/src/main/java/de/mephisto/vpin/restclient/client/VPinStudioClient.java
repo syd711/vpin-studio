@@ -72,7 +72,7 @@ public class VPinStudioClient {
   private final AltColorServiceClient altColorServiceClient;
   private final VpAuthenticationServiceClient authenticationServiceClient;
   private final BackupServiceClient backupServiceClient;
-  private final VPXZServiceClient VPXZServiceClient;
+  private final VPXZServiceClient vpxzServiceClient;
   private final AlxServiceClient alxServiceClient;
   private final AssetServiceClient assetServiceClient;
   private final CompetitionsServiceClient competitions;
@@ -129,7 +129,7 @@ public class VPinStudioClient {
     this.altColorServiceClient = new AltColorServiceClient(this);
     this.altSoundServiceClient = new AltSoundServiceClient(this);
     this.backupServiceClient = new BackupServiceClient(this);
-    this.VPXZServiceClient = new VPXZServiceClient(this);
+    this.vpxzServiceClient = new VPXZServiceClient(this);
     this.assetServiceClient = new AssetServiceClient(this);
     this.competitions = new CompetitionsServiceClient(this);
     this.componentServiceClient = new ComponentServiceClient(this);
@@ -208,8 +208,8 @@ public class VPinStudioClient {
     return backupServiceClient;
   }
 
-  public VPXZServiceClient getVPXMobileService() {
-    return VPXZServiceClient;
+  public VPXZServiceClient getVpxzService() {
+    return vpxzServiceClient;
   }
 
   public FuturePinballServiceClient getFuturePinballService() {

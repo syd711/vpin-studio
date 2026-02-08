@@ -60,7 +60,7 @@ public class VPXZDeleteProgressModel extends ProgressModel<VPXZDescriptorReprese
   @Override
   public void finalizeModel(ProgressResultModel progressResultModel) {
     super.finalizeModel(progressResultModel);
-    client.getVPXMobileService().invalidateVPXZCache();
+    client.getVpxzService().invalidateVPXZCache();
   }
 
   @Override
@@ -68,7 +68,7 @@ public class VPXZDeleteProgressModel extends ProgressModel<VPXZDescriptorReprese
     try {
       TableDetails tableDetails = backup.getTableDetails();
       List<GameRepresentation> gamesByFileName = client.getGameService().getGamesByFileName(-1, tableDetails.getGameFileName());
-      boolean b = client.getVPXMobileService().deleteVPXZ(backup.getSource().getId(), backup.getFilename());
+      boolean b = client.getVpxzService().deleteVPXZ(backup.getSource().getId(), backup.getFilename());
 
       for (GameRepresentation gameRepresentation : gamesByFileName) {
         EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);

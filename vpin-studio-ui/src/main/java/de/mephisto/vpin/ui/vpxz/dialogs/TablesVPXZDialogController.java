@@ -114,7 +114,7 @@ public class TablesVPXZDialogController implements Initializable, DialogControll
     descriptor.setBackupSourceId(source.getId());
     descriptor.setRemoveFromPlaylists(removeFromPlaylistCheckbox.isSelected());
     descriptor.getGameIds().addAll(games.stream().map(GameRepresentation::getId).collect(Collectors.toList()));
-    Studio.client.getVPXMobileService().vpxMobileTable(descriptor);
+    Studio.client.getVpxzService().vpxMobileTable(descriptor);
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
@@ -168,7 +168,7 @@ public class TablesVPXZDialogController implements Initializable, DialogControll
     pupPackCheckBox.managedProperty().bindBidirectional(pupPackCheckBox.visibleProperty());
     popperMediaCheckBox.managedProperty().bindBidirectional(popperMediaCheckBox.visibleProperty());
 
-    List<VPXZSourceRepresentation> repositories = new ArrayList<>(client.getVPXMobileService().getVPXZSources());
+    List<VPXZSourceRepresentation> repositories = new ArrayList<>(client.getVpxzService().getVPXZSources());
     sourceCombo.setItems(FXCollections.observableList(repositories));
     sourceCombo.getSelectionModel().select(0);
 

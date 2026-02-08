@@ -29,7 +29,7 @@ public class VPXZUploadProgressModel extends ProgressModel<File> {
     this.repositoryId = repositoryId;
     this.files = files;
     this.iterator = files.iterator();
-    VPXZServiceClient = Studio.client.getVPXMobileService();
+    VPXZServiceClient = Studio.client.getVpxzService();
   }
 
   @Override

@@ -9,7 +9,9 @@ import de.mephisto.vpin.restclient.backups.BackupDescriptorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
+import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.preferences.VPXZSettings;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.backups.BackupsController;
 import de.mephisto.vpin.ui.backups.BackupsSidebarController;
@@ -59,7 +61,7 @@ import java.util.ResourceBundle;
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class TablesController implements Initializable, StudioFXController, StudioEventListener {
+public class TablesController implements Initializable, StudioFXController, StudioEventListener, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private static final int TAB_TABLE = 0;
@@ -179,7 +181,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
         break;
       }
       case TAB_VPXZ: {
-        PreferencesController.open("settings_vpxz");
+        PreferencesController.open("vpxz");
         break;
       }
       case TAB_RECORDER: {
@@ -217,7 +219,9 @@ public class TablesController implements Initializable, StudioFXController, Stud
     if (!Features.BACKUPS_ENABLED) {
       tabPane.getTabs().remove(tableBackupsTab);
     }
-    if (!Features.VPXZ_ENABLED) {
+
+    VPXZSettings vpxzSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPXZ_SETTINGS, VPXZSettings.class);
+    if (!Features.VPXZ_ENABLED || !vpxzSettings.isEnabled()) {
       tabPane.getTabs().remove(vpxMobileTab);
     }
 
@@ -344,6 +348,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
     });
 
     sidePanelRoot.managedProperty().bindBidirectional(sidePanelRoot.visibleProperty());
+
+    client.getPreferenceService().addListener(this);
   }
 
   public void setSidebarVisible(boolean b) {
@@ -578,28 +584,28 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
     for (Integer gameId : refreshList) {
       JFXFuture.supplyAsync(() -> client.getGameService().getGame(gameId))
-      .thenAcceptLater(game -> {
-        if (game != null) {
-          this.tableOverviewController.reloadItem(game);
-          if (recorderController != null) {
-            this.recorderController.reloadItem(game);
-          }
-        }
-        else {
-          Optional<GameRepresentationModel> first = this.tableOverviewController.getTableView().getItems().stream().filter(t -> t.getGameId() == gameId).findFirst();
-          if (first.isPresent()) {
-            this.tableOverviewController.getTableView().getItems().remove(first.get());
-            this.tableOverviewController.getTableView().refresh();
-          }
-          if (recorderController != null) {
-            first = this.recorderController.getTableView().getItems().stream().filter(t -> t.getGameId() == gameId).findFirst();
-            if (first.isPresent()) {
-              this.recorderController.getTableView().getItems().remove(first.get());
-              this.recorderController.getTableView().refresh();
+          .thenAcceptLater(game -> {
+            if (game != null) {
+              this.tableOverviewController.reloadItem(game);
+              if (recorderController != null) {
+                this.recorderController.reloadItem(game);
+              }
             }
-          }
-        }
-      });
+            else {
+              Optional<GameRepresentationModel> first = this.tableOverviewController.getTableView().getItems().stream().filter(t -> t.getGameId() == gameId).findFirst();
+              if (first.isPresent()) {
+                this.tableOverviewController.getTableView().getItems().remove(first.get());
+                this.tableOverviewController.getTableView().refresh();
+              }
+              if (recorderController != null) {
+                first = this.recorderController.getTableView().getItems().stream().filter(t -> t.getGameId() == gameId).findFirst();
+                if (first.isPresent()) {
+                  this.recorderController.getTableView().getItems().remove(first.get());
+                  this.recorderController.getTableView().refresh();
+                }
+              }
+            }
+          });
     }
 
     // also refresh playlists as the addition/modification of tables may impact them
@@ -716,5 +722,18 @@ public class TablesController implements Initializable, StudioFXController, Stud
       }
     }
     return null;
+  }
+
+  @Override
+  public void preferencesChanged(String key, Object value) {
+    if (PreferenceNames.VPXZ_SETTINGS.equalsIgnoreCase(key)) {
+      VPXZSettings vpxzSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPXZ_SETTINGS, VPXZSettings.class);
+      if(vpxzSettings.isEnabled()) {
+        tabPane.getTabs().add(5, vpxMobileTab);
+      }
+      else {
+        tabPane.getTabs().remove(vpxMobileTab);
+      }
+    }
   }
 }
