@@ -1,3 +1,15 @@
+## Release Notes 4.6.4
+
+## Changes
+
+- **superhac** has extended his media repository: table flyers can now be searched for the GameInfo screen.
+- Fixed error reading the global screenres.txt.
+- Fixed missing UI disabled state update when the drop-in folder checkbox was toggled.
+- Fixed broken "Generate" button in the template editor.
+- Fixed builds for MacOS.
+
+---
+
 ## Release Notes 4.6.3
 
 ## Changes (including a breaking one!)

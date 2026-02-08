@@ -863,7 +863,12 @@ public class BackglassService implements InitializingBean {
     res.setDmdX(parseIntSafe(lines.get(9)));
     res.setDmdY(parseIntSafe(lines.get(10)));
 
-    res.setDmYFlip("1".equals(lines.get(11)));
+    if (lines.size() >= 12) {
+      res.setDmYFlip("1".equals(lines.get(11)));
+    }
+    else {
+      res.setDmYFlip(false);
+    }
 
     if (lines.size() > 16) {
       res.setBackgroundX(parseIntSafe(lines.get(12)));
