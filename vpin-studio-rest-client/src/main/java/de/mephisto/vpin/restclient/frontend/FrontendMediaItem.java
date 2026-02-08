@@ -10,17 +10,24 @@ public class FrontendMediaItem {
   private String mimeType;
   private final File file;
   private final VPinScreen screen;
-  private int gameId;
   private Date modificationDate;
   private long size;
+  private String uri;
 
-  public FrontendMediaItem(int gameId, VPinScreen screen, File file) {
+  public static FrontendMediaItem forGame(int gameId, VPinScreen screen, File file) {
+    return new FrontendMediaItem(screen, file, "media" + "/" + gameId + "/" + screen);
+  }
+  public static FrontendMediaItem forPlaylist(int playlistId, VPinScreen screen, File file) {
+    return new FrontendMediaItem(screen, file, "playlistmedia" + "/" + playlistId + "/" + screen);
+  }
+
+  private FrontendMediaItem(VPinScreen screen, File file, String uri) {
     this.file = file;
-    this.gameId = gameId;
     this.screen = screen;
     this.mimeType = MimeTypeUtil.determineMimeType(file);
     this.modificationDate = new Date(file.lastModified());
     this.size = file.length();
+    this.uri = uri;
   }
 
   public long getSize() {
@@ -60,15 +67,11 @@ public class FrontendMediaItem {
     return this.file.getName();
   }
 
-  public int getGameId() {
-    return gameId;
-  }
-
-  public void setGameId(int gameId) {
-    this.gameId = gameId;
-  }
-
   public String getUri() {
-    return "media/" + getGameId() + "/" + getScreen();
+    return uri;
+  }
+
+  public void setUri(String uri) {
+    this.uri = uri;
   }
 }

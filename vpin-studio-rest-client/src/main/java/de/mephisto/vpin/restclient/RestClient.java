@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientErrorHandler;
-import org.apache.commons.io.IOUtils;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -184,7 +183,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
     return exchange;
   }
 
-  public Boolean put(String url, Map<String, Object> model) throws Exception {
+  public Boolean put(String url, Map<String, Object> model) {
     long start = System.currentTimeMillis();
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
@@ -194,7 +193,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
     return exchange;
   }
 
-  public <T> T put(String url, Map<String, Object> model, Class<T> entityType) throws Exception {
+  public <T> T put(String url, Map<String, Object> model, Class<T> entityType) {
     long start = System.currentTimeMillis();
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);

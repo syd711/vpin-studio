@@ -19,11 +19,12 @@ public class MediaConversionServiceClient extends VPinStudioClientService {
     super(client);
   }
 
-  public MediaOperationResult convert(int gameId, VPinScreen screen, String name, MediaConversionCommand command) {
+  public MediaOperationResult convert(int objectId, boolean playlistMode, VPinScreen screen, String name, MediaConversionCommand command) {
     try {
       MediaOperation mediaOperation = new MediaOperation();
       mediaOperation.setScreen(screen);
-      mediaOperation.setGameId(gameId);
+      mediaOperation.setObjectId(objectId);
+      mediaOperation.setPlaylistMode(playlistMode);
       mediaOperation.setFilename(name);
       mediaOperation.setCommand(command);
       return getRestClient().post(API + "convertmedia/batch", mediaOperation, MediaOperationResult.class);

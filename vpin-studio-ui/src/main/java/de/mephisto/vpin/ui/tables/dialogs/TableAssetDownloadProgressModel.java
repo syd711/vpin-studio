@@ -78,7 +78,7 @@ public class TableAssetDownloadProgressModel extends ProgressModel<TableAsset> {
         client.getGameMediaService().downloadTableAsset(tableAsset, this.screen, this.game, append);
       }
       else {
-        client.getPlaylistMediaService().downloadPlaylistAsset(tableAsset, this.screen, this.playlist, append);
+        client.getGameMediaService().downloadPlaylistAsset(tableAsset, this.screen, this.playlist, append);
       }
     }
     catch (Exception e) {

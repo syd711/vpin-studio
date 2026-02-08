@@ -6,7 +6,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.altsound.AltSound2DuckingProfile;
 import de.mephisto.vpin.restclient.altsound.AltSound2SampleType;
-import de.mephisto.vpin.restclient.assets.AssetRequest;
+import de.mephisto.vpin.restclient.assets.AssetMetaData;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
@@ -65,39 +65,14 @@ public class TableDialogs {
   private final static Logger LOG = LoggerFactory.getLogger(TableDialogs.class);
 
   public static void directAssetUpload(Stage stage, GameRepresentation game, VPinScreen screen) {
-    StudioFileChooser fileChooser = new StudioFileChooser();
-    fileChooser.setTitle("Select Media");
-    fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("Files", MediaTypesSelector.getFileSelection(screen)));
-
-    List<File> files = fileChooser.showOpenMultipleDialog(stage);
-    if (files != null && !files.isEmpty()) {
-      Platform.runLater(() -> {
-
-        FrontendMediaRepresentation medias = client.getGameMediaService().getGameMedia(game.getId());
-        boolean append = false;
-        if (medias.getMediaItems(screen).size() > 0) {
-          Optional<ButtonType> buttonType = WidgetFactory.showConfirmationWithOption(Studio.stage, "Replace Media?",
-              "A media asset already exists.",
-              "Append new asset or overwrite existing asset?", "Overwrite", "Append");
-          if (buttonType.isPresent() && buttonType.get().equals(ButtonType.OK)) {
-          }
-          else if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
-            append = true;
-          }
-          else {
-            return;
-          }
-        }
-
-        FrontendMediaUploadProgressModel model = new FrontendMediaUploadProgressModel(game,
-            "Media Upload", files, screen, append);
-        ProgressDialog.createProgressDialog(model);
-      });
-    }
+    directAssetUpload(stage, game.getId(), false, screen);
   }
 
   public static void directAssetUpload(Stage stage, PlaylistRepresentation playlist, VPinScreen screen) {
+    directAssetUpload(stage, playlist.getId(), true, screen);
+  }
+
+  public static void directAssetUpload(Stage stage, int id, boolean playlistMode, VPinScreen screen) {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select Media");
     fileChooser.getExtensionFilters().addAll(
@@ -107,7 +82,7 @@ public class TableDialogs {
     if (files != null && !files.isEmpty()) {
       Platform.runLater(() -> {
 
-        FrontendMediaRepresentation medias = client.getPlaylistMediaService().getPlaylistMedia(playlist.getId());
+        FrontendMediaRepresentation medias = client.getGameMediaService().getMedia(id, playlistMode);
         boolean append = false;
         if (medias.getMediaItems(screen).size() > 0) {
           Optional<ButtonType> buttonType = WidgetFactory.showConfirmationWithOption(Studio.stage, "Replace Media?",
@@ -123,7 +98,7 @@ public class TableDialogs {
           }
         }
 
-        FrontendMediaUploadProgressModel model = new FrontendMediaUploadProgressModel(playlist,
+        FrontendMediaUploadProgressModel model = new FrontendMediaUploadProgressModel(id, playlistMode,
             "Media Upload", files, screen, append);
         ProgressDialog.createProgressDialog(model);
       });
@@ -160,10 +135,10 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static void openMetadataDialog(AssetRequest request) {
-    Stage stage = Dialogs.createStudioDialogStage(AssetMetadataController.class, "dialog-asset-metadata.fxml", "Metadata for \"" + request.getName() + "\"");
+  public static void openMetadataDialog(AssetMetaData metadata, String filename) {
+    Stage stage = Dialogs.createStudioDialogStage(AssetMetadataController.class, "dialog-asset-metadata.fxml", "Metadata for \"" + filename + "\"");
     AssetMetadataController controller = (AssetMetadataController) stage.getUserData();
-    controller.setData(request);
+    controller.setData(metadata);
     stage.showAndWait();
   }
 
