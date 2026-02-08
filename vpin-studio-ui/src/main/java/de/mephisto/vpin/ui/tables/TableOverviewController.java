@@ -26,6 +26,7 @@ import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.preferences.VPXZSettings;
 import de.mephisto.vpin.restclient.validation.*;
 import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.ui.*;
@@ -45,6 +46,7 @@ import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.tables.vps.VpsTableColumn;
 import de.mephisto.vpin.ui.tables.vps.VpsTutorialColumn;
 import de.mephisto.vpin.ui.util.*;
+import de.mephisto.vpin.ui.vpxz.VPXZDialogs;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -251,6 +253,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private Button deleteBtn;
 
   @FXML
+  private Button vpxzBtn;
+
+  @FXML
   private Button playlistManagerBtn;
 
   @FXML
@@ -290,6 +295,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private UISettings uiSettings;
   private VpsSettings vpsSettings;
   private ServerSettings serverSettings;
+  private VPXZSettings vpxzSettings;
   private IScoredSettings iScoredSettings;
 
   private final List<Consumer<GameRepresentation>> reloadConsumers = new ArrayList<>();
@@ -558,6 +564,12 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }
 
     deleteSelection();
+  }
+
+  @FXML
+  protected void onVpxz(Event e) {
+    List<GameRepresentation> selectedItems = getSelections();
+    VPXZDialogs.openTablesVpxzDialog(selectedItems);
   }
 
   private void deleteSelection() {
@@ -1868,6 +1880,10 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       tableView.getColumns().add(tableView.getColumns().indexOf(columnHSType), columnTutorials);
     }
 
+    vpxzSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPXZ_SETTINGS, VPXZSettings.class);
+    vpxzBtn.managedProperty().bindBidirectional(vpxzBtn.visibleProperty());
+    vpxzBtn.setVisible(vpxzSettings.isEnabled());
+
     iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
     columnStatus.setPrefWidth(iScoredSettings != null && iScoredSettings.isEnabled() ? 75 : 55);
 
@@ -2148,6 +2164,10 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }
     else if (key.equals(PreferenceNames.SERVER_SETTINGS)) {
       serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+    }
+    else if (key.equals(PreferenceNames.VPXZ_SETTINGS)) {
+      vpxzSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPXZ_SETTINGS, VPXZSettings.class);
+      vpxzBtn.setVisible(vpxzSettings.isEnabled());
     }
     else if (key.equals(PreferenceNames.ISCORED_SETTINGS)) {
       iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);

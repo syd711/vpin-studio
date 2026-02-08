@@ -15,7 +15,7 @@ import java.util.List;
 public class VPXZDialogs {
 
   public static void openTablesVpxzDialog(List<GameRepresentation> games) {
-    Stage stage = Dialogs.createStudioDialogStage(TablesVPXZDialogController.class, "dialog-tables-vpxz.fxml", "Table Packager");
+    Stage stage = Dialogs.createStudioDialogStage(TablesVPXZDialogController.class, "dialog-tables-vpxz.fxml", "VPXZ Table Packager");
     TablesVPXZDialogController controller = (TablesVPXZDialogController) stage.getUserData();
     controller.setGames(games);
     stage.showAndWait();
