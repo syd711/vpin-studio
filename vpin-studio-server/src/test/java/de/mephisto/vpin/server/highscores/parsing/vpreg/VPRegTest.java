@@ -15,8 +15,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class VPRegTest {
 
-  private static ScoringDB scoringDB = ScoringDB.load();
-
   @Test
   public void readFile() {
     File vpRegFile = new File("../testsystem/vPinball/VisualPinball/User/VPReg.stg");
