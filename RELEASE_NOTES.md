@@ -1,3 +1,12 @@
+## Release Notes 4.6.5
+
+## Changes
+
+- **Asset Manager**: Fixed possible file lock caused by the media streaming that prohibited the deletion.
+- **System Manager**: Added the **dmddevice.ini** file to the list of exlusions for VPinMAME installations.
+
+---
+
 ## Release Notes 4.6.4
 
 ## Changes
