@@ -964,11 +964,10 @@ public class TableDataController extends BasePrevNextController implements AutoC
   }
 
   protected void switchGame(GameRepresentation game) {
-    this.game = game;
-
     JFXFuture.supplyAsync(() -> {
       return client.getFrontendService().getTableDetails(game.getId());
     }).thenAcceptLater((tableDetails) -> {
+      this.game = game;
       switchGame(game, tableDetails);
 
       this.nextButton.setDisable(false);
