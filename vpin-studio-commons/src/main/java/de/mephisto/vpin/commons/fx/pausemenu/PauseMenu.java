@@ -338,7 +338,7 @@ public class PauseMenu extends Application {
       }
       screenAssets.stream().forEach(asset -> {
         asset.getScreenStage().hide();
-        asset.dispose();
+        asset.getFrontendScreenController().dispose();
       });
       screenAssets.clear();
     });

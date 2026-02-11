@@ -1,7 +1,7 @@
 package de.mephisto.vpin.commons.fx.pausemenu.model;
 
+import de.mephisto.vpin.commons.fx.FrontendScreenController;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
-import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
 import java.net.URL;
@@ -17,14 +17,14 @@ public class FrontendScreenAsset {
   private int offsetX;
   private int offsetY;
 
-  private MediaPlayer mediaPlayer;
+  private FrontendScreenController frontendScreenController;
 
-  public void dispose() {
-    if(mediaPlayer != null) {
-      new Thread(() -> {
-        mediaPlayer.dispose();
-      }).start();
-    }
+  public void setFrontendScreenController(FrontendScreenController frontendScreenController) {
+    this.frontendScreenController = frontendScreenController;
+  }
+
+  public FrontendScreenController getFrontendScreenController() {
+    return frontendScreenController;
   }
 
   public int getOffsetX() {

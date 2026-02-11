@@ -2,7 +2,7 @@
 
 ## Changes
 
-- **Asset Manager**: Fixed possible file lock caused by the media streaming that prohibited the deletion.
+- **Asset Manager**: Fixed possible file lock caused by the media streaming that prohibited the deletion (blind fix).
 - **System Manager**: Added the **dmddevice.ini** file to the list of exlusions for VPinMAME installations.
 
 ---
