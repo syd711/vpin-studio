@@ -1,0 +1,6166 @@
+<TableNameMappings>
+	<Mapping>
+		<TableName>250cc</TableName>
+		<RomName>ind250cc</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>A Nightmare On Elm Street</TableName>
+		<RomName>freddy</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Airborne</TableName>
+		<RomName>abv106</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Ali</TableName>
+		<RomName>ali</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Alien Poker (Not multiball version)</TableName>
+		<RomName>alpok_l6</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Alien Star</TableName>
+		<RomName>alienstr</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Amazing Spiderman</TableName>
+		<RomName>spidermn</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Amazon Hunt</TableName>
+		<RomName>amazonh</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Attack from Mars</TableName>
+		<RomName>afm</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Austin Powers</TableName>
+		<RomName>austin</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Baby Pacman</TableName>
+		<RomName>babypac</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Back to the Future</TableName>
+		<RomName>bttf</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Bad Cats</TableName>
+		<RomName>bcats</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Banzai Run</TableName>
+		<RomName>bnzai</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Barbwire</TableName>
+		<RomName>barbwire</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Barracora</TableName>
+		<RomName>barra</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Batman</TableName>
+		<RomName>btmn</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Baywatch</TableName>
+		<RomName>baywatch</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Beat the Clock</TableName>
+		<RomName>beatclck</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Big Bang Bar</TableName>
+		<RomName>bbb109</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Big Game</TableName>
+		<RomName>biggame</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Big Guns</TableName>
+		<RomName>bguns</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>BlackBelt (Zaccaria)</TableName>
+		<RomName>bbeltzac</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Black Jack</TableName>
+		<RomName>blackjck</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Black Knight</TableName>
+		<RomName>bk</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Black Knight 2000</TableName>
+		<RomName>bk2k</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Black Pyramid</TableName>
+		<RomName>blakpyra</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Black Rose</TableName>
+		<RomName>br</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Blackout</TableName>
+		<RomName>blkou</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Bone Busters</TableName>
+		<RomName>bonebstr</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Bow and Arrow</TableName>
+		<RomName>bowarrow</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Bram Stokers Dracula</TableName>
+		<RomName>drac</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Brave Team</TableName>
+		<RomName>brvteam</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>301 Bullseye</TableName>
+		<RomName>bullseye</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Cactus Canyon</TableName>
+		<RomName>cc</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Canasta 86</TableName>
+		<RomName>canasta</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Centaur</TableName>
+		<RomName>centaur</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Checkpoint</TableName>
+		<RomName>ckpt</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Cirqus Voltaire</TableName>
+		<RomName>cv</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Class of 1812</TableName>
+		<RomName>clas1812</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Comet</TableName>
+		<RomName>comet</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Congo</TableName>
+		<RomName>congo</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Creature from the Black Lagoon</TableName>
+		<RomName>cftbl</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Cue Ball Wizard</TableName>
+		<RomName>cueball</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Cyclone</TableName>
+		<RomName>cycln</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Demolition Man</TableName>
+		<RomName>dm</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Diamond Lady</TableName>
+		<RomName>diamond</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Diner</TableName>
+		<RomName>diner</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Dirty Harry</TableName>
+		<RomName>dh</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Doctor Who</TableName>
+		<RomName>dw</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Dolly Parton</TableName>
+		<RomName>dollyptb</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Dr. Dude</TableName>
+		<RomName>dd</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Dracula</TableName>
+		<RomName>dracula</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Dragon (Gottlieb)</TableName>
+		<RomName>dragon</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Earthshaker</TableName>
+		<RomName>esha</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Eight Ball</TableName>
+		<RomName>eightbll</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Eight Ball Deluxe</TableName>
+		<RomName>eballdlx</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>El Dorado City of Gold</TableName>
+		<RomName>eldorado</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Elvira and the Party Monsters</TableName>
+		<RomName>eatpm</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Elvis</TableName>
+		<RomName>elvis</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>F-14 Tomcat</TableName>
+		<RomName>f14</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Fathom</TableName>
+		<RomName>fathom</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Fireball</TableName>
+		<RomName>fireball_1972</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Firepower</TableName>
+		<RomName>frpwr</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Fish Tales</TableName>
+		<RomName>ft</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Flash</TableName>
+		<RomName>flash</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Flash Gordon</TableName>
+		<RomName>flashgdn</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Flight 2000</TableName>
+		<RomName>flight2k</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Mary Shelley&apos;s Frankenstein</TableName>
+		<RomName>frankst</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Funhouse</TableName>
+		<RomName>fh</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Galaxy</TableName>
+		<RomName>galaxy</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Gilligan&apos;s Island</TableName>
+		<RomName>gi</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Godzilla</TableName>
+		<RomName>godzilla</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Golden Cue</TableName>
+		<RomName>goldcue</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Goldeneye</TableName>
+		<RomName>gldneye</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Gorgar</TableName>
+		<RomName>grgar</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Grand Lizard</TableName>
+		<RomName>grand</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Grand Prix</TableName>
+		<RomName>gprix</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Guns And Roses</TableName>
+		<RomName>gnr</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Harlem Globetrotters On Tour</TableName>
+		<RomName>hglbtrtb</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Harley Davidson</TableName>
+		<RomName>hd</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>High Roller Casino</TableName>
+		<RomName>hirolcas</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>High Speed</TableName>
+		<RomName>hs</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Hurricane</TableName>
+		<RomName>hurr</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Independence Day</TableName>
+		<RomName>id4</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Indiana Jones The Pinball Adventure</TableName>
+		<RomName>ij</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Indianapolis 500</TableName>
+		<RomName>i500</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Iron Maiden</TableName>
+		<RomName>ironmaid</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Jackbot</TableName>
+		<RomName>jb</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>James Bond</TableName>
+		<RomName>jamesb2</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Johnny Mnemonic</TableName>
+		<RomName>jm</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Jokerz!</TableName>
+		<RomName>jokrz</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Judge Dredd</TableName>
+		<RomName>jd</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Jurassic Park</TableName>
+		<RomName>jupk</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Kingpin</TableName>
+		<RomName>kp</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Kings of Steel</TableName>
+		<RomName>kosteel</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>KISS</TableName>
+		<RomName>kiss</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Lethal Weapon 3</TableName>
+		<RomName>lw3</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Lightning</TableName>
+		<RomName>lightnin</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Lost in Space</TableName>
+		<RomName>lostspc</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Lost World</TableName>
+		<RomName>lostw</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Mata Hari</TableName>
+		<RomName>matahari</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Medieval Madness</TableName>
+		<RomName>mm</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Medusa</TableName>
+		<RomName>medusa</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Monopoly</TableName>
+		<RomName>monopoly</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Monster Bash</TableName>
+		<RomName>mb</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Mousin Around</TableName>
+		<RomName>mousn</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Nascar</TableName>
+		<RomName>nascar</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>NBA Fastbreak</TableName>
+		<RomName>nbaf</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Nine Ball</TableName>
+		<RomName>ninebal</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Nitro Ground Shaker</TableName>
+		<RomName>ngndshkr</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>No Fear</TableName>
+		<RomName>nf</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>No Good Gofers</TableName>
+		<RomName>ngg</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Party Animal</TableName>
+		<RomName>prtyanim</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Pharaoh</TableName>
+		<RomName>pharo</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Pinball Champ</TableName>
+		<RomName>pinchamp</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Pinbot</TableName>
+		<RomName>pb</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Pink Panther</TableName>
+		<RomName>pnkpnthr</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Playboy</TableName>
+		<RomName>playboyb</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Playboy 35th Anniversairy</TableName>
+		<RomName>play</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Police Force</TableName>
+		<RomName>polic</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Power Play</TableName>
+		<RomName>pwerplay</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Radical</TableName>
+		<RomName>radcl</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Red and Teds Roadshow</TableName>
+		<RomName>rs</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Rescue 911</TableName>
+		<RomName>rescu911</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Ripleys Believe It or Not</TableName>
+		<RomName>ripleys</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Road Kings</TableName>
+		<RomName>rdkng</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Road Runner</TableName>
+		<RomName>roadrunr</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Robo-War</TableName>
+		<RomName>robowars</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Robocop</TableName>
+		<RomName>robo</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Adventures of Rocky and Bullwinkle and Friends</TableName>
+		<RomName>rab</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Rollercoaster Tycoon</TableName>
+		<RomName>rctycn</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Rollergames</TableName>
+		<RomName>rollr</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Rolling Stones</TableName>
+		<RomName>rollstob</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Royal Flush/Deluxe/Supreme</TableName>
+		<RomName>rflshdlx</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Scared Stiff</TableName>
+		<RomName>SS</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Seawitch</TableName>
+		<RomName>seawitch</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Secret Service</TableName>
+		<RomName>ssvc</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Silverball Mania</TableName>
+		<RomName>slbmania</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Solar Ride</TableName>
+		<RomName>solaride</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Sorcerer</TableName>
+		<RomName>sorcr</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>South Park</TableName>
+		<RomName>sprk</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Space Invaders</TableName>
+		<RomName>spaceinv</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Space Shuttle</TableName>
+		<RomName>sshtl</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Spectrum</TableName>
+		<RomName>spectru4</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Star Trek Bally</TableName>
+		<RomName>startrek</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Star Trek 25th Anniversary</TableName>
+		<RomName>trek</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Star Trek The Next Generation</TableName>
+		<RomName>sttng</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Star Wars</TableName>
+		<RomName>stwr</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Star God</TableName>
+		<RomName>stargod</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Starship Troopers</TableName>
+		<RomName>startrp</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Strange Science</TableName>
+		<RomName>strngsci</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Strikes and Spares</TableName>
+		<RomName>stk</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Super Mario Bros</TableName>
+		<RomName>smb3</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Tales from the Crypt</TableName>
+		<RomName>tftc</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Tales of the Arabian Nights</TableName>
+		<RomName>totan</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Taxi</TableName>
+		<RomName>taxi</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Tee&apos;d Off</TableName>
+		<RomName>teedoff3</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Teenage Mutant Ninja Turtles</TableName>
+		<RomName>tmnt</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Terminator 2 Judgement Day</TableName>
+		<RomName>t2</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Terminator 3 Rise of the Machines</TableName>
+		<RomName>term3</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>The Addams Family</TableName>
+		<RomName>taf</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Bally Game Show, The</TableName>
+		<RomName>gs</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Flintstones, The</TableName>
+		<RomName>fs</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>The Getaway High Speed II</TableName>
+		<RomName>gw</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>The Lord of the Rings</TableName>
+		<RomName>lotr</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>The Machine Bride of Pinbot</TableName>
+		<RomName>bop</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Party Zone</TableName>
+		<RomName>pz</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Phantom Of The Opera, The</TableName>
+		<RomName>poto</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>The Shadow</TableName>
+		<RomName>ts</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>The Simpsons</TableName>
+		<RomName>simp</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>The Simpsons Pinball Party</TableName>
+		<RomName>simpprty</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Sopranos, The</TableName>
+		<RomName>sopranos</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Time Machine, The</TableName>
+		<RomName>tmac</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Twilight Zone, The</TableName>
+		<RomName>tz</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Theatre of Magic</TableName>
+		<RomName>tom</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Tommy The Pinball Wizard</TableName>
+		<RomName>tomy</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Triple Strike</TableName>
+		<RomName>triplestrike</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Truck Stop</TableName>
+		<RomName>trucksp3</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Twister</TableName>
+		<RomName>twst</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Viper Night Drivin</TableName>
+		<RomName>viprsega</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Whirlwind</TableName>
+		<RomName>whirl</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>White Water</TableName>
+		<RomName>ww</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Who Dunnit</TableName>
+		<RomName>wd</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Wipeout</TableName>
+		<RomName>wipeout</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>World Cup Soccer</TableName>
+		<RomName>wcs</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>WWF Royal Rumble</TableName>
+		<RomName>wwfr</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>X-Files</TableName>
+		<RomName>xfiles</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Xenon</TableName>
+		<RomName>Xenon</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Tron</TableName>
+		<RomName>trn_174h</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Batman The Dark Knight</TableName>
+		<RomName>bdk</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>NBA</TableName>
+		<RomName>nba</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Family Guy</TableName>
+		<RomName>fg</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Shrek</TableName>
+		<RomName>shr</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>ACDC</TableName>
+		<RomName>acd_170</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>X-Men</TableName>
+		<RomName>xmn_151</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Transformers</TableName>
+		<RomName>tf</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Avatar</TableName>
+		<RomName>avr</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Future Spa</TableName>
+		<RomName>futurspa</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Free Fall</TableName>
+		<RomName>freefall</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Paragon</TableName>
+		<RomName>paragon</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Corvette</TableName>
+		<RomName>corv</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Deadly Weapon</TableName>
+		<RomName>deadweap</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Sharp Shooter</TableName>
+		<RomName>sshooter</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Star Wars Trilogy</TableName>
+		<RomName>swtril43</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Haunted House</TableName>
+		<RomName>hh</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Genesis</TableName>
+		<RomName>genesis</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Cosmic Gunfight</TableName>
+		<RomName>csmic</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Als Garage Band</TableName>
+		<RomName>wrldtou2</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Arena</TableName>
+		<RomName>arena</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Big House</TableName>
+		<RomName>bighouse</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Big Hurt</TableName>
+		<RomName>bighurt</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Black Hole</TableName>
+		<RomName>blckhole</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Cyclopes</TableName>
+		<RomName>cyclopes</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Devil Riders</TableName>
+		<RomName>dvlrider</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Faeton</TableName>
+		<RomName>faeton</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Frontier</TableName>
+		<RomName>frontie</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Junk Yard</TableName>
+		<RomName>jy</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Laser Cue</TableName>
+		<RomName>lsrcu</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Metal Man</TableName>
+		<RomName>metalman</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Qberts Quest</TableName>
+		<RomName>qbquest</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Riverboat Gambler</TableName>
+		<RomName>rvrbt</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Stargate</TableName>
+		<RomName>stargat4</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Swords of Fury</TableName>
+		<RomName>swrds</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Trailer</TableName>
+		<RomName>trailer</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Mr and Mrs Pacman</TableName>
+		<RomName>m_mpac</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Eight Ball Champ</TableName>
+		<RomName>eballchp</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Cosmic Princess</TableName>
+		<RomName>princess</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Close Encounters Of The Third Kind</TableName>
+		<RomName>closeenc</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Flipper Football</TableName>
+		<RomName>ffv104</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Genie</TableName>
+		<RomName>genie</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Ice Fever</TableName>
+		<RomName>icefever</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Mystic</TableName>
+		<RomName>mysticb</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Bad Girls</TableName>
+		<RomName>badgirls</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Charlies Angels SS</TableName>
+		<RomName>charlies</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Embryon</TableName>
+		<RomName>embryon</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Hot Hand</TableName>
+		<RomName>hothand</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Street Fighter II</TableName>
+		<RomName>sfight2</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Supersonic</TableName>
+		<RomName>sst</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Pinball Pool</TableName>
+		<RomName>pinpool</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Raven</TableName>
+		<RomName>raven</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Stars</TableName>
+		<RomName>stars</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Spirit</TableName>
+		<RomName>spirit</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Trident</TableName>
+		<RomName>trident</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Vegas (Taito)</TableName>
+		<RomName>vegast</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Vortex</TableName>
+		<RomName>vortex</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Lectronamo</TableName>
+		<RomName>lectrono</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Panthera</TableName>
+		<RomName>panthera</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Rocky</TableName>
+		<RomName>rocky</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Atlantis</TableName>
+		<RomName>atlantis</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Popeye Saves the Earth</TableName>
+		<RomName>pop</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Disco Fever</TableName>
+		<RomName>disco</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Spider-Man</TableName>
+		<RomName>sman</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Hook</TableName>
+		<RomName>hook</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Rolling Stones (Stern 2011)</TableName>
+		<RomName>rsn</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Wheel Of Fortune</TableName>
+		<RomName>wof</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Jolly Park</TableName>
+		<RomName>jolypark</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Apollo 13</TableName>
+		<RomName>apollo13</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>The Lost World Jurassic Park</TableName>
+		<RomName>jplstw</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Batman Forever</TableName>
+		<RomName>batmanf</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Pinball Magic</TableName>
+		<RomName>pmv112</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>24</TableName>
+		<RomName>twenty4</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Metallica</TableName>
+		<RomName>mtl_180</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Maverick</TableName>
+		<RomName>mav</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Last Action Hero</TableName>
+		<RomName>lah</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Robot</TableName>
+		<RomName>robot</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Cybernaut</TableName>
+		<RomName>cybrnaut</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Breakshot</TableName>
+		<RomName>bsv103</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Big Brave</TableName>
+		<RomName>BigBrave</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Scarface</TableName>
+		<RomName>Scarface</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Playboy (Stern 2002)</TableName>
+		<RomName>playboys</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Iron Man</TableName>
+		<RomName>im</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Space Station</TableName>
+		<RomName>spstn</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Safe Cracker</TableName>
+		<RomName>sc</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Tri Zone</TableName>
+		<RomName>trizn_l1</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Lady Luck (Bally)</TableName>
+		<RomName>LadyLuck</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Wrath of Olympus</TableName>
+		<RomName>Wooly</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Laser War</TableName>
+		<RomName>lwar</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Avengers, The</TableName>
+		<RomName>avs_170</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>World Cup Soccer 78</TableName>
+		<RomName>wldcp</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Baseball (Gottlieb 1970)</TableName>
+		<RomName>baseball_1970</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Joker Poker</TableName>
+		<RomName>jokrpokr</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Pirates of the Caribbean</TableName>
+		<RomName>potc</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Car Hop</TableName>
+		<RomName>carhop</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Abracadabra</TableName>
+		<RomName>abracadabra</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>AC/DC Music Table</TableName>
+		<RomName>ACDC</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Black Sabbath 70s Music</TableName>
+		<RomName>BS70_B2S</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Black Sabbath 80s Music</TableName>
+		<RomName>BS80_B2S</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Greateful Dead Music</TableName>
+		<RomName>GratefulDead_B2S</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Rush Music Table</TableName>
+		<RomName>RUSH2112_B2S</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Star Trek Stern Pro</TableName>
+		<RomName>st_162</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Big Hit</TableName>
+		<RomName>bighit</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Big Valley</TableName>
+		<RomName>bigvalley</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Capersville</TableName>
+		<RomName>capersville</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Centigrade 37</TableName>
+		<RomName>centigrade</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Super Soccer</TableName>
+		<RomName>supersoccer</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Full</TableName>
+		<RomName>Full</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Impacto</TableName>
+		<RomName>impacto</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Gridiron</TableName>
+		<RomName>gridiron</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Shangrila</TableName>
+		<RomName>Shangrila</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Yukon</TableName>
+		<RomName>yukon</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Strange World</TableName>
+		<RomName>strworld</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Sure Shot</TableName>
+		<RomName>sureshot</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Sky Rocket</TableName>
+		<RomName>skyrocket</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Ghostbusters</TableName>
+		<RomName>ghostbusters</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Captain Fantastic</TableName>
+		<RomName>captfantastic</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Gator</TableName>
+		<RomName>gator</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Hit the Deck</TableName>
+		<RomName>hitthedeck</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Honey</TableName>
+		<RomName>honey</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Jacks Open</TableName>
+		<RomName>jacksopen</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Kings and Queens</TableName>
+		<RomName>kingsandqueens</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Dipsy Doodle</TableName>
+		<RomName>dipsydoodle</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>The Champion Pub</TableName>
+		<RomName>cp</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>See Saw</TableName>
+		<RomName>seesaw</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Yellow Submarine</TableName>
+		<RomName>yellowsub</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Four Million B.C.</TableName>
+		<RomName>FourMBC</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Mars Trek</TableName>
+		<RomName>marstrek</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Beatles 2013</TableName>
+		<RomName>Beatles2013</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Evel Knievel</TableName>
+		<RomName>evelknie</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>King Kong</TableName>
+		<RomName>kiko</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Ski Jump</TableName>
+		<RomName>skijump</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>King Tut</TableName>
+		<RomName>kingtut</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Antar</TableName>
+		<RomName>antar</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Jigglebox</TableName>
+		<RomName>jigglebox</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Dragon Interflip</TableName>
+		<RomName>dragoninterflip</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Knockout</TableName>
+		<RomName>knockout</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Blue Chip</TableName>
+		<RomName>BlueChip_1976</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Jungle Queen</TableName>
+		<RomName>junglequeen</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Mephisto JP</TableName>
+		<RomName>Mphisto</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Defender</TableName>
+		<RomName>dfndr</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Title Fight</TableName>
+		<RomName>tfight</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Volley</TableName>
+		<RomName>volley_1976</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Magnotron</TableName>
+		<RomName>Magnotron_1974</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Old Chicago</TableName>
+		<RomName>old_chicago_1975</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Jungle</TableName>
+		<RomName>Jungle_1972</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Target Alpha</TableName>
+		<RomName>Target_Alpha_1976</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Line Drive</TableName>
+		<RomName>linedrive</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Super Star</TableName>
+		<RomName>superstar</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Haunted Mansion</TableName>
+		<RomName>hauntedmansion</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Pinball Universe</TableName>
+		<RomName>PinballUniverse</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Geisha</TableName>
+		<RomName>geisha_FS</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>StratoFlite</TableName>
+		<RomName>Stratoflite</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Hot Shot</TableName>
+		<RomName>Hot_Shot_1973</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Far Out</TableName>
+		<RomName>Far_Out_1974</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>King Pin 1973</TableName>
+		<RomName>King_Pin_1973</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Sheriff</TableName>
+		<RomName>Sheriff_1971</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Rugby</TableName>
+		<RomName>rugby</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Spiderman JP</TableName>
+		<RomName>spidermanjp</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Pirates of the Caribbean JP</TableName>
+		<RomName>potcjp</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Superman</TableName>
+		<RomName>superman</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Abracadabra_UP</TableName>
+		<RomName>abracadabraup</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Skateball</TableName>
+		<RomName>skateblb</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Firepower II</TableName>
+		<RomName>fpwr2</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Mustang Pro</TableName>
+		<RomName>mt_130</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Stingray</TableName>
+		<RomName>stingray</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Fire!</TableName>
+		<RomName>fire</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Grand Slam</TableName>
+		<RomName>gransla</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Concorde</TableName>
+		<RomName>Concorde</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Dungeons and Dragons</TableName>
+		<RomName>dungdrag</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Sharkey s Shootout</TableName>
+		<RomName>shrkysht</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Super Mario Bros. Mushroom World</TableName>
+		<RomName>smbmush</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>King of Diamonds</TableName>
+		<RomName>KingOfDiamonds_1967</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Barbarella</TableName>
+		<RomName>Barbarella_1972</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Silver</TableName>
+		<RomName>Silver</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Paradise</TableName>
+		<RomName>Paradise_Gottlieb_1965</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Big Buck Hunter Pro</TableName>
+		<RomName>bbh</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Blackwater 100</TableName>
+		<RomName>black100</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Bugs Bunny Birthday Ball</TableName>
+		<RomName>bbnny</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Xs and Os</TableName>
+		<RomName>xsandos</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Wild Fyre</TableName>
+		<RomName>wildfyre</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Vector</TableName>
+		<RomName>vector</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Voltan Escapes Cosmic Doom</TableName>
+		<RomName>voltan</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Buck Rogers</TableName>
+		<RomName>buckrgrs</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Spy Hunter</TableName>
+		<RomName>spyhunt</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Bounty Hunter</TableName>
+		<RomName>bountyh</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Farfalla</TableName>
+		<RomName>farfalla</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Empire Strikes Back</TableName>
+		<RomName>empsback</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Super Bowl</TableName>
+		<RomName>suprbowl</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Asteroid Annie</TableName>
+		<RomName>astannie</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Time Warp</TableName>
+		<RomName>tmwrp</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Chicago Cubs Triple Play</TableName>
+		<RomName>triplay</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Striker Xtreme</TableName>
+		<RomName>strikext</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Trigon</TableName>
+		<RomName>trigon</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Clown (Inder)</TableName>
+		<RomName>pinclown</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Magic Castle</TableName>
+		<RomName>mcastle</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Clown (Zaccaria)</TableName>
+		<RomName>clown</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Sinbad</TableName>
+		<RomName>sinbad</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Transporter the Rescue</TableName>
+		<RomName>tsptr</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Hercules</TableName>
+		<RomName>hercules</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Mystery Castle</TableName>
+		<RomName>mystcas</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>BMX</TableName>
+		<RomName>bmx</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>The Games</TableName>
+		<RomName>thegames</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Escape from the Lost World</TableName>
+		<RomName>esclwrld</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Elektra</TableName>
+		<RomName>elektra</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Cactus Jack</TableName>
+		<RomName>cactjack</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Pole Position</TableName>
+		<RomName>poleposn</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Agents 777</TableName>
+		<RomName>agent777</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Aaron Spelling</TableName>
+		<RomName>aar</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Airborne Avenger</TableName>
+		<RomName>aavenger</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Algar</TableName>
+		<RomName>algar</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>America 1942</TableName>
+		<RomName>america</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Andromeda</TableName>
+		<RomName>androme</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Split Second</TableName>
+		<RomName>splitsec</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Escape</TableName>
+		<RomName>escape</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FJ</TableName>
+		<RomName>fjholden</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Miss World</TableName>
+		<RomName>missworld</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Force II</TableName>
+		<RomName>forceii</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>King Rock</TableName>
+		<RomName>KingRock_1972</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Flicker</TableName>
+		<RomName>flicker</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Fireball II</TableName>
+		<RomName>fball</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Catacomb</TableName>
+		<RomName>cataco</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Atlantis (Gottlieb)</TableName>
+		<RomName>Atlantis_1975</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Gladiators</TableName>
+		<RomName>gladiatr</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Contact</TableName>
+		<RomName>cntct</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Attila the Hun</TableName>
+		<RomName>attila</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Magic</TableName>
+		<RomName>magic</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Time Fantasy</TableName>
+		<RomName>tmfnt</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Fast Draw EM</TableName>
+		<RomName>Fast_Draw_1975</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Spin Out</TableName>
+		<RomName>SpinOut_1975</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Krull</TableName>
+		<RomName>krull</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Goin&apos; Nuts</TableName>
+		<RomName>goinnuts</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Totem</TableName>
+		<RomName>totem</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Kuwait</TableName>
+		<RomName>Kuwait</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Gamatron</TableName>
+		<RomName>gamatron</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Gork</TableName>
+		<RomName>gork</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Harley Davidson (Sega)</TableName>
+		<RomName>harl</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Gold Ball</TableName>
+		<RomName>goldbal</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Walking Dead, The</TableName>
+		<RomName>twd_156</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Freedom</TableName>
+		<RomName>freedom</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Verne&apos;s World</TableName>
+		<RomName>vrnwrld</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Earth Wind Fire</TableName>
+		<RomName>ewf</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Gold Wings</TableName>
+		<RomName>goldwing</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Global Warfare</TableName>
+		<RomName>gwarfare</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Cleopatra</TableName>
+		<RomName>cleoptra</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Incredible Hulk, The</TableName>
+		<RomName>hulk</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Top Score</TableName>
+		<RomName>GottliebTopScore_1975</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Hard Body</TableName>
+		<RomName>hardbody</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Strawman</TableName>
+		<RomName>strawman</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Hotdoggin&apos;</TableName>
+		<RomName>hotdogg</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Time Machine (Zaccaria)</TableName>
+		<RomName>tmachzac</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>World Poker Tour</TableName>
+		<RomName>wpt</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Quicksilver</TableName>
+		<RomName>quicks</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Hoe Down</TableName>
+		<RomName>hoedown</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Indiana Jones (Stern)</TableName>
+		<RomName>ij4</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Devil&apos;s Dare</TableName>
+		<RomName>dvlsdre</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Punchy the Clown</TableName>
+		<RomName>punchy</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>CSI</TableName>
+		<RomName>csi</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Hawkman</TableName>
+		<RomName>hawkman</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Waterworld</TableName>
+		<RomName>waterwld</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>America&apos;s Most Haunted</TableName>
+		<RomName>americamosthaunted</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Heavy Metal (Rowamet)</TableName>
+		<RomName>heavymtl</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Heavy Metal Meltdown</TableName>
+		<RomName>hvymetal</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Hot Wheels</TableName>
+		<RomName>hotwheel</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Howzat</TableName>
+		<RomName>howzat</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>New Wave</TableName>
+		<RomName>newwave</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Hot Tip</TableName>
+		<RomName>httip_l1</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>MIBS</TableName>
+		<RomName>MIBS_1969</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>PinballX</TableName>
+		<RomName>PinballX</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Black Belt (Bally)</TableName>
+		<RomName>blackblt</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Black Sheep Squadron</TableName>
+		<RomName>blkshpsq</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Jacks to Open</TableName>
+		<RomName>jack2opn</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>OXO</TableName>
+		<RomName>OXO</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Captain Hook</TableName>
+		<RomName>cpthook</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Counterforce</TableName>
+		<RomName>cntforce</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Fire Mountain</TableName>
+		<RomName>firemntn</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Road Race</TableName>
+		<RomName>RoadRace_1969</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Lap by Lap</TableName>
+		<RomName>lapbylap</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Jumping Jack</TableName>
+		<RomName>Jumping_Jack</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Excalibur</TableName>
+		<RomName>excalibr</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Locomotion</TableName>
+		<RomName>locomotn</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Lights, Camera, Action (Gottlieb 1989)</TableName>
+		<RomName>lca</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Laser Ball</TableName>
+		<RomName>lzbal</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Future Queen</TableName>
+		<RomName>futrquen</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Orbitor 1</TableName>
+		<RomName>orbito</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Snow Derby</TableName>
+		<RomName>SnowDerby_1970</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Jungle Lord</TableName>
+		<RomName>jngld</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Mini Cycle</TableName>
+		<RomName>MiniCycle_1970</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Lucky Seven</TableName>
+		<RomName>lucky</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Lunelle</TableName>
+		<RomName>lunelle</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Mario Andretti</TableName>
+		<RomName>andretti</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Solar Fire</TableName>
+		<RomName>solar</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Mars God Of War</TableName>
+		<RomName>mars</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Rack Em Up</TableName>
+		<RomName>rackemup</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Jumaci</TableName>
+		<RomName>Jumaci_1966</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Memory Lane</TableName>
+		<RomName>memlan</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Mexico</TableName>
+		<RomName>mexico</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Middle Earth</TableName>
+		<RomName>midearth</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Millionaire</TableName>
+		<RomName>milln</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>City Slicker</TableName>
+		<RomName>cityslck</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Monte Carlo</TableName>
+		<RomName>mntecrlo</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Operation Thunder</TableName>
+		<RomName>opthund</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Roller Disco</TableName>
+		<RomName>roldisco</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Wolf Man</TableName>
+		<RomName>wolfman</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Space Jam</TableName>
+		<RomName>spacej</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Mystic Star</TableName>
+		<RomName>myststar</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>New Stars Phoenix</TableName>
+		<RomName>strsphnx</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Oba Oba</TableName>
+		<RomName>obaoba</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>DOF Test table</TableName>
+		<RomName>dof_test</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Striker</TableName>
+		<RomName>striker</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Odin Deluxe</TableName>
+		<RomName>odin_dlx</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Nugent</TableName>
+		<RomName>nugent</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Orbit 1</TableName>
+		<RomName>orbit1</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Pennant Fever</TableName>
+		<RomName>pfevr</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Pentacup</TableName>
+		<RomName>pentacup</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Phoenix</TableName>
+		<RomName>phnix</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Pinball Lizard</TableName>
+		<RomName>lizard</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Torpedo Alley</TableName>
+		<RomName>torp</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Petaco</TableName>
+		<RomName>petaco</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Pistol Poker</TableName>
+		<RomName>pstlpkr</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Pokerino</TableName>
+		<RomName>pkrno</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Spirit of 76</TableName>
+		<RomName>Spiritof76</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>New York</TableName>
+		<RomName>NewYork_1976</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Pioneer</TableName>
+		<RomName>Pioneer</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Soccer Kings</TableName>
+		<RomName>sock</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Pool Sharks</TableName>
+		<RomName>pool</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Rally</TableName>
+		<RomName>rally</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Ready...Aim...Fire!</TableName>
+		<RomName>raimfire</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Buccaneer</TableName>
+		<RomName>Buccaneer</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Monday Night Football</TableName>
+		<RomName>mnfb</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Cherry Bell</TableName>
+		<RomName>cherry_bell</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Rock</TableName>
+		<RomName>rock</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Saturn 2</TableName>
+		<RomName>saturn2</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Scorpion</TableName>
+		<RomName>scrpn_l1</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Scramble</TableName>
+		<RomName>scram</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Nemesis</TableName>
+		<RomName>nemesis</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Shaq attaq</TableName>
+		<RomName>shaqatt</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Shark (Hankin)</TableName>
+		<RomName>shark</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Shark (Taito)</TableName>
+		<RomName>sharkt</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Tag Team</TableName>
+		<RomName>tagteam</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Sharp Shooter II</TableName>
+		<RomName>sshootr2</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Victory</TableName>
+		<RomName>victory</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Shooting the rapids</TableName>
+		<RomName>strapids</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Humpty Dumpty</TableName>
+		<RomName>humpty_dumpty</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Snake Machine</TableName>
+		<RomName>snake</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Time 2000</TableName>
+		<RomName>time2000</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Space City</TableName>
+		<RomName>spacecty</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Space Hawks</TableName>
+		<RomName>spacehaw</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Special Force</TableName>
+		<RomName>specforc</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>V1</TableName>
+		<RomName>v1</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Space Riders</TableName>
+		<RomName>spcrider</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Silver Slugger</TableName>
+		<RomName>silvslug</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Spooky</TableName>
+		<RomName>spooky</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Speakeasy</TableName>
+		<RomName>speake</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Star Light</TableName>
+		<RomName>strlt</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Star Race</TableName>
+		<RomName>starrace</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Spring Break</TableName>
+		<RomName>sprbreak</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Star Wars (Sonic)</TableName>
+		<RomName>sonstw</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Stellar Wars</TableName>
+		<RomName>stlwr</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Strike</TableName>
+		<RomName>strike</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Thunderball</TableName>
+		<RomName>thund_p</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Time Line</TableName>
+		<RomName>timeline</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Torch</TableName>
+		<RomName>torch</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Touchdown</TableName>
+		<RomName>touchdn</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Titan</TableName>
+		<RomName>titan</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>TX-Sector</TableName>
+		<RomName>txsector</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Viper</TableName>
+		<RomName>viper</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Warlok</TableName>
+		<RomName>wrlok</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>World Challenge Soccer</TableName>
+		<RomName>wcsoccer</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>World Cup 90</TableName>
+		<RomName>wcup90</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Alien Poker Multiball</TableName>
+		<RomName>alpok_b6</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Odisea Paris Dakar</TableName>
+		<RomName>odisea</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>L&apos;Hexagone</TableName>
+		<RomName>hexagone</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Zankor</TableName>
+		<RomName>zankor</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Vpx nudge test</TableName>
+		<RomName>nudge_test</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Rat Fink</TableName>
+		<RomName>ratfink</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Ice Cold Beer</TableName>
+		<RomName>icecoldbeer</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Pumpkin Carvin</TableName>
+		<RomName>blkou_hf</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Circus (Zaccaria)</TableName>
+		<RomName>CircusZaccaria_1977</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Firecracker</TableName>
+		<RomName>Firecracker_1971</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Zeke&apos;s Peak</TableName>
+		<RomName>zekespeak</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Legend of Zelda</TableName>
+		<RomName>zof10</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Blue Note</TableName>
+		<RomName>BlueNote_1979</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>2001</TableName>
+		<RomName>GTB2001_1971</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Strikes N Spares</TableName>
+		<RomName>snspares</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Eclipse</TableName>
+		<RomName>eclipse</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Space Shuttle (Zaccaria)</TableName>
+		<RomName>sshtlzac</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Scuba</TableName>
+		<RomName>Scuba_1970</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Hyperball</TableName>
+		<RomName>hypbl</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Beat Time</TableName>
+		<RomName>BeatTime</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Surf  n Safari</TableName>
+		<RomName>surfnsaf</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Airport</TableName>
+		<RomName>Airport_1969</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Evil Fight</TableName>
+		<RomName>evlfight</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Meteor</TableName>
+		<RomName>meteor</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Bronco</TableName>
+		<RomName>bronco</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Star Gazer</TableName>
+		<RomName>stargzr</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Solar Wars</TableName>
+		<RomName>solarwar</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Aqualand</TableName>
+		<RomName>aqualand</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Roller Coaster</TableName>
+		<RomName>RollerCoaster_1971</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Aladdin Castle</TableName>
+		<RomName>Aladdins_Castle</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Rocket III</TableName>
+		<RomName>RocketIII_1967</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Big Indian</TableName>
+		<RomName>big_indian</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Bronco Buster</TableName>
+		<RomName>BroncoBuster</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Trade Winds</TableName>
+		<RomName>trade_winds</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Future World</TableName>
+		<RomName>futurwld</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Basketball</TableName>
+		<RomName>bsktball</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Wizard</TableName>
+		<RomName>wizard_1975</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Spin A Card</TableName>
+		<RomName>SpinACard_1969</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Iron Balls</TableName>
+		<RomName>ironball</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Bell Ringer</TableName>
+		<RomName>bellring</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Cheetah</TableName>
+		<RomName>cheetah</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Whoa Nellie</TableName>
+		<RomName>Whoa_Nellie_EM</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Six Million Dollar Man, The</TableName>
+		<RomName>smman</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Gemini</TableName>
+		<RomName>gemini_1977</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Fireball Classics</TableName>
+		<RomName>fbclass</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Star Fire</TableName>
+		<RomName>starfire</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Flying Carpet</TableName>
+		<RomName>flying_carpet</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>TKO</TableName>
+		<RomName>tko_1979</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Apollo 1967</TableName>
+		<RomName>apollo_1967</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Straight Flush</TableName>
+		<RomName>straight_flush</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Bank A Ball</TableName>
+		<RomName>BankABall_1965</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Smurfette</TableName>
+		<RomName>smurfette</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Beat The Clock 1963</TableName>
+		<RomName>beat_the_clock_1963</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Caveman</TableName>
+		<RomName>caveman</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Pyramid</TableName>
+		<RomName>pyramid_1978</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Wheel</TableName>
+		<RomName>wheel_maresa</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>World Defender</TableName>
+		<RomName>worlddef</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Space Walk</TableName>
+		<RomName>spacewalk_1979</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Rock 2500</TableName>
+		<RomName>rock2500</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Sing Along</TableName>
+		<RomName>sing_along_1967</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Petaco 2</TableName>
+		<RomName>petaco2</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Joker Poker EM</TableName>
+		<RomName>jokerpoker_1978</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Golden Arrow</TableName>
+		<RomName>goldenarrow_1977</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Mad Race</TableName>
+		<RomName>madrace</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>The Web</TableName>
+		<RomName>theweb</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Atleta</TableName>
+		<RomName>atleta</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Nautilus</TableName>
+		<RomName>nautilus</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Party</TableName>
+		<RomName>party</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>KZ-26</TableName>
+		<RomName>kz26</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Halley Comet</TableName>
+		<RomName>halley</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Big Top (1964)</TableName>
+		<RomName>bigtop_1964</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Bushido</TableName>
+		<RomName>bushidoa</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Big Top (Wico)</TableName>
+		<RomName>big_top_1977</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>NFL</TableName>
+		<RomName>nfl</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Slick Chick</TableName>
+		<RomName>SlickChick_1963</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Motordome</TableName>
+		<RomName>motrdome</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Break</TableName>
+		<RomName>break</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Crescendo</TableName>
+		<RomName>crescendo_1970</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Fire Queen</TableName>
+		<RomName>firequeen_1977</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Star Trek (Gottlieb)</TableName>
+		<RomName>startrek_1971</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Atarians, The</TableName>
+		<RomName>atarianb</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Paul Bunyan</TableName>
+		<RomName>paulbunyan_1968</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Cactus Canyon PROC</TableName>
+		<RomName>Proc_CC</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Space Train</TableName>
+		<RomName>spctrain</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Evil Dead (Proc)</TableName>
+		<RomName>proc_evildead</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Attack</TableName>
+		<RomName>attack</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Sir Lancelot</TableName>
+		<RomName>lancelot</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Groovy</TableName>
+		<RomName>groovy_1970</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Caddie</TableName>
+		<RomName>caddie_1970</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Cirqus Voltaire Pinmame DMD</TableName>
+		<RomName>cv_dmd</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Volcano</TableName>
+		<RomName>vlcno_ax</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Night Rider</TableName>
+		<RomName>nightrdr</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Dragonfist</TableName>
+		<RomName>dragfi</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Double Up</TableName>
+		<RomName>doubleup_1970</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Gargamel Park</TableName>
+		<RomName>gargamel_park</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Spanish Eyes</TableName>
+		<RomName>spanisheyes_1972</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Buckaroo</TableName>
+		<RomName>buckaroo_1965</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Hi-Score Pool</TableName>
+		<RomName>hiscorepool</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Circus (Gottlieb)</TableName>
+		<RomName>circus</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Papa Smurf</TableName>
+		<RomName>papa_smurf</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Aquarius</TableName>
+		<RomName>aquarius_1970</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Moon Light</TableName>
+		<RomName>moonlght</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>El Dorado EM</TableName>
+		<RomName>El_Dorado_1975</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Flip A Card</TableName>
+		<RomName>FlipACard_1970</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Gigi</TableName>
+		<RomName>Gigi_1963</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Miss O</TableName>
+		<RomName>miss_o_1969</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Jungle Princess</TableName>
+		<RomName>jungleprincess_1977</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Sky Jump</TableName>
+		<RomName>Sky_Jump_1974</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Star Wars (Original)</TableName>
+		<RomName>StarWars_1978</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Jigsaw</TableName>
+		<RomName>Jigsaw</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Orbit (1971)</TableName>
+		<RomName>orbit_1971</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Wild Wild West (1969)</TableName>
+		<RomName>wildwildwest_1969</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Pro Pinball Ultra : Timeshock</TableName>
+		<RomName>timeshock</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Nip It</TableName>
+		<RomName>nipit_1973</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Pokemon Pinball</TableName>
+		<RomName>Pokemon_Pinball</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Prospector</TableName>
+		<RomName>Prospector_1977</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Smart Set</TableName>
+		<RomName>smart_set_1969</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Cabaret</TableName>
+		<RomName>cabaret_1968</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Quijote</TableName>
+		<RomName>pimbal</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Heat Wave</TableName>
+		<RomName>heat_wave_1964</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Jolly Roger</TableName>
+		<RomName>JollyRoger_1967</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Raid, The</TableName>
+		<RomName>theraid</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Star Pool</TableName>
+		<RomName>StarPool_1974</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Kiss (Original)</TableName>
+		<RomName>kiss_original_2016</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Star Trek Stern Limited Edition</TableName>
+		<RomName>st_162h</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Boomerang</TableName>
+		<RomName>boomerang_1974</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Viking</TableName>
+		<RomName>vikingb</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Punk!</TableName>
+		<RomName>punk</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Mustang Limited Edition</TableName>
+		<RomName>mt_145h</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Band Wagon</TableName>
+		<RomName>bandWagon_1965</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Dolphin</TableName>
+		<RomName>dolphin_1974</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Ghostbuster JP</TableName>
+		<RomName>jp_ghostbusters</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>NBA Mac</TableName>
+		<RomName>nbamac</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Grand Prix (Wiliams)</TableName>
+		<RomName>grandprix_1977</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Domino</TableName>
+		<RomName>domino_1968</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>High Hand</TableName>
+		<RomName>highhand_1973</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Jet Spin</TableName>
+		<RomName>jetspin_1977</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Count Down</TableName>
+		<RomName>countdwn</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>ACDC Limited Edition</TableName>
+		<RomName>acd_170h</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Olympics</TableName>
+		<RomName>olympics_1962</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Liberty Bell</TableName>
+		<RomName>libertybell_1977</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Walking Dead, The Limited Edition</TableName>
+		<RomName>twd_156h</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Old Coney Island</TableName>
+		<RomName>coneyis</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Mortal Kombat II</TableName>
+		<RomName>mkii</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Motor Show</TableName>
+		<RomName>motrshow</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Metallica Limited Edition</TableName>
+		<RomName>mtl_180h</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Minions</TableName>
+		<RomName>minions</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Aspen</TableName>
+		<RomName>aspen</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Card Whiz</TableName>
+		<RomName>cardwhiz_1976</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Champions League</TableName>
+		<RomName>uefa_cl</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Joust</TableName>
+		<RomName>jst_l2</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Stranger Things</TableName>
+		<RomName>stranger_things</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Diablo</TableName>
+		<RomName>diablo</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Nobs (BorgDog) 2016</TableName>
+		<RomName>Nobs</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Gremlins</TableName>
+		<RomName>fp_gremlins</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Mad Scientist</TableName>
+		<RomName>madscientist</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Centaur (Inder)</TableName>
+		<RomName>centauri</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Alien Isolation</TableName>
+		<RomName>fx2_alienisol</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>DOFLinx</TableName>
+		<RomName>doflinx</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Aliens</TableName>
+		<RomName>fx2_aliens</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Alien vs Predator</TableName>
+		<RomName>fx2_alienvsp</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: American Dad</TableName>
+		<RomName>fx2_amdad</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Archer</TableName>
+		<RomName>fx2_archer</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Biolab</TableName>
+		<RomName>fx2_biolab</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Bethesda - Doom</TableName>
+		<RomName>fx2_doom</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Bethesda - Fallout</TableName>
+		<RomName>fx2_fallout</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Bethesda - Skyrim</TableName>
+		<RomName>fx2_skyrim</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Bob&apos;s Burgers</TableName>
+		<RomName>fx2_bb</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Castle Storm</TableName>
+		<RomName>fx2_castle</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Earth Defense</TableName>
+		<RomName>fx2_earthdef</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: El Dorado</TableName>
+		<RomName>fx2_eldorado</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Epic Quest</TableName>
+		<RomName>fx2_epicquest</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Excalibur</TableName>
+		<RomName>fx2_excalibur</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Family Guy</TableName>
+		<RomName>fx2_familyguy</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Mars</TableName>
+		<RomName>fx2_mars</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Marvel - Ant Man</TableName>
+		<RomName>fx2_antman</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Marvel - Avengers Age of Ultron</TableName>
+		<RomName>fx2_ageultron</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Marvel - Blade</TableName>
+		<RomName>fx2_blade</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Marvel - Captain America</TableName>
+		<RomName>fx2_captam</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Marvel - Civil War</TableName>
+		<RomName>fx2_civilwar</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Marvel - Deadpool</TableName>
+		<RomName>fx2_deadpool</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Marvel - Doctor Strange</TableName>
+		<RomName>fx2_drstrange</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Marvel - Fantastic Four</TableName>
+		<RomName>fx2_fantasticfour</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Marvel - Fear Itself</TableName>
+		<RomName>fx2_fearitself</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Marvel - Ghost Rider</TableName>
+		<RomName>fx2_ghostrider</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Marvel - Guardians of the Galaxy</TableName>
+		<RomName>fx2_guardians</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Marvel - Iron Man</TableName>
+		<RomName>fx2_ironman</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Marvel - Moon Knight</TableName>
+		<RomName>fx2_moonknight</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Marvel - Spider-man</TableName>
+		<RomName>fx2_spiderman</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Marvel - The Avengers</TableName>
+		<RomName>fx2_avengers</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Marvel - The Infinity Gauntlet</TableName>
+		<RomName>fx2_infinityg</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Marvel - Thor</TableName>
+		<RomName>fx2_thor</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Marvel - Venom</TableName>
+		<RomName>fx2_venom</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Marvel - Wolverine</TableName>
+		<RomName>fx2_wolverine</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Marvel - Women of Power A Force</TableName>
+		<RomName>fx2_aforce</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Marvel - Women of Power Champions</TableName>
+		<RomName>fx2_champions</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Marvel - World War Hulk</TableName>
+		<RomName>fx2_wwhulk</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Marvel - X-Men</TableName>
+		<RomName>fx2_xmen</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Ms Splosion Man</TableName>
+		<RomName>fx2_mssplosion</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Paranormal</TableName>
+		<RomName>fx2_paranormal</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Pasha</TableName>
+		<RomName>fx2_pasha</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Plants vs Zombies</TableName>
+		<RomName>fx2_pvz</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Portal</TableName>
+		<RomName>fx2_portal</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Rome</TableName>
+		<RomName>fx2_rome</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Secrets of the Deep</TableName>
+		<RomName>fx2_secretsdeep</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Shaman</TableName>
+		<RomName>fx2_shaman</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Sorcerer&apos;s Lair</TableName>
+		<RomName>fx2_sorcerers</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: South Park Butters Very Own Pinball Game</TableName>
+		<RomName>fx2_spbutters</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: South Park Super Sweet Pinball</TableName>
+		<RomName>fx2_spsweet</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Star Wars - Boba Fett</TableName>
+		<RomName>fx2_boba</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Star Wars - Darth Vader</TableName>
+		<RomName>fx2_swdarth</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Star Wars - Droids</TableName>
+		<RomName>fx2_swdroids</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Star Wars - Episode IV A New Hope</TableName>
+		<RomName>fx2_swnewhope</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Star Wars - Episode V The Empire Strikes Back</TableName>
+		<RomName>fx2_swempire</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Star Wars - Episode VI Return of the Jedi</TableName>
+		<RomName>fx2_swreturn</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Star Wars - Han Solo</TableName>
+		<RomName>fx2_swhansolo</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Star Wars - Masters of the Force</TableName>
+		<RomName>fx2_swmasters</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Star Wars - Might of the First Order</TableName>
+		<RomName>fx2_swmight</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Star Wars - Rogue One</TableName>
+		<RomName>fx2_swrogueone</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Star Wars - Rebels</TableName>
+		<RomName>fx2_swrebels</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Star Wars - Starfighter Assault</TableName>
+		<RomName>fx2_swstarfighter</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Star Wars - The Clone Wars</TableName>
+		<RomName>fx2_swclonewars</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Star Wars - The Force Awakens</TableName>
+		<RomName>fx2_swforceaw</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Super League Football</TableName>
+		<RomName>fx2_superleague</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Tesla</TableName>
+		<RomName>fx2_tesla</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: The Walking Dead</TableName>
+		<RomName>fx2_walkingdead</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: V12</TableName>
+		<RomName>fx2_v12</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX2: Wild West Rampage</TableName>
+		<RomName>fx2_wildwest</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: 24</TableName>
+		<RomName>fp_24</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Addam&apos;s Family (Ultimate)</TableName>
+		<RomName>fp_adfam_ultimate</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Aliens Legacy (Ultimate)</TableName>
+		<RomName>fp_alienleg_ultimate</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Astroblast</TableName>
+		<RomName>fp_astroblast</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Avatar (Ultimate)</TableName>
+		<RomName>fp_avatar_ultimate</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Back to the Future (SLAMT1LT)(Ultimate)</TableName>
+		<RomName>fp_bttf_slam_ultimate</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Batman Joker Edition</TableName>
+		<RomName>fp_bmjoker</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Big Spender</TableName>
+		<RomName>fp_bigspen</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Blue vs Pink</TableName>
+		<RomName>fp_bvp</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Bride of Pinbot</TableName>
+		<RomName>fp_bop</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Bubble Bobble</TableName>
+		<RomName>fp_bubbob</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Centaur (Ultimate)</TableName>
+		<RomName>fp_cent_ultimate</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Checkpoint</TableName>
+		<RomName>fp_checkpoint</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Creature from the Black Lagoon</TableName>
+		<RomName>fp_creaturefbl</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: CSI</TableName>
+		<RomName>fp_csi</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Dark Quest</TableName>
+		<RomName>fp_darkquest</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Dead Hunters</TableName>
+		<RomName>fp_deadhunters</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Dragon&apos;s Lair</TableName>
+		<RomName>fp_dlair</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Flame Reaper</TableName>
+		<RomName>fp_flreap</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Flash Gordon (Ultimate)</TableName>
+		<RomName>fp_flashg_ultimate</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Goldorak</TableName>
+		<RomName>fp_goldorak</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Gone in 60 Seconds</TableName>
+		<RomName>fp_gonein60</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Gorgar (Ultimate)</TableName>
+		<RomName>fp_gorgar_ultimate</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Independence Day</TableName>
+		<RomName>fp_id4</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Indiana Jones and the Kingdom of the Crystal Skull</TableName>
+		<RomName>fp_indyskull</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP-PE: Indiana Jones - Fortune and Glory Edition</TableName>
+		<RomName>fp_pe_indiana_jones_fge</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Iron Man (Ultimate)</TableName>
+		<RomName>fp_im_ultimate</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Jungle Boy</TableName>
+		<RomName>fp_jungleboy</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Jurassic Park (Ultimate)</TableName>
+		<RomName>fp_jp_ultimate</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Knight Rider</TableName>
+		<RomName>fp_knightrider</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Lunch Takeout</TableName>
+		<RomName>fp_lunto</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Masters of the Universe (Mastered)</TableName>
+		<RomName>fp_motu</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Minions</TableName>
+		<RomName>fp_minions</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Metal Slug</TableName>
+		<RomName>fp_metalslug</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Nightmare On Elm Street (SLAMT1LT)(Ultimate)</TableName>
+		<RomName>fp_noes_slam_ultimate</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Oblivion</TableName>
+		<RomName>fp_oblivion</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Paragon</TableName>
+		<RomName>fp_paragon</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Phantom of the Opera (Ultimate)</TableName>
+		<RomName>fp_phantom_ultimate</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Pirates of the Caribbean</TableName>
+		<RomName>fp_poc</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Reel It In</TableName>
+		<RomName>fp_reelitin</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: RetroFlair</TableName>
+		<RomName>fp_retroflair</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Road Girls</TableName>
+		<RomName>fp_roadgirls</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Robocop (Ultimate)</TableName>
+		<RomName>fp_robocop_ultimate</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Robots Invasion (Ultimate)</TableName>
+		<RomName>fp_robinv_ultimate</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Scared Stiff</TableName>
+		<RomName>fp_scaredstiff</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Shootanza</TableName>
+		<RomName>fp_shootanza</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Sonic the Hedgehog Pinball Party (Ultimate)</TableName>
+		<RomName>fp_sonicpp_ultimate</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Speed Devils - Special Edition</TableName>
+		<RomName>fp_speeddevse</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Spider-man</TableName>
+		<RomName>fp_spiderman</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Star Trek (Stern)(Ultimate)</TableName>
+		<RomName>fp_strek_stern_ult</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Star Trek The Next Generation (Ultimate)</TableName>
+		<RomName>fp_sttng_ultimate</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Star Wars - Battle for Hoth</TableName>
+		<RomName>fp_swbfh</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Star Wars - Death Star Assault (Ultimate)</TableName>
+		<RomName>fp_swdsa_ultimate</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Star Wars - Empire Edition</TableName>
+		<RomName>fp_swemp</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Steel Wheel - Special Edition</TableName>
+		<RomName>fp_steelwheelse</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Strip Joker Poker (Ultimate)</TableName>
+		<RomName>fp_sjp_ultimate</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Superman (SLAMT1LT)(Ultimate)</TableName>
+		<RomName>fp_supman_slam_ult</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Tales of the Arabian Nights</TableName>
+		<RomName>fp_totan</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Terminator 2 (Skynet)(Ultimate)</TableName>
+		<RomName>fp_t2sky_ultimate</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: The Fifth Element</TableName>
+		<RomName>fp_5thelement</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: The Goonies</TableName>
+		<RomName>fp_goonies</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: The Lord of the Rings (Ultimate)</TableName>
+		<RomName>fp_lotr_ultimate</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Three Angels (Ultimate)</TableName>
+		<RomName>fp_threeang_ultimate</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Tombstone</TableName>
+		<RomName>fp_tombstone</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Transformers</TableName>
+		<RomName>fp_transformers</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Tribute to the 80&apos;s - Astrohits</TableName>
+		<RomName>fp_astrohits</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Tribute to the 80&apos;s - Cool Position</TableName>
+		<RomName>fp_coolpos</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Tribute to the 80&apos;s - Frogster</TableName>
+		<RomName>fp_frogster</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Tribute to the 80&apos;s - Multipede</TableName>
+		<RomName>fp_multipede</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Tribute to the 80&apos;s - Tempexx</TableName>
+		<RomName>fp_tempexx</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Tribute to the 80&apos;s - Tutenkham</TableName>
+		<RomName>fp_tutenkham</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Tribute to the 80&apos;s - Warlock</TableName>
+		<RomName>fp_warlock</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Tron Legacy (SLAMT1LT)(Ultimate)</TableName>
+		<RomName>fp_tronleg_slam_ult</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Tron Legacy (Stern)(Ultimate)</TableName>
+		<RomName>fp_tronleg_stern_ult</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Underdog</TableName>
+		<RomName>fp_underdog</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Wacky Races</TableName>
+		<RomName>fp_wackyraces</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: War of the Worlds (Ultimate)</TableName>
+		<RomName>fp_wow_ultimate</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Wipeout</TableName>
+		<RomName>fp_wipeout</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: World Cup Soccer</TableName>
+		<RomName>fp_wcs</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: X-Files</TableName>
+		<RomName>fp_xfiles</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: X-Men</TableName>
+		<RomName>fp_x-men</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>X-Men LE</TableName>
+		<RomName>xmn_151h</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Nobs</TableName>
+		<RomName>nobs_2016</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Mac Galaxy</TableName>
+		<RomName>macgalxy</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Contest</TableName>
+		<RomName>contest_1958</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Cartoons</TableName>
+		<RomName>Cartoons</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Hollywood Heat</TableName>
+		<RomName>hlywoodh</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Zira</TableName>
+		<RomName>zira</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Cosmic</TableName>
+		<RomName>cosmic</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: ET</TableName>
+		<RomName>fx3_et</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: Jaws</TableName>
+		<RomName>fx3_jaws</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: BTTF</TableName>
+		<RomName>fx3_bttf</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: Hercules</TableName>
+		<RomName>fx3_hercules</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: Amusement</TableName>
+		<RomName>fx3_amusement</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Zip A Doo</TableName>
+		<RomName>zipadoo_1970</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Polar Explorer</TableName>
+		<RomName>polar</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Bronco (Gottlieb_1977)</TableName>
+		<RomName>bronco_1977</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Super straight</TableName>
+		<RomName>SuperStraight</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Galaxy Play</TableName>
+		<RomName>glxplay</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Mr Black</TableName>
+		<RomName>mrblack</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Jive Time</TableName>
+		<RomName>jivetime</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Kidnap</TableName>
+		<RomName>kidnap</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Darling</TableName>
+		<RomName>darling</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Cavaleiro Negro</TableName>
+		<RomName>cavnegro</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: Jurassic Park</TableName>
+		<RomName>fx3_jurassicpark</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: Jurassic World</TableName>
+		<RomName>fx3_jurassicworld</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: Jurassic Mayhem</TableName>
+		<RomName>fx3_jurassicmayhem</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Neptune</TableName>
+		<RomName>neptune</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Clue</TableName>
+		<RomName>clue</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>PinUP Menu</TableName>
+		<RomName>pinupmenu</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Shock</TableName>
+		<RomName>shock</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Speed Test</TableName>
+		<RomName>stest</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Ghostbusters LE</TableName>
+		<RomName>spagb_100</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>GhostBusters LE B2S</TableName>
+		<RomName>spagb_100b2s</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Aztec</TableName>
+		<RomName>aztec_1976</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Sea Ray</TableName>
+		<RomName>searay_1971</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Stranger Things Stranger Edition</TableName>
+		<RomName>STLE</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: SW  Last Jedi</TableName>
+		<RomName>fx3_swlastjedi</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: swahchtoisland</TableName>
+		<RomName>fx3_swahchtoisland</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Fire Action</TableName>
+		<RomName>fireact</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Fire Action De Luxe</TableName>
+		<RomName>fireactd</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Drakor</TableName>
+		<RomName>drakor</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Mariner</TableName>
+		<RomName>mariner_1971</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>GulfStream</TableName>
+		<RomName>gulfstream_1973</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Space Time</TableName>
+		<RomName>spacetime_1972</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Lady Luck (Taito)</TableName>
+		<RomName>ladylukt</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Zarza</TableName>
+		<RomName>zarza</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Time Tunnel</TableName>
+		<RomName>timetunnel_1971</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Air Aces</TableName>
+		<RomName>airaces_1974</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>PinballY</TableName>
+		<RomName>PinballY</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Meteor (Taito)</TableName>
+		<RomName>meteort</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Super Nova</TableName>
+		<RomName>suprnova</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>The Wiggler</TableName>
+		<RomName>thewiggler_1967</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Gemini 2000</TableName>
+		<RomName>gemini</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Hoops</TableName>
+		<RomName>hoops</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Space Shuttle (Taito)</TableName>
+		<RomName>sshuttle</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>4 Square</TableName>
+		<RomName>GTB_4square_1971</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Jaws</TableName>
+		<RomName>Jaws</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Masters of the Universe</TableName>
+		<RomName>motu</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Wizard Of Oz, The</TableName>
+		<RomName>woz_original</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: WMS Fishtales</TableName>
+		<RomName>fx3_wms_fishtales</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: WMS Getaway</TableName>
+		<RomName>fx3_wms_getaway</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: WMS Junkyard</TableName>
+		<RomName>fx3_wms_junkyard</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: WMS Medieval Madness</TableName>
+		<RomName>fx3_wms_mmadness</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Clash Original 2018</TableName>
+		<RomName>clash</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Three Angels</TableName>
+		<RomName>Threeangels</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: WMS Attack From Mars</TableName>
+		<RomName>fx3_wms_afm</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: WMS Black Rose</TableName>
+		<RomName>fx3_wms_blackrose</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: WMS Party Zone</TableName>
+		<RomName>fx3_wms_partyzone</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>DOFLinx: Effects</TableName>
+		<RomName>doflinx_effects</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Tomb Raider</TableName>
+		<RomName>tomb_raider</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Magic Circle</TableName>
+		<RomName>magic_circle</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Serious Sam</TableName>
+		<RomName>serioussam</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Hot Shots</TableName>
+		<RomName>hotshots</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Tom and Jerry</TableName>
+		<RomName>tomjerry</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Metal Slug</TableName>
+		<RomName>metalslug</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: Star Wars - Solo&amp;#65279;</TableName>
+		<RomName>fx3_swsolo</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: Star Wars - Calrissian Chronicles</TableName>
+		<RomName>fx3_swcalrissian</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: Star Wars - Battle of Mimban</TableName>
+		<RomName>fx3_swmimban</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Sons of Anarchy</TableName>
+		<RomName>soa</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: Bally Theatre Of Magic</TableName>
+		<RomName>fx3_wms_tom</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: Bally The Champion Pub</TableName>
+		<RomName>fx3_wms_championpub</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: Bally Safe Cracker</TableName>
+		<RomName>fx3_wms_safecracker</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Mac Jungle</TableName>
+		<RomName>macjungl</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Aqua Teen Hunger Force</TableName>
+		<RomName>athf</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: WMS White Water</TableName>
+		<RomName>fx3_wms_whitewater</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: WMS Red and Ted Road Show</TableName>
+		<RomName>fx3_wms_redandted</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: WMS Hurricane</TableName>
+		<RomName>fx3_wms_hurricane</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Spot A Card</TableName>
+		<RomName>spotacard_1960</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>PUPJukeBox</TableName>
+		<RomName>pupjukebox</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Cross Town</TableName>
+		<RomName>CrossTown_1966</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Harry Potter and the Goblet of Fire</TableName>
+		<RomName>hpgof</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Cuphead</TableName>
+		<RomName>cuphead</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>The Leprechaun King</TableName>
+		<RomName>leprechaun</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Night moves</TableName>
+		<RomName>nmoves</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Capt. Card</TableName>
+		<RomName>CaptCard_1973</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Total Nuclear Annihilation</TableName>
+		<RomName>tna</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Goonies, The</TableName>
+		<RomName>goonies</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>4 Queens</TableName>
+		<RomName>Bally4Queens_1970</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP-PE: RetroFlair - Bam Edition</TableName>
+		<RomName>fp_pe_retroflair_bam</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Star Wars DSA - Ultimate Pro</TableName>
+		<RomName>fp_sw_dsa_ult_pro</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Robocop - Ultimate Pro</TableName>
+		<RomName>fp_robocop_ult_pro</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Iron Man - Ultimate Pro</TableName>
+		<RomName>fp_ironman_ult_pro</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Star Trek (Stern) Ultimate Pro</TableName>
+		<RomName>fp_startrek_stern_ult_pro</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: WMS Monster Bash</TableName>
+		<RomName>fx3_wms_monsterbash</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: Bally Creature from the Black Lagoon</TableName>
+		<RomName>Fx3_wms_creaturebl</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Hokus Pokus</TableName>
+		<RomName>HokusPokus_1976</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>300</TableName>
+		<RomName>gottlieb300_1975</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: WMS Tales of the Arabian Nights</TableName>
+		<RomName>fx3_wms_totan</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: WMS Cirqus Voltaire</TableName>
+		<RomName>fx3_wms_cirqusvoltaire</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: WMS No Good Gofers</TableName>
+		<RomName>fx3_wms_nogoodgofers</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Dragon Ball Z</TableName>
+		<RomName>dbz</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Jurassic Park (Ultimate Pro)</TableName>
+		<RomName>fp_jurassicpark_ult_pro</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: The Addams Family (Ultimate Pro)</TableName>
+		<RomName>fp_taf_ult_pro</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Nightmare On Elm Street (Ultimate Pro)</TableName>
+		<RomName>fp_noes_ult_pro</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Flash Gordon (Ultimate Pro)</TableName>
+		<RomName>fp_flash_gordon_ult_pro</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Kiss (Ultimate Pro)</TableName>
+		<RomName>fp_kiss_ult_pro</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Xenon (Ultimate Pro)</TableName>
+		<RomName>fp_xenon_ult_pro</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Strikes and Spares (Ultimate Pro)</TableName>
+		<RomName>fp_strikes_and_spares_ult_pro</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Star Trek: Condition Red (Ultimate Pro)</TableName>
+		<RomName>fp_startrek_cr_ult_pro</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Freedom EM</TableName>
+		<RomName>freedom_1976</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: PinEvent</TableName>
+		<RomName>fp_pinevent</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Kim Wilde</TableName>
+		<RomName>kimwilde</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>8 Ball</TableName>
+		<RomName>Williams8Ball1966</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Star Jet</TableName>
+		<RomName>star_jet</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Endless Summer, The</TableName>
+		<RomName>ndlsmr</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Canada Dry</TableName>
+		<RomName>CanadaDry_1976</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Pink Floyd</TableName>
+		<RomName>pink_floyd</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Pirate Gold</TableName>
+		<RomName>PirateGold_1969</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Grand Tour</TableName>
+		<RomName>GrandTour_1964</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Farm Time</TableName>
+		<RomName>FarmTime_2020</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: The Good The bad The ugly</TableName>
+		<RomName>fp_tgtbtu</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Deadpool</TableName>
+		<RomName>fp_deadpool</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Pink Floyd</TableName>
+		<RomName>fp_pinkfloyd</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Batman 1989</TableName>
+		<RomName>fp_batman1989</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Ever after High</TableName>
+		<RomName>fp_everafterhigh</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Gremlins (PROC)</TableName>
+		<RomName>proc_gremlins</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Munsters (Original)</TableName>
+		<RomName>mmunsters</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Futurama</TableName>
+		<RomName>fp_futurama</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Tales From The Crypt</TableName>
+		<RomName>fp_tftc</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Pinball SS</TableName>
+		<RomName>pinball</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP-PE: Blade Runner - Replicant Edition</TableName>
+		<RomName>fp_pe_blade_runner_re</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Indiana Jones (Ultimate Pro)</TableName>
+		<RomName>fp_ij_ult_pro</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Halloween (Ultimate Pro)</TableName>
+		<RomName>fp_hlwn_ult_pro</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP-PE: Robocop - Dead or Alive Edition</TableName>
+		<RomName>fp_pe_robocop_doae</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Jungle Girl</TableName>
+		<RomName>fp_jungle_girl</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Guardians of the Galaxy (Original)</TableName>
+		<RomName>gotg_2020</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Rapid Fire</TableName>
+		<RomName>rapidfir</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Spaceramp</TableName>
+		<RomName>spaceramp</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Hi-Lo Ace</TableName>
+		<RomName>HiLoAce_1973</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Led Zeppelin (Original)</TableName>
+		<RomName>ledzeppelin</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: WMS Space Station</TableName>
+		<RomName>fx3_wms_spacestation</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: Midway DrDude</TableName>
+		<RomName>fx3_wms_drdude</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: WMS FunHouse</TableName>
+		<RomName>fx3_wms_funhouse</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Balls A Poppin</TableName>
+		<RomName>BallsAPoppin_1956</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Mundial 90</TableName>
+		<RomName>mundial</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Bank Shot</TableName>
+		<RomName>BankShot_1976</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Shovel Knight</TableName>
+		<RomName>shovelknight</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Whirl-Wind</TableName>
+		<RomName>whirl_wind_1958</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Bumper Pool</TableName>
+		<RomName>BumperPool_1969</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Chance (Playmatic 1978)</TableName>
+		<RomName>chance</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Doodle Bug</TableName>
+		<RomName>DoodleBug_1971</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Egg Head</TableName>
+		<RomName>EggHead_1961</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Elite Guard</TableName>
+		<RomName>EliteGuard_1968</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Flipper Fair</TableName>
+		<RomName>FlipperFair_1961</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Fun Fair</TableName>
+		<RomName>FunFair_1968</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Grande Domino</TableName>
+		<RomName>GrandeDomino_1968</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Harmony</TableName>
+		<RomName>Harmony_1967</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Hearts Gain (Inder 1971)</TableName>
+		<RomName>heartsgain</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>High Seas</TableName>
+		<RomName>HighSeas_1976</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Hi-Lo</TableName>
+		<RomName>HiLo_1969</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Home Run (Gottlieb 1971)</TableName>
+		<RomName>HomeRun_1971</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Jungle King</TableName>
+		<RomName>JungleKing_1973</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Jungle Life</TableName>
+		<RomName>JungleLife_1972</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Kickoff</TableName>
+		<RomName>Kickoff_1967</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Lightning Ball</TableName>
+		<RomName>LightningBall_1959</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Little Joe</TableName>
+		<RomName>LittleJoe_1971</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Mini Pool</TableName>
+		<RomName>MiniPool_1969</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Playball</TableName>
+		<RomName>Playball_71VPX</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Poseidon</TableName>
+		<RomName>Poseidon_1978</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Psychedelic</TableName>
+		<RomName>Psychedelic_1970</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Rack-A-Ball</TableName>
+		<RomName>RackABall_1962</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Rancho (Gottlieb 1965)</TableName>
+		<RomName>Rancho_1965</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Rey de Diamantes (Petaco)</TableName>
+		<RomName>ReydeDiamantes_1967</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Royal Pair</TableName>
+		<RomName>RoyalPair_1974</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Satin Doll</TableName>
+		<RomName>SatinDoll_1975</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Ship Mates</TableName>
+		<RomName>ShipMates_1964</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Skipper</TableName>
+		<RomName>Skipper_1969</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Soccer</TableName>
+		<RomName>Soccer1964</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Solitaire</TableName>
+		<RomName>Solitaire_1967</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Space Orbit</TableName>
+		<RomName>SpaceOrbit_1972</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Surf Side</TableName>
+		<RomName>SurfSide_1967</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Tam-Tam (Playmatic)</TableName>
+		<RomName>TamTam_1975</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Target Pool</TableName>
+		<RomName>TargetPool_1969</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Team One</TableName>
+		<RomName>TeamOne_77VPX</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Tiger</TableName>
+		<RomName>Tiger_1975</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Toledo (Williams)</TableName>
+		<RomName>toledo</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Top Hand</TableName>
+		<RomName>TopHand_1973</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>World Series</TableName>
+		<RomName>WorldSeries_1972</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Faces</TableName>
+		<RomName>faces_1976</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Bon Voyage</TableName>
+		<RomName>bon_voyage_1974</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Cue</TableName>
+		<RomName>cue</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Pizzatime</TableName>
+		<RomName>pizzatime</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Cavalier</TableName>
+		<RomName>Cavalier_1979</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Night of the Living Dead 68</TableName>
+		<RomName>NOTLD68</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Moonshiners the pinball Adventure</TableName>
+		<RomName>mnshnr</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Fog, The (Gottlieb 1979)</TableName>
+		<RomName>the_fog_1979</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Dawn of the Dead</TableName>
+		<RomName>dotd_1978</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Dark Princess</TableName>
+		<RomName>DarkPrincess</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Christmas Pinball</TableName>
+		<RomName>christmasp</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Mr. Doom</TableName>
+		<RomName>MrDoom_1979</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Corsario</TableName>
+		<RomName>corsario</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Vegas</TableName>
+		<RomName>vegas</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>U-Boat 65</TableName>
+		<RomName>uboat65</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Star Wars Bounty Hunter</TableName>
+		<RomName>starwarsbh</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Fashion Show</TableName>
+		<RomName>FashionShow_1962</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Blade Runner (Ultimate Pro)</TableName>
+		<RomName>fp_blade_runner_ult_pro</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Space Mission</TableName>
+		<RomName>spacemission_1976</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>MFDOOM</TableName>
+		<RomName>mfdoom</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>A Clock Work Orange</TableName>
+		<RomName>aclockworkorange</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Supreme</TableName>
+		<RomName>supreme</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Space Gambler (playmatic 1978)</TableName>
+		<RomName>spcgambl</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Force</TableName>
+		<RomName>force</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Batman 66 Stern Tribute</TableName>
+		<RomName>b66_orig</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Nudge-It</TableName>
+		<RomName>nudgeit</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Post Time</TableName>
+		<RomName>PostTime_1969</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Dukes of Hazzard</TableName>
+		<RomName>dukes</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Haunted Hotel</TableName>
+		<RomName>hhotel</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Unreal Tournament 99 Capture the Flag</TableName>
+		<RomName>ut99ctf</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Flicker EM</TableName>
+		<RomName>flicker_1974</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Nudgy</TableName>
+		<RomName>nudgy_1947</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Escape from monkey island</TableName>
+		<RomName>monkeyisland</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Big Deal (1963)</TableName>
+		<RomName>BigDeal1963</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Cheech and Chong - Road-Trip&apos;pin</TableName>
+		<RomName>che_cho</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Joker</TableName>
+		<RomName>Joker_1950</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Deadpool JP</TableName>
+		<RomName>jpsdeadpool</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>DOFLinx: Effects - Custom</TableName>
+		<RomName>doflinx_effects_custom</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Rainbow</TableName>
+		<RomName>Rainbow_1956</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Red Hot Pinball</TableName>
+		<RomName>RED_HOT_Pinball</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>San Francisco</TableName>
+		<RomName>SanFrancisco1964</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Loch Ness</TableName>
+		<RomName>lochness</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Watchmen</TableName>
+		<RomName>watchmen</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Married With Children</TableName>
+		<RomName>married</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Circus (Bally)</TableName>
+		<RomName>Circus_1973</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Lortium</TableName>
+		<RomName>lortium</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Phase II</TableName>
+		<RomName>PhaseII_1975</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Mago de Oz JP</TableName>
+		<RomName>magodeoz</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Dealers Choice</TableName>
+		<RomName>DealersChoice_1973</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Big Chief</TableName>
+		<RomName>BigChief1965</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>O Brother Where Art Thou</TableName>
+		<RomName>OBWAT</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Argosy</TableName>
+		<RomName>argosy_1977</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Gay 90&apos;s</TableName>
+		<RomName>gay90s_1970</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Football (Taito do Brasil - 1979)</TableName>
+		<RomName>football_1979_2</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>New World</TableName>
+		<RomName>newworld</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Willy Wonka Pro</TableName>
+		<RomName>willywonka</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Major League</TableName>
+		<RomName>majorleague1934</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Space Cadet</TableName>
+		<RomName>jpspacecadet</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Aliens From Outer Space</TableName>
+		<RomName>aliensfromouterspace</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Dragon Fire</TableName>
+		<RomName>dragonfire</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>U-FOES</TableName>
+		<RomName>u-foes</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>SpongeBob&apos;s Bikini Bottom</TableName>
+		<RomName>spongebob</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Ballyhoo</TableName>
+		<RomName>ballyhoo</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Hunter</TableName>
+		<RomName>hunter</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Bond 50</TableName>
+		<RomName>fp_Bond 50</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Rocky LE</TableName>
+		<RomName>rockyle</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Blaze and the Monster Machines</TableName>
+		<RomName>Blaze</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Underwater</TableName>
+		<RomName>underwater</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Mission Impossible</TableName>
+		<RomName>fp_Mission_Impossible</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Knock Out</TableName>
+		<RomName>Knockout_1950</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Black Gold</TableName>
+		<RomName>blackgold_1975</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>BatmanTAS</TableName>
+		<RomName>batmantas</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>SupermanTAS</TableName>
+		<RomName>supermantas</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Skateboard</TableName>
+		<RomName>skatebrd</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Flying Chariots</TableName>
+		<RomName>FlyingChariots_1963</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Worlds Fair Jigsaw</TableName>
+		<RomName>worlds_fair</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Stripping Funny</TableName>
+		<RomName>stripping_funny</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Blood Machines</TableName>
+		<RomName>bloodmach</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Bow and Arrow  EM</TableName>
+		<RomName>bowarrowEM_1974</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Tropic Fun</TableName>
+		<RomName>TropicFun_1973</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>DOFLinx: Effects - MAME</TableName>
+		<RomName>doflinx_effects_mame</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Black Red</TableName>
+		<RomName>BlackRed</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Junkyard Cats</TableName>
+		<RomName>gatos</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Seven Winner</TableName>
+		<RomName>sevenwinner</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Black Knight - Sword Of Rage</TableName>
+		<RomName>bksor</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Hang Glider</TableName>
+		<RomName>HangGlider_1976</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Home Alone</TableName>
+		<RomName>homealone</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>House of Diamonds</TableName>
+		<RomName>hod</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>North Pole</TableName>
+		<RomName>northpole</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Speakeasy (Playmatic)</TableName>
+		<RomName>PlaymaticSpeakeasy</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Luck Smile</TableName>
+		<RomName>lucksmile4</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>The Cerebral Maze</TableName>
+		<RomName>thecerebralmaze</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>CheckMate</TableName>
+		<RomName>checkMate</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Mississipi</TableName>
+		<RomName>mississipi</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Get Smart</TableName>
+		<RomName>getsmart</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Zodiac (1971)</TableName>
+		<RomName>zodiac_1971</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Friday the 13th JP&apos;s</TableName>
+		<RomName>jpsfriday13th</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Surfer</TableName>
+		<RomName>Surfer_1976</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP-PE: Blue Vs Pink BAM Edition</TableName>
+		<RomName>FP_PE_BLUE_VS_PINK_BAM</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Hi-Diver</TableName>
+		<RomName>hidiver</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Jurassic Parc LE (marty02)</TableName>
+		<RomName>jurassic</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>4 Roses</TableName>
+		<RomName>roses_1962</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Swing Along</TableName>
+		<RomName>swingalong</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>PinballX MX</TableName>
+		<RomName>PinballXMX</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Space Patrol</TableName>
+		<RomName>SpacePatrol</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Metropolis (Maresa 1981)</TableName>
+		<RomName>metropolis</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Nairobi (Maresa 1965)</TableName>
+		<RomName>nairobi</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Pop a Card</TableName>
+		<RomName>PopACard_1971</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Palace Guard</TableName>
+		<RomName>PalaceGuard_1970</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Big Horse</TableName>
+		<RomName>bighorse</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Criterium 77 (Taito do Brasil 1977)</TableName>
+		<RomName>criterium77</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>1-2-3</TableName>
+		<RomName>TlD_123</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Al Capone</TableName>
+		<RomName>alcapone</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Skyway</TableName>
+		<RomName>skyway_1954</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Drink Absolut</TableName>
+		<RomName>drinkabsolut</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Circus (Brunswick - 1980)</TableName>
+		<RomName>CircusB</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Schuss</TableName>
+		<RomName>schuss</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>North Star (Gottlieb 1964)</TableName>
+		<RomName>NorthStar_1964</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Shamrock</TableName>
+		<RomName>shamrock4</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Hustler</TableName>
+		<RomName>hustler</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Lucky Strike</TableName>
+		<RomName>LuckyStrike_1978</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Roman Victory</TableName>
+		<RomName>RomanVictory</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Captain NEMO Dives Again</TableName>
+		<RomName>Epe_CaptainNemoDivesAgain</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Caballeros del Zodiaco</TableName>
+		<RomName>Caballeros_del_Zodiaco</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Stardust</TableName>
+		<RomName>Stardust</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Fifteen</TableName>
+		<RomName>Fifteen</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Apache</TableName>
+		<RomName>Apache_1978</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Conquest 200</TableName>
+		<RomName>Conquest200</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Torpedo (Petaco)</TableName>
+		<RomName>Torpedo</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Spinning Wheel</TableName>
+		<RomName>spinningwheel</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Bumper</TableName>
+		<RomName>bumper</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Big Star</TableName>
+		<RomName>bigstar</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Gaucho</TableName>
+		<RomName>gaucho_1963</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Teachers Pet</TableName>
+		<RomName>TeachersPet_1965</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Game Of Thrones</TableName>
+		<RomName>gameofthrones</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Now</TableName>
+		<RomName>Now_1971</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Flashman</TableName>
+		<RomName>flashman</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Hi Deal</TableName>
+		<RomName>HiDeal_1975</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Top Card</TableName>
+		<RomName>TopCard_1974</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Cyber Race</TableName>
+		<RomName>cyberrace</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>King Pin  (Williams 1962)</TableName>
+		<RomName>KingPin1962</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Simpsons Kooky Carnival</TableName>
+		<RomName>scarn200</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP-PE: Sonic Pinball Mania</TableName>
+		<RomName>fp_pe_sonic_pinball_mania</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Apache (Playmatic)</TableName>
+		<RomName>Apache_1975</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Four Seasons</TableName>
+		<RomName>FourSeasons_1968</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Voodoo&apos;s Carnival Pinball</TableName>
+		<RomName>voodoo</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Triple Action</TableName>
+		<RomName>TripleAction_1973</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FX3: WMS Indiana Jones</TableName>
+		<RomName>fx3_wms_indiana_jones</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Dark Shadow</TableName>
+		<RomName>darkshad</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>South Park Pinball</TableName>
+		<RomName>SPP</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Dale Jr Nascar JP&apos;s</TableName>
+		<RomName>dalejr</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Amigo</TableName>
+		<RomName>Amigo_1974</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Scooby Doo, 2022</TableName>
+		<RomName>Scooby</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP-PE: Junk Yard Cats BAM Edition</TableName>
+		<RomName>FP_PE_JUNKYARD_CATS_BAM</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Terrific Lake (Sportmatic 1987)</TableName>
+		<RomName>terrlake</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Wacky races</TableName>
+		<RomName>wackyraces</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Jack in the Box de 1973</TableName>
+		<RomName>JackInTheBox_1973</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Avengers, The (Limited Edition)</TableName>
+		<RomName>avs_170h</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Triple X</TableName>
+		<RomName>TripleX_1973</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Iron Maiden Legacy of the Beast Stern Tribute</TableName>
+		<RomName>IronMaiden_LOTB</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Little Chief</TableName>
+		<RomName>littlechief</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Sweet hearts</TableName>
+		<RomName>SweetHearts_1963</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Blade Runner 2049</TableName>
+		<RomName>BladeRunner2049</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Zissou The Life Aquatic</TableName>
+		<RomName>zissou</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP-PE: Star Wars Death Star Assault - GALACTIC EDITION</TableName>
+		<RomName>FP_PE_SW_DSA_GE</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Running Horse</TableName>
+		<RomName>runninghorse</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Iron Maiden LOTB Stern Tribute (VPW)</TableName>
+		<RomName>IM_LOTB</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Time Lord</TableName>
+		<RomName>TimeLord</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Zephy</TableName>
+		<RomName>zephy</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Martain Queen</TableName>
+		<RomName>marqueen</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Heavy Metal (wiesshund)</TableName>
+		<RomName>HeavyMetal</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Big Trouble Little China</TableName>
+		<RomName>BigTrouble</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Breaking bad-VP Cooks_ED</TableName>
+		<RomName>BreakingBad</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Alaska</TableName>
+		<RomName>alaska</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>The Fifth Element</TableName>
+		<RomName>5th_Element</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Doom Eternal</TableName>
+		<RomName>Fluffy</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Dream Daddy</TableName>
+		<RomName>DreamDaddy</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Asterix the Twelve Tasks</TableName>
+		<RomName>asterix12tasks</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Champ</TableName>
+		<RomName>ChampBall1y973</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Buffy The Vampire Slayer_VP_Cooks</TableName>
+		<RomName>VpBuffyVamp</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>IT Pinball Madness</TableName>
+		<RomName>it_pinball_madness</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Mickey Mouse in Steamboat Willie</TableName>
+		<RomName>MickeyM</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>The Price is Right: 50 Years</TableName>
+		<RomName>price_is_right</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Hellraiser</TableName>
+		<RomName>HellRaiser</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP-PE: Jaws - Bigger Boat Edition</TableName>
+		<RomName>FP_PE_JAWS_BBE</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Bond 60th</TableName>
+		<RomName>bond</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Hannibal Lecter_VPCooks</TableName>
+		<RomName>HannibalVPX</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>SupermanLE</TableName>
+		<RomName>SupermanLE</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>The Purge</TableName>
+		<RomName>Purge</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Poltergeist - VP_Cooks</TableName>
+		<RomName>Poltergeist</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP-PE: Halloween - Big Bloody Mike</TableName>
+		<RomName>FP_PE_HALLOWEEN_BBM</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>KILL BILL_VP_Cooks</TableName>
+		<RomName>kill_bill</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP-PE: F-14 Tomcat - Afterburner</TableName>
+		<RomName>fp_pe_f14_tomcat_ab</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Disco (Stern 1977)</TableName>
+		<RomName>disco_Stern_1977</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>A7X</TableName>
+		<RomName>a7x</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Queen of hearts</TableName>
+		<RomName>QueenOFHearts_1952</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Big Deal (1977)</TableName>
+		<RomName>bigdeal1977</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Rancho (Williams 1976)</TableName>
+		<RomName>rancho1976</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>STRANGERTHINGS4</TableName>
+		<RomName>STRANGERTHINGS4</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Mission Impossible LE (marty02)</TableName>
+		<RomName>MI</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: DOF</TableName>
+		<RomName>FP_DOF</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: DOF - Test Config</TableName>
+		<RomName>FP_DOF_TEST</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>VP: DOF - Test Config</TableName>
+		<RomName>VP_DOF_TEST</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Jackpot (1971 EM)</TableName>
+		<RomName>Jackpot_1971</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Putin Vodka Mania</TableName>
+		<RomName>PVM</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Trick Shooter</TableName>
+		<RomName>tricksht</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Goldorak</TableName>
+		<RomName>Goldorak</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Mr. and Mrs. PEC-MEN</TableName>
+		<RomName>pecmen</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Great Houdini</TableName>
+		<RomName>Great_HOUDINI</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Inhabiting Mars</TableName>
+		<RomName>INHABITINGMARS</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Beavis and Butthead Pinball Stupidity</TableName>
+		<RomName>bnbps</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Thundercats</TableName>
+		<RomName>ThunderCats</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Magic City</TableName>
+		<RomName>MagicCity_1967</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Pat Hand Williams 1975</TableName>
+		<RomName>pathand1975</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Monaco Segasa 1977</TableName>
+		<RomName>monaco1977</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Cannes Segasa 1976</TableName>
+		<RomName>cannes1976</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Ben Hur Staal 1977</TableName>
+		<RomName>benhur1977</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Monte Carlo (Bally 1973)</TableName>
+		<RomName>montecarlo_1973</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Aerosmith (Pro) (Stern/Tribute 2017)</TableName>
+		<RomName>aerosmith</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Galaxy (Sega 1973)</TableName>
+		<RomName>SegaGalaxy</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>The Matrix VP_Cooks</TableName>
+		<RomName>TheMatrix</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Indochine Central Tour</TableName>
+		<RomName>indochine_central_tour</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Klondike</TableName>
+		<RomName>klondike1971</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP: Megaman</TableName>
+		<RomName>fp_megaman</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Incredible Hulk Limited Edition, The</TableName>
+		<RomName>HulkLE</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Darkest Dungeon</TableName>
+		<RomName>darkestdungeon</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Sands of the Aton</TableName>
+		<RomName>SOTA</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Horrorburg</TableName>
+		<RomName>horrorburg</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Crazy Cats Demo Derby</TableName>
+		<RomName>CrazyCats</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Pulp Fiction</TableName>
+		<RomName>pulpfiction</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Volkan Steel and Metal</TableName>
+		<RomName>volkan</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Black Knight - Sword Of Rage LE</TableName>
+		<RomName>bksorle</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Indiana Jones The Last Movie</TableName>
+		<RomName>indiana_jones_last_movie</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP-PE: Aliens Legacy - Game Over, Man</TableName>
+		<RomName>fp_pe_aliens_legacy_gom</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Crystal Ball</TableName>
+		<RomName>crystalball</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Chance (1971)</TableName>
+		<RomName>chance_1971</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Rockmakers</TableName>
+		<RomName>rockmakers_1968</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>4 Aces</TableName>
+		<RomName>fouraces</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Ducktales</TableName>
+		<RomName>DUCKTALES</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Jack Sparrow</TableName>
+		<RomName>jacksparrow</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Killers Hall of Fame</TableName>
+		<RomName>killershof</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>American Graffiti</TableName>
+		<RomName>AmericanGraffiti_1962</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Gardiens de la Galaxie Trilogy</TableName>
+		<RomName>GOG_Trilogy</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>The Mandalorian</TableName>
+		<RomName>mandalorian</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Exorcist_Original_2023</TableName>
+		<RomName>exorcist</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>John Wick : Baba Yaga Pinball</TableName>
+		<RomName>johnwick</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Trick &apos;r Treat</TableName>
+		<RomName>trickrtreat</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Touchdown (1967)</TableName>
+		<RomName>Touchdown_1967</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Nags</TableName>
+		<RomName>nags_1960</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>PinJuke music player</TableName>
+		<RomName>pinjuke</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Olympus</TableName>
+		<RomName>olympus</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Megadeth</TableName>
+		<RomName>megadeth</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Die Hard Trilogy</TableName>
+		<RomName>diehard</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Skylab (Williams 1974)</TableName>
+		<RomName>Skylab1974</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Futurama</TableName>
+		<RomName>futurama</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Jumanji</TableName>
+		<RomName>jumanji</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Star Trip</TableName>
+		<RomName>startrip</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Fireball XL5</TableName>
+		<RomName>fireballxl5</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Beavis and Butthead Pinballed</TableName>
+		<RomName>beav_butt</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Five nights at freddy</TableName>
+		<RomName>FNAF</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Sin City</TableName>
+		<RomName>sincity</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Death Proof</TableName>
+		<RomName>deathproof</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Dark Crystal</TableName>
+		<RomName>DarkCrystal</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>A-Go-Go</TableName>
+		<RomName>A-Go-Go</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Aloha</TableName>
+		<RomName>aloha</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Spooky Wednesday</TableName>
+		<RomName>SpookyWednesday</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Dune</TableName>
+		<RomName>dune</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Camping Trip</TableName>
+		<RomName>CampingTrip</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Curse Mummy</TableName>
+		<RomName>fx_curse_mummy</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Sky Pirates</TableName>
+		<RomName>fx_sky_pirates</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Pinball Noir</TableName>
+		<RomName>fx_noir</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Star Wars Classic Collectibles</TableName>
+		<RomName>fx_swcollectables</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>My Little Pony</TableName>
+		<RomName>fx_little_pony</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Kung Fu Panda</TableName>
+		<RomName>fx_panda</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Trolls</TableName>
+		<RomName>fx_trolls</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Dragons Pinball</TableName>
+		<RomName>fx_dragons</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Garfield</TableName>
+		<RomName>fx_garfield</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Peanuts Snoopy</TableName>
+		<RomName>fx_peanuts</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Wrath of the Elder Gods</TableName>
+		<RomName>fx_eldergods</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Williams Bride of Pin-Bot</TableName>
+		<RomName>fx_wms_bride</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Williams Swords of Fury</TableName>
+		<RomName>fx_wms_swords</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Journey to Hiigara</TableName>
+		<RomName>fx_hiigara Homeworld</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Brothers in Arms</TableName>
+		<RomName>fx_brothersarms</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Borderlands Vault Hunter</TableName>
+		<RomName>fx_vaulthunter</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Kong</TableName>
+		<RomName>fx_kong</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>World War Z</TableName>
+		<RomName>fx_wwz</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Grimm Tale</TableName>
+		<RomName>fx_grimm</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Williams The Addams Family</TableName>
+		<RomName>fx_wms_addams</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Williams World Cup Soccer</TableName>
+		<RomName>fx_wms_worldcup</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Godzilla vs Kong</TableName>
+		<RomName>fx_godzillakong</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Crypt of the Necrodancer</TableName>
+		<RomName>fx_necrodancer</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Williams Twilight Zone</TableName>
+		<RomName>fx_wms_twilight</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Williams Star Trek The Next Generation</TableName>
+		<RomName>fx_wms_nextgen</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Verne&apos;s Mysterious Island</TableName>
+		<RomName>fx_mysteriousisland</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>A Samiurai&apos;s Vengence</TableName>
+		<RomName>fx_samiurai</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Star Trek Kelvin Timeline</TableName>
+		<RomName>fx_startrek_kelvin</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Williams Whirlwind</TableName>
+		<RomName>fx_wms_whirlwind</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Star Trek Discovery</TableName>
+		<RomName>fx_startrek_discovery</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Star Trek Deep Space Nine</TableName>
+		<RomName>fx_startrek_deepspace</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Terraforming Mars</TableName>
+		<RomName>fx_mars</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Exploding Kittens</TableName>
+		<RomName>fx_kittens</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Gloomhaven</TableName>
+		<RomName>fx_gloomhaven</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>A Charlie Brown Christmas</TableName>
+		<RomName>fx_charliebrown</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>System Shock</TableName>
+		<RomName>fx_systemshock</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Hot Line</TableName>
+		<RomName>HotLine_1966</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Last Lap</TableName>
+		<RomName>lastlap</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Big Town</TableName>
+		<RomName>bigtown</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Rick and Morty</TableName>
+		<RomName>RickMorty</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Godfather</TableName>
+		<RomName>Godfather</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Moana</TableName>
+		<RomName>Moana</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Bourne Identity Treadstone</TableName>
+		<RomName>bourne</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Pirates Life</TableName>
+		<RomName>PiratesLife2</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Killer Instinct</TableName>
+		<RomName>KillerInstinct</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Men in black Trilogy</TableName>
+		<RomName>men_in_black</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Marylin Manson Music Table:</TableName>
+		<RomName>MARILYNMANSONPUP</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Nirvana Music Table:</TableName>
+		<RomName>NIRVANAPUP</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Alice in Chains Music Table</TableName>
+		<RomName>ALICEINCHAINSPUP</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Linkin Park Music Table</TableName>
+		<RomName>LINKINPARKPUP</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Van Halen Music Table</TableName>
+		<RomName>VANHALENPUP</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Coldplay Music Table:</TableName>
+		<RomName>COLDPLAYPUP</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Red Hot Chilli Peppers Music Table</TableName>
+		<RomName>RHCPPUP</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Queens of the Stone Age Music Table</TableName>
+		<RomName>QOTSA</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Foo Fighters Music Table</TableName>
+		<RomName>FOOFIGHTERSPUP</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Tool Music Table</TableName>
+		<RomName>TOOLPUP</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Def Leppard Music Table</TableName>
+		<RomName>DEFLEPPARDPUP</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Sonic The Hedgehog</TableName>
+		<RomName>erizo</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Daredevil and The Defenders</TableName>
+		<RomName>Daredevil</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>DAFT PUNK Interstella 5555</TableName>
+		<RomName>Daft_Punk</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Life Is But A Dream</TableName>
+		<RomName>libad</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Hellboy</TableName>
+		<RomName>HELLBOY</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Secret Agent</TableName>
+		<RomName>Secretagent</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Terrifier</TableName>
+		<RomName>Terrifier</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Killer Klowns</TableName>
+		<RomName>KKlowns</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FP-PE: Masters of the Universe - Collector&apos;s Edition</TableName>
+		<RomName>fp_pe_motu_ce</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Bud and Terence</TableName>
+		<RomName>BudTerence</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Masquerade</TableName>
+		<RomName>masquerade</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Mighty Morphin Power Rangers</TableName>
+		<RomName>powerrangers</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Gorillaz</TableName>
+		<RomName>gorillaz</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Ozzy Osbourne</TableName>
+		<RomName>ozzy</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Vampirella</TableName>
+		<RomName>vampirella</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Wild West</TableName>
+		<RomName>WildWest</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Nightmare Before Christmas</TableName>
+		<RomName>nightmarebc</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Thunder Man (When Using Pinchamp Rom See Pinball Champ Game for DOF)</TableName>
+		<RomName>thndrman</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Tornado Rally</TableName>
+		<RomName>OKIES_TornadoRally</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>SUPER ORBIT</TableName>
+		<RomName>sorbit</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>JP&apos;s Space Cadet: Galaxy Edition</TableName>
+		<RomName>jpspacecadetGE</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Ace of Speed</TableName>
+		<RomName>Ace_Speed</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Fleetwood Mac</TableName>
+		<RomName>Fleetwood</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Fp: War of the Worlds</TableName>
+		<RomName>The+War+of+the+Worlds</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Swinger</TableName>
+		<RomName>Swinger_1972</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Rawhide</TableName>
+		<RomName>Rawhide</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Bally Hoo (Bally 1969)</TableName>
+		<RomName>Bally_Hoo</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Punchout</TableName>
+		<RomName>punchout</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Squid Game</TableName>
+		<RomName>squid_game</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>B52s</TableName>
+		<RomName>B52s</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Yes</TableName>
+		<RomName>Yes</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Jalisco</TableName>
+		<RomName>jalisco</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>TenasiousD</TableName>
+		<RomName>TenasiousD</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Animal Crossing</TableName>
+		<RomName>AnimalCrossing</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Captain Spaulding</TableName>
+		<RomName>CAPTAINSPAULDING1</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Big Lebowski</TableName>
+		<RomName>Big Lebowski</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Aquaman</TableName>
+		<RomName>Aquaman</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Halloween MM Edition</TableName>
+		<RomName>Halloween</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Universe (Gottlieb 1959)</TableName>
+		<RomName>universe</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Wimbledon (Electromatic 1978)</TableName>
+		<RomName>wimbledon</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Kingdom</TableName>
+		<RomName>kingdom</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>John Rambo</TableName>
+		<RomName>John_Rambo</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Solar Ride (EM)</TableName>
+		<RomName>solarrideem</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Freddy&apos;s Nightmares</TableName>
+		<RomName>Freddy&#039;s_Nightmares</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Superman and The Justice League</TableName>
+		<RomName>Superman_tjl</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Counterforce (7-digit)</TableName>
+		<RomName>cntforc7</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Jurassic Park 30Th Stern Tribute</TableName>
+		<RomName>JP30LE</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>RAMBO</TableName>
+		<RomName>Rambo</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Punk Park</TableName>
+		<RomName>Punk_Park</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Spooky Wednesday Pro</TableName>
+		<RomName>SpookyWednesdayPro</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Mach 2.0 Two (Spinball 1995)</TableName>
+		<RomName>mach2</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Star Ship (Bally 1976)</TableName>
+		<RomName>starship</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Dark Chaos</TableName>
+		<RomName>darkchaos</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>GEEGA</TableName>
+		<RomName>geega</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Rush LE Tribute</TableName>
+		<RomName>rush_le</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>The Big Lebowski</TableName>
+		<RomName>no rom v</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Fun Fest</TableName>
+		<RomName>FunFest_1973</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>On Beam</TableName>
+		<RomName>onbeam</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Mustang (Gottlieb 1977)</TableName>
+		<RomName>Mustang_1977</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>War Of The Worlds (Jeff Wayne&apos;s Musical Version)</TableName>
+		<RomName>waroftheworlds</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Sound Stage (Chicago Coin 1976)</TableName>
+		<RomName>soundstage</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>J</TableName>
+		<RomName>K</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Carnaval no Rio (LTD do Brasil 1977)</TableName>
+		<RomName>carnavalnorio</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Black Magic 4 (Recel 1980)</TableName>
+		<RomName>blackmagic4</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Clown (Playmatic 1971)</TableName>
+		<RomName>Clown-Playmatic</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Champions League (Season 18) St Pauli</TableName>
+		<RomName>uefa_cl18</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>TOTEM (EM Brasil 1979 )</TableName>
+		<RomName>TotemEM</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FleetJr</TableName>
+		<RomName>FleetJr</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Silver Cup</TableName>
+		<RomName>SilverCup</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Stranger Things 4 Premium</TableName>
+		<RomName>StrangerThings4_Premium</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Baby Leland</TableName>
+		<RomName>Baby_Leland</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Horseshoe (A.B.T. Manufacturing 1933)</TableName>
+		<RomName>Horseshoe</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Vampire (Bally 1971)</TableName>
+		<RomName>Vampire</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Royal Flush (Gottlieb 1957)</TableName>
+		<RomName>RoyalFlush_1957</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Knight Rider</TableName>
+		<RomName>Knight_Rider</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Gun Men (Staal 1979)</TableName>
+		<RomName>GunMen1979</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Flip Flop</TableName>
+		<RomName>FlipFlop</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Heat Ray Heist</TableName>
+		<RomName>Heat</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Op-Pop-Pop</TableName>
+		<RomName>Op-Pop-Pop</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Cactus Canjon</TableName>
+		<RomName>CC_13</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>City Hunter</TableName>
+		<RomName>City_Hunter</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Loony Labyrinth (LittleWing 1994)</TableName>
+		<RomName>loonylab</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>STEELPANTHERPUP</TableName>
+		<RomName>STEELPANTHERPUP</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>SUBLIME</TableName>
+		<RomName>SUBLIME</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>ParadiseJP</TableName>
+		<RomName>ParadiseJP</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>all</TableName>
+		<RomName>all</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>frank</TableName>
+		<RomName>kobben</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Pinball Frank</TableName>
+		<RomName>Bar</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Gridiron (Gottlieb 1977) NFL Mod</TableName>
+		<RomName>gridiron_1977_mod</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Tiro&apos;s</TableName>
+		<RomName>tiros</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>led+</TableName>
+		<RomName>2</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>tze</TableName>
+		<RomName>test</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Skyscraper</TableName>
+		<RomName>Skyscraper</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Shangri-La</TableName>
+		<RomName>ShangriLa1967</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Love Bug</TableName>
+		<RomName>LoveBug_1971</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>alien</TableName>
+		<RomName>alien</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>2001:A Space Odyssey (Original 2025)</TableName>
+		<RomName>HAL9000</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>JAWS 50Th Anniversary</TableName>
+		<RomName>JAWS_50Th_Anniversary</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>King Of The Hill</TableName>
+		<RomName>kingofthehill</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>My Solenoid Rig 4 Bumper</TableName>
+		<RomName>Stock</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Pinball EM</TableName>
+		<RomName>PinballEM_1977</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Game Logic Framework Example Table</TableName>
+		<RomName>VPXExampleGLF</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Dragonball Super Saiyan Edition</TableName>
+		<RomName>DragonBallSSE</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Charlies Angels EM</TableName>
+		<RomName>CharlieAngelsEM</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Black Velvet</TableName>
+		<RomName>blvelvet</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>BEASTIEBOYS</TableName>
+		<RomName>barra_l1</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Granny and the Gators</TableName>
+		<RomName>granny</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>The Shining</TableName>
+		<RomName>shining</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Black Fever</TableName>
+		<RomName>blkfever</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Saloon (Taito do Brasil 1978)</TableName>
+		<RomName>Saloon_1978</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Pinocchio</TableName>
+		<RomName>Pinocchio</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Off Road Racers</TableName>
+		<RomName>OffRoadRacers</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Robot Invasion</TableName>
+		<RomName>none</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Topaz</TableName>
+		<RomName>topazi</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Terminator 2 (Williams 1991)</TableName>
+		<RomName>t2_l8</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>metallica limited edition pup</TableName>
+		<RomName>mtl_180h72</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Eye Of The Tiger</TableName>
+		<RomName>Eye_of_the_tiger_1978</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Standard Body</TableName>
+		<RomName>Office</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Jukebox (Seeburg 1965) </TableName>
+		<RomName>Jukebox (Seeburg 1965) </RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>The Crow</TableName>
+		<RomName>SGsTheCrow</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Twin Peaks</TableName>
+		<RomName>TwinPeaks</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>BlackVelvetTest</TableName>
+		<RomName>blvelvettest</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>test</TableName>
+		<RomName>test1</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Queen show must go ON</TableName>
+		<RomName>QUEEN_original_2022</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Jukebox_Seeburg1965</TableName>
+		<RomName>Jukebox_Seeburg1965</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Airborne EM (J.Esteban 1979)</TableName>
+		<RomName>AirborneEM</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Star Wars (Burger 2025)</TableName>
+		<RomName>starwrs</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Galaxia (LTD 1975)</TableName>
+		<RomName>ltdgalaxia</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>The Last Dragon  (2025)</TableName>
+		<RomName>LastDragon</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Near Dark</TableName>
+		<RomName>neardark2025</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Hairy-Singers (Rally 1966)</TableName>
+		<RomName>hairysingers</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>The lion king</TableName>
+		<RomName>alpok_f6</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>O Gaucho (LTD do Brasil 1975)</TableName>
+		<RomName>ogaucho</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Willow</TableName>
+		<RomName>willow</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>TMNT Stern</TableName>
+		<RomName>tmntstern</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Twinky (Chicago Coin 1967)</TableName>
+		<RomName>twinky</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>King Kong (LTD do Brasil 1974)</TableName>
+		<RomName>kingkongEM</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Young Frankenstein (Bally 1978)</TableName>
+		<RomName>YFboy</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Private tedt</TableName>
+		<RomName>Private Test</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>FlipperJulien</TableName>
+		<RomName>Xx</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Warrior Sea (Eletromatic 1977)</TableName>
+		<RomName>warriorsea</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Scream (2025)</TableName>
+		<RomName>SCREAM</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>MagicPinball</TableName>
+		<RomName>magicpinball</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Goldorak_PUP</TableName>
+		<RomName>Goldorak_PUP</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Blizzard of Ozz</TableName>
+		<RomName>BlizzardOfOzz-Data</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Cobra (Playbar 1987)</TableName>
+		<RomName>cobrapb</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Cobra (Nuova Bell 1987)</TableName>
+		<RomName>cobra</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Cobra (Bell Games 1987)</TableName>
+		<RomName>cobra.zip</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Rattlecan</TableName>
+		<RomName>rattlecan</RomName>
+	</Mapping>
+	<Mapping>
+		<TableName>Pit Stop</TableName>
+		<RomName>pitstop</RomName>
+	</Mapping>
+</TableNameMappings>
