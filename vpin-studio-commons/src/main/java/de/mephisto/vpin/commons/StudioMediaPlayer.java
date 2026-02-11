@@ -51,7 +51,7 @@ public class StudioMediaPlayer {
   }
 
   private Node renderVlcMediaPlayer(String mediaUrl) {
-    mediaPlayerFactory = new MediaPlayerFactory("--no-video-title-show");
+    mediaPlayerFactory = new MediaPlayerFactory("--no-video-title-show", "--quiet");
     mediaPlayer = mediaPlayerFactory.mediaPlayers().newEmbeddedMediaPlayer();
 
     ImageView imageView = new ImageView();

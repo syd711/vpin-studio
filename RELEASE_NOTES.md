@@ -2,8 +2,9 @@
 
 ## Changes
 
+- **Media Player**: The video playback uses the VLC player now. I hope this solves the playback issues once and for all.
 - **Asset Manager**: Fixed possible file lock caused by the media streaming that prohibited the deletion (blind fix).
-- **System Manager**: Added the **dmddevice.ini** file to the list of exlusions for VPinMAME installations.
+- **System Manager**: Added the **dmddevice.ini** file to the list of exclusions for VPinMAME installations.
 
 ---
 
