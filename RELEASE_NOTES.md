@@ -1,10 +1,13 @@
 ## Release Notes 4.6.5
 
-## Changes
+## Changes (including a breaking one!)
 
-- **Media Player**: The video playback uses the VLC player now. I hope this solves the playback issues once and for all.
+- **Pause Menu Settings**: Added separate section for the screenshot preferences there. You can choose now which screens are taken for the screenshot. Note that **you need to review these settings** so that the scoring screenshot works as expected and contains your highscore.
+- **Tutorials Video Player**: The video playback uses the VLC player now. I hope this solves the playback issues once and for all.
 - **Asset Manager**: Fixed possible file lock caused by the media streaming that prohibited the deletion (blind fix).
 - **System Manager**: Added the **dmddevice.ini** file to the list of exclusions for VPinMAME installations.
+- **Table Data Manager**: Fixed issue that data was saved for the wrong table. 
+- **Table Overview**: Fixed table import button that was disabled when only VPX emulator was enabled. 
 
 ---
 

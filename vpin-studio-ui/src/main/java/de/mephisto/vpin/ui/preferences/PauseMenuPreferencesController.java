@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
+import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.preferences.dialogs.PreferencesDialogs;
@@ -18,6 +19,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,9 +58,6 @@ public class PauseMenuPreferencesController implements Initializable {
 
   @FXML
   private CheckBox triggerCheckbox;
-
-  @FXML
-  private CheckBox desktopModeCheckbox;
 
   @FXML
   private CheckBox includeDmdCheckbox;
@@ -103,6 +102,9 @@ public class PauseMenuPreferencesController implements Initializable {
   private Pane tutorialDetailsBox;
 
   @FXML
+  private VBox monitorsPane;
+
+  @FXML
   private void onPauseTest() {
     PreferencesDialogs.openPauseMenuTestDialog();
   }
@@ -130,6 +132,26 @@ public class PauseMenuPreferencesController implements Initializable {
     maniaScoresBox.setVisible(Features.MANIA_ENABLED && maniaClient.getCabinetClient() != null);
     iScoredScoresBox.managedProperty().bindBidirectional(iScoredScoresBox.visibleProperty());
     iScoredScoresBox.setVisible(Features.ISCORED_ENABLED && pauseMenuSettings.isShowIscoredScores());
+
+    SystemSummary systemSummary = client.getSystemService().getSystemSummary();
+    for (MonitorInfo monitorInfo : systemSummary.getMonitorInfos()) {
+      CheckBox checkBox = new CheckBox(monitorInfo.toDetailsString());
+      checkBox.setSelected(pauseMenuSettings.getMultiScreenIds().contains(monitorInfo.getId()));
+      checkBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+          pauseMenuSettings.getMultiScreenIds().remove(new Integer(monitorInfo.getId()));
+          if (newValue) {
+            pauseMenuSettings.getMultiScreenIds().add(monitorInfo.getId());
+          }
+          client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+        }
+      });
+      checkBox.getStyleClass().add("default-text");
+      checkBox.setUserData(monitorInfo);
+      monitorsPane.getChildren().add(checkBox);
+    }
+
 
     screenInfoComboBox.setItems(FXCollections.observableList(client.getSystemService().getSystemSummary().getMonitorInfos()));
     if (pauseMenuSettings.getPauseMenuScreenId() == -1) {
@@ -233,18 +255,6 @@ public class PauseMenuPreferencesController implements Initializable {
       pauseMenuSettings.setPressPause(newValue);
       delaySpinner.setDisable(!newValue);
       client.getPreferenceService().setJsonPreference(pauseMenuSettings);
-    });
-
-    desktopModeCheckbox.setSelected(pauseMenuSettings.isDesktopUser());
-    desktopModeCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      pauseMenuSettings.setDesktopUser(newValue);
-      try {
-        client.getPreferenceService().setJsonPreference(pauseMenuSettings);
-        PreferencesController.markDirty(PreferenceType.competitionSettings);
-      }
-      catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
-      }
     });
 
     includeDmdCheckbox.setSelected(pauseMenuSettings.isIncludeDmdFrame());
