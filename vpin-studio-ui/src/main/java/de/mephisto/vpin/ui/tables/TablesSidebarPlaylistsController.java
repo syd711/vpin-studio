@@ -191,6 +191,9 @@ public class TablesSidebarPlaylistsController implements Initializable {
         });
       });
     }
+    else {
+      refreshDirty.set(false);
+    }
   }
 
   private void renderPlaylist(List<GameRepresentation> games, PlaylistRepresentation playlist, UISettings uiSettings) {

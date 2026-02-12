@@ -3,7 +3,7 @@
 ## Changes (including a breaking one!)
 
 - **Pause Menu Settings**: Added separate section for the screenshot preferences there. You can choose now which screens are taken for the screenshot. Note that **you need to review these settings** so that the scoring screenshot works as expected and contains your highscore.
-- **Tutorials Video Player**: The video playback uses the VLC player now. I hope this solves the playback issues once and for all.
+- **Tutorials Video Player**: The video playback uses the **VLC Media Player** now. I hope this solves the playback issues once and for all. Note that the VLC player is not shipped with the server, but will be installed automatically if missing (for the VPin Studio Server only!) during the startup which may take a while.
 - **Asset Manager**: Fixed possible file lock caused by the media streaming that prohibited the deletion (blind fix).
 - **System Manager**: Added the **dmddevice.ini** file to the list of exclusions for VPinMAME installations.
 - **Table Data Manager**: Fixed issue that data was saved for the wrong table. 
