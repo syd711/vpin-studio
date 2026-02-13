@@ -7,7 +7,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,18 +20,25 @@ abstract public class DefaultMediaAccessStrategy implements MediaAccessStrategy 
 
   protected List<File> getMediaFiles(File screenMediaFolder) {
     String key = screenMediaFolder.getAbsolutePath();
-    if (!monitors.containsKey(key)) {
-      MediaMonitor gameMediaMonitor = new MediaMonitor(screenMediaFolder);
-      monitors.put(key, gameMediaMonitor);
+    // if the folder does not exist, do not register the monitor
+    if (screenMediaFolder.exists()) {
+      if (!monitors.containsKey(key)) {
+        MediaMonitor gameMediaMonitor = new MediaMonitor(screenMediaFolder);
+        monitors.put(key, gameMediaMonitor);
+      }
+      return monitors.get(key).getFiles();
     }
-    return monitors.get(key).getFiles();
+    else {
+      return Collections.emptyList();
+    }
   }
 
   @Override
-  public void stopMonitoring() {
-    Collection<MediaMonitor> values = monitors.values();
-    for (MediaMonitor value : values) {
-      value.stopMonitoring();
+  public void stopMonitoring(File screenMediaFolder) {
+    String key = screenMediaFolder.getAbsolutePath();
+    MediaMonitor gameMediaMonitor = monitors.remove(key);
+    if (gameMediaMonitor != null) {
+      gameMediaMonitor.stopMonitoring();
     }
   }
 

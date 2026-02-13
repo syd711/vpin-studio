@@ -128,20 +128,6 @@ public class AssetServiceClient extends VPinStudioClientService {
     return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "assets/index/exists", Boolean.class);
   }
 
-  public AssetRequest getMetadata(int gameId, VPinScreen screen, String name) {
-    try {
-      AssetRequest request = new AssetRequest();
-      request.setScreen(screen);
-      request.setGameId(gameId);
-      request.setName(name);
-      return getRestClient().post(API + "assets/metadata", request, AssetRequest.class);
-    }
-    catch (Exception e) {
-      LOG.error("Failed to convert video: " + e.getMessage(), e);
-    }
-    return null;
-  }
-
   @Nullable
   public ByteArrayInputStream getAvatar(boolean forceRefresh) {
     try {
