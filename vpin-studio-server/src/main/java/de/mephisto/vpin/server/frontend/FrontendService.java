@@ -134,6 +134,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   }
 
   //--------------------------
+  @Nullable
   private Game setGameEmulator(Game game) {
     if (game != null) {
       GameEmulator emulator = emulatorService.getGameEmulator(game.getEmulatorId());
@@ -143,6 +144,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
       }
       else {
         LOG.info("No emulator found for {}/{}/{}/{}", game, game.getId(), game.getEmulatorId(), game.getGameFilePath());
+        return null;
       }
 
       //FrontendMediaItem frontendMediaItem = getGameMedia(game).getDefaultMediaItem(VPinScreen.Wheel);
@@ -168,7 +170,8 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
    * @return the original un-customized game instance
    */
   public Game getOriginalGame(int id) {
-    return setGameEmulator(getFrontendConnector().getGame(id));
+    Game game = getFrontendConnector().getGame(id);
+    return setGameEmulator(game);
   }
 
   public Game getGameByFilename(int emulatorId, String filename) {
