@@ -9,9 +9,7 @@ import com.drew.metadata.Tag;
 import de.mephisto.vpin.commons.fx.ImageUtil;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetMetaData;
-import de.mephisto.vpin.restclient.assets.AssetRequest;
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.frontend.FrontendService;
@@ -100,40 +98,23 @@ public class AssetService {
     return null;
   }
 
-
-  public AssetRequest getMetadata(AssetRequest request) {
-    AssetMetaData metaData = new AssetMetaData();
-    request.setMetaData(metaData);
+  public static AssetMetaData getMetadata(File file) {
     try {
-      Game game = frontendService.getOriginalGame(request.getGameId());
-      if (game == null) {
-        LOG.info("No game found for " + request.getGameId());
-        request.setResult("No game found for " + request.getGameId());
-        return request;
-      }
-
-      FrontendMediaItem mediaItem = frontendService.getMediaItem(game, request.getScreen(), request.getName());
-      if (mediaItem == null) {
-        LOG.info("No media item found for " + request.getName());
-        request.setResult("No media item found for " + request.getName());
-        return request;
-      }
-
-      File file = mediaItem.getFile();
-      if (file.exists()) {
+      if (file != null && file.exists()) {
+        AssetMetaData metaData = new AssetMetaData();
         if (file.getName().endsWith(".mp3")) {
           readMp3Metadata(file, metaData);
         }
         else {
           readVideoAndImageMetadata(file, metaData);
         }
+        return metaData;
       }
     }
     catch (Exception e) {
       LOG.error("Failed to read video metadata: " + e.getMessage());
-      request.setResult("Failed to read video metadata: " + e.getMessage());
     }
-    return request;
+    return null;
   }
 
   private static void readMp3Metadata(File file, AssetMetaData metaData) throws IOException, SAXException, TikaException {

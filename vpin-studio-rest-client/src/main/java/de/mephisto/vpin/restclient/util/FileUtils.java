@@ -243,7 +243,7 @@ public class FileUtils {
   }
 
   //-----------------------------------------------
-  static Pattern assetPattern = Pattern.compile("\\d\\d$");
+  public static Pattern assetPattern = Pattern.compile("\\d\\d$");
 
   public static boolean isDefaultAsset(String filename) {
     String basename = FilenameUtils.getBaseName(filename);
@@ -251,11 +251,16 @@ public class FileUtils {
     return basename.equals(baseAssetName);
   }
 
+  public static boolean isAssetOf(String filename, String baseAssetName) {
+    String basename = baseUniqueAsset(filename);
+    return StringUtils.startsWithIgnoreCase(basename, baseAssetName);
+  }
+
   public static String baseUniqueAsset(String filename) {
     String basename = FilenameUtils.removeExtension(filename).trim();
     Matcher match = assetPattern.matcher(basename);
     if (match.find()) {
-      basename = match.replaceAll("");
+      basename = match.replaceAll("").trim();
     }
     return basename;
   }

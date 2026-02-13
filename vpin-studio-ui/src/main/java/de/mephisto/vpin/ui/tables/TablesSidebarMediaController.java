@@ -96,7 +96,7 @@ public class TablesSidebarMediaController implements Initializable {
     if (defaultMediaItem != null) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete", "Delete \"" + defaultMediaItem.getName() + "\"?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        client.getGameMediaService().deleteMedia(gameRepresentation.getId(), vPinScreen, defaultMediaItem.getName());
+        client.getGameMediaService().deleteMedia(gameRepresentation.getId(), false, vPinScreen, defaultMediaItem.getName());
         EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
       }
     }
