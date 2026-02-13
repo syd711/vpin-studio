@@ -4,6 +4,7 @@
 
 - **Media Player**: The video playback uses the VLC player now. I hope this solves the playback issues once and for all.
 - **Asset Manager**: Fixed possible file lock caused by the media streaming that prohibited the deletion (blind fix).
+- **Asset Manager**: Added same support for playlist medias than game medias (drag/drop, rename, set as default, delete, conversion...).
 - **System Manager**: Added the **dmddevice.ini** file to the list of exclusions for VPinMAME installations.
 
 ---
