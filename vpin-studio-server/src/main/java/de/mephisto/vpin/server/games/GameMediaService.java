@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.connectors.vps.matcher.VpsMatch;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
-import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.backups.BackupDataStudio;
 import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
@@ -24,14 +23,13 @@ import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.assets.AssetService;
-import de.mephisto.vpin.server.backups.adapters.vpa.VpaService;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.directb2s.BackglassService;
 import de.mephisto.vpin.server.dmd.DMDDeviceIniService;
 import de.mephisto.vpin.server.dmd.DMDService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
-import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.server.frontend.MediaService;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.frontend.WheelIconDelete;
 import de.mephisto.vpin.server.highscores.HighscoreService;
@@ -48,7 +46,6 @@ import de.mephisto.vpin.server.vps.VpsService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.aspectj.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,11 +60,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class GameMediaService {
+public class GameMediaService extends MediaService {
   private final static Logger LOG = LoggerFactory.getLogger(GameMediaService.class);
-
-  @Autowired
-  private FrontendService frontendService;
 
   @Autowired
   private EmulatorService emulatorService;
@@ -635,11 +629,11 @@ public class GameMediaService {
         }
 
         String suffix = FilenameUtils.getExtension(mediaFile);
-        File out = uniqueMediaAsset(game, screen, suffix);
+        File out = uniqueMediaAsset(game, screen, suffix, true, true);
         if (uploadDescriptor.getUploadType() != null && uploadDescriptor.getUploadType().equals(UploadType.uploadAndReplace)) {
           out = new File(frontendService.getMediaFolder(game, screen, suffix, true), game.getGameName() + "." + suffix);
           if (out.exists() && !out.delete()) {
-            out = uniqueMediaAsset(game, screen, suffix);
+            out = uniqueMediaAsset(game, screen, suffix, true, true);
           }
         }
 
@@ -647,7 +641,7 @@ public class GameMediaService {
           LOG.info("Created \"" + out.getAbsolutePath() + "\" for screen \"" + screen.name() + "\" from archive file \"" + mediaFile + "\"");
 
           if (game != null) {
-            gameLifecycleService.notifyGameScreenAssetsChanged(game.getId(), screen, out);
+            notifyGameScreenAssetsChanged(game.getId(), screen, out);
           }
         }
         else {
@@ -683,10 +677,11 @@ public class GameMediaService {
 
       for (Integer gameId : gameIds) {
         Game game = gameService.getGame(gameId);
-        GameEmulator gameEmulator = emulatorService.getGameEmulator(game.getEmulatorId());
         if (game == null) {
           return false;
         }
+
+        GameEmulator gameEmulator = emulatorService.getGameEmulator(game.getEmulatorId());
 
         if (descriptor.isDeleteHighscores()) {
           highscoreService.deleteHighscore(game);
@@ -897,55 +892,31 @@ public class GameMediaService {
     return success;
   }
 
-  public boolean copyAsset(int gameId, String name, VPinScreen screen, VPinScreen target) {
-    try {
-      Game game = gameService.getGame(gameId);
-      if (game != null) {
-        File mediaFolder = frontendService.getMediaFolder(game, screen, null, false);
-        File mediaFile = new File(mediaFolder, name);
-        if (mediaFile.exists()) {
-          String suffix = FilenameUtils.getExtension(mediaFile.getName());
-          File targetFile = uniqueMediaAsset(game, target, suffix);
-          FileUtil.copyFile(mediaFile, targetFile);
-          gameLifecycleService.notifyGameScreenAssetsChanged(game.getId(), screen, target);
-        }
-      }
-      return true;
+  //--------------------------------------
+
+  @Override
+  public File uniqueMediaAsset(int gameId, VPinScreen screen, String suffix, boolean createFolder, boolean append) {
+    //Game game = gameService.getGame(gameId);
+    Game game = frontendService.getOriginalGame(gameId);
+    if (game != null) {
+      return uniqueMediaAsset(game, screen, suffix, createFolder, append);
     }
-    catch (Exception e) {
-      LOG.error("Failed to copy asset {} to {}: {}", name, target, e.getMessage(), e);
-    }
-    return false;
+    return null;
   }
 
-  public File uniqueMediaAsset(Game game, VPinScreen screen) {
-    return buildMediaAsset(game, screen, true);
+  private File uniqueMediaAsset(Game game, VPinScreen screen, String suffix, boolean createFolder, boolean append) {
+    File mediaFolder = frontendService.getMediaFolder(game, screen, suffix, createFolder);
+    return buildMediaAsset(mediaFolder, game.getGameName(), suffix, append);
   }
 
-  public File uniqueMediaAsset(Game game, VPinScreen screen, String suffix) {
-    File mediaFolder = frontendService.getMediaFolder(game, screen, suffix, false);
-    return buildMediaAsset(mediaFolder, game, suffix, true);
+  @Override
+  public List<File> getMediaFiles(int gameId, VPinScreen screen) {
+    Game game = frontendService.getOriginalGame(gameId);
+    return frontendService.getMediaFiles(game, screen);
   }
 
-  public File buildMediaAsset(Game game, VPinScreen screen, boolean append) {
-    String suffix = "mp4";
-    if (screen.equals(VPinScreen.AudioLaunch) || screen.equals(VPinScreen.Audio)) {
-      suffix = "mp3";
-    }
-    File mediaFolder = frontendService.getMediaFolder(game, screen, suffix, false);
-    return buildMediaAsset(mediaFolder, game, suffix, append);
-  }
-
-  public static File buildMediaAsset(File mediaFolder, Game game, String suffix, boolean append) {
-    File out = new File(mediaFolder, game.getGameName() + "." + suffix);
-    if (append) {
-      int index = 1;
-      while (out.exists()) {
-        String nameIndex = index <= 9 ? "0" + index : String.valueOf(index);
-        out = new File(out.getParentFile(), game.getGameName() + nameIndex + "." + suffix);
-        index++;
-      }
-    }
-    return out;
+  @Override
+  protected void notifyGameScreenAssetsChanged(int objectId, VPinScreen screen, File asset) {
+    gameLifecycleService.notifyGameScreenAssetsChanged(objectId, screen, asset);
   }
 }

@@ -174,11 +174,14 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     Game game = getGameCached(id);
     if (game == null) {
       game = frontendService.getOriginalGame(id);
-      if (game != null && game.getEmulator() != null) {
-        applyGameDetails(game, false, true, null);
-        List<Game> games = allGamesByEmulatorId.computeIfAbsent(game.getEmulatorId(), k -> new ArrayList<>());
-        games.add(game);
+      //ignore unlinked games
+      if (game == null || game.getEmulator() == null) {
+        return null;
       }
+
+      applyGameDetails(game, false, true, null);
+      List<Game> games = allGamesByEmulatorId.computeIfAbsent(game.getEmulatorId(), k -> new ArrayList<>());
+      games.add(game);
     }
     return game;
   }

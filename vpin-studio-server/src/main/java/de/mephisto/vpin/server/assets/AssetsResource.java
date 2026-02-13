@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.assets;
 
-import de.mephisto.vpin.restclient.assets.AssetRequest;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.RequestUtil;
 import de.mephisto.vpin.server.util.UploadUtil;
@@ -55,11 +54,6 @@ public class AssetsResource {
       return serializeFile(defaultAsset);
     }
     return serializeAsset(competitionBackground);
-  }
-
-  @PostMapping("/metadata")
-  public AssetRequest getMetaData(@RequestBody AssetRequest request) {
-    return assetService.getMetadata(request);
   }
 
   @GetMapping("/defaultbackground/{id}")

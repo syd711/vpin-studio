@@ -256,7 +256,6 @@ public class PauseMenu extends Application {
             FrontendMediaItemRepresentation tutorialItem = new FrontendMediaItemRepresentation();
             tutorialItem.setMimeType("video/mp4");
             tutorialItem.setScreen(tutorialScreen);
-            tutorialItem.setGameId(game.getId());
             tutorialItem.setUri(videoUrl);
 
             FrontendScreenAsset assetScreen = PauseMenuScreensFactory.createScreenStage(client, game, screenDisplay, tutorialScreen, tutorialItem, pauseMenuSettings);
