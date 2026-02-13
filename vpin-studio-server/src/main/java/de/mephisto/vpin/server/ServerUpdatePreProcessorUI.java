@@ -2,6 +2,7 @@ package de.mephisto.vpin.server;
 
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.util.ZipUtil;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
@@ -17,6 +18,7 @@ import javafx.stage.StageStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.net.HttpURLConnection;
@@ -55,14 +57,19 @@ public class ServerUpdatePreProcessorUI {
     }
   }
 
-  public static void downloadWithProgressDialog(String downloadUrl, File targetFile, File extractFolder) {
+  public static void downloadWithProgressDialog(String downloadUrl, File targetFile, @Nullable File extractFolder) {
     try {
+      if (GraphicsEnvironment.isHeadless()) {
+        throw new UnsupportedOperationException("Downloading headless...");
+      }
       initJavaFXToolkit();
     }
     catch (Exception e) {
       LOG.warn("JavaFX not available, downloading without progress dialog: {}", e.getMessage());
       Updater.download(downloadUrl, targetFile);
-      ZipUtil.unzip(targetFile, extractFolder, null);
+      if (extractFolder != null) {
+        ZipUtil.unzip(targetFile, extractFolder, null);
+      }
       return;
     }
 
@@ -127,12 +134,14 @@ public class ServerUpdatePreProcessorUI {
                   }
                 }
 
-                Platform.runLater(() -> {
-                  progressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
-                  statusLabel.setText("Installing " + targetFile.getName() + "...");
-                });
+                if (extractFolder != null) {
+                  Platform.runLater(() -> {
+                    progressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
+                    statusLabel.setText("Installing " + targetFile.getName() + "...");
+                  });
 
-                ZipUtil.unzip(targetFile, extractFolder, null);
+                  ZipUtil.unzip(targetFile, extractFolder, null);
+                }
 
                 Platform.runLater(() -> {
                   stage.close();
