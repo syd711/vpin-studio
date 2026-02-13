@@ -148,3 +148,5 @@ vpin-studio-logs.zip
 /resources/PinVol.bat
 /resources/media-cropped/
 /resources/media-raw/
+/resources/vlc/
+.claude/settings.local.json

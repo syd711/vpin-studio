@@ -1,9 +1,11 @@
 package de.mephisto.vpin.server;
 
+import com.sun.jna.NativeLibrary;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.system.NVRamsInfo;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.util.PackageUtil;
+import de.mephisto.vpin.restclient.util.ZipUtil;
 import net.sf.sevenzipjbinding.SevenZip;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -35,6 +37,12 @@ public class ServerUpdatePreProcessing {
       "frames/wheel-tarcissio.png");
   private final static List<String> jvmFiles = Arrays.asList("jinput-dx8_64.dll");
 
+  private final static Map<String, String> DOWNLOADS = new HashMap<>();
+
+  static {
+    DOWNLOADS.put("resources/vlc/", "https://download.videolan.org/pub/videolan/vlc/last/win64/vlc-3.0.23-win64.zip");
+  }
+
   private final static Map<String, Long> PUP_GAMES = new HashMap<>();
 
   static {
@@ -62,6 +70,8 @@ public class ServerUpdatePreProcessing {
         runLogosUpdateCheck();
         runDOFTesterCheck();
         runPupGamesUpdateCheck();
+        runDownloadableInstallationsCheck();
+        runVlcCheck();
         runDeletions();
 
 
@@ -76,6 +86,35 @@ public class ServerUpdatePreProcessing {
         LOG.error("Server update failed: " + e.getMessage(), e);
       }
     }).start();
+  }
+
+  private static void runVlcCheck() {
+    try {
+      String vlcPath = new File(RESOURCES, "vlc/vlc-3.0.23/").getAbsolutePath();
+      // Add to library search path
+      NativeLibrary.addSearchPath("libvlc", vlcPath);
+      NativeLibrary.addSearchPath("libvlccore", vlcPath);
+      LOG.info("VLC player initialized.");
+    }
+    catch (Exception e) {
+      LOG.error("Failed to initialize VLC: {}", e.getMessage(), e);
+    }
+  }
+
+  private static void runDownloadableInstallationsCheck() {
+    for (Map.Entry<String, String> entry : DOWNLOADS.entrySet()) {
+      File folder = new File(entry.getKey());
+      if (!folder.exists() || folder.listFiles().length == 0) {
+        LOG.info("Starting installation of {}", entry.getValue());
+        if (folder.mkdirs()) {
+          LOG.info("Created target folder {}", folder.getParentFile().getAbsolutePath());
+        }
+        String fileName = new File(entry.getValue()).getName();
+        File targetFile = new File(folder, fileName);
+        Updater.download(entry.getValue(), targetFile, true);
+        ZipUtil.unzip(targetFile, folder, null);
+      }
+    }
   }
 
   private static void runDeletions() {

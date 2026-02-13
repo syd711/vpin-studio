@@ -635,8 +635,8 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
         String targetScreen = cardSettings.getPopperScreen();
         if (StringUtils.isEmpty(targetScreen)) {
           WidgetFactory.showAlert(stage, "Not target screen selected.", "Select a target screen in the preferences.");
+          return;
         }
-        return;
       }
 
       ProgressDialog.createProgressDialog(new DesignerGeneratorProgressModel(client, "Generating Media", this.gameRepresentation.get(), getSelectedTemplateType()));

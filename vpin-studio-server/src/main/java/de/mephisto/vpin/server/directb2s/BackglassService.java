@@ -807,9 +807,11 @@ public class BackglassService implements InitializingBean {
       File b2sFile = game.getDirectB2SFile();
       String b2sFilename = game.getDirectB2SFilename();
       DirectB2sScreenRes res = getScreenRes(b2sFile, perTableOnly);
-      res.setB2SFileName(b2sFilename);
-      res.setEmulatorId(game.getEmulatorId());
-      res.setGameId(game.getId());
+      if (res != null) {
+        res.setEmulatorId(game.getEmulatorId());
+        res.setB2SFileName(b2sFilename);
+        res.setGameId(game.getId());
+      }
       return res;
     }
     return null;
@@ -830,11 +832,11 @@ public class BackglassService implements InitializingBean {
     return null;
   }
 
-  public DirectB2sScreenRes getGlobalScreenRes() {
+  public @Nullable DirectB2sScreenRes getGlobalScreenRes() {
     return getScreenRes((File) null, false);
   }
 
-  private DirectB2sScreenRes getScreenRes(@Nullable File b2sFile, boolean perTableOnly) {
+  private @Nullable DirectB2sScreenRes getScreenRes(@Nullable File b2sFile, boolean perTableOnly) {
     List<String> lines = readScreenRes(b2sFile, false, perTableOnly);
     if (lines == null) {
       return null;
@@ -863,7 +865,12 @@ public class BackglassService implements InitializingBean {
     res.setDmdX(parseIntSafe(lines.get(9)));
     res.setDmdY(parseIntSafe(lines.get(10)));
 
-    res.setDmYFlip("1".equals(lines.get(11)));
+    if (lines.size() >= 12) {
+      res.setDmYFlip("1".equals(lines.get(11)));
+    }
+    else {
+      res.setDmYFlip(false);
+    }
 
     if (lines.size() > 16) {
       res.setBackgroundX(parseIntSafe(lines.get(12)));
@@ -892,7 +899,7 @@ public class BackglassService implements InitializingBean {
    * @param perTableOnly Load only the file if it is table dedicated one, else null
    * @return the List of all lines in the file
    */
-  private List<String> readScreenRes(@Nullable File b2sFile, boolean withComment, boolean perTableOnly) {
+  private @Nullable List<String> readScreenRes(@Nullable File b2sFile, boolean withComment, boolean perTableOnly) {
     if (screenresTxt == null) {
       // The default filename ScreenRes.txt can be altered by setting the registry key
       // Software\B2S\B2SScreenResFileNameOverride to a different filename.
@@ -919,20 +926,28 @@ public class BackglassService implements InitializingBean {
     }
 
     // load global screen res file
-    if (!perTableOnly && (target == null || !target.exists())) {
+    if (target == null || !target.exists()) {
+      // do not load global screenres if perTableOnly is requested !
+      if (perTableOnly) {
+        return null;
+      }
       //  4) Screenres.txt ( or whatever you set in the registry) in the folder where the B2SBackglassServerEXE.exe is located
       target = new File(getBackglassServerFolder(), screenresTxt);
-    }
 
-    if (target == null || !target.exists()) {
-      LOG.error("Failed to read Screenres.txt, unable to determine backglass server folder, trying first VPX emulator instead.");
-      List<GameEmulator> vpxGameEmulators = emulatorService.getVpxGameEmulators();
-      if (!vpxGameEmulators.isEmpty()) {
-        GameEmulator emulator = vpxGameEmulators.get(0);
-        target = new File(emulator.getGamesDirectory(), "ScreenRes.txt");
+      // fall back to tables folder of the first emulator 
+      if (!target.exists()) {
+        LOG.info("Failed to read Screenres.txt via standard patterns, trying first VPX emulator instead.");
+        List<GameEmulator> vpxGameEmulators = emulatorService.getVpxGameEmulators();
+        if (!vpxGameEmulators.isEmpty()) {
+          GameEmulator emulator = vpxGameEmulators.get(0);
+          target = new File(emulator.getGamesDirectory(), "ScreenRes.txt");
+        }
 
         if (!target.exists()) {
-          LOG.error("Unable to determine ScreenRes.txt, giving up.");
+          LOG.error("Unable to read {}, please check the following :", screenresTxt);
+          LOG.error("- your backglass server folder is registered: {}", getBackglassServerFolder());
+          LOG.error("- A table-dedicated <tablename.res> or {} file is present in the same folder as your table", screenresTxt);
+          LOG.error("- a {} file is present in the tables folder or in the backglass server folder", screenresTxt);
           return null;
         }
       }
@@ -979,10 +994,14 @@ public class BackglassService implements InitializingBean {
 
         // The background image should fit the full screen
         DirectB2sScreenRes screenres = getScreenRes(b2sFile, false);
-        int targetW = screenres.getFullBackglassWidth();
-        int targetH = screenres.getFullBackglassHeight();
-
-        return DirectB2SFrameTypeGenerator.generateAsByte(image, targetW, targetH, frameType, false);
+        if (screenres != null) {
+          int targetW = screenres.getFullBackglassWidth();
+          int targetH = screenres.getFullBackglassHeight();
+          return DirectB2SFrameTypeGenerator.generateAsByte(image, targetW, targetH, frameType, false);
+        }
+        else {
+          LOG.error("Cannot read screenres and determine image dimensions for {} and emulator {}", filename, emulatorId);  
+        }
       }
       catch (IOException ioe) {
         LOG.error("Error in frame generation for {} and emulator {}", filename, emulatorId, ioe);

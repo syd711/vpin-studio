@@ -270,6 +270,9 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
       try {
         Cabinet cabinet = getClient().getCabinetClient().getCabinet();
         if (cabinet != null) {
+          if (cabinet.getStatus() == null) {
+            cabinet.setStatus(new CabinetStatus());
+          }
           cabinet.getStatus().setStatus(CabinetOnlineStatus.offline);
           cabinet.getStatus().setActiveGame(null);
           getClient().getCabinetClient().update(cabinet);
@@ -286,6 +289,9 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
     if (Features.MANIA_ENABLED) {
       try {
         if (cabinet != null) {
+          if (cabinet.getStatus() == null) {
+            cabinet.setStatus(new CabinetStatus());
+          }
           cabinet.getStatus().setStatus(CabinetOnlineStatus.online);
           cabinet.getStatus().setActiveGame(null);
           getClient().getCabinetClient().update(cabinet);
