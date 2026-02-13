@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.highscores;
 
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
+import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.system.ScoringDBMapping;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.parsing.ScoreParsingSummary;
@@ -68,7 +69,19 @@ public class HighscoreResolver implements InitializingBean {
   @Nullable
   public File getHighscoreTextFile(Game game) {
     if (!StringUtils.isEmpty(game.getHsFileName())) {
-      return new File(game.getEmulator().getUserFolder(), game.getHsFileName());
+      File hsFile = new File(game.getEmulator().getUserFolder(), game.getHsFileName());
+      if (!hsFile.exists()) {
+        return hsFile;
+      }
+    }
+
+    ScoringDB scoringDatabase = systemService.getScoringDatabase();
+    ScoringDBMapping highscoreMapping = scoringDatabase.getHighscoreMapping(game.getRom());
+    if (highscoreMapping != null) {
+      File hsFile = new File(game.getEmulator().getUserFolder(), highscoreMapping.getTextFile());
+      if (hsFile.exists()) {
+        return hsFile;
+      }
     }
     return null;
   }

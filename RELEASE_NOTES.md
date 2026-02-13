@@ -2,5 +2,6 @@
 
 ## Changes
 
+- **Added .vpxz File Support** 
 
 ## Bugfixes

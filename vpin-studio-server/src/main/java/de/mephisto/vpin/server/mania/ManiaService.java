@@ -16,7 +16,7 @@ import de.mephisto.vpin.server.frontend.FrontendStatusChangeListener;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.frontend.TableStatusChangeListener;
 import de.mephisto.vpin.server.games.*;
-import de.mephisto.vpin.server.highscores.Score;
+import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
@@ -53,7 +53,7 @@ import java.util.stream.Collectors;
 import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 @Service
-public class ManiaService implements InitializingBean, FrontendStatusChangeListener, PreferenceChangedListener, TableStatusChangeListener, GameDataChangedListener, GameLifecycleListener, ApplicationListener<ApplicationReadyEvent> {
+public class ManiaService implements InitializingBean, FrontendStatusChangeListener, PreferenceChangedListener, TableStatusChangeListener, GameDataChangedListener, GameLifecycleListener, HighscoreChangeListener, ApplicationListener<ApplicationReadyEvent> {
   private final static Logger LOG = LoggerFactory.getLogger(ManiaService.class);
 
   //the file contains the UUID of the cabinet
@@ -87,6 +87,9 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
   @Autowired
   private PreferencesService preferencesService;
+
+  @Autowired
+  private HighscoreService highscoreService;
 
   private List<CabinetContact> contacts;
   private ManiaSettings maniaSettings;
@@ -197,7 +200,9 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   public boolean clearCache() {
     refreshDefaultCabinet();
     this.getContacts();
-    return maniaServiceCache.clear();
+    maniaServiceCache.clear();
+    LOG.info("Invalidated Mania Caches");
+    return true;
   }
 
   private Cabinet refreshDefaultCabinet() {
@@ -646,6 +651,69 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
     return false;
   }
 
+  private static void updateIdFile(@NonNull String uuid) {
+    try {
+      String localAppData = System.getenv("LOCALAPPDATA");
+      Path appDataPath = Paths.get(localAppData, "VPin-Studio");
+      Files.createDirectories(appDataPath);
+      File idFile = new File(appDataPath.toFile(), VPIN_MANIA_ID_TXT);
+      if (idFile.exists() && !idFile.delete()) {
+        LOG.error("Failed to delete mania id file");
+        return;
+      }
+      Files.writeString(idFile.toPath(), uuid);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to write mania id file: {}", e.getMessage());
+    }
+  }
+
+  public void shutdown() {
+    this.setOffline();
+    LOG.info("Cabinet has been set into offline mode.");
+  }
+
+  @Override
+  public void onApplicationEvent(ApplicationReadyEvent event) {
+    try {
+      if (Features.MANIA_ENABLED) {
+        refreshDefaultCabinet();
+        Cabinet cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
+        if (cabinet != null) {
+          new Thread(() -> {
+            Thread.currentThread().setName("VPin Mania Tables Synchronizer");
+            LOG.info("Cabinet is registered on VPin-Mania");
+            synchronizeTables();
+          }).start();
+        }
+        else {
+          LOG.info("Cabinet is not registered on VPin-Mania");
+        }
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to initialize mania service after startup: {}", e.getMessage(), e);
+    }
+  }
+
+  @Override
+  public void highscoreChanged(@NonNull HighscoreChangeEvent event) {
+
+  }
+
+  @Override
+  public void highscoreUpdated(@NonNull Game game, @NonNull Highscore highscore) {
+    if (Features.MANIA_ENABLED) {
+      Cabinet cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
+      if (cabinet != null) {
+        String extTableId = game.getExtTableId();
+        if (!StringUtils.isEmpty(extTableId)) {
+          synchronizeHighscore(extTableId);
+        }
+      }
+    }
+  }
+
   @Override
   public void afterPropertiesSet() throws Exception {
     if (Features.MANIA_ENABLED) {
@@ -680,6 +748,8 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
         new Thread(() -> {
           setOnline(cabinet);
         }).start();
+
+        highscoreService.addHighscoreChangeListener(this);
       }
       catch (Exception e) {
         LOG.error("Failed to init mania services: {}", e.getMessage(), e);
@@ -687,50 +757,5 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
       }
     }
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
-  }
-
-  private static void updateIdFile(@NonNull String uuid) {
-    try {
-      String localAppData = System.getenv("LOCALAPPDATA");
-      Path appDataPath = Paths.get(localAppData, "VPin-Studio");
-      Files.createDirectories(appDataPath);
-      File idFile = new File(appDataPath.toFile(), VPIN_MANIA_ID_TXT);
-      if (idFile.exists() && !idFile.delete()) {
-        LOG.error("Failed to delete mania id file");
-        return;
-      }
-      Files.writeString(idFile.toPath(), uuid);
-    }
-    catch (Exception e) {
-      LOG.error("Failed to write mania id file: {}", e.getMessage());
-    }
-  }
-
-  @Override
-  public void onApplicationEvent(ApplicationReadyEvent event) {
-    try {
-      if (Features.MANIA_ENABLED) {
-        refreshDefaultCabinet();
-        Cabinet cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
-        if (cabinet != null) {
-          new Thread(() -> {
-            Thread.currentThread().setName("VPin Mania Tables Synchronizer");
-            LOG.info("Cabinet is registered on VPin-Mania");
-            synchronizeTables();
-          }).start();
-        }
-        else {
-          LOG.info("Cabinet is not registered on VPin-Mania");
-        }
-      }
-    }
-    catch (Exception e) {
-      LOG.error("Failed to initialize mania service after startup: {}", e.getMessage(), e);
-    }
-  }
-
-  public void shutdown() {
-    this.setOffline();
-    LOG.info("Cabinet has been set into offline mode.");
   }
 }

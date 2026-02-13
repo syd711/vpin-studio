@@ -15,6 +15,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,7 +109,6 @@ public class ManiaRegistrationDialogController implements DialogController, Init
         synchronizeRatingsCheckbox.setDisable(!newValue);
         synchronizePlayCountCheckbox.setDisable(!newValue);
         synchronizeTablesCheckbox.setDisable(!newValue);
-        okButton.setDisable(!newValue);
         apiKeyText.setDisable(!newValue);
 
         for (CheckBox playerCheckbox : playerCheckboxes) {
@@ -131,8 +131,18 @@ public class ManiaRegistrationDialogController implements DialogController, Init
       playerCheckboxes.add(checkBox);
     }
 
+    okButton.setDisable(true);
+    apiKeyText.textProperty().addListener(new ChangeListener<String>() {
+      @Override
+      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+        okButton.setDisable(StringUtils.isEmpty(newValue));
+      }
+    });
+
     ManiaSettings maniaSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
     apiKeyText.setText(maniaSettings.getApiKey());
+
+
   }
 
   public ManiaRegistration getManiaRegistration() {

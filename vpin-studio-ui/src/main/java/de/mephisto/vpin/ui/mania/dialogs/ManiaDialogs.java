@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.mania.dialogs;
 
-import de.mephisto.vpin.commons.utils.FXResizeHelper;
 import de.mephisto.vpin.restclient.mania.ManiaRegistration;
 import de.mephisto.vpin.restclient.mania.ManiaTableSyncResult;
 import de.mephisto.vpin.ui.util.Dialogs;
