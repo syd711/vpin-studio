@@ -1,17 +1,18 @@
 package de.mephisto.vpin.server;
 
 import com.sun.jna.NativeLibrary;
+import de.mephisto.vpin.commons.StudioMediaPlayer;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.system.NVRamsInfo;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.util.PackageUtil;
-import de.mephisto.vpin.restclient.util.ZipUtil;
 import net.sf.sevenzipjbinding.SevenZip;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -19,6 +20,7 @@ import java.lang.invoke.MethodHandles;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.*;
+import java.util.List;
 
 import static de.mephisto.vpin.server.system.SystemService.RESOURCES;
 
@@ -95,6 +97,8 @@ public class ServerUpdatePreProcessing {
       NativeLibrary.addSearchPath("libvlc", vlcPath);
       NativeLibrary.addSearchPath("libvlccore", vlcPath);
       LOG.info("VLC player initialized.");
+
+      StudioMediaPlayer.runVLCCheck();
     }
     catch (Exception e) {
       LOG.error("Failed to initialize VLC: {}", e.getMessage(), e);
@@ -111,8 +115,9 @@ public class ServerUpdatePreProcessing {
         }
         String fileName = new File(entry.getValue()).getName();
         File targetFile = new File(folder, fileName);
-        Updater.download(entry.getValue(), targetFile, true);
-        ZipUtil.unzip(targetFile, folder, null);
+        if (!GraphicsEnvironment.isHeadless()) {
+          ServerUpdatePreProcessorUI.downloadWithProgressDialog(entry.getValue(), targetFile, folder);
+        }
       }
     }
   }

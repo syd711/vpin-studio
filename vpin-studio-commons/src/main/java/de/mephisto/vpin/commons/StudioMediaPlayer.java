@@ -19,9 +19,9 @@ import java.lang.invoke.MethodHandles;
 public class StudioMediaPlayer {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  private static final boolean VLC_AVAILABLE;
+  private static boolean VLC_AVAILABLE;
 
-  static {
+  public static void runVLCCheck() {
     boolean available = false;
     try {
       available = new uk.co.caprica.vlcj.factory.discovery.NativeDiscovery().discover();
