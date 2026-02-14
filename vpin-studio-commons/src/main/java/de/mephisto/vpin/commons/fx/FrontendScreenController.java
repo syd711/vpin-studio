@@ -71,13 +71,10 @@ public class FrontendScreenController implements Initializable {
     imageView.setFitHeight(image.getHeight());
 
     Stage screenStage = asset.getScreenStage();
-//    double x = screen.getWidth() / 2 - image.getWidth() / 2;
-//    double y = screen.getHeight() / 2 - image.getHeight() / 2;
     screenStage.setX(0);
     screenStage.setY(0);
     screenStage.setHeight(screen.getHeight());
     screenStage.setWidth(screen.getWidth());
-//    screenStage.initStyle(StageStyle.UTILITY);
 
     int targetRotation = asset.getRotation() + (-90);
     root.setRotate(targetRotation);
@@ -111,9 +108,12 @@ public class FrontendScreenController implements Initializable {
       imageView.setVisible(false);
 
       mediaPlayer = new StudioMediaPlayer();
-      Node node = mediaPlayer.render(asset);
+      Node node = mediaPlayer.render(display, asset);
       if (node != null) {
         root.getChildren().add(node);
+      }
+      else {
+        return;
       }
     }
     else {
@@ -121,6 +121,10 @@ public class FrontendScreenController implements Initializable {
       throw new UnsupportedEncodingException("Unsupported mime type for screen asset: " + mimeType);
     }
 
+    showStage(asset, display);
+  }
+
+  private void showStage(FrontendScreenAsset asset, FrontendPlayerDisplay display) {
     Stage screenStage = asset.getScreenStage();
     screenStage.setTitle("VPin UI");
     screenStage.setX(display.getX() + asset.getOffsetX());
@@ -143,10 +147,6 @@ public class FrontendScreenController implements Initializable {
     if (asset.getRotation() == 90 || asset.getRotation() == 270) {
       root.translateXProperty().setValue(-(display.getHeight() + (display.getHeight() / 2)));
     }
-  }
-
-  public Node getRoot() {
-    return root;
   }
 
   public void dispose() {

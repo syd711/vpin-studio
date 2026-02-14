@@ -1,7 +1,5 @@
 package de.mephisto.vpin.server;
 
-import com.sun.jna.NativeLibrary;
-import de.mephisto.vpin.commons.StudioMediaPlayer;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.system.NVRamsInfo;
 import de.mephisto.vpin.restclient.system.ScoringDB;
@@ -48,7 +46,6 @@ public class ServerUpdatePreProcessing {
     DOWNLOADS.put("competition-badges/wovp.png", GITHUB_RESOURCES_URL + "competition-badges/wovp.png");
     DOWNLOADS.put("frames/wheel-black.png", GITHUB_RESOURCES_URL + "frames/wheel-black.png");
     DOWNLOADS.put("frames/wheel-tarcissio.png", GITHUB_RESOURCES_URL + "frames/wheel-tarcissio.png");
-    DOWNLOADS.put("resources/vlc/", "https://download.videolan.org/pub/videolan/vlc/last/win64/vlc-3.0.23-win64.zip");
   }
 
   private final static Map<String, Long> PUP_GAMES = new HashMap<>();
@@ -78,7 +75,6 @@ public class ServerUpdatePreProcessing {
         runDOFTesterCheck();
         runPupGamesUpdateCheck();
         runDownloadableInstallationsCheck();
-        runVlcCheck();
         runDeletions();
 
 
@@ -93,21 +89,6 @@ public class ServerUpdatePreProcessing {
         LOG.error("Server update failed: " + e.getMessage(), e);
       }
     }).start();
-  }
-
-  private static void runVlcCheck() {
-    try {
-      String vlcPath = new File(RESOURCES, "vlc/vlc-3.0.23/").getAbsolutePath();
-      // Add to library search path
-      NativeLibrary.addSearchPath("libvlc", vlcPath);
-      NativeLibrary.addSearchPath("libvlccore", vlcPath);
-      LOG.info("VLC player initialized.");
-
-      StudioMediaPlayer.runVLCCheck();
-    }
-    catch (Exception e) {
-      LOG.error("Failed to initialize VLC: {}", e.getMessage(), e);
-    }
   }
 
   private static void runDownloadableInstallationsCheck() {
