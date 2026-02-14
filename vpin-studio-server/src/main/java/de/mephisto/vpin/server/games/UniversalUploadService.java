@@ -451,6 +451,9 @@ public class UniversalUploadService {
       importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.BAM_CFG, true);
     }
 
+    /*
+     * BACKUP MODE Restore
+     */
     if (uploadDescriptor.isBackupRestoreMode()) {
       File tempFile = new File(uploadDescriptor.getTempFilename());
       ZipFile zipFile = vpaService.createProtectedArchive(tempFile);

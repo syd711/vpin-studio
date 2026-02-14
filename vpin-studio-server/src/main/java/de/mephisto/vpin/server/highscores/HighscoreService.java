@@ -15,7 +15,8 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
-import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
+import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegFile;
+import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegService;
 import de.mephisto.vpin.server.listeners.EventOrigin;
 import de.mephisto.vpin.server.nvrams.NVRamService;
 import de.mephisto.vpin.server.players.Player;
@@ -68,13 +69,15 @@ public class HighscoreService implements InitializingBean {
   @Autowired
   private HighscoreResolver highscoreResolver;
 
+  @Autowired
+  private VPRegService vpRegService;
+
   // manually injected
   private GameService gameService;
 
   private boolean pauseHighscoreEvents;
 
   private final List<HighscoreChangeListener> listeners = new ArrayList<>();
-  private final List<String> vpRegEntries = new ArrayList<>();
   private final List<String> highscoreFiles = new ArrayList<>();
 
   public File getHighscoreFile(@NonNull Game game) {
@@ -84,10 +87,9 @@ public class HighscoreService implements InitializingBean {
   public HighscoreFiles getHighscoreFiles(@NonNull Game game) {
     HighscoreFiles highscoreFiles = new HighscoreFiles();
 
-    File vpRegFile = game.getEmulator().getVPRegFile();
-    if (vpRegFile.exists()) {
-      VPReg reg = new VPReg(vpRegFile);
-      highscoreFiles.setVpRegEntries(reg.getEntries());
+    VPRegFile vpRegFile = vpRegService.getVPRegFile(game);
+    if (vpRegFile != null && vpRegFile.isValid()) {
+      highscoreFiles.setVpRegEntries(vpRegFile.getEntries());
     }
 
     File userFolder = game.getEmulator().getUserFolder();
@@ -133,9 +135,8 @@ public class HighscoreService implements InitializingBean {
             break;
           }
           case VPReg: {
-            VPReg reg = new VPReg(game.getEmulator().getVPRegFile(), game.getRom(), game.getTableName());
-            result = reg.resetHighscores(score);
-            break;
+              result = vpRegService.resetHighscores(game, score);
+              break;
           }
           default: {
             LOG.error("No matching highscore type found for '" + highscoreType + "'");
@@ -723,35 +724,11 @@ public class HighscoreService implements InitializingBean {
 
   public void refreshAvailableScores() {
     this.refreshHighscoreFiles();
-    this.refreshVPRegEntries();
-  }
-
-  public List<String> getVPRegEntries() {
-    return this.vpRegEntries;
+    this.vpRegService.refreshVPRegEntries();
   }
 
   public List<String> getHighscoreFiles() {
     return highscoreFiles;
-  }
-
-  public void refreshVPRegEntries() {
-    try {
-      List<File> vpRegFiles = new ArrayList<>();
-      vpRegEntries.clear();
-      List<GameEmulator> gameEmulators = emulatorService.getVpxGameEmulators();
-      for (GameEmulator gameEmulator : gameEmulators) {
-        File vpRegFile = gameEmulator.getVPRegFile();
-        if (vpRegFile.exists() && !vpRegFiles.contains(vpRegFile)) {
-          vpRegFiles.add(vpRegFile);
-          VPReg reg = new VPReg(vpRegFile);
-          vpRegEntries.addAll(reg.getEntries());
-        }
-      }
-      LOG.info("Highscore Service read " + vpRegEntries.size() + " VPReg.stg entries");
-    }
-    catch (Exception e) {
-      LOG.error("Failed to refresh VPReg entries: " + e.getMessage(), e);
-    }
   }
 
 
@@ -778,7 +755,6 @@ public class HighscoreService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() {
-    this.refreshVPRegEntries();
     this.refreshHighscoreFiles();
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }

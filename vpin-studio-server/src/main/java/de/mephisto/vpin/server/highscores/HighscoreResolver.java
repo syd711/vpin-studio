@@ -8,7 +8,8 @@ import de.mephisto.vpin.server.highscores.parsing.ScoreParsingSummary;
 import de.mephisto.vpin.server.highscores.parsing.ini.IniHighscoreAdapters;
 import de.mephisto.vpin.server.highscores.parsing.nvram.NvRamOutputToScoreTextConverter;
 import de.mephisto.vpin.server.highscores.parsing.text.TextHighscoreAdapters;
-import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
+import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegFile;
+import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -38,6 +39,9 @@ public class HighscoreResolver implements InitializingBean {
 
   @Autowired
   private IniHighscoreAdapters initHighscoreAdapters;
+
+  @Autowired
+  private VPRegService vpRegService;
 
 
   //--------------------------------------------
@@ -273,25 +277,13 @@ public class HighscoreResolver implements InitializingBean {
       return null;
     }
 
-    String tableName = game.getTableName();
-    ScoringDBMapping highscoreMapping = systemService.getScoringDatabase().getHighscoreMapping(game.getRom());
-    if (StringUtils.isEmpty(tableName) && highscoreMapping != null) {
-      tableName = highscoreMapping.getTableName();
-    }
-
-    File vpRegFile = game.getEmulator().getVPRegFile();
-    VPReg reg = new VPReg(vpRegFile, game.getRom(), tableName);
-
-    if (!reg.containsGame()) {
-      reg = new VPReg(vpRegFile, game.getRom() + "_VPX", tableName);
-    }
-
-    if (reg.containsGame()) {
+    VPRegFile vpRegFile = vpRegService.getVPRegFile(game);
+    if (vpRegFile != null && vpRegFile.isValid()) {
       metadata.setType(HighscoreType.VPReg);
       metadata.setFilename(vpRegFile.getCanonicalPath());
-      metadata.setModified(new Date(vpRegFile.lastModified()));
+      metadata.setModified(vpRegFile.getLastModified());
 
-      ScoreParsingSummary summary = reg.readHighscores();
+      ScoreParsingSummary summary = vpRegFile.getScoreParsingSummary();
       if (summary != null) {
         metadata.setStatus(null);
         metadata.setRaw(summary.toRaw());
