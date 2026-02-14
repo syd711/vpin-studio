@@ -250,6 +250,13 @@ public class ScreenshotService {
     long start = System.currentTimeMillis();
     PauseMenuSettings pauseMenuSettings = preferencesService.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
 
+    // add DMD capture image
+    BufferedImage dmdImage = null;
+    if (pauseMenuSettings.isIncludeDmdFrame() && !pauseMenuSettings.isDesktopUser()) {
+      // mind when network stream is not enabled or DMDDevice is not used, the dmdImage is null
+      dmdImage = screenDmdRecorder.getCurrentImage();
+    }
+
     List<BufferedImage> images = new ArrayList<>();
     List<MonitorInfo> monitorInfos = new ArrayList<>();
     if (pauseMenuSettings.isDesktopUser()) {
@@ -283,13 +290,8 @@ public class ScreenshotService {
       }
     }
 
-    // add DMD capture image
-    if (pauseMenuSettings.isIncludeDmdFrame() && !pauseMenuSettings.isDesktopUser()) {
-      BufferedImage dmdImage = screenDmdRecorder.getCurrentImage();
-      // when network stream is not enabled or DMDDevice is not used, the dmdImage is null
-      if (dmdImage != null) {
-        images.add(dmdImage);
-      }
+    if (dmdImage != null) {
+      images.add(dmdImage);
     }
 
     BufferedImage summaryImage = null;
