@@ -103,27 +103,22 @@ public class AltColorService implements InitializingBean {
     return null;
   }
 
-
   public File getAltColorFolder(@NonNull Game game) {
     File altColorFolder = null;
     if (game.isZenGame()) {
       File altColorFolderRoot = mameService.getAltColorFolder();
       altColorFolder = new File(altColorFolderRoot, game.getGameName());
     }
-    else {
-      if (StringUtils.isNotEmpty(game.getRom())) {
-        altColorFolder = getAltColorFolder(game, game.getRom());
-      }
-
-      if ((altColorFolder == null || !altColorFolder.exists()) && StringUtils.isNotEmpty(game.getRomAlias())) {
-        altColorFolder = getAltColorFolder(game, game.getRomAlias());
-      }
-      if ((altColorFolder == null || !altColorFolder.exists()) && StringUtils.isNotEmpty(game.getTableName())) {
-        altColorFolder = getAltColorFolder(game, game.getTableName());
-      }
+    else if (!StringUtils.isEmpty(game.getRomAlias()) && game.getEmulator() != null) {
+      altColorFolder = getAltColorFolder(game, game.getRomAlias());
     }
-
-    return (altColorFolder == null || !altColorFolder.exists()) ? null : altColorFolder;
+    else if (!StringUtils.isEmpty(game.getRom()) && game.getEmulator() != null) {
+      altColorFolder = getAltColorFolder(game, game.getRom());
+    }
+    if ((altColorFolder == null || !altColorFolder.exists()) && !StringUtils.isEmpty(game.getTableName()) && game.getEmulator() != null) {
+      altColorFolder = getAltColorFolder(game, game.getTableName());
+    }
+    return altColorFolder;
   }
 
   public AltColor getAltColor(@NonNull Game game) {

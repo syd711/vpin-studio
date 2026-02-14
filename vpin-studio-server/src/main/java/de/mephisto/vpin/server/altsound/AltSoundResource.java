@@ -75,13 +75,13 @@ public class AltSoundResource {
   }
 
   @PostMapping("/save/{id}")
-  public boolean save(@PathVariable("id") int id, @RequestBody AltSound altSound) throws Exception {
+  public AltSound save(@PathVariable("id") int id, @RequestBody AltSound altSound) throws Exception {
     Game game = gameService.getGame(id);
     if (game != null) {
       altSoundService.save(game, altSound);
-      return true;
+      return getAltSound(game);
     }
-    return false;
+    return null;
   }
 
   @GetMapping("/restore/{id}")

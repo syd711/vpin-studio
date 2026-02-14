@@ -80,22 +80,21 @@ public class AltSoundService implements InitializingBean {
 
   @Nullable
   public File getAltSoundFolder(@NonNull Game game) {
-    File altSoundFolder = null;
-    if (StringUtils.isNotEmpty(game.getRom())) {
-      altSoundFolder = getAltSoundFolder(game, game.getRom());
+    if (!StringUtils.isEmpty(game.getRomAlias()) && game.getEmulator() != null) {
+      return getAltSoundFolder(game, game.getRomAlias());
     }
-    if ((altSoundFolder == null || !altSoundFolder.exists()) && StringUtils.isNotEmpty(game.getRomAlias())) {
-      altSoundFolder = getAltSoundFolder(game, game.getRomAlias());
+    if (!StringUtils.isEmpty(game.getRom()) && game.getEmulator() != null) {
+      return getAltSoundFolder(game, game.getRom());
     }
-    return (altSoundFolder == null || !altSoundFolder.exists()) ? null : altSoundFolder;
+    return null;
   }
 
   public boolean delete(@NonNull Game game) {
-    File altSoundFolder  = getAltSoundFolder(game);
-    if (altSoundFolder != null) {
-      altSoundFolder2AltSound.remove(altSoundFolder.getAbsolutePath().toLowerCase());
-      LOG.info("Deleting ALTSound folder " + altSoundFolder.getAbsolutePath());
-      if (FileUtils.deleteFolder(altSoundFolder)) {
+    File folder  = getAltSoundFolder(game);
+    if (folder != null && folder.exists()) {
+      altSoundFolder2AltSound.remove(folder.getAbsolutePath().toLowerCase());
+      LOG.info("Deleting ALTSound folder " + folder.getAbsolutePath());
+      if (FileUtils.deleteFolder(folder)) {
         return clearCache();
       }
       gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.ALT_SOUND, game.getRom());

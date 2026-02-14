@@ -27,8 +27,8 @@ public class AltSoundServiceClient extends VPinStudioClientService {
     super(client);
   }
 
-  public boolean saveAltSound(int gameId, AltSound altSound) throws Exception {
-    return getRestClient().post(API + "altsound/save/" + gameId, altSound, Boolean.class);
+  public AltSound saveAltSound(int gameId, AltSound altSound) throws Exception {
+    return getRestClient().post(API + "altsound/save/" + gameId, altSound, AltSound .class);
   }
 
   public AltSound getAltSound(int gameId) {
