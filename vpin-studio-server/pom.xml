@@ -408,12 +408,15 @@
                                         <include>nvrams/**</include>
                                         <include>scripts/**</include>
                                         <include>competition-badges/*</include>
+                                        <include>pubgames/*</include>
+                                        <include>puppacktweaker/*</include>
                                         <include>*.exe</include>
                                         <include>*.dll</include>
                                         <include>sendKeys.bat</include>
                                         <include>update-runtime.bat</include>
                                         <include>highscore-card-background-*.jpg</include>
                                         <include>maintenance.jpg</include>
+                                        <include>maintenance.mp4</include>
                                         <include>competition-bg-default.png</include>
                                         <include>empty-b2s-preview.png</include>
                                         <include>vpbm-128.png</include>
