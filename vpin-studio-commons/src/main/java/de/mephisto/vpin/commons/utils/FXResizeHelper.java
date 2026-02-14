@@ -22,7 +22,6 @@ public class FXResizeHelper {
   private final Scene SCENE;
   private final int TR;
   private final int TM;
-  private final double SCREEN_WIDTH, SCREEN_HEIGHT;
 
   private double mPresSceneX, mPresSceneY;
   private double mPresScreeX, mPresScreeY;
@@ -31,30 +30,42 @@ public class FXResizeHelper {
   private double mWidthStore, mHeightStore, mXStore, mYStore;
   private boolean verticalOnly;
 
-  public FXResizeHelper(Stage stage, int dt, int rt) {
-    this(stage, dt, rt, false);
+  private Object userData;
+
+
+  public static void install(Stage stage, int dt, int rt) {
+    new FXResizeHelper(stage, dt, rt, false);
+  }
+
+  public static void install(Stage stage, int dt, int rt, boolean verticalOnly) {
+    new FXResizeHelper(stage, dt, rt, verticalOnly);
   }
 
   /**
    * Create an FXResizeHelper for undecoreated JavaFX Stages.
-   * The only wich is your job is to create an padding for the Stage so the user can resize it.
+   * The only which is your job is to create an padding for the Stage so the user can resize it.
    *
    * @param stage - The JavaFX Stage.
    * @param dt    - The area (in px) where the user can drag the window.
    * @param rt    - The area (in px) where the user can resize the window.
    */
-  public FXResizeHelper(Stage stage, int dt, int rt, boolean verticalOnly) {
+  private FXResizeHelper(Stage stage, int dt, int rt, boolean verticalOnly) {
     this.verticalOnly = verticalOnly;
     this.TR = rt;
     this.TM = dt + rt;
     this.STAGE = stage;
     this.SCENE = stage.getScene();
 
-    this.SCREEN_HEIGHT = Screen.getPrimary().getVisualBounds().getHeight();
-    this.SCREEN_WIDTH = Screen.getPrimary().getVisualBounds().getWidth();
+    // replace the Stage userData, normally a DialogController
+    this.userData = stage.getUserData();
+    stage.setUserData(this);
 
     createListener();
     launch();
+  }
+
+  public Object getUserData() {
+    return userData;
   }
 
   /**
@@ -64,19 +75,33 @@ public class FXResizeHelper {
     STAGE.setIconified(true);
   }
 
+  private static Screen getScreen(Stage stage) {
+    double centerX = stage.getX() + stage.getWidth() / 2;
+    double centerY = stage.getY() + stage.getHeight() / 2;
+
+    ObservableList<Screen> screensForRectangle = Screen.getScreensForRectangle(centerX, centerY, 1, 1);
+    return screensForRectangle.get(0);
+  }
+
+  public static boolean isMaximized(Stage stage) {
+    Screen screen = getScreen(stage);
+    return stage.getWidth() == screen.getVisualBounds().getWidth()
+        && stage.getHeight() == screen.getVisualBounds().getHeight();
+  }
+
   /**
    * If the stage is maximized, it will be restored to the last postition
    * with heigth and width. Otherwise it will be maximized to fullscreen.
    */
-  public void switchWindowedMode(MouseEvent e) {
-    ObservableList<Screen> screensForRectangle = Screen.getScreensForRectangle(e.getScreenX(), e.getScreenY(), 1, 1);
-    Screen screen = screensForRectangle.get(0);
+  public boolean switchWindowedMode(MouseEvent e) {
+    Screen screen = getScreen(STAGE);
 
-    boolean mIsMaximized = STAGE.getX() == 0 && STAGE.getY() == 0;
+    boolean mIsMaximized = STAGE.getWidth() == screen.getVisualBounds().getWidth()
+                        && STAGE.getHeight() == screen.getVisualBounds().getHeight();
 
     if (mIsMaximized) {
-      STAGE.setX(mXStore > 0  ? mXStore : 50);
-      STAGE.setY(mYStore > 0  ? mYStore : 50);
+      STAGE.setX(mXStore);
+      STAGE.setY(mYStore);
       STAGE.setWidth(mWidthStore > 0  ? mWidthStore : STAGE.getWidth() - 100);
       STAGE.setHeight(mHeightStore > 0 ? mHeightStore : STAGE.getHeight() - 100);
     }
@@ -103,6 +128,7 @@ public class FXResizeHelper {
       STAGE.setWidth(screen.getVisualBounds().getWidth());
       STAGE.setHeight(screen.getVisualBounds().getHeight());
     }
+    return !mIsMaximized;
   }
 
   private void createListener() {

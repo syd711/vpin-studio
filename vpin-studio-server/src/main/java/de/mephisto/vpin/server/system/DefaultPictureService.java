@@ -1,9 +1,7 @@
 package de.mephisto.vpin.server.system;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.frontend.FrontendMedia;
@@ -22,11 +20,9 @@ import de.mephisto.vpin.server.games.GameAssetChangedEvent;
 import de.mephisto.vpin.server.games.GameDataChangedEvent;
 import de.mephisto.vpin.server.games.GameDataChangedListener;
 import de.mephisto.vpin.server.games.GameLifecycleService;
-import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
-import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.resources.ResourceLoader;
-import de.mephisto.vpin.server.util.ImageUtil;
+import de.mephisto.vpin.commons.fx.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -53,10 +49,8 @@ import java.nio.file.Files;
 import java.util.List;
 
 @Service
-public class DefaultPictureService implements PreferenceChangedListener, ApplicationListener<ApplicationReadyEvent>, InitializingBean, GameDataChangedListener {
+public class DefaultPictureService implements ApplicationListener<ApplicationReadyEvent>, InitializingBean, GameDataChangedListener {
   private final static Logger LOG = LoggerFactory.getLogger(DefaultPictureService.class);
-
-  private final static DirectB2SImageRatio DEFAULT_MEDIA_RATIO = DirectB2SImageRatio.RATIO_16X9;
 
   @Autowired
   private SystemService systemService;
@@ -71,14 +65,7 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
   private PupPacksService pupPackService;
 
   @Autowired
-  private PreferencesService preferencesService;
-
-  @Autowired
   private GameLifecycleService gameLifecycleService;
-
-
-  private CardSettings cardSettings;
-
 
   public void updateGame(Game game) {
     if (game != null) {
@@ -94,14 +81,14 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
     if (VPinScreen.BackGlass.equals(onScreen)) {
       File preview = getDefaultPreview(game);
       if (!preview.exists()) {
-        extractPreviewPicture(game);
+        extractDefaultPicture(game, preview, true);
       }
       return extractBytes(preview);
     }
     else if (VPinScreen.Menu.equals(onScreen)) {
       File dmd = getDMDPicture(game);
       if (!dmd.exists()) {
-        extractDmd(game);
+        extractDmd(game, dmd);
       }
       return extractBytes(dmd);
     }
@@ -114,32 +101,26 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
     extractDefaultPicture(game, target, false);
   }
 
-  public void extractPreviewPicture(@NonNull Game game) {
-    File target = getDefaultPreview(game);
-    extractDefaultPicture(game, target, true);
-  }
-
   private void extractDefaultPicture(@NonNull Game game, File target, boolean usePreview) {
-    File rawDefaultPicture = getRawDefaultPicture(game);
-    if (!rawDefaultPicture.getParentFile().exists() && !rawDefaultPicture.getParentFile().mkdirs()) {
-      LOG.error("Failed to create raw default picture folder: " + rawDefaultPicture.getParentFile().getAbsolutePath());
+    if (!target.getParentFile().exists() && !target.getParentFile().mkdirs()) {
+      LOG.error("Failed to create raw default picture folder: " + target.getParentFile().getAbsolutePath());
     }
 
     // extract Preview with frame, no grill is hidden...
     if (usePreview) {
       DirectB2STableSettings tableSettings = backglassService.getTableSettings(game);
       if (tableSettings == null || !tableSettings.isHideB2SBackglass()) {
-          DirectB2SData tableData = backglassService.getDirectB2SData(game);
-          byte[] img = backglassService.getPreviewBackground(tableData, game, true);
-          if (img != null) {
-            try {
-              Files.write(target.toPath(), img);
-              return;
-            }
-            catch (IOException ioe) {
-              LOG.error("Failed to extract preview image", ioe);
-            }
+        DirectB2SData tableData = backglassService.getDirectB2SData(game);
+        byte[] img = backglassService.getPreviewBackground(tableData, game, true);
+        if (img != null) {
+          try {
+            Files.write(target.toPath(), img);
+            return;
           }
+          catch (IOException ioe) {
+            LOG.error("Failed to extract preview image", ioe);
+          }
+        }
       }
     }
     // extract Raw images
@@ -171,9 +152,7 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
     // no more idea :)
   }
 
-  public void extractDmd(Game game) {
-    File target = getDMDPicture(game);
-
+  private void extractDmd(Game game, File target) {
     // use B2S DMD image if present and not hidden
     DirectB2STableSettings tableSettings = backglassService.getTableSettings(game);
     if (tableSettings == null || !tableSettings.isHideB2SDMD()) {
@@ -226,12 +205,15 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
   }
 
   private void addWatermark(File target, String watermark) {
-    try {
-      ImageUtil.drawWatermark(target, watermark, Color.CYAN);
-    }
-    catch (IOException ioe) {
-      LOG.warn("Cannot add watermark on {}", target.getAbsolutePath());
-    }
+    //TODO why should we do that?
+//    try {
+//      BufferedImage bufferedImage = ImageUtil.loadImage(target);
+//      bufferedImage = ImageUtil.drawWatermark(bufferedImage, watermark, Color.CYAN);
+//      ImageUtil.write(bufferedImage, target);
+//    }
+//    catch (IOException ioe) {
+//      LOG.warn("Cannot add watermark on {}", target.getAbsolutePath());
+//    }
   }
 
   private byte[] extractBytes(File file) {
@@ -248,9 +230,6 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
 
   public boolean deleteDefaultPictures(@NonNull Game game) {
     boolean success = true;
-    if (!FileUtils.delete(getCroppedDefaultPicture(game))) {
-      success = false;
-    }
     if (!FileUtils.delete(getRawDefaultPicture(game))) {
       success = false;
     }
@@ -269,69 +248,14 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
   }
 
   @Nullable
-  public File generateCroppedDefaultPicture(@NonNull Game game) {
-    try {
-      //try to use existing file first
-      File croppedDefaultPicture = getCroppedDefaultPicture(game);
-      if (croppedDefaultPicture.exists()) {
-        return croppedDefaultPicture;
-      }
-
-      File rawDefaultPicture = getRawDefaultPicture(game);
-      if (!rawDefaultPicture.exists()) {
-        extractDefaultPicture(game);
-      }
-
-      rawDefaultPicture = getRawDefaultPicture(game);
-      if (rawDefaultPicture.exists()) {
-
-        BufferedImage image = ImageIO.read(rawDefaultPicture);
-        BufferedImage crop = ImageUtil.crop(image, DEFAULT_MEDIA_RATIO.getXRatio(), DEFAULT_MEDIA_RATIO.getYRatio());
-        BufferedImage resized = ImageUtil.resizeImage(crop, cardSettings.getCardResolution().toWidth());
-
-        File target = getCroppedDefaultPicture(game);
-        if (target == null) {
-          return null;
-        }
-
-        if (target.exists()) {
-          if (!target.delete()) {
-            LOG.error("Failed to delete crop picture " + target.getAbsolutePath());
-          }
-        }
-
-        if (!target.getParentFile().exists()) {
-          if (!target.getParentFile().mkdirs()) {
-            LOG.error("Failed to create crop image directory " + target.getParentFile().getAbsolutePath());
-          }
-        }
-
-        if (target.getParentFile().exists() && target.getParentFile().canWrite()) {
-          ImageUtil.write(resized, target);
-          LOG.info("Written cropped default background for " + game.getRom());
-        }
-        else {
-          LOG.error("No permission to write cropped default picture, folder " + game.getRom() + " does not exist.");
-        }
-        return target;
-      }
-    }
-    catch (Exception e) {
-      LOG.error("Error extracting default picture: " + e.getMessage(), e);
-    }
-    return null;
-  }
-
-  @Nullable
   public BufferedImage generateCompetitionBackgroundImage(@NonNull Game game, int cropWidth, int cropHeight) {
     try {
       File backgroundImageFile = getRawDefaultPicture(game);
-      if (backgroundImageFile == null || !backgroundImageFile.exists()) {
-        extractDefaultPicture(game);
+      if (!backgroundImageFile.exists()) {
+        extractDefaultPicture(game, backgroundImageFile, false);
       }
 
-      backgroundImageFile = getRawDefaultPicture(game);
-      if (backgroundImageFile == null || !backgroundImageFile.exists()) {
+      if (!backgroundImageFile.exists()) {
         return null;
       }
 
@@ -340,7 +264,6 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
       if (image.getWidth() < image.getHeight()) {
         image = ImageUtil.crop(image, DirectB2SImageRatio.RATIO_16X9.getXRatio(), DirectB2SImageRatio.RATIO_16X9.getYRatio());
       }
-
 
       BufferedImage resized = ImageUtil.resizeImage(image, cropWidth);
       LOG.info("Resized to " + resized.getWidth() + "x" + resized.getHeight());
@@ -353,7 +276,7 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
 
       Color start = new Color(0f, 0f, 0f, .1f);
       Color end = Color.decode("#111111");
-      ImageUtil.gradient(blurred, cropHeight, cropWidth, start, end);
+      ImageUtil.gradient(blurred, cropWidth, cropHeight, start, end);
       return blurred;
     }
     catch (Exception e) {
@@ -363,25 +286,11 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
   }
 
   public boolean isMediaIndexAvailable() {
-    return systemService.getCroppedImageFolder().exists()
-        && systemService.getRawImageExtractionFolder().exists()
+    return systemService.getRawImageExtractionFolder().exists()
         && !org.apache.commons.io.FileUtils.listFiles(systemService.getRawImageExtractionFolder(), null, false).isEmpty();
   }
 
-  @Override
-  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
-    if (PreferenceNames.HIGHSCORE_CARD_SETTINGS.equalsIgnoreCase(propertyName)) {
-      cardSettings = preferencesService.getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
-    }
-  }
-
   //-------------------------
-
-  @NonNull
-  @JsonIgnore
-  public File getCroppedDefaultPicture(Game game) {
-    return new File(systemService.getCroppedImageFolder(), game.getId() + "_" + SystemService.DEFAULT_BACKGROUND);
-  }
 
   @NonNull
   @JsonIgnore
@@ -435,15 +344,67 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
     return null;
   }
 
+
+  public File getManufacturerPicture(String manufacturer, Integer year, boolean useYear) {
+    if (StringUtils.isEmpty(manufacturer)) {
+      return null;
+    }
+
+    String manufacturerFilter = cleanName(manufacturer);
+    File folder = new File(SystemService.RESOURCES, "manufacturers");
+    File[] files = folder.listFiles((dir, name) -> cleanName(name).startsWith(manufacturerFilter));
+    File preferred = null;
+    int prefscore = -1;
+    for (File f : files) {
+      int score = 0;
+
+      //String extension = FilenameUtils.getExtension(f.getName()).toLowerCase();
+      String filename = FilenameUtils.removeExtension(f.getName()).trim();
+      int start = filename.indexOf("(");
+      if (start > 0 && filename.endsWith(")") && year != null && year > 0) {
+        // if years are not used, just ignore the image as it contains year info
+        if (useYear) {
+          int pos = filename.indexOf("-");
+          String yearStr = Integer.toString(year);
+          String fromYear = StringUtils.substring(filename, start + 1, pos);
+          String toYear = StringUtils.substring(filename, pos + 1, -1);
+          if (StringUtils.isEmpty(fromYear) || fromYear.compareTo(yearStr) <= 0) {
+            if (StringUtils.isEmpty(toYear) || toYear.compareTo(yearStr) >= 0) {
+              score += 2;
+            }
+          }
+        }
+      }
+      else {
+        // when no year specified, prefer generic name
+        score += StringUtils.equalsIgnoreCase(manufacturer, filename) ? 2 : 1;
+      }
+
+      if (score > prefscore) {
+        prefscore = score;
+        preferred = f;
+      }
+    }
+
+    return preferred;
+  }
+
+  private String cleanName(String name) {
+    String ret = name.toLowerCase();
+    ret = StringUtils.remove(ret, " ");
+    ret = StringUtils.remove(ret, ".");
+    return ret;
+  }
+
   //---------------------------------------------------
 
   @Override
-  public void gameDataChanged(GameDataChangedEvent changedEvent) {
+  public void gameDataChanged(@NonNull GameDataChangedEvent changedEvent) {
     // not needed
   }
 
   @Override
-  public void gameAssetChanged(GameAssetChangedEvent changedEvent) {
+  public void gameAssetChanged(@NonNull GameAssetChangedEvent changedEvent) {
     if (AssetType.DIRECTB2S.equals(changedEvent.getAssetType())) {
       // not that clean but sufficient so save access to Game
       Game game = new Game();
@@ -454,9 +415,6 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    preferencesService.addChangeListener(this);
-    preferenceChanged(PreferenceNames.HIGHSCORE_CARD_SETTINGS, null, null);
-
     gameLifecycleService.addGameDataChangedListener(this);
 
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
@@ -479,21 +437,6 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
       }
     }
     LOG.info("Folder '{}' cleaned", systemService.getRawImageExtractionFolder().getAbsolutePath());
-
-    for (File f : org.apache.commons.io.FileUtils.listFiles(systemService.getCroppedImageFolder(), null, false)) {
-      try {
-        Integer id = Integer.valueOf(StringUtils.substringBefore(f.getName(), "_"));
-        String type = StringUtils.substringAfter(f.getName(), "_");
-        if (!gameIds.contains(id) || !(type.equals(SystemService.DEFAULT_BACKGROUND))) {
-          f.delete();
-        }
-      }
-      catch (NumberFormatException e) {
-        LOG.warn("Failed to clean up cropped backglass media file {}", f.getAbsolutePath());
-        f.delete();
-      }
-    }
-    LOG.info("Folder '{}' cleaned", systemService.getCroppedImageFolder().getAbsolutePath());
   }
 
   @Override
@@ -501,4 +444,5 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
     //ALWAYS AVOID CALLING GETKNOWNGAMES DURING THE INITILIZATION PHASE OF THE SERVER
     clearImages();
   }
+
 }

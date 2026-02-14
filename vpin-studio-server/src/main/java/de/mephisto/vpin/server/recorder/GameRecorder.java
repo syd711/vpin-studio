@@ -23,6 +23,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 public class GameRecorder {
   private final static Logger LOG = LoggerFactory.getLogger(GameRecorder.class);
@@ -63,14 +64,18 @@ public class GameRecorder {
         }
 
         File recordingTempFile = createTemporaryRecordingFile(game, screen, option.getRecordMode());
-        FrontendPlayerDisplay recordingScreen = recordingScreens.stream().filter(s -> s.getScreen().equals(screen)).findFirst().get();
+        List<FrontendPlayerDisplay> collect = recordingScreens.stream().filter(s -> s.getScreen().equals(screen)).collect(Collectors.toList());
+        if (collect.isEmpty()) {
+          continue;
+        }
+        FrontendPlayerDisplay recordingScreen = collect.get(0);
         int totalDuration = option.getRecordingDuration() + option.getInitialDelay();
         if (totalDuration > totalTime) {
           totalTime = totalDuration;
         }
 
         if (option.isEnabled()) {
-          Callable<RecordingResult> screenRecordable = new Callable<>() {
+          Callable<RecordingResult> screenRecordable = new Callable<RecordingResult>() {
             @Override
             public RecordingResult call() {
               LOG.info("Starting recording for \"" + game.getGameDisplayName() + "\", " + screen.name() + ": " + recordingTempFile.getAbsolutePath());
@@ -158,7 +163,8 @@ public class GameRecorder {
 
   private boolean isRecordingRequired(Game game, VPinScreen screen, RecordingWriteMode recordingWriteMode) {
     if (recordingWriteMode.equals(RecordingWriteMode.ifMissing)) {
-      List<File> screenMediaFiles = frontend.getMediaAccessStrategy().getScreenMediaFiles(game, screen);
+      //passing null here is ok, we are not interested in foreign assets here
+      List<File> screenMediaFiles = frontend.getMediaAccessStrategy().getScreenMediaFiles(game, screen, null);
       return screenMediaFiles.isEmpty();
     }
     return true;
@@ -191,12 +197,13 @@ public class GameRecorder {
 
     try {
       // when several folder possible for a VpinScreen like in pinballX, get the ones for mp4
-      File mediaFolder = frontend.getMediaAccessStrategy().getGameMediaFolder(game, screen, "mp4");
-      File target = GameMediaService.buildMediaAsset(mediaFolder, game, "mp4", false);
+      File mediaFolder = frontend.getMediaAccessStrategy().getGameMediaFolder(game, screen, "mp4", true);
+      File target = GameMediaService.buildMediaAsset(mediaFolder, game.getGameName(), "mp4", false);
 
       switch (recordingWriteMode) {
         case overwrite: {
-          List<File> screenMediaFiles = frontend.getMediaAccessStrategy().getScreenMediaFiles(game, screen);
+          //passing null here is ok, we are not interested in foreign assets here
+          List<File> screenMediaFiles = frontend.getMediaAccessStrategy().getScreenMediaFiles(game, screen, null);
           // delete existing files in the generated folder only whatever their format (and there maybe several, not only mp4)
           // why only in the generated folder is because pinballX has separated folders for images that need to stay
           if (!screenMediaFiles.isEmpty()) {
@@ -207,7 +214,7 @@ public class GameRecorder {
                   LOG.error("Failed to delete {}, can't overwrite file with media recording for {}, file will be appended instead", screenMediaFile.getAbsolutePath(), screen.name());
                 }
                 else {
-                  target = GameMediaService.buildMediaAsset(mediaFolder, game, "mp4", true);
+                  target = GameMediaService.buildMediaAsset(mediaFolder, game.getGameName(), "mp4", true);
                 }
               }
             }
@@ -224,7 +231,7 @@ public class GameRecorder {
           // simply switch recorded and target files and keep all other files and format
           if (!StringUtils.equalsIgnoreCase(target.getName(), recordingTempFile.getName())) {
             // another temporary not existing file that will be deleted
-            target = GameMediaService.buildMediaAsset(mediaFolder, game, "mp4", true);
+            target = GameMediaService.buildMediaAsset(mediaFolder, game.getGameName(), "mp4", true);
             copyRecordingToTarget(game, screen, recordingTempFile, target, mediaFolder);
             LOG.info("Appended recorded file {} of screen {} with {}, used overwrite mode.", recordingTempFile.getAbsolutePath(), target.getAbsolutePath(), screen.name());
           }
@@ -247,7 +254,7 @@ public class GameRecorder {
   private static void copyRecordingToTarget(Game game, VPinScreen screen, File recordingTempFile, File target, File mediaFolder) throws IOException {
     try {
       if (!target.canWrite()) {
-        target = GameMediaService.buildMediaAsset(mediaFolder, game, "mp4", true);
+        target = GameMediaService.buildMediaAsset(mediaFolder, game.getGameName(), "mp4", true);
         FileUtils.copyFile(recordingTempFile, target);
         LOG.info("Appending instead of overwriting existing media file \"{}\" of screen {} with \"{}\" (original file was locked).", target.getAbsolutePath(), recordingTempFile.getAbsolutePath(), screen.name());
       }
@@ -258,7 +265,7 @@ public class GameRecorder {
     }
     catch (IOException e) {
       LOG.error("Copying temporary video file to {} failed, trying to append asset. ({})", target.getAbsolutePath(), e.getMessage());
-      target = GameMediaService.buildMediaAsset(mediaFolder, game, "mp4", true);
+      target = GameMediaService.buildMediaAsset(mediaFolder, game.getGameName(), "mp4", true);
       FileUtils.copyFile(recordingTempFile, target);
     }
   }

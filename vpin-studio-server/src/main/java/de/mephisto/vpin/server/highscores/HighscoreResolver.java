@@ -109,8 +109,12 @@ public class HighscoreResolver implements InitializingBean {
     return null;
   }
 
-  @NonNull
+  @Nullable
   public File getNvRamFile(@NonNull Game game) {
+    if (game.getEmulator() == null || game.getEmulator().getMameDirectory() == null) {
+      return null;
+    }
+
     File nvRamFolder = new File(game.getEmulator().getMameDirectory(), "nvram");
     String rom = game.getRom();
     File defaultNvRam = new File(nvRamFolder, rom + ".nv");
@@ -313,7 +317,7 @@ public class HighscoreResolver implements InitializingBean {
   private String readNvHighscore(@NonNull Game game, HighscoreMetadata metadata) {
     try {
       File nvRam = getNvRamFile(game);
-      if (!nvRam.exists()) {
+      if (nvRam == null || !nvRam.exists()) {
         return null;
       }
 

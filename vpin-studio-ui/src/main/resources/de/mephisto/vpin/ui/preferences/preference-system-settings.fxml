@@ -16,10 +16,11 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.SystemSettingsPreferencesController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.SystemSettingsPreferencesController">
    <center>
       <ScrollPane hbarPolicy="NEVER" hmin="800.0" BorderPane.alignment="CENTER">
          <content>
+
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                <children>
                   <Label styleClass="preference-title" text="VPIN SYSTEM PREFERENCES" textFill="WHITE" />
@@ -44,7 +45,6 @@
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="801.600048828125" minWidth="10.0" prefWidth="369.4000244140625" />
                      </columnConstraints>
                      <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -117,6 +117,7 @@
                   <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
                </padding>
             </VBox>
+
          </content>
       </ScrollPane>
    </center>

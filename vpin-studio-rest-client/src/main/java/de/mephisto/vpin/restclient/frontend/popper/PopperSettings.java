@@ -1,13 +1,14 @@
 package de.mephisto.vpin.restclient.frontend.popper;
 
 import de.mephisto.vpin.restclient.JsonSettings;
-import de.mephisto.vpin.restclient.PreferenceNames;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
+
 public class PopperSettings extends JsonSettings {
-  private final static Logger LOG = LoggerFactory.getLogger(PopperSettings.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private int delayReturn = 2000;
   private boolean returnNext = false;
@@ -32,6 +33,15 @@ public class PopperSettings extends JsonSettings {
   private boolean volumeChange = true;
   private boolean useAltWheels = false;
   private boolean watchDog;
+  private String globalMediaDir;
+
+  public String getGlobalMediaDir() {
+    return globalMediaDir;
+  }
+
+  public void setGlobalMediaDir(String globalMediaDir) {
+    this.globalMediaDir = globalMediaDir;
+  }
 
   public boolean isWatchDog() {
     return watchDog;
@@ -269,13 +279,25 @@ public class PopperSettings extends JsonSettings {
 
   public void setScriptData(String optionString) {
     if (optionString != null) {
-      String[] split = optionString.split("\r\n");
+      String[] split = optionString.split("\n");
+      if (optionString.contains("\r")) {
+        split = optionString.split("\r\n");
+      }
+
       for (String s : split) {
         try {
           if (!StringUtils.isEmpty(s) && s.contains("=")) {
             String[] valueLine = s.split("=");
             String key = valueLine[0];
-            int value = Integer.parseInt(valueLine[1]);
+            int value = 0;
+            try {
+              value = Integer.parseInt(valueLine[1]);
+            }
+            catch (NumberFormatException e) {
+              LOG.error("Failed to read script value line \"" + s + "\": " + e.getMessage());
+              continue;
+            }
+
             switch (key) {
               case "DelayReturn": {
                 this.delayReturn = value;
@@ -371,7 +393,8 @@ public class PopperSettings extends JsonSettings {
               }
             }
           }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOG.error("Failed to read script value line \"" + s + "\": " + e.getMessage());
         }
       }

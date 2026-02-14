@@ -1,16 +1,24 @@
 package de.mephisto.vpin.server.emulators;
 
+import de.mephisto.vpin.restclient.emulators.EmulatorValidation;
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.server.frontend.popper.pupgames.PUPGameImporter;
+import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameEmulatorValidationService;
+import de.mephisto.vpin.server.games.GameMediaService;
 import de.mephisto.vpin.server.mame.MameService;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -26,6 +34,15 @@ public class EmulatorService {
 
   @Autowired
   private MameService mameService;
+
+  @Autowired
+  private EmulatorFactory emulatorFactory;
+
+  @Lazy
+  @Autowired
+  private GameMediaService gameMediaService;
+
+  private final List<EmulatorChangeListener> listeners = new ArrayList<>();
 
   private final Map<Integer, GameEmulator> emulators = new LinkedHashMap<>();
 
@@ -80,60 +97,12 @@ public class EmulatorService {
     return getGameEmulators().stream().filter(e -> e.isVpxEmulator() && e.isValid()).collect(Collectors.toList());
   }
 
-  public List<GameEmulator> getBackglassGameEmulators() {
-    return getGameEmulators().stream().filter(GameEmulator::isValid).filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
+  public List<GameEmulator> getZenGameEmulators() {
+    return getGameEmulators().stream().filter(e -> e.isZenEmulator() && e.isValid()).collect(Collectors.toList());
   }
 
-  //@deprecated, always determine emulator
-//  public GameEmulator getDefaultGameEmulator() {
-//    Collection<GameEmulator> emulators = this.emulators.values();
-//
-//    // when there is only one VPX emulator, it is forcibly the default one
-//    if (emulators.size() == 1) {
-//      GameEmulator value = emulators.iterator().next();
-//      return value.isVpxEmulator() ? value : null;
-//    }
-//
-//    for (GameEmulator emulator : emulators) {
-//      if (emulator.isValid() && emulator.getDescription() != null && emulator.isVpxEmulator() && emulator.getDescription().contains("default")) {
-//        return emulator;
-//      }
-//    }
-//
-//    for (GameEmulator value : emulators) {
-//      if (value.isValid() && value.isVpxEmulator() && value.getNvramFolder().exists()) {
-//        return value;
-//      }
-//      else {
-//        // avoid NPE when installationFolder is null like in test
-//        if (value.isValid()) {
-//          LOG.error(value + " has no nvram folder \"" + value.getNvramFolder().getAbsolutePath() + "\"");
-//        }
-//        else {
-//          LOG.error(value + " has no valid nvram folder");
-//        }
-//      }
-//    }
-//    LOG.error("Failed to determine emulator for highscores, no VPinMAME/nvram folder could be resolved (" + this.emulators.size() + " VPX emulators found).");
-//    return null;
-//  }
-
-  public boolean isValidVPXEmulator(GameEmulator emulator) {
-    if (!emulator.getType().isVpxEmulator()) {
-      return false;
-    }
-
-    if (StringUtils.isEmpty(emulator.getGamesDirectory())) {
-      LOG.warn("Ignoring " + emulator + ", because \"Games Folder\" is not set.");
-      return false;
-    }
-
-    if (frontendService.getFrontendConnector().getMediaAccessStrategy() != null && StringUtils.isEmpty(emulator.getMediaDirectory())) {
-      LOG.warn("Ignoring " + emulator + ", because \"Media Dir\" is not set.");
-      return false;
-    }
-
-    return true;
+  public List<GameEmulator> getBackglassGameEmulators() {
+    return getGameEmulators().stream().filter(GameEmulator::isValid).filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
   }
 
   public void setFrontendService(FrontendService frontendService) {
@@ -144,12 +113,15 @@ public class EmulatorService {
     GameEmulator saved = frontendService.saveEmulator(emulator);
     this.emulators.remove(saved.getId());
     loadEmulator(saved);
+    synchronizeEmulator(saved);
+    notifyEmulatorChange(saved.getId());
     return saved;
   }
 
   public boolean delete(int emulatorId) {
     frontendService.deleteEmulator(emulatorId);
     this.emulators.remove(emulatorId);
+    notifyEmulatorChange(emulatorId);
     return true;
   }
 
@@ -171,11 +143,6 @@ public class EmulatorService {
 
   private void loadEmulator(GameEmulator emulator) {
     try {
-//      if (emulator.getType().isVpxEmulator() && !isValidVPXEmulator(emulator)) {
-//        return;
-//      }
-
-
       File mameFolder = new File(emulator.getInstallationDirectory(), "VPinMAME");
       if (mameFolder.exists()) {
         emulator.setMameDirectory(mameFolder.getAbsolutePath());
@@ -188,7 +155,7 @@ public class EmulatorService {
         }
         else {
           emulator.setNvramDirectory(new File(mameFolder, "nvram").getAbsolutePath());
-        }  
+        }
 
         File cfgFolder = mameService.getCfgFolder();
         if (cfgFolder != null && cfgFolder.exists()) {
@@ -202,7 +169,7 @@ public class EmulatorService {
         if (StringUtils.isEmpty(emulator.getRomDirectory())) {
           File romFolder = mameService.getRomsFolder();
           if (romFolder != null && romFolder.exists()) {
-            emulator.setRomDirectory(romFolder.getAbsolutePath());;
+            emulator.setRomDirectory(romFolder.getAbsolutePath());
           }
           else {
             emulator.setRomDirectory(new File(mameFolder, "roms").getAbsolutePath());
@@ -218,8 +185,57 @@ public class EmulatorService {
     }
   }
 
+  public EmulatorValidation validate(EmulatorType emulatorType) {
+    return emulatorFactory.create(emulatorType);
+  }
+
+
+  @EventListener(ApplicationReadyEvent.class)
+  public void synchronizeEmulators() {
+    for (GameEmulator emulator : this.emulators.values()) {
+      synchronizeEmulator(emulator);
+    }
+  }
+
+  /**
+   * Used to synchronize emulators with .pupgames files to the latest lists.
+   *
+   * @param emulator
+   */
+  private void synchronizeEmulator(GameEmulator emulator) {
+    if (!emulator.isEnabled()) {
+      return;
+    }
+
+    int count = 0;
+    if (emulator.isPupGameImportSupported()) {
+      List<Game> gamesByEmulator = frontendService.getGamesByEmulator(emulator.getId());
+      if (gamesByEmulator.isEmpty()) {
+        List<TableDetails> tableDetailList = PUPGameImporter.read(emulator.getType(), emulator.getId());
+        for (TableDetails tableDetails : tableDetailList) {
+          int gameId = frontendService.importGame(tableDetails);
+          if (gameId > 0) {
+            gameMediaService.autoMatch(gameId, false);
+            count++;
+          }
+        }
+        LOG.info("\"{}\" emulator synchronization finished, added {} games.", emulator.getName(), count);
+      }
+    }
+  }
+
   public boolean clearCache() {
     loadEmulators();
     return true;
+  }
+
+  private void notifyEmulatorChange(int emulatorId) {
+    for (EmulatorChangeListener listener : listeners) {
+      listener.emulatorChanged(emulatorId);
+    }
+  }
+
+  public void addEmulatorChangeListener(EmulatorChangeListener listener) {
+    this.listeners.add(listener);
   }
 }

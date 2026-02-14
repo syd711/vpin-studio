@@ -11,15 +11,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 
 /*********************************************************************************************************************
  * Alt Sound
  ********************************************************************************************************************/
 public class AltSoundServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(AltSoundServiceClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public AltSoundServiceClient(VPinStudioClient client) {
     super(client);
@@ -50,10 +52,12 @@ public class AltSoundServiceClient extends VPinStudioClientService {
     return getRestClient().delete(API + "altsound/" + gameId);
   }
 
-  public UploadDescriptor uploadAltSound(File file, int emulatorId, FileUploadProgressListener listener) throws Exception {
+  public UploadDescriptor uploadAltSound(File file, int emulatorId, int gameId, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "altsound/upload";
       HttpEntity upload = createUpload(file, emulatorId, null, AssetType.ALT_SOUND, listener);
+      LinkedMultiValueMap<String, Object> map = (LinkedMultiValueMap<String, Object>) upload.getBody();
+      map.add("gameId", gameId);
       ResponseEntity<UploadDescriptor> exchange = new RestTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
       finalizeUpload(upload);
       return exchange.getBody();

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
@@ -11,6 +12,7 @@ import de.mephisto.vpin.restclient.system.FileInfo;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TableScanProgressModel;
+import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -32,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.List;
 import java.util.*;
@@ -39,7 +42,7 @@ import java.util.*;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableDataTabScoreDataController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(TableDataTabScoreDataController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   public static final String UNPLAYED_STATUS_ICON = "bi-check2-circle";
   private final static int DEBOUNCE_MS = 300;
 
@@ -94,7 +97,6 @@ public class TableDataTabScoreDataController implements Initializable {
   private TableDataController tableDataController;
 
   private GameRepresentation game;
-  private TableDetails tableDetails;
 
   @FXML
   private void onScoreReset() {
@@ -104,7 +106,7 @@ public class TableDataTabScoreDataController implements Initializable {
   @FXML
   private void onTableScan() {
     ProgressDialog.createProgressDialog(new TableScanProgressModel("Scanning \"" + game.getGameDisplayName() + "\"", Arrays.asList(game)));
-    this.game = client.getGame(this.game.getId());
+    this.game = client.getGameService().getGame(this.game.getId());
     refreshScannedValues();
   }
 
@@ -141,111 +143,85 @@ public class TableDataTabScoreDataController implements Initializable {
     highscoreFileName.setValue(scannedHighscoreFileName.getText());
   }
 
-  public void setGame(TableDataController tableDataController, GameRepresentation game, TableDetails tableDetails, HighscoreFiles highscoreFiles, ServerSettings serverSettings) {
-    this.tableDataController = tableDataController;
+  public void setGame(GameRepresentation game, TableDetails tableDetails, ServerSettings serverSettings) {
     this.game = game;
-    this.tableDetails = tableDetails;
 
-    List<String> availableRoms = new ArrayList<>();
-    if (highscoreFiles.getNvRams() != null) {
-      availableRoms.addAll(highscoreFiles.getNvRams());
-    }
-    if (highscoreFiles.getVpRegEntries() != null) {
-      availableRoms.addAll(highscoreFiles.getVpRegEntries());
-    }
-    Collections.sort(availableRoms);
-    availableRoms.add(0, null);
-    romName.setItems(FXCollections.observableList(availableRoms));
-
-    List<String> availableHsFiles = new ArrayList<>();
-    if (highscoreFiles.getTextFiles() != null) {
-      availableHsFiles.addAll(highscoreFiles.getTextFiles());
-    }
-    Collections.sort(availableHsFiles);
-    availableHsFiles.add(0, null);
-    highscoreFileName.setItems(FXCollections.observableList(availableHsFiles));
-
-    refreshScannedValues();
-
-
-    applyRomBtn.setDisable(true);
-    String tableRomName = tableDetails != null ? tableDetails.getRomName() : null;
-    romName.setValue(tableRomName);
-    romName.valueProperty().addListener((observable, oldValue, newValue) -> {
-      onRomNameUpdate(newValue);
-    });
-    romName.focusedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        onRomNameFocusChange(newValue);
+    JFXFuture.supplyAsync(() -> {
+      return client.getGameService().getHighscoreFiles(game.getId());
+    }).thenAcceptLater((highscoreFiles) -> {
+      List<String> availableRoms = new ArrayList<>();
+      if (highscoreFiles.getNvRams() != null) {
+        availableRoms.addAll(highscoreFiles.getNvRams());
       }
-    });
-
-    if (StringUtils.isEmpty(tableRomName) && !StringUtils.isEmpty(game.getScannedRom())) {
-      if (!StringUtils.isEmpty(game.getRomAlias())) {
-        romName.setPromptText(game.getRom() + " (aliased ROM)");
+      if (highscoreFiles.getVpRegEntries() != null) {
+        availableRoms.addAll(highscoreFiles.getVpRegEntries());
       }
-      else {
-        romName.setPromptText(game.getScannedRom() + " (scanned value)");
+      Collections.sort(availableRoms);
+      availableRoms.add(0, null);
+      romName.setItems(FXCollections.observableList(availableRoms));
+
+      List<String> availableHsFiles = new ArrayList<>();
+      if (highscoreFiles.getTextFiles() != null) {
+        availableHsFiles.addAll(highscoreFiles.getTextFiles());
+      }
+      Collections.sort(availableHsFiles);
+      availableHsFiles.add(0, null);
+      highscoreFileName.setItems(FXCollections.observableList(availableHsFiles));
+
+      refreshScannedValues();
+
+
+      applyRomBtn.setDisable(true);
+      String tableRomName = tableDetails != null ? tableDetails.getRomName() : null;
+      romName.setValue(tableRomName);
+
+      if (StringUtils.isEmpty(tableRomName) && !StringUtils.isEmpty(game.getScannedRom())) {
+        if (!StringUtils.isEmpty(game.getRomAlias())) {
+          romName.setPromptText(game.getRom() + " (aliased ROM)");
+        }
+        else {
+          romName.setPromptText(game.getScannedRom() + " (scanned value)");
+        }
+
+        applyRomBtn.setDisable(false);
       }
 
-      applyRomBtn.setDisable(false);
-    }
-    romName.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
-      debouncer.debounce("romName", () -> {
-        onRomNameUpdate(newValue);
-      }, DEBOUNCE_MS);
-    });
+      applyAltRomBtn.setDisable(true);
+      String tableRomAlt = tableDetails != null ? tableDetails.getRomAlt() : null;
+      altRomName.setText(tableRomAlt);
 
+      if (StringUtils.isEmpty(tableRomAlt) && !StringUtils.isEmpty(game.getScannedAltRom())) {
+        altRomName.setPromptText(game.getScannedAltRom() + " (scanned value)");
+        applyAltRomBtn.setDisable(false);
+      }
 
-    applyAltRomBtn.setDisable(true);
-    String tableRomAlt = tableDetails != null ? tableDetails.getRomAlt() : null;
-    altRomName.setText(tableRomAlt);
-    altRomName.textProperty().addListener((observable, oldValue, newValue) -> {
-      onAltRomNameUpdate(newValue);
-    });
-    altRomName.focusedProperty().addListener((observable, oldValue, newValue) -> onAltRomNameFocusChange(newValue));
+      resetBtn.setVisible(client.getEmulatorService().isVpxGame(game));
 
-    if (StringUtils.isEmpty(tableRomAlt) && !StringUtils.isEmpty(game.getScannedAltRom())) {
-      altRomName.setPromptText(game.getScannedAltRom() + " (scanned value)");
-      applyAltRomBtn.setDisable(false);
-    }
+      scannedRomName.setText(game.getScannedRom());
+      applyRomBtn.setDisable(StringUtils.isEmpty(scannedRomName.getText()));
 
-    resetBtn.setVisible(game.isVpxGame());
+      scannedAltRomName.setText(game.getScannedAltRom());
+      applyAltRomBtn.setDisable(StringUtils.isEmpty(scannedAltRomName.getText()));
 
-    scannedRomName.setText(game.getScannedRom());
-    applyRomBtn.setDisable(StringUtils.isEmpty(scannedRomName.getText()));
+      scannedHighscoreFileName.setText(game.getScannedHsFileName());
+      applyHsBtn.setDisable(StringUtils.isEmpty(scannedHighscoreFileName.getText()));
+      hsMappingLabel.setText("The value is mapped to Popper field \"" + serverSettings.getMappingHsFileName() + "\"");
 
-    scannedAltRomName.setText(game.getScannedAltRom());
-    applyAltRomBtn.setDisable(StringUtils.isEmpty(scannedAltRomName.getText()));
+      highscoreFileName.setValue(game.getHsFileName());
 
-    scannedHighscoreFileName.setText(game.getScannedHsFileName());
-    applyHsBtn.setDisable(StringUtils.isEmpty(scannedHighscoreFileName.getText()));
-    hsMappingLabel.setText("The value is mapped to Popper field \"" + serverSettings.getMappingHsFileName() + "\"");
-
-    highscoreFileName.setValue(game.getHsFileName());
-
-    tableDataController.setHsFilenameValue(highscoreFileName.getValue());
-    if (StringUtils.isEmpty(highscoreFileName.getValue()) && !StringUtils.isEmpty(game.getScannedHsFileName())) {
-      highscoreFileName.setPromptText(game.getScannedHsFileName() + " (scanned value)");
-    }
-    highscoreFileName.valueProperty().addListener((observable, oldValue, newValue) -> {
-      onHighscoreFilenameUpdate(newValue);
-    });
-    highscoreFileName.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
-      debouncer.debounce("highscoreFileName", () -> {
-        onHighscoreFilenameUpdate(newValue);
-      }, DEBOUNCE_MS);
+      tableDataController.setHsFilenameValue(highscoreFileName.getValue());
+      if (StringUtils.isEmpty(highscoreFileName.getValue()) && !StringUtils.isEmpty(game.getScannedHsFileName())) {
+        highscoreFileName.setPromptText(game.getScannedHsFileName() + " (scanned value)");
+      }
     });
   }
 
-  public void save() {
-
+  public boolean save() {
+    return true;
   }
-
 
   public void refreshScannedValues() {
-    if (!game.isVpxGame()) {
+    if (!client.getEmulatorService().isVpxGame(game)) {
       return;
     }
 
@@ -268,7 +244,6 @@ public class TableDataTabScoreDataController implements Initializable {
       scannedHighscoreFileName.setPromptText(game.getScannedAltRom() + ".txt (scanned value)");
     }
     applyHsBtn.setDisable(StringUtils.isEmpty(game.getScannedHsFileName()));
-    refreshStatusIcons();
   }
 
 
@@ -278,21 +253,21 @@ public class TableDataTabScoreDataController implements Initializable {
   }
 
   private void onAltRomNameUpdate(String newValue) {
-    tableDetails.setRomAlt(newValue);
+    tableDataController.setTableDetailProperty("romAlt", newValue);
     refreshStatusIcons();
   }
 
   private void onAltRomNameFocusChange(Boolean newValue) {
     if (!newValue) {
       altRomName.setPromptText("");
-      if ((tableDetails == null || StringUtils.isEmpty(tableDetails.getRomAlt())) && !StringUtils.isEmpty(game.getScannedAltRom())) {
+      if (StringUtils.isEmpty(altRomName.getText()) && !StringUtils.isEmpty(game.getScannedAltRom())) {
         altRomName.setPromptText(game.getScannedAltRom() + " (scanned value)");
       }
     }
   }
 
   private void onRomNameUpdate(String newValue) {
-    tableDetails.setRomName(newValue);
+    tableDataController.setTableDetailProperty("romName", newValue);
     refreshStatusIcons();
   }
 
@@ -300,7 +275,7 @@ public class TableDataTabScoreDataController implements Initializable {
   private void onRomNameFocusChange(Boolean newValue) {
     if (!newValue) {
       romName.setPromptText("");
-      if ((tableDetails == null || StringUtils.isEmpty(tableDetails.getRomName())) && !StringUtils.isEmpty(game.getScannedRom())) {
+      if (StringUtils.isEmpty(romName.getValue()) && !StringUtils.isEmpty(game.getScannedRom())) {
         if (!StringUtils.isEmpty(game.getRomAlias())) {
           romName.setPromptText(game.getRom() + " (aliased ROM)");
         }
@@ -312,33 +287,72 @@ public class TableDataTabScoreDataController implements Initializable {
   }
 
   private void refreshStatusIcons() {
-    GameScoreValidation gameScoreValidation = client.getGameService().getGameScoreValidation(this.game.getId());
-    romStatusBox.getChildren().removeAll(romStatusBox.getChildren());
-    hsFileStatusBox.getChildren().removeAll(hsFileStatusBox.getChildren());
+    // get the score validations with the modified TableDetails (real time check)
+    TableDetails tableDetails = tableDataController.getTableDetails();
+    JFXFuture.supplyAsync(() -> {
+      return client.getGameService().getGameScoreValidation(game.getId(), tableDetails);
+    }).thenAcceptLater((gameScoreValidation) -> {
+      romStatusBox.getChildren().removeAll(romStatusBox.getChildren());
+      hsFileStatusBox.getChildren().removeAll(hsFileStatusBox.getChildren());
 
-    String statusRom = gameScoreValidation.getRomStatus();
-    if (statusRom != null) {
-      FontIcon icon = WidgetFactory.createIcon(gameScoreValidation.getRomIcon());
-      icon.setIconColor(javafx.scene.paint.Paint.valueOf(gameScoreValidation.getRomIconColor()));
-      Label l = new Label();
-      l.setGraphic(icon);
-      l.setTooltip(new Tooltip(statusRom));
-      romStatusBox.getChildren().add(l);
-    }
+      String statusRom = gameScoreValidation.getRomStatus();
+      if (statusRom != null) {
+        FontIcon icon = WidgetFactory.createIcon(gameScoreValidation.getRomIcon());
+        icon.setIconColor(javafx.scene.paint.Paint.valueOf(gameScoreValidation.getRomIconColor()));
+        Label l = new Label();
+        l.setGraphic(icon);
+        l.setTooltip(new Tooltip(statusRom));
+        romStatusBox.getChildren().add(l);
+      }
 
-    String statusHsFile = gameScoreValidation.getHighscoreFilenameStatus();
-    if (statusHsFile != null) {
-      FontIcon icon = WidgetFactory.createIcon(gameScoreValidation.getHighscoreFilenameIcon());
-      icon.setIconColor(Paint.valueOf(gameScoreValidation.getHighscoreFilenameIconColor()));
-      Label l = new Label();
-      l.setGraphic(icon);
-      l.setTooltip(new Tooltip(statusHsFile));
-      hsFileStatusBox.getChildren().add(l);
-    }
+      String statusHsFile = gameScoreValidation.getHighscoreFilenameStatus();
+      if (statusHsFile != null) {
+        FontIcon icon = WidgetFactory.createIcon(gameScoreValidation.getHighscoreFilenameIcon());
+        icon.setIconColor(Paint.valueOf(gameScoreValidation.getHighscoreFilenameIconColor()));
+        Label l = new Label();
+        l.setGraphic(icon);
+        l.setTooltip(new Tooltip(statusHsFile));
+        hsFileStatusBox.getChildren().add(l);
+      }
+    });
   }
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     openHsFileBtn.setVisible(client.getSystemService().isLocal());
+  }
+
+  public void initBindings(TableDataController tableDataController) {
+    this.tableDataController = tableDataController;
+
+    romName.valueProperty().addListener((observable, oldValue, newValue) -> {
+      onRomNameUpdate(newValue);
+    });
+    romName.focusedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        onRomNameFocusChange(newValue);
+      }
+    });
+
+    romName.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
+      debouncer.debounce("romName", () -> {
+        onRomNameUpdate(newValue);
+      }, DEBOUNCE_MS, true);
+    });
+
+    altRomName.textProperty().addListener((observable, oldValue, newValue) -> {
+      onAltRomNameUpdate(newValue);
+    });
+    altRomName.focusedProperty().addListener((observable, oldValue, newValue) -> onAltRomNameFocusChange(newValue));
+
+    highscoreFileName.valueProperty().addListener((observable, oldValue, newValue) -> {
+      onHighscoreFilenameUpdate(newValue);
+    });
+    highscoreFileName.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
+      debouncer.debounce("highscoreFileName", () -> {
+        onHighscoreFilenameUpdate(newValue);
+      }, DEBOUNCE_MS, true);
+    });
   }
 }

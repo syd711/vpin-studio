@@ -1,24 +1,17 @@
 package de.mephisto.vpin.restclient.frontend;
 
-import javafx.scene.control.Tooltip;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
-import org.springframework.beans.BeansException;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class TableDetails {
   public final static String ARCHIVE_FILENAME = "table-details.json";
-  private final static Logger LOG = LoggerFactory.getLogger(TableDetails.class);
 
   private int sqlVersion;
   private int emulatorId;
 
-  private int status;
+  private int status = 1;
   private String gameName;
   private String gameFileName;
   private String gameDisplayName;
@@ -459,5 +452,19 @@ public class TableDetails {
 
   public void setHsFilename(String hsFilename) {
     this.hsFilename = hsFilename;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || getClass() != o.getClass()) return false;
+    TableDetails that = (TableDetails) o;
+    //todo ignored dates because of different base objects
+    return sqlVersion == that.sqlVersion && emulatorId == that.emulatorId && status == that.status && mod == that.mod && Objects.equals(gameName, that.gameName) && Objects.equals(gameFileName, that.gameFileName) && Objects.equals(gameDisplayName, that.gameDisplayName) && Objects.equals(gameType, that.gameType) && Objects.equals(gameVersion, that.gameVersion) && Objects.equals(gameTheme, that.gameTheme) && Objects.equals(notes, that.notes) && Objects.equals(gameYear, that.gameYear) && Objects.equals(romName, that.romName) && Objects.equals(manufacturer, that.manufacturer) && Objects.equals(numberOfPlayers, that.numberOfPlayers) && Objects.equals(lastPlayed, that.lastPlayed) && Objects.equals(numberPlays, that.numberPlays) && Objects.equals(tags, that.tags) && Objects.equals(category, that.category) && Objects.equals(author, that.author) && Objects.equals(volume, that.volume) && Objects.equals(launchCustomVar, that.launchCustomVar) && Objects.equals(keepDisplays, that.keepDisplays) && Objects.equals(gameRating, that.gameRating) && Objects.equals(dof, that.dof) && Objects.equals(IPDBNum, that.IPDBNum) && Objects.equals(altRunMode, that.altRunMode) && Objects.equals(url, that.url) && Objects.equals(designedBy, that.designedBy) && Objects.equals(altLaunchExe, that.altLaunchExe) && Objects.equals(custom2, that.custom2) && Objects.equals(custom3, that.custom3) && Objects.equals(special, that.special) && Objects.equals(mediaSearch, that.mediaSearch) && Objects.equals(custom4, that.custom4) && Objects.equals(custom5, that.custom5) && Objects.equals(webGameId, that.webGameId) && Objects.equals(romAlt, that.romAlt) && Objects.equals(webLink2Url, that.webLink2Url) && Objects.equals(tourneyId, that.tourneyId) && Objects.equals(gDetails, that.gDetails) && Objects.equals(gNotes, that.gNotes) && Objects.equals(gLog, that.gLog) && Objects.equals(gPlayLog, that.gPlayLog) && Objects.equals(hsFilename, that.hsFilename) && Objects.equals(launcherList, that.launcherList);
+  }
+
+  @Override
+  public int hashCode() {
+    //todo ignored dates because of different base objects
+    return Objects.hash(sqlVersion, emulatorId, status, gameName, gameFileName, gameDisplayName, gameType, gameVersion, gameTheme, notes, gameYear, romName, manufacturer, numberOfPlayers, lastPlayed, numberPlays, tags, category, author, volume, launchCustomVar, keepDisplays, gameRating, dof, IPDBNum, altRunMode, url, designedBy, altLaunchExe, custom2, custom3, special, mediaSearch, custom4, custom5, webGameId, romAlt, webLink2Url, tourneyId, mod, gDetails, gNotes, gLog, gPlayLog, hsFilename, launcherList);
   }
 }

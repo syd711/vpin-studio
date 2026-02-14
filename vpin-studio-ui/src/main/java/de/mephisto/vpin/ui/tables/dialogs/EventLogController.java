@@ -13,13 +13,14 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class EventLogController implements Initializable, DialogController {
-  private final static Logger LOG = LoggerFactory.getLogger(EventLogController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private TextArea textArea;

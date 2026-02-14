@@ -5,10 +5,7 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SDataScore;
 import de.mephisto.vpin.restclient.directb2s.DirectB2sScreenRes;
-import de.mephisto.vpin.restclient.dmd.DMDAspectRatio;
-import de.mephisto.vpin.restclient.dmd.DMDInfo;
-import de.mephisto.vpin.restclient.dmd.DMDInfoZone;
-import de.mephisto.vpin.restclient.dmd.DMDType;
+import de.mephisto.vpin.restclient.dmd.*;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.mame.MameOptions;
@@ -26,6 +23,7 @@ import de.mephisto.vpin.server.system.DefaultPictureService;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.io.ByteOrderMark;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -42,9 +40,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static de.mephisto.vpin.server.ini.IniUtil.safeGet;
+import static de.mephisto.vpin.server.ini.IniUtil.safeGetBoolean;
+
 @Service
 public class DMDPositionService {
   private final static Logger LOG = LoggerFactory.getLogger(DMDPositionService.class);
+
 
   @Autowired
   private GameService gameService;
@@ -60,14 +62,18 @@ public class DMDPositionService {
   private GameLifecycleService gameLifecycleService;
   @Autowired
   private DefaultPictureService defaultPictureService;
+  @Autowired
+  private DMDDeviceIniService dmdDeviceIniService;
 
   public DMDInfo getDMDInfo(int gameId) {
     Game game = gameService.getGame(gameId);
     String rom = StringUtils.defaultString(game.getRomAlias(), game.getRom());
+    String storeName = dmdDeviceIniService.getStoreName(game);
 
     DMDInfo dmdinfo = new DMDInfo();
     dmdinfo.setGameId(game.getId());
     dmdinfo.setGameRom(rom);
+    dmdinfo.setDmdStoreName(storeName);
 
     DMDType type = null;
     if (useExternalDmd(rom)) {
@@ -107,14 +113,12 @@ public class DMDPositionService {
   }
 
   private DMDInfo loadDMDInfo(DMDInfo dmdinfo, Game game, DMDType type) {
-
     List<FrontendPlayerDisplay> screenResDisplays = screenService.getScreenResDisplays(game);
 
     DMDInfoZone mainZone = new DMDInfoZone();
     List<DMDInfoZone> alphaNumZones = getAlphaNumericScores(game, screenResDisplays);
 
-    INIConfiguration iniConfiguration = loadDmdDeviceIni(game.getEmulator());
-
+    INIConfiguration iniConfiguration = dmdDeviceIniService.getIniConfiguration(game);
     boolean forceAspectRatio = false;
     if (type == null || type.equals(DMDType.VirtualDMD) || type.equals(DMDType.AlphaNumericDMD)) {
       if (iniConfiguration != null) {
@@ -123,7 +127,7 @@ public class DMDPositionService {
         if (type == null) {
           SubnodeConfiguration virtualdmdConf = iniConfiguration.getSection("virtualdmd");
           SubnodeConfiguration alphaNumericConf = iniConfiguration.getSection("alphanumeric");
-          SubnodeConfiguration conf = dmdinfo.getGameRom() != null ? iniConfiguration.getSection(dmdinfo.getGameRom()) : null;
+          SubnodeConfiguration conf = iniConfiguration.getSection(dmdinfo.getDmdStoreName());
           boolean virtualDmdEnabled = safeGetBoolean(conf, "virtualdmd enabled", safeGetBoolean(virtualdmdConf, "enabled", false));
           boolean alphaNumericEnabled = safeGetBoolean(conf, "alphanumeric enabled", safeGetBoolean(alphaNumericConf, "enabled", false));
           type = alphaNumericEnabled ? DMDType.AlphaNumericDMD :
@@ -255,9 +259,9 @@ public class DMDPositionService {
   }
 
   private boolean fillDMDInfoFromIni(DMDInfo info, DMDInfoZone main, List<DMDInfoZone> alphaNumZones, INIConfiguration iniConfiguration) {
-    if (info.getGameRom() != null) {
+    if (info.getDmdStoreName() != null) {
       SubnodeConfiguration virtualdmdConf = iniConfiguration.getSection("virtualdmd");
-      SubnodeConfiguration conf = iniConfiguration.getSection(info.getGameRom());
+      SubnodeConfiguration conf = iniConfiguration.getSection(info.getDmdStoreName());
 
       info.setLocallySaved(!conf.isEmpty());
       info.setUseRegistry(false);
@@ -403,6 +407,9 @@ public class DMDPositionService {
   public boolean saveDMDInfo(DMDInfo dmdinfo) {
     Game game = gameService.getGame(dmdinfo.getGameId());
     String rom = StringUtils.defaultString(game.getRomAlias(), game.getRom());
+    String storeName = dmdDeviceIniService.getStoreName(game);
+
+    dmdinfo.setDmdStoreName(storeName);
 
     List<FrontendPlayerDisplay> screenResDisplays = screenService.getScreenResDisplays(game);
     //DirectB2sScreenRes screenres = backglassService.getScreenRes(game, false);
@@ -430,7 +437,7 @@ public class DMDPositionService {
     // Case of NO DMD
     if (dmdinfo.getDMDType().equals(DMDType.NoDMD)) {
       if (dmdinfo.isDisableViaIni()) {
-        disableDMDInIni(game, rom);
+        dmdDeviceIniService.disableDMDInIni(game, rom);
       }
       if (dmdinfo.isDisableInVpinMame()) {
         setMameOptions(rom, false, false);
@@ -444,7 +451,7 @@ public class DMDPositionService {
         ServerSettings serverSettings = preferenceService.getJsonPreference(PreferenceNames.SERVER_SETTINGS);
         serverSettings.setDisableDmdViaIni(dmdinfo.isDisableViaIni());
         serverSettings.setDisableDmdInMame(dmdinfo.isDisableInVpinMame());
-        preferenceService.savePreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+        preferenceService.savePreference(serverSettings);
       }
       catch (Exception e) {
         LOG.error("Cannot save server preference for disable options, exception ignored : " + e.getMessage());
@@ -468,14 +475,14 @@ public class DMDPositionService {
     else if (dmdinfo.getDMDType().equals(DMDType.VirtualDMD)) {
       setMameOptions(rom, false, true);
 
-      INIConfiguration iniConfiguration = loadDmdDeviceIni(game.getEmulator());
-      if (iniConfiguration != null) {
+      DMDDeviceIniConfiguration dmdDeviceIni = dmdDeviceIniService.getDmdDeviceIni(game.getEmulator());
+      if (dmdDeviceIni != null) {
         DMDInfoZone mainZone = getMainZone(dmdinfo);
-        if (useRegistry(iniConfiguration)) {
-          return saveDMDInfoInRegistry(game, mainZone, iniConfiguration);
+        if (dmdDeviceIni.isUseRegistry()) {
+          return dmdDeviceIniService.saveDMDInfoInRegistry(game, mainZone);
         }
         else {
-          return saveVirtualDMDInfoInIni(game, mainZone, iniConfiguration, dmdinfo.isLocallySaved());
+          return dmdDeviceIniService.saveVirtualDMDInfoInIni(game, dmdinfo, mainZone, dmdinfo.isLocallySaved());
         }
       }
     }
@@ -490,17 +497,14 @@ public class DMDPositionService {
       try {
         ServerSettings serverSettings = preferenceService.getJsonPreference(PreferenceNames.SERVER_SETTINGS);
         serverSettings.setDisableBackglassScore(dmdinfo.isDisableBackglassScores());
-        preferenceService.savePreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+        preferenceService.savePreference(serverSettings);
       }
       catch (Exception e) {
         LOG.error("Cannot save server preference for disable options, exception ignored : " + e.getMessage());
       }
 
       setMameOptions(rom, false, true);
-      INIConfiguration iniConfiguration = loadDmdDeviceIni(game.getEmulator());
-      if (iniConfiguration != null) {
-        return saveAlphaNumericDMDInfoInIni(game, dmdinfo, iniConfiguration);
-      }
+        return dmdDeviceIniService.saveAlphaNumericDMDInfoInIni(game, dmdinfo);
     }
     else {
       throw new RuntimeException("DMD Type " + dmdinfo.getDMDType() + " not supported");
@@ -513,194 +517,16 @@ public class DMDPositionService {
     return zones.size() > 0 ? zones.get(0) : null;
   }
 
-  private void disableDMDInIni(Game game, String rom) {
-    // the deactivation is always stored in the rom section
-    INIConfiguration iniConfiguration = loadDmdDeviceIni(game.getEmulator());
-    if (iniConfiguration != null && rom != null) {
-      SubnodeConfiguration virtualdmdConf = iniConfiguration.getSection("virtualdmd");
-      SubnodeConfiguration alphaNumericConf = iniConfiguration.getSection("alphanumeric");
-      SubnodeConfiguration conf = iniConfiguration.getSection(rom.replace(".", ".."));
-
-      // if the global virtualconf is enabled, force enable=false
-      if (safeGetBoolean(virtualdmdConf, "enabled", false)) {
-        conf.setProperty("virtualdmd enabled", false);
-      }
-      else {
-        // as the virtualdmd is globally deactivated, no need to add a property
-        conf.clearProperty("virtualdmd enabled");
-      }
-
-      // if the global alphaNumeric is enabled, force enable=false
-      if (safeGetBoolean(alphaNumericConf, "enabled", false)) {
-        conf.setProperty("alphanumeric enabled", false);
-      }
-      else {
-        // as the virtualdmd is globally deactivated, no need to add a property
-        conf.clearProperty("alphanumeric enabled");
-      }
-    }
-  }
-
-  private boolean saveDMDInfoInRegistry(Game game, DMDInfoZone dmdinfo, INIConfiguration iniConfiguration) {
-    // clear any values in dmddevice that could overwrite registry values
-    String rom = StringUtils.defaultString(game.getRomAlias(), game.getRom());
-
-    // mind that iniConfiguration can be null if externalDMD is not used
-    if (iniConfiguration != null) {
-      SubnodeConfiguration conf = iniConfiguration.getSection(rom.replace(".", ".."));
-      conf.clear();
-
-      SubnodeConfiguration virtualdmdConf = iniConfiguration.getSection("virtualdmd");
-      // if the global virtualconf is not enabled, force enable=true
-      if (!safeGetBoolean(virtualdmdConf, "enabled", false)) {
-        conf.setProperty("virtualdmd enabled", true);
-      }
-      saveDmdDeviceIni(game.getEmulator(), iniConfiguration);
-    }
-
-    return mameService.saveDmdPosition(rom, dmdinfo);
-  }
-
-  private boolean saveVirtualDMDInfoInIni(Game game, DMDInfoZone dmdinfo, INIConfiguration iniConfiguration, boolean locallySaved) {
-    String rom = StringUtils.defaultString(game.getRomAlias(), game.getRom());
-
-    SubnodeConfiguration virtualdmdConf = iniConfiguration.getSection("virtualdmd");
-    SubnodeConfiguration alphaNumericConf = iniConfiguration.getSection("alphanumeric");
-    SubnodeConfiguration conf = iniConfiguration.getSection(rom.replace(".", ".."));
-
-    // if the global virtualDMD is not enabled, force enable=true
-    if (!safeGetBoolean(virtualdmdConf, "enabled", false)) {
-      conf.setProperty("virtualdmd enabled", true);
-    }
-    // else as virtual dmd is enabled, no need for key in the rom section
-    else {
-      conf.clearProperty("virtualdmd enabled");
-    }
-    // if the global alphaNumeric is enabled, force enable=false
-    if (safeGetBoolean(alphaNumericConf, "enabled", false)) {
-      conf.setProperty("alphanumeric enabled", false);
-    }
-    // else globally not enabled, no need for key in rom
-    else {
-      conf.clearProperty("alphanumeric enabled");
-    }
-
-    // now store the positions in the good section
-    if (locallySaved) {
-      conf.setProperty("virtualdmd left", (int) dmdinfo.getX());
-      conf.setProperty("virtualdmd top", (int) dmdinfo.getY());
-      conf.setProperty("virtualdmd width", (int) dmdinfo.getWidth());
-      conf.setProperty("virtualdmd height", (int) dmdinfo.getHeight());
-    }
-    else {
-      // else update the global ones
-      virtualdmdConf.setProperty("left", (int) dmdinfo.getX());
-      virtualdmdConf.setProperty("top", (int) dmdinfo.getY());
-      virtualdmdConf.setProperty("width", (int) dmdinfo.getWidth());
-      virtualdmdConf.setProperty("height", (int) dmdinfo.getHeight());
-    }
-
-    return saveDmdDeviceIni(game.getEmulator(), iniConfiguration);
-  }
-
-  private boolean saveAlphaNumericDMDInfoInIni(Game game, DMDInfo dmdinfo, INIConfiguration iniConfiguration) {
-    String rom = StringUtils.defaultString(game.getRomAlias(), game.getRom());
-
-    SubnodeConfiguration virtualdmdConf = iniConfiguration.getSection("virtualdmd");
-    SubnodeConfiguration alphaNumericConf = iniConfiguration.getSection("alphanumeric");
-    SubnodeConfiguration conf = iniConfiguration.getSection(rom.replace(".", ".."));
-
-    // if the global virtualDMD is enabled, force enable=false
-    if (safeGetBoolean(virtualdmdConf, "enabled", false)) {
-      conf.setProperty("virtualdmd enabled", false);
-    }
-    // else as virtual dmd is not enabled, no need for key in the rom section
-    else {
-      conf.clearProperty("virtualdmd enabled");
-    }
-    // if the global alphaNumeric is not enabled, force enable=true
-    if (!safeGetBoolean(alphaNumericConf, "enabled", false)) {
-      conf.setProperty("alphanumeric enabled", true);
-    }
-    // else as alphanumeric dmd is enabled globally, no need for key in the rom section
-    else {
-      conf.clearProperty("alphanumeric enabled");
-    }
-
-    int pos = 0;
-    for (DMDInfoZone score : dmdinfo.getZones()) {
-      conf.setProperty("alphanumeric pos.." + pos + "..left", Math.round(score.getX()));
-      conf.setProperty("alphanumeric pos.." + pos + "..top", Math.round(score.getY()));
-      conf.setProperty("alphanumeric pos.." + pos + "..height", Math.round(score.getHeight()));
-      // width is not used by external dmd but persisted by studio
-      conf.setProperty("alphanumeric pos.." + pos + "..width", Math.round(score.getWidth()));
-      pos++;
-    }
-
-    return saveDmdDeviceIni(game.getEmulator(), iniConfiguration);
-  }
 
   //------------------------------------
   // Utilities
-
-  private INIConfiguration loadDmdDeviceIni(GameEmulator emulator) {
-    File iniFile = new File(emulator.getMameFolder(), "DmdDevice.ini");
-    if (!iniFile.exists()) {
-      return null;
-    }
-
-    INIConfiguration iniConfiguration = new INIConfiguration();
-    iniConfiguration.setCommentLeadingCharsUsedInInput(";");
-    iniConfiguration.setSeparatorUsedInOutput(" = ");
-    iniConfiguration.setSeparatorUsedInInput("=");
-
-    String defaultCharset = "UTF-8";
-    try (FileInputStream in = new FileInputStream(iniFile)) {
-      try (BOMInputStream bOMInputStream = BOMInputStream.builder().setInputStream(in).get()) {
-        ByteOrderMark bom = bOMInputStream.getBOM();
-        String charsetName = bom == null ? defaultCharset : bom.getCharsetName();
-        try (InputStreamReader reader = new InputStreamReader(new BufferedInputStream(bOMInputStream), charsetName)) {
-          iniConfiguration.read(reader);
-          return iniConfiguration;
-        }
-        catch (Exception e) {
-          LOG.error("Cannot parse {}", iniFile.getAbsolutePath(), e);
-        }
-      }
-      catch (Exception e) {
-        LOG.error("Cannot decode charset of {}}", iniFile.getAbsolutePath(), e);
-      }
-    }
-    catch (Exception e) {
-      LOG.error("Cannot open {}", iniFile.getAbsolutePath(), e);
-    }
-    return null;
-  }
-
-  private boolean saveDmdDeviceIni(GameEmulator emulator, INIConfiguration iniConfiguration) {
-    File iniFile = new File(emulator.getMameFolder(), "DmdDevice.ini");
-    if (!iniFile.exists()) {
-      return false;
-    }
-
-    try (OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(iniFile), StandardCharsets.UTF_8);
-         BufferedWriter writer = new BufferedWriter(osw)) {
-      writer.write('\ufeff');
-      iniConfiguration.write(writer);
-      return true;
-    }
-    catch (Exception e) {
-      LOG.error("Failed to write dmddevice.ini", e);
-      return false;
-    }
-  }
 
   private boolean isShowDmd(String rom) {
     return rom != null ? mameService.getOptions(rom).isShowDmd() : false;
   }
 
   private boolean useExternalDmd(String rom) {
-    return rom != null ? mameService.getOptions(rom).isUseExternalDmd() : false;
+    return rom != null ? mameService.getOptions(rom).isUseExternalDmd() : true;
   }
 
   private void setMameOptions(String rom, boolean showDmd, boolean useExternalDmd) {
@@ -721,26 +547,5 @@ public class DMDPositionService {
   private boolean keepAspectRatio(INIConfiguration iniConfiguration) {
     SubnodeConfiguration conf = iniConfiguration.getSection("virtualdmd");
     return conf.containsKey("ignorear") ? !conf.getBoolean("ignorear") : true;
-  }
-
-  private int safeGet(SubnodeConfiguration conf, String key) {
-    return safeGet(conf, key, 0);
-  }
-
-  private int safeGet(SubnodeConfiguration conf, String key, int defValue) {
-    if (conf != null && !conf.isEmpty() && conf.containsKey(key)) {
-      try {
-        double value = conf.getDouble(key);
-        return (int) value;
-      }
-      catch (Exception e) {
-        return defValue;
-      }
-    }
-    return defValue;
-  }
-
-  private boolean safeGetBoolean(SubnodeConfiguration conf, String key, boolean defValue) {
-    return conf != null && !conf.isEmpty() && conf.containsKey(key) ? conf.getBoolean(key) : defValue;
   }
 }

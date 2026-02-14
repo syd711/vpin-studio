@@ -4,7 +4,9 @@ import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.doflinx.DOFLinxSettings;
+import de.mephisto.vpin.restclient.system.FolderRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.util.FolderChooserDialog;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -15,19 +17,15 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
-import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.stage;
 
 public class DOFLinxPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(DOFLinxPreferencesController.class);
@@ -62,13 +60,9 @@ public class DOFLinxPreferencesController implements Initializable {
 
   @FXML
   private void onFolder(ActionEvent event) {
-    Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-
-    DirectoryChooser chooser = new DirectoryChooser();
-    chooser.setTitle("Select DOFLinx Installation Folder");
-    File folder = chooser.showDialog(stage);
-    if (folder != null && folder.exists()) {
-      this.installationFolderText.setText(folder.getAbsolutePath());
+    FolderRepresentation folder = FolderChooserDialog.open(installationFolderText.getText());
+    if (folder != null) {
+      this.installationFolderText.setText(folder.getPath());
     }
   }
 
@@ -109,8 +103,6 @@ public class DOFLinxPreferencesController implements Initializable {
     DOFLinxSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.DOFLINX_SETTINGS, DOFLinxSettings.class);
 
     stopBtn.setDisable(!client.getDofLinxService().isRunning());
-    folderBtn.setVisible(client.getSystemService().isLocal());
-
     toggleAutoStart.setSelected(settings.isAutostart());
     toggleAutoStart.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override

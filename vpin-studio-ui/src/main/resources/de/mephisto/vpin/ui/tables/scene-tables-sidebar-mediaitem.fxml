@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane fx:id="mediaRoot" maxHeight="1.7976931348623157E308" prefWidth="600.0" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarMediaController">
+<BorderPane fx:id="screenDMD" layoutX="157.0" layoutY="437.0" prefHeight="120.0" prefWidth="250.0" styleClass="media-container">
+    <bottom>
+        <Label text="DMD" textFill="WHITE" BorderPane.alignment="CENTER" />
+    </bottom>
+    <top>
+        <BorderPane fx:id="top_DMD" BorderPane.alignment="TOP_RIGHT">
+            <BorderPane.margin>
+                <Insets />
+            </BorderPane.margin>
+            <right>
+                <HBox fx:id="hbox_DMD" spacing="3.0" BorderPane.alignment="CENTER">
+                    <children>
+                        <Button fx:id="btn_DMD" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="folder-component">
+                            <graphic>
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
+                            </graphic>
+                        </Button>
+                    </children>
+                </HBox>
+            </right>
+            <left>
+        <HBox spacing="3.0" BorderPane.alignment="CENTER">
+            <children>
+                        <Button fx:id="btn_edit_DMD" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
+                            <graphic>
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" />
+                            </graphic>
+                        </Button>
+                        <Button fx:id="btn_view_DMD" mnemonicParsing="false" onAction="#onMediaViewClick">
+                            <graphic>
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" />
+                            </graphic>
+                        </Button>
+            <Button fx:id="btn_delete_DMD" mnemonicParsing="false" onAction="#onMediaDeleteClick" textFill="#ff3333">
+                <graphic>
+                    <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
+                </graphic>
+            </Button>
+            <Button fx:id="btn_dmdPos_DMD" mnemonicParsing="false" onAction="#onDMDPosition" textFill="WHITE">
+                <graphic>
+                    <FontIcon iconColor="WHITE" iconLiteral="mdi2t-target-variant" />
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Adjust DMD position" />
+                </tooltip>
+            </Button>
+            </children>
+        </HBox>
+            </left>
+        </BorderPane>
+    </top>
+</BorderPane>

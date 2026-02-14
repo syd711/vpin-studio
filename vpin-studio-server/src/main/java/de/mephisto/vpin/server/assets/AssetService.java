@@ -1,18 +1,15 @@
 package de.mephisto.vpin.server.assets;
 
 import com.drew.imaging.ImageMetadataReader;
-import com.drew.imaging.ImageProcessingException;
 import com.drew.lang.Rational;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.StringValue;
 import com.drew.metadata.Tag;
-
+import de.mephisto.vpin.commons.fx.ImageUtil;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetMetaData;
-import de.mephisto.vpin.restclient.assets.AssetRequest;
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.frontend.FrontendService;
@@ -23,7 +20,6 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.util.ImageUtil;
 import de.mephisto.vpin.server.util.UploadUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -84,7 +80,6 @@ public class AssetService {
           defaultPictureService.extractDefaultPicture(game);
         }
 
-        target = defaultPictureService.getRawDefaultPicture(game);
         if (target.exists()) {
           BufferedImage bufferedImage = ImageUtil.loadImage(target);
           return ImageUtil.toBytes(bufferedImage);
@@ -103,40 +98,23 @@ public class AssetService {
     return null;
   }
 
-
-  public AssetRequest getMetadata(AssetRequest request) {
-    AssetMetaData metaData = new AssetMetaData();
-    request.setMetaData(metaData);
+  public static AssetMetaData getMetadata(File file) {
     try {
-      Game game = frontendService.getOriginalGame(request.getGameId());
-      if (game == null) {
-        LOG.info("No game found for " + request.getGameId());
-        request.setResult("No game found for " + request.getGameId());
-        return request;
-      }
-
-      FrontendMediaItem mediaItem = frontendService.getMediaItem(game, request.getScreen(), request.getName());
-      if (mediaItem == null) {
-        LOG.info("No media item found for " + request.getName());
-        request.setResult("No media item found for " + request.getName());
-        return request;
-      }
-
-      File file = mediaItem.getFile();
-      if (file.exists()) {
+      if (file != null && file.exists()) {
+        AssetMetaData metaData = new AssetMetaData();
         if (file.getName().endsWith(".mp3")) {
           readMp3Metadata(file, metaData);
         }
         else {
           readVideoAndImageMetadata(file, metaData);
         }
+        return metaData;
       }
     }
     catch (Exception e) {
       LOG.error("Failed to read video metadata: " + e.getMessage());
-      request.setResult("Failed to read video metadata: " + e.getMessage());
     }
-    return request;
+    return null;
   }
 
   private static void readMp3Metadata(File file, AssetMetaData metaData) throws IOException, SAXException, TikaException {
@@ -156,7 +134,13 @@ public class AssetService {
     }
   }
 
-  private static void readVideoAndImageMetadata(File file, AssetMetaData metaData) throws ImageProcessingException, IOException {
+  public static AssetMetaData readVideoAndImageMetadata(File file) throws Exception {
+    AssetMetaData metadata = new AssetMetaData();
+    readVideoAndImageMetadata(file, metadata);
+    return metadata;
+  }
+
+  private static void readVideoAndImageMetadata(File file, AssetMetaData metaData) throws Exception {
     Metadata metadata = ImageMetadataReader.readMetadata(file);
     Iterable<Directory> directories = metadata.getDirectories();
     for (Directory directory : directories) {
@@ -194,6 +178,20 @@ public class AssetService {
     return true;
   }
 
+  public boolean deleteCompetitionBackground(int gameId) {
+    try {
+      Optional<Asset> asset = assetRepository.findByExternalIdAndAssetType(String.valueOf(gameId), AssetType.COMPETITION.name());
+      if (asset.isPresent()) {
+        assetRepository.deleteByUuid(asset.get().getUuid());
+      }
+      return true;
+    }
+    catch (Exception e) {
+      LOG.error("Failed to delete competition background image: {}", e.getMessage(), e);
+    }
+    return false;
+  }
+
   public Boolean backgroundUpload(MultipartFile file, int gameId) throws Exception {
     if (file == null) {
       LOG.error("Upload request did not contain a file object.");
@@ -214,7 +212,7 @@ public class AssetService {
     return UploadUtil.upload(file, rawDefaultPicture);
   }
 
-
+  @Nullable
   public Asset getCompetitionBackground(long gameId) {
     try {
       Game game = gameService.getGame((int) gameId);
@@ -311,7 +309,7 @@ public class AssetService {
 
   public Asset getAvatar() {
     Asset avatar = (Asset) preferencesService.getPreferenceValue(PreferenceNames.AVATAR);
-    byte[] image = defaultPictureService.generateAvatarImage(avatar != null? avatar.getData() : null);
+    byte[] image = defaultPictureService.generateAvatarImage(avatar != null ? avatar.getData() : null);
     Asset clipped = new Asset();
     clipped.setAssetType(AssetType.AVATAR.name());
     clipped.setUpdatedAt(new Date());

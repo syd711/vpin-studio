@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.games;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+
+import de.mephisto.vpin.restclient.dmd.DMDPackageTypes;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -16,7 +18,7 @@ import java.util.Date;
 public class GameDetails {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-  @Column(name = "id", nullable = false)
+  @Column(name = "id", nullable = false, unique = true)
   private Long id;
 
   @Column(nullable = false, updatable = false)
@@ -32,6 +34,9 @@ public class GameDetails {
   @Column(length = 4096)
   public String assets;
 
+  @Column(length = 4096)
+  public String scripts;
+
   @Column(length = 1024)
   public String updates;
 
@@ -43,6 +48,8 @@ public class GameDetails {
   private String eventLog;
 
   private Long templateId;
+  private Long instructionCardTemplateId;
+  private Long wheelTemplateId;
 
   private String romName;
 
@@ -64,7 +71,9 @@ public class GameDetails {
 
   private int nvOffset;
 
-  private Boolean cardsDisabled;
+  private Boolean cardsDisabled = false;
+
+  private Boolean ignoreUpdates = false;
 
   private Boolean foundControllerStop = true;
 
@@ -74,10 +83,17 @@ public class GameDetails {
 
   private Boolean vrRoomEnabled = false;
 
-  private String dmdType;
+  private DMDPackageTypes dmdType;
   private String dmdGameName;
   private String dmdProjectFolder;
 
+  public Boolean getIgnoreUpdates() {
+    return ignoreUpdates;
+  }
+
+  public void setIgnoreUpdates(Boolean ignoreUpdates) {
+    this.ignoreUpdates = ignoreUpdates;
+  }
 
   public Boolean getVrRoomSupport() {
     return vrRoomSupport;
@@ -137,6 +153,22 @@ public class GameDetails {
 
   public void setTemplateId(Long templateId) {
     this.templateId = templateId;
+  }
+
+  public Long getInstructionCardTemplateId() {
+    return instructionCardTemplateId;
+  }
+
+  public void setInstructionCardTemplateId(Long instructionCardTemplateId) {
+    this.instructionCardTemplateId = instructionCardTemplateId;
+  }
+
+  public Long getWheelTemplateId() {
+    return wheelTemplateId;
+  }
+
+  public void setWheelTemplateId(Long wheelTemplateId) {
+    this.wheelTemplateId = wheelTemplateId;
   }
 
   public String getPupPack() {
@@ -201,6 +233,14 @@ public class GameDetails {
 
   public void setAssets(String assets) {
     this.assets = assets;
+  }
+  
+  public String getScripts() {
+    return scripts;
+  }
+
+  public void setScripts(String scripts) {
+    this.scripts = scripts;
   }
 
   public Date getCreatedAt() {
@@ -277,11 +317,11 @@ public class GameDetails {
     this.extRating = extRating;
   }
 
-  public String getDMDType() {
+  public DMDPackageTypes getDMDType() {
     return dmdType;
   }
 
-  public void setDMDType(String dmdType) {
+  public void setDMDType(DMDPackageTypes dmdType) {
     this.dmdType = dmdType;
   }
 

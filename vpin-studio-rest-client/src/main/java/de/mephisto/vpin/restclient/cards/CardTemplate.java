@@ -1,68 +1,321 @@
 package de.mephisto.vpin.restclient.cards;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.JsonSettings;
-import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 
 import java.util.Objects;
 
 public class CardTemplate extends JsonSettings {
+  public final static String CARD_TEMPLATE_PREFIX = "__card_template_";
+
   public final static String DEFAULT = "Default";
 
+  public final static int LEFT   = 1;
+  public final static int RIGHT  = 2;
+  public final static int CENTER = 4;
+  public final static int TOP    = 8;
+  public final static int BOTTOM = 16;
+  public final static int MIDDLE = 32;
+
   private Long id;
+  private Long parentId;
 
   private String name = DEFAULT;
-  private int alphaBlack = 33;
-  private int alphaWhite = 1;
+
+  private CardTemplateType templateType = CardTemplateType.HIGSCORE_CARD;
+
+  private Integer version = null;
+
+  private boolean renderBackground = false;
+  private boolean lockBackground = false;
+  private boolean renderFrame = false;
+  private boolean lockFrame = false;
+  private boolean renderTableName = false;
+  private boolean lockTableName = false;
+  private boolean renderTitle = false;
+  private boolean lockTitle = false;
+  private boolean renderWheelIcon = false;
+  private boolean lockWheelIcon = false;
+  private boolean renderManufacturerLogo = false;
+  private boolean lockManufacturerLogo = false;
+  private boolean renderOtherMedia = false;
+  private boolean lockOtherMedia = false;
+  private boolean renderCanvas = false;
+  private boolean lockCanvas = false;
+  private boolean renderScores = false;
+  private boolean lockScores = false;
+
+  private boolean lockOverlay = false;
+
+  // Background images
+  private boolean useDefaultBackground = true;
   private String background = "Old Bumbers";
-  private int borderWidth = 1;
-  private int padding = 10;
-  private int marginTop = 10;
-  private int marginRight = 10;
-  private int marginBottom = 10;
-  private int marginLeft = 10;
-  private int wheelPadding = 32;
-  private int rowMargin = 5;
-  private int wheelSize = 200;
-  private int blur = 6;
-  private String fontColor = "#FFFFFF";
-  private String friendsFontColor = "#CCCCCC";
+  private boolean useColoredBackground = false;
+  private String backgroundColor = "#000000";
+
+  // BACKGROUND SETTINGS
+  private double backgroundX = 0;
+  private double backgroundY = 0;
+  private double zoom = 100;
+  private boolean useDmdPositions = false;
+  private boolean fullScreen = true;
+
+  private int transparentPercentage = 0;
+  private int alphaBlack = 0;
+  private int alphaWhite = 0;
+  private int blur = 0;
   private boolean grayScale = false;
+
+  // FRAME SETTINGS
+  private int borderWidth = 0;
+  public int borderRadius = 0;
+  private String borderColor = "#FFFFFF";
+
+  private int marginTop = 0;
+  private int marginRight = 0;
+  private int marginBottom = 0;
+  private int marginLeft = 0;
+
+  private String frame;
+
+  // MANUFACTURER LOGO SETTINGS
+  private boolean manufacturerLogoKeepAspectRatio = true;
+  private boolean manufacturerLogoUseYear = true;
+  private double manufacturerLogoX = 0.15;
+  private double manufacturerLogoY = 0.05;
+  private double manufacturerLogoWidth = 0.85;
+  private double manufacturerLogoHeight = 0.2;
+  private int manufacturerLogoAlignment = CENTER | MIDDLE;
+
+  // OTHER MEDIA SETTINGS
+  private boolean otherMediaKeepAspectRatio = true;
+  private VPinScreen otherMediaScreen = null;
+  private double otherMediaX = 0.8;
+  private double otherMediaY = 0.6;
+  private double otherMediaWidth = 0.2;
+  private double otherMediaHeight = 0.2;
+  private int otherMediaAlignment = CENTER | MIDDLE;
+
+  // WHEEL SETTINGS
+  private double wheelX = 0.0;
+  private double wheelY = 0.5;
+  private double wheelSize = 0.3;
+
+  // SCORES SETTINGS
+  private double scoresX = 0.3;
+  private double scoresY = 0.4;
+  private double scoresWidth = 0.7;
+  private double scoresHeight = 0.6;
+  private int scoresAlignment = LEFT | TOP;
+
+  private int rowMargin = 5;
   private boolean rawScore = true;
   private int maxScores = 0;
+
+  private String fontColor = "#FFFFFF";
+  private String friendsFontColor = "#CCCCCC";
 
   private String scoreFontName = "Monospaced";
   private int scoreFontSize = 90;
   private String scoreFontStyle = "Regular";
+
+  private boolean renderFriends = true;
+  private boolean renderPositions = true;
+  private boolean renderScoreDates = true;
+
+  // TABLENAME SETTINGS
+  private boolean tableUseVpsName = false;
+  private boolean tableRenderManufacturer = true;
+  private boolean tableRenderYear = true;
   private String tableFontName = "Impact";
   private int tableFontSize = 72;
   private String tableFontStyle = "Regular";
+  private boolean tableUseDefaultColor = true;
+  private String tableColor = "#FFFFFF";
+  private double tableX = 0.0;
+  private double tableY = 0.2;
+  private double tableWidth = 1.0;
+  private double tableHeight = 0.2;
+  private int tableAlignment = CENTER | MIDDLE;
+
+  // TITLE SETTINGS
+  private String title = "Highscores";
   private String titleFontName = "Cambria";
   private int titleFontSize = 120;
   private String titleFontStyle = "Regular";
-  private String title = "Highscores";
+  private boolean titleUseDefaultColor = true;
+  private String titleColor = "#FFFFFF";
+  private double titleX = 0;
+  private double titleY = 0;
+  private double titleWidth = 1.0;
+  private double titleHeight = 0.2;
+  private int titleAlignment = CENTER | MIDDLE;
 
-  private boolean useDirectB2S = true;
-
-  private boolean transparentBackground = false;
-  private int transparentPercentage = 0;
-
-  private boolean renderTableName = true;
-  private boolean renderTitle = true;
-  private boolean renderWheelIcon = true;
-  private boolean renderPositions = true;
-  private boolean renderCanvas = false;
-
-  private int canvasX = 100;
-  private int canvasY = 100;
-  private int canvasWidth = 100;
-  private int canvasHeight = 100;
+  // CANVAS SETTINGS
+  private double canvasX = 0.1;
+  private double canvasY = 0.1;
+  private double canvasWidth = 0.8;
+  private double canvasHeight = 0.8;
   private String canvasBackground;
   private int canvasAlphaPercentage = 0;
   private int canvasBorderRadius = 0;
 
-  private boolean renderFriends = true;
+  // OVERLAY SETTINGS
   private boolean overlayMode = false;
   private String overlayScreen = null;
+
+
+  public Integer getVersion() {
+    return version;
+  }
+
+  public void setVersion(Integer version) {
+    this.version = version;
+  }
+
+  public CardTemplateType getTemplateType() {
+    return templateType;
+  }
+
+  public void setTemplateType(CardTemplateType templateType) {
+    this.templateType = templateType;
+  }
+ 
+  //----------------------------------------
+
+  @JsonIgnore
+  public boolean isTemplate() {
+    return parentId == null;
+  }
+
+  public boolean isLockOverlay() {
+    return lockOverlay;
+  }
+
+  public void setLockOverlay(boolean lockOverlay) {
+    this.lockOverlay = lockOverlay;
+  }
+
+  public Long getParentId() {
+    return parentId;
+  }
+
+  public void setParentId(Long parentId) {
+    this.parentId = parentId;
+  }
+
+  public boolean isLockBackground() {
+    return lockBackground;
+  }
+
+  public void setLockBackground(boolean lockBackground) {
+    this.lockBackground = lockBackground;
+  }
+
+  public boolean isLockFrame() {
+    return lockFrame;
+  }
+
+  public void setLockFrame(boolean lockFrame) {
+    this.lockFrame = lockFrame;
+  }
+
+  public boolean isLockTableName() {
+    return lockTableName;
+  }
+
+  public void setLockTableName(boolean lockTableName) {
+    this.lockTableName = lockTableName;
+  }
+
+  public boolean isLockTitle() {
+    return lockTitle;
+  }
+
+  public void setLockTitle(boolean lockTitle) {
+    this.lockTitle = lockTitle;
+  }
+
+  public boolean isLockWheelIcon() {
+    return lockWheelIcon;
+  }
+
+  public void setLockWheelIcon(boolean lockWheelIcon) {
+    this.lockWheelIcon = lockWheelIcon;
+  }
+
+  public boolean isLockManufacturerLogo() {
+    return lockManufacturerLogo;
+  }
+
+  public void setLockManufacturerLogo(boolean lockManufacturerLogo) {
+    this.lockManufacturerLogo = lockManufacturerLogo;
+  }
+
+  public boolean isLockOtherMedia() {
+    return lockOtherMedia;
+  }
+
+  public void setLockOtherMedia(boolean lockOtherMedia) {
+    this.lockOtherMedia = lockOtherMedia;
+  }
+
+  public boolean isLockCanvas() {
+    return lockCanvas;
+  }
+
+  public void setLockCanvas(boolean lockCanvas) {
+    this.lockCanvas = lockCanvas;
+  }
+
+  public boolean isLockScores() {
+    return lockScores;
+  }
+
+  public void setLockScores(boolean lockScores) {
+    this.lockScores = lockScores;
+  }
+
+  public double getBackgroundX() {
+    return backgroundX;
+  }
+
+  public void setBackgroundX(double backgroundX) {
+    this.backgroundX = backgroundX;
+  }
+
+  public double getBackgroundY() {
+    return backgroundY;
+  }
+
+  public void setBackgroundY(double backgroundY) {
+    this.backgroundY = backgroundY;
+  }
+
+  public double getZoom() {
+    return zoom;
+  }
+
+  public void setZoom(double zoom) {
+    this.zoom = zoom;
+  }
+
+  public boolean isUseDmdPositions() {
+    return useDmdPositions;
+  }
+
+  public void setUseDmdPositions(boolean useDmdPositions) {
+    this.useDmdPositions = useDmdPositions;
+  }
+
+  public boolean isFullScreen() {
+    return fullScreen;
+  }
+
+  public void setFullScreen(boolean fullScreen) {
+    this.fullScreen = fullScreen;
+  }
 
   public String getFriendsFontColor() {
     return friendsFontColor;
@@ -120,35 +373,35 @@ public class CardTemplate extends JsonSettings {
     this.renderCanvas = renderCanvas;
   }
 
-  public int getCanvasX() {
+  public double getCanvasX() {
     return canvasX;
   }
 
-  public void setCanvasX(int canvasX) {
+  public void setCanvasX(double canvasX) {
     this.canvasX = canvasX;
   }
 
-  public int getCanvasY() {
+  public double getCanvasY() {
     return canvasY;
   }
 
-  public void setCanvasY(int canvasY) {
+  public void setCanvasY(double canvasY) {
     this.canvasY = canvasY;
   }
 
-  public int getCanvasWidth() {
+  public double getCanvasWidth() {
     return canvasWidth;
   }
 
-  public void setCanvasWidth(int canvasWidth) {
+  public void setCanvasWidth(double canvasWidth) {
     this.canvasWidth = canvasWidth;
   }
 
-  public int getCanvasHeight() {
+  public double getCanvasHeight() {
     return canvasHeight;
   }
 
-  public void setCanvasHeight(int canvasHeight) {
+  public void setCanvasHeight(double canvasHeight) {
     this.canvasHeight = canvasHeight;
   }
 
@@ -176,12 +429,188 @@ public class CardTemplate extends JsonSettings {
     this.renderPositions = renderPositions;
   }
 
-  public int getWheelSize() {
+  public boolean isRenderScoreDates() {
+    return renderScoreDates;
+  }
+
+  public void setRenderScoreDates(boolean renderscoreDate) {
+    this.renderScoreDates = renderscoreDate;
+  }
+
+  public double getWheelX() {
+    return wheelX;
+  }
+
+  public void setWheelX(double wheelX) {
+    this.wheelX = wheelX;
+  }
+
+  public double getWheelY() {
+    return wheelY;
+  }
+
+  public void setWheelY(double wheelY) {
+    this.wheelY = wheelY;
+  }
+
+  public double getWheelSize() {
     return wheelSize;
   }
 
-  public void setWheelSize(int wheelSize) {
+  public void setWheelSize(double wheelSize) {
     this.wheelSize = wheelSize;
+  }
+
+  public boolean isManufacturerLogoKeepAspectRatio() {
+    return manufacturerLogoKeepAspectRatio;
+  }
+
+  public void setManufacturerLogoKeepAspectRatio(boolean manufacturerKeepAspectRatio) {
+    this.manufacturerLogoKeepAspectRatio = manufacturerKeepAspectRatio;
+  }
+
+  public boolean isManufacturerLogoUseYear() {
+    return manufacturerLogoUseYear;
+  }
+
+  public void setManufacturerLogoUseYear(boolean manufacturerLogoUseYear) {
+    this.manufacturerLogoUseYear = manufacturerLogoUseYear;
+  }
+
+  public double getManufacturerLogoX() {
+    return manufacturerLogoX;
+  }
+
+  public void setManufacturerLogoX(double manufacturerLogoX) {
+    this.manufacturerLogoX = manufacturerLogoX;
+  }
+
+  public double getManufacturerLogoY() {
+    return manufacturerLogoY;
+  }
+
+  public void setManufacturerLogoY(double manufacturerLogoY) {
+    this.manufacturerLogoY = manufacturerLogoY;
+  }
+
+  public double getManufacturerLogoWidth() {
+    return manufacturerLogoWidth;
+  }
+
+  public void setManufacturerLogoWidth(double manufacturerLogoWidth) {
+    this.manufacturerLogoWidth = manufacturerLogoWidth;
+  }
+
+  public double getManufacturerLogoHeight() {
+    return manufacturerLogoHeight;
+  }
+
+  public void setManufacturerLogoHeight(double manufacturerLogoHeight) {
+    this.manufacturerLogoHeight = manufacturerLogoHeight;
+  }
+
+  public int getManufacturerLogoAlignment() {
+    return manufacturerLogoAlignment;
+  }
+
+  public void setManufacturerLogoAlignment(int manufacturerLogoAlignment) {
+    this.manufacturerLogoAlignment = manufacturerLogoAlignment;
+  }
+
+  public VPinScreen getOtherMediaScreen() {
+    return otherMediaScreen;
+  }
+
+  public void setOtherMediaScreen(VPinScreen otherMediaScreen) {
+    this.otherMediaScreen = otherMediaScreen;
+  }
+
+  public boolean isOtherMediaKeepAspectRatio() {
+    return otherMediaKeepAspectRatio;
+  }
+
+  public void setOtherMediaKeepAspectRatio(boolean other2MediaKeepAspectRatio) {
+    this.otherMediaKeepAspectRatio = other2MediaKeepAspectRatio;
+  }
+
+  public double getOtherMediaX() {
+    return otherMediaX;
+  }
+
+  public void setOtherMediaX(double other2MediaX) {
+    this.otherMediaX = other2MediaX;
+  }
+
+  public double getOtherMediaY() {
+    return otherMediaY;
+  }
+
+  public void setOtherMediaY(double other2MediaY) {
+    this.otherMediaY = other2MediaY;
+  }
+
+  public double getOtherMediaWidth() {
+    return otherMediaWidth;
+  }
+
+  public void setOtherMediaWidth(double other2MediaWidth) {
+    this.otherMediaWidth = other2MediaWidth;
+  }
+
+  public double getOtherMediaHeight() {
+    return otherMediaHeight;
+  }
+
+  public void setOtherMediaHeight(double other2MediaHeight) {
+    this.otherMediaHeight = other2MediaHeight;
+  }
+
+    public int getOtherMediaAlignment() {
+    return otherMediaAlignment;
+  }
+
+  public void setOtherMediaAlignment(int otherMediaAlignment) {
+    this.otherMediaAlignment = otherMediaAlignment;
+  }
+
+  public double getScoresX() {
+    return scoresX;
+  }
+
+  public void setScoresX(double scoreX) {
+    this.scoresX = scoreX;
+  }
+
+  public double getScoresY() {
+    return scoresY;
+  }
+
+  public void setScoresY(double scoreY) {
+    this.scoresY = scoreY;
+  }
+
+  public double getScoresWidth() {
+    return scoresWidth;
+  }
+
+  public void setScoresWidth(double scoreWidth) {
+    this.scoresWidth = scoreWidth;
+  }
+
+  public double getScoresHeight() {
+    return scoresHeight;
+  }
+
+  public void setScoresHeight(double scoreHeight) {
+    this.scoresHeight = scoreHeight;
+  }
+
+  public int getScoresAlignment() {
+    return scoresAlignment;
+  }
+
+  public void setScoresAlignment(int scoresAlignment) {
+    this.scoresAlignment = scoresAlignment;
   }
 
   public int getMarginTop() {
@@ -216,12 +645,36 @@ public class CardTemplate extends JsonSettings {
     this.marginLeft = marginLeft;
   }
 
+  public String getFrame() {
+    return frame;
+  }
+
+  public void setFrame(String frame) {
+    this.frame = frame;
+  }
+
   public Long getId() {
     return id;
   }
 
   public void setId(Long id) {
     this.id = id;
+  }
+
+  public boolean isRenderBackground() {
+    return renderBackground;
+  }
+
+  public void setRenderBackground(boolean renderBackground) {
+    this.renderBackground = renderBackground;
+  }
+  
+  public boolean isRenderFrame() {
+    return renderFrame;
+  }
+
+  public void setRenderFrame(boolean renderFrame) {
+    this.renderFrame = renderFrame;
   }
 
   public boolean isRenderWheelIcon() {
@@ -232,28 +685,28 @@ public class CardTemplate extends JsonSettings {
     this.renderWheelIcon = renderWheelIcon;
   }
 
+  public boolean isRenderManufacturerLogo() {
+    return renderManufacturerLogo;
+  }
+
+  public void setRenderManufacturerLogo(boolean renderManufacturerLogo) {
+    this.renderManufacturerLogo = renderManufacturerLogo;
+  }
+
+  public boolean isRenderOtherMedia() {
+    return renderOtherMedia;
+  }
+
+  public void setRenderOtherMedia(boolean renderOther2Media) {
+    this.renderOtherMedia = renderOther2Media;
+  }
+
   public boolean isRenderTitle() {
     return renderTitle;
   }
 
   public void setRenderTitle(boolean renderTitle) {
     this.renderTitle = renderTitle;
-  }
-
-  public boolean isTransparentBackground() {
-    return transparentBackground;
-  }
-
-  public void setTransparentBackground(boolean transparentBackground) {
-    this.transparentBackground = transparentBackground;
-  }
-
-  public int getTransparentPercentage() {
-    return transparentPercentage;
-  }
-
-  public void setTransparentPercentage(int transparentPercentage) {
-    this.transparentPercentage = transparentPercentage;
   }
 
   public boolean isRenderTableName() {
@@ -264,12 +717,33 @@ public class CardTemplate extends JsonSettings {
     this.renderTableName = renderTableName;
   }
 
+  public boolean isRenderScores() {
+    return renderScores;
+  }
+
+  public void setRenderScores(boolean renderScore) {
+    this.renderScores = renderScore;
+  }
+
   public String getName() {
     return name;
   }
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  @JsonIgnore
+  public boolean isDefault() {
+    return DEFAULT.equals(getName());
+  }
+
+  public int getTransparentPercentage() {
+    return transparentPercentage;
+  }
+
+  public void setTransparentPercentage(int transparentPercentage) {
+    this.transparentPercentage = transparentPercentage;
   }
 
   public int getAlphaBlack() {
@@ -295,6 +769,14 @@ public class CardTemplate extends JsonSettings {
   public void setBackground(String background) {
     this.background = background;
   }
+ 
+  public String getBackgroundColor() {
+    return backgroundColor;
+  }
+
+  public void setBackgroundColor(String backgroundColor) {
+    this.backgroundColor = backgroundColor;
+  }
 
   public int getBorderWidth() {
     return borderWidth;
@@ -304,20 +786,12 @@ public class CardTemplate extends JsonSettings {
     this.borderWidth = borderWidth;
   }
 
-  public int getPadding() {
-    return padding;
+  public int getBorderRadius() {
+    return borderRadius;
   }
 
-  public void setPadding(int padding) {
-    this.padding = padding;
-  }
-
-  public int getWheelPadding() {
-    return wheelPadding;
-  }
-
-  public void setWheelPadding(int wheelPadding) {
-    this.wheelPadding = wheelPadding;
+  public void setBorderRadius(int borderRadius) {
+    this.borderRadius = borderRadius;
   }
 
   public int getRowMargin() {
@@ -407,6 +881,86 @@ public class CardTemplate extends JsonSettings {
   public void setTableFontStyle(String tableFontStyle) {
     this.tableFontStyle = tableFontStyle;
   }
+  
+  public boolean isTableUseVpsName() {
+    return tableUseVpsName;
+  }
+
+  public void setTableUseVpsName(boolean tableUseVpsName) {
+    this.tableUseVpsName = tableUseVpsName;
+  }
+
+  public boolean isTableRenderYear() {
+    return tableRenderYear;
+  }
+
+  public void setTableRenderYear(boolean tableRenderYear) {
+    this.tableRenderYear = tableRenderYear;
+  }
+
+  public boolean isTableRenderManufacturer() {
+    return tableRenderManufacturer;
+  }
+
+  public void setTableRenderManufacturer(boolean tableRenderManufacturer) {
+    this.tableRenderManufacturer = tableRenderManufacturer;
+  }
+
+  public boolean isTableUseDefaultColor() {
+    return tableUseDefaultColor;
+  }
+
+  public void setTableUseDefaultColor(boolean tableUseDefaultColor) {
+    this.tableUseDefaultColor = tableUseDefaultColor;
+  }
+
+  public String getTableColor() {
+    return tableColor;
+  }
+
+  public void setTableColor(String tableColor) {
+    this.tableColor = tableColor;
+  }
+
+  public double getTableX() {
+    return tableX;
+  }
+
+  public void setTableX(double tableX) {
+    this.tableX = tableX;
+  }
+
+  public double getTableY() {
+    return tableY;
+  }
+
+  public void setTableY(double tableY) {
+    this.tableY = tableY;
+  }
+
+  public double getTableWidth() {
+    return tableWidth;
+  }
+
+  public void setTableWidth(double tableWidth) {
+    this.tableWidth = tableWidth;
+  }
+
+  public double getTableHeight() {
+    return tableHeight;
+  }
+
+  public void setTableHeight(double tableHeight) {
+    this.tableHeight = tableHeight;
+  }
+
+  public int getTableAlignment() {
+    return tableAlignment;
+  }
+
+  public void setTableAlignment(int tableAlignment) {
+    this.tableAlignment = tableAlignment;
+  }
 
   public String getTitleFontName() {
     return titleFontName;
@@ -440,25 +994,96 @@ public class CardTemplate extends JsonSettings {
     this.title = title;
   }
 
-  public boolean isUseDirectB2S() {
-    return useDirectB2S;
+  public boolean isTitleUseDefaultColor() {
+    return titleUseDefaultColor;
   }
 
-  public void setUseDirectB2S(boolean useDirectB2S) {
-    this.useDirectB2S = useDirectB2S;
+  public void setTitleUseDefaultColor(boolean titleUseDefaultColor) {
+    this.titleUseDefaultColor = titleUseDefaultColor;
+  }
+
+  public String getTitleColor() {
+    return titleColor;
+  }
+
+  public void setTitleColor(String titleColor) {
+    this.titleColor = titleColor;
+  }
+
+  public double getTitleX() {
+    return titleX;
+  }
+
+  public void setTitleX(double titleX) {
+    this.titleX = titleX;
+  }
+
+  public double getTitleY() {
+    return titleY;
+  }
+
+  public void setTitleY(double titleY) {
+    this.titleY = titleY;
+  }
+
+  public double getTitleWidth() {
+    return titleWidth;
+  }
+
+  public void setTitleWidth(double titleWidth) {
+    this.titleWidth = titleWidth;
+  }
+
+  public double getTitleHeight() {
+    return titleHeight;
+  }
+
+  public void setTitleHeight(double titleHeight) {
+    this.titleHeight = titleHeight;
+  }
+
+  public int getTitleAlignment() {
+    return titleAlignment;
+  }
+
+  public void setTitleAlignment(int titleAlignment) {
+    this.titleAlignment = titleAlignment;
+  }
+
+  public String getBorderColor() {
+    return borderColor;
+  }
+
+  public void setBorderColor(String borderColor) {
+    this.borderColor = borderColor;
+  }
+
+  public boolean isUseDefaultBackground() {
+    return useDefaultBackground;
+  }
+
+  public void setUseDefaultBackground(boolean useDefaultBackground) {
+    this.useDefaultBackground = useDefaultBackground;
+  }
+
+  public boolean isUseColoredBackground() {
+    return useColoredBackground;
+  }
+
+  public void setUseColoredBackground(boolean useColorBackground) {
+    this.useColoredBackground = useColorBackground;
   }
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     CardTemplate that = (CardTemplate) o;
-    return Objects.equals(name, that.name);
+    return Objects.equals(id, that.id) && Objects.equals(parentId, that.parentId) && Objects.equals(name, that.name) && templateType == that.templateType;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name);
+    return Objects.hash(id, parentId, name, templateType);
   }
 
   @Override
@@ -470,4 +1095,168 @@ public class CardTemplate extends JsonSettings {
   public String getSettingsName() {
     return null;
   }
+
+  public static int setHorizontalAlignment(int alignment, int value) {
+    int valign = alignment & (TOP | MIDDLE | BOTTOM);
+    return value | valign;
+  }
+
+  public static int setVerticalAlignment(int alignment, int value) {
+    int halign = alignment & (LEFT | CENTER | RIGHT);
+    return value | halign;
+  }
+
+  public static boolean isOn(int alignment, int value) {
+    return (alignment & value) > 0;
+  }
+
+  //-----------------------------------------------------------
+
+  public void resetDefaultHighscoreCard() {
+    renderBackground = true;
+    renderFrame = true;
+    renderTableName = true;
+    renderTitle = true;
+    renderWheelIcon = true;
+    renderManufacturerLogo = false;
+    renderOtherMedia = false;
+    renderCanvas = false;
+    renderScores = true;
+
+    // BACKGROUND IMAGES
+    useDefaultBackground = true;
+    background = "Old Bumbers";
+    useColoredBackground = true;
+    backgroundColor = "#000000";
+
+    transparentPercentage = 0;
+    alphaBlack = 33;
+    alphaWhite = 1;
+    blur = 6;
+    grayScale = false;
+
+    // FRAME SETTINGS
+    borderWidth = 1;
+    borderRadius = 0;
+    borderColor = "#FFFFFF";
+
+    marginTop = 10;
+    marginRight = 10;
+    marginBottom = 10;
+    marginLeft = 10;
+
+    // MANUFACTURER LOGO SETTINGS
+    manufacturerLogoKeepAspectRatio = true;
+    manufacturerLogoUseYear = true;
+    manufacturerLogoX = 0.15;
+    manufacturerLogoY = 0.05;
+    manufacturerLogoWidth = 0.85;
+    manufacturerLogoHeight = 0.2;
+
+    // OTHER MEDIA SETTINGS
+    otherMediaKeepAspectRatio = true;
+    otherMediaScreen = null;
+    otherMediaX = 0.8;
+    otherMediaY = 0.6;
+    otherMediaWidth = 0.2;
+    otherMediaHeight = 0.2;
+
+    // WHEEL SETTINGS
+    wheelX = 0.0;
+    wheelY = 0.5;
+    wheelSize = 0.3;
+
+    // SCORES SETTINGS
+    scoresX = 0.3;
+    scoresY = 0.4;
+    scoresWidth = 0.7;
+    scoresHeight = 0.6;
+
+    rowMargin = 5;
+    rawScore = true;
+    maxScores = 0;
+
+    fontColor = "#FFFFFF";
+    friendsFontColor = "#CCCCCC";
+
+    scoreFontName = "Monospaced";
+    scoreFontSize = 90;
+    scoreFontStyle = "Regular";
+
+    renderFriends = true;
+    renderPositions = true;
+    renderScoreDates = true;
+
+    // TABLENAME SETTINGS
+    tableUseVpsName = false;
+    tableRenderManufacturer = true;
+    tableRenderYear = true;
+    tableFontName = "Impact";
+    tableFontSize = 72;
+    tableFontStyle = "Regular";
+    tableUseDefaultColor = true;
+    tableColor = "#FFFFFF";
+    tableX = 0.0;
+    tableY = 0.2;
+    tableWidth = 1.0;
+    tableHeight = 0.2;
+
+    // TITLE SETTINGS
+    title = "Highscores";
+    titleFontName = "Cambria";
+    titleFontSize = 120;
+    titleFontStyle = "Regular";
+    titleUseDefaultColor = true;
+    titleColor = "#FFFFFF";
+    titleX = 0;
+    titleY = 0;
+    titleWidth = 1.0;
+    titleHeight = 0.2;
+
+    // CANVAS SETTINGS
+    canvasX = 0.1;
+    canvasY = 0.1;
+    canvasWidth = 0.8;
+    canvasHeight = 0.8;
+    canvasAlphaPercentage = 0;
+    canvasBorderRadius = 0;
+
+    // OVERLAY SETTINGS
+    overlayMode = false;
+    overlayScreen = null;
+  }
+
+  public void resetDefaultInstructionsCard() {
+    //TODO find a good feault settings
+  }
+
+  public void resetDefaultWheel() {
+    //TODO find a good default settings
+    renderBackground = true;
+    renderFrame = true;
+    renderTableName = true;
+
+    useDefaultBackground = true;
+
+    borderRadius = 2000;
+    marginTop = 80;
+    marginBottom = 80;
+    marginLeft = 80;
+    marginRight = 80;
+    frame = "wheel-tarcissio";
+
+    tableFontName = "Arial";
+    tableFontSize = 100;
+    tableUseVpsName = true;
+    tableRenderManufacturer = false;
+    tableRenderYear = false;
+    tableUseDefaultColor = false;
+    tableColor = "#999999";
+    tableX = 0;
+    tableY = 0.85;
+    tableWidth = 1;
+    tableHeight = 0.15;
+    tableAlignment = CENTER | MIDDLE;
+  }
+
 }

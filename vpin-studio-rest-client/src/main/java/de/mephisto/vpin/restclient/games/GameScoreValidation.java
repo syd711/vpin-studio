@@ -9,6 +9,7 @@ public class GameScoreValidation {
   public final static String ERROR_ICON = "bi-x-circle";
   public final static String ERROR_COLOR = "#FF9933";
 
+  public final static String STATUS_ROM_NOT_FOUND = "The ROM name does not exist.";
   public final static String STATUS_ROM_MATCH_FOUND = "A matching highscore entry has been found for this ROM name.";
   public final static String STATUS_ROM_ALIASED_MATCH_FOUND = "A matching highscore entry has been found for this aliased ROM name.";
   public final static String STATUS_VPREG_STG_MATCH_FOUND = "A matching highscore entry has been found for this ROM name.";

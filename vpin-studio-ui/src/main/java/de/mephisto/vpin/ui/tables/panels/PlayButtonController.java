@@ -6,6 +6,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.emulators.LaunchConfiguration;
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -23,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +34,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
 public class PlayButtonController implements Initializable, ChangeListener<LaunchConfiguration> {
-  private final static Logger LOG = LoggerFactory.getLogger(PlayButtonController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private ComboBox<LaunchConfiguration> launchCombo;
@@ -71,24 +73,22 @@ public class PlayButtonController implements Initializable, ChangeListener<Launc
 
   public void setData(GameRepresentation game) {
     this.game = game;
-    boolean disable = game == null || game.getGameFilePath() == null;
+    boolean disable = true;
     launchCombo.setDisable(disable);
     launchBtn.setDisable(disable);
     this.launchCombo.getItems().clear();
 
-    if (disable || game == null) {
-      return;
-    }
-
-    JFXFuture.supplyAllAsync(
-      () -> client.getEmulatorService().getGameEmulator(game.getEmulatorId()),
-      () -> client.getEmulatorService().getAltExeNames(game.getEmulatorId())
+    JFXFuture.supplyAsync(
+        () -> client.getEmulatorService().getAltExeNames(game.getEmulatorId())
     ).thenAcceptLater(objs -> {
-      GameEmulatorRepresentation gameEmulator = (GameEmulatorRepresentation) objs[0];
       @SuppressWarnings("unchecked")
-      List<String> altExeNames = (List<String>) objs[1];
+      List<String> altExeNames = objs;
 
       List<LaunchConfiguration> items = new ArrayList<>();
+      GameEmulatorRepresentation gameEmulator = null;
+      if (game != null) {
+        gameEmulator = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
+      }
 
       String exeName = gameEmulator != null ? gameEmulator.getExeName() : null;
       if (!StringUtils.isEmpty(exeName)) {
@@ -99,7 +99,7 @@ public class PlayButtonController implements Initializable, ChangeListener<Launc
         items.add(new LaunchConfiguration("Launch via PinUP Popper", true, null, null));
       }
 
-      if (game.isVpxGame() && altExeNames != null) {
+      if (client.getEmulatorService().isVpxGame(game) && altExeNames != null) {
         for (String altExeName : altExeNames) {
           items.add(new LaunchConfiguration(altExeName, false, altExeName, null));
           if (isCameraModeSupported(altExeName)) {
@@ -107,10 +107,16 @@ public class PlayButtonController implements Initializable, ChangeListener<Launc
           }
         }
       }
-      else if (game.isFpGame() && altExeNames != null) {
+      else if (client.getEmulatorService().isFpGame(game) && altExeNames != null) {
         for (String altExeName : altExeNames) {
           items.add(new LaunchConfiguration(altExeName, false, altExeName, null));
         }
+      }
+      else if (client.getEmulatorService().isZenGame(game) && !gameEmulator.getType().equals(EmulatorType.ZenFX2)) {
+        items.add(new LaunchConfiguration("Launch via Steam", false, null, null));
+      }
+      else if (client.getEmulatorService().isZaccariaGame(game)) {
+        items.add(new LaunchConfiguration("Launch via Steam", false, null, null));
       }
 
       launchCombo.setItems(FXCollections.observableList(items));
@@ -128,6 +134,17 @@ public class PlayButtonController implements Initializable, ChangeListener<Launc
         this.launchCombo.valueProperty().addListener(this);
       }
     });
+  }
+
+  private boolean isPlayable(GameRepresentation game, GameEmulatorRepresentation gameEmulator) {
+    if (game == null) {
+      return false;
+    }
+
+    if (gameEmulator.isZaccariaEmulator() || gameEmulator.isFxEmulator()) {
+      return true;
+    }
+    return game.getGameFilePath() != null;
   }
 
   private static boolean isCameraModeSupported(String altExeName) {
@@ -167,7 +184,7 @@ public class PlayButtonController implements Initializable, ChangeListener<Launc
   @Override
   public void changed(ObservableValue<? extends LaunchConfiguration> observable, LaunchConfiguration oldValue, LaunchConfiguration newValue) {
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-    if(newValue != null) {
+    if (newValue != null) {
       uiSettings.setLaunchConfiguration(newValue);
       client.getPreferenceService().setJsonPreference(uiSettings);
     }

@@ -87,6 +87,7 @@
                                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="459.1999755859375" minWidth="1.6000488281249545" prefWidth="8.000073242187455" />
                                 </columnConstraints>
                                 <rowConstraints>
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -100,65 +101,65 @@
                                     <Insets top="6.0" />
                                  </VBox.margin>
                                  <children>
-                                    <Label text="Name:" textFill="WHITE">
+                                    <Label text="Name:" textFill="WHITE" GridPane.rowIndex="1">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="15.0" text="IPDB Url:" textFill="WHITE" GridPane.rowIndex="1">
+                                    <Label layoutX="10.0" layoutY="15.0" text="IPDB Url:" textFill="WHITE" GridPane.rowIndex="2">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="49.0" text="Manufacturer:" textFill="WHITE" GridPane.rowIndex="2">
+                                    <Label layoutX="10.0" layoutY="49.0" text="Manufacturer:" textFill="WHITE" GridPane.rowIndex="3">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="116.0" text="Players:" textFill="WHITE" GridPane.rowIndex="4">
+                                    <Label layoutX="10.0" layoutY="116.0" text="Players:" textFill="WHITE" GridPane.rowIndex="5">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="150.0" text="Updated:" textFill="WHITE" GridPane.rowIndex="5">
+                                    <Label layoutX="10.0" layoutY="150.0" text="Updated:" textFill="WHITE" GridPane.rowIndex="6">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="116.0" text="Year:" textFill="WHITE" GridPane.rowIndex="3">
+                                    <Label layoutX="10.0" layoutY="116.0" text="Year:" textFill="WHITE" GridPane.rowIndex="4">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="manufacturerLabel" layoutX="139.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                    <Label fx:id="manufacturerLabel" layoutX="139.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="yearLabel" layoutX="139.0" layoutY="116.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                    <Label fx:id="yearLabel" layoutX="139.0" layoutY="116.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="playersLabel" layoutX="139.0" layoutY="150.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                    <Label fx:id="playersLabel" layoutX="139.0" layoutY="150.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="updatedLabel" layoutX="139.0" layoutY="184.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                    <Label fx:id="updatedLabel" layoutX="139.0" layoutY="184.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="6">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Hyperlink fx:id="ipdbLink" onAction="#onIpdbLink" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                    <HBox spacing="6.0" GridPane.columnIndex="1">
+                                    <Hyperlink fx:id="ipdbLink" onAction="#onIpdbLink" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    <HBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                        <children>
                                           <TextField fx:id="nameField" alignment="BASELINE_LEFT" prefHeight="30.0" prefWidth="392.0" promptText="Enter Table Name...">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </TextField>
-                                          <Button fx:id="openTableVersionBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="link-component">
+                                          <Button fx:id="openTableLinkBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="link-component">
                                              <graphic>
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" iconSize="18" />
                                              </graphic>
@@ -171,7 +172,7 @@
                                           </Button>
                                        </children>
                                     </HBox>
-                                    <Label layoutX="10.0" layoutY="168.0" text="Table Version:" textFill="WHITE" GridPane.rowIndex="6">
+                                    <Label layoutX="10.0" layoutY="168.0" text="Table Version:" textFill="WHITE" GridPane.rowIndex="7">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -179,7 +180,7 @@
                                           <Insets top="3.0" />
                                        </padding>
                                     </Label>
-                                    <HBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                    <HBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
                                        <children>
                                           <ComboBox fx:id="tableVersionsCombo" prefWidth="487.0" />
                                           <VBox spacing="3.0">
@@ -213,7 +214,7 @@
                                           </VBox>
                                        </children>
                                     </HBox>
-                                    <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="RIGHT">
+                                    <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
                                        <graphic>
                                           <FontIcon iconLiteral="mdi2d-database-search-outline" iconSize="18" />
                                        </graphic>
@@ -221,17 +222,42 @@
                                           <Insets right="60.0" />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="168.0" text="Authors:" textFill="WHITE" GridPane.rowIndex="7">
+                                    <Label layoutX="10.0" layoutY="168.0" text="Authors:" textFill="WHITE" GridPane.rowIndex="8">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                    <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="8">
                                        <children>
                                           <Label fx:id="versionAuthorsLabel" text="-" textFill="WHITE">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <Label layoutX="10.0" layoutY="45.0" text="Updates:" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
+                                       <children>
+                                          <CheckBox fx:id="updatesCheckbox" mnemonicParsing="false" text="Ignore VPS Updates" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </CheckBox>
+                                          <Label>
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip prefWidth="300.0" text="If checked, no updates indicators will be shown for this table anymore." wrapText="true" />
+                                             </tooltip>
                                           </Label>
                                        </children>
                                     </HBox>

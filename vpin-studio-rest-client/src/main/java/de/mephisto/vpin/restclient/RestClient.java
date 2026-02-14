@@ -4,15 +4,11 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientErrorHandler;
-import org.apache.commons.io.IOUtils;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
-import org.springframework.http.client.ClientHttpRequestExecution;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
-import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.client.*;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.ResourceAccessException;
@@ -21,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.invoke.MethodHandles;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
@@ -29,7 +26,7 @@ import java.util.*;
  *
  */
 public class RestClient implements ClientHttpRequestInterceptor {
-  private final static Logger LOG = LoggerFactory.getLogger(RestTemplate.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   public static final String SCHEME = "http";
   public static final String HOST = "localhost";
   public static final int PORT = 8089;
@@ -91,6 +88,13 @@ public class RestClient implements ClientHttpRequestInterceptor {
 
   public void setErrorHandler(VPinStudioClientErrorHandler errorHandler) {
 //    this.errorHandler = errorHandler;
+  }
+
+  public static RestTemplate createTimeoutBasedTemplate(int timeoutMs) {
+    SimpleClientHttpRequestFactory httpRequestFactory = new SimpleClientHttpRequestFactory();
+    httpRequestFactory.setConnectTimeout(timeoutMs);
+    httpRequestFactory.setReadTimeout(timeoutMs);
+    return new RestTemplate(httpRequestFactory);
   }
 
   public String getBaseUrl() {
@@ -179,7 +183,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
     return exchange;
   }
 
-  public Boolean put(String url, Map<String, Object> model) throws Exception {
+  public Boolean put(String url, Map<String, Object> model) {
     long start = System.currentTimeMillis();
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
@@ -189,7 +193,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
     return exchange;
   }
 
-  public <T> T put(String url, Map<String, Object> model, Class<T> entityType) throws Exception {
+  public <T> T put(String url, Map<String, Object> model, Class<T> entityType) {
     long start = System.currentTimeMillis();
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
@@ -269,7 +273,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
       return baos.toByteArray();
     }
     catch (Exception e) {
-      LOG.error("Failed while reading bytes from %s: %s", resource, e.getMessage(), e);
+      LOG.error("Failed while reading bytes from {}: {}", resource, e.getMessage(), e);
     }
     return null;
   }

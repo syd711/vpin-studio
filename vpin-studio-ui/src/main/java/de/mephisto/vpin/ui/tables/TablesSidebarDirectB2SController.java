@@ -13,13 +13,13 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
+import de.mephisto.vpin.ui.tables.models.B2SDualMode;
 import de.mephisto.vpin.ui.tables.models.B2SFormPosition;
 import de.mephisto.vpin.ui.tables.models.B2SGlowing;
 import de.mephisto.vpin.ui.tables.models.B2SLedType;
 import de.mephisto.vpin.ui.tables.models.B2SStartAsExe;
 import de.mephisto.vpin.ui.tables.models.B2SVisibility;
 import de.mephisto.vpin.ui.util.JFXHelper;
-import de.mephisto.vpin.ui.util.MediaUtil;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -35,8 +35,7 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -47,7 +46,7 @@ import java.util.ResourceBundle;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablesSidebarDirectB2SController implements Initializable, StudioEventListener {
-  private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarDirectB2SController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final Debouncer debouncer = new Debouncer();
   public static final int DEBOUNCE_MS = 100;
@@ -74,6 +73,11 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   public final static List<B2SLedType> LED_TYPES = Arrays.asList(
     new B2SLedType(1, "Simple LEDs"),
     new B2SLedType(2, "Dream7 LEDs")
+  );
+
+  public final static List<B2SDualMode> DUAL_MODES = Arrays.asList(
+    new B2SDualMode(1, "Authentic"),
+    new B2SDualMode(2, "Fantasy")
   );
 
   public final static List<B2SGlowing> GLOWINGS = Arrays.asList(
@@ -198,6 +202,9 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   private ComboBox<B2SLedType> usedLEDType;
 
   @FXML
+  private ComboBox<B2SDualMode> dualModes;
+
+  @FXML
   private ComboBox<B2SVisibility> startBackground;
 
   @FXML
@@ -222,7 +229,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   @FXML
   private void onDMDPosition() {
     if (game.isPresent()) {
-      TableDialogs.openDMDPositionDialog(game.get(), null);
+      TableDialogs.openDMDPositionDialog(game.get(), tablesController.getTableOverviewController());
     }
   }
 
@@ -271,12 +278,8 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   @FXML
   private void onOpenDirectB2SBackground() {
     if (tableData != null) {
-      try (InputStream in = client.getBackglassServiceClient().getDirectB2sBackground(tableData)) {
-        MediaUtil.openMedia(in);
-      }
-      catch (IOException ioe) {
-        LOG.error("Cannot open media for game " + game.get().getId(), ioe);
-      }
+      String url = client.getBackglassServiceClient().getDirectB2sBackgroundUrl(tableData.getEmulatorId(), tableData.getFilename());
+      TableDialogs.openMediaDialog(Studio.stage, "Backglass", url, "image/png");
     }
   }
 
@@ -387,6 +390,15 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
         save();
       }
     });
+
+    dualModes.setItems(FXCollections.observableList(DUAL_MODES));
+    dualModes.valueProperty().addListener((observableValue, aBoolean, t1) -> {
+      if (t1 != null) {
+        tableSettings.setDualMode(t1.getId());
+        save();
+      }
+    });
+
 
     startBackground.setItems(FXCollections.observableList(VISIBILITIES));
     startBackground.valueProperty().addListener((observableValue, aBoolean, t1) -> {
@@ -526,6 +538,8 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
           }
 
           if (tableSettings != null) {
+            setDisable(b2sSettings, false);
+
             hideGrill.setValue(VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getHideGrill()).findFirst().orElse(null));
             hideB2SDMD.selectedProperty().setValue(tableSettings.isHideB2SDMD());
             hideB2SBackglass.selectedProperty().setValue(tableSettings.isHideB2SBackglass());
@@ -540,6 +554,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
             startBackground.setValue(VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getStartBackground()).findFirst().orElse(null));
             formToPosition.setValue(FORM_POSITIONS.stream().filter(v -> v.getId() == tableSettings.getFormToPosition()).findFirst().orElse(null));
             startAsExe.setValue(START_AS_EXE.stream().filter(v -> v.getId() == tableSettings.getStartAsEXE()).findFirst().orElse(null));
+            dualModes.setValue(DUAL_MODES.stream().filter(v -> v.getId() == tableSettings.getDualMode()).findFirst().orElse(null));
 
             DirectB2ServerSettings serverSettings = client.getBackglassServiceClient().getServerSettings();
             if (serverSettings != null) {
@@ -548,7 +563,6 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
             }
           }
 
-          setDisable(b2sSettings, false);
           startAsExeServer.setDisable(true);
 
           skipGIFrames.setDisable(tableData.getIlluminations() == 0);
@@ -557,6 +571,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
           skipLEDFrames.setDisable(tableData.getIlluminations() == 0);
           glowing.setDisable(usedLEDType.getValue() != null && usedLEDType.getValue().getId() == 1);
           lightBulbOn.setDisable(usedLEDType.getValue() != null && usedLEDType.getValue().getId() == 1);
+          dualModes.setDisable(tableData.getDualBackglass() == 0);
 
           setSaveEnabled(true);
         });

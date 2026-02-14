@@ -1,26 +1,18 @@
 package de.mephisto.vpin.commons.fx;
 
 import de.mephisto.vpin.commons.utils.FXResizeHelper;
-import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
-import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import org.apache.commons.lang3.StringUtils;
+import org.kordamp.ikonli.javafx.FontIcon;
 
-public class DialogHeaderResizeableController implements Initializable {
-  private final Debouncer debouncer = new Debouncer();
+public class DialogHeaderResizeableController extends DialogHeaderController {
 
   @FXML
   private Button maximizeBtn;
@@ -28,38 +20,16 @@ public class DialogHeaderResizeableController implements Initializable {
   @FXML
   private Button minimizeBtn;
 
-  @FXML
-  private Label titleLabel;
-
-  /** The dirty indicator */
-  private BooleanProperty dirty = new SimpleBooleanProperty(false);
-
-  @FXML
-  private BorderPane header;
-
-  private static MouseEvent event;
-
-  public void setStateId(String stateId) {
-    this.stageId = stateId;
-  }
-
-  private String stageId;
+  // memorize last MouseEvent for maximize click
+  private MouseEvent event;
 
   @FXML
   private void onMouseClick(MouseEvent e) {
     if (e.getClickCount() == 2) {
       FXResizeHelper helper = (FXResizeHelper) getStage().getUserData();
-      helper.switchWindowedMode(e);
+      boolean isMaximize = helper.switchWindowedMode(e);
+      refreshWindowMaximizedState(isMaximize);
     }
-  }
-
-  private Stage getStage() {
-    return (Stage) header.getScene().getWindow();
-  }
-
-  @FXML
-  private void onCloseClick() {
-    getStage().close();
   }
 
   public void setMaximizeable(boolean b) {
@@ -67,24 +37,10 @@ public class DialogHeaderResizeableController implements Initializable {
   }
 
   @FXML
-  private void onDragDone() {
-    if (titleLabel.getText() != null) {
-      debouncer.debounce("position", () -> {
-        int y = (int) getStage().getY();
-        int x = (int) getStage().getX();
-        int width = (int) getStage().getWidth();
-        int height = (int) getStage().getHeight();
-        if (width > 0 && height > 0) {
-          LocalUISettings.saveLocation(stageId, x, y, width, height);
-        }
-      }, 500);
-    }
-  }
-
-  @FXML
   private void onMaximize() {
     FXResizeHelper helper = (FXResizeHelper) getStage().getUserData();
-    helper.switchWindowedMode(event);
+    boolean isMaximize = helper.switchWindowedMode(event);
+    refreshWindowMaximizedState(isMaximize);
   }
 
   @FXML
@@ -92,57 +48,21 @@ public class DialogHeaderResizeableController implements Initializable {
     getStage().setIconified(true);
   }
 
-  public void setTitle(String title) {
-    titleLabel.setText(title);
-  }
-
-  //---------------------------------------------
-  // Dirty management
-
-  public boolean isDirty() {
-    return this.dirty.get();
-  }
-
-  public void setDirty(boolean dirty) {
-    this.dirty.set(dirty);
-  }
-
-  public BooleanProperty dirtyProperty() {
-    return dirty;
-  }
-
-  private static final String dirtySuffix = " (*)";
-  
-  protected void updateTitle() {
-    String title = titleLabel.getText();
-    if (dirty.get() && !title.endsWith(dirtySuffix)) {
-      titleLabel.setText(title + dirtySuffix);
-    }
-    else if (!dirty.get() && title.endsWith(dirtySuffix)) {
-      titleLabel.setText(StringUtils.removeEnd(title, dirtySuffix));
-    }
+  private void refreshWindowMaximizedState(boolean mIsMaximized) {
+    FontIcon icon = WidgetFactory.createIcon(mIsMaximized? "mdi2w-window-restore" : "mdi2w-window-maximize");
+    icon.setIconSize(16);
+    maximizeBtn.setGraphic(icon);
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+  	super.initialize(url, resourceBundle);
     minimizeBtn.setVisible(false);
-    header.setUserData(this);
-
-    Platform.runLater(() -> {
-      getStage().xProperty().addListener((observable, oldValue, newValue) -> onDragDone());
-      getStage().yProperty().addListener((observable, oldValue, newValue) -> onDragDone());
-      getStage().widthProperty().addListener((observable, oldValue, newValue) -> onDragDone());
-      getStage().heightProperty().addListener((observable, oldValue, newValue) -> onDragDone());
-
-      header.setOnMouseMoved(new EventHandler<MouseEvent>() {
-        @Override
-        public void handle(MouseEvent event) {
-          DialogHeaderResizeableController.event = event;
-        }
-      });
+    header.setOnMouseMoved(new EventHandler<MouseEvent>() {
+      @Override
+      public void handle(MouseEvent event) {
+        DialogHeaderResizeableController.this.event = event;
+      }
     });
-
-    // update title when the dirty flag changes
-    dirty.addListener((pbs, o, v) -> updateTitle());
   }
 }

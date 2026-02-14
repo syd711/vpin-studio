@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.competitions.validation.CompetitionValidationTexts;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.WaitProgressModel;
@@ -132,6 +133,10 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
         try {
           CompetitionRepresentation newCmp = client.getCompetitionService().saveCompetition(c);
           onReload();
+          GameRepresentation game = client.getGameService().getGame(c.getGameId());
+          if (game != null) {
+            EventManager.getInstance().notifyTableChange(game.getId(), null);
+          }
           tableView.getSelectionModel().select(newCmp);
         }
         catch (Exception e) {
@@ -150,6 +155,10 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
         try {
           CompetitionRepresentation newCmp = client.getCompetitionService().saveCompetition(c);
           onReload();
+          GameRepresentation game = client.getGameService().getGame(c.getGameId());
+          if (game != null) {
+            EventManager.getInstance().notifyTableChange(game.getId(), null);
+          }
           tableView.getSelectionModel().select(newCmp);
         }
         catch (Exception e) {
@@ -275,7 +284,7 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
 
     columnTable.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
-      GameRepresentation game = client.getGame(value.getGameId());
+      GameRepresentation game = client.getGameService().getGame(value.getGameId());
       Label label = new Label("- not available anymore -");
       if (game != null) {
         label = new Label(game.getGameDisplayName());
@@ -287,7 +296,7 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
       HBox hBox = new HBox(6);
       hBox.setAlignment(Pos.CENTER_LEFT);
 
-      InputStream gameMediaItem = ServerFX.client.getGameMediaItem(value.getGameId(), VPinScreen.Wheel);
+      InputStream gameMediaItem = ServerFX.client.getWheelIcon(game.getId(), true);
       if (gameMediaItem == null) {
         gameMediaItem = Studio.class.getResourceAsStream("avatar-blank.png");
       }

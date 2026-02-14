@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui;
 
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
@@ -36,6 +35,7 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class PreferencesController extends SettingsSceneController implements Initializable, StudioEventListener {
@@ -48,7 +48,7 @@ public class PreferencesController extends SettingsSceneController implements In
   /**
    * a singleton
    */
-  private static PreferencesController instance;
+  public static PreferencesController instance;
 
   @FXML
   private Pane root;
@@ -69,6 +69,9 @@ public class PreferencesController extends SettingsSceneController implements In
   private Button backglassBtn;
 
   @FXML
+  private Button mediaSourcesBtn;
+
+  @FXML
   private Button settings_clientBtn;
 
   @FXML
@@ -81,7 +84,16 @@ public class PreferencesController extends SettingsSceneController implements In
   private Button vpfBtn;
 
   @FXML
+  private Button wovpBtn;
+
+  @FXML
   private Button iScoredBtn;
+
+  @FXML
+  private Button dmdDeviceBtn;
+
+  @FXML
+  private Button vpsBtn;
 
   @FXML
   private Button validators_screensBtn;
@@ -99,7 +111,7 @@ public class PreferencesController extends SettingsSceneController implements In
   private Button pinballXSettingsBtn;
 
   @FXML
-  private Button vpbmBtn;
+  private Button pinballYSettingsBtn;
 
   @FXML
   private Button overlayBtn;
@@ -184,6 +196,10 @@ public class PreferencesController extends SettingsSceneController implements In
 
   @FXML
   private void onClose(ActionEvent event) {
+    closePreferences();
+  }
+
+  public void closePreferences() {
     FadeTransition outFader = TransitionUtil.createOutFader(root, UIDefaults.FADER_DURATION);
     outFader.setOnFinished(new EventHandler<ActionEvent>() {
       @Override
@@ -212,6 +228,11 @@ public class PreferencesController extends SettingsSceneController implements In
   }
 
   @FXML
+  private void onMediaSources(ActionEvent event) throws IOException {
+    load("preference-asset-sources.fxml", event);
+  }
+
+  @FXML
   private void onClientSettings(ActionEvent event) throws IOException {
     load("preference-settings_client.fxml", event);
   }
@@ -219,6 +240,12 @@ public class PreferencesController extends SettingsSceneController implements In
   @FXML
   private void onWebhooks(ActionEvent event) throws IOException {
     load("preference-webhooks.fxml", event);
+  }
+
+
+  @FXML
+  private void onWovp(ActionEvent event) throws IOException {
+    load("preference-wovp.fxml", event);
   }
 
   @FXML
@@ -259,7 +286,7 @@ public class PreferencesController extends SettingsSceneController implements In
 
   @FXML
   private void onVpaRepositories(ActionEvent event) throws IOException {
-    load("preference-repositories.fxml", event);
+    load("preference-backups.fxml", event);
   }
 
   @FXML
@@ -293,6 +320,11 @@ public class PreferencesController extends SettingsSceneController implements In
   }
 
   @FXML
+  private void onDMD(ActionEvent event) throws IOException {
+    load("preference-dmd.fxml", event);
+  }
+
+  @FXML
   private void onDOFLinx(ActionEvent event) throws IOException {
     load("preference-doflinx.fxml", event);
   }
@@ -313,8 +345,13 @@ public class PreferencesController extends SettingsSceneController implements In
   }
 
   @FXML
-  private void onVPBM(ActionEvent event) throws IOException {
-    load("preference-vpbm.fxml", event);
+  private void onPinballYSettings(ActionEvent event) throws IOException {
+    load("preference-pinbally-settings.fxml", event);
+  }
+
+  @FXML
+  private void onVps(ActionEvent event) throws IOException {
+    load("preference-vps.fxml", event);
   }
 
   @FXML
@@ -378,6 +415,12 @@ public class PreferencesController extends SettingsSceneController implements In
     load("preference-discord_faq.fxml", event);
   }
 
+  public static void navigate(String preferenceType) {
+    if (instance != null) {
+      instance.load("preference-" + preferenceType + ".fxml", null, preferenceType + "Btn");
+    }
+  }
+
   public static void open(String preferenceType) {
     open();
     Platform.runLater(() -> {
@@ -395,7 +438,7 @@ public class PreferencesController extends SettingsSceneController implements In
     Studio.browse("https://ko-fi.com/syd711");
   }
 
-  private void load(String screen, ActionEvent event) throws IOException {
+  private void load(String screen, ActionEvent event) {
     load(screen, event, null);
   }
 
@@ -431,7 +474,7 @@ public class PreferencesController extends SettingsSceneController implements In
       preferencesMain.setCenter(node);
     }
     catch (Exception e) {
-      LOG.error("Failed to loading settings view: " + e.getMessage(), e);
+      LOG.error("Failed to loading settings view {}: {}", screen, e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
     }
   }
@@ -440,9 +483,9 @@ public class PreferencesController extends SettingsSceneController implements In
   public void initialize(URL url, ResourceBundle resourceBundle) {
     popperSettingsBtn.managedProperty().bindBidirectional(popperSettingsBtn.visibleProperty());
     pinballXSettingsBtn.managedProperty().bindBidirectional(pinballXSettingsBtn.visibleProperty());
+    pinballYSettingsBtn.managedProperty().bindBidirectional(pinballYSettingsBtn.visibleProperty());
     repositoriesBtn.managedProperty().bindBidirectional(repositoriesBtn.visibleProperty());
     notificationsButton.managedProperty().bindBidirectional(notificationsButton.visibleProperty());
-    vpbmBtn.managedProperty().bindBidirectional(vpbmBtn.visibleProperty());
     overlayBtn.managedProperty().bindBidirectional(overlayBtn.visibleProperty());
     pauseMenuBtn.managedProperty().bindBidirectional(pauseMenuBtn.visibleProperty());
     highscore_cardsBtn.managedProperty().bindBidirectional(highscore_cardsBtn.visibleProperty());
@@ -452,24 +495,25 @@ public class PreferencesController extends SettingsSceneController implements In
     vpuBtn.managedProperty().bindBidirectional(vpuBtn.visibleProperty());
     vpfBtn.managedProperty().bindBidirectional(vpfBtn.visibleProperty());
     webhooksBtn.managedProperty().bindBidirectional(webhooksBtn.visibleProperty());
+    dmdDeviceBtn.managedProperty().bindBidirectional(dmdDeviceBtn.visibleProperty());
 
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
-    vpbmBtn.setVisible(frontendType.supportArchive());
-    repositoriesBtn.setVisible(false);
-//    repositoriesBtn.setVisible(frontendType.supportArchive());
+    repositoriesBtn.setVisible(Features.BACKUPS_ENABLED);
+    dmdDeviceBtn.setVisible(Features.DMD_DEVICE_INI);
 
     // activation of custom options according to installed frontend
-    frontendPreferences.setVisible(frontendType.equals(FrontendType.Popper) || frontendType.equals(FrontendType.PinballX));
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
+    frontendPreferences.setVisible(frontendType.equals(FrontendType.Popper) || frontendType.equals(FrontendType.PinballX) || frontendType.equals(FrontendType.PinballY));
     popperSettingsBtn.setVisible(frontendType.equals(FrontendType.Popper));
     pinballXSettingsBtn.setVisible(frontendType.equals(FrontendType.PinballX));
+    pinballYSettingsBtn.setVisible(frontendType.equals(FrontendType.PinballY));
 
-    notificationsButton.setVisible(frontendType.isNotStandalone() && Features.NOTIFICATIONS_ENABLED);
-    overlayBtn.setVisible(frontendType.isNotStandalone());
+    notificationsButton.setVisible(!Features.IS_STANDALONE && Features.NOTIFICATIONS_ENABLED);
+    overlayBtn.setVisible(!Features.IS_STANDALONE);
 
-    pauseMenuBtn.setVisible(frontendType.supportControls());
-    highscore_cardsBtn.setVisible(frontendType.isNotStandalone());
-    validators_screensBtn.setVisible(frontendType.isNotStandalone());
-    validators_backglassBtn.setVisible(frontendType.isNotStandalone());
+    pauseMenuBtn.setVisible(Features.CONTROLS_ENABLED);
+    highscore_cardsBtn.setVisible(!Features.IS_STANDALONE);
+    validators_screensBtn.setVisible(!Features.IS_STANDALONE);
+    validators_backglassBtn.setVisible(!Features.IS_STANDALONE);
 
     vpuBtn.setVisible(Features.VP_UNIVERSE);
     vpfBtn.setVisible(Features.VP_FORUMS);

@@ -4,9 +4,12 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -17,10 +20,11 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.PauseMenuPreferencesController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.PauseMenuPreferencesController">
    <center>
       <ScrollPane hbarPolicy="NEVER" hmin="800.0" BorderPane.alignment="CENTER">
          <content>
+
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="800.0" styleClass="subpanel">
                <children>
                   <Label styleClass="preference-title" text="VPIN STUDIO FRONTEND PREFERENCES" textFill="WHITE" />
@@ -50,11 +54,12 @@
                   </Label>
                   <GridPane alignment="BASELINE_RIGHT" hgap="3.0" vgap="3.0">
                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="209.5999755859375" prefWidth="190.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="650.0" minWidth="350.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="160.0" prefWidth="160.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="650.0" minWidth="350.0" prefWidth="546.6000732421875" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="145.199951171875" minWidth="1.6000244140625455" prefWidth="3.2000732421875" />
                      </columnConstraints>
                      <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
@@ -62,7 +67,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <children>
                               <CheckBox fx:id="pauseMenuCheckbox" mnemonicParsing="false" styleClass="default-text" text="Show pause menu instead of overlay" textFill="WHITE">
                                  <font>
@@ -76,7 +81,7 @@
                               <Label styleClass="checkbox-description" text="the pause menu will be shown instead. This saves one key binding." textFill="WHITE" />
                            </children>
                         </VBox>
-                        <Label layoutX="10.0" layoutY="46.0" styleClass="preference-label" text="Pause Menu Visibility:" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label layoutX="10.0" layoutY="46.0" styleClass="preference-label" text="Pause Menu Visibility:" textFill="WHITE" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -97,27 +102,27 @@
                                     <FontIcon iconColor="#ff3333" iconLiteral="mdi2r-restart-alert" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="400.0" text="The server needs to be restarted to apply this change. You can restart the server in the &quot;Server Settings&quot; section." wrapText="true" />
+                                    <Tooltip prefWidth="400.0" text="The server needs to be restarted to apply this change." wrapText="true" />
                                  </tooltip>
                               </Label>
                            </children>
                         </HBox>
-                        <CheckBox fx:id="pauseMenuMuteCheckbox" mnemonicParsing="false" styleClass="default-text" text="Mute system on pause" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <CheckBox fx:id="pauseMenuMuteCheckbox" mnemonicParsing="false" styleClass="default-text" text="Mute system on pause" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="9.0" layoutY="15.0" styleClass="preference-label" text="Pause System Volume:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="9.0" layoutY="15.0" styleClass="preference-label" text="System Volume:" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="9.0" layoutY="77.0" styleClass="preference-label" text="Resume Deplay:" textFill="WHITE" GridPane.rowIndex="3">
+                        <Label layoutX="9.0" layoutY="77.0" styleClass="preference-label" text="Resume Delay:" textFill="WHITE" GridPane.rowIndex="5">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
                            <children>
                               <Spinner fx:id="delaySpinner" />
                               <Label styleClass="preference-label" text="ms." textFill="WHITE">
@@ -138,16 +143,56 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Label styleClass="preference-label" text="Tutorial Videos:" textFill="WHITE" GridPane.rowIndex="4">
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <CheckBox fx:id="pauseMenuOrientation" mnemonicParsing="false" styleClass="default-text" text="Desktop Mode" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <Label>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="#ff3333" iconLiteral="mdi2r-restart-alert" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="400.0" text="The server needs to be restarted to apply this change." wrapText="true" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <Label layoutX="9.0" layoutY="15.0" styleClass="preference-label" text="Screen Orientation:" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <CheckBox fx:id="tutorialsCheckbox" layoutX="198.0" layoutY="49.0" mnemonicParsing="false" styleClass="default-text" text="Show Tutorial Videos" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                        <Label layoutX="10.0" layoutY="220.0" styleClass="preference-label" text="Pause Trigger:" textFill="WHITE" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
                            </font>
-                        </CheckBox>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                           <children>
+                              <CheckBox fx:id="triggerCheckbox" mnemonicParsing="false" styleClass="default-text" text="Let VPin Studio Server press 'P' on pause menu show and resume." textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <Label fx:id="publicReadAPIHint112" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="This will give the option to resume the game with a bit more delay. Otherwise the game will continue after the emulator has the focus again." wrapText="true" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </HBox>
                      </children>
                      <opaqueInsets>
                         <Insets />
@@ -156,9 +201,112 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </GridPane>
+                  <GridPane hgap="3.0" layoutX="34.0" layoutY="434.0" vgap="3.0">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="160.0" prefWidth="160.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="594.1999816894531" minWidth="10.0" prefWidth="537.99990234375" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
+                           <GridPane.margin>
+                              <Insets top="12.0" />
+                           </GridPane.margin>
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#onPauseTest" text="Test Pause Menu" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Button>
+                              <Button fx:id="restartBtn" mnemonicParsing="false" onAction="#onRestart" styleClass="error-title" text="Restart Server" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </children>
+                  </GridPane>
+                  <Label layoutX="34.0" layoutY="596.0" styleClass="preference-subtitle" text="Screenshot Generation">
+                     <VBox.margin>
+                        <Insets top="24.0" />
+                     </VBox.margin>
+                  </Label>
+                  <GridPane hgap="3.0" vgap="3.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="160.0" prefWidth="160.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="556.4000549316406" minWidth="10.0" prefWidth="556.4000549316406" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                     <children>
+                        <Label styleClass="preference-label" text="Scoring Screenshots:" textFill="WHITE" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <GridPane.margin>
+                              <Insets top="3.0" />
+                           </GridPane.margin>
+                        </Label>
+                        <Label styleClass="preference-label" text="Real DMD Support:" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <GridPane.margin>
+                              <Insets top="3.0" />
+                           </GridPane.margin>
+                        </Label>
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <Label styleClass="checkbox-description" text="Screens included in the screenshot:" textFill="WHITE" />
+                              <VBox fx:id="monitorsPane" spacing="3.0">
+                                 <VBox.margin>
+                                    <Insets left="28.0" top="6.0" />
+                                 </VBox.margin></VBox>
+                           </children>
+                           <GridPane.margin>
+                              <Insets top="3.0" />
+                           </GridPane.margin>
+                        </VBox>
+                        <VBox GridPane.columnIndex="1">
+                           <children>
+                              <CheckBox fx:id="includeDmdCheckbox" mnemonicParsing="false" text="Include a DMD frame capture (for cabinets with a real DMD)" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                              </CheckBox>
+                              <Label styleClass="checkbox-description" text="The DMD frame capture needs network stream enabled in DMDDevice.ini." textFill="WHITE" />
+                              <Hyperlink onAction="#onDMDDeviceLink" text="Open DMD Device Settings">
+                                 <VBox.margin>
+                                    <Insets bottom="12.0" left="21" />
+                                 </VBox.margin>
+                              </Hyperlink>
+                           </children>
+                           <GridPane.margin>
+                              <Insets top="3.0" />
+                           </GridPane.margin>
+                        </VBox>
+                     </children>
+                  </GridPane>
+                  <Label styleClass="preference-subtitle" text="Pause Menu Items">
+                     <VBox.margin>
+                        <Insets bottom="12.0" top="24.0" />
+                     </VBox.margin>
+                  </Label>
                   <GridPane fx:id="iScoredScoresBox" hgap="3.0" vgap="3.0">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="416.6000732421875" minWidth="10.0" prefWidth="208.1999267578125" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="160.0" prefWidth="160.0" />
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="594.1999816894531" minWidth="10.0" prefWidth="540.2000732421875" />
                     </columnConstraints>
                     <rowConstraints>
@@ -170,20 +318,35 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <CheckBox fx:id="iScoredScoresCheckbox" mnemonicParsing="false" styleClass="default-text" text="Show iScored Scores (only when the table is linked to an iScored Game Room)" textFill="WHITE" GridPane.columnIndex="1">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </CheckBox>
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
+                           <children>
+                              <CheckBox fx:id="iScoredScoresCheckbox" mnemonicParsing="false" styleClass="default-text" text="Show iScored Scores" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <Label fx:id="publicReadAPIHint111" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="The menu entry is only shown when the table is linked via its Virtual Pinball Spreadsheet ID to an iScored Game Room." wrapText="true" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </HBox>
                      </children>
                      <VBox.margin>
-                        <Insets top="3.0" />
+                        <Insets />
                      </VBox.margin>
                   </GridPane>
                   <GridPane fx:id="maniaScoresBox" hgap="3.0" vgap="3.0">
                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="416.6000732421875" minWidth="10.0" prefWidth="208.00006713867185" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="594.1999816894531" minWidth="10.0" prefWidth="539.9999328613283" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="160.0" prefWidth="160.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="594.1999816894531" minWidth="10.0" prefWidth="577.5999755859375" />
                      </columnConstraints>
                      <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -194,37 +357,216 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <CheckBox fx:id="maniaScoresCheckbox" mnemonicParsing="false" styleClass="default-text" text="Show VPin Mania Highscores" textFill="WHITE" GridPane.columnIndex="1">
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
+                           <children>
+                              <CheckBox fx:id="maniaScoresCheckbox" mnemonicParsing="false" styleClass="default-text" text="Show VPin Mania Highscores " textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <Label fx:id="publicReadAPIHint1111" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="The menu entry is only shown when the table has a Virtual Pinball Spreadsheet ID and a score exists on VPin Mania for it." wrapText="true" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </HBox>
+                     </children>
+                  </GridPane>
+                  <GridPane hgap="3.0" vgap="3.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="160.0" prefWidth="160.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <children>
+                        <Label styleClass="preference-label" text="Tutorial Videos:" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <CheckBox fx:id="tutorialsCheckbox" mnemonicParsing="false" styleClass="default-text" text="Show Tutorial Videos" textFill="WHITE" GridPane.columnIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
+                        <VBox fx:id="tutorialDetailsBox" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <RadioButton fx:id="tutorialItemRadio" mnemonicParsing="false" styleClass="default-text" text="Display Tutorial Videos as Menu Item">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="tutorialScreenGroup" />
+                                 </toggleGroup>
+                              </RadioButton>
+                              <RadioButton fx:id="tutorialScreenRadio" layoutX="10.0" layoutY="43.0" mnemonicParsing="false" styleClass="default-text" text="Display Tutorial Videos on VPin Screen" toggleGroup="$tutorialScreenGroup" />
+                              <ComboBox fx:id="screenTutorialComboBox" prefWidth="250.0">
+                                 <VBox.margin>
+                                    <Insets left="24.0" />
+                                 </VBox.margin>
+                              </ComboBox>
+                              <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                 <children>
+                                    <Label styleClass="default-text" text="Rotate Screen:" textFill="WHITE" />
+                                    <ComboBox fx:id="rotationComboBox" prefWidth="90.0" />
+                                    <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="degrees" textFill="WHITE" />
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets left="26.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <HBox>
+                                 <children>
+                                    <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                       <children>
+                                          <Label styleClass="default-text" text="Margin Top:" textFill="WHITE" />
+                                          <Spinner fx:id="marginTopSpinner" editable="true" prefWidth="90.0">
+                                             <HBox.margin>
+                                                <Insets left="14.0" />
+                                             </HBox.margin>
+                                          </Spinner>
+                                          <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="pixel" textFill="WHITE" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets left="26.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                 <children>
+                                    <Label styleClass="default-text" text="Margin Left:" textFill="WHITE" />
+                                    <Spinner fx:id="marginLeftSpinner" editable="true" prefWidth="90.0">
+                                       <HBox.margin>
+                                          <Insets left="14.0" />
+                                       </HBox.margin>
+                                    </Spinner>
+                                    <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="pixel" textFill="WHITE" />
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets left="26.0" />
+                                 </VBox.margin>
+                              </HBox>
+                           </children>
+                           <GridPane.margin>
+                              <Insets top="3.0" />
+                           </GridPane.margin>
+                        </VBox>
                      </children>
                   </GridPane>
-                  <GridPane hgap="3.0" layoutX="34.0" layoutY="434.0" vgap="3.0">
-                     <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="416.6000732421875" minWidth="10.0" prefWidth="190.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="594.1999816894531" minWidth="10.0" prefWidth="561.3999328613281" />
-                     </columnConstraints>
-                     <rowConstraints>
+                  <Label layoutX="34.0" layoutY="535.0" styleClass="preference-subtitle" text="Apron Mode" />
+                  <Label layoutX="34.0" layoutY="117.0" styleClass="preference-description" text="This section allows you to adjust some visual settings in case the pause menu layout does not fit." textFill="WHITE">
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label layoutX="34.0" layoutY="946.0" styleClass="preference-description" text="For default 16:9 monitors (backglass or playfields) changing these settings is usually not required." textFill="WHITE" />
+                  <GridPane hgap="3.0" vgap="3.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="130.0" prefWidth="160.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="574.0" minWidth="10.0" prefWidth="574.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                     </rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
                      <children>
-                        <Button mnemonicParsing="false" onAction="#onPauseTest" text="Test Pause Menu" textFill="WHITE" GridPane.columnIndex="1">
+                        <Label styleClass="preference-label" text="Apron Mode:" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
-                           <GridPane.margin>
-                              <Insets top="12.0" />
-                           </GridPane.margin>
-                        </Button>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
+                           <children>
+                              <CheckBox fx:id="apronModeCheckbox" mnemonicParsing="false" styleClass="default-text" text="Use Apron Mode" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <Label fx:id="publicReadAPIHint1112" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="The navigation bar is not shown, but you can still navigate. This is useful for small screens." wrapText="true" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <Label styleClass="default-text" text="Margin Top:" textFill="WHITE" GridPane.rowIndex="2" />
+                        <Label layoutX="10.0" layoutY="48.0" styleClass="default-text" text="Margin Left:" textFill="WHITE" GridPane.rowIndex="3" />
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <children>
+                              <Spinner fx:id="stageMarginTopSpinner" editable="true" prefWidth="90.0">
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                              </Spinner>
+                              <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="pixel" textFill="WHITE" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" layoutX="173.0" layoutY="43.0" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                           <children>
+                              <Spinner fx:id="stageMarginLeftSpinner" editable="true" prefWidth="90.0">
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                              </Spinner>
+                              <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="pixel" textFill="WHITE" />
+                           </children>
+                        </HBox>
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="preference-label" text="UI Scaling:" textFill="WHITE" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <Spinner fx:id="scalingSpinner" editable="true" prefWidth="90.0" />
+                              <Label styleClass="preference-label" text="\% (0 will use the system defaults)" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="publicReadAPIHint11121" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="This settings allows to scale the size of the complete pause menu. The Studio tries to adjust the scaling by itself depending on the resolution. Changing this setting will overwrite the default." wrapText="true" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </HBox>
                      </children>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
                   </GridPane>
                </children>
                <padding>
                   <Insets bottom="48.0" left="24.0" right="24.0" top="24.0" />
                </padding>
             </VBox>
+
          </content>
       </ScrollPane>
    </center>

@@ -19,12 +19,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
 public class MenuScoreViewController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(MenuScoreViewController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private ImageView sectionIcon;
@@ -46,7 +47,7 @@ public class MenuScoreViewController implements Initializable {
 
   private WidgetCompetitionSummaryController competitionWidgetController;
 
-  public void setData(GameRepresentation game, GameStatus status, VpsTable tableById, PauseMenuItem pauseMenuItem, Image sectionImage) {
+  public void setData(GameRepresentation game, VpsTable tableById, PauseMenuItem pauseMenuItem, Image sectionImage) {
     this.nameLabel.setText(game.getGameDisplayName());
     this.versionLabel.setText("");
     this.authorsLabel.setText("");

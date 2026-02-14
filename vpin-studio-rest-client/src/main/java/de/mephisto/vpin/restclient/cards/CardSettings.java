@@ -2,23 +2,23 @@ package de.mephisto.vpin.restclient.cards;
 
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.highscores.HighscoreCardResolution;
 
 /**
  *
  */
 public class CardSettings extends JsonSettings {
   private String popperScreen = null;
+  private boolean backupAsset = false;
   private int notificationTime = 0;
   private String notificationRotation = "0";
   private boolean notificationOnPopperScreen = false;
-  private HighscoreCardResolution cardResolution = HighscoreCardResolution.HDReady;
+  private CardResolution cardResolution = CardResolution.HDReady;
 
-  public HighscoreCardResolution getCardResolution() {
+  public CardResolution getCardResolution() {
     return cardResolution;
   }
 
-  public void setCardResolution(HighscoreCardResolution cardResolution) {
+  public void setCardResolution(CardResolution cardResolution) {
     this.cardResolution = cardResolution;
   }
 
@@ -28,6 +28,14 @@ public class CardSettings extends JsonSettings {
 
   public void setPopperScreen(String popperScreen) {
     this.popperScreen = popperScreen;
+  }
+
+  public boolean isBackupAsset() {
+    return backupAsset;
+  }
+
+  public void setBackupAsset(boolean backupAsset) {
+    this.backupAsset = backupAsset;
   }
 
   public int getNotificationTime() {

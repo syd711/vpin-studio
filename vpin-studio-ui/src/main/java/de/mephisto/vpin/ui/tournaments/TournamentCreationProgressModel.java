@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.image.BufferedImage;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -22,7 +23,7 @@ import java.util.List;
 import static de.mephisto.vpin.ui.Studio.*;
 
 public class TournamentCreationProgressModel extends ProgressModel<TreeItem<TournamentTreeModel>> {
-  private final static Logger LOG = LoggerFactory.getLogger(TournamentCreationProgressModel.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private final List<TreeItem<TournamentTreeModel>> tournaments;
   private final TournamentCreationModel tournamentModel;
   private final Account account;

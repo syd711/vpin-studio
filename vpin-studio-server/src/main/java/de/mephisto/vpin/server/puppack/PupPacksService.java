@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.puppack;
 
 import de.mephisto.vpin.commons.OrbitalPins;
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
@@ -23,11 +22,14 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 public class PupPacksService implements InitializingBean {
@@ -49,6 +51,8 @@ public class PupPacksService implements InitializingBean {
 
   private final Map<String, PupPack> pupPackCache = new ConcurrentHashMap<>();
 
+  private AtomicBoolean pupPackScanActive = new AtomicBoolean(false);
+
   /**
    * Return where pinup player is installed, read it today from installation directory,
    * independently of the frontend, could be usefull to support standalone installation with
@@ -63,7 +67,7 @@ public class PupPacksService implements InitializingBean {
   public PupPack getMenuPupPack() {
     File pupPackFolder = getPupPackFolder();
     File menuPupPackFolder = new File(pupPackFolder, "PinUpMenu");
-    return loadPupPack(menuPupPackFolder);
+    return menuPupPackFolder.exists() ? loadPupPack(menuPupPackFolder) : null;
   }
 
   public boolean delete(@NonNull Game game) {
@@ -116,11 +120,11 @@ public class PupPacksService implements InitializingBean {
   }
 
   private void refresh() {
-    FrontendType frontendType = frontendService.getFrontendType();
-    if (!frontendType.supportPupPacks()) {
+    if (!Features.PUPPACKS_ENABLED) {
       return;
     }
 
+    pupPackScanActive.set(true);
     this.pupPackCache.clear();
     long start = System.currentTimeMillis();
     File pupPackFolder = getPupPackFolder();
@@ -138,24 +142,35 @@ public class PupPacksService implements InitializingBean {
     }
     long end = System.currentTimeMillis();
     LOG.info("Finished PUP pack scan, found " + pupPackCache.size() + " packs (" + (end - start) + "ms)");
+    pupPackScanActive.set(false);
   }
 
   public PupPack loadPupPack(File packFolder) {
-    PupPack pupPack = new PupPack(packFolder);
-    if (new File(packFolder, "scriptonly.txt").exists()) {
-      pupPack.setScriptOnly(true);
-    }
+    try {
+      PupPack pupPack = new PupPack(packFolder);
+      if (new File(packFolder, "scriptonly.txt").exists()) {
+        pupPack.setScriptOnly(true);
+      }
 
-    boolean orbitalPin = OrbitalPins.isOrbitalPin(packFolder.getName());
-    boolean containsMedia = pupPack.containsFileWithSuffixes("mp4", "mkv", "png");
-    if ((orbitalPin || containsMedia)) {
-//      LOG.info("Loaded PUP Pack " + packFolder.getName() + " (orbitalPin: " + orbitalPin + ")");
-      pupPackCache.put(packFolder.getName().toLowerCase(), pupPack);
+      boolean orbitalPin = OrbitalPins.isOrbitalPin(packFolder.getName());
+      boolean containsMedia = pupPack.containsFileWithSuffixes("mp4", "mkv", "png");
+      if ((orbitalPin || containsMedia)) {
+        pupPackCache.put(packFolder.getName().toLowerCase(), pupPack);
+        String msg = "Loaded PUP Pack " + packFolder.getName();
+        if (orbitalPin) {
+          msg += " (orbitalPin: " + orbitalPin + ")";
+        }
+//        LOG.info(msg);
+      }
+      else {
+//        LOG.info("Skipped PUP pack folder \"" + packFolder.getName() + "\", no media found.");
+      }
+      return pupPack;
     }
-    else {
-//      LOG.info("Skipped PUP pack folder \"" + packFolder.getName() + "\", no media found.");
+    catch (Exception e) {
+      LOG.error("Failed to load PUP pack {}: {}", packFolder.getAbsolutePath(), e.getMessage());
     }
-    return pupPack;
+    return null;
   }
 
   public JobDescriptor option(Game game, String option) {
@@ -169,6 +184,10 @@ public class PupPacksService implements InitializingBean {
     boolean b = frontendService.setPupPackEnabled(game, enable);
     gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.PUP_PACK, game.getRom());
     return b;
+  }
+
+  public boolean isScanActive() {
+    return this.pupPackScanActive.get();
   }
 
   public boolean hasPupPack(Game game) {
@@ -212,8 +231,7 @@ public class PupPacksService implements InitializingBean {
   }
 
   public void installPupPack(@NonNull UploadDescriptor uploadDescriptor, @NonNull UploaderAnalysis analysis, boolean async) throws IOException {
-    FrontendType frontendType = frontendService.getFrontendType();
-    if (!frontendType.supportPupPacks()) {
+    if (!Features.PUPPACKS_ENABLED) {
       return;
     }
 
@@ -246,7 +264,7 @@ public class PupPacksService implements InitializingBean {
     }
 
     LOG.info("Starting PUP pack extraction for ROM '" + rom + "'");
-    PupPackInstallerJob job = new PupPackInstallerJob(this, tempFile, pupVideosFolder, analysis.getPupPackRootDirectory(), rom);
+    PupPackInstallerJob job = new PupPackInstallerJob(this, tempFile, pupVideosFolder, analysis.getPupPackRootDirectory(), rom, async);
     if (!async) {
       JobDescriptor jobDescriptor = new JobDescriptor(JobType.PUP_INSTALL);
       job.execute(jobDescriptor);
@@ -318,22 +336,13 @@ public class PupPacksService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() {
-    FrontendType frontendType = frontendService.getFrontendType();
-    if (!frontendType.supportPupPacks()) {
+    if (!Features.PUPPACKS_ENABLED) {
       return;
     }
 
-    try {
-      File pupPackScreenTweakerExe = new File(systemService.getPinupInstallationFolder(), PUP_PACK_TWEAKER_EXE);
-      if (!pupPackScreenTweakerExe.exists()) {
-        File source = new File(SystemService.RESOURCES, PUP_PACK_TWEAKER_EXE);
-        FileUtils.copyFile(source, pupPackScreenTweakerExe);
-        LOG.info("Copied {}", pupPackScreenTweakerExe.getAbsolutePath());
-      }
-    }
-    catch (Exception e) {
-      LOG.error("Failed to copy {}: {}", PUP_PACK_TWEAKER_EXE, e.getMessage(), e);
-    }
+    File sourceExe = new File(SystemService.RESOURCES, "puppacktweaker/" + PUP_PACK_TWEAKER_EXE);
+    File targetExe = new File(systemService.getPinupInstallationFolder(), PUP_PACK_TWEAKER_EXE);
+    de.mephisto.vpin.restclient.util.FileUtils.checkedCopy(sourceExe, targetExe);
 
     new Thread(() -> {
       try {

@@ -3,13 +3,9 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
-import de.mephisto.vpin.ui.tables.panels.PropperRenamingController;
-import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.UploadProgressModel;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
@@ -18,11 +14,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class Directb2sUploadController extends BaseUploadController {
-  private final static Logger LOG = LoggerFactory.getLogger(PropperRenamingController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private VBox uploadReplaceBox;
@@ -48,20 +45,8 @@ public class Directb2sUploadController extends BaseUploadController {
 
   @Override
   protected UploadProgressModel createUploadModel() {
-    return null;
-  }
-
-  @Override
-  protected void onUploadClick(ActionEvent event) {
-    Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-
     boolean append = uploadAndAppendRadio.isSelected();
-    Platform.runLater(() -> {
-      stage.close();
-    });
-
-    DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", getSelection(), append, finalizer);
-    ProgressDialog.createProgressDialog(model);
+    return new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", getSelection(), append);
   }
 
   @Override

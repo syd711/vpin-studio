@@ -1,27 +1,31 @@
 package de.mephisto.vpin.server.frontend;
 
+import de.mephisto.vpin.commons.MonitorInfoUtil;
 import de.mephisto.vpin.restclient.directb2s.DirectB2sScreenRes;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.FrontendScreenSummary;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
-import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.server.directb2s.BackglassService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpx.VPXService;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import org.apache.commons.configuration2.Configuration;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import static de.mephisto.vpin.server.directb2s.BackglassService.parseIntSafe;
 
@@ -36,7 +40,7 @@ import static de.mephisto.vpin.server.directb2s.BackglassService.parseIntSafe;
  * all others (Topper, help, ...) from FrontendService
  */
 @Service
-public class VPinScreenService {
+public class VPinScreenService implements InitializingBean {
 
   private final static Logger LOG = LoggerFactory.getLogger(VPinScreenService.class);
 
@@ -126,7 +130,7 @@ public class VPinScreenService {
       for (int i = 1; i < monitors.size(); i++) {
         MonitorInfo second = monitors.get(i);
         if (monitor.getY() != second.getY()) {
-          errors.add("Monitor " + (i + 1) + ", named " + second.getFormattedName() + " is not aligned on top with first one");
+          errors.add("Monitor " + (i + 1) + ", named " + second.getFormattedName() + " is not aligned on top with first one: " + monitor.getY() + "px vs. " + second.getY() + "px.");
         }
       }
     }
@@ -244,7 +248,7 @@ public class VPinScreenService {
   private void createVpxPlayfieldDisplay(Configuration vpxConfiguration, List<FrontendPlayerDisplay> players) {
     try {
       FrontendPlayerDisplay player = new FrontendPlayerDisplay(VPinScreen.PlayField);
-      
+
       // the windows index, but how to match it with MonitorInfoUtils.getMonitor(), this is still unknows
       int monitor = safeGetInteger(vpxConfiguration, "Display", 0);
       MonitorInfo monitorInfo = systemService.getMonitorFromOS(monitor);
@@ -379,29 +383,7 @@ public class VPinScreenService {
     List<MonitorInfo> monitors = systemService.getMonitorInfos();
 
     if (screenres != null && monitors.size() > 0) {
-
-      MonitorInfo monitor = null;
-      // screen number (\\.\DISPLAY)x or screen coordinates (@x) or screen index (=x)
-      String backglassDisplay = screenres.getBackglassDisplay();
-      if (backglassDisplay.startsWith("@")) {
-        int xPos = Integer.parseInt(backglassDisplay.substring(1));
-        for (MonitorInfo m : monitors) {
-          if (m.getX() == xPos) {
-            monitor = m;
-          }
-        }
-      }
-      else if (backglassDisplay.startsWith("=")) {
-        int idx = Integer.parseInt(backglassDisplay.substring(1)) - 1;
-        monitor = idx < monitors.size() ? monitors.get(idx) : null;
-      }
-      else {
-        for (MonitorInfo m : monitors) {
-          if (m.getName().endsWith(backglassDisplay)) {
-            monitor = m;
-          }
-        }
-      }
+      MonitorInfo monitor = getBackglassMonitor(screenres, monitors);
 
       FrontendPlayerDisplay playfield = new FrontendPlayerDisplay(VPinScreen.PlayField);
       MonitorInfo firstMonitor = monitors.get(0);
@@ -426,15 +408,46 @@ public class VPinScreenService {
         FrontendPlayerDisplay fulldmd = new FrontendPlayerDisplay(VPinScreen.Menu);
         // override the name
         fulldmd.setName("FullDMD");
-        // DMD is relative to backglass so use prevously calculated coordinate
+        // DMD is relative to backglass, not background so cannot use prevously calculated coordinates
         fulldmd.setX(screenres.getBackglassX() + screenres.getDmdX());
         fulldmd.setY(screenres.getBackglassY() + screenres.getDmdY());
+        if (monitor != null) {
+          fulldmd.setX((int) monitor.getX() + fulldmd.getX());
+          fulldmd.setY((int) monitor.getY() + fulldmd.getY());
+        }
         fulldmd.setWidth(screenres.getDmdWidth());
         fulldmd.setHeight(screenres.getDmdHeight());
         displays.add(fulldmd);
       }
     }
     return displays;
+  }
+
+  @Nullable
+  private static MonitorInfo getBackglassMonitor(@NonNull DirectB2sScreenRes screenres, List<MonitorInfo> monitors) {
+    // screen number (\\.\DISPLAY)x or screen coordinates (@x) or screen index (=x)
+    MonitorInfo monitor = null;
+    String backglassDisplay = screenres.getBackglassDisplay();
+    if (backglassDisplay.startsWith("@")) {
+      int xPos = Integer.parseInt(backglassDisplay.substring(1));
+      for (MonitorInfo m : monitors) {
+        if (m.getX() == xPos) {
+          monitor = m;
+        }
+      }
+    }
+    else if (backglassDisplay.startsWith("=")) {
+      int idx = Integer.parseInt(backglassDisplay.substring(1)) - 1;
+      monitor = idx < monitors.size() ? monitors.get(idx) : null;
+    }
+    else {
+      for (MonitorInfo m : monitors) {
+        if (String.valueOf(m.getId()).equals(backglassDisplay)) {
+          monitor = m;
+        }
+      }
+    }
+    return monitor;
   }
 
   //TODO move dmdInfo and FrameRes to use vpinScreenService and remove that method
@@ -475,5 +488,32 @@ public class VPinScreenService {
 
   private List<FrontendPlayerDisplay> getFrontendDisplays(boolean forceReload) {
     return frontendService.getFrontendPlayerDisplays(forceReload);
+  }
+
+  @Override
+  public void afterPropertiesSet() {
+    try {
+      boolean isHeadless = GraphicsEnvironment.isHeadless();
+      if (!isHeadless) {
+        List<FrontendPlayerDisplay> displays = getScreenResDisplays();
+        LOG.info("######################## Offset Frontend Screen Summary ##################################");
+        DirectB2sScreenRes screenres = backglassService.getGlobalScreenRes();
+        if (screenres != null) {
+          MonitorInfo backglassMonitor = getBackglassMonitor(screenres, MonitorInfoUtil.getMonitors());
+          LOG.info("Backglass Monitor: {}", backglassMonitor);
+          LOG.info("------------------------------------------------------------------------------------------");
+          for (FrontendPlayerDisplay frontendPlayerDisplay : displays) {
+            LOG.info(frontendPlayerDisplay.toString());
+          }
+        }
+        else {
+          LOG.error("Reading frontend screen summary failed.");
+        }
+        LOG.info("####################### /Offset  Frontend Screen Summary #################################");
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to initialize screen displays: {}", e.getMessage(), e);
+    }
   }
 }

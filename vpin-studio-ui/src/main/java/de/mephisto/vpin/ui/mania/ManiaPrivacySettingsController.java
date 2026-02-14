@@ -73,7 +73,7 @@ public class ManiaPrivacySettingsController implements Initializable {
 
   @FXML
   private void onHighscoreSync() {
-    ManiaHelper.runScoreSynchronization(false);
+    ManiaHelper.runScoreSynchronization(true);
   }
 
   @FXML

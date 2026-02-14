@@ -7,10 +7,11 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 
 @Service
 public class AltSoundBackupService {
-  private final static Logger LOG = LoggerFactory.getLogger(AltSoundBackupService.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public void synchronizeBackup(@NonNull File altSoundFolder) {
     File csvFile = new File(altSoundFolder, "altsound.csv");

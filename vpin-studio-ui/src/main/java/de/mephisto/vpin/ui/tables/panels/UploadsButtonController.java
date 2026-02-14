@@ -3,7 +3,6 @@ package de.mephisto.vpin.ui.tables.panels;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.Frontend;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.ui.Studio;
@@ -15,23 +14,24 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitMenuButton;
 import javafx.scene.layout.HBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
 public class UploadsButtonController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(UploadsButtonController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private HBox root;
@@ -62,6 +62,9 @@ public class UploadsButtonController implements Initializable {
 
   @FXML
   private MenuItem altColorUploadItem;
+
+  @FXML
+  private MenuItem fplItem;
 
   @FXML
   private MenuItem dmdUploadItem;
@@ -163,7 +166,7 @@ public class UploadsButtonController implements Initializable {
     if (selectedItems != null && !selectedItems.isEmpty()) {
       boolean b = TableDialogs.directUpload(stage, AssetType.INI, selectedItems.get(0), null);
       if (b) {
-        tablesController.getTablesSideBarController().getTitledPaneIni().setExpanded(true);
+        tablesController.getTablesSideBarController().getTitledPaneTableData().setExpanded(true);
       }
     }
   }
@@ -193,6 +196,11 @@ public class UploadsButtonController implements Initializable {
         tablesController.getTablesSideBarController().getTitledPanePov().setExpanded(true);
       }
     }
+  }
+
+  @FXML
+  public void onFplUpload() {
+    TableDialogs.directUpload(stage, AssetType.FPL, null, null);
   }
 
   @FXML
@@ -234,14 +242,14 @@ public class UploadsButtonController implements Initializable {
     GameRepresentation game = getSelection();
     if (game != null) {
       GameEmulatorRepresentation emu = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
-      TableDialogs.openTableUploadDialog(game, emu.getType(), uploadType, null);
+      TableDialogs.openTableUploadDialog(game, emu.getType(), uploadType, null, null);
     }
     else {
       if (gameEmulator != null) {
-        TableDialogs.openTableUploadDialog(null, gameEmulator.getType(), uploadType, null);
+        TableDialogs.openTableUploadDialog(null, gameEmulator.getType(), uploadType, null, null);
       }
       else {
-        TableDialogs.openTableUploadDialog(null, null, uploadType, null);
+        TableDialogs.openTableUploadDialog(null, null, uploadType, null, null);
       }
     }
   }
@@ -270,6 +278,7 @@ public class UploadsButtonController implements Initializable {
     altSoundUploadItem.setVisible(vpxEmulator);
     altColorUploadItem.setVisible(vpxEmulator);
     dmdUploadItem.setVisible(vpxEmulator);
+    fplItem.setVisible(fpEmulator);
     patchItem.setVisible(vpxEmulator);
     iniUploadMenuItem.setVisible(vpxEmulator);
     povItem.setVisible(vpxEmulator);
@@ -292,6 +301,7 @@ public class UploadsButtonController implements Initializable {
     this.gameEmulator = gameEmulator;
 
     boolean disable = games.size() != 1;
+    altSoundUploadItem.setDisable(disable);
     altColorUploadItem.setDisable(disable);
     mediaUploadItem.setDisable(disable);
     povItem.setDisable(disable);
@@ -301,7 +311,7 @@ public class UploadsButtonController implements Initializable {
   }
 
   public void setCompact(boolean b) {
-    if(!b) {
+    if (!b) {
       uploadTableBtn.setText("Uploads");
     }
   }
@@ -312,14 +322,12 @@ public class UploadsButtonController implements Initializable {
     this.uploadTableBtn.managedProperty().bindBidirectional(this.uploadTableBtn.visibleProperty());
 
     Frontend frontend = client.getFrontendService().getFrontendCached();
-    FrontendType frontendType = frontend.getFrontendType();
-
     FrontendUtil.replaceName(uploadTableBtn.getTooltip(), frontend);
 
-    if (!frontendType.supportPupPacks()) {
+    if (!Features.PUPPACKS_ENABLED) {
       uploadTableBtn.getItems().remove(pupPackUploadItem);
     }
-    if (!frontendType.supportMedias()) {
+    if (!Features.MEDIA_ENABLED) {
       uploadTableBtn.getItems().remove(mediaUploadItem);
     }
   }

@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.util.List;
@@ -16,9 +17,27 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FileUtils {
-  private final static Logger LOG = LoggerFactory.getLogger(FileUtils.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private final static Character[] INVALID_WINDOWS_SPECIFIC_CHARS = {'"', '*', '<', '>', '?', '|', '/', '\\', ':'};
   private final static Character[] INVALID_WINDOWS_SPECIFIC_CHARS_WITH_PATH = {'"', '*', '<', '>', '?', '|', '/', ':'};
+
+  public static boolean checkedCopy(@NonNull File source, @NonNull File target) {
+    try {
+      if (!target.exists() || source.length() != target.length()) {
+        if (target.exists() && !target.delete()) {
+          LOG.error("Failed to delete target file {} of checked copy {}", target.getAbsolutePath(), source.getAbsolutePath());
+          return false;
+        }
+        org.apache.commons.io.FileUtils.copyFile(source, target);
+        LOG.info("Copied {}/({}) to {}", source.getAbsolutePath(), source.length(), target.getAbsolutePath());
+        return true;
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to execute checked copy: {}", e.getMessage(), e);
+    }
+    return true;
+  }
 
   public static String replaceWindowsChars(String name) {
     for (Character invalidWindowsSpecificChar : INVALID_WINDOWS_SPECIFIC_CHARS) {
@@ -181,10 +200,11 @@ public class FileUtils {
       path = new File(System.getProperty("MAC_WRITE_PATH") + name);
     }
 
-    if (path.exists()) {
-      path.delete();
+    if (path.exists() && !path.delete()) {
+      LOG.error("Failed to delete existing .bat file {}", path.getAbsolutePath());
     }
     Files.write(path.toPath(), content.getBytes());
+    LOG.info("Written .bat file {}", path.getAbsolutePath());
     return path;
   }
 
@@ -222,19 +242,42 @@ public class FileUtils {
     return target;
   }
 
+  //-----------------------------------------------
+  public static Pattern assetPattern = Pattern.compile("\\d\\d$");
+
+  public static boolean isDefaultAsset(String filename) {
+    String basename = FilenameUtils.getBaseName(filename);
+    String baseAssetName = baseUniqueAsset(filename);
+    return basename.equals(baseAssetName);
+  }
+
+  public static boolean isAssetOf(String filename, String baseAssetName) {
+    String basename = baseUniqueAsset(filename);
+    return StringUtils.startsWithIgnoreCase(basename, baseAssetName);
+  }
+
+  public static String baseUniqueAsset(String filename) {
+    String basename = FilenameUtils.removeExtension(filename).trim();
+    Matcher match = assetPattern.matcher(basename);
+    if (match.find()) {
+      basename = match.replaceAll("").trim();
+    }
+    return basename;
+  }
+
   public static File uniqueAsset(File target) {
     int index = 1;
-    String segment = String.format("%02d", index);
     String originalBaseName = FilenameUtils.getBaseName(target.getName());
     String suffix = FilenameUtils.getExtension(target.getName());
 
     while (target.exists()) {
+      String segment = String.format("%02d", index++);
       target = new File(target.getParentFile(), originalBaseName + segment + "." + suffix);
-      index++;
-      segment = String.format("%02d", index);
     }
     return target;
   }
+
+  //----------------------------------
 
   static Pattern filePattern = Pattern.compile(" \\(\\d\\d?\\)$");
 
@@ -278,5 +321,26 @@ public class FileUtils {
     String base1 = FilenameUtils.getBaseName(file1);
     String base2 = FilenameUtils.getBaseName(file2);
     return base1.equalsIgnoreCase(base2);
+  }
+
+  public static void findFileRecursive(File directory, List<String> extensions, String term, List<File> result) {
+    if (!directory.isDirectory()) {
+      return;
+    }
+
+    File[] files = directory.listFiles();
+    if (files != null) {
+      for (File file : files) {
+        if (file.isDirectory()) {
+          findFileRecursive(file, extensions, term, result);
+        }
+        else {
+          String ext = FilenameUtils.getExtension(file.getName());
+          if (extensions.contains(ext.toLowerCase()) && file.getName().toLowerCase().contains(term.toLowerCase())) {
+            result.add(file);
+          }
+        }
+      }
+    }
   }
 }

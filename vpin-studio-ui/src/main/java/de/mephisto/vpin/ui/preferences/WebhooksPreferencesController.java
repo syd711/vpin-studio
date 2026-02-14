@@ -2,12 +2,14 @@ package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.webhooks.WebhookSet;
 import de.mephisto.vpin.restclient.webhooks.WebhookSettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -34,9 +36,19 @@ public class WebhooksPreferencesController implements Initializable {
   private Button deleteBtn;
 
   @FXML
+  private CheckBox pauseMenuScreenshotCheckbox;
+
+  @FXML
   private Button editBtn;
   private WebhookSettings webhookSettings;
 
+
+  @FXML
+  private void onLinkClick(ActionEvent event) {
+    Hyperlink link = (Hyperlink) event.getSource();
+    String linkText = link.getText();
+    Studio.browse(linkText);
+  }
 
   @FXML
   private void onReload() {
@@ -68,9 +80,11 @@ public class WebhooksPreferencesController implements Initializable {
           WebhookSettings webhookSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.WEBHOOK_SETTINGS, WebhookSettings.class);
           webhookSettings.remove(selectedItem);
           client.getPreferenceService().setJsonPreference(webhookSettings);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           WidgetFactory.showAlert(Studio.stage, "Error", "Error deleting \"" + selectedItem.getName() + "\": " + e.getMessage());
-        } finally {
+        }
+        finally {
           reload();
         }
       }
@@ -120,6 +134,13 @@ public class WebhooksPreferencesController implements Initializable {
         }
       });
       return row;
+    });
+
+    PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
+    pauseMenuScreenshotCheckbox.setSelected(pauseMenuSettings.isAlwaysTakeScreenshot());
+    pauseMenuScreenshotCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      pauseMenuSettings.setAlwaysTakeScreenshot(newValue);
+      client.getPreferenceService().setJsonPreference(pauseMenuSettings);
     });
 
     reload();

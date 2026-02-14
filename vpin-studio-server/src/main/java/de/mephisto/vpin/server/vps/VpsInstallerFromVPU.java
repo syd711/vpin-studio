@@ -7,20 +7,22 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
+import de.mephisto.vpin.server.vpauthenticators.VpfVPAuthenticator;
+import de.mephisto.vpin.server.vpauthenticators.VpuVPAuthenticator;
 import org.apache.commons.lang3.StringUtils;
+import org.htmlunit.SilentCssErrorHandler;
 import org.htmlunit.UnexpectedPage;
 import org.htmlunit.WebClient;
 import org.htmlunit.WebWindow;
-import org.htmlunit.html.DomNode;
-import org.htmlunit.html.HtmlAnchor;
-import org.htmlunit.html.HtmlElement;
-import org.htmlunit.html.HtmlForm;
-import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.*;
 
 import de.mephisto.vpin.restclient.vps.VpsInstallLink;
 import de.mephisto.vpin.restclient.vpu.VPUSettings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class VpsInstallerFromVPU implements VpsInstaller {
+  private final static Logger LOG = LoggerFactory.getLogger(VpsInstallerFromVPU.class);
 
   private VPUSettings settings;
 
@@ -31,6 +33,7 @@ public class VpsInstallerFromVPU implements VpsInstaller {
   @Override
   public String login() throws IOException {
     try (final WebClient webClient = new WebClient()) {
+      webClient.setCssErrorHandler(new SilentCssErrorHandler());
       webClient.getOptions().setThrowExceptionOnScriptError(false);
       webClient.getOptions().setJavaScriptEnabled(false);
 
@@ -38,34 +41,39 @@ public class VpsInstallerFromVPU implements VpsInstaller {
     }
   }
 
-  private String doLogin(final WebClient webClient) throws IOException {
-    // don't even try to authenticate if settings are not set
-    if (StringUtils.isBlank(settings.getLogin())) {
-      return "Login cannot be empty";
+  private String doLogin(final WebClient webClient) {
+    try {
+      // don't even try to authenticate if settings are not set
+      if (StringUtils.isBlank(settings.getLogin())) {
+        return "Login cannot be empty";
+      }
+
+      final HtmlPage loginPage = webClient.getPage("https://vpuniverse.com/login/");
+
+      HtmlForm loginForm = loginPage.getForms().stream()
+          .filter(f -> StringUtils.containsIgnoreCase(f.getActionAttribute(), "/login"))
+          .findFirst().orElseThrow();
+
+      loginForm.getInputByName("auth").setValue(settings.getLogin());
+      loginForm.getInputByName("password").setValue(settings.getPassword());
+      final HtmlPage homePage = loginForm.getButtonByName("_processLogin").click();
+
+      // check that authentication happens successfully
+      String title = homePage.getTitleText();
+      if (StringUtils.containsIgnoreCase(title, "sign in")) {
+        DomNode node = homePage.querySelector("div.ipsMessage_error");
+        return node != null ? node.getTextContent() : "Cannot login";
+      }
+      return null;
     }
-
-    final HtmlPage loginPage = webClient.getPage("https://vpuniverse.com/login/");
-
-    HtmlForm loginForm = loginPage.getForms().stream()
-      .filter(f -> StringUtils.containsIgnoreCase(f.getActionAttribute(), "/login"))
-      .findFirst().orElseThrow();
-
-    loginForm.getInputByName("auth").setValue(settings.getLogin());
-    loginForm.getInputByName("password").setValue(settings.getPassword());
-    final HtmlPage homePage = loginForm.getButtonByName("_processLogin").click();
-
-    // check that authentication happens successfully
-    String title = homePage.getTitleText();
-    if (StringUtils.containsIgnoreCase(title, "sign in")) {
-      DomNode node = homePage.querySelector("div.ipsMessage_error");
-      return node != null ? node.getTextContent() : "Cannot login";
+    catch (IOException e) {
+      LOG.error("Login failed: {}", e.getMessage(), e);
+      return "Login failed: " + e.getMessage();
     }
-    return null;
   }
 
   @Override
   public void browse(String link, BiConsumer<VpsInstallLink, Supplier<InputStream>> consumer) throws IOException {
-
     try (final WebClient webClient = new WebClient()) {
       webClient.getOptions().setThrowExceptionOnScriptError(false);
       webClient.getOptions().setJavaScriptEnabled(false);

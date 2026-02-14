@@ -283,8 +283,8 @@ public class PINemHiUIPreferenceController implements Initializable, DialogContr
     });
 
     SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
-    screenInfoComboBox.setItems(FXCollections.observableList(systemSummary.getScreenInfos()));
-    screenInfoComboBox.valueProperty().setValue(systemSummary.getScreenInfo(settings.getInt(SETTING_SCREEN)));
+    screenInfoComboBox.setItems(FXCollections.observableList(systemSummary.getMonitorInfos()));
+    screenInfoComboBox.valueProperty().setValue(systemSummary.getMonitorInfo(settings.getInt(SETTING_SCREEN)));
     screenInfoComboBox.valueProperty().addListener(new ChangeListener<MonitorInfo>() {
       @Override
       public void changed(ObservableValue<? extends MonitorInfo> observableValue, MonitorInfo monitorInfo, MonitorInfo t1) {

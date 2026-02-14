@@ -6,7 +6,7 @@
 ' Exotic GameName
 
 ' use _ to split const on several lines
-Const myExoticName = "rab_320", _
+Const myExoticName = "rab_320",_
 			tableName = "ex""'otic" & " 'and' " & "com'""plex", _ ' with a "comment" at the end"   ' with a "comment"
 			BallSize = 54, _
 			UseSolenoids  = True
@@ -128,8 +128,7 @@ End Sub
 '===============================================================
 ' Cyber Race (Original 2023)
 
-Const cGameName = "cyberrace"
-Const myVersion = "1.3.0"
+Const cGameName = "cyberrace", myVersion = "1.3.0"
 
 LoadCoreFiles
 Sub LoadCoreFiles
@@ -162,12 +161,17 @@ Const myVersion = "0.81"
 Const DebugGeneral = True
 Const cAssetsFolder="SEPF"
 Const cDefaultDMDColor = "PowderBlue"	
+'ultraDmd is initialized in an included script
+Const newscript = "includedScript.vbs"
 
-Sub DMD_Init
-	If turnonultradmd = 0 then exit sub
-	ExecuteGlobal GetTextFile("UltraDMD_Options.vbs")
-	InitUltraDMD cAssetsFolder,cGameName
-End Sub
+On Error Resume Next
+ExecuteGlobal GetTextFile(newscript)    : If Err Then MsgBox "Can't open ""includedScript.vbs"""    : Exit Sub
+
+On Error Resume Next
+'ExecuteGlobal GetTextFile("PFMusic.vbs")
+If Err Then MsgBox "You need the PFMusic.vbs that accompanies this table"
+if PFMusicV> "" then if PFMusicV < 1.01 or Err then msgbox "PFMusic.vbs needs updated version"
+On Error Goto 0
 
 Sub Table1_Exit()
 	ExitUltraDMD

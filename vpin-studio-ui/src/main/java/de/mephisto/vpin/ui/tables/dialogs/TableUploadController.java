@@ -14,9 +14,10 @@ import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
-import de.mephisto.vpin.restclient.textedit.TextFile;
+import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.restclient.vps.VpsInstallLink;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableDialogs;
@@ -43,6 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -50,10 +52,11 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableUploadController implements Initializable, DialogController {
-  private final static Logger LOG = LoggerFactory.getLogger(TableUploadController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   public static final int MATCHING_PERCENTAGE = 90;
 
   @FXML
@@ -175,6 +178,7 @@ public class TableUploadController implements Initializable, DialogController {
   private UploaderAnalysis uploaderAnalysis;
   private Stage stage;
   private UISettings uiSettings;
+  private Runnable finalizer;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -186,7 +190,7 @@ public class TableUploadController implements Initializable, DialogController {
   private void onReadme(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     String value = (String) ((Button) e.getSource()).getUserData();
-    Dialogs.openTextEditor("readme", stage, new TextFile(value), "README");
+    Dialogs.openTextEditor("readme", stage, new MonitoredTextFile(value), "README");
   }
 
   @FXML
@@ -220,6 +224,11 @@ public class TableUploadController implements Initializable, DialogController {
 
         GameMediaUploadPostProcessingProgressModel progressModel = new GameMediaUploadPostProcessingProgressModel("Importing Game Media", uploadDescriptor);
         result = UniversalUploadUtil.postProcess(progressModel);
+
+        if (finalizer != null) {
+          finalizer.run();
+        }
+
         if (result.isPresent()) {
           // notify listeners of table import done
           EventManager.getInstance().notifyTableUploaded(result.get());
@@ -385,8 +394,14 @@ public class TableUploadController implements Initializable, DialogController {
           this.uploadBtn.setDisable(true);
         });
       }
+      else if (VpsInstallLink.isLinkFilename(selection.getName())) {
+        this.fileNameField.setText("");
+        this.fileNameField.setDisable(true);
+        this.fileBtn.setDisable(true);
+        this.uploadBtn.setDisable(false);
+      }
       else {
-        this.uploaderAnalysis = new UploaderAnalysis(client.getFrontendService().getFrontendType().supportPupPacks(), this.selection);
+        this.uploaderAnalysis = new UploaderAnalysis(Features.PUPPACKS_ENABLED, this.selection);
         if (!selectMatchingEmulator()) {
           return;
         }
@@ -425,7 +440,7 @@ public class TableUploadController implements Initializable, DialogController {
         return true;
       }
       else {
-        WidgetFactory.showAlert(stage, "Invalid File", "No matching Future Pinball emulator found.");
+        WidgetFactory.showAlert(stage, "Invalid File", "No matching emulator found.");
         this.selection = null;
         setSelection(false);
       }
@@ -456,7 +471,9 @@ public class TableUploadController implements Initializable, DialogController {
     }
 
     assetFilterBtn.setText("Filter Selection");
+    assetFilterBtn.getStyleClass().remove("error-title");
     if (!uploaderAnalysis.getExclusions().isEmpty()) {
+      assetFilterBtn.getStyleClass().add("error-title");
       if (uploaderAnalysis.getExclusions().size() == 1) {
         assetFilterBtn.setText("Filter Selection (" + uploaderAnalysis.getExclusions().size() + " excluded asset)");
       }
@@ -517,7 +534,7 @@ public class TableUploadController implements Initializable, DialogController {
 
     assetAltSoundLabel.setText("- ALT Sound");
     if (assetAltSoundLabel.isVisible()) {
-      assetAltSoundLabel.setText("- ALT Sound (" + uploaderAnalysis.getRomFromAltSoundPack() + ")");
+      assetAltSoundLabel.setText("- ALT Sound");
     }
 
     assetsView.setVisible(assetBackglassLabel.isVisible()
@@ -586,7 +603,7 @@ public class TableUploadController implements Initializable, DialogController {
         this.uploadBtn.setDisable(!this.uploaderAnalysis.getEmulatorType().equals(emulatorType));
       }
       else if (selection != null) {
-        UploaderAnalysis analysis = new UploaderAnalysis(client.getFrontendService().getFrontendType().supportPupPacks(), selection);
+        UploaderAnalysis analysis = new UploaderAnalysis(Features.PUPPACKS_ENABLED, selection);
         this.uploadBtn.setDisable(!analysis.getEmulatorType().equals(emulatorType));
       }
     });
@@ -703,8 +720,9 @@ public class TableUploadController implements Initializable, DialogController {
     assetCfgLabel.setVisible(false);
   }
 
-  public void setGame(@NonNull Stage stage, @Nullable GameRepresentation game, @Nullable UploadType uploadType, UploaderAnalysis analysis) {
+  public void setGame(@NonNull Stage stage, @Nullable GameRepresentation game, @Nullable UploadType uploadType, UploaderAnalysis analysis, @Nullable Runnable finalizer) {
     this.stage = stage;
+    this.finalizer = finalizer;
     this.uploaderAnalysis = analysis;
 
     if (!StringUtils.isEmpty(uiSettings.getDefaultUploadMode()) && uploadType == null) {

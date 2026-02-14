@@ -2,6 +2,7 @@ package de.mephisto.vpin.restclient.games.descriptors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -11,11 +12,12 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 
 public class UploadDescriptor {
-  private final static Logger LOG = LoggerFactory.getLogger(UploadDescriptor.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private UploadType uploadType;
   private String tempFilename;
@@ -32,10 +34,20 @@ public class UploadDescriptor {
   private boolean acceptAllAudioAsMusic;
   private String patchVersion;
 
+  private boolean backupRestoreMode = false;
+
   private List<String> excludedFiles = new ArrayList<>();
   private List<String> excludedFolders = new ArrayList<>();
 
-  private List<File> tempFiles = new ArrayList<>();
+  private final List<File> tempFiles = new ArrayList<>();
+
+  public boolean isBackupRestoreMode() {
+    return backupRestoreMode;
+  }
+
+  public void setBackupRestoreMode(boolean backupRestoreMode) {
+    this.backupRestoreMode = backupRestoreMode;
+  }
 
   public String getPatchVersion() {
     return patchVersion;
@@ -97,7 +109,7 @@ public class UploadDescriptor {
 
   public void finalizeUpload() {
     File tempFile = new File(getTempFilename());
-    if (tempFile.exists()) {
+    if (!isBackupRestoreMode() && tempFile.exists() && !isAsync()) {
       if (tempFile.delete()) {
         LOG.info("Finalized upload, deleted \"" + tempFile.getAbsolutePath() + "\"");
       }
@@ -137,6 +149,13 @@ public class UploadDescriptor {
 
   public void setExcludedFolders(List<String> excludedFolders) {
     this.excludedFolders = excludedFolders;
+  }
+
+  public boolean isExcluded(@Nullable String path) {
+    if (path == null) {
+      return true;
+    }
+    return excludedFiles.contains(path) || excludedFolders.contains(path);
   }
 
   @JsonIgnore

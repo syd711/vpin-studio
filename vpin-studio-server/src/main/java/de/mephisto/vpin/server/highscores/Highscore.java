@@ -27,6 +27,21 @@ public class Highscore {
 
   private int gameId;
 
+  private String displayName;
+
+  private String raw;
+
+  private String filename;
+
+  private String status;
+
+  private String type;
+
+  @Column(length = 1024)
+  private String options;
+
+  //--------------------
+
   public int getGameId() {
     return gameId;
   }
@@ -42,19 +57,6 @@ public class Highscore {
   public void setId(Long id) {
     this.id = id;
   }
-
-  private String displayName;
-
-  private String raw;
-
-  private String filename;
-
-  private String status;
-
-  private String type;
-
-  @Column(length = 1024)
-  private String options;
 
   public String getOptions() {
     return options;

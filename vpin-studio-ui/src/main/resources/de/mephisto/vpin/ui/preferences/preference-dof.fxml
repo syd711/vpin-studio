@@ -21,6 +21,7 @@
    <center>
       <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
+
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                <children>
                   <Label styleClass="preference-title" text="3RD PARTY PREFERENCES" textFill="WHITE" />
@@ -58,12 +59,12 @@
                      <children>
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                            <children>
-                              <TextField fx:id="installationFolderText" prefHeight="30.0" prefWidth="472.0">
+                              <TextField fx:id="installationFolderText" editable="false" prefHeight="30.0" prefWidth="430.0">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </TextField>
-                              <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFolder" styleClass="external-component" text="Folder...">
+                              <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFolder" text="Select Folder...">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -71,7 +72,7 @@
                            </children>
                         </HBox>
                         <Label styleClass="default-text" text="Folder:" />
-                        <Label fx:id="dofFolderErrorLabel" styleClass="error-message" text="Invalid DOF installation folder, no &quot;x64&quot; or &quot;x86&quot; folder found." GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label fx:id="dofFolderErrorLabel" styleClass="error-message" text="Invalid DOF installation folder, no &quot;DirectOutput.dll&quot; file found." GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -164,6 +165,7 @@
                   <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
                </padding>
             </VBox>
+
          </content>
       </ScrollPane>
    </center>

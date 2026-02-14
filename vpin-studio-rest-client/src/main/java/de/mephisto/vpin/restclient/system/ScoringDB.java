@@ -3,11 +3,13 @@ package de.mephisto.vpin.restclient.system;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.lang.invoke.MethodHandles;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -17,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ScoringDB {
-  private final static Logger LOG = LoggerFactory.getLogger(ScoringDB.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static String SCORING_DB_NAME = "scoringdb.json";
   public final static String URL = "https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/scoringdb.json";
@@ -145,9 +147,20 @@ public class ScoringDB {
 
   private List<String> notSupported = new ArrayList<>();
 
+  private List<String> allRoms = new ArrayList<>();
+
   private List<String> ignoredVPRegEntries = new ArrayList<>();
 
   private List<String> ignoredTextFiles = new ArrayList<>();
+
+
+  public List<String> getAllRoms() {
+    return allRoms;
+  }
+
+  public void setAllRoms(List<String> allRoms) {
+    this.allRoms = allRoms;
+  }
 
   public List<String> getIgnoredTextFiles() {
     return ignoredTextFiles;
@@ -208,6 +221,13 @@ public class ScoringDB {
 
   public List<String> getSupportedNvRams() {
     return supportedNvRams;
+  }
+
+  public boolean isNvRam(@Nullable String rom) {
+    if (StringUtils.isEmpty(rom)) {
+      return false;
+    }
+    return getAllRoms().contains(rom);
   }
 
   public void setSupportedNvRams(List<String> supportedNvRams) {

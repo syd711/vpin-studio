@@ -18,6 +18,7 @@ import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSavingProgressModel;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSyncProgressModel;
 import de.mephisto.vpin.ui.competitions.validation.CompetitionValidationTexts;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -249,6 +250,10 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
         try {
           CompetitionRepresentation newCmp = client.getCompetitionService().saveCompetition(c);
           onReload();
+          GameRepresentation game = client.getGameService().getGame(c.getGameId());
+          if (game != null) {
+            EventManager.getInstance().notifyTableChange(game.getId(), null);
+          }
           tableView.getSelectionModel().select(newCmp);
         }
         catch (Exception e) {
@@ -285,9 +290,9 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
           help, help2);
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
-        ProgressDialog.createProgressDialog(new WaitProgressModel<>("Delete Competition", 
-          "Deleting Competition " + selection.getName(), 
-          () -> client.getCompetitionService().deleteCompetition(selection)));
+        ProgressDialog.createProgressDialog(new WaitProgressModel<>("Delete Competition",
+            "Deleting Competition " + selection.getName(),
+            () -> client.getCompetitionService().deleteCompetition(selection)));
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions"));
         onReload();
       }
@@ -316,9 +321,9 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
     tableView.setVisible(false);
     tableStack.getChildren().add(loadingOverlay);
 
-    long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
+    long guildId = client.getPreferenceService().getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
     DiscordBotStatus discordStatus = client.getDiscordService().getDiscordStatus(guildId);
-    if (!discordStatus.isValid()) {
+    if (discordStatus.getError() != null) {
       textfieldSearch.setDisable(true);
       addBtn.setDisable(true);
       editBtn.setDisable(true);
@@ -361,7 +366,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
 
         tableView.setItems(data);
         tableView.refresh();
-        if (selection != null) {
+        if (selection != null && !data.isEmpty() && competitions.contains(selection)) {
           tableView.getSelectionModel().select(selection);
         }
         else if (!data.isEmpty()) {
@@ -404,7 +409,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
 
     columnTable.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
-      GameRepresentation game = client.getGame(value.getGameId());
+      GameRepresentation game = client.getGameService().getGame(value.getGameId());
       Label label = new Label("- not available anymore -");
       if (game != null) {
         label = new Label(game.getGameDisplayName());
@@ -414,7 +419,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
       HBox hBox = new HBox(6);
       hBox.setAlignment(Pos.CENTER_LEFT);
 
-      InputStream gameMediaItem = ServerFX.client.getGameMediaItem(value.getGameId(), VPinScreen.Wheel);
+      InputStream gameMediaItem = ServerFX.client.getWheelIcon(game.getId(), true);
       if (gameMediaItem == null) {
         gameMediaItem = Studio.class.getResourceAsStream("avatar-blank.png");
       }
@@ -432,7 +437,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
 
     columnServer.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
-      DiscordServer discordServer = client.getDiscordServer(value.getDiscordServerId());
+      DiscordServer discordServer = client.getDiscordService().getDiscordServer(value.getDiscordServerId());
       if (discordServer != null) {
         HBox hBox = new HBox(6);
         hBox.setAlignment(Pos.CENTER_LEFT);
@@ -664,7 +669,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
   @Override
   public void onViewActivated(NavigationOptions options) {
     JFXFuture.runAsync(() -> {
-      long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
+      long guildId = client.getPreferenceService().getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
       this.discordBotId = client.getDiscordService().getDiscordStatus(guildId).getBotId();
     }).thenLater(() -> {
       if (this.competitionsController != null) {

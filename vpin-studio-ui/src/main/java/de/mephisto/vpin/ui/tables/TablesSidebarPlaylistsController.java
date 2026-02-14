@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.commons.fx.Features;
-import de.mephisto.vpin.commons.fx.UIDefaults;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.Frontend;
@@ -11,9 +10,11 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.playlistmanager.PlaylistDialogs;
 import de.mephisto.vpin.ui.playlistmanager.PlaylistUpdateProgressModel;
+import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.util.PreferenceBindingUtil;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -34,16 +35,19 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
 public class TablesSidebarPlaylistsController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarPlaylistsController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   public static final int FAV_PADDING_LEFT = 118;
   public static final int FAV_WIDTH = 392;
 
@@ -82,6 +86,8 @@ public class TablesSidebarPlaylistsController implements Initializable {
 
   @FXML
   private Label dialogTitleLabel;
+  @FXML
+  private Label dialogCommentLabel;
 
   @FXML
   private Separator playlistManagerSeparator;
@@ -91,6 +97,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
   private TableOverviewController tableOverviewController;
 
   private boolean dialogMode = false;
+  private AtomicBoolean refreshDirty = new AtomicBoolean(false);
 
   // Add a public no-args constructor
   public TablesSidebarPlaylistsController() {
@@ -124,6 +131,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
   public void setDialogMode() {
     this.dialogMode = true;
     this.dialogTitleLabel.setVisible(true);
+    this.dialogCommentLabel.setVisible(true);
     this.toolbar.setVisible(false);
   }
 
@@ -132,6 +140,10 @@ public class TablesSidebarPlaylistsController implements Initializable {
   }
 
   public void refreshView(List<GameRepresentation> games) {
+    if (refreshDirty.get()) {
+      return;
+    }
+    refreshDirty.set(true);
     dataBox.getChildren().removeAll(dataBox.getChildren());
 
     assetManagerBtn.setDisable(games.size() != 1);
@@ -140,16 +152,14 @@ public class TablesSidebarPlaylistsController implements Initializable {
     dataRoot.setVisible(true);
     errorBox.setVisible(false);
 
-    List<PlaylistRepresentation> playlists = client.getPlaylistsService().getPlaylists();
 
     emptyDataBox.setVisible(games.isEmpty());
     dataBox.setVisible(!games.isEmpty());
     dataRoot.setVisible(!games.isEmpty());
 
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
 
-    if (!frontendType.supportPlaylists()) {
+    if (!Features.PLAYLIST_ENABLED) {
       parentBox.getChildren().remove(dataRoot);
       return;
     }
@@ -157,149 +167,164 @@ public class TablesSidebarPlaylistsController implements Initializable {
     this.errorBox.setVisible(false);
     if (!games.isEmpty()) {
       Frontend frontend = client.getFrontendService().getFrontendCached();
+      JFXFuture.supplyAsync(() -> {
+        return Studio.client.getFrontendService().isFrontendRunning();
+      }).thenAcceptLater((running) -> {
+        if (running) {
+          emptyDataBox.setVisible(false);
+          dataRoot.setVisible(false);
+          errorBox.setVisible(true);
+          errorTitle.setText("The database is currently locked.");
+          errorText.setText("Exit [Frontend] to modify playlists.");
 
-      boolean locked = client.getFrontendService().isFrontendRunning();
-      if (locked) {
-        emptyDataBox.setVisible(false);
-        dataRoot.setVisible(false);
-        errorBox.setVisible(true);
-        errorTitle.setText("The database is currently locked.");
-        errorText.setText("Exit [Frontend] to modify playlists.");
-        FrontendUtil.replaceName(errorText, frontend);
-        return;
-      }
+          FrontendUtil.replaceName(errorText, frontend);
+          return;
+        }
 
-      for (PlaylistRepresentation playlist : playlists) {
-        boolean linkedToEmu = playlist.getEmulatorId() == null || (this.games.size() == 1 && playlist.getEmulatorId() == games.get(0).getEmulatorId());
+        JFXFuture.supplyAsync(() -> {
+          return client.getPlaylistsService().getPlaylists();
+        }).thenAcceptLater((playlists) -> {
+          for (PlaylistRepresentation playlist : playlists) {
+            renderPlaylist(games, playlist, uiSettings);
+          }
+          refreshDirty.set(false);
+        });
+      });
+    }
+    else {
+      refreshDirty.set(false);
+    }
+  }
 
-        HBox root = new HBox();
-        root.setAlignment(Pos.BASELINE_LEFT);
-        root.setSpacing(3);
-        CheckBox gameCheckbox = new CheckBox(playlist.getName());
-        gameCheckbox.getStyleClass().add("default-text");
-        gameCheckbox.setPrefWidth(370);
-        gameCheckbox.setUserData(playlist);
-        gameCheckbox.setSelected(isFullSelectionInPlaylist(playlist));
-        boolean disabled = !linkedToEmu || !isPlaylistSelectable(playlist);
-        gameCheckbox.setDisable(disabled);
-        gameCheckbox.setStyle("-fx-font-size: 14px;-fx-text-fill: white;");
+  private void renderPlaylist(List<GameRepresentation> games, PlaylistRepresentation playlist, UISettings uiSettings) {
+    boolean linkedToEmu = playlist.getEmulatorId() == null || (this.games.size() == 1 && playlist.getEmulatorId() == games.get(0).getEmulatorId());
 
-        HBox favLists = new HBox(12);
-        favLists.setPadding(new Insets(0, 0, 0, 49));
-        gameCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-          @Override
-          public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
-            try {
-              String title = "Removing " + games.size() + " games from \"" + playlist.getName() + "\"";
-              if (games.size() == 1) {
-                title = "Removing \"" + games.get(0).getGameDisplayName() + "\" from \"" + playlist.getName() + "\"";
-              }
+    HBox root = new HBox();
+    root.setAlignment(Pos.BASELINE_LEFT);
+    root.setSpacing(3);
+    CheckBox gameCheckbox = new CheckBox(playlist.getName());
+    gameCheckbox.getStyleClass().add("default-text");
+    gameCheckbox.setPrefWidth(370);
+    gameCheckbox.setUserData(playlist);
+    gameCheckbox.setSelected(isFullSelectionInPlaylist(playlist));
+    boolean disabled = !linkedToEmu || !isPlaylistSelectable(playlist);
+    gameCheckbox.setDisable(disabled);
+    gameCheckbox.setStyle("-fx-font-size: 14px;-fx-text-fill: white;");
 
-              if (t1) {
-                title = "Adding " + games.size() + " games to \"" + playlist.getName() + "\"";
-                if (games.size() == 1) {
-                  title = "Adding \"" + games.get(0).getGameDisplayName() + "\" to \"" + playlist.getName() + "\"";
-                }
-              }
+    HBox favLists = new HBox(12);
+    favLists.setPadding(new Insets(0, 0, 0, 49));
+    gameCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
+        try {
+          String title = "Removing " + games.size() + " games from \"" + playlist.getName() + "\"";
+          if (games.size() == 1) {
+            title = "Removing \"" + games.get(0).getGameDisplayName() + "\" from \"" + playlist.getName() + "\"";
+          }
 
-              ProgressDialog.createProgressDialog(new PlaylistUpdateProgressModel(title, playlist, games, t1));
-              refreshPlaylist(client.getPlaylistsService().getPlaylist(playlist.getId()), false);
-            }
-            catch (Exception e) {
-              LOG.error("Failed to update playlists: " + e.getMessage(), e);
-              WidgetFactory.showAlert(stage, "Error", "Failed to update playlists: " + e.getMessage());
+          if (t1) {
+            title = "Adding " + games.size() + " games to \"" + playlist.getName() + "\"";
+            if (games.size() == 1) {
+              title = "Adding \"" + games.get(0).getGameDisplayName() + "\" to \"" + playlist.getName() + "\"";
             }
           }
-        });
 
-        Label playlistIcon = WidgetFactory.createPlaylistIcon(playlist, uiSettings);
-        Tooltip playlistTooltip = TableOverviewController.createPlaylistTooltip(playlist, playlistIcon);
-        playlistIcon.setTooltip(playlistTooltip);
-        if (frontendType.supportPlaylistsCrud() && isEditablePlaylist(playlist) && !dialogMode) {
-          Button plyButton = new Button();
-          plyButton.setGraphic(playlistIcon.getGraphic());
-          plyButton.setTooltip(playlistTooltip);
-          plyButton.getStyleClass().add("playlist-button");
-          plyButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-              PlaylistDialogs.openPlaylistManager(tableOverviewController, playlist);
-            }
-          });
-          root.getChildren().add(plyButton);
+          ProgressDialog.createProgressDialog(new PlaylistUpdateProgressModel(title, playlist, games, t1));
+          refreshPlaylist(client.getPlaylistsService().getPlaylist(playlist.getId()), false);
         }
-        else {
-          root.getChildren().add(playlistIcon);
+        catch (Exception e) {
+          LOG.error("Failed to update playlists: " + e.getMessage(), e);
+          WidgetFactory.showAlert(stage, "Error", "Failed to update playlists: " + e.getMessage());
         }
-
-        String tooltip = null;
-        FontIcon icon = null;
-        if (playlist.isSqlPlayList()) {
-          tooltip = "SQL Playlist";
-          icon = WidgetFactory.createIcon("mdi2d-database-search-outline");
-        }
-        else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_FAVORITE_ID) {
-          tooltip = "Favorite";
-          icon = WidgetFactory.createIcon("mdi2d-database-search-outline");
-        }
-        else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_GLOBALFAV_ID) {
-          tooltip = "Global Favorite";
-          icon = WidgetFactory.createIcon("mdi2d-database-search-outline");
-        }
-        else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_JUSTADDED_ID) {
-          tooltip = "Just Added";
-          icon = WidgetFactory.createIcon("mdi2d-database-search-outline");
-        }
-        else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_MOSTPLAYED_ID) {
-          tooltip = "Most Played";
-          icon = WidgetFactory.createIcon("mdi2d-database-search-outline");
-        }
-        else {
-          tooltip = "Curated Playlist";
-          icon = WidgetFactory.createIcon("mdi2f-format-list-checkbox");
-        }
-        Label playListTypeIcon = new Label(null, icon);
-        playListTypeIcon.setTooltip(new Tooltip(tooltip));
-        root.getChildren().add(playListTypeIcon);
-
-        root.getChildren().add(gameCheckbox);
-
-        if (linkedToEmu) {
-          ColorPicker colorPicker = new ColorPicker(Color.web(WidgetFactory.hexColor(playlist.getMenuColor())));
-          colorPicker.valueProperty().addListener(new ChangeListener<Color>() {
-            @Override
-            public void changed(ObservableValue<? extends Color> observableValue, Color color, Color t1) {
-              try {
-                String colorhex = PreferenceBindingUtil.toHexString(t1);
-                if (colorhex.startsWith("#")) {
-                  colorhex = colorhex.substring(1);
-                }
-                playlist.setMenuColor((int) Long.parseLong(colorhex, 16));
-                PlaylistRepresentation update = client.getPlaylistsService().savePlaylist(playlist);
-                if (update == null) {
-                  LOG.error("Saving playlist failed, check server logs.");
-                }
-                //client.getPlaylistsService().clearCache();
-                refreshPlaylist(update, true);
-              }
-              catch (Exception e) {
-                LOG.error("Failed to update playlists: " + e.getMessage(), e);
-                WidgetFactory.showAlert(stage, "Error", "Failed to update playlists: " + e.getMessage());
-              }
-            }
-          });
-          root.getChildren().add(colorPicker);
-        }
-
-        VBox entry = new VBox(3);
-        entry.getChildren().add(root);
-
-        if (!favLists.getChildren().isEmpty()) {
-          entry.getChildren().add(favLists);
-        }
-        dataBox.getChildren().add(entry);
       }
+    });
+
+    Label playlistIcon = WidgetFactory.createPlaylistIcon(playlist, uiSettings);
+    Tooltip playlistTooltip = TableOverviewController.createPlaylistTooltip(playlist, playlistIcon);
+    playlistIcon.setTooltip(playlistTooltip);
+    if (Features.PLAYLIST_CRUD && isEditablePlaylist(playlist) && !dialogMode) {
+      Button plyButton = new Button();
+      plyButton.setGraphic(playlistIcon.getGraphic());
+      plyButton.setTooltip(playlistTooltip);
+      plyButton.getStyleClass().add("playlist-button");
+      plyButton.setOnAction(new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+          PlaylistDialogs.openPlaylistManager(tableOverviewController, playlist);
+        }
+      });
+      root.getChildren().add(plyButton);
     }
+    else {
+      root.getChildren().add(playlistIcon);
+    }
+
+    String tooltip = null;
+    FontIcon icon = null;
+    if (playlist.isSqlPlayList()) {
+      tooltip = "SQL Playlist";
+      icon = WidgetFactory.createIcon("mdi2d-database-search-outline");
+    }
+    else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_FAVORITE_ID) {
+      tooltip = "Favorite";
+      icon = WidgetFactory.createIcon("mdi2d-database-search-outline");
+    }
+    else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_GLOBALFAV_ID) {
+      tooltip = "Global Favorite";
+      icon = WidgetFactory.createIcon("mdi2d-database-search-outline");
+    }
+    else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_JUSTADDED_ID) {
+      tooltip = "Just Added";
+      icon = WidgetFactory.createIcon("mdi2d-database-search-outline");
+    }
+    else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_MOSTPLAYED_ID) {
+      tooltip = "Most Played";
+      icon = WidgetFactory.createIcon("mdi2d-database-search-outline");
+    }
+    else {
+      tooltip = "Curated Playlist";
+      icon = WidgetFactory.createIcon("mdi2f-format-list-checkbox");
+    }
+    Label playListTypeIcon = new Label(null, icon);
+    playListTypeIcon.setTooltip(new Tooltip(tooltip));
+    root.getChildren().add(playListTypeIcon);
+
+    root.getChildren().add(gameCheckbox);
+
+    if (linkedToEmu) {
+      ColorPicker colorPicker = new ColorPicker(Color.web(WidgetFactory.hexColor(playlist.getMenuColor())));
+      colorPicker.valueProperty().addListener(new ChangeListener<Color>() {
+        @Override
+        public void changed(ObservableValue<? extends Color> observableValue, Color color, Color t1) {
+          try {
+            String colorhex = PreferenceBindingUtil.toHexString(t1);
+            if (colorhex.startsWith("#")) {
+              colorhex = colorhex.substring(1);
+            }
+            playlist.setMenuColor((int) Long.parseLong(colorhex, 16));
+            PlaylistRepresentation update = client.getPlaylistsService().savePlaylist(playlist);
+            if (update == null) {
+              LOG.error("Saving playlist failed, check server logs.");
+            }
+            //client.getPlaylistsService().clearCache();
+            refreshPlaylist(update, true);
+          }
+          catch (Exception e) {
+            LOG.error("Failed to update playlists: " + e.getMessage(), e);
+            WidgetFactory.showAlert(stage, "Error", "Failed to update playlists: " + e.getMessage());
+          }
+        }
+      });
+      root.getChildren().add(colorPicker);
+    }
+
+    VBox entry = new VBox(3);
+    entry.getChildren().add(root);
+
+    if (!favLists.getChildren().isEmpty()) {
+      entry.getChildren().add(favLists);
+    }
+    dataBox.getChildren().add(entry);
   }
 
   private boolean isEditablePlaylist(PlaylistRepresentation playlist) {
@@ -384,10 +409,11 @@ public class TablesSidebarPlaylistsController implements Initializable {
     toolbar.managedProperty().bindBidirectional(toolbar.visibleProperty());
     dialogTitleLabel.managedProperty().bindBidirectional(dialogTitleLabel.visibleProperty());
     dialogTitleLabel.setVisible(false);
+    dialogCommentLabel.managedProperty().bindBidirectional(dialogCommentLabel.visibleProperty());
+    dialogCommentLabel.setVisible(false);
 
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
-    playlistManagerBtn.setVisible(frontendType.supportPlaylistsCrud() && Features.PLAYLIST_MANAGER);
-    playlistManagerSeparator.setVisible(frontendType.supportPlaylistsCrud() && Features.PLAYLIST_MANAGER);
+    playlistManagerBtn.setVisible(Features.PLAYLIST_CRUD && Features.PLAYLIST_MANAGER);
+    playlistManagerSeparator.setVisible(Features.PLAYLIST_CRUD && Features.PLAYLIST_MANAGER);
 
     dataBox.managedProperty().bindBidirectional(dataBox.visibleProperty());
     emptyDataBox.managedProperty().bindBidirectional(emptyDataBox.visibleProperty());

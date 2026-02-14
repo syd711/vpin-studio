@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SDetail;
+import de.mephisto.vpin.restclient.directb2s.DirectB2SFrameType;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2sScreenRes;
@@ -16,10 +17,7 @@ import de.mephisto.vpin.restclient.util.MimeTypeUtil;
 import de.mephisto.vpin.restclient.util.ReturnMessage;
 import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.frontend.FrontendService;
-import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameLifecycleService;
-import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.games.UniversalUploadService;
+import de.mephisto.vpin.server.games.*;
 
 import de.mephisto.vpin.server.system.DefaultPictureService;
 
@@ -29,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -49,7 +48,6 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -78,6 +76,9 @@ public class DirectB2SResource {
 
   @Autowired
   private GameLifecycleService gameLifecycleService;
+
+  @Autowired
+  private GameCachingService gameCachingService;
 
   //--------------------------------------------------
 
@@ -183,16 +184,6 @@ public class DirectB2SResource {
     return download(backglassService.getPreviewBackground(emulatorId, fileName, game, includeFrame), FilenameUtils.getBaseName(fileName) + ".png", false);
   }
 
-  @GetMapping("/croppedBackground/{gameId}")
-  public ResponseEntity<StreamingResponseBody> getCroppedBackground(@PathVariable("gameId") int gameId) {
-    return download(gameId, game -> defaultPictureService.getCroppedDefaultPicture(game));
-  }
-
-  @GetMapping("/croppedDmd/{gameId}")
-  public ResponseEntity<StreamingResponseBody> getCroppedDmd(@PathVariable("gameId") int gameId) {
-    return download(gameId, game -> defaultPictureService.getDMDPicture(game));
-  }
-
   //-------
   // download utilities
 
@@ -206,6 +197,14 @@ public class DirectB2SResource {
     if (image == null) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
+    ByteArrayResource resource = new ByteArrayResource(image);
+    return download(resource, name, forceDownload);
+  }
+
+  private ResponseEntity<Resource> download(Resource resource, String name, boolean forceDownload) {
+    if (resource == null) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
 
     HttpHeaders headers = new HttpHeaders();
     if (forceDownload) {
@@ -216,20 +215,19 @@ public class DirectB2SResource {
     headers.add("Expires", "0");
     headers.add("X-Frame-Options", "SAMEORIGIN");
 
-    ByteArrayResource resource = new ByteArrayResource(image);
-    return ResponseEntity.ok()
-        .headers(headers)
-        .contentLength(resource.contentLength())
-        .contentType(forceDownload ? MediaType.APPLICATION_OCTET_STREAM : MediaType.IMAGE_PNG)
-        .body(resource);
-  }
+    ResponseEntity.BodyBuilder res = ResponseEntity.ok().headers(headers);
 
-  private ResponseEntity<StreamingResponseBody> download(int gameId, Function<Game, File> provider) {
-    Game game = gameService.getGame(gameId);
-    if (game == null) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    try {
+      res.contentLength(resource.contentLength());
     }
-    return download(provider.apply(game));
+    catch (IOException ioe) {
+      LOG.warn("Cannot determine content Length for " + name);
+    }
+
+    // add content Type
+    res = res.contentType(forceDownload ? MediaType.APPLICATION_OCTET_STREAM : MediaType.IMAGE_PNG);
+
+    return res.body(resource);
   }
 
   private ResponseEntity<StreamingResponseBody> download(File file) {
@@ -264,6 +262,7 @@ public class DirectB2SResource {
       Game game = gameService.getGameByDirectB2S(emulatorId, fileName);
       if (game != null) {
         gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.DIRECTB2S, fileName);
+        gameCachingService.invalidate(game.getId());
       }
     }
     return b;
@@ -302,6 +301,7 @@ public class DirectB2SResource {
       }
       else if (game != null) {
         gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.DIRECTB2S, fileName);
+        gameCachingService.invalidate(game.getId());
       }
     }
   }
@@ -350,22 +350,15 @@ public class DirectB2SResource {
 
   @PostMapping("/upload")
   public UploadDescriptor uploadDirectB2s(@RequestParam(value = "file", required = false) MultipartFile file,
-                                          @RequestParam("uploadType") UploadType uploadType,
+                                          @RequestParam("uploadType") String uploadType,
                                           @RequestParam("objectId") Integer gameId) {
     UploadDescriptor descriptor = universalUploadService.create(file, gameId);
     try {
       descriptor.upload();
-      descriptor.setUploadType(uploadType);
+      descriptor.setUploadType(UploadType.valueOf(uploadType.replaceAll("\"", ""))); //????
       universalUploadService.importFileBasedAssets(descriptor, AssetType.DIRECTB2S);
       gameService.resetUpdate(gameId, VpsDiffTypes.b2s);
       backglassService.clearCache();
-
-      // FIXME OLE not really needed anymore as defaultPictureService auto detect missing images
-      Game game = gameService.getGame(gameId);
-      if (game != null) {
-        defaultPictureService.extractDefaultPicture(game);
-      }
-
       return descriptor;
     }
     catch (Exception e) {
@@ -432,6 +425,22 @@ public class DirectB2SResource {
     filename = URLDecoder.decode(filename, StandardCharsets.UTF_8);
     File screenRes = new File(filename);
     return download(screenRes);
+  }
+
+  @GetMapping("/frame/{emuId}/{filename}/{frameType}")
+  public ResponseEntity<Resource> generateFrame(@PathVariable("emuId") int emulatorId, @PathVariable("filename") String filename, @PathVariable("frameType") DirectB2SFrameType frameType) {
+    // first decoding done by the RestService but an extra one is needed
+    filename = URLDecoder.decode(filename, StandardCharsets.UTF_8);
+
+    if (DirectB2SFrameType.USE_FRAME.equals(frameType)) {
+      DirectB2sScreenRes screenres = getScreenRes(emulatorId, filename, false);
+      String filePath = screenres.getBackgroundFilePath();
+      return download(new FileSystemResource(filePath), "frame.png", false);
+    }
+
+    Game game = gameService.getGameByDirectB2S(emulatorId, filename);
+    byte[] frame = backglassService.generateFrame(emulatorId, filename, game, frameType);
+    return download(frame, frameType + ".png", false);
   }
 
   @PostMapping("/screenRes/save")

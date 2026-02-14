@@ -7,7 +7,16 @@ public class IScoredGameRoom {
   private String url;
   private boolean synchronize = true;
   private boolean scoreReset = true;
+  private boolean ignoreHidden = true;
   private String badge;
+
+  public boolean isIgnoreHidden() {
+    return ignoreHidden;
+  }
+
+  public void setIgnoreHidden(boolean ignoreHidden) {
+    this.ignoreHidden = ignoreHidden;
+  }
 
   public String getBadge() {
     return badge;

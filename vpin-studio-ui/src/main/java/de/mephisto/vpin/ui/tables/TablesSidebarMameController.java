@@ -4,40 +4,43 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.mame.MameOptions;
-import de.mephisto.vpin.restclient.textedit.TextFile;
+import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
 import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
+import de.mephisto.vpin.ui.tables.vbsedit.VBSManager;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.DismissalUtil;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablesSidebarMameController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarMameController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public final static java.util.List<SoundMode> SOUND_MODES = Arrays.asList(
       new SoundMode(0, "0 - Standard built-in PinMAME emulation"),
@@ -59,6 +62,12 @@ public class TablesSidebarMameController implements Initializable {
 
   @FXML
   private VBox noInputDataBox;
+
+  @FXML
+  private VBox tablesBox;
+
+  @FXML
+  private VBox tableListBox;
 
   @FXML
   private VBox errorBox;
@@ -118,6 +127,9 @@ public class TablesSidebarMameController implements Initializable {
   private Button reloadBtn;
 
   @FXML
+  private Button scriptBtn;
+
+  @FXML
   private Button copyRomAliasBtn;
 
   @FXML
@@ -127,7 +139,13 @@ public class TablesSidebarMameController implements Initializable {
   private Label labelRomAlias;
 
   @FXML
+  private Label nvOffsetLabel;
+
+  @FXML
   private Label labelRom;
+
+  @FXML
+  private Button nvOffsetBtn;
 
 
   private Optional<GameRepresentation> game = Optional.empty();
@@ -176,14 +194,69 @@ public class TablesSidebarMameController implements Initializable {
   }
 
   @FXML
+  private void onNvOffset() {
+    if (this.game.isPresent()) {
+      onNvOffset(this.game.get().getId());
+    }
+  }
+
+  @FXML
+  public void onScriptEdit() {
+    VBSManager.getInstance().edit(this.game);
+  }
+
+  private void onNvOffset(int gameId) {
+    GameRepresentation g = client.getGameService().getGame(gameId);
+    if (g == null) {
+      return;
+    }
+
+    int nvOffset = g.getNvOffset();
+    if (nvOffset == 0) {
+      nvOffset = 1;
+    }
+    String value = WidgetFactory.showInputDialog(Studio.stage, "NVOffset", "Enter the new NVOffset value for the table.", null, null, String.valueOf(nvOffset));
+    if (value != null) {
+      try {
+        nvOffset = Integer.parseInt(value);
+      }
+      catch (NumberFormatException e) {
+        WidgetFactory.showAlert(Studio.stage, "Error", "Invalid NVOffset value.", "Please input a numeric value.");
+        onNvOffset(gameId);
+        return;
+      }
+
+      if (nvOffset > 0 && nvOffset == g.getNvOffset()) {
+        WidgetFactory.showInformation(Studio.stage, "NVOffset not updated", "NVOffset not updated, because it already has the value \"" + nvOffset + "\".", null);
+        onNvOffset(gameId);
+        return;
+      }
+
+      try {
+        int nvOffset1 = client.getVpxService().setNvOffset(g.getId(), nvOffset);
+        if (nvOffset1 == -1) {
+          WidgetFactory.showAlert(Studio.stage, "Error", "The NVOffset value has not been set. The script analysis failed.", "Use the script editor to set the value manually.");
+        }
+        else {
+          EventManager.getInstance().notifyTableChange(g.getId(), g.getRom(), null);
+        }
+      }
+      catch (Exception e) {
+        LOG.error("Failed to set nvoffset value: {}", e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, "Error", "Setting NVOffset failed: " + e.getMessage(), "Use the script editor to set the value manually.");
+      }
+    }
+  }
+
+  @FXML
   private void onVPMAlias() {
     try {
       if (game.isPresent()) {
         GameRepresentation gameRepresentation = game.get();
 
-        TextFile textFile = new TextFile(VPinFile.VPMAliasTxt);
-        textFile.setEmulatorId(gameRepresentation.getEmulatorId());
-        boolean b = Dialogs.openTextEditor(textFile, "VPMAlias.txt");
+        MonitoredTextFile monitoredTextFile = new MonitoredTextFile(VPinFile.VPMAliasTxt);
+        monitoredTextFile.setEmulatorId(gameRepresentation.getEmulatorId());
+        boolean b = Dialogs.openTextEditor(monitoredTextFile, "VPMAlias.txt");
         if (b) {
           EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), gameRepresentation.getRom());
           if (!StringUtils.isEmpty(gameRepresentation.getRomAlias())) {
@@ -206,46 +279,45 @@ public class TablesSidebarMameController implements Initializable {
   @FXML
   private void onMameSetup() {
     if (this.game.isPresent()) {
-      File file = client.getMameService().getSetupFile();
-      if (file == null || !file.exists()) {
+      if (!client.getMameService().runSetup()) {
         WidgetFactory.showAlert(Studio.stage, "Did not find Setup.exe", "The setup.exe file was not found.");
-      }
-      else {
-        Studio.open(file);
       }
     }
   }
 
   @FXML
   private void onApplyDefaults() {
-    if (options.isExistInRegistry()) {
-      onDelete();
-    }
-    else {
-      noInputDataBox.setVisible(false);
-      MameOptions defaultOptions = client.getMameService().getOptions(MameOptions.DEFAULT_KEY);
+    try {
+      if (options.isExistInRegistry()) {
+        onDelete();
+      }
+      else {
+        noInputDataBox.setVisible(false);
+        MameOptions defaultOptions = client.getMameService().getOptions(MameOptions.DEFAULT_KEY);
 
-      options.setSkipPinballStartupTest(defaultOptions.isSkipPinballStartupTest());
-      options.setUseSound(defaultOptions.isUseSound());
-      options.setUseSamples(defaultOptions.isUseSamples());
-      options.setCompactDisplay(defaultOptions.isCompactDisplay());
-      options.setDoubleDisplaySize(defaultOptions.isDoubleDisplaySize());
-      options.setIgnoreRomCrcError(defaultOptions.isIgnoreRomCrcError());
-      options.setCabinetMode(defaultOptions.isCabinetMode());
-      options.setShowDmd(defaultOptions.isShowDmd());
-      options.setUseExternalDmd(defaultOptions.isUseExternalDmd());
-      options.setColorizeDmd(defaultOptions.isColorizeDmd());
-      options.setSoundMode(defaultOptions.getSoundMode());
-      options.setForceStereo(defaultOptions.isForceStereo());
+        options.setSkipPinballStartupTest(defaultOptions.isSkipPinballStartupTest());
+        options.setUseSound(defaultOptions.isUseSound());
+        options.setUseSamples(defaultOptions.isUseSamples());
+        options.setCompactDisplay(defaultOptions.isCompactDisplay());
+        options.setDoubleDisplaySize(defaultOptions.isDoubleDisplaySize());
+        options.setIgnoreRomCrcError(defaultOptions.isIgnoreRomCrcError());
+        options.setCabinetMode(defaultOptions.isCabinetMode());
+        options.setShowDmd(defaultOptions.isShowDmd());
+        options.setUseExternalDmd(defaultOptions.isUseExternalDmd());
+        options.setColorizeDmd(defaultOptions.isColorizeDmd());
+        options.setSoundMode(defaultOptions.getSoundMode());
+        options.setForceStereo(defaultOptions.isForceStereo());
 
-      try {
         client.getMameService().saveOptions(options);
-        EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
       }
-      catch (Exception e) {
-        LOG.error("Failed to save mame settings: " + e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save mame settings: " + e.getMessage());
-      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to save mame settings: " + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save mame settings: " + e.getMessage());
+    }
+    finally {
+      Studio.client.getGameService().reload(game.get().getId());
+      EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
     }
   }
 
@@ -261,9 +333,14 @@ public class TablesSidebarMameController implements Initializable {
     emptyDataBox.managedProperty().bindBidirectional(emptyDataBox.visibleProperty());
     noInputDataBox.managedProperty().bindBidirectional(noInputDataBox.visibleProperty());
     invalidDataBox.managedProperty().bindBidirectional(invalidDataBox.visibleProperty());
+    tablesBox.managedProperty().bindBidirectional(tablesBox.visibleProperty());
     errorBox.managedProperty().bindBidirectional(errorBox.visibleProperty());
     errorBox.setVisible(false);
     invalidDataBox.setVisible(false);
+    tablesBox.setVisible(false);
+
+    mameBtn.managedProperty().bind(mameBtn.visibleProperty());
+    mameBtn.setVisible(!Features.IS_STANDALONE);
     mameBtn.setDisable(!client.getSystemService().isLocal());
 
     noInputDataBox.setVisible(false);
@@ -292,19 +369,22 @@ public class TablesSidebarMameController implements Initializable {
     saveDisabled = false;
   }
 
-  public void refreshView(Optional<GameRepresentation> g) {
+  public void refreshView(Optional<GameRepresentation> gameOptional) {
     this.options = null;
 
     invalidDataBox.setVisible(false);
-    emptyDataBox.setVisible(g.isEmpty());
-    dataBox.setVisible(g.isPresent());
-    dataScrollPane.setVisible(g.isPresent());
+    emptyDataBox.setVisible(gameOptional.isEmpty());
+    dataBox.setVisible(gameOptional.isPresent());
+    dataScrollPane.setVisible(gameOptional.isPresent());
 
     labelRomAlias.setText("-");
+    nvOffsetLabel.setText("-");
     labelRom.setText("-");
     copyRomAliasBtn.setDisable(true);
+    scriptBtn.setDisable(true);
     copyRomBtn.setDisable(true);
-    aliasBtn.setDisable(g.isEmpty());
+    aliasBtn.setDisable(gameOptional.isEmpty());
+    nvOffsetBtn.setDisable(true);
 
     skipPinballStartupTest.setSelected(false);
     useSound.setSelected(false);
@@ -320,15 +400,65 @@ public class TablesSidebarMameController implements Initializable {
     forceStereo.setSelected(false);
 
     this.errorBox.setVisible(false);
-    this.applyDefaultsBtn.setDisable(!g.isPresent());
+    this.applyDefaultsBtn.setDisable(!gameOptional.isPresent());
     noInputDataBox.setVisible(false);
+    tablesBox.setVisible(false);
 
-    if (g.isPresent()) {
-      GameRepresentation game = g.get();
+    if (gameOptional.isPresent()) {
+      GameRepresentation game = gameOptional.get();
 
-      if (!StringUtils.isEmpty(game.getRomAlias())) {
-        labelRomAlias.setText(game.getRomAlias());
-        copyRomAliasBtn.setDisable(false);
+      nvOffsetBtn.setDisable(!HighscoreType.NVRam.equals(game.getHighscoreType()));
+      labelRomAlias.setText(!StringUtils.isEmpty(game.getRomAlias()) ? game.getRomAlias() : "-");
+      copyRomAliasBtn.setDisable(false);
+      scriptBtn.setDisable(false);
+
+      if (game.getNvOffset() > 0) {
+        nvOffsetLabel.setText(String.valueOf(game.getNvOffset()));
+      }
+
+      List<GameRepresentation> data = tablesSidebarController.getTableOverviewController().getData();
+      String rom = game.getRom();
+      List<GameRepresentation> sharedGames = data.stream().filter(g -> !StringUtils.isEmpty(g.getRom()) && g.getRom().equals(rom) && g.getId() != game.getId()).collect(Collectors.toList());
+      if (!sharedGames.isEmpty()) {
+        tablesBox.setVisible(true);
+        tableListBox.getChildren().removeAll(tableListBox.getChildren());
+        for (GameRepresentation sharedGame : sharedGames) {
+          HBox row = new HBox(3);
+          String title = "\"" + sharedGame.getGameDisplayName() + "\"";
+          if (sharedGame.getNvOffset() > 0) {
+            title += " [NVOffset: " + sharedGame.getNvOffset() + "]";
+          }
+          Label label = new Label("- " + title);
+          label.setPrefWidth(464);
+          label.setStyle("");
+          label.getStyleClass().add("default-text");
+          row.getChildren().add(label);
+
+          Button button = new Button("", WidgetFactory.createIcon("mdi2l-lead-pencil"));
+          button.setTooltip(new Tooltip("Edit table data"));
+          button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+              TableDialogs.openTableDataDialog(tablesSidebarController.getTableOverviewController(), sharedGame);
+            }
+          });
+          row.getChildren().add(button);
+
+          if (HighscoreType.NVRam.equals(sharedGame.getHighscoreType())) {
+            Button nvOffsetButton = new Button("", WidgetFactory.createIcon("mdi2s-script-text"));
+            nvOffsetButton.setTooltip(new Tooltip("Set NVOffset"));
+            nvOffsetButton.setOnAction(new EventHandler<ActionEvent>() {
+              @Override
+              public void handle(ActionEvent event) {
+                onNvOffset(sharedGame.getId());
+              }
+            });
+
+            row.getChildren().add(nvOffsetButton);
+          }
+
+          tableListBox.getChildren().add(row);
+        }
       }
 
       if (!StringUtils.isEmpty(game.getRom())) {

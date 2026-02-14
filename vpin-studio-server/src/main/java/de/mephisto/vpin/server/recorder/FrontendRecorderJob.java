@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.recorder;
 
+import de.mephisto.vpin.commons.utils.NirCmd;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -59,6 +60,8 @@ public class FrontendRecorderJob implements Job {
         if (jobDescriptor.isFinished() || jobDescriptor.isCancelled()) {
           break;
         }
+
+        NirCmd.setTaskBarVisible(false);
 
         jobDescriptor.setGameId(game.getId());
         jobDescriptor.setStatus("Launching Frontend");
@@ -170,7 +173,7 @@ public class FrontendRecorderJob implements Job {
         }
 
         if (recordingScreenOption.getRecordMode().equals(RecordingWriteMode.ifMissing)) {
-          List<File> screenMediaFiles = frontend.getMediaAccessStrategy().getScreenMediaFiles(game, screen);
+          List<File> screenMediaFiles = recorderService.getGameMediaFiles(game, screen);
           if (screenMediaFiles.isEmpty()) {
             return true;
           }

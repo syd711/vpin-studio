@@ -238,12 +238,12 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <TextArea fx:id="tableRulesLabel" editable="false" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                              <TextArea fx:id="tableRulesLabel" editable="false" prefHeight="200.0" prefWidth="200.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="7">
                                  <GridPane.margin>
                                     <Insets right="6.0" />
                                  </GridPane.margin>
                               </TextArea>
-                              <TextArea fx:id="tableDescriptionLabel" editable="false" layoutX="178.0" layoutY="223.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                              <TextArea fx:id="tableDescriptionLabel" editable="false" layoutX="178.0" layoutY="223.0" prefHeight="200.0" prefWidth="200.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="8">
                                  <GridPane.margin>
                                     <Insets right="6.0" />
                                  </GridPane.margin>
@@ -272,7 +272,7 @@
                                     </Button>
                                  </children>
                               </VBox>
-                              <TextArea fx:id="tableBlurbLabel" editable="false" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                              <TextArea fx:id="tableBlurbLabel" editable="false" prefHeight="200.0" prefWidth="200.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="6">
                                  <GridPane.margin>
                                     <Insets right="6.0" />
                                  </GridPane.margin>

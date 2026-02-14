@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.vpx;
 
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -16,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.util.Collections;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -31,9 +33,20 @@ public class MusicInstallationUtil {
     LOG.info("Extracting music pack into \"" + musicFolder.getAbsolutePath() + "\" with ROM value \"" + rom + "\", relative path: {}", relativePath);
     String suffix = FilenameUtils.getExtension(archiveFile.getName());
     if (suffix.equalsIgnoreCase(AssetType.ZIP.name())) {
+      //TODO replace with PackageUtil
       unzipIntoMusicFolder(archiveFile, musicFolder, analysis, rom, relativePath);
     }
+    else if (suffix.equalsIgnoreCase(AssetType.VPA.name())) {
+      if (!StringUtils.isEmpty(rom)) {
+        File tableMusicFolder = new File(musicFolder, rom);
+        PackageUtil.unpackTargetFolder(archiveFile, tableMusicFolder, analysis.getMusicFolder(), Collections.emptyList(), null);
+      }
+      else{
+        LOG.error("The backup contains a music folder but no ROM information for the extraction.");
+      }
+    }
     else if (suffix.equalsIgnoreCase(AssetType.RAR.name()) || suffix.equalsIgnoreCase("7z")) {
+      //TODO replace with PackageUtil
       unrarIntoMusicFolder(archiveFile, musicFolder, analysis, rom, relativePath);
     }
     return true;
@@ -135,7 +148,7 @@ public class MusicInstallationUtil {
         }
 
         String suffix = FilenameUtils.getExtension(name);
-        if (suffix.equalsIgnoreCase("mp3") || suffix.equalsIgnoreCase("ogg") ||suffix.equalsIgnoreCase("wav")) {
+        if (suffix.equalsIgnoreCase("mp3") || suffix.equalsIgnoreCase("ogg") || suffix.equalsIgnoreCase("wav")) {
           File target = null;
           if (StringUtils.isEmpty(relativePath)) {
             String relativeName = name.substring(name.toLowerCase().lastIndexOf("music/") + "music/".length());

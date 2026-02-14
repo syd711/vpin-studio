@@ -20,11 +20,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class DefaultBackgroundUploadController implements Initializable, DialogController {
-  private final static Logger LOG = LoggerFactory.getLogger(DefaultBackgroundUploadController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private static boolean uploadTypeGeneratorSelectedLast;
 

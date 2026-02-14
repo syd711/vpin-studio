@@ -4,7 +4,7 @@ import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.textedit.TextFile;
+import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
 import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
@@ -25,16 +25,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablesSidebarDMDController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarDMDController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private Optional<GameRepresentation> game = Optional.empty();
 
@@ -43,6 +45,9 @@ public class TablesSidebarDMDController implements Initializable {
 
   @FXML
   private Button flexDMDUIBtn;
+
+  @FXML
+  private Button dmdDeviceBtn;
 
   @FXML
   private Button dmdPositionBtn;
@@ -97,7 +102,7 @@ public class TablesSidebarDMDController implements Initializable {
     }
     else {
       try {
-        boolean b = Dialogs.openTextEditor(new TextFile(VPinFile.DmdDeviceIni), "DmdDevice.ini");
+        boolean b = Dialogs.openTextEditor(new MonitoredTextFile(VPinFile.DmdDeviceIni), "DmdDevice.ini");
         if (b) {
           client.getMameService().clearCache();
           EventManager.getInstance().notifyTablesChanged();
@@ -113,12 +118,8 @@ public class TablesSidebarDMDController implements Initializable {
   @FXML
   private void onFlexDMDUI() {
     if (this.game.isPresent()) {
-      File file = client.getMameService().getFlexSetupFile();
-      if (file == null || !file.exists()) {
+      if (!client.getMameService().runFlexSetup()) {
         WidgetFactory.showAlert(Studio.stage, "Did not find FlexDMD UI", "The FlexDMDUI.exe file was not found.");
-      }
-      else {
-        Studio.open(file);
       }
     }
   }
@@ -126,19 +127,17 @@ public class TablesSidebarDMDController implements Initializable {
   @FXML
   private void onDMDPosition() {
     GameRepresentation g = game.get();
-    TableDialogs.openDMDPositionDialog(g, null);
+    TableDialogs.openDMDPositionDialog(g, tablesSidebarController.getTableOverviewController());
   }
 
   @FXML
   private void onReload() {
     this.reloadBtn.setDisable(true);
 
-    Platform.runLater(() -> {
-      new Thread(() -> {
-        Studio.client.getGameService().scanGame(this.game.get().getId());
-        this.game.ifPresent(gameRepresentation -> EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), gameRepresentation.getRom()));
-      }).start();
-    });
+    new Thread(() -> {
+      Studio.client.getGameService().scanGame(this.game.get().getId());
+      this.game.ifPresent(gameRepresentation -> EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), gameRepresentation.getRom()));
+    }).start();
   }
 
   @FXML
@@ -163,7 +162,11 @@ public class TablesSidebarDMDController implements Initializable {
     dataBox.setVisible(false);
     emptyDataBox.setVisible(true);
 
-    flexDMDUIBtn.setVisible(Studio.client.getSystemService().isLocal());
+    flexDMDUIBtn.managedProperty().bind(flexDMDUIBtn.visibleProperty());
+    flexDMDUIBtn.setVisible(!Features.IS_STANDALONE);
+
+    dmdDeviceBtn.managedProperty().bind(dmdDeviceBtn.visibleProperty());
+    dmdDeviceBtn.setVisible(!Features.IS_STANDALONE);
   }
 
   public void setGame(Optional<GameRepresentation> game) {

@@ -24,7 +24,7 @@ public class PupPackUploadController extends BaseUploadController {
 
   @Override 
   protected UploadProgressModel createUploadModel() {
-    return new PupPackUploadProgressModel(null, "PUP Pack Upload", getSelection(), finalizer);
+    return new PupPackUploadProgressModel(null, "PUP Pack Upload", getSelection());
   }
 
   @Override

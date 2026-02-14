@@ -2,26 +2,31 @@ package de.mephisto.vpin.server.competitions;
 
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
+import de.mephisto.vpin.server.assets.AssetService;
 import de.mephisto.vpin.server.discord.DiscordService;
+import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
-import de.mephisto.vpin.server.iscored.IScoredService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
-import de.mephisto.vpin.server.vps.VpsService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,8 +58,10 @@ public class CompetitionService implements InitializingBean {
   private CompetitionValidator competitionValidator;
 
   @Autowired
-  private CompetitionLifecycleService competitionLifecycleService;
+  private AssetService assetService;
 
+  @Autowired
+  private CompetitionLifecycleService competitionLifecycleService;
 
   public List<Competition> getOfflineCompetitions() {
     return competitionsRepository
@@ -66,6 +73,13 @@ public class CompetitionService implements InitializingBean {
   public List<Competition> getDiscordCompetitions() {
     return competitionsRepository
         .findByTypeOrderByEndDateDesc(CompetitionType.DISCORD.name())
+        .stream().map(c -> competitionValidator.validate(c))
+        .collect(Collectors.toList());
+  }
+
+  public List<Competition> getWeeklyCompetitions() {
+    return competitionsRepository
+        .findByTypeOrderByEndDateDesc(CompetitionType.WEEKLY.name())
         .stream().map(c -> competitionValidator.validate(c))
         .collect(Collectors.toList());
   }
@@ -103,7 +117,7 @@ public class CompetitionService implements InitializingBean {
 
   public List<Competition> getFinishedCompetitions(int limit) {
     List<Competition> competitions = competitionsRepository.findByWinnerInitialsIsNotNull();
-    if (competitions.size() > limit) {
+    if (competitions.size() > limit && limit > 0) {
       return competitions.subList(0, limit);
     }
     return competitions;
@@ -127,8 +141,9 @@ public class CompetitionService implements InitializingBean {
       Date start = competition.getStartDate();
       Date end = competition.getEndDate();
       int gameId = competition.getGameId();
+      Game game = gameService.getGame(gameId);
       long serverId = competition.getDiscordServerId();
-      return highscoreService.getScoresBetween(gameId, start, end, serverId);
+      return highscoreService.getScoresBetween(game, start, end, serverId);
     }
     else if (competition.getType().equals(CompetitionType.DISCORD.name())) {
       long serverId = competition.getDiscordServerId();
@@ -266,6 +281,16 @@ public class CompetitionService implements InitializingBean {
     return Collections.emptyList();
   }
 
+  public List<Competition> getFinishedByDateCompetitions() {
+    try {
+      return competitionsRepository.findByEndDateLessThanEqual(new Date());
+    }
+    catch (Exception e) {
+      LOG.error("Failed to read active competitions: " + e.getMessage());
+    }
+    return Collections.emptyList();
+  }
+
   public Competition getActiveCompetition(CompetitionType competitionType) {
     List<Competition> result = competitionsRepository.findByAndWinnerInitialsIsNullAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndType(new Date(), new Date(), competitionType.name());
     if (!result.isEmpty()) {
@@ -277,6 +302,7 @@ public class CompetitionService implements InitializingBean {
   public boolean delete(long id) {
     Optional<Competition> c = competitionsRepository.findById(id);
     if (c.isPresent()) {
+      assetService.deleteCompetitionBackground(c.get().getGameId());
       competitionsRepository.deleteById(id);
       competitionLifecycleService.notifyCompetitionDeleted(c.get());
       LOG.error("Deleted competition " + c.get().getName());
@@ -307,15 +333,15 @@ public class CompetitionService implements InitializingBean {
     if (competition.getType().equals(CompetitionType.DISCORD.name())) {
       return discordService.getScoreSummary(this.highscoreParser, competition.getUuid(), serverId, competition.getDiscordChannelId());
     }
-    return highscoreService.getScoreSummary(serverId, gameService.getGame(competition.getGameId()));
+    Game game = gameService.getGame(competition.getGameId());
+    if (game == null) {
+      return new ScoreSummary();
+    }
+    return highscoreService.getScoreSummary(serverId, game);
   }
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    scheduler.scheduleAtFixedRate(new CompetitionCheckRunnable(this), 1000 * 60 * 2);
-
-
-
     try {
       List<Competition> iScoredSubscriptions = getIScoredSubscriptions();
       LOG.info("---------------------------------- iScored Competitions -----------------------------------------------");
@@ -328,5 +354,16 @@ public class CompetitionService implements InitializingBean {
       LOG.error("iScored summary failed: {}", e.getMessage(), e);
     }
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
+  }
+
+
+  @EventListener(ApplicationReadyEvent.class)
+  public void scheduleCompetitionCheck() {
+    scheduler.scheduleAtFixedRate(new CompetitionCheckRunnable(this), 1000 * 60 * 2);
+  }
+
+  public void shutdown() {
+    scheduler.shutdown();
+    LOG.info("Competition scheduler has been shut down.");
   }
 }

@@ -114,7 +114,7 @@ public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChan
           LOG.info("Finished Discord update of \"" + competition.getName() + "\"");
         }
 
-        if (highscoreBackupService.backup(game)) {
+        if (highscoreBackupService.backup(game) != null) {
           highscoreService.resetHighscore(game);
         }
         LOG.info("Resetted highscores of " + game.getGameDisplayName() + " for " + competition);
@@ -122,7 +122,8 @@ public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChan
         if (competition.getBadge() != null && competition.isActive()) {
           frontendStatusService.augmentWheel(game, competition.getBadge());
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Error starting discord competition: " + e.getMessage(), e);
       }
     }
@@ -138,7 +139,7 @@ public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChan
 
         //this is the situation where a player joined a competition
         if (game != null && !isOwner && bot != null) {
-          if (highscoreBackupService.backup(game)) {
+          if (highscoreBackupService.backup(game) != null) {
             highscoreService.resetHighscore(game);
           }
 
@@ -149,7 +150,8 @@ public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChan
 
           LOG.info("Discord bot \"" + bot + "\" has joined \"" + competition + "\"");
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Error creating discord competition: " + e.getMessage(), e);
       }
     }

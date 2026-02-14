@@ -1,30 +1,23 @@
 package de.mephisto.vpin.restclient.client;
 
-import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.pinvol.PinVolPreferences;
 import de.mephisto.vpin.restclient.pinvol.PinVolUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
+
 /*********************************************************************************************************************
  * PinVol
  ********************************************************************************************************************/
 public class PinVolServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 
   private PinVolPreferences pinVolTablePreferences;
 
   public PinVolServiceClient(VPinStudioClient client) {
     super(client);
-  }
-
-  public boolean isAutoStartEnabled() {
-    return getRestClient().get(API + "pinvol/autostart", Boolean.class);
-  }
-
-  public boolean toggleAutoStart() {
-    return getRestClient().get(API + "pinvol/autostart/toggle", Boolean.class);
   }
 
   public PinVolPreferences getPinVolTablePreferences() {
@@ -64,5 +57,9 @@ public class PinVolServiceClient extends VPinStudioClientService {
 
   public boolean restart() {
     return getRestClient().get(API + "pinvol/restart", Boolean.class);
+  }
+
+  public boolean isValid() {
+    return getRestClient().get(API + "pinvol/valid", Boolean.class);
   }
 }

@@ -29,6 +29,7 @@ import org.springframework.lang.NonNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,7 @@ import static de.mephisto.vpin.commons.fx.ServerFX.client;
 import static de.mephisto.vpin.commons.utils.WidgetFactory.getCompetitionScoreFont;
 
 public class WidgetCompetitionSummaryController extends WidgetController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(WidgetCompetitionSummaryController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private Label competitionLabel;
@@ -139,6 +140,12 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
     emptyPanel.setVisible(false);
     topBox.setVisible(false);
     loadingPane.setVisible(true);
+
+    scoreLabel1.setFont(getCompetitionScoreFont());
+    scoreLabel2.setFont(getCompetitionScoreFont());
+    scoreLabel3.setFont(getCompetitionScoreFont());
+    scoreLabel4.setFont(getCompetitionScoreFont());
+    scoreLabel5.setFont(getCompetitionScoreFont());
   }
 
   public void setCompetition(CompetitionType competitionType, CompetitionRepresentation competition) {
@@ -169,10 +176,10 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
 
     GameRepresentation competedGame = null;
     if (competitionType.equals(CompetitionType.ISCORED)) {
-      competedGame = client.getGameByVpsId(competition.getVpsTableId(), competition.getVpsTableVersionId());
+      competedGame = client.getGameService().getGameByVpsTable(competition.getVpsTableId(), competition.getVpsTableVersionId());
     }
     else {
-      competedGame = client.getGame(competition.getGameId());
+      competedGame = client.getGameService().getGame(competition.getGameId());
     }
 
     if (competedGame != null) {
@@ -190,16 +197,6 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
 
     competitionLabel.setText(competition.getName());
 
-    boolean isActive = competition.isActive();
-    firstLabel.setVisible(isActive);
-    secondLabel.setVisible(isActive);
-    thirdLabel.setVisible(isActive);
-    scoreLabel1.setVisible(isActive);
-    scoreLabel2.setVisible(isActive);
-    scoreLabel3.setVisible(isActive);
-    scoreLabel4.setVisible(isActive);
-    scoreLabel5.setVisible(isActive);
-
     name1.setText("-");
     name2.setText("-");
     name3.setText("-");
@@ -211,16 +208,6 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
     scoreLabel3.setText("0");
     scoreLabel4.setText("0");
     scoreLabel5.setText("0");
-
-    name1.setVisible(isActive);
-    name2.setVisible(isActive);
-    name3.setVisible(isActive);
-    name4.setVisible(isActive);
-    name5.setVisible(isActive);
-
-    if (!competition.isActive()) {
-      return;
-    }
 
     final GameRepresentation game = competedGame;
     JFXFuture.supplyAsync(() -> {
@@ -236,7 +223,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
         scoreSummary = fromManiaScores(highscoresByTable.getData());
       }
       else {
-        scoreSummary = client.getCompetitionScore(competition.getId());
+        scoreSummary = client.getCompetitionService().getCompetitionScore(competition.getId());
       }
       return scoreSummary;
     }).thenAcceptLater((latestCompetitionScore) -> {
@@ -251,14 +238,12 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
         int index = 0;
         ScoreRepresentation score1 = scores.get(index);
         name1.setText(formatScoreText(score1));
-        scoreLabel1.setFont(getCompetitionScoreFont());
         scoreLabel1.setText(score1.getFormattedScore());
 
         index++;
         if (index < scores.size()) {
           ScoreRepresentation score2 = scores.get(index);
           name2.setText(formatScoreText(score2));
-          scoreLabel2.setFont(getCompetitionScoreFont());
           scoreLabel2.setText(score2.getFormattedScore());
         }
 
@@ -266,7 +251,6 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
         if (index < scores.size()) {
           ScoreRepresentation score3 = scores.get(index);
           name3.setText(formatScoreText(score3));
-          scoreLabel3.setFont(getCompetitionScoreFont());
           scoreLabel3.setText(score3.getFormattedScore());
         }
 
@@ -274,7 +258,6 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
         if (index < scores.size()) {
           ScoreRepresentation score4 = scores.get(index);
           name4.setText(formatScoreText(score4));
-          scoreLabel4.setFont(getCompetitionScoreFont());
           scoreLabel4.setText(score4.getFormattedScore());
         }
 
@@ -282,12 +265,11 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
         if (index < scores.size()) {
           ScoreRepresentation score5 = scores.get(index);
           name5.setText(formatScoreText(score5));
-          scoreLabel5.setFont(getCompetitionScoreFont());
           scoreLabel5.setText(score5.getFormattedScore());
         }
 
         JFXFuture.supplyAsync(() -> {
-          return client.getFrontendMedia(game.getId());
+          return client.getFrontendService().getFrontendMedia(game.getId());
         }).thenAcceptLater((frontendMedia) -> {
           FrontendMediaItemRepresentation item = frontendMedia.getDefaultMediaItem(VPinScreen.Wheel);
           if (item != null) {
@@ -297,7 +279,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
               competitionWheelImage.setImage(image);
             }
             else {
-              ByteArrayInputStream gameMediaItem = client.getGameMediaItem(game.getId(), VPinScreen.Wheel);
+              ByteArrayInputStream gameMediaItem = client.getWheelIcon(game.getId(), false);
               Image image = new Image(gameMediaItem);
               competitionWheelImage.setImage(image);
             }
@@ -323,7 +305,8 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
         loadingPane.setVisible(false);
       }
 
-      InputStream competitionBackground = client.getCompetitionBackground(game.getId());
+      topBox.setVisible(true);
+      InputStream competitionBackground = client.getCompetitionService().getCompetitionBackground(game.getId());
       if (competitionBackground != null) {
         Image image = new Image(competitionBackground);
         BackgroundImage myBI = new BackgroundImage(image,
@@ -333,7 +316,6 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
         emptyPanel.setVisible(false);
       }
 
-      topBox.setVisible(true);
     });
   }
 

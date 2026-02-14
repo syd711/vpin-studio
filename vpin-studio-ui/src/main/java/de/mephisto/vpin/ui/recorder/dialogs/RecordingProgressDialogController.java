@@ -28,16 +28,14 @@ import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.ThreadUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -272,8 +270,8 @@ public class RecordingProgressDialogController implements Initializable, DialogC
 
     List<RecordingData> recordingData = recordingDataSummary.getRecordingData();
     for (RecordingData data : recordingData) {
-      GameRepresentation game = client.getGame(data.getGameId());
-      if (!game.isVpxGame()) {
+      GameRepresentation game = client.getGameService().getGame(data.getGameId());
+      if (!client.getEmulatorService().isVpxGame(game)) {
         frontendRecordingRadio.setSelected(true);
         emulatorRecordingRadio.setDisable(true);
         launcherCombo.setDisable(true);

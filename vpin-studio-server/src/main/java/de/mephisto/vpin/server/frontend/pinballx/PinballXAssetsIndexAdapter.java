@@ -1,11 +1,16 @@
 package de.mephisto.vpin.server.frontend.pinballx;
 
 import de.mephisto.vpin.connectors.assets.TableAsset;
-import de.mephisto.vpin.connectors.assets.TableAssetConf;
+import de.mephisto.vpin.connectors.assets.TableAssetSource;
+import de.mephisto.vpin.connectors.assets.TableAssetSourceType;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -17,18 +22,15 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.ConnectException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 @Service
-public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements TableAssetsAdapter {
+public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements TableAssetsAdapter<Game> {
 
   private final static Logger LOG = LoggerFactory.getLogger(PinballXAssetsIndexAdapter.class);
 
@@ -37,15 +39,22 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
   @Value("${pinballX.mediaserver.refreshInterval:3}")
   private int refreshInterval;
 
-  /** the refresh timer to keep the index up-to-date */
+  /**
+   * the refresh timer to keep the index up-to-date
+   */
   private Timer refreshTimer;
 
   public PinballXAssetsIndexAdapter() {
   }
 
   @Override
-  public TableAssetConf getTableAssetConf() {
-    TableAssetConf conf = new TableAssetConf();
+  public TableAssetSource getAssetSource() {
+    TableAssetSource conf = new TableAssetSource();
+    conf.setType(TableAssetSourceType.PinballX);
+    conf.setLocation("PinballX");
+    conf.setEnabled(true);
+    conf.setName("PinballX");
+    conf.setId(TableAssetSourceType.PinballX.name());
     conf.setAssetSearchLabel("GameEx Assets Search for PinballX");
     conf.setAssetSearchIcon("gameex.png");
     return conf;
@@ -81,6 +90,9 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
       }
       LOG.info("Written " + indexFile.getAbsolutePath());
     }
+    catch (ConnectException ce) {
+      LOG.error("Cannot connect to FTP server: {}", ce.getMessage());
+    }
     catch (IOException ioe) {
       LOG.error("Error while reloading index file", ioe);
     }
@@ -90,7 +102,7 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
   }
 
   @Override
-  public List<TableAsset> search(@NonNull String emulatorType, @NonNull String screenSegment, @NonNull String term) throws Exception {
+  public List<TableAsset> search(@NonNull String emulatorType, @NonNull String screenSegment, @Nullable Game game, @NonNull String term) throws Exception {
     if (term.length() < 3) {
       return Collections.emptyList();
     }
@@ -102,7 +114,7 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
   }
 
   @Override
-  public Optional<TableAsset> get(String emulatorName, String screenSegment, String folder, String name) throws Exception {
+  public Optional<TableAsset> get(String emulatorName, String screenSegment, @Nullable Game game, String folder, String name) throws Exception {
     EmulatorType emutype = EmulatorType.valueOf(emulatorName);
     VPinScreen screen = VPinScreen.valueOfSegment(screenSegment);
     return getIndex().get(emutype, screen, folder, name);
@@ -111,11 +123,12 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
   //-------------------------------------
 
   @Override
-  public void writeAsset(OutputStream out, @NonNull String url) throws Exception {
+  public void writeAsset(@NonNull OutputStream outputStream, @NonNull TableAsset tableAsset, long start, long length) throws Exception {
     FTPClient ftp = null;
     try {
       ftp = open();
 
+      String url = tableAsset.getUrl();
       String decodeUrl = URLDecoder.decode(url, StandardCharsets.UTF_8);
       decodeUrl = decodeUrl.substring(1);
       LOG.info("downloading " + decodeUrl);
@@ -126,11 +139,14 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
       ftp.changeWorkingDirectory(rootfolder + folder);
       ftp.setFileType(FTP.BINARY_FILE_TYPE);
 
-      if (ftp.retrieveFile(name, out)) {
+      try (InputStream in = ftp.retrieveFileStream(name)) {
         LOG.info("Read FTP file \"" + decodeUrl + "\", " + ftp.getReplyString());
-      }
-      else {
-        LOG.error("FTP download incomplete \"" + decodeUrl + "\", " + ftp.getReplyString());
+        if (start < 0) {
+          IOUtils.copy(in, outputStream);
+        }
+        else {
+          IOUtils.copyLarge(in, outputStream, start, length);
+        }
       }
     }
     catch (CopyStreamException cse) {

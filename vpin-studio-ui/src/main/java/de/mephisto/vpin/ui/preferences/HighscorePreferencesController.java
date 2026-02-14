@@ -32,7 +32,7 @@ public class HighscorePreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    boolean filerEnabled = ServerFX.client.getPreference(PreferenceNames.HIGHSCORE_FILTER_ENABLED).getBooleanValue(false);
+    boolean filerEnabled = ServerFX.client.getPreferenceService().getPreference(PreferenceNames.HIGHSCORE_FILTER_ENABLED).getBooleanValue(false);
     filterCheckbox.setSelected(filerEnabled);
     filterCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       client.getPreferenceService().setPreference(PreferenceNames.HIGHSCORE_FILTER_ENABLED, t1);

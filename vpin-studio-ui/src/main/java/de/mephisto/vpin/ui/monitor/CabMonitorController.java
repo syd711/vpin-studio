@@ -62,6 +62,8 @@ public class CabMonitorController implements Initializable, DialogController {
   private IMonitoringView monitoringView;
   private boolean refreshEnabled = true;
 
+  private File folder;
+
   @FXML
   private void onCancelClick(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
@@ -72,9 +74,14 @@ public class CabMonitorController implements Initializable, DialogController {
   private void onScreenshot() {
     DirectoryChooser chooser = new DirectoryChooser();
     chooser.setTitle("Select Target Folder");
+
+    if (folder != null) {
+      chooser.setInitialDirectory(folder);
+    }
     File targetFolder = chooser.showDialog(stage);
 
     if (targetFolder != null && targetFolder.exists()) {
+      this.folder = targetFolder;
       ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new ScreenshotsDownloadProgressModel("Download Screenshots", targetFolder));
       if (!resultModel.getResults().isEmpty()) {
         File target = (File) resultModel.getResults().get(0);

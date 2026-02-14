@@ -23,11 +23,22 @@ public class SystemInfo {
 
   public final static String B2SSERVER_INSTALLATION_DIR = "B2SServer.installationDir";
 
+  public final static String SYSTEM_FEATURES_ON = "system.featuresOn";
+  public final static String SYSTEM_FEATURES_OFF = "system.featuresOff";
+
+
   public final static String DOT_NET = "SOFTWARE\\Microsoft\\NET Framework Setup\\NDP";
 
   public File resolvePinUPSystemInstallationFolder() {
     if (OSUtil.isWindows()) {
       return SystemInfoWindows.INSTANCE.resolvePinUPSystemInstallationFolder();
+    }
+    return null;
+  }
+
+  public File resolvePinupPlayerFolder() {
+    if (OSUtil.isWindows()) {
+      return SystemInfoWindows.INSTANCE.resolvePinupPlayerFolder();
     }
     return null;
   }
@@ -121,7 +132,7 @@ public class SystemInfo {
 
   public boolean isValidDotNetVersion(String localMachineKey) {
     if (OSUtil.isWindows()) {
-        String formatted = localMachineKey.replaceAll("\\.", "");
+      String formatted = localMachineKey.replaceAll("\\.", "");
       String versionId = formatted.substring(1);
       if (versionId.length() == 1) {
         versionId = versionId + "0";
@@ -182,9 +193,15 @@ public class SystemInfo {
     return null;
   }
 
-  public void setUserValue(String path, String key, int value) {
+  public void setUserIntValue(String path, String key, int value) {
     if (OSUtil.isWindows()) {
       WinRegistry.setUserIntValue(path, key, value);
+    }
+  }
+
+  public void setUserValue(String path, String key, String value) {
+    if (OSUtil.isWindows()) {
+      WinRegistry.setUserValue(path, key, value);
     }
   }
 
@@ -197,6 +214,12 @@ public class SystemInfo {
   public void deleteUserKey(@NonNull String key) {
     if (OSUtil.isWindows()) {
       WinRegistry.deleteUserKey(key);
+    }
+  }
+
+  public void deleteUserValue(@NonNull String path, @NonNull String key) {
+    if (OSUtil.isWindows()) {
+      WinRegistry.deleteUserValue(path, key);
     }
   }
 }

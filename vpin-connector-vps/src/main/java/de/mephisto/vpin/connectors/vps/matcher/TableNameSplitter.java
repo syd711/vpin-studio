@@ -95,6 +95,27 @@ public class TableNameSplitter {
     int year = -1;
     String extra = null;
     String version = null;
+
+    public String getDisplayName() {
+      return displayName;
+    }
+    public String getTableName() {
+      return tableName;
+    }
+    public String getManufacturer() {
+      return manufacturer;
+    }
+    public int getYear() {
+      return year;
+    }
+    public String getExtra() {
+      return extra;
+    }
+    public String getVersion() {
+      return version;
+    }
+
+    
   }
 
 }

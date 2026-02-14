@@ -6,12 +6,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.UUID;
 
 import static de.mephisto.vpin.restclient.jobs.JobType.ARCHIVE_DOWNLOAD_TO_FILESYSTEM;
 
 public class DownloadJobDescriptor extends JobDescriptor {
-  private final static Logger LOG = LoggerFactory.getLogger(DownloadJobDescriptor.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @NonNull
   private final String url;

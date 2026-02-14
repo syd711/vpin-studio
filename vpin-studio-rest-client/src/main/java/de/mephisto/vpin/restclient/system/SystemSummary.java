@@ -1,11 +1,11 @@
 package de.mephisto.vpin.restclient.system;
 
-import de.mephisto.vpin.restclient.archiving.ArchiveType;
+import de.mephisto.vpin.restclient.backups.BackupType;
 
 import java.util.List;
 
 public class SystemSummary {
-  private ArchiveType archiveType;
+  private BackupType backupType;
   private String systemId;
 
   public String getSystemId() {
@@ -16,17 +16,17 @@ public class SystemSummary {
     this.systemId = systemId;
   }
 
-  public ArchiveType getArchiveType() {
-    return archiveType;
+  public BackupType getBackupType() {
+    return backupType;
   }
 
-  public void setArchiveType(ArchiveType archiveType) {
-    this.archiveType = archiveType;
+  public void setBackupType(BackupType backupType) {
+    this.backupType = backupType;
   }
 
   private List<MonitorInfo> monitorInfos;
 
-  public List<MonitorInfo> getScreenInfos() {
+  public List<MonitorInfo> getMonitorInfos() {
     return monitorInfos;
   }
 
@@ -34,18 +34,16 @@ public class SystemSummary {
     this.monitorInfos = monitorInfos;
   }
 
-  public MonitorInfo getPrimaryScreen() {
-    for (MonitorInfo monitorInfo : monitorInfos) {
-      if (monitorInfo.isPrimary()) {
-        return monitorInfo;
-      }
-    }
-    return null;
+  public MonitorInfo getPrimaryMonitor() {
+    return getMonitorInfo(-1);
   }
 
-  public MonitorInfo getScreenInfo(int id) {
+  public MonitorInfo getMonitorInfo(int id) {
     for (MonitorInfo monitorInfo : monitorInfos) {
-      if (monitorInfo.getId() == id) {
+      if (id == -1 && monitorInfo.isPrimary()) {
+        return monitorInfo;
+      }
+      else if (monitorInfo.getId() == id) {
         return monitorInfo;
       }
     }

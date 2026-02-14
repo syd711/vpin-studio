@@ -1,17 +1,22 @@
 package de.mephisto.vpin.server.games;
 
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
+import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.system.FileInfo;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
-import de.mephisto.vpin.server.fp.FPService;
+import de.mephisto.vpin.server.emulators.EmulatorService;
+import de.mephisto.vpin.server.fp.FuturePinballService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.listeners.EventOrigin;
+import de.mephisto.vpin.server.steam.SteamService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpx.VPXService;
 import org.slf4j.Logger;
@@ -46,7 +51,7 @@ public class GamesResource {
   private FrontendService frontendService;
 
   @Autowired
-  private FPService fpService;
+  private FuturePinballService futurePinballService;
 
   @Autowired
   private SystemService systemService;
@@ -56,6 +61,12 @@ public class GamesResource {
 
   @Autowired
   private GameLifecycleService gameLifecycleService;
+
+  @Autowired
+  private EmulatorService emulatorService;
+
+  @Autowired
+  private SteamService steamService;
 
   @GetMapping
   public List<Game> getGames() {
@@ -77,6 +88,11 @@ public class GamesResource {
     return gameService.reload(gameId);
   }
 
+  @GetMapping("/reloadEmulator/{emulatorId}")
+  public boolean reloadEmulator(@PathVariable("emulatorId") int emulatorId) {
+    return gameService.reloadEmulator(emulatorId);
+  }
+
   @GetMapping("/unknowns")
   public List<Integer> getUnknownGameIds() {
     return gameService.getUnknownGames();
@@ -95,8 +111,14 @@ public class GamesResource {
       String altExe = (String) values.get("altExe");
       String option = (String) values.get("option");
 
+      GameEmulator gameEmulator = emulatorService.getGameEmulator(game.getEmulatorId());
+      if (gameEmulator == null) {
+        return false;
+      }
+
       if (game.isVpxGame()) {
         frontendService.killFrontend();
+        SLOG.initLog(game.getId());
         if (vpxService.play(game, altExe, option)) {
           gameStatusService.setActiveStatus(id);
           return true;
@@ -104,7 +126,16 @@ public class GamesResource {
       }
       else if (game.isFpGame()) {
         frontendService.killFrontend();
-        if (fpService.play(game, altExe)) {
+        SLOG.initLog(game.getId());
+        if (futurePinballService.play(game, altExe)) {
+          gameStatusService.setActiveStatus(id);
+          return true;
+        }
+      }
+      else if (game.isZenGame() || game.isZaccariaGame()) {
+        frontendService.killFrontend();
+        SLOG.initLog(game.getId());
+        if (steamService.play(game)) {
           gameStatusService.setActiveStatus(id);
           return true;
         }
@@ -154,6 +185,14 @@ public class GamesResource {
     return gameService.getGameScoreValidation(id);
   }
 
+  /**
+   * Checks if the scoring settings of the table details match with the files found for these settings.
+   */
+  @PostMapping("/scorevalidation/{id}")
+  public GameScoreValidation getGameScoreValidation(@PathVariable("id") int id, @RequestBody TableDetails tableDetails) {
+    return gameService.getGameScoreValidation(id, tableDetails);
+  }
+
   @GetMapping("/scores/{id}")
   public ScoreSummary getScores(@PathVariable("id") int gameId) {
     return gameService.getScores(gameId);
@@ -167,7 +206,7 @@ public class GamesResource {
   @GetMapping("/highscorefile/{id}/fileinfo")
   public FileInfo getHighscoreFileInfo(@PathVariable("id") int gameId) {
     File hsfile = gameService.getHighscoreFile(gameId);
-    return hsfile != null? FileInfo.file(hsfile, hsfile.getParentFile()) : null;
+    return hsfile != null ? FileInfo.file(hsfile, hsfile.getParentFile()) : null;
   }
 
   @GetMapping("/scorehistory/{id}")
@@ -197,6 +236,13 @@ public class GamesResource {
   @PostMapping("/delete")
   public boolean delete(@RequestBody DeleteDescriptor descriptor) {
     return gameMediaService.deleteGame(descriptor);
+  }
+
+  @PostMapping("/deleteGameFile")
+  public boolean deleteGameFile(@RequestBody Map<String, Object> data) {
+    int emulatorId = (int) data.get("emulatorId");
+    String fileName = (String) data.get("fileName");
+    return gameMediaService.deleteGameFile(emulatorId, fileName);
   }
 
   @PostMapping("/reset")

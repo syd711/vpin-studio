@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.*;
@@ -42,7 +43,7 @@ import java.util.*;
 import static de.mephisto.vpin.ui.Studio.*;
 
 public class TournamentBrowserDialogController implements Initializable, DialogController {
-  private final static Logger LOG = LoggerFactory.getLogger(TournamentBrowserDialogController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final Debouncer debouncer = new Debouncer();
 

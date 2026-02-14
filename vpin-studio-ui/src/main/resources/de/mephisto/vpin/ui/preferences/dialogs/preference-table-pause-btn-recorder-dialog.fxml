@@ -2,7 +2,9 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -44,10 +46,10 @@
                </VBox.margin></Label>
             <GridPane hgap="3.0" vgap="3.0">
                <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="482.1999816894531" minWidth="10.0" prefWidth="137.7999755859375" />
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="765.3999938964844" minWidth="10.0" prefWidth="125.80002441406253" />
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="765.3999938964844" minWidth="10.0" prefWidth="140.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="765.3999938964844" minWidth="10.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="140.0" minWidth="140.0" prefWidth="140.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
                </columnConstraints>
                <rowConstraints>
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -62,11 +64,26 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Label text="Pause Button Key:" textFill="WHITE" GridPane.rowIndex="4">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
+                  <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.rowIndex="4">
+                     <children>
+                        <Label text="Pause Button Key:" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip prefWidth="300.0" text="Keep the pause key &quot;P&quot; in VPX and select another key then &quot;P&quot; for pausing here. The VPin Studio Server will press the VPX pause key for you." wrapText="true" />
+                           </tooltip>
+                        </Label>
+                     </children>
+                  </HBox>
                   <Label fx:id="usersLabel" text="Start Key:" textFill="WHITE" GridPane.rowIndex="6">
                      <font>
                         <Font size="14.0" />
@@ -82,26 +99,62 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="keyCodePause" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="keyCodeStart" layoutX="213.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="6">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="keyCodeLeft" layoutX="213.0" layoutY="49.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="7">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="keyCodeRight" layoutX="213.0" layoutY="83.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="8">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
+                  <HBox alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                     <children>
+                        <Label fx:id="keyCodePause" text="-" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="textPauseBtn" maxWidth="120.0" minWidth="120.0" prefWidth="120.0">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                     <children>
+                        <Label fx:id="keyCodeStart" text="-" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="textStartBtn" maxWidth="120.0" minWidth="120.0" prefWidth="120.0">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                     <children>
+                        <Label fx:id="keyCodeLeft" text="-" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="textLeftBtn" maxWidth="120.0" minWidth="120.0" prefWidth="120.0">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                     <children>
+                        <Label fx:id="keyCodeRight" text="-" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="textRightBtn" maxWidth="120.0" minWidth="120.0" prefWidth="120.0">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                     </children>
+                  </HBox>
                   <Button fx:id="bindPauseBtn" mnemonicParsing="false" onAction="#onBindClick" prefWidth="120.0" text="Bind Key" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="4">
                      <font>
                         <Font size="14.0" />
@@ -152,11 +205,20 @@
                         </Label>
                      </children>
                   </HBox>
-                  <Label fx:id="keyCodeOverlay" layoutX="206.0" layoutY="150.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
+                  <HBox alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                     <children>
+                        <Label fx:id="keyCodeOverlay" text="-" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="textOverlayBtn" maxWidth="120.0" minWidth="120.0" prefWidth="120.0">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                     </children>
+                  </HBox>
                   <Button fx:id="bindOverlayBtn" layoutX="272.0" layoutY="145.0" mnemonicParsing="false" onAction="#onBindClick" prefWidth="120.0" text="Bind Key" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2">
                      <font>
                         <Font size="14.0" />
@@ -182,11 +244,20 @@
                         </Label>
                      </children>
                   </HBox>
-                  <Label fx:id="keyCodeReset" layoutX="206.0" layoutY="83.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
+                  <HBox alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <children>
+                        <Label fx:id="keyCodeReset" text="-" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="textResetBtn" maxWidth="120.0" minWidth="120.0" prefWidth="120.0">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                     </children>
+                  </HBox>
                   <Button fx:id="bindResetBtn" layoutX="272.0" layoutY="78.0" mnemonicParsing="false" onAction="#onBindClick" prefWidth="120.0" text="Bind Key" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
@@ -227,11 +298,20 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="keyCodeRecording" layoutX="228.0" layoutY="116.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
+                  <HBox alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                     <children>
+                        <Label fx:id="keyCodeRecording" text="-" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="textRecordingBtn" maxWidth="120.0" minWidth="120.0" prefWidth="120.0">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                     </children>
+                  </HBox>
                   <Button fx:id="bindRecordingBtn" layoutX="319.0" layoutY="112.0" mnemonicParsing="false" onAction="#onBindClick" prefWidth="120.0" text="Bind Key" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="5">
                      <font>
                         <Font size="14.0" />
@@ -262,11 +342,20 @@
                         </Label>
                      </children>
                   </HBox>
-                  <Label fx:id="keyCodeScreenshot" layoutX="227.0" layoutY="83.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
+                  <HBox alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                     <children>
+                        <Label fx:id="keyCodeScreenshot" text="-" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="textScreenshotBtn" maxWidth="120.0" minWidth="120.0" prefWidth="120.0">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                     </children>
+                  </HBox>
                   <Button fx:id="bindScreenshotBtn" layoutX="316.0" layoutY="78.0" mnemonicParsing="false" onAction="#onBindClick" prefWidth="120.0" text="Bind Key" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="3">
                      <font>
                         <Font size="14.0" />
@@ -282,6 +371,22 @@
                   <Insets top="12.0" />
                </VBox.margin>
             </GridPane>
+            <HBox alignment="CENTER_LEFT" spacing="6.0">
+               <children>
+                  <CheckBox fx:id="expertModeCheckbox" mnemonicParsing="false" styleClass="default-text" text="Expert Mode" />
+                  <Label>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip prefWidth="300.0" text="In case the Studio does not detect the right key code of your controller, you can try to set it manually." wrapText="true" />
+                     </tooltip>
+                  </Label>
+               </children>
+            </HBox>
          </children>
          <padding>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

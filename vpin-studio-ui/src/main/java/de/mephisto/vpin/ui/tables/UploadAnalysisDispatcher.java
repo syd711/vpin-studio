@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.backups.BackupDialogs;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -21,12 +22,14 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class UploadAnalysisDispatcher {
-  private final static Logger LOG = LoggerFactory.getLogger(UploadAnalysisDispatcher.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static void dispatch(@NonNull File file, @Nullable GameRepresentation game, @Nullable Runnable finalizer) {
     String extension = FilenameUtils.getExtension(file.getName());
@@ -53,7 +56,7 @@ public class UploadAnalysisDispatcher {
   }
 
   public static void dispatchFile(@NonNull File file, @Nullable GameRepresentation game, @NonNull AssetType assetType, @Nullable Runnable finalizer) {
-    UploaderAnalysis analysis = new UploaderAnalysis(client.getFrontendService().getFrontendType().supportPupPacks(), file);
+    UploaderAnalysis analysis = new UploaderAnalysis(Features.PUPPACKS_ENABLED, file);
     dispatchBySuffix(file, game, assetType, analysis, finalizer);
   }
 
@@ -72,6 +75,10 @@ public class UploadAnalysisDispatcher {
         TableDialogs.openCfgUploads(file, finalizer);
         return;
       }
+      case FPL: {
+        TableDialogs.openFplUploads(file, finalizer);
+        return;
+      }
       case DIF: {
         TableDialogs.openPatchUpload(game, file, analysis, finalizer);
         return;
@@ -80,16 +87,12 @@ public class UploadAnalysisDispatcher {
         TableDialogs.openDMDUploadDialog(game, file, analysis, finalizer);
         return;
       }
-      case ALT_SOUND: {
-        TableDialogs.openAltSoundUploadDialog(game, file, analysis, finalizer);
-        return;
-      }
       case VPX: {
-        TableDialogs.openTableUploadDialog(game, EmulatorType.VisualPinball, null, analysis);
+        TableDialogs.openTableUploadDialog(game, EmulatorType.VisualPinball, null, analysis, finalizer);
         return;
       }
       case FPT: {
-        TableDialogs.openTableUploadDialog(game, EmulatorType.FuturePinball, null, analysis);
+        TableDialogs.openTableUploadDialog(game, EmulatorType.FuturePinball, null, analysis, finalizer);
         return;
       }
       default: {
@@ -102,6 +105,10 @@ public class UploadAnalysisDispatcher {
     }
 
     switch (assetType) {
+      case ALT_SOUND: {
+        TableDialogs.openAltSoundUploadDialog(game, file, analysis, finalizer);
+        return;
+      }
       case DIRECTB2S: {
         TableDialogs.openBackglassUpload(null, Studio.stage, game, file, finalizer);
         return;
@@ -126,6 +133,7 @@ public class UploadAnalysisDispatcher {
       case PAC:
       case PAL:
       case VNI:
+      case CROMC:
       case CRZ: {
         TableDialogs.openAltColorUploadDialog(game, file, analysis, finalizer);
         break;
@@ -140,6 +148,10 @@ public class UploadAnalysisDispatcher {
       }
       case FRONTEND_MEDIA: {
         TableDialogs.openMediaUploadDialog(Studio.stage, game, file, analysis, null, -1);
+        break;
+      }
+      case VPA: {
+        BackupDialogs.openArchiveUploadDialog(file);
         break;
       }
       default: {
@@ -199,10 +211,10 @@ public class UploadAnalysisDispatcher {
       List<AssetType> assetTypes = analysis.getAssetTypes();
       if (!assetTypes.isEmpty()) {
         if (analysis.isVpxOrFpTable()) {
-          TableDialogs.openTableUploadDialog(game, analysis.getEmulatorType(), null, analysis);
+          TableDialogs.openTableUploadDialog(game, analysis.getEmulatorType(), null, analysis, finalizer);
         }
         else if (analysis.isPatch()) {
-          if (game == null || !game.isVpxGame()) {
+          if (game == null || !client.getEmulatorService().isVpxGame(game)) {
             WidgetFactory.showInformation(Studio.stage, "Can not apply a patch without a VPX table selected.", "Select the matching table for the patch file and try again.");
             return null;
           }

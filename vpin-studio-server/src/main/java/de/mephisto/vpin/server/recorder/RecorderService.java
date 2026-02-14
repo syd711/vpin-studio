@@ -12,7 +12,7 @@ import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
 import de.mephisto.vpin.restclient.recorder.*;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
-import de.mephisto.vpin.server.fp.FPService;
+import de.mephisto.vpin.server.fp.FuturePinballService;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
@@ -33,6 +33,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,8 +45,8 @@ import java.util.Optional;
 public class RecorderService {
   private final static Logger LOG = LoggerFactory.getLogger(RecorderService.class);
 
-  private final static List<VPinScreen> supportedRecodingScreens = Arrays.asList(VPinScreen.PlayField, VPinScreen.BackGlass, 
-  VPinScreen.DMD, VPinScreen.Menu, VPinScreen.Topper);
+  private final static List<VPinScreen> supportedRecodingScreens = Arrays.asList(VPinScreen.PlayField, VPinScreen.BackGlass,
+      VPinScreen.DMD, VPinScreen.Menu, VPinScreen.Topper);
 
   @Autowired
   private FrontendService frontendService;
@@ -74,7 +76,7 @@ public class RecorderService {
   private VPXService vpxService;
 
   @Autowired
-  private FPService fpService;
+  private FuturePinballService futurePinballService;
 
   @Autowired
   private NotificationService notificationService;
@@ -85,6 +87,8 @@ public class RecorderService {
   private JobDescriptor jobDescriptor;
 
   public JobDescriptor startRecording(RecordingDataSummary recordingData) {
+    systemService.setMaintenanceMode(false);
+
     RecorderSettings settings = preferencesService.getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
 
     Job job = null;
@@ -224,7 +228,7 @@ public class RecorderService {
     }
 
     if (game.isVpxGame()) {
-      if(recorderSettings.isPrimaryParam()) {
+      if (recorderSettings.isPrimaryParam()) {
         vpxService.play(game, altExe, "primary");
       }
       else {
@@ -232,11 +236,14 @@ public class RecorderService {
       }
     }
     else if (game.isFpGame()) {
-      fpService.play(game, altExe);
+      futurePinballService.play(game, altExe);
     }
     else {
       throw new UnsupportedOperationException("Unsupported emulator: " + game.getEmulator());
     }
   }
 
+  public List<File> getGameMediaFiles(Game game, VPinScreen screen) {
+    return frontendService.getMediaFiles(game, screen);
+  }
 }

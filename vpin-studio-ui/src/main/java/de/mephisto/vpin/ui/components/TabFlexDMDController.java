@@ -10,10 +10,10 @@ import javafx.scene.control.Button;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TabFlexDMDController extends AbstractComponentTab implements Initializable {
@@ -24,12 +24,8 @@ public class TabFlexDMDController extends AbstractComponentTab implements Initia
 
   @FXML
   private void onFlexDMD() {
-    File file = client.getMameService().getFlexSetupFile();
-    if (file == null || !file.exists()) {
+    if (!client.getMameService().runFlexSetup()) {
       WidgetFactory.showAlert(Studio.stage, "Did not find FlexDMD UI", "The exe file was not found.");
-    }
-    else {
-      Studio.open(file);
     }
   }
 
@@ -48,6 +44,9 @@ public class TabFlexDMDController extends AbstractComponentTab implements Initia
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize();
+
+    flexDMDBtn.managedProperty().bind(flexDMDBtn.visibleProperty());
+    flexDMDBtn.setVisible(!Features.IS_STANDALONE);
   }
 
   @Override

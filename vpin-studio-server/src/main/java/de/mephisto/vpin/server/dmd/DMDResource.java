@@ -2,9 +2,12 @@ package de.mephisto.vpin.server.dmd;
 
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.components.ComponentSummary;
+import de.mephisto.vpin.restclient.dmd.DMDDeviceIniConfiguration;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.UniversalUploadService;
 import org.slf4j.Logger;
@@ -26,10 +29,16 @@ public class DMDResource {
   private DMDService dmdService;
 
   @Autowired
+  private DMDDeviceIniService dmdDeviceIniService;
+
+  @Autowired
   private GameService gameService;
 
   @Autowired
   private UniversalUploadService universalUploadService;
+
+  @Autowired
+  private EmulatorService emulatorService;
 
   @GetMapping("{id}")
   public DMDPackage get(@PathVariable("id") int id) {
@@ -38,6 +47,17 @@ public class DMDResource {
       return dmdService.getDMDPackage(game);
     }
     return null;
+  }
+
+  @GetMapping("dmddeviceini/{emulatorId}")
+  public DMDDeviceIniConfiguration getDMDDeviceIniConfiguration(@PathVariable("emulatorId") int emulatorId) {
+    GameEmulator gameEmulator = emulatorService.getGameEmulator(emulatorId);
+    return dmdDeviceIniService.getDmdDeviceIni(gameEmulator);
+  }
+
+  @PostMapping("/dmddeviceini")
+  public DMDDeviceIniConfiguration save(@RequestBody DMDDeviceIniConfiguration dmddeviceini) throws Exception {
+    return dmdDeviceIniService.save(dmddeviceini);
   }
 
   @GetMapping("/clearcache")
@@ -63,7 +83,8 @@ public class DMDResource {
     catch (Exception e) {
       LOG.error(AssetType.DMD_PACK.name() + " upload failed: " + e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.DMD_PACK.name() + " upload failed: " + e.getMessage());
-    } finally {
+    }
+    finally {
       descriptor.finalizeUpload();
     }
   }

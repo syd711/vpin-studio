@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.List;
  * Recorder
  ********************************************************************************************************************/
 public class RecorderServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public RecorderServiceClient(VPinStudioClient client) {
     super(client);

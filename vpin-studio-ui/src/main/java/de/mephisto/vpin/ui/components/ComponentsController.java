@@ -7,7 +7,6 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.components.ComponentActionLogRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentInstallation;
 import de.mephisto.vpin.restclient.components.ComponentType;
-import de.mephisto.vpin.restclient.doflinx.DOFLinxSettings;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
@@ -20,8 +19,6 @@ import de.mephisto.vpin.ui.components.emulators.EmulatorsController;
 import de.mephisto.vpin.ui.components.screens.ScreensController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
-import de.mephisto.vpin.ui.util.ProgressDialog;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -44,8 +41,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import static de.mephisto.vpin.commons.fx.Features.EMULATORS_ENABLED;
-import static de.mephisto.vpin.commons.fx.Features.SCREEN_MANAGER_ENABLED;
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
@@ -137,7 +133,7 @@ public class ComponentsController implements Initializable, StudioFXController, 
 
   private void updateForTabSelection(int index) {
     if (index == 0) {
-      NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Overview"));
+      NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Updates"));
     }
     else if (index == 1) {
       NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Visual Pinball"));
@@ -155,12 +151,9 @@ public class ComponentsController implements Initializable, StudioFXController, 
       NavigationController.setBreadCrumb(Arrays.asList("System Manager", "FlexDMD"));
     }
     else if (index == 6) {
-      NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Serum"));
-    }
-    else if (index == 7) {
       NavigationController.setBreadCrumb(Arrays.asList("System Manager", "DOFLinx"));
     }
-    else if (index == 8) {
+    else if (index == 7) {
       NavigationController.setBreadCrumb(Arrays.asList("System Manager", "DOF"));
     }
   }
@@ -201,6 +194,7 @@ public class ComponentsController implements Initializable, StudioFXController, 
     tabPane.setTabMaxWidth(100);
     tabPane.setTabMinWidth(100);
 
+    hint.setVisible(false);
     hint.managedProperty().bindBidirectional(hint.visibleProperty());
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
@@ -230,7 +224,7 @@ public class ComponentsController implements Initializable, StudioFXController, 
 
     updateForTabSelection(0);
 
-    if (SCREEN_MANAGER_ENABLED && frontendType.isNotStandalone()) {
+    if (Features.SCREEN_MANAGER_ENABLED && !Features.IS_STANDALONE) {
       try {
         FXMLLoader loader = new FXMLLoader(ScreensController.class.getResource("tab-screens.fxml"));
         Parent builtInRoot = loader.load();
@@ -244,7 +238,7 @@ public class ComponentsController implements Initializable, StudioFXController, 
       rootTabPane.getTabs().remove(screensTab);
     }
 
-    if (EMULATORS_ENABLED && frontendType.supportEmulators()) {
+    if (Features.EMULATORS_ENABLED) {
       try {
         FXMLLoader loader = new FXMLLoader(EmulatorsController.class.getResource("tab-emulators.fxml"));
         Parent builtInRoot = loader.load();

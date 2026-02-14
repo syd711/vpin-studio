@@ -21,6 +21,16 @@ public class Settings {
 
   private String apiReadAccess;
 
+  private String apiWriteAccess;
+
+  public String getApiWriteAccess() {
+    return apiWriteAccess;
+  }
+
+  public void setApiWriteAccess(String apiWriteAccess) {
+    this.apiWriteAccess = apiWriteAccess;
+  }
+
   public String getApiReadAccess() {
     return apiReadAccess;
   }
@@ -84,6 +94,15 @@ public class Settings {
     }
     return false;
   }
+
+  @JsonIgnore//do not use original name!
+  public boolean isApiWritingEnabled() {
+    if (this.apiWriteAccess != null && (this.apiWriteAccess.equalsIgnoreCase("true") || this.apiWriteAccess.equalsIgnoreCase("false"))) {
+      return Boolean.parseBoolean(this.apiWriteAccess.toLowerCase());
+    }
+    return false;
+  }
+
   @JsonIgnore//do not use original name!
   public boolean isPublicScoresReadingEnabled() {
     if (this.publicScoresEnabled != null && (this.publicScoresEnabled.equalsIgnoreCase("true") || this.publicScoresEnabled.equalsIgnoreCase("false"))) {

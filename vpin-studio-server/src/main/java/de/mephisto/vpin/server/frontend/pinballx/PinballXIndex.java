@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.frontend.pinballx;
 
+import de.mephisto.vpin.connectors.assets.TableAssetSourceType;
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -43,12 +44,17 @@ public class PinballXIndex {
     if (screenAssets != null) {
       List<Asset> listAssets = screenAssets.get(screen);
       if (listAssets != null) {
-        assets = listAssets.stream().filter(t -> StringUtils.containsIgnoreCase(t.name, term)
-            || StringUtils.containsIgnoreCase(t.folder, term)
-        ).map(t -> t.createAsset(emutype, screen)).collect(Collectors.toList());
+        assets = listAssets.stream()
+          .filter(t -> matchTerm(t, term))
+          .map(t -> t.createAsset(emutype, screen))
+          .collect(Collectors.toList());
       }
     }
     return assets;
+  }
+
+  private boolean matchTerm(Asset t, String term) {
+    return StringUtils.containsIgnoreCase(t.name, term) || StringUtils.containsIgnoreCase(t.folder, term);
   }
 
   public Optional<TableAsset> get(EmulatorType emutype, VPinScreen screen, String folder, String name) {
@@ -163,6 +169,7 @@ public class PinballXIndex {
 
       asset.setEmulator(emutype != null ? emutype.name() : null);
       asset.setScreen(screen.getSegment());
+      asset.setPlayfieldMediaInverted(true);
 
       String mimeType = URLConnection.guessContentTypeFromName(name);
       if (StringUtils.endsWithIgnoreCase(name, ".apng")) {
@@ -177,7 +184,7 @@ public class PinballXIndex {
       // url must start with / not encoded !
       String url = "/" + URLEncoder.encode(folder + "/" + name, StandardCharsets.UTF_8);
       asset.setUrl(url);
-      asset.setSourceId(folder);
+      asset.setSourceId(TableAssetSourceType.PinballX.name());
       asset.setName(name);
       asset.setAuthor(author);
 

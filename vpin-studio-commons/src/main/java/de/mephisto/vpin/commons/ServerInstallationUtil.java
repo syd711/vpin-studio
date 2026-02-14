@@ -6,10 +6,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
 
 public class ServerInstallationUtil {
-  private final static Logger LOG = LoggerFactory.getLogger(ServerInstallationUtil.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static File SERVER_EXE = new File("./VPin-Studio-Server.exe");
   public static final String VPIN_STUDIO_SERVER_BAT = "VPin-Studio-Server.bat";
@@ -31,19 +32,21 @@ public class ServerInstallationUtil {
       LOG.info("Written autostart file " + runFile.getAbsolutePath());
 
       String wbScript = "Dim WShell\nSet WShell = CreateObject(\"WScript.Shell\")\n" +
-        "WShell.CurrentDirectory = \"" + root.getAbsolutePath() + "\"\n" +
-        "WShell.Run \"VPin-Studio-Server.exe\", 0\n" +
-        "Set WShell = Nothing";
+          "WShell.CurrentDirectory = \"" + root.getAbsolutePath() + "\"\n" +
+          "WShell.Run \"VPin-Studio-Server.exe\", 0\n" +
+          "Set WShell = Nothing";
 
 
       if (vbsFile.exists() && !vbsFile.delete()) {
+        LOG.error("Could not delete existing vbs file {}", vbsFile.getAbsolutePath());
         throw new IOException("Could not delete existing vbs file " + vbsFile.getAbsolutePath());
       }
       FileUtils.writeStringToFile(vbsFile, wbScript, StandardCharsets.UTF_8);
       LOG.info("Written vbs file " + vbsFile.getAbsolutePath());
 
       return runFile.exists();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to install autostart: " + e.getMessage(), e);
       throw e;
     }

@@ -4,6 +4,8 @@ import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
@@ -12,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,7 +24,7 @@ import java.util.ResourceBundle;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableDataTabScreensController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(TableDataTabScreensController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   //screens
   @FXML
@@ -69,6 +72,9 @@ public class TableDataTabScreensController implements Initializable {
   private List<CheckBox> screenCheckboxes = new ArrayList<>();
   private TableDetails tableDetails;
 
+  private BooleanProperty dirty = new SimpleBooleanProperty(false);
+
+
   public void setGame(GameRepresentation game, TableDetails tableDetails) {
     this.tableDetails = tableDetails;
 
@@ -87,9 +93,11 @@ public class TableDataTabScreensController implements Initializable {
         checkbox.setSelected(screens.contains(screen));
       }
     }
+
+    dirty.set(false);
   }
 
-  public void save() {
+  public boolean save() {
     String value = "";
     if (useEmuDefaultsCheckbox.isSelected()) {
       //nothing, empty value for defaults
@@ -112,6 +120,8 @@ public class TableDataTabScreensController implements Initializable {
     if (tableDetails !=  null) {
       tableDetails.setKeepDisplays(value);
     }
+    dirty.set(false);
+    return true;
   }
 
   @Override
@@ -137,6 +147,7 @@ public class TableDataTabScreensController implements Initializable {
           hideAllCheckbox.setSelected(false);
           useEmuDefaultsCheckbox.setSelected(false);
         }
+        dirty.set(true);
       });
     }
 
@@ -145,6 +156,7 @@ public class TableDataTabScreensController implements Initializable {
         screenCheckboxes.stream().forEach(check -> check.setSelected(false));
         hideAllCheckbox.setSelected(false);
       }
+      dirty.set(true);
     });
 
     hideAllCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -152,6 +164,11 @@ public class TableDataTabScreensController implements Initializable {
         screenCheckboxes.stream().forEach(check -> check.setSelected(false));
         useEmuDefaultsCheckbox.setSelected(false);
       }
+      dirty.set(true);
     });
   }
+
+  public BooleanProperty dirtyProperty() {
+    return dirty;
+  } 
 }

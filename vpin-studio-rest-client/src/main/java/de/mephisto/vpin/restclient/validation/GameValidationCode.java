@@ -13,6 +13,7 @@ public interface GameValidationCode {
   int CODE_NO_DIRECTB2S_OR_PUPPACK = 20;
   int CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED = 21;
   int CODE_NO_DMDFOLDER = 22;
+  int CODE_BACKGLASS_AND_BACKGLASSES_DISABLED = 23;
 
   int CODE_NO_AUDIO = 30;
   int CODE_NO_AUDIO_LAUNCH = 31;
@@ -26,6 +27,7 @@ public interface GameValidationCode {
   int CODE_NO_LOADING = 39;
   int CODE_NO_OTHER2 = 40;
   int CODE_NO_WHEEL_IMAGE = 41;
+  int CODE_NO_LOGO = 42;
 
   int CODE_ALT_SOUND_NOT_ENABLED = 50;
   int CODE_ALT_SOUND_FILE_MISSING = 51;
@@ -44,4 +46,5 @@ public interface GameValidationCode {
   int CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING = 84;
 
   int CODE_SCRIPT_CONTROLLER_STOP_MISSING = 90;
+  int CODE_SCRIPT_FILES_MISSING = 91;
 }

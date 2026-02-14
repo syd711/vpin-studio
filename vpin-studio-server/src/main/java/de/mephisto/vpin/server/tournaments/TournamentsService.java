@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.tournaments;
 
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.connectors.mania.model.CabinetOnlineStatus;
 import de.mephisto.vpin.connectors.mania.model.CabinetStatus;
@@ -19,9 +18,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 @Service
 public class TournamentsService implements InitializingBean, TableStatusChangeListener {
@@ -105,7 +103,7 @@ public class TournamentsService implements InitializingBean, TableStatusChangeLi
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    if (Features.MANIA_ENABLED) {
+    if (Features.MANIA_TOURNAMENTS_ENABLED) {
       try {
         Cabinet cabinet = maniaService.getClient().getCabinetClient().getCabinetCached();
         if (cabinet != null) {
@@ -117,7 +115,7 @@ public class TournamentsService implements InitializingBean, TableStatusChangeLi
 
           ManiaSettings settings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
           settings.setEnabled(true);
-          preferencesService.savePreference(PreferenceNames.MANIA_SETTINGS, settings);
+          preferencesService.savePreference(settings);
 
           if (settings.isShowOnlineStatus()) {
             cabinet.getStatus().setStatus(CabinetOnlineStatus.online);

@@ -37,15 +37,6 @@
                               <VBox fx:id="menuItemsPanel">
                                  <children>
                                     <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPrivacySettings" styleClass="preference-button" text="Data &amp; Privacy Settings" />
-                                    <Label alignment="BASELINE_LEFT" styleClass="preference-section" text="CABINET">
-                                       <font>
-                                          <Font size="13.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets top="24.0" />
-                                       </VBox.margin>
-                                    </Label>
-                                    <Button fx:id="cabinetBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onCabinet" styleClass="preference-button" text="Cabinet Settings" />
                                     <Label alignment="BASELINE_LEFT" styleClass="preference-section" text="FRIENDS">
                                        <font>
                                           <Font size="13.0" />
@@ -56,15 +47,19 @@
                                     </Label>
                                     <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onFriendsList" styleClass="preference-button" text="All" />
                                     <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onFriendsPendingInvites" styleClass="preference-button" text="Pending Invites" />
-                                    <Label alignment="BASELINE_LEFT" styleClass="preference-section" text="TOURNAMENTS">
-                                       <font>
-                                          <Font size="13.0" />
-                                       </font>
+                                    <VBox fx:id="tournamentsBox">
+                                       <children>
+                                          <Label alignment="BASELINE_LEFT" styleClass="preference-section" text="TOURNAMENTS">
+                                             <font>
+                                                <Font size="13.0" />
+                                             </font>
+                                          </Label>
+                                          <Button fx:id="tournamentsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onTournaments" styleClass="preference-button" text="Tournament Settings" />
+                                       </children>
                                        <VBox.margin>
                                           <Insets top="24.0" />
                                        </VBox.margin>
-                                    </Label>
-                                    <Button fx:id="tournamentsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onTournaments" styleClass="preference-button" text="Tournament Settings" />
+                                    </VBox>
                                  </children>
                               </VBox>
                            </children>
@@ -89,12 +84,12 @@
                      <children>
                         <Hyperlink fx:id="kofiLink" onAction="#onKofiLink">
                            <graphic>
-                              <FontIcon iconColor="#c7c3c3" iconLiteral="mdi2d-discord" iconSize="24" />
+                              <FontIcon iconColor="#c7c3c3" iconLiteral="mdi-discord" iconSize="24" />
                            </graphic>
                         </Hyperlink>
                         <Hyperlink onAction="#onDiscordLink" text="Join Discord">
                            <graphic>
-                              <FontIcon iconColor="#c7c3c3" iconLiteral="mdi2d-discord" iconSize="24" />
+                              <FontIcon iconColor="#c7c3c3" iconLiteral="mdi-discord" iconSize="24" />
                            </graphic>
                         </Hyperlink>
                         <Hyperlink fx:id="versionLink" onAction="#onVersionLInk" styleClass="version-label" text="Hyperlink" textFill="#b0abab" />

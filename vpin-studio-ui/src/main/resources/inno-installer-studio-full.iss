@@ -2,12 +2,10 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "VPin Studio"
-#define MyAppNameVPBM "VPBM"
 #define MyAppVersion "${project.version}"
 #define MyAppPublisher "Matthias Faust"
 #define MyAppURL "https://github.com/syd711/vpin-studio"
 #define MyAppExeName "VPin-Studio.exe"
-#define MyAppExeNameVPBM "vPinBackupManager.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
@@ -38,7 +36,6 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "Create Desktop Icon for the VPin Studio"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
-Name: "desktopiconVPBM"; Description: "Create Desktop Icon for the Visual Pinball Archive Manager"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Dirs]
 Name: "{app}\resources"; Permissions: users-full
@@ -57,10 +54,9 @@ Source: "..\..\..\Output\Vpin-Studio\VPin-Studio-Server.l4j.ini"; DestDir: "{app
 
 [Icons]
 Name: "{autoprograms}\VPin-Studio\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
-Name: "{autoprograms}\VPin-Studio\VPin-Studio-Server.exe"; Filename: "{app}\VPin-Studio-Server.exe";
+Name: "{autoprograms}\VPin-Studio\VPin-Studio-Server.exe"; Filename: "{app}\VPin-Studio-Server.exe"
 Name: "{autoprograms}\VPin-Studio\VPin-Studio-Server"; Filename: "{app}\VPin-Studio-Server.bat"; Flags: runminimized
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
-Name: "{autodesktop}\{#MyAppNameVPBM}"; Filename: "{app}\resources\vpbm\{#MyAppExeNameVPBM}"; Tasks: desktopiconVPBM
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent

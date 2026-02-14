@@ -64,8 +64,10 @@ public class EventManager {
 
   public void notifyTableChange(int tableId, @Nullable String rom, @Nullable String gameName) {
     Platform.runLater(() -> {
-      for (StudioEventListener listener : listeners) {
-        listener.tableChanged(tableId, rom, gameName);
+      synchronized (listeners) {
+        for (StudioEventListener listener : listeners) {
+          listener.tableChanged(tableId, rom, gameName);
+        }
       }
     });
   }
@@ -80,20 +82,11 @@ public class EventManager {
 
   public void notifyJobFinished(JobDescriptor descriptor) {
     JobType type = descriptor.getJobType();
-    notifyJobFinished(type, descriptor.getGameId());
+    notifyJobFinished(type, descriptor.getGameId(), descriptor.isCancelled(), descriptor.isFinished());
   }
 
-  public void notifyJobFinished(JobType type) {
-    JobFinishedEvent event = new JobFinishedEvent(type);
-    new Thread(() -> {
-      for (StudioEventListener listener : listeners) {
-        listener.jobFinished(event);
-      }
-    }).start();
-  }
-
-  public void notifyJobFinished(JobType type, int gameId) {
-    JobFinishedEvent event = new JobFinishedEvent(type, gameId);
+  public void notifyJobFinished(JobType type, int gameId, boolean cancelled, boolean finished) {
+    JobFinishedEvent event = new JobFinishedEvent(type, gameId, cancelled, finished);
     new Thread(() -> {
       for (StudioEventListener listener : listeners) {
         listener.jobFinished(event);

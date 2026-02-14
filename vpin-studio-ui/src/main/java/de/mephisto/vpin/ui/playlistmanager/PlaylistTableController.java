@@ -31,6 +31,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class PlaylistTableController extends BaseTableController<GameRepresentation, GameRepresentationModel> implements Initializable {
@@ -112,6 +113,9 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
       }
       refresh();
     }
+    else {
+      tableView.setItems(FXCollections.emptyObservableList());
+    }
   }
 
   private void refresh() {
@@ -152,8 +156,8 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
     emulatorsSeparator.managedProperty().bindBidirectional(emulatorsSeparator.visibleProperty());
     allEmulatorsCombo.managedProperty().bindBidirectional(allEmulatorsCombo.visibleProperty());
 
-    allEmulatorsCombo.setVisible(client.getFrontendService().getFrontend().getFrontendType().supportExtendedPlaylists());
-    emulatorsSeparator.setVisible(client.getFrontendService().getFrontend().getFrontendType().supportExtendedPlaylists());
+    allEmulatorsCombo.setVisible(Features.PLAYLIST_EXTENDED);
+    emulatorsSeparator.setVisible(Features.PLAYLIST_EXTENDED);
 
     removeBtn.setDisable(true);
     addBtn.setDisable(true);

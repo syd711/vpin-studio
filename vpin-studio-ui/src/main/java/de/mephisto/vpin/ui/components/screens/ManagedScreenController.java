@@ -165,7 +165,7 @@ public class ManagedScreenController implements Initializable {
     this.previewCanvas.setPrefWidth((Studio.stage.getWidth() - OFFSET));
 
     SystemSummary systemSummary = client.getSystemService().getSystemSummary(reloadData);
-    List<MonitorInfo> monitorInfos = systemSummary.getScreenInfos();
+    List<MonitorInfo> monitorInfos = systemSummary.getMonitorInfos();
     previewCanvas.getChildren().removeAll(previewCanvas.getChildren());
 
     double canvasMinX = Integer.MAX_VALUE, canvasMinY = Integer.MAX_VALUE;

@@ -20,6 +20,7 @@
   <ScreenshotFileType>0</ScreenshotFileType>
   <HyperpinXMLFile>Unknown</HyperpinXMLFile>
   <avr_200>
+    <DualMode>1</DualMode>
     <HideGrill>2</HideGrill>
     <HideB2SDMD>0</HideB2SDMD>
     <HideDMD>2</HideDMD>

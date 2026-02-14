@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.players;
 
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -34,6 +33,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.util.*;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
 
@@ -258,16 +258,16 @@ public class BuiltInPlayersController extends BasePlayersController implements I
 
     nameColumn.setCellValueFactory(cellData -> {
       PlayerRepresentation value = cellData.getValue();
-      return new SimpleObjectProperty(value.getName());
+      return new SimpleObjectProperty<>(value.getName());
     });
 
     avatarColumn.setCellValueFactory(cellData -> {
       PlayerRepresentation value = cellData.getValue();
       if (value.getAvatar() == null) {
-        return new SimpleObjectProperty("");
+        return new SimpleObjectProperty<>("");
       }
 
-      return new SimpleObjectProperty<>(AvatarFactory.create(client.getAsset(AssetType.AVATAR, value.getAvatar().getUuid())));
+      return new SimpleObjectProperty<>(AvatarFactory.create(client.getAssetService().getAsset(AssetType.AVATAR, value.getAvatar().getUuid())));
     });
 
     initialsColumn.setCellValueFactory(cellData -> {

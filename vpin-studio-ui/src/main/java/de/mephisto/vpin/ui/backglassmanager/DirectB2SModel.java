@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SDetail;
 import de.mephisto.vpin.restclient.validation.BackglassValidationCode;
 import de.mephisto.vpin.restclient.validation.ValidationState;
+import de.mephisto.vpin.ui.tables.panels.BaseGameModel;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingModel;
 
 import org.apache.commons.lang3.StringUtils;
@@ -14,7 +15,7 @@ import java.util.Objects;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class DirectB2SModel extends BaseLoadingModel<DirectB2S, DirectB2SModel> {
+public class DirectB2SModel extends BaseLoadingModel<DirectB2S, DirectB2SModel> implements BaseGameModel {
   private final static Logger LOG = LoggerFactory.getLogger(DirectB2SModel.class);
 
   // not null when loaded
@@ -51,6 +52,7 @@ public class DirectB2SModel extends BaseLoadingModel<DirectB2S, DirectB2SModel> 
     return bean.getEmulatorId();
   }
 
+  @Override     // BaseGameModel
   public int getGameId() {
     return bean.getGameId();
   }
@@ -117,9 +119,14 @@ public class DirectB2SModel extends BaseLoadingModel<DirectB2S, DirectB2SModel> 
     return validationState != null ? validationState.getCode() : -1;
   }
 
-  public boolean _isGameAvailable() {
+  public boolean isGameAvailable() {
     return backglassDetail == null ? false : 
       !ValidationState.contains(backglassDetail.getValidations(), BackglassValidationCode.CODE_NO_GAME);
+  }
+
+  public boolean hasWrongFullDMDRatioError() {
+    return backglassDetail == null ? false : 
+      ValidationState.contains(backglassDetail.getValidations(), BackglassValidationCode.CODE_WRONG_FULLDMD_RATIO);
   }
 
   //---------------------------------------

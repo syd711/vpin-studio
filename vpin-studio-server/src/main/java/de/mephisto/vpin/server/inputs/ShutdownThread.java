@@ -17,6 +17,7 @@ public class ShutdownThread extends Thread {
   private final PreferencesService preferencesService;
   private final JobQueue queue;
   private int idleMinutes;
+  private boolean running = true;
 
   public ShutdownThread(PreferencesService preferencesService, JobQueue queue) {
     this.preferencesService = preferencesService;
@@ -26,11 +27,11 @@ public class ShutdownThread extends Thread {
   public void run() {
     Thread.currentThread().setName("System Shutdown Listener");
     LOG.info("Started " + Thread.currentThread().getName() + " (" + preferencesService.getPreferenceValue(PreferenceNames.IDLE_TIMEOUT) + " minutes timeout)");
-    while (true) {
+    while (running) {
       try {
         Thread.sleep(60 * 1000);
 
-        boolean uiRunning = ServerFX.getInstance().isOverlayVisible() || PauseMenu.isVisible();
+        boolean uiRunning = ServerFX.getInstance().isOverlayVisible() || PauseMenu.getInstance().isVisible();
         if (uiRunning) {
           idleMinutes = 0;
           continue;
@@ -51,13 +52,13 @@ public class ShutdownThread extends Thread {
             }
             else {
               LOG.info("Executing shutdown after being idle for " + idleMinutes + " minutes");
-              shutdown();
+              shutdownSystem();
             }
           }
         }
       }
       catch (InterruptedException e) {
-        LOG.error("Error in shutdown thread: " + e.getMessage(), e);
+        LOG.error("Error in shutdown thread: " + e.getMessage());
       }
     }
   }
@@ -66,7 +67,17 @@ public class ShutdownThread extends Thread {
     this.idleMinutes = 0;
   }
 
-  public static void shutdown() {
+  public void shutdown() {
+    try {
+      running = false;
+      this.interrupt();
+    }
+    catch (Exception e) {
+      LOG.warn("Unsafe shutdown listener shutdown: {}", e.getMessage());
+    }
+  }
+
+  public static void shutdownSystem() {
     try {
       SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("shutdown", "-s"));
       executor.executeCommand();

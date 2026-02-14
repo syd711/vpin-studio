@@ -16,12 +16,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
 public class PinVolSettingsDialogController implements Initializable, DialogController {
-  private final static Logger LOG = LoggerFactory.getLogger(PinVolSettingsDialogController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private VBox center;
@@ -37,7 +38,7 @@ public class PinVolSettingsDialogController implements Initializable, DialogCont
   @FXML
   private void onSaveClick(ActionEvent e) {
     Platform.runLater(() -> {
-      pinVolController.save();
+      pinVolController.save(true);
     });
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();

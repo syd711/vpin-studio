@@ -4,7 +4,7 @@ import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.FrontendScreenController;
 import de.mephisto.vpin.commons.fx.pausemenu.model.FrontendScreenAsset;
 import de.mephisto.vpin.commons.utils.TransitionUtil;
-import de.mephisto.vpin.restclient.util.SystemUtil;
+import de.mephisto.vpin.restclient.system.MonitorInfo;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
@@ -15,18 +15,18 @@ import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 
 public class FrontendScreensManager {
-  private final static Logger LOG = LoggerFactory.getLogger(FrontendScreensManager.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  private static FrontendScreensManager instance = new FrontendScreensManager();
+  private static final FrontendScreensManager instance = new FrontendScreensManager();
 
   public static FrontendScreensManager getInstance() {
     return instance;
@@ -36,8 +36,9 @@ public class FrontendScreensManager {
     try {
       BorderPane root = new BorderPane();
       root.setStyle("-fx-background-color: transparent;");
-      Screen screen = SystemUtil.getScreenById(-1);
-      final Scene scene = new Scene(root, screen.getVisualBounds().getWidth(), screen.getVisualBounds().getHeight(), true, SceneAntialiasing.BALANCED);
+
+      MonitorInfo screen = ServerFX.client.getSystemService().getScreenInfo(-1);
+      final Scene scene = new Scene(root, screen.getWidth(), screen.getHeight(), true, SceneAntialiasing.BALANCED);
       scene.setFill(Color.TRANSPARENT);
       scene.setCursor(Cursor.NONE);
 
@@ -56,13 +57,15 @@ public class FrontendScreensManager {
         FrontendScreenController screenController = loader.getController();
         screenController.setMediaAsset(asset);
         root.setCenter(widgetRoot);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.error("Failed to frontend screen: " + e.getMessage(), e);
       }
 
       showStage(screenStage, asset.getDuration());
       return screenStage;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to open screen stage: " + e.getMessage(), e);
     }
     return null;
@@ -85,7 +88,8 @@ public class FrontendScreensManager {
         else {
           ServerFX.toFront(stage, stage.isShowing());
         }
-      } catch (InterruptedException e) {
+      }
+      catch (InterruptedException e) {
         //ignore
       }
     }).start();

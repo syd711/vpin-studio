@@ -10,16 +10,20 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.lang.invoke.MethodHandles;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 
 /*********************************************************************************************************************
  * Assets
  ********************************************************************************************************************/
 public class AssetServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private static final String UUID_MAIN_AVATAR = "__MAIN_AVATAR__";
 
   public AssetServiceClient(VPinStudioClient client) {
@@ -53,27 +57,44 @@ public class AssetServiceClient extends VPinStudioClientService {
 
   @Nullable
   public ByteArrayInputStream getGameMediaItem(int id, @Nullable VPinScreen screen) {
+    return getGameMediaItem(id, screen, null);
+  }
+
+  @Nullable
+  public ByteArrayInputStream getWheelIcon(int id, boolean skipApng) {
+    //------------
+    // The Wheel is cached for performance reason
+    //goes to the GameMediaResource, 404 is not a bug
+    String url = API + "media/" + id + "/" + VPinScreen.Wheel.name() + "?preview=" + skipApng;
+    if (!client.getImageCache().containsKey(url)) {
+      byte[] bytes = getRestClient().readBinary(url);
+      if (bytes == null) {
+        bytes = new byte[]{};
+      }
+      client.getImageCache().put(url, bytes);
+    }
+
+    byte[] imageBytes = client.getImageCache().get(url);
+    if (imageBytes == null || imageBytes.length == 0) {
+      return null;
+    }
+    return new ByteArrayInputStream(imageBytes);
+  }
+
+  @Nullable
+  public ByteArrayInputStream getGameMediaItem(int id, @Nullable VPinScreen screen, String name) {
     try {
       if (screen == null) {
         return null;
       }
 
-      //goes to the GameMediaResource, 404 is not a bug
-      String url = API + "media/" + id + "/" + screen.name();
-      if (!client.getImageCache().containsKey(url) && screen.equals(VPinScreen.Wheel)) {
-        byte[] bytes = getRestClient().readBinary(url);
-        if (bytes == null) {
-          bytes = new byte[]{};
-        }
-        client.getImageCache().put(url, bytes);
+      if (screen.equals(VPinScreen.Wheel)) {
+        return getWheelIcon(id, false);
       }
 
-      if (screen.equals(VPinScreen.Wheel)) {
-        byte[] imageBytes = client.getImageCache().get(url);
-        if (imageBytes == null || imageBytes.length == 0) {
-          return null;
-        }
-        return new ByteArrayInputStream(imageBytes);
+      String url = API + "media/" + id + "/" + screen.name();
+      if (name != null) {
+        url += "/" + URLEncoder.encode(name, Charset.defaultCharset());
       }
 
       byte[] bytes = getRestClient().readBinary(url);
@@ -91,7 +112,9 @@ public class AssetServiceClient extends VPinStudioClientService {
     try {
       String url = getRestClient().getBaseUrl() + API + "assets/" + id + "/upload/" + maxSize;
       LOG.info("HTTP POST " + url);
-      ResponseEntity<AssetRepresentation> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, assetType, listener), AssetRepresentation.class);
+      HttpEntity<MultiValueMap<String, Object>> upload = createUpload(file, -1, null, assetType, listener);
+      ResponseEntity<AssetRepresentation> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, AssetRepresentation.class);
+      finalizeUpload(upload);
       return exchange.getBody();
     }
     catch (Exception e) {
@@ -103,20 +126,6 @@ public class AssetServiceClient extends VPinStudioClientService {
   public boolean isMediaIndexAvailable() {
     final RestTemplate restTemplate = new RestTemplate();
     return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "assets/index/exists", Boolean.class);
-  }
-
-  public AssetRequest getMetadata(int gameId, VPinScreen screen, String name) {
-    try {
-      AssetRequest request = new AssetRequest();
-      request.setScreen(screen);
-      request.setGameId(gameId);
-      request.setName(name);
-      return getRestClient().post(API + "assets/metadata", request, AssetRequest.class);
-    }
-    catch (Exception e) {
-      LOG.error("Failed to convert video: " + e.getMessage(), e);
-    }
-    return null;
   }
 
   @Nullable

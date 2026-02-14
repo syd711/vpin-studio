@@ -15,6 +15,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
+<?import javafx.scene.control.SeparatorMenuItem?>
 <BorderPane xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.ToolbarController">
    <center>
       <BorderPane fx:id="mainToolbar" stylesheets="@stylesheet.css">
@@ -104,15 +105,21 @@
                         </Button>
                         <SplitMenuButton fx:id="preferencesBtn" mnemonicParsing="false" onAction="#onSettings" textFill="WHITE">
                           <items>
-                            <MenuItem mnemonicParsing="false" onAction="#onClearCache" text="Clear Cache">
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
-                                 </graphic>
-                              </MenuItem>
+
                               <MenuItem fx:id="muteSystemEntry" mnemonicParsing="false" onAction="#onMute" text="Mute System">
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2v-volume-mute" iconSize="18" />
                                  </graphic>
+                              </MenuItem>
+                              <MenuItem fx:id="pinVolStartItem" mnemonicParsing="false" onAction="#onPinvolStart" text="Start Pinvol">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2v-volume-source" iconSize="18" />
+                                 </graphic>
+                              </MenuItem>
+                              <MenuItem fx:id="pinVolStopItem" mnemonicParsing="false" onAction="#onPinvolStop" text="Stop Pinvol">
+                                  <graphic>
+                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2v-volume-off" iconSize="18" />
+                                  </graphic>
                               </MenuItem>
                               <MenuItem fx:id="shutdownMenuItem" mnemonicParsing="false" onAction="#onShutdown" text="Shutdown System">
                                  <graphic>
@@ -129,6 +136,13 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-sync-outline" iconSize="18" />
                                  </graphic>
                               </MenuItem>
+                              <SeparatorMenuItem />
+                              <MenuItem mnemonicParsing="false" onAction="#onClearCache" text="Clear Cache">
+                                  <graphic>
+                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18"/>
+                                  </graphic>
+                              </MenuItem>
+                              <SeparatorMenuItem />
                             <MenuItem mnemonicParsing="false" onAction="#onDisconnect" text="Disconnect">
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2l-logout" iconSize="18" />

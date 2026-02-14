@@ -2,6 +2,7 @@ package de.mephisto.vpin.restclient.games;
 
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
+import de.mephisto.vpin.restclient.cards.CardTemplateType;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.validation.ValidationState;
@@ -9,6 +10,8 @@ import de.mephisto.vpin.restclient.validation.ValidationState;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * {
@@ -29,6 +32,7 @@ public class GameRepresentation {
   private int nvOffset;
   private String gameDisplayName;
   private String gameFileName;
+  private String mediaSearch;
   private Date dateAdded;
   private Date dateUpdated;
   private String gameName;
@@ -59,7 +63,6 @@ public class GameRepresentation {
   private boolean selected;
   private boolean romRequired;
   private String assets;
-  private boolean defaultBackgroundAvailable;
   private AltColorTypes altColorType;
   private String extTableId;
   private String extTableVersionId;
@@ -67,13 +70,14 @@ public class GameRepresentation {
   private String launcher;
   private int emulatorId;
   private String pupPackName;
-  private Long templateId;
-  private boolean vpxGame;
-  private boolean fpGame;
-  private boolean fxGame;
+
+  private Long highscoreCardTemplateId;
+  private Long instructionCardTemplateId;
+  private Long wheelTemplateId;
 
   private boolean cardDisabled;
   private boolean eventLogAvailable;
+  private boolean ignoreUpdates;
 
   private VPSChanges vpsUpdates = new VPSChanges();
 
@@ -84,10 +88,35 @@ public class GameRepresentation {
   private String povPath;
   private String iniPath;
   private String resPath;
-  private String pupPackPath;
   private boolean altSoundAvailable;
 
+  private List<String> tags = new ArrayList<>();
+
   private int nbDirectB2S = -1;
+
+  public List<String> getTags() {
+    return tags;
+  }
+
+  public void setTags(List<String> tags) {
+    this.tags = tags;
+  }
+
+  public String getMediaSearch() {
+    return mediaSearch;
+  }
+
+  public void setMediaSearch(String mediaSearch) {
+    this.mediaSearch = mediaSearch;
+  }
+
+  public boolean isIgnoreUpdates() {
+    return ignoreUpdates;
+  }
+
+  public void setIgnoreUpdates(boolean ignoreUpdates) {
+    this.ignoreUpdates = ignoreUpdates;
+  }
 
   public List<CompetitionType> getCompetitionTypes() {
     return competitionTypes;
@@ -207,44 +236,12 @@ public class GameRepresentation {
     this.resPath = resPath;
   }
 
-  public String getPupPackPath() {
-    return pupPackPath;
-  }
-
-  public void setPupPackPath(String pupPackPath) {
-    this.pupPackPath = pupPackPath;
-  }
-
   public String getComment() {
     return comment;
   }
 
   public void setComment(String comment) {
     this.comment = comment;
-  }
-
-  public boolean isVpxGame() {
-    return vpxGame;
-  }
-
-  public void setVpxGame(boolean vpxGame) {
-    this.vpxGame = vpxGame;
-  }
-
-  public boolean isFpGame() {
-    return fpGame;
-  }
-
-  public void setFpGame(boolean fpGame) {
-    this.fpGame = fpGame;
-  }
-
-  public boolean isFxGame() {
-    return fxGame;
-  }
-
-  public void setFxGame(boolean fxGame) {
-    this.fxGame = fxGame;
   }
 
   public String getPupPackName() {
@@ -255,12 +252,41 @@ public class GameRepresentation {
     this.pupPackName = pupPackName;
   }
 
-  public Long getTemplateId() {
-    return templateId;
+  @JsonIgnore
+  public Long getTemplateId(CardTemplateType templateType) {
+    switch (templateType) {
+      case HIGSCORE_CARD:
+        return getHighscoreCardTemplateId();
+      case INSTRUCTIONS_CARD:
+        return getInstructionCardTemplateId();
+      case WHEEL:
+        return getWheelTemplateId();
+    }
+    return null;
   }
 
-  public void setTemplateId(Long templateId) {
-    this.templateId = templateId;
+  public Long getHighscoreCardTemplateId() {
+    return highscoreCardTemplateId;
+  }
+
+  public void setHighscoreCardTemplateId(Long highscoreCardTemplateId) {
+    this.highscoreCardTemplateId = highscoreCardTemplateId;
+  }
+
+  public Long getInstructionCardTemplateId() {
+    return instructionCardTemplateId;
+  }
+
+  public void setInstructionCardTemplateId(Long instructionCardTemplateId) {
+    this.instructionCardTemplateId = instructionCardTemplateId;
+  }
+
+  public Long getWheelTemplateId() {
+    return wheelTemplateId;
+  }
+
+  public void setWheelTemplateId(Long wheelTemplateId) {
+    this.wheelTemplateId = wheelTemplateId;
   }
 
   public Date getDateAdded() {
@@ -357,14 +383,6 @@ public class GameRepresentation {
 
   public void setAltSoundAvailable(boolean altSoundAvailable) {
     this.altSoundAvailable = altSoundAvailable;
-  }
-
-  public boolean isDefaultBackgroundAvailable() {
-    return defaultBackgroundAvailable;
-  }
-
-  public void setDefaultBackgroundAvailable(boolean defaultBackgroundAvailable) {
-    this.defaultBackgroundAvailable = defaultBackgroundAvailable;
   }
 
   public String getAssets() {

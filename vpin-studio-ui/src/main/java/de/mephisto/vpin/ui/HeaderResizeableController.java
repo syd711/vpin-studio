@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.FXResizeHelper;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
@@ -33,6 +32,7 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
 
@@ -65,8 +65,14 @@ public class HeaderResizeableController implements Initializable {
   private void onMouseClick(MouseEvent e) {
     if (e.getClickCount() == 2) {
       FXResizeHelper helper = (FXResizeHelper) getStage().getUserData();
-      helper.switchWindowedMode(e);
+      boolean isMaximize = helper.switchWindowedMode(e);
+      refreshWindowMaximizedState(isMaximize);
     }
+  }
+
+  @FXML
+  private void onManiaOpen() {
+    Studio.browse("https://app.vpin-mania.net");
   }
 
   @FXML
@@ -92,23 +98,23 @@ public class HeaderResizeableController implements Initializable {
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         boolean register = ManiaHelper.register();
         if (register) {
-          toggleFriendsView();
+          toggleManiaView();
         }
       }
       return;
     }
-    toggleFriendsView();
+    toggleManiaView();
   }
 
-  public static void toggleFriendsView() {
+  public static void toggleManiaView() {
     boolean open = ManiaSettingsController.toggle();
     if (open) {
-      if (!FRIENDS_BTN.getStyleClass().contains("friends-button-selected")) {
-        FRIENDS_BTN.getStyleClass().add("friends-button-selected");
+      if (!FRIENDS_BTN.getStyleClass().contains("bar-button-selected")) {
+        FRIENDS_BTN.getStyleClass().add("bar-button-selected");
       }
     }
     else {
-      FRIENDS_BTN.getStyleClass().remove("friends-button-selected");
+      FRIENDS_BTN.getStyleClass().remove("bar-button-selected");
     }
   }
 
@@ -142,22 +148,14 @@ public class HeaderResizeableController implements Initializable {
   @FXML
   private void onMaximize() {
     FXResizeHelper helper = (FXResizeHelper) getStage().getUserData();
-    helper.switchWindowedMode(event);
-    refreshWindowMaximizedState();
+    boolean isMaximize = helper.switchWindowedMode(event);
+    refreshWindowMaximizedState(isMaximize);
   }
 
-  private void refreshWindowMaximizedState() {
-    boolean mIsMaximized = Studio.stage.getX() == 0 && Studio.stage.getY() == 0;
-    if (mIsMaximized) {
-      FontIcon icon = WidgetFactory.createIcon("mdi2w-window-restore");
-      icon.setIconSize(16);
-      maximizeBtn.setGraphic(icon);
-    }
-    else {
-      FontIcon icon = WidgetFactory.createIcon("mdi2w-window-maximize");
-      icon.setIconSize(16);
-      maximizeBtn.setGraphic(icon);
-    }
+  private void refreshWindowMaximizedState(boolean isMaximized) {
+    FontIcon icon = WidgetFactory.createIcon(isMaximized ? "mdi2w-window-restore" : "mdi2w-window-maximize");
+    icon.setIconSize(16);
+    maximizeBtn.setGraphic(icon);
   }
 
   @FXML
@@ -184,7 +182,7 @@ public class HeaderResizeableController implements Initializable {
     maniaIconLabel.setGraphic(iconMedia);
 
     titleLabel.setText("VPin Studio (" + Studio.getVersion() + ")");
-    PreferenceEntryRepresentation systemNameEntry = client.getPreference(PreferenceNames.SYSTEM_NAME);
+    PreferenceEntryRepresentation systemNameEntry = client.getPreferenceService().getPreference(PreferenceNames.SYSTEM_NAME);
     String name = UIDefaults.VPIN_NAME;
     if (!StringUtils.isEmpty(systemNameEntry.getValue())) {
       name = systemNameEntry.getValue();
@@ -207,8 +205,8 @@ public class HeaderResizeableController implements Initializable {
         }
       });
 
-
-      refreshWindowMaximizedState();
+      boolean isMaximize = FXResizeHelper.isMaximized(stage);
+      refreshWindowMaximizedState(isMaximize);
     });
 
   }

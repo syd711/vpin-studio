@@ -5,11 +5,14 @@ import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.NavigationItem;
 import de.mephisto.vpin.ui.NavigationOptions;
-import de.mephisto.vpin.ui.events.EventManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.Tooltip;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,24 +45,25 @@ public class JobsContainerController implements Initializable {
   @FXML
   private Label statusLabel;
 
-  private JobDescriptor job;
+  private JobDescriptor jobDescriptor;
 
   private boolean finalizedJob = false;
+  private boolean cancelled = false;
   private JobPoller poller;
 
   @FXML
   private void onOpen() {
-    if (job.getGameId() > 0) {
-      NavigationOptions options = new NavigationOptions(job.getGameId());
+    if (jobDescriptor.getGameId() > 0) {
+      NavigationOptions options = new NavigationOptions(jobDescriptor.getGameId());
       NavigationController.navigateTo(NavigationItem.Tables, options);
     }
   }
 
   @FXML
   private void onRemove() {
-    if (job.isFinished()) {
-      client.getJobsService().dismiss(job.getUuid());
-      poller.dismiss(job);
+    if (jobDescriptor.isFinished()) {
+      client.getJobsService().dismiss(jobDescriptor.getUuid());
+      poller.dismiss(jobDescriptor);
       removeBtn.setDisable(true);
       poller.refreshJobsUI();
     }
@@ -67,56 +71,66 @@ public class JobsContainerController implements Initializable {
 
   @FXML
   private void onStop() {
-    client.getJobsService().cancel(job.getUuid());
+    cancelled = true;
+    client.getJobsService().cancel(jobDescriptor.getUuid());
     stopBtn.setDisable(true);
+    setCancelled();
 
-    EventManager.getInstance().notifyJobFinished(job.getJobType(), job.getGameId());
+    poller.notifyJobFinished(jobDescriptor);
   }
 
-  public void setData(JobPoller poller, JobDescriptor job) {
+  public void setCancelled() {
+    this.progressBar.setProgress(1);
+    statusLabel.setText("");
+    statusLabel.setGraphic(WidgetFactory.createExclamationIcon());
+    statusLabel.setText("The job has been cancelled.");
+  }
+
+  public void setData(JobPoller poller, JobDescriptor jobDescriptor) {
     this.poller = poller;
     if (finalizedJob) {
       return;
     }
 
-    this.job = job;
+    this.jobDescriptor = jobDescriptor;
     Platform.runLater(() -> {
-      nameLabel.setText(this.job.getTitle());
+      nameLabel.setText(this.jobDescriptor.getTitle());
       nameLabel.setStyle("-fx-font-size: 15px;-fx-font-weight: bold;");
-      nameLabel.setTooltip(new Tooltip(job.getTitle()));
-      infoLabel.setText(job.getStatus());
+      nameLabel.setTooltip(new Tooltip(jobDescriptor.getTitle()));
+      infoLabel.setText(jobDescriptor.getStatus());
       infoLabel.setStyle("-fx-font-size: 13px");
-      openBtn.setVisible(job.getGameId() > 0);
+      openBtn.setVisible(jobDescriptor.getGameId() > 0);
 
-      if (!job.isCancelable()) {
+      if (!jobDescriptor.isCancelable()) {
         stopBtn.setDisable(true);
         stopBtn.setTooltip(new Tooltip("This job can not be canceled."));
       }
 
+      progressBar.setVisible(!StringUtils.isEmpty(jobDescriptor.getStatus()));
+      progressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
 
-      if (job.getProgress() <= 0) {
-        progressBar.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
+      if (jobDescriptor.getProgress() <= 0) {
+
       }
       else {
-        progressBar.setProgress(job.getProgress());
-        int progress = (int) (job.getProgress() * 100);
+        progressBar.setProgress(jobDescriptor.getProgress());
+        int progress = (int) (jobDescriptor.getProgress() * 100);
         progressBar.setTooltip(new Tooltip(progress + "%"));
       }
 
-      if (job.getProgress() == 1 || job.getError() != null) {
-        LOG.info("Finalizing job container: " + job);
+      if (jobDescriptor.getProgress() == 1 || jobDescriptor.getError() != null) {
         finalizedJob = true;
 
-        boolean error = job.getError() != null;
+        boolean error = jobDescriptor.getError() != null;
         statusLabel.setVisible(true);
+        statusLabel.getGraphic().setVisible(true);
         if (error) {
           statusLabel.setGraphic(WidgetFactory.createExclamationIcon());
-          statusLabel.setText(job.getError());
-          statusLabel.setTooltip(new Tooltip(job.getError()));
+          statusLabel.setText(jobDescriptor.getError());
+          statusLabel.setTooltip(new Tooltip(jobDescriptor.getError()));
         }
-        else if (job.isCancelled()) {
-          statusLabel.setGraphic(WidgetFactory.createExclamationIcon());
-          statusLabel.setText("The job has been cancelled.");
+        else if (jobDescriptor.isCancelled() || cancelled) {
+          setCancelled();
         }
         else {
           statusLabel.setGraphic(WidgetFactory.createCheckboxIcon(WidgetFactory.OK_COLOR));
@@ -125,22 +139,26 @@ public class JobsContainerController implements Initializable {
 
         infoLabel.setVisible(false);
         progressBar.setVisible(false);
-        openBtn.setVisible(job.getGameId() > 0);
-        openBtn.setDisable(job.getGameId() <= 0);
+        openBtn.setVisible(jobDescriptor.getGameId() > 0);
+        openBtn.setDisable(jobDescriptor.getGameId() <= 0);
         stopBtn.setDisable(true);
         removeBtn.setDisable(false);
 
 
-        EventManager.getInstance().notifyJobFinished(job.getJobType(), job.getGameId());
+        poller.notifyJobFinished(jobDescriptor);
       }
-      else if (job.getProgress() > 0) {
-        progressBar.setProgress(job.getProgress());
+      else if (jobDescriptor.getProgress() > 0) {
+        progressBar.setProgress(jobDescriptor.getProgress());
+      }
+
+      if (jobDescriptor.isCancelled()) {
+        setCancelled();
       }
     });
   }
 
   public JobDescriptor getDescriptor() {
-    return job;
+    return jobDescriptor;
   }
 
   @Override
@@ -149,7 +167,9 @@ public class JobsContainerController implements Initializable {
     statusLabel.managedProperty().bindBidirectional(statusLabel.visibleProperty());
     infoLabel.managedProperty().bindBidirectional(infoLabel.visibleProperty());
     progressBar.managedProperty().bindBidirectional(progressBar.visibleProperty());
-    statusLabel.setVisible(false);
+    progressBar.setVisible(false);
+    statusLabel.setText("Queued...");
+    statusLabel.getGraphic().setVisible(false);
     openBtn.setDisable(true);
     removeBtn.setDisable(true);
   }

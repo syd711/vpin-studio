@@ -39,6 +39,7 @@ public class Preferences {
   private String discordBotToken;
 
   private String discordBotAllowList;
+
   private String backupSettings;
 
   private String rankingPoints;
@@ -48,6 +49,8 @@ public class Preferences {
   private String dofLinxSettings;
 
   private String pinballXSettings;
+
+  private String pinballYSettings;
 
   private String highscoreCardSettings;
 
@@ -69,13 +72,25 @@ public class Preferences {
 
   private String filterSettings;
 
+  private String recordingsFilterSettings;
+
   private String vpuSettings;
 
   private String vpfSettings;
 
+  private String vpsSettings;
+
+  private String authenticationSettings;
+
+  private String assetSourcesSettings;
+
   private String webhookSettings;
 
   private String iScoredSettings;
+
+  private String taggingSettings;
+
+  private String wovpSettings;
 
   @Column(length = 1024)
   private String doNotShowAgains;
@@ -94,6 +109,9 @@ public class Preferences {
   @Column(name = "pinVolAutoStartEnabled", nullable = false, columnDefinition = "boolean default false")
   private boolean pinVolAutoStartEnabled;
 
+  @Column(name = "pinVolInstallationFolder", nullable = true, columnDefinition = "PinVol Installation folder")
+  private String pinVolInstallationFolder;
+
   @Column(name = "pinemhiAutoStartEnabled", nullable = false, columnDefinition = "boolean default false")
   private boolean pinemhiAutoStartEnabled;
 
@@ -102,6 +120,38 @@ public class Preferences {
 
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
+
+  public String getWovpSettings() {
+    return wovpSettings;
+  }
+
+  public void setWovpSettings(String wovpSettings) {
+    this.wovpSettings = wovpSettings;
+  }
+
+  public String getTaggingSettings() {
+    return taggingSettings;
+  }
+
+  public void setTaggingSettings(String taggingSettings) {
+    this.taggingSettings = taggingSettings;
+  }
+
+  public String getAssetSourcesSettings() {
+    return assetSourcesSettings;
+  }
+
+  public void setAssetSourcesSettings(String assetSourcesSettings) {
+    this.assetSourcesSettings = assetSourcesSettings;
+  }
+
+  public String getAuthenticationSettings() {
+    return authenticationSettings;
+  }
+
+  public void setAuthenticationSettings(String authenticationSettings) {
+    this.authenticationSettings = authenticationSettings;
+  }
 
   public String getIScoredSettings() {
     return iScoredSettings;
@@ -171,6 +221,14 @@ public class Preferences {
   }
   public void setVpfSettings(String vpfSettings) {
     this.vpfSettings = vpfSettings;
+  }
+
+  public String getRecordingsFilterSettings() {
+    return recordingsFilterSettings;
+  }
+
+  public void setRecordingsFilterSettings(String recordingsFilterSettings) {
+    this.recordingsFilterSettings = recordingsFilterSettings;
   }
 
   public String getFilterSettings() {
@@ -248,6 +306,14 @@ public class Preferences {
     this.pinballXSettings = pinballXSettings;
   }
 
+  public String getPinballYSettings() {
+    return pinballYSettings;
+  }
+
+  public void setPinballYSettings(String pinballYSettings) {
+    this.pinballYSettings = pinballYSettings;
+  }
+
   public String getOverlaySettings() {
     return overlaySettings;
   }
@@ -270,6 +336,14 @@ public class Preferences {
 
   public void setUiSettings(String uiSettings) {
     this.uiSettings = uiSettings;
+  }
+
+  public String getVpsSettings() {
+    return vpsSettings;
+  }
+
+  public void setVpsSettings(String vpsSettings) {
+    this.vpsSettings = vpsSettings;
   }
 
   public boolean getHighscoreFilterEnabled() {
@@ -318,6 +392,14 @@ public class Preferences {
 
   public void setPinVolAutoStartEnabled(boolean pinVolAutoStartEnabled) {
     this.pinVolAutoStartEnabled = pinVolAutoStartEnabled;
+  }
+  
+  public String getPinVolInstallationFolder() {
+    return pinVolInstallationFolder;
+  }
+
+  public void setPinVolInstallationFolder(String pinVolInstallationFolder) {
+    this.pinVolInstallationFolder = pinVolInstallationFolder;
   }
 
   public boolean getPreviewEnabled() {

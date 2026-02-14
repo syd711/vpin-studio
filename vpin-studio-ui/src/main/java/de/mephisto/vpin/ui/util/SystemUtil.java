@@ -11,13 +11,14 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 
 import static de.mephisto.vpin.restclient.util.OSUtil.isMac;
 import static de.mephisto.vpin.restclient.util.OSUtil.isWindows;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class SystemUtil {
-  private final static Logger LOG = LoggerFactory.getLogger(SystemUtil.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static String publicUrl = null;
 
@@ -50,7 +51,7 @@ public class SystemUtil {
       }
     }
   }
-      
+
 
   public static void openFolder(File folder) {
     openFolder(folder, null);
@@ -83,6 +84,10 @@ public class SystemUtil {
   public static void openFolder(File folder, File fallback) {
     if (folder == null) {
       return;
+    }
+
+    while (!folder.exists()) {
+      folder = folder.getParentFile();
     }
 
     if (!folder.exists() && (fallback != null && !fallback.exists())) {

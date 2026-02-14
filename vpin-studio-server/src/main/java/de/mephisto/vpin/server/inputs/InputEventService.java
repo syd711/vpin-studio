@@ -4,7 +4,9 @@ import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.controller.GameController;
 import de.mephisto.vpin.commons.utils.controller.GameControllerInputListener;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
+import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.preferences.OverlaySettings;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
@@ -13,6 +15,7 @@ import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusChangeListener;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.frontend.TableStatusChangeListener;
+import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.TableStatusChangedEvent;
 import de.mephisto.vpin.server.jobs.JobQueue;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
@@ -24,8 +27,9 @@ import javafx.application.Platform;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.net.InetAddress;
@@ -34,7 +38,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
-public class InputEventService implements InitializingBean, TableStatusChangeListener, FrontendStatusChangeListener, PreferenceChangedListener, GameControllerInputListener {
+public class InputEventService implements TableStatusChangeListener, FrontendStatusChangeListener, PreferenceChangedListener, GameControllerInputListener {
   private final static Logger LOG = LoggerFactory.getLogger(InputEventService.class);
 
   @Autowired
@@ -44,9 +48,6 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
   private FrontendStatusService frontendStatusService;
 
   @Autowired
-  private OverlayClientImpl overlayClient;
-
-  @Autowired
   private PreferencesService preferencesService;
 
   @Autowired
@@ -54,6 +55,9 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
 
   @Autowired
   private RecorderService recorderService;
+
+  @Autowired
+  private GameService gameService;
 
   @Autowired
   private ScreenshotService screenshotService;
@@ -66,7 +70,7 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
   private boolean launchOverlayOnStartup = false;
 
   private boolean frontendIsRunning = false;
-  private boolean vpxIsRunning = false;
+  private boolean emulatorRunning = false;
 
   private final Map<String, Long> timingMap = new ConcurrentHashMap<>();
   private PauseMenuSettings pauseMenuSettings;
@@ -97,6 +101,15 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
     String overlayBtn = pauseMenuSettings.getOverlayButton();
     String recordBtn = pauseMenuSettings.getRecordingButton();
     String screenshotBtn = pauseMenuSettings.getScreenshotButton();
+    String resetBtn = pauseMenuSettings.getResetButton();
+
+    if (name.equals("Q")) {
+      HighscoreEventLog highscoreEventLog = SLOG.finalizeEventLog();
+      if (highscoreEventLog != null) {
+        gameService.saveEventLog(highscoreEventLog);
+      }
+      return;
+    }
 
     if (name.equals(recordBtn)) {
       if (frontendStatusService.getGameStatus().isActive()) {
@@ -126,7 +139,7 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
 
     if (overlayBtn != null) {
       if (name.equals(overlayBtn) || (showPauseInsteadOfOverlay && name.equals(pauseBtn))) {
-        if (showPauseInsteadOfOverlay && vpxIsRunning) {
+        if (showPauseInsteadOfOverlay && emulatorRunning) {
           onTogglePauseMenu();
           return;
         }
@@ -145,9 +158,9 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
     }
 
     //handle key based reset
-    String resetBtn = pauseMenuSettings.getResetButton();
     if (name.equals(resetBtn)) {
       onResetEvent();
+      return;
     }
   }
 
@@ -181,7 +194,7 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
 
   private void onResetEvent() {
     frontendIsRunning = false;
-    vpxIsRunning = false;
+    emulatorRunning = false;
     new Thread(() -> {
       frontendService.restartFrontend();
       frontendStatusService.notifyFrontendRestart();
@@ -261,20 +274,22 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
 
   @Override
   public void tableLaunched(TableStatusChangedEvent event) {
-    vpxIsRunning = true;
+    emulatorRunning = true;
     frontendIsRunning = true;
   }
 
   @Override
   public void tableExited(TableStatusChangedEvent event) {
-    vpxIsRunning = false;
+    emulatorRunning = systemService.isPinballEmulatorRunning();
     frontendIsRunning = true;
-    ServerFX.getInstance().exitPauseMenu();
+    if (!emulatorRunning) {
+      ServerFX.getInstance().exitPauseMenu();
+    }
   }
 
   @Override
   public void frontendExited() {
-    vpxIsRunning = false;
+    emulatorRunning = false;
     frontendIsRunning = false;
     ServerFX.getInstance().exitPauseMenu();
   }
@@ -282,11 +297,13 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
   @Override
   public void frontendRestarted() {
     frontendIsRunning = true;
-    vpxIsRunning = false;
+    emulatorRunning = false;
   }
 
   public void resetShutdownTimer() {
-    shutdownThread.reset();
+    if (shutdownThread != null) {
+      shutdownThread.reset();
+    }
   }
 
   @Override
@@ -313,8 +330,9 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
     }
   }
 
-  @Override
-  public void afterPropertiesSet() {
+  @EventListener(ApplicationReadyEvent.class)
+  public void onApplicationReady() {
+    ServerFX.client = new VPinStudioClient("localhost");
     new Thread(() -> {
       ServerFX.main(new String[]{});
       LOG.info("Overlay listener started.");
@@ -323,9 +341,8 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
     shutdownThread = new ShutdownThread(preferencesService, queue);
     shutdownThread.start();
 
-    ServerFX.client = overlayClient;
     ServerFX.waitForOverlay();
-    ServerFX.getInstance().getOverlayStage().setTitle(
+    ServerFX.getInstance().setOverlayTitle(
         frontendService.getFrontendType().equals(FrontendType.Popper) ? "PinUP Popper" : "VPin Studio Overlay");
     LOG.info("Finished initialization of OverlayWindowFX");
 
@@ -357,5 +374,10 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
     GameController.getInstance().addListener(this);
     LOG.info("Server startup finished, running version is " + systemService.getVersion());
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
+  }
+
+  public void shutdown() {
+    shutdownThread.shutdown();
+    LOG.info("Shutdown watcher has been shut down.");
   }
 }

@@ -84,7 +84,7 @@ public class DefaultTableAndFrontendStatusChangeListenerImpl implements Initiali
         if (lastGamePlayed != null && lastGamePlayed.getId() != game.getId()) {
           highscoreService.scanScore(game, EventOrigin.TABLE_EXIT_EVENT);
         }
-        preferencesService.savePreference(PreferenceNames.ACTIVE_GAME, game.getId());
+        preferencesService.savePreference(PreferenceNames.ACTIVE_GAME, game.getId(), false);
       }
     }
     catch (Exception e) {
@@ -99,7 +99,7 @@ public class DefaultTableAndFrontendStatusChangeListenerImpl implements Initiali
 
   private void showTableStartupScreens(Game game) {
     try {
-      PreferenceEntryRepresentation preference = ServerFX.client.getPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS);
+      PreferenceEntryRepresentation preference = ServerFX.client.getPreferenceService().getPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS);
       String value = preference.getValue();
       CardSettings cardSettings = JsonSettings.fromJson(CardSettings.class, value);
 

@@ -52,7 +52,7 @@
                      <children>
                         <HBox GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
-                              <TextField fx:id="fileNameField" editable="false" prefHeight="30.0" prefWidth="399.0">
+                              <TextField fx:id="fileNameField" editable="false" prefHeight="30.0" prefWidth="400.0">
                                  <HBox.margin>
                                     <Insets right="12.0" />
                                  </HBox.margin>
@@ -65,12 +65,12 @@
                         <Label styleClass="default-text" text="ALT Sound Bundle:" GridPane.rowIndex="1" />
                         <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="Emulator:" />
                         <ComboBox fx:id="emulatorCombo" prefHeight="30.0" prefWidth="310.0" GridPane.columnIndex="1" />
-                        <Label fx:id="titleLabel11" text="Resolved ROM Name:" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label fx:id="titleLabel11" text="ROM Name:" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="titleLabel1" text="Matching Table:" textFill="WHITE" GridPane.rowIndex="3">
+                        <Label fx:id="titleLabel1" text="Selected Table:" textFill="WHITE" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -81,7 +81,7 @@
                            </font>
                         </Button>
                         <Label fx:id="romLabel" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Label fx:id="tableLabel" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label fx:id="tableLabel" maxWidth="350.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                      </children>
                      <BorderPane.margin>
                         <Insets top="6.0" />

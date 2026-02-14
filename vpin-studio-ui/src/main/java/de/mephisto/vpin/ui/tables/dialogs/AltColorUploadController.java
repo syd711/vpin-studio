@@ -9,7 +9,7 @@ public class AltColorUploadController extends BaseUploadController {
   private GameRepresentation game;
 
   public AltColorUploadController() {
-    super(AssetType.ALT_COLOR, false, false, "zip", "pac", "rar", "vni", "pal", "cRZ");
+    super(AssetType.ALT_COLOR, false, false, "zip", "pac", "rar", "vni", "pal", "cRZ", "cROMc");
   }
 
   public void setGame(GameRepresentation game) {
@@ -18,7 +18,7 @@ public class AltColorUploadController extends BaseUploadController {
 
   @Override
   protected UploadProgressModel createUploadModel() {
-    return new AltColorUploadProgressModel(this.game.getId(), "ALT Color Upload", getSelection(), "altcolor", finalizer);
+    return new AltColorUploadProgressModel(this.game.getId(), "ALT Color Upload", getSelection(), "altcolor");
   }
 
 }

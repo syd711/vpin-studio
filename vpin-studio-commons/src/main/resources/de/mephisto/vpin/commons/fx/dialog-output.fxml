@@ -28,7 +28,7 @@
                <VBox.margin>
                   <Insets top="12.0" />
                </VBox.margin></Label>
-            <TextArea fx:id="textArea" editable="false" minHeight="400.0" VBox.vgrow="NEVER">
+            <TextArea fx:id="textArea" editable="false" minHeight="400.0" wrapText="true" VBox.vgrow="NEVER">
                <VBox.margin>
                   <Insets top="6.0" />
                </VBox.margin>

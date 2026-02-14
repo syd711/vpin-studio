@@ -1,11 +1,11 @@
 package de.mephisto.vpin.ui.jobs;
 
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
@@ -18,10 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -29,6 +27,8 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class JobPoller implements StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(JobPoller.class);
+  private final static String ACTIVE_STYLE = "-fx-border-style: solid;-fx-border-color: #6666FFAA;-fx-border-width: 1;";
+  public static final int JOB_DELAY = 800;
 
   private static JobPoller instance;
 
@@ -50,6 +50,8 @@ public class JobPoller implements StudioEventListener {
   public void removeListener(JobUpdatesListener listener) {
     this.listeners.remove(listener);
   }
+
+  private final Queue<JobDescriptor> finishedJobs = new ConcurrentLinkedQueue<>();
 
   public static void destroy() {
     if (instance != null) {
@@ -84,6 +86,9 @@ public class JobPoller implements StudioEventListener {
       LOG.error("Failed to load job container: " + e.getMessage(), e);
     }
 
+    List<JobDescriptor> preload = getAllJobs();
+    List<JobDescriptor> existingFinished = preload.stream().filter(j -> j.isFinished() || j.isCancelled()).collect(Collectors.toList());
+    finishedJobs.addAll(existingFinished);
 
     service = new Service() {
       @Override
@@ -96,13 +101,13 @@ public class JobPoller implements StudioEventListener {
             boolean poll = true;
 
             while (poll) {
-              Thread.sleep(600);
+              Thread.sleep(JOB_DELAY);
               List<JobDescriptor> allJobs = getAllJobs();
               List<JobDescriptor> activeJobs = allJobs.stream().filter(j -> (!j.isFinished() && !j.isCancelled())).collect(Collectors.toList());
               LOG.info("JobPoller is waiting for " + activeJobs.size() + " running jobs.");
               refreshJobsUI();
               poll = !activeJobs.isEmpty();
-              notifyListeners(activeJobs);
+              notifyListeners(activeJobs, allJobs);
             }
             LOG.info("JobPoller finished all jobs");
             refreshJobsUI();
@@ -120,9 +125,23 @@ public class JobPoller implements StudioEventListener {
     setPolling();
   }
 
-  private void notifyListeners(List<JobDescriptor> activeJobs) {
+  private void notifyListeners(List<JobDescriptor> activeJobs, List<JobDescriptor> allJobs) {
     for (JobUpdatesListener listener : listeners) {
       listener.jobsRefreshed(activeJobs);
+    }
+
+    for (JobDescriptor job : allJobs) {
+      if ((job.isCancelled() || job.isFinished()) && !finishedJobs.contains(job)) {
+        finishedJobs.add(job);
+        EventManager.getInstance().notifyJobFinished(job);
+      }
+    }
+  }
+
+  public void notifyJobFinished(JobDescriptor jobDescriptor) {
+    if (!finishedJobs.contains(jobDescriptor)) {
+      finishedJobs.add(jobDescriptor);
+      EventManager.getInstance().notifyJobFinished(jobDescriptor.getJobType(), jobDescriptor.getGameId(), jobDescriptor.isCancelled(), jobDescriptor.isFinished());
     }
   }
 
@@ -139,6 +158,7 @@ public class JobPoller implements StudioEventListener {
       jobProgress.setProgress(-1);
       jobProgress.setVisible(true);
       jobProgress.setDisable(false);
+      jobMenu.setStyle(ACTIVE_STYLE);
 
       if (!service.isRunning()) {
         service.restart();
@@ -148,16 +168,22 @@ public class JobPoller implements StudioEventListener {
   }
 
   public void refreshJobsUI() {
-    List<JobDescriptor> allJobs = getAllJobs();
-    List<JobDescriptor> activeJobList = allJobs.stream().filter(j -> (!j.isFinished() && !j.isCancelled())).collect(Collectors.toList());
-    polling.set(!activeJobList.isEmpty());
-    jobMenu.setDisable(allJobs.isEmpty());
-    headerController.setVisible(!allJobs.isEmpty());
+    JFXFuture.supplyAsync(() -> {
+      List<JobDescriptor> allJobs = getAllJobs();
+      return allJobs;
+    }).thenAcceptLater(allJobs -> {
+      List<JobDescriptor> activeJobList = allJobs.stream().filter(j -> (!j.isFinished() && !j.isCancelled())).collect(Collectors.toList());
+      polling.set(!activeJobList.isEmpty());
+      jobMenu.setDisable(allJobs.isEmpty());
+      headerController.setVisible(!allJobs.isEmpty());
 
-    Platform.runLater(() -> {
       jobProgress.setProgress(activeJobList.isEmpty() ? 0 : -1);
       jobProgress.setVisible(!activeJobList.isEmpty());
       jobProgress.setDisable(activeJobList.isEmpty());
+      if (activeJobList.isEmpty()) {
+        jobMenu.setStyle(null);
+      }
+
 
       if (activeJobList.size() == 1) {
         jobMenu.setText(activeJobList.size() + " active job");
@@ -171,6 +197,7 @@ public class JobPoller implements StudioEventListener {
 
       //remove dismissed jobs
       List<MenuItem> items = new ArrayList<>(jobMenu.getItems());
+      List<MenuItem> toRemove = new ArrayList<>();
       for (MenuItem item : items) {
         if (item.getUserData() == null) {
           continue;
@@ -178,12 +205,17 @@ public class JobPoller implements StudioEventListener {
 
         JobDescriptor descriptor = ((JobsContainerController) item.getUserData()).getDescriptor();
         if (!allJobs.contains(descriptor)) {
-          jobMenu.getItems().remove(item);
-          jobMenu.requestLayout();
+          toRemove.add(item);
         }
       }
 
+      jobMenu.getItems().removeAll(toRemove);
+      if (jobMenu.isShowing() && !toRemove.isEmpty()) {
+        jobMenu.requestLayout();
+      }
+
       //update or add jobs
+      List<CustomMenuItem> itemsToAdd = new ArrayList<>();
       for (JobDescriptor descriptor : allJobs) {
         Optional<MenuItem> menuItem = items.stream().filter(c -> c.getUserData() != null && ((JobsContainerController) c.getUserData()).getDescriptor().equals(descriptor)).findFirst();
         if (menuItem.isPresent()) {
@@ -201,12 +233,14 @@ public class JobPoller implements StudioEventListener {
           CustomMenuItem item = new CustomMenuItem();
           item.setUserData(containerController);
           item.setContent(root);
-          jobMenu.getItems().add(item);
+          itemsToAdd.add(item);
         }
         catch (IOException e) {
           LOG.error("Failed to load job container: " + e.getMessage(), e);
         }
       }
+
+      jobMenu.getItems().addAll(itemsToAdd);
     });
   }
 
@@ -222,10 +256,19 @@ public class JobPoller implements StudioEventListener {
     for (JobDescriptor clientJob : new ArrayList<>(clientJobs)) {
       if (clientJob.isFinished() || clientJob.isCancelled()) {
         clientJobs.remove(clientJob);
+        finishedJobs.remove(clientJob);
       }
     }
   }
 
+  public void cancelAll() {
+    client.getJobsService().cancelAll();
+    for (JobDescriptor jobDescriptor : new ArrayList<>(clientJobs)) {
+      if (!jobDescriptor.isFinished() && !jobDescriptor.isCancelled()) {
+        client.getJobsService().cancel(jobDescriptor.getUuid());
+      }
+    }
+  }
 
   public void dismiss(JobDescriptor job) {
     clientJobs.remove(job);

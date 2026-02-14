@@ -14,13 +14,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Iterator;
 import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class MediaConversionBulkProgressModel extends ProgressModel<GameRepresentation> {
-  private final static Logger LOG = LoggerFactory.getLogger(MediaConversionBulkProgressModel.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final Iterator<GameRepresentation> iterator;
   private final List<GameRepresentation> games;
@@ -70,7 +71,7 @@ public class MediaConversionBulkProgressModel extends ProgressModel<GameRepresen
       for (Object result : results) {
         MediaOperationResult r = (MediaOperationResult) result;
         if(!StringUtils.isEmpty(r.getResult())) {
-          GameRepresentation game = client.getGameService().getGame(r.getMediaOperation().getGameId());
+          GameRepresentation game = client.getGameService().getGame(r.getMediaOperation().getObjectId());
           if(game != null) {
             builder.append("Result for \"" + game.getGameDisplayName() + "\":\n");
             builder.append(r.getResult());
@@ -91,7 +92,7 @@ public class MediaConversionBulkProgressModel extends ProgressModel<GameRepresen
   @Override
   public void processNext(ProgressResultModel progressResultModel, GameRepresentation game) {
     try {
-      MediaOperationResult convert = client.getMediaConversionService().convert(game.getId(), screen, null, command);
+      MediaOperationResult convert = client.getMediaConversionService().convert(game.getId(), false, screen, null, command);
       progressResultModel.getResults().add(convert);
       EventManager.getInstance().notifyTableChange(game.getId(), game.getRom());
     }

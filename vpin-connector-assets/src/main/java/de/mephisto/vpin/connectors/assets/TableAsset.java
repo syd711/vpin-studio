@@ -10,7 +10,8 @@ public class TableAsset {
   private String sourceId;
   private String mimeType;
   private String author;
-  private String screen;
+  private String screenSegment;
+  private boolean playfieldMediaInverted = false;
   private String emulator;
   private long length = -1;
 
@@ -31,11 +32,19 @@ public class TableAsset {
   }
 
   public String getScreen() {
-    return screen;
+    return screenSegment;
   }
 
-  public void setScreen(String screen) {
-    this.screen = screen;
+  public void setScreen(String screenSegment) {
+    this.screenSegment = screenSegment;
+  }
+
+  public boolean isPlayfieldMediaInverted() {
+    return playfieldMediaInverted;
+  }
+
+  public void setPlayfieldMediaInverted(boolean playfieldMediaInverted) {
+    this.playfieldMediaInverted = playfieldMediaInverted;
   }
 
   public String getAuthor() {
@@ -84,6 +93,9 @@ public class TableAsset {
 
   @Override
   public String toString() {
+    if (emulator == null) {
+      return name + "  [" + this.author + "]";
+    }
     return name + "  [" + this.emulator + "/" + this.author + "]";
   }
 

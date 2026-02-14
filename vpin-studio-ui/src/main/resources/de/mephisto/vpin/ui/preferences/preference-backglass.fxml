@@ -4,6 +4,7 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -12,7 +13,10 @@
 <?import javafx.scene.text.Font?>
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.BackglassPreferencesController">
-   <top>
+   <center>
+      <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+         <content>
+
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
             <Label styleClass="preference-title" text="3RD PARTY PREFERENCES" textFill="WHITE" />
@@ -28,7 +32,7 @@
             </Label>
             <Label fx:id="backglassServerFolder" styleClass="preference-description" text="..." textFill="WHITE" />
 
-            <Label styleClass="preference-description" text="B2STableSettings.xml:" textFill="WHITE">
+            <Label fx:id="b2STableSettingsDescr" styleClass="preference-description" text="B2STableSettings.xml:" textFill="WHITE">
                <VBox.margin>
                   <Insets top="8.0" />
                </VBox.margin>
@@ -61,6 +65,15 @@
                      </font>
                   </CheckBox>
                   <Label layoutX="10.0" layoutY="156.0" styleClass="checkbox-description" text="If enabled, a pop-up window will be shown if no matching backglass file was found." textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="extendedSearchCheckbox" layoutX="10.0" layoutY="354.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Extended &quot;B2STableSettings.xml&quot; Search" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <Label layoutX="10.0" layoutY="392.0" styleClass="checkbox-description" text="If enabled, the server will try to find B2STableSettings.xml in current directory" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="10.0" layoutY="204.0" styleClass="checkbox-description" text="and then installation directory (for some the &quot;Tables&quot; directory)." textFill="WHITE" wrapText="true" />
+                  <Label layoutX="10.0" layoutY="226.0" styleClass="checkbox-description" text="This extended search is activated in the registry using" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="10.0" layoutY="248.0" styleClass="checkbox-description" text="&quot;HKEY_CURRENT_USER\Software\B2S\B2STableSettingsExtendedPath&quot; set to String &quot;1&quot;." textFill="WHITE" wrapText="true" />
                   <CheckBox fx:id="fuzzyMatchingCheckbox" layoutX="10.0" layoutY="107.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Disable Fuzzy Matching" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
@@ -145,5 +158,8 @@
             <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
          </padding>
       </VBox>
-   </top>
+
+         </content>
+      </ScrollPane>
+   </center>
 </BorderPane>

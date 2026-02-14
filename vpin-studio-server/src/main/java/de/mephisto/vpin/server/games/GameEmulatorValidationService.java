@@ -20,7 +20,7 @@ public class GameEmulatorValidationService {
   public List<ValidationState> validate(@NonNull FrontendType frontendType, @NonNull GameEmulator emulator, boolean findFirst) {
     List<ValidationState> result = new ArrayList<>();
 
-    if (emulator.isFpEmulator() || emulator.isVpxEmulator() || emulator.isFxEmulator() || emulator.isMameEmulator() || EmulatorType.OTHER.equals(emulator.getType())) {
+    if (emulator.isFpEmulator() || emulator.isVpxEmulator() || emulator.isMameEmulator() || EmulatorType.OTHER.equals(emulator.getType())) {
       if (StringUtils.isEmpty(emulator.getInstallationDirectory()) || !emulator.getInstallationFolder().exists()) {
         result.add(ValidationStateFactory.create(GameEmulatorValidationCode.CODE_NO_INSTALLATION_DIRECTORY));
         if (findFirst) {
@@ -29,7 +29,7 @@ public class GameEmulatorValidationService {
       }
     }
 
-    if (frontendType.equals(FrontendType.Popper) && StringUtils.isEmpty(emulator.getGameExt())) {
+    if (frontendType.equals(FrontendType.Popper) && StringUtils.isEmpty(emulator.getGameExt()) && !emulator.isZaccariaEmulator()) {
       result.add(ValidationStateFactory.create(GameEmulatorValidationCode.CODE_NO_GAME_EXTENSION));
       if (findFirst) {
         return result;
@@ -37,10 +37,7 @@ public class GameEmulatorValidationService {
     }
 
     if (StringUtils.isEmpty(emulator.getGamesDirectory()) || !new File(emulator.getGamesDirectory()).exists()) {
-      if (frontendType.equals(FrontendType.PinballX) && !emulator.isVpxEmulator() & !emulator.isFpEmulator()) {
-        result.add(ValidationStateFactory.create(GameEmulatorValidationCode.CODE_NO_GAMES_FOLDER));
-      }
-      else {
+      if (frontendType.equals(FrontendType.PinballX) && !emulator.isVpxEmulator() & !emulator.isFpEmulator() && !emulator.isZenEmulator()) {
         result.add(ValidationStateFactory.create(GameEmulatorValidationCode.CODE_NO_GAMES_FOLDER));
         if (findFirst) {
           return result;
@@ -55,7 +52,7 @@ public class GameEmulatorValidationService {
       }
     }
 
-    if ((emulator.isFxEmulator() || emulator.isFpEmulator() || emulator.isVpxEmulator() || emulator.isMameEmulator()) && !StringUtils.isEmpty(emulator.getGamesDirectory()) && !StringUtils.isEmpty(emulator.getGameExt())) {
+    if ((emulator.isZenEmulator() || emulator.isFpEmulator() || emulator.isVpxEmulator() || emulator.isMameEmulator()) && !StringUtils.isEmpty(emulator.getGamesDirectory()) && !StringUtils.isEmpty(emulator.getGameExt())) {
       File folder = new File(emulator.getGamesDirectory());
       if (folder.exists()) {
         File[] files = folder.listFiles(new FileFilter() {

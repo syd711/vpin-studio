@@ -1,15 +1,13 @@
 package de.mephisto.vpin.server;
 
-import de.mephisto.vpin.commons.fx.Features;
-import de.mephisto.vpin.restclient.archiving.ArchiveType;
+import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.restclient.backups.BackupType;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
-import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
-import de.mephisto.vpin.server.altsound.AltSoundService;
-import de.mephisto.vpin.server.archiving.ArchiveService;
-import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapterFactory;
-import de.mephisto.vpin.server.archiving.adapters.TableInstallerAdapterFactory;
+import de.mephisto.vpin.restclient.frontend.popper.PopperSettings;
+import de.mephisto.vpin.server.backups.BackupService;
+import de.mephisto.vpin.server.backups.adapters.TableBackupAdapterFactory;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.assets.AssetService;
 import de.mephisto.vpin.server.competitions.Competition;
@@ -20,6 +18,7 @@ import de.mephisto.vpin.server.games.*;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.players.PlayerRepository;
+import de.mephisto.vpin.server.playlists.PlaylistMediaService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusEventsResource;
 
@@ -27,6 +26,8 @@ import de.mephisto.vpin.server.system.SystemService;
 import org.jcodec.common.logging.Logger;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 import java.io.File;
 import java.util.Arrays;
@@ -65,7 +66,13 @@ abstract public class AbstractVPinServerTest {
   protected GameService gameService;
 
   @Autowired
-  protected GameDetailsRepository gameDetailsRepository;
+  protected GameMediaService gameMediaService;
+
+  @Autowired
+  protected PlaylistMediaService playlistMediaService;
+
+  @Autowired
+  private GameDetailsRepositoryService gameDetailsRepositoryService;
 
   @Autowired
   protected SystemService systemService;
@@ -101,13 +108,7 @@ abstract public class AbstractVPinServerTest {
   protected TableBackupAdapterFactory tableBackupAdapterFactory;
 
   @Autowired
-  protected TableInstallerAdapterFactory tableInstallerAdapterFactory;
-
-  @Autowired
-  protected ArchiveService archiveService;
-
-  @Autowired
-  protected AltSoundService altSoundService;
+  protected BackupService backupService;
 
   /**
    * To force usage of a given Frontend
@@ -142,7 +143,15 @@ abstract public class AbstractVPinServerTest {
       frontendService.deleteGames(1);
       clearVPinStudioDatabase();
 
-      systemService.setArchiveType(ArchiveType.VPA);
+      // configure popper global settings for tests
+      JsonSettings settings = frontendService.getSettings();
+      if (settings instanceof PopperSettings) {
+        PopperSettings popperSettings = (PopperSettings) settings;
+        popperSettings.setGlobalMediaDir("../testsystem/vPinball/PinUPSystem/POPMedia/Default");
+        frontendService.saveSettings(popperSettings);
+      }
+
+      systemService.setBackupType(BackupType.VPA);
 
       frontendService.importGame(EM_TABLE, 1);
       frontendService.importGame(VPREG_TABLE, 1);
@@ -154,7 +163,7 @@ abstract public class AbstractVPinServerTest {
   }
 
   protected void clearVPinStudioDatabase() {
-    gameDetailsRepository.deleteAll();
+    gameDetailsRepositoryService.deleteAll();
     competitionsRepository.deleteAll();
     assetRepository.deleteAll();
     playerRepository.deleteAll();

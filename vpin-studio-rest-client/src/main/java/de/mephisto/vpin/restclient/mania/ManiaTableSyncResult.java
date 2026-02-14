@@ -1,13 +1,42 @@
 package de.mephisto.vpin.restclient.mania;
 
 import de.mephisto.vpin.connectors.mania.model.TableScore;
-
-import java.util.ArrayList;
-import java.util.List;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class ManiaTableSyncResult {
+  @Nullable
   private String result = null;
-  private List<TableScore> tableScores = new ArrayList<>();
+
+  @Nullable
+  private TableScore tableScore;
+
+  private String tableName;
+  private boolean denied = false;
+  private boolean valid = true;
+
+  public boolean isValid() {
+    return valid;
+  }
+
+  public void setValid(boolean valid) {
+    this.valid = valid;
+  }
+
+  public String getTableName() {
+    return tableName;
+  }
+
+  public void setTableName(String tableName) {
+    this.tableName = tableName;
+  }
+
+  public boolean isDenied() {
+    return denied;
+  }
+
+  public void setDenied(boolean denied) {
+    this.denied = denied;
+  }
 
   public String getResult() {
     return result;
@@ -17,11 +46,11 @@ public class ManiaTableSyncResult {
     this.result = result;
   }
 
-  public List<TableScore> getTableScores() {
-    return tableScores;
+  public TableScore getTableScore() {
+    return tableScore;
   }
 
-  public void setTableScores(List<TableScore> tableScores) {
-    this.tableScores = tableScores;
+  public void setTableScore(TableScore tableScore) {
+    this.tableScore = tableScore;
   }
 }

@@ -94,25 +94,12 @@ public class TableOverviewColumnSorter implements BaseColumnSorter<GameRepresent
       else if (column.equals(tableOverviewController.columnPOV)) {
         comp = Comparator.comparing(o -> o.getGame().getPovPath() != null);
       }
-      else if (column.equals(tableOverviewController.columnTutorials)) {
-        comp = Comparator.comparing(o -> {
-          VpsTable vpsTable = Studio.client.getVpsService().getTableById(o.getGame().getExtTableId());
-          if (vpsTable == null) {
-            return -1;
-          }
-          List<VpsTutorialUrls> tutorialFiles = vpsTable.getTutorialFiles();
-          if (tutorialFiles != null && !tutorialFiles.isEmpty()) {
-            return 1;
-          }
-          return -1;
-        });
-      }
       else if (column.equals(tableOverviewController.columnRES)) {
         comp = Comparator.comparing(o -> o.getGame().getResPath() != null);
       }
       else if (column.equals(tableOverviewController.columnPinVol)) {
         comp = Comparator.comparing(o -> {
-          String key = PinVolPreferences.getKey(o.getGame().getGameFileName(), o.getGame().isVpxGame(), o.getGame().isFpGame());
+          String key = PinVolPreferences.getKey(o.getGame().getGameFileName(), client.getEmulatorService().isVpxGame(o.getGame()), client.getEmulatorService().isFpGame(o.getGame()));
           return client.getPinVolService().getPinVolTablePreferences().contains(key);
         });
       }
@@ -133,6 +120,9 @@ public class TableOverviewColumnSorter implements BaseColumnSorter<GameRepresent
       }
       else if (column.equals(tableOverviewController.columnLoading)) {
         comp = Comparator.comparing(o -> o.getStatusColor(VPinScreen.Loading, validationSettings));
+      }
+      else if (column.equals(tableOverviewController.columnLogo)) {
+        comp = Comparator.comparing(o -> o.getStatusColor(VPinScreen.Logo, validationSettings));
       }
       else if (column.equals(tableOverviewController.columnWheel)) {
         comp = Comparator.comparing(o -> o.getStatusColor(VPinScreen.Wheel, validationSettings));

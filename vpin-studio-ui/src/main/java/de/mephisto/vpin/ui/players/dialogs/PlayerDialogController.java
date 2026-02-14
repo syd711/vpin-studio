@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.players.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.AccountVisibility;
@@ -42,6 +41,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
 
@@ -158,7 +158,7 @@ public class PlayerDialogController implements Initializable, DialogController {
     if (this.avatarFile != null) {
 
       //FIXME was in AvatarGeneratorProgressModel so moved here but is it really needed ???
-      ProgressDialog.createProgressDialog(new ClearCacheProgressModel());
+      ProgressDialog.createProgressDialog(ClearCacheProgressModel.getFullClearCacheModel());
 
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new AvatarGeneratorProgressModel(avatar, this.avatarFile));
       this.avatarFile = (File) progressDialog.getResults().get(0);
@@ -183,7 +183,7 @@ public class PlayerDialogController implements Initializable, DialogController {
 
     if (this.player.getAvatar() != null) {
       this.initialsOverlayLabel.setText("");
-      Image image = new Image(client.getAsset(AssetType.AVATAR, this.player.getAvatar().getUuid()));
+      Image image = new Image(client.getAssetService().getAsset(AssetType.AVATAR, this.player.getAvatar().getUuid()));
       avatar.setImage(image);
     }
   }

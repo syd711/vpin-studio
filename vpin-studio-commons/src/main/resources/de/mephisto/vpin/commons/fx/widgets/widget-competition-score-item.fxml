@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="widget-item" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionScoreItemController">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="media-container" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionScoreItemController">
     <center>
         <VBox fx:id="highscoreVBox" BorderPane.alignment="TOP_LEFT">
             <children>
@@ -21,7 +21,7 @@
                             </children>
                         </VBox>
                     </bottom>
-                    <left>
+               <center>
                         <HBox alignment="CENTER_RIGHT" BorderPane.alignment="CENTER">
                             <children>
                                 <Label fx:id="positionLabel" text="#" textFill="WHITE">
@@ -39,7 +39,7 @@
                                 </Label>
                             </children>
                         </HBox>
-                    </left>
+               </center>
                 </BorderPane>
             </children>
         </VBox>

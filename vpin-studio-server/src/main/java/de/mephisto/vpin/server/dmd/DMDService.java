@@ -34,7 +34,7 @@ public class DMDService implements InitializingBean {
   @Autowired
   private MameService mameService;
 
-  private File getDmdFolder(Game game) {
+  public File getDmdFolder(Game game) {
     File tablesFolder = game.getGameFile().getParentFile();
     return new File(tablesFolder, game.getDMDProjectFolder());
   }
@@ -43,7 +43,7 @@ public class DMDService implements InitializingBean {
   public boolean delete(@NonNull Game game) {
     try {
       DMDPackage dmdPackage = getDMDPackage(game);
-      if (dmdPackage != null) {
+      if (dmdPackage != null && dmdPackage.isValid()) {
         File dir = getDmdFolder(game);
         if (dir.exists()) {
           FileUtils.deleteDirectory(dir);
@@ -59,18 +59,9 @@ public class DMDService implements InitializingBean {
 
   @Nullable
   public DMDPackage getDMDPackage(@NonNull Game game) {
-
-    if (StringUtils.isNotEmpty(game.getDMDType())) {
-      DMDPackageTypes packageTypes = DMDPackageTypes.Unknown;
-      if (StringUtils.equalsIgnoreCase(game.getDMDType(), DMDPackageTypes.FlexDMD.name())) {
-        packageTypes = DMDPackageTypes.FlexDMD;
-      }
-      else if (StringUtils.equalsIgnoreCase(game.getDMDType(), DMDPackageTypes.UltraDMD.name())) {
-        packageTypes = DMDPackageTypes.UltraDMD;
-      }
-
+    if (game.getDMDType() != null && !DMDPackageTypes.Standard.equals(game.getDMDType())) {
       DMDPackage dmdPackage = new DMDPackage();
-      dmdPackage.setDmdPackageTypes(packageTypes);
+      dmdPackage.setDmdPackageTypes(game.getDMDType());
 
       if (StringUtils.isNotEmpty(game.getDMDProjectFolder())) {
         dmdPackage.setName(game.getDMDProjectFolder());
@@ -87,26 +78,24 @@ public class DMDService implements InitializingBean {
         else {
           ValidationState st = new ValidationState();
           st.setCode(GameValidationCode.CODE_NO_DMDFOLDER);
+          st.setOptions(List.of(game.getDMDProjectFolder()));
           dmdPackage.getValidationStates().add(st);
         }
+        return dmdPackage;
       }
-      else {
-        dmdPackage.setName("Not Used");
-      }
-      return dmdPackage;
     }
     return null;
   }
 
   public void installDMDPackage(@NonNull File archive, UploaderAnalysis analysis, @NonNull Game game) {
-    File dmdFolder = game.getDMDProjectFolder() != null ? getDmdFolder(game):
-      analysis.getDMDPath() != null ? new File(game.getGameFile().getParentFile(), analysis.getDMDPath()):
-      null;
+    File dmdFolder = game.getDMDProjectFolder() != null ? getDmdFolder(game) :
+        analysis.getDMDPath() != null ? new File(game.getGameFile().getParentFile(), analysis.getDMDPath()) :
+            null;
 
     if (dmdFolder != null) {
       String extension = FilenameUtils.getExtension(archive.getName()).toLowerCase();
-      if (extension.equals(PackageUtil.ARCHIVE_ZIP)) {
-        DMDInstallationUtil.unzip(archive, dmdFolder);
+      if (extension.equals(PackageUtil.ARCHIVE_ZIP) || extension.equals(PackageUtil.ARCHIVE_VPA)) {
+        PackageUtil.unpackTargetFolder(archive, dmdFolder, analysis.getDMDPath(), Collections.emptyList(), null);
       }
       else if (extension.equals(PackageUtil.ARCHIVE_7Z) || extension.equals(PackageUtil.ARCHIVE_RAR)) {
         DMDInstallationUtil.unrar(archive, dmdFolder);

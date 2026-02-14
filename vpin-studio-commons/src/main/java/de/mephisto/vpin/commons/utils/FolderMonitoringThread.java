@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.lang.invoke.MethodHandles;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
@@ -18,7 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 public class FolderMonitoringThread {
-  private final static Logger LOG = LoggerFactory.getLogger(FolderMonitoringThread.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private final AtomicBoolean running = new AtomicBoolean(false);
 
   private FolderChangeListener listener;
@@ -44,9 +45,10 @@ public class FolderMonitoringThread {
   }
 
   public void stopMonitoring() {
-    this.running.set(false);
     try {
+      this.running.set(false);
       watchService.close();
+      monitorThread.interrupt();
     }
     catch (IOException e) {
       LOG.error("Failed to close watch service: " + e.getMessage(), e);

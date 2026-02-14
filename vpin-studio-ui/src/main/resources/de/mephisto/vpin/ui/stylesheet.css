@@ -406,13 +406,28 @@
 /**
  * Friends Buttons
  */
-.bar-button {
+.bar-button-left {
     -fx-min-width: 114px;
-    -fx-padding: 2 0 1 0;
-    -fx-border-radius: 0 0 4 4;
-    -fx-background-radius: 0 0 5 5;
+    -fx-min-height: 26px;
+    -fx-padding: 2 0 0 0;
+    -fx-border-radius: 0 0 0 4;
+    -fx-background-radius: 0 0 0 5;
     -fx-background-color: #494949;
-    -fx-border-style: solid inside;
+    -fx-border-style: solid;
+    -fx-border-width: 1;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-border-color: #373737;
+    -fx-text-fill: #DDDDDD;
+}
+.bar-button-right {
+    -fx-min-width: 44px;
+    -fx-min-height: 26px;
+    -fx-padding: 2 0 0 0;
+    -fx-border-radius: 0 0 4 0;
+    -fx-background-radius: 0 0 5 0;
+    -fx-background-color: #494949;
+    -fx-border-style: solid;
     -fx-border-width: 1;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
@@ -420,7 +435,7 @@
     -fx-text-fill: #DDDDDD;
 }
 
-.bar-button:hover {
+.bar-button-left:hover,.bar-button-right:hover,.bar-button-left:selected,.bar-button-right:selected {
     -fx-background-color: -fx-font-hover;
     -fx-background-color: #5858D3;
     -fx-text-fill: #fff8f8;
@@ -517,6 +532,7 @@
     -fx-font-size : 14px;
     -fx-background-color: #333366;
     -fx-text-fill: #fff8f8;
+    -fx-border-radius: 3px;
 }
 
 .submit-button:hover {
@@ -530,6 +546,7 @@
 }
 
 .default-button {
+    -fx-border-radius: 3px;
     -fx-border-style: solid solid solid solid;
     -fx-border-color: #111111;
     -fx-border-width: 1;
@@ -549,6 +566,7 @@
 }
 
 .warn-button {
+    -fx-border-radius: 3px;
     -fx-border-color: #663333;
     -fx-border-width: 1;
     -fx-font-size : 14px;
@@ -1042,7 +1060,15 @@
 }
 
 /**
- * Date Picker
+ * NagBar
+ */
+.nagbar-container {
+    -fx-padding: 3 3 3 6;
+    -fx-background-color: -fx-info-background;
+}
+
+/**
+ * Date Pickerp
  */
 
 .date-picker .arrow-button {
@@ -1328,12 +1354,15 @@
 }
 
 .progress-bar > .track {
-  -fx-text-box-border: #605E5E;
-  -fx-control-inner-background: #FFFFFF;
+  -fx-control-inner-background: #FFF;
+  -fx-background-radius: 3px;
+  -fx-padding: 0;
 }
 
-.progress-bar .bar {
+.progress-bar > .bar {
     -fx-background-insets: 3px;
+    -fx-background-radius: 3px;
+    -fx-padding: 0;
 }
 
 .green {
@@ -1400,17 +1429,47 @@
     -fx-border-color: #6666FF;
 }
 
-.custom-toggle-button {
-    -fx-border-style: solid solid solid solid;
+.custom-toggle-button-small {
+    -fx-border-width: 1;
     -fx-border-color: transparent;
+    -fx-border-radius: 3px;
+    -fx-font-size: 10px;
+}
+
+.custom-toggle-button-small:selected {
+    -fx-border-width: 1;
+    -fx-font-size: 10px;
+    -fx-border-color: #6666FF;
+    -fx-border-radius: 3px;
+    -fx-background-color: #333366; /* Selected button color */
+}
+
+.custom-toggle-button {
+    -fx-border-width: 1;
+    -fx-border-color: transparent;
+    -fx-border-radius: 3px;
     -fx-font-size: 14px;
 }
 
 .custom-toggle-button:selected {
+    -fx-border-width: 1;
+    -fx-border-color: #6666FF;
+    -fx-border-radius: 3px;
     -fx-background-color: #333366; /* Selected button color */
-    -fx-text-fill: white; /* Text color when selected */
-    -fx-border-color: #333366; /* Border color when selected */
-    -fx-border-radius: 5px; /* Rounded corners */
+}
+
+.custom-toggle-button2 {
+    -fx-border-width: 1;
+    -fx-border-color: transparent;
+    -fx-border-radius: 3px;
+    -fx-font-size: 14px;
+}
+
+.custom-toggle-button2:selected {
+    -fx-border-width: 1;
+    -fx-border-color: #44AA44;
+    -fx-border-radius: 3px;
+    -fx-background-color: #116611 /* Selected button color */
 }
 
 .dnd-dashed-border {

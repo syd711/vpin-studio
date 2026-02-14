@@ -1,22 +1,64 @@
 package de.mephisto.vpin.restclient.system;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import de.mephisto.vpin.restclient.RestClient;
+import de.mephisto.vpin.restclient.backups.StudioBackupDescriptor;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.Date;
+import java.util.HashMap;
 
 /*********************************************************************************************************************
  * System
  ********************************************************************************************************************/
 public class SystemServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public SystemServiceClient(VPinStudioClient client) {
     super(client);
+  }
+
+  private final static ObjectMapper objectMapper = new ObjectMapper();
+
+  static {
+    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+  }
+
+  public String backupSystem() {
+    final RestTemplate restTemplate = new RestTemplate();
+    return restTemplate.postForObject(getRestClient().getBaseUrl() + API + "system/backup/create", new HashMap<>(), String.class);
+  }
+
+  public boolean restoreSystemBackup(@NonNull File file, @NonNull StudioBackupDescriptor backupDescriptor) throws Exception {
+    try {
+      String url = getRestClient().getBaseUrl() + API + "system/backup/restore";
+      HttpEntity upload = createUpload(file, -1, null, null, null);
+      LinkedMultiValueMap<String, Object> map = (LinkedMultiValueMap<String, Object>) upload.getBody();
+
+      String backupDescriptorJson = objectMapper.writeValueAsString(backupDescriptor);
+      map.add("backupDescriptor", backupDescriptorJson);
+      new RestTemplate().exchange(url, HttpMethod.POST, upload, Boolean.class);
+      finalizeUpload(upload);
+      return true;
+    }
+    catch (Exception e) {
+      LOG.error("Backup upload failed: " + e.getMessage(), e);
+      throw e;
+    }
   }
 
   public Date getStartupTime() {
@@ -31,11 +73,6 @@ public class SystemServiceClient extends VPinStudioClientService {
   public boolean isLocal() {
     String url = getRestClient().getBaseUrl();
     return url.contains("localhost") || url.contains("127.0.0.1");
-  }
-
-  public String backup() {
-    final RestTemplate restTemplate = new RestTemplate();
-    return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/backup", String.class);
   }
 
   public void shutdown() {
@@ -53,29 +90,14 @@ public class SystemServiceClient extends VPinStudioClientService {
     restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/mute/" + (mute ? "1" : "0"), Boolean.class);
   }
 
+  public boolean isMuted() {
+    final RestTemplate restTemplate = new RestTemplate();
+    return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/muted", Boolean.class);
+  }
+
   public void systemShutdown() {
     final RestTemplate restTemplate = new RestTemplate();
     restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/systemshutdown", Boolean.class);
-  }
-
-  public boolean autostartInstalled() {
-    final RestTemplate restTemplate = new RestTemplate();
-    return Boolean.TRUE.equals(restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/autostart/installed", Boolean.class));
-  }
-
-  public boolean autostartInstall() {
-    final RestTemplate restTemplate = new RestTemplate();
-    return Boolean.TRUE.equals(restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/autostart/install", Boolean.class));
-  }
-
-  public boolean autostartUninstall() {
-    final RestTemplate restTemplate = new RestTemplate();
-    return Boolean.TRUE.equals(restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/autostart/uninstall", Boolean.class));
-  }
-
-  public boolean isDotNetInstalled() {
-    final RestTemplate restTemplate = new RestTemplate();
-    return Boolean.TRUE.equals(restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/dotnet", Boolean.class));
   }
 
   public void startServerUpdate(String version) {
@@ -110,12 +132,16 @@ public class SystemServiceClient extends VPinStudioClientService {
 
   public String getVersion() {
     try {
-      final RestTemplate restTemplate = new RestTemplate();
+      final RestTemplate restTemplate = RestClient.createTimeoutBasedTemplate(2000);
       return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/version", String.class);
     } catch (Exception e) {
-      LOG.info("Get version failed for " + getRestClient().getBaseUrl());
+      LOG.info("Get version failed for {} ({})", getRestClient().getBaseUrl(), e.getMessage());
     }
     return null;
+  }
+
+  public FeaturesInfo getFeatures() {
+    return getRestClient().get(API + "system/features", FeaturesInfo.class);
   }
 
   public SystemId getSystemId() {
@@ -136,6 +162,15 @@ public class SystemServiceClient extends VPinStudioClientService {
 
   public SystemSummary getSystemSummary(boolean reloadData) {
     return getRestClient().getCached(API + "system/info", SystemSummary.class, reloadData);
+  }
+
+  public MonitorInfo getScreenInfo(int screenId) {
+    if (screenId == -1) {
+      return getSystemSummary().getPrimaryMonitor();
+    }
+    else {
+      return getSystemSummary().getMonitorInfo(screenId);
+    }
   }
 
   public ScoringDB getScoringDatabase() {

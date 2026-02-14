@@ -21,7 +21,7 @@
             </Label>
             <Label styleClass="preference-description" text="Enter personal comments for this table." />
             <Label layoutX="22.0" layoutY="49.0" styleClass="preference-description" text="They will be shown as colored markers in the status column of the table overview." />
-            <TextArea fx:id="textArea">
+            <TextArea fx:id="textArea" wrapText="true">
                <VBox.margin>
                   <Insets bottom="6.0" top="6.0" />
                </VBox.margin>
@@ -58,6 +58,24 @@
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
+            <Label layoutX="22.0" layoutY="22.0" styleClass="default-title" text="Tags" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="24.0" />
+               </VBox.margin>
+            </Label>
+            <VBox>
+               <children>
+                  <Label styleClass="preference-description" text="Add tags to the table to allow better filtering." />
+                  <VBox fx:id="tags" spacing="6.0">
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
+                  </VBox>
+               </children>
+            </VBox>
          </children>
          <padding>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

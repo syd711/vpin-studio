@@ -163,7 +163,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       FrontendMediaRepresentation frontendMedia = client.getFrontendService().getFrontendMedia(game.getId());
       FrontendMediaItemRepresentation mediaItem = frontendMedia.getDefaultMediaItem(VPinScreen.Wheel);
       if (mediaItem != null) {
-        ByteArrayInputStream gameMediaItem = client.getGameMediaItem(game.getId(), VPinScreen.Wheel);
+        ByteArrayInputStream gameMediaItem = client.getWheelIcon(game.getId(), false);
         Image image = new Image(gameMediaItem);
         iconPreview.setImage(image);
 
@@ -218,7 +218,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     //check Discord permissions
     DiscordChannel value = channelsCombo.getValue();
     if (value != null) {
-      if (!client.getCompetitionService().hasManagePermissions(competition.getDiscordServerId(), competition.getDiscordChannelId())) {
+      if (!client.getCompetitionService().hasChannelManagePermissions(competition.getDiscordServerId(), competition.getDiscordChannelId())) {
         validationTitle.setText("Insufficient Permissions");
         validationDescription.setText("Your Discord bot has insufficient permissions for this channel. Please check the documentation for details.");
         return;
@@ -323,8 +323,8 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       this.resetCheckbox.setDisable(selectedCompetition.getId() != null);
       this.resetCheckbox.setSelected(selectedCompetition.getId() != null);
 
-      GameRepresentation game = client.getGame(selectedCompetition.getGameId());
-      DiscordServer discordServer = client.getDiscordServer(selectedCompetition.getDiscordServerId());
+      GameRepresentation game = client.getGameService().getGame(selectedCompetition.getGameId());
+      DiscordServer discordServer = client.getDiscordService().getDiscordServer(selectedCompetition.getDiscordServerId());
       List<DiscordChannel> serverChannels = client.getDiscordService().getDiscordChannels(discordServer.getId());
 
       String botId = String.valueOf(botStatus.getBotId());
@@ -427,7 +427,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
+    long guildId = client.getPreferenceService().getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
     this.botStatus = client.getDiscordService().getDiscordStatus(guildId);
     this.nvRamList = client.getNvRamsService().getResettedNVRams();
 

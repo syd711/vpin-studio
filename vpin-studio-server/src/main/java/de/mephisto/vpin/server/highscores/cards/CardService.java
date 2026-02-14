@@ -1,26 +1,29 @@
 package de.mephisto.vpin.server.highscores.cards;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.mephisto.vpin.commons.fx.ImageUtil;
+import de.mephisto.vpin.commons.fx.cards.CardGraphicsHighscore;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.cards.CardSettings;
-import de.mephisto.vpin.restclient.cards.CardTemplate;
+import de.mephisto.vpin.restclient.cards.*;
+import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.frontend.TableStatusChangeListener;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameStatusService;
 import de.mephisto.vpin.server.games.TableStatusChangedEvent;
-import de.mephisto.vpin.server.highscores.Highscore;
-import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
-import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
-import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.highscores.*;
+import de.mephisto.vpin.server.mania.ManiaService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.util.ImageUtil;
+import de.mephisto.vpin.server.vps.VpsService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import org.apache.commons.io.FilenameUtils;
@@ -33,11 +36,12 @@ import org.springframework.stereotype.Service;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
+
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 @Service
 public class CardService implements InitializingBean, HighscoreChangeListener, PreferenceChangedListener, TableStatusChangeListener {
@@ -47,7 +51,10 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
   private HighscoreService highscoreService;
 
   @Autowired
-  private DefaultPictureService directB2SService;
+  private DefaultPictureService defaultPictureService;
+
+  @Autowired
+  private VpsService vpsService;
 
   @Autowired
   private FrontendService frontendService;
@@ -61,171 +68,360 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
   @Autowired
   private FrontendStatusService frontendStatusService;
 
+  @Autowired
+  private ManiaService maniaService;
+
+
   private CardSettings cardSettings;
+
 
   private Map<Integer, ScoreSummary> scoreCache = new LinkedHashMap<>();
 
-  public File generateTableCardFile(Game game) {
-    generateCard(game);
-    return getCardSampleFile();
+  public byte[] generateTableCardFile(Game game, CardTemplateType templateType) {
+    CardTemplate template = cardTemplatesService.getTemplateForGame(game, templateType);
+    ScoreSummary summary = getScoreSummary(game, template, true);
+    return generatePreview(game, summary, template);
   }
 
-  public File generateTemplateTableCardFile(Game game, int templateId) {
-    try {
-      CardTemplate template = cardTemplatesService.getTemplate(templateId);
-      generateCard(game, true, template);
-      return getCardSampleFile();
-    }
-    catch (Exception e) {
-      LOG.error("Failed to generate template card: " + e.getMessage(), e);
-    }
-    return getCardSampleFile();
+  public byte[] generateTemplateTableCardFile(Game game, CardTemplateType templateType, long templateId) {
+    CardTemplate template = cardTemplatesService.getTemplateOrDefault(templateId, templateType);
+    ScoreSummary summary = getScoreSummary(game, template, true);
+    return generatePreview(game, summary, template);
   }
 
-  public List<String> getBackgrounds() {
-    File folder = new File(SystemService.RESOURCES, "backgrounds");
-    File[] files = folder.listFiles((dir, name) -> name.endsWith("jpg") || name.endsWith("png"));
-    return Arrays.stream(files).sorted().map(f -> FilenameUtils.getBaseName(f.getName())).collect(Collectors.toList());
+  public boolean generateHighscoreCard(Game game) {
+    return generateCard(game, CardTemplateType.HIGSCORE_CARD);
   }
 
-  public boolean generateCard(Game game) {
-    try {
-      CardTemplate template = cardTemplatesService.getTemplateForGame(game);
-      return generateCard(game, false, template);
-    }
-    catch (Exception e) {
-      LOG.error("Failed to generate card: " + e.getMessage(), e);
-    }
-    return false;
+  public boolean generateCard(Game game, CardTemplateType templateType) {
+    CardTemplate template = cardTemplatesService.getTemplateForGame(game, templateType);
+    return generateCard(game, template);
   }
 
-  public boolean generateCard(Game game, boolean generateSampleCard, int templateId) {
-    try {
-      CardTemplate template = cardTemplatesService.getTemplate(templateId);
-      return generateCard(game, generateSampleCard, template);
-    }
-    catch (Exception e) {
-      LOG.error("Failed to generate card: " + e.getMessage(), e);
-    }
-    return false;
-  }
-
-  /**
-   * The card must be drawn synchronized and in a FX thread.
-   * We need to wait until finished, because otherwise the UI would show the previous result
-   *
-   * @param game
-   * @param generateSampleCard
-   * @param template
-   * @return
-   */
-  public synchronized boolean generateCard(Game game, boolean generateSampleCard, CardTemplate template) {
-    try {
-      ScoreSummary summary = getScoreSummary(game, template, generateSampleCard);
-      Platform.runLater(() -> {
-        Thread.currentThread().setName("FX Card Generator Thread for " + game.getGameDisplayName());
-        doGenerateCard(game, summary, generateSampleCard, template);
-        LOG.info("Finished card generation for \"{}\"", game.getGameDisplayName());
-      });
-
-      Thread.currentThread().setName("Card Generator Thread for " + game.getGameDisplayName());
-      synchronized (this) {
-        this.wait();
-      }
-      return true;
-    }
-    catch (Exception e) {
-      LOG.error("Failed to generate image: " + e.getMessage(), e);
-      return false;
-    }
+  public boolean generateCard(Game game, CardTemplateType templateType, Long templateId) {
+    CardTemplate template = cardTemplatesService.getTemplateOrDefault(templateId, templateType);
+    return generateCard(game, template);
   }
 
   @NonNull
-  private ScoreSummary getScoreSummary(Game game, CardTemplate template, boolean generateSampleCard) {
+  private ScoreSummary getScoreSummary(Game game, CardTemplate template, boolean generatePreview) {
     long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
-    ScoreSummary summary = null;
-    if (template.isRenderFriends()) {
-      //add simply caching until a real card is generated, should be sufficient while editing
-      if (generateSampleCard) {
-        if (!scoreCache.containsKey(game.getId())) {
-          scoreCache.put(game.getId(), highscoreService.getMergedScoreSummary(serverId, game));
-        }
+    ScoreSummary summary = (template != null && template.isRenderScoreDates()) ?
+        highscoreService.getScoreSummaryWithDates(serverId, game) :
+        highscoreService.getScoreSummary(serverId, game);
 
+    if (template != null && template.isRenderFriends()) {
+      //add simply caching until a real card is generated, should be sufficient while editing
+      if (generatePreview) {
+        if (!scoreCache.containsKey(game.getId())) {
+          summary = getMergedScoreSummary(summary, game);
+          scoreCache.put(game.getId(), summary);
+        }
         return scoreCache.get(game.getId());
       }
 
       scoreCache.clear();
-      summary = highscoreService.getMergedScoreSummary(serverId, game);
-    }
-    else {
-      summary = highscoreService.getScoreSummary(serverId, game);
+      summary = getMergedScoreSummary(summary, game);
     }
     return summary;
   }
 
-  private boolean doGenerateCard(Game game, ScoreSummary summary, boolean generateSampleCard, CardTemplate template) {
+  /**
+   * Returns a list of all scores for the given game
+   *
+   * @param game the game to retrieve the highscores for
+   * @return all highscores of the given player
+   */
+  @NonNull
+  public ScoreSummary getMergedScoreSummary(ScoreSummary summary, Game game) {
+    if (Features.MANIA_ENABLED) {
+      List<Score> externalScores = maniaService.getFriendsScoresFor(game);
+      summary.mergeScores(externalScores);
+    }
+    return summary;
+  }
+
+  private byte[] generatePreview(Game game, ScoreSummary summary, CardTemplate template) {
     try {
-      if (!summary.getScores().isEmpty() && !StringUtils.isEmpty(summary.getRaw())) {
-        //sample card are always generated
-        if (generateSampleCard) {
-          BufferedImage bufferedImage = new CardGraphics(directB2SService, frontendService, cardSettings.getCardResolution(), template, game, summary).draw();
-          if (bufferedImage != null) {
-            ImageUtil.write(bufferedImage, getCardSampleFile());
-            return true;
-          }
-          return false;
-        }
-
-        String screenName = cardSettings.getPopperScreen();
-        if (!StringUtils.isEmpty(screenName)) {
-          if (!game.isCardDisabled()) {
-            BufferedImage bufferedImage = new CardGraphics(directB2SService, frontendService, cardSettings.getCardResolution(), template, game, summary).draw();
-            if (bufferedImage != null) {
-              File highscoreCard = getCardFile(game, screenName);
-              ImageUtil.write(bufferedImage, highscoreCard);
-              LOG.info("Written highscore card: " + highscoreCard.getAbsolutePath());
-              SLOG.info("Written highscore card: " + highscoreCard.getAbsolutePath());
-              return true;
-            }
-          }
-          else {
-            LOG.info("Skipped card generation for \"" + game.getGameDisplayName() + "\", generation not enabled.");
-            SLOG.info("Skipped card generation for \"" + game.getGameDisplayName() + "\", generation not enabled.");
-          }
-
-        }
-        else {
-          LOG.info("Skipped card generation, no target screen set.");
-          SLOG.info("Skipped card generation, no target screen set.");
-        }
-
-        return false;
-      }
-      else {
-        LOG.info("Skipped card generation for \"" + game.getGameDisplayName() + "\", no scores found.");
-        SLOG.info("Skipped card generation for \"" + game.getGameDisplayName() + "\", no scores found.");
-      }
+      BufferedImage bufferedImage = doGenerateCardImage(game, summary, template);
+      return ImageUtil.toBytes(bufferedImage);
     }
     catch (Exception e) {
+      LOG.error("Failed to generate highscore preview", e);
+      SLOG.error("Failed to generate highscore card: " + e.getMessage());
+      return null;
+    }
+  }
+
+  /**
+   * Generate the card and store it
+   */
+  public synchronized boolean generateCard(Game game, CardTemplate template) {
+    try {
+      String screenName = cardSettings.getPopperScreen();
+      boolean wheelTemplate = template.getTemplateType() != null && template.getTemplateType().equals(CardTemplateType.WHEEL);
+
+      ScoreSummary summary = getScoreSummary(game, template, false);
+      if (wheelTemplate) {
+        screenName = VPinScreen.Wheel.getSegment();
+      }
+
+      if (!wheelTemplate && (summary.getScores().isEmpty() || StringUtils.isEmpty(summary.getRaw()))) {
+        LOG.info("Skipped card generation for \"" + game.getGameDisplayName() + "\", no scores found.");
+        SLOG.info("Skipped card generation for \"" + game.getGameDisplayName() + "\", no scores found.");
+        return false;
+      }
+
+      if (StringUtils.isEmpty(screenName)) {
+        LOG.info("Skipped card generation, no target screen set.");
+        SLOG.info("Skipped card generation, no target screen set.");
+        return false;
+      }
+
+      if (!wheelTemplate && game.isCardDisabled()) {
+        LOG.info("Skipped card generation for \"" + game.getGameDisplayName() + "\", generation not enabled.");
+        SLOG.info("Skipped card generation for \"" + game.getGameDisplayName() + "\", generation not enabled.");
+        return false;
+      }
+
+      BufferedImage bufferedImage = doGenerateCardImage(game, summary, template);
+      if (bufferedImage != null) {
+        File highscoreCard = getCardFile(game, screenName);
+        if (cardSettings.isBackupAsset()) {
+          //Prepend cards and Backup existing asset
+          highscoreCard = ImageUtil.backupPNGByMarker(highscoreCard, "Highscore Card");
+        }
+
+        if (highscoreCard.exists() && !highscoreCard.delete()) {
+          LOG.info("Writing highscore card {} failed, file is locked.", highscoreCard.getAbsolutePath());
+          SLOG.info("Writing highscore card " + highscoreCard.getAbsolutePath() + " failed, file is locked.");
+        }
+        else {
+          ImageUtil.writePNG(bufferedImage, highscoreCard, "Highscore Card");
+          LOG.info("Written highscore card: " + highscoreCard.getAbsolutePath());
+          SLOG.info("Written highscore card: " + highscoreCard.getAbsolutePath());
+        }
+      }
+    }
+    catch (
+        Exception e) {
       LOG.error("Failed to generate highscore card: {}", e.getMessage(), e);
       SLOG.error("Failed to generate highscore card: " + e.getMessage());
-    }
-    finally {
-      synchronized (this) {
-        notifyAll();
-      }
     }
     return false;
   }
 
-  private File getCardSampleFile() {
-    return new File(SystemService.RESOURCES, "highscore-card-sample.png");
+  /*
+   * The card must be drawn synchronized and in a FX thread.
+   * We need to wait until finished, because otherwise the UI would show the previous result
+   */
+  private BufferedImage doGenerateCardImage(Game game, ScoreSummary summary, CardTemplate template) throws Exception {
+    // sync between FX thread and calling thread
+    CountDownLatch latch = new CountDownLatch(1);
+    BufferedImage[] generatedImage = {null};
+    Platform.runLater(() -> {
+      try {
+        CardResolution res = getCardResolution(template.getTemplateType());
+
+        CardGraphicsHighscore cardGraphics = new CardGraphicsHighscore(false);
+        cardGraphics.setTemplate(template);
+
+        CardData data = getCardData(game, summary, template, true);
+
+        cardGraphics.setData(data, res);
+        // resize the cards to the needed resolution
+        cardGraphics.resize(res.toWidth(), res.toHeight());
+
+        // then export image
+        generatedImage[0] = cardGraphics.snapshot();
+
+        LOG.info("Finished card generation for \"{}\"", game.getGameDisplayName());
+      }
+      finally {
+        latch.countDown();
+      }
+    });
+    // wait for termination of FX thread
+    latch.await();
+
+    return generatedImage[0];
+  }
+
+  public CardResolution getCardResolution(CardTemplateType templateType) {
+    switch (templateType) {
+      case HIGSCORE_CARD:
+        return cardSettings.getCardResolution();
+      case INSTRUCTIONS_CARD:
+        //TODO add settings like Highscore, reuse same ?
+        return CardResolution.HDReady;
+      case WHEEL:
+        return CardResolution.WHEEL;
+    }
+    return null;
+  }
+
+//-----------------------------------------
+
+  public List<String> getImages(String subfolder) {
+    File folder = new File(SystemService.RESOURCES, subfolder);
+    if (!folder.exists() && !folder.mkdirs()) {
+      LOG.error("Failed to create image subfolder {}", subfolder);
+    }
+
+    File[] files = folder.listFiles((dir, name) -> name.endsWith("jpg") || name.endsWith("png"));
+    if (files == null) {
+      return Collections.emptyList();
+    }
+    return Arrays.stream(files).sorted().map(f -> FilenameUtils.getBaseName(f.getName())).collect(Collectors.toList());
+  }
+
+  public File getImage(String subfolder, String imageName) {
+    String image = imageName.replaceAll("\\+", " ");
+    File folder = new File(SystemService.RESOURCES, subfolder);
+    File[] files = folder.listFiles((dir, name) -> FilenameUtils.getBaseName(name).equalsIgnoreCase(image));
+    if (files != null && files.length > 0) {
+      return files[0];
+    }
+    return null;
+  }
+
+  public byte[] getBytes(String subfolder, String imageName) {
+    try {
+      File file = getImage(subfolder, imageName);
+      return org.apache.commons.io.FileUtils.readFileToByteArray(file);
+    }
+    catch (IOException ioe) {
+      LOG.error("Cannot open {} image {}", subfolder, imageName, ioe);
+      return null;
+    }
+  }
+
+  public CardTemplate getCardTemplate(long templateId) {
+    return cardTemplatesService.getTemplate(templateId);
+  }
+
+  public CardData getCardData(Game game, long templateId, boolean withStreams) {
+    CardTemplate template = cardTemplatesService.getTemplate(templateId);
+    return getCardData(game, template, withStreams);
+  }
+
+  public CardData getCardData(Game game, CardTemplate template, boolean withStreams) {
+    ScoreSummary summary = getScoreSummary(game, template, false);
+    return getCardData(game, summary, template, withStreams);
+  }
+
+  private CardData getCardData(Game game, ScoreSummary summary, CardTemplate template, boolean withStreams) {
+    CardData cardData = new CardData();
+
+    VpsTable vpsTable = null;
+    String vpsTableId = game.getExtTableId();
+    if (!StringUtils.isEmpty(vpsTableId)) {
+      vpsTable = vpsService.getTableById(vpsTableId);
+    }
+    if (vpsTable != null) {
+      cardData.setVpsName(vpsTable.getName());
+      cardData.setManufacturer(vpsTable.getManufacturer());
+      cardData.setYear(vpsTable.getYear() > 0 ? vpsTable.getYear() : null);
+      cardData.setVpsTableId(vpsTableId);
+    }
+
+    // load overwrites
+    TableDetails details = frontendService.getTableDetails(game.getId());
+    if (details != null) {
+      if (StringUtils.isNotEmpty(details.getManufacturer())) {
+        cardData.setManufacturer(details.getManufacturer());
+      }
+      if (details.getGameYear() != null) {
+        cardData.setYear(details.getGameYear());
+      }
+    }
+
+    cardData.setGameId(game.getId());
+    cardData.setGameDisplayName(game.getGameDisplayName());
+    cardData.setGameName(game.getGameName());
+
+    if (withStreams) {
+      cardData.setBackground(getImage(game, cardData, template, "background"));
+      cardData.setWheel(getImage(game, cardData, template, "wheel"));
+
+      cardData.setFallbackBackground(getBytes("backgrounds", template.getBackground()));
+      if (template.getFrame() != null) {
+        cardData.setFrame(getBytes("frames", template.getFrame()));
+      }
+
+      if (template.isRenderManufacturerLogo()) {
+        cardData.setManufacturerLogo(getImage(game, cardData, template, "manufacturerLogo"));
+      }
+
+      if (template.isRenderOtherMedia()) {
+        cardData.setOtherMedia(getImage(game, cardData, template, "otherMedia"));
+      }
+    }
+
+    if (summary != null) {
+      cardData.setRawScore(summary.getRaw());
+
+      ObjectMapper mapper = new ObjectMapper();
+      ArrayList<ScoreRepresentation> scores = new ArrayList<>();
+      for (Score score : summary.getScores()) {
+        try {
+          String s = mapper.writeValueAsString(score);
+          scores.add(mapper.readValue(s, ScoreRepresentation.class));
+        }
+        catch (Exception e) {
+          LOG.error("cannot decode score %s", score.getFormattedScore(), e);
+        }
+      }
+      cardData.setScores(scores);
+    }
+
+    return cardData;
+  }
+
+  public byte[] getImage(Game game, CardData cardData, CardTemplate template, String imageName) {
+    try {
+      if ("background".equals(imageName)) {
+        File background = defaultPictureService.getRawDefaultPicture(game);
+        if (background != null && !background.exists()) {
+          defaultPictureService.extractDefaultPicture(game);
+        }
+        if (background != null && background.exists()) {
+          return org.apache.commons.io.FileUtils.readFileToByteArray(background);
+        }
+      }
+      else if ("wheel".equals(imageName)) {
+        FrontendMediaItem media = frontendService.getDefaultMediaItem(game, VPinScreen.Wheel);
+        if (media != null && media.getFile().exists()) {
+          return org.apache.commons.io.FileUtils.readFileToByteArray(media.getFile());
+        }
+      }
+      else if ("manufacturerLogo".equals(imageName)) {
+        File manufacturer = defaultPictureService.getManufacturerPicture(cardData.getManufacturer(), cardData.getYear(), template.isManufacturerLogoUseYear());
+        if (manufacturer != null && manufacturer.exists()) {
+          return org.apache.commons.io.FileUtils.readFileToByteArray(manufacturer);
+        }
+      }
+      else if ("otherMedia".equals(imageName)) {
+        if (template.getOtherMediaScreen() != null) {
+          List<FrontendMediaItem> medias = frontendService.getMediaItems(game, template.getOtherMediaScreen());
+          for (FrontendMediaItem media : medias) {
+            if (media.getFile().exists() && media.getMimeType().contains("image")) {
+              return org.apache.commons.io.FileUtils.readFileToByteArray(media.getFile());
+            }
+          }
+        }
+      }
+    }
+    catch (IOException e) {
+      LOG.info("Cannot load {} for game {}: {}", imageName, game.getGameDisplayName(), e.getMessage());
+    }
+    return null;
   }
 
   @NonNull
-  private File getCardFile(@NonNull Game game, @NonNull String screenName) {
+  public File getCardFile(@NonNull Game game, @NonNull String screenName) {
     VPinScreen screen = VPinScreen.valueOf(screenName);
-    File mediaFolder = frontendService.getMediaFolder(game, screen, "png");
+    File mediaFolder = frontendService.getMediaFolder(game, screen, "png", true);
     return new File(mediaFolder, game.getGameName() + ".png");
   }
 
@@ -236,7 +432,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
 
   @Override
   public void highscoreUpdated(@NonNull Game game, @NonNull Highscore highscore) {
-    generateCard(game);
+    generateHighscoreCard(game);
   }
 
   @Override
@@ -257,7 +453,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
   @Override
   public void tableExited(TableStatusChangedEvent event) {
     Game game = event.getGame();
-    generateCard(game);
+    generateHighscoreCard(game);
   }
 
   @Override

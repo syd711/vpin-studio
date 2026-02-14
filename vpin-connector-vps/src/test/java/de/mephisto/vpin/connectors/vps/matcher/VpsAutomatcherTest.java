@@ -11,8 +11,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 
+import java.lang.invoke.MethodHandles;
+
 public class VpsAutomatcherTest {
-  private final static Logger LOG = LoggerFactory.getLogger(VpsAutomatcherTest.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private void doMatch(VpsAutomatcher matcher, VPS vpsDatabase, String gameFileName, 
             String rom, String author, String version, 
@@ -25,7 +27,7 @@ public class VpsAutomatcherTest {
 
     // first run a match with findClosest
     VpsMatch vpsMatch = matcher.autoMatch(vpsDatabase, tableFormats, gameFileName, rom, author, version);
-    LOG.error(debug.toString());
+//    LOG.error(debug.toString());
 
     assertEquals(expectedTableId, vpsMatch.getExtTableId());
     assertEquals(expectedVersionId, vpsMatch.getExtTableVersionId());
@@ -164,7 +166,7 @@ public class VpsAutomatcherTest {
     doMatch(matcher, vpsDatabase, "Getaway, The - High Speed II (Williams 1992)", null, null, "", "cCV4A6uc", null, "", debug);
     doMatch(matcher, vpsDatabase, "The Getaway High Speed II (Williams 1992) v2_0", "", null, null, "cCV4A6uc", "YoXfmzDV", "2.0", debug);
     doMatch(matcher, vpsDatabase, "The Getaway High Speed II (Williams 1992) Bigus(MOD) 2.0", "", null, null, "cCV4A6uc", "YoXfmzDV", "2.0", debug);
-    doMatch(matcher, vpsDatabase, "Getaway, The - High Speed II v1.03", null, null, "", "cCV4A6uc", "UNbB3Z3a", "1.03", debug);
+    doMatch(matcher, vpsDatabase, "Getaway, The - High Speed II v1.03", null, null, "", "cCV4A6uc", "YoXfmzDV", "1.03", debug);
     doMatch(matcher, vpsDatabase, "Getaway 1.0 - FSS", "", null, null, "cCV4A6uc", "UNbB3Z3a", "1.0", debug);
 
     doMatch(matcher, vpsDatabase, "The Who's Tommy Pinball Wizard (Data East 1994)", "tomy_500", null, null, "p3HP_P2H", null, "", debug);

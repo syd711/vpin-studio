@@ -1,34 +1,39 @@
 package de.mephisto.vpin.ui.preferences;
 
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.Frontend;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.preferences.dialogs.PreferencesDialogs;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.StudioFolderChooser;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.VBox;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.net.URL;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class ServerSettingsPreferencesController implements Initializable {
+  private final static Logger LOG = LoggerFactory.getLogger(ServerSettingsPreferencesController.class);
 
   @FXML
   private Label startupTimeLabel;
@@ -104,13 +109,32 @@ public class ServerSettingsPreferencesController implements Initializable {
 
   @FXML
   private void onBackup() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Backup Database", "This creates a copy with timestamp of the VPin Studio Servers database.", null, "Backup Database");
-    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      String dbFile = client.getSystemService().backup();
-      if (dbFile != null) {
-        WidgetFactory.showInformation(Studio.stage, "Backup Database", "Created database backup \"" + dbFile + "\".");
+    StudioFolderChooser fileChooser = new StudioFolderChooser();
+    fileChooser.setTitle("Select Target Folder");
+    File selection = fileChooser.showOpenDialog(Studio.stage);
+    if (selection != null) {
+      try {
+        String backup = client.getSystemService().backupSystem();
+        if (backup != null) {
+          String name = "VPin-Studio-Backup[" + new SimpleDateFormat("yyyy-MM-dd--HH-mm").format(new Date()) + "].json";
+          File file = new File(selection, name);
+          FileOutputStream fileOutputStream = new FileOutputStream(file);
+          IOUtils.write(backup, fileOutputStream);
+          LOG.info("Written backup file {}", file.getAbsolutePath());
+          fileOutputStream.close();
+          WidgetFactory.showInformation(Studio.stage, "Backup Finished", "Written backup file \"" + file.getAbsolutePath() + "\".");
+        }
+      }
+      catch (Exception e) {
+        LOG.error("Error creating backup file {}", e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to create backup file: " + e.getMessage());
       }
     }
+  }
+
+  @FXML
+  private void onRestore() {
+    PreferencesDialogs.openRestoreBackupDialog();
   }
 
   @Override
@@ -122,10 +146,9 @@ public class ServerSettingsPreferencesController implements Initializable {
     popperDataMappingFields.managedProperty().bindBidirectional(popperDataMappingFields.visibleProperty());
 
     Frontend frontend = client.getFrontendService().getFrontendCached();
-    FrontendType frontendType = frontend.getFrontendType();
-    popperDataMappingFields.setVisible(frontendType.supportExtendedFields());
-    launchOnExitOption.setVisible(frontendType.supportMedias());
-    launchFrontendCheckbox.setText("Launch " + frontend.getName() +  " on maintenance exit.");
+    popperDataMappingFields.setVisible(Features.FIELDS_EXTENDED);
+    launchOnExitOption.setVisible(Features.MEDIA_ENABLED);
+    launchFrontendCheckbox.setText("Launch " + frontend.getName() + " on maintenance exit.");
 
     Date startupTime = client.getSystemService().getStartupTime();
     startupTimeLabel.setText(DateFormat.getDateTimeInstance().format(startupTime));

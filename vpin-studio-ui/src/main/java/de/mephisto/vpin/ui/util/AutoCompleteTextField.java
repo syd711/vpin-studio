@@ -14,9 +14,14 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.mephisto.vpin.commons.utils.JFXFuture;
+
+import java.lang.invoke.MethodHandles;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
@@ -28,31 +33,25 @@ import java.util.stream.Collectors;
  * @author Caleb Brinkman
  */
 public class AutoCompleteTextField {
-  private final static Logger LOG = LoggerFactory.getLogger(AutoCompleteTextField.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private final ContextMenu entriesPopup;
   private final TextField textField;
   private final AutoCompleteTextFieldChangeListener listener;
   private final AutoCompleteMatcher matcher;
-
   private boolean changedEnabled = true;
 
   private String defaultValue;
 
-  public AutoCompleteTextField(Stage stage, TextField textField, AutoCompleteTextFieldChangeListener listener, AutoCompleteMatcher matcher) {
-    this(stage, textField, listener, null, matcher);
+  public AutoCompleteTextField(TextField textField, AutoCompleteTextFieldChangeListener listener, List<String> entries) {
+    this(textField, listener, new DefaultAutoCompleteMatcher(entries));
   }
 
-  public AutoCompleteTextField(Stage stage, TextField textField, AutoCompleteTextFieldChangeListener listener, TreeSet<String> entries) {
-    this(stage, textField, listener, entries, null);
-  }
 
-  /**
-   * Construct a new AutoCompleteTextField.
-   */
-  public AutoCompleteTextField(Stage stage, TextField textField, AutoCompleteTextFieldChangeListener listener, TreeSet<String> entries, AutoCompleteMatcher matcher) {
+  public AutoCompleteTextField(TextField textField, AutoCompleteTextFieldChangeListener listener, AutoCompleteMatcher matcher) {
     this.textField = textField;
     this.listener = listener;
     this.matcher = matcher;
+
     entriesPopup = new ContextMenu();
     entriesPopup.getStyleClass().add("context-menu");
 
@@ -64,7 +63,13 @@ public class AutoCompleteTextField {
             defaultValue = value;
             entriesPopup.hide();
             entriesPopup.getItems().clear();
-            textField.setText(String.valueOf(value));
+            if (value == null) {
+              textField.setText("");
+            }
+            else {
+              textField.setText(String.valueOf(value));
+            }
+
             listener.onChange(value);
             Platform.runLater(() -> {
               textField.getParent().requestFocus();
@@ -90,23 +95,10 @@ public class AutoCompleteTextField {
           entriesPopup.hide();
         }
         else {
-          List<AutoMatchModel> searchResult = null;
-          if (entries != null) {
-            searchResult = entries.stream().filter(e -> e.toLowerCase().contains(textField.getText().toLowerCase())).map(e -> new AutoMatchModel(e, e)).collect(Collectors.toList());
-          }
-          else {
-            searchResult = matcher.match(textField.getText());
-          }
-
+          List<AutoMatchModel> searchResult = matcher.match(textField.getText());
           if (!searchResult.isEmpty()) {
             populatePopup(searchResult);
-            if (!entriesPopup.isShowing()) {
-              entriesPopup.show(textField, Side.BOTTOM, 0, 0);
-              textField.requestFocus();
-              Platform.runLater(() -> {
-                entriesPopup.requestFocus();
-              });
-            }
+            showPopup();
           }
           else {
             entriesPopup.hide();
@@ -125,7 +117,7 @@ public class AutoCompleteTextField {
     textField.setOnKeyPressed(new EventHandler<KeyEvent>() {
       @Override
       public void handle(KeyEvent event) {
-        if (event.getCode() == KeyCode.ESCAPE) {
+        if (event.getCode() == KeyCode.ESCAPE && defaultValue != null) {
           setText(defaultValue);
         }
       }
@@ -134,11 +126,15 @@ public class AutoCompleteTextField {
     textField.focusedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        if (!newValue) {
+        if (!newValue && defaultValue != null) {
           setText(String.valueOf(defaultValue));
         }
       }
     });
+  }
+
+  public void setSuggestions(List<String> entries) {
+    this.matcher.setEntries(entries);
   }
 
   public void setChangeEnabled(boolean b) {
@@ -183,7 +179,16 @@ public class AutoCompleteTextField {
     }
     entriesPopup.getItems().clear();
     entriesPopup.getItems().addAll(menuItems);
+  }
 
+  /**
+   * Display the popup
+   */
+  private void showPopup() {
+    if (!entriesPopup.isShowing()) {
+      entriesPopup.show(textField, Side.BOTTOM, 0, 0);
+      entriesPopup.requestFocus();
+    }
   }
 
   public void reset() {
@@ -193,10 +198,33 @@ public class AutoCompleteTextField {
   }
 
   public void setText(String name) {
+    this.defaultValue = null;
     setChangeEnabled(false);
     textField.setText(name);
     defaultValue = name;
     setChangeEnabled(true);
+  }
+
+  /**
+   * Trigger the autoselectionn and if result is one, automatically select it
+   */
+  public void selectIfMatch() {
+    if (textField.getText().length() > 0) {
+      JFXFuture.supplyAsync(() -> matcher.match(textField.getText()))
+          .thenAcceptLater(searchResult -> {
+            if (searchResult.size() == 1) {
+              AutoMatchModel match = searchResult.get(0);
+              String value = match.getId();
+              defaultValue = value;
+              setText(value);
+              listener.onChange(value);
+            }
+            else if (searchResult.size() > 1) {
+              populatePopup(searchResult);
+              showPopup();
+            }
+          });
+    }
   }
 
   public void setDisable(boolean b) {

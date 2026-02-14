@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.Features;
+
 public class BackglassPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(BackglassPreferencesController.class);
 
@@ -42,6 +44,9 @@ public class BackglassPreferencesController implements Initializable {
   private CheckBox hideB2SDMDCheckbox;
 
   @FXML
+  private CheckBox extendedSearchCheckbox;
+
+  @FXML
   private CheckBox hideDMDCheckbox;
 
   @FXML
@@ -50,6 +55,8 @@ public class BackglassPreferencesController implements Initializable {
   @FXML
   private Label backglassServerFolder;
 
+  @FXML
+  private Label b2STableSettingsDescr;
   @FXML
   private Label b2STableSettingsFile;
 
@@ -65,12 +72,18 @@ public class BackglassPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    backglassServerFolder.managedProperty().bind(backglassServerFolder.visibleProperty());
+    b2STableSettingsDescr.managedProperty().bind(b2STableSettingsDescr.visibleProperty());
+    b2STableSettingsFile.managedProperty().bind(b2STableSettingsFile.visibleProperty());
+
     try {
       backglassServerSettings = Studio.client.getBackglassServiceClient().getServerSettings();
       boolean serverInstalled = backglassServerSettings != null;
 
-      backglassServerFolder.setVisible(serverInstalled);
-      b2STableSettingsFile.setVisible(serverInstalled);
+      backglassServerFolder.setVisible(serverInstalled && !Features.IS_STANDALONE);
+      b2STableSettingsDescr.setVisible(serverInstalled && !Features.IS_STANDALONE);
+      b2STableSettingsFile.setVisible(serverInstalled && !Features.IS_STANDALONE);
+
       noMatchFound.setVisible(!serverInstalled);
       pluginsCheckbox.setDisable(!serverInstalled);
       backglassMissingCheckbox.setDisable(!serverInstalled);
@@ -78,12 +91,12 @@ public class BackglassPreferencesController implements Initializable {
       startModeCheckbox.setDisable(!serverInstalled);
       hideGrillCheckbox.setDisable(!serverInstalled);
       hideB2SDMDCheckbox.setDisable(!serverInstalled);
+      extendedSearchCheckbox.setDisable(!serverInstalled);
       hideDMDCheckbox.setDisable(!serverInstalled);
       formToPosition.setDisable(!serverInstalled);
       usedLEDType.setDisable(!serverInstalled);
 
       if (serverInstalled) {
-
         backglassServerFolder.setText(backglassServerSettings.getBackglassServerFolder());
         b2STableSettingsFile.setText(backglassServerSettings.getB2STableSettingsFile());
 
@@ -130,6 +143,11 @@ public class BackglassPreferencesController implements Initializable {
           backglassServerSettings.setHideDMDBoolean(newValue);
           saveSettings();
         });
+        extendedSearchCheckbox.setSelected(backglassServerSettings.isExtendedSearch());
+        extendedSearchCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+          backglassServerSettings.setExtendedSearch(newValue);
+          saveSettings();
+        });
 
         formToPosition.setItems(FXCollections.observableList(TablesSidebarDirectB2SController.FORM_POSITIONS));
         formToPosition.setValue(TablesSidebarDirectB2SController.FORM_POSITIONS.stream().filter(v -> v.getId() == backglassServerSettings.getFormToPosition()).findFirst().orElse(null));
@@ -159,7 +177,6 @@ public class BackglassPreferencesController implements Initializable {
           }
           saveSettings();
         });
-
 
         saveEnabled = true;
       }

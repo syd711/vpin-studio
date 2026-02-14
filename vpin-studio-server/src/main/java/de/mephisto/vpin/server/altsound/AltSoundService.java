@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.altsound;
 
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.altsound.AltSoundFormats;
 import de.mephisto.vpin.restclient.assets.AssetType;
@@ -8,6 +7,7 @@ import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.util.FileUtils;
+import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.*;
 import de.mephisto.vpin.server.mame.MameService;
@@ -22,9 +22,13 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.lang.invoke.MethodHandles;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 /**
  * ID,CHANNEL,DUCK,GAIN,LOOP,STOP,NAME,FNAME,GROUP,SHAKER,SERIAL,PRELOAD,STOPCMD
@@ -32,7 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Service
 public class AltSoundService implements InitializingBean {
-  private final static Logger LOG = LoggerFactory.getLogger(AltSoundService.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @Autowired
   private AltSoundBackupService altSoundBackupService;
@@ -150,7 +154,7 @@ public class AltSoundService implements InitializingBean {
     return -1;
   }
 
-  public JobDescriptor installAltSound(int emulatorId, @NonNull String rom, @NonNull File archive) {
+  public JobDescriptor installAltSound(int emulatorId, @NonNull String rom, @NonNull File archive, @Nullable String archivePath) {
     GameEmulator gameEmulator = emulatorService.getGameEmulator(emulatorId);
     File altSoundFolder = new File(gameEmulator.getAltSoundFolder(), rom);
     if (!altSoundFolder.exists() && !altSoundFolder.mkdirs()) {
@@ -158,7 +162,8 @@ public class AltSoundService implements InitializingBean {
     }
 
     LOG.info("Extracting ALT sound to " + altSoundFolder.getAbsolutePath());
-    AltSoundUtil.unpack(archive, altSoundFolder);
+
+    PackageUtil.unpackTargetFolder(archive, altSoundFolder, archivePath, Arrays.asList(".ogg", ".mp3", ".wav", ".csv", ".ini"), null);
     setAltSoundEnabled(rom, true);
     clearCache();
     return JobDescriptorFactory.empty();

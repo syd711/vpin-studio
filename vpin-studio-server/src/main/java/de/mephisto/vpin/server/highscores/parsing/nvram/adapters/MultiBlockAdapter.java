@@ -1,21 +1,12 @@
 package de.mephisto.vpin.server.highscores.parsing.nvram.adapters;
 
-import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.highscores.Score;
-import de.mephisto.vpin.server.highscores.parsing.ScoreListAdapter;
 import de.mephisto.vpin.server.highscores.parsing.listadapters.DefaultAdapter;
-import de.mephisto.vpin.server.highscores.parsing.listadapters.ScoreListAdapterBase;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class MultiBlockAdapter extends DefaultAdapter implements ScoreNvRamAdapter {
   private final static Logger LOG = LoggerFactory.getLogger(MultiBlockAdapter.class);

@@ -65,14 +65,18 @@ hs_err_pid*
 /resources/vbs/*.vbs
 /resources/vpin-studio.db
 /resources/vpin-studio.db.bak
+/resources/vpin-studio.db-shm
+/resources/vpin-studio.db-wal
 /resources/vpin-studio.sqbpro
 /resources/b2s-raw/
 /resources/b2s-cropped/
+/resources/flags/
 resources/media-raw/
 resources/media-cropped/
 /resources/overlay.png
 /resources/overlay.jpg
 /resources/pinemhi/pinemhi.ini
+/resources/text-temp/**
 /resources/component-archives/**
 /resources/screenshots/**
 /resources/directoutputconfig.zip
@@ -144,3 +148,6 @@ vpin-studio-logs.zip
 /resources/PinVol.bat
 /resources/media-cropped/
 /resources/media-raw/
+/resources/vlc/
+.claude/settings.local.json
+/nul

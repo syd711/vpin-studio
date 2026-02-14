@@ -1,50 +1,92 @@
 package de.mephisto.vpin.restclient.util;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+import net.lingala.zip4j.model.ZipParameters;
+import net.lingala.zip4j.model.enums.CompressionLevel;
+import net.lingala.zip4j.model.enums.EncryptionMethod;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.List;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 public class ZipUtil {
-  private final static Logger LOG = LoggerFactory.getLogger(ZipUtil.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  public static boolean unzip(File archiveFile, File destinationDir) {
-    return unzip(archiveFile, destinationDir, false);
+  public static boolean unzip(@NonNull File archiveFile, @NonNull File destinationDir, @Nullable UnzipChangeListener listener) {
+    return unzip(archiveFile, destinationDir, false, null, Collections.emptyList(), listener);
   }
 
-  public static boolean unzip(File archiveFile, File destinationDir, boolean log) {
+  public static boolean unzip(@NonNull File archiveFile, @NonNull File targetFolder, boolean log, @Nullable String archiveFolder, @NonNull List<String> suffixAllowList) {
+    return unzip(archiveFile, targetFolder, log, archiveFolder, suffixAllowList, null);
+  }
+
+  public static boolean unzip(@NonNull File archiveFile, @NonNull File targetFolder, boolean log, @Nullable String archiveFolder, @NonNull List<String> suffixAllowList, @Nullable UnzipChangeListener listener) {
     try {
       byte[] buffer = new byte[1024];
       FileInputStream fileInputStream = new FileInputStream(archiveFile);
       ZipInputStream zis = new ZipInputStream(fileInputStream);
       ZipEntry zipEntry = zis.getNextEntry();
+
+      ZipFile zipFile = new ZipFile(archiveFile);
+      int total = zipFile.size();
+      zipFile.close();
+
+      int index = 0;
       while (zipEntry != null) {
-        File newFile = new File(destinationDir, zipEntry.getName());
-        LOG.info("Writing " + newFile.getAbsolutePath());
         if (zipEntry.isDirectory()) {
-          if (!newFile.isDirectory() && !newFile.mkdirs()) {
-            throw new IOException("Failed to create directory " + newFile);
-          }
+          //ignore, we will create folder for files only
         }
         else {
-          // fix for Windows-created archives
-          File parent = newFile.getParentFile();
-          if (!parent.isDirectory() && !parent.mkdirs()) {
-            throw new IOException("Failed to create directory " + parent);
+          if (listener != null) {
+            boolean continueOp = listener.unzipping(zipEntry.getName(), index, total);
+            if (!continueOp) {
+              zis.closeEntry();
+              break;
+            }
           }
-          FileOutputStream fos = new FileOutputStream(newFile);
-          int len;
-          while ((len = zis.read(buffer)) > 0) {
-            fos.write(buffer, 0, len);
+
+          index++;
+
+          String entryName = zipEntry.getName().replaceAll("\\\\", "/");
+          String suffix = FilenameUtils.getExtension(entryName);
+          boolean isTargetFolder = archiveFolder == null || entryName.toLowerCase().startsWith(archiveFolder.toLowerCase());
+          if (suffixAllowList.isEmpty() || suffixAllowList.contains(suffix.toLowerCase()) || isTargetFolder) {
+            String itempath = entryName;
+            if (archiveFolder != null) {
+              if (!itempath.toLowerCase().startsWith(archiveFolder.toLowerCase())) {
+                zis.closeEntry();
+                zipEntry = zis.getNextEntry();
+                continue;
+              }
+              itempath = itempath.substring(archiveFolder.length());
+            }
+
+
+            File targetFile = new File(targetFolder, itempath);
+            // fix for targetFile-created archives
+            File parent = targetFile.getParentFile();
+            if (!parent.isDirectory() && !parent.mkdirs()) {
+              throw new IOException("Failed to create directory " + parent);
+            }
+            FileOutputStream fos = new FileOutputStream(targetFile);
+            int len;
+            while ((len = zis.read(buffer)) > 0) {
+              fos.write(buffer, 0, len);
+            }
+            fos.close();
+            LOG.info("Unpacked {}", targetFile.getAbsolutePath());
           }
-          fos.close();
-          LOG.info("Unpacked {}", newFile.getAbsolutePath());
         }
         zis.closeEntry();
         zipEntry = zis.getNextEntry();
@@ -58,6 +100,9 @@ public class ZipUtil {
     }
     catch (Exception e) {
       LOG.error("Unzipping of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
+      if (listener != null) {
+        listener.onError("Unzipping of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage());
+      }
       return false;
     }
   }
@@ -150,6 +195,46 @@ public class ZipUtil {
     fis.close();
   }
 
+
+  public static void zipFileEncrypted(File fileToZip, String fileName, net.lingala.zip4j.ZipFile zipOut) throws IOException {
+    if (fileToZip.isHidden()) {
+      return;
+    }
+
+    if (fileToZip.isDirectory()) {
+      LOG.info("Zipping [{}]: {}", fileToZip.getAbsolutePath(), fileName);
+
+      if (!fileName.endsWith("/")) {
+        fileName = fileName + "/";
+      }
+
+      File[] children = fileToZip.listFiles();
+      if (children != null) {
+        for (File childFile : children) {
+          ZipParameters zipParameters = new ZipParameters();
+          zipParameters.setEncryptFiles(true);
+          zipParameters.setCompressionLevel(CompressionLevel.HIGHER);
+          zipParameters.setEncryptionMethod(EncryptionMethod.AES);
+          zipParameters.setFileNameInZip(fileName + childFile.getName());
+          zipOut.addFile(childFile, zipParameters);
+
+          if (childFile.isDirectory()) {
+            zipFileEncrypted(childFile, fileName + childFile.getName(), zipOut);
+          }
+        }
+      }
+
+      return;
+    }
+
+    ZipParameters zipParameters = new ZipParameters();
+    zipParameters.setEncryptFiles(true);
+    zipParameters.setCompressionLevel(CompressionLevel.HIGHER);
+    zipParameters.setEncryptionMethod(EncryptionMethod.AES);
+    zipParameters.setFileNameInZip(fileName);
+    zipOut.addFile(fileToZip, zipParameters);
+  }
+
   public static void zipFolder(File sourceDirPath, File targetZip, ZipProgressable progressable) throws IOException {
     Path p = targetZip.toPath();
     OutputStream outputStream = null;
@@ -226,11 +311,11 @@ public class ZipUtil {
     return fileToString;
   }
 
-  public static boolean writeZippedFile(@NonNull File file, @NonNull String filename, @NonNull File target) {
+  public static boolean writeZippedFile(@NonNull File zipFile, @NonNull String filename, @NonNull File target) {
     boolean descriptorFound = false;
     try {
       byte[] buffer = new byte[1024];
-      FileInputStream fileInputStream = new FileInputStream(file);
+      FileInputStream fileInputStream = new FileInputStream(zipFile);
       ZipInputStream zis = new ZipInputStream(fileInputStream);
       ZipEntry zipEntry = zis.getNextEntry();
 
@@ -249,7 +334,7 @@ public class ZipUtil {
               fileOutputStream.write(buffer, 0, len);
             }
             fileOutputStream.close();
-            LOG.info("Unzipped \"" + target.getAbsolutePath() + "\" from zip file \"" + file.getAbsolutePath() + "\"");
+            LOG.info("Unzipped \"" + target.getAbsolutePath() + "\" from zip file \"" + zipFile.getAbsolutePath() + "\"");
           }
         }
         zis.closeEntry();
@@ -262,7 +347,7 @@ public class ZipUtil {
       return true;
     }
     catch (Exception e) {
-      LOG.error("Reading of " + file.getAbsolutePath() + " failed: " + e.getMessage(), e);
+      LOG.error("Reading of " + zipFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
     }
 
     if (!descriptorFound) {
@@ -317,46 +402,6 @@ public class ZipUtil {
     }
     finally {
       LOG.info("Contains check for \"" + file.getAbsolutePath() + "\" took " + (System.currentTimeMillis() - start) + "ms.");
-    }
-
-    return fileFound;
-  }
-
-  public static String containsFolder(@NonNull File file, @NonNull String name) {
-    String fileFound = null;
-    try {
-      byte[] buffer = new byte[1024];
-      FileInputStream fileInputStream = new FileInputStream(file);
-      ZipInputStream zis = new ZipInputStream(fileInputStream);
-      ZipEntry zipEntry = zis.getNextEntry();
-
-      while (zipEntry != null) {
-        if (zipEntry.isDirectory()) {
-          if (zipEntry.getName().equals(name)) {
-            fileFound = zipEntry.getName();
-          }
-        }
-        else {
-          String entryName = zipEntry.getName();
-          if (entryName.contains(name + "/")) {
-            fileFound = entryName;
-          }
-        }
-        zis.closeEntry();
-
-        if (fileFound != null) {
-          break;
-        }
-
-        zipEntry = zis.getNextEntry();
-      }
-      fileInputStream.close();
-      zis.closeEntry();
-      zis.close();
-    }
-    catch (Exception e) {
-      LOG.error("Search of " + file.getAbsolutePath() + " failed: " + e.getMessage(), e);
-      return null;
     }
 
     return fileFound;

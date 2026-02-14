@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.*;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -11,6 +10,7 @@ import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.hooks.HookCommand;
 import de.mephisto.vpin.restclient.monitor.MonitoringSettings;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
+import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.dropins.DropInManager;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
@@ -26,13 +26,13 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -45,11 +45,13 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class ToolbarController implements Initializable, StudioEventListener, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(ToolbarController.class);
   private final Debouncer debouncer = new Debouncer();
+
   public static final int DEBOUNCE_MS = 200;
 
   private boolean monitorOpen = false;
@@ -82,10 +84,13 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
   private MenuItem shutdownMenuItem;
 
   @FXML
-  private ToggleButton maintenanceBtn;
+  private MenuItem pinVolStartItem;
 
   @FXML
-  private HBox toolbarHBox;
+  private MenuItem pinVolStopItem;
+
+  @FXML
+  private ToggleButton maintenanceBtn;
 
   @FXML
   private Label breadcrumb;
@@ -105,6 +110,28 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
 
   // Add a public no-args constructor
   public ToolbarController() {
+  }
+
+  @FXML
+  private void onPinvolStart() {
+    client.getPinVolService().restart();
+    JFXFuture.supplyAsync(() -> {
+      try {
+        Thread.sleep(2000);
+      }
+      catch (InterruptedException e) {
+        //ignore
+      }
+      return true;
+    }).thenAcceptLater((b) -> {
+      preferencesChanged(PreferenceNames.PINVOL_AUTOSTART_ENABLED, null);
+    });
+  }
+
+  @FXML
+  private void onPinvolStop() {
+    client.getPinVolService().kill();
+    preferencesChanged(PreferenceNames.PINVOL_AUTOSTART_ENABLED, null);
   }
 
   @FXML
@@ -150,7 +177,10 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
   private void onMute() {
     client.getSystemService().mute(!muted);
     muted = !muted;
+    refreshMuteState();
+  }
 
+  private void refreshMuteState() {
     if (muted) {
       muteSystemEntry.setText("Unmute System");
       muteSystemEntry.setGraphic(WidgetFactory.createIcon("mdi2v-volume-high"));
@@ -204,8 +234,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
       monitorStage = Dialogs.createStudioDialogStage(CabMonitorController.class, "dialog-cab-monitor.fxml", "Cabinet Monitor", CabMonitorController.MODAL_STATE_ID);
       CabMonitorController controller = (CabMonitorController) monitorStage.getUserData();
       controller.setData(monitorStage);
-      FXResizeHelper fxResizeHelper = new FXResizeHelper(monitorStage, 30, 6);
-      monitorStage.setUserData(fxResizeHelper);
+      FXResizeHelper.install(monitorStage, 30, 6);
       monitorStage.setMinWidth(600);
       monitorStage.setMinHeight(500);
 
@@ -223,7 +252,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
 
   @FXML
   private void onClearCache() {
-    ProgressDialog.createProgressDialog(new ClearCacheProgressModel());
+    ProgressDialog.createProgressDialog(ClearCacheProgressModel.getFullClearCacheModel());
   }
 
   @FXML
@@ -234,6 +263,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
 
   private void runUpdateCheck() {
     try {
+      newVersion = null;
       updateBtn.setVisible(false);
       new Thread(() -> {
 
@@ -263,15 +293,6 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
     }
     catch (Exception e) {
       LOG.error("Failed to run update check: " + e.getMessage(), e);
-    }
-  }
-
-  @Override
-  public void preferencesChanged(String key, Object value) {
-    if (key.equals(PreferenceNames.DOF_SETTINGS)) {
-      DOFSettings settings = client.getDofService().getSettings();
-      boolean valid = settings.isValidDOFFolder() && !StringUtils.isEmpty(settings.getApiKey());
-      dofSyncEntry.setDisable(!valid);
     }
   }
 
@@ -330,6 +351,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
     }
 
     this.monitorBtn.setVisible(Features.RECORDER && !client.getRecorderService().getRecordingScreens().isEmpty() && !client.getSystemService().isLocal());
+//    this.monitorBtn.setVisible(true);
     this.maintenanceBtn.setVisible(!client.getSystemService().isLocal());
 
     EventManager.getInstance().addListener(this);
@@ -365,9 +387,12 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
     });
 
     client.getPreferenceService().addListener(this);
-    preferencesChanged(PreferenceNames.DOF_SETTINGS, null);
+
 
     JFXFuture.supplyAsync(() -> {
+      preferencesChanged(PreferenceNames.DOF_SETTINGS, null);
+      preferencesChanged(PreferenceNames.PINVOL_AUTOSTART_ENABLED, null);
+
       return client.getHooksService().getHookList();
     }).thenAcceptLater((hookList) -> {
       if (!hookList.getHooks().isEmpty()) {
@@ -410,6 +435,21 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
         }
       }
     }
+
+    jobBtn.setOnShowing(new EventHandler<Event>() {
+      @Override
+      public void handle(Event event) {
+        JobPoller.getInstance().refreshJobsUI();
+      }
+    });
+
+    preferencesBtn.setOnShowing(new EventHandler<Event>() {
+      @Override
+      public void handle(Event event) {
+        muted = client.getSystemService().isMuted();
+        refreshMuteState();
+      }
+    });
   }
 
   private void onCabSwitch(ConnectionEntry connection) {
@@ -426,5 +466,23 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
 
   public void setTableOverviewController(TableOverviewController tableOverviewController) {
     this.tableOverviewController = tableOverviewController;
+  }
+
+  @Override
+  public void preferencesChanged(String key, Object value) {
+    if (key.equals(PreferenceNames.DOF_SETTINGS)) {
+      DOFSettings settings = client.getDofService().getSettings();
+      boolean valid = settings.isValidDOFFolder() && !StringUtils.isEmpty(settings.getApiKey());
+      dofSyncEntry.setDisable(!valid);
+    }
+    else if (key.equals(PreferenceNames.PINVOL_AUTOSTART_ENABLED)) {
+      PreferenceEntryRepresentation preference = client.getPreferenceService().getPreference(PreferenceNames.PINVOL_AUTOSTART_ENABLED);
+      pinVolStartItem.setVisible(client.getSystemService().isLocal() && preference.getBooleanValue());
+      pinVolStopItem.setVisible(client.getSystemService().isLocal() && preference.getBooleanValue());
+
+      boolean running = client.getPinVolService().isRunning();
+      pinVolStartItem.setDisable(running);
+      pinVolStopItem.setDisable(!running);
+    }
   }
 }

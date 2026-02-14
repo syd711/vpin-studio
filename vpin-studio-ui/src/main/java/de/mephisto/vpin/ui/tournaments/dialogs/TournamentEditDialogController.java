@@ -58,6 +58,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -68,7 +69,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
 
 public class TournamentEditDialogController implements Initializable, DialogController {
-  private final static Logger LOG = LoggerFactory.getLogger(TournamentEditDialogController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final Debouncer debouncer = new Debouncer();
 
@@ -399,10 +400,10 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
 
     InputStream in = null;
-    PreferenceEntryRepresentation avatarEntry = client.getPreference(PreferenceNames.AVATAR);
+    PreferenceEntryRepresentation avatarEntry = client.getPreferenceService().getPreference(PreferenceNames.AVATAR);
     if (tournament.getUuid() == null) {
       editable = true;
-      in = client.getAsset(AssetType.VPIN_AVATAR, avatarEntry.getValue());
+      in = client.getAssetService().getAsset(AssetType.VPIN_AVATAR, avatarEntry.getValue());
     }
     else {
       in = client.getCachedUrlImage(maniaClient.getTournamentClient().getBadgeUrl(tournament));

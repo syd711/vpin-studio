@@ -3,11 +3,9 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.assets.AssetMetaData;
-import de.mephisto.vpin.restclient.assets.AssetRequest;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -16,13 +14,14 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 
 public class AssetMetadataController implements Initializable, DialogController {
-  private final static Logger LOG = LoggerFactory.getLogger(AssetMetadataController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private VBox dataRoot;
@@ -36,13 +35,12 @@ public class AssetMetadataController implements Initializable, DialogController 
     stage.close();
   }
 
-  public void setData(AssetRequest request) {
-    if(request.getResult() != null) {
-      dataRoot.getChildren().add(WidgetFactory.createDefaultLabel(request.getResult()));
+  public void setData(AssetMetaData metaData) {
+    if(metaData == null) {
+      dataRoot.getChildren().add(WidgetFactory.createDefaultLabel("Cannot get  metadata information"));
       return;
     }
 
-    AssetMetaData metaData = request.getMetaData();
     Set<Map.Entry<String, Object>> entries = metaData.getData().entrySet();
     for (Map.Entry<String, Object> entry : entries) {
       HBox row = new HBox(3);

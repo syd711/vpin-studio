@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.util.*;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class PlaylistManagerController implements Initializable, DialogController {
@@ -65,7 +66,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     SQL_TEMPLATES.put("All '4k' tables", "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND tags LIKE '%4k%' ORDER BY GameDisplay");
     SQL_TEMPLATES.put("All kids-friendly tables", "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND tags LIKE '%Kids%' ORDER BY GameDisplay");
     SQL_TEMPLATES.put("All iScored competed tables", "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND TourneyID like '%iscored%' ORDER BY GameDisplay");
-    SQL_TEMPLATES.put("All tournament competed tables", "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND TourneyID like '%tournament%' ORDER BY GameDisplay");
+    SQL_TEMPLATES.put("All 'World Of Virtual Pinball' competed tables", "SELECT * FROM Games WHERE visible=1 AND TourneyID like '%weekly%' ORDER BY GameDisplay");
   }
 
   @FXML
@@ -151,6 +152,9 @@ public class PlaylistManagerController implements Initializable, DialogControlle
   private Pane settingsBox;
 
   @FXML
+  private Button saveSQLBtn;
+
+  @FXML
   private PlaylistTableController playlistTableController; //fxml magic! Not unused -> id + "Controller"
 
   private Stage dialogStage;
@@ -162,11 +166,20 @@ public class PlaylistManagerController implements Initializable, DialogControlle
   private TreeItem<PlaylistRepresentation> draggedItem;
   private TreeCell<PlaylistRepresentation> dropZone;
 
+
+
   @FXML
   private void onCancelClick(ActionEvent e) {
     onClose();
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
+  }
+
+  @FXML
+  private void onSQLSave(ActionEvent e) {
+    String sql = sqlText.getText();
+    getPlaylist().setPlayListSQL(sql);
+    savePlaylist();
   }
 
   @FXML
@@ -271,7 +284,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
       newPlayList.setMediaName("pl_" + FileUtils.replaceWindowsChars(value));
 
       //workaround for PinballX
-      if (!client.getFrontendService().getFrontend().getFrontendType().supportExtendedPlaylists()) {
+      if (!Features.PLAYLIST_EXTENDED) {
         newPlayList.setEmulatorId(getDefaultGameEmulator().getId());
       }
 
@@ -369,6 +382,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     mediaNameText.setText("");
     passcodeText.setDisable(value.isEmpty());
     passcodeText.setText("");
+    saveSQLBtn.setDisable(value.isEmpty());
     templateSelector.setDisable(value.isEmpty() || !value.get().isSqlPlayList());
 
     errorContainer.setVisible(false);
@@ -401,6 +415,9 @@ public class PlaylistManagerController implements Initializable, DialogControlle
 
       colorPicker.setValue(Color.web(WidgetFactory.hexColor(plList.getMenuColor())));
     }
+    else {
+      playlistTableController.setData(Optional.empty());
+    }
 
     saveDisabled = false;
   }
@@ -426,7 +443,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
           TreeItem<PlaylistRepresentation> root = new TreeItem<>(playListRoot);
           buildTreeModel(root);
           treeView.setRoot(root);
-          treeView.setShowRoot(client.getFrontendService().getFrontendCached().getFrontendType().supportExtendedPlaylists());
+          treeView.setShowRoot(Features.PLAYLIST_EXTENDED);
           expandAll(root);
 
           if (playlist != null) {
@@ -463,6 +480,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
 
     treeView.setEditable(true);
     settingsBox.managedProperty().bindBidirectional(settingsBox.visibleProperty());
+    saveSQLBtn.setDisable(true);
 
     assetManagerSeparator.managedProperty().bindBidirectional(assetManagerSeparator.visibleProperty());
     assetManagerBtn.managedProperty().bindBidirectional(assetManagerBtn.visibleProperty());
@@ -479,7 +497,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     templateSelector.setVisible(frontendType.equals(FrontendType.Popper));
     hintLabel.setVisible(frontendType.equals(FrontendType.Popper));
 
-    settingsBox.setVisible(frontendType.supportExtendedPlaylists());
+    settingsBox.setVisible(Features.PLAYLIST_EXTENDED);
 //    assetManagerSeparator.setVisible(frontendType.supportPlaylists());
 //    assetManagerBtn.setVisible(frontendType.supportPlaylists());
 
@@ -502,7 +520,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
           @Override
           public void handle(ActionEvent event) {
             sqlText.setText(formatQuery(entry.getValue()));
-            savePlaylist();
+            onSQLSave(event);
           }
 
           private String formatQuery(String value) {
@@ -526,7 +544,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     treeView.selectionModelProperty().get().selectedItemProperty().addListener(new ChangeListener<TreeItem<PlaylistRepresentation>>() {
       @Override
       public void changed(ObservableValue<? extends TreeItem<PlaylistRepresentation>> observable, TreeItem<PlaylistRepresentation> oldValue, TreeItem<PlaylistRepresentation> newValue) {
-        if (newValue != null) {
+        if (newValue != null && newValue.getValue() != null) {
           PlaylistRepresentation value = newValue.getValue();
           refreshView(Optional.of(value));
         }
@@ -642,6 +660,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
         if (!newValue) {
           errorContainer.setVisible(false);
           getPlaylist().setSqlError(null);
+          saveSQLBtn.setDisable(true);
         }
         getPlaylist().setSqlPlayList(newValue);
         savePlaylist();
@@ -683,13 +702,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     sqlText.textProperty().addListener(new ChangeListener<String>() {
       @Override
       public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-        if (saveDisabled) {
-          return;
-        }
-        debouncer.debounce("sqlText", () -> {
-          getPlaylist().setPlayListSQL(newValue);
-          savePlaylist();
-        }, 500);
+        saveSQLBtn.setDisable(false);
       }
     });
 
@@ -885,6 +898,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     }
 
     TreeItem<PlaylistRepresentation> selectedItem = treeView.getSelectionModel().getSelectedItem();
+    playlistTableController.setData(Optional.empty());
     if (selectedItem != null) {
       PlaylistRepresentation value = selectedItem.getValue();
       try {
@@ -898,6 +912,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
           if (update.isSqlPlayList()) {
             errorLabel.setText(update.getSqlError());
             errorContainer.setVisible(!StringUtils.isEmpty(update.getSqlError()));
+            saveSQLBtn.setDisable(true);
           }
           List<PlaylistGame> games = update.getGames();
           for (PlaylistGame playlistGame : games) {

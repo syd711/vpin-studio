@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,27 +62,13 @@ public class VPSTest {
       assertFalse(vpsNew.getTables().isEmpty());
       assertFalse(vpsOld.getTables().isEmpty());
 
-      List<VpsDiffer> diff = vpsNew.diff(vpsOld.getTables(), vpsNew.getTables());
-      System.out.println(diff.size());
+      List<VpsDiffer> diff = vpsNew.diff(vpsOld.getTables(), vpsNew.getTables(), Collections.emptyList());
       assertFalse(diff.isEmpty());
-//      for (VpsDiffer diffEntry : diff) {
-//        System.out.println(diffEntry.getId() + ": " + diffEntry.toString());
-//      }
+
+      List<VpsDiffer> diff2 = vpsNew.diff(vpsOld.getTables(), vpsNew.getTables(), Arrays.asList("bigus"));
+      assertFalse(diff2.size() == diff.size());
     }
   }
-  @Test
-  public void testDiffById() throws IOException {
-    try (InputStream in1 = VPSTest.class.getResourceAsStream("vpsdb.json.1");
-        InputStream in2 = VPSTest.class.getResourceAsStream("vpsdb.json.2")) {
-      VPS vpsOld = newInstance(in1);
-      VPS vpsNew = newInstance(in2);
-
-      VpsDiffer diff = vpsNew.diffById(vpsOld.getTables(), vpsNew.getTables(), "Gs1n4eIo");
-      VPSChanges changes = diff.getChanges();
-      assertFalse(changes.isEmpty());
-    }
-  }
-
 
   @Test
   public void testDiff3() throws Exception {
@@ -89,11 +77,11 @@ public class VPSTest {
       VPS vpsOld = newInstance(in1);
       VPS vpsNew = newInstance(in2);
 
-      List<VpsDiffer> diff = vpsNew.diff(vpsOld.getTables(), vpsNew.getTables());
+      List<VpsDiffer> diff = vpsNew.diff(vpsOld.getTables(), vpsNew.getTables(), Collections.emptyList());
       assertFalse(diff.isEmpty());
-      assertEquals(2, diff.size());
+      assertEquals(1, diff.size());
 
-      VpsDiffer diffTable1 = diff.get(1);
+      VpsDiffer diffTable1 = diff.get(0);
       VPSChanges tableChanges = diffTable1.getTableChanges();
       assertFalse(tableChanges.isEmpty());
 

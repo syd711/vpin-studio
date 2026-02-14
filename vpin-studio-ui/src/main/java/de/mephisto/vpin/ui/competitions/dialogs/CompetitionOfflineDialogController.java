@@ -218,7 +218,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
       FrontendMediaRepresentation frontendMedia = client.getFrontendService().getFrontendMedia(game.getId());
       FrontendMediaItemRepresentation mediaItem = frontendMedia.getDefaultMediaItem(VPinScreen.Wheel);
       if (mediaItem != null) {
-        ByteArrayInputStream gameMediaItem = client.getGameMediaItem(game.getId(), VPinScreen.Wheel);
+        ByteArrayInputStream gameMediaItem = client.getWheelIcon(game.getId(), false);
         Image image = new Image(gameMediaItem);
         iconPreview.setImage(image);
 
@@ -290,7 +290,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
 
   public void setCompetition(List<CompetitionRepresentation> all, CompetitionRepresentation selectedCompetition) {
     if (selectedCompetition != null) {
-      GameRepresentation game = client.getGame(selectedCompetition.getGameId());
+      GameRepresentation game = client.getGameService().getGame(selectedCompetition.getGameId());
 
       nameField.setText(selectedCompetition.getName());
       this.startDatePicker.setValue(selectedCompetition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
@@ -348,7 +348,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
   private List<DiscordChannel> getDiscordChannels() {
     if (this.discordChannels == null) {
       this.discordChannels = client.getDiscordService().getDiscordChannels();
-      this.serverId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
+      this.serverId = client.getPreferenceService().getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
     }
     return this.discordChannels;
   }

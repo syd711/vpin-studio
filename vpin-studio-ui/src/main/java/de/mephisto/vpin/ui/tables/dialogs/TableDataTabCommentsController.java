@@ -1,28 +1,31 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.util.tags.TagField;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.stage.Stage;
+import javafx.scene.layout.Pane;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
-import java.util.Optional;
+import java.util.Collections;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableDataTabCommentsController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(TableDataTabCommentsController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private TextArea textArea;
@@ -36,26 +39,31 @@ public class TableDataTabCommentsController implements Initializable {
   @FXML
   private Label useOutdatedLabel;
 
-  private GameRepresentation game;
+  @FXML
+  private Pane tags;
 
-  public void save() {
+  private GameRepresentation game;
+  private TagField tagField;
+
+  public boolean save(TableDetails tableDetails) {
     game.setComment(textArea.getText());
+    tableDetails.setTags(String.join(",", tagField.getTags()));
     try {
       client.getGameService().saveGame(game);
+      return true;
     }
     catch (Exception e) {
       LOG.error("Failed to save notes: " + e.getMessage(), e);
       Platform.runLater(() -> {
         WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save notes: " + e.getMessage());
       });
+      return false;
     }
   }
 
-
   @FXML
   private void onDelete() {
-    this.textArea.setText(null);
-    game.setComment(null);
+    this.textArea.clear();
   }
 
   private void appendTextAndFocus(String text) {
@@ -63,9 +71,20 @@ public class TableDataTabCommentsController implements Initializable {
     this.textArea.requestFocus();
   }
 
+  public void setTags(List<String> tags) {
+    tagField.setTags(tags);
+  }
+
   public void setGame(GameRepresentation game) {
     this.game = game;
-    this.textArea.setText(game.getComment());
+    if (StringUtils.isNotEmpty(game.getComment())) {
+      this.textArea.setText(game.getComment());
+    }
+    else {
+      this.textArea.clear();
+    }
+
+    this.tagField.setTags(game.getTags());
   }
 
   @Override
@@ -73,5 +92,21 @@ public class TableDataTabCommentsController implements Initializable {
     useTodoLabel.setOnMouseClicked(mouseEvent -> appendTextAndFocus("//TODO "));
     useErrorLabel.setOnMouseClicked(mouseEvent -> appendTextAndFocus("//ERROR "));
     useOutdatedLabel.setOnMouseClicked(mouseEvent -> appendTextAndFocus("//OUTDATED "));
+
+    tagField = new TagField(Collections.emptyList());
+    tags.getChildren().add(tagField);
+
+    JFXFuture.supplyAsync(() -> {
+      return client.getTaggingService().getTags();
+    }).thenAcceptLater((initialTags) -> {
+      tagField.setSuggestions(initialTags);
+    });
   }
+
+  public void initBindings(TableDataController tableDataController) {
+    this.textArea.textProperty().addListener((obs, oldValue, newValue) -> {
+      tableDataController.setDialogDirty(true);
+    });
+  }
+
 }

@@ -8,11 +8,12 @@ import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Iterator;
 import java.util.List;
 
 public class TableScanProgressModel extends ProgressModel<GameRepresentation> {
-  private final static Logger LOG = LoggerFactory.getLogger(TableScanProgressModel.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private final Iterator<GameRepresentation> iterator;
   private final List<GameRepresentation> gameRepresentations;
 
@@ -36,6 +37,11 @@ public class TableScanProgressModel extends ProgressModel<GameRepresentation> {
   @Override
   public GameRepresentation getNext() {
     return iterator.next();
+  }
+
+  @Override
+  public boolean isIndeterminate() {
+    return gameRepresentations.size() == 1;
   }
 
   @Override

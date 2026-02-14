@@ -15,11 +15,10 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
-import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.competitions.dialogs.GameRoomCellContainer;
-import de.mephisto.vpin.ui.competitions.dialogs.IScoredGameCellContainer;
+import de.mephisto.vpin.ui.competitions.dialogs.VpsGameCellContainer;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
@@ -92,6 +91,9 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
   private Button addBtn;
 
   @FXML
+  private Button eventLogBtn;
+
+  @FXML
   private Button reloadBtn;
 
   @FXML
@@ -136,6 +138,20 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       List<GameRepresentation> matches = value.getMatches();
       if (!matches.isEmpty()) {
         NavigationController.navigateTo(NavigationItem.Tables, new NavigationOptions(matches.get(0).getId()));
+      }
+    }
+  }
+
+  @FXML
+  private void onEventLog(ActionEvent e) {
+    IScoredGameRoomGameModel value = tableView.getSelectionModel().getSelectedItem();
+    if (value != null) {
+      List<GameRepresentation> matches = value.getMatches();
+      if (!matches.isEmpty()) {
+        GameRepresentation gameRepresentation = matches.get(0);
+        if (gameRepresentation.isEventLogAvailable()) {
+          TableDialogs.openEventLogDialog(gameRepresentation);
+        }
       }
     }
   }
@@ -449,7 +465,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
         return new SimpleObjectProperty<>(fallbackLabel);
       }
 
-      return new SimpleObjectProperty(new IScoredGameCellContainer(value.getMatches(), vpsTable, getLabelCss(cellData.getValue())));
+      return new SimpleObjectProperty(new VpsGameCellContainer(value.getMatches(), vpsTable, getLabelCss(cellData.getValue())));
     });
 
     vpsTableColumn.setCellValueFactory(cellData -> {
@@ -467,17 +483,20 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       Label fallbackLabel = new Label();
       fallbackLabel.setStyle(getLabelCss(value));
       if (value.game.isAllVersionsEnabled()) {
+        fallbackLabel.getStyleClass().add("default-text");
         fallbackLabel.setText("All versions allowed.");
         return new SimpleObjectProperty<>(fallbackLabel);
       }
 
       VpsTable vpsTable = client.getVpsService().getTableById(value.getVpsTableId());
       if (vpsTable == null) {
+        fallbackLabel.getStyleClass().add("default-text");
         fallbackLabel.setText("No matching VPS Table found.");
         return new SimpleObjectProperty<>(fallbackLabel);
       }
       VpsTableVersion vpsTableVersion = vpsTable.getTableVersionById(value.getVpsTableVersionId());
       if (vpsTableVersion == null) {
+        fallbackLabel.getStyleClass().add("default-text");
         fallbackLabel.setText("All versions allowed.");
         return new SimpleObjectProperty<>(fallbackLabel);
       }
@@ -653,6 +672,20 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
     IScoredGameRoomGameModel newSelection = null;
     if (model.isPresent()) {
       newSelection = model.get();
+    }
+
+    eventLogBtn.setDisable(model.isEmpty());
+    if (model.isPresent()) {
+      List<GameRepresentation> matches = newSelection.getMatches();
+      if (!matches.isEmpty()) {
+        GameRepresentation gameRepresentation = matches.get(0);
+        if (gameRepresentation.isEventLogAvailable()) {
+          eventLogBtn.setDisable(false);
+        }
+        else {
+          eventLogBtn.setDisable(true);
+        }
+      }
     }
 
     tableNavigateBtn.setDisable(model.isEmpty() || model.get().getMatches().isEmpty());

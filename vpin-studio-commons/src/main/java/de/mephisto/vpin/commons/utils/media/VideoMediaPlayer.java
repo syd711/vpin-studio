@@ -1,179 +1,220 @@
 package de.mephisto.vpin.commons.utils.media;
 
-import de.mephisto.vpin.commons.utils.FXUtil;
-import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
+import edu.umd.cs.findbugs.annotations.Nullable;
+import javafx.geometry.HPos;
+import javafx.geometry.VPos;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import javafx.scene.paint.Paint;
+
+import org.apache.commons.lang3.StringUtils;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class VideoMediaPlayer extends AssetMediaPlayer {
-  private final static Logger LOG = LoggerFactory.getLogger(VideoMediaPlayer.class);
-  public static final int MEDIA_SIZE = 280;
+import java.lang.invoke.MethodHandles;
 
-  private VPinScreen screen;
+public class VideoMediaPlayer extends AssetMediaPlayer {
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final String mimeType;
 
-  private final boolean dialogRendering;
-
-  private FrontendMediaItemRepresentation mediaItem;
+  private ImageView imageView;
   private MediaView mediaView;
-  private Media media;
 
-  private double fitWidth = -1;
-  private double fitHeight = -1;
+  private boolean modeVideo = false;
+  private Button playBtn;
 
   private boolean invertPlayfield;
+  private int retryCount = 0;
 
-  public VideoMediaPlayer(@NonNull BorderPane parent, @NonNull String url, @NonNull String screenName,
-                          @NonNull String mimeType, boolean invertPlayfield) {
-    this(parent, null, screenName, url, mimeType, invertPlayfield, true);
-  }
 
-  public VideoMediaPlayer(@NonNull BorderPane parent, @NonNull FrontendMediaItemRepresentation mediaItem, @NonNull String url,
-                          @NonNull String mimeType, boolean invertPlayfield, boolean dialogRendering) {
-    this(parent, mediaItem, mediaItem.getScreen(), url, mimeType, invertPlayfield, dialogRendering);
-  }
-
-  private VideoMediaPlayer(@NonNull BorderPane parent, @NonNull FrontendMediaItemRepresentation mediaItem, @NonNull String screenName,
-                           @NonNull String url, @NonNull String mimeType, boolean invertPlayfield, boolean dialogRendering) {
-    super(parent, url);
-    this.mediaItem = mediaItem;
+  public VideoMediaPlayer(@NonNull String mimeType, boolean invertPlayfield) {
+    super();
     this.mimeType = mimeType;
-    this.dialogRendering = dialogRendering;
     this.invertPlayfield = invertPlayfield;
-
-    if (screenName.equalsIgnoreCase("PlayField")) {
-      screen = VPinScreen.PlayField;
-    }
-    else if (screenName.equalsIgnoreCase("Loading")) {
-      screen = VPinScreen.Loading;
-    }
   }
 
-  public void render() {
-    String baseType = mimeType.split("/")[0];
-    String mediaType = mimeType.split("/")[1];
-
-    if (mediaType.equalsIgnoreCase("quicktime")) {
-      parent.setCenter(getEncodingNotSupportedLabel(mediaItem));
+  public void render(@NonNull String url, @Nullable VPinScreen screen, boolean usePreview) {
+    if (StringUtils.endsWithIgnoreCase(mimeType, "/quicktime")) {
+      setCenter(getEncodingNotSupportedLabel());
       return;
     }
 
-    this.setCenter(new ProgressIndicator());
-    parent.setCenter(this);
+    setLoading();
 
-    media = new Media(url);
-    LOG.info("Streaming media: " + url);
-    mediaPlayer = new MediaPlayer(media);
+    if (usePreview) {
+      JFXFuture.supplyAsync(() -> new Image(url + "?preview=true", false))
+          .thenAcceptLater(image -> {
+            // create an ImageView with a play button
+            this.imageView = new ImageView(image);
+            imageView.setPreserveRatio(true);
+            setCenter(imageView);
 
-    mediaPlayer.setOnError(() -> {
-      LOG.warn("Media player error: " + mediaPlayer.getError() + ", URL: " + mediaPlayer.getMedia().getSource());
-      disposeMedia();
-      parent.setCenter(getErrorLabel(mediaItem));
-    });
+            scaleImageView(image, screen);
 
-    mediaPlayer.setOnReady(() -> {
-      for (MediaPlayerListener listener : this.listeners) {
-        listener.onReady(media);
-      }
+            // add an image on top
+            FontIcon fontIcon = new FontIcon();
+            fontIcon.setIconSize(48);
+            fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+            fontIcon.setIconLiteral("bi-play");
+            this.playBtn = new Button();
+            playBtn.setGraphic(fontIcon);
+            playBtn.setVisible(false);
+            getChildren().add(playBtn);
+            playBtn.managedProperty().bind(playBtn.visibleProperty());
 
-      mediaPlayer.setAutoPlay(baseType.equals("video"));
-      mediaPlayer.setCycleCount(-1);
-      mediaPlayer.setMute(true);
+            this.setOnMouseEntered(me -> {
+              playBtn.setVisible(true);
+            });
+            this.setOnMouseExited(me -> {
+              playBtn.setVisible(false);
+            });
 
-      mediaView = new MediaView(mediaPlayer);
-      mediaView.setUserData(mediaItem);
-      mediaView.setPreserveRatio(true);
-      mediaView.setVisible(false);
-      scaleMediaView();
-      mediaView.setVisible(true);
-
-      this.setCenter(mediaView);
-    });
-  }
-
-  private void scaleMediaView() {
-    if (fitWidth > 0 || fitHeight > 0) {
-      mediaView.setFitWidth(fitWidth);
-      mediaView.setFitHeight(fitWidth);
-      return;
-    }
-
-    double prefWidth = parent.getPrefWidth();
-    if (prefWidth <= 0) {
-      prefWidth = ((Pane) parent.getParent()).getWidth();
-    }
-    double prefHeight = parent.getPrefHeight();
-    if (prefHeight <= 0) {
-      prefHeight = ((Pane) parent.getParent()).getHeight();
-    }
-
-    prefWidth = prefWidth - 12;
-    prefHeight = prefHeight - 12;
-
-    if (!dialogRendering) {
-      prefHeight = prefHeight - 32;
-    }
-
-    if (VPinScreen.PlayField.equals(screen)) {
-      if (media.getWidth() > media.getHeight()) {
-        mediaView.setRotate(90 + (invertPlayfield ? 180 : 0));
-        mediaView.setFitWidth(prefHeight);
-        mediaView.setFitHeight(prefWidth);
-
-        if (!dialogRendering) {
-          mediaView.setX(0);
-          mediaView.setY(0);
-          double ratio = (double) media.getWidth() / media.getHeight();
-          if (ratio > 1.5) {
-            mediaView.translateXProperty().set(mediaView.translateXProperty().get() - 74);
-          }
-          else {
-            mediaView.translateXProperty().set(mediaView.translateXProperty().get() - 12);
-          }
-        }
-      }
-      else {
-        mediaView.setFitWidth(prefWidth);
-        mediaView.setFitHeight(prefHeight);
-      }
-    }
-    else if (VPinScreen.Loading.equals(screen)) {
-      if (media.getWidth() > media.getHeight()) {
-        mediaView.setRotate(90);
-        mediaView.setFitWidth(prefHeight);
-        mediaView.setFitHeight(prefWidth);
-      }
-      else {
-        mediaView.setFitWidth(prefWidth);
-        mediaView.setFitHeight(prefHeight);
-      }
+            playBtn.setOnMouseReleased(me -> {
+              // in video mode, switch back to the imageView
+              if (modeVideo) {
+                mediaView.getMediaPlayer().stop();
+                setCenter(imageView);
+                fontIcon.setIconLiteral("bi-play");
+                modeVideo = false;
+              }
+              // in audio mode, when mediaPLayer has already been created, just switch to it
+              else if (mediaPlayer != null) {
+                setCenter(mediaView);
+                mediaView.getMediaPlayer().play();
+                fontIcon.setIconLiteral("bi-stop");
+                modeVideo = true;
+              }
+              else {
+                getChildren().remove(playBtn);
+                fontIcon.setIconLiteral("bi-stop");
+                renderVideo(url, screen);
+                modeVideo = true;
+              }
+            });
+          });
     }
     else {
-      mediaView.setFitWidth(prefWidth);
-      mediaView.setFitHeight(prefHeight);
+      renderVideo(url, screen);
+    }
+  }
+
+  public void renderVideo(@NonNull String url, @Nullable VPinScreen screen) {
+    retryCount = 0;
+    renderVideoWithRetries(url, screen);
+  }
+
+  public void renderVideoWithRetries(@NonNull String url, @Nullable VPinScreen screen) {
+    setLoading();
+
+    retryCount++;
+    new Thread(() -> {
+      try {
+        Thread.currentThread().setName("Video Player for " + url);
+        Media media = new Media(url);
+        LOG.info("Streaming media: " + url);
+        mediaPlayer = new MediaPlayer(media);
+
+        mediaPlayer.setOnError(() -> {
+          LOG.warn("Media player error: " + mediaPlayer.getError() + ", URL: " + mediaPlayer.getMedia().getSource());
+//          try {
+//            Thread.sleep(100);
+//          }
+//          catch (InterruptedException e) {
+//            //ignore
+//          }
+
+          if (retryCount > 20 || !url.contains("api/v1")) { //TODO we do not want too much load on remote servers
+            disposeMedia();
+            setCenter(getErrorLabel());
+          }
+          else {
+            renderVideoWithRetries(url, screen);
+          }
+        });
+
+        mediaPlayer.setOnReady(() -> {
+          installMediaView(screen, media);
+        });
+      }
+      catch (Exception e) {
+        LOG.error("Failed to play video: {}", e.getMessage());
+      }
+    }).start();
+  }
+
+  private void installMediaView(VPinScreen screen, Media media) {
+    for (MediaPlayerListener listener : this.listeners) {
+      listener.onReady(media);
+    }
+
+    mediaPlayer.setAutoPlay(true);
+    mediaPlayer.setCycleCount(-1);
+    if (mediaOptions == null || mediaOptions.isMuted()) {
+      mediaPlayer.setMute(true);
+    }
+
+    mediaView = new MediaView(mediaPlayer);
+    mediaView.setPreserveRatio(true);
+
+    scaleMediaView(media, screen);
+
+    setCenter(mediaView);
+    if (playBtn != null) {
+      getChildren().add(playBtn);
+    }
+  }
+
+  private void scaleMediaView(Media media, @Nullable VPinScreen screen) {
+    if (mediaOptions == null || mediaOptions.isAutoRotate()) {
+      if (VPinScreen.PlayField.equals(screen)) {
+        if (media.getWidth() > media.getHeight()) {
+          mediaView.setRotate(90 + (invertPlayfield ? 180 : 0));
+          setRotated(true);
+        }
+      }
+      else if (VPinScreen.Loading.equals(screen)) {
+        if (media.getWidth() > media.getHeight()) {
+          mediaView.setRotate(90);
+          setRotated(true);
+        }
+      }
+    }
+  }
+
+  private void scaleImageView(Image image, @Nullable VPinScreen screen) {
+    if (mediaOptions == null || mediaOptions.isAutoRotate()) {
+      if (VPinScreen.PlayField.equals(screen)) {
+        if (image.getWidth() > image.getHeight()) {
+          imageView.setRotate(90 + (invertPlayfield ? 180 : 0));
+          setRotated(true);
+        }
+      }
+      else if (VPinScreen.Loading.equals(screen)) {
+        if (image.getWidth() > image.getHeight()) {
+          imageView.setRotate(90);
+          setRotated(true);
+        }
+      }
     }
   }
 
   @Override
-  public void setSize(double fitWidth, double fitHeight) {
-    this.fitHeight = fitHeight;
-    this.fitWidth = fitWidth;
-  }
+  protected void layoutChildren() {
+    super.layoutChildren();
 
-  @Override
-  public void setMediaViewSize(double fitWidth, double fitHeight) {
-    if (this.mediaView != null) {
-      this.mediaView.setFitHeight(fitHeight);
-      this.mediaView.setFitWidth(fitWidth);
+    if (playBtn != null) {
+      double width = getWidth();
+      double height = getHeight();
+      super.layoutInArea(playBtn, 0, 0, width, height, 0, HPos.CENTER, VPos.CENTER);
     }
   }
 

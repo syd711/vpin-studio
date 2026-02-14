@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.mania;
 
 import de.mephisto.vpin.restclient.mania.ManiaConfig;
-import de.mephisto.vpin.restclient.mania.ManiaTableSyncResult;
 import de.mephisto.vpin.restclient.mania.ManiaRegistration;
+import de.mephisto.vpin.restclient.mania.ManiaTableSyncResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,9 +25,9 @@ public class ManiaResource {
     return maniaService.clearCache();
   }
 
-  @GetMapping("/synchronize/table/{vpsTableId}")
-  public ManiaTableSyncResult synchronize(@PathVariable("vpsTableId") String vpsTableId) {
-    return maniaService.synchronize(vpsTableId);
+  @GetMapping("/synchronize/highscore/{vpsTableId}")
+  public ManiaTableSyncResult synchronizeScore(@PathVariable("vpsTableId") String vpsTableId) {
+    return maniaService.synchronizeHighscore(vpsTableId);
   }
 
   @GetMapping("/synchronize/tables")

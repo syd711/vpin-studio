@@ -12,26 +12,7 @@ public class VpsAuthoredUrls implements VPSEntity {
   private String version;
   private long createdAt;
   private String id;
-
-  @Override
-  public String toString() {
-    StringBuilder builder = new StringBuilder();
-    if (!authors.isEmpty()) {
-      builder.append("- Authors: ");
-      builder.append(String.join(", ", authors));
-      builder.append("\n");
-    }
-
-    if (version != null) {
-      builder.append("- Version: ");
-      builder.append(version);
-      builder.append("\n");
-    }
-
-    builder.append("- Created At: ");
-    builder.append(DateFormat.getDateTimeInstance().format(new Date(createdAt)));
-    return builder.toString();
-  }
+  private String comment;
 
   public String getId() {
     return id;
@@ -73,6 +54,15 @@ public class VpsAuthoredUrls implements VPSEntity {
     this.urls = urls;
   }
 
+  public String getComment() {
+    return comment;
+  }
+
+  public void setComment(String comment) {
+    this.comment = comment;
+  }
+  
+
   public boolean isContainedIn(List<? extends VpsAuthoredUrls> urls) {
     for (VpsAuthoredUrls url : urls) {
       List<VpsUrl> comparingUrls = url.getUrls();
@@ -108,6 +98,8 @@ public class VpsAuthoredUrls implements VPSEntity {
     return false;
   }
 
+
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -129,5 +121,31 @@ public class VpsAuthoredUrls implements VPSEntity {
     result = 31 * result + version.hashCode();
     result = 31 * result + (int) (createdAt ^ (createdAt >>> 32));
     return result;
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    if (!authors.isEmpty()) {
+      builder.append("- Authors: ");
+      builder.append(String.join(", ", authors));
+      builder.append("\n");
+    }
+
+    if (version != null) {
+      builder.append("- Version: ");
+      builder.append(version);
+      builder.append("\n");
+    }
+
+    if(comment != null) {
+      builder.append("- Comment: ");
+      builder.append(comment);
+      builder.append("\n");
+    }
+
+    builder.append("- Created At: ");
+    builder.append(DateFormat.getDateTimeInstance().format(new Date(createdAt)));
+    return builder.toString();
   }
 }

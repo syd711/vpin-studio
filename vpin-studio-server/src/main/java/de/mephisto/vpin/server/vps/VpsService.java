@@ -1,29 +1,26 @@
 package de.mephisto.vpin.server.vps;
 
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.VpsDiffer;
-import de.mephisto.vpin.connectors.vps.matcher.VpsMatch;
 import de.mephisto.vpin.connectors.vps.matcher.VpsAutomatcher;
+import de.mephisto.vpin.connectors.vps.matcher.VpsMatch;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.vps.VpsInstallLink;
 import de.mephisto.vpin.restclient.vpf.VPFSettings;
+import de.mephisto.vpin.restclient.vps.VpsInstallLink;
+import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.restclient.vpu.VPUSettings;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
-import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameDetails;
-import de.mephisto.vpin.server.games.GameDetailsRepository;
-import de.mephisto.vpin.server.games.GameLifecycleService;
+import de.mephisto.vpin.server.games.*;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.util.Version;
 import de.mephisto.vpin.server.vpsdb.VpsDbEntry;
 import de.mephisto.vpin.server.vpsdb.VpsEntryService;
 import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -41,6 +38,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
+
 @Service
 public class VpsService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(VpsService.class);
@@ -52,7 +51,7 @@ public class VpsService implements InitializingBean {
   private PreferencesService preferencesService;
 
   @Autowired
-  private GameDetailsRepository gameDetailsRepository;
+  private GameDetailsRepositoryService gameDetailsRepositoryService;
 
   @Autowired
   private GameLifecycleService gameLifecycleService;
@@ -82,7 +81,7 @@ public class VpsService implements InitializingBean {
    *
    * @return GameVpsMatch of ids
    */
-  public VpsMatch autoMatch(VPS vpsDatabase, Game game, TableInfo tableInfo, boolean checkall, boolean overwrite, boolean useDisplayName) {
+  public VpsMatch autoMatch(VPS vpsDatabase, Game game, @Nullable TableInfo tableInfo, boolean checkall, boolean overwrite, boolean useDisplayName) {
     VpsMatch vpsMatch = new VpsMatch();
     vpsMatch.setGameId(game.getId());
     vpsMatch.setExtTableId(game.getExtTableId());
@@ -139,6 +138,17 @@ public class VpsService implements InitializingBean {
       if (gameVersion.equalsIgnoreCase(vpsVersion)) {
         return;
       }
+
+      try {
+        Version versionVps = new Version(vpsVersion);
+        Version versionTable = new Version(gameVersion);
+        boolean updateAvailable = versionVps.compareTo(versionTable) > 0;
+        game.setUpdateAvailable(updateAvailable);
+        return;
+      }
+      catch (Exception e) {
+        //ignore
+      }
     }
 
     game.setUpdateAvailable(true);
@@ -182,10 +192,15 @@ public class VpsService implements InitializingBean {
     return vpsDatabase.getTables();
   }
 
-  public VpsTable getTableById(String extTableId) {
+  public VpsTable getTableById(@Nullable String extTableId) {
+    if (extTableId == null) {
+      return null;
+    }
     VpsTable tableById = vpsDatabase.getTableById(extTableId);
-    VpsDbEntry vpsDbEntry = vpsEntryService.getVpsEntry(tableById.getId());
-    augmentTable(tableById, vpsDbEntry);
+    if (tableById != null) {
+      VpsDbEntry vpsDbEntry = vpsEntryService.getVpsEntry(tableById.getId());
+      augmentTable(tableById, vpsDbEntry);
+    }
     return tableById;
   }
 
@@ -194,7 +209,19 @@ public class VpsService implements InitializingBean {
   }
 
   public boolean update(List<Game> games) {
-    List<VpsDiffer> update = vpsDatabase.update();
+    VpsSettings vpsSettings = preferencesService.getJsonPreference(PreferenceNames.VPS_SETTINGS, VpsSettings.class);
+    List<String> denyList = new ArrayList<>();
+    if (!StringUtils.isEmpty(vpsSettings.getAuthorDenyList())) {
+      String[] split = vpsSettings.getAuthorDenyList().split(",");
+      for (String s : split) {
+        if (!StringUtils.isEmpty(s)) {
+          denyList.add(s.trim());
+        }
+      }
+    }
+
+
+    List<VpsDiffer> update = vpsDatabase.update(denyList);
     applyVPSDiff(update, games);
     return update.isEmpty();
   }
@@ -212,14 +239,14 @@ public class VpsService implements InitializingBean {
       try {
         List<Game> collect = games.stream().filter(g -> String.valueOf(g.getExtTableId()).equals(tableDiff.getId())).collect(Collectors.toList());
         for (Game game : collect) {
-          GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
+          GameDetails gameDetails = gameDetailsRepositoryService.findByPupId(game.getId());
           if (gameDetails != null) {
             VPSChanges changes = tableDiff.getTableChanges();
             String json = changes.toJson();
             List<String> changeTypes = changes.getChanges().stream().map(c -> c.getDiffType().name()).collect(Collectors.toList());
             LOG.info("Updating change list for \"" + game.getGameDisplayName() + "\" (" + tableDiff.getChanges().getChanges().size() + " entries): " + String.join(", ", changeTypes));
             gameDetails.setUpdates(json);
-            gameDetailsRepository.saveAndFlush(gameDetails);
+            gameDetailsRepositoryService.saveAndFlush(gameDetails);
             gameLifecycleService.notifyGameUpdated(game.getId());
           }
         }

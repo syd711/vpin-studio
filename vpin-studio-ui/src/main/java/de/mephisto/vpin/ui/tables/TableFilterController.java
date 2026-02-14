@@ -1,26 +1,36 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.utils.FXUtil;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.CommentType;
 import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
-import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.recorder.RecorderFilterSettings;
+import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
 import de.mephisto.vpin.ui.tables.models.TableStatus;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
+import de.mephisto.vpin.ui.util.tags.TagField;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TabPane;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
 
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,9 +38,13 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Predicate;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableFilterController extends BaseFilterController<GameRepresentation, GameRepresentationModel> implements Initializable, PreferenceChangeListener {
+
+  @FXML
+  private Node filterRoot;
 
   @FXML
   private CheckBox missingAssetsCheckBox;
@@ -108,22 +122,25 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
   private Node vpsFilters;
 
   @FXML
+  private Pane tagsFilter;
+
+  @FXML
   private ComboBox<TableStatus> statusCombo;
 
   @FXML
   private ComboBox<CommentType> commentsCombo;
 
-  private FilterSettings filterSettings;
-  private UISettings uiSettings;
+  private VpsSettings vpsSettings;
 
   private TableOverviewPredicateFactory predicateFactory = new TableOverviewPredicateFactory();
+  private TagField tagField;
 
 
   public void applyFilters() {
     // as we do not call filterGames() anymore, manually call saveFilterSettings to persist the reset
     JFXFuture.runAsync(() -> {
       client.getPreferenceService().setJsonPreference(filterSettings);
-      uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+      vpsSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPS_SETTINGS, VpsSettings.class);
     }).thenLater(() -> {
       super.applyFilters();
     });
@@ -142,13 +159,18 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
   @Override
   public Predicate<GameRepresentationModel> buildPredicate(String searchTerm, PlaylistRepresentation playlist) {
     GameEmulatorRepresentation emulatorSelection = getEmulatorSelection();
-    return predicateFactory.buildPredicate(searchTerm, playlist, emulatorSelection, filterSettings, uiSettings);
+    return predicateFactory.buildPredicate(searchTerm, playlist, emulatorSelection, filterSettings, vpsSettings);
   }
 
   protected void resetFilters() {
     GameEmulatorRepresentation emulatorSelection = getEmulatorSelection();
     if (!filterSettings.isResetted(emulatorSelection == null || emulatorSelection.isVpxEmulator())) {
-      this.filterSettings = new FilterSettings();
+      try {
+        this.filterSettings = this.filterSettings.getClass().getConstructor().newInstance();
+      }
+      catch (Exception e) {
+        //ignore
+      }
 
       statusCombo.setValue(null);
       commentsCombo.setValue(null);
@@ -161,6 +183,7 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
       noHighscoreSupportCheckBox.setSelected(filterSettings.isNoHighscoreSupport());
       noVpsMappingTableCheckBox.setSelected(filterSettings.isNoVpsTableMapping());
       iScoredCompetitionCheckBox.setSelected(filterSettings.isIScored());
+      iScoredCompetitionCheckBox.setSelected(filterSettings.isIScored());
       noVpsMappingVersionCheckBox.setSelected(filterSettings.isNoVpsVersionMapping());
       withBackglassCheckBox.setSelected(filterSettings.isWithBackglass());
       withPupPackCheckBox.setSelected(filterSettings.isWithPupPack());
@@ -172,6 +195,7 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
       withNVOffsetCheckBox.setSelected(filterSettings.isWithNVOffset());
       withAliasCheckBox.setSelected(filterSettings.isWithAlias());
     }
+    tagField.setTags(filterSettings.getTags());
   }
 
   @Override
@@ -187,13 +211,15 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
     notPlayedSettings.managedProperty().bindBidirectional(notPlayedSettings.visibleProperty());
     statusSettings.managedProperty().bindBidirectional(statusSettings.visibleProperty());
 
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
-    withPupPackCheckBox.setVisible(frontendType.supportPupPacks());
-    statusSettings.setVisible(!frontendType.equals(FrontendType.Standalone));
-    notPlayedSettings.setVisible(frontendType.supportStatistics());
-    missingAssetsCheckBox.setVisible(frontendType.supportMedias());
+    withPupPackCheckBox.setVisible(Features.PUPPACKS_ENABLED);
+    statusSettings.setVisible(!Features.IS_STANDALONE);
+    notPlayedSettings.setVisible(Features.STATISTICS_ENABLED);
+    missingAssetsCheckBox.setVisible(Features.MEDIA_ENABLED);
+  }
 
-    filterSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.FILTER_SETTINGS, FilterSettings.class);
+  public void loadFilterSettings(@NonNull FilterSettings filterSettings) {
+    this.filterSettings = filterSettings;
+
     missingAssetsCheckBox.setSelected(filterSettings.isMissingAssets());
     missingAssetsCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       filterSettings.setMissingAssets(newValue);
@@ -290,7 +316,7 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
       applyFilters();
     });
 
-    List<TableStatus> statuses = new ArrayList<>(TableDataController.supportedStatuses(frontendType));
+    List<TableStatus> statuses = new ArrayList<>(TableDataController.supportedStatuses());
     statuses.add(0, null);
     statusCombo.setItems(FXCollections.observableList(statuses));
     if (filterSettings.getGameStatus() >= 0) {
@@ -320,8 +346,28 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
       applyFilters();
     });
 
+    List<String> initialTags = client.getTaggingService().getTags();
+    tagField = new TagField(initialTags);
+    tagField.setAllowCustomTags(false);
+    tagField.setPreferredWidth(200);
+    tagField.setPreferredTagWidth(200);
+    tagField.addListener(new ListChangeListener<String>() {
+      @Override
+      public void onChanged(Change<? extends String> c) {
+        ObservableList<? extends String> list = c.getList();
+        filterSettings.setTags(new ArrayList<>(list));
+        applyFilters();
+      }
+    });
+    tagsFilter.getChildren().add(tagField);
+    tagField.setTags(filterSettings.getTags());
+
     client.getPreferenceService().addListener(this);
     preferencesChanged(PreferenceNames.ISCORED_SETTINGS, null);
+  }
+
+  public TagField getTagField() {
+    return tagField;
   }
 
   public void setEmulator(GameEmulatorRepresentation value) {
@@ -338,9 +384,11 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
   public void preferencesChanged(String key, Object value) {
     if (PreferenceNames.ISCORED_SETTINGS.equalsIgnoreCase(key)) {
       IScoredSettings iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
-      FrontendType frontendType = client.getFrontendService().getFrontendType();
-
-      iScoredCompetitionCheckBox.setVisible(iScoredSettings != null && iScoredSettings.isEnabled() && frontendType.supportCompetitions());
+      iScoredCompetitionCheckBox.setVisible(iScoredSettings != null && iScoredSettings.isEnabled() && Features.COMPETITIONS_ENABLED);
+    }
+    else if (PreferenceNames.TAGGING_SETTINGS.equals(key)) {
+      List<String> initialTags = client.getTaggingService().getTags();
+      tagField.setSuggestions(initialTags);
     }
   }
 }

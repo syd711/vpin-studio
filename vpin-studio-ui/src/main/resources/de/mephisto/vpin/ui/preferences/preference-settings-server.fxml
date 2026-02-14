@@ -10,15 +10,17 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.ServerSettingsPreferencesController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.ServerSettingsPreferencesController">
    <center>
       <ScrollPane hbarPolicy="NEVER" hmin="800.0" BorderPane.alignment="CENTER">
          <content>
+
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                <children>
                   <Label styleClass="preference-title" text="VPIN STUDIO PREFERENCES" textFill="WHITE" />
@@ -121,16 +123,30 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="275.0" styleClass="preference-description" text="Create a copy of the VPin Studio database (with timestamp) as backup." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="400.0" styleClass="preference-description" text="The copy is created inside the servers installation folder under &quot;resources/backups&quot;." textFill="WHITE" />
-                  <Button mnemonicParsing="false" onAction="#onBackup" text="Create Backup">
+                  <Label layoutX="34.0" layoutY="275.0" styleClass="preference-description" text="Create/Restore a backup file in json format which contains all VPin Studio preferences." textFill="WHITE" />
+                  <HBox spacing="6.0">
                      <VBox.margin>
                         <Insets top="6.0" />
                      </VBox.margin>
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Button>
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#onBackup" text="Create Backup">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-save-cog-outline" iconSize="18" />
+                           </graphic>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#onRestore" text="Restore Backup">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2b-backup-restore" iconSize="18" />
+                           </graphic>
+                        </Button>
+                     </children>
+                  </HBox>
                   <VBox fx:id="popperDataMappingFields">
                      <children>
                         <Label styleClass="preference-subtitle" text="Table Data Mapping">
@@ -267,6 +283,7 @@
                   <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
                </padding>
             </VBox>
+
          </content>
       </ScrollPane>
    </center>

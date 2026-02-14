@@ -5,12 +5,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.mephisto.vpin.server.scripteval.EvaluationContext;
-
 public class ScanResult {
-  
-  //FIXME REMOVE FOR PROD, JUST HERE TO COMPARE RESULT FROM NEW SCAN WITH OLD ONE
-  public EvaluationContext evalctxt;
   
   private int nvOffset = 0;
 
@@ -28,6 +23,9 @@ public class ScanResult {
   private String dmdType;
   private String dmdGameName;
   private String dmdProjectFolder;
+
+  private List<String> assets = new ArrayList<>();
+  private List<String> scripts = new ArrayList<>();
 
   public boolean isVrRoomSupport() {
     return vrRoomSupport;
@@ -85,14 +83,20 @@ public class ScanResult {
     this.tableName = tableName;
   }
 
-  private List<String> assets = new ArrayList<>();
-
   public List<String> getAssets() {
     return assets;
   }
 
   public void setAssets(List<String> assets) {
     this.assets = assets;
+  }
+
+  public List<String> getScripts() {
+    return scripts;
+  }
+
+  public void addScript(String script) {
+    this.scripts.add(script);
   }
 
   public String getHsFileName() {

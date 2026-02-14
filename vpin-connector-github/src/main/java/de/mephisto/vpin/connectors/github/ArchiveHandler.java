@@ -8,12 +8,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class ArchiveHandler {
-  private final static Logger LOG = LoggerFactory.getLogger(ArchiveHandler.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @NonNull
   private final File archiveFile;
@@ -37,7 +39,7 @@ public class ArchiveHandler {
     this.installLog = installLog;
     this.rootFileIndicators = rootFileIndicators;
     this.includedFiles = includedFiles;
-    this.excludedFiles = excludedFiles;
+    this.excludedFiles = excludedFiles.stream().map(f -> f.toLowerCase()).collect(Collectors.toList());
   }
 
   public void diff(@NonNull File destinationDir) {
@@ -232,12 +234,12 @@ public class ArchiveHandler {
       }
     }
 
-    if (this.excludedFiles.contains(name)) {
+    if (this.excludedFiles.contains(name.toLowerCase())) {
       return true;
     }
 
     for (String excludedFile : this.excludedFiles) {
-      if (excludedFile.startsWith(".") && name.endsWith(excludedFile)) {
+      if (excludedFile.startsWith(".") && name.toLowerCase().endsWith(excludedFile)) {
         return true;
       }
     }

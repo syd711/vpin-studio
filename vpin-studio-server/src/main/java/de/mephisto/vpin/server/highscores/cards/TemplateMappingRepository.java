@@ -5,5 +5,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TemplateMappingRepository extends JpaRepository<TemplateMapping, Long> {
-
 }

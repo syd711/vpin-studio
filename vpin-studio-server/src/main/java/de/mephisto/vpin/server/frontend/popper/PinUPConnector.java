@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.frontend.popper.PopperSettings;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
+import de.mephisto.vpin.restclient.tagging.TaggingUtil;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.server.competitions.CompetitionIdFactory;
@@ -33,6 +34,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -291,7 +293,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     }
   }
 
-  public void saveTableDetails(int id, TableDetails tableDetails) {
+  public TableDetails saveTableDetails(int id, TableDetails tableDetails) {
     Connection connect = this.connect();
     try {
       StringBuilder stmtBuilder = new StringBuilder("UPDATE Games SET ");
@@ -405,6 +407,8 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     finally {
       this.disconnect(connect);
     }
+
+    return getTableDetails(id);
   }
 
   @Override
@@ -646,7 +650,9 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       ResultSet rs = statement.executeQuery();
       if (rs.next()) {
         String optionString = rs.getString("GlobalOptions");
+        String gobalMediaDir = rs.getString("GlobalMediaDir");
         settings = new PopperSettings();
+        settings.setGlobalMediaDir(gobalMediaDir);
         settings.setScriptData(optionString);
       }
       rs.close();
@@ -665,8 +671,9 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     Connection connect = this.connect();
     try {
       PopperSettings options = JsonSettings.objectMapper.convertValue(data, PopperSettings.class);
-      PreparedStatement preparedStatement = Objects.requireNonNull(connect).prepareStatement("UPDATE GlobalSettings SET 'GlobalOptions'=?");
+      PreparedStatement preparedStatement = Objects.requireNonNull(connect).prepareStatement("UPDATE GlobalSettings SET 'GlobalOptions'=?, 'GlobalMediaDir'=?");
       preparedStatement.setString(1, options.toString());
+      preparedStatement.setString(2, options.getGlobalMediaDir());
       preparedStatement.executeUpdate();
       preparedStatement.close();
       LOG.info("Updated of custom options");
@@ -780,6 +787,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
             SubnodeConfiguration sectionNode = iniConfiguration.getSection(section);
             String name = sectionMappings.get(section);
             if (name != null) {
+              display.setTechnicalName(section);
               display.setName(name);
               display.setScreen(VPinScreen.valueOfScreen(name));
               display.setX(sectionNode.getInt("ScreenXPos"));
@@ -813,36 +821,45 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
    *
    * @return the generated game id.
    */
-  public int importGame(int emulatorId, @NonNull String gameName, @NonNull String gameFileName, @NonNull String gameDisplayName, @Nullable String launchCustomVar, @NonNull java.util.Date dateFileUpdated) {
+  public int importGame(@NonNull TableDetails tableDetails) {
     Connection connect = this.connect();
     try {
       PreparedStatement preparedStatement = Objects.requireNonNull(connect).prepareStatement("INSERT INTO Games (EMUID, GameName, GameFileName, GameDisplay, Visible, LaunchCustomVar, DateAdded, DateFileUpdated, " +
-          "Author, TAGS, Category, MediaSearch, IPDBNum, AltRunMode) " +
-          "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
-      preparedStatement.setInt(1, emulatorId);
-      preparedStatement.setString(2, gameName);
-      preparedStatement.setString(3, gameFileName);
-      preparedStatement.setString(4, gameDisplayName);
+          "Author, TAGS, Category, MediaSearch, IPDBNum, AltRunMode, GAMEVER, GameType, GameTheme, GameYear, Manufact, GKeepDisplays, NumPlayers, Notes, ROM) " +
+          "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+      preparedStatement.setInt(1, tableDetails.getEmulatorId());
+      preparedStatement.setString(2, tableDetails.getGameName());
+      preparedStatement.setString(3, tableDetails.getGameFileName());
+      preparedStatement.setString(4, tableDetails.getGameDisplayName());
       preparedStatement.setInt(5, 1);
-      preparedStatement.setString(6, launchCustomVar != null ? launchCustomVar : "");
+      preparedStatement.setString(6, tableDetails.getLaunchCustomVar() != null ? tableDetails.getLaunchCustomVar() : "");
 
       SimpleDateFormat sdf = new SimpleDateFormat(POPPER_DATE_FORMAT);
       Timestamp timestamp = new Timestamp(System.currentTimeMillis());
       String ts = sdf.format(timestamp);
       preparedStatement.setString(7, ts);
-      preparedStatement.setString(8, sdf.format(dateFileUpdated));
+      preparedStatement.setString(8, tableDetails.getDateModified() != null ? sdf.format(tableDetails.getDateModified()) : sdf.format(new java.util.Date()));
 
-      preparedStatement.setString(9, "");
-      preparedStatement.setString(10, "");
-      preparedStatement.setString(11, "");
+      preparedStatement.setString(9, tableDetails.getAuthor());
+      preparedStatement.setString(10, tableDetails.getTags());
+      preparedStatement.setString(11, tableDetails.getCategory());
       preparedStatement.setString(12, "");
       preparedStatement.setString(13, "");
-      preparedStatement.setString(14, "");
+      preparedStatement.setString(14, tableDetails.getAltRunMode());
+      preparedStatement.setString(15, tableDetails.getGameVersion());
+      preparedStatement.setString(16, tableDetails.getGameType());
+      preparedStatement.setString(17, tableDetails.getGameTheme());
+      preparedStatement.setInt(18, tableDetails.getGameYear() != null ? tableDetails.getGameYear() : 0);
+      preparedStatement.setString(19, tableDetails.getManufacturer());
+      preparedStatement.setString(20, tableDetails.getKeepDisplays());
+      preparedStatement.setInt(21, tableDetails.getNumberOfPlayers() != null ? tableDetails.getNumberOfPlayers() : 0);
+      preparedStatement.setString(22, tableDetails.getNotes());
+      preparedStatement.setString(23, tableDetails.getRomName());
 
       preparedStatement.executeUpdate();
       preparedStatement.close();
 
-      LOG.info("Added game entry for '" + gameName + "', file name '" + gameFileName + "'");
+      LOG.info("Added game entry for '" + tableDetails.getGameName() + "', file name '" + tableDetails.getGameFileName() + "', emulator " + tableDetails.getEmulatorId());
       try (ResultSet keys = preparedStatement.getGeneratedKeys()) {
         if (keys.next()) {
           return keys.getInt(1);
@@ -850,7 +867,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to update game table:" + e.getMessage(), e);
+      LOG.error("Failed to update game table: {}", e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -952,6 +969,14 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
   @NonNull
   public Playlist getPlaylist(int id) {
+    if (id == PlaylistRepresentation.PLAYLIST_FAVORITE_ID) {
+      return getFavsPlaylist();
+    }
+    if (id == PlaylistRepresentation.PLAYLIST_GLOBALFAV_ID) {
+      return getGlobalFavsPlaylist();
+    }
+    // else
+
     Playlist playlist = new Playlist();
     Connection connect = this.connect();
     try {
@@ -1022,13 +1047,8 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Playlists;");
 
-      Playlist favsPlaylist = new Playlist();
-      favsPlaylist.setId(PlaylistRepresentation.PLAYLIST_FAVORITE_ID);
-      favsPlaylist.setName("Playlist Favorites");
-
-      Playlist globalFavsPlaylist = new Playlist();
-      globalFavsPlaylist.setId(PlaylistRepresentation.PLAYLIST_GLOBALFAV_ID);
-      globalFavsPlaylist.setName("Global Favorites");
+      Playlist favsPlaylist = getFavsPlaylist();
+      Playlist globalFavsPlaylist = getGlobalFavsPlaylist();
 
       result.add(favsPlaylist);
       result.add(globalFavsPlaylist);
@@ -1050,6 +1070,20 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
     Collections.sort(result, Comparator.comparingInt(Playlist::getDisplayOrder));
     return result;
+  }
+
+  private Playlist getGlobalFavsPlaylist() {
+    Playlist globalFavsPlaylist = new Playlist();
+    globalFavsPlaylist.setId(PlaylistRepresentation.PLAYLIST_GLOBALFAV_ID);
+    globalFavsPlaylist.setName("Global Favorites");
+    return globalFavsPlaylist;
+  }
+
+  private Playlist getFavsPlaylist() {
+    Playlist favsPlaylist = new Playlist();
+    favsPlaylist.setId(PlaylistRepresentation.PLAYLIST_FAVORITE_ID);
+    favsPlaylist.setName("Playlist Favorites");
+    return favsPlaylist;
   }
 
 
@@ -1135,7 +1169,6 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     }
   }
 
-
   @Override
   public void savePlaylistOrder(PlaylistOrder playlistOrder) {
     Map<Integer, Integer> playlistToOrderId = playlistOrder.getPlaylistToOrderId();
@@ -1177,7 +1210,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.setString(index++, ""); //no field for notes
       preparedStatement.setInt(index++, playlist.isSqlPlayList() ? 1 : 0);
       preparedStatement.setString(index++, playlist.getPlayListSQL());
-      preparedStatement.setInt(index++, playlist.getMenuColor());
+      preparedStatement.setInt(index++, playlist.getMenuColor() != null ? playlist.getMenuColor() : Integer.valueOf("FFFFFF", 16));
       preparedStatement.setInt(index++, playlist.getPassCode());
       preparedStatement.setInt(index++, playlist.isUglyList() ? 1 : 0);
       preparedStatement.setInt(index++, playlist.isHideSysLists() ? 1 : 0);
@@ -1322,6 +1355,14 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.executeUpdate();
       preparedStatement.close();
       LOG.info("Deleted emulator {}", emulatorId);
+
+
+      PreparedStatement preparedStatementGames = Objects.requireNonNull(connect).prepareStatement("DELETE FROM Games WHERE EMUID = ?");
+      preparedStatementGames.setInt(1, emulatorId);
+      preparedStatementGames.executeUpdate();
+      preparedStatementGames.close();
+      LOG.info("Deleted games from emulator {}", emulatorId);
+
       return true;
     }
     catch (SQLException e) {
@@ -1375,15 +1416,19 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     try {
       int index = 1;
 
+      if (emulator.getSafeName() == null) {
+        emulator.setSafeName(emulator.getName());
+      }
+
       PreparedStatement preparedStatement = null;
       if (emulator.getId() < 0) {
-        preparedStatement = Objects.requireNonNull(connect).prepareStatement("INSERT OR REPLACE INTO Emulators (" +
-                "EmuName, Description, DirGames, DirMedia, EmuDisplay, Visible, DirRoms, EmuLaunchDir, GamesExt, LaunchScript, PostScript) values (?,?,?,?,?,?,?,?,?,?)"
+        preparedStatement = Objects.requireNonNull(connect).prepareStatement("INSERT INTO Emulators (" +
+                "EmuName, Description, DirGames, DirMedia, EmuDisplay, Visible, DirRoms, EmuLaunchDir, GamesExt, KeepDisplays, LaunchScript, PostScript) values (?,?,?,?,?,?,?,?,?,?,?,?)"
             , Statement.RETURN_GENERATED_KEYS);
       }
       else {
         preparedStatement = Objects.requireNonNull(connect).prepareStatement("INSERT OR REPLACE INTO Emulators (" +
-                "EMUID, EmuName, Description, DirGames, DirMedia, EmuDisplay, Visible, DirRoms, EmuLaunchDir, GamesExt, LaunchScript, PostScript) values (?,?,?,?,?,?,?,?,?,?,?,?)"
+                "EMUID, EmuName, Description, DirGames, DirMedia, EmuDisplay, Visible, DirRoms, EmuLaunchDir, GamesExt, KeepDisplays, LaunchScript, PostScript) values (?,?,?,?,?,?,?,?,?,?,?,?,?)"
             , Statement.RETURN_GENERATED_KEYS);
         preparedStatement.setInt(index++, emulator.getId());
       }
@@ -1397,6 +1442,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.setString(index++, emulator.getRomDirectory());
       preparedStatement.setString(index++, emulator.getInstallationDirectory());
       preparedStatement.setString(index++, emulator.getGameExt());
+      preparedStatement.setString(index++, emulator.getKeepDisplays());
       preparedStatement.setString(index++, emulator.getLaunchScript() != null ? emulator.getLaunchScript().getScript() : null);
       preparedStatement.setString(index++, emulator.getExitScript() != null ? emulator.getExitScript().getScript() : null);
       preparedStatement.executeUpdate();
@@ -1451,8 +1497,9 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     String emuName = rs.getString("EmuName");
     String dirGames = rs.getString("DirGames");
     String extension = rs.getString("GamesExt");
+    String launchScript = rs.getString("LaunchScript");
 
-    EmulatorType type = getEmulatorType(emuName, dirGames, extension);
+    EmulatorType type = getEmulatorType(emuName, dirGames, extension, launchScript);
 
     GameEmulator e = new GameEmulator();
     e.setType(type);
@@ -1464,6 +1511,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     e.setMediaDirectory(rs.getString("DirMedia"));
     e.setRomDirectory(rs.getString("DirRoms"));
     e.setDescription(rs.getString("Description"));
+    e.setKeepDisplays(rs.getString("KeepDisplays"));
     e.setInstallationDirectory(rs.getString("EmuLaunchDir"));
     e.getLaunchScript().setScript(rs.getString("LaunchScript"));
     e.getExitScript().setScript(rs.getString("PostScript"));
@@ -1499,7 +1547,23 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   }
 
   @NonNull
-  private EmulatorType getEmulatorType(String emuName, String dirGames, String extension) {
+  private EmulatorType getEmulatorType(String emuName, String dirGames, String extension, String launchScript) {
+    if (emuName.toLowerCase().contains("fx")) {
+      if (launchScript != null && launchScript.toLowerCase().contains("fx3")) {
+        return EmulatorType.ZenFX3;
+      }
+      if (launchScript != null && launchScript.toLowerCase().contains("fx2")) {
+        return EmulatorType.ZenFX2;
+      }
+      return EmulatorType.ZenFX;
+    }
+
+    if (emuName.toLowerCase().contains("pinballm")
+        || emuName.toLowerCase().contains("pinball m")
+        || (launchScript != null && launchScript.toLowerCase().contains("pinballm"))) {
+      return EmulatorType.PinballM;
+    }
+
     EmulatorType type = EmulatorType.fromExtension(extension);
     if (type != null) {
       return type;
@@ -1947,16 +2011,18 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       emuName = emuName.replaceAll("'", "''");
       Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Emulators where EmuName = '" + emuName + "';");
-      rs.next();
-      script = rs.getString(LAUNCH_SCRIPT);
-      if (script == null) {
-        script = "";
+      while (rs.next()) {
+        script = rs.getString(LAUNCH_SCRIPT);
+        if (script == null) {
+          script = "";
+        }
+        break;
       }
       rs.close();
       statement.close();
     }
     catch (SQLException e) {
-      LOG.error("Failed to read startup script or " + emuName + ": " + e.getMessage(), e);
+      LOG.error("Failed to read startup script of emulator \"" + emuName + "\": " + e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -1972,10 +2038,12 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       emuName = emuName.replaceAll("'", "''");
       Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Emulators where EmuName = '" + emuName + "';");
-      rs.next();
-      script = rs.getString(POST_SCRIPT);
-      if (script == null) {
-        script = "";
+      while (rs.next()) {
+        script = rs.getString(POST_SCRIPT);
+        if (script == null) {
+          script = "";
+        }
+        break;
       }
       rs.close();
       statement.close();
@@ -2114,6 +2182,8 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     game.setGameName(gameName);
     game.setDateAdded(getDate(rs, "DateAdded"));
     game.setDateUpdated(getDate(rs, "DateUpdated"));
+    game.setTags(TaggingUtil.getTags(rs.getString("TAGS")));
+    game.setMediaSearch(rs.getString("MediaSearch"));
 
     game.setVersion(rs.getString("GAMEVER"));
     game.setAltLauncherExe(rs.getString("ALTEXE"));
@@ -2313,7 +2383,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   @Override
   public MediaAccessStrategy getMediaAccessStrategy() {
     if (this.pinUPMediaAccessStrategy == null) {
-      this.pinUPMediaAccessStrategy = new PinUPMediaAccessStrategy(getInstallationFolder());
+      this.pinUPMediaAccessStrategy = new PinUPMediaAccessStrategy(this);
     }
     return pinUPMediaAccessStrategy;
   }
@@ -2385,6 +2455,18 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   public boolean killFrontend() {
     NirCmd.setTaskBarVisible(true);
     pupEventEmitter.sendPupEvent(11, 2);
+
+    if (systemService.isPinballEmulatorRunning()) {
+      systemService.sendKey(KeyEvent.VK_Q);
+      //give vpx time to quit
+      try {
+        Thread.sleep(300);
+      }
+      catch (InterruptedException e) {
+        //ignore
+      }
+    }
+
     List<ProcessHandle> pinUpProcesses = ProcessHandle
         .allProcesses()
         .filter(p -> p.info().command().isPresent() &&
@@ -2397,6 +2479,10 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
                     p.info().command().get().contains("PinUpPackEditor") ||
                     p.info().command().get().contains("VPinballX") ||
                     p.info().command().get().startsWith("VPinball") ||
+                    p.info().command().get().contains("PinballFX") ||
+                    p.info().command().get().contains("Pinball FX") ||
+                    p.info().command().get().contains("PinballM") ||
+                    p.info().command().get().contains("Zaccaria") ||
                     p.info().command().get().contains("Future Pinball") ||
                     p.info().command().get().contains("B2SBackglassServerEXE"))).collect(Collectors.toList());
 

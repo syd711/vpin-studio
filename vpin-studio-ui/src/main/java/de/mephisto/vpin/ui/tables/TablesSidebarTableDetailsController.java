@@ -1,8 +1,10 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.Frontend;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -10,28 +12,37 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
 import de.mephisto.vpin.ui.tables.models.TableStatus;
+import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
 import de.mephisto.vpin.ui.tables.panels.UploadsButtonController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FrontendUtil;
+import de.mephisto.vpin.ui.util.tags.TagButton;
+import edu.umd.cs.findbugs.annotations.Nullable;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.*;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablesSidebarTableDetailsController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarTableDetailsController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private VBox tableDataBox;
@@ -70,6 +81,9 @@ public class TablesSidebarTableDetailsController implements Initializable {
   private Label gameDisplayName;
 
   @FXML
+  private Label mediaSearch;
+
+  @FXML
   private Label gameTheme;
 
   @FXML
@@ -94,7 +108,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
   private Label numberOfPlayers;
 
   @FXML
-  private Label tags;
+  private BorderPane tags;
 
   @FXML
   private Label category;
@@ -187,6 +201,34 @@ public class TablesSidebarTableDetailsController implements Initializable {
   @FXML
   private VBox screenFields;
 
+  @FXML
+  private VBox tableFilesBox;
+
+  @FXML
+  private Label resFileLabel;
+  @FXML
+  private Label iniFileLabel;
+  @FXML
+  private Label povFileLabel;
+  @FXML
+  private Button resFileUploadBtn;
+  @FXML
+  private Button iniFileUploadBtn;
+  @FXML
+  private Button povFileUploadBtn;
+  @FXML
+  private Button resFileDeleteBtn;
+  @FXML
+  private Button iniFileDeleteBtn;
+  @FXML
+  private Button povFileDeleteBtn;
+  @FXML
+  private Button resFileEditBtn;
+  @FXML
+  private Button iniFileEditBtn;
+  @FXML
+  private Button povFileEditBtn;
+
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
@@ -194,6 +236,99 @@ public class TablesSidebarTableDetailsController implements Initializable {
 
   // Add a public no-args constructor
   public TablesSidebarTableDetailsController() {
+  }
+
+  @FXML
+  private void onIniUpload() {
+    if (game.isPresent()) {
+      TableDialogs.directUpload(Studio.stage, AssetType.INI, game.get(), null);
+    }
+  }
+
+  @FXML
+  private void onResUpload() {
+    if (game.isPresent()) {
+      TableDialogs.directUpload(Studio.stage, AssetType.RES, game.get(), null);
+    }
+  }
+
+  @FXML
+  private void onPovUpload() {
+    if (game.isPresent()) {
+      TableDialogs.directUpload(Studio.stage, AssetType.POV, game.get(), null);
+    }
+  }
+
+  @FXML
+  private void onIniEdit() {
+    if (game.isPresent()) {
+      try {
+        GameRepresentation gameRepresentation = game.get();
+        String path = gameRepresentation.getIniPath();
+        Studio.editGameFile(gameRepresentation, path);
+      }
+      catch (Exception e) {
+        LOG.error("Failed to open .ini file: {}", e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open .ini file: " + e.getMessage());
+      }
+    }
+  }
+
+  @FXML
+  private void onResEdit() {
+    if (game.isPresent()) {
+      try {
+        GameRepresentation gameRepresentation = game.get();
+        String path = gameRepresentation.getResPath();
+        Studio.editGameFile(gameRepresentation, path);
+      }
+      catch (Exception e) {
+        LOG.error("Failed to open .res file: {}", e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open .res file: " + e.getMessage());
+      }
+    }
+  }
+
+  @FXML
+  private void onPovEdit() {
+    if (game.isPresent()) {
+      try {
+        GameRepresentation gameRepresentation = game.get();
+        String path = gameRepresentation.getPovPath();
+        Studio.editGameFile(gameRepresentation, path);
+      }
+      catch (Exception e) {
+        LOG.error("Failed to open .pov file: {}", e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open .pov file: " + e.getMessage());
+      }
+    }
+  }
+
+  @FXML
+  private void onIniDelete() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete .ini for table '" + this.game.get().getGameDisplayName() + "'?");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      client.getIniService().delete(this.game.get().getId());
+      EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
+    }
+  }
+
+  @FXML
+  private void onResDelete() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete .res for table '" + this.game.get().getGameDisplayName() + "'?");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      client.getResService().delete(this.game.get().getId());
+      EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
+    }
+  }
+
+  @FXML
+  private void onPovDelete() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete POV file for table '" + this.game.get().getGameDisplayName() + "'?");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      client.getVpxService().deletePOV(this.game.get().getId());
+      EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
+    }
   }
 
   @FXML
@@ -262,6 +397,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
   public void refreshView(Optional<GameRepresentation> g) {
     this.game = g;
 
+    tableFilesBox.setVisible(false);
     if (g.isEmpty()) {
       uploadsButtonController.setData(Collections.emptyList(), tablesSidebarController.getTableOverviewController().getEmulatorSelection());
     }
@@ -269,13 +405,10 @@ public class TablesSidebarTableDetailsController implements Initializable {
       uploadsButtonController.setData(Arrays.asList(g.get()), tablesSidebarController.getTableOverviewController().getEmulatorSelection());
     }
 
-
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
-
-    if (!frontendType.supportStandardFields()) {
+    if (!Features.FIELDS_STANDARD) {
       tableDataBox.getChildren().remove(gameMetaDataFields);
     }
-    if (!frontendType.isNotStandalone()) {
+    if (Features.IS_STANDALONE) {
       tableDataBox.getChildren().remove(screenFields);
     }
 
@@ -287,7 +420,10 @@ public class TablesSidebarTableDetailsController implements Initializable {
     GameRepresentation game = g.orElse(null);
 
     if (game != null) {
-      autoFillBtn.setVisible(game.isVpxGame() && frontendType.supportStandardFields());
+      GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
+      tableFilesBox.setVisible(gameEmulator != null && gameEmulator.isVpxEmulator());
+
+      autoFillBtn.setVisible(client.getEmulatorService().isVpxGame(game) && Features.FIELDS_STANDARD);
 
       dateAdded.setText(game.getDateAdded() == null ? "-" : DateFormat.getDateTimeInstance().format(game.getDateAdded()));
       emulatorLabel.setText(client.getEmulatorService().getGameEmulator(game.getEmulatorId()).getName());
@@ -298,8 +434,17 @@ public class TablesSidebarTableDetailsController implements Initializable {
       // will be overriden by tableDetails status
       status.setText(game.isDisabled() ? "Disabled" : "Enabled");
       notes.setText(StringUtils.defaultIfEmpty(game.getComment(), ""));
-
       romName.setText(StringUtils.defaultIfEmpty(game.getRom(), "-"));
+
+      this.resFileLabel.setText(StringUtils.defaultIfEmpty(game.getResPath(), "-"));
+      this.resFileDeleteBtn.setDisable(game.getResPath() == null);
+      this.resFileEditBtn.setDisable(game.getResPath() == null);
+      this.iniFileLabel.setText(StringUtils.defaultIfEmpty(game.getIniPath(), "-"));
+      this.iniFileDeleteBtn.setDisable(game.getIniPath() == null);
+      this.iniFileEditBtn.setDisable(game.getIniPath() == null);
+      this.povFileLabel.setText(StringUtils.defaultIfEmpty(game.getPovPath(), "-"));
+      this.povFileDeleteBtn.setDisable(game.getPovPath() == null);
+      this.povFileEditBtn.setDisable(game.getPovPath() == null);
     }
     else {
       autoFillBtn.setVisible(false);
@@ -311,23 +456,66 @@ public class TablesSidebarTableDetailsController implements Initializable {
       gameDisplayName.setText("-");
       status.setText("-");
       notes.setText("");
-
       romName.setText("-");
+
+      this.povFileDeleteBtn.setDisable(true);
+      this.povFileUploadBtn.setDisable(true);
+      this.povFileEditBtn.setDisable(true);
+
+      this.resFileDeleteBtn.setDisable(true);
+      this.resFileUploadBtn.setDisable(true);
+      this.resFileEditBtn.setDisable(true);
+
+      this.iniFileDeleteBtn.setDisable(true);
+      this.iniFileUploadBtn.setDisable(true);
+      this.iniFileEditBtn.setDisable(true);
+
+      this.resFileLabel.setText("-");
+      this.iniFileLabel.setText("-");
+      this.povFileLabel.setText("-");
     }
 
+    JFXFuture.supplyAsync(() -> {
+      return game != null ? Studio.client.getFrontendService().getTableDetails(game.getId()) : null;
+    }).thenAcceptLater((tableDetails) -> {
+      refreshTableDetails(tableDetails);
+    });
+  }
 
-    TableDetails tableDetails = game != null ? Studio.client.getFrontendService().getTableDetails(game.getId()) : null;
-    if (tableDetails != null) {
-
+  private void refreshTableDetails(@Nullable TableDetails tableDetails) {
+    if (tableDetails != null && game.isPresent()) {
+      GameRepresentation g = game.get();
       extrasPanel.setVisible(tableDetails.isPopper15());
 
+      mediaSearch.setText(!StringUtils.isEmpty(tableDetails.getMediaSearch()) ? tableDetails.getMediaSearch() : "-");
       gameType.setText(tableDetails.getGameType() != null ? tableDetails.getGameType() : "-");
       gameTheme.setText(StringUtils.isEmpty(tableDetails.getGameTheme()) ? "-" : tableDetails.getGameTheme());
       gameYear.setText(tableDetails.getGameYear() == null ? "-" : String.valueOf(tableDetails.getGameYear()));
       manufacturer.setText(StringUtils.isEmpty(tableDetails.getManufacturer()) ? "-" : tableDetails.getManufacturer());
       numberOfPlayers.setText(tableDetails.getNumberOfPlayers() == null ? "-" : String.valueOf(tableDetails.getNumberOfPlayers()));
       altLaunch.setText(tableDetails.getAltLaunchExe() == null ? "-" : tableDetails.getAltLaunchExe());
-      tags.setText(StringUtils.isEmpty(tableDetails.getTags()) ? "-" : tableDetails.getTags());
+
+      FlowPane tagsRoot = new FlowPane(3, 3);
+      tags.setCenter(tagsRoot);
+
+      JFXFuture.supplyAsync(() -> {
+        return client.getTaggingService().getTags();
+      }).thenAcceptLater((allTags) -> {
+        for (String tagsValue : g.getTags()) {
+          TagButton tagButton = new TagButton(g.getId(), tableDetails, allTags, tagsValue);
+          tagButton.setButtonListener(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+              BaseFilterController<GameRepresentation, GameRepresentationModel> filterController = tablesSidebarController.getTableOverviewController().getFilterController();
+              TableFilterController tableFilterController = (TableFilterController) filterController;
+              tableFilterController.getTagField().toggleTag(tagsValue);
+            }
+          });
+          tagsRoot.getChildren().add(tagButton);
+        }
+      });
+
+
       category.setText(StringUtils.isEmpty(tableDetails.getCategory()) ? "-" : tableDetails.getCategory());
       author.setText(StringUtils.isEmpty(tableDetails.getAuthor()) ? "-" : tableDetails.getAuthor());
       launchCustomVar.setText(StringUtils.isEmpty(tableDetails.getLaunchCustomVar()) ? "-" : tableDetails.getLaunchCustomVar());
@@ -353,7 +541,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
       }
 
       if (tableDetails.getStatus() >= 0) {
-        List<TableStatus> statuses = TableDataController.supportedStatuses(frontendType);
+        List<TableStatus> statuses = TableDataController.supportedStatuses();
         Optional<TableStatus> first = statuses.stream().filter(status -> status.value == tableDetails.getStatus()).findFirst();
         if (first.isPresent()) {
           status.setText(first.get().label);
@@ -381,13 +569,14 @@ public class TablesSidebarTableDetailsController implements Initializable {
       labelLastPlayed.setText("-");
       labelTimesPlayed.setText("-");
 
+      mediaSearch.setText("-");
       isMod.setText("-");
       gameYear.setText("-");
       gameType.setText("-");
       gameTheme.setText("-");
       manufacturer.setText("-");
       numberOfPlayers.setText("-");
-      tags.setText("-");
+      tags.setCenter(new Label("-"));
       category.setText("-");
       author.setText("-");
       launchCustomVar.setText("-");
@@ -416,13 +605,17 @@ public class TablesSidebarTableDetailsController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    tableFilesBox.managedProperty().bindBidirectional(tableFilesBox.visibleProperty());
+
     autoFillBtn.managedProperty().bindBidirectional(autoFillBtn.visibleProperty());
     extrasPanel.managedProperty().bindBidirectional(extrasPanel.visibleProperty());
     popperRuntimeFields.managedProperty().bindBidirectional(popperRuntimeFields.visibleProperty());
     gameMetaDataFields.managedProperty().bindBidirectional(gameMetaDataFields.visibleProperty());
 
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
-    popperRuntimeFields.setVisible(frontendType.supportExtendedFields());
+    popperRuntimeFields.setVisible(Features.FIELDS_EXTENDED);
+
+
+    tags.setCenter(new Label("-"));
 
     try {
       FXMLLoader loader = new FXMLLoader(UploadsButtonController.class.getResource("uploads-btn.fxml"));

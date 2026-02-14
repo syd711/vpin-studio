@@ -1,11 +1,14 @@
 package de.mephisto.vpin.ui.cards;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.cards.CardTemplate;
+import de.mephisto.vpin.restclient.cards.CardTemplateType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import java.util.Iterator;
 import java.util.List;
 
-import static de.mephisto.vpin.commons.fx.pausemenu.PauseMenuUIDefaults.MAX_REFRESH_COUNT;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TemplateAssigmentProgressModel extends ProgressModel<GameRepresentation> {
@@ -21,13 +23,20 @@ public class TemplateAssigmentProgressModel extends ProgressModel<GameRepresenta
   private List<GameRepresentation> games;
 
   private final Iterator<GameRepresentation> gameIterator;
-  private final long templateId;
+  private final CardTemplate cardTemplate;
+  private final boolean switchToCustom;
+  private final CardTemplateType templateType;
 
-  public TemplateAssigmentProgressModel(List<GameRepresentation> games, long templateId) {
+  /**
+   * BaseTemplate is used when CardTemplate is null, the template use 
+   */
+  public TemplateAssigmentProgressModel(List<GameRepresentation> games, @Nullable CardTemplate cardTemplate, boolean switchToCustom, CardTemplateType templateType) {
     super("Applying Template");
     this.games = games;
     this.gameIterator = games.iterator();
-    this.templateId = templateId;
+    this.cardTemplate = cardTemplate;
+    this.switchToCustom = switchToCustom;
+    this.templateType = templateType;
   }
 
   @Override
@@ -61,27 +70,14 @@ public class TemplateAssigmentProgressModel extends ProgressModel<GameRepresenta
   }
 
   @Override
-  public void finalizeModel(ProgressResultModel progressResultModel) {
-    super.finalizeModel(progressResultModel);
-
-    if (games.size() > MAX_REFRESH_COUNT) {
-      EventManager.getInstance().notifyTablesChanged();
-    }
-    else {
-      for (GameRepresentation game : games) {
-        EventManager.getInstance().notifyTableChange(game.getId(), null);
-      }
-    }
-  }
-
-  @Override
   public void processNext(ProgressResultModel progressResultModel, GameRepresentation game) {
-    game.setTemplateId(templateId);
     try {
-      client.getGameService().saveGame(game);
+      client.getHighscoreCardTemplatesClient().assignTemplate(game, cardTemplate.getId(), switchToCustom, templateType);
+      client.getHighscoreCardTemplatesClient().getTemplates();
+      EventManager.getInstance().notifyTableChange(game.getId(), null);
     }
     catch (Exception e) {
-      LOG.error("Failed to save template mapping: " + e.getMessage(), e);
+      LOG.error("Failed to save template mapping: {}", e.getMessage(), e);
       Platform.runLater(() -> {
         WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save template mapping: " + e.getMessage());
       });

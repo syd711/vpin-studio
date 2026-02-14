@@ -19,16 +19,24 @@ public class MediaMonitor implements FolderChangeListener {
 
   @NonNull
   private final File folder;
+
+  private FolderMonitoringThread monitoringThread;
   private List<File> files = new ArrayList<>();
 
   public MediaMonitor(@NonNull File folder) {
     this.folder = folder;
     if (folder.exists()) {
-      FolderMonitoringThread monitoringThread = new FolderMonitoringThread(this, true, false);
+      monitoringThread = new FolderMonitoringThread(this, true, false);
       monitoringThread.setFolder(folder);
       monitoringThread.startMonitoring();
 
       notifyFolderChange(folder, null);
+    }
+  }
+
+  public void stopMonitoring() {
+    if (monitoringThread != null) {
+      monitoringThread.stopMonitoring();
     }
   }
 
@@ -43,7 +51,7 @@ public class MediaMonitor implements FolderChangeListener {
 
   @Override
   public void notifyFolderChange(@NonNull File f, @Nullable File file) {
-    LOG.info("Notified change for \"" + folder.getAbsolutePath() + "\"");
+//    LOG.info("Notified change for \"" + folder.getAbsolutePath() + "\"");
     File[] list = folder.listFiles(new FilenameFilter() {
       @Override
       public boolean accept(File dir, String name) {

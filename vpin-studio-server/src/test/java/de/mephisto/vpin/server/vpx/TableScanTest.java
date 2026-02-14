@@ -11,9 +11,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TableScanTest {
 
+  private final static File scripts = new File("../testsystem/vPinball/VisualPinball/scripts");
+  private final static File folder = new File("../testsystem/vPinball/VisualPinball/Tables");
+
   @Test
   public void testTableScan1() {
-    ScanResult scan = VPXFileScanner.scan(new File("../testsystem/vPinball/VisualPinball/Tables/" + EM_TABLE_NAME));
+    File table = new File(folder, EM_TABLE_NAME);
+    ScanResult scan = VPXFileScanner.scan(table, scripts);
     assertEquals("Baseball_70VPX.txt", scan.getHsFileName());
     assertEquals("Baseball_1970", scan.getRom());
     assertEquals("Baseball_1970", scan.getTableName());
@@ -21,15 +25,15 @@ public class TableScanTest {
 
   @Test
   public void testTableScan2() {
-    File table = new File("../testsystem/vPinball/VisualPinball/Tables/" + VPREG_TABLE_NAME);
-    ScanResult scan = VPXFileScanner.scan(table);
+    File table = new File(folder, VPREG_TABLE_NAME);
+    ScanResult scan = VPXFileScanner.scan(table, scripts);
     assertEquals(VPREG_ROM_NAME, scan.getRom());
   }
 
   @Test
   public void testTableScan3() throws Exception {
     File table = new File("../testsystem/vPinball/VisualPinball/Tables/" + NVRAM_TABLE_NAME);
-    ScanResult scan = VPXFileScanner.scan(table);
+    ScanResult scan = VPXFileScanner.scan(table, scripts);
     assertEquals(NVRAM_ROM_NAME, scan.getRom());
   }
 

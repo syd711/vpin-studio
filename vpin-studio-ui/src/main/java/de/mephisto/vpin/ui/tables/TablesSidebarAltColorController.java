@@ -2,6 +2,8 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.restclient.altcolor.AltColor;
@@ -22,14 +24,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.client;
+
 public class TablesSidebarAltColorController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarAltColorController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private Button uploadBtn;
@@ -105,7 +110,7 @@ public class TablesSidebarAltColorController implements Initializable {
   private void onDelete() {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete ALT Color files for table '" + this.game.get().getGameDisplayName() + "'?");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      Studio.client.getAltColorService().delete(this.game.get().getId());
+      client.getAltColorService().delete(this.game.get().getId());
       EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
     }
   }
@@ -116,8 +121,8 @@ public class TablesSidebarAltColorController implements Initializable {
 
     Platform.runLater(() -> {
       new Thread(() -> {
-        Studio.client.getDmdService().clearCache();
-        Studio.client.getGameService().reload(this.game.get().getId());
+        client.getDmdService().clearCache();
+        client.getGameService().reload(this.game.get().getId());
         this.game.ifPresent(gameRepresentation -> EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), gameRepresentation.getRom()));
 
         Platform.runLater(() -> {
@@ -178,7 +183,7 @@ public class TablesSidebarAltColorController implements Initializable {
     if (g.isPresent()) {
       GameRepresentation game = g.get();
 
-      AltColor altColor = Studio.client.getAltColorService().getAltColor(game.getId());
+      AltColor altColor = client.getAltColorService().getAltColor(game.getId());
       boolean altColorAvailable = altColor.isAvailable();
 
       restoreBtn.setDisable(altColor.getBackedUpFiles().isEmpty());
@@ -189,14 +194,17 @@ public class TablesSidebarAltColorController implements Initializable {
       dataBox.setVisible(altColorAvailable);
       emptyDataBox.setVisible(!altColorAvailable);
 
-      uploadBtn.setDisable(StringUtils.isEmpty(game.getRom()));
+      GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
+      boolean validVPX = client.getEmulatorService().isVpxGame(game) && StringUtils.isEmpty(game.getRom());
+      boolean validEmu = gameEmulator.getType().equals(EmulatorType.ZenFX) || gameEmulator.getType().equals(EmulatorType.ZenFX3) || gameEmulator.getType().equals(EmulatorType.VisualPinball) || gameEmulator.getType().equals(EmulatorType.VisualPinball9);
+      uploadBtn.setDisable(!validEmu && !validVPX);
       deleteBtn.setDisable(!altColorAvailable);
 
       if (altColorAvailable) {
         lastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(altColor.getModificationDate()));
         typeLabel.setText(altColor.getAltColorType().name());
         nameLabel.setText(altColor.getName());
-        altColor = Studio.client.getAltColorService().getAltColor(game.getId());
+        altColor = client.getAltColorService().getAltColor(game.getId());
         backupsLabel.setText(String.valueOf(altColor.getBackedUpFiles().size()));
 
         List<String> files = altColor.getFiles();

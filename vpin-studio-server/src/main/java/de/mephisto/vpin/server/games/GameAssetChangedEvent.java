@@ -5,6 +5,8 @@ import de.mephisto.vpin.restclient.frontend.TableDetails;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
+import java.util.Objects;
+
 public class GameAssetChangedEvent {
   private int gameId;
   @NonNull
@@ -35,5 +37,17 @@ public class GameAssetChangedEvent {
   @NonNull
   public AssetType getAssetType() {
     return assetType;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || getClass() != o.getClass()) return false;
+    GameAssetChangedEvent that = (GameAssetChangedEvent) o;
+    return gameId == that.gameId && assetType == that.assetType && Objects.equals(asset, that.asset);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(gameId, assetType, asset);
   }
 }

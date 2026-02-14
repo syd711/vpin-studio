@@ -52,7 +52,6 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     DiscordBotStatus status = new DiscordBotStatus();
     status.setServerId(serverId);
     status.setBotId(botId);
-    status.setValid(botId != -1 && this.discordClient != null && !this.discordClient.getGuilds().isEmpty());
     if (botId != -1) {
       try {
         DiscordMember member = this.discordClient.getMember(serverId, botId);
@@ -160,7 +159,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   }
 
 
-  public boolean hasManagePermissions(long serverId, long channelId, long memberId) {
+  public boolean hasManageChannelPermissions(long serverId, long channelId, long memberId) {
     if (this.discordClient != null) {
       return this.discordClient.hasPermissions(serverId, channelId, memberId,
 //          MANAGE_CHANNEL,
@@ -175,7 +174,22 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   }
 
 
-  public boolean hasManagePermissions(long serverId, long memberId) {
+  public boolean hasManageCategoryPermissions(long serverId, long memberId) {
+    if (this.discordClient != null) {
+      return this.discordClient.hasPermissions(serverId, memberId,
+          MANAGE_CHANNEL,
+          VIEW_CHANNEL,
+          MESSAGE_SEND,
+          MESSAGE_MANAGE,
+          MESSAGE_EMBED_LINKS,
+          MESSAGE_ATTACH_FILES,
+          MESSAGE_HISTORY);
+    }
+    return false;
+  }
+
+
+  public boolean hasManageChannelPermissions(long serverId, long memberId) {
     if (this.discordClient != null) {
       return this.discordClient.hasPermissions(serverId, memberId,
 //          MANAGE_CHANNEL,
@@ -210,16 +224,26 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
   public long sendMessage(long serverId, long channelId, String message) {
     if (this.discordClient != null) {
-      SLOG.info("Sending discord message to channel " + channelId);
-      return this.discordClient.sendMessage(serverId, channelId, message);
+      try {
+        SLOG.info("Sending discord message to channel " + channelId);
+        return this.discordClient.sendMessage(serverId, channelId, message);
+      }
+      catch (Exception e) {
+        LOG.error("Failed to send Discord message: {}", e.getMessage(), e);
+      }
     }
     return -1;
   }
 
   public long sendMessage(long serverId, long channelId, MessageEmbed message) {
     if (this.discordClient != null) {
-      SLOG.info("Sending discord message to channel " + channelId);
-      return this.discordClient.sendMessage(serverId, channelId, message);
+      try {
+        SLOG.info("Sending discord message to channel " + channelId);
+        return this.discordClient.sendMessage(serverId, channelId, message);
+      }
+      catch (Exception e) {
+        LOG.error("Failed to send Discord message: {}", e.getMessage(), e);
+      }
     }
     return -1;
   }
@@ -274,7 +298,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
         }
       }
     }
-    return new ScoreSummary(Collections.emptyList(), new Date());
+    return new ScoreSummary();
   }
 
   public boolean isEnabled() {
@@ -371,10 +395,10 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return result;
   }
 
-  public List<DiscordServer> getAdministratedServers() {
+  public List<DiscordServer> getMyServers() {
     List<DiscordServer> result = new ArrayList<>();
     if (this.discordClient != null) {
-      List<GuildInfo> guilds = this.discordClient.getAdministratedGuilds();
+      List<GuildInfo> guilds = this.discordClient.getGuilds();
       for (GuildInfo guild : guilds) {
         List<de.mephisto.vpin.connectors.discord.DiscordCategory> categories = this.discordClient.getCategories(guild.getId());
         result.add(toServer(guild, categories));
@@ -460,6 +484,14 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     }
   }
 
+  public void shutdown() {
+    if (this.discordClient != null) {
+      this.discordClient.close();
+    }
+  }
+
+  //------------------------------ Model Helper ------------------------------------------------------------------------
+
   private Player toPlayer(@NonNull DiscordMember member) {
     DiscordPlayer player = new DiscordPlayer();
     player.setId(member.getId());
@@ -497,11 +529,9 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   }
 
   private ScoreSummary toScoreSummary(@NonNull HighscoreParsingService highscoreParser, @NonNull DiscordMessage message) {
-    List<Score> scores = new ArrayList<>();
-    ScoreSummary summary = new ScoreSummary(scores, message.getCreatedAt());
     String raw = message.getRaw();
-    scores.addAll(highscoreParser.parseScores(message.getCreatedAt(), raw, null, message.getServerId()));
-    return summary;
+    List<Score> scores = highscoreParser.parseScores(message.getCreatedAt(), raw, null, message.getServerId());
+    return new ScoreSummary(scores, message.getCreatedAt(), raw);
   }
 
   public void initCompetition(long serverId, long channelId, long messageId, String topic) {
@@ -637,7 +667,6 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
         String name = competition.getName() + "§" + game.getRom();
         String topic = "Channel for highscores of table \"" + game.getGameDisplayName() + "\"";
         DiscordTextChannel c = this.discordClient.createChannel(serverId, Long.parseLong(categoryId), name, topic);
-
         subsChannel = toChannel(c);
       }
 
@@ -650,7 +679,11 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     if (this.discordClient != null) {
       List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
       for (DiscordMessage pinnedMessage : pinnedMessages) {
-        if (pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.START_INDICATOR) && pinnedMessage.getMember() != null) {
+        if (pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.START_INDICATOR)) {
+          if(pinnedMessage.getMember() == null) {
+            LOG.warn("A pinned competition message was found for channel the channel, but the owner is not member of the server anymore.");
+            continue;
+          }
           String raw = pinnedMessage.getRaw();
           String uuid = raw.substring(raw.indexOf("ID:") + 3);
           uuid = uuid.substring(0, uuid.indexOf(")")).trim();
@@ -700,14 +733,14 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
   public DiscordBotStatus validateSettings() {
     DiscordBotStatus status = new DiscordBotStatus();
-    status.setValid(true);
     try {
       if (this.discordClient == null) {
         this.recreateDiscordClient();
       }
     }
     catch (Exception e) {
-      status.setValid(false);
+      LOG.error("Failed to initialize Discord client: {}", e.getMessage(), e);
+      status.setError("Failed to initialize Discord client: " + e.getMessage());
       return status;
     }
 
@@ -721,36 +754,41 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
         status.setBotId(this.discordClient.getBotId());
 
         if (!StringUtils.isEmpty(serverId)) {
+          status.setCanManageCategories(this.hasManageCategoryPermissions(Long.parseLong(serverId), this.discordClient.getBotId()));
+
           GuildInfo guild = this.discordClient.getGuildById(Long.parseLong(serverId));
           if (guild == null) {
-            preferencesService.savePreference(PreferenceNames.DISCORD_GUILD_ID, null);
-            preferencesService.savePreference(PreferenceNames.DISCORD_CATEGORY_ID, null);
-            preferencesService.savePreference(PreferenceNames.DISCORD_CHANNEL_ID, null);
-            preferencesService.savePreference(PreferenceNames.DISCORD_DYNAMIC_SUBSCRIPTIONS, false);
-            status.setValid(false);
+            preferencesService.savePreference(PreferenceNames.DISCORD_GUILD_ID, null, false);
+            preferencesService.savePreference(PreferenceNames.DISCORD_CATEGORY_ID, null, false);
+            preferencesService.savePreference(PreferenceNames.DISCORD_CHANNEL_ID, null, false);
+            preferencesService.savePreference(PreferenceNames.DISCORD_DYNAMIC_SUBSCRIPTIONS, false, false);
+            status.setError("No valid matching Discord server found.");
+            return status;
           }
         }
 
         if (!StringUtils.isEmpty(channelId)) {
           DiscordChannel channel = this.getChannel(Long.parseLong(serverId), Long.parseLong(channelId));
           if (channel == null) {
-            preferencesService.savePreference(PreferenceNames.DISCORD_CATEGORY_ID, null);
-            status.setValid(false);
+            preferencesService.savePreference(PreferenceNames.DISCORD_CATEGORY_ID, null, false);
+            status.setError("No valid matching channel found.");
+            return status;
           }
         }
 
         if (!StringUtils.isEmpty(categoryId)) {
           Category category = this.discordClient.getCategory(Long.parseLong(serverId), Long.parseLong(categoryId));
           if (category == null) {
-            preferencesService.savePreference(PreferenceNames.DISCORD_CHANNEL_ID, null);
-            status.setValid(false);
+            preferencesService.savePreference(PreferenceNames.DISCORD_CHANNEL_ID, null, false);
+            status.setError("No valid matching subscription category found.");
+            return status;
           }
         }
       }
     }
     catch (Exception e) {
       LOG.error("Failed to validate Discord settings: " + e.getMessage(), e);
-      status.setValid(false);
+      status.setError("Failed to validate Discord settings: " + e.getMessage());
     }
 
     return status;

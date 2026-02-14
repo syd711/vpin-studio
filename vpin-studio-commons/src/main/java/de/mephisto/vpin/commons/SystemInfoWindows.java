@@ -12,13 +12,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.lang.invoke.MethodHandles;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
 public class SystemInfoWindows {
 
-  private final static Logger LOG = LoggerFactory.getLogger(SystemInfoWindows.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public final static String PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR = "pinupSystem.installationDir";
   public final static String PINBALLX_INSTALLATION_DIR_INST_DIR = "pinballX.installationDir";
@@ -56,6 +57,21 @@ public class SystemInfoWindows {
       LOG.error("Failed to read installation folder: " + e.getMessage(), e);
     }
     return new File("C:/vPinball/PinUPSystem");
+  }
+
+  /**
+   * Usefull for PinballX and PinballY, use same CLSID as PinUpPlayerRegister.bat
+   */
+  public File resolvePinupPlayerFolder() {
+    String regkey = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Classes\\WOW6432Node\\CLSID\\{88919FAC-00B2-4AA8-B1C7-52AD65C476D3}\\LocalServer32";
+    String pinuPlayerExe = extractRegistryValue(readRegistry(regkey, null));
+    if (pinuPlayerExe != null) {
+      File pinupPlayerFile = new File(pinuPlayerExe);
+      if (pinupPlayerFile.exists()) {
+        return pinupPlayerFile.getParentFile();
+      }
+    }
+    return null;
   }
 
   public File resolvePinballXInstallationFolder() {

@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables.drophandler;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
@@ -13,6 +14,7 @@ import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.control.ButtonType;
+import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -21,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,7 +33,7 @@ import java.util.stream.Collectors;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
-  private final static Logger LOG = LoggerFactory.getLogger(TableMediaFileDropEventHandler.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final VPinScreen screen;
   private final List<String> suffixes;
@@ -57,7 +60,7 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
       return suffixes.contains(suffix.toLowerCase());
     }).collect(Collectors.toList());
 
-    if (filtered.isEmpty()) {
+    if (filtered.isEmpty() && !event.getDragboard().hasContent(DataFormat.URL)) {
       Platform.runLater(() -> {
         WidgetFactory.showAlert(Studio.stage, "Error", "None of the selected is valid for this upload.",
             "Only files with extension(s) \"" + String.join("\", \"", suffixes) + "\" are accepted here.");
@@ -65,6 +68,45 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
       return;
     }
 
+    if (event.getDragboard().hasContent(DataFormat.URL) && !event.getDragboard().hasContent(DataFormat.FILES)) {
+      dropAsset(event);
+    }
+    else if (!files.isEmpty()) {
+      dropFiles(files);
+    }
+  }
+
+  private void dropAsset(DragEvent event) {
+    try {
+      FrontendMediaItemRepresentation media = (FrontendMediaItemRepresentation) event.getDragboard().getContent(DataFormat.URL);
+      Platform.runLater(() -> {
+
+        GameRepresentation game = null;
+        PlaylistRepresentation playlist = null;
+        if (this.tablesController != null) {
+          game = tablesController.getSelection();
+        }
+        else if (dialogController.isPlaylistMode()) {
+          playlist = dialogController.getPlaylist();
+        }
+        else {
+          game = dialogController.getGame();
+        }
+
+        if (playlist != null) {
+          ProgressDialog.createProgressDialog(new TableMediaCopyProgressModel(playlist, screen, media));
+        } else {
+          ProgressDialog.createProgressDialog(new TableMediaCopyProgressModel(game, screen, media));
+        }
+        refreshView();
+      });
+    }
+    catch (Exception e) {
+      LOG.warn("Media drop failed: {}", e.getMessage());
+    }
+  }
+
+  private void dropFiles(List<File> filtered) {
     List<File> draggedCopies = new ArrayList<>();
     try {
       for (File file : filtered) {
@@ -120,7 +162,6 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
         }
       }
 
-
       if (playlist != null) {
         FrontendMediaUploadProgressModel model = new FrontendMediaUploadProgressModel(playlist,
             "Media Upload", draggedCopies, screen, append);
@@ -132,13 +173,16 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
         ProgressDialog.createProgressDialog(model);
       }
 
-
-      if (tablesController != null) {
-        tablesController.getTablesController().getAssetViewSideBarController().refreshTableMediaView();
-      }
-      if (dialogController != null) {
-        dialogController.refreshTableMediaView();
-      }
+      refreshView();
     });
+  }
+
+  private void refreshView() {
+    if (tablesController != null) {
+      tablesController.getTablesController().getAssetViewSideBarController().refreshTableMediaView();
+    }
+    if (dialogController != null) {
+      dialogController.refreshTableMediaView();
+    }
   }
 }

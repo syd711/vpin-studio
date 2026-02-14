@@ -46,6 +46,8 @@ public class Asset {
 
   private String assetType;
 
+  private String mimeType;
+
   public String getAssetType() {
     return assetType;
   }
@@ -62,8 +64,7 @@ public class Asset {
     this.uuid = uuid;
   }
 
-  private String mimeType;
-
+  @JsonIgnore
   public Date getCreatedAt() {
     return createdAt;
   }
@@ -72,6 +73,7 @@ public class Asset {
     this.createdAt = createdAt;
   }
 
+  @JsonIgnore
   public Date getUpdatedAt() {
     return updatedAt;
   }

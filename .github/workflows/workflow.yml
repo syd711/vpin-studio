@@ -17,7 +17,7 @@ on:
 jobs:
   mac-app-build-x64:
     name: mac-app-build-x64
-    runs-on: macos-13
+    runs-on: macos-15-intel
 
     steps:
       # Step 1: Checkout the repository
@@ -39,11 +39,12 @@ jobs:
           token: ${{ secrets.ACCESS_TOKEN }}
 
       # Step 2: Set up Zulu OpenJDK 17
-      - name: Set up Zulu JDK 17
+      - name: Set up Zulu JDK 11
         uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
-          java-version: '17'
+          java-package: 'jdk+fx'
+          java-version: '11.0.21+9'
           architecture: 'x64'
 
       # Step 4: Build the Java application
@@ -166,7 +167,8 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
-          java-version: '17'
+          java-package: 'jdk+fx'
+          java-version: '11.0.21+9'
           architecture: 'aarch64'
 
       # Step 4: Build the Java application
@@ -273,6 +275,9 @@ jobs:
       # otherwise, read permission is required at least
       pull-requests: write
     steps:
+      - name: Install Inno Setup
+        run: choco install innosetup --yes
+
       - name: Checkout VPin Studio
         uses: actions/checkout@v3
 

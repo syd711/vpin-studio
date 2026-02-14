@@ -11,7 +11,6 @@ import de.mephisto.vpin.restclient.pinvol.PinVolUpdate;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
-import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.games.GameService;
@@ -59,38 +58,38 @@ public class PinVolService implements InitializingBean, FileChangeListener {
   private boolean enabled = false;
   private PinVolPreferences preferences = null;
 
-  public boolean getPinVolAutoStart() {
-    return preferencesService.getPreferences().getPinVolAutoStartEnabled();
-  }
-
-  public boolean toggleAutoStart() {
-    try {
-      this.enabled = !enabled;
-      preferencesService.savePreference(PreferenceNames.PINVOL_AUTOSTART_ENABLED, enabled);
-      return enabled;
-    }
-    catch (Exception e) {
-      LOG.error("Failed to set PinVol autostart flag: " + e.getMessage(), e);
-    }
-    return false;
-  }
-
   public boolean isRunning() {
     return systemService.isProcessRunning("PinVol");
+  }
+
+  public boolean isValid() {
+    File pinVolExe = getPinVolExe();
+    return pinVolExe.exists();
   }
 
   public boolean killPinVol() {
     return systemService.killProcesses("PinVol");
   }
 
-  private static void startPinVol() {
+  private void startPinVol() {
     try {
-      FileUtils.writeBatch("./resources/PinVol.bat", "cd /d %~dp0\ncd resources\nstart /min PinVol.exe\nexit\n");
-      List<String> commands = Arrays.asList("cmd", "/c", "start", "PinVol.bat");
-      SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-      executor.setDir(new File("./resources"));
-      executor.executeCommandAsync();
-      LOG.info("Executed PinVol command: " + String.join(" ", commands));
+      File pinVolExe = getPinVolExe();
+      if (pinVolExe.exists()) {
+        File file = FileUtils.writeBatch(SystemService.RESOURCES + "PinVol.bat", "start /min " + pinVolExe.getAbsolutePath() + "\nexit\n");
+        if (file.exists()) {
+          List<String> commands = Arrays.asList("cmd", "/c", "start", "PinVol.bat");
+          SystemCommandExecutor executor = new SystemCommandExecutor(commands);
+          executor.setDir(new File(SystemService.RESOURCES));
+          executor.executeCommand();
+          LOG.info("Executed PinVol command: " + String.join(" ", commands));
+        }
+        else {
+          LOG.error("Failed to start PinVol.bat, file does not exist: {}", file.getAbsolutePath());
+        }
+      }
+      else {
+        LOG.warn("{} does not exist; couldn't start it", pinVolExe.getAbsolutePath());
+      }
     }
     catch (Exception e) {
       LOG.error("Failed to launch PinVol.exe: " + e.getMessage(), e);
@@ -117,9 +116,10 @@ public class PinVolService implements InitializingBean, FileChangeListener {
   }
 
   public boolean restart() {
-    killPinVol();
-    startPinVol();
-    return true;
+    if (killPinVol()) {
+      startPinVol();
+    }
+    return isRunning();
   }
 
   public PinVolPreferences getPinVolTablePreferences() {
@@ -215,16 +215,26 @@ public class PinVolService implements InitializingBean, FileChangeListener {
     }
   }
 
-  private static File getPinVolTablesIniFile() {
-    return new File(SystemService.RESOURCES, PIN_VOL_TABLES_INI);
+  private File getPinVolTablesIniFile() {
+    File pinvolExe = getPinVolExe();
+    return new File(pinvolExe.getParentFile(), PIN_VOL_TABLES_INI);
   }
 
-  private static File getPinVolSettingsIniFile() {
-    return new File(SystemService.RESOURCES, PIN_VOL_SETTINGS_INI);
+  private File getPinVolSettingsIniFile() {
+    File pinvolExe = getPinVolExe();
+    return new File(pinvolExe.getParentFile(), PIN_VOL_SETTINGS_INI);
   }
 
-  private static File getPinVolVolIniFile() {
-    return new File(SystemService.RESOURCES, PIN_VOL_VOL_INI);
+  private File getPinVolVolIniFile() {
+    File pinvolExe = getPinVolExe();
+    return new File(pinvolExe.getParentFile(), PIN_VOL_VOL_INI);
+  }
+
+  private File getPinVolExe() {
+    String installFolderPreferences = (String) preferencesService.getPreferenceValue(PreferenceNames.PINVOL_FOLDER);
+    return installFolderPreferences == null ?
+        new File(SystemService.RESOURCES, "PinVol.exe") :
+        new File(installFolderPreferences, "PinVol.exe");
   }
 
   private void initListener() {
@@ -239,6 +249,14 @@ public class PinVolService implements InitializingBean, FileChangeListener {
       FileMonitoringThread settingsThread = new FileMonitoringThread(this, pincolSettingsFile, true);
       settingsThread.startMonitoring();
     }
+  }
+
+  public PinVolPreferences save(@NonNull PinVolUpdate update) {
+    PinVolPreferences updated = update(update);
+    if (isRunning() && isValid()) {
+      restart();
+    }
+    return updated;
   }
 
   public PinVolPreferences update(@NonNull PinVolUpdate update) {
@@ -348,26 +366,27 @@ public class PinVolService implements InitializingBean, FileChangeListener {
   @Override
   public void afterPropertiesSet() throws Exception {
     setSystemVolume();
-    this.enabled = getPinVolAutoStart();
+    this.enabled = preferencesService.getPreferences().getPinVolAutoStartEnabled();
 
     new Thread(() -> {
       if (enabled) {
         startPinVol();
         LOG.info("Auto-started PinVol");
-        boolean pinVolFound = systemService.waitForProcess("PinVol", 3);
+        boolean pinVolFound = systemService.isProcessRunning("PinVol");
         LOG.info("Found PinVol.exe process: {}", pinVolFound);
-        try {
-          Thread.sleep(3000);
-        }
-        catch (InterruptedException e) {
-          //ignore
-        }
       }
       setInitialMute();
     }).start();
 
     loadIni();
     initListener();
+
+    preferencesService.addChangeListener((propertyName, oldValue, newValue) -> {
+      if (PreferenceNames.PINVOL_FOLDER.equals(propertyName)) {
+        loadIni();
+      }
+    });
+
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

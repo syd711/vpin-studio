@@ -68,7 +68,7 @@
                                         <Tooltip text="Table Statistics (F5)" />
                                     </tooltip>
                                 </Tab>
-                                <Tab fx:id="tableRepositoryTab" text=" Table Backups">
+                                <Tab fx:id="tableBackupsTab" text=" Table Backups">
                                     <content>
                                         <BorderPane />
                                     </content>
@@ -133,7 +133,7 @@
             <children>
                 <fx:include fx:id="assetViewSideBar" source="scene-tables-assetview-sidebar.fxml" />
                 <fx:include fx:id="tablesSideBar" source="scene-tables-sidebar.fxml" />
-                <fx:include fx:id="repositorySideBar" source="../archiving/scene-repository-sidebar.fxml" />
+                <fx:include fx:id="backupsSideBar" source="../backups/scene-backups-sidebar.fxml" />
                 <fx:include fx:id="vpsTablesSidebar" source="../vps/scene-vps-tables-sidebar.fxml" />
             </children>
             <padding>

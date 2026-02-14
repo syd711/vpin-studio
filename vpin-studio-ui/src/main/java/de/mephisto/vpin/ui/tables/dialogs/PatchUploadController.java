@@ -6,12 +6,11 @@ import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
-import de.mephisto.vpin.restclient.textedit.TextFile;
+import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.panels.AssetFilterPanelController;
-import de.mephisto.vpin.ui.tables.panels.PropperRenamingController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.UploadProgressModel;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -32,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Optional;
@@ -40,7 +40,7 @@ import java.util.ResourceBundle;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class PatchUploadController extends BaseUploadController {
-  private final static Logger LOG = LoggerFactory.getLogger(PropperRenamingController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private VBox uploadReplaceBox;
@@ -125,8 +125,14 @@ public class PatchUploadController extends BaseUploadController {
 
 
         LOG.info("Starting Game Patcher");
-        GamePatcherUploadPostProcessingProgressModel progressModel = new GamePatcherUploadPostProcessingProgressModel("Patching Game", uploadDescriptor);
+        GamePatcherUploadPostProcessingProgressModel progressModel = new GamePatcherUploadPostProcessingProgressModel("Patching Game", uploadDescriptor, game);
         result = UniversalUploadUtil.postProcess(progressModel);
+
+        // call finalizer
+        if (finalizer != null) {
+          finalizer.run();
+        }
+
         if (result.isPresent()) {
           // notify listeners of table import done
           EventManager.getInstance().notifyTableUploaded(result.get());
@@ -143,7 +149,7 @@ public class PatchUploadController extends BaseUploadController {
   private void onReadme(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     String value = (String) ((Button) e.getSource()).getUserData();
-    Dialogs.openTextEditor("readme", stage, new TextFile(value), "README");
+    Dialogs.openTextEditor("readme", stage, new MonitoredTextFile(value), "README");
   }
 
   @Override

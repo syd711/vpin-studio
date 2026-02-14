@@ -8,6 +8,7 @@ import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class IScoredGameRoomLoadingProgressModel extends ProgressModel<String> {
-  private final static Logger LOG = LoggerFactory.getLogger(IScoredGameRoomLoadingProgressModel.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private final List<String> urls;
   private boolean forceReload = false;
   private final Iterator<String> iterator;

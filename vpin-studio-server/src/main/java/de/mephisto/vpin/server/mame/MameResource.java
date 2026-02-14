@@ -41,24 +41,19 @@ public class MameResource {
   @Autowired
   private GameCachingService gameCachingService;//TODO cyclic wise workaround
 
-  @GetMapping("/folder")
-  public File getMameFolder() {
-    return mameService.getMameFolder();
-  }
-
   @GetMapping("/dmddevice.ini") 
   public File getDmdDeviceIni() {
     return mameService.getDmdDeviceIni();
   }
 
   @GetMapping("/setup")
-  public File getSetupFile() {
-    return mameService.getSetupExe();
+  public Boolean runSetupFile() {
+    return mameService.runSetupExe();
   }
 
   @GetMapping("/flexsetup")
-  public File getFlexSetupFile() {
-    return mameService.getFlexSetupExe();
+  public Boolean runFlexSetupFile() {
+    return mameService.runFlexSetupExe();
   }
 
   @GetMapping("/options/{rom}")

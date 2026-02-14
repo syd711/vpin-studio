@@ -4,23 +4,60 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DeleteDescriptor {
-  private boolean deleteTable;
-  private boolean deleteDirectB2s;
-  private boolean deleteFromFrontend;
-  private boolean deletePupPack;
-  private boolean deleteDMDs;
-  private boolean deleteHighscores;
-  private boolean deleteMusic;
-  private boolean deleteAltSound;
-  private boolean deleteAltColor;
-  private boolean deleteCfg;
-  private boolean deleteBAMCfg;
-  private boolean deletePov;
-  private boolean deleteRes;
-  private boolean deleteIni;
-  private boolean deleteVbs;
-  private boolean deletePinVol;
-  private boolean keepAssets;
+  private boolean deleteTable = true;
+  private boolean deleteDirectB2s = true;
+  private boolean deleteFromFrontend = true;
+  private boolean deletePupPack = false;
+  private boolean deleteDMDs = true;
+  private boolean deleteHighscores = true;
+  private boolean deleteMusic = false;
+  private boolean deleteAltSound = false;
+  private boolean deleteAltColor = false;
+  private boolean deleteCfg = false;
+  private boolean deleteRom = false;
+  private boolean deleteBAMCfg = true;
+  private boolean deletePov = true;
+  private boolean deleteRes = true;
+  private boolean deleteIni = true;
+  private boolean deleteVbs = true;
+  private boolean deletePinVol = true;
+  private boolean deleteAlias = true;
+  private boolean deleteB2STableSettings = true;
+  private boolean deleteDMDDeviceIni = true;
+
+  public boolean isDeleteRom() {
+    return deleteRom;
+  }
+
+  public void setDeleteRom(boolean deleteRom) {
+    this.deleteRom = deleteRom;
+  }
+
+  public boolean isDeleteAlias() {
+    return deleteAlias;
+  }
+
+  public void setDeleteAlias(boolean deleteAlias) {
+    this.deleteAlias = deleteAlias;
+  }
+
+  public boolean isDeleteB2STableSettings() {
+    return deleteB2STableSettings;
+  }
+
+  public void setDeleteB2STableSettings(boolean deleteB2STableSettings) {
+    this.deleteB2STableSettings = deleteB2STableSettings;
+  }
+
+  public boolean isDeleteDMDDeviceIni() {
+    return deleteDMDDeviceIni;
+  }
+
+  public void setDeleteDMDDeviceIni(boolean deleteDMDDeviceIni) {
+    this.deleteDMDDeviceIni = deleteDMDDeviceIni;
+  }
+
+  private boolean keepAssets = false;
 
   public boolean isDeleteBAMCfg() {
     return deleteBAMCfg;

@@ -8,20 +8,23 @@ import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 
 /*********************************************************************************************************************
  * Mame
  ********************************************************************************************************************/
 public class MameServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(MameServiceClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public MameServiceClient(VPinStudioClient client) {
     super(client);
@@ -31,20 +34,16 @@ public class MameServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "mame/options/" + name, MameOptions.class);
   }
 
-  public File getMameFolder() {
-    return getRestClient().get(API + "mame/folder", File.class);
-  }
-
   public File getDmdDeviceIni() {
     return getRestClient().get(API + "mame/dmddevice.ini", File.class);
   }
 
-  public File getSetupFile() {
-    return getRestClient().get(API + "mame/setup", File.class);
+  public boolean runSetup() {
+    return getRestClient().get(API + "mame/setup", Boolean.class);
   }
 
-  public File getFlexSetupFile() {
-    return getRestClient().get(API + "mame/flexsetup", File.class);
+  public boolean runFlexSetup() {
+    return getRestClient().get(API + "mame/flexsetup", Boolean.class);
   }
 
   public boolean clearCache() {
@@ -65,7 +64,9 @@ public class MameServiceClient extends VPinStudioClientService {
       String url = getRestClient().getBaseUrl() + API + "mame/upload/rom/" + emuId;
       LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
       map.add("emuId", emuId);
-      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(map, file, -1, null, AssetType.TABLE, listener), UploadDescriptor.class);
+      HttpEntity<MultiValueMap<String, Object>> upload = createUpload(map, file, -1, null, AssetType.TABLE, listener);
+      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
+      finalizeUpload(upload);
       return exchange.getBody();
     }
     catch (Exception e) {
@@ -79,7 +80,9 @@ public class MameServiceClient extends VPinStudioClientService {
       String url = getRestClient().getBaseUrl() + API + "mame/upload/cfg/" + emuId;
       LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
       map.add("emuId", emuId);
-      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(map, file, -1, null, AssetType.CFG, listener), UploadDescriptor.class);
+      HttpEntity<MultiValueMap<String, Object>> upload = createUpload(map, file, -1, null, AssetType.CFG, listener);
+      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
+      finalizeUpload(upload);
       return exchange.getBody();
     }
     catch (Exception e) {
@@ -93,7 +96,9 @@ public class MameServiceClient extends VPinStudioClientService {
       String url = getRestClient().getBaseUrl() + API + "mame/upload/nvram/" + emuId;
       LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
       map.add("emuId", emuId);
-      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(map, file, -1, null, AssetType.NV, listener), UploadDescriptor.class);
+      HttpEntity<MultiValueMap<String, Object>> upload = createUpload(map, file, -1, null, AssetType.NV, listener);
+      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
+      finalizeUpload(upload);
       return exchange.getBody();
     }
     catch (Exception e) {

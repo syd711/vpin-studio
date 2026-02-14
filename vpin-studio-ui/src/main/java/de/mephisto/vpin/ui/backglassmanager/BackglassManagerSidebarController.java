@@ -7,14 +7,12 @@ import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TablesSidebarDirectB2SController;
 import de.mephisto.vpin.ui.tables.dialogs.FrontendMediaUploadProgressModel;
 import de.mephisto.vpin.ui.tables.models.*;
@@ -38,8 +36,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.PixelReader;
-import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -64,6 +60,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
@@ -205,6 +202,9 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
   @FXML
   private ComboBox<B2SLedType> usedLEDType;
+
+  @FXML
+  private ComboBox<B2SDualMode> dualModes;
 
   @FXML
   private ComboBox<B2SVisibility> startBackground;
@@ -483,8 +483,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     directB2SLabel.managedProperty().bindBidirectional(directB2SLabel.visibleProperty());
     noneActiveInfo.managedProperty().bindBidirectional(noneActiveInfo.visibleProperty());
 
-    FrontendType frontendType = Studio.client.getFrontendService().getFrontendType();
-    if (!frontendType.supportMedias()) {
+    if (!Features.MEDIA_ENABLED) {
       HBox bgtoolbar = (HBox) this.useAsMediaBackglassBtn.getParent();
       bgtoolbar.getChildren().remove(useAsMediaBackglassBtn);
 
@@ -592,6 +591,15 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
           glowing.setDisable(t1 != null && t1.getId() == 1);
           lightBulbOn.setDisable(t1 != null && t1.getId() == 1);
           lightBulbOn.setSelected(false);
+        });
+      }
+    });
+
+    dualModes.setItems(FXCollections.observableList(TablesSidebarDirectB2SController.DUAL_MODES));
+    dualModes.valueProperty().addListener((observableValue, aBoolean, t1) -> {
+      if (refreshingCounter == 0 && tableSettings != null) {
+        save(() -> {
+          tableSettings.setDualMode(t1 != null ? t1.getId() : 0);
         });
       }
     });
@@ -790,6 +798,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
   protected void setData(@Nullable DirectB2S model) {
     this.directb2s = model;
+    this.refreshingCounter = 1;
 
     // maintain current selection if possible
     directB2SCombo.getItems().clear();
@@ -833,6 +842,11 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       refreshingCounter++;
       JFXFuture.supplyAsync(() -> client.getBackglassServiceClient().getDirectB2SData(getEmulatorId(), getSelectedVersion()))
         .thenAcceptLater(data -> {
+          // Ignore this old answer as a new backglass is now selected
+          if (getEmulatorId() != data.getEmulatorId() || !getSelectedVersion().equals(data.getFilename())) {
+            return;
+          }
+
           this.tableData = data;
           refreshTableData(tableData);
           refreshingCounter--;
@@ -841,11 +855,13 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       refreshStatusCheckbox();
     }  
     refreshTableSettings(model != null ? model.getGameId() : -1);
+    this.refreshingCounter--;
   }
 
   protected void refreshTableSettings(int gameId) {
     this.tableSettings = null;
 
+    dualModes.setDisable(true);
     usedLEDType.setDisable(true);
     lightBulbOn.setDisable(true);
     glowing.setDisable(true);
@@ -871,13 +887,15 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     formToPosition.setDisable(true);
 
     if (gameId > 0) {
-      JFXFuture.supplyAsync(() -> client.getBackglassServiceClient().getTableSettings(gameId))
-          .thenAcceptLater((tableSettings) -> {
+      JFXFuture.supplyAllAsync(
+              () -> client.getBackglassServiceClient().getTableSettings(gameId),
+              () -> client.getBackglassServiceClient().getServerSettings())
+          .thenAcceptLater((objs) -> {
             this.refreshingCounter++;
 
-            this.tableSettings = tableSettings;
+            this.tableSettings = (DirectB2STableSettings) objs[0];
+            DirectB2ServerSettings serverSettings = (DirectB2ServerSettings) objs[1];
 
-            DirectB2ServerSettings serverSettings = client.getBackglassServiceClient().getServerSettings();
             boolean serverLaunchAsExe = serverSettings != null && serverSettings.getDefaultStartMode() == DirectB2ServerSettings.EXE_START_MODE;
             startAsExeServer.setSelected(serverLaunchAsExe);
             startAsExeServer.setDisable(true);
@@ -897,6 +915,8 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
             hideGrill.setValue(TablesSidebarDirectB2SController.VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getHideGrill()).findFirst().orElse(null));
 
             disableCombosFrames();
+
+            dualModes.setValue(TablesSidebarDirectB2SController.DUAL_MODES.stream().filter(v -> v.getId() == tableSettings.getDualMode()).findFirst().orElse(null));
 
             skipLampFrames.getValueFactory().valueProperty().set(tableSettings.getLampsSkipFrames());
             skipGIFrames.getValueFactory().valueProperty().set(tableSettings.getGiStringsSkipFrames());
@@ -919,10 +939,12 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   }
 
   protected void disableCombosFrames() {
-    skipLampFrames.setDisable(tableSettings != null && tableData != null && tableData.getIlluminations() == 0);
-    skipGIFrames.setDisable(tableSettings != null && tableData != null && tableData.getIlluminations() == 0);
-    skipSolenoidFrames.setDisable(tableSettings != null && tableData != null && tableData.getIlluminations() == 0);
-    skipLEDFrames.setDisable(tableSettings != null && tableData != null && tableData.getIlluminations() == 0);
+    skipLampFrames.setDisable(tableSettings == null || tableData == null || tableData.getIlluminations() == 0);
+    skipGIFrames.setDisable(tableSettings == null || tableData == null || tableData.getIlluminations() == 0);
+    skipSolenoidFrames.setDisable(tableSettings == null || tableData == null || tableData.getIlluminations() == 0);
+    skipLEDFrames.setDisable(tableSettings == null || tableData == null || tableData.getIlluminations() == 0);
+
+    dualModes.setDisable(tableSettings == null || tableData == null || tableData.getDualBackglass() == 0);
   }
 
   private void loadImages(int emulatorId, String fileName) {
@@ -934,6 +956,11 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
           return null;
         })
         .thenAcceptLater(_thumbnail -> {
+          // Ignore old answer when a new backglass has been selected
+          if (getEmulatorId() != emulatorId || !getSelectedVersion().equals(fileName)) {
+            return;
+          }
+
           if (_thumbnail != null) {
             thumbnailImage.setImage(_thumbnail);
             thumbnailImagePane.setCenter(thumbnailImage);
@@ -961,6 +988,11 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
           return null;
         })
         .thenAcceptLater(_dmdThumbnail -> {
+          // Ignore old answer when a new backglass has been selected
+          if (getEmulatorId() != emulatorId || !getSelectedVersion().equals(fileName)) {
+            return;
+          }
+
           uploadDMDBtn.setDisable(false);
           if (_dmdThumbnail != null) {
             dmdThumbnailImage.setImage(_dmdThumbnail);

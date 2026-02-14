@@ -9,9 +9,9 @@ import java.util.function.Predicate;
 
 public class VisibilityHoverListener implements ChangeListener<Boolean> {
   private final Node node;
-  private final Predicate showPredicate;
+  private final Predicate<Boolean> showPredicate;
 
-  public VisibilityHoverListener(Node node, Predicate showPredicate) {
+  public VisibilityHoverListener(Node node, Predicate<Boolean> showPredicate) {
     this.node = node;
     this.showPredicate = showPredicate;
   }

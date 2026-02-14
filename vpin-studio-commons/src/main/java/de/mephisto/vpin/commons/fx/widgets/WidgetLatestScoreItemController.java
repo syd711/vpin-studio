@@ -57,7 +57,7 @@ public class WidgetLatestScoreItemController extends WidgetController implements
   }
 
   public void setData(GameRepresentation game, FrontendMediaRepresentation gameMedia, ScoreRepresentation score) {
-    InputStream gameMediaItem = ServerFX.client.getGameMediaItem(game.getId(), VPinScreen.Wheel);
+    InputStream gameMediaItem = ServerFX.client.getWheelIcon(game.getId(), true);
     if (gameMediaItem == null) {
       gameMediaItem = ServerFX.class.getResourceAsStream("avatar-blank.png");
     }
@@ -86,7 +86,8 @@ public class WidgetLatestScoreItemController extends WidgetController implements
     String date = simpleDateFormat.format(score.getCreatedAt());
     changeDateLabel.setText("Updated: " + date);
 
-    InputStream competitionBackground = ServerFX.client.getCompetitionBackground(game.getId());
+    InputStream competitionBackground = ServerFX.client.getCompetitionService().getCompetitionBackground(game.getId());
+
     if (competitionBackground != null) {
       Image backgroundImage = new Image(competitionBackground);
       BackgroundImage myBI = new BackgroundImage(backgroundImage,

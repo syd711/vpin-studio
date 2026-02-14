@@ -10,12 +10,13 @@ import javafx.stage.WindowEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class NotificationStageService extends Application {
-  private final static Logger LOG = LoggerFactory.getLogger(NotificationStageService.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final static NotificationStageService INSTANCE = new NotificationStageService();
 

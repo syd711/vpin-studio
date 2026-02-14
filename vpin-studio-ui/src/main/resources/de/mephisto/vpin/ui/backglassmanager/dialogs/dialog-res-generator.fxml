@@ -3,9 +3,11 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -51,7 +53,7 @@
                <bottom>
                   <GridPane hgap="3.0" vgap="3.0" BorderPane.alignment="CENTER">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="114.399951171875" minWidth="10.0" prefWidth="114.399951171875" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="125" minWidth="10.0" prefWidth="125" />
                       <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="395.199951171875" minWidth="10.0" prefWidth="374.400048828125" />
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
                     </columnConstraints>
@@ -62,12 +64,43 @@
                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File..." GridPane.columnIndex="2">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Button>
-                        <StackPane alignment="CENTER_RIGHT" GridPane.columnIndex="1">
+
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Display Options:" GridPane.rowIndex="0" />
+                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="12.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                           <children>
+                              <RadioButton fx:id="radioStretchBackglass" mnemonicParsing="false" prefWidth="170.0" text="Stretch backglass" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </RadioButton>
+                              <RadioButton fx:id="radioCenterBackglass" mnemonicParsing="false" prefWidth="170.0" text="Center backglass" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </RadioButton>
+                           </children>
+                        </HBox>
+
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Frame Type:" GridPane.rowIndex="1" />
+                        <HBox alignment="CENTER_LEFT" spacing="12.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <ComboBox fx:id="frameTypeCombo" />
+                              <Label>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip fx:id="frameTypeTooltip" prefWidth="600.0" text="Choose and previsualize a frame template, the frame will be generated on save:" wrapText="true" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </HBox>
+
+                        <Label styleClass="default-text" text="Frame Picture:" GridPane.rowIndex="2"/>
+                        <StackPane fx:id="fileNamePane" alignment="CENTER_RIGHT" GridPane.rowIndex="2" GridPane.columnIndex="1">
                            <children>
                               <TextField fx:id="fileNameField" editable="false" prefHeight="26.0" prefWidth="400.0" promptText="Select or drop a frame image here">
                                  <font>
@@ -84,32 +117,28 @@
                               </Button>
                            </children>
                         </StackPane>                
-                        <Label styleClass="default-text" text="Frame Picture:" />
-                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="12.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                           <children>
-                              <RadioButton fx:id="radioStretchBackglass" mnemonicParsing="false" prefWidth="170.0" text="Stretch backglass" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </RadioButton>
-                              <RadioButton fx:id="radioCenterBackglass" mnemonicParsing="false" prefWidth="170.0" text="Center backglass" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </RadioButton>
-                           </children>
-                        </HBox>
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Display Options:" GridPane.rowIndex="1" />
-                        <CheckBox fx:id="turnOnRunAsExe" mnemonicParsing="false" text="Turn on 'run Backglass as exe' to display frames" textFill="WHITE" GridPane.columnSpan="3" GridPane.rowIndex="2">
+                        <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File..." GridPane.rowIndex="2" GridPane.columnIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Button>
+
+
+                        <CheckBox fx:id="turnOnRunAsExe" mnemonicParsing="false" text="Turn on 'run Backglass as exe' to display frames" textFill="WHITE" GridPane.columnSpan="3" GridPane.rowIndex="3">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <GridPane.margin>
+                              <Insets top="12.0" />
+                           </GridPane.margin>
+                        </CheckBox>
+
+                        <CheckBox fx:id="turnOnBackground" mnemonicParsing="false" text="Turn on Backglass 'background' visibility" textFill="WHITE" GridPane.columnSpan="3" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <CheckBox fx:id="turnOnBackground" mnemonicParsing="false" text="Turn on Backglass 'background' visibility" textFill="WHITE" GridPane.columnSpan="3" GridPane.rowIndex="3">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </CheckBox>
+
                      </children>
                      <BorderPane.margin>
                         <Insets top="12.0" />

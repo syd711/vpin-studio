@@ -125,8 +125,10 @@ public class PlayerService {
     }
 
     if (player.getAvatar() != null) {
-      Asset asset = assetRepository.findByUuid(player.getAvatar().getUuid()).get();
-      model.setAvatar(asset);
+      Optional<Asset> asset = assetRepository.findByUuid(player.getAvatar().getUuid());
+      if (asset.isPresent()) {
+        model.setAvatar(asset.get());
+      }
     }
 
     model.setDomain(player.getDomain());

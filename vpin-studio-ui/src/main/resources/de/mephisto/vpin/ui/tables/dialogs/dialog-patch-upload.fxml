@@ -43,7 +43,7 @@
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>
          <children>
-            <HBox spacing="36.0">
+            <HBox prefHeight="230.0" spacing="36.0">
                <children>
                   <VBox>
                      <children>
@@ -78,7 +78,7 @@
                               </HBox>
                               <Label styleClass="default-text" text="Patch File:" />
                               <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Table:" GridPane.rowIndex="2" />
-                              <Label fx:id="tableNameLabel" layoutX="10.0" layoutY="49.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <Label fx:id="tableNameLabel" layoutX="10.0" layoutY="49.0" maxWidth="450.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                               <Label fx:id="titleLabel11" text="README.txt" textFill="WHITE" GridPane.rowIndex="3">
                                  <font>
                                     <Font size="14.0" />
@@ -115,7 +115,7 @@
                         </GridPane>
                      </children>
                   </VBox>
-                  <VBox fx:id="assetsView" prefHeight="200.0" prefWidth="250.0">
+                  <VBox fx:id="assetsView" prefWidth="250.0">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>

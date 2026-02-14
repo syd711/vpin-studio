@@ -17,6 +17,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TabMameController extends AbstractComponentTab implements Initializable {
@@ -32,12 +33,8 @@ public class TabMameController extends AbstractComponentTab implements Initializ
 
   @FXML
   private void onMameSetup() {
-    File file = client.getMameService().getSetupFile();
-    if (file == null || !file.exists()) {
+    if (!client.getMameService().runSetup()) {
       WidgetFactory.showAlert(Studio.stage, "Did not find Setup.exe", "The exe file was not found.");
-    }
-    else {
-      Studio.open(file);
     }
   }
 
@@ -59,6 +56,9 @@ public class TabMameController extends AbstractComponentTab implements Initializ
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     super.initialize();
+
+    mameBtn.managedProperty().bind(mameBtn.visibleProperty());
+    mameBtn.setVisible(!Features.IS_STANDALONE);
   }
 
   @Override

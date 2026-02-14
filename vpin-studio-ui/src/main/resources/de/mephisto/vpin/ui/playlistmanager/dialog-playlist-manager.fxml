@@ -21,7 +21,7 @@
 
 <BorderPane fx:id="root" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="680.0" prefWidth="1000.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.playlistmanager.PlaylistManagerController">
     <top>
-        <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/dialog-header-resizeable.fxml" />
+        <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-resizeable-header.fxml" />
     </top>
     <bottom>
       <BorderPane BorderPane.alignment="CENTER">
@@ -329,17 +329,36 @@
                                                 </BorderPane>
                                  </top>
                                  <center>
-                                                <TextArea fx:id="sqlText" promptText="Enter SQL Query here..." BorderPane.alignment="CENTER" />
+                                                <TextArea fx:id="sqlText" promptText="Enter SQL Query here..." wrapText="true" BorderPane.alignment="CENTER" />
                                  </center>
                                  <bottom>
-                                    <HBox fx:id="errorContainer" styleClass="error-container" BorderPane.alignment="CENTER">
-                                       <children>
-                                          <Label fx:id="errorLabel" styleClass="error-title" text="Label" />
-                                       </children>
+                                    <VBox BorderPane.alignment="CENTER">
                                        <BorderPane.margin>
                                           <Insets top="3.0" />
                                        </BorderPane.margin>
-                                    </HBox>
+                                       <children>
+                                          <HBox alignment="BASELINE_RIGHT">
+                                             <children>
+                                                <Button fx:id="saveSQLBtn" mnemonicParsing="false" onAction="#onSQLSave" text="Save Query" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-save" iconSize="18" />
+                                                   </graphic>
+                                                </Button>
+                                             </children>
+                                             <VBox.margin>
+                                                <Insets bottom="3.0" />
+                                             </VBox.margin>
+                                          </HBox>
+                                          <HBox fx:id="errorContainer" styleClass="error-container">
+                                             <children>
+                                                <Label fx:id="errorLabel" styleClass="error-title" text="Label" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
                                  </bottom>
                               </BorderPane>
                            </center>

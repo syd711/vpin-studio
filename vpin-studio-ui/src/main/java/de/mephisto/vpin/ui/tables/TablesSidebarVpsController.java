@@ -4,7 +4,6 @@ import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.*;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
@@ -14,6 +13,7 @@ import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.restclient.validation.ValidationState;
+import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.*;
@@ -53,7 +54,7 @@ import java.util.stream.Collectors;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablesSidebarVpsController implements Initializable, AutoCompleteTextFieldChangeListener, ChangeListener<VpsTableVersion>, PreferenceChangeListener {
-  private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarVpsController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private VBox detailsBox;
@@ -92,6 +93,9 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   private Button openTableVersionBtn;
 
   @FXML
+  private Button openTableLinkBtn;
+
+  @FXML
   private SplitMenuButton autoFillBtn;
 
   @FXML
@@ -119,6 +123,9 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   private Button vpsResetUpdatesBtn;
 
   @FXML
+  private CheckBox updatesCheckbox;
+
+  @FXML
   private Button vpsLinkResetBtn;
 
   @FXML
@@ -130,10 +137,12 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   private ValidationState validationState;
 
   private UISettings uiSettings;
+  private VpsSettings vpsSettings;
 
   private List<GameRepresentation> games = new ArrayList<>();
 
   private TablesSidebarController tablesSidebarController;
+  private IgnoreUpdatesChangeListener ignoreUpdatesListener;
 
   // Add a public no-args constructor
   public TablesSidebarVpsController() {
@@ -285,19 +294,25 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     updatedLabel.setText("-");
     ipdbLink.setText("");
     openTableVersionBtn.setDisable(true);
+    openTableLinkBtn.setDisable(true);
     copyTableVersionBtn.setDisable(true);
     autoFillBtn.setDisable(games.isEmpty());
     vpsResetUpdatesBtn.setDisable(true);
 
+    updatesCheckbox.selectedProperty().removeListener(ignoreUpdatesListener);
+
     if (!games.isEmpty()) {
       GameRepresentation game = games.get(0);
+      this.updatesCheckbox.setSelected(game.isIgnoreUpdates());
+      this.updatesCheckbox.selectedProperty().addListener(ignoreUpdatesListener);
+
       vpsResetUpdatesBtn.setDisable(game.getVpsUpdates().isEmpty() && this.games.size() == 1);
 
       String vpsTableId = game.getExtTableId();
       String vpsTableVersionId = game.getExtTableVersionId();
 
       if (StringUtils.isEmpty(vpsTableId) || StringUtils.isEmpty(vpsTableVersionId)) {
-        PreferenceEntryRepresentation entry = Studio.client.getPreference(PreferenceNames.IGNORED_VALIDATION_SETTINGS);
+        PreferenceEntryRepresentation entry = Studio.client.getPreferenceService().getPreference(PreferenceNames.IGNORED_VALIDATION_SETTINGS);
         List<String> ignoredCsvValue = entry.getCSVValue();
         if (!game.getIgnoredValidations().contains(GameValidationCode.CODE_VPS_MAPPING_MISSING) && !ignoredCsvValue.contains(String.valueOf(GameValidationCode.CODE_VPS_MAPPING_MISSING))) {
           errorBox.setVisible(games.size() == 1);
@@ -309,7 +324,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
         }
       }
 
-      openTableVersionBtn.setDisable(StringUtils.isEmpty(vpsTableId));
+      openTableLinkBtn.setDisable(StringUtils.isEmpty(vpsTableId));
       openTableVersionBtn.setDisable(StringUtils.isEmpty(vpsTableVersionId));
       copyTableVersionBtn.setDisable(StringUtils.isEmpty(vpsTableVersionId));
 
@@ -376,41 +391,43 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     GameRepresentation game = games.get(0);
     TablesSidebarVpsController.addTablesSection(dataRoot, "Table Version", game, VpsDiffTypes.tableNewVersionVPX, vpsTable, false, null);
 
+    vpsSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPS_SETTINGS, VpsSettings.class);
+
     if (!doFilter || game.getPupPackName() == null) {
-      addSection(dataRoot, "PUP Pack", game, VpsDiffTypes.pupPack, vpsTable.getPupPackFiles(), !uiSettings.isHideVPSUpdates() && uiSettings.isVpsPUPPack(), null);
+      addSection(dataRoot, "PUP Pack", game, VpsDiffTypes.pupPack, vpsTable.getPupPackFiles(), !vpsSettings.isHideVPSUpdates() && vpsSettings.isVpsPUPPack(), null);
     }
 
     if (!doFilter || game.getDirectB2SPath() == null) {
-      addSection(dataRoot, "Backglasses", game, VpsDiffTypes.b2s, vpsTable.getB2sFiles(), !uiSettings.isHideVPSUpdates() && uiSettings.isVpsBackglass(), null);
+      addSection(dataRoot, "Backglasses", game, VpsDiffTypes.b2s, vpsTable.getB2sFiles(), !vpsSettings.isHideVPSUpdates() && vpsSettings.isVpsBackglass(), null);
     }
 
     if (!doFilter || !game.isAltSoundAvailable()) {
-      addSection(dataRoot, "ALT Sound", game, VpsDiffTypes.altSound, vpsTable.getAltSoundFiles(), !uiSettings.isHideVPSUpdates() && uiSettings.isVpsAltSound(), null);
+      addSection(dataRoot, "ALT Sound", game, VpsDiffTypes.altSound, vpsTable.getAltSoundFiles(), !vpsSettings.isHideVPSUpdates() && vpsSettings.isVpsAltSound(), null);
     }
 
-    addSection(dataRoot, "ALT Color", game, VpsDiffTypes.altColor, vpsTable.getAltColorFiles(), !uiSettings.isHideVPSUpdates() && uiSettings.isVpsAltColor(), null);
+    addSection(dataRoot, "ALT Color", game, VpsDiffTypes.altColor, vpsTable.getAltColorFiles(), !vpsSettings.isHideVPSUpdates() && vpsSettings.isVpsAltColor(), null);
 
     if (!doFilter || !game.isRomExists()) {
-      addSection(dataRoot, "ROM", game, VpsDiffTypes.rom, vpsTable.getRomFiles(), !uiSettings.isHideVPSUpdates() && uiSettings.isVpsRom(), null);
+      addSection(dataRoot, "ROM", game, VpsDiffTypes.rom, vpsTable.getRomFiles(), !vpsSettings.isHideVPSUpdates() && vpsSettings.isVpsRom(), null);
     }
 
-    addSection(dataRoot, "Sound", game, VpsDiffTypes.sound, vpsTable.getSoundFiles(), !uiSettings.isHideVPSUpdates() && uiSettings.isVpsSound(), null);
+    addSection(dataRoot, "Sound", game, VpsDiffTypes.sound, vpsTable.getSoundFiles(), !vpsSettings.isHideVPSUpdates() && vpsSettings.isVpsSound(), null);
 
     List<FrontendMediaItemRepresentation> items = frontendMedia.getMediaItems(VPinScreen.Topper);
     if (!doFilter || items.isEmpty()) {
-      addSection(dataRoot, "Topper", game, VpsDiffTypes.topper, vpsTable.getTopperFiles(), !uiSettings.isHideVPSUpdates() && uiSettings.isVpsToppper(), null);
+      addSection(dataRoot, "Topper", game, VpsDiffTypes.topper, vpsTable.getTopperFiles(), !vpsSettings.isHideVPSUpdates() && vpsSettings.isVpsToppper(), null);
     }
 
     items = frontendMedia.getMediaItems(VPinScreen.Wheel);
     if (!doFilter || items.isEmpty()) {
-      addSection(dataRoot, "Wheel Art", game, VpsDiffTypes.wheel, vpsTable.getWheelArtFiles(), !uiSettings.isHideVPSUpdates() && uiSettings.isVpsWheel(), null);
+      addSection(dataRoot, "Wheel Art", game, VpsDiffTypes.wheel, vpsTable.getWheelArtFiles(), !vpsSettings.isHideVPSUpdates() && vpsSettings.isVpsWheel(), null);
     }
 
     if (!doFilter || game.getPovPath() == null) {
-      addSection(dataRoot, "POV", game, VpsDiffTypes.pov, vpsTable.getPovFiles(), !uiSettings.isHideVPSUpdates() && uiSettings.isVpsPOV(), null);
+      addSection(dataRoot, "POV", game, VpsDiffTypes.pov, vpsTable.getPovFiles(), !vpsSettings.isHideVPSUpdates() && vpsSettings.isVpsPOV(), null);
     }
 
-    addSection(dataRoot, "Tutorials", game, VpsDiffTypes.tutorial, vpsTable.getTutorialFiles(), !uiSettings.isHideVPSUpdates() && uiSettings.isVpsTutorial(), null);
+    addSection(dataRoot, "Tutorials", game, VpsDiffTypes.tutorial, vpsTable.getTutorialFiles(), !vpsSettings.isHideVPSUpdates() && vpsSettings.isVpsTutorial(), null);
   }
 
   public static void addSection(VBox dataRoot, String title, GameRepresentation game, VpsDiffTypes diffTypes, List<? extends VpsAuthoredUrls> urls, boolean showUpdates, @Nullable Predicate<VpsAuthoredUrls> filterPredicate) {
@@ -420,26 +437,26 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
     List<Node> entries = new ArrayList<>();
     for (VpsAuthoredUrls authoredUrl : urls) {
-      List<VpsUrl> authoredUrlUrls = authoredUrl.getUrls();
-      if (authoredUrlUrls != null && !authoredUrlUrls.isEmpty()) {
-        String version = authoredUrl.getVersion();
-        long updatedAt = authoredUrl.getCreatedAt();
-        List<String> authors = authoredUrl.getAuthors();
+      String version = authoredUrl.getVersion();
+      long updatedAt = authoredUrl.getCreatedAt();
+      List<String> authors = authoredUrl.getAuthors();
 
-        String updateText = null;
-        if (game != null && showUpdates) {
-          List<VPSChange> changes = game.getVpsUpdates().getChanges();
-          for (VPSChange change : changes) {
-            if (change.getId() != null && authoredUrl.getId() != null && change.getId().equals(authoredUrl.getId())) {
-              VpsTable gameTable = client.getVpsService().getTableById(game.getExtTableId());
-              updateText = change.toString(gameTable);
-              break;
-            }
+      String updateText = null;
+      if (game != null && showUpdates) {
+        List<VPSChange> changes = game.getVpsUpdates().getChanges();
+        for (VPSChange change : changes) {
+          if (change.getId() != null && authoredUrl.getId() != null && change.getId().equals(authoredUrl.getId())) {
+            VpsTable gameTable = client.getVpsService().getTableById(game.getExtTableId());
+            updateText = change.toString(gameTable);
+            break;
           }
         }
+      }
 
-        boolean isFiltered = filterPredicate != null ? filterPredicate.test(authoredUrl) : true;
+      boolean isFiltered = filterPredicate != null ? filterPredicate.test(authoredUrl) : true;
 
+      List<VpsUrl> authoredUrlUrls = authoredUrl.getUrls();
+      if (authoredUrlUrls != null && !authoredUrlUrls.isEmpty()) {
         for (VpsUrl vpsUrl : authoredUrlUrls) {
           String url = vpsUrl.getUrl();
           VpsEntry vpsEntry = new VpsEntry(game, diffTypes, null, null, version, authors, url, updatedAt, updateText, false, isFiltered);
@@ -447,13 +464,16 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
             entries.add(vpsEntry);
           }
         }
-
-        if (authoredUrl instanceof VpsBackglassFile) {
-          VpsBackglassFile backglassFile = (VpsBackglassFile) authoredUrl;
-          if (!StringUtils.isEmpty(backglassFile.getComment())) {
-            entries.add(new VpsEntryComment(backglassFile.getComment()));
-          }
+      }
+      else {
+        VpsEntry vpsEntry = new VpsEntry(game, diffTypes, null, null, version, authors, null, updatedAt, updateText, false, isFiltered);
+        if (!entries.contains(vpsEntry)) {
+          entries.add(vpsEntry);
         }
+      }
+
+      if (!StringUtils.isEmpty(authoredUrl.getComment())) {
+        entries.add(new VpsEntryComment(authoredUrl.getComment()));
       }
     }
 
@@ -506,6 +526,10 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
         GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(-1, vpsTable, vpsTableVersion);
         boolean installed = (gameByVpsTable != null);
 
+        if (gameByVpsTable == null) {
+          gameByVpsTable = game;
+        }
+
         boolean isFiltered = filterPredicate != null ? filterPredicate.test(vpsTableVersion) : true;
 
         if (authoredUrlUrls != null && !authoredUrlUrls.isEmpty()) {
@@ -524,6 +548,10 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
           if (!entries.contains(vpsEntry)) {
             entries.add(vpsEntry);
           }
+        }
+
+        if (!StringUtils.isEmpty(vpsTableVersion.getComment())) {
+          entries.add(new VpsEntryComment(vpsTableVersion.getComment()));
         }
       }
 
@@ -582,7 +610,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
         client.getFrontendService().saveVpsMapping(gameRepresentation.getId(), extTableId, updatedId);
 
         if (autoApplyCheckbox.isSelected()) {
-          gameRepresentation = client.getGame(gameRepresentation.getId());
+          gameRepresentation = client.getGameService().getGame(gameRepresentation.getId());
           TableDialogs.openAutoFillSettingsDialog(Studio.stage, Arrays.asList(gameRepresentation), null);
         }
         else {
@@ -636,8 +664,10 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
     List<VpsTable> tables = client.getVpsService().getTables();
     refreshSheetData(tables);
-    TreeSet<String> collect = new TreeSet<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
-    autoCompleteNameField = new AutoCompleteTextField(null, this.nameField, this, collect);
+    List<String> collect = new ArrayList<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
+    autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, collect);
+
+    this.ignoreUpdatesListener = new IgnoreUpdatesChangeListener();
 
     preferencesChanged(PreferenceNames.UI_SETTINGS, null);
     client.getPreferenceService().addListener(this);
@@ -645,9 +675,19 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
   @Override
   public void preferencesChanged(String key, Object value) {
-    if (key.equals(PreferenceNames.UI_SETTINGS)) {
-      uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-      this.vpsResetUpdatesBtn.setVisible(!uiSettings.isHideVPSUpdates());
+    if (key.equals(PreferenceNames.VPS_SETTINGS)) {
+      vpsSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPS_SETTINGS, VpsSettings.class);
+      this.vpsResetUpdatesBtn.setVisible(!vpsSettings.isHideVPSUpdates());
+    }
+  }
+
+  class IgnoreUpdatesChangeListener implements ChangeListener<Boolean> {
+    @Override
+    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+      GameRepresentation gameRepresentation = games.get(0);
+      gameRepresentation.setIgnoreUpdates(newValue);
+      client.getGameService().saveGame(gameRepresentation);
+      EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
     }
   }
 }

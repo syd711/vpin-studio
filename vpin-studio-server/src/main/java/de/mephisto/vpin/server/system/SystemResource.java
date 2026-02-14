@@ -1,16 +1,17 @@
 package de.mephisto.vpin.server.system;
 
-import de.mephisto.vpin.commons.ServerInstallationUtil;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.NirCmd;
 import de.mephisto.vpin.commons.utils.Updater;
+import de.mephisto.vpin.commons.utils.WindowsVolumeControl;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.system.*;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.restclient.util.ZipUtil;
+import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.popper.PinUPConnector;
@@ -26,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,10 +41,12 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.zip.ZipOutputStream;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static de.mephisto.vpin.server.system.SystemService.COMPETITION_BADGES;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @RestController
 @RequestMapping(API_SEGMENT + "system")
@@ -60,9 +64,42 @@ public class SystemResource {
   @Autowired
   private FrontendService frontendService;
 
+  @Autowired
+  private SystemBackupService systemBackupService;
+
+  @PostMapping("/backup/create")
+  public String createBackup() {
+    try {
+      return systemBackupService.create();
+    }
+    catch (Exception e) {
+      LOG.error("Backup creation failed: {}", e.getMessage(), e);
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Backup creation failed: " + e.getMessage());
+    }
+  }
+
+  @PostMapping("/backup/restore")
+  public Boolean restoreBackup(@RequestParam(value = "file") MultipartFile file,
+                               @RequestParam(value = "backupDescriptor") String backupDescriptor) {
+    try {
+      String json = new String(file.getBytes());
+      return systemBackupService.restore(json, backupDescriptor);
+    }
+    catch (Exception e) {
+      LOG.error("Backup restore failed: {}", e.getMessage(), e);
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Backup restoring failed: " + e.getMessage());
+    }
+  }
+
   @GetMapping("/startupTime")
   public Date startupTime() {
     return startupTime;
+  }
+
+  @GetMapping("/pausemenu")
+  public boolean pauseMenu() {
+    ServerFX.getInstance().togglePauseMenu();
+    return true;
   }
 
   @GetMapping("/pausemenu/test/{gameId}/{duration}")
@@ -76,7 +113,9 @@ public class SystemResource {
   public String logs() {
     try {
       Path filePath = Path.of("./vpin-studio-server.log");
-      return Files.readString(filePath);
+      List<String> lines = Files.readAllLines(filePath);
+      List<String> filtered = lines.stream().filter(l -> l.trim().startsWith("at ") || l.trim().contains("ERROR")).collect(Collectors.toList());
+      return String.join("\n", filtered);
     }
     catch (IOException e) {
       LOG.error("Error reading log: " + e.getMessage(), e);
@@ -165,7 +204,7 @@ public class SystemResource {
     SystemSummary info = new SystemSummary();
     try {
       info.setScreenInfos(systemService.getMonitorInfos());
-      info.setArchiveType(systemService.getArchiveType());
+      info.setBackupType(systemService.getBackupType());
       info.setSystemId(SystemUtil.getUniqueSystemId());
     }
     catch (Exception e) {
@@ -178,6 +217,11 @@ public class SystemResource {
   public boolean muteSystem(@PathVariable("mute") int mute) {
     NirCmd.muteSystem(mute == 1);
     return true;
+  }
+
+  @GetMapping("/muted")
+  public boolean isMuted() {
+    return WindowsVolumeControl.isMuted();
   }
 
 
@@ -251,7 +295,7 @@ public class SystemResource {
     systemService.killProcesses("javaw.exe");
     File uiZip = new File("./", Updater.UI_ZIP);
     if (uiZip.exists()) {
-      if (!ZipUtil.unzip(uiZip, new File("./"))) {
+      if (!ZipUtil.unzip(uiZip, new File("./"), null)) {
         LOG.error("Extraction of " + uiZip.getAbsolutePath() + " failed.");
         return false;
       }
@@ -281,8 +325,10 @@ public class SystemResource {
   public boolean installServerUpdate() throws IOException {
     File serverUpdate = new File("./VPin-Studio-Server.zip");
     if (!serverUpdate.exists()) {
+      LOG.info("No {} file found, skipping update installation,", Updater.SERVER_ZIP);
       return false;
     }
+    LOG.info("{} file found, installing update.", Updater.SERVER_ZIP);
     Updater.installServerUpdate();
     new Thread(() -> {
       try {
@@ -315,48 +361,20 @@ public class SystemResource {
     return true;
   }
 
-  @GetMapping("/autostart/installed")
-  public boolean autostart() {
-    return new File("./server.vbs").exists();
-  }
-
-  @GetMapping("/autostart/install")
-  public boolean installService() {
-    try {
-      File disabled = new File("./server.vbs.bak");
-      File file = new File("./server.vbs");
-      if (disabled.exists()) {
-        FileUtils.moveFile(disabled, file);
-        return true;
-      }
-      return ServerInstallationUtil.install();
-    }
-    catch (IOException e) {
-      return false;
-    }
-  }
-
-  @GetMapping("/autostart/uninstall")
-  public boolean uninstallService() throws IOException {
-    File file = new File("./server.vbs");
-    File disabled = new File("./server.vbs.bak");
-    FileUtils.moveFile(file, disabled);
-    return true;
-  }
-
   @GetMapping("/version")
   public String version() {
     return systemService.getVersion();
   }
 
+  @GetMapping("/features")
+  public FeaturesInfo getFeatures() {
+    return VPinStudioServer.Features;
+  }
+
+
   @GetMapping("/badges")
   public List<String> getCompetitionBadges() {
     return systemService.getCompetitionBadges();
-  }
-
-  @GetMapping("/dotnet")
-  public boolean isDotNetInstalled() {
-    return systemService.isDotNetInstalled();
   }
 
   @PostMapping("/text")

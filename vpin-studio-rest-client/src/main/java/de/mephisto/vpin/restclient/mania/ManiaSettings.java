@@ -62,7 +62,7 @@ public class ManiaSettings extends JsonSettings {
   }
 
   public boolean isTournamentsEnabled() {
-    return tournamentsEnabled;
+    return false;//tournamentsEnabled;
   }
 
   public void setTournamentsEnabled(boolean tournamentsEnabled) {

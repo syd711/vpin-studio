@@ -152,7 +152,7 @@ public class EvaluationContext {
   /**
    * Public method so that caller can specify a specific variable to capture
    */
-  public boolean addUndefinedVar(String var) {
+  private boolean addUndefinedVar(String var) {
     return undefinedVars.add(var);
   }
 
@@ -180,7 +180,8 @@ public class EvaluationContext {
       onEvalVars.add(var);
     } 
     else {
-      LOG.error("Expression for variable '{}'' cannot be evaluated, the variable remains undefined !", var);
+      //...a bit too verbose
+      //LOG.error("Expression for variable '{}'' cannot be evaluated, the variable remains undefined !", var);
     }
   }
 
@@ -224,8 +225,7 @@ public class EvaluationContext {
       return true;
     }
     catch(ParseException pe) {
-      pe.printStackTrace();
-      LOG.warn("Cannot parse {},  : {}", expressionString, pe.getMessage());
+//      LOG.warn("Cannot parse {},  : {}", expressionString, pe.getMessage());
       return false;
     }
   }

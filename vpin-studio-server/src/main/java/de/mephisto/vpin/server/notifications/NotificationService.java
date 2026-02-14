@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.notifications;
 
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.ServerFXListener;
 import de.mephisto.vpin.commons.fx.notifications.Notification;
@@ -22,6 +21,9 @@ import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
+
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,10 +63,12 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
 
   private void showNotification(Notification notification, boolean checkEmulator) {
     //no support for standalone
-    if (frontendService.getFrontendType().isNotStandalone()) {
+    if (!Features.IS_STANDALONE) {
       if (Features.NOTIFICATIONS_ENABLED && notificationSettings.getDurationSec() > 0) {
         notification.setDesktopMode(notificationSettings.isDesktopMode());
         notification.setDurationSec(notificationSettings.getDurationSec());
+        notification.setMargin(notificationSettings.getMargin());
+        notification.setTextBoxMargin(notificationSettings.getTextboxMargin());
         notification.setWindowTitle(frontendService.getFrontendType().equals(FrontendType.Popper) && pinVolAutostart ? "PinUP Popper" : "VPin Studio Notification");
 
         if (checkEmulator) {
@@ -152,6 +156,14 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
           "Version " + systemService.getVersion());
       showNotification(notification);
     }
+  }
+
+  public boolean testNotification() {
+    Notification notification = NotificationFactory.createNotification(null,
+        "VPin Studio Server", "This is a test notification.",
+        "VPin Studio Version " + systemService.getVersion());
+    showNotification(notification);
+    return true;
   }
 
   @Override

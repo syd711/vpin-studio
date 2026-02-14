@@ -1,16 +1,12 @@
 package de.mephisto.vpin.commons.utils.media;
 
-import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -21,30 +17,26 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
+
 public class AudioMediaPlayer extends AssetMediaPlayer {
-  private final static Logger LOG = LoggerFactory.getLogger(VideoMediaPlayer.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private static AudioMediaPlayer activePlayer = null;
 
-  @Nullable
-  private final FrontendMediaItemRepresentation mediaItem;
+  protected int retryCounter = 0;
+
   private ProgressBar progressBar;
   private DoubleBinding binding;
   private MediaView mediaView;
   private FontIcon fontIcon;
 
-  public AudioMediaPlayer(@NonNull BorderPane parent, @NonNull String url) {
-    this(parent, null, url);
+  public AudioMediaPlayer() {
+    super();
   }
 
-  public AudioMediaPlayer(@NonNull BorderPane parent, @Nullable FrontendMediaItemRepresentation mediaItem, @NonNull String url) {
-    super(parent, url);
-    this.mediaItem = mediaItem;
-  }
-
-  public void render() {
-    this.setCenter(new ProgressIndicator());
-    parent.setCenter(this);
+  public void render(@NonNull String url) {
+    setLoading();
 
     Media media = new Media(url);
     mediaPlayer = new MediaPlayer(media);
@@ -62,11 +54,11 @@ public class AudioMediaPlayer extends AssetMediaPlayer {
           catch (InterruptedException e) {
             throw new RuntimeException(e);
           }
-          render();
+          render(url);
         });
       }
       else {
-        parent.setCenter(getErrorLabel(mediaItem));
+        setCenter(getErrorLabel());
       }
     });
 
@@ -139,8 +131,6 @@ public class AudioMediaPlayer extends AssetMediaPlayer {
       });
 
       bindProgress(mediaPlayer, progressBar);
-
-      this.setBottom(mediaView);
     });
   }
 
@@ -161,11 +151,5 @@ public class AudioMediaPlayer extends AssetMediaPlayer {
 
   private boolean isValidDuration(Duration d) {
     return d != null && !d.isIndefinite() && !d.isUnknown();
-  }
-
-  @Override
-  public void disposeMedia() {
-    super.disposeMedia();
-    this.setBottom(null);
   }
 }

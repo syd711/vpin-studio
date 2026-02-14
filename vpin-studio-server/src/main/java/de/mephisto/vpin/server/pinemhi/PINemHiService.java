@@ -42,6 +42,7 @@ public class PINemHiService implements InitializingBean {
 
 
   private boolean enabled = false;
+  private final List<String> romList = new ArrayList<>();
 
   public boolean getAutoStart() {
     return preferencesService.getPreferences().getPinemhiAutoStartEnabled();
@@ -50,13 +51,17 @@ public class PINemHiService implements InitializingBean {
   public boolean toggleAutoStart() {
     try {
       this.enabled = !enabled;
-      preferencesService.savePreference(PreferenceNames.PINEMHI_AUTOSTART_ENABLED, enabled);
+      preferencesService.savePreference(PreferenceNames.PINEMHI_AUTOSTART_ENABLED, enabled, false);
       return enabled;
     }
     catch (Exception e) {
       LOG.error("Failed to set PINemHi autostart flag: " + e.getMessage(), e);
     }
     return false;
+  }
+
+  public List<String> getRomList() {
+    return romList;
   }
 
   public boolean isRunning() {
@@ -71,6 +76,10 @@ public class PINemHiService implements InitializingBean {
     File exe = new File(PINEMHI_FOLDER, PROCESS_NAME + ".exe");
     List<String> commands = Arrays.asList("start", "/min", exe.getAbsolutePath());
     SystemCommandExecutor executor = new SystemCommandExecutor(commands);
+//    executor.setEnv("LANG", "en_US.UTF-8");
+//    executor.setEnv("LC_ALL", "en_US.UTF-8");
+//    executor.setEnv("LC_CTYPE", "en_US.UTF-8");
+//    executor.setCodePage("65001");
     executor.setDir(new File(PINEMHI_FOLDER));
     executor.executeCommandAsync();
     LOG.info("Executed " + PROCESS_NAME + " command: " + String.join(" ", commands));
@@ -96,10 +105,6 @@ public class PINemHiService implements InitializingBean {
 
         Set<String> sections = iniConfiguration.getSections();
         for (String section : sections) {
-          if ("romfind".equals(section)) {
-            continue;
-          }
-
           SubnodeConfiguration s = iniConfiguration.getSection(section);
           if (s.containsKey(key)) {
             //changeCounter++;
@@ -142,10 +147,6 @@ public class PINemHiService implements InitializingBean {
       Map<String, Object> entries = new HashMap<>();
       Set<String> sections = iniConfiguration.getSections();
       for (String section : sections) {
-        if ("romfind".equals(section)) {
-          continue;
-        }
-
         SubnodeConfiguration s = iniConfiguration.getSection(section);
         Iterator<String> keys = s.getKeys();
         while (keys.hasNext()) {
@@ -214,26 +215,6 @@ public class PINemHiService implements InitializingBean {
     }
   }
 
-  @Override
-  public void afterPropertiesSet() throws Exception {
-    new Thread(() -> {
-      Thread.currentThread().setName("PinemHi Updater");
-      checkForUpdates();
-    }).start();
-
-    this.enabled = getAutoStart();
-    if (enabled) {
-      startMonitor();
-      LOG.info("Auto-started Pinemhi " + PROCESS_NAME);
-    }
-
-    File nvramFolder = mameService.getNvRamFolder();
-    if (nvramFolder != null && nvramFolder.exists()) {
-      adjustVPPathForEmulator(nvramFolder, getPinemhiIni(), true);
-    }
-    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
-  }
-
   /**
    * Load pinhemi.ini, update the VP path with the nvRam foldr of the emulator
    * and save
@@ -259,5 +240,26 @@ public class PINemHiService implements InitializingBean {
         LOG.error("Failed to update VP path in pinemhi.ini: " + e.getMessage(), e);
       }
     }
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    new Thread(() -> {
+      Thread.currentThread().setName("PinemHi Updater");
+      checkForUpdates();
+    }).start();
+
+    this.enabled = getAutoStart();
+    if (enabled) {
+      startMonitor();
+      LOG.info("Auto-started Pinemhi " + PROCESS_NAME);
+    }
+
+    File nvramFolder = mameService.getNvRamFolder();
+    if (nvramFolder != null && nvramFolder.exists()) {
+      adjustVPPathForEmulator(nvramFolder, getPinemhiIni(), true);
+    }
+
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

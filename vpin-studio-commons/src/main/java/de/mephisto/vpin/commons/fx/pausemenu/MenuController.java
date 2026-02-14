@@ -1,51 +1,62 @@
 package de.mephisto.vpin.commons.fx.pausemenu;
 
+import de.mephisto.vpin.commons.fx.ServerFX;
+import de.mephisto.vpin.commons.fx.cards.CardGraphicsHighscore;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItem;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemTypes;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemsFactory;
+import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuState;
 import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
 import de.mephisto.vpin.commons.utils.FXUtil;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
+import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.cards.CardResolution;
+import de.mephisto.vpin.restclient.cards.CardSettings;
+import de.mephisto.vpin.restclient.cards.CardTemplate;
+import de.mephisto.vpin.restclient.cards.CardTemplateType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.GameStatus;
-import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.animation.ParallelTransition;
 import javafx.animation.Transition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
-import javafx.scene.web.WebView;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static de.mephisto.vpin.commons.fx.pausemenu.PauseMenuUIDefaults.*;
+import static de.mephisto.vpin.commons.fx.ServerFX.client;
+import static de.mephisto.vpin.commons.fx.pausemenu.PauseMenuUIDefaults.SELECTION_SCALE_DURATION;
+import static de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemTypes.wovp;
 
 public class MenuController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(MenuController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private Node bluePanel;
@@ -55,6 +66,9 @@ public class MenuController implements Initializable {
 
   @FXML
   private HBox menuItemsRow;
+
+  @FXML
+  private ImageView wheelImage;
 
   @FXML
   private Label blueLabel;
@@ -75,46 +89,49 @@ public class MenuController implements Initializable {
   private MediaView mediaView;
 
   @FXML
-  private WebView webView;
-
-  @FXML
   private BorderPane customView;
 
   @FXML
   private BorderPane scoreView;
 
+  @FXML
+  private ImageView rowImage;
+
+  @FXML
+  private BorderPane baseSelector;
+
+  @FXML
+  private StackPane footerStack;
+
   private int selectionIndex = 0;
 
-  private GameStatus gameStatus;
-  private VpsTable vpsTable;
-  private VPinScreen cardScreen;
-  private FrontendPlayerDisplay tutorialScreen;
-  private PauseMenuSettings pauseMenuSettings;
   private GameRepresentation game;
-  private FrontendMediaRepresentation frontendMedia;
+  private PauseMenuState state;
   private PauseMenuItem activeSelection;
 
   private final List<PauseMenuItem> pauseMenuItems = new ArrayList<>();
 
   private MenuCustomViewController customViewController;
   private Node currentSelection;
+  private WovpMenuItemController wovpMenuItemController;
+  private VPinScreen cardScreen = null;
+  private FrontendMediaRepresentation frontendMedia;
+  private VpsTable vpsTable;
 
-  public void setGame(@NonNull GameRepresentation game,
-                      @NonNull FrontendMediaRepresentation frontendMedia,
-                      GameStatus gameStatus,
-                      VpsTable vpsTable,
-                      @Nullable VPinScreen cardScreen,
-                      @Nullable FrontendPlayerDisplay tutorialScreen,
-                      @NonNull PauseMenuSettings pauseMenuSettings) {
-    this.game = game;
-    this.frontendMedia = frontendMedia;
-    this.gameStatus = gameStatus;
-    this.vpsTable = vpsTable;
-    this.cardScreen = cardScreen;
-    this.tutorialScreen = tutorialScreen;
-    this.pauseMenuSettings = pauseMenuSettings;
-    this.customViewController.setGame(game, frontendMedia, gameStatus, vpsTable);
+  public void setInitialState(@NonNull PauseMenuState state) {
+    this.game = state.getGame();
+    this.state = state;
     enterMenuItemSelection();
+    if (state.isApronMode()) {
+      footerStack.setVisible(false);
+      rowImage.setVisible(false);
+      baseSelector.setVisible(false);
+      bluePanel.setVisible(false);
+      bluePanel.setVisible(false);
+      loadMask.setVisible(false);
+      menuItemsRow.setVisible(false);
+      wheelImage.setVisible(false);
+    }
   }
 
   public void setVisible(boolean b) {
@@ -122,19 +139,34 @@ public class MenuController implements Initializable {
   }
 
   private void enterMenuItemSelection() {
-    resetGameRow();
     blueLabel.setText("Loading...");
-    TransitionUtil.createOutFader(bluePanel).play();
-    TransitionUtil.createInFader(menuItemsRow).play();
-    TransitionUtil.createInFader(loadMask).play();
-    footer.setTranslateY(310);
-    setLoadLabel("Loading...");
+    JFXFuture.supplyAsync(() -> {
+      CardSettings cardSettings = client.getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
+      cardScreen = null;
+      if (!StringUtils.isEmpty(cardSettings.getPopperScreen())) {
+        cardScreen = VPinScreen.valueOf(cardSettings.getPopperScreen());
+      }
+      LOG.info("Finished fetching all screen information for pause menu.");
 
-    Platform.runLater(() -> {
-      loadMenuItems();
-      initGameBarSelection();
+      frontendMedia = client.getFrontendService().getFrontendMedia(game.getId());
+      String extTableId = game.getExtTableId();
+      vpsTable = client.getVpsService().getTableById(extTableId);
+      return "Loading Menu for \"" + game.getGameDisplayName() + "\"";
+    }).thenAcceptLater((msg) -> {
+      this.customViewController.setGame(game, vpsTable, frontendMedia);
+      resetGameRow();
+      TransitionUtil.createOutFader(bluePanel).play();
+      TransitionUtil.createInFader(menuItemsRow).play();
+      TransitionUtil.createInFader(loadMask).play();
+      footer.setTranslateY(310);
+      setLoadLabel(msg);
 
-      TransitionUtil.createOutFader(loadMask).play();
+      Platform.runLater(() -> {
+        loadMenuItems();
+        initGameBarSelection();
+
+        TransitionUtil.createOutFader(loadMask).play();
+      });
     });
   }
 
@@ -143,12 +175,28 @@ public class MenuController implements Initializable {
     label.setText(text);
   }
 
-  public void scrollGameBarRight() {
-    scroll(false);
+  public void enter() {
+    PauseMenuItemTypes itemType = getSelection().getItemType();
+    switch (itemType) {
+      case wovp: {
+        wovpMenuItemController.enter();
+        break;
+      }
+    }
   }
 
-  public void scrollGameBarLeft() {
-    scroll(true);
+  public void right() {
+    PauseMenuItemTypes itemType = getSelection().getItemType();
+    if (!itemType.equals(wovp) || !wovpMenuItemController.right()) {
+      scroll(false);
+    }
+  }
+
+  public void left() {
+    PauseMenuItemTypes itemType = getSelection().getItemType();
+    if (!itemType.equals(wovp) || !wovpMenuItemController.left()) {
+      scroll(true);
+    }
   }
 
   private synchronized void scroll(boolean left) {
@@ -188,11 +236,9 @@ public class MenuController implements Initializable {
     animateMenuSteps(left, oldIndex, steps, duration);
   }
 
-  private AtomicBoolean animating = new AtomicBoolean(false);
+  private final AtomicBoolean animating = new AtomicBoolean(false);
 
   private synchronized void animateMenuSteps(boolean left, final int oldIndex, final int steps, int duration) {
-
-
     animating.set(true);
     final Node node = menuItemsRow.getChildren().get(oldIndex);
     Transition t1 = TransitionUtil.createTranslateByXTransition(node, duration, left ? PauseMenuUIDefaults.SCROLL_OFFSET : -PauseMenuUIDefaults.SCROLL_OFFSET);
@@ -231,7 +277,6 @@ public class MenuController implements Initializable {
 
   private void updateSelection(Node oldNode, Node node) {
     if (oldNode != null) {
-      PauseMenuItem oldSelection = (PauseMenuItem) node.getUserData();
       if (activeSelection.getVideoUrl() != null && mediaView != null && mediaView.getMediaPlayer() != null) {
         try {
           mediaView.getMediaPlayer().stop();
@@ -247,7 +292,6 @@ public class MenuController implements Initializable {
     nameLabel.setText(activeSelection.getDescription());
     screenImageView.setVisible(false);
     mediaView.setVisible(false);
-    webView.setVisible(false);
     customView.setVisible(false);
     scoreView.setVisible(false);
 
@@ -256,13 +300,12 @@ public class MenuController implements Initializable {
     }
     else if (activeSelection.getItemType().equals(PauseMenuItemTypes.iScored)) {
       try {
-        Image sectionImage = new Image(PauseMenu.class.getResourceAsStream("iScored-wheel.png"));
+        Image sectionImage = new Image(PauseMenu.class.getResourceAsStream("iscored.png"));
         String resource = "menu-score-view.fxml";
         FXMLLoader loader = new FXMLLoader(MenuScoreViewController.class.getResource(resource));
         Pane widgetRoot = loader.load();
         MenuScoreViewController customViewController = loader.getController();
-        customViewController.setData(game, gameStatus, vpsTable, activeSelection, sectionImage);
-//        return widgetRoot;
+        customViewController.setData(game, vpsTable, activeSelection, sectionImage);
         scoreView.setCenter(widgetRoot);
         scoreView.setVisible(true);
       }
@@ -277,14 +320,61 @@ public class MenuController implements Initializable {
         FXMLLoader loader = new FXMLLoader(MenuScoreViewController.class.getResource(resource));
         Pane widgetRoot = loader.load();
         MenuScoreViewController customViewController = loader.getController();
-        customViewController.setData(game, gameStatus, vpsTable, activeSelection, sectionImage);
-//        return widgetRoot;
+        customViewController.setData(game, vpsTable, activeSelection, sectionImage);
         scoreView.setCenter(widgetRoot);
         scoreView.setVisible(true);
       }
       catch (IOException e) {
         LOG.error("Failed to init pause component: " + e.getMessage(), e);
       }
+    }
+    else if (activeSelection.getItemType().equals(wovp)) {
+      try {
+        Image sectionImage = new Image(PauseMenu.class.getResourceAsStream("wovp-wheel.png"));
+        String resource = "menu-submitter-view.fxml";
+        FXMLLoader loader = new FXMLLoader(WovpMenuItemController.class.getResource(resource));
+        Pane widgetRoot = loader.load();
+        wovpMenuItemController = loader.getController();
+        wovpMenuItemController.setData(game, activeSelection, vpsTable, sectionImage);
+        scoreView.setCenter(widgetRoot);
+        scoreView.setVisible(true);
+      }
+      catch (IOException e) {
+        LOG.error("Failed to init pause component: " + e.getMessage(), e);
+      }
+    }
+    else if (activeSelection.getItemType().equals(PauseMenuItemTypes.highscores)) {
+      ProgressIndicator indicator = new ProgressIndicator();
+      indicator.setPrefWidth(300.0);
+      indicator.setPrefHeight(300.0);
+      BorderPane.setAlignment(indicator, Pos.CENTER);
+
+      scoreView.setCenter(indicator);
+      scoreView.setVisible(true);
+
+      JFXFuture
+          .supplyAsync(() -> {
+            try {
+              CardTemplate cardTemplate = client.getHighscoreCardTemplatesClient().getCardTemplateForGame(game, CardTemplateType.HIGSCORE_CARD);
+              return cardTemplate;
+            }
+            catch (Exception e) {
+              LOG.error("Failed to read card template for {}: {}", game.getGameDisplayName() + "/" + game.getId(), e.getMessage(), e);
+            }
+            return null;
+          })
+          .thenAcceptLater(template -> {
+            JFXFuture
+                .supplyAsync(() -> {
+                  return client.getCardData(game, template);
+                })
+                .thenAcceptLater(carddata -> {
+                  CardGraphicsHighscore highscoreCard = new CardGraphicsHighscore(true);
+                  highscoreCard.setTemplate(template);
+                  highscoreCard.setData(carddata, CardResolution.HDReady);
+                  scoreView.setCenter(highscoreCard);
+                });
+          });
     }
     else if (activeSelection.getVideoUrl() != null) {
       mediaView.setVisible(true);
@@ -299,17 +389,23 @@ public class MenuController implements Initializable {
         LOG.info("Started streaming of {}", activeSelection.getVideoUrl());
       }
     }
-    else if (activeSelection.getDataImage() != null) {
-      screenImageView.setVisible(true);
-      screenImageView.setImage(activeSelection.getDataImage());
+    else if (activeSelection.getDataImageUrl() != null) {
+      JFXFuture.supplyAsync(() -> {
+        return new Image(ServerFX.client.getCachedUrlImage(activeSelection.getDataImageUrl()));
+      }).thenAcceptLater((image) -> {
+        screenImageView.setVisible(true);
+        screenImageView.setImage(image);
+      });
     }
-
-    StateMananger.getInstance().checkAutoPlay();
   }
 
   public void reset() {
     LOG.info("Resetting pause menu media items.");
     this.screenImageView.setImage(null);
+
+    if (wovpMenuItemController != null) {
+      wovpMenuItemController.reset();
+    }
 
     try {
       if (mediaView != null && mediaView.getMediaPlayer() != null) {
@@ -344,9 +440,6 @@ public class MenuController implements Initializable {
       this.mediaView.setMediaPlayer(null);
       this.mediaView.setVisible(false);
     });
-
-    this.webView.setVisible(false);
-    this.webView.getEngine().load(null);
   }
 
   public PauseMenuItem getSelection() {
@@ -361,10 +454,11 @@ public class MenuController implements Initializable {
       return;
     }
 
+    //ensures that the scrolling row is centered to the screen.
     Pane node = (Pane) menuItemsRow.getChildren().get(0);
     int size = menuItemsRow.getChildren().size() * PauseMenuUIDefaults.THUMBNAIL_SIZE;
-    if (size < PauseMenuUIDefaults.SCREEN_WIDTH) {
-      menuItemsRow.setTranslateX(PauseMenuUIDefaults.SCREEN_WIDTH / 2 + PauseMenuUIDefaults.THUMBNAIL_SIZE + SCROLL_OFFSET);
+    if (size < PauseMenuUIDefaults.getScreenWidth()) {
+      menuItemsRow.setTranslateX(PauseMenuUIDefaults.getScreenWidth() / 2);
     }
     else {
       menuItemsRow.setTranslateX(size / 2);
@@ -384,28 +478,33 @@ public class MenuController implements Initializable {
 
   private void loadMenuItems() {
     pauseMenuItems.clear();
-    pauseMenuItems.addAll(PauseMenuItemsFactory.createPauseMenuItems(game, pauseMenuSettings, cardScreen, frontendMedia));
+    pauseMenuItems.addAll(PauseMenuItemsFactory.createPauseMenuItems(state, cardScreen, frontendMedia));
 
     menuItemsRow.getChildren().clear();
+//    menuItemsRow.getStyleClass().add("debug");
     selectionIndex = 0;
     for (PauseMenuItem pItem : pauseMenuItems) {
       menuItemsRow.getChildren().add(PauseMenuItemComponentFactory.createMenuItemFor(pItem));
     }
 
-    while (menuItemsRow.getChildren().size() * PauseMenuUIDefaults.THUMBNAIL_SIZE < PauseMenuUIDefaults.SCREEN_WIDTH * 2) {
-      Label label = new Label();
-      label.setMinWidth(THUMBNAIL_SIZE);
-      menuItemsRow.getChildren().add(label);
-    }
+//    while (menuItemsRow.getChildren().size() * PauseMenuUIDefaults.THUMBNAIL_SIZE < PauseMenuUIDefaults.getScreenWidth() * 2) {
+//      Label label = new Label();
+//      label.setMinWidth(THUMBNAIL_SIZE);
+//      menuItemsRow.getChildren().add(label);
+//    }
   }
 
   public boolean isVisible() {
-    return PauseMenu.visible;
+    return PauseMenu.getInstance().isVisible();
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    webView.getEngine().setUserStyleSheetLocation(PauseMenu.class.getResource("web-style.css").toString());
+    rowImage.setFitWidth(PauseMenuUIDefaults.getScreenWidth());
+
+    if (PauseMenuUIDefaults.getScreenWidth() < 2000) {
+      footerStack.setVisible(false);
+    }
 
     try {
       String resource = "menu-custom-view.fxml";

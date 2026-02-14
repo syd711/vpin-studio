@@ -1,18 +1,18 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenuUIDefaults;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
+import de.mephisto.vpin.restclient.backups.BackupDescriptorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.*;
-import de.mephisto.vpin.ui.archiving.RepositoryController;
-import de.mephisto.vpin.ui.archiving.RepositorySidebarController;
+import de.mephisto.vpin.ui.backups.BackupsController;
+import de.mephisto.vpin.ui.backups.BackupsSidebarController;
 import de.mephisto.vpin.ui.backglassmanager.BackglassManagerController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
@@ -47,28 +47,32 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablesController implements Initializable, StudioFXController, StudioEventListener {
-  private final static Logger LOG = LoggerFactory.getLogger(TablesController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private static final int TAB_TABLE = 0;
   private static final int TAB_BACKGLASS = 1;
   private static final int TAB_VPS = 2;
   private static final int TAB_STATISTICS = 3;
   private static final int TAB_RECORDER = 4;
-  private static final int TAB_REPOSITORY = 5;
+  private static final int TAB_BACKUPS = 5;
 
   private TableOverviewController tableOverviewController;
   private BackglassManagerController backglassManagerController;
   private VpsTablesController vpsTablesController;
   private AlxController alxController;
-  private RepositoryController repositoryController;
+  private BackupsController backupsController;
 
   public static TablesController INSTANCE;
 
@@ -93,10 +97,10 @@ public class TablesController implements Initializable, StudioFXController, Stud
   private Tab backglassManagerTab;
 
   @FXML
-  private Tab tablesStatisticsTab;
+  private Tab tableBackupsTab;
 
   @FXML
-  private Tab tableRepositoryTab;
+  private Tab tablesStatisticsTab;
 
   @FXML
   private Tab vpsTablesTab;
@@ -108,7 +112,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
   private TablesSidebarController tablesSideBarController; //fxml magic! Not unused
 
   @FXML
-  private RepositorySidebarController repositorySideBarController; //fxml magic! Not unused
+  private BackupsSidebarController backupsSideBarController; //fxml magic! Not unused
 
   @FXML
   private VpsTablesSidebarController vpsTablesSidebarController; //fxml magic! Not unused
@@ -154,19 +158,19 @@ public class TablesController implements Initializable, StudioFXController, Stud
         break;
       }
       case TAB_VPS: {
-        PreferencesController.open("settings_client");
+        PreferencesController.open("vps");
         break;
       }
       case TAB_STATISTICS: {
         PreferencesController.open("settings_client");
         break;
       }
-      case TAB_REPOSITORY: {
-        PreferencesController.open("vpbm");
+      case TAB_BACKUPS: {
+        PreferencesController.open("backups");
         break;
       }
       case TAB_RECORDER: {
-        PreferencesController.open("inputs");
+        PreferencesController.open("validators_screens");
         break;
       }
       default: {
@@ -194,13 +198,11 @@ public class TablesController implements Initializable, StudioFXController, Stud
     EventManager.getInstance().addListener(this);
     sidePanelRoot = root.getRight();
 
-
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
-    if (!frontendType.supportStatistics()) {
+    if (!Features.STATISTICS_ENABLED) {
       tabPane.getTabs().remove(tablesStatisticsTab);
     }
-    if (!frontendType.supportArchive()) {
-      tabPane.getTabs().remove(tableRepositoryTab);
+    if (!Features.BACKUPS_ENABLED) {
+      tabPane.getTabs().remove(tableBackupsTab);
     }
 
     try {
@@ -246,15 +248,15 @@ public class TablesController implements Initializable, StudioFXController, Stud
     }
 
     try {
-      if (Features.BACKUP_VIEW_ENABLED) {
-        FXMLLoader loader = new FXMLLoader(RepositoryController.class.getResource("scene-repository.fxml"));
+      if (Features.BACKUPS_ENABLED) {
+        FXMLLoader loader = new FXMLLoader(BackupsController.class.getResource("scene-backups.fxml"));
         Parent repositoryRoot = loader.load();
-        repositoryController = loader.getController();
-        repositoryController.setRootController(this);
-        tableRepositoryTab.setContent(repositoryRoot);
+        backupsController = loader.getController();
+        backupsController.setRootController(this);
+        tableBackupsTab.setContent(repositoryRoot);
       }
       else {
-        tabPane.getTabs().remove(tableRepositoryTab);
+        tabPane.getTabs().remove(tableBackupsTab);
       }
     }
     catch (IOException e) {
@@ -301,7 +303,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
     });
 
     tablesSideBarController.setVisible(true);
-    repositorySideBarController.setVisible(false);
+    backupsSideBarController.setVisible(false);
     vpsTablesSidebarController.setVisible(false);
 
     Platform.runLater(() -> {
@@ -354,7 +356,6 @@ public class TablesController implements Initializable, StudioFXController, Stud
     }
   }
 
-
   private void refreshTabSelection(Number oldValue, Number newValue) {
     int oldTab = getSelectedTab(oldValue.intValue());
     StudioFXController controller = getController(oldTab);
@@ -365,7 +366,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
     int selectedTab = getSelectedTab(newValue.intValue());
     Platform.runLater(() -> {
       tableOverviewController.setVisible(selectedTab == TAB_TABLE);
-      repositorySideBarController.setVisible(selectedTab == TAB_REPOSITORY);
+      backupsSideBarController.setVisible(selectedTab == TAB_BACKUPS);
       vpsTablesSidebarController.setVisible(selectedTab == TAB_VPS);
 
       if (selectedTab == TAB_TABLE) {
@@ -388,8 +389,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
         root.setRight(null);
         toggleSidebarBtn.setDisable(true);
       }
-      else if (selectedTab == TAB_REPOSITORY) {
-        repositoryController.onViewActivated(null);
+      else if (selectedTab == TAB_BACKUPS) {
+        backupsController.onViewActivated(null);
         root.setRight(sidePanelRoot);
         toggleSidebarBtn.setDisable(false);
       }
@@ -423,8 +424,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
     if (tabPane.getTabs().contains(tablesStatisticsTab) && cnt++ == index) {
       return TAB_STATISTICS;
     }
-    if (tabPane.getTabs().contains(tableRepositoryTab) && cnt++ == index) {
-      return TAB_REPOSITORY;
+    if (tabPane.getTabs().contains(tableBackupsTab) && cnt++ == index) {
+      return TAB_BACKUPS;
     }
     if (tabPane.getTabs().contains(recorderTab) && cnt++ == index) {
       return TAB_RECORDER;
@@ -437,8 +438,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
     return tablesSideBarController;
   }
 
-  public RepositorySidebarController getRepositorySideBarController() {
-    return repositorySideBarController;
+  public BackupsSidebarController getRepositorySideBarController() {
+    return backupsSideBarController;
   }
 
   public TableOverviewController getTableOverviewController() {
@@ -458,15 +459,15 @@ public class TablesController implements Initializable, StudioFXController, Stud
     tabPane.getSelectionModel().select(backglassManagerTab);
   }
 
+  public void switchToBackupsTab(BackupDescriptorRepresentation backup) {
+    tabPane.getSelectionModel().select(tableBackupsTab);
+    backupsController.selectBackup(backup);
+  }
+
   @Override
   public void jobFinished(@NonNull JobFinishedEvent event) {
     JobType jobType = event.getJobType();
-    if (jobType.equals(JobType.TABLE_BACKUP) || jobType.equals(JobType.ARCHIVE_INSTALL) && repositoryController != null) {
-      Platform.runLater(() -> {
-        repositoryController.doReload();
-      });
-    }
-    else if (jobType.equals(JobType.PUP_INSTALL) || jobType.equals(JobType.ALTSOUND_INSTALL) || jobType.equals(JobType.ALTCOLOR_INSTALL)) {
+    if (jobType.equals(JobType.PUP_INSTALL) || jobType.equals(JobType.ALTSOUND_INSTALL) || jobType.equals(JobType.ALTCOLOR_INSTALL)) {
       Platform.runLater(() -> {
         if (event.getGameId() > 0) {
           GameRepresentation game = Studio.client.getGameService().getGame(event.getGameId());
@@ -493,6 +494,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
     ) {
       Platform.runLater(() -> {
         if (event.getGameId() > 0) {
+          // force cache refresh
+          client.getFrontendService().clearCache(event.getGameId());
           EventManager.getInstance().notifyTableChange(event.getGameId(), null);
         }
         else {
@@ -528,18 +531,35 @@ public class TablesController implements Initializable, StudioFXController, Stud
     }
     else {
       GameRepresentation selection = this.tableOverviewController.getSelection();
-      if (selection != null && !refreshList.contains(selection)) {
+      if (selection != null && !refreshList.contains(selection.getId())) {
         refreshList.add(selection.getId());
       }
     }
 
     for (Integer gameId : refreshList) {
-      GameRepresentation game = client.getGameService().getGame(gameId);
-      this.tableOverviewController.reloadItem(game);
-      // recorderController may be null when recording is not supported
-      if (recorderController != null) {
-        this.recorderController.reloadItem(game);
-      }
+      JFXFuture.supplyAsync(() -> client.getGameService().getGame(gameId))
+      .thenAcceptLater(game -> {
+        if (game != null) {
+          this.tableOverviewController.reloadItem(game);
+          if (recorderController != null) {
+            this.recorderController.reloadItem(game);
+          }
+        }
+        else {
+          Optional<GameRepresentationModel> first = this.tableOverviewController.getTableView().getItems().stream().filter(t -> t.getGameId() == gameId).findFirst();
+          if (first.isPresent()) {
+            this.tableOverviewController.getTableView().getItems().remove(first.get());
+            this.tableOverviewController.getTableView().refresh();
+          }
+          if (recorderController != null) {
+            first = this.recorderController.getTableView().getItems().stream().filter(t -> t.getGameId() == gameId).findFirst();
+            if (first.isPresent()) {
+              this.recorderController.getTableView().getItems().remove(first.get());
+              this.recorderController.getTableView().refresh();
+            }
+          }
+        }
+      });
     }
 
     // also refresh playlists as the addition/modification of tables may impact them
@@ -565,7 +585,11 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   @Override
   public void preferencesChanged(PreferenceType preferenceType) {
-    if (preferenceType.equals(PreferenceType.serverSettings) || preferenceType.equals(PreferenceType.uiSettings) || preferenceType.equals(PreferenceType.validationSettings) || preferenceType.equals(PreferenceType.competitionSettings)) {
+    if (preferenceType.equals(PreferenceType.serverSettings)
+        || preferenceType.equals(PreferenceType.uiSettings)
+        || preferenceType.equals(PreferenceType.validationSettings)
+        || preferenceType.equals(PreferenceType.vpsSettings)
+        || preferenceType.equals(PreferenceType.competitionSettings)) {
       Platform.runLater(() -> {
         this.tableOverviewController.onReload();
       });
@@ -599,7 +623,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
       tabPane.getSelectionModel().select(tablesStatisticsTab);
     }
     else if (ke.getCode() == KeyCode.F6) {
-      tabPane.getSelectionModel().select(tableRepositoryTab);
+      tabPane.getSelectionModel().select(tableBackupsTab);
     }
     else if (ke.getCode() == KeyCode.F7 && Features.RECORDER) {
       tabPane.getSelectionModel().select(recorderTab);
@@ -616,6 +640,10 @@ public class TablesController implements Initializable, StudioFXController, Stud
     }
   }
 
+  public BackupsController getTableBackupsController() {
+    return backupsController;
+  }
+
   private StudioFXController getController(int tab) {
     switch (tab) {
       case TAB_TABLE: {
@@ -630,8 +658,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
       case TAB_STATISTICS: {
         return alxController;
       }
-      case TAB_REPOSITORY: {
-        return repositoryController;
+      case TAB_BACKUPS: {
+        return backupsController;
       }
       case TAB_RECORDER: {
         return recorderController;

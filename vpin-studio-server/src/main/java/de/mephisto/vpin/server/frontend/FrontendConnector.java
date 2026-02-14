@@ -23,7 +23,7 @@ public interface FrontendConnector {
 
   Frontend getFrontend();
 
-  TableAssetsAdapter getTableAssetAdapter();
+  TableAssetsAdapter<Game> getTableAssetAdapter();
 
 
   @NonNull
@@ -59,7 +59,7 @@ public interface FrontendConnector {
   @Nullable
   Game getGameByName(int emuId, String gameName);
 
-  int importGame(int emuId, @NonNull String gameName, @NonNull String gameFileName, @NonNull String gameDisplayName, @Nullable String launchCustomVar, @NonNull Date dateFileUpdated);
+  int importGame(@NonNull TableDetails tableDetails);
 
   boolean deleteGame(int id);
 
@@ -80,7 +80,7 @@ public interface FrontendConnector {
 
   void updateTableFileUpdated(int id);
 
-  void saveTableDetails(int id, TableDetails tableDetails);
+  TableDetails saveTableDetails(int id, TableDetails tableDetails);
 
   void vpsLink(int id, String extTableId, String extTableVersionId);
 

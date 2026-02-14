@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+<TitledPane fx:id="settingsPane" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="de.mephisto.vpin.ui.cards.panels.LayerEditorOverlayController">
+    <graphic>
+        <BorderPane prefWidth="250.0">
+            <left>
+                <Label text="Overlay"/>
+            </left>
+            <right>
+                <HBox alignment="CENTER_RIGHT" spacing="3.0">
+                    <children>
+                        <Button fx:id="eyeBtn" mnemonicParsing="false">
+                            <font>
+                                <Font size="10.0"/>
+                            </font>
+                            <graphic>
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline"/>
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="Lock these properties for custom templates."/>
+                            </tooltip>
+                        </Button>
+                        <ToggleButton fx:id="lockBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false"
+                                      onAction="#onLockToggle" styleClass="custom-toggle-button-small">
+                            <font>
+                                <Font size="10.0"/>
+                            </font>
+                            <graphic>
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lock-open-variant-outline"
+                                          iconSize="13"/>
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="Lock these properties for custom templates."/>
+                            </tooltip>
+                        </ToggleButton>
+                    </children>
+                </HBox>
+            </right>
+        </BorderPane>
+    </graphic>
+    <content>
+        <ScrollPane hbarPolicy="NEVER">
+            <content>
+                <VBox styleClass="accordion-container">
+                    <children>
+                        <Label prefWidth="200"
+                               text="This mode is to simulate the rendering of highscore cards when located over a VPin screen with existing video or image as an overlay (in 16:9 format)."
+                               wrapText="true">
+                            <graphic>
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18"/>
+                            </graphic>
+                            <VBox.margin>
+                                <Insets top="6.0"/>
+                            </VBox.margin>
+                        </Label>
+
+                        <Label text="Screen:" textFill="WHITE">
+                            <font>
+                                <Font size="14.0"/>
+                            </font>
+                            <padding>
+                                <Insets top="12.0"/>
+                            </padding>
+                        </Label>
+
+                        <HBox alignment="CENTER_LEFT" spacing="6.0">
+                            <children>
+                                <ComboBox fx:id="screensComboBox" prefWidth="150.0"/>
+                                <Label>
+                                    <font>
+                                        <Font size="14.0"/>
+                                    </font>
+                                    <graphic>
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline"
+                                                  iconSize="18" text="󰘥"/>
+                                    </graphic>
+                                    <tooltip>
+                                        <Tooltip prefWidth="300.0"
+                                                 text="Select the screen on which the score card is shown. The selection is only used for the editor."
+                                                 wrapText="true"/>
+                                    </tooltip>
+                                </Label>
+                            </children>
+                            <VBox.margin>
+                                <Insets top="6.0"/>
+                            </VBox.margin>
+                        </HBox>
+
+                    </children>
+                    <padding>
+                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0"/>
+                    </padding>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </content>
+</TitledPane>

@@ -38,6 +38,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -56,16 +58,21 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 
 public class WidgetFactory {
-  private final static Logger LOG = LoggerFactory.getLogger(WidgetFactory.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static final String DISABLED_TEXT_STYLE = "-fx-font-color: #B0ABAB;-fx-text-fill:#B0ABAB;";
   public static final String DEFAULT_TEXT_STYLE = "-fx-font-color: #FFFFFF;-fx-text-fill:#FFFFFF;";
+  public static final String DEFAULT_COLOR = "#FFFFFF";
   public static final String DISABLED_COLOR = "#767272";
   public static final String LOCAL_FAVS_COLOR = "#ffcc00";
   public static final String GLOBAL_FAVS_COLOR = "#cc6600";
@@ -146,7 +153,11 @@ public class WidgetFactory {
   }
 
   public static HBox createCheckAndUpdateIcon(String tooltip) {
-    return addUpdateIcon(createCheckIcon("#FFFFFF"), tooltip);
+    return addUpdateIcon(createCheckIcon(DEFAULT_COLOR), tooltip);
+  }
+
+  public static HBox createCheckAndIgnoredIcon(String tooltip) {
+    return addIgnoredIcon(createCheckIcon(DEFAULT_COLOR), tooltip);
   }
 
   public static FontIcon createUpdateStar() {
@@ -190,6 +201,17 @@ public class WidgetFactory {
     return fontIcon;
   }
 
+  public static FontIcon createEditIcon(@Nullable String color) {
+    FontIcon fontIcon = new FontIcon();
+    fontIcon.setIconSize(DEFAULT_ICON_SIZE);
+    fontIcon.setIconLiteral("mdi2f-file-document-edit-outline");
+    fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+    if (color != null) {
+      fontIcon.setIconColor(Paint.valueOf(color));
+    }
+    return fontIcon;
+  }
+
   public static FontIcon createBotIcon() {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(DEFAULT_ICON_SIZE);
@@ -221,7 +243,7 @@ public class WidgetFactory {
   public static FontIcon createIcon(String s, String color) {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(DEFAULT_ICON_SIZE);
-    fontIcon.setIconColor(Paint.valueOf(color != null ? color : "#FFFFFF"));
+    fontIcon.setIconColor(Paint.valueOf(color != null ? color : DEFAULT_COLOR));
     fontIcon.setIconLiteral(s);
     return fontIcon;
   }
@@ -229,51 +251,25 @@ public class WidgetFactory {
   public static FontIcon createIcon(String s, int size, String color) {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(size);
-    fontIcon.setIconColor(Paint.valueOf(color != null ? color : "#FFFFFF"));
+    fontIcon.setIconColor(Paint.valueOf(color != null ? color : DEFAULT_COLOR));
     fontIcon.setIconLiteral(s);
     return fontIcon;
   }
 
   public static FontIcon createCheckboxIcon() {
-    FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(DEFAULT_ICON_SIZE);
-    fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
-    fontIcon.setIconLiteral("bi-check-circle");
-    return fontIcon;
+    return createIcon("bi-check-circle", DEFAULT_ICON_SIZE, null);
   }
 
-
   public static FontIcon createCheckboxIcon(@Nullable String color) {
-    FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(DEFAULT_ICON_SIZE);
-    fontIcon.setIconLiteral("bi-check-circle");
-    fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
-    if (color != null) {
-      fontIcon.setIconColor(Paint.valueOf(color));
-    }
-    return fontIcon;
+    return createIcon("bi-check-circle", DEFAULT_ICON_SIZE, color);
   }
 
   public static Label createCheckboxIcon(@Nullable String color, @NonNull String tooltip) {
     Label label = new Label();
     label.setTooltip(new Tooltip(tooltip));
-    FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(DEFAULT_ICON_SIZE);
-    fontIcon.setIconLiteral("bi-check-circle");
-    fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
-    if (color != null) {
-      fontIcon.setIconColor(Paint.valueOf(color));
-    }
+    FontIcon fontIcon = createCheckboxIcon(color);
     label.setGraphic(fontIcon);
     return label;
-  }
-
-  public static FontIcon createExclamationIcon() {
-    FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(DEFAULT_ICON_SIZE);
-    fontIcon.setIconColor(Paint.valueOf(ERROR_COLOR));
-    fontIcon.setIconLiteral("bi-exclamation-circle-fill");
-    return fontIcon;
   }
 
   public static FontIcon createUnsupportedIcon() {
@@ -284,15 +280,16 @@ public class WidgetFactory {
     return fontIcon;
   }
 
+  public static FontIcon createExclamationIcon() {
+    return createExclamationIcon(null);
+  }
+
   public static FontIcon createExclamationIcon(@Nullable String color) {
-    FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(DEFAULT_ICON_SIZE);
-    fontIcon.setIconLiteral("bi-exclamation-circle-fill");
-    fontIcon.setIconColor(Paint.valueOf("#FF3333"));
-    if (color != null) {
-      fontIcon.setIconColor(Paint.valueOf(color));
-    }
-    return fontIcon;
+    return createIcon("bi-exclamation-circle-fill", DEFAULT_ICON_SIZE, color != null ? color : ERROR_COLOR);
+  }
+
+  public static FontIcon createWarningIcon(@Nullable String color) {
+    return createIcon("bi-exclamation-circle", DEFAULT_ICON_SIZE, color);
   }
 
   public static HBox addUpdateIcon(FontIcon icon, String tooltip) {
@@ -303,6 +300,19 @@ public class WidgetFactory {
     Label icon2 = new Label();
     icon2.setTooltip(new Tooltip(tooltip));
     icon2.setGraphic(createUpdateIcon());
+
+    root.getChildren().addAll(icon2, icon1);
+    return root;
+  }
+
+  public static HBox addIgnoredIcon(FontIcon icon, String tooltip) {
+    HBox root = new HBox(3);
+    root.setAlignment(Pos.CENTER);
+    Label icon1 = new Label();
+    icon1.setGraphic(icon);
+    Label icon2 = new Label();
+    icon2.setTooltip(new Tooltip(tooltip));
+    icon2.setGraphic(createIcon("mdi2b-bell-cancel-outline"));
 
     root.getChildren().addAll(icon2, icon1);
     return root;
@@ -336,7 +346,7 @@ public class WidgetFactory {
     label.setText("");
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(DEFAULT_ICON_SIZE);
-    fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+    fontIcon.setIconColor(Paint.valueOf(DEFAULT_COLOR));
     fontIcon.setIconLiteral("mdi2h-help-circle-outline");
     Tooltip tt = new Tooltip(tooltip);
     tt.setWrapText(true);
@@ -352,7 +362,7 @@ public class WidgetFactory {
   public static Label createPlaylistIcon(@Nullable PlaylistRepresentation playlist, @NonNull UISettings uiSettings, boolean disabled) {
     Label label = new Label();
     FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(DEFAULT_ICON_SIZE+2);
+    fontIcon.setIconSize(DEFAULT_ICON_SIZE + 2);
 
     String nameLower = playlist.getName().toLowerCase();
     String iconLiteral = "mdi2v-view-list";
@@ -381,7 +391,7 @@ public class WidgetFactory {
           iconLiteral = determineIconLiteral(nameLower);
         }
         catch (Exception e) {
-          LOG.error("Error loading icon literal: " + iconLiteral, e);
+          LOG.error("Error loading icon literal {}: {}", iconLiteral, e.getMessage());
           iconLiteral = "mdi2v-view-list";
         }
       }
@@ -553,6 +563,9 @@ public class WidgetFactory {
 
     char firstChar = nameLower.charAt(0);
     // Default fallback: alphabet letter, number, or standard list
+    if (firstChar == '#') {
+      return "mdi2v-view-list";
+    }
     if (Character.isLetter(firstChar)) {
       return "mdi2a-alpha-" + nameLower.charAt(0) + "-circle";
     }
@@ -563,8 +576,6 @@ public class WidgetFactory {
       // Do something for symbols, punctuation, etc.
       return "mdi2v-view-list";
     }
-
-
   }
 
   public static Stage createStage() {
@@ -648,6 +659,8 @@ public class WidgetFactory {
 
     Node header = root.lookup("#header");
     Object userData = header.getUserData();
+    boolean resizeable = userData instanceof DialogHeaderResizeableController;
+
     if (userData instanceof DialogHeaderController) {
       DialogHeaderController dialogHeaderController = (DialogHeaderController) userData;
       dialogHeaderController.setStage(stage);
@@ -662,10 +675,9 @@ public class WidgetFactory {
         }
       });
     }
-    else if (userData instanceof DialogHeaderResizeableController) {
+
+    if (resizeable) {
       DialogHeaderResizeableController dialogHeaderController = (DialogHeaderResizeableController) userData;
-      dialogHeaderController.setStateId(stateId);
-      dialogHeaderController.setTitle(title);
       dialogHeaderController.setMaximizeable(LocalUISettings.isMaximizeable(stateId));
     }
 
@@ -690,7 +702,7 @@ public class WidgetFactory {
         stage.setX(position.getX());
         stage.setY(position.getY());
 
-        if (position.getWidth() > 0 && position.getHeight() > 0) {
+        if (position.getWidth() > 0 && position.getHeight() > 0 && resizeable) {
           stage.setWidth(position.getWidth());
           stage.setHeight(position.getHeight());
         }
@@ -912,7 +924,6 @@ public class WidgetFactory {
       if (mediaItem == null) {
         label.setText("No media found");
       }
-      label.setUserData(mediaItem);
       label.setStyle(MEDIA_CONTAINER_LABEL);
 
       if (mediaItem != null) {
@@ -922,7 +933,8 @@ public class WidgetFactory {
     }
 
     if (previewEnabled && mediaItem != null) {
-      addMediaItemToBorderPane(client, mediaItem, parent);
+      AssetMediaPlayer assetMediaPlayer = createAssetMediaPlayer(client, mediaItem, false, true);
+      parent.setCenter(assetMediaPlayer);
       Tooltip.install(parent, createMediaItemTooltip(mediaItem));
     }
   }
@@ -933,47 +945,47 @@ public class WidgetFactory {
     parent.setCenter(label);
   }
 
-  public static AssetMediaPlayer addMediaItemToBorderPane(VPinStudioClient client, FrontendMediaItemRepresentation mediaItem, BorderPane parent) {
-    return addMediaItemToBorderPane(client, mediaItem, parent, null);
-  }
-
-  public static AssetMediaPlayer addMediaItemToBorderPane(VPinStudioClient client, FrontendMediaItemRepresentation mediaItem, BorderPane parent, MediaPlayerListener listener) {
+  public static AssetMediaPlayer createAssetMediaPlayer(VPinStudioClient client, FrontendMediaItemRepresentation mediaItem,
+                                                        boolean noLoading, boolean usePreview) {
     String mimeType = mediaItem.getMimeType();
     if (mimeType == null) {
       LOG.info("Failed to resolve mime type for " + mediaItem);
       return null;
     }
 
-    boolean audioOnly = parent.getId().equalsIgnoreCase("screenAudioLaunch") || parent.getId().equalsIgnoreCase("screenAudio");
-    String baseType = mimeType.split("/")[0];
-    String url = client.getURL(mediaItem.getUri());
+    String url = client.getURL(mediaItem.getUri()) + "/" + URLEncoder.encode(mediaItem.getName(), Charset.defaultCharset());
 
     Frontend frontend = client.getFrontendService().getFrontendCached();
+    boolean playfieldMediaInverted = frontend.isPlayfieldMediaInverted();
+    return createAssetMediaPlayer(client, url, mediaItem.getScreen(), mimeType, playfieldMediaInverted, noLoading, usePreview);
+  }
 
+  public static AssetMediaPlayer createAssetMediaPlayer(VPinStudioClient client, String url, @Nullable VPinScreen screen,
+                                                        String mimeType, boolean playfieldMediaInverted, boolean noLoading, boolean usePreview) {
+
+    boolean audioOnly = VPinScreen.Audio.equals(screen) || VPinScreen.AudioLaunch.equals(screen);
+
+    String baseType = mimeType.split("/")[0];
     if (baseType.equals("image") && !audioOnly) {
-      ByteArrayInputStream gameMediaItem = client.getAssetService().getGameMediaItem(mediaItem.getGameId(), VPinScreen.valueOf(mediaItem.getScreen()));
-      Image image = gameMediaItem != null ? new Image(gameMediaItem) : null;
-      ImageViewer imageViewer = new ImageViewer(parent, mediaItem, image, frontend.isPlayfieldMediaInverted());
-      parent.setUserData(imageViewer);
+      ImageViewer imageViewer = new ImageViewer();
+      imageViewer.setNoLoading(noLoading);
+      imageViewer.render(url, screen, playfieldMediaInverted);
+      return imageViewer;
     }
     else if (baseType.equals("audio")) {
-      AudioMediaPlayer audioMediaPlayer = new AudioMediaPlayer(parent, mediaItem, url);
-      if (listener != null) {
-        audioMediaPlayer.addListener(listener);
-      }
-      audioMediaPlayer.render();
+      AudioMediaPlayer audioMediaPlayer = new AudioMediaPlayer();
+      audioMediaPlayer.setNoLoading(noLoading);
+      audioMediaPlayer.render(url);
       return audioMediaPlayer;
     }
     else if (baseType.equals("video") && !audioOnly) {
-      VideoMediaPlayer videoMediaPlayer = new VideoMediaPlayer(parent, mediaItem, url, mimeType, frontend.isPlayfieldMediaInverted(), false);
-      if (listener != null) {
-        videoMediaPlayer.addListener(listener);
-      }
-      videoMediaPlayer.render();
+      VideoMediaPlayer videoMediaPlayer = new VideoMediaPlayer(mimeType, playfieldMediaInverted);
+      videoMediaPlayer.setNoLoading(noLoading);
+      videoMediaPlayer.render(url, screen, usePreview);
       return videoMediaPlayer;
     }
     else {
-      LOG.error("Invalid media mime type " + mimeType + " of asset used for media panel " + parent.getId());
+      LOG.error("Invalid media mime type " + mimeType + " of asset used for media panel " + screen);
     }
 
     return null;
@@ -991,10 +1003,10 @@ public class WidgetFactory {
   }
 
   public static class HighscoreBackgroundImageListCell extends ListCell<String> {
-    private final VPinStudioClient client;
+    private final Function<String, byte[]> provider;
 
-    public HighscoreBackgroundImageListCell(VPinStudioClient client) {
-      this.client = client;
+    public HighscoreBackgroundImageListCell(Function<String, byte[]> provider) {
+      this.provider = provider;
     }
 
     protected void updateItem(String item, boolean empty) {
@@ -1002,7 +1014,7 @@ public class WidgetFactory {
       setGraphic(null);
       setText(null);
       if (item != null) {
-        Image image = new Image(client.getHighscoreCardsService().getHighscoreBackgroundImage(item));
+        Image image = new Image(new ByteArrayInputStream(provider.apply(item)));
         ImageView imageView = new ImageView(image);
         imageView.setFitWidth(80);
 
@@ -1074,9 +1086,6 @@ public class WidgetFactory {
       Node node = parent.getCenter();
       if (node instanceof AssetMediaPlayer) {
         ((AssetMediaPlayer) node).disposeMedia();
-      }
-      else if (node instanceof ImageViewer) {
-        ((ImageViewer) node).disposeImage();
       }
       parent.setCenter(null);
     }

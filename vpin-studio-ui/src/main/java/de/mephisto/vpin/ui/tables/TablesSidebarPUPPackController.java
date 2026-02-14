@@ -3,11 +3,10 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.ScreenMode;
-import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.puppacks.PupPackRepresentation;
-import de.mephisto.vpin.restclient.textedit.TextFile;
+import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.validation.ValidationState;
@@ -30,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -40,7 +40,7 @@ import java.util.ResourceBundle;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablesSidebarPUPPackController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarPUPPackController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private Optional<GameRepresentation> game = Optional.empty();
 
@@ -213,7 +213,7 @@ public class TablesSidebarPUPPackController implements Initializable {
     if (!StringUtils.isEmpty(value)) {
       File file = new File(pupPack.getPath(), value);
       Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-      Dialogs.openTextEditor("puppack", stage, new TextFile(file), file.getName());
+      Dialogs.openTextEditor("puppack", stage, new MonitoredTextFile(file), file.getName());
     }
   }
 
@@ -223,7 +223,7 @@ public class TablesSidebarPUPPackController implements Initializable {
     if (!StringUtils.isEmpty(value)) {
       File file = new File(pupPack.getPath(), value + ".bat");
       Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-      Dialogs.openTextEditor("puppack", stage, new TextFile(file), file.getName());
+      Dialogs.openTextEditor("puppack", stage, new MonitoredTextFile(file), file.getName());
     }
   }
 
@@ -284,9 +284,8 @@ public class TablesSidebarPUPPackController implements Initializable {
     dataScrollPane.setVisible(false);
     emptyDataBox.setVisible(true);
 
-    //TODO disabled for now
     pupPackEditorBtn.setDisable(!client.getSystemService().isLocal());
-    pupPackEditorBtn.setVisible(false);
+    pupPackEditorBtn.setVisible(true);
 
     optionsCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
       optionEditBtn.setDisable(StringUtils.isEmpty(newValue));
@@ -309,6 +308,7 @@ public class TablesSidebarPUPPackController implements Initializable {
     reloadBtn.setDisable(g.isEmpty());
     enabledCheckbox.setDisable(g.isEmpty());
     scriptOnlyCheckbox.setSelected(false);
+    pupPackEditorBtn.setDisable(g.isEmpty() || !client.getSystemService().isLocal());
 
     screensPanel.setVisible(true);
 
@@ -361,6 +361,7 @@ public class TablesSidebarPUPPackController implements Initializable {
 
       uploadBtn.setDisable(StringUtils.isEmpty(game.getRom()));
       deleteBtn.setDisable(!pupPackAvailable);
+      pupPackEditorBtn.setDisable(!pupPackAvailable || !client.getSystemService().isLocal());
 
       if (pupPackAvailable) {
         nameLabel.setText(pupPack.getName());

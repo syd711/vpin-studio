@@ -3,6 +3,10 @@ package de.mephisto.vpin.server.games;
 import de.mephisto.vpin.connectors.vps.matcher.VpsMatch;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.backups.BackupDataStudio;
+import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
+import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
+import de.mephisto.vpin.restclient.dmd.DMDBackupData;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
@@ -10,22 +14,28 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
+import de.mephisto.vpin.restclient.preferences.BackupSettings;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
+import de.mephisto.vpin.server.assets.AssetService;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
+import de.mephisto.vpin.server.directb2s.BackglassService;
+import de.mephisto.vpin.server.dmd.DMDDeviceIniService;
 import de.mephisto.vpin.server.dmd.DMDService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
-import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.server.frontend.MediaService;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.frontend.WheelIconDelete;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.listeners.EventOrigin;
+import de.mephisto.vpin.server.mame.MameRomAliasService;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.music.MusicService;
 import de.mephisto.vpin.server.pinvol.PinVolService;
@@ -50,17 +60,20 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class GameMediaService {
+public class GameMediaService extends MediaService {
   private final static Logger LOG = LoggerFactory.getLogger(GameMediaService.class);
-
-  @Autowired
-  private FrontendService frontendService;
 
   @Autowired
   private EmulatorService emulatorService;
 
   @Autowired
   private DMDService dmdService;
+
+  @Autowired
+  private DMDDeviceIniService dmdDeviceIniService;
+
+  @Autowired
+  private MameRomAliasService mameRomAliasService;
 
   @Autowired
   private PinVolService pinVolService;
@@ -87,7 +100,7 @@ public class GameMediaService {
   private HighscoreService highscoreService;
 
   @Autowired
-  private GameDetailsRepository gameDetailsRepository;
+  private GameDetailsRepositoryService gameDetailsRepositoryService;
 
   @Autowired
   private PreferencesService preferencesService;
@@ -106,6 +119,17 @@ public class GameMediaService {
 
   @Autowired
   private VpsService vpsService;
+
+  @Autowired
+  private AssetService assetService;
+
+  @Autowired
+  private BackglassService backglassService;
+
+  public VpsMatch autoMatch(int gameId, boolean overwrite) {
+    Game game = gameService.getGame(gameId);
+    return autoMatch(game, overwrite, false);
+  }
 
   /**
    * moved from VpsService to break circular dependency.
@@ -141,7 +165,7 @@ public class GameMediaService {
   }
 
 
-  public TableDetails saveTableDetails(TableDetails updatedTableDetails, int gameId, boolean renamingChecks) {
+  public synchronized TableDetails saveTableDetails(TableDetails updatedTableDetails, int gameId, boolean renamingChecks) {
     //fetch existing data first
     TableDetails originalTableDetails = getTableDetails(gameId);
     Game game = frontendService.getOriginalGame(gameId);
@@ -235,7 +259,7 @@ public class GameMediaService {
     if (romChanged || hsChanged) {
       LOG.info("Game highscore data fields have been changed, triggering score check.");
       highscoreService.scanScore(game, EventOrigin.USER_INITIATED);
-      cardService.generateCard(game);
+      cardService.generateHighscoreCard(game);
     }
   }
 
@@ -365,7 +389,11 @@ public class GameMediaService {
     File tablesFolder = gameEmulator.getGamesFolder();
     if (uploadDescriptor.isFolderBasedImport()) {
       LOG.info("Using folder based import.");
-      tablesFolder = new File(tablesFolder, uploadDescriptor.getSubfolderName().trim());
+      String subFolderName = uploadDescriptor.getSubfolderName();
+      if (StringUtils.isEmpty(subFolderName)) {
+        subFolderName = FilenameUtils.getBaseName(uploadDescriptor.getOriginalUploadFileName());
+      }
+      tablesFolder = new File(tablesFolder, subFolderName);
     }
     File targetVPXFile = new File(tablesFolder, uploadDescriptor.getOriginalUploadFileName());
 
@@ -385,17 +413,60 @@ public class GameMediaService {
     if (returningGameId >= 0) {
       Game game = gameService.scanGame(returningGameId);
       if (game != null) {
-        if (uploadDescriptor.isAutoFill()) {
-          autoMatch(game, true, false);
+        if (!uploadDescriptor.isBackupRestoreMode()) {
+          if (uploadDescriptor.isAutoFill()) {
+            autoMatch(game, true, false);
+          }
+
+          TableDetails tableDetails = getTableDetails(game.getId());
+          if (tableDetails != null && uploadDescriptor.isAutoFill()) {
+            tableDetails = frontendService.autoFill(game, tableDetails, false);
+          }
+
+          TableDataUtil.setMappedFieldValue(tableDetails, serverSettings.getMappingPatchVersion(), uploadDescriptor.getPatchVersion());
+          frontendService.saveTableDetails(game.getId(), tableDetails);
+        }
+        else {
+          //we have read the table details, including the mapping from the VPA file.
+          TableDetails newTableDetails = getTableDetails(game.getId());
+          TableDetails backedUpTableDetails = VpaArchiveUtil.readTableDetails(analysis.getFile());
+          backedUpTableDetails.setGameName(newTableDetails.getGameName());
+          backedUpTableDetails.setGameFileName(newTableDetails.getGameFileName());
+          backedUpTableDetails.setDateAdded(new Date());
+          backedUpTableDetails.setTourneyId(null);
+          backedUpTableDetails.setWebGameId(null);
+          backedUpTableDetails.setLastPlayed(null);
+          backedUpTableDetails.setEmulatorId(uploadDescriptor.getEmulatorId());
+          frontendService.saveTableDetails(game.getId(), backedUpTableDetails);
+
+          BackupSettings backupSettings = preferencesService.getJsonPreference(PreferenceNames.BACKUP_SETTINGS);
+          if (backupSettings.isB2sSettings()) {
+            DirectB2STableSettings tableSettings = VpaArchiveUtil.readB2STableSettings(analysis.getFile());
+            if (tableSettings != null) {
+              backglassService.saveTableSettings(game, tableSettings);
+              LOG.info("Restored updated table details for {}", game.getGameDisplayName());
+            }
+          }
+
+          if (backupSettings.isStudioData()) {
+            BackupDataStudio backupDataStudio = VpaArchiveUtil.readStudioDetails(analysis.getFile());
+            if (backupDataStudio != null) {
+              game.setComment(backupDataStudio.getComment());
+              game.setCardDisabled(backupDataStudio.isCardsDisabled());
+              game.setIgnoredValidations(ValidationState.toIds(backupDataStudio.getIgnoredValidations()));
+              gameService.save(game);
+              LOG.info("Restored VPin-Studio data for {}", game.getGameDisplayName());
+            }
+          }
+
+          if (backupSettings.isDmdDeviceData()) {
+            DMDBackupData dmdBackupData = VpaArchiveUtil.readDMDDeviceData(analysis.getFile());
+            if (dmdBackupData != null) {
+              dmdDeviceIniService.restore(game, dmdBackupData);
+            }
+          }
         }
 
-        TableDetails tableDetails = getTableDetails(game.getId());
-        if (tableDetails != null && uploadDescriptor.isAutoFill()) {
-          tableDetails = frontendService.autoFill(game, tableDetails, false);
-        }
-
-        TableDataUtil.setMappedFieldValue(tableDetails, serverSettings.getMappingPatchVersion(), uploadDescriptor.getPatchVersion());
-        frontendService.saveTableDetails(game.getId(), tableDetails);
 
         uploadDescriptor.setGameId(returningGameId);
         LOG.info("Import of \"" + game.getGameDisplayName() + "\" successful.");
@@ -496,7 +567,7 @@ public class GameMediaService {
           if (frontendMediaItem.getFile().exists()) {
             File mediaFile = frontendMediaItem.getFile();
             String suffix = FilenameUtils.getExtension(mediaFile.getName());
-            File cloneTarget = new File(frontendService.getMediaFolder(clone, originalScreenValue, suffix), clone.getGameName() + "." + suffix);
+            File cloneTarget = new File(frontendService.getMediaFolder(clone, originalScreenValue, suffix, true), clone.getGameName() + "." + suffix);
             if (mediaFile.getName().equals(cloneTarget.getName())) {
               LOG.warn("Source name and target name of media asset " + mediaFile.getAbsolutePath() + " are identical, skipping cloning.");
               return;
@@ -558,16 +629,20 @@ public class GameMediaService {
         }
 
         String suffix = FilenameUtils.getExtension(mediaFile);
-        File out = uniqueMediaAsset(game, screen, suffix);
+        File out = uniqueMediaAsset(game, screen, suffix, true, true);
         if (uploadDescriptor.getUploadType() != null && uploadDescriptor.getUploadType().equals(UploadType.uploadAndReplace)) {
-          out = new File(frontendService.getMediaFolder(game, screen, suffix), game.getGameName() + "." + suffix);
+          out = new File(frontendService.getMediaFolder(game, screen, suffix, true), game.getGameName() + "." + suffix);
           if (out.exists() && !out.delete()) {
-            out = uniqueMediaAsset(game, screen, suffix);
+            out = uniqueMediaAsset(game, screen, suffix, true, true);
           }
         }
 
         if (PackageUtil.unpackTargetFile(tempFile, out, mediaFile)) {
           LOG.info("Created \"" + out.getAbsolutePath() + "\" for screen \"" + screen.name() + "\" from archive file \"" + mediaFile + "\"");
+
+          if (game != null) {
+            notifyGameScreenAssetsChanged(game.getId(), screen, out);
+          }
         }
         else {
           LOG.error("Failed to unpack " + out.getAbsolutePath() + " from " + tempFile.getAbsolutePath());
@@ -579,6 +654,18 @@ public class GameMediaService {
         }
       }
     }
+  }
+
+  public boolean deleteGameFile(int emulatorId, String fileName) {
+    GameEmulator gameEmulator = emulatorService.getGameEmulator(emulatorId);
+    if (gameEmulator != null) {
+      File gameFile = new File(gameEmulator.getGamesDirectory(), fileName);
+      if (gameFile.exists() && gameFile.delete()) {
+        LOG.info("Delete game file {}", gameFile.getAbsolutePath());
+        return true;
+      }
+    }
+    return false;
   }
 
   public boolean deleteGame(@NonNull DeleteDescriptor descriptor) {
@@ -593,6 +680,8 @@ public class GameMediaService {
         if (game == null) {
           return false;
         }
+
+        GameEmulator gameEmulator = emulatorService.getGameEmulator(game.getEmulatorId());
 
         if (descriptor.isDeleteHighscores()) {
           highscoreService.deleteHighscore(game);
@@ -663,6 +752,12 @@ public class GameMediaService {
           }
         }
 
+        if (descriptor.isDeleteAlias()) {
+          if (!mameRomAliasService.deleteAlias(gameEmulator, game.getRomAlias())) {
+            success = false;
+          }
+        }
+
         if (descriptor.isDeleteAltSound()) {
           if (!altSoundService.delete(game)) {
             success = false;
@@ -671,6 +766,27 @@ public class GameMediaService {
 
         if (descriptor.isDeleteAltColor()) {
           if (!altColorService.delete(game)) {
+            success = false;
+          }
+        }
+
+        if (descriptor.isDeleteB2STableSettings()) {
+          //Only relevant for tables that are located in a separate folder
+          File b2STableSettingsFile = game.getB2STableSettingsFile();
+          if (b2STableSettingsFile != null && b2STableSettingsFile.exists()) {
+            if (!b2STableSettingsFile.delete()) {
+              success = false;
+            }
+          }
+
+          //Delete the regular entry
+          if (!backglassService.deleteB2STableSettings(game)) {
+            success = false;
+          }
+        }
+
+        if (descriptor.isDeleteDMDDeviceIni()) {
+          if (!mameService.deleteDMDDeviceIniEntry(game)) {
             success = false;
           }
         }
@@ -688,16 +804,26 @@ public class GameMediaService {
           }
         }
 
+        if (descriptor.isDeleteRom()) {
+          if (!StringUtils.isEmpty(game.getRom())) {
+            if (!mameService.deleteRom(game)) {
+              success = false;
+            }
+          }
+        }
+
         if (descriptor.isDeleteMusic()) {
           if (!musicService.delete(game)) {
             success = false;
           }
         }
 
+        assetService.deleteDefaultBackground(game.getId());
+
         if (descriptor.isDeleteFromFrontend()) {
-          GameDetails byPupId = gameDetailsRepository.findByPupId(game.getId());
+          GameDetails byPupId = gameDetailsRepositoryService.findByPupId(game.getId());
           if (byPupId != null) {
-            gameDetailsRepository.delete(byPupId);
+            gameDetailsRepositoryService.delete(byPupId);
           }
 
           highscoreService.deleteScores(game.getId(), true);
@@ -766,34 +892,31 @@ public class GameMediaService {
     return success;
   }
 
-  public File uniqueMediaAsset(Game game, VPinScreen screen) {
-    return buildMediaAsset(game, screen, true);
-  }
+  //--------------------------------------
 
-  public File uniqueMediaAsset(Game game, VPinScreen screen, String suffix) {
-    File mediaFolder = frontendService.getMediaFolder(game, screen, suffix);
-    return buildMediaAsset(mediaFolder, game, suffix, true);
-  }
-
-  public File buildMediaAsset(Game game, VPinScreen screen, boolean append) {
-    String suffix = "mp4";
-    if (screen.equals(VPinScreen.AudioLaunch) || screen.equals(VPinScreen.Audio)) {
-      suffix = "mp3";
+  @Override
+  public File uniqueMediaAsset(int gameId, VPinScreen screen, String suffix, boolean createFolder, boolean append) {
+    //Game game = gameService.getGame(gameId);
+    Game game = frontendService.getOriginalGame(gameId);
+    if (game != null) {
+      return uniqueMediaAsset(game, screen, suffix, createFolder, append);
     }
-    File mediaFolder = frontendService.getMediaFolder(game, screen, suffix);
-    return buildMediaAsset(mediaFolder, game, suffix, append);
+    return null;
   }
 
-  public static File buildMediaAsset(File mediaFolder, Game game, String suffix, boolean append) {
-    File out = new File(mediaFolder, game.getGameName() + "." + suffix);
-    if (append) {
-      int index = 1;
-      while (out.exists()) {
-        String nameIndex = index <= 9 ? "0" + index : String.valueOf(index);
-        out = new File(out.getParentFile(), game.getGameName() + nameIndex + "." + suffix);
-        index++;
-      }
-    }
-    return out;
+  private File uniqueMediaAsset(Game game, VPinScreen screen, String suffix, boolean createFolder, boolean append) {
+    File mediaFolder = frontendService.getMediaFolder(game, screen, suffix, createFolder);
+    return buildMediaAsset(mediaFolder, game.getGameName(), suffix, append);
+  }
+
+  @Override
+  public List<File> getMediaFiles(int gameId, VPinScreen screen) {
+    Game game = frontendService.getOriginalGame(gameId);
+    return frontendService.getMediaFiles(game, screen);
+  }
+
+  @Override
+  protected void notifyGameScreenAssetsChanged(int objectId, VPinScreen screen, File asset) {
+    gameLifecycleService.notifyGameScreenAssetsChanged(objectId, screen, asset);
   }
 }

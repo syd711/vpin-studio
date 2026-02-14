@@ -21,7 +21,7 @@ public class MusicUploadController extends BaseUploadController {
 
   @Override
   protected UploadProgressModel createUploadModel() {
-    return new MusicUploadProgressModel("Music Upload", getSelection(), finalizer);
+    return new MusicUploadProgressModel("Music Upload", getSelection());
   }
 
   @Override

@@ -149,7 +149,7 @@
                            </VBox.margin>
                         </Label>
                         <ComboBox fx:id="soundModeCombo" prefWidth="320.0" />
-                        <Label layoutX="10.0" layoutY="10.0" text="Table Alias Settings" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="10.0" text="Table ROM Settings" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -159,13 +159,14 @@
                         </Label>
                         <GridPane>
                           <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="151.2000732421875" minWidth="10.0" prefWidth="115.2000732421875" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" />
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="227.9999267578125" minWidth="10.0" prefWidth="227.9999267578125" />
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="229.60009765625" minWidth="10.0" prefWidth="215.0" />
                           </columnConstraints>
                           <rowConstraints>
                               <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
                               <HBox alignment="CENTER_RIGHT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
@@ -178,7 +179,7 @@
                                           <Font size="14.0" />
                                        </font>
                                        <tooltip>
-                                          <Tooltip text="Copy VPS Table URL" />
+                                          <Tooltip text="Copy ROM alias" />
                                        </tooltip>
                                     </Button>
                                     <Label>
@@ -224,7 +225,7 @@
                                           <Font size="14.0" />
                                        </font>
                                        <tooltip>
-                                          <Tooltip text="Copy VPS Table URL" />
+                                          <Tooltip text="Copy ROM name" />
                                        </tooltip>
                                     </Button>
                                     <Label>
@@ -240,11 +241,80 @@
                                     </Label>
                                  </children>
                               </HBox>
+                              <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="NVOffset:" textFill="WHITE" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="nvOffsetLabel" layoutX="130.0" layoutY="45.0" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <HBox alignment="CENTER_RIGHT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                 <children>
+                                    <Button fx:id="scriptBtn" layoutX="163.0" layoutY="11.0" mnemonicParsing="false" onAction="#onScriptEdit">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2f-file-document-edit-outline" iconSize="18" />
+                                       </graphic>
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <tooltip>
+                                          <Tooltip text="Edit table script" />
+                                       </tooltip>
+                                    </Button>
+                                    <Button fx:id="nvOffsetBtn" mnemonicParsing="false" onAction="#onNvOffset">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2s-script-text" iconSize="18" />
+                                       </graphic>
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <tooltip>
+                                          <Tooltip text="Edit NVOffset" />
+                                       </tooltip>
+                                    </Button>
+                                    <Label>
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip prefWidth="300.0" text="You can set an NVOffset inside the table script so that highscores are written into a unique nvram, even if the other tables share the same ROM." wrapText="true" />
+                                       </tooltip>
+                                    </Label>
+                                 </children>
+                              </HBox>
                            </children>
                            <VBox.margin>
                               <Insets top="6.0" />
                            </VBox.margin>
                         </GridPane>
+                        <VBox fx:id="tablesBox">
+                           <children>
+                              <Label text="Related Tables" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label styleClass="preference-description" text="The following tables share the same original ROM.">
+                                 <VBox.margin>
+                                    <Insets bottom="6.0" top="6.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <VBox fx:id="tableListBox">
+                                 <VBox.margin>
+                                    <Insets bottom="24.0" />
+                                 </VBox.margin>
+                              </VBox>
+                           </children>
+                           <VBox.margin>
+                              <Insets top="24.0" />
+                           </VBox.margin>
+                        </VBox>
                         </children>
                      <padding>
                         <Insets bottom="12.0" top="12.0" />

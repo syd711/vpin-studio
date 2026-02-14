@@ -3,7 +3,8 @@ package de.mephisto.vpin.restclient.converter;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 
 public class MediaOperation {
-  private int gameId;
+  private int objectId;
+  private boolean playlistMode;
   private VPinScreen screen;
   private MediaConversionCommand command;
   private String filename;
@@ -16,12 +17,20 @@ public class MediaOperation {
     this.filename = filename;
   }
 
-  public int getGameId() {
-    return gameId;
+  public int getObjectId() {
+    return objectId;
   }
 
-  public void setGameId(int gameId) {
-    this.gameId = gameId;
+  public void setObjectId(int objectId) {
+    this.objectId = objectId;
+  }
+
+  public boolean isPlaylistMode() {
+    return playlistMode;
+  }
+
+  public void setPlaylistMode(boolean playlistMode) {
+    this.playlistMode = playlistMode;
   }
 
   public VPinScreen getScreen() {

@@ -1,23 +1,26 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.dialogs.ScriptDownloadProgressModel;
 import de.mephisto.vpin.ui.tables.vbsedit.VBSManager;
-import de.mephisto.vpin.ui.util.*;
+import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.ProgressResultModel;
+import de.mephisto.vpin.ui.util.SystemUtil;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.apache.commons.lang3.StringUtils;
@@ -28,6 +31,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -40,7 +44,7 @@ import java.util.ResourceBundle;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablesSidebarScriptDataController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarScriptDataController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private Label labelNVOffset;
@@ -132,9 +136,8 @@ public class TablesSidebarScriptDataController implements Initializable {
   @FXML
   private void onScreenshotView() {
     if (this.game.isPresent()) {
-      String url = client.getURL("vpx/screenshot/" + game.get().getId());
-      InputStream cachedUrlImage = client.getCachedUrlImage(url);
-      MediaUtil.openMedia(cachedUrlImage);
+      String url = Studio.client.getRestClient().getBaseUrl() + VPinStudioClientService.API + "vpx/screenshot/" + game.get().getId();
+      TableDialogs.openMediaDialog(Studio.stage, "Table Screenshot", url, "image/png");
     }
   }
 

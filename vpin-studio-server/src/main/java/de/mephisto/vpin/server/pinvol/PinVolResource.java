@@ -17,12 +17,6 @@ public class PinVolResource {
   @Autowired
   private PinVolService pinVolService;
 
-
-  @GetMapping("/autostart")
-  public boolean autostart() {
-    return pinVolService.getPinVolAutoStart();
-  }
-
   @GetMapping("/running")
   public boolean isProcessRunning() {
     return pinVolService.isRunning();
@@ -33,14 +27,14 @@ public class PinVolResource {
     return pinVolService.restart();
   }
 
-  @GetMapping("/autostart/toggle")
-  public boolean toggleAutoStart() {
-    return pinVolService.toggleAutoStart();
-  }
-
   @GetMapping("/kill")
   public boolean kill() {
     return pinVolService.killPinVol();
+  }
+
+  @GetMapping("/valid")
+  public boolean isValid() {
+    return pinVolService.isValid();
   }
 
   @GetMapping("/preferences")
@@ -55,7 +49,7 @@ public class PinVolResource {
 
   @PostMapping("/save")
   public PinVolPreferences save(@RequestBody PinVolUpdate update) throws Exception {
-    return pinVolService.update(update);
+    return pinVolService.save(update);
   }
 
 }

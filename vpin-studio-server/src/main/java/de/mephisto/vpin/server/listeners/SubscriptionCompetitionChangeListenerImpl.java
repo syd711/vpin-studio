@@ -68,7 +68,7 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
       Game game = gameService.getGame(competition.getGameId());
       if (game != null) {
         if (competition.isHighscoreReset()) {
-          if (highscoreBackupService.backup(game)) {
+          if (highscoreBackupService.backup(game) != null) {
             highscoreService.resetHighscore(game);
           }
         }
@@ -81,7 +81,7 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
         DiscordMember bot = discordService.getBot();
         if (game != null && bot != null) {
           if (competition.isHighscoreReset()) {
-            if (highscoreBackupService.backup(game)) {
+            if (highscoreBackupService.backup(game) != null) {
               highscoreService.resetHighscore(game);
             }
           }
@@ -96,7 +96,9 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
               subscriptionChannel = discordService.createSubscriptionChannel(competition, game);
             }
             else {
+              competition.setDiscordChannelId(subscriptionChannel.getId());
               joinCompetition(competition, bot);
+              competitionService.save(competition);
               return;
             }
 

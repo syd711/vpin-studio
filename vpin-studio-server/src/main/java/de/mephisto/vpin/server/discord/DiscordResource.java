@@ -5,7 +5,6 @@ import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
-import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.players.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,14 +40,14 @@ public class DiscordResource {
     return discordService.hasJoinPermissions(serverId, channelId, discordService.getBotId());
   }
 
-  @GetMapping("/permissions/competitions/manage/{serverId}/{channelId}")
+  @GetMapping("/permissions/competitions/managechannel/{serverId}/{channelId}")
   public boolean hasManagePermissions(@PathVariable("serverId") long serverId, @PathVariable("channelId") long channelId) {
-    return discordService.hasManagePermissions(serverId, channelId, discordService.getBotId());
+    return discordService.hasManageChannelPermissions(serverId, channelId, discordService.getBotId());
   }
 
-  @GetMapping("/permissions/competitions/manage/{serverId}")
+  @GetMapping("/permissions/competitions/managechannel/{serverId}")
   public boolean hasManagePermissions(@PathVariable("serverId") long serverId) {
-    return discordService.hasManagePermissions(serverId, discordService.getBotId());
+    return discordService.hasManageChannelPermissions(serverId, discordService.getBotId());
   }
 
   /**
@@ -110,7 +109,7 @@ public class DiscordResource {
 
   @GetMapping("/myservers")
   public List<DiscordServer> getAdministratedServers() {
-    return discordService.getAdministratedServers();
+    return discordService.getMyServers();
   }
 
   @GetMapping("/competition/isactive/{serverId}/{channelId}/{uuid}")

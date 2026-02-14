@@ -7,7 +7,7 @@ import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.players.Player;
-import de.mephisto.vpin.server.util.ImageUtil;
+import de.mephisto.vpin.commons.fx.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.embed.swing.SwingFXUtils;
@@ -21,9 +21,10 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 
 public class AssetFactory {
-  private final static Logger LOG = LoggerFactory.getLogger(AssetFactory.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   static {
     try {
@@ -299,27 +300,4 @@ public class AssetFactory {
     }
     return null;
   }
-
-  /* no more used
-  private static byte[] readImageUrl(String imageUrl) {
-    try {
-      URL url = new URL(imageUrl);
-      ByteArrayOutputStream bis = new ByteArrayOutputStream();
-      InputStream is = null;
-      is = url.openStream();
-      byte[] bytebuff = new byte[4096];
-      int n;
-
-      while ((n = is.read(bytebuff)) > 0) {
-        bis.write(bytebuff, 0, n);
-      }
-      is.close();
-      bis.close();
-
-      return bis.toByteArray();
-    } catch (Exception e) {
-      LOG.error("Failed to read url " + imageUrl + ": " + e.getMessage());
-    }
-    return null;
-  } */
 }

@@ -1,22 +1,30 @@
 package de.mephisto.vpin.server.frontend.pinballx;
 
 import de.mephisto.vpin.connectors.assets.TableAsset;
-import de.mephisto.vpin.connectors.assets.TableAssetConf;
+import de.mephisto.vpin.connectors.assets.TableAssetSource;
+import de.mephisto.vpin.connectors.assets.TableAssetSourceType;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.util.MimeTypeUtil;
+import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPFileFilter;
+import org.apache.commons.net.io.CopyStreamException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
@@ -28,7 +36,7 @@ import java.util.*;
  * @Deprecated
  */
 @Service
-public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAssetsAdapter {
+public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAssetsAdapter<Game> {
   private final static Logger LOG = LoggerFactory.getLogger(PinballXAssetsAdapter.class);
 
   // for exclusive search : if searching for an emulators, will exclude all folders below except the one searched
@@ -46,20 +54,25 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
   );
 
   @Override
-  public TableAssetConf getTableAssetConf() {
-    TableAssetConf conf = new TableAssetConf();
+  public TableAssetSource getAssetSource() {
+    TableAssetSource conf = new TableAssetSource();
+    conf.setType(TableAssetSourceType.PinballX);
+    conf.setLocation("PinballX");
+    conf.setEnabled(true);
+    conf.setName("PinballX");
+    conf.setId(TableAssetSourceType.PinballX.name());
     conf.setAssetSearchLabel("GameEx Assets Search for PinballX");
     conf.setAssetSearchIcon("gameex.png");
     return conf;
   }
 
   @Override
-  public Optional<TableAsset> get(String emulatorName, String screenSegment, String folder, String name) throws Exception {
+  public Optional<TableAsset> get(String emulatorName, String screenSegment, @Nullable Game game, String folder, String name) throws Exception {
     return Optional.empty();
   }
 
   @Override
-  public List<TableAsset> search(@NonNull String emulatorType, @NonNull String screenSegment, @NonNull String term) throws Exception {
+  public List<TableAsset> search(@NonNull String emulatorType, @NonNull String screenSegment, @Nullable Game game, @NonNull String term) throws Exception {
     if (term.length() < 3) {
       return Collections.emptyList();
     }
@@ -103,10 +116,11 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
       searchRecursive(results, ftp, "", filter, isScreenEmulatorIndependent(screen), emulator, false, folders, screenSegment);
       LOG.info("PinballX search finished, took " + (System.currentTimeMillis() - start) + "ms.");
       for (TableAsset asset : results) {
-        asset.setSourceId("PinballX");
+        asset.setSourceId(TableAssetSourceType.PinballX.name());
         asset.setAuthor("gameex");
         asset.setEmulator(emulatorType);
-        asset.setScreen(screen.name());
+        asset.setScreen(screen.getSegment());
+        asset.setPlayfieldMediaInverted(true);
       }
 
     }
@@ -209,11 +223,11 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
     TableAsset asset = new TableAsset();
     asset.setEmulator(emulator);
     asset.setScreen(screenSegment);
-
+    asset.setPlayfieldMediaInverted(true);
     asset.setMimeType(MimeTypeUtil.determineMimeType(FilenameUtils.getExtension(filename).toLowerCase()));
     String url = "/" + URLEncoder.encode(folder + "/" + filename, StandardCharsets.UTF_8);
     asset.setUrl(url);
-    asset.setSourceId(folder);
+    asset.setSourceId(TableAssetSourceType.PinballX.name());
     asset.setName(filename);
     asset.setLength(file.getSize());
 
@@ -223,28 +237,38 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
   //-------------------------------------
 
   @Override
-  public void writeAsset(OutputStream outputStream, @NonNull String url) throws Exception {
-//
-//    FTPClient ftp = null;
-//    try {
-//      ftp = open();
-//
-//      String decodeUrl = URLDecoder.decode(url, StandardCharsets.UTF_8);
-//      decodeUrl = decodeUrl.substring(1);
-//      LOG.info("downloading " + decodeUrl);
-//
-//      String folder = StringUtils.substringBeforeLast(decodeUrl, "/");
-//      String name = StringUtils.substringAfterLast(decodeUrl, "/");
-//
-//      ftp.changeWorkingDirectory(rootfolder + folder);
-//      ftp.retrieveFile(name, outputStream);
-//    }
-//    catch (CopyStreamException cse) {
-//      LOG.error("Error while downloading asset " + url + ": " + cse.getMessage());
-//    }
-//    finally {
-//      close(ftp);
-//    }
+  public void writeAsset(@NonNull OutputStream outputStream, @NonNull TableAsset tableAsset, long start, long length) throws Exception {
+    FTPClient ftp = null;
+    try {
+      ftp = open();
+
+      String url = tableAsset.getUrl();
+      String decodeUrl = URLDecoder.decode(url, StandardCharsets.UTF_8);
+      decodeUrl = decodeUrl.substring(1);
+      LOG.info("downloading " + decodeUrl);
+
+      String folder = StringUtils.substringBeforeLast(decodeUrl, "/");
+      String name = StringUtils.substringAfterLast(decodeUrl, "/");
+
+      ftp.changeWorkingDirectory(rootfolder + folder);
+      ftp.setFileType(FTP.BINARY_FILE_TYPE);
+
+      try (InputStream in = ftp.retrieveFileStream(name)) {
+        LOG.info("Read FTP file \"" + decodeUrl + "\", " + ftp.getReplyString());
+        if (start < 0) {
+          IOUtils.copy(in, outputStream);
+        }
+        else {
+          IOUtils.copyLarge(in, outputStream, start, length);
+        }
+      }
+    }
+    catch (CopyStreamException cse) {
+      LOG.error("Error while downloading asset: " + cse.getMessage());
+    }
+    finally {
+      close(ftp);
+    }
   }
 
   private String[] fromScreenToFolders(VPinScreen screen) {
@@ -269,6 +293,8 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
         return new String[]{"DMD Video", "DMD Image"};
       case Loading:
         return new String[]{"Loading Video", "Loading Image"};
+      case Logo:
+        return new String[]{"Logo"};
       case Wheel:
         return new String[]{"Wheel"};
       case PlayField:

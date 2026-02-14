@@ -7,6 +7,7 @@ public class DMDInfo {
 
   private int gameId;
   private String gameRom;
+  private String dmdStoreName;
 
   /** Aspect ratio from dmddevice.ini */ 
   private boolean forceAspectRatio;
@@ -55,6 +56,15 @@ public class DMDInfo {
 	public void setGameRom(String gameRom) {
 		this.gameRom = gameRom;
 	}
+
+  public String getDmdStoreName() {
+		return dmdStoreName;
+	}
+
+	public void setDmdStoreName(String dmdStoreName) {
+		this.dmdStoreName = dmdStoreName;
+	}
+
 
 	public boolean isForceAspectRatio() {
     return forceAspectRatio;

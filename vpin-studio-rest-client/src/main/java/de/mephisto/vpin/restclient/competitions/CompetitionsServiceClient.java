@@ -1,17 +1,20 @@
 package de.mephisto.vpin.restclient.competitions;
 
 import de.mephisto.vpin.connectors.iscored.IScoredGame;
+import de.mephisto.vpin.connectors.wovp.models.WovpPlayer;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
+import de.mephisto.vpin.restclient.wovp.ScoreSubmitResult;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
+import java.lang.invoke.MethodHandles;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -24,18 +27,23 @@ import java.util.List;
  * Competitions
  ********************************************************************************************************************/
 public class CompetitionsServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public CompetitionsServiceClient(VPinStudioClient client) {
     super(client);
   }
 
-  public boolean hasManagePermissions(long serverId, long channelId) {
-    return getRestClient().get(API + "discord/permissions/competitions/manage/" + serverId + "/" + channelId, Boolean.class);
+
+  public ScoreSubmitResult submitScore(WovpPlayer player, boolean simulate) {
+    return getRestClient().get(API + "competitions/weekly/submit/" + player.getId() + "/" + simulate, ScoreSubmitResult.class);
   }
 
-  public boolean hasManagePermissions(long serverId) {
-    return getRestClient().get(API + "discord/permissions/competitions/manage/" + serverId, Boolean.class);
+  public boolean hasChannelManagePermissions(long serverId, long channelId) {
+    return getRestClient().get(API + "discord/permissions/competitions/managechannel/" + serverId + "/" + channelId, Boolean.class);
+  }
+
+  public boolean hasChannelManagePermissions(long serverId) {
+    return getRestClient().get(API + "discord/permissions/competitions/managechannel/" + serverId, Boolean.class);
   }
 
   public boolean hasJoinPermissions(long serverId, long channelId) {
@@ -58,6 +66,17 @@ public class CompetitionsServiceClient extends VPinStudioClientService {
     return Arrays.asList(getRestClient().get(API + "competitions/discord", CompetitionRepresentation[].class));
   }
 
+  public List<CompetitionRepresentation> getWeeklyCompetitions() {
+    return Arrays.asList(getRestClient().get(API + "competitions/weekly", CompetitionRepresentation[].class));
+  }
+
+  public boolean synchronizeWeeklyCompetitions(boolean forceReload) {
+    return getRestClient().get(API + "competitions/weekly/synchronize/" + forceReload, Boolean.class);
+  }
+
+  public List<CompetitionScore> getWeeklyCompetitionScores(String uuid) {
+    return Arrays.asList(getRestClient().get(API + "competitions/weekly/scores/" + uuid, CompetitionScore[].class));
+  }
 
   public List<CompetitionRepresentation> getSubscriptions() {
     return Arrays.asList(getRestClient().get(API + "competitions/subscriptions", CompetitionRepresentation[].class));
@@ -93,14 +112,15 @@ public class CompetitionsServiceClient extends VPinStudioClientService {
     }
   }
 
-  public boolean isGameReferencedByCompetitions(int gameId) {
-    CompetitionRepresentation[] competitionRepresentations = getRestClient().get(API + "competitions/game/" + gameId, CompetitionRepresentation[].class);
-    return competitionRepresentations.length > 0;
+  public List<CompetitionRepresentation> getGameCompetitions(int gameId) {
+    return Arrays.asList(getRestClient().get(API + "competitions/game/" + gameId, CompetitionRepresentation[].class));
   }
 
   public void deleteCompetition(CompetitionRepresentation c) {
     try {
       getRestClient().delete(API + "competitions/" + c.getId());
+      String cacheId = "competition-bg-game-" + c.getGameId();
+      client.getImageCache().clear(cacheId);
     }
     catch (Exception e) {
       LOG.error("Failed to delete competition: " + e.getMessage(), e);
@@ -189,5 +209,15 @@ public class CompetitionsServiceClient extends VPinStudioClientService {
 
     byte[] imageBytes = client.getImageCache().get(name);
     return new ByteArrayInputStream(imageBytes);
+  }
+
+  public boolean isScoreSubmitterEnabled() {
+    try {
+      return getRestClient().get(API + "competitions/submitter/enabled", Boolean.class);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to get submitter state: " + e.getMessage(), e);
+      throw e;
+    }
   }
 }

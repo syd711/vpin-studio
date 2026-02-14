@@ -1,7 +1,9 @@
 package de.mephisto.vpin.server.frontend.pinbally;
 
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
+import de.mephisto.vpin.restclient.frontend.pinbally.PinballYSettings;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.frontend.BaseConnector;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
@@ -35,7 +38,7 @@ public class PinballYConnector extends BaseConnector {
 
 
   private Map<String, TableDetails> mapTableDetails = new HashMap<>();
-  
+
 
   @Override
   public void initializeConnector() {
@@ -59,10 +62,7 @@ public class PinballYConnector extends BaseConnector {
     List<VPinScreen> screens = new ArrayList<>(Arrays.asList(VPinScreen.values()));
     screens.remove(VPinScreen.Other2);
     frontend.setSupportedScreens(screens);
-    frontend.setIgnoredValidations(Arrays.asList(GameValidationCode.CODE_NO_OTHER2,
-        GameValidationCode.CODE_PUP_PACK_FILE_MISSING,
-        GameValidationCode.CODE_ALT_SOUND_FILE_MISSING
-    ));
+    frontend.setIgnoredValidations(Arrays.asList(GameValidationCode.CODE_NO_OTHER2));
 
     frontend.setPlayfieldMediaInverted(true);
     return frontend;
@@ -96,7 +96,7 @@ public class PinballYConnector extends BaseConnector {
     List<GameEmulator> emulators = new ArrayList<>();
     mapTableDetails = new HashMap<>();
 
-    var settingsFileLines = readSettingsFileLines();
+    List<String> settingsFileLines = readSettingsFileLines();
 
     Boolean settingsFileChanged = false;
     // Add specific ones
@@ -111,8 +111,8 @@ public class PinballYConnector extends BaseConnector {
             continue;
 
           // Update RunBefore en RunAfter in settings.txt for VPX emulators
-          for (var runType : new String[] { "RunBefore", "RunAfter" }) {
-            var settingValue = settings.getProperty("System" + emuId + "." + runType);
+          for (String runType : new String[] {"RunBefore", "RunAfter"}) {
+            String settingValue = settings.getProperty("System" + emuId + "." + runType);
             if (StringUtils.isAllBlank(settingValue) || settingValue.endsWith("& :: Added by VPin Studio")) {
               settingsFileChanged |= updateSetting(settingsFileLines, emuId, system, runType);
             }
@@ -132,6 +132,17 @@ public class PinballYConnector extends BaseConnector {
   private File getPinballYSettings() {
     File pinballYFolder = getInstallationFolder();
     return new File(pinballYFolder, "/Settings.txt");
+  }
+
+  @Override
+  public PinballYSettings getSettings() {
+    try {
+      return preferencesService.getJsonPreference(PreferenceNames.PINBALLY_SETTINGS, PinballYSettings.class);
+    }
+    catch (Exception e) {
+      LOG.error("Getting pinballY settings failed: " + e.getMessage(), e);
+      return null;
+    }
   }
 
   private Properties loadPinballYSettings() {
@@ -227,9 +238,9 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
       e.setExeName(exe.getName());
     }
     else {
-      LOG.error("Executable '" + executable + "' not or wrongly set for " + emuname + " in pinballY options "
-        + "default exe couldn't be determined. studio won't be able to lauch tables. "
-        + "Please fill in the full path to executable !");
+      LOG.error("Executable '" + executable + "' not or wrongly set for " + emuname + " in PinballY options "
+          + "default exe couldn't be determined. VPin Studio won't be able to launch tables. "
+          + "Please fill in the full path to executable !");
     }
 
     e.setGameExt(type.getExtension());
@@ -247,6 +258,19 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
     if (dirGames != null) {
       e.setGamesDirectory(dirGames.getAbsolutePath());
     }
+    else if (exe != null && exe.exists() && (EmulatorType.VisualPinball.equals(type) || EmulatorType.VisualPinball9.equals(type))) {
+      File tablesDir = new File(exe.getParentFile(), tablePath);
+      if (tablesDir.exists()) {
+        e.setGamesDirectory(tablesDir.getAbsolutePath());
+        LOG.warn("PinballY is using default fallback folder {} as games directory.", tablesDir.getAbsolutePath());
+      }
+      else {
+        LOG.warn("No games directory set for {}", emuname);
+      }
+    }
+    else {
+      LOG.warn("No games directory set for {}", emuname);
+    }
 
     //always return the emulator, otherwise it can't be managed.
     return e;
@@ -255,9 +279,11 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
   private File getMediaPath(Properties s) {
     return getPath(s, "MediaPath");
   }
+
   private File getTableDatabasePath(Properties s) {
-    return getPath(s,"TableDatabasePath");
+    return getPath(s, "TableDatabasePath");
   }
+
   private File getPath(Properties s, String variable) {
     String path = s.getProperty(variable);
     if (path.contains("[PinballX]")) {
@@ -276,7 +302,9 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
     List<String> games = new ArrayList<>();
     File pinballXDb = new File(emu.getDatabase());
     if (pinballXDb.exists()) {
-      PinballYTableParser parser = new PinballYTableParser();
+      PinballYSettings settings = preferencesService.getJsonPreference(PreferenceNames.PINBALLY_SETTINGS);
+      Charset charset = settings.getCharset() != null ? Charset.forName(settings.getCharset()) : Charset.defaultCharset();
+      PinballYTableParser parser = new PinballYTableParser(charset);
       parser.addGames(pinballXDb, games, mapTableDetails, emu);
     }
     return games;
@@ -305,7 +333,10 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
   @Override
   protected void commitDb(GameEmulator emu) {
     File pinballXDb = new File(emu.getDatabase());
-    PinballYTableParser parser = new PinballYTableParser();
+
+    PinballYSettings settings = preferencesService.getJsonPreference(PreferenceNames.PINBALLY_SETTINGS);
+    Charset charset = settings.getCharset() != null ? Charset.forName(settings.getCharset()) : Charset.defaultCharset();
+    PinballYTableParser parser = new PinballYTableParser(charset);
     parser.writeGames(pinballXDb, gamesByEmu.get(emu.getId()), mapTableDetails, emu);
   }
 
@@ -326,17 +357,17 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
   }
 
   /**
-PlayfieldWindow.Position = 583,13,1664,758
-PlayfieldWindow.Rotation = 90
-PlayfieldWindow.MirrorHorz = 0
-PlayfieldWindow.MirrorVert = 0
-PlayfieldWindow.FullScreen = 0
-PlayfieldWindow.Maximized = 0
-PlayfieldWindow.Minimized = 0
+   * PlayfieldWindow.Position = 583,13,1664,758
+   * PlayfieldWindow.Rotation = 90
+   * PlayfieldWindow.MirrorHorz = 0
+   * PlayfieldWindow.MirrorVert = 0
+   * PlayfieldWindow.FullScreen = 0
+   * PlayfieldWindow.Maximized = 0
+   * PlayfieldWindow.Minimized = 0
    */
   private void createDisplay(List<FrontendPlayerDisplay> players, Properties display, String sectionName, VPinScreen screen, String name, boolean defaultVisibility) {
     String visible = display.getProperty(sectionName + ".Visible");
-    boolean isVisible =  StringUtils.isEmpty(visible) ? defaultVisibility : StringUtils.equals(visible, "1");
+    boolean isVisible = StringUtils.isEmpty(visible) ? defaultVisibility : StringUtils.equals(visible, "1");
     if (isVisible) {
       FrontendPlayerDisplay player = new FrontendPlayerDisplay();
       player.setName(name);
@@ -354,7 +385,7 @@ PlayfieldWindow.Minimized = 0
       // identify the screen that contains our top let corner
       GraphicsDevice[] gds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
       for (int i = 0; i < gds.length; i++) {
-        GraphicsDevice gd  = gds[i];
+        GraphicsDevice gd = gds[i];
         Rectangle bounds = gd.getDefaultConfiguration().getBounds();
         if (bounds.contains(Integer.parseInt(positions[0]), Integer.parseInt(positions[1]))) {
           player.setMonitor(i);
@@ -396,8 +427,8 @@ PlayfieldWindow.Minimized = 0
   @Override
   public Playlist savePlaylist(Playlist playlist) {
     if (playlist.getId() >= -1) {
-        // delete first the old playlist, to insert new one 
-        if (playlist.getId() >= 0) {
+      // delete first the old playlist, to insert new one
+      if (playlist.getId() >= 0) {
         deletePlaylist(playlist.getId());
       }
       // pesrsist all games
@@ -480,7 +511,7 @@ PlayfieldWindow.Minimized = 0
   }
 
   //---------------- Utilities -----------------------------------------------------------------------------------------
-  
+
   private Boolean updateSetting(List<String> lines, int emuId, String emulatorName, String runType) {
     // Construct the new settings line
     StringBuilder newSettingsLine = new StringBuilder();
@@ -491,12 +522,12 @@ PlayfieldWindow.Minimized = 0
     newSettingsLine.append(" --data-urlencode \"emu=" + emulatorName + "\"");
     newSettingsLine.append(" & :: Added by VPin Studio"); /* used to detect earlier update by VPin Studio */
 
-    var updateAt = -1; // to find the "SystemX.RunBefore" / "SystemX.RunAfter" line to update
-    var insertAfter = -1; // to find the last "SystemX" line to insert after
-    
-    for (var t = 0; t < lines.size(); t++) {
+    int updateAt = -1; // to find the "SystemX.RunBefore" / "SystemX.RunAfter" line to update
+    int insertAfter = -1; // to find the last "SystemX" line to insert after
 
-      var regex = "^System" + emuId + "\\." + runType + "\\s*=.*";
+    for (int t = 0; t < lines.size(); t++) {
+
+      String regex = "^System" + emuId + "\\." + runType + "\\s*=.*";
       if (lines.get(t).matches(regex)) {
         updateAt = t;
       }
@@ -529,7 +560,8 @@ PlayfieldWindow.Minimized = 0
     // Read the PinballY settings.txt file, return null if something went wrong
     try {
       return Files.readAllLines(getPinballYSettings().toPath(), StandardCharsets.UTF_8);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       return null;
     }
   }
@@ -539,7 +571,8 @@ PlayfieldWindow.Minimized = 0
     if (settingsFileLines != null) {
       try {
         Files.write(getPinballYSettings().toPath(), settingsFileLines, StandardCharsets.UTF_8);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.error("Failed to update settings.txt with RunBefore and RunAfter commands: " + e.getMessage(), e);
       }
     }

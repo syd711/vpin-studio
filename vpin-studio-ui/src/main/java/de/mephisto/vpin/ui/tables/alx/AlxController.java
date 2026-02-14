@@ -30,6 +30,7 @@ import org.apache.commons.collections4.ListUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -38,7 +39,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
 public class AlxController implements Initializable, StudioFXController, StudioEventListener, PreferenceChangeListener {
-  private final static Logger LOG = LoggerFactory.getLogger(AlxController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private final Debouncer debouncer = new Debouncer();
   public static final int DEBOUNCE_MS = 200;
 
@@ -202,8 +203,8 @@ public class AlxController implements Initializable, StudioFXController, StudioE
           });
     }
     catch (Exception e) {
-      LOG.error("Failed to initialize ALX dashboard: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to initialize dashboard: " + e.getMessage(), "Please submit a bug report with log files on github for this.");
+      LOG.error("Failed to initialize ALX data: " + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to initialize ALX data: " + e.getMessage(), "Please submit a bug report with log files on github for this.");
     }
   }
 
@@ -237,7 +238,7 @@ public class AlxController implements Initializable, StudioFXController, StudioE
     }
     catch (Exception e) {
       LOG.error("Failed to initialize ALX dashboard: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to initialize dashboard: " + e.getMessage(), "Please submit a bug report with log files on github for this.");
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to initialize ALX dashboard: " + e.getMessage(), "Please submit a bug report with log files on github for this.");
     }
   }
 

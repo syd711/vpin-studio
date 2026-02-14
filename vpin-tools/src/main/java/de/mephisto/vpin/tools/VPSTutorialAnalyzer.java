@@ -20,17 +20,19 @@ public class VPSTutorialAnalyzer {
     VPS vps = new VPS();
     vps.reload();
     List<VpsTable> tables = vps.getTables();
+    int count = 0;
     for (VpsTable table : tables) {
       List<VpsTutorialUrls> tutorialFiles = table.getTutorialFiles();
       for (VpsTutorialUrls tutorialFile : tutorialFiles) {
         if (tutorialFile.getAuthors().contains("Kongedam")) {
+          count++;
           String videoUrl = "https://assets.vpin-mania.net/tutorials/kongedam/" + table.getId() + ".mp4";
           boolean check = HttpUtils.check(videoUrl);
           if (!check) {
-            System.out.println("failed to load " + table.getName());
+            System.out.println("[ERROR] Failed to load " + table.getName() + "/ mp4 name should be \"" + table.getId() + ".mp4\"");
           }
           else {
-            System.out.println(table.getName() + " [OK]");
+//            System.out.println(table.getName() + " [OK] " + count);
           }
         }
       }

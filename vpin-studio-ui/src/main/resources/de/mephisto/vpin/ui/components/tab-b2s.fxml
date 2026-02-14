@@ -29,7 +29,7 @@
                      <Tooltip text="Open B2S server installation folder" />
                   </tooltip>
                </Button>
-               <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+               <Separator fx:id="folderSeparator" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                <Button fx:id="registerBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRegister" styleClass="external-component" text="B2SBackglassServerRegisterApp" textFill="WHITE">
                   <font>
                      <Font size="14.0" />

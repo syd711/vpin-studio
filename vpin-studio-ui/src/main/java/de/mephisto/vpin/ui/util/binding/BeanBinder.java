@@ -1,87 +1,215 @@
 package de.mephisto.vpin.ui.util.binding;
 
-import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.ui.util.FontSelectorDialog;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+
+import java.lang.invoke.MethodHandles;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BeanBinder {
-  private final static Logger LOG = LoggerFactory.getLogger(BeanBinder.class);
+import com.google.inject.internal.util.Objects;
 
-  public static Debouncer debouncer = new Debouncer();
+public class BeanBinder<T> {
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  private BindingChangedListener listener;
-  private Object bean;
+  private List<BindingChangedListener> listeners = new ArrayList<>();
+
+  private List<Runnable> onBeanSet = new ArrayList<>();
+
+  protected T bean;
+
   private boolean paused;
 
-  private final static int MAX_DEBOUNCE = 500;
-
-  public BeanBinder(BindingChangedListener listener) {
-    this.listener = listener;
+  public void addListener(BindingChangedListener listener) {
+    this.listeners.add(listener);
   }
 
-  public void bindTextField(TextField textField, Object beanObject, String property, String defaultValue) {
-    String value = getProperty(beanObject, property);
-    textField.setText(value);
-    textField.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce(property, () -> {
-      setProperty(property, textField.getText());
-    }, MAX_DEBOUNCE));
+  public void removeListener(BindingChangedListener listener) {
+    this.listeners.remove(listener);
+  }
 
-    if (StringUtils.isEmpty(value)) {
-      textField.setText(defaultValue);
+  public void setBean(T bean, boolean runSetters) {
+    this.bean = bean;
+
+    // notify all setters that a bean has been set
+    if (runSetters) {
+      boolean oldPause = paused;
+      paused = true;
+      for (Runnable r : onBeanSet) {
+        r.run();
+      }
+      paused = oldPause;
     }
   }
 
-  public void bindComboBox(ComboBox<String> comboBox, Object beanObject, String property) {
-    bindComboBox(comboBox, beanObject, property, "");
+  public T getBean() {
+    return bean;
   }
 
-  public void bindComboBox(ComboBox<String> comboBox, Object beanObject, String property, String defaultValue) {
-    String value = getProperty(beanObject, property, defaultValue);
-    comboBox.setValue(value);
-    comboBox.valueProperty().addListener((observableValue, s, t1) -> {
-      Platform.runLater(() -> {
-        setProperty(property, t1);
-      });
+  public void setPaused(boolean paused) {
+    this.paused = paused;
+  }
+
+  public boolean isPaused() {
+    return this.paused;
+  }
+
+  //------------------------------
+
+  public void bindTextField(TextInputControl textField, String property) {
+    bindTextField(textField, property, (observableValue, s, t1) -> {
+      String text = textField.getText();
+      setProperty(property, text != null ? text.trim() : null);
+    });
+    onBeanSet.add(() -> textField.setText(getProperty(property, null)));
+  }
+
+  public void bindTextField(TextInputControl textField, String property, ChangeListener<String> listener) {
+    textField.textProperty().addListener((obs, oldValue, newValue) -> {
+      if (!paused) {
+        listener.changed(obs, oldValue, newValue);
+      }
+    });
+    onBeanSet.add(() -> {
+      Object value = getProperty(property, null);
+      textField.setText(value != null? value.toString() : null);
     });
   }
 
-  public void bindCheckbox(CheckBox checkbox, Object beanObject, String property) {
-    boolean value = getBooleanProperty(beanObject, property, false);
-    checkbox.setSelected(value);
+
+  public <U> void bindComboBoxList(ComboBox<U> comboBox, String property, boolean addEmpty) {
+    onBeanSet.add(() -> {
+      List<U> items = getProperty(property, null);
+      if (items != null) {
+        items = new ArrayList<>(items);
+        if (addEmpty) {
+          items.add(0, null);
+        }
+        comboBox.setItems(FXCollections.observableList(items));
+      }
+    });
+  }
+
+  public <U> void bindComboBox(ComboBox<U> comboBox, String property) {
+    bindComboBox(comboBox, property, null, t -> t);
+  }
+
+  public <U> void bindComboBox(ComboBox<U> comboBox, String property, String defaultValue, Function<U, ?> mapper) {
+    comboBox.valueProperty().addListener((observableValue, s, t1) -> {
+      setProperty(property, t1 != null ? mapper.apply(t1): null);
+    });
+    onBeanSet.add(() -> {
+      Object value = getProperty(property, defaultValue);
+      if (value != null) {
+        for (U item : comboBox.getItems()) {
+          if (item != null && value.equals(mapper.apply(item))) {
+            comboBox.setValue(item);
+            return;
+          }
+        }
+        // not found in items
+        if (comboBox.isEditable()) {
+          try {
+            comboBox.setValue((U) value);
+          }
+          catch (ClassCastException cce) {
+            LOG.warn("Cannot set value {} for {} as it is of wrong type: {}", value, property, cce.getMessage());
+          }
+        }
+      }
+    });
+  }
+
+  public void bindRadioButton(RadioButton radio, String property) {
+    radio.selectedProperty().addListener((observableValue, s, t1) -> {
+      setProperty(property, t1);
+    });
+    onBeanSet.add(() -> radio.setSelected(getBooleanProperty(property, false)));
+  }
+
+  public void bindCheckbox(CheckBox checkbox, String property) {
     checkbox.selectedProperty().addListener((observableValue, s, t1) -> {
       setProperty(property, t1);
     });
+    onBeanSet.add(() -> checkbox.setSelected(getBooleanProperty(property, false)));
   }
 
-  public void bindSpinner(Spinner<Integer> spinner, Object beanObject, String property, int min, int max) {
-    int value = getIntProperty(beanObject, property);
-    SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(min, max, value);
+  public void bindToggleButton(ToggleButton btn, String property) {
+    btn.selectedProperty().addListener((observableValue, s, t1) -> {
+      setProperty(property, t1);
+    });
+    onBeanSet.add(() -> btn.setSelected(getBooleanProperty(property, false)));
+  }
+
+  public void bindSpinner(Spinner<Integer> spinner, String property) {
+    bindSpinner(spinner, property, 0, 2000);
+  }
+
+  public void bindSpinner(Spinner<Integer> spinner, String property, int min, int max) {
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(min, max, 0);
     spinner.setValueFactory(factory);
-    factory.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(property, () -> {
-      int value1 = Integer.parseInt(String.valueOf(t1));
-      setProperty(property, value1);
-    }, MAX_DEBOUNCE));
+    factory.valueProperty().addListener((observableValue, oldValue, newValue) -> {
+      setProperty(property, newValue);
+    });
+    onBeanSet.add(() -> {
+      int value = getIntProperty(property, 0);
+      factory.setValue(value);
+    });
   }
 
-  public void bindSpinner(Spinner<Integer> spinner, Object beanObject, String property) {
-    bindSpinner(spinner, beanObject, property, 0, 2000);
+
+  public void bindIntSlider(Slider slider, String property) {
+    bindSlider(slider, property, v -> v.intValue(), v -> (Integer) v);
   }
 
-  public void bindFontLabel(Label label, Object beanObject, String key) {
-    String name = getProperty(beanObject, key + "FontName", "Arial");
+  public void bindDoubleSlider(Slider slider, String property) {
+    bindSlider(slider, property, v -> v, v -> (Double) v);
+  }
+
+  public void bindSlider(Slider slider, String property, Function<Number, Object> mapperToValue, Function<Object, Number> mapperToNumber) {
+    slider.valueProperty().addListener((obs, oldValue, newValue) -> {
+      setProperty(property, mapperToValue.apply(newValue));
+    });
+    onBeanSet.add(() -> {
+      Object value = getProperty(property, null);
+      try {
+        slider.valueProperty().setValue(mapperToNumber.apply(value));
+      }
+      catch (NumberFormatException e) {
+        LOG.error("Failed to convert {} {} to Number : {}", property, value, e.getMessage());
+      }
+    });
+  }
+
+  //--------------------------------------
+
+  public void bindVisibility(Node node, String property) {
+    node.managedProperty().bindBidirectional(node.visibleProperty());
+    onBeanSet.add(() -> {
+      boolean value = getBooleanProperty(property, false);
+      node.setVisible(value);
+    });
+  }
+
+  //--------------------------------------
+
+  public static void setFontLabel(Label label, Object bean, String key) {
+    String name = getProperty(bean, key + "FontName", "Arial");
     int size = 14;
-    String style = getProperty(beanObject, key + "FontStyle", FontPosture.REGULAR.name());
+    String style = getProperty(bean, key + "FontStyle", FontPosture.REGULAR.name());
     Font font = resolveFont(name, style, size);
     String text = name + ", " + style + ", " + size + "px";
     label.setFont(font);
@@ -89,10 +217,10 @@ public class BeanBinder {
     label.setTooltip(new Tooltip(text));
   }
 
-  public void bindFontSelector(Object beanObject, String key, Label label) {
-    String name = getProperty(beanObject, key + "FontName", "Arial");
-    int size = getIntProperty(beanObject, key + "FontSize", 72);
-    String style = getProperty(beanObject, key + "FontStyle", FontWeight.NORMAL.name());
+  public void openFontSelector(String key, Label label) {
+    String name = getProperty(key + "FontName", "Arial");
+    int size = getIntProperty(key + "FontSize", 72);
+    String style = getProperty(key + "FontStyle", FontWeight.NORMAL.name());
 
     Font font = resolveFont(name, style, size);
     FontSelectorDialog fs = new FontSelectorDialog(font);
@@ -104,21 +232,13 @@ public class BeanBinder {
     fs.setOnCloseRequest(e -> {
       if (fs.getResult() != null) {
         Font result = fs.getResult();
-        debouncer.debounce("font", () -> {
-          setProperty(key + "FontName", result.getFamily(), true);
-          setProperty(key + "FontSize", (int) result.getSize(), true);
-          setProperty(key + "FontStyle", result.getStyle());
+        setProperty(key + "FontName", result.getFamily(), true);
+        setProperty(key + "FontSize", (int) result.getSize(), true);
+        setProperty(key + "FontStyle", result.getStyle());
 
-          String updatedStyle = result.getStyle();
-          Font labelFont = resolveFont(result.getFamily(), result.getStyle(), 14);
-          label.setFont(labelFont);
-          String labelText = result.getFamily() + ", " + updatedStyle + ", " + result.getSize() + "px";
-          Platform.runLater(() -> {
-            label.setText(labelText);
-            label.setTooltip(new Tooltip(labelText));
-          });
-        }, 50);
-
+        Platform.runLater(() -> {
+          setFontLabel(label, bean, key);
+        });
       }
     });
   }
@@ -139,30 +259,13 @@ public class BeanBinder {
     return font;
   }
 
-  public void bindSlider(Slider slider, Object beanObject, String property) {
-    int value = getIntProperty(beanObject, property, 0);
-    slider.setValue(value);
-    slider.valueProperty().addListener(new ChangeListener<Number>() {
-      @Override
-      public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
-        debouncer.debounce(property, () -> {
-          int value1 = ((Double) t1).intValue();
-          setProperty(property, value1);
-        }, MAX_DEBOUNCE);
-      }
-    });
-  }
-
-  public void setColorPickerValue(ColorPicker colorPicker, Object beanObject, String property) {
+  public static void setColorPickerValue(ColorPicker colorPicker, Object beanObject, String property) {
     String value = getProperty(beanObject, property, "#FFFFFF");
     Color colorValue = Color.web(value);
     colorPicker.setValue(colorValue);
   }
 
-  public void bindColorPicker(ColorPicker colorPicker, Object beanObject, String property) {
-    String value = getProperty(beanObject, property, "#FFFFFF");
-    Color colorValue = Color.web(value);
-    colorPicker.setValue(colorValue);
+  public void bindColorPicker(ColorPicker colorPicker, String property) {
     colorPicker.valueProperty().addListener((observableValue, color, t1) -> {
       String hex = toHexString(t1);
       setProperty(property, hex);
@@ -178,21 +281,29 @@ public class BeanBinder {
     return "#" + (format(value.getRed()) + format(value.getGreen()) + format(value.getBlue()));
   }
 
-  private String getProperty(Object beanObject, String property) {
+  //------------------------------------------------------
+
+  private static <P> P getProperty(Object beanObject, String property, P defaultValue) {
     try {
-      return (String) PropertyUtils.getProperty(beanObject, property);
+      @SuppressWarnings("unchecked")
+      P value = (P) PropertyUtils.getProperty(beanObject, property);
+      return value != null ? value : defaultValue;
     }
     catch (Exception e) {
-      LOG.error("Failed to read string property " + property + ": " + e.getMessage());
+      LOG.error("Failed to read property " + property + ": " + e.getMessage());
+      return defaultValue;
     }
-    return null;
   }
 
-  private String getProperty(Object beanObject, String property, String defaultValue) {
+  public <P> P getProperty(String property, P defaultValue) {
+    return bean != null ? getProperty(bean, property, defaultValue) : defaultValue;
+  }
+
+  private boolean getBooleanProperty(String property, boolean defaultValue) {
     try {
-      String value = (String) PropertyUtils.getProperty(beanObject, property);
-      if (!StringUtils.isEmpty(value)) {
-        return value;
+      Object value = getProperty(property, null);
+      if (value instanceof Boolean) {
+        return (Boolean) value;
       }
     }
     catch (Exception e) {
@@ -201,9 +312,15 @@ public class BeanBinder {
     return defaultValue;
   }
 
-  private boolean getBooleanProperty(Object beanObject, String property, boolean defaultValue) {
+  private int getIntProperty(String property, int defaultValue) {
     try {
-      return (Boolean) PropertyUtils.getProperty(beanObject, property);
+      Object value = getProperty(property, null);
+      if (value instanceof Number) {
+        return ((Number) value).intValue();
+      }
+      else if (value instanceof String) {
+        return Integer.parseInt((String) value);
+      }
     }
     catch (Exception e) {
       LOG.error("Failed to read property " + property + ": " + e.getMessage());
@@ -211,59 +328,24 @@ public class BeanBinder {
     return defaultValue;
   }
 
-  private int getIntProperty(Object beanObject, String property) {
-    try {
-      return (int) PropertyUtils.getProperty(beanObject, property);
-    }
-    catch (Exception e) {
-      LOG.error("Failed to read property " + property + ": " + e.getMessage());
-    }
-    return 0;
-  }
-
-  private int getIntProperty(Object beanObject, String property, int defaultValue) {
-    try {
-      String value = String.valueOf(PropertyUtils.getProperty(beanObject, property));
-      return Integer.parseInt(value);
-    }
-    catch (Exception e) {
-      LOG.error("Failed to read property " + property + ": " + e.getMessage());
-    }
-    return defaultValue;
-  }
-
-  private void setProperty(String property, Object value) {
+  public void setProperty(String property, Object value) {
     setProperty(property, value, false);
   }
 
   private void setProperty(String property, Object value, boolean skipChangeEvent) {
-    try {
-      PropertyUtils.setProperty(bean, property, value);
-      if (listener != null && !skipChangeEvent && !paused) {
-        listener.beanPropertyChanged(bean, property, value);
+    if (bean != null) {
+      try {
+        Object oldValue = PropertyUtils.getProperty(bean, property);
+        PropertyUtils.setProperty(bean, property, value);
+        if (!skipChangeEvent && !paused && !Objects.equal(oldValue, value)) {
+          for (BindingChangedListener listener : listeners) {
+            listener.beanPropertyChanged(bean, property, value);
+          }
+        }
       }
-    }
-    catch (Exception e) {
-      LOG.error("Failed to set property " + property + ": " + e.getMessage());
-    }
-  }
-
-  public void setBean(Object bean) {
-    this.bean = bean;
-  }
-
-  public Object getBean() {
-    return bean;
-  }
-
-  public void setPaused(boolean paused) {
-    if (!paused) {
-      debouncer.debounce("delay", () -> {
-        this.paused = paused;
-      }, MAX_DEBOUNCE + 100);
-    }
-    else {
-      this.paused = paused;
+      catch (Exception e) {
+        LOG.error("Failed to set property " + property + ": " + e.getMessage());
+      }
     }
   }
 }

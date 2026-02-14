@@ -145,10 +145,11 @@ public class PinballXAssetsIndexer {
       match(folder, "fulldmd", VPinScreen.Menu,
       match(folder, "topper", VPinScreen.Topper,
       match(folder, "backglass", VPinScreen.BackGlass,
+      match(folder, "logo", VPinScreen.Logo,
       match(folder, "wheel", VPinScreen.Wheel,
       match(folder, "table", VPinScreen.PlayField,
       match(folder, "tableaudio", VPinScreen.Audio,
-      null)))))))))));
+      null))))))))))));
   }
 
   private <T> T match(String folder, String toMatch, T retIfMatched, T retIfNonNull) {

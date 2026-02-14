@@ -12,51 +12,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.Iterator;
+import java.lang.invoke.MethodHandles;
 
 public class AltSoundUploadProgressModel extends UploadProgressModel {
-  private final static Logger LOG = LoggerFactory.getLogger(AltSoundUploadProgressModel.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  private final Iterator<File> iterator;
   private final int gameId;
-  private final File file;
   private final int emulatorId;
   private final String rom;
 
-  public AltSoundUploadProgressModel(int gameId, String title, File file, int emulatorId, String rom, Runnable finalizer) {
-    super(file, title, finalizer);
+  public AltSoundUploadProgressModel(int gameId, String title, File file, int emulatorId, String rom) {
+    super(file, title);
     this.gameId = gameId;
-    this.file = file;
     this.emulatorId = emulatorId;
     this.rom = rom;
-    this.iterator = Collections.singletonList(this.file).iterator();
-  }
-
-  @Override
-  public boolean isShowSummary() {
-    return false;
-  }
-
-  @Override
-  public int getMax() {
-    return 1;
-  }
-
-  @Override
-  public File getNext() {
-    return iterator.next();
-  }
-
-  @Override
-  public String nextToString(File file) {
-    return "Uploading " + file.getName();
   }
 
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      UploadDescriptor result = Studio.client.getAltSoundService().uploadAltSound(next, emulatorId, percent -> progressResultModel.setProgress(percent));
+      UploadDescriptor result = Studio.client.getAltSoundService().uploadAltSound(next, emulatorId, gameId, percent -> progressResultModel.setProgress(percent));
       if (!StringUtils.isEmpty(result.getError())) {
         Platform.runLater(() -> {
           WidgetFactory.showAlert(Studio.stage, "Error", result.getError());
@@ -71,10 +46,5 @@ public class AltSoundUploadProgressModel extends UploadProgressModel {
     catch (Exception e) {
       LOG.error("Alt sound upload failed: " + e.getMessage(), e);
     }
-  }
-
-  @Override
-  public boolean hasNext() {
-    return iterator.hasNext();
   }
 }

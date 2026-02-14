@@ -34,12 +34,16 @@ public class PinballXTableParser extends DefaultHandler {
   /** Parser for dates */
   protected final FastDateFormat sdf = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss");
 
+  private final Charset charset;
 
-  @Nullable
+  public PinballXTableParser(Charset charset) {
+    this.charset = charset;
+  }
+
+
   public int addGames(File xmlFile, List<String> games, Map<String, TableDetails> tabledetails, GameEmulator emu) {
     int gamecount = 0;
-    //try (Reader reader = new BufferedReader(new FileReader(xmlFile, Charset.forName("UTF-8")))) {
-    try (Reader reader = new BufferedReader(new FileReader(xmlFile, Charset.defaultCharset()))) {
+    try (Reader reader = new BufferedReader(new FileReader(xmlFile, charset))) {
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
       dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 
@@ -70,7 +74,7 @@ public class PinballXTableParser extends DefaultHandler {
                 try {
                   readNode(detail, name, content);
                 } catch (Exception e) {
-                  LOG.warn("Ignored exception while parsing " + name + " '" + content+ "'' of table '" + gameName + 
+                  LOG.warn("Ignored exception while parsing " + name + " '" + content+ "' of table '" + gameName + 
                     " for emulator "  + emu.getName() +  "': " + e.getMessage());
                 }
               }
@@ -178,11 +182,11 @@ public class PinballXTableParser extends DefaultHandler {
         break;
       }
       case "rating": {
-        detail.setGameRating(Integer.parseInt(content));
+        detail.setGameRating(StringUtils.isNotEmpty(content) ? Integer.parseInt(content) : null);
         break;
       }
       case "players": {
-        detail.setNumberOfPlayers(Integer.parseInt(content));
+        detail.setNumberOfPlayers(StringUtils.isNotEmpty(content) ? Integer.parseInt(content): null);
         break;
       }
       case "comment": {
@@ -201,6 +205,11 @@ public class PinballXTableParser extends DefaultHandler {
       case "datemodified": {
         Date dateModified = content.equals("1900-01-01 00:00:00") ? null : sdf.parse(content);
         detail.setDateModified(dateModified);
+        break;
+      }
+      case "vpsid": {
+        detail.setWebGameId(content);
+        detail.setWebLink2Url("https://virtualpinballspreadsheet.github.io/?game=" + content);
         break;
       }
     }
@@ -234,7 +243,7 @@ public class PinballXTableParser extends DefaultHandler {
       }
     }
     
-    try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pinballXDb)))) {
+    try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pinballXDb), charset))) {
 
       writer.append("<menu>\n");
       for (GameEntry entry : games) {
@@ -264,6 +273,7 @@ public class PinballXTableParser extends DefaultHandler {
           appendValue(writer, "IPDBnr", detail.getIPDBNum());
           appendValue(writer, "dateadded", detail.getDateAdded());
           appendValue(writer, "datemodified", detail.getDateModified());
+          appendValue(writer, "vpsid", detail.getWebGameId());
 
           writer.append("  </game>\n");
         }

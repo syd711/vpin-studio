@@ -9,11 +9,10 @@ import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.preferences.AutoFillSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.emulators.EmulatorService;
-import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameEmulator;
-import de.mephisto.vpin.server.games.GameLifecycleService;
+import de.mephisto.vpin.server.games.*;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -30,9 +29,12 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 import java.sql.Date;
 import java.util.*;
+import java.util.List;
 
 @Service
 public class FrontendService implements InitializingBean, PreferenceChangedListener {
@@ -59,6 +61,9 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   @Autowired
   private GameLifecycleService gameLifecycleService;
+
+  @Autowired
+  private GameDetailsRepositoryService gameDetailsRepositoryService;
 
   private FrontendStatusService frontendStatusService;
 
@@ -104,20 +109,20 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   public TableDetails getTableDetails(int id) {
     FrontendConnector frontend = getFrontendConnector();
-    TableDetails manifest = frontend.getTableDetails(id);
-    if (manifest != null) {
-      GameEmulator emu = emulatorService.getGameEmulator(manifest.getEmulatorId());
+    TableDetails tableDetails = frontend.getTableDetails(id);
+    if (tableDetails != null) {
+      GameEmulator emu = emulatorService.getGameEmulator(tableDetails.getEmulatorId());
       if (emu != null) {
-        manifest.setLauncherList(new ArrayList<>(emulatorService.getAltExeNames(emu)));
+        tableDetails.setLauncherList(new ArrayList<>(emulatorService.getAltExeNames(emu)));
       }
     }
-    return manifest;
+    return tableDetails;
 
   }
 
   public void saveTableDetails(int id, TableDetails tableDetails) {
-    getFrontendConnector().saveTableDetails(id, tableDetails);
-    gameLifecycleService.notifyGameDataChanged(id, tableDetails, tableDetails);
+    TableDetails newTableDetails = getFrontendConnector().saveTableDetails(id, tableDetails);
+    gameLifecycleService.notifyGameDataChanged(id, tableDetails, newTableDetails);
   }
 
   public void updateTableFileUpdated(int id) {
@@ -129,15 +134,17 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   }
 
   //--------------------------
+  @Nullable
   private Game setGameEmulator(Game game) {
     if (game != null) {
       GameEmulator emulator = emulatorService.getGameEmulator(game.getEmulatorId());
       if (emulator != null) {
         game.setEmulator(emulator);
-      //  game.setEmulatorName(emulator.getName());
+        //  game.setEmulatorName(emulator.getName());
       }
       else {
         LOG.info("No emulator found for {}/{}/{}/{}", game, game.getId(), game.getEmulatorId(), game.getGameFilePath());
+        return null;
       }
 
       //FrontendMediaItem frontendMediaItem = getGameMedia(game).getDefaultMediaItem(VPinScreen.Wheel);
@@ -163,7 +170,8 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
    * @return the original un-customized game instance
    */
   public Game getOriginalGame(int id) {
-    return setGameEmulator(getFrontendConnector().getGame(id));
+    Game game = getFrontendConnector().getGame(id);
+    return setGameEmulator(game);
   }
 
   public Game getGameByFilename(int emulatorId, String filename) {
@@ -208,25 +216,26 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     return getFrontendConnector().getSettings();
   }
 
-  public void saveSettings(@NonNull Map<String, Object> data) {
-    getFrontendConnector().saveSettings(data);
+  public void saveSettings(JsonSettings settings) {
+    try {
+      String serialize = settings.toJson();
+      @SuppressWarnings("unchecked")
+      Map<String, Object> data = JsonSettings.objectMapper.readValue(serialize, HashMap.class);
+      saveSettings(data);
+    }
+    catch(IOException ioe) {
+      LOG.error("Cannot save settings", ioe);
+    }
   }
 
-  public boolean supportPupPacks() {
-    return getFrontendType().supportPupPacks();
+  public void saveSettings(@NonNull Map<String, Object> data) {
+    getFrontendConnector().saveSettings(data);
   }
 
   public boolean setPupPackEnabled(Game game, boolean enable) {
     if (game != null) {
       getFrontendConnector().setPupPackEnabled(game, enable);
       return enable;
-    }
-    return false;
-  }
-
-  public boolean isPupPackDisabled(Game game) {
-    if (game != null) {
-      return game.isPupPackDisabled();
     }
     return false;
   }
@@ -412,11 +421,19 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     GameEmulator gameEmulator = emulatorService.getGameEmulator(emuId);
     String gameFileName = gameEmulator.getGameFileName(file);
     String gameDisplayName = baseName.replaceAll("-", " ").replaceAll("_", " ");
-    return getFrontendConnector().importGame(emuId, formattedBaseName, gameFileName, gameDisplayName, null, new Date(file.lastModified()));
+
+    TableDetails tableDetails = new TableDetails();
+    tableDetails.setEmulatorId(emuId);
+    tableDetails.setStatus(1);
+    tableDetails.setGameName(formattedBaseName);
+    tableDetails.setGameFileName(gameFileName);
+    tableDetails.setGameDisplayName(gameDisplayName);
+    tableDetails.setDateModified(new Date(file.lastModified()));
+    return importGame(tableDetails);
   }
 
-  public int importGame(int emulatorId, @NonNull String gameName, @NonNull String gameFileName, @NonNull String gameDisplayName, @Nullable String launchCustomVar, @NonNull java.util.Date dateFileUpdated) {
-    return getFrontendConnector().importGame(emulatorId, gameName, gameFileName, gameDisplayName, launchCustomVar, dateFileUpdated);
+  public int importGame(@NonNull TableDetails tableDetails) {
+    return getFrontendConnector().importGame(tableDetails);
   }
 
   public boolean deleteGame(int id) {
@@ -519,7 +536,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
       }
     }
 
-    return new FrontendControl();
+    return null;
   }
 
   public FrontendControls getControls() {
@@ -551,7 +568,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   public File getDefaultMediaFolder(@NonNull VPinScreen screen) {
     List<GameEmulator> vpxGameEmulators = emulatorService.getVpxGameEmulators();
-    if(vpxGameEmulators.isEmpty()) {
+    if (vpxGameEmulators.isEmpty()) {
       return getFrontendInstallationFolder();
     }
     GameEmulator emulator = vpxGameEmulators.get(0);
@@ -559,20 +576,41 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     return mediaStrategy != null ? mediaStrategy.getEmulatorMediaFolder(emulator, screen) : null;
   }
 
-  public File getPlaylistMediaFolder(@NonNull Playlist playList, @NonNull VPinScreen screen) {
+  public File getPlaylistMediaFolder(@NonNull Playlist playList, @NonNull VPinScreen screen, boolean create) {
     MediaAccessStrategy mediaStrategy = getFrontendConnector().getMediaAccessStrategy();
-    return mediaStrategy != null ? mediaStrategy.getPlaylistMediaFolder(playList, screen) : null;
+    return mediaStrategy != null ? mediaStrategy.getPlaylistMediaFolder(playList, screen, create) : null;
   }
 
-  public File getMediaFolder(@NonNull Game game, @NonNull VPinScreen screen, @Nullable String extension) {
+  public File getMediaFolder(@NonNull Game game, @NonNull VPinScreen screen, @Nullable String extension, boolean create) {
     MediaAccessStrategy mediaStrategy = getFrontendConnector().getMediaAccessStrategy();
-    return mediaStrategy != null ? mediaStrategy.getGameMediaFolder(game, screen, extension) : null;
+    return mediaStrategy != null ? mediaStrategy.getGameMediaFolder(game, screen, extension, create) : null;
+  }
+
+  public boolean deletePlaylistMediaFolder(@NonNull Playlist playList, @NonNull VPinScreen screen, @Nullable String extension) {
+    MediaAccessStrategy mediaStrategy = getFrontendConnector().getMediaAccessStrategy();
+    if (mediaStrategy != null) {
+      File mediaFolder = mediaStrategy.getPlaylistMediaFolder(playList, screen, false);
+      mediaStrategy.stopMonitoring(mediaFolder);
+      return FileUtils.deleteFolder(mediaFolder);
+    }
+    return false;
+  }
+
+  public boolean deleteMediaFolder(@NonNull Game game, @NonNull VPinScreen screen, @Nullable String extension) {
+    MediaAccessStrategy mediaStrategy = getFrontendConnector().getMediaAccessStrategy();
+    if (mediaStrategy != null) {
+      File mediaFolder = mediaStrategy.getGameMediaFolder(game, screen, extension, false);
+      mediaStrategy.stopMonitoring(mediaFolder);
+      return FileUtils.deleteFolder(mediaFolder);
+    }
+    return false;
   }
 
   @NonNull
   public List<File> getMediaFiles(@NonNull Game game, @NonNull VPinScreen screen) {
     MediaAccessStrategy mediaStrategy = getFrontendConnector().getMediaAccessStrategy();
-    return mediaStrategy != null ? mediaStrategy.getScreenMediaFiles(game, screen) : Collections.emptyList();
+    String mediaSearchTerm = game.getMediaSearch();
+    return mediaStrategy != null ? mediaStrategy.getScreenMediaFiles(game, screen, mediaSearchTerm) : Collections.emptyList();
   }
 
   public FrontendMediaItem getMediaItem(@NonNull Game game, @NonNull VPinScreen screen, String name) {
@@ -587,18 +625,18 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   @NonNull
   public List<FrontendMediaItem> getMediaItems(@NonNull Game game, @NonNull VPinScreen screen) {
-      List<FrontendMediaItem> itemList = new ArrayList<>();
-      List<File> mediaFiles = getMediaFiles(game, screen);
-      for (File file : mediaFiles) {
-        FrontendMediaItem item = new FrontendMediaItem(game.getId(), screen, file);
-        itemList.add(item);
-      }
-      return itemList;
+    List<FrontendMediaItem> itemList = new ArrayList<>();
+    List<File> mediaFiles = getMediaFiles(game, screen);
+    for (File file : mediaFiles) {
+      FrontendMediaItem item = FrontendMediaItem.forGame(game.getId(), screen, file);
+      itemList.add(item);
     }
+    return itemList;
+  }
 
   public File getWheelImage(Game game) {
     List<File> mediaFiles = getMediaFiles(game, VPinScreen.Wheel);
-    return mediaFiles.isEmpty()? null : mediaFiles.get(0);
+    return mediaFiles.isEmpty() ? null : mediaFiles.get(0);
   }
 
   /**
@@ -622,7 +660,10 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   @NonNull
   public FrontendMedia getGameMedia(int gameId) {
     Game game = getOriginalGame(gameId);
-    return getGameMedia(game);
+    if (game != null) {
+      return getGameMedia(game);
+    }
+    return new FrontendMedia();
   }
 
   public boolean clearCache() {
@@ -639,15 +680,17 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
       List<FrontendMediaItem> itemList = new ArrayList<>();
       List<File> mediaFiles = getMediaFiles(game, screen);
       for (File file : mediaFiles) {
-        FrontendMediaItem item = new FrontendMediaItem(game.getId(), screen, file);
+        FrontendMediaItem item = FrontendMediaItem.forGame(game.getId(), screen, file);
         itemList.add(item);
       }
+      // compare filenames ignoring case
+      Collections.sort(itemList, (i1, i2) -> i1.getName().compareToIgnoreCase(i2.getName()));
       frontendMedia.getMedia().put(screen.name(), itemList);
     }
     return frontendMedia;
   }
 
-  public TableAssetsAdapter getTableAssetAdapter() {
+  public TableAssetsAdapter<Game> getTableAssetAdapter() {
     return getFrontendConnector().getTableAssetAdapter();
   }
 
@@ -683,7 +726,20 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   }
 
   public boolean deleteEmulator(int emulatorId) {
-    return getFrontendConnector().deleteEmulator(emulatorId);
+    List<Game> gamesByEmulator = getFrontendConnector().getGamesByEmulator(emulatorId);
+    killFrontend();
+    boolean result = getFrontendConnector().deleteEmulator(emulatorId);
+    if (result) {
+      LOG.info("Sucessfully deleted emulator {}, now deleting Studio game details.", emulatorId);
+      for (Game game : gamesByEmulator) {
+        GameDetails byPupId = gameDetailsRepositoryService.findByPupId(game.getId());
+        if (byPupId != null) {
+          gameDetailsRepositoryService.delete(byPupId);
+        }
+      }
+      LOG.info("Studio game details deletion completed, deleted {} games", gamesByEmulator.size());
+    }
+    return result;
   }
 
   @Override
@@ -695,6 +751,16 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
       getFrontendConnector().getFrontendPlayerDisplays();
       preferencesService.addChangeListener(this);
+
+      boolean isHeadless = GraphicsEnvironment.isHeadless();
+      if (!isHeadless) {
+        List<FrontendPlayerDisplay> displays = getFrontendPlayerDisplays(false);
+        LOG.info("########################## Frontend Screen Summary #####################################");
+        for (FrontendPlayerDisplay frontendPlayerDisplay : displays) {
+          LOG.info(frontendPlayerDisplay.toString());
+        }
+        LOG.info("######################### /Frontend Screen Summary #####################################");
+      }
     }
     catch (Exception e) {
       LOG.info("FrontendService initialization failed: {}", e.getMessage(), e);

@@ -1,10 +1,9 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.ScoreGraphUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.restclient.cards.CardTemplate;
+import de.mephisto.vpin.restclient.cards.CardTemplateType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.*;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
@@ -22,7 +21,6 @@ import eu.hansolo.tilesfx.Tile;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -38,17 +36,18 @@ import org.springframework.core.io.ResourceLoader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.getScoreFontText;
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablesSidebarHighscoresController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarHighscoresController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private Label hsTypeLabel;
@@ -192,6 +191,9 @@ public class TablesSidebarHighscoresController implements Initializable {
   @FXML
   private void onScan() {
     this.refreshView(game);
+    if (game.isPresent()) {
+      client.getGameService().reload(this.game.get().getId());
+    }
   }
 
   @FXML
@@ -327,19 +329,15 @@ public class TablesSidebarHighscoresController implements Initializable {
 
       cardsEnabledCheckbox.setDisable(false);
       cardsEnabledCheckbox.setSelected(!game.isCardDisabled());
-      List<CardTemplate> templates = client.getHighscoreCardTemplatesClient().getTemplates();
-      Long templateId = g.get().getTemplateId();
-      Optional<CardTemplate> first = templates.stream().filter(t -> t.getId().equals(templateId)).findFirst();
-      if (first.isEmpty()) {
-        first = templates.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst();
-      }
-      InputStream highscoreCard = client.getHighscoreCardsService().getHighscoreCardPreview(game, first.get());
 
+      //TODO swith to new Image(URL) to avoid non closed InputStrem + async loading ?
+      InputStream highscoreCard = client.getHighscoreCardsService().getHighscoreCardPreview(game, CardTemplateType.HIGSCORE_CARD);
       if (highscoreCard != null) {
         cardImage.setImage(new Image(highscoreCard));
       }
       else {
-        cardImage.setImage(new Image(ResourceLoader.class.getResourceAsStream("empty-preview.png")));
+        InputStream resourceAsStream = Studio.class.getResourceAsStream("empty-preview.png");
+        cardImage.setImage(new Image(resourceAsStream));
       }
 
       String rom = game.getRom();

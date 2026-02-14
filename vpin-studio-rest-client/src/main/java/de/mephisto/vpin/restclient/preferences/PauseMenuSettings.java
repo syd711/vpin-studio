@@ -4,17 +4,38 @@ import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PauseMenuSettings extends JsonSettings {
   private boolean useOverlayKey;
   private int inputDebounceMs = 0;
-  private VPinScreen videoScreen = VPinScreen.Topper;
+  private VPinScreen tutorialsScreen = VPinScreen.Topper;
+  private boolean tutorialsOnScreen = false;
+  private int tutorialMarginLeft = 0;
+  private int tutorialMarginTop = 0;
+  private int tutorialsRotation = 0;
+  private boolean pressPause = true;
+  private boolean alwaysTakeScreenshot = false;
+
+  private boolean apronMode = false;
+  private int stageOffsetX = 0;
+  private int stageOffsetY = 0;
+  private boolean multiScreenUser = false;
+  private boolean includeDmdFrame = false;
+  private List<Integer> multiScreenIds = new ArrayList<>(List.of(new Integer(1)));
 
   private int testDuration = 8;
   private int testGameId = -1;
   private int unpauseDelay = 1000;
+  private int scaling = 0;
+
+  //default is 90 degree rotation
+  private int rotation = 90;
 
   private boolean showIscoredScores = true;
   private boolean showManiaScores = true;
+  private boolean showWovpScores = true;
   private boolean showTutorials = true;
 
   private String pauseButton;
@@ -26,6 +47,126 @@ public class PauseMenuSettings extends JsonSettings {
   private String resetButton;
   private String recordingButton;
   private String inputFilterList;
+
+  public boolean isAlwaysTakeScreenshot() {
+    return alwaysTakeScreenshot;
+  }
+
+  public void setAlwaysTakeScreenshot(boolean alwaysTakeScreenshot) {
+    this.alwaysTakeScreenshot = alwaysTakeScreenshot;
+  }
+
+  public int getScaling() {
+    return scaling;
+  }
+
+  public void setScaling(int scaling) {
+    this.scaling = scaling;
+  }
+
+  public boolean isApronMode() {
+    return apronMode;
+  }
+
+  public void setApronMode(boolean apronMode) {
+    this.apronMode = apronMode;
+  }
+
+  public int getStageOffsetX() {
+    return stageOffsetX;
+  }
+
+  public void setStageOffsetX(int stageOffsetX) {
+    this.stageOffsetX = stageOffsetX;
+  }
+
+  public int getStageOffsetY() {
+    return stageOffsetY;
+  }
+
+  public void setStageOffsetY(int stageOffsetY) {
+    this.stageOffsetY = stageOffsetY;
+  }
+
+  public int getTutorialMarginLeft() {
+    return tutorialMarginLeft;
+  }
+
+  public void setTutorialMarginLeft(int tutorialMarginLeft) {
+    this.tutorialMarginLeft = tutorialMarginLeft;
+  }
+
+  public int getTutorialMarginTop() {
+    return tutorialMarginTop;
+  }
+
+  public void setTutorialMarginTop(int tutorialMarginTop) {
+    this.tutorialMarginTop = tutorialMarginTop;
+  }
+
+  public int getTutorialsRotation() {
+    return tutorialsRotation;
+  }
+
+  public void setTutorialsRotation(int tutorialsRotation) {
+    this.tutorialsRotation = tutorialsRotation;
+  }
+
+  public boolean isMultiScreenUser() {
+    return multiScreenUser;
+  }
+
+  public void setMultiScreenUser(boolean multiScreenUser) {
+    this.multiScreenUser = multiScreenUser;
+  }
+
+  public List<Integer> getMultiScreenIds() {
+    return multiScreenIds;
+  }
+
+  public void setMultiScreenIds(List<Integer> multiScreenIds) {
+    this.multiScreenIds = multiScreenIds;
+  }
+
+  public boolean isIncludeDmdFrame() {
+    return includeDmdFrame;
+  }
+
+  public void setIncludeDmdFrame(boolean includeDmdFrame) {
+    this.includeDmdFrame = includeDmdFrame;
+  }
+
+  public boolean isPressPause() {
+    return pressPause;
+  }
+
+  public void setPressPause(boolean pressPause) {
+    this.pressPause = pressPause;
+  }
+
+  public boolean isTutorialsOnScreen() {
+    return tutorialsOnScreen;
+  }
+
+  public void setTutorialsOnScreen(boolean tutorialsOnScreen) {
+    this.tutorialsOnScreen = tutorialsOnScreen;
+  }
+
+  public int getRotation() {
+    return rotation;
+  }
+
+  public void setRotation(int rotation) {
+    this.rotation = rotation;
+  }
+
+  public boolean isShowWovpScores() {
+    return showWovpScores;
+  }
+
+  public void setShowWovpScores(boolean showWovpScores) {
+    this.showWovpScores = showWovpScores;
+  }
 
   public boolean isShowTutorials() {
     return showTutorials;
@@ -175,12 +316,12 @@ public class PauseMenuSettings extends JsonSettings {
     this.inputDebounceMs = inputDebounceMs;
   }
 
-  public VPinScreen getVideoScreen() {
-    return videoScreen;
+  public VPinScreen getTutorialsScreen() {
+    return tutorialsScreen;
   }
 
-  public void setVideoScreen(VPinScreen videoScreen) {
-    this.videoScreen = videoScreen;
+  public void setTutorialsScreen(VPinScreen videoScreen) {
+    this.tutorialsScreen = videoScreen;
   }
 
   public boolean isUseOverlayKey() {

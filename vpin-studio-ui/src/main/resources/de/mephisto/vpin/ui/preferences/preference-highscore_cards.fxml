@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
@@ -21,6 +22,7 @@
    <center>
       <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
+
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                <children>
                   <Label styleClass="preference-title" text="HIGHSCORE PREFERENCES" textFill="WHITE" />
@@ -34,7 +36,7 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="148.0" styleClass="preference-description" text="Select the PinUP Popper screen the highscore cards will be generated for. " textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="148.0" styleClass="preference-description" text="Select the screen the highscore cards will be generated for. " textFill="WHITE" />
                   <Label styleClass="preference-description" text="Ensure that the screen is enabled (and bound to a key in your frontend if supported)." textFill="WHITE">
                      <VBox.margin>
                         <Insets bottom="6.0" />
@@ -46,7 +48,8 @@
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
                      </columnConstraints>
                      <rowConstraints>
-                        <RowConstraints minHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
                         <Label styleClass="preference-label" text="Generate Highscore Cards for Screen:" textFill="WHITE">
@@ -55,6 +58,17 @@
                            </font>
                         </Label>
                         <ComboBox fx:id="cardTargetScreenCombo" prefWidth="150.0" GridPane.columnIndex="1" />
+
+                        <Label styleClass="preference-label" text="Action when an asset exists:" textFill="WHITE" GridPane.rowIndex="1" >
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <CheckBox fx:id="cardBackupAssetCheckbox" mnemonicParsing="false" text="Backup existing asset. " textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" >
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
                      </children>
                      <opaqueInsets>
                         <Insets />
@@ -242,6 +256,7 @@
                   <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
                </padding>
             </VBox>
+
          </content>
       </ScrollPane>
    </center>

@@ -3,6 +3,9 @@ package de.mephisto.vpin.ui.util;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.Tooltip;
+
+import static de.mephisto.vpin.ui.Studio.Features;
+
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -23,7 +26,7 @@ public class FrontendUtil {
         tp.setText(replaceName(tp.getText(),frontend));
     }
     public static String replaceName(String text, Frontend frontend) {
-        if (frontend.getFrontendType().isStandalone()) {
+        if (Features.IS_STANDALONE) {
             text = StringUtils.replace(text, " and [Frontend]", "");
         }
         return StringUtils.replace(text, "[Frontend]", frontend.getName());

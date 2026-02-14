@@ -22,7 +22,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="1340.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.DMDPositionController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="1340.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.DMDPositionController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
@@ -69,8 +69,13 @@
                   </Label>
                </left>
                <right>
-                  <HBox alignment="BASELINE_RIGHT" spacing="3.0" BorderPane.alignment="CENTER">
+                  <HBox alignment="CENTER" spacing="6.0" styleClass="subpanel" BorderPane.alignment="CENTER">
                      <children>
+                        <CheckBox fx:id="autosaveCheckbox" mnemonicParsing="false" selected="true" text="Auto-save" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
                         <Button fx:id="prevButton" mnemonicParsing="false" onAction="#onPrevious">
                            <font>
                               <Font size="14.0" />
@@ -94,6 +99,9 @@
                            </tooltip>
                         </Button>
                      </children>
+                     <padding>
+                        <Insets bottom="3.0" left="6.0" right="6.0" top="3.0" />
+                     </padding>
                   </HBox>
                   </right>
             </BorderPane>
@@ -110,14 +118,6 @@
                               <Tab fx:id="dmdTab" closable="false" text="DMD" />
                            </tabs>
                         </TabPane>
-                        <CheckBox fx:id="autosaveCheckbox" mnemonicParsing="false" selected="true" text="Auto-save" textFill="WHITE" StackPane.alignment="TOP_RIGHT">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <StackPane.margin>
-                              <Insets right="12.0" top="10.0" />
-                           </StackPane.margin>
-                        </CheckBox>
                      </children>
                   </StackPane>
 
@@ -128,7 +128,7 @@
                </ImageView>
                <VBox fx:id="noFullDMDPane">
                   <children>
-                     <VBox fx:id="uploadFullDMDImagePane" spacing="3" >
+                     <VBox fx:id="uploadFullDMDImagePane" spacing="3">
                         <children>
                            <Label fx:id="noFullDMDLabel" styleClass="default-text" text="No Full DMD Image present in the backglass !" textFill="WHITE" />
                            <Label fx:id="noFullDMDDescr" styleClass="preference-description" text="You can upload or drop a Full DMD image here. Please note the backglass will be modified and will be enhanced with the uploaded image." />
@@ -142,7 +142,7 @@
                            <Insets bottom="12.0" left="12.0" right="12.0" top="36.0" />
                         </VBox.margin>
                      </VBox>
-                     <VBox fx:id="activateFullDMDImagePane" spacing="3" >
+                     <VBox fx:id="activateFullDMDImagePane" spacing="3">
                         <children>
                            <Label fx:id="activateDMDImageLabel" styleClass="default-text" text="The Full DMD Image present in the backglass is Hidden !" textFill="WHITE" />
                            <Label fx:id="activateDMDImageDescr" styleClass="preference-description" text="You can show the backglass DMD image" />

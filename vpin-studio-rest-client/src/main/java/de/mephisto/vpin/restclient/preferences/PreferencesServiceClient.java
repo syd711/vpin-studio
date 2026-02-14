@@ -10,16 +10,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.*;
 
 /*********************************************************************************************************************
  * Preferences
  ********************************************************************************************************************/
 public class PreferencesServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private Map<String, Object> jsonSettingsCache = new HashMap<>();
 
@@ -124,7 +126,7 @@ public class PreferencesServiceClient extends VPinStudioClientService {
   public boolean uploadVPinAvatar(File file) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "preferences/avatar";
-      HttpEntity<?> upload = createUpload(file, -1, null, AssetType.VPIN_AVATAR, null);
+      HttpEntity<MultiValueMap<String, Object>> upload = createUpload(file, -1, null, AssetType.VPIN_AVATAR, null);
       new RestTemplate().exchange(url, HttpMethod.POST, upload, Boolean.class);
       finalizeUpload(upload);
       return true;

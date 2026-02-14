@@ -12,18 +12,6 @@ public class UISettings extends JsonSettings {
   private boolean showPlayerScores = true;
 
   private boolean hideVersions;
-  private boolean hideVPSUpdates;
-
-  private boolean vpsAltSound = true;
-  private boolean vpsAltColor = true;
-  private boolean vpsBackglass = true;
-  private boolean vpsPOV = true;
-  private boolean vpsPUPPack = true;
-  private boolean vpsRom = true;
-  private boolean vpsSound = true;
-  private boolean vpsToppper = true;
-  private boolean vpsTutorial = true;
-  private boolean vpsWheel = true;
 
   private boolean hideComponentWarning;
   private boolean hideVPXStartInfo;
@@ -35,8 +23,11 @@ public class UISettings extends JsonSettings {
 
   //Hide/Show Unique Custom Vpin Studio Icons
   private boolean hideCustomIcons;
+  private boolean hideGreenMarker = true;
 
   private boolean autoApplyVpsData = true;
+
+  private boolean autoSaveEnabled = false;
 
   /** Whether DMD position are auto-saved */
   private boolean autoSaveDmdPosition = true;
@@ -47,6 +38,18 @@ public class UISettings extends JsonSettings {
   private String mostPlayedColor = "#FFFFFF";
 
   private String defaultUploadMode = UploadType.uploadAndImport.name();
+  private boolean uploadMediaPreview = true;
+
+  // dropins setup
+  public static final int DROP_IN_POSTACTION_DONOTHING = 0;
+  public static final int DROP_IN_POSTACTION_MOVETOFOLDER = 1;
+  public static final int DROP_IN_POSTACTION_MOVETOTABLEFOLDER = 2;
+  public static final int DROP_IN_POSTACTION_MOVETO = 3;
+  public static final int DROP_IN_POSTACTION_MOVETOTRASH = 4;
+  public static final int DROP_IN_POSTACTION_DELETE = 5;
+
+  private int dropinPostAction = DROP_IN_POSTACTION_MOVETOTRASH;
+  private String dropinPostTargetFolder;
 
   //open after upload
   private boolean autoEditTableData = true;
@@ -64,7 +67,6 @@ public class UISettings extends JsonSettings {
   private boolean sectionHighscore = true;
   private boolean sectionAssets = true;
   private boolean sectionPov = false; //lets remove POV be default
-  private boolean sectionIni = true;
   private boolean sectionPupPack = true;
   private boolean sectionPlaylists = true;
   private boolean sectionTableData = true;
@@ -74,7 +76,6 @@ public class UISettings extends JsonSettings {
 
   private boolean tableSidebarVisible = true;
   private boolean competitionsSidebarVisible = true;
-  private boolean tournamentsSidebarVisible = true;
 
   //columns
   private boolean columnAltColor = true;
@@ -90,7 +91,6 @@ public class UISettings extends JsonSettings {
   private boolean columnRes = true;
   private boolean columnPlaylists = true;
   private boolean columnPov = false;
-  private boolean columnTutorials = false;
   private boolean columnPinVol = false;
   private boolean columnPupPack = true;
   private boolean columnRom = true;
@@ -98,10 +98,17 @@ public class UISettings extends JsonSettings {
   private boolean columnVpsStatus = true;
   private boolean columnComment = false;
   private boolean columnPatchVersion = false;
+  private boolean columnTutorial = false;
 
   private LaunchConfiguration launchConfiguration;
 
+  public boolean isAutoSaveEnabled() {
+    return autoSaveEnabled;
+  }
 
+  public void setAutoSaveEnabled(boolean autoSaveEnabled) {
+    this.autoSaveEnabled = autoSaveEnabled;
+  }
 
   public LaunchConfiguration getLaunchConfiguration() {
     return launchConfiguration;
@@ -111,12 +118,12 @@ public class UISettings extends JsonSettings {
     this.launchConfiguration = launchConfiguration;
   }
 
-  public boolean isTournamentsSidebarVisible() {
-    return tournamentsSidebarVisible;
+  public boolean isUploadMediaPreview() {
+    return uploadMediaPreview;
   }
 
-  public void setTournamentsSidebarVisible(boolean tournamentsSidebarVisible) {
-    this.tournamentsSidebarVisible = tournamentsSidebarVisible;
+  public void setUploadMediaPreview(boolean uploadMediaPreview) {
+    this.uploadMediaPreview = uploadMediaPreview;
   }
 
   private AutoFillSettings autoFillSettings = new AutoFillSettings();
@@ -199,14 +206,6 @@ public class UISettings extends JsonSettings {
 
   public void setAutoFillSettings(AutoFillSettings autoFillSettings) {
     this.autoFillSettings = autoFillSettings;
-  }
-
-  public boolean isSectionIni() {
-    return sectionIni;
-  }
-
-  public void setSectionIni(boolean sectionIni) {
-    this.sectionIni = sectionIni;
   }
 
   public boolean isColumnRes() {
@@ -421,6 +420,14 @@ public class UISettings extends JsonSettings {
     return columnPlaylists;
   }
 
+  public boolean isColumnTutorial() {
+    return columnTutorial;
+  }
+
+  public void setColumnTutorial(boolean columnTutorial) {
+    this.columnTutorial = columnTutorial;
+  }
+
   public boolean isColumnPinVol() {
     return columnPinVol;
   }
@@ -439,14 +446,6 @@ public class UISettings extends JsonSettings {
 
   public void setColumnPov(boolean columnPov) {
     this.columnPov = columnPov;
-  }
-
-  public boolean isColumnTutorials() {
-    return columnTutorials;
-  }
-
-  public void setColumnTutorials(boolean columnTutorials) {
-    this.columnTutorials = columnTutorials;
   }
 
   public boolean isColumnPupPack() {
@@ -557,100 +556,12 @@ public class UISettings extends JsonSettings {
     this.autoEditTableData = autoEditTableData;
   }
 
-  public boolean isVpsWheel() {
-    return vpsWheel;
-  }
-
-  public void setVpsWheel(boolean vpsWheel) {
-    this.vpsWheel = vpsWheel;
-  }
-
-  public boolean isVpsAltSound() {
-    return vpsAltSound;
-  }
-
-  public void setVpsAltSound(boolean vpsAltSound) {
-    this.vpsAltSound = vpsAltSound;
-  }
-
-  public boolean isVpsAltColor() {
-    return vpsAltColor;
-  }
-
-  public void setVpsAltColor(boolean vpsAltColor) {
-    this.vpsAltColor = vpsAltColor;
-  }
-
-  public boolean isVpsBackglass() {
-    return vpsBackglass;
-  }
-
-  public void setVpsBackglass(boolean vpsBackglass) {
-    this.vpsBackglass = vpsBackglass;
-  }
-
-  public boolean isVpsPOV() {
-    return vpsPOV;
-  }
-
-  public void setVpsPOV(boolean vpsPOV) {
-    this.vpsPOV = vpsPOV;
-  }
-
-  public boolean isVpsPUPPack() {
-    return vpsPUPPack;
-  }
-
-  public void setVpsPUPPack(boolean vpsPUPPack) {
-    this.vpsPUPPack = vpsPUPPack;
-  }
-
-  public boolean isVpsRom() {
-    return vpsRom;
-  }
-
-  public void setVpsRom(boolean vpsRom) {
-    this.vpsRom = vpsRom;
-  }
-
-  public boolean isVpsSound() {
-    return vpsSound;
-  }
-
-  public void setVpsSound(boolean vpsSound) {
-    this.vpsSound = vpsSound;
-  }
-
-  public boolean isVpsToppper() {
-    return vpsToppper;
-  }
-
-  public void setVpsToppper(boolean vpsToppper) {
-    this.vpsToppper = vpsToppper;
-  }
-
-  public boolean isVpsTutorial() {
-    return vpsTutorial;
-  }
-
-  public void setVpsTutorial(boolean vpsTutorial) {
-    this.vpsTutorial = vpsTutorial;
-  }
-
   public boolean isHideVersions() {
     return hideVersions;
   }
 
   public void setHideVersions(boolean hideVersions) {
     this.hideVersions = hideVersions;
-  }
-
-  public boolean isHideVPSUpdates() {
-    return hideVPSUpdates;
-  }
-
-  public void setHideVPSUpdates(boolean hideVPSUpdates) {
-    this.hideVPSUpdates = hideVPSUpdates;
   }
 
   public boolean isHideComponentWarning() {
@@ -693,12 +604,36 @@ public class UISettings extends JsonSettings {
     this.hideRatingSyncInfo = hideRatingSyncInfo;
   }
 
+  public boolean isHideGreenMarker() {
+    return hideGreenMarker;
+  }
+
+  public void setHideGreenMarker(boolean hideGreenMarker) {
+    this.hideGreenMarker = hideGreenMarker;
+  }
+
   public boolean isHideCustomIcons() {
     return hideCustomIcons;
   }
 
   public void setHideCustomIcons(boolean hideCustomIcons) {
     this.hideCustomIcons = hideCustomIcons;
+  }
+  
+  public int getDropinPostAction() {
+    return dropinPostAction;
+  }
+
+  public void setDropinPostAction(int dropinPostAction) {
+    this.dropinPostAction = dropinPostAction;
+  }
+
+  public String getDropinPostTargetFolder() {
+    return dropinPostTargetFolder;
+  }
+
+  public void setDropinPostTargetFolder(String dropinPostTargetFolder) {
+    this.dropinPostTargetFolder = dropinPostTargetFolder;
   }
 
   @Override

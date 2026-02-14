@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.dof.DOFSettings;
 import de.mephisto.vpin.restclient.doflinx.DOFLinxSettings;
 import de.mephisto.vpin.restclient.frontend.pinballx.PinballXSettings;
+import de.mephisto.vpin.restclient.frontend.pinbally.PinballYSettings;
 import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.mania.ManiaSettings;
@@ -14,12 +15,19 @@ import de.mephisto.vpin.restclient.preferences.OverlaySettings;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.recorder.RecorderFilterSettings;
 import de.mephisto.vpin.restclient.recorder.RecorderSettings;
+import de.mephisto.vpin.restclient.tagging.TaggingSettings;
 import de.mephisto.vpin.restclient.validation.IgnoredValidationSettings;
 import de.mephisto.vpin.restclient.validation.ValidationSettings;
+import de.mephisto.vpin.restclient.vpauthenticators.AuthenticationSettings;
 import de.mephisto.vpin.restclient.vpf.VPFSettings;
+import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.restclient.vpu.VPUSettings;
 import de.mephisto.vpin.restclient.webhooks.WebhookSettings;
+import de.mephisto.vpin.restclient.wovp.WOVPSettings;
+
+import javax.swing.text.html.HTML;
 
 public interface PreferenceNames {
   String IGNORED_VALIDATION_SETTINGS = "ignoredValidations";
@@ -41,14 +49,21 @@ public interface PreferenceNames {
   String OVERLAY_SETTINGS = "overlaySettings";
 
   String UI_SETTINGS = "uiSettings";
+  String VPS_SETTINGS = "vpsSettings";
   String SERVER_SETTINGS = "serverSettings";
   String NOTIFICATION_SETTINGS = "notificationSettings";
   String FILTER_SETTINGS = "filterSettings";
+  String RECORDINGS_FILTER_SETTINGS = "recordingsFilterSettings";
   String MONITORING_SETTINGS = "monitoringSettings";
 
   String PINBALLX_SETTINGS = "pinballXSettings";
+  String PINBALLY_SETTINGS = "pinballYSettings";
   String VPU_SETTINGS = "vpuSettings";
   String VPF_SETTINGS = "vpfSettings";
+
+  String AUTHENTICATION_SETTINGS = "authenticationSettings";
+
+  String ASSET_SOURCES_SETTINGS = "assetSourcesSettings";
 
   String DISCORD_BOT_TOKEN = "discordBotToken";
   String DISCORD_GUILD_ID = "discordGuildId";
@@ -59,6 +74,7 @@ public interface PreferenceNames {
   String DISCORD_BOT_ALLOW_LIST = "discordBotAllowList";
   String DISCORD_BOT_COMMANDS_ENABLED = "discordBotCommandsEnabled";
   String MANIA_SETTINGS = "tournamentSettings";
+  String TAGGING_SETTINGS = "taggingSettings";
 
   String RECORDER_SETTINGS = "recorderSettings";
   String WEBHOOK_SETTINGS = "webhookSettings";
@@ -68,9 +84,12 @@ public interface PreferenceNames {
   String ACTIVE_GAME = "activeGame";
   String PREVIEW_ENABLED = "previewEnabled";
   String PINVOL_AUTOSTART_ENABLED = "pinVolAutoStartEnabled";
+  String PINVOL_FOLDER = "pinVolInstallationFolder";
+
   String PINEMHI_AUTOSTART_ENABLED = "pinemhiAutoStartEnabled";
 
   String BACKUP_SETTINGS = "backupSettings";
+  String WOVP_SETTINGS = "wovpSettings";
 
   static Class<? extends JsonSettings> getClassFromKey(String key) {
     switch (key) {
@@ -107,8 +126,14 @@ public interface PreferenceNames {
       case PreferenceNames.PINBALLX_SETTINGS: {
         return PinballXSettings.class;
       }
+      case PreferenceNames.PINBALLY_SETTINGS: {
+        return PinballYSettings.class;
+      }
       case PreferenceNames.FILTER_SETTINGS: {
         return FilterSettings.class;
+      }
+      case PreferenceNames.RECORDINGS_FILTER_SETTINGS: {
+        return RecorderFilterSettings.class;
       }
       case PreferenceNames.VPU_SETTINGS: {
         return VPUSettings.class;
@@ -133,6 +158,21 @@ public interface PreferenceNames {
       }
       case PreferenceNames.ISCORED_SETTINGS: {
         return IScoredSettings.class;
+      }
+      case PreferenceNames.VPS_SETTINGS: {
+        return VpsSettings.class;
+      }
+      case PreferenceNames.AUTHENTICATION_SETTINGS: {
+        return AuthenticationSettings.class;
+      }
+      case PreferenceNames.ASSET_SOURCES_SETTINGS: {
+        return AuthenticationSettings.class;
+      }
+      case PreferenceNames.TAGGING_SETTINGS: {
+        return TaggingSettings.class;
+      }
+      case PreferenceNames.WOVP_SETTINGS: {
+        return WOVPSettings.class;
       }
       default: {
         throw new UnsupportedOperationException("JSON format not supported for preference '" + key + "'");

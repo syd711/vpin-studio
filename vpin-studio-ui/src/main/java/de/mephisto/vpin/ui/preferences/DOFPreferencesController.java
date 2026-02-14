@@ -5,21 +5,19 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.dof.DOFSettings;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.system.FolderRepresentation;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.util.FolderChooserDialog;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -56,19 +54,9 @@ public class DOFPreferencesController implements Initializable {
 
   @FXML
   private void onFolder(ActionEvent event) {
-    Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-
-    DirectoryChooser chooser = new DirectoryChooser();
-
-    File path = new File(settings.getInstallationPath());
-    if(path.exists()) {
-      chooser.setInitialDirectory(path);
-    }
-
-    chooser.setTitle("Select DOF Installation Folder");
-    File folder = chooser.showDialog(stage);
-    if (folder != null && folder.exists()) {
-      this.installationFolderText.setText(folder.getAbsolutePath());
+    FolderRepresentation folder = FolderChooserDialog.open(installationFolderText.getText());
+    if (folder != null) {
+      this.installationFolderText.setText(folder.getPath());
     }
   }
 
@@ -97,7 +85,8 @@ public class DOFPreferencesController implements Initializable {
           }
         }
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to sync dof: " + e.getMessage());
     }
   }
@@ -122,7 +111,8 @@ public class DOFPreferencesController implements Initializable {
       try {
         client.getDofService().saveSettings(settings);
         refresh();
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
       }
     });
@@ -135,12 +125,11 @@ public class DOFPreferencesController implements Initializable {
       try {
         client.getDofService().saveSettings(settings);
         refresh();
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
       }
     });
-
-    folderBtn.setVisible(client.getSystemService().isLocal());
 
     installationFolderText.setText(settings.getInstallationPath());
 
@@ -151,7 +140,8 @@ public class DOFPreferencesController implements Initializable {
           settings.setApiKey(t1);
           client.getDofService().saveSettings(settings);
           refresh();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
         }
       }, 300);
@@ -164,7 +154,8 @@ public class DOFPreferencesController implements Initializable {
           settings.setInstallationPath(t1);
           client.getDofService().saveSettings(settings);
           refresh();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
         }
       }, 300);

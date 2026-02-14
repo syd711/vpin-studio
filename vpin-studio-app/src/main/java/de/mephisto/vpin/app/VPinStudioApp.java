@@ -8,29 +8,27 @@ import de.mephisto.vpin.commons.utils.controller.GameControllerInputListener;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.preferences.OverlaySettings;
-import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
-import de.mephisto.vpin.restclient.util.SystemUtil;
+import de.mephisto.vpin.restclient.system.MonitorInfo;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Locale;
+import java.lang.invoke.MethodHandles;
 
+/**
+ * A standalone Overlay window
+ */
 public class VPinStudioApp extends Application implements GameControllerInputListener {
-  private final static Logger LOG = LoggerFactory.getLogger(VPinStudioApp.class);
-
-  public static VPinStudioClient client;
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static void main(String[] args) {
     launch(args);
@@ -38,22 +36,19 @@ public class VPinStudioApp extends Application implements GameControllerInputLis
 
   @Override
   public void start(Stage overlayStage) {
-    VPinStudioApp.client = new VPinStudioClient("localhost");
-    ServerFX.client = VPinStudioApp.client;
-
+    ServerFX.client = new VPinStudioClient("localhost");
 
     try {
       Platform.setImplicitExit(false);
-      OverlaySettings overlaySettings = client.getJsonPreference(PreferenceNames.OVERLAY_SETTINGS, OverlaySettings.class);
-      Screen screen = SystemUtil.getScreenById(overlaySettings.getOverlayScreenId());
+      OverlaySettings overlaySettings = ServerFX.client.getJsonPreference(PreferenceNames.OVERLAY_SETTINGS, OverlaySettings.class);
+      MonitorInfo screen = ServerFX.client.getSystemService().getScreenInfo(overlaySettings.getOverlayScreenId());
 
       BorderPane root = new BorderPane();
-      final Scene scene = new Scene(root, screen.getVisualBounds().getWidth(), screen.getVisualBounds().getHeight(), true, SceneAntialiasing.BALANCED);
+      final Scene scene = new Scene(root, screen.getWidth(), screen.getHeight(), true, SceneAntialiasing.BALANCED);
       scene.setCursor(Cursor.NONE);
 
-      Rectangle2D bounds = screen.getVisualBounds();
-      overlayStage.setX(bounds.getMinX());
-      overlayStage.setY(bounds.getMinY());
+      overlayStage.setX(screen.getX());
+      overlayStage.setY(screen.getY());
 
       overlayStage.setScene(scene);
       overlayStage.setFullScreenExitHint("");
@@ -93,6 +88,7 @@ public class VPinStudioApp extends Application implements GameControllerInputLis
 
   @Override
   public void controllerEvent(String name) {
+    GameController.getInstance().removeListener(this);
     System.exit(0);
   }
 }

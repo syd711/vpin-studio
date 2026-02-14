@@ -2,13 +2,13 @@ package de.mephisto.vpin.server.vpx;
 
 import de.mephisto.vpin.commons.POV;
 import de.mephisto.vpin.commons.utils.VPXKeyManager;
+import de.mephisto.vpin.commons.utils.WinRegistry;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.Nullable;
-
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.slf4j.Logger;
@@ -25,8 +25,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Base64;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -47,32 +47,39 @@ public class VPXService implements InitializingBean {
 
   private VPXKeyManager keyManager;
 
+  private Map<String, Object> vpxControllerValues = new HashMap<>();
+
+  public boolean isForceDisableB2S() {
+    Configuration section = getControllerConfiguration(false);
+    if (section != null) {
+      String forceDisableB2S = section.getString("ForceDisableB2S");
+      if (forceDisableB2S != null) {
+        return forceDisableB2S.trim().equalsIgnoreCase("1");
+      }
+    }
+
+    if (vpxControllerValues.containsKey("ForceDisableB2S")) {
+      Object o = vpxControllerValues.get("ForceDisableB2S");
+      if (o instanceof Integer) {
+        return ((Integer) o) == 1;
+      }
+    }
+    return false;
+  }
 
   public File getVPXFile() {
     String userhome = System.getProperty("user.home");
     return new File(userhome, "AppData/Roaming/VPinballX/VPinballX.ini");
   }
 
-  private void loadIni() {
-    File vpxInFile = getVPXFile();
-    if (vpxInFile.exists()) {
-      try (FileReader fileReader = new FileReader(vpxInFile)) {
-        this.iniConfiguration = new INIConfiguration();
-        iniConfiguration.setCommentLeadingCharsUsedInInput(";");
-        iniConfiguration.setSeparatorUsedInOutput("=");
-        iniConfiguration.setSeparatorUsedInInput("=");
-        iniConfiguration.read(fileReader);
-        LOG.info("loaded VPX ini file {}", vpxInFile.getAbsolutePath());
-
-        this.keyManager = new VPXKeyManager(getPlayerConfiguration(false));
-      }
-      catch (Exception e) {
-        LOG.error("Failed to read VPX ini file: " + e.getMessage(), e);
-      }
+  public @Nullable Configuration getPlayerConfiguration(boolean forceReload) {
+    if (forceReload) {
+      loadIni();
     }
+    return iniConfiguration != null ? iniConfiguration.getSection("Player") : null;
   }
 
-  public @Nullable Configuration getPlayerConfiguration(boolean forceReload) {
+  public @Nullable Configuration getControllerConfiguration(boolean forceReload) {
     if (forceReload) {
       loadIni();
     }
@@ -211,14 +218,12 @@ public class VPXService implements InitializingBean {
 
   @Nullable
   public TableInfo getTableInfo(Game game) {
-    if (game != null) {
+    if (game != null && game.isVpxGame()) {
       File gameFile = game.getGameFile();
       if (gameFile.exists()) {
         try {
           Map<String, Object> values = VPXUtil.readTableInfo(gameFile);
-          if (values != null) {
-            return new TableInfo(values);
-          }
+          return new TableInfo(values);
         }
         catch (Exception e) {
           LOG.error("Failed to read table info: " + e.getMessage());
@@ -295,11 +300,76 @@ public class VPXService implements InitializingBean {
     return null;
   }
 
+  public boolean setNvOffset(Game game, int nvOffset, boolean keepVbsFiles) throws Exception {
+    if (game.isVpxGame() && game.getNvOffset() != nvOffset) {
+      String script = VPXUtil.exportVBS(game.getGameFile(), true);
+      List<String> lines = Arrays.stream(script.split("\n")).filter(l -> !l.contains("NVOffset(") && !l.contains("NVOffset (")).collect(Collectors.toList());
+
+      boolean replaced = nvOffset == 0;
+      StringBuilder builder = new StringBuilder();
+      for (String line : lines) {
+        if (nvOffset > 0 && line.trim().matches("^\\s*\\.GameName\\s*=\\s*cGameName")) {
+          builder.append(line);
+          builder.append("\n");
+          builder.append("\t\tNVOffset (" + nvOffset + ")");
+          builder.append("\n");
+
+          replaced = true;
+        }
+        else {
+          builder.append(line);
+          builder.append("\n");
+        }
+      }
+
+      if (replaced) {
+        VPXUtil.importVBS(game.getGameFile(), builder.toString(), keepVbsFiles);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  //-------------- Config Loading -------------------------------------
+
+  private void loadIni() {
+    File vpxInFile = getVPXFile();
+    if (vpxInFile.exists()) {
+      try (FileReader fileReader = new FileReader(vpxInFile)) {
+        this.iniConfiguration = new INIConfiguration();
+        iniConfiguration.setCommentLeadingCharsUsedInInput(";");
+        iniConfiguration.setSeparatorUsedInOutput("=");
+        iniConfiguration.setSeparatorUsedInInput("=");
+        iniConfiguration.read(fileReader);
+        LOG.info("loaded VPX ini file {}", vpxInFile.getAbsolutePath());
+
+        this.keyManager = new VPXKeyManager(getPlayerConfiguration(false));
+      }
+      catch (Exception e) {
+        LOG.error("Failed to read VPX ini file: " + e.getMessage(), e);
+      }
+    }
+  }
+
+  private void loadRegistration() {
+    try {
+      vpxControllerValues = WinRegistry.getCurrentUserValues("Software\\Visual Pinball\\Controller");
+    }
+    catch (Exception e) {
+      LOG.warn("Failed to read VPX registry values: {}", e.getMessage());
+    }
+  }
+
   //------------------------------------------
+
+  public void clearCache() {
+    loadIni();
+    loadRegistration();
+  }
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    loadIni();
+    clearCache();
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

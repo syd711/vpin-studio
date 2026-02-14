@@ -10,11 +10,11 @@ import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.frontend.BaseConnector;
 import de.mephisto.vpin.server.frontend.GameEntry;
+import de.mephisto.vpin.server.frontend.pinbally.PinballYTableParser;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.io.ByteOrderMark;
@@ -27,18 +27,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static de.mephisto.vpin.server.system.SystemService.RESOURCES;
+import static de.mephisto.vpin.commons.SystemInfo.RESOURCES;
 
 @Service("PinballX")
 public class PinballXConnector extends BaseConnector {
@@ -72,6 +68,16 @@ public class PinballXConnector extends BaseConnector {
       // no effect if already stopped
       this.assetsAdapter.stopRefresh();
     }
+/*
+    try {
+      Class<?> aClass = Class.forName("de.mephisto.vpin.popper.PopperAssetAdapter");
+      de.mephisto.vpin.connectors.assets.TableAssetsAdapter assetAdapter = (de.mephisto.vpin.connectors.assets.TableAssetsAdapter) aClass.getDeclaredConstructor().newInstance();
+      super.setTableAssetAdapter(new de.mephisto.vpin.server.frontend.CacheTableAssetsAdapter(assetAdapter));
+    }
+    catch (Exception e) {
+      LOG.error("Unable to find PopperAssetAdapter: " + e.getMessage());
+    }
+*/
     LOG.info("Finished initialization of " + this);
   }
 
@@ -93,10 +99,7 @@ public class PinballXConnector extends BaseConnector {
     List<VPinScreen> screens = new ArrayList<>(Arrays.asList(VPinScreen.values()));
     screens.remove(VPinScreen.Other2);
     frontend.setSupportedScreens(screens);
-    frontend.setIgnoredValidations(Arrays.asList(GameValidationCode.CODE_NO_OTHER2,
-        GameValidationCode.CODE_PUP_PACK_FILE_MISSING,
-        GameValidationCode.CODE_ALT_SOUND_FILE_MISSING
-    ));
+    frontend.setIgnoredValidations(Arrays.asList(GameValidationCode.CODE_NO_OTHER2));
 
     frontend.setPlayfieldMediaInverted(true);
     return frontend;
@@ -117,7 +120,7 @@ public class PinballXConnector extends BaseConnector {
   public void saveSettings(@NonNull Map<String, Object> data) {
     try {
       PinballXSettings settings = JsonSettings.objectMapper.convertValue(data, PinballXSettings.class);
-      preferencesService.savePreference(PreferenceNames.PINBALLX_SETTINGS, settings);
+      preferencesService.savePreference(settings);
       // reinitialize the connector with updated settings
       initializeConnector();
     }
@@ -182,15 +185,19 @@ public class PinballXConnector extends BaseConnector {
       initVisualPinballXScripts(emulator, iniConfiguration);
     }
     else {
-      emulatorNode.setProperty("LaunchBeforeEnabled", emulator.getLaunchScript().isEnabled() ? "True" : "False");
-      emulatorNode.setProperty("LaunchBeforeExecutable", emulator.getLaunchScript().getExecuteable());
-      emulatorNode.setProperty("LaunchBeforeParameters", emulator.getLaunchScript().getExecuteable());
-      emulatorNode.setProperty("LaunchBeforeWorkingPath", emulator.getLaunchScript().getWorkingDirectory());
+      if (emulator.getLaunchScript() != null) {
+        emulatorNode.setProperty("LaunchBeforeEnabled", emulator.getLaunchScript().isEnabled() ? "True" : "False");
+        emulatorNode.setProperty("LaunchBeforeExecutable", emulator.getLaunchScript().getExecuteable());
+        emulatorNode.setProperty("LaunchBeforeParameters", emulator.getLaunchScript().getExecuteable());
+        emulatorNode.setProperty("LaunchBeforeWorkingPath", emulator.getLaunchScript().getWorkingDirectory());
+      }
 
-      emulatorNode.setProperty("LaunchAfterEnabled", emulator.getExitScript().isEnabled() ? "True" : "False");
-      emulatorNode.setProperty("LaunchAfterExecutable", emulator.getExitScript().getExecuteable());
-      emulatorNode.setProperty("LaunchAfterParameters", emulator.getExitScript().getExecuteable());
-      emulatorNode.setProperty("LaunchAfterWorkingPath", emulator.getExitScript().getWorkingDirectory());
+      if (emulator.getExitScript() != null) {
+        emulatorNode.setProperty("LaunchAfterEnabled", emulator.getExitScript().isEnabled() ? "True" : "False");
+        emulatorNode.setProperty("LaunchAfterExecutable", emulator.getExitScript().getExecuteable());
+        emulatorNode.setProperty("LaunchAfterParameters", emulator.getExitScript().getExecuteable());
+        emulatorNode.setProperty("LaunchAfterWorkingPath", emulator.getExitScript().getWorkingDirectory());
+      }
     }
 
     saveIni(iniConfiguration);
@@ -261,9 +268,11 @@ public class PinballXConnector extends BaseConnector {
     File pinballXFolder = getInstallationFolder();
     return new File(pinballXFolder, "/Databases/" + emu.getName());
   }
+
   private File getDatabase(GameEmulator emu) {
     return getDatabase(emu.getName());
   }
+
   private File getDatabase(String emuName) {
     File pinballXFolder = getInstallationFolder();
     return new File(pinballXFolder, "/Databases/" + emuName + "/" + emuName + ".xml");
@@ -419,7 +428,9 @@ public class PinballXConnector extends BaseConnector {
 
     File pinballXDb = getDatabase(emu);
     if (pinballXDb.exists()) {
-      PinballXTableParser parser = new PinballXTableParser();
+      PinballXSettings settings = preferencesService.getJsonPreference(PreferenceNames.PINBALLX_SETTINGS);
+      Charset charset = settings.getCharset() != null ? Charset.forName(settings.getCharset()) : Charset.defaultCharset();
+      PinballYTableParser parser = new PinballYTableParser(charset);
       parser.addGames(pinballXDb, games, mapTableDetails, emu);
     }
 
@@ -427,12 +438,10 @@ public class PinballXConnector extends BaseConnector {
   }
 
   @Override
-  public int importGame(int emulatorId, @NonNull String gameName, @NonNull String gameFileName,
-                        @NonNull String gameDisplayName, @Nullable String launchCustomVar, @NonNull java.util.Date dateFileUpdated) {
-
+  public int importGame(@NonNull TableDetails tableDetails) {
     // pinballX does not support gameName, so force equality with gameFileName
-    String gameNameFromFileName = gameFileName;
-    return super.importGame(emulatorId, gameNameFromFileName, gameFileName, gameDisplayName, launchCustomVar, dateFileUpdated);
+    tableDetails.setGameName(tableDetails.getGameFileName());
+    return super.importGame(tableDetails);
   }
 
   //---------------------------------------------------
@@ -462,7 +471,9 @@ public class PinballXConnector extends BaseConnector {
   @Override
   protected void commitDb(GameEmulator emu) {
     File pinballXDb = getDatabase(emu);
-    PinballXTableParser parser = new PinballXTableParser();
+    PinballXSettings settings = preferencesService.getJsonPreference(PreferenceNames.PINBALLX_SETTINGS);
+    Charset charset = settings.getCharset() != null ? Charset.forName(settings.getCharset()) : Charset.defaultCharset();
+    PinballYTableParser parser = new PinballYTableParser(charset);
     parser.writeGames(pinballXDb, gamesByEmu.get(emu.getId()), mapTableDetails, emu);
   }
 
@@ -595,7 +606,9 @@ public class PinballXConnector extends BaseConnector {
             playlist.setName(playlistname);
             // don't set mediaName, studio will use the name
 
-            PinballXTableParser parser = new PinballXTableParser();
+            PinballXSettings settings = preferencesService.getJsonPreference(PreferenceNames.PINBALLX_SETTINGS);
+            Charset charset = settings.getCharset() != null ? Charset.forName(settings.getCharset()) : Charset.defaultCharset();
+            PinballYTableParser parser = new PinballYTableParser(charset);
             List<String> _games = new ArrayList<>();
             Map<String, TableDetails> _tabledetails = new HashMap<>();
             parser.addGames(f, _games, _tabledetails, emu);
@@ -617,7 +630,9 @@ public class PinballXConnector extends BaseConnector {
   protected void savePlaylistGame(int gameId, Playlist pl) {
     if (pl.getEmulatorId() != null) {
       GameEmulator emu = getEmulator(pl.getEmulatorId());
-      PinballXTableParser parser = new PinballXTableParser();
+      PinballXSettings settings = preferencesService.getJsonPreference(PreferenceNames.PINBALLX_SETTINGS);
+      Charset charset = settings.getCharset() != null ? Charset.forName(settings.getCharset()) : Charset.defaultCharset();
+      PinballYTableParser parser = new PinballYTableParser(charset);
       List<GameEntry> games = pl.getGames().stream().map(pg -> getGameEntry(pg.getId())).collect(Collectors.toList());
 
       File playlistDb = new File(getDatabaseFolder(emu), pl.getName() + ".xml");

@@ -51,6 +51,7 @@ import org.slf4j.LoggerFactory;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -62,7 +63,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
 
 public class TournamentsManiaController implements Initializable, StudioFXController, StudioEventListener, PreferenceChangeListener {
-  private final static Logger LOG = LoggerFactory.getLogger(TournamentsManiaController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 
   @FXML
@@ -200,10 +201,10 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
           maniaAccount = maniaClient.getAccountClient().getAccountByUuid(defaultPlayer.getTournamentUserUuid());
         }
         if (maniaAccount != null) {
-          PreferenceEntryRepresentation avatarEntry = client.getPreference(PreferenceNames.AVATAR);
+          PreferenceEntryRepresentation avatarEntry = client.getPreferenceService().getPreference(PreferenceNames.AVATAR);
           Image image = new Image(DashboardController.class.getResourceAsStream("avatar-default.png"));
           if (!StringUtils.isEmpty(avatarEntry.getValue())) {
-            image = new Image(client.getAsset(AssetType.VPIN_AVATAR, avatarEntry.getValue()));
+            image = new Image(client.getAssetService().getAsset(AssetType.VPIN_AVATAR, avatarEntry.getValue()));
           }
           BufferedImage badge = SwingFXUtils.fromFXImage(image, null);
 
@@ -566,10 +567,10 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
   private BufferedImage getTournamentBadge() {
     if (this.tournamentBadgeFile == null || !this.tournamentBadgeFile.exists()) {
       try {
-        PreferenceEntryRepresentation avatarEntry = client.getPreference(PreferenceNames.AVATAR);
+        PreferenceEntryRepresentation avatarEntry = client.getPreferenceService().getPreference(PreferenceNames.AVATAR);
         Image image = new Image(DashboardController.class.getResourceAsStream("avatar-default.png"));
         if (!StringUtils.isEmpty(avatarEntry.getValue())) {
-          image = new Image(client.getAsset(AssetType.VPIN_AVATAR, avatarEntry.getValue()));
+          image = new Image(client.getAssetService().getAsset(AssetType.VPIN_AVATAR, avatarEntry.getValue()));
         }
 
         tournamentBadgeFile = File.createTempFile("default-tournament-badge", ".png");

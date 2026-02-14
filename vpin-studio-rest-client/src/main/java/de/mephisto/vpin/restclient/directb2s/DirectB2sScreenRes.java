@@ -61,6 +61,8 @@ public class DirectB2sScreenRes {
   private int backgroundWidth;
   private int backgroundHeight;
 
+  private DirectB2SFrameType frameType;
+
   /** The path to the background image, if any */
   private String backgroundFilePath;
 
@@ -352,6 +354,14 @@ public class DirectB2sScreenRes {
 
   public void setBackgroundFilePath(String backgroundFilePath) {
     this.backgroundFilePath = backgroundFilePath;
+  }
+ 
+  public DirectB2SFrameType getFrameType() {
+    return frameType;
+  }
+
+  public void setFrameType(DirectB2SFrameType frameType) {
+    this.frameType = frameType;
   }
 
   public String getB2SWindowPunch() {

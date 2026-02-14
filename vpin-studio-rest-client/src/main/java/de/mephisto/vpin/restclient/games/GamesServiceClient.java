@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
@@ -20,14 +21,17 @@ import de.mephisto.vpin.restclient.validation.ValidationState;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,7 +40,7 @@ import java.util.stream.Collectors;
  * Games
  ********************************************************************************************************************/
 public class GamesServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final Map<Integer, List<GameRepresentation>> allGames = new HashMap<>();
   /**
@@ -70,6 +74,9 @@ public class GamesServiceClient extends VPinStudioClientService {
   public GameRepresentation reload(int gameId) {
     return getRestClient().get(API + "games/reload/" + gameId, GameRepresentation.class);
   }
+  public boolean reloadEmulator(int emulatorId) {
+    return getRestClient().get(API + "games/reloadEmulator/" + emulatorId, Boolean.class);
+  }
 
   public void playGame(int id, String altExe, String option) {
     try {
@@ -90,7 +97,9 @@ public class GamesServiceClient extends VPinStudioClientService {
       map.add("mode", uploadType.name());
       map.add("gameId", gameId);
       map.add("emuId", emuId);
-      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(map, file, -1, null, AssetType.TABLE, listener), UploadDescriptor.class);
+      HttpEntity<MultiValueMap<String, Object>> upload = createUpload(map, file, -1, null, AssetType.TABLE, listener);
+      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
+      finalizeUpload(upload);
       return exchange.getBody();
     }
     catch (Exception e) {
@@ -114,10 +123,24 @@ public class GamesServiceClient extends VPinStudioClientService {
       getRestClient().post(API + "games/delete", descriptor, Boolean.class);
       int emulatorId = game.getEmulatorId();
       List<GameRepresentation> gameRepresentations = this.allGames.get(emulatorId);
-      gameRepresentations.remove(game);
+      if (descriptor.isDeleteTable()) {
+        gameRepresentations.remove(game);
+      }
     }
     catch (Exception e) {
       LOG.error("Failed to delete games " + descriptor.getGameIds() + ": " + e.getMessage(), e);
+    }
+  }
+
+  public void deleteGameFile(int emulatorId, @NonNull String name) {
+    try {
+      Map<String, Object> data =new HashMap<>();
+      data.put("emulatorId", emulatorId);
+      data.put("fileName", name);
+      getRestClient().post(API + "games/deleteGameFile", data, Boolean.class);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to delete game file " + name + ": " + e.getMessage(), e);
     }
   }
 
@@ -125,8 +148,10 @@ public class GamesServiceClient extends VPinStudioClientService {
     List<GameRepresentation> gameList = this.getVpxGamesCached();
     List<GameRepresentation> result = new ArrayList<>();
     for (GameRepresentation gameRepresentation : gameList) {
-      if ((!StringUtils.isEmpty(gameRepresentation.getRom()) && gameRepresentation.getRom().equalsIgnoreCase(rom)) ||
-          (!StringUtils.isEmpty(gameRepresentation.getTableName()) && gameRepresentation.getTableName().equalsIgnoreCase(rom))) {
+      String gameRom = gameRepresentation.getRom();
+      String gameTableName = gameRepresentation.getTableName();
+      if ((!StringUtils.isEmpty(gameRom) && gameRepresentation.getRom().equalsIgnoreCase(rom)) ||
+          (!StringUtils.isEmpty(gameTableName) && gameRepresentation.getTableName().equalsIgnoreCase(rom))) {
         result.add(gameRepresentation);
       }
     }
@@ -136,8 +161,16 @@ public class GamesServiceClient extends VPinStudioClientService {
   public GameRepresentation getFirstGameByRom(String rom) {
     List<GameRepresentation> gamesCached = this.getVpxGamesCached();
     for (GameRepresentation gameRepresentation : gamesCached) {
+      String pupPackName = gameRepresentation.getPupPackName();
+      if (!StringUtils.isEmpty(pupPackName) && pupPackName.equalsIgnoreCase(rom)) {
+        return gameRepresentation;
+      }
       String gameRom = gameRepresentation.getRom();
       if (!StringUtils.isEmpty(gameRom) && gameRom.equalsIgnoreCase(rom)) {
+        return gameRepresentation;
+      }
+      String gameTableName = gameRepresentation.getTableName();
+      if (!StringUtils.isEmpty(gameTableName) && gameTableName.equalsIgnoreCase(rom)) {
         return gameRepresentation;
       }
     }
@@ -215,7 +248,7 @@ public class GamesServiceClient extends VPinStudioClientService {
       return gameRepresentation;
     }
     catch (Exception e) {
-      LOG.error("Failed to retrieve game: " + e.getMessage());
+      LOG.error("Failed to retrieve game {}: {}", id, e.getMessage());
     }
     return null;
   }
@@ -483,6 +516,9 @@ public class GamesServiceClient extends VPinStudioClientService {
   public GameRepresentation getVpxGameCached(int gameId) {
     List<GameRepresentation> games = this.getVpxGamesCached();
     Optional<GameRepresentation> first = games.stream().filter(g -> g.getId() == gameId).findFirst();
+    if(first.isEmpty()) {
+      return getGame(gameId);
+    }
     return first.orElse(null);
   }
 
@@ -502,6 +538,14 @@ public class GamesServiceClient extends VPinStudioClientService {
   }
 
   public GameScoreValidation getGameScoreValidation(int gameId) {
+    return getRestClient().get(API + "games/scorevalidation/" + gameId, GameScoreValidation.class);
+  }
+
+  public GameScoreValidation getGameScoreValidation(int gameId, TableDetails tableDetails) {
+    if (tableDetails != null) {
+      return getRestClient().post(API + "games/scorevalidation/" + gameId, tableDetails, GameScoreValidation.class);
+    }
+    //else 
     return getRestClient().get(API + "games/scorevalidation/" + gameId, GameScoreValidation.class);
   }
 }

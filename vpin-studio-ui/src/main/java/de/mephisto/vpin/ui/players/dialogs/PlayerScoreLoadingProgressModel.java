@@ -85,7 +85,7 @@ public class PlayerScoreLoadingProgressModel extends ProgressModel<PlayerReprese
         highscoreList.getStyleClass().add("media-container");
         noScoreLabel.setVisible(false);
         for (ScoreRepresentation playerScore : playerScores.getScores()) {
-          GameRepresentation game = client.getGameCached(playerScore.getGameId());
+          GameRepresentation game = client.getGameService().getGameCached(playerScore.getGameId());
           if (game == null) {
             continue;
           }

@@ -33,8 +33,8 @@
                                  </VBox.margin>
                               </Button>
                               <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="500.0" mnemonicParsing="false" onAction="#onServiceInfo" styleClass="preference-button" text="Server Settings" />
-                              <Button fx:id="webhooksBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="133.0" mnemonicParsing="false" onAction="#onWebhooks" styleClass="preference-button" text="Webhooks" />
-                              <Button fx:id="repositoriesBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="709.0" mnemonicParsing="false" onAction="#onVpaRepositories" styleClass="preference-button" text="Repositories" />
+                              <Button fx:id="repositoriesBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="709.0" mnemonicParsing="false" onAction="#onVpaRepositories" styleClass="preference-button" text="Backup Settings" />
+                              <Button fx:id="webhooksBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="133.0" mnemonicParsing="false" onAction="#onWebhooks" styleClass="preference-button" text="Integration Settings" />
                               <Label alignment="BASELINE_LEFT" layoutX="34.0" layoutY="10.0" styleClass="preference-section" text="VPIN STUDIO FRONTEND PREFERENCES">
                                  <font>
                                     <Font size="13.0" />
@@ -51,15 +51,6 @@
                               </Button>
                               <Button fx:id="pauseMenuBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="213.0" mnemonicParsing="false" onAction="#onPauseMenu" styleClass="preference-button" text="Pause Menu" />
                               <Button fx:id="notificationsButton" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="34.0" layoutY="100.0" mnemonicParsing="false" onAction="#onNotifications" styleClass="preference-button" text="Notifications" />
-                              <Label alignment="BASELINE_LEFT" layoutX="28.0" layoutY="191.0" styleClass="preference-section" text="VPIN SYSTEM PREFERENCES">
-                                 <font>
-                                    <Font size="13.0" />
-                                 </font>
-                                 <VBox.margin>
-                                    <Insets top="24.0" />
-                                 </VBox.margin>
-                              </Label>
-                              <Button fx:id="systemBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="213.0" mnemonicParsing="false" onAction="#onSystemSettings" styleClass="preference-button" text="System Settings" />
                               <VBox fx:id="frontendPreferences">
                                  <children>
                                     <Label alignment="BASELINE_LEFT" styleClass="preference-section" text="FRONTEND PREFERENCES">
@@ -72,9 +63,11 @@
                                     </Label>
                                     <Button fx:id="popperSettingsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPopperSettings" prefHeight="35.0" prefWidth="212.0" styleClass="preference-button" text="Popper Settings" />
                                     <Button fx:id="pinballXSettingsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPinballXSettings" prefHeight="35.0" prefWidth="212.0" styleClass="preference-button" text="PinballX Settings" />
+                                    <Button fx:id="pinballYSettingsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPinballYSettings" prefHeight="35.0" prefWidth="212.0" styleClass="preference-button" text="PinballY Settings" />
+                                    <Button fx:id="mediaSourcesBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onMediaSources" styleClass="preference-button" text="Media Sources" />
                                  </children>
                               </VBox>
-                              <Label alignment="BASELINE_LEFT" layoutX="210.0" layoutY="256.0" styleClass="preference-section" text="VALIDATORS">
+                              <Label alignment="BASELINE_LEFT" layoutX="210.0" layoutY="256.0" styleClass="preference-section" text="VALIDATORS &amp; TAGGING">
                                  <font>
                                     <Font size="13.0" />
                                  </font>
@@ -129,6 +122,7 @@
                               </Label>
                               <Button fx:id="backglassBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onBackglassServer" styleClass="preference-button" text="Backglass Server" />
                               <Button fx:id="dofBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="130.0" layoutY="213.0" mnemonicParsing="false" onAction="#onDOF" styleClass="preference-button" text="Direct Output Framework (DOF)" />
+                              <Button fx:id="dmdDeviceBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="1105.0" mnemonicParsing="false" onAction="#onDMD" styleClass="preference-button" text="DMD Device" />
                               <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="1049.0" mnemonicParsing="false" onAction="#onDOFLinx" styleClass="preference-button" text="DOFLinx" />
                               <Button fx:id="iScoredBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="1116.0" mnemonicParsing="false" onAction="#onIScored" styleClass="preference-button" text="iScored Game Rooms" />
                               <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="133.0" mnemonicParsing="false" onAction="#onPINemHi" styleClass="preference-button" text="PINemHi" />
@@ -136,7 +130,8 @@
                               <Button fx:id="mameBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onMame" styleClass="preference-button" text="VPin MAME" />
                               <Button fx:id="vpuBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="1184.0" mnemonicParsing="false" onAction="#onVpu" styleClass="preference-button" text="Virtual Pinball Universe" />
                               <Button fx:id="vpfBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="1184.0" mnemonicParsing="false" onAction="#onVpf" styleClass="preference-button" text="VP Forums" />
-                              <Button fx:id="vpbmBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="864.0" mnemonicParsing="false" onAction="#onVPBM" styleClass="preference-button" text="Visual Pinball Backup Manager" />
+                              <Button fx:id="vpsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="1286.0" mnemonicParsing="false" onAction="#onVps" styleClass="preference-button" text="Virtual Pinball Spreadsheet" />
+                              <Button fx:id="wovpBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="1374.0" mnemonicParsing="false" onAction="#onWovp" styleClass="preference-button" text="World of Virtual Pinball" />
                               <Label alignment="BASELINE_LEFT" layoutX="34.0" layoutY="982.0" styleClass="preference-section" text="HELP &amp; SUPPORT">
                                  <font>
                                     <Font size="13.0" />
@@ -168,14 +163,8 @@
                      </BorderPane.margin>
                      <children>
                         <Hyperlink fx:id="kofiLink" onAction="#onKofiLink">
-                           <graphic>
-                              <FontIcon iconColor="#c7c3c3" iconLiteral="mdi2d-discord" iconSize="24" />
-                           </graphic>
                         </Hyperlink>
                         <Hyperlink onAction="#onDiscordLink" text="Join Discord">
-                           <graphic>
-                              <FontIcon iconColor="#c7c3c3" iconLiteral="mdi2d-discord" iconSize="24" />
-                           </graphic>
                         </Hyperlink>
                         <Hyperlink fx:id="versionLink" onAction="#onVersionLInk" styleClass="version-label" text="Hyperlink" textFill="#b0abab" />
                         <Label fx:id="hostLabel" layoutX="358.0" layoutY="10.0" styleClass="version-label" text="Label">

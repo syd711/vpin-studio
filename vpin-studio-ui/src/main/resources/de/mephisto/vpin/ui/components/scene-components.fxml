@@ -75,7 +75,7 @@
                            <graphic>
                               <Label>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2g-google-controller" iconSize="18" />
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2c-controller" iconSize="18" />
                                  </graphic>
                               </Label>
                            </graphic>

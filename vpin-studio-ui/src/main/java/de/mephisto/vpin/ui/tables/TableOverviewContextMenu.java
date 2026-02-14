@@ -1,9 +1,8 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.ui.Studio;
@@ -22,14 +21,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableOverviewContextMenu {
-  private final static Logger LOG = LoggerFactory.getLogger(TableOverviewContextMenu.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final TableOverviewController tableOverviewController;
   private ContextMenu ctxMenu;
@@ -95,7 +96,6 @@ public class TableOverviewContextMenu {
   public void refreshContextMenu(TableView<GameRepresentationModel> tableView, ContextMenu ctxMenu, List<GameRepresentationModel> games) {
     this.ctxMenu = ctxMenu;
     this.ctxMenu.getItems().clear();
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
 
     boolean multiSelection = tableOverviewController.getSelections().size() > 1;
     if (games.isEmpty()) {
@@ -111,7 +111,7 @@ public class TableOverviewContextMenu {
     dataItem.setOnAction(actionEvent -> tableOverviewController.onTableEdit());
     ctxMenu.getItems().add(dataItem);
 
-    if (frontendType.supportStandardFields()) {
+    if (Features.FIELDS_STANDARD) {
       boolean isDisabled = game.isDisabled();
       String txt = isDisabled ? "Enable Table(s)" : "Disable Table(s)";
       String icon = isDisabled ? "mdi2c-checkbox-marked-outline" : "mdi2c-checkbox-blank-off-outline";
@@ -123,7 +123,7 @@ public class TableOverviewContextMenu {
       ctxMenu.getItems().add(enableItem);
     }
 
-    if (frontendType.supportMedias()) {
+    if (Features.MEDIA_ENABLED) {
       MenuItem assetsItem = new MenuItem("Edit Table Assets");
       assetsItem.setGraphic(iconMedia);
       assetsItem.setDisable(multiSelection);
@@ -171,14 +171,16 @@ public class TableOverviewContextMenu {
     vpsResetItem.setGraphic(iconVpsReset);
     ctxMenu.getItems().add(vpsResetItem);
 
-    ctxMenu.getItems().add(new SeparatorMenuItem());
+    if (client.getEmulatorService().isVpxGame(game)) {
+      ctxMenu.getItems().add(new SeparatorMenuItem());
 
-    MenuItem resetRatingsItem = new MenuItem("Reset Ratings");
-    resetRatingsItem.setOnAction(actionEvent -> tableOverviewController.onResetRatings());
-    resetRatingsItem.setGraphic(WidgetFactory.createIcon("mdi2u-undo-variant"));
-    ctxMenu.getItems().add(resetRatingsItem);
+      MenuItem resetRatingsItem = new MenuItem("Reset Ratings");
+      resetRatingsItem.setOnAction(actionEvent -> tableOverviewController.onResetRatings());
+      resetRatingsItem.setGraphic(WidgetFactory.createIcon("mdi2u-undo-variant"));
+      ctxMenu.getItems().add(resetRatingsItem);
+    }
 
-    if (Features.MANIA_ENABLED) {
+    if (Features.MANIA_ENABLED && client.getEmulatorService().isVpxGame(game)) {
       ctxMenu.getItems().add(new SeparatorMenuItem());
       MenuItem maniaEntry = new MenuItem("Open VPin Mania Entry");
       maniaEntry.setDisable(StringUtils.isEmpty(game.getExtTableId()) || multiSelection);
@@ -208,24 +210,29 @@ public class TableOverviewContextMenu {
 
     ctxMenu.getItems().add(new SeparatorMenuItem());
 
-    MenuItem eventLogItem = new MenuItem("Event Log");
-    KeyCombination eventLogItemKey = new KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN);
-    eventLogItem.setAccelerator(eventLogItemKey);
-    eventLogItem.setDisable(multiSelection);
-    eventLogItem.setOnAction(actionEvent -> TableDialogs.openEventLogDialog(game));
-    eventLogItem.setDisable(!game.isEventLogAvailable());
-    eventLogItem.setGraphic(WidgetFactory.createIcon("mdi2m-message-text-clock-outline"));
-    ctxMenu.getItems().add(eventLogItem);
+    if(client.getEmulatorService().isVpxGame(game)) {
+      MenuItem eventLogItem = new MenuItem("Event Log");
+      KeyCombination eventLogItemKey = new KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN);
+      eventLogItem.setAccelerator(eventLogItemKey);
+      eventLogItem.setDisable(multiSelection);
+      eventLogItem.setOnAction(actionEvent -> TableDialogs.openEventLogDialog(game));
+      eventLogItem.setDisable(!game.isEventLogAvailable());
+      eventLogItem.setGraphic(WidgetFactory.createIcon("mdi2m-message-text-clock-outline"));
+      ctxMenu.getItems().add(eventLogItem);
 
-    ctxMenu.getItems().add(new SeparatorMenuItem());
+      ctxMenu.getItems().add(new SeparatorMenuItem());
+    }
 
-    MenuItem pinVolItem = new MenuItem("PinVol Settings");
-    pinVolItem.setOnAction(actionEvent -> TableDialogs.openPinVolSettings(tableView.getSelectionModel().getSelectedItems().stream().map(m -> m.getGame()).collect(Collectors.toList())));
+
+    if(client.getEmulatorService().isVpxGame(game)) {
+      MenuItem pinVolItem = new MenuItem("PinVol Settings");
+      pinVolItem.setOnAction(actionEvent -> TableDialogs.openPinVolSettings(tableView.getSelectionModel().getSelectedItems().stream().map(m -> m.getGame()).collect(Collectors.toList())));
 //    pinVolItem.setDisable(games.isEmpty());
-    pinVolItem.setGraphic(WidgetFactory.createIcon("mdi2v-volume-high"));
-    ctxMenu.getItems().add(pinVolItem);
+      pinVolItem.setGraphic(WidgetFactory.createIcon("mdi2v-volume-high"));
+      ctxMenu.getItems().add(pinVolItem);
+    }
 
-    if (game.isVpxGame()) {
+    if (client.getEmulatorService().isVpxGame(game)) {
       ctxMenu.getItems().add(new SeparatorMenuItem());
 
       MenuItem reloadItem = new MenuItem("Reload");
@@ -236,7 +243,7 @@ public class TableOverviewContextMenu {
       ctxMenu.getItems().add(reloadItem);
 
       MenuItem scanItem = new MenuItem("Scan");
-      KeyCombination scanItemKey = new KeyCodeCombination(KeyCode.T, KeyCombination.CONTROL_DOWN);
+      KeyCombination scanItemKey = new KeyCodeCombination(KeyCode.J, KeyCombination.CONTROL_DOWN);
       scanItem.setAccelerator(scanItemKey);
       scanItem.setGraphic(WidgetFactory.createIcon("mdi2m-map-search-outline"));
       scanItem.setOnAction(actionEvent -> tableOverviewController.onTablesScan());
@@ -248,7 +255,7 @@ public class TableOverviewContextMenu {
       ctxMenu.getItems().add(validateItem);
     }
 
-//    if (frontendType.isNotStandalone()) {
+//    if (!Features.IS_STANDALONE) {
 //      ctxMenu.getItems().add(new SeparatorMenuItem());
 //      MenuItem importsItem = new MenuItem("Import Tables");
 //      importsItem.setGraphic(WidgetFactory.createIcon("mdi2d-database-import-outline"));
@@ -256,15 +263,7 @@ public class TableOverviewContextMenu {
 //      ctxMenu.getItems().add(importsItem);
 //    }
 
-    //Declutter
-//    ctxMenu.getItems().add(new SeparatorMenuItem());
-//    MenuItem b2sItem = new MenuItem("Open Backglass Manager");
-//    b2sItem.setGraphic(iconBackglassManager);
-//    b2sItem.setOnAction(actionEvent -> tableOverviewController.onBackglassManager(game));
-//    ctxMenu.getItems().add(b2sItem);
-
-    if (game.isVpxGame()) {
-
+    if (client.getEmulatorService().isVpxGame(game)) {
       ctxMenu.getItems().add(new SeparatorMenuItem());
 
       MenuItem uploadAndImportTableItem = new MenuItem("Upload and Import Table");
@@ -312,12 +311,17 @@ public class TableOverviewContextMenu {
       dmdItem.setOnAction(actionEvent -> tableOverviewController.getUploadsButtonController().onDMDUpload());
       uploadMenu.getItems().add(dmdItem);
 
+      MenuItem fplItem = new MenuItem("Upload .fpl File");
+      fplItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
+      fplItem.setOnAction(actionEvent -> tableOverviewController.getUploadsButtonController().onFplUpload());
+      uploadMenu.getItems().add(fplItem);
+
       MenuItem iniItem = new MenuItem("Upload .ini File");
       iniItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
       iniItem.setOnAction(actionEvent -> tableOverviewController.getUploadsButtonController().onIniUpload());
       uploadMenu.getItems().add(iniItem);
 
-      if (frontendType.supportMedias()) {
+      if (Features.MEDIA_ENABLED) {
         MenuItem mediaItem = new MenuItem("Upload Media Pack");
         mediaItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
         mediaItem.setOnAction(actionEvent -> tableOverviewController.getUploadsButtonController().onMediaUpload());
@@ -340,7 +344,7 @@ public class TableOverviewContextMenu {
       povItem.setOnAction(actionEvent -> tableOverviewController.getUploadsButtonController().onPOVUpload());
       uploadMenu.getItems().add(povItem);
 
-      if (frontendType.supportPupPacks()) {
+      if (Features.PUPPACKS_ENABLED) {
         MenuItem pupPackItem = new MenuItem("Upload PUP Pack");
         pupPackItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
         pupPackItem.setOnAction(actionEvent -> tableOverviewController.getUploadsButtonController().onPupPackUpload());
@@ -370,7 +374,7 @@ public class TableOverviewContextMenu {
 //    ctxMenu.getItems().add(validateAllItem);
 
 
-    if (game.isVpxGame()) {
+    if (client.getEmulatorService().isVpxGame(game)) {
       ctxMenu.getItems().add(new SeparatorMenuItem());
 
       MenuItem launchItem = new MenuItem("Launch");
@@ -382,33 +386,37 @@ public class TableOverviewContextMenu {
       ctxMenu.getItems().add(launchItem);
 
       //decluttering
-      if (frontendType.supportArchive()) {
+      if (Features.BACKUPS_ENABLED) {
         ctxMenu.getItems().add(new SeparatorMenuItem());
 
-        MenuItem exportItem = new MenuItem("Backup Table");
-        exportItem.setGraphic(WidgetFactory.createIcon("mdi2e-export"));
+        MenuItem exportItem = new MenuItem("Backup Table(s)");
+        KeyCombination backupKey = new KeyCodeCombination(KeyCode.B, KeyCombination.CONTROL_DOWN);
+        exportItem.setAccelerator(backupKey);
+        exportItem.setGraphic(WidgetFactory.createIcon("mdi2a-archive-outline"));
         exportItem.setOnAction(actionEvent -> tableOverviewController.onBackup());
         ctxMenu.getItems().add(exportItem);
-
-//        ctxMenu.getItems().add(new SeparatorMenuItem());
-//
-//        MenuItem vpbmItem = new MenuItem("Open Visual Pinball Backup Manager");
-//        vpbmItem.setGraphic(iconVpbm);
-//        vpbmItem.setOnAction(actionEvent -> {
-//          VPBMPreferencesController.openVPBM();
-//        });
-//        ctxMenu.getItems().add(vpbmItem);
       }
+
+      MenuItem tagItem = new MenuItem("Tag Table(s)");
+      KeyCombination backupKey = new KeyCodeCombination(KeyCode.T, KeyCombination.CONTROL_DOWN);
+      tagItem.setAccelerator(backupKey);
+      tagItem.setGraphic(WidgetFactory.createIcon("mdi2t-tag-multiple-outline"));
+      tagItem.setOnAction(actionEvent -> tableOverviewController.onTagging());
+      ctxMenu.getItems().add(tagItem);
     }
 
-    ctxMenu.getItems().add(new SeparatorMenuItem());
+    GameEmulatorRepresentation emu = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
+    if (emu.isFpEmulator() || emu.isVpxEmulator()) {
+      ctxMenu.getItems().add(new SeparatorMenuItem());
 
-    MenuItem removeItem = new MenuItem("Delete");
-    KeyCombination removeItemKey = new KeyCodeCombination(KeyCode.DELETE);
-    removeItem.setAccelerator(removeItemKey);
-    removeItem.setOnAction(tableOverviewController::onDelete);
-    removeItem.setGraphic(WidgetFactory.createAlertIcon("mdi2d-delete-outline"));
-    ctxMenu.getItems().add(removeItem);
+      MenuItem removeItem = new MenuItem("Delete");
+      KeyCombination removeItemKey = new KeyCodeCombination(KeyCode.DELETE);
+      removeItem.setAccelerator(removeItemKey);
+      removeItem.setOnAction(tableOverviewController::onDelete);
+      removeItem.setGraphic(WidgetFactory.createAlertIcon("mdi2d-delete-outline"));
+      ctxMenu.getItems().add(removeItem);
+    }
+
   }
 
   public void handleKeyEvent(KeyEvent event) {

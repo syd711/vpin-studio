@@ -12,8 +12,9 @@ import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.tagging.TaggingUtil;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
-import de.mephisto.vpin.server.fp.FPService;
+import de.mephisto.vpin.server.fp.FuturePinballService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.playlists.Playlist;
@@ -21,13 +22,13 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -43,7 +44,7 @@ public abstract class BaseConnector implements FrontendConnector {
   private VPXService vpxService;
 
   @Autowired
-  private FPService fpService;
+  private FuturePinballService futurePinballService;
 
   @Autowired
   protected GameEntryRepository gameEntryRepository;
@@ -245,6 +246,8 @@ public abstract class BaseConnector implements FrontendConnector {
     game.setDisabled(details != null ? details.getStatus() == 0 : false);
     game.setVersion(details != null ? details.getGameVersion() : null);
     game.setRating(details != null && details.getGameRating() != null ? details.getGameRating() : 0);
+    game.setRom(details != null && details.getRomName() != null ? details.getRomName() : null);
+    game.setTags(TaggingUtil.getTags(details != null ? details.getTags() : null));
 
     File table = new File(emu.getGamesDirectory(), filename);
     game.setGameFile(table);
@@ -340,10 +343,10 @@ public abstract class BaseConnector implements FrontendConnector {
   }
 
   @Override
-  public void saveTableDetails(int id, TableDetails tableDetails) {
+  public TableDetails saveTableDetails(int id, TableDetails tableDetails) {
     GameEntry e = mapFilenames.get(id);
     if (e == null) {
-      return;
+      return tableDetails;
     }
 
     // detection of file renamed
@@ -357,13 +360,18 @@ public abstract class BaseConnector implements FrontendConnector {
     }
     updateGameInDb(e.getEmuId(), e.getFilename(), tableDetails);
     commitDb(emulators.get(tableDetails.getEmulatorId()));
+
+    return getTableDetails(id);
   }
 
   @Override
   public void vpsLink(int gameId, String extTableId, String extTableVersionId) {
-    //do nothing by default as this is stored in the internal database
+    TableDetails details = getTableDetails(gameId);
+    if (details != null) {
+      details.setWebGameId(extTableId);
+      saveTableDetails(gameId, details);
+    }
   }
-
 
   //------------------------------------------------------------
 
@@ -401,21 +409,11 @@ public abstract class BaseConnector implements FrontendConnector {
   }
 
   @Override
-  public int importGame(int emulatorId,
-                        @NonNull String gameName, @NonNull String gameFileName, @NonNull String gameDisplayName,
-                        @Nullable String launchCustomVar, @NonNull java.util.Date dateFileUpdated) {
-    LOG.info("Add game entry for '" + gameName + "', file name '" + gameFileName + "'");
+  public int importGame(@NonNull TableDetails tableDetails) {
+    String gameFileName = tableDetails.getGameFileName();
+    int emulatorId = tableDetails.getEmulatorId();
 
-    TableDetails details = new TableDetails();
-    details.setEmulatorId(emulatorId);
-    details.setGameName(gameName);
-    details.setGameFileName(gameFileName);
-    details.setGameDisplayName(gameDisplayName);
-    details.setDateAdded(new java.util.Date());
-    details.setLaunchCustomVar(launchCustomVar);
-    details.setStatus(1); // enable game
-
-    updateGameInDb(emulatorId, gameFileName, details);
+    updateGameInDb(emulatorId, gameFileName, tableDetails);
 
     int id = filenameToId(emulatorId, gameFileName);
     GameEntry e = new GameEntry(emulatorId, gameFileName, id);
@@ -485,7 +483,7 @@ public abstract class BaseConnector implements FrontendConnector {
         uiSettings.setJustAddedColor(WidgetFactory.hexColor(playlist.getMenuColor()));
       }
       try {
-        preferencesService.savePreference(PreferenceNames.UI_SETTINGS, uiSettings);
+        preferencesService.savePreference(uiSettings);
       }
       catch (Exception e) {
         LOG.error("Failed to save playlist colors: {}", e.getMessage(), e);
@@ -530,6 +528,7 @@ public abstract class BaseConnector implements FrontendConnector {
     Playlist favs = new Playlist();
     favs.setId(PlaylistRepresentation.PLAYLIST_FAVORITE_ID);
     favs.setName("Favorites");
+    favs.setMediaName("Favorites");
     int intValue = toColorCode(uiSettings.getLocalFavsColor());
     favs.setMenuColor(intValue);
     List<PlaylistGame> favspg = gameFavs.stream().map(id -> toPlaylistGame(id)).collect(Collectors.toList());
@@ -548,6 +547,7 @@ public abstract class BaseConnector implements FrontendConnector {
     Playlist pl = new Playlist();
     pl.setId(PlaylistRepresentation.PLAYLIST_JUSTADDED_ID);
     pl.setName("Just Added");
+    pl.setMediaName("JustAdded");
     int intValue = toColorCode(uiSettings.getJustAddedColor());
     pl.setMenuColor(intValue);
     pl.setSqlPlayList(true);
@@ -563,6 +563,7 @@ public abstract class BaseConnector implements FrontendConnector {
     Playlist pl = new Playlist();
     pl.setId(PlaylistRepresentation.PLAYLIST_MOSTPLAYED_ID);
     pl.setName("Most Played");
+    pl.setMediaName("MostPlayed");
     int intValue = toColorCode(uiSettings.getMostPlayedColor());
     pl.setMenuColor(intValue);
     pl.setSqlPlayList(true);
@@ -786,6 +787,7 @@ public abstract class BaseConnector implements FrontendConnector {
 
   @Override
   public final List<TableAlxEntry> getAlxData(int gameId) {
+    loadStats();
     List<TableAlxEntry> result = new ArrayList<>();
     TableAlxEntry stat = getGameStat(gameId);
     if (stat != null) {
@@ -860,8 +862,13 @@ public abstract class BaseConnector implements FrontendConnector {
 
   protected File resolveExe(EmulatorType type) {
     switch (type) {
-      case VisualPinball:
-        return systemService.resolveVpx64Exe();
+      case VisualPinball: {
+        File f = systemService.resolveVpx64Exe();
+        if (f == null) {
+          f = systemService.resolveVpxExe();
+        }
+        return f;
+      }
       case VisualPinball9:
         return systemService.resolveVptExe();
       case FuturePinball:
@@ -874,6 +881,9 @@ public abstract class BaseConnector implements FrontendConnector {
   @Override
   public boolean killFrontend() {
     NirCmd.setTaskBarVisible(true);
+    if (systemService.isPinballEmulatorRunning()) {
+      systemService.sendKey(KeyEvent.VK_Q);
+    }
     return killEmulators(true);
   }
 
@@ -888,6 +898,10 @@ public abstract class BaseConnector implements FrontendConnector {
                     p.info().command().get().contains("VPXStarter") ||
                     p.info().command().get().contains("VPinballX") ||
                     p.info().command().get().contains("Future Pinball") ||
+                    p.info().command().get().contains("PinballFX") ||
+                    p.info().command().get().contains("Pinball FX") ||
+                    p.info().command().get().contains("PinballM") ||
+                    p.info().command().get().contains("Zaccaria") ||
                     p.info().command().get().startsWith("VPinball") ||
                     p.info().command().get().contains("B2SBackglassServerEXE") ||
                     p.info().command().get().contains("DOF")))
@@ -954,7 +968,7 @@ public abstract class BaseConnector implements FrontendConnector {
       return false;
     }
     else if (game.isFpGame()) {
-      return fpService.play(game, null);
+      return futurePinballService.play(game, null);
     }
     else {
       LOG.error("Emulator {} for Game \"{}\" cannot be started", game.getEmulator(), game.getGameFileName());

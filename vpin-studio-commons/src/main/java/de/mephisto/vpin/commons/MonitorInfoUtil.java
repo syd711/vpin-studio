@@ -1,32 +1,46 @@
 package de.mephisto.vpin.commons;
 
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.sun.jna.platform.win32.User32;
-import com.sun.jna.platform.win32.WinDef.HDC;
-import com.sun.jna.platform.win32.WinDef.LPARAM;
-import com.sun.jna.platform.win32.WinDef.RECT;
-import com.sun.jna.platform.win32.WinUser;
-import com.sun.jna.platform.win32.WinUser.HMONITOR;
-import com.sun.jna.platform.win32.WinUser.MONITORENUMPROC;
-import com.sun.jna.platform.win32.WinUser.MONITORINFOEX;
-
 import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.restclient.util.OSUtil;
+import org.slf4j.LoggerFactory;
+
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.lang.invoke.MethodHandles;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 /**
- * A small demo that tests the Win32 monitor API.
- * All available physical and virtual monitors are enumerated and
- * their capabilities printed to stdout
  *
- * @author Martin Steiger
  */
 public class MonitorInfoUtil {
+  private final static org.slf4j.Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  private static boolean FORCE_USE_GRAPHICS_ENVIRONMENT = false;
+  private final static List<MonitorInfo> monitors = new ArrayList<>();
+
+  static {
+    try {
+      List<MonitorInfo> monitorsGde = getMonitors(true);
+      logScreenSummary("GDE Monitor List", monitorsGde);
+      List<MonitorInfo> monitorsJna = getMonitors(false);
+      logScreenSummary("JNA Monitor List", monitorsJna);
+
+      if (monitorsJna.size() > monitorsGde.size()) {
+        LOG.info("Using JNA Monitors");
+        monitors.addAll(monitorsJna);
+      }
+      else {
+        LOG.info("Using GDE Monitors");
+        monitors.addAll(monitorsGde);
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Monitor initialization failed: {}", e.getMessage());
+      monitors.addAll(getMonitors(true));
+    }
+  }
 
   /**
    * List monitors
@@ -34,34 +48,36 @@ public class MonitorInfoUtil {
    * @param args (ignored)
    */
   public static void main(String[] args) {
-    List<MonitorInfo> monitors = getMonitors();
-
-    System.out.println("Monitors: " + monitors.size());
+    List<MonitorInfo> monitors = getMonitors(true);
     for (MonitorInfo monitor : monitors) {
-      System.out.println(monitor.getName()
-          + (monitor.isPrimary() ? " (Primary)" : "")
-          + " : " + monitor.getX() + "," + monitor.getY()
-          + " - " + monitor.getWidth() + "x" + monitor.getHeight()
-          + " - " + monitor.isPortraitMode());
+      System.out.println(monitor.toDetailsString());
+    }
+    System.out.println("---------------------------");
+    monitors = getMonitors(false);
+    for (MonitorInfo monitor : monitors) {
+      System.out.println(monitor.toDetailsString());
     }
   }
 
-  public static List<MonitorInfo> getMonitors() {
-    List<MonitorInfo> monitors = new ArrayList<>();
-    if (OSUtil.isWindows() && !FORCE_USE_GRAPHICS_ENVIRONMENT) {
+  public static MonitorInfo getPrimaryMonitor() {
+    Optional<MonitorInfo> monitorInfo = getMonitors().stream().filter(MonitorInfo::isPrimary).findFirst();
+    return monitorInfo.orElse(null);
+  }
 
-      int[] index = { 1 };
-      User32.INSTANCE.EnumDisplayMonitors(null, null, new MONITORENUMPROC() {
-        @Override
-        public int apply(HMONITOR hMonitor, HDC hdc, RECT rect, LPARAM lparam) {
-          MonitorInfo mon = enumerate(hMonitor, index[0]);
-          monitors.add(mon);
-          index[0]++;
-          return 1;
-        }
-      }, new LPARAM(0));
+  public static List<MonitorInfo> getMonitors() {
+    return monitors;
+  }
+
+  private static List<MonitorInfo> getMonitors(boolean useGraphicsEnv) {
+    List<MonitorInfo> monitors = new ArrayList<>();
+    if (OSUtil.isWindows() && !useGraphicsEnv) {
+      monitors.addAll(JNAMonitorUtil.getMonitors());
     }
     else {
+      if (GraphicsEnvironment.isHeadless()) {
+        return Collections.emptyList();
+      }
+
       int index = 1;
       GraphicsDevice[] gds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
       for (GraphicsDevice gd : gds) {
@@ -69,34 +85,9 @@ public class MonitorInfoUtil {
         index++;
       }
     }
-
     // sort by xPosition
     monitors.sort((m1, m2) -> (int) (m1.getX() - m2.getX()));
     return monitors;
-  }
-
-  private static MonitorInfo enumerate(HMONITOR hMonitor, int index) {
-    MonitorInfo monitor = new MonitorInfo();
-
-    MONITORINFOEX info = new MONITORINFOEX();
-    User32.INSTANCE.GetMonitorInfo(hMonitor, info);
-    RECT screen = info.rcMonitor;
-    //RECT workArea = info.rcWork;
-    monitor.setX(screen.left);
-    monitor.setY(screen.top);
-    monitor.setWidth(screen.right - screen.left);
-    monitor.setHeight(screen.bottom - screen.top);
-
-    boolean isPrimary = (info.dwFlags & WinUser.MONITORINFOF_PRIMARY) != 0;
-    monitor.setPrimary(isPrimary);
-    monitor.setPortraitMode(monitor.getWidth() < monitor.getHeight());
-
-    String deviceName = new String(info.szDevice);
-    monitor.setName(deviceName.trim());
-    // index starts with 1
-    monitor.setId(index);
-
-    return monitor;
   }
 
   private static MonitorInfo gdToMonitorInfo(GraphicsDevice gd, int index) {
@@ -107,6 +98,15 @@ public class MonitorInfoUtil {
     monitor.setY(bounds.y);
     monitor.setWidth(bounds.width);
     monitor.setHeight(bounds.height);
+    monitor.setMinY(bounds.getMinY());
+
+    AffineTransform tx = gd.getDefaultConfiguration().getDefaultTransform();
+    monitor.setScaling(tx.getScaleX());
+
+    if (tx.getScaleX() > 1) {
+      monitor.setWidth((int) (bounds.width * tx.getScaleX()));
+      monitor.setHeight((int) (bounds.height * tx.getScaleY()));
+    }
 
     boolean isPrimary = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice() == gd;
     monitor.setPrimary(isPrimary);
@@ -123,4 +123,16 @@ public class MonitorInfoUtil {
     return monitor;
   }
 
+  private static void logScreenSummary(String names, List<MonitorInfo> monitors) {
+    try {
+      LOG.info("########################## " + names + " #####################################");
+      for (MonitorInfo monitor : monitors) {
+        LOG.info(monitor.toDetailsString());
+      }
+      LOG.info("######################### /" + names + " #####################################");
+    }
+    catch (Exception e) {
+      LOG.error("Logging monitor information failed: {}", e.getMessage());
+    }
+  }
 }

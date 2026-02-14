@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<?import javafx.scene.control.Button?>
+<TitledPane fx:id="settingsPane" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.panels.LayerEditorFrameController">
+   <graphic>
+      <BorderPane prefWidth="250.0">
+         <left>
+            <Label text="Frame Settings" />
+         </left>
+         <right>
+             <HBox alignment="CENTER_RIGHT" spacing="3.0">
+                 <children>
+                     <Button fx:id="eyeBtn" mnemonicParsing="false" >
+                         <font>
+                             <Font size="10.0" />
+                         </font>
+                         <graphic>
+                             <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline" />
+                         </graphic>
+                         <tooltip>
+                             <Tooltip text="Toggle frame visibility" />
+                         </tooltip>
+                     </Button>
+                     <ToggleButton fx:id="lockBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onLockToggle" styleClass="custom-toggle-button-small">
+                         <font>
+                             <Font size="10.0" />
+                         </font>
+                         <graphic>
+                             <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lock-open-variant-outline" iconSize="13" />
+                         </graphic>
+                         <tooltip>
+                             <Tooltip text="Lock these properties for custom templates." />
+                         </tooltip>
+                     </ToggleButton>
+                 </children>
+             </HBox>
+         </right>
+      </BorderPane>
+   </graphic>
+   <content>
+      <ScrollPane hbarPolicy="NEVER">
+         <content>
+            <VBox styleClass="accordion-container">
+              <children>
+                <Label prefWidth="200" text="Change how the background is displayed, by adding a bordered frame. The margins set transparent spacing around" wrapText="true">
+                    <graphic>
+                      <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" />
+                    </graphic>
+                    <VBox.margin>
+                      <Insets top="6.0" />
+                    </VBox.margin>
+                </Label>
+
+                <Label text="Border" textFill="WHITE">
+                    <font>
+                      <Font name="System Bold" size="14.0" />
+                    </font>
+                    <VBox.margin>
+                      <Insets top="12.0" />
+                    </VBox.margin>
+                </Label>
+                <HBox spacing="12.0">
+                  <children>
+                      <VBox spacing="3.0">
+                        <children>
+                            <Label text="Border Size:" textFill="WHITE">
+                              <font>
+                                  <Font size="14.0" />
+                              </font>
+                            </Label>
+                            <Spinner fx:id="borderSizeSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
+                        </children>
+                      </VBox>
+                      <VBox spacing="3.0">
+                        <children>
+                            <Label text="Border Radius:" textFill="WHITE">
+                              <font>
+                                  <Font size="14.0" />
+                              </font>
+                            </Label>
+                            <Spinner fx:id="borderRadiusSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
+                        </children>
+                      </VBox>
+                  </children>
+                  <VBox.margin>
+                    <Insets top="3.0" />
+                  </VBox.margin>
+                </HBox>
+                <VBox fx:id="borderColorPane" spacing="3.0">
+                  <children>
+                    <Label text="Border Color:" textFill="WHITE">
+                        <font>
+                          <Font size="14.0" />
+                        </font>
+                    </Label>
+                    <ColorPicker fx:id="borderColorSelector">
+                    </ColorPicker>
+                  </children>
+                  <VBox.margin>
+                    <Insets top="6.0" />
+                  </VBox.margin>
+                </VBox>
+
+                <HBox alignment="CENTER_LEFT" spacing="6.0">
+                    <children>
+                      <Label text="Margins" textFill="WHITE">
+                          <font>
+                            <Font name="System Bold" size="14.0" />
+                          </font>
+                      </Label>
+                      <Label>
+                          <graphic>
+                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" />
+                          </graphic>
+                          <tooltip>
+                            <Tooltip text="Determines the margins from the card's border." />
+                          </tooltip>
+                      </Label>
+                    </children>
+                    <VBox.margin>
+                      <Insets top="12.0" />
+                    </VBox.margin>
+                </HBox>
+
+                <HBox spacing="12.0">
+                  <children>
+                      <VBox>
+                        <children>
+                          <Label text="Top:" textFill="WHITE">
+                              <font>
+                                <Font size="14.0" />
+                              </font>
+                          </Label>
+                          <Spinner fx:id="marginTopSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
+                        </children>
+                      </VBox>
+                      <VBox>
+                        <children>
+                          <Label text="Bottom:" textFill="WHITE">
+                              <font>
+                                <Font size="14.0" />
+                              </font>
+                          </Label>
+                          <Spinner fx:id="marginBottomSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
+                        </children>
+                      </VBox>
+                    </children>
+                    <VBox.margin>
+                      <Insets top="3.0" />
+                    </VBox.margin>
+                </HBox>
+
+                <HBox spacing="12.0">
+                  <children>
+                      <VBox>
+                        <children>
+                          <Label text="Left:" textFill="WHITE">
+                              <font>
+                                <Font size="14.0" />
+                              </font>
+                          </Label>
+                          <Spinner fx:id="marginLeftSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
+                        </children>
+                      </VBox>
+                      <VBox>
+                        <children>
+                          <Label text="Right:" textFill="WHITE">
+                              <font>
+                                <Font size="14.0" />
+                              </font>
+                          </Label>
+                          <Spinner fx:id="marginRightSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
+                        </children>
+                      </VBox>
+                    </children>
+                    <VBox.margin>
+                      <Insets top="3.0" />
+                    </VBox.margin>
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" spacing="3.0">
+                    <children>
+                      <Label text="Background Zoom" textFill="WHITE">
+                          <font>
+                            <Font size="14.0" />
+                          </font>
+                      </Label>
+                      <Label>
+                          <graphic>
+                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                          </graphic>
+                          <tooltip>
+                            <Tooltip text="Zoom in the background, then click on it and position" />
+                          </tooltip>
+                      </Label>
+                    </children>
+                    <VBox.margin>
+                      <Insets top="12.0" />
+                    </VBox.margin>
+                </HBox>
+                <Slider fx:id="zoomSlider" maxWidth="330.0">
+                    <padding>
+                      <Insets top="6.0" />
+                    </padding>
+                </Slider>
+
+                <VBox fx:id="backgroundPositionBox">
+                  <children>
+                    <HBox alignment="CENTER_LEFT" spacing="6.0">
+                        <children>
+                          <Label text="Background Position:" textFill="WHITE">
+                              <font>
+                                <Font size="14.0" />
+                              </font>
+                          </Label>
+                          <Label>
+                              <graphic>
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" />
+                              </graphic>
+                              <tooltip>
+                                <Tooltip text="The position of the background within the card when zoomed" />
+                              </tooltip>
+                          </Label>
+                        </children>
+                        <VBox.margin>
+                          <Insets top="6.0" />
+                        </VBox.margin>
+                    </HBox>
+                    <HBox alignment="BASELINE_LEFT" spacing="12.0">
+                        <children>
+                          <Spinner fx:id="backgroundXSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
+                          <Spinner fx:id="backgroundYSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
+                        </children>
+                        <VBox.margin>
+                          <Insets top="6.0" />
+                        </VBox.margin>
+                    </HBox>
+                  </children>
+                </VBox>
+
+                <VBox fx:id="frameImagePane" spacing="3.0">
+                    <children>
+                      <Label text="Frame Image:" textFill="WHITE">
+                          <font>
+                            <Font size="14.0" />
+                          </font>
+                      </Label>
+                      <HBox alignment="CENTER_LEFT" spacing="6.0">
+                          <children>
+                            <ComboBox fx:id="frameImageCombo" prefWidth="200.0">
+                                <HBox.margin>
+                                  <Insets top="3.0" />
+                                </HBox.margin>
+                            </ComboBox>
+                            <Button fx:id="frameUploadBtn" mnemonicParsing="false" onAction="#onUploadButton">
+                                <graphic>
+                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                                </graphic>
+                            </Button>
+                          </children>
+                      </HBox>
+                    </children>
+                    <VBox.margin>
+                      <Insets top="12.0" />
+                    </VBox.margin>
+                </VBox>
+
+              </children>
+              <padding>
+                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+              </padding>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </content>
+</TitledPane>

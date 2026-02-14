@@ -12,6 +12,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +20,7 @@ import java.util.Map;
  * RES
  ********************************************************************************************************************/
 public class ResServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public ResServiceClient(VPinStudioClient client) {
     super(client);
@@ -30,6 +31,10 @@ public class ResServiceClient extends VPinStudioClientService {
     params.put("emulatorId", emulatorId);
     params.put("fileName", filename);
     return getRestClient().post(API + "res/delete", params, Boolean.class);
+  }
+
+  public void delete(int gameId) {
+    getRestClient().delete(API + "res/" + gameId);
   }
 
   public UploadDescriptor uploadResFile(File file, int gameId, FileUploadProgressListener listener) throws Exception {

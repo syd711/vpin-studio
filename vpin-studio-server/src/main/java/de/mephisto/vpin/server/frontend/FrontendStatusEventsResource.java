@@ -27,6 +27,15 @@ public class FrontendStatusEventsResource {
     return frontendStatusService.gameLaunch(table, emuDirOrName);
   }
 
+  /**
+   * Only used for testing through postman
+   */
+  @PostMapping("/gameRelaunch")
+  public boolean gameRelaunch(@RequestParam("table") String table, @RequestParam("emu") String emuDirOrName) {
+    frontendStatusService.gameExit(table, emuDirOrName);
+    return frontendStatusService.gameLaunch(table, emuDirOrName);
+  }
+
   @PostMapping("/gameExit")
   public boolean gameExit(@RequestParam("table") String table, @RequestParam("emu") String emuDirOrName) {
     return frontendStatusService.gameExit(table, emuDirOrName);

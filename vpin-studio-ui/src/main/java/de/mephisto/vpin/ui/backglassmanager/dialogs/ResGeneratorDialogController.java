@@ -3,13 +3,18 @@ package de.mephisto.vpin.ui.backglassmanager.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
+import de.mephisto.vpin.restclient.directb2s.DirectB2SFrameType;
 import de.mephisto.vpin.restclient.directb2s.DirectB2sScreenRes;
 import de.mephisto.vpin.restclient.util.ReturnMessage;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.FileSelectorDragEventHandler;
 import de.mephisto.vpin.ui.util.FileSelectorDropEventHandler;
+import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
+import de.mephisto.vpin.ui.util.WaitProgressModel;
+import javafx.collections.FXCollections;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,11 +22,14 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -35,7 +43,10 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.imageio.ImageIO;
@@ -57,6 +68,9 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
 
   @FXML
   private Button fileBtn;
+
+  @FXML
+  private StackPane fileNamePane;
 
   @FXML
   private Label screenResLabel;
@@ -83,6 +97,12 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
   private RadioButton radioCenterBackglass;
 
   @FXML
+  private ComboBox<DirectB2SFrameType> frameTypeCombo;
+
+  @FXML
+  private Tooltip frameTypeTooltip;
+
+  @FXML
   private CheckBox turnOnRunAsExe;
 
   @FXML
@@ -104,6 +124,9 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
 
   private File uploadedFrame = null;
 
+  /** As the generation is quite long, keep in a cache the frames when generated */
+  private Map<DirectB2SFrameType, BufferedImage> mapFrames = new HashMap<>();
+
   private boolean stretchedBackglass;
 
   @FXML
@@ -113,8 +136,9 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
 
   @FXML
   private void onGenerateClick(ActionEvent event) {
-    JFXFuture.runAsync(() -> {
-
+    ProgressResultModel result =  ProgressDialog.createProgressDialog(new WaitProgressModel<>("Generate .res File...", 
+      "Generating and saving .res file", 
+      () -> {
           DirectB2sScreenRes screenres = client.getBackglassServiceClient().getGlobalScreenRes();
           // Mind that the case where globalRes has a frame background is not fully tested...
           int x = screenres.getFullBackglassX();
@@ -149,6 +173,8 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
               screenres.setBackgroundFilePath(fileNameField.getText());
             }
 
+            screenres.setFrameType(frameTypeCombo.getValue());
+
             int backglassFitWidth = w;
             int backglassFitHeight = h;
             // If background is centered, fit new backgroundWidth and backgroundHeight within the screen
@@ -182,19 +208,22 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
           screenres.setTurnOnRunAsExe(turnOnRunAsExe.isSelected());
           screenres.setTurnOnBackground(turnOnBackground.isSelected());
 
-          ReturnMessage status = client.getBackglassServiceClient().saveScreenRes(screenres);
-          JFXFuture.throwExceptionIfError(status);
-        })
-        .thenLater(() -> {
-          stage.close();
-          // refresh screens
-          if (gameId != -1) {
-            EventManager.getInstance().notifyTableChange(gameId, null);
-          }
-        })
-        .onErrorLater(ex -> {
-          WidgetFactory.showAlert(stage, "Error", "Error saving .res file :", ex.getMessage());
-        });
+          return client.getBackglassServiceClient().saveScreenRes(screenres);
+        }));
+
+    if (result.isSuccess()) {
+      ReturnMessage status = result.getFirstTypedResult();
+      if (status != null && !status.isOk()) {
+        WidgetFactory.showAlert(stage, "Error", "Error saving .res file :", status.getMessage());
+      }
+      else {
+        stage.close();
+        // refresh screens
+        if (gameId != -1) {
+          EventManager.getInstance().notifyTableChange(gameId, null);
+        }
+      }
+    }
   }
 
   @FXML
@@ -221,6 +250,7 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
   private void onClear() {
     fileNameField.setText("");
     frameImg = null;
+    mapFrames.remove(DirectB2SFrameType.USE_FRAME);
     refreshPreview();
   }
 
@@ -228,6 +258,7 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
     try {
       uploadedFrame = file;
       frameImg = ImageIO.read(file);
+      mapFrames.put(DirectB2SFrameType.USE_FRAME, frameImg);
     }
     catch (IOException ioe) {
       frameImg = null;
@@ -236,6 +267,12 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
   }
 
   private void refreshPreview() {
+
+    // set disable state for frame options
+    DirectB2SFrameType frameType = frameTypeCombo.getValue();
+    frameTypeCombo.setDisable(stretchedBackglass);
+    fileNamePane.setDisable(stretchedBackglass || !DirectB2SFrameType.USE_FRAME.equals(frameType));
+    fileBtn.setDisable(stretchedBackglass || !DirectB2SFrameType.USE_FRAME.equals(frameType));
 
     if (previewWidth > 0 && previewHeight > 0 && backglassImg != null) {
       BufferedImage preview = new BufferedImage((int) previewWidth, (int) previewHeight, BufferedImage.TYPE_INT_ARGB);
@@ -272,6 +309,7 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     this.frameImg = null;
+    this.mapFrames.clear();
     this.uploadedFrame = null;
     this.generateBtn.setDisable(true);
 
@@ -286,6 +324,19 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
       loadFrame(file);
       refreshPreview();
     }));
+
+    frameTypeCombo.setItems(FXCollections.observableArrayList(DirectB2SFrameType.values()));
+    frameTypeCombo.setValue(DirectB2SFrameType.USE_FRAME);
+    frameTypeCombo.valueProperty().addListener((obs, ov, nv) -> onGenerateFrame(nv));
+
+    StringBuilder tooltiptext = new StringBuilder();
+    tooltiptext.append(frameTypeTooltip.getText()).append("\n");
+    for (DirectB2SFrameType type : DirectB2SFrameType.values()) {
+      tooltiptext.append("\u2022 ").append(type.getName()).append(": ").append(type.getDescription()).append("\n");
+    }
+    Label tooltiplbl = new Label(tooltiptext.toString());
+    frameTypeTooltip.setText(null);
+    frameTypeTooltip.setGraphic(tooltiplbl);
 
     // create a toggle group 
     ToggleGroup tg = new ToggleGroup();
@@ -316,6 +367,36 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
         });
   }
 
+  private void onGenerateFrame(DirectB2SFrameType frameType) {
+
+    if (mapFrames.containsKey(frameType)) {
+      frameImg = mapFrames.get(frameType);
+      refreshPreview();
+      return; 
+    }
+
+    ProgressResultModel img =  ProgressDialog.createProgressDialog(new WaitProgressModel<>("Generate Frame...", 
+          "Generating a '" + frameType + "' frame", 
+          () -> {
+            try {
+              InputStream in = client.getBackglassServiceClient().generateFrame(emulatorId, b2sFileName, frameType);
+              return in != null? ImageIO.read(in): null;
+            }
+            catch (IOException ioe) {
+              LOG.error("Cannot generate background image for backglass {} of emulator {} : {}",
+                  b2sFileName, emulatorId, ioe.getMessage());
+            }
+            return null;
+          }));
+
+    if (img.isSuccess()) {
+      mapFrames.get(frameType);
+      frameImg = img.getFirstTypedResult();
+      mapFrames.put(frameType, frameImg);
+      refreshPreview();
+    }
+  }
+
   @Override
   public void onDialogCancel() {
   }
@@ -332,29 +413,26 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
           if (data != null) {
             try {
               // get the preview image without grill if hidden but without frame
-              return client.getBackglassServiceClient().getDirectB2sPreviewBackground(data, false);
+              InputStream is = client.getBackglassServiceClient().getDirectB2sPreviewBackground(data, false);
+              if (is != null) {
+                try {
+                  return ImageIO.read(is);
+                }
+                catch (IOException ioe) {
+                  LOG.error("Cannot load background image for backglass {} of emulator {} : {}",
+                      fileName, emulatorId, ioe.getMessage());
+                }
+              }
             }
             catch (IOException ioe) {
-              LOG.error("Cannot get background for backglass {} of emulator {} : {}",
-              fileName, emulatorId, ioe.getMessage());
+              LOG.error("Cannot get background for backglass {} of emulator {} : {}", 
+                  fileName, emulatorId, ioe.getMessage());
             }
           }
           return null;
         })
-        .thenAcceptLater((is) -> {
-          if (is != null) {
-            try {
-              backglassImg = ImageIO.read(is);
-            }
-            catch (IOException ioe) {
-              backglassImg = null;
-              LOG.error("Cannot load background image for backglass {} of emulator {} : {}",
-                  fileName, emulatorId, ioe.getMessage());
-            }
-          }
-          else {
-            backglassImg = null;
-          }
+        .thenAcceptLater((img) -> {
+          backglassImg = img;
           refreshPreview();
         });
   }
@@ -389,6 +467,7 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
             })
             .thenAcceptLater(img -> {
               frameImg = img;
+              mapFrames.put(DirectB2SFrameType.USE_FRAME, img);
               refreshPreview();
             });
       }

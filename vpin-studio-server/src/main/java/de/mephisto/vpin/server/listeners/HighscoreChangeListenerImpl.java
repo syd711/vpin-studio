@@ -111,9 +111,13 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
         discordService.sendDefaultHighscoreMessage(DiscordOfflineChannelMessageFactory.createHighscoreCreatedMessage(highscoreParsingService, event, raw));
       }
       else {
-        LOG.warn("Skipped highscore emitting, raw score is empty.");
-        SLOG.warn("Skipped highscore emitting, raw score is empty.");
+        LOG.warn("Skipped discord highscore emitting, raw score is empty.");
+        SLOG.warn("Skipped discord highscore emitting, raw score is empty.");
       }
+    }
+    else {
+      LOG.warn("Skipped discord highscore emitting, initial scores are ignored.");
+      SLOG.warn("Skipped discord highscore emitting, initial scores are ignored.");
     }
   }
 

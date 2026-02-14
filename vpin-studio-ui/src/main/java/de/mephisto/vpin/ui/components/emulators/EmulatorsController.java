@@ -5,9 +5,12 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
+import de.mephisto.vpin.restclient.system.FolderRepresentation;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.util.StudioFileChooser;
+import de.mephisto.vpin.ui.components.emulators.dialogs.EmulatorDialogs;
+import de.mephisto.vpin.ui.util.FolderChooserDialog;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFolderChooser;
 import de.mephisto.vpin.ui.util.SystemUtil;
 import javafx.application.Platform;
@@ -20,9 +23,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -34,6 +35,7 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
@@ -262,6 +264,7 @@ public class EmulatorsController implements Initializable {
       GameEmulatorRepresentation emu = new GameEmulatorRepresentation();
       emu.setSafeName(s);
       emu.setName(s);
+      emu.setId(-1);
       emu.setType(template.getType());
       emu.setDescription(template.getDescription());
       emu.setMediaDirectory(template.getMediaDirectory());
@@ -286,41 +289,27 @@ public class EmulatorsController implements Initializable {
       GameEmulatorRepresentation gameEmulatorRepresentation = emulator.get();
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Game Emulator", "Delete Game Emulator \"" + gameEmulatorRepresentation.getName() + "\"?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        client.getEmulatorService().deleteGameEmulator(gameEmulatorRepresentation.getId());
-        onReload();
+        ProgressDialog.createProgressDialog(new EmulatorDeletionProgressModel(gameEmulatorRepresentation, this));
       }
     }
   }
 
   @FXML
   private void onCreate() {
-    String s = WidgetFactory.showInputDialog(Studio.stage, "New Emulator", "Enter the folder save name of the new emulator.", "You can edit the additional emulator parameters afterwards.", null, "Visual Pinball");
-    if (!StringUtils.isEmpty(s)) {
-      if (!FileUtils.isValidFilename(s)) {
-        WidgetFactory.showAlert(stage, "Invalid Name", "The specified name contains invalid characters.");
-        return;
-      }
+    GameEmulatorRepresentation emulatorRepresentation = EmulatorDialogs.openNewEmulatorDialog();
+    if (emulatorRepresentation != null) {
+      ProgressDialog.createProgressDialog(new EmulatorCreateProgressModel(emulatorRepresentation, this));
 
-      GameEmulatorRepresentation emu = new GameEmulatorRepresentation();
-      emu.setSafeName(s);
-      emu.setName(s);
-      emu.setType(EmulatorType.OTHER);
-      GameEmulatorRepresentation gameEmulatorRepresentation = client.getEmulatorService().saveGameEmulator(emu);
-      onReload();
-
-      tableController.select(gameEmulatorRepresentation);
     }
   }
 
   @FXML
-  private void onReload() {
+  public void onReload() {
     client.getEmulatorService().clearCache();
     tableController.reload();
   }
 
   public void setSelection(Optional<GameEmulatorRepresentation> model) {
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
-
     this.emulator = model;
 
     emulatorNameLabel.setText("-");
@@ -329,7 +318,7 @@ public class EmulatorsController implements Initializable {
     enabledCheckbox.setSelected(false);
     enabledCheckbox.setDisable(model.isEmpty());
     safeNameField.setText("");
-    safeNameField.setDisable(model.isEmpty() || !frontendType.supportEmulatorCreateDelete());
+    safeNameField.setDisable(model.isEmpty() || !Features.EMULATORS_CRUD);
     nameField.setText("");
     nameField.setDisable(model.isEmpty());
     descriptionField.setText("");
@@ -368,6 +357,8 @@ public class EmulatorsController implements Initializable {
       launchFolderField.setText(emulator.getInstallationDirectory());
       gamesFolderField.setText(emulator.getGamesDirectory());
       romsFolderField.setText(emulator.getRomDirectory());
+
+      FrontendType frontendType = client.getFrontendService().getFrontendType();
 
       if (frontendType.equals(FrontendType.Popper)) {
         customField2.setText(emulator.getGameExt());
@@ -455,19 +446,11 @@ public class EmulatorsController implements Initializable {
   }
 
   private void onFolderSelect(ActionEvent event, TextField field) {
-    Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-    StudioFolderChooser chooser = new StudioFolderChooser();
-    chooser.setTitle("Select Folder");
-
     String value = field.getText();
-    if(!StringUtils.isEmpty(value) && new File(value).exists()) {
-      chooser.setInitialDirectory(new File(value));
-    }
 
-    File targetFolder = chooser.showOpenDialog(stage);
-
-    if (targetFolder != null) {
-      field.setText(targetFolder.getAbsolutePath());
+    FolderRepresentation folder = FolderChooserDialog.open(value);
+    if (folder != null) {
+      field.setText(folder.getPath());
     }
   }
 
@@ -481,18 +464,6 @@ public class EmulatorsController implements Initializable {
     selectFolderButtonGames.managedProperty().bindBidirectional(selectFolderButtonGames.visibleProperty());
     selectFolderButtonRoms.managedProperty().bindBidirectional(selectFolderButtonRoms.visibleProperty());
     selectFolderButtonMedia.managedProperty().bindBidirectional(selectFolderButtonMedia.visibleProperty());
-
-    openFolderButtonLaunch.managedProperty().bindBidirectional(openFolderButtonLaunch.visibleProperty());
-    openFolderButtonLaunch.setVisible(client.getSystemService().isLocal());
-
-    openFolderButtonMedia.managedProperty().bindBidirectional(openFolderButtonMedia.visibleProperty());
-    openFolderButtonMedia.setVisible(client.getSystemService().isLocal());
-
-    openFolderButtonRoms.managedProperty().bindBidirectional(openFolderButtonRoms.visibleProperty());
-    openFolderButtonRoms.setVisible(client.getSystemService().isLocal());
-
-    openFolderButtonGames.managedProperty().bindBidirectional(openFolderButtonGames.visibleProperty());
-    openFolderButtonGames.setVisible(client.getSystemService().isLocal());
 
     try {
       FXMLLoader loader = new FXMLLoader(EmulatorsTableController.class.getResource("table-emulators.fxml"));
@@ -528,10 +499,10 @@ public class EmulatorsController implements Initializable {
       tabPane.setVisible(false);
     }
 
-    createBtn.setVisible(frontendType.supportEmulatorCreateDelete());
-    deleteBtn.setVisible(frontendType.supportEmulatorCreateDelete());
-    duplicateBtn.setVisible(frontendType.supportEmulatorCreateDelete());
-    firstSeparator.setVisible(frontendType.supportEmulatorCreateDelete());
+    createBtn.setVisible(Features.EMULATORS_CRUD);
+    deleteBtn.setVisible(Features.EMULATORS_CRUD);
+    duplicateBtn.setVisible(Features.EMULATORS_CRUD);
+    firstSeparator.setVisible(Features.EMULATORS_CRUD);
 
     emulatorRoot.widthProperty().addListener(new ChangeListener<Number>() {
       @Override
@@ -555,5 +526,9 @@ public class EmulatorsController implements Initializable {
 
       refreshTableWidth();
     });
+  }
+
+  public void select(GameEmulatorRepresentation gameEmulator) {
+    this.tableController.select(gameEmulator);
   }
 }

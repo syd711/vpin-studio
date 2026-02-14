@@ -29,7 +29,7 @@
                      <Tooltip text="Open Visual Pinball Installation Folder" />
                   </tooltip>
                </Button>
-               <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+               <Separator fx:id="folderSeparator" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="text-button" text="VPinballX.ini" textFill="WHITE">
                   <font>
                      <Font size="14.0" />

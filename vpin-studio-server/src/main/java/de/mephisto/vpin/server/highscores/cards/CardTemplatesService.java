@@ -1,21 +1,47 @@
 package de.mephisto.vpin.server.highscores.cards;
 
+import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.cards.CardResolution;
+import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
+import de.mephisto.vpin.restclient.cards.CardTemplateType;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.preferences.PreferencesService;
+
+import org.apache.commons.collections4.ListUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CardTemplatesService {
+  private final static Logger LOG = LoggerFactory.getLogger(CardTemplatesService.class);
+
+  /**
+   * The current version of CardTemplate. Increment by 1 when incompatible changes
+   * in CardTemplate are introduced and update the checkversion() method
+   */
+  public static final Integer CURRENT_VERSION = 2;
 
   @Autowired
   private TemplateMappingRepository templateMappingRepository;
 
-  public CardTemplate save(CardTemplate cardTemplate) throws Exception {
+  @Autowired
+  private PreferencesService preferencesService;
+
+  @Autowired
+  private GameService gameService;
+
+  @Autowired
+  private TemplateMerger templateMerger;
+
+  public synchronized CardTemplate save(CardTemplate cardTemplate) {
     if (cardTemplate.getId() != null) {
       Optional<TemplateMapping> mapping = templateMappingRepository.findById(cardTemplate.getId());
       if (mapping.isPresent()) {
@@ -30,64 +56,240 @@ public class CardTemplatesService {
     m.setCardTemplate(cardTemplate);
     TemplateMapping updatedMapping = templateMappingRepository.saveAndFlush(m);
     cardTemplate.setId(updatedMapping.getId());
+    return getTemplate(updatedMapping.getId());
+  }
+
+  public CardTemplate createFromJson(String templateName, String json) {
+    TemplateMapping m = new TemplateMapping();
+    try {
+      CardTemplate template = CardTemplate.fromJson(CardTemplate.class, json);
+      template.setId(null);
+      template.setName(templateName);
+      m.setCardTemplate(template);
+      TemplateMapping updatedMapping = templateMappingRepository.saveAndFlush(m);
+      return getTemplate(updatedMapping.getId());
+    }
+    catch (Exception e) {
+      LOG.error("Cannot create form json", e);
+      return null;
+    }
+  }
+
+  public synchronized boolean delete(long id) {
+    Optional<TemplateMapping> byId = templateMappingRepository.findById(id);
+    if (byId.isPresent()) {
+      //OLE : prevent delete DEFAULT via UI but not via service ? + delete allow sthe reset feature
+      //TemplateMapping templateMapping = byId.get();
+      //if (!templateMapping.getTemplate().getName().equals(CardTemplate.DEFAULT)) {
+      templateMappingRepository.deleteById(id);
+      return true;
+      //}
+    }
+    return false;
+  }
+
+  public synchronized List<CardTemplate> getTemplates() {
+    List<TemplateMapping> all = templateMappingRepository.findAll();
+    LOG.info("Loaded {} card templates.", all.size());
+    List<CardTemplate> results = all.stream().map(m -> mappingToTemplate(m)).collect(Collectors.toList());
+
+    createDefaultIfAbsent(results, CardTemplateType.HIGSCORE_CARD);
+    createDefaultIfAbsent(results, CardTemplateType.INSTRUCTIONS_CARD);
+    createDefaultIfAbsent(results, CardTemplateType.WHEEL);
+
+    return results;
+  }
+
+
+  private void createDefaultIfAbsent(List<CardTemplate> results, CardTemplateType templateType) {
+    if (ListUtils.indexOf(results, template -> template.isDefault() && templateType.equals(template.getTemplateType())) < 0) {
+      CardTemplate template = createDefaultTemplate(templateType);
+      results.add(template);
+    }
+  }
+
+  private CardTemplate createDefaultTemplate(CardTemplateType templateType) {
+    CardTemplate template = new CardTemplate();
+    template.setName(CardTemplate.DEFAULT);
+    template.setVersion(CURRENT_VERSION);
+    template.setTemplateType(templateType);
+    switch (templateType) {
+      case HIGSCORE_CARD:
+        template.resetDefaultHighscoreCard();
+        break;
+      case INSTRUCTIONS_CARD:
+        template.resetDefaultInstructionsCard();
+        break;
+      case WHEEL:
+        template.resetDefaultWheel();
+        break;
+    }
+
+    // save the template
+    template = save(template);
+    return template;
+  }
+
+  public CardTemplate getTemplateForGame(Game game, CardTemplateType templateType) {
+    return getTemplateOrDefault(game.getTemplateId(templateType), templateType);
+  }
+
+  public CardTemplate getTemplateOrDefault(Long templateId, CardTemplateType templateType) {
+    CardTemplate template = getTemplate(templateId);
+    return template != null ? template : getDefaultTemplate(templateType);
+  }
+
+  public CardTemplate getTemplate(Long templateId) {
+    if (templateId != null) {
+      Optional<TemplateMapping> mapping = templateMappingRepository.findById(templateId);
+      if (mapping.isPresent()) {
+        return mappingToTemplate(mapping.get());
+      }
+    }
+    return null;
+  }
+
+  private CardTemplate getDefaultTemplate(CardTemplateType templateType) {
+    List<TemplateMapping> all = templateMappingRepository.findAll();
+    CardTemplate cardTemplate = all.stream()
+        .filter(m -> m.getTemplate().isTemplate() && m.getTemplate().isDefault() && templateType.equals(m.getTemplate().getTemplateType()))
+        .map(m -> mappingToTemplate(m))
+        .findFirst()
+        .orElse(null);
+
+    if (cardTemplate == null) {
+      LOG.error("Failed to load default template, recreating it...");
+      return createDefaultTemplate(templateType);
+    }
     return cardTemplate;
   }
 
-  public boolean delete(int id) {
-    templateMappingRepository.deleteById((long) id);
-    return true;
-  }
-
-  public List<CardTemplate> getTemplates() throws Exception {
-    List<CardTemplate> result = new ArrayList<>();
-    List<TemplateMapping> all = templateMappingRepository.findAll();
-    if (all.isEmpty()) {
-      CardTemplate template = new CardTemplate();
-      template.setName(CardTemplate.DEFAULT);
-      save(template);
+  public boolean assignTemplate(int gameId, long templateId, boolean switchToCustom, CardTemplateType templateType) throws Exception {
+    Game game = gameService.getGame(gameId);
+    if (game == null) {
+      LOG.error("Cannot assign template to game {} as the game does not exist", gameId);
+      return false;
     }
 
-    all = templateMappingRepository.findAll();
-    for (TemplateMapping mapping : all) {
-      CardTemplate template = CardTemplate.fromJson(CardTemplate.class, mapping.getTemplateJson());
-      template.setId(mapping.getId());
-      result.add(template);
+    Optional<TemplateMapping> baseTemplateMapping = templateMappingRepository.findById(templateId);
+    if (baseTemplateMapping.isEmpty()) {
+      LOG.error("Cannot assign template {} as it does not exist", templateId);
+      return false;
     }
-    return result;
-  }
+    CardTemplate baseTemplate = baseTemplateMapping.get().getTemplate();
 
-  public CardTemplate getTemplateForGame(Game game) throws Exception {
-    if (game.getTemplateId() != null) {
-      Optional<TemplateMapping> byId = templateMappingRepository.findById(game.getTemplateId());
-      if (byId.isPresent()) {
-        TemplateMapping mapping = byId.get();
-        CardTemplate template = CardTemplate.fromJson(CardTemplate.class, mapping.getTemplateJson());
-        template.setId(mapping.getId());
-        return template;
+    Long oldTemplateId = game.getTemplateId(templateType);
+
+    //create new card template
+    if (switchToCustom) {
+      //delete possible existing one
+      TemplateMapping mapping = oldTemplateId != null ? templateMappingRepository.findById(oldTemplateId).orElse(null) : null;
+      if (mapping != null) {
+        CardTemplate template = mapping.getTemplate();
+        if (!template.isTemplate()) {
+          templateMappingRepository.deleteById(oldTemplateId);
+        }
       }
-    }
 
-    return getCardTemplate(CardTemplate.DEFAULT);
+      baseTemplate.setId(null);
+      baseTemplate.setParentId(templateId);
+      baseTemplate.setName(CardTemplate.CARD_TEMPLATE_PREFIX + game.getId());
+      baseTemplate = save(baseTemplate);
+
+      game.setTemplateId(templateType, baseTemplate.getId());
+      gameService.save(game);
+      return true;
+    }
+    else if (oldTemplateId != null && oldTemplateId != templateId || oldTemplateId == null && !baseTemplate.isDefault()) {
+      game.setTemplateId(templateType, templateId);
+      gameService.save(game);
+
+      Optional<TemplateMapping> oldTemplate = templateMappingRepository.findById(oldTemplateId);
+      if (oldTemplate.isPresent()) {
+        TemplateMapping oldTemplateMapping = oldTemplate.get();
+        CardTemplate template = oldTemplateMapping.getTemplate();
+        if (template.getName().contains(CardTemplate.CARD_TEMPLATE_PREFIX)) {
+          templateMappingRepository.delete(oldTemplateMapping);
+        }
+      }
+      return true;
+    }
+    return false;
   }
 
-  private CardTemplate getCardTemplate(String name) throws Exception {
-    Optional<CardTemplate> first = getTemplates().stream().filter(c -> c.getName().equals(name)).findFirst();
-    if (first.isEmpty()) {
-      first = getTemplates().stream().filter(c -> c.getName().equals(CardTemplate.DEFAULT)).findFirst();
-    }
+  //-------------------------------------------------- Merge of templates
 
-    return first.get();
+  private CardTemplate mappingToTemplate(TemplateMapping m) {
+    CardTemplate template = checkVersion(m.getTemplate());
+    if (!template.isTemplate()) {
+      mergeWithParent(template);
+    }
+    return template;
   }
 
-  public CardTemplate getTemplate(long templateId) throws Exception {
-    Optional<TemplateMapping> mapping = templateMappingRepository.findById(templateId);
-    if (mapping.isPresent()) {
-      TemplateMapping m = mapping.get();
-      CardTemplate template = CardTemplate.fromJson(CardTemplate.class, m.getTemplateJson());
-      template.setId(m.getId());
-      return template;
+  private CardTemplate mergeWithParent(CardTemplate template) {
+    CardTemplate parent = null;
+    if (template.getParentId() != null) {
+      parent = getTemplate(template.getParentId());
+    }
+    if (parent == null) {
+      // no parent, merger with DEFAULT
+      parent = getDefaultTemplate(template.getTemplateType());
     }
 
-    return getCardTemplate(CardTemplate.DEFAULT);
+    return templateMerger._merge(template, parent);
+  }
+
+  //-------------------------------------------------- Template version management
+
+  private CardTemplate checkVersion(CardTemplate template) {
+    Integer version = template.getVersion();
+    if (version == null || version == 1) {
+      template = upgradeFromVersion1(template);
+      template.setVersion(CURRENT_VERSION);
+      template = save(template);
+    }
+
+    return template;
+  }
+
+  private CardTemplate upgradeFromVersion1(CardTemplate template) {
+    CardSettings cardSettings = preferencesService.getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS);
+    CardResolution res = cardSettings.getCardResolution();
+    if (res != null) {
+      double width = res.toWidth();
+      double height = res.toHeight();
+
+      template.setCanvasX(template.getCanvasX() / width);
+      template.setCanvasY(template.getCanvasY() / height);
+      template.setCanvasWidth(template.getCanvasWidth() / width);
+      template.setCanvasHeight(template.getCanvasHeight() / height);
+
+      double currentY = template.getMarginTop();
+      template.setTitleY(currentY / height);
+      template.setTitleHeight(template.getTitleFontSize() / height);
+
+      currentY += template.getTitleFontSize();
+      template.setTableY(currentY / height);
+      template.setTableHeight(template.getTableFontSize() / height);
+
+      currentY += template.getTableFontSize();
+      template.setWheelY(currentY / height);
+      template.setScoresY(currentY / height);
+      template.setScoresHeight((height - currentY - template.getMarginBottom()) / height);
+
+
+      double currentX = template.getMarginLeft();
+      template.setWheelX(currentX / width);
+      if (template.isRenderWheelIcon()) {
+        currentX += template.getWheelSize();
+      }
+      template.setWheelSize(template.getWheelSize() / width);
+
+      template.setScoresX(currentX / width);
+      template.setScoresWidth((width - currentX - template.getMarginRight()) / width);
+    }
+    return template;
   }
 }
+

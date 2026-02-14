@@ -6,4 +6,5 @@ open module de.mephisto.vpin.connectors.assets {
 
   requires com.github.spotbugs.annotations;
   requires java.desktop;
+  requires com.fasterxml.jackson.annotation;
 }

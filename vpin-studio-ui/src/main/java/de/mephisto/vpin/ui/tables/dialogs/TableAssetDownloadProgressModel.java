@@ -12,13 +12,14 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.Iterator;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableAssetDownloadProgressModel extends ProgressModel<TableAsset> {
-  private final static Logger LOG = LoggerFactory.getLogger(TableAssetDownloadProgressModel.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final Stage stage;
   private final VPinScreen screen;
@@ -77,7 +78,7 @@ public class TableAssetDownloadProgressModel extends ProgressModel<TableAsset> {
         client.getGameMediaService().downloadTableAsset(tableAsset, this.screen, this.game, append);
       }
       else {
-        client.getPlaylistMediaService().downloadPlaylistAsset(tableAsset, this.screen, this.playlist, append);
+        client.getGameMediaService().downloadPlaylistAsset(tableAsset, this.screen, this.playlist, append);
       }
     }
     catch (Exception e) {

@@ -6,7 +6,7 @@
 
     <groupId>de.mephisto.vpin</groupId>
     <artifactId>vpin-studio-server</artifactId>
-    <version>4.0.6</version>
+    <version>4.6.5</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -47,6 +47,11 @@
             <groupId>org.htmlunit</groupId>
             <artifactId>htmlunit</artifactId>
             <version>4.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.lingala.zip4j</groupId>
+            <artifactId>zip4j</artifactId>
+            <version>2.11.5</version>
         </dependency>
 
         <dependency>
@@ -108,6 +113,11 @@
         <dependency>
             <groupId>de.mephisto.vpin</groupId>
             <artifactId>vpin-connector-discord</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.mephisto.vpin</groupId>
+            <artifactId>vpin-connector-wovp</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -246,7 +256,6 @@
             <version>3.16.1</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
@@ -394,6 +403,7 @@
                                         <include>backgrounds/*</include>
                                         <include>themes/**</include>
                                         <include>pinemhi/**</include>
+                                        <include>DOFTest/**</include>
                                         <include>vpbm/**</include>
                                         <include>nvrams/**</include>
                                         <include>scripts/**</include>
@@ -413,10 +423,8 @@
                                         <include>*.index</include>
                                     </includes>
                                     <excludes>
-                                        <exclude>vpbm/identifiers.dat</exclude>
                                         <exclude>pinemhi/pinemhi.ini</exclude>
                                         <exclude>pinemhi/pinemhi.ini.bak</exclude>
-                                        <include>vpbm/Logs/*.log</include>
                                     </excludes>
                                 </resource>
                             </resources>

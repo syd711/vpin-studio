@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.games;
 
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.connectors.vps.model.VpsAuthoredUrls;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsUrl;
@@ -32,6 +31,7 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vps.VpsService;
+import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -47,6 +47,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 import static de.mephisto.vpin.restclient.validation.GameValidationCode.*;
 
 /**
@@ -89,10 +90,13 @@ public class GameValidationService implements InitializingBean, PreferenceChange
   private MameRomAliasService mameRomAliasService;
 
   @Autowired
-  private GameDetailsRepository gameDetailsRepository;
+  private GameDetailsRepositoryService gameDetailsRepositoryService;
 
   @Autowired
   private VpsService vpsService;
+
+  @Autowired
+  private VPXService vpxService;
 
   private ValidationSettings validationSettings;
   private IgnoredValidationSettings ignoredValidationSettings;
@@ -149,7 +153,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (isVPX && isValidationEnabled(game, GameValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK)) {
-      if (game.getDirectB2SPath() == null && !pupPacksService.hasPupPack(game)) {
+      if (game.getDirectB2SPath() == null && !pupPacksService.isScanActive() && !pupPacksService.hasPupPack(game)) {
         result.add(ValidationStateFactory.create(GameValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK));
         if (findFirst) {
           return result;
@@ -157,13 +161,40 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
     }
 
-    if (isVPX && isValidationEnabled(game, GameValidationCode.CODE_NO_DMDFOLDER)) {
-      File dmdProjectFolder = StringUtils.isNotEmpty(game.getDMDProjectFolder()) ? 
-        new File(game.getEmulator().getGamesFolder(), game.getDMDProjectFolder()) : null;
-      if (dmdProjectFolder != null && !dmdProjectFolder.exists()) {
-        result.add(ValidationStateFactory.create(GameValidationCode.CODE_NO_DMDFOLDER));
+    if (isVPX && isValidationEnabled(game, GameValidationCode.CODE_BACKGLASS_AND_BACKGLASSES_DISABLED)) {
+      if (game.getDirectB2SPath() != null && vpxService.isForceDisableB2S()) {
+        result.add(ValidationStateFactory.create(GameValidationCode.CODE_BACKGLASS_AND_BACKGLASSES_DISABLED));
         if (findFirst) {
           return result;
+        }
+      }
+    }
+
+    if (isVPX && isValidationEnabled(game, GameValidationCode.CODE_NO_DMDFOLDER)) {
+      File dmdProjectFolder = StringUtils.isNotEmpty(game.getDMDProjectFolder()) ?
+          new File(game.getGameFile().getParent(), game.getDMDProjectFolder()) : null;
+      if (dmdProjectFolder != null && !dmdProjectFolder.exists()) {
+        result.add(ValidationStateFactory.create(GameValidationCode.CODE_NO_DMDFOLDER, game.getDMDProjectFolder()));
+        if (findFirst) {
+          return result;
+        }
+      }
+    }
+
+    if (isVPX && isValidationEnabled(game, GameValidationCode.CODE_SCRIPT_FILES_MISSING)) {
+      if (game.getScripts() != null) {
+        File scriptFolder = game.getEmulator().getScriptsFolder();
+        for (String script : game.getScripts()) {
+          File scriptFile = new File(game.getGameFile().getParentFile(), script);
+          if (!scriptFile.exists()) {
+            scriptFile = new File(scriptFolder, script);
+          }
+          if (!scriptFile.exists()) {
+            result.add(ValidationStateFactory.create(GameValidationCode.CODE_SCRIPT_FILES_MISSING, script));
+            if (findFirst) {
+              return result;
+            }
+          }
         }
       }
     }
@@ -187,7 +218,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
           return result;
         }
       }
-    } 
+    }
 
     if (fptOrVpx && isValidationEnabled(game, CODE_VPS_MAPPING_MISSING)) {
       if (StringUtils.isEmpty(game.getExtTableId()) || StringUtils.isEmpty(game.getExtTableVersionId())) {
@@ -227,7 +258,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
             }
           }
 
-          if (isValidationEnabled(game, CODE_VPS_PUPPACK_MISSING) && !pupPacksService.hasPupPack(game)) {
+          if (isValidationEnabled(game, CODE_VPS_PUPPACK_MISSING) && !pupPacksService.isScanActive() && !pupPacksService.hasPupPack(game)) {
             List<VpsAuthoredUrls> pupPackFiles = vpsTable.getPupPackFiles();
             for (VpsAuthoredUrls pupPackFile : pupPackFiles) {
               if (pupPackFile.getUrls().isEmpty() || pupPackFile.getUrls().stream().allMatch(VpsUrl::isBroken)) {
@@ -287,12 +318,12 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
     if (isVPX && isValidationEnabled(game, CODE_NVOFFSET_MISMATCH)) {
       if (game.getNvOffset() > 0 && !StringUtils.isEmpty(game.getRom())) {
-        List<GameDetails> otherGameDetailsWithSameRom = new ArrayList<>(gameDetailsRepository.findByRomName(game.getRom())).stream().filter(g -> g.getRomName() != null && g.getPupId() != game.getId() && g.getRomName().equalsIgnoreCase(game.getRom())).collect(Collectors.toList());
+        List<GameDetails> otherGameDetailsWithSameRom = new ArrayList<>(gameDetailsRepositoryService.findByRomName(game.getRom())).stream().filter(g -> g.getRomName() != null && g.getPupId() != game.getId() && g.getRomName().equalsIgnoreCase(game.getRom())).collect(Collectors.toList());
         for (GameDetails otherGameDetails : otherGameDetailsWithSameRom) {
           if (otherGameDetails.getNvOffset() == 0 || otherGameDetails.getNvOffset() == game.getNvOffset()) {
             Game otherGame = frontendService.getOriginalGame(otherGameDetails.getPupId());
             if (otherGame != null) {
-              //only complain if it is another table or has no VPS mapping
+              //only complain if it is another table or has no VPS mapping!!!!!!!!!!!!!!
               if (otherGame.getExtTableId() == null || !otherGame.getExtTableId().equals(game.getExtTableId())) {
                 result.add(ValidationStateFactory.create(GameValidationCode.CODE_NVOFFSET_MISMATCH, otherGame.getGameDisplayName(), String.valueOf(game.getNvOffset()), String.valueOf(otherGameDetails.getNvOffset())));
                 if (findFirst) {
@@ -391,7 +422,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (isValidationEnabled(game, GameValidationCode.CODE_NO_LOADING)) {
-      if (!validScreenAssets(game, VPinScreen.PlayField)) {
+      if (!validScreenAssets(game, VPinScreen.Loading)) {
         result.add(ValidationStateFactory.create(GameValidationCode.CODE_NO_LOADING));
         if (findFirst) {
           return result;
@@ -411,6 +442,15 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     if (isValidationEnabled(game, GameValidationCode.CODE_NO_WHEEL_IMAGE)) {
       if (!validScreenAssets(game, VPinScreen.Wheel)) {
         result.add(ValidationStateFactory.create(GameValidationCode.CODE_NO_WHEEL_IMAGE));
+        if (findFirst) {
+          return result;
+        }
+      }
+    }
+
+    if (isValidationEnabled(game, GameValidationCode.CODE_NO_LOGO)) {
+      if (!validScreenAssets(game, VPinScreen.Logo)) {
+        result.add(ValidationStateFactory.create(GameValidationCode.CODE_NO_LOGO));
         if (findFirst) {
           return result;
         }
@@ -453,7 +493,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
   private List<ValidationState> validateForceStereo(Game game) {
     List<ValidationState> result = new ArrayList<>();
 
-    if (isValidationEnabled(game, CODE_FORCE_STEREO) && !StringUtils.isEmpty(game.getRom())) {
+    if (isValidationEnabled(game, CODE_FORCE_STEREO) && !StringUtils.isEmpty(game.getRom()) && !game.isAltSoundAvailable()) {
       MameOptions gameOptions = mameService.getOptions(game.getRom());
       MameOptions options = mameService.getOptions(MameOptions.DEFAULT_KEY);
 
@@ -487,7 +527,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
     // skip this check in standalone as DmdDevice is part of the VPX bundle
     if (!Features.IS_STANDALONE) {
-      File mameFolder = game.getEmulator().getMameFolder();
+      File mameFolder = mameService.getMameFolder();
       File dmdDevicedll = new File(mameFolder, "DmdDevice.dll");
       File dmdDevice64dll = new File(mameFolder, "DmdDevice64.dll");
       File dmdextexe = new File(mameFolder, "dmdext.exe");
@@ -522,6 +562,19 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
       case serum: {
         String name = game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX;
+        if (game.isZenGame()) {
+          name = "pin2dmd." + UploaderAnalysis.SERUM_SUFFIX;
+        }
+        if (isValidationEnabled(game, CODE_ALT_COLOR_FILES_MISSING) && !altColor.contains(name)) {
+          result.add(ValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, name));
+        }
+        break;
+      }
+      case cROMc: {
+        String name = game.getRom() + "." + UploaderAnalysis.CROMC_SUFFIX;
+        if (game.isZenGame()) {
+          name = "pin2dmd." + UploaderAnalysis.CROMC_SUFFIX;
+        }
         if (isValidationEnabled(game, CODE_ALT_COLOR_FILES_MISSING) && !altColor.contains(name)) {
           result.add(ValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, name));
         }
@@ -532,7 +585,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
     }
 
-    if (!StringUtils.isEmpty(game.getRom())) {
+    if (game.isVpxGame() && !StringUtils.isEmpty(game.getRom())) {
       MameOptions gameOptions = mameService.getOptions(game.getRom());
       if (gameOptions.isExistInRegistry()) {
         if (isValidationEnabled(game, CODE_ALT_COLOR_COLORIZE_DMD_ENABLED) && !gameOptions.isColorizeDmd()) {
@@ -577,16 +630,18 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
   public List<ValidationState> validatePupPack(Game game) {
     List<ValidationState> result = new ArrayList<>();
-    if (isValidationEnabled(game, CODE_PUP_PACK_FILE_MISSING)) {
-      List<String> missingResources =  pupPacksService.getMissingResources(game);
-      if (missingResources != null && !missingResources.isEmpty()) {
-        result.add(ValidationStateFactory.create(GameValidationCode.CODE_PUP_PACK_FILE_MISSING, missingResources));
+    if (!pupPacksService.isScanActive()) {
+      if (isValidationEnabled(game, CODE_PUP_PACK_FILE_MISSING)) {
+        List<String> missingResources = pupPacksService.getMissingResources(game);
+        if (missingResources != null && !missingResources.isEmpty()) {
+          result.add(ValidationStateFactory.create(GameValidationCode.CODE_PUP_PACK_FILE_MISSING, missingResources));
+        }
       }
-    }
 
-    if (game.getDirectB2SPath() == null && pupPacksService.hasPupPack(game) && !pupPacksService.isPupPackDisabled(game)) {
-      ValidationState validationState = ValidationStateFactory.create(CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED);
-      result.add(validationState);
+      if (game.getDirectB2SPath() == null && pupPacksService.hasPupPack(game) && pupPacksService.isPupPackDisabled(game)) {
+        ValidationState validationState = ValidationStateFactory.create(CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED);
+        result.add(validationState);
+      }
     }
     return result;
   }
@@ -628,6 +683,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         || codes.contains(CODE_NO_PLAYFIELD)
         || codes.contains(CODE_NO_LOADING)
         || codes.contains(CODE_NO_OTHER2)
+        || codes.contains(CODE_NO_LOGO)
         || codes.contains(CODE_NO_WHEEL_IMAGE)) {
       return true;
     }
@@ -642,6 +698,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
     if (codes.contains(CODE_NO_DIRECTB2S_OR_PUPPACK)
         || codes.contains(CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED)
+        || codes.contains(CODE_BACKGLASS_AND_BACKGLASSES_DISABLED)
         || codes.contains(CODE_NO_ROM)
         || codes.contains(CODE_ROM_NOT_EXISTS)
         || codes.contains(CODE_VPX_NOT_EXISTS)
@@ -653,6 +710,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         || codes.contains(CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED)
         || codes.contains(CODE_ALT_COLOR_FILES_MISSING)
         || codes.contains(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING)
+        || codes.contains(CODE_SCRIPT_FILES_MISSING)
     ) {
       return true;
     }
@@ -668,6 +726,12 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     List<String> highscoreFiles = highscoreService.getHighscoreFiles();
 
     String rom = TableDataUtil.getEffectiveRom(tableDetails, gameDetails);
+    if (game.isRomRequired() && !mameService.isRomExists(rom)) {
+      validation.setRomIcon(GameScoreValidation.ERROR_ICON);
+      validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);
+      validation.setRomStatus(GameScoreValidation.STATUS_ROM_NOT_FOUND);
+      return validation;
+    }
 
     String originalRom = mameRomAliasService.getRomForAlias(game.getEmulator(), rom);
     boolean aliasedRom = false;
@@ -722,7 +786,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     File nvRamFile = highscoreResolver.getNvRamFile(game);
 
     //not played and the ROM VPReg.stg entry not found
-    if (!game.isPlayed() && !vpRegEntries.contains(String.valueOf(rom)) && !vpRegEntries.contains(rom) && !nvRamFile.exists()) {
+    if (!game.isPlayed() && !vpRegEntries.contains(String.valueOf(rom)) && !vpRegEntries.contains(rom) && (nvRamFile == null || !nvRamFile.exists())) {
       validation.setRomIcon(GameScoreValidation.UNPLAYED_ICON);
       validation.setRomIconColor(GameScoreValidation.OK_COLOR);
       validation.setRomStatus(GameScoreValidation.STATUS_NOT_PLAYED_NO_MATCH_FOUND);
@@ -766,7 +830,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     //game has been played, but the .nvram or VPReg has not been found
-    if (game.isPlayed() && !StringUtils.isEmpty(rom) && !vpRegEntries.contains(rom) && !vpRegEntries.contains(rom.toLowerCase()) && !vpRegEntries.contains(tableName) && !nvRamFile.exists()) {
+    if (game.isPlayed() && !StringUtils.isEmpty(rom) && !vpRegEntries.contains(rom) && !vpRegEntries.contains(rom.toLowerCase()) && !vpRegEntries.contains(tableName) && (nvRamFile == null || !nvRamFile.exists())) {
       validation.setValidScoreConfiguration(false);
       validation.setRomIcon(GameScoreValidation.ERROR_ICON);
       validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);

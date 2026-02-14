@@ -235,7 +235,7 @@ public class VPReg {
     try {
       ObjectMapper objectMapper = new ObjectMapper();
       objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-      TypeReference<HashMap<String, String>> typeRef = new TypeReference<>() {
+      TypeReference<HashMap<String, String>> typeRef = new TypeReference<HashMap<String, String>>() {
       };
       HashMap<String, String> values = objectMapper.readValue(data, typeRef);
 
@@ -304,6 +304,40 @@ public class VPReg {
       }
     }
     return null;
+  }
+
+  public void deleteEntry(String amh) {
+    POIFSFileSystem fs = null;
+    try {
+      fs = new POIFSFileSystem(vpregFile, false);
+      DirectoryEntry root = fs.getRoot();
+      DirectoryEntry gameFolder = getGameDirectory(root);
+      if (gameFolder != null) {
+        List<String> entryNames = new ArrayList<>(gameFolder.getEntryNames());
+        for (String entryName : entryNames) {
+          Entry next = gameFolder.getEntry(entryName);
+          next.delete();
+          LOG.info("Deleted {}", next.getName());
+        }
+        gameFolder.delete();
+        LOG.info("Deleted all entries for {}", gameFolder.getName());
+      }
+
+      fs.writeFilesystem();
+    }
+    catch (IOException e) {
+      LOG.error("Failed to deleting entry from VPReg.stg: " + e.getMessage(), e);
+    }
+    finally {
+      if (fs != null) {
+        try {
+          fs.close();
+        }
+        catch (IOException e) {
+          //ignore
+        }
+      }
+    }
   }
 
   /**

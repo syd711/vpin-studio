@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -32,7 +33,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class TablesSidebarAltSoundController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarAltSoundController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private Button altSoundBtn;

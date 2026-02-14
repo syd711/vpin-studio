@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.mania.util;
 
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.mania.ManiaRegistration;
@@ -19,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -108,17 +110,16 @@ public class ManiaHelper {
   }
 
   public static void runScoreSynchronization(boolean showScoreSummary) {
+    List<Account> accounts = maniaClient.getAccountClient().getAccounts();
+    if (accounts.isEmpty()) {
+      WidgetFactory.showAlert(Studio.stage, "Highscore Synchronization", "The synchronization has been cancelled, no registered player found.", "Register a local player to synchronize their highscores with vpin-mania.net.");
+      return;
+    }
+
     ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new VPinManiaScoreSynchronizeProgressModel());
     if (showScoreSummary) {
-      List<Object> results = progressDialog.getResults();
-      int count = 0;
-      String msg = null;
-      for (Object result : results) {
-        ManiaTableSyncResult syncResult = (ManiaTableSyncResult) result;
-        count += syncResult.getTableScores().size();
-        msg = syncResult.getResult();
-      }
-      WidgetFactory.showInformation(Studio.stage, "Synchronization Result", count + " highscore(s) have been submitted to vpin-mania.net.", msg);
+      List<ManiaTableSyncResult> results = (List<ManiaTableSyncResult>) (List<?>) progressDialog.getResults();
+      ManiaDialogs.openTableSyncResult(results);
     }
   }
 

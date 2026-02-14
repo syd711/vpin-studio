@@ -2,7 +2,6 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
-import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -13,43 +12,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.Iterator;
+import java.lang.invoke.MethodHandles;
 
 public class DirectB2SUploadProgressModel extends UploadProgressModel {
-  private final static Logger LOG = LoggerFactory.getLogger(DirectB2SUploadProgressModel.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  private final Iterator<File> iterator;
   private final int gameId;
-  private final File file;
   private final boolean append;
 
-  public DirectB2SUploadProgressModel(int gameId, String title, File file, boolean append, Runnable finalizer) {
-    super(file, title, finalizer);
+  public DirectB2SUploadProgressModel(int gameId, String title, File file, boolean append) {
+    super(file, title);
     this.gameId = gameId;
-    this.file = file;
     this.append = append;
-    this.iterator = Collections.singletonList(this.file).iterator();
-  }
-
-  @Override
-  public boolean isShowSummary() {
-    return false;
-  }
-
-  @Override
-  public int getMax() {
-    return 1;
-  }
-
-  @Override
-  public File getNext() {
-    return iterator.next();
-  }
-
-  @Override
-  public String nextToString(File file) {
-    return file.getName();
   }
 
   @Override
@@ -71,12 +45,7 @@ public class DirectB2SUploadProgressModel extends UploadProgressModel {
       }
     }
     catch (Exception e) {
-      LOG.error("Res upload failed: " + e.getMessage(), e);
+      LOG.error(".directb2s upload failed: " + e.getMessage(), e);
     }
-  }
-
-  @Override
-  public boolean hasNext() {
-    return iterator.hasNext();
   }
 }

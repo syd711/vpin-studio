@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -47,7 +48,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class WidgetCompetitionController extends WidgetController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(WidgetCompetitionController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private Label titleLabel;
@@ -188,7 +189,7 @@ public class WidgetCompetitionController extends WidgetController implements Ini
       }
 
       if (competition.isActive()) {
-        ScoreListRepresentation competitionScores = ServerFX.client.getCompetitionScoreList(competition.getId());
+        ScoreListRepresentation competitionScores = ServerFX.client.getCompetitionService().getCompetitionScoreList(competition.getId());
         if (!competitionScores.getScores().isEmpty()) {
           if (highscoresGraphTile != null) {
             statsWidget.getChildren().remove(highscoresGraphTile);
@@ -220,7 +221,7 @@ public class WidgetCompetitionController extends WidgetController implements Ini
                 }
                 else if (currentScore.getPlayer().getAvatar() != null) {
                   AssetRepresentation avatar = currentScore.getPlayer().getAvatar();
-                  turnoverTile.setImage(new Image(ServerFX.client.getAsset(AssetType.AVATAR, avatar.getUuid())));
+                  turnoverTile.setImage(new Image(ServerFX.client.getAssetService().getAsset(AssetType.AVATAR, avatar.getUuid())));
                 }
               }
               else {
@@ -244,7 +245,7 @@ public class WidgetCompetitionController extends WidgetController implements Ini
         root.setVisible(true);
         if (competition != null) {
           if (competition.getType().equals(CompetitionType.DISCORD.name())) {
-            DiscordServer discordServer = ServerFX.client.getDiscordServer(competition.getDiscordServerId());
+            DiscordServer discordServer = ServerFX.client.getDiscordService().getDiscordServer(competition.getDiscordServerId());
             if (discordServer != null) {
               titleLabel.setText("Discord: " + discordServer.getName());
             }

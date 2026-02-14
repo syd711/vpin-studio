@@ -10,6 +10,7 @@ import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
 import de.mephisto.vpin.ui.util.FileSelectorDragEventHandler;
 import de.mephisto.vpin.ui.util.FilesSelectorDropEventHandler;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import de.mephisto.vpin.ui.util.UploadProgressModel;
 import javafx.application.Platform;
@@ -30,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -37,7 +39,7 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 public abstract class BaseUploadController implements Initializable, DialogController {
-  private final static Logger LOG = LoggerFactory.getLogger(BaseUploadController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private Node root;
@@ -83,6 +85,15 @@ public abstract class BaseUploadController implements Initializable, DialogContr
 
   protected abstract UploadProgressModel createUploadModel();
 
+  /**
+   * Upload done,
+   */
+  protected void onUploadDone(ProgressResultModel result) {
+    if (finalizer != null) {
+      finalizer.run();
+    }
+  }
+
   //--------------
 
   @FXML
@@ -98,9 +109,15 @@ public abstract class BaseUploadController implements Initializable, DialogContr
         Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
         stage.close();
 
+        UploadProgressModel model = createUploadModel();
+        if (model == null) {
+          // ProgressModel not created, then upload is cancelled
+          return;
+        }
+
         Platform.runLater(() -> {
-          UploadProgressModel model = createUploadModel();
-          ProgressDialog.createProgressDialog(model);
+          ProgressResultModel result = ProgressDialog.createProgressDialog(model);
+          onUploadDone(result);
         });
       }
       catch (Exception e) {
@@ -160,6 +177,9 @@ public abstract class BaseUploadController implements Initializable, DialogContr
 
   protected void refreshEmulators() {
     List<GameEmulatorRepresentation> gameEmulators = Studio.client.getEmulatorService().getVpxGameEmulators();
+    if (isFpOnly()) {
+      gameEmulators = Studio.client.getEmulatorService().getFpGameEmulators();
+    }
     emulator = gameEmulators.get(0);
     ObservableList<GameEmulatorRepresentation> emulators = FXCollections.observableList(gameEmulators);
     emulatorCombo.setItems(emulators);
@@ -168,6 +188,10 @@ public abstract class BaseUploadController implements Initializable, DialogContr
       emulator = t1;
       refreshSelection(null);
     });
+  }
+
+  protected boolean isFpOnly() {
+    return false;
   }
 
   @Override

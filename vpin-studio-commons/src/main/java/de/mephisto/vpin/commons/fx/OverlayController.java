@@ -9,22 +9,21 @@ import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.preferences.OverlaySettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
-import de.mephisto.vpin.restclient.util.SystemUtil;
+import de.mephisto.vpin.restclient.system.MonitorInfo;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
-import javafx.stage.Screen;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class OverlayController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(OverlayController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private StackPane rootStack;
@@ -58,14 +57,13 @@ public class OverlayController implements Initializable {
 
   public void refreshData() {
     OverlaySettings overlaySettings = ServerFX.client.getJsonPreference(PreferenceNames.OVERLAY_SETTINGS, OverlaySettings.class);
-    Rectangle2D screenBounds = SystemUtil.getScreenById(overlaySettings.getOverlayScreenId()).getBounds();
-    if(screenBounds.getWidth() < screenBounds.getHeight()) {
+    MonitorInfo screen = ServerFX.client.getSystemService().getScreenInfo(overlaySettings.getOverlayScreenId());
+    if(screen.getWidth() < screen.getHeight()) {
       rootStack.setRotate(0);
     }
 
-
     LOG.info("Refreshing overlay.");
-    PreferenceEntryRepresentation systemName = ServerFX.client.getPreference(PreferenceNames.SYSTEM_NAME);
+    PreferenceEntryRepresentation systemName = ServerFX.client.getPreferenceService().getPreference(PreferenceNames.SYSTEM_NAME);
     String name = systemName.getValue();
     if (StringUtils.isEmpty(name) || name.equals("null")) {
       name = UIDefaults.VPIN_NAME;
@@ -74,13 +72,13 @@ public class OverlayController implements Initializable {
 
 
     if (offlineCompetitionController != null) {
-      CompetitionRepresentation c = ServerFX.client.getActiveCompetition(CompetitionType.OFFLINE);
+      CompetitionRepresentation c = ServerFX.client.getCompetitionService().getActiveCompetition(CompetitionType.OFFLINE);
       offlineCompetitionController.setCompetitionType(CompetitionType.OFFLINE);
       offlineCompetitionController.refresh(c);
     }
 
     if (discordCompetitionController != null) {
-      CompetitionRepresentation c = ServerFX.client.getActiveCompetition(CompetitionType.DISCORD);
+      CompetitionRepresentation c = ServerFX.client.getCompetitionService().getActiveCompetition(CompetitionType.DISCORD);
       discordCompetitionController.setCompetitionType(CompetitionType.DISCORD);
       discordCompetitionController.refresh(c);
     }

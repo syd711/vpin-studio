@@ -3,909 +3,349 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.Slider?>
-<?import javafx.scene.control.Spinner?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane prefHeight="900.0" prefWidth="1400.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.panels.TemplateEditorController">
-   <right>
-      <VBox styleClass="subpanel" BorderPane.alignment="CENTER">
-         <children>
-            <Accordion fx:id="accordion">
-               <panes>
-                  <TitledPane fx:id="backgroundSettingsPane" text="Background Settings">
-                     <content>
-                        <ScrollPane hbarPolicy="NEVER">
-                           <content>
-                              <VBox styleClass="accordion-container">
-                                 <children>
-                                    <CheckBox fx:id="transparentBackgroundCheckbox" layoutX="22.0" layoutY="54.0" mnemonicParsing="false" text="Transparent Background" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </CheckBox>
-                                    <Label layoutX="22.0" layoutY="184.0" text="Alpha Percentage:" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets top="6.0" />
-                                       </VBox.margin>
-                                    </Label>
-                                    <Slider fx:id="alphaPercentageSpinner">
-                                       <padding>
-                                          <Insets bottom="12.0" top="6.0" />
-                                       </padding>
-                                    </Slider>
-                                    <HBox alignment="CENTER_LEFT" spacing="6.0">
-                                       <VBox.margin>
-                                          <Insets top="24.0" />
-                                       </VBox.margin>
-                                       <children>
-                                          <CheckBox fx:id="overlayModeCheckbox" mnemonicParsing="false" text="Overlay Mode" textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <HBox.margin>
-                                                <Insets />
-                                             </HBox.margin>
-                                          </CheckBox>
-                                          <Label>
-                                             <graphic>
-                                                <FontIcon fx:id="rawHighscoreHelp121" iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" />
-                                             </graphic>
-                                             <tooltip>
-                                                <Tooltip prefWidth="300.0" text="The mode is only enabled for transparent highscore cards. The designer assumes the card will be located over a VPin screen with existing video or image as an overlay (in 16:9 format)." wrapText="true" />
-                                             </tooltip>
-                                          </Label>
-                                       </children>
-                                    </HBox>
-                                    <HBox alignment="CENTER_LEFT" spacing="6.0">
-                                       <children>
-                                          <Label text="Screen:" textFill="WHITE">
-                                             <font>
-                                                <Font name="System Bold" size="14.0" />
-                                             </font>
-                                             <padding>
-                                                <Insets left="3.0" right="3.0" />
-                                             </padding>
-                                          </Label>
-                                          <ComboBox fx:id="screensComboBox" prefWidth="150.0" />
-                                          <Label>
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" text="󰘥" />
-                                             </graphic>
-                                             <tooltip>
-                                                <Tooltip prefWidth="300.0" text="Select the screen on which the score card is shown. The selection is only used for the editor." wrapText="true" />
-                                             </tooltip>
-                                          </Label>
-                                       </children>
-                                       <VBox.margin>
-                                          <Insets top="6.0" />
-                                       </VBox.margin>
-                                    </HBox>
-                                    <CheckBox fx:id="useDirectB2SCheckbox" mnemonicParsing="false" text="Prefer Default Background" textFill="WHITE">
-                                       <VBox.margin>
-                                          <Insets top="24.0" />
-                                       </VBox.margin>
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </CheckBox>
-                                    <Label text="Fallback Background Image:" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets top="12.0" />
-                                       </VBox.margin>
-                                    </Label>
-                                    <HBox alignment="CENTER_LEFT" spacing="6.0">
-                                       <children>
-                                          <ComboBox fx:id="backgroundImageCombo" prefWidth="200.0">
-                                             <HBox.margin>
-                                                <Insets top="3.0" />
-                                             </HBox.margin>
-                                          </ComboBox>
-                                          <Button fx:id="falbackUploadBtn" mnemonicParsing="false" onAction="#onUploadButton">
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
-                                             </graphic>
-                                          </Button>
-                                       </children>
-                                    </HBox>
-                                    <CheckBox fx:id="grayScaleCheckbox" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" text="Grayscale Background" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets top="12.0" />
-                                       </VBox.margin>
-                                    </CheckBox>
-                                    <Label text="Brighten Background:" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets top="12.0" />
-                                       </VBox.margin>
-                                    </Label>
-                                    <Slider fx:id="brightenSlider" maxWidth="330.0">
-                                       <padding>
-                                          <Insets bottom="12.0" top="6.0" />
-                                       </padding>
-                                    </Slider>
-                                    <Label text="Darken Background:" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <padding>
-                                          <Insets top="12.0" />
-                                       </padding>
-                                    </Label>
-                                    <Slider fx:id="darkenSlider" maxWidth="330.0">
-                                       <padding>
-                                          <Insets bottom="12.0" top="6.0" />
-                                       </padding>
-                                    </Slider>
-                                    <Label text="Blur Background:" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <padding>
-                                          <Insets top="12.0" />
-                                       </padding>
-                                    </Label>
-                                    <Slider fx:id="blurSlider" max="50.0" maxWidth="330.0">
-                                       <padding>
-                                          <Insets bottom="12.0" top="6.0" />
-                                       </padding>
-                                    </Slider>
-                                    <Label text="Border Size:" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <padding>
-                                          <Insets top="12.0" />
-                                       </padding>
-                                    </Label>
-                                    <Slider fx:id="borderSlider" maxWidth="330.0">
-                                       <padding>
-                                          <Insets bottom="12.0" top="6.0" />
-                                       </padding>
-                                    </Slider>
-                                 </children>
-                                 <padding>
-                                    <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                                 </padding>
-                              </VBox>
-                           </content>
-                        </ScrollPane>
-                     </content>
-                  </TitledPane>
-                  <TitledPane text="Font Settings">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <content>
-                        <ScrollPane hbarPolicy="NEVER">
-                           <content>
-                              <VBox styleClass="accordion-container">
-                                 <children>
-                                    <Label text="Title Font" textFill="WHITE">
-                                       <font>
-                                          <Font name="System Bold" size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <BorderPane>
-                                       <left>
-                                          <Label fx:id="titleFontLabel" prefHeight="20.0" prefWidth="170.0" textFill="WHITE" BorderPane.alignment="CENTER">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                       </left>
-                                       <right>
-                                          <HBox spacing="3.0" BorderPane.alignment="CENTER">
-                                             <children>
-                                                <Button mnemonicParsing="false" onAction="#onFontTitleSelect">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                   <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="bi-fonts" />
-                                                   </graphic>
-                                                </Button>
-                                                <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onFontTitleApplyAll">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                   <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-all" />
-                                                   </graphic>
-                                                   <tooltip>
-                                                      <Tooltip text="Apply selected font settings to all templates" />
-                                                   </tooltip>
-                                                </Button>
-                                             </children>
-                                          </HBox>
-                                       </right>
-                                    </BorderPane>
-                                    <Label text="Table Font" textFill="WHITE">
-                                       <font>
-                                          <Font name="System Bold" size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets top="12.0" />
-                                       </VBox.margin>
-                                    </Label>
-                                    <BorderPane>
-                                       <left>
-                                          <Label fx:id="tableFontLabel" prefHeight="20.0" prefWidth="150.0" textFill="WHITE" BorderPane.alignment="CENTER">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                       </left>
-                                       <right>
-                                          <HBox spacing="3.0" BorderPane.alignment="CENTER">
-                                             <children>
-                                                <Button mnemonicParsing="false" onAction="#onFontTableSelect">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                   <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="bi-fonts" onDragDetected="#onFontTableSelect" />
-                                                   </graphic>
-                                                </Button>
-                                                <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onFontTableApplyAll">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                   <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-all" onDragDetected="#onFontTableSelect" />
-                                                   </graphic>
-                                                   <tooltip>
-                                                      <Tooltip text="Apply selected font settings to all templates" />
-                                                   </tooltip>
-                                                </Button>
-                                             </children>
-                                          </HBox>
-                                       </right>
-                                    </BorderPane>
-                                    <Label text="Score Font" textFill="WHITE">
-                                       <font>
-                                          <Font name="System Bold" size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets top="12.0" />
-                                       </VBox.margin>
-                                    </Label>
-                                    <BorderPane>
-                                       <left>
-                                          <Label fx:id="scoreFontLabel" prefWidth="150.0" textFill="WHITE" BorderPane.alignment="CENTER">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                       </left>
-                                       <right>
-                                          <HBox spacing="3.0" BorderPane.alignment="CENTER">
-                                             <children>
-                                                <Button mnemonicParsing="false" onAction="#onFontScoreSelect">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                   <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="bi-fonts" />
-                                                   </graphic>
-                                                </Button>
-                                                <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onFontScoreApplyAll">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                   <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-all" />
-                                                   </graphic>
-                                                   <tooltip>
-                                                      <Tooltip text="Apply selected font settings to all templates" />
-                                                   </tooltip>
-                                                </Button>
-                                             </children>
-                                          </HBox>
-                                       </right>
-                                    </BorderPane>
-                                    <Label text="Font Color" textFill="WHITE">
-                                       <font>
-                                          <Font name="System Bold" size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets top="12.0" />
-                                       </VBox.margin>
-                                    </Label>
-                                    <ColorPicker fx:id="fontColorSelector">
-                                       <VBox.margin>
-                                          <Insets top="6.0" />
-                                       </VBox.margin>
-                                    </ColorPicker>
-                                    <Label layoutX="22.0" layoutY="207.0" text="Font Color for Friends" textFill="WHITE">
-                                       <font>
-                                          <Font name="System Bold" size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets top="6.0" />
-                                       </VBox.margin>
-                                    </Label>
-                                    <ColorPicker fx:id="friendsFontColorSelector" layoutX="22.0" layoutY="233.0">
-                                       <VBox.margin>
-                                          <Insets top="6.0" />
-                                       </VBox.margin>
-                                    </ColorPicker>
-                                 </children>
-                                 <padding>
-                                    <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                                 </padding>
-                              </VBox>
-                           </content>
-                        </ScrollPane>
-                     </content>
-                  </TitledPane>
-                  <TitledPane expanded="false" text="Layout">
-                     <content>
-                        <ScrollPane hbarPolicy="NEVER">
-                           <content>
-                              <VBox spacing="3.0" styleClass="accordion-container">
-                                 <children>
-                                    <HBox alignment="CENTER_LEFT" spacing="6.0">
-                                       <children>
-                                          <Label text="Padding:" textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label>
-                                             <graphic>
-                                                <FontIcon fx:id="rawHighscoreHelp1" iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" />
-                                             </graphic>
-                                             <tooltip>
-                                                <Tooltip text="Determines the inner horizontal and vertical gaps between the card components." />
-                                             </tooltip>
-                                          </Label>
-                                       </children>
-                                       <VBox.margin>
-                                          <Insets />
-                                       </VBox.margin>
-                                    </HBox>
-                                    <HBox alignment="BASELINE_LEFT" spacing="6.0">
-                                       <children>
-                                          <Spinner fx:id="paddingSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
-                                       </children>
-                                       <VBox.margin>
-                                          <Insets top="6.0" />
-                                       </VBox.margin>
-                                    </HBox>
-                                    <HBox alignment="CENTER_LEFT" spacing="6.0">
-                                       <children>
-                                          <Label text="Margins (top/bottom):" textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label>
-                                             <graphic>
-                                                <FontIcon fx:id="rawHighscoreHelp11" iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" />
-                                             </graphic>
-                                             <tooltip>
-                                                <Tooltip text="Determines the margins from the card's border." />
-                                             </tooltip>
-                                          </Label>
-                                       </children>
-                                       <VBox.margin>
-                                          <Insets top="12.0" />
-                                       </VBox.margin>
-                                    </HBox>
-                                    <HBox alignment="BASELINE_LEFT" spacing="6.0">
-                                       <children>
-                                          <Spinner fx:id="marginTopSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
-                                          <Spinner fx:id="marginBottomSpinner" editable="true" layoutX="87.0" layoutY="10.0" prefWidth="110.0" styleClass="widget-default" />
-                                       </children>
-                                       <VBox.margin>
-                                          <Insets top="6.0" />
-                                       </VBox.margin>
-                                    </HBox>
-                                    <Label text="Margins (left/right):" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <HBox spacing="6.0">
-                                       <children>
-                                          <Spinner fx:id="marginLeftSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
-                                          <Spinner fx:id="marginRightSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
-                                       </children>
-                                    </HBox>
-                                    <CheckBox fx:id="renderTableNameCheckbox" mnemonicParsing="false" text="Render Table Name">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets top="24.0" />
-                                       </VBox.margin>
-                                    </CheckBox>
-                                    <CheckBox fx:id="renderTitleCheckbox" layoutX="22.0" layoutY="255.0" mnemonicParsing="false" text="Render Title">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets top="12.0" />
-                                       </VBox.margin>
-                                    </CheckBox>
-                                    <Label text="Title:" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets left="26.0" top="6.0" />
-                                       </VBox.margin>
-                                    </Label>
-                                    <TextField fx:id="titleText">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets left="26.0" />
-                                       </VBox.margin>
-                                    </TextField>
-                                    <CheckBox fx:id="renderWheelIconCheckbox" layoutX="22.0" layoutY="284.0" mnemonicParsing="false" text="Render Wheel Icon">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets top="12.0" />
-                                       </VBox.margin>
-                                    </CheckBox>
-                                    <HBox alignment="CENTER_LEFT" layoutX="22.0" layoutY="22.0" spacing="6.0">
-                                       <children>
-                                          <Label text="Wheel Size" textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <HBox.margin>
-                                                <Insets top="6.0" />
-                                             </HBox.margin>
-                                          </Label>
-                                          <Label>
-                                             <tooltip>
-                                                <Tooltip text="Determines the inner horizontal and vertical gaps between the card components." />
-                                             </tooltip>
-                                          </Label>
-                                       </children>
-                                       <VBox.margin>
-                                          <Insets left="26.0" />
-                                       </VBox.margin>
-                                    </HBox>
-                                    <HBox alignment="BASELINE_LEFT" layoutX="22.0" layoutY="52.0" spacing="6.0">
-                                       <children>
-                                          <Spinner fx:id="wheelSizeSpinner" editable="true" prefWidth="70.0" styleClass="widget-default" />
-                                       </children>
-                                       <VBox.margin>
-                                          <Insets left="26.0" />
-                                       </VBox.margin>
-                                    </HBox>
-                                    <HBox alignment="BASELINE_LEFT">
-                                       <children>
-                                          <CheckBox fx:id="renderRawHighscore" mnemonicParsing="false" text="Render Raw Highscore Data  " textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <HBox.margin>
-                                                <Insets top="12.0" />
-                                             </HBox.margin>
-                                          </CheckBox>
-                                          <Label>
-                                             <graphic>
-                                                <FontIcon fx:id="rawHighscoreHelp" iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" />
-                                             </graphic>
-                                             <tooltip>
-                                                <Tooltip text="The font size of the highscore text will be adapted according to the number of lines." />
-                                             </tooltip>
-                                          </Label>
-                                       </children>
-                                       <VBox.margin>
-                                          <Insets top="6.0" />
-                                       </VBox.margin>
-                                    </HBox>
-                                    <HBox alignment="BASELINE_LEFT" layoutX="22.0" layoutY="453.0">
-                                       <children>
-                                          <CheckBox fx:id="renderFriendsHighscore" mnemonicParsing="false" text="Render Friends Highscore Data  " textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <HBox.margin>
-                                                <Insets top="12.0" />
-                                             </HBox.margin>
-                                          </CheckBox>
-                                          <Label>
-                                             <graphic>
-                                                <FontIcon fx:id="rawHighscoreHelp3" iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" />
-                                             </graphic>
-                                             <tooltip>
-                                                <Tooltip text="The scores of your friends will be merged with yours." />
-                                             </tooltip>
-                                          </Label>
-                                       </children>
-                                    </HBox>
-                                    <HBox alignment="BASELINE_LEFT" spacing="6.0">
-                                       <children>
-                                          <Label text="Max. Scores" textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <HBox.margin>
-                                                <Insets top="6.0" />
-                                             </HBox.margin>
-                                          </Label>
-                                          <Label>
-                                             <graphic>
-                                                <FontIcon fx:id="rawHighscoreHelp2" iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" />
-                                             </graphic>
-                                             <tooltip>
-                                                <Tooltip text="&quot;0&quot; will render all available scores." />
-                                             </tooltip>
-                                          </Label>
-                                       </children>
-                                       <VBox.margin>
-                                          <Insets left="26.0" />
-                                       </VBox.margin>
-                                    </HBox>
-                                    <Spinner fx:id="maxScoresSpinner" editable="true" layoutX="48.0" layoutY="444.0" styleClass="widget-default">
-                                       <VBox.margin>
-                                          <Insets left="26.0" />
-                                       </VBox.margin>
-                                    </Spinner>
-                                    <Label text="Wheel Image Padding:" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets left="26.0" top="6.0" />
-                                       </VBox.margin>
-                                    </Label>
-                                    <Spinner fx:id="wheelImageSpinner" editable="true" styleClass="widget-default">
-                                       <VBox.margin>
-                                          <Insets left="26.0" />
-                                       </VBox.margin></Spinner>
-                                    <Label text="Row Separator:" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets left="26.0" top="6.0" />
-                                       </VBox.margin>
-                                    </Label>
-                                    <Spinner fx:id="rowSeparatorSpinner" editable="true" styleClass="widget-default">
-                                       <VBox.margin>
-                                          <Insets left="26.0" />
-                                       </VBox.margin></Spinner>
-                                    <CheckBox fx:id="renderPositionsCheckbox" mnemonicParsing="false" text="Render Positions" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets left="26.0" top="6.0" />
-                                       </VBox.margin>
-                                    </CheckBox>
-                                 </children>
-                                 <padding>
-                                    <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                                 </padding>
-                              </VBox>
-                           </content>
-                        </ScrollPane>
-                     </content>
-                  </TitledPane>
-                  <TitledPane layoutX="10.0" layoutY="41.0" text="Canvas Settings">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <content>
-                        <ScrollPane hbarPolicy="NEVER">
-                           <content>
-                              <VBox styleClass="accordion-container">
-                                 <children>
-                                    <HBox alignment="CENTER_LEFT" spacing="6.0">
-                                       <children>
-                                          <CheckBox fx:id="renderCanvasCheckbox" mnemonicParsing="false" text="Use Background Canvas">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </CheckBox>
-                                          <Label>
-                                             <graphic>
-                                                <FontIcon fx:id="rawHighscoreHelp12" iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" />
-                                             </graphic>
-                                             <tooltip>
-                                                <Tooltip text="Adds an additional background layer so that it improves the readability of the score text." />
-                                             </tooltip>
-                                          </Label>
-                                       </children>
-                                    </HBox>
-                                    <Label text="Color" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets top="12.0" />
-                                       </VBox.margin>
-                                    </Label>
-                                    <ColorPicker fx:id="canvasColorSelector">
-                                       <VBox.margin>
-                                          <Insets top="6.0" />
-                                       </VBox.margin>
-                                    </ColorPicker>
-                                    <Label text="Alpha Percentage:" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets top="12.0" />
-                                       </VBox.margin>
-                                    </Label>
-                                    <Slider fx:id="canvasAlphaPercentageSlider">
-                                       <padding>
-                                          <Insets bottom="12.0" top="6.0" />
-                                       </padding>
-                                    </Slider>
-                                    <HBox spacing="12.0">
-                                       <children>
-                                          <VBox>
-                                             <children>
-                                                <Label text="Position X" textFill="WHITE">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                   <padding>
-                                                      <Insets top="3.0" />
-                                                   </padding>
-                                                </Label>
-                                                <Spinner fx:id="canvasXSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
-                                             </children>
-                                          </VBox>
-                                          <VBox layoutX="10.0" layoutY="10.0">
-                                             <children>
-                                                <Label text="Position Y" textFill="WHITE">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                   <padding>
-                                                      <Insets top="3.0" />
-                                                   </padding>
-                                                </Label>
-                                                <Spinner fx:id="canvasYSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
-                                             </children>
-                                          </VBox>
-                                       </children>
-                                    </HBox>
-                                    <HBox layoutX="22.0" layoutY="175.0" spacing="12.0">
-                                       <children>
-                                          <VBox>
-                                             <children>
-                                                <Label text="Width" textFill="WHITE">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                   <padding>
-                                                      <Insets top="3.0" />
-                                                   </padding>
-                                                </Label>
-                                                <Spinner fx:id="canvasWidthSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
-                                             </children>
-                                          </VBox>
-                                          <VBox layoutX="10.0" layoutY="10.0">
-                                             <children>
-                                                <Label text="Height" textFill="WHITE">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                   <padding>
-                                                      <Insets top="3.0" />
-                                                   </padding>
-                                                </Label>
-                                                <Spinner fx:id="canvasHeightSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
-                                             </children>
-                                          </VBox>
-                                       </children>
-                                       <VBox.margin>
-                                          <Insets top="12.0" />
-                                       </VBox.margin>
-                                    </HBox>
-                                    <Label text="Border Radius" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <padding>
-                                          <Insets top="3.0" />
-                                       </padding>
-                                       <VBox.margin>
-                                          <Insets top="12.0" />
-                                       </VBox.margin>
-                                    </Label>
-                                    <Spinner fx:id="canvasBorderRadiusSpinner" editable="true" maxWidth="110.0" styleClass="widget-default" />
-                                 </children>
-                                 <padding>
-                                    <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                                 </padding>
-                              </VBox>
-                           </content>
-                        </ScrollPane>
-                     </content>
-                  </TitledPane>
-               </panes>
-            </Accordion>
-         </children>
-         <BorderPane.margin>
-            <Insets />
-         </BorderPane.margin>
-      </VBox>
-   </right>
-   <center>
-      <BorderPane BorderPane.alignment="CENTER">
-         <top>
-            <ToolBar BorderPane.alignment="CENTER">
-               <items>
-                  <Label text="Template:" textFill="WHITE">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
+    <top>
+
+        <TabPane fx:id="tabPane">
+            <tabs>
+                <Tab fx:id="highscoreCardsTab" closable="false" text="Highscore Cards" />
+                <!--Tab fx:id="instructionCardsTab" closable="false" text="Instruction Cards" /-->
+                <Tab fx:id="wheelsTab" closable="false" text="Wheels" />
+            </tabs>
+        </TabPane>
+
+    </top>
+    <center>
+        <BorderPane>
+
+    <right>
+            <BorderPane BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets />
+               </BorderPane.margin>
+               <center>
+              <VBox styleClass="subpanel">
+                  <children>
+                      <Accordion fx:id="accordion">
+                          <panes>
+                              <fx:include fx:id="layerEditorBackground" source="template-editor-background.fxml" />
+                              <fx:include fx:id="layerEditorFrame" source="template-editor-frame.fxml" />
+                              <fx:include fx:id="layerEditorCanvas" source="template-editor-canvas.fxml" />
+                              <fx:include fx:id="layerEditorManufacturer" source="template-editor-manufacturer.fxml" />
+                              <fx:include fx:id="layerEditorOtherMedia" source="template-editor-othermedia.fxml" />
+                              <fx:include fx:id="layerEditorOverlay" source="template-editor-overlay.fxml" />
+                              <fx:include fx:id="layerEditorScores" source="template-editor-scores.fxml" />
+                              <fx:include fx:id="layerEditorTableName" source="template-editor-tablename.fxml" />
+                              <fx:include fx:id="layerEditorTitle" source="template-editor-title.fxml" />
+                              <fx:include fx:id="layerEditorWheel" source="template-editor-wheel.fxml" />
+                          </panes>
+                      </Accordion>
+                  </children>
+                     <BorderPane.margin>
+                        <Insets />
+                     </BorderPane.margin>
                      <padding>
-                        <Insets right="6.0" />
+                        <Insets top="1.0" />
                      </padding>
-                  </Label>
-                  <ComboBox fx:id="templateCombo" prefHeight="30.0" prefWidth="222.0" />
-                  <Separator layoutX="665.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <Button fx:id="createBtn" mnemonicParsing="false" onAction="#onCreate" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <tooltip>
-                        <Tooltip text="Create New Template" />
-                     </tooltip>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
-                     </graphic>
-                  </Button>
-                  <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
-                     </graphic>
-                     <tooltip>
-                        <Tooltip text="Rename the selected template" />
-                     </tooltip>
-                  </Button>
-                  <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" textFill="#ff3333">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
-                     </graphic>
-                  </Button>
-                  <Separator layoutX="485.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <Button fx:id="openImageBtn" mnemonicParsing="false" onAction="#onOpenImage" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" iconSize="18" />
-                     </graphic>
-                  </Button>
-                  <Separator layoutX="307.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <Button fx:id="generateBtn" layoutX="565.0" layoutY="11.0" mnemonicParsing="false" onAction="#onGenerate" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="bi-image" iconSize="18" />
-                     </graphic>
-                     <tooltip>
-                        <Tooltip text="Generate Card" />
-                     </tooltip>
-                  </Button>
-                  <Button fx:id="generateAllBtn" mnemonicParsing="false" onAction="#onGenerateAll" text=" Generate All" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="bi-images" iconSize="18" />
-                     </graphic>
-                  </Button>
-                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFolderBtn" styleClass="folder-component" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
-                     </graphic>
-                     <tooltip>
-                        <Tooltip text="Open [Frontend] system folder for the target folder." />
-                     </tooltip>
-                  </Button>
-                  <HBox fx:id="mediaPlayerControl" spacing="6.0">
+              </VBox>
+               </center>
+               <bottom>
+                  <VBox fx:id="previewPane" prefHeight="260.0" prefWidth="200.0" styleClass="media-container" BorderPane.alignment="CENTER">
+                     <BorderPane.margin>
+                        <Insets left="1.0" />
+                     </BorderPane.margin>
                      <children>
-                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button mnemonicParsing="false" onAction="#onStart" styleClass="external-component" textFill="#ff3333">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2p-play" iconSize="18" />
-                           </graphic>
-                        </Button>
-                        <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" textFill="#ff3333">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <graphic>
-                              <FontIcon iconColor="#ff3333" iconLiteral="mdi2s-stop" iconSize="18" />
-                           </graphic>
-                           <tooltip>
-                              <Tooltip text="Kill all VPX and [Frontend] processes." />
-                           </tooltip>
-                        </Button>
-                     </children>
-                  </HBox>
-                  <Label fx:id="resolutionLabel" text="Resolution">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <padding>
-                        <Insets left="6.0" />
-                     </padding>
-                  </Label>
-               </items>
-            </ToolBar>
-         </top>
-         <center>
-            <StackPane fx:id="previewStack" styleClass="media-container" BorderPane.alignment="CENTER">
-               <children>
-                  <BorderPane fx:id="previewOverlayPanel" prefHeight="200.0" prefWidth="200.0" />
-                  <VBox fx:id="previewPanel" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" styleClass="media-container">
-                     <children>
-                        <Pane fx:id="imagepane">
-                        <ImageView fx:id="cardPreview" pickOnBounds="true" preserveRatio="true" />
-                        </Pane>
+                        <BorderPane>
+                           <top>
+                              <ToolBar prefWidth="200.0" BorderPane.alignment="CENTER">
+                                <items>
+                                    <Button fx:id="assetViewBtn" mnemonicParsing="false" onAction="#onAssetPreview" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="Display the image of the card as it would be saved upon generation." />
+                                       </tooltip>
+                                    </Button>
+                                    <Button fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onAssetManager" prefHeight="29.0" prefWidth="0.0" textFill="WHITE">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" iconSize="18" />
+                                       </graphic>
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <tooltip>
+                                          <Tooltip text="Asset Manager" />
+                                       </tooltip>
+                                    </Button>
+                                    <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                                    <Button fx:id="assetDeleteBtn" mnemonicParsing="false" onAction="#onAssetDelete" textFill="#ff3333">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+                                       </graphic>
+                                    </Button>
+                                </items>
+                                 <BorderPane.margin>
+                                    <Insets />
+                                 </BorderPane.margin>
+                              </ToolBar>
+                           </top>
+                           <bottom>
+                              <HBox alignment="CENTER" BorderPane.alignment="CENTER">
+                                 <children>
+                                    <Label text="Default Asset Preview">
+                                       <padding>
+                                          <Insets left="6.0" />
+                                       </padding>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                           </bottom>
+                           <center>
+                              <BorderPane fx:id="mediaPane" prefHeight="200.0" prefWidth="240.0" BorderPane.alignment="CENTER" />
+                           </center>
+                        </BorderPane>
                      </children>
                   </VBox>
-               </children>
-            </StackPane>
-         </center>
-         <BorderPane.margin>
-            <Insets />
-         </BorderPane.margin>
-      </BorderPane>
-   </center>
+               </bottom>
+            </BorderPane>
+    </right>
+    <top>
+        <ToolBar BorderPane.alignment="CENTER">
+            <items>
+                <StackPane alignment="CENTER_LEFT" prefWidth="229.0">
+                    <children>
+                        <ToggleButton fx:id="templateModeBtn" mnemonicParsing="false" styleClass="custom-toggle-button" text="Template Mode">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                     <toggleGroup>
+                        <ToggleGroup fx:id="mode" />
+                     </toggleGroup>
+                        </ToggleButton>
+                        <ToggleButton fx:id="cardModeBtn" mnemonicParsing="false" selected="true" styleClass="custom-toggle-button2" text="Custom Mode" toggleGroup="$mode">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                            <StackPane.margin>
+                                <Insets left="119.0" />
+                            </StackPane.margin>
+                        </ToggleButton>
+                    </children>
+                </StackPane>
+                <Separator layoutX="313.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                <Label text="Template:" textFill="WHITE">
+                    <font>
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+                    <padding>
+                        <Insets right="6.0" />
+                    </padding>
+                </Label>
+                <ComboBox fx:id="templateCombo" prefHeight="30.0" prefWidth="222.0" />
+                <Button fx:id="createBtn" mnemonicParsing="false" onAction="#onCreate" textFill="WHITE">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                    <tooltip>
+                        <Tooltip text="Create New Template" />
+                    </tooltip>
+                    <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
+                    </graphic>
+                </Button>
+                <Separator layoutX="665.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+
+                <Button fx:id="exportBtn" mnemonicParsing="false" onAction="#onExport" textFill="WHITE">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                    <tooltip>
+                        <Tooltip text="Export current Template" />
+                    </tooltip>
+                    <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="18" />
+                    </graphic>
+                </Button>
+                <Button fx:id="importBtn" mnemonicParsing="false" onAction="#onImport" textFill="WHITE">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                    <tooltip>
+                        <Tooltip text="Import Template" />
+                    </tooltip>
+                    <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                    </graphic>
+                </Button>
+
+                <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" textFill="WHITE">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                    <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="Rename the selected template" />
+                    </tooltip>
+                </Button>
+                <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" textFill="#ff3333">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                    <graphic>
+                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+                    </graphic>
+                </Button>
+                <Separator layoutX="485.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                <Button fx:id="openImageBtn" mnemonicParsing="false" onAction="#onOpenImage" textFill="WHITE">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                    <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" iconSize="18" />
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="Display the image of the card as it would be saved upon generation." />
+                    </tooltip>
+                </Button>
+                <Separator layoutX="307.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Button fx:id="generateWheelBtn" layoutX="856.0" layoutY="11.0" mnemonicParsing="false" onAction="#onGenerateWithConfirmationClick" styleClass="submit-button" text="Generate Wheel" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-save" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Writes the given image for the selected screen and table" />
+                     </tooltip>
+                  </Button>
+                <Button fx:id="generateBtn" layoutX="565.0" layoutY="11.0" mnemonicParsing="false" onAction="#onGenerate" textFill="WHITE">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                    <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="bi-image" iconSize="18" />
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="Writes the given image for the selected screen and table" />
+                    </tooltip>
+                </Button>
+                <Button fx:id="generateAllBtn" mnemonicParsing="false" onAction="#onGenerateAll" text=" Generate All" textFill="WHITE">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                    <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="bi-images" iconSize="18" />
+                    </graphic>
+                </Button>
+                <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFolderBtn" styleClass="folder-component" textFill="WHITE">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                    <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="Open [Frontend] system folder for the target folder." />
+                    </tooltip>
+                </Button>
+                <HBox fx:id="mediaPlayerControl" spacing="6.0">
+                    <children>
+                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                        <Button mnemonicParsing="false" onAction="#onStart" styleClass="external-component" textFill="#ff3333">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                            <graphic>
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2p-play" iconSize="18" />
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="Run the overlay animation (if it is a video)." />
+                            </tooltip>
+                        </Button>
+                        <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" textFill="#ff3333">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                            <graphic>
+                                <FontIcon iconColor="#ff3333" iconLiteral="mdi2s-stop" iconSize="18" />
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="Stop the overlay animation." />
+                            </tooltip>
+                        </Button>
+                    </children>
+                </HBox>
+            </items>
+        </ToolBar>
+    </top>
+    <center>
+        <BorderPane>
+            <center>
+                <StackPane fx:id="previewStack" styleClass="media-container" BorderPane.alignment="CENTER">
+                    <children>
+                        <BorderPane fx:id="previewOverlayPanel">
+                        </BorderPane>
+                        <Pane fx:id="previewPanel">
+                            <children>
+                            </children>
+                        </Pane>
+                    </children>
+                </StackPane>
+            </center>
+            <top>
+                <BorderPane fx:id="nagBar" styleClass="nagbar-container">
+                    <center>
+                        <Label fx:id="nagBarLabel" text="Editing highscore card for XY using template XY" BorderPane.alignment="CENTER_LEFT" />
+                    </center>
+                </BorderPane>
+            </top>
+            <bottom>
+                <HBox alignment="CENTER_RIGHT" styleClass="media-container" BorderPane.alignment="CENTER">
+                    <children>
+                        <Label layoutX="10.0" layoutY="15.0" text="Card Resolution: ">
+                            <padding>
+                                <Insets left="6.0" />
+                            </padding>
+                        </Label>
+                        <Label fx:id="resolutionLabel" text="Resolution">
+                            <padding>
+                                <Insets left="6.0" />
+                            </padding>
+                        </Label>
+                    </children>
+                </HBox>
+            </bottom>
+        </BorderPane>
+    </center>
+
+        </BorderPane>
+    </center>
 </BorderPane>

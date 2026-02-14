@@ -4,10 +4,27 @@ public class DiscordBotStatus {
   private long botId;
   private String name;
   private String botInitials;
-  private boolean valid;
   private boolean validDefaultChannel;
+  private boolean canManageCategories;
   private long serverId;
   private long categoryId;
+  private String error;
+
+  public String getError() {
+    return error;
+  }
+
+  public void setError(String error) {
+    this.error = error;
+  }
+
+  public boolean isCanManageCategories() {
+    return canManageCategories;
+  }
+
+  public void setCanManageCategories(boolean canManageCategories) {
+    this.canManageCategories = canManageCategories;
+  }
 
   public String getName() {
     return name;
@@ -47,14 +64,6 @@ public class DiscordBotStatus {
 
   public void setBotId(long botId) {
     this.botId = botId;
-  }
-
-  public boolean isValid() {
-    return valid;
-  }
-
-  public void setValid(boolean valid) {
-    this.valid = valid;
   }
 
   public boolean isValidDefaultChannel() {

@@ -1,13 +1,19 @@
 package de.mephisto.vpin.restclient.util;
 
+import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class PackageUtil {
   public static String ARCHIVE_RAR = "rar";
   public static String ARCHIVE_7Z = "7z";
   public static String ARCHIVE_ZIP = "zip";
-  public static String[] ARCHIVE_SUFFIXES = {ARCHIVE_ZIP, ARCHIVE_RAR, ARCHIVE_7Z};
+  public static String ARCHIVE_VPA = "vpa";
+  public static String[] ARCHIVE_SUFFIXES = {ARCHIVE_ZIP, ARCHIVE_RAR, ARCHIVE_7Z, ARCHIVE_VPA};
 
   public static boolean isSupportedArchive(String suffix) {
     return Arrays.asList(ARCHIVE_SUFFIXES).contains(suffix);
@@ -18,7 +24,10 @@ public class PackageUtil {
     if (fileName.endsWith(".zip")) {
       return ZipUtil.contains(file, suffix);
     }
-    if (fileName.endsWith(".rar") || fileName.endsWith(".7z")) {
+    else if (fileName.endsWith(".vpa")) {
+      return VpaArchiveUtil.contains(file, suffix);
+    }
+    else if (fileName.endsWith(".rar") || fileName.endsWith(".7z")) {
       return RarUtil.contains(file, suffix);
     }
     throw new UnsupportedOperationException("No package support for " + file.getName());
@@ -29,15 +38,32 @@ public class PackageUtil {
     if (archiveName.endsWith(".zip")) {
       return ZipUtil.unzipTargetFile(archiveFile, targetFile, name);
     }
-    if (archiveName.endsWith(".rar") || archiveName.endsWith(".7z")) {
+    else if (archiveName.endsWith(".vpa")) {
+      return VpaArchiveUtil.extractFile(archiveFile, targetFile, name);
+    }
+    else if (archiveName.endsWith(".rar") || archiveName.endsWith(".7z")) {
       return RarUtil.unrarTargetFile(archiveFile, targetFile, name);
+    }
+    throw new UnsupportedOperationException("No package support for " + archiveFile.getName());
+  }
+
+  public static boolean unpackTargetFolder(File archiveFile, File targetFolder, String archiveFolderName, List<String> suffixesAllowList, @Nullable UnzipChangeListener listener) {
+    String archiveName = archiveFile.getName().toLowerCase();
+    if (archiveName.endsWith(".zip")) {
+      return ZipUtil.unzip(archiveFile, targetFolder, true, archiveFolderName, suffixesAllowList, listener);
+    }
+    else if (archiveName.endsWith(".vpa")) {
+      return VpaArchiveUtil.extractFolder(archiveFile, targetFolder, archiveFolderName, suffixesAllowList);
+    }
+    else if (archiveName.endsWith(".rar") || archiveName.endsWith(".7z")) {
+      return RarUtil.unrar(archiveFile, targetFolder, archiveFolderName, suffixesAllowList, listener);
     }
     throw new UnsupportedOperationException("No package support for " + archiveFile.getName());
   }
 
   public static byte[] readFile(File file, String name) {
     String archiveName = file.getName().toLowerCase();
-    if (archiveName.endsWith(".zip")) {
+    if (archiveName.endsWith(".zip") || archiveName.endsWith(".vpa")) {
       return ZipUtil.readFile(file, name);
     }
     if (archiveName.endsWith(".rar") || archiveName.endsWith(".7z")) {
