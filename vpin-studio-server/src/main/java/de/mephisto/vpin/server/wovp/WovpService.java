@@ -170,7 +170,7 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
     metadata.setVpinStudioVersion(systemService.getVersion());
     metadata.setVpxFile(game.getGameFileName());
     metadata.setRom(game.getRom());
-    metadata.setPlatform(pauseMenuSettings.isDesktopUser() ? 1 : 0);
+    metadata.setPlatform(pauseMenuSettings.getMultiScreenIds().size() == 1 ? 1 : 0);
     return metadata;
   }
 

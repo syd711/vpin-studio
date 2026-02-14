@@ -4,6 +4,9 @@ import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PauseMenuSettings extends JsonSettings {
   private boolean useOverlayKey;
   private int inputDebounceMs = 0;
@@ -18,8 +21,9 @@ public class PauseMenuSettings extends JsonSettings {
   private boolean apronMode = false;
   private int stageOffsetX = 0;
   private int stageOffsetY = 0;
-  private boolean desktopUser = false;
+  private boolean multiScreenUser = false;
   private boolean includeDmdFrame = false;
+  private List<Integer> multiScreenIds = new ArrayList<>(List.of(new Integer(1)));
 
   private int testDuration = 8;
   private int testGameId = -1;
@@ -108,12 +112,20 @@ public class PauseMenuSettings extends JsonSettings {
     this.tutorialsRotation = tutorialsRotation;
   }
 
-  public boolean isDesktopUser() {
-    return desktopUser;
+  public boolean isMultiScreenUser() {
+    return multiScreenUser;
   }
 
-  public void setDesktopUser(boolean desktopUser) {
-    this.desktopUser = desktopUser;
+  public void setMultiScreenUser(boolean multiScreenUser) {
+    this.multiScreenUser = multiScreenUser;
+  }
+
+  public List<Integer> getMultiScreenIds() {
+    return multiScreenIds;
+  }
+
+  public void setMultiScreenIds(List<Integer> multiScreenIds) {
+    this.multiScreenIds = multiScreenIds;
   }
 
   public boolean isIncludeDmdFrame() {
