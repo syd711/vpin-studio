@@ -10,6 +10,7 @@
 - **System Manager**: Added the **dmddevice.ini** file to the list of exclusions for VPinMAME installations.
 - **Table Data Manager**: Fixed issue that data was saved for the wrong table. 
 - **Table Overview**: Fixed table import button that was disabled when only VPX emulator was enabled. 
+- **Misc**: Fixed the resize handler for all windows which was not working properly (finally).
 
 ---
 
