@@ -134,9 +134,16 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
     }
 
     byte[] frameBytes = DmdImageUtils.toPlane(planes, nbPlanes, width, height);
-    Frame frame = new Frame(type, timeStamp - firstTimeStamp, frameBytes, width, height, palette);
-    for (DMDScoreProcessor processor : processors) {
-      processor.onFrameReceived(frame);
+    if (frameBytes != null) {
+      Frame frame = new Frame(type, timeStamp - firstTimeStamp, frameBytes, width, height, palette);
+      for (DMDScoreProcessor processor : processors) {
+        try {
+          processor.onFrameReceived(frame);
+        }
+        catch (Exception e) {
+          LOG.warn("Error while processing frame by {}: {}", processor.getClass().getName(), e.getMessage());
+        }
+      }
     }
   }
 
@@ -159,7 +166,7 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
 
   @Override
   public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
-    LOG.info("connection closed");
+    LOG.info("connection closed: {}", status.getReason());
     processGameStop();
   }
 

@@ -8,6 +8,7 @@
   - Fixed possible file lock caused by the media streaming that prohibited the deletion (blind fix).
   - Added same support for playlist medias than game medias (drag/drop, rename, set as default, delete, conversion...).
 - **System Manager**: Added the **dmddevice.ini** file to the list of exclusions for VPinMAME installations.
+- **Screen Recorder**: improve logs and exception in DMD frame handling
 - **Table Data Manager**: Fixed issue that data was saved for the wrong table. 
 - **Table Overview**: Fixed table import button that was disabled when only VPX emulator was enabled. 
 - **Misc**: Fixed the resize handler for all windows which was not working properly (finally).

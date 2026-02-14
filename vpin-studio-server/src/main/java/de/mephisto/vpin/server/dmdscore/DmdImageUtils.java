@@ -11,14 +11,13 @@ public class DmdImageUtils {
     if (planesAreValid(planes, planeSize, width, height)) {
       return joinPlanes(planes, planeSize, width, height);
     }
-    LOG.warn("Planes data was not valid, planeSize: {}, dim: {} x {}", planeSize, width, height);
+    LOG.warn("Planes data was not valid, planeSize: {}, dim: {} x {}, planesLength: {}", planeSize, width, height, planes.length);
     return null;
   }
  /**
    * Sanity check that we have a valid set of planes data compared to expected values
    */
-  private static boolean planesAreValid(final byte[] planes,
-      final int planeSize, final int width, final int height) {
+  private static boolean planesAreValid(final byte[] planes, final int planeSize, final int width, final int height) {
   return (width * height) % 8 == 0 &&
       planes.length % planeSize == 0 &&
       planes.length / planeSize == (width * height) / 8;
