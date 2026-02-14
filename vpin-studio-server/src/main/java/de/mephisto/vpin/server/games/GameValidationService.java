@@ -24,6 +24,7 @@ import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.highscores.HighscoreResolver;
 import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegService;
 import de.mephisto.vpin.server.mame.MameRomAliasService;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
@@ -94,6 +95,9 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
   @Autowired
   private VpsService vpsService;
+
+  @Autowired
+  private VPRegService vpRegService;
 
   @Autowired
   private VPXService vpxService;
@@ -718,7 +722,6 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     validation.setValidScoreConfiguration(true);
 
     ScoringDB scoringDB = systemService.getScoringDatabase();
-    List<String> vpRegEntries = highscoreService.getVPRegEntries();
     List<String> highscoreFiles = highscoreService.getHighscoreFiles();
 
     String rom = TableDataUtil.getEffectiveRom(tableDetails, gameDetails);
@@ -764,7 +767,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     //the ROM was found as VPReg.stg entry
-    if (vpRegEntries.contains(String.valueOf(rom)) || vpRegEntries.contains(tableName)) {
+    if (vpRegService.isValid(game)) {
       validation.setRomIcon(GameScoreValidation.OK_ICON);
       validation.setRomIconColor(GameScoreValidation.OK_COLOR);
       validation.setRomStatus(GameScoreValidation.STATUS_VPREG_STG_MATCH_FOUND);
@@ -782,7 +785,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     File nvRamFile = highscoreResolver.getNvRamFile(game);
 
     //not played and the ROM VPReg.stg entry not found
-    if (!game.isPlayed() && !vpRegEntries.contains(String.valueOf(rom)) && !vpRegEntries.contains(rom) && (nvRamFile == null || !nvRamFile.exists())) {
+    if (!game.isPlayed() && (nvRamFile == null || !nvRamFile.exists()) && !vpRegService.isValid(game)) {
       validation.setRomIcon(GameScoreValidation.UNPLAYED_ICON);
       validation.setRomIconColor(GameScoreValidation.OK_COLOR);
       validation.setRomStatus(GameScoreValidation.STATUS_NOT_PLAYED_NO_MATCH_FOUND);
@@ -826,7 +829,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     //game has been played, but the .nvram or VPReg has not been found
-    if (game.isPlayed() && !StringUtils.isEmpty(rom) && !vpRegEntries.contains(rom) && !vpRegEntries.contains(rom.toLowerCase()) && !vpRegEntries.contains(tableName) && (nvRamFile == null || !nvRamFile.exists())) {
+    if (game.isPlayed() && !StringUtils.isEmpty(rom) && (nvRamFile == null || !nvRamFile.exists()) && !vpRegService.isValid(game)) {
       validation.setValidScoreConfiguration(false);
       validation.setRomIcon(GameScoreValidation.ERROR_ICON);
       validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);

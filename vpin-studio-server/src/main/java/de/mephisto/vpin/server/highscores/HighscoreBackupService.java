@@ -1,12 +1,16 @@
 package de.mephisto.vpin.server.highscores;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.restclient.highscores.HighscoreBackup;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
-import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
+import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegFile;
+import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegService;
 import de.mephisto.vpin.server.listeners.EventOrigin;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -18,22 +22,13 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.zip.ZipOutputStream;
 
 @Service
@@ -42,7 +37,6 @@ public class HighscoreBackupService implements InitializingBean {
 
   public static final String FILE_SUFFIX = "hsbckp";
   public static final String DESCRIPTOR_JSON = "descriptor.json";
-  public static final String VPREG_STG_JSON = "vpreg-stg.json";
 
   private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 
@@ -54,6 +48,9 @@ public class HighscoreBackupService implements InitializingBean {
 
   @Autowired
   private SystemService systemService;
+
+  @Autowired
+  private VPRegService vpRegService;
 
   public boolean delete(@NonNull String rom, String filename) {
     File folder = new File(systemService.getBackupFolder(), rom);
@@ -154,7 +151,7 @@ public class HighscoreBackupService implements InitializingBean {
     backup.setHighscoreFilename(new File(highscore.getFilename()).getName());
 
     if (!folder.exists() && !folder.mkdirs()) {
-      LOG.error("Failed to create " + folder.getAbsolutePath());
+      LOG.error("Failed to create {}", folder.getAbsolutePath());
     }
 
     File descriptorFile = new File(folder, DESCRIPTOR_JSON);
@@ -195,14 +192,12 @@ public class HighscoreBackupService implements InitializingBean {
 
       //write VPReg.stg data
       if (HighscoreType.VPReg.equals(game.getHighscoreType())) {
-        File vprRegFile = emulator.getVPRegFile();
-        VPReg reg = new VPReg(vprRegFile, game.getRom(), game.getTableName());
-        String gameData = reg.toJson();
+        String gameData = vpRegService.getVPRegJson(game);
         if (gameData != null) {
           File regBackupTemp = File.createTempFile("vpreg-stg", "json");
           regBackupTemp.deleteOnExit();
           Files.write(regBackupTemp.toPath(), gameData.getBytes());
-          ZipUtil.zipFile(regBackupTemp, VPReg.ARCHIVE_FILENAME, zipOut);
+          ZipUtil.zipFile(regBackupTemp, VPRegFile.ARCHIVE_FILENAME, zipOut);
           if (!regBackupTemp.delete()) {
             throw new UnsupportedEncodingException("Failed to delete " + regBackupTemp.getAbsolutePath());
           }
@@ -236,37 +231,36 @@ public class HighscoreBackupService implements InitializingBean {
       target = FileUtils.uniqueFile(target);
 
       File tempFile = new File(target.getParentFile(), target.getName() + ".bak");
-      LOG.info("Creating temporary archive file " + tempFile.getAbsolutePath());
+      LOG.info("Creating temporary archive file {}", tempFile.getAbsolutePath());
 
       boolean written = writeHighscoreBackup(game, game.getEmulator(), hs.get(), romBasedBackupFolder, tempFile, filename);
       if (written && !tempFile.renameTo(target)) {
-        LOG.error("Failed to rename highscore zip file " + tempFile.getAbsolutePath());
+        LOG.error("Failed to rename highscore zip file {}", tempFile.getAbsolutePath());
         return null;
       }
 
       if (!written && !tempFile.delete()) {
-        LOG.error("No data written backup and deletion of temp data failed: " + tempFile.getAbsolutePath());
+        LOG.error("No data written backup and deletion of temp data failed: {}", tempFile.getAbsolutePath());
         return null;
       }
 
       if (written) {
-        LOG.info("Written highscore backup " + target.getAbsolutePath());
+        LOG.info("Written highscore backup {}", target.getAbsolutePath());
         return target;
       }
       else {
-        LOG.info("No highscore backup created, no matching source found for \"" + game.getRom() + "\"");
+        LOG.info("No highscore backup created, no matching source found for \"{}\"", game.getRom());
         return null;
       }
     }
 
-    LOG.info("Skipped creating highscore backup of \"" + game.getGameDisplayName() + "\", no existing highscore data found.");
+    LOG.info("Skipped creating highscore backup of \"{}\", no existing highscore data found.", game.getGameDisplayName());
     return null;
   }
 
   public boolean restoreBackupFile(@NonNull GameEmulator gameEmulator, @NonNull File backupFile) {
     HighscoreBackup highscoreBackup = readBackupFile(backupFile);
     HighscoreType highscoreType = highscoreBackup.getHighscoreType();
-    String rom = highscoreBackup.getRom();
 
     switch (highscoreType) {
       case NVRam: {
@@ -278,16 +272,17 @@ public class HighscoreBackupService implements InitializingBean {
         return ZipUtil.writeZippedFile(backupFile, highscoreBackup.getHighscoreFilename(), target);
       }
       case VPReg: {
-        try {
-          String json = ZipUtil.readZipFile(backupFile, VPREG_STG_JSON);
-          VPReg vpReg = new VPReg(gameEmulator.getVPRegFile(), rom, null);
-          vpReg.restore(json);
-          LOG.info("Imported VPReg.stg data from " + backupFile.getParentFile().getAbsolutePath());
-          return true;
-        }
-        catch (Exception e) {
-          LOG.error("Failed to restore backup for VPReg.stg file and rom " + rom + ": " + e.getMessage(), e);
-        }
+        //TODO 10.8.1
+//        try {
+//          String json = ZipUtil.readZipFile(backupFile, VPREG_STG_JSON);
+//          vpRegService.restore(game, json);
+//          vpRegFile.restore(json);
+//          LOG.info("Imported VPReg.stg data from " + backupFile.getParentFile().getAbsolutePath());
+//          return true;
+//        }
+//        catch (Exception e) {
+//          LOG.error("Failed to restore backup for VPReg.stg file and rom " + rom + ": " + e.getMessage(), e);
+//        }
         break;
       }
       default: {
