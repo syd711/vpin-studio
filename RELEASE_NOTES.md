@@ -6,7 +6,7 @@
 - **Tutorials Video Player**: The video playback uses the **VLC Media Player** now. I hope this solves the playback issues once and for all. Note that the VLC player is not shipped with the server, but **will be installed automatically if missing (for the VPin Studio Server only!) during the startup**. For the time being, the client still uses the default video player.
 - **Asset Manager**: 
   - Fixed possible file lock caused by the media streaming that prohibited the deletion (blind fix).
-  - Added same support for playlist medias than game medias (drag/drop, rename, set as default, delete, conversion...).
+  - Added same support for playlist media than game media (drag/drop, rename, set as default, delete, conversion...).
 - **System Manager**: Added the **dmddevice.ini** file to the list of exclusions for VPinMAME installations.
 - **Screen Recorder**: improve logs and exception in DMD frame handling
 - **Table Data Manager**: Fixed issue that data was saved for the wrong table. 
