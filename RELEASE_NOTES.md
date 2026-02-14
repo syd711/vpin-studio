@@ -1,4 +1,4 @@
-## Release Notes 4.6.5
+## Release Notes 4.7.0
 
 ## Changes (including a breaking one!)
 
@@ -98,15 +98,7 @@
   - Added backup of the DMDDevice.ini settings for a table. This includes the DMD position (if not stored for the registry). Note that the restoring is only applied if the registry usage is disabled.
 - **Screenshots**: Added service URL to fetch latest pause menu screenshot (http://localhost:8089/api/v1/recorder/screenshot/latest)
 
+- **VPX 10.8.1 Support**
 
 ## Bugfixes
 
-- **Server Startup**: Fixed critical error that lead to a server crash when the **ScreenRes.txt** file location could no be determined.
-- **Media Recorder Table Filtering**: Fixed issue that the media recorder used the filter settings from the table overview.
-- **Table Data Manager**: The "Auto-save" flag for the dialog is not remembered.
-- **Pause Menu**:
-  - Fixed screen configuration that can be used for showing the tutorials video (@kongedam It is finally there!).
-  - Fixed mute on pause: If the system was already muted, the pause menu does not unmute on exit anymore.
-  - Fixed **iScored** pause menu item that was always ignored.
-  - Added retry attempts in case the video rendering for tutorials fails. Hopefully this fixes the issue that videos are not starting.
-- **Dialogs**: Fixed issue that after releasing changes on dialogs the contents of these were cropped.
