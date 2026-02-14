@@ -42,34 +42,45 @@ public class DMDScoreProcessorFrameDump implements DMDScoreProcessor {
 
   @Override
   public void onFrameReceived(Frame frame) {
-
-    int width = frame.getWidth();
-    int height = frame.getHeight();
-
     try {
-      writer.append(frame.getTimeStamp() + " / " + frame.getType() + " / " + width + " / " + height + "\n");
-
-      int[] palette = frame.getPalette();
-      for (int p = 0; p < palette.length; p++) {
-        if (p != 0) writer.append(",");
-        writer.append(Integer.toString(palette[p]));
-      }
-      writer.append("\n");
-
-      byte[] plane  = frame.getPlane();
-      for (int j = 0; j < height; j++) {
-        for (int i = 0; i < width; i++) {
-          int idx = plane[j * width + i];
-          writer.append(idx == 0? " " : idx<=9 ? Integer.toString(idx) : Character.toString(55 + idx));
-        }
-        writer.append("\n");
-      }
-      writer.append("\n");
+      String txt = frameToString(frame);
+      writer.write(txt);
       writer.flush();
     }
     catch (IOException ioe) {
       LOG.error("error while writing frame");
     }
+  }
+
+  public static String  frameToString(Frame frame) {
+    if (frame == null) {
+      return null;
+    }
+
+    StringBuilder writer = new StringBuilder();
+
+    int width = frame.getWidth();
+    int height = frame.getHeight();
+
+    writer.append(frame.getTimeStamp() + " / " + frame.getType() + " / " + width + " / " + height + "\n");
+
+    int[] palette = frame.getPalette();
+    for (int p = 0; p < palette.length; p++) {
+      if (p != 0) writer.append(",");
+      writer.append(Integer.toString(palette[p]));
+    }
+    writer.append("\n");
+
+    byte[] plane  = frame.getPlane();
+    for (int j = 0; j < height; j++) {
+      for (int i = 0; i < width; i++) {
+        int idx = plane[j * width + i];
+        writer.append(idx == 0? " " : idx<=9 ? Integer.toString(idx) : Character.toString(55 + idx));
+      }
+      writer.append("\n");
+    }
+    writer.append("\n");
+    return writer.toString();
   }
 
   @Override
