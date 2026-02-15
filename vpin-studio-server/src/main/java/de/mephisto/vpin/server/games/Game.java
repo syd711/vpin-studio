@@ -480,8 +480,6 @@ public class Game {
     return new File(getGameFolder(), FilenameUtils.getBaseName(gameFileName) + ".ini");
   }
 
-  // getHighscoreIniFile moved in HighscoreResolution
-
   @NonNull
   @JsonIgnore
   public File getVBSFile() {
