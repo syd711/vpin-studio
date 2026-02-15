@@ -6,12 +6,14 @@ import de.mephisto.vpin.connectors.vps.model.VpsUrl;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
+import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.ValidationStateFactory;
+import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
@@ -628,7 +630,8 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
 
       if (isValidationEnabled(game, CODE_ALT_SOUND_FILE_MISSING)) {
-        if (altSoundService.getAltSound(game).isMissingAudioFiles()) {
+        AltSound altSound = altSoundService.getAltSound(game);
+        if (altSound != null && altSound.isMissingAudioFiles()) {
           result.add(ValidationStateFactory.create(GameValidationCode.CODE_ALT_SOUND_FILE_MISSING));
         }
       }
@@ -730,7 +733,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     validation.setValidScoreConfiguration(true);
 
     ScoringDB scoringDB = systemService.getScoringDatabase();
-    List<String> highscoreFiles = highscoreService.getHighscoreFiles();
+    HighscoreFiles highscoreFiles = highscoreService.getHighscoreFiles(game);
 
     String rom = TableDataUtil.getEffectiveRom(tableDetails, gameDetails);
     if (game.isRomRequired() && !mameService.isRomExists(rom)) {

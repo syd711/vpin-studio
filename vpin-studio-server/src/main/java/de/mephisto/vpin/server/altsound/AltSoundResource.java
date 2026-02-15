@@ -60,7 +60,7 @@ public class AltSoundResource {
   @GetMapping("{id}/fileinfo")
   public FileInfo getAltSoundFolder(@PathVariable("id") int id) {
     Game game = gameService.getGame(id);
-    return game != null ? FileInfo.folder(altSoundService.getAltSoundFolder(game), game.getEmulator().getAltSoundFolder()) : null;
+    return game != null ? FileInfo.folder(altSoundService.getAltSoundFolder(game), null) : null;
   }
 
   @DeleteMapping("{id}")
@@ -129,9 +129,10 @@ public class AltSoundResource {
     }
   }
 
-  @GetMapping("/stream/{emuId}/{name}/{filename}")
-  public ResponseEntity<Resource> handleRequestWithName(@PathVariable("emuId") int emuId, @PathVariable("name") String altSoundName, @PathVariable("filename") String filename) throws IOException {
-    AltSound altSound = altSoundService.getAltSound(emuId, altSoundName);
+  @GetMapping("/stream/{gameId}/{name}/{filename}")
+  public ResponseEntity<Resource> handleRequestWithName(@PathVariable("gameId") int gameId, @PathVariable("name") String altSoundName, @PathVariable("filename") String filename) throws IOException {
+    Game game = gameService.getGame(gameId);
+    AltSound altSound = altSoundService.getAltSound(game, altSoundName);
     File file = new File(altSound.getCsvFile().getParentFile(), filename);
     if (file.exists()) {
       FileInputStream in = new FileInputStream(file);

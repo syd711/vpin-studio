@@ -20,19 +20,13 @@ public class VPRegService {
 
   public boolean isValid(Game game) {
     VPRegFile reg = folderLookupService.getVPRegFileForGame(game);
-    if (reg != null) {
-      return reg.isValid();
-    }
-    return false;
+    return reg.isValid();
   }
 
   @Nullable
   public String getVPRegJson(@NonNull Game game) {
     VPRegFile reg = folderLookupService.getVPRegFileForGame(game);
-    if (reg != null) {
-      return reg.toJson();
-    }
-    return null;
+    return reg.toJson();
   }
 
   @Nullable
@@ -42,16 +36,11 @@ public class VPRegService {
 
   public boolean resetHighscores(Game game, long score) {
     VPRegFile vpRegFile = folderLookupService.getVPRegFileForGame(game);
-    if (vpRegFile != null) {
-      return vpRegFile.resetHighscores(score);
-    }
-    return false;
+    return vpRegFile.resetHighscores(score);
   }
 
   public void restore(@NonNull Game game, @NonNull String json) {
     VPRegFile vpRegFile = folderLookupService.getVPRegFileForGame(game);
-    if (vpRegFile != null) {
-      vpRegFile.restore(json);
-    }
+    vpRegFile.restore(json);
   }
 }

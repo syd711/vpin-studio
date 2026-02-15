@@ -252,7 +252,7 @@ public class UniversalUploadService {
           }
           if (!StringUtils.isEmpty(rom)) {
             String altSoundFolder = analysis.getAltSoundFolder();
-            JobDescriptor jobExecutionResult = altSoundService.installAltSound(uploadDescriptor.getEmulatorId(), rom, tempFile, altSoundFolder);
+            JobDescriptor jobExecutionResult = altSoundService.installAltSound(game, rom, tempFile, altSoundFolder);
             uploadDescriptor.setError(jobExecutionResult.getError());
             gameLifecycleService.notifyGameAssetsChanged(assetType, rom);
           }
@@ -319,9 +319,7 @@ public class UniversalUploadService {
           String rom = null;
           if (game != null) {
             rom = game.getRom();
-          }
-          musicService.installMusic(tempFile, uploadDescriptor.getEmulatorId(), analysis, rom, uploadDescriptor.isAcceptAllAudioAsMusic());
-          if (game != null) {
+            musicService.installMusic(tempFile, game, analysis, rom, uploadDescriptor.isAcceptAllAudioAsMusic());
             gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, updatedAssetName);
           }
         }

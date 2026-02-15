@@ -259,7 +259,7 @@ public class AltSound2EditorController implements Initializable {
             btn.setOnAction(event -> {
               fontIcon.setIconLiteral("bi-stop");
 
-              final String fileUrl = client.getAltSoundService().getAudioUrl(altSound, game.getEmulatorId(), item.filename.get());
+              final String fileUrl = client.getAltSoundService().getAudioUrl(altSound, game.getId(), item.filename.get());
               String url = client.getURL(fileUrl);
 
               Media media = new Media(url);

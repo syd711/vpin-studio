@@ -61,10 +61,7 @@ public class HighscoreResolver implements InitializingBean {
         }
         case VPReg: {
           VPRegFile vpRegFileForGame = folderLookupService.getVPRegFileForGame(game);
-          if(vpRegFileForGame != null) {
-            return vpRegFileForGame.getFile();
-          }
-          break;
+          return vpRegFileForGame.getFile();
         }
         case NVRam: {
           return getNvRamFile(game);

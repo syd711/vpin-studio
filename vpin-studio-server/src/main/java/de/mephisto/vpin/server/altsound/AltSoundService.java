@@ -9,7 +9,9 @@ import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.server.emulators.EmulatorService;
-import de.mephisto.vpin.server.games.*;
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.vpx.FolderLookupService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -28,8 +30,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 /**
  * ID,CHANNEL,DUCK,GAIN,LOOP,STOP,NAME,FNAME,GROUP,SHAKER,SERIAL,PRELOAD,STOPCMD
@@ -63,7 +63,7 @@ public class AltSoundService implements InitializingBean {
 
       // auto discovery of non previously detected altSound
       if (!altSoundFolder2AltSound.containsKey(altSoundKey)) {
-        AltSound altSound = AltSoundLoaderFactory.create(altSoundFolder, game.getEmulatorId());
+        AltSound altSound = AltSoundLoaderFactory.create(altSoundFolder);
         if (altSound != null) {
           altSoundFolder2AltSound.put(altSoundKey, altSound);
         }
@@ -75,10 +75,10 @@ public class AltSoundService implements InitializingBean {
 
   @Nullable
   public File getAltSoundFolder(@NonNull Game game) {
-    if (!StringUtils.isEmpty(game.getRomAlias()) && game.getEmulator() != null) {
+    if (!StringUtils.isEmpty(game.getRomAlias())) {
       return folderLookupService.getAltSoundFolder(game, game.getRomAlias());
     }
-    if (!StringUtils.isEmpty(game.getRom()) && game.getEmulator() != null) {
+    if (!StringUtils.isEmpty(game.getRom())) {
       return folderLookupService.getAltSoundFolder(game, game.getRom());
     }
     return null;
@@ -88,7 +88,7 @@ public class AltSoundService implements InitializingBean {
     File folder = getAltSoundFolder(game);
     if (folder != null && folder.exists()) {
       altSoundFolder2AltSound.remove(folder.getAbsolutePath().toLowerCase());
-      LOG.info("Deleting ALTSound folder " + folder.getAbsolutePath());
+      LOG.info("Deleting ALTSound folder {}", folder.getAbsolutePath());
       if (FileUtils.deleteFolder(folder)) {
         return clearCache();
       }
@@ -97,15 +97,17 @@ public class AltSoundService implements InitializingBean {
     return true;
   }
 
-  @NonNull
+  @Nullable
   public AltSound getAltSound(@NonNull Game game) {
     if (isAltSoundAvailable(game)) {
       File altSoundFolder = getAltSoundFolder(game);
-      String altSoundKey = altSoundFolder.getAbsolutePath().toLowerCase();
-      AltSound altSound = altSoundFolder2AltSound.get(altSoundKey);
-      altSound.setFolder(altSoundFolder.getAbsolutePath());
-      altSound = AltSoundLoaderFactory.load(altSound);
-      return altSound;
+      if (altSoundFolder != null) {
+        String altSoundKey = altSoundFolder.getAbsolutePath().toLowerCase();
+        AltSound altSound = altSoundFolder2AltSound.get(altSoundKey);
+        altSound.setFolder(altSoundFolder.getAbsolutePath());
+        altSound = AltSoundLoaderFactory.load(altSound);
+        return altSound;
+      }
     }
     return null;
   }
@@ -121,7 +123,7 @@ public class AltSoundService implements InitializingBean {
         else {
           new AltSoundWriter(altSoundFolder).write(altSound);
         }
-        createAltSound(new File(altSound.getFolder()), altSound.getEmulatorId());
+        createAltSound(new File(altSound.getFolder()));
         gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.ALT_SOUND, game.getRom());
         return true;
       }
@@ -129,33 +131,29 @@ public class AltSoundService implements InitializingBean {
     return false;
   }
 
-  public boolean setAltSoundEnabled(@NonNull String rom, boolean b) {
+  public void setAltSoundEnabled(@NonNull String rom, boolean b) {
     if (!StringUtils.isEmpty(rom)) {
       MameOptions options = mameService.getOptions(rom);
       options.setSoundMode(b ? 1 : 0);
       mameService.saveOptions(options);
-      return true;
     }
-    return false;
   }
 
   public int getAltSoundMode(@NonNull Game game) {
     if (!StringUtils.isEmpty(game.getRom())) {
       MameOptions options = mameService.getOptions(game.getRom());
-      int mode = options.getSoundMode();
-      return mode;
+      return options.getSoundMode();
     }
     return -1;
   }
 
-  public JobDescriptor installAltSound(int emulatorId, @NonNull String rom, @NonNull File archive, @Nullable String archivePath) {
-    GameEmulator gameEmulator = emulatorService.getGameEmulator(emulatorId);
-    File altSoundFolder = new File(folderLookupService.getAltSoundFolder(), rom);
+  public JobDescriptor installAltSound(@NonNull Game game, @NonNull String rom, @NonNull File archive, @Nullable String archivePath) {
+    File altSoundFolder = folderLookupService.getAltSoundFolder(game, rom);
     if (!altSoundFolder.exists() && !altSoundFolder.mkdirs()) {
       return JobDescriptorFactory.error("Failed to create ALT sound directory \"" + altSoundFolder.getAbsolutePath() + "\"");
     }
 
-    LOG.info("Extracting ALT sound to " + altSoundFolder.getAbsolutePath());
+    LOG.info("Extracting ALT sound to {}", altSoundFolder.getAbsolutePath());
 
     PackageUtil.unpackTargetFolder(archive, altSoundFolder, archivePath, Arrays.asList(".ogg", ".mp3", ".wav", ".csv", ".ini"), null);
     setAltSoundEnabled(rom, true);
@@ -181,7 +179,7 @@ public class AltSoundService implements InitializingBean {
 
     List<GameEmulator> vpxGameEmulators = emulatorService.getVpxGameEmulators();
     for (GameEmulator emulator : vpxGameEmulators) {
-      File altSoundFolder = emulator.getAltSoundFolder();
+      File altSoundFolder = new File(emulator.getMameFolder(), "altsound/");
       if (altSoundFolder.exists()) {
         File[] altSoundBundles = altSoundFolder.listFiles(new FilenameFilter() {
           @Override
@@ -191,18 +189,18 @@ public class AltSoundService implements InitializingBean {
         });
         if (altSoundBundles != null) {
           for (File altSoundDir : altSoundBundles) {
-            createAltSound(altSoundDir, emulator.getId());
+            createAltSound(altSoundDir);
           }
         }
       }
     }
-    LOG.info("Clearing cache of " + altSoundFolder2AltSound.size() + " ALTSounds finished, took " + (System.currentTimeMillis() - start) + "ms.");
+    LOG.info("Clearing cache of {} ALTSounds finished, took {}ms.", altSoundFolder2AltSound.size(), System.currentTimeMillis() - start);
     return true;
   }
 
-  private void createAltSound(@Nullable File altSoundDir, int emulatorId) {
+  private void createAltSound(@Nullable File altSoundDir) {
     if (altSoundDir != null) {
-      AltSound altSound = AltSoundLoaderFactory.create(altSoundDir, emulatorId);
+      AltSound altSound = AltSoundLoaderFactory.create(altSoundDir);
       if (altSound != null) {
         altSoundFolder2AltSound.put(altSoundDir.getAbsolutePath().toLowerCase(), altSound);
       }
@@ -214,15 +212,10 @@ public class AltSoundService implements InitializingBean {
 
   /**
    * Only used for streaming
-   *
-   * @param emuId
-   * @param name
-   * @return
    */
-  public AltSound getAltSound(int emuId, String name) {
-    GameEmulator emulator = emulatorService.getGameEmulator(emuId);
-    File folder = new File(emulator.getAltSoundFolder(), name);
-    return AltSoundLoaderFactory.load(folder, emuId);
+  public AltSound getAltSound(Game game, String name) {
+    File folder = folderLookupService.getAltSoundFolder(game, name);
+    return AltSoundLoaderFactory.load(folder);
   }
 
   @Override

@@ -24,14 +24,9 @@ public class FolderLookupService {
   @Autowired
   private SystemService systemService;
 
-  @Nullable
+  @NonNull
   public File getAltSoundFolder(@NonNull Game game, String subfolder) {
-    GameEmulator emulator = game.getEmulator();
-    if (emulator == null) {
-      return null;
-    }
-
-    if (isPreferLegacyFileStructure(emulator)) {
+    if (isPreferLegacyFileStructure(game.getEmulator())) {
       File folder = new File(game.getEmulator().getMameFolder(), "altsound");
       return new File(folder, subfolder);
     }
@@ -39,13 +34,9 @@ public class FolderLookupService {
     return new File(game.getGameFolder(), "altsound/" + subfolder);
   }
 
-  @Nullable
+  @NonNull
   public File getAltColorFolder(@NonNull Game game, String subfolder) {
     GameEmulator emulator = game.getEmulator();
-    if (emulator == null) {
-      return null;
-    }
-
     if (isPreferLegacyFileStructure(emulator)) {
       File folder = new File(game.getEmulator().getMameFolder(), "altcolor");
       return new File(folder, subfolder);
@@ -54,13 +45,9 @@ public class FolderLookupService {
     return new File(game.getGameFolder(), "altcolor/" + subfolder);//TODO wrong for serum
   }
 
-  @Nullable
+  @NonNull
   public File getNvRamFolder(@NonNull Game game) {
     GameEmulator emulator = game.getEmulator();
-    if (emulator == null) {
-      return null;
-    }
-
     if (isPreferLegacyFileStructure(emulator)) {
       return new File(game.getEmulator().getMameFolder(), "nvram");
     }
@@ -68,13 +55,9 @@ public class FolderLookupService {
     return new File(game.getGameFolder(), "pinmame/nvram/");
   }
 
-  @Nullable
+  @NonNull
   public File getRomFolder(@NonNull Game game) {
     GameEmulator emulator = game.getEmulator();
-    if (emulator == null) {
-      return null;
-    }
-
     if (isPreferLegacyFileStructure(emulator)) {
       return new File(game.getEmulator().getMameFolder(), "roms");
     }
@@ -82,13 +65,9 @@ public class FolderLookupService {
     return new File(game.getGameFolder(), "pinmame/roms/");
   }
 
-  @Nullable
+  @NonNull
   public File getScriptsFolder(@NonNull Game game) {
     GameEmulator emulator = game.getEmulator();
-    if (emulator == null) {
-      return null;
-    }
-
     if (isPreferLegacyFileStructure(emulator)) {
       return new File(game.getEmulator().getMameFolder(), "scripts");
     }
@@ -99,10 +78,6 @@ public class FolderLookupService {
   @Nullable
   public File getCfgFolder(@NonNull Game game) {
     GameEmulator emulator = game.getEmulator();
-    if (emulator == null) {
-      return null;
-    }
-
     if (isPreferLegacyFileStructure(emulator)) {
       return new File(game.getEmulator().getMameFolder(), "cfg");
     }
@@ -110,27 +85,26 @@ public class FolderLookupService {
     return new File(game.getGameFolder(), "pinmame/cfg/");
   }
 
-  @Nullable
+  @NonNull
   public File getMusicFolder(@NonNull Game game) {
-    GameEmulator emulator = game.getEmulator();
-    if (emulator == null) {
-      return null;
+    File folder = new File(game.getGameFolder(), "music/");
+
+    if (isPreferLegacyFileStructure(game.getEmulator())) {
+      folder = new File(game.getEmulator().getInstallationFolder(), "Music");
+      if (!StringUtils.isEmpty(game.getRom())) {
+        File musicFolder = new File(folder, game.getRom());
+        if (musicFolder.exists()) {
+          return musicFolder;
+        }
+      }
     }
 
-    if (isPreferLegacyFileStructure(emulator)) {
-      return new File(game.getEmulator().getInstallationFolder(), "Music");
-    }
-
-    return new File(game.getGameFolder(), "pinmame/music/");
+    return folder;
   }
 
-  @Nullable
+  @NonNull
   public File getUserFolder(@NonNull Game game) {
     GameEmulator emulator = game.getEmulator();
-    if (emulator == null) {
-      return null;
-    }
-
     if (isPreferLegacyFileStructure(emulator)) {
       return new File(game.getEmulator().getInstallationFolder(), "User");
     }
@@ -152,13 +126,9 @@ public class FolderLookupService {
    * @param game the game to retrieve the VPReg.stg file for
    * @return the VPReg.stg file or null
    */
-  @Nullable
+  @NonNull
   public VPRegFile getVPRegFileForGame(@NonNull Game game) {
     GameEmulator emulator = game.getEmulator();
-    if (emulator == null) {
-      return null;
-    }
-
     String tableName = game.getTableName();
     ScoringDBMapping highscoreMapping = systemService.getScoringDatabase().getHighscoreMapping(game.getRom());
     if (StringUtils.isEmpty(tableName) && highscoreMapping != null) {
@@ -178,7 +148,7 @@ public class FolderLookupService {
   }
 
   private boolean isPreferLegacyFileStructure(@NonNull GameEmulator emulator) {
-    return emulator.getName().contains("10.8.1");//TODO 10.8.1
+    return true; //emulator.getName().contains("10.8.1");//TODO 10.8.1
   }
 
   public boolean isRomExists(@NonNull Game game) {
@@ -189,7 +159,7 @@ public class FolderLookupService {
   @Nullable
   public File getRomFile(@NonNull Game game) {
     File romFolder = getRomFolder(game);
-    if (!StringUtils.isEmpty(game.getRom()) && romFolder != null) {
+    if (romFolder.exists() && !StringUtils.isEmpty(game.getRom())) {
       return new File(romFolder, game.getRom() + ".zip");
     }
     return null;

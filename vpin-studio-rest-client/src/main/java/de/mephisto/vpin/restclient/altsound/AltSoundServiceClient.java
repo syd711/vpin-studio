@@ -67,7 +67,7 @@ public class AltSoundServiceClient extends VPinStudioClientService {
     }
   }
 
-  public String getAudioUrl(AltSound altSound, int emuId, String item) {
-    return "altsound/stream/" + emuId + "/" + altSound.getName() + "/" + item;
+  public String getAudioUrl(AltSound altSound, int gameId, String item) {
+    return "altsound/stream/" + gameId + "/" + altSound.getName() + "/" + item;
   }
 }
