@@ -78,17 +78,20 @@ public class StudioMediaPlayer {
           List<String> cmds = new ArrayList<>(List.of("vlc.exe",
               "\"" + asset.getUrl().toExternalForm() + "\"",
               "--mouse-hide-timeout=0",
-              "--dummy-quiet",
               "--intf", "rc",
+              "--intf", "dummy",
               "--rc-quiet",
               "--no-qt-privacy-ask",
               "--reset-plugins-cache",
               "--ignore-config",
+              "--aout=directsound",
+              "--directx-audio-device=default",
               "--no-stats",
               "--no-media-library",
               "--no-video-deco",
               "--no-video-title-show",
               "--qt-minimal-view",
+              "--video-on-top",
               "--no-qt-name-in-title",
               "--no-qt-fs-controller",
               "--video-x=" + screenStageX,
@@ -97,6 +100,8 @@ public class StudioMediaPlayer {
               "--height=" + height
           ));
 
+          LOG.info("VLC is playing: {}", asset.getUrl().toExternalForm());
+          LOG.info("VLC command: {}", String.join(" ", cmds));
           if (rotation != 0) {
             cmds.add("--video-filter=transform");
             cmds.add("--transform-type=" + rotation);

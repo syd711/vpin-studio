@@ -2,8 +2,10 @@
 
 ## Changes (including a breaking one!)
 
-- **Pause Menu Settings**: Added separate section for the screenshot preferences there. You can choose now which screens are taken for the screenshot. Note that **you need to review these settings** so that the scoring screenshot works as expected and contains your highscore.
-- **Tutorials Video Player**: The video playback uses the **VLC Media Player** from PinUP Popper now (when found).
+- **Pause Menu**: 
+  - Added separate section for the screenshot preferences there. You can choose now which screens are taken for the screenshot. Note that **you need to review these settings** so that the scoring screenshot works as expected and contains your highscore.
+  - Tutorials Video**: The video playback uses the **VLC Media Player** from PinUP Popper now (when found). This is a first test ballon and might need some refinement. But at least the video playback is now reliable. The VLC player is not shipped with the Studio due to license restrictions.
+  - The videos are played on a separate screen, the "Mute System" option is ignored so that the video is always played with sound.
 - **Asset Manager**: 
   - Fixed possible file lock caused by the media streaming that prohibited the deletion (blind fix).
   - Added same support for playlist media than game media (drag/drop, rename, set as default, delete, conversion...).
