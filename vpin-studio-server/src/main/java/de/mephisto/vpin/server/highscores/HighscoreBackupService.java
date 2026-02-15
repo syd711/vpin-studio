@@ -13,6 +13,7 @@ import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegFile;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegService;
 import de.mephisto.vpin.server.listeners.EventOrigin;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.vpx.FolderLookupService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -54,6 +55,9 @@ public class HighscoreBackupService implements InitializingBean {
 
   @Autowired
   private VPRegService vpRegService;
+
+  @Autowired
+  private FolderLookupService folderLookupService;
 
   public boolean delete(@NonNull String rom, String filename) {
     File folder = new File(systemService.getBackupFolder(), rom);
@@ -267,7 +271,7 @@ public class HighscoreBackupService implements InitializingBean {
 
     switch (highscoreType) {
       case NVRam: {
-        File target = new File(gameEmulator.getNvramFolder(), highscoreBackup.getHighscoreFilename());
+        File target = new File(folderLookupService.getNvRamFolder(game), highscoreBackup.getHighscoreFilename());
         return ZipUtil.writeZippedFile(backupFile, highscoreBackup.getHighscoreFilename(), target);
       }
       case EM: {

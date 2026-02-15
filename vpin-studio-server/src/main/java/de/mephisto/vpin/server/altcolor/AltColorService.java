@@ -11,6 +11,7 @@ import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.vpx.FolderLookupService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -46,6 +47,9 @@ public class AltColorService implements InitializingBean {
 
   @Autowired
   private GameLifecycleService gameLifecycleService;
+
+  @Autowired
+  private FolderLookupService folderLookupService;
 
   public void setAltColorEnabled(@NonNull Game game, boolean b) {
     String rom = game.getRom();
@@ -92,14 +96,7 @@ public class AltColorService implements InitializingBean {
   }
 
   private File getAltColorFolder(@NonNull Game game, String subfolder) {
-    if (Features.IS_STANDALONE) {
-      return new File(game.getGameFolder(), "vpinmame/altcolor/" + subfolder);
-    }
-    else if (game.getEmulator() != null) {
-      return new File(game.getEmulator().getAltColorFolder(), subfolder);
-    }
-    // else
-    return null;
+    return folderLookupService.getAltColorFolder(game, subfolder);
   }
 
   public File getAltColorFolder(@NonNull Game game) {
