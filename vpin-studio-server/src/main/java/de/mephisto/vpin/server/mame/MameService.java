@@ -251,23 +251,23 @@ public class MameService implements InitializingBean {
   //---------------------------------
 
   public boolean deleteCfg(@NonNull Game game) {
-    File cfgFile = game.getCfgFile();
+    File cfgFile = folderLookupService.getCfgFile(game);
     return cfgFile != null && cfgFile.exists() && FileUtils.delete(cfgFile);
   }
 
   public boolean deleteRom(@NonNull Game game) {
-    File romFile = game.getRomFile();
+    File romFile = folderLookupService.getRomFile(game);
     return romFile != null && romFile.exists() && FileUtils.delete(romFile);
   }
 
   //--------------------------------
 
-  public void installRom(UploadDescriptor uploadDescriptor, Game game, File tempFile, UploaderAnalysis analysis) throws IOException {
+  public void installRom(UploadDescriptor uploadDescriptor, Game game, GameEmulator emulator, File tempFile, UploaderAnalysis analysis) throws IOException {
     File romFolder = game != null ? folderLookupService.getRomFolder(game) : getRomsFolder();
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.ZIP, romFolder);
   }
 
-  public void installNvRam(UploadDescriptor uploadDescriptor, Game game, File tempFile, UploaderAnalysis analysis) throws IOException {
+  public void installNvRam(UploadDescriptor uploadDescriptor, Game game, GameEmulator emulator, File tempFile, UploaderAnalysis analysis) throws IOException {
     File nvramFolder = game != null ? folderLookupService.getNvRamFolder(game) : getNvRamFolder();
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.NV, nvramFolder);
   }
@@ -319,7 +319,7 @@ public class MameService implements InitializingBean {
     }
   }
 
-  public void installCfg(UploadDescriptor uploadDescriptor, Game game, File tempFile, UploaderAnalysis analysis) throws IOException {
+  public void installCfg(UploadDescriptor uploadDescriptor, Game game, GameEmulator emulator, File tempFile, UploaderAnalysis analysis) throws IOException {
     File cfgFolder = game != null ? folderLookupService.getCfgFolder(game) : getCfgFolder();
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.CFG, cfgFolder);
   }

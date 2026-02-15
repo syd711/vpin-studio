@@ -329,7 +329,7 @@ public class UniversalUploadService {
       }
       case ROM: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.ROM) == null) {
-          mameService.installRom(uploadDescriptor, gameEmulator, tempFile, analysis);
+          mameService.installRom(uploadDescriptor, game, gameEmulator, tempFile, analysis);
           gameLifecycleService.notifyGameAssetsChanged(assetType, updatedAssetName);
         }
         break;
@@ -343,14 +343,14 @@ public class UniversalUploadService {
       }
       case NV: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.NV) == null) {
-          mameService.installNvRam(uploadDescriptor, gameEmulator, tempFile, analysis);
+          mameService.installNvRam(uploadDescriptor, game, gameEmulator, tempFile, analysis);
           gameLifecycleService.notifyGameAssetsChanged(assetType, updatedAssetName);
         }
         break;
       }
       case CFG: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.CFG) == null) {
-          mameService.installCfg(uploadDescriptor, gameEmulator, tempFile, analysis);
+          mameService.installCfg(uploadDescriptor, game, gameEmulator, tempFile, analysis);
           gameLifecycleService.notifyGameAssetsChanged(assetType, updatedAssetName);
         }
         break;

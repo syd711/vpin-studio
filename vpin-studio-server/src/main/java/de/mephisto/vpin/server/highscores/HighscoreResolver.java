@@ -11,6 +11,7 @@ import de.mephisto.vpin.server.highscores.parsing.text.TextHighscoreAdapters;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegFile;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegService;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.vpx.FolderLookupService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
@@ -43,6 +44,9 @@ public class HighscoreResolver implements InitializingBean {
   @Autowired
   private VPRegService vpRegService;
 
+  @Autowired
+  private FolderLookupService folderLookupService;
+
 
   //--------------------------------------------
   // Resolution of highscore files
@@ -53,10 +57,14 @@ public class HighscoreResolver implements InitializingBean {
     if (highscoreType != null) {
       switch (highscoreType) {
         case EM: {
-          return getHighscoreTextFile(game);
+          return folderLookupService.getHighscoreTextFile(game);
         }
         case VPReg: {
-          return game.getEmulator().getVPRegFile();
+          VPRegFile vpRegFileForGame = folderLookupService.getVPRegFileForGame(game);
+          if(vpRegFileForGame != null) {
+            return vpRegFileForGame.getFile();
+          }
+          break;
         }
         case NVRam: {
           return getNvRamFile(game);
@@ -70,20 +78,12 @@ public class HighscoreResolver implements InitializingBean {
   }
 
   @Nullable
-  public File getHighscoreTextFile(Game game) {
-    if (!StringUtils.isEmpty(game.getHsFileName())) {
-      return new File(game.getEmulator().getUserFolder(), game.getHsFileName());
-    }
-    return null;
-  }
-
-  @Nullable
   private File getAlternateHighscoreTextFile(Game game, @NonNull String name) {
     if (!StringUtils.isEmpty(name)) {
       if (!name.endsWith(".txt")) {
         name = name + ".txt";
       }
-      return new File(game.getEmulator().getUserFolder(), name);
+      return new File(folderLookupService.getUserFolder(game), name);
     }
     return null;
   }
@@ -119,7 +119,7 @@ public class HighscoreResolver implements InitializingBean {
       return null;
     }
 
-    File nvRamFolder = new File(game.getEmulator().getMameDirectory(), "nvram");
+    File nvRamFolder = folderLookupService.getNvRamFolder(game);
     String rom = game.getRom();
     File defaultNvRam = new File(nvRamFolder, rom + ".nv");
     if (defaultNvRam.exists() && game.getNvOffset() == 0) {
@@ -145,7 +145,7 @@ public class HighscoreResolver implements InitializingBean {
   //--------------------------------------------
 
   public boolean deleteTextScore(Game game, long score) {
-    File hsFile = getHighscoreTextFile(game);
+    File hsFile = folderLookupService.getHighscoreTextFile(game);
     if ((hsFile == null || !hsFile.exists())) {
       hsFile = getAlternateHighscoreTextFile(game, game.getTableName());
     }
@@ -225,7 +225,7 @@ public class HighscoreResolver implements InitializingBean {
   }
 
   private String readHSFileHighscore(@NonNull Game game, @NonNull HighscoreMetadata metadata) throws IOException {
-    File hsFile = getHighscoreTextFile(game);
+    File hsFile = folderLookupService.getHighscoreTextFile(game);
     if ((hsFile == null || !hsFile.exists())) {
       hsFile = getAlternateHighscoreTextFile(game, game.getTableName());
     }

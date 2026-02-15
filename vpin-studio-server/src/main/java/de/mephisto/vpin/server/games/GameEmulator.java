@@ -29,6 +29,7 @@ public class GameEmulator {
   private String mediaDirectory;
 
   private String mameDirectory;
+  private String romDirectory;
 
   private String keepDisplays;
 
@@ -202,6 +203,14 @@ public class GameEmulator {
 
   public String getInstallationDirectory() {
     return installationDirectory;
+  }
+
+  public String getRomDirectory() {
+    return romDirectory;
+  }
+
+  public void setRomDirectory(String romDirectory) {
+    this.romDirectory = romDirectory;
   }
 
   @Nullable

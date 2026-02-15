@@ -383,6 +383,10 @@ public class VPRegFile {
     return scoreParsingSummary != null;
   }
 
+  public File getFile() {
+    return vpregFile;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;

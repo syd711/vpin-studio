@@ -720,31 +720,6 @@ public class Game {
     this.altSoundAvailable = altSoundAvailable;
   }
 
-  // getAltSoundFolder() -> moved in altSoundService
-
-  // getAltColorFolder() -> moved in altColorService
-
-  // getMusicFolder() -> moved in musicService
-
-  @Nullable
-  @JsonIgnore
-  public File getCfgFile() {
-    if (!StringUtils.isEmpty(this.getRom())) {
-      return new File(new File(emulator.getMameFolder(), "cfg"), this.getRom() + ".cfg");
-    }
-    return null;
-  }
-
-  @Nullable
-  @JsonIgnore
-  public File getRomFile() {
-    if (!StringUtils.isEmpty(this.getRom()) && emulator.getRomDirectory() != null) {
-      return new File(emulator.getRomDirectory(), this.getRom() + ".zip");
-    }
-    return null;
-  }
-
-
   /**
    * Only relevant for tables that are located in a separate folder
    *
@@ -764,11 +739,6 @@ public class Game {
       }
     }
     return null;
-  }
-
-  public boolean isRomExists() {
-    File romFile = getRomFile();
-    return romFile != null && romFile.exists();
   }
 
   @NonNull

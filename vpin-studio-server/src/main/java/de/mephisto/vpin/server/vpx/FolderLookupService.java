@@ -138,6 +138,13 @@ public class FolderLookupService {
     return new File(game.getGameFolder(), "user/");
   }
 
+  public File getHighscoreTextFile(Game game) {
+    if (!StringUtils.isEmpty(game.getHsFileName())) {
+      return new File(getUserFolder(game), game.getHsFileName());
+    }
+    return null;
+  }
+
   /**
    * Lookup the game VPReg.stg file based on the game file first.
    * Check the emulator next.
@@ -172,5 +179,28 @@ public class FolderLookupService {
 
   private boolean isPreferLegacyFileStructure(@NonNull GameEmulator emulator) {
     return emulator.getName().contains("10.8.1");//TODO 10.8.1
+  }
+
+  public boolean isRomExists(@NonNull Game game) {
+    File romFile = getRomFile(game);
+    return romFile != null && romFile.exists();
+  }
+
+  @Nullable
+  public File getRomFile(@NonNull Game game) {
+    File romFolder = getRomFolder(game);
+    if (!StringUtils.isEmpty(game.getRom()) && romFolder != null) {
+      return new File(romFolder, game.getRom() + ".zip");
+    }
+    return null;
+  }
+
+  @Nullable
+  public File getCfgFile(@NonNull Game game) {
+    File folder = getCfgFolder(game);
+    if (!StringUtils.isEmpty(game.getRom()) && folder != null) {
+      return new File(folder, game.getRom() + ".cfg");
+    }
+    return null;
   }
 }

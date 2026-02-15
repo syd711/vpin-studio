@@ -150,7 +150,7 @@ public class AltSoundService implements InitializingBean {
 
   public JobDescriptor installAltSound(int emulatorId, @NonNull String rom, @NonNull File archive, @Nullable String archivePath) {
     GameEmulator gameEmulator = emulatorService.getGameEmulator(emulatorId);
-    File altSoundFolder = new File(gameEmulator.getAltSoundFolder(), rom);
+    File altSoundFolder = new File(folderLookupService.getAltSoundFolder(), rom);
     if (!altSoundFolder.exists() && !altSoundFolder.mkdirs()) {
       return JobDescriptorFactory.error("Failed to create ALT sound directory \"" + altSoundFolder.getAbsolutePath() + "\"");
     }
@@ -180,8 +180,8 @@ public class AltSoundService implements InitializingBean {
     this.altSoundFolder2AltSound.clear();
 
     List<GameEmulator> vpxGameEmulators = emulatorService.getVpxGameEmulators();
-    for (GameEmulator vpxGameEmulator : vpxGameEmulators) {
-      File altSoundFolder = vpxGameEmulator.getAltSoundFolder();
+    for (GameEmulator emulator : vpxGameEmulators) {
+      File altSoundFolder = emulator.getAltSoundFolder();
       if (altSoundFolder.exists()) {
         File[] altSoundBundles = altSoundFolder.listFiles(new FilenameFilter() {
           @Override
@@ -191,7 +191,7 @@ public class AltSoundService implements InitializingBean {
         });
         if (altSoundBundles != null) {
           for (File altSoundDir : altSoundBundles) {
-            createAltSound(altSoundDir, vpxGameEmulator.getId());
+            createAltSound(altSoundDir, emulator.getId());
           }
         }
       }

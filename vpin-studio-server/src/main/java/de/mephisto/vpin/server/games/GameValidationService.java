@@ -32,6 +32,7 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vps.VpsService;
+import de.mephisto.vpin.server.vpx.FolderLookupService;
 import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -48,8 +49,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static de.mephisto.vpin.server.VPinStudioServer.Features;
 import static de.mephisto.vpin.restclient.validation.GameValidationCode.*;
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 /**
  * See ValidationTexts
@@ -102,6 +103,9 @@ public class GameValidationService implements InitializingBean, PreferenceChange
   @Autowired
   private VPXService vpxService;
 
+  @Autowired
+  private FolderLookupService folderLookupService;
+
   private ValidationSettings validationSettings;
   private IgnoredValidationSettings ignoredValidationSettings;
 
@@ -139,7 +143,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (isVPX && isValidationEnabled(game, GameValidationCode.CODE_ROM_NOT_EXISTS)) {
-      if (!game.isRomExists() && game.isRomRequired()) {
+      if (game.isRomRequired() && !folderLookupService.isRomExists(game)) {
         result.add(ValidationStateFactory.create(GameValidationCode.CODE_ROM_NOT_EXISTS));
         if (findFirst) {
           return result;
@@ -187,7 +191,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
     if (isVPX && isValidationEnabled(game, GameValidationCode.CODE_SCRIPT_FILES_MISSING)) {
       if (game.getScripts() != null) {
-        File scriptFolder = game.getEmulator().getScriptsFolder();
+        File scriptFolder = folderLookupService.getScriptsFolder(game);
         for (String script : game.getScripts()) {
           File scriptFile = new File(game.getGameFile().getParentFile(), script);
           if (!scriptFile.exists()) {
@@ -308,7 +312,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     if (isVPX && isValidationEnabled(game, CODE_SCRIPT_CONTROLLER_STOP_MISSING)) {
       HighscoreType highscoreType = game.getHighscoreType();
       if (highscoreType == null || highscoreType.equals(HighscoreType.NVRam)) {
-        File romFile = game.getRomFile();
+        File romFile = folderLookupService.getRomFile(game);
         if (romFile != null && romFile.exists()) {
           if (game.isFoundTableExit() && !game.isFoundControllerStop()) {
             result.add(ValidationStateFactory.create(GameValidationCode.CODE_SCRIPT_CONTROLLER_STOP_MISSING));

@@ -184,7 +184,7 @@ public class HighscoreBackupService implements InitializingBean {
 
       //store highscore
       //zip EM file
-      File highscoreTextFile = highscoreResolver.getHighscoreTextFile(game);
+      File highscoreTextFile = folderLookupService.getHighscoreTextFile(game);
       if (highscoreTextFile != null && highscoreTextFile.exists()) {
         ZipUtil.zipFile(highscoreTextFile, highscoreTextFile.getName(), zipOut);
         highscoreWritten = true;
@@ -275,7 +275,7 @@ public class HighscoreBackupService implements InitializingBean {
         return ZipUtil.writeZippedFile(backupFile, highscoreBackup.getHighscoreFilename(), target);
       }
       case EM: {
-        File target = new File(gameEmulator.getUserFolder(), highscoreBackup.getHighscoreFilename());
+        File target = new File(folderLookupService.getUserFolder(game), highscoreBackup.getHighscoreFilename());
         return ZipUtil.writeZippedFile(backupFile, highscoreBackup.getHighscoreFilename(), target);
       }
       case VPReg: {
