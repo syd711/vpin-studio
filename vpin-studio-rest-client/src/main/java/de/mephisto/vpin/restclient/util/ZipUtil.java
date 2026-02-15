@@ -163,9 +163,8 @@ public class ZipUtil {
     }
 
     if (fileToZip.isDirectory()) {
-      LOG.info("Zipping " + fileToZip.getCanonicalPath());
-
       if (fileName.endsWith("/")) {
+        LOG.info("Zipping {} as {}", fileToZip.getCanonicalPath(), fileName);
         zipOut.putNextEntry(new ZipEntry(fileName));
         zipOut.closeEntry();
       }
@@ -183,6 +182,7 @@ public class ZipUtil {
       return;
     }
 
+    LOG.info("Zipping {} as {}", fileToZip.getCanonicalPath(), fileName);
     FileInputStream fis = new FileInputStream(fileToZip);
     ZipEntry zipEntry = new ZipEntry(fileName);
     zipOut.putNextEntry(zipEntry);

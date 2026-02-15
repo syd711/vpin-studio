@@ -466,10 +466,11 @@ public class UniversalUploadService {
       }
 
       String highscoreBackupZipEntry = analysis.getFileNameWithPathForExtension(HighscoreBackupService.FILE_SUFFIX);
-      if (!StringUtils.isEmpty(highscoreBackupZipEntry)) {
+      Game game = gameService.getGame(uploadDescriptor.getGameId());
+      if (game != null && !StringUtils.isEmpty(highscoreBackupZipEntry)) {
         File highscoreBackupTempFile = VpaArchiveUtil.extractFile(zipFile, highscoreBackupZipEntry);
         uploadDescriptor.getTempFiles().add(highscoreBackupTempFile);
-        highscoreBackupService.restoreBackupFile(gameEmulator, highscoreBackupTempFile);
+        highscoreBackupService.restoreBackupFile(game, gameEmulator, highscoreBackupTempFile);
       }
     }
 

@@ -50,7 +50,7 @@ public class VPRegFile {
   private ScoreParsingSummary scoreParsingSummary;
 
 
-  protected VPRegFile(File vpregFile, String rom, String tablename) {
+  public VPRegFile(File vpregFile, String rom, String tablename) {
     this.vpregFile = vpregFile;
     this.rom = rom;
     this.tablename = tablename;

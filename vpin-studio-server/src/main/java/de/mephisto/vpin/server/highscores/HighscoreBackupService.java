@@ -26,6 +26,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -37,6 +39,7 @@ public class HighscoreBackupService implements InitializingBean {
 
   public static final String FILE_SUFFIX = "hsbckp";
   public static final String DESCRIPTOR_JSON = "descriptor.json";
+  public static final String VPREG_STG_JSON = "vpreg-stg.json";
 
   private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 
@@ -103,7 +106,7 @@ public class HighscoreBackupService implements InitializingBean {
 
     File backupRomFolder = new File(systemService.getBackupFolder(), rom);
     File backupFile = new File(backupRomFolder, filename);
-    boolean result = restoreBackupFile(game.getEmulator(), backupFile);
+    boolean result = restoreBackupFile(game, game.getEmulator(), backupFile);
     if (result) {
       highscoreService.setPauseHighscoreEvents(true);
       for (Game allRomGames : games) {
@@ -161,7 +164,7 @@ public class HighscoreBackupService implements InitializingBean {
 
     String json = objectMapper.writeValueAsString(backup);
     Files.write(descriptorFile.toPath(), json.getBytes());
-    LOG.info("Written temporary highscore export descriptor file " + descriptorFile.getAbsolutePath());
+    LOG.info("Written temporary highscore export descriptor file {}", descriptorFile.getAbsolutePath());
     return descriptorFile;
   }
 
@@ -210,7 +213,7 @@ public class HighscoreBackupService implements InitializingBean {
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to create highscore archive file: " + e.getMessage(), e);
+      LOG.error("Failed to create highscore archive file: {}", e.getMessage(), e);
     }
     return highscoreWritten;
   }
@@ -258,7 +261,7 @@ public class HighscoreBackupService implements InitializingBean {
     return null;
   }
 
-  public boolean restoreBackupFile(@NonNull GameEmulator gameEmulator, @NonNull File backupFile) {
+  public boolean restoreBackupFile(@NonNull Game game, @NonNull GameEmulator gameEmulator, @NonNull File backupFile) {
     HighscoreBackup highscoreBackup = readBackupFile(backupFile);
     HighscoreType highscoreType = highscoreBackup.getHighscoreType();
 
@@ -272,21 +275,21 @@ public class HighscoreBackupService implements InitializingBean {
         return ZipUtil.writeZippedFile(backupFile, highscoreBackup.getHighscoreFilename(), target);
       }
       case VPReg: {
-        //TODO 10.8.1
-//        try {
-//          String json = ZipUtil.readZipFile(backupFile, VPREG_STG_JSON);
-//          vpRegService.restore(game, json);
-//          vpRegFile.restore(json);
-//          LOG.info("Imported VPReg.stg data from " + backupFile.getParentFile().getAbsolutePath());
-//          return true;
-//        }
-//        catch (Exception e) {
-//          LOG.error("Failed to restore backup for VPReg.stg file and rom " + rom + ": " + e.getMessage(), e);
-//        }
+        try {
+          String json = ZipUtil.readZipFile(backupFile, VPREG_STG_JSON);
+          if (!StringUtils.isEmpty(json)) {
+            vpRegService.restore(game, json);
+            LOG.info("Imported VPReg.stg data from {}", backupFile.getParentFile().getAbsolutePath());
+          }
+          return true;
+        }
+        catch (Exception e) {
+          LOG.error("Failed to restore backup for VPReg.stg file: {}", e.getMessage(), e);
+        }
         break;
       }
       default: {
-        throw new UnsupportedOperationException("Unkown highscore type to restore: " + highscoreType);
+        throw new UnsupportedOperationException("Unknown highscore type to restore: " + highscoreType);
       }
     }
     return false;

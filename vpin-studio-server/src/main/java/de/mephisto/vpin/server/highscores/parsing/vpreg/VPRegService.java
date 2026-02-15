@@ -1,13 +1,11 @@
 package de.mephisto.vpin.server.highscores.parsing.vpreg;
 
-import de.mephisto.vpin.restclient.system.ScoringDBMapping;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
-import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.vpx.FolderLookupService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +25,12 @@ public class VPRegService {
   private EmulatorService emulatorService;
 
   @Autowired
-  private SystemService systemService;
+  private FolderLookupService folderLookupService;
 
   private final Map<Integer, List<String>> vpRegEntries = new HashMap<>();
 
   public boolean isValid(Game game) {
-    VPRegFile reg = getVPRegFileForGame(game);
+    VPRegFile reg = folderLookupService.getVPRegFileForGame(game);
     if (reg != null) {
       return reg.isValid();
     }
@@ -41,7 +39,7 @@ public class VPRegService {
 
   @Nullable
   public String getVPRegJson(@NonNull Game game) {
-    VPRegFile reg = getVPRegFileForGame(game);
+    VPRegFile reg = folderLookupService.getVPRegFileForGame(game);
     if (reg != null) {
       return reg.toJson();
     }
@@ -50,15 +48,22 @@ public class VPRegService {
 
   @Nullable
   public VPRegFile getVPRegFile(@NonNull Game game) {
-    return getVPRegFileForGame(game);
+    return folderLookupService.getVPRegFileForGame(game);
   }
 
   public boolean resetHighscores(Game game, long score) {
-    VPRegFile vpRegFile = getVPRegFileForGame(game);
+    VPRegFile vpRegFile = folderLookupService.getVPRegFileForGame(game);
     if (vpRegFile != null) {
       return vpRegFile.resetHighscores(score);
     }
     return false;
+  }
+
+  public void restore(@NonNull Game game, @NonNull String json) {
+    VPRegFile vpRegFile = folderLookupService.getVPRegFileForGame(game);
+    if (vpRegFile != null) {
+      vpRegFile.restore(json);
+    }
   }
 
   public void refreshVPRegEntries() {
@@ -75,40 +80,5 @@ public class VPRegService {
     catch (Exception e) {
       LOG.error("Failed to refresh emulator VPReg entries: " + e.getMessage(), e);
     }
-  }
-
-  /**
-   * Lookup the game VPReg.stg file based on the game file first.
-   * Check the emulator next.
-   *
-   * @param game the game to retrieve the VPReg.stg file for
-   * @return the VPReg.stg file or null
-   */
-  @Nullable
-  private VPRegFile getVPRegFileForGame(@NonNull Game game) {
-    GameEmulator emulator = game.getEmulator();
-    if (emulator == null) {
-      return null;
-    }
-
-    String tableName = game.getTableName();
-    ScoringDBMapping highscoreMapping = systemService.getScoringDatabase().getHighscoreMapping(game.getRom());
-    if (StringUtils.isEmpty(tableName) && highscoreMapping != null) {
-      tableName = highscoreMapping.getTableName();
-    }
-
-    File stgFile = new File(game.getGameFile().getParentFile(), "user/VPReg.stg");
-    VPRegFile reg = new VPRegFile(stgFile, game.getRom(), tableName);
-    if (reg.isValid()) {
-      return reg;
-    }
-
-    stgFile = emulator.getVPRegFile();
-    reg = new VPRegFile(stgFile, game.getRom(), tableName);
-    if (reg.isValid()) {
-      return reg;
-    }
-
-    return null;
   }
 }

@@ -11,6 +11,7 @@ import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.*;
 import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.vpx.FolderLookupService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -50,6 +51,9 @@ public class AltSoundService implements InitializingBean {
   @Autowired
   private GameLifecycleService gameLifecycleService;
 
+  @Autowired
+  private FolderLookupService folderLookupService;
+
   private final Map<String, AltSound> altSoundFolder2AltSound = new ConcurrentHashMap<>();
 
   public boolean isAltSoundAvailable(@NonNull Game game) {
@@ -60,37 +64,28 @@ public class AltSoundService implements InitializingBean {
       // auto discovery of non previously detected altSound
       if (!altSoundFolder2AltSound.containsKey(altSoundKey)) {
         AltSound altSound = AltSoundLoaderFactory.create(altSoundFolder, game.getEmulatorId());
-        altSoundFolder2AltSound.put(altSoundKey, altSound);
+        if (altSound != null) {
+          altSoundFolder2AltSound.put(altSoundKey, altSound);
+        }
       }
       return altSoundFolder2AltSound.get(altSoundKey) != null;
     }
     return false;
   }
 
-  private File getAltSoundFolder(@NonNull Game game, String subfolder) {
-    if (Features.IS_STANDALONE) {
-      return new File(game.getGameFolder(), "vpinmame/altsound/" + subfolder);
-    }
-    else if (game.getEmulator() != null) {
-      return new File(game.getEmulator().getAltSoundFolder(), subfolder);
-    }
-    // else
-    return null;
-  }
-
   @Nullable
   public File getAltSoundFolder(@NonNull Game game) {
     if (!StringUtils.isEmpty(game.getRomAlias()) && game.getEmulator() != null) {
-      return getAltSoundFolder(game, game.getRomAlias());
+      return folderLookupService.getAltSoundFolder(game, game.getRomAlias());
     }
     if (!StringUtils.isEmpty(game.getRom()) && game.getEmulator() != null) {
-      return getAltSoundFolder(game, game.getRom());
+      return folderLookupService.getAltSoundFolder(game, game.getRom());
     }
     return null;
   }
 
   public boolean delete(@NonNull Game game) {
-    File folder  = getAltSoundFolder(game);
+    File folder = getAltSoundFolder(game);
     if (folder != null && folder.exists()) {
       altSoundFolder2AltSound.remove(folder.getAbsolutePath().toLowerCase());
       LOG.info("Deleting ALTSound folder " + folder.getAbsolutePath());
