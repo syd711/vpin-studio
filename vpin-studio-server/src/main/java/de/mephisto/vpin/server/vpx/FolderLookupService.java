@@ -145,10 +145,6 @@ public class FolderLookupService {
     return new VPRegFile(stgFile, game.getRom(), tableName);
   }
 
-  private boolean isPreferLegacyFileStructure(@NonNull GameEmulator emulator) {
-    return true; //emulator.getName().contains("10.8.1");//TODO 10.8.1
-  }
-
   public boolean isRomExists(@NonNull Game game) {
     File romFile = getRomFile(game);
     return romFile != null && romFile.exists();
@@ -170,5 +166,9 @@ public class FolderLookupService {
       return new File(folder, game.getRom() + ".cfg");
     }
     return null;
+  }
+
+  private boolean isPreferLegacyFileStructure(@NonNull GameEmulator emulator) {
+    return true; //emulator.getName().contains("10.8.1");//TODO 10.8.1
   }
 }
