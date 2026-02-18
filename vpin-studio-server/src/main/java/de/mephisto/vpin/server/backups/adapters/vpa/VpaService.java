@@ -111,14 +111,20 @@ public class VpaService implements InitializingBean {
   }
 
   //-------------------------------
-
   public void createBackup(BackupPackageInfo packageInfo,
                            JobDescriptor jobDescriptor,
                            BiConsumer<File, String> zipOut,
                            Game game, TableDetails tableDetails) throws IOException {
-    File gameFolder = game.getGameFile().getParentFile();
-
     BackupSettings backupSettings = preferencesService.getJsonPreference(PreferenceNames.BACKUP_SETTINGS, BackupSettings.class);
+    backup(packageInfo, jobDescriptor, zipOut, game, tableDetails, backupSettings);
+  }
+
+  private void backup(BackupPackageInfo packageInfo,
+                      JobDescriptor jobDescriptor,
+                      BiConsumer<File, String> zipOut,
+                      Game game, TableDetails tableDetails,
+                      BackupSettings backupSettings) throws IOException {
+    File gameFolder = game.getGameFile().getParentFile();
 
     File romFile = folderLookupService.getRomFile(game);
     if (romFile != null && backupSettings.isRom() && romFile.exists()) {
