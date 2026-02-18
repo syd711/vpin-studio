@@ -22,9 +22,9 @@ import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
-import de.mephisto.vpin.server.assets.AssetService;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
+import de.mephisto.vpin.server.assets.AssetService;
 import de.mephisto.vpin.server.directb2s.BackglassService;
 import de.mephisto.vpin.server.dmd.DMDDeviceIniService;
 import de.mephisto.vpin.server.dmd.DMDService;
@@ -46,6 +46,7 @@ import de.mephisto.vpin.server.vps.VpsService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -296,12 +297,12 @@ public class GameMediaService extends MediaService {
       }
 
       if (!existingVPXFile.delete()) {
-        LOG.error("Failed to delete existing old game file \"" + existingVPXFile.getAbsolutePath() + "\"");
+        LOG.error("Failed to delete existing old game file \"{}\"", existingVPXFile.getAbsolutePath());
         throw new Exception("Failed to delete existing old game file \"" + existingVPXFile.getName() + "\"");
       }
     }
     else {
-      LOG.warn("VPX file to overwrite \"" + existingVPXFile.getAbsolutePath() + "\" was not found.");
+      LOG.warn("VPX file to overwrite \"{}\" was not found.", existingVPXFile.getAbsolutePath());
     }
 
     //delete existing .vbs file
@@ -319,21 +320,21 @@ public class GameMediaService extends MediaService {
         vpxFileName = uploadDescriptor.getOriginalUploadFileName();
       }
       target = new File(existingVPXFile.getParentFile(), vpxFileName);
-      LOG.info("Resolved target VPX file \"" + target.getAbsolutePath() + "\"");
+      LOG.info("Resolved target VPX file \"{}\"", target.getAbsolutePath());
     }
 
     //copy file
     org.apache.commons.io.FileUtils.copyFile(temporaryVPXFile, target);
-    LOG.info("Copied temporary VPX file \"" + temporaryVPXFile.getAbsolutePath() + "\" to target \"" + target.getAbsolutePath() + "\"");
+    LOG.info("Copied temporary VPX file \"{}\" to target \"{}\"", temporaryVPXFile.getAbsolutePath(), target.getAbsolutePath());
 
     //keep modification date
     if (keepModificationDate) {
       boolean b = target.setLastModified(existingModifiationDate);
       if (b) {
-        LOG.info("Reverted modification of VPX file \"" + temporaryVPXFile.getAbsolutePath() + "\" to \"" + new Date(existingModifiationDate) + "\"");
+        LOG.info("Reverted modification of VPX file \"{}\" to \"{}\"", temporaryVPXFile.getAbsolutePath(), new Date(existingModifiationDate));
       }
       else {
-        LOG.warn("Revetring modification of VPX file \"" + temporaryVPXFile.getAbsolutePath() + "\" failed.");
+        LOG.warn("Revetring modification of VPX file \"{}\" failed.", temporaryVPXFile.getAbsolutePath());
       }
     }
 
@@ -353,7 +354,7 @@ public class GameMediaService extends MediaService {
       name = oldName.substring(0, oldName.lastIndexOf("\\") + 1) + target.getName();
     }
 
-    LOG.info("Updated database filename to \"" + name + "\"");
+    LOG.info("Updated database filename to \"{}\"", name);
     tableDetails.setGameFileName(name);
     if (!keepExistingDisplayName) {
       tableDetails.setGameDisplayName(FilenameUtils.getBaseName(analysis.getTableFileName(uploadDescriptor.getOriginalUploadFileName())));
@@ -629,11 +630,11 @@ public class GameMediaService extends MediaService {
         }
 
         String suffix = FilenameUtils.getExtension(mediaFile);
-        File out = uniqueMediaAsset(game, screen, suffix, true, true);
+        File out = uniqueMediaAsset(game, screen, suffix);
         if (uploadDescriptor.getUploadType() != null && uploadDescriptor.getUploadType().equals(UploadType.uploadAndReplace)) {
           out = new File(frontendService.getMediaFolder(game, screen, suffix, true), game.getGameName() + "." + suffix);
           if (out.exists() && !out.delete()) {
-            out = uniqueMediaAsset(game, screen, suffix, true, true);
+            out = uniqueMediaAsset(game, screen, suffix);
           }
         }
 
@@ -859,17 +860,17 @@ public class GameMediaService extends MediaService {
 
                   if (mediaFile.exists() && !mediaFile.delete()) {
                     success = false;
-                    LOG.warn("Failed to delete media asset \"" + mediaFile.getAbsolutePath() + "\" for \"" + game.getGameDisplayName() + "\"");
+                    LOG.warn("Failed to delete media asset \"{}\" for \"{}\"", mediaFile.getAbsolutePath(), game.getGameDisplayName());
                   }
                 }
               }
             }
             else {
-              LOG.info("Deletion of assets has been skipped, because there are " + duplicateGameNameTables.size() + " tables with the same GameName \"" + game.getGameName() + "\"");
+              LOG.info("Deletion of assets has been skipped, because there are {} tables with the same GameName \"{}\"", duplicateGameNameTables.size(), game.getGameName());
             }
           }
 
-          LOG.info("Deleted \"" + game.getGameDisplayName() + "\" from frontend.");
+          LOG.info("Deleted \"{}\" from frontend.", game.getGameDisplayName());
           gameLifecycleService.notifyGameDeleted(game.getId());
         }
 
@@ -886,29 +887,30 @@ public class GameMediaService extends MediaService {
       }
     }
     catch (Exception e) {
-      LOG.error("Game deletion failed: " + e.getMessage(), e);
+      LOG.error("Game deletion failed: {}", e.getMessage(), e);
     }
     LOG.info("*********** /Game Deletion End **********");
     return success;
   }
 
   //--------------------------------------
-
-  @Override
-  public File uniqueMediaAsset(int gameId, VPinScreen screen, String suffix, boolean createFolder, boolean append) {
-    //Game game = gameService.getGame(gameId);
-    Game game = frontendService.getOriginalGame(gameId);
+  private File uniqueMediaAsset(Game game, VPinScreen screen, String suffix) {
     if (game != null) {
-      return uniqueMediaAsset(game, screen, suffix, createFolder, append);
+      return frontendService.getFrontendConnector().getMediaAccessStrategy().createMedia(game, screen, suffix, true);
     }
     return null;
   }
 
-  private File uniqueMediaAsset(Game game, VPinScreen screen, String suffix, boolean createFolder, boolean append) {
-    File mediaFolder = frontendService.getMediaFolder(game, screen, suffix, createFolder);
-    return buildMediaAsset(mediaFolder, game.getGameName(), suffix, append);
+  @Override
+  public File uniqueMediaAsset(int gameId, VPinScreen screen, String suffix, boolean append) {
+    Game game = frontendService.getOriginalGame(gameId);
+    if (game != null) {
+      return frontendService.getFrontendConnector().getMediaAccessStrategy().createMedia(game, screen, suffix, append);
+    }
+    return null;
   }
 
+  @NotNull
   @Override
   public List<File> getMediaFiles(int gameId, VPinScreen screen) {
     Game game = frontendService.getOriginalGame(gameId);

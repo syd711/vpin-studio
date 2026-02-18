@@ -85,12 +85,10 @@ public class FolderLookupService {
     return new File(game.getGameFolder(), "pinmame/cfg/");
   }
 
-  @NonNull
+  @Nullable
   public File getMusicFolder(@NonNull Game game) {
-    File folder = new File(game.getGameFolder(), "music/");
-
     if (isPreferLegacyFileStructure(game.getEmulator())) {
-      folder = new File(game.getEmulator().getInstallationFolder(), "Music");
+      File folder = new File(game.getEmulator().getInstallationFolder(), "Music");
       if (!StringUtils.isEmpty(game.getRom())) {
         File musicFolder = new File(folder, game.getRom());
         if (musicFolder.exists()) {
@@ -99,7 +97,7 @@ public class FolderLookupService {
       }
     }
 
-    return folder;
+    return null;
   }
 
   @NonNull

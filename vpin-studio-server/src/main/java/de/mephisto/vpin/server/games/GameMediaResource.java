@@ -392,7 +392,7 @@ public class GameMediaResource {
       }
 
       String suffix = FilenameUtils.getExtension(file.getOriginalFilename());
-      File out = gameMediaService.uniqueMediaAsset(gameId, screen, suffix, true, append);
+      File out = gameMediaService.uniqueMediaAsset(gameId, screen, suffix, append);
       if (out == null) {
         LOG.error("No game found for media upload.");
         return JobDescriptorFactory.error("No game found for media upload.");

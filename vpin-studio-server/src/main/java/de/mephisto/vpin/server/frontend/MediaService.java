@@ -93,7 +93,7 @@ public abstract class MediaService  {
       File mediaFile = getMediaFile(objectId, screen, name);
       if (mediaFile != null && mediaFile.exists()) {
         String extension = FilenameUtils.getExtension(name);
-        File targetFile = uniqueMediaAsset(objectId, target, extension, true, true);
+        File targetFile = uniqueMediaAsset(objectId, target, extension, true);
         FileUtil.copyFile(mediaFile, targetFile);
         notifyGameScreenAssetsChanged(objectId, screen, targetFile);
         return true;
@@ -141,7 +141,7 @@ public abstract class MediaService  {
       suffix = "mp3";
     }
 
-    File target = uniqueMediaAsset(objectId, screen, suffix, true, true);
+    File target = uniqueMediaAsset(objectId, screen, suffix, true);
     try (FileOutputStream out = new FileOutputStream(target)) {
       // copy base64 asset
       if (screen.equals(VPinScreen.AudioLaunch) || screen.equals(VPinScreen.Audio)) {
@@ -212,22 +212,9 @@ public abstract class MediaService  {
 
   public abstract @NonNull List<File> getMediaFiles(int objectId, VPinScreen screen);
 
-  protected abstract File uniqueMediaAsset(int objectId, VPinScreen screen, String suffix, boolean createFolder, boolean append);
+  protected abstract File uniqueMediaAsset(int objectId, VPinScreen screen, String suffix, boolean append);
 
   protected abstract void notifyGameScreenAssetsChanged(int objectId, VPinScreen screen, File asset);
 
-
-  public static File buildMediaAsset(File mediaFolder, String mediaName, String suffix, boolean append) {
-    File out = new File(mediaFolder, mediaName + "." + suffix);
-    if (append) {
-      int index = 1;
-      while (out.exists()) {
-        String nameIndex = index <= 9 ? "0" + index : String.valueOf(index);
-        out = new File(out.getParentFile(), mediaName + nameIndex + "." + suffix);
-        index++;
-      }
-    }
-    return out;
-  }
 
 }

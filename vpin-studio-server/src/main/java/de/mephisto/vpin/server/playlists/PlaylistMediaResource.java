@@ -60,7 +60,7 @@ public class PlaylistMediaResource {
     LOG.info("Starting download of " + asset.getName() + "(appending: " + append + ")");
 
     String suffix = FilenameUtils.getExtension(asset.getName());
-    File out = playlistMediaService.uniqueMediaAsset(playlistId, screen, suffix, false, true);
+    File out = playlistMediaService.uniqueMediaAsset(playlistId, screen, suffix, true);
     if (out == null) {
       LOG.error("No playlist for media upload.");
       return false;
@@ -115,7 +115,7 @@ public class PlaylistMediaResource {
       }
 
       String suffix = FilenameUtils.getExtension(file.getOriginalFilename());
-      File out = playlistMediaService.uniqueMediaAsset(playlistId, screen, suffix, true, append);
+      File out = playlistMediaService.uniqueMediaAsset(playlistId, screen, suffix, append);
       if (out == null) {
         LOG.error("No playlist for media upload.");
         return JobDescriptorFactory.error("No playlist found for media upload.");

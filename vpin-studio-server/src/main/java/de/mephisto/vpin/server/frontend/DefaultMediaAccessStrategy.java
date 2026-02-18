@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.frontend;
 
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.playlists.Playlist;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -74,5 +75,34 @@ abstract public class DefaultMediaAccessStrategy implements MediaAccessStrategy 
       file.mkdirs();
     }
     return file;
+  }
+
+  @Override
+  public File createMedia(@NonNull Game game, @NonNull VPinScreen screen, String suffix, boolean append) {
+    File gameMediaFolder = getGameMediaFolder(game, screen, suffix, true);
+    return createMediaFile(gameMediaFolder, game.getGameName(), suffix, append);
+  }
+
+  @Override
+  public File createMedia(@NonNull Playlist playlist, @NonNull VPinScreen screen, String suffix, boolean append) {
+    File mediaFolder = getPlaylistMediaFolder(playlist, screen, true);
+    String mediaName = !StringUtils.isEmpty(playlist.getMediaName()) ? playlist.getMediaName() : playlist.getName();
+    return createMediaFile(mediaFolder, mediaName, suffix, append);
+  }
+
+  /**
+   * Utility method to create a unique media file in the target folder.
+   */
+  private File createMediaFile(File mediaFolder, String mediaName, String suffix, boolean append) {
+    File out = new File(mediaFolder, mediaName + "." + suffix);
+    if (append) {
+      int index = 1;
+      while (out.exists()) {
+        String nameIndex = index <= 9 ? "0" + index : String.valueOf(index);
+        out = new File(out.getParentFile(), mediaName + nameIndex + "." + suffix);
+        index++;
+      }
+    }
+    return out;
   }
 }
