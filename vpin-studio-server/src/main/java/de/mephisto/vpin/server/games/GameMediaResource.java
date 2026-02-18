@@ -105,11 +105,7 @@ public class GameMediaResource {
     try {
       LOG.info("Starting download of " + asset.getName() + "(appending: " + append + ")");
       Game game = frontendService.getOriginalGame(gameId);
-      File mediaFolder = frontendService.getMediaFolder(game, screen, asset.getFileSuffix(), false);
-      File target = new File(mediaFolder, game.getGameName() + "." + asset.getFileSuffix());
-      if (target.exists() && append) {
-        target = FileUtils.uniqueAsset(target);
-      }
+      File target = frontendService.getFrontendConnector().getMediaAccessStrategy().createMedia(game, screen, asset.getFileSuffix(), append);
       tableAssetsService.download(asset, target);
 
       // for PLayfield, if the tableAsset is in a different orientation than frontend, rotate the asset
