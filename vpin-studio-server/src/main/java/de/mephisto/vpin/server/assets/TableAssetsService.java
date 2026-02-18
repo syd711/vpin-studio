@@ -110,7 +110,6 @@ public class TableAssetsService {
           return;
         }
       }
-      target.getParentFile().mkdirs();
       try (FileOutputStream fileOutputStream = new FileOutputStream(target)) {
         adapter.get().writeAsset(fileOutputStream, asset, -1, -1);
         LOG.info("Downloaded file {}", target.getAbsolutePath());
