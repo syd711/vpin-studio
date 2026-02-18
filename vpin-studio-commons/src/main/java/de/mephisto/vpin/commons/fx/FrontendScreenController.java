@@ -1,9 +1,9 @@
 package de.mephisto.vpin.commons.fx;
 
+import de.mephisto.vpin.commons.StudioMediaPlayer;
 import de.mephisto.vpin.commons.fx.pausemenu.model.FrontendScreenAsset;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -11,9 +11,6 @@ import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaView;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,10 +29,9 @@ public class FrontendScreenController implements Initializable {
   private ImageView imageView;
 
   @FXML
-  private MediaView mediaView;
-
-  @FXML
   private StackPane root;
+
+  private StudioMediaPlayer mediaPlayer;
 
   // Add a public no-args constructor
   public FrontendScreenController() {
@@ -47,6 +43,7 @@ public class FrontendScreenController implements Initializable {
   }
 
   public void setMediaAsset(FrontendScreenAsset screenAsset) {
+    screenAsset.setFrontendScreenController(this);
     try {
       root.setPadding(new Insets(0, 0, 0, 0)); //reset of the other options
 
@@ -105,7 +102,6 @@ public class FrontendScreenController implements Initializable {
       image = new Image(inputStream, display.getWidth(), display.getHeight(), false, true);
       inputStream.close();
 
-      mediaView.setVisible(false);
       imageView.setPreserveRatio(false);
       imageView.setFitWidth(display.getWidth());
       imageView.setFitHeight(display.getHeight());
@@ -114,12 +110,11 @@ public class FrontendScreenController implements Initializable {
     else if (mimeType.startsWith("video")) {
       imageView.setVisible(false);
 
-      mediaView.setPreserveRatio(false);
-      mediaView.setFitWidth(display.getWidth());
-      mediaView.setFitHeight(display.getHeight());
-
-      Media media = new Media(asset.getUrl().toExternalForm());
-      renderMediaPlayer(media, 0);
+      mediaPlayer = new StudioMediaPlayer();
+      Node node = mediaPlayer.render(asset);
+      if (node != null) {
+        root.getChildren().add(node);
+      }
     }
     else {
       LOG.error("Unsupported mime type for screen asset: " + mimeType);
@@ -150,29 +145,14 @@ public class FrontendScreenController implements Initializable {
     }
   }
 
-  private void renderMediaPlayer(Media media, int attempt) {
-    if (attempt == 100) {
-      return;
-    }
-    int attemptCount = attempt + 1;
-    MediaPlayer mediaPlayer = new MediaPlayer(media);
-    mediaPlayer.setCycleCount(-1);
-    mediaPlayer.setMute(false);
-    mediaPlayer.setOnError(() -> {
-      LOG.warn("Pause Menu Media player error:{}/{}, URL: {}", mediaPlayer.getError(), attemptCount, mediaPlayer.getMedia().getSource());
-      mediaPlayer.stop();
-      mediaPlayer.dispose();
-      mediaView.setMediaPlayer(null);
-      renderMediaPlayer(media, attemptCount);
-    });
-    mediaView.setMediaPlayer(mediaPlayer);
-
-    Platform.runLater(() -> {
-      mediaPlayer.play();
-    });
-  }
-
   public Node getRoot() {
     return root;
+  }
+
+  public void dispose() {
+    root.getChildren().removeAll(root.getChildren());
+    if (mediaPlayer != null) {
+      mediaPlayer.dispose();
+    }
   }
 }

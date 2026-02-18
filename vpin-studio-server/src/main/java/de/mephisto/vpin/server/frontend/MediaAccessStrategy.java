@@ -24,6 +24,13 @@ public interface MediaAccessStrategy {
 
   List<File> getScreenMediaFiles(@NonNull Game game, @NonNull VPinScreen screen, @Nullable String mediaSearchTerm);
 
-  void stopMonitoring();
+  void stopMonitoring(File gameMediaFolder);
 
+  boolean deleteMedia(@NonNull Game game, @NonNull VPinScreen screen);
+
+  boolean deleteMedia(@NonNull Playlist playlist, @NonNull VPinScreen screen);
+
+  File createMedia(@NonNull Game game, @NonNull VPinScreen screen, String suffix, boolean append);
+
+  File createMedia(@NonNull Playlist playlist, @NonNull VPinScreen screen, String suffix, boolean append);
 }

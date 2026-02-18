@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.mame;
 
-import de.mephisto.vpin.restclient.backups.BackupMameData;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.backups.BackupMameData;
 import de.mephisto.vpin.restclient.dmd.DMDInfoZone;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.mame.MameOptions;
@@ -9,11 +9,11 @@ import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
-import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.FileUpdateWriter;
+import de.mephisto.vpin.server.vpx.FolderLookupService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -23,10 +23,11 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.awt.Desktop;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -59,6 +60,9 @@ public class MameService implements InitializingBean {
   @Autowired
   protected SystemService systemService;
 
+  @Autowired
+  private FolderLookupService folderLookupService;
+
   private File mameFolder;
 
   public boolean clearGamesCache(List<Game> knownGames) {
@@ -80,7 +84,7 @@ public class MameService implements InitializingBean {
     return true;
   }
 
-  public boolean clearValidationsCache(List<GameEmulator> gameEmulators) {
+  public void clearValidationsCache(List<GameEmulator> gameEmulators) {
     long l = System.currentTimeMillis();
     romValidationCache.clear();
     List<File> folders = new ArrayList<>();
@@ -95,8 +99,6 @@ public class MameService implements InitializingBean {
       validateRoms(folder);
     }
     LOG.info("ROM validation took " + (System.currentTimeMillis() - l) + "ms.");
-
-    return true;
   }
 
   public boolean clearCacheFor(@Nullable String rom) {
@@ -249,24 +251,24 @@ public class MameService implements InitializingBean {
   //---------------------------------
 
   public boolean deleteCfg(@NonNull Game game) {
-    File cfgFile = game.getCfgFile();
+    File cfgFile = folderLookupService.getCfgFile(game);
     return cfgFile != null && cfgFile.exists() && FileUtils.delete(cfgFile);
   }
 
   public boolean deleteRom(@NonNull Game game) {
-    File romFile = game.getRomFile();
+    File romFile = folderLookupService.getRomFile(game);
     return romFile != null && romFile.exists() && FileUtils.delete(romFile);
   }
 
   //--------------------------------
 
-  public void installRom(UploadDescriptor uploadDescriptor, GameEmulator gameEmulator, File tempFile, UploaderAnalysis analysis) throws IOException {
-    File romFolder = gameEmulator != null ? gameEmulator.getRomFolder() : getRomsFolder();
+  public void installRom(UploadDescriptor uploadDescriptor, Game game, GameEmulator emulator, File tempFile, UploaderAnalysis analysis) throws IOException {
+    File romFolder = game != null ? folderLookupService.getRomFolder(game) : getRomsFolder();
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.ZIP, romFolder);
   }
 
-  public void installNvRam(UploadDescriptor uploadDescriptor, GameEmulator gameEmulator, File tempFile, UploaderAnalysis analysis) throws IOException {
-    File nvramFolder = gameEmulator != null ? gameEmulator.getNvramFolder() : getNvRamFolder();
+  public void installNvRam(UploadDescriptor uploadDescriptor, Game game, GameEmulator emulator, File tempFile, UploaderAnalysis analysis) throws IOException {
+    File nvramFolder = game != null ? folderLookupService.getNvRamFolder(game) : getNvRamFolder();
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.NV, nvramFolder);
   }
 
@@ -281,43 +283,6 @@ public class MameService implements InitializingBean {
   public boolean isValidRom(String name) {
     return !romValidationCache.containsKey(name);
   }
-
-//  public boolean validateRom(GameEmulator gameEmulator, String name) {
-//    try {
-//      File romFolder = gameEmulator.getRomFolder();
-//      File romFile = new File(romFolder, name + ".zip");
-//      if (romFile.exists()) {
-//        File mameExe = getMameExe(gameEmulator.getMameFolder());
-//        if (mameExe != null) {
-//          List<String> cmds = Arrays.asList(mameExe.getName(), "-verifyroms", name);
-//          LOG.info("Executing ROM validation: " + String.join(" ", cmds));
-//          SystemCommandExecutor executor = new SystemCommandExecutor(cmds);
-//          executor.setDir(mameExe.getParentFile());
-//          executor.executeCommand();
-//          StringBuilder out = executor.getStandardOutputFromCommand();
-//          if (out != null) {
-//            String result = out.toString();
-//            return result.contains("1 were OK");
-//          }
-//
-//          LOG.error("MAME command failed: " + executor.getStandardErrorFromCommand());
-//        }
-//        else {
-//          LOG.error("MAME exe not found.");
-//          return false;
-//        }
-//      }
-//      else {
-//        LOG.error("ROM file \"" + romFile.getAbsolutePath() + "\" not found.");
-//        return false;
-//      }
-//    }
-//    catch (Exception e) {
-//      LOG.error("ROM validation failed: " + e.getMessage(), e);
-//      return false;
-//    }
-//    return false;
-//  }
 
   public void validateRoms(@NonNull File mameFolder) {
     try {
@@ -354,8 +319,8 @@ public class MameService implements InitializingBean {
     }
   }
 
-  public void installCfg(UploadDescriptor uploadDescriptor, GameEmulator gameEmulator, File tempFile, UploaderAnalysis analysis) throws IOException {
-    File cfgFolder = gameEmulator != null ? gameEmulator.getCfgFolder() : getCfgFolder();
+  public void installCfg(UploadDescriptor uploadDescriptor, Game game, GameEmulator emulator, File tempFile, UploaderAnalysis analysis) throws IOException {
+    File cfgFolder = game != null ? folderLookupService.getCfgFolder(game) : getCfgFolder();
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.CFG, cfgFolder);
   }
 

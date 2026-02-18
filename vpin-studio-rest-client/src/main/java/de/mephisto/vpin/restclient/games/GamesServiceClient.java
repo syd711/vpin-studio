@@ -248,7 +248,7 @@ public class GamesServiceClient extends VPinStudioClientService {
       return gameRepresentation;
     }
     catch (Exception e) {
-      LOG.error("Failed to retrieve game: " + e.getMessage());
+      LOG.error("Failed to retrieve game {}: {}", id, e.getMessage());
     }
     return null;
   }

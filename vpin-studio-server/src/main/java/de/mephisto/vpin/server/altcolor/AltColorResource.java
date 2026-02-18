@@ -39,6 +39,7 @@ public class AltColorResource {
   @Autowired
   private UniversalUploadService universalUploadService;
 
+
   @GetMapping("{id}")
   public AltColor get(@PathVariable("id") int id) {
     Game game = gameService.getGame(id);
@@ -51,7 +52,7 @@ public class AltColorResource {
   @GetMapping("{id}/fileinfo")
   public FileInfo getAltColorFolder(@PathVariable("id") int id) {
     Game game = gameService.getGame(id);
-    return game != null ? FileInfo.folder(altColorService.getAltColorFolder(game), game.getEmulator().getAltColorFolder()) : null;
+    return game != null ? FileInfo.folder(altColorService.getAltColorFolder(game), null) : null;
   }
 
   @DeleteMapping("/{id}/{filename}")

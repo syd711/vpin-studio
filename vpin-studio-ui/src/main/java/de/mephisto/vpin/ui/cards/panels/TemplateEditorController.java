@@ -233,7 +233,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
         Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete \"" + defaultMediaItem.getName() + "\"?", "The selected media will be deleted.", null, "Delete");
         if (result.isPresent() && result.get().equals(ButtonType.OK)) {
 
-          client.getGameMediaService().deleteMedia(game.getId(), screen, defaultMediaItem.getName());
+          client.getGameMediaService().deleteMedia(game.getId(), false, screen, defaultMediaItem.getName());
 
           Platform.runLater(() -> {
             EventManager.getInstance().notifyTableChange(game.getId(), null);

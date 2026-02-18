@@ -32,6 +32,7 @@ import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.util.PngFrameCapture;
+import de.mephisto.vpin.server.vpx.FolderLookupService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import net.lingala.zip4j.ZipFile;
 import org.apache.commons.io.FilenameUtils;
@@ -102,22 +103,31 @@ public class VpaService implements InitializingBean {
   @Autowired
   private PreferencesService preferencesService;
 
+  @Autowired
+  private FolderLookupService folderLookupService;
+
   public ZipFile createProtectedArchive(@NonNull File target) {
     return VpaArchiveUtil.createZipFile(target);
   }
 
   //-------------------------------
-
   public void createBackup(BackupPackageInfo packageInfo,
                            JobDescriptor jobDescriptor,
                            BiConsumer<File, String> zipOut,
                            Game game, TableDetails tableDetails) throws IOException {
+    BackupSettings backupSettings = preferencesService.getJsonPreference(PreferenceNames.BACKUP_SETTINGS, BackupSettings.class);
+    backup(packageInfo, jobDescriptor, zipOut, game, tableDetails, backupSettings);
+  }
+
+  private void backup(BackupPackageInfo packageInfo,
+                      JobDescriptor jobDescriptor,
+                      BiConsumer<File, String> zipOut,
+                      Game game, TableDetails tableDetails,
+                      BackupSettings backupSettings) throws IOException {
     File gameFolder = game.getGameFile().getParentFile();
 
-    BackupSettings backupSettings = preferencesService.getJsonPreference(PreferenceNames.BACKUP_SETTINGS, BackupSettings.class);
-
-    File romFile = game.getRomFile();
-    if (backupSettings.isRom() && romFile != null && romFile.exists()) {
+    File romFile = folderLookupService.getRomFile(game);
+    if (romFile != null && backupSettings.isRom() && romFile.exists()) {
       packageInfo.setRom(BackupFileInfoFactory.create(romFile));
       if (!zipFile(jobDescriptor, romFile, MAME_FOLDER + "/roms/" + romFile.getName(), zipOut)) {
         return;
@@ -256,7 +266,7 @@ public class VpaService implements InitializingBean {
     }
 
     // Cfg
-    File cfgFile = game.getCfgFile();
+    File cfgFile = folderLookupService.getCfgFile(game);
     if (cfgFile != null && cfgFile.exists()) {
       packageInfo.setCfg(BackupFileInfoFactory.create(cfgFile));
       if (!zipFile(jobDescriptor, cfgFile, MAME_FOLDER + "/cfg/" + cfgFile.getName(), zipOut)) {

@@ -11,6 +11,7 @@ import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.vpx.FolderLookupService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -32,6 +33,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
+
 /**
  *
  */
@@ -44,6 +47,9 @@ public class AltColorService implements InitializingBean {
 
   @Autowired
   private GameLifecycleService gameLifecycleService;
+
+  @Autowired
+  private FolderLookupService folderLookupService;
 
   public void setAltColorEnabled(@NonNull Game game, boolean b) {
     String rom = game.getRom();
@@ -89,6 +95,10 @@ public class AltColorService implements InitializingBean {
     return false;
   }
 
+  private File getAltColorFolder(@NonNull Game game, String subfolder) {
+    return folderLookupService.getAltColorFolder(game, subfolder);
+  }
+
   public File getAltColorFolder(@NonNull Game game) {
     File altColorFolder = null;
     if (game.isZenGame()) {
@@ -96,13 +106,13 @@ public class AltColorService implements InitializingBean {
       altColorFolder = new File(altColorFolderRoot, game.getGameName());
     }
     else if (!StringUtils.isEmpty(game.getRomAlias()) && game.getEmulator() != null) {
-      altColorFolder = new File(game.getEmulator().getAltColorFolder(), game.getRomAlias());
+      altColorFolder = getAltColorFolder(game, game.getRomAlias());
     }
     else if (!StringUtils.isEmpty(game.getRom()) && game.getEmulator() != null) {
-      altColorFolder = new File(game.getEmulator().getAltColorFolder(), game.getRom());
+      altColorFolder = getAltColorFolder(game, game.getRom());
     }
     if ((altColorFolder == null || !altColorFolder.exists()) && !StringUtils.isEmpty(game.getTableName()) && game.getEmulator() != null) {
-      altColorFolder = new File(game.getEmulator().getAltColorFolder(), game.getTableName());
+      altColorFolder = getAltColorFolder(game, game.getTableName());
     }
     return altColorFolder;
   }

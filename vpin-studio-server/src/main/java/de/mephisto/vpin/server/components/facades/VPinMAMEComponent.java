@@ -61,7 +61,7 @@ public class VPinMAMEComponent implements ComponentFacade {
   @NonNull
   @Override
   public List<String> getExcludedFilenames() {
-    return Arrays.asList("VPMAlias.txt");
+    return Arrays.asList("VPMAlias.txt", "DMDDevice.ini");
   }
 
   @Override

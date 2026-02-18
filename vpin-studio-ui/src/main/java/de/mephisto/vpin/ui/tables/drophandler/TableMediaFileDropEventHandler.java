@@ -80,7 +80,24 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
     try {
       FrontendMediaItemRepresentation media = (FrontendMediaItemRepresentation) event.getDragboard().getContent(DataFormat.URL);
       Platform.runLater(() -> {
-        ProgressDialog.createProgressDialog(new TableMediaCopyProgressModel(screen, media));
+
+        GameRepresentation game = null;
+        PlaylistRepresentation playlist = null;
+        if (this.tablesController != null) {
+          game = tablesController.getSelection();
+        }
+        else if (dialogController.isPlaylistMode()) {
+          playlist = dialogController.getPlaylist();
+        }
+        else {
+          game = dialogController.getGame();
+        }
+
+        if (playlist != null) {
+          ProgressDialog.createProgressDialog(new TableMediaCopyProgressModel(playlist, screen, media));
+        } else {
+          ProgressDialog.createProgressDialog(new TableMediaCopyProgressModel(game, screen, media));
+        }
         refreshView();
       });
     }

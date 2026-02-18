@@ -848,8 +848,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
                 + ". Make sure that all(!) directories are set and reload after fixing these.", frontend));
           }
 
-          GameEmulatorRepresentation emulatorRepresentation = emulatorCombo.valueProperty().get();
-          this.importBtn.setDisable(!isAllVpxSelected);
+          List<GameEmulatorRepresentation> vpxEmus = emulatorCombo.getItems().stream().filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
+
+          this.importBtn.setDisable(!isAllVpxSelected && vpxEmus.size() > 1);
           this.exportBtn.setDisable(!isAllVpxSelected);
           this.stopBtn.setDisable(false);
           this.searchTextField.setDisable(false);

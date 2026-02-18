@@ -3,20 +3,16 @@ package de.mephisto.vpin.server.games;
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
+import de.mephisto.vpin.restclient.assets.AssetMetaData;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.*;
-import de.mephisto.vpin.restclient.games.AssetCopy;
-import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.MimeTypeUtil;
 import de.mephisto.vpin.server.assets.TableAssetSourcesService;
 import de.mephisto.vpin.server.assets.TableAssetsService;
 import de.mephisto.vpin.server.converter.MediaConverterService;
 import de.mephisto.vpin.server.frontend.FrontendService;
-import de.mephisto.vpin.server.frontend.WheelAugmenter;
-import de.mephisto.vpin.server.frontend.WheelIconDelete;
 import de.mephisto.vpin.server.system.JCodec;
 import de.mephisto.vpin.server.util.PngFrameCapture;
 import de.mephisto.vpin.server.util.UploadUtil;
@@ -36,11 +32,13 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -53,9 +51,6 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @RequestMapping(API_SEGMENT + "media")
 public class GameMediaResource {
   private final static Logger LOG = LoggerFactory.getLogger(GameMediaResource.class);
-
-  public static final byte[] EMPTY_MP4 = Base64.getDecoder().decode("AAAAGGZ0eXBpc29tAAAAAGlzb21tcDQxAAAACGZyZWUAAAAmbWRhdCELUCh9wBQ+4cAhC1AAfcAAPuHAIQtQAH3AAD7hwAAAAlNtb292AAAAbG12aGQAAAAAxzFHd8cxR3cAAV+QAAAYfQABAAABAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAAAAG2lvZHMAAAAAEA0AT////xX/DgQAAAACAAABxHRyYWsAAABcdGtoZAAAAAfHMUd3xzFHdwAAAAIAAAAAAAAYfQAAAAAAAAAAAAAAAAEAAAAAAQAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAWBtZGlhAAAAIG1kaGQAAAAAxzFHd8cxR3cAAKxEAAAL/xXHAAAAAAA0aGRscgAAAAAAAAAAc291bgAAAAAAAAAAAAAAAFNvdW5kIE1lZGlhIEhhbmRsZXIAAAABBG1pbmYAAAAQc21oZAAAAAAAAAAAAAAAJGRpbmYAAAAcZHJlZgAAAAAAAAABAAAADHVybCAAAAABAAAAyHN0YmwAAABkc3RzZAAAAAAAAAABAAAAVG1wNGEAAAAAAAAAAQAAAAAAAAAAAAIAEAAAAACsRAAAAAAAMGVzZHMAAAAAA4CAgB8AQBAEgICAFEAVAAYAAAANdQAADXUFgICAAhIQBgECAAAAGHN0dHMAAAAAAAAAAQAAAAMAAAQAAAAAHHN0c2MAAAAAAAAAAQAAAAEAAAADAAAAAQAAABRzdHN6AAAAAAAAAAoAAAADAAAAFHN0Y28AAAAAAAAAAQAAACg=");
-  public static final byte[] EMPTY_MP3 = Base64.getDecoder().decode("SUQzAwAAAAADJVRGTFQAAAAPAAAB//5NAFAARwAvADMAAABDT01NAAAAggAAAGRldWlUdW5TTVBCACAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMDAwMDAxMmMxIDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/+7RAAAAE4ABLgAAACAAACXAAAAEAAAEuAAAAIAAAJcAAAAT/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////+7RAwAAP/ABLgAAACByACXAAAAEAAAEuAAAAIAAAJcAAAAT/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////+7RAwAAP/ABLgAAACByACXAAAAEAAAEuAAAAIAAAJcAAAAT/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////+7RAwAAP/ABLgAAACByACXAAAAEAAAEuAAAAIAAAJcAAAAT///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8=");
 
   @Autowired
   private FrontendService frontendService;
@@ -93,17 +88,10 @@ public class GameMediaResource {
     return assetAdapter != null ? assetAdapter.getAssetSource() : null;
   }
 
-  @PostMapping("/assets/copy")
-  public boolean copyAsset(@RequestBody AssetCopy assetCopy) {
-    VPinScreen target = assetCopy.getTarget();
-    FrontendMediaItemRepresentation item = assetCopy.getItem();
-    return gameMediaService.copyAsset(item.getGameId(), item.getName(), item.getScreen(), target);
-  }
-
   @PostMapping("/assets/search")
   public TableAssetSearch searchTableAssets(@RequestBody TableAssetSearch search) throws Exception {
     Game game = gameService.getGame(search.getGameId());
-    EmulatorType emulatorType = game != null && game.getEmulator() != null ? game.getEmulator().getType() : EmulatorType.VisualPinball;
+    EmulatorType emulatorType = game != null ? game.getEmulator().getType() : EmulatorType.VisualPinball;
     TableAssetSource source = tableAssetSourcesService.getAssetSource(search.getAssetSourceId());
 
     List<TableAsset> result = tableAssetsService.search(source, emulatorType, search.getScreen().getSegment(), game, search.getTerm());
@@ -119,11 +107,7 @@ public class GameMediaResource {
     try {
       LOG.info("Starting download of " + asset.getName() + "(appending: " + append + ")");
       Game game = frontendService.getOriginalGame(gameId);
-      File mediaFolder = frontendService.getMediaFolder(game, screen, asset.getFileSuffix(), false);
-      File target = new File(mediaFolder, game.getGameName() + "." + asset.getFileSuffix());
-      if (target.exists() && append) {
-        target = FileUtils.uniqueAsset(target);
-      }
+      File target = frontendService.getFrontendConnector().getMediaAccessStrategy().createMedia(game, screen, asset.getFileSuffix(), append);
       tableAssetsService.download(asset, target);
 
       // for PLayfield, if the tableAsset is in a different orientation than frontend, rotate the asset
@@ -160,7 +144,7 @@ public class GameMediaResource {
                             @PathVariable("gameId") int gameId,
                             @PathVariable("url") String url) throws Exception {
     Game game = gameService.getGame(gameId);
-    EmulatorType emulatorType = game != null && game.getEmulator() != null ? game.getEmulator().getType() : EmulatorType.VisualPinball;
+    EmulatorType emulatorType = game != null ? game.getEmulator().getType() : EmulatorType.VisualPinball;
 
     String decode = URLDecoder.decode(url, StandardCharsets.UTF_8);
     String folder = decode.substring(0, decode.lastIndexOf("/"));
@@ -237,6 +221,8 @@ public class GameMediaResource {
     }
   }
 
+  //---------------------------------
+
   @GetMapping("/{id}/{screen}/{name}")
   public void getMedia(HttpServletResponse response, HttpServletRequest request,
                        @PathVariable("id") int id,
@@ -254,16 +240,26 @@ public class GameMediaResource {
 
     FrontendMedia frontendMedia = frontendService.getGameMedia(game);
     final FrontendMediaItem frontendMediaItem;
-    if (!StringUtils.isEmpty(name)) {
-      //name = name.replaceAll("%(?![0-9a-fA-F]{2})", "%25");
-      //name = name.replaceAll("\\+", "%2B");
-      name = URLDecoder.decode(name, Charset.defaultCharset());
-      frontendMediaItem = frontendMedia.getMediaItem(screen, name);
-    }
-    else {
-      frontendMediaItem = frontendMedia.getDefaultMediaItem(screen);
+    if (frontendMedia != null) {
+      if (!StringUtils.isEmpty(name)) {
+        //name = name.replaceAll("%(?![0-9a-fA-F]{2})", "%25");
+        //name = name.replaceAll("\\+", "%2B");
+        name = URLDecoder.decode(name, Charset.defaultCharset());
+        frontendMediaItem = frontendMedia.getMediaItem(screen, name);
+      }
+      else {
+        frontendMediaItem = frontendMedia.getDefaultMediaItem(screen);
+      }
+    } else {
+      frontendMediaItem = null;
     }
 
+    downloadFrontendMediaItem(response, request, id, name, preview, frontendMediaItem);
+  }
+
+  private void downloadFrontendMediaItem(HttpServletResponse response, HttpServletRequest request, int id, String name,
+      boolean preview, final FrontendMediaItem frontendMediaItem) throws IOException 
+  {
     if (frontendMediaItem == null) {
       throw new ResponseStatusException(NOT_FOUND);
     }
@@ -393,18 +389,16 @@ public class GameMediaResource {
         return JobDescriptorFactory.error("Upload request did not contain a file object.");
       }
 
-      Game game = frontendService.getOriginalGame(gameId);
-      if (game == null) {
+      String suffix = FilenameUtils.getExtension(file.getOriginalFilename());
+      File out = gameMediaService.uniqueMediaAsset(gameId, screen, suffix, append);
+      if (out == null) {
         LOG.error("No game found for media upload.");
         return JobDescriptorFactory.error("No game found for media upload.");
       }
 
-      String suffix = FilenameUtils.getExtension(file.getOriginalFilename());
-      File mediaFolder = frontendService.getMediaFolder(game, screen, suffix, true);
-      File out = GameMediaService.buildMediaAsset(mediaFolder, game, suffix, append);
       LOG.info("Uploading " + out.getAbsolutePath());
       UploadUtil.upload(file, out);
-      gameLifecycleService.notifyGameScreenAssetsChanged(game.getId(), screen, out);
+      gameLifecycleService.notifyGameScreenAssetsChanged(gameId, screen, out);
       return JobDescriptorFactory.empty();
     }
     catch (Exception e) {
@@ -415,52 +409,25 @@ public class GameMediaResource {
     }
   }
 
+  @GetMapping("/metadata/{gameId}/{screen}/{file}")
+  public AssetMetaData metadata(@PathVariable("gameId") int gameId, @PathVariable("screen") VPinScreen screen, @PathVariable("file") String filename) {
+    return gameMediaService.getMetadata(gameId, screen, filename);
+  }
+
   @DeleteMapping("/media/{gameId}/{screen}/{file}")
   public boolean deleteMedia(@PathVariable("gameId") int gameId, @PathVariable("screen") VPinScreen screen, @PathVariable("file") String filename) {
     try {
-      Game game = frontendService.getOriginalGame(gameId);
-      String suffix = FilenameUtils.getExtension(filename);
-      File mediaFolder = frontendService.getMediaFolder(game, screen, suffix, false);
-      File media = new File(mediaFolder, filename);
-      if (media.exists()) {
-        if (screen.equals(VPinScreen.Wheel)) {
-          new WheelAugmenter(media).deAugment();
-          new WheelIconDelete(media).delete();
-        }
-        if (media.delete()) {
-          gameLifecycleService.notifyGameScreenAssetsChanged(game.getId(), screen, media);
-          return true;
-        }
-      }
-      return false;
+      return gameMediaService.deleteMedia(gameId, screen, filename);
     }
     finally {
       gameLifecycleService.notifyGameAssetsChanged(gameId, AssetType.FRONTEND_MEDIA, null);
     }
   }
 
-
   @DeleteMapping("/media/{gameId}")
   public boolean deleteMedia(@PathVariable("gameId") int gameId) {
     try {
-      Game game = frontendService.getOriginalGame(gameId);
-      VPinScreen[] values = VPinScreen.values();
-      for (VPinScreen screen : values) {
-        FrontendMedia gameMedia = frontendService.getGameMedia(game);
-        List<FrontendMediaItem> mediaItems = gameMedia.getMediaItems(screen);
-        for (FrontendMediaItem mediaItem : mediaItems) {
-          File file = mediaItem.getFile();
-          if (screen.equals(VPinScreen.Wheel)) {
-            new WheelAugmenter(file).deAugment();
-            new WheelIconDelete(file).delete();
-          }
-          if (file.delete()) {
-            LOG.info("Deleted game media: {}", file.getAbsolutePath());
-            gameLifecycleService.notifyGameScreenAssetsChanged(game.getId(), screen, file);
-          }
-        }
-      }
-      return true;
+      return gameMediaService.deleteMedia(gameId);
     }
     finally {
       gameLifecycleService.notifyGameAssetsChanged(gameId, AssetType.FRONTEND_MEDIA, null);
@@ -471,16 +438,20 @@ public class GameMediaResource {
   public boolean doPut(@PathVariable("gameId") int gameId, @PathVariable("screen") VPinScreen screen, @RequestBody Map<String, String> data) throws Exception {
     try {
       if (data.containsKey("fullscreen")) {
-        return toFullscreenMedia(gameId, screen);
+        return gameMediaService.toFullscreenMedia(gameId, screen);
       }
       if (data.containsKey("blank")) {
-        return addBlank(gameId, screen);
+        return gameMediaService.addBlank(gameId, screen);
       }
       if (data.containsKey("setDefault")) {
-        return setDefaultAsset(gameId, screen, data.get("setDefault"));
+        return gameMediaService.setDefaultAsset(gameId, screen, data.get("setDefault"));
       }
       if (data.containsKey("oldName")) {
-        return renameAsset(gameId, screen, data.get("oldName"), data.get("newName"));
+        return gameMediaService.renameAsset(gameId, screen, data.get("oldName"), data.get("newName"));
+      }
+      if (data.containsKey("copy")) {
+        VPinScreen target = VPinScreen.valueOf(data.get("target"));
+        return gameMediaService.copyAsset(gameId, screen, data.get("copy"), target);
       }
       return true;
     }
@@ -492,111 +463,4 @@ public class GameMediaResource {
     }
     return false;
   }
-
-  private boolean setDefaultAsset(int gameId, VPinScreen screen, String defaultName) {
-    Game game = frontendService.getOriginalGame(gameId);
-    List<File> mediaFiles = frontendService.getMediaFiles(game, screen);
-
-    File torename = mediaFiles.stream().filter(f -> f.getName().equals(defaultName)).findFirst().orElse(null);
-    if (torename == null) {
-      LOG.info("Cannot set default asset as {} does not exist in the assets for game {} and screen {}", defaultName, gameId, screen);
-      return false;
-    }
-
-    String extension = FilenameUtils.getExtension(defaultName);
-    File temp = new File(torename.getParentFile(), "temp_" + defaultName);
-    if (torename.renameTo(temp)) {
-      for (File file : mediaFiles) {
-        // find existing default files, mind there could be several with different extensions
-        String fileext = FilenameUtils.getExtension(file.getName());
-        if (FileUtils.isDefaultAsset(file.getName()) && StringUtils.equalsIgnoreCase(fileext, extension)) {
-          File defaultFile = FileUtils.uniqueAsset(file);
-          if (file.renameTo(defaultFile)) {
-            LOG.info("Renamed \"{}\" to \"{}\"", file.getAbsolutePath(), defaultFile.getName());
-            gameLifecycleService.notifyGameScreenAssetsChanged(game.getId(), screen, defaultFile);
-          }
-          else {
-            LOG.warn("Cannot rename \"{}\" to \"{}\", state may be inconsistent", file.getAbsolutePath(), defaultFile.getName());
-            return false;
-          }
-        }
-      }
-      // ends by renaming temp file to default
-      File newFile = new File(torename.getParent(), FileUtils.baseUniqueAsset(defaultName) + "." + extension);
-      if (temp.renameTo(newFile)) {
-        LOG.info("New default asset set \"{} \"for game {} and screen{}", newFile.getAbsolutePath(), gameId, screen);
-        return true;
-      }
-      else {
-        LOG.warn("Cannot rename \"{}\" to \"{}\", state may be inconsistent", temp.getAbsolutePath(), newFile.getName());
-      }
-
-    }
-    else {
-      LOG.warn("Cannot rename \"{}\", set as default operation ignored", torename.getAbsolutePath());
-    }
-    return false;
-  }
-
-  private boolean renameAsset(int gameId, VPinScreen screen, String oldName, String newName) {
-    Game game = frontendService.getOriginalGame(gameId);
-    List<File> mediaFiles = frontendService.getMediaFiles(game, screen);
-    for (File file : mediaFiles) {
-      if (file.getName().equals(oldName)) {
-        File renamed = new File(file.getParentFile(), newName);
-        if (file.renameTo(renamed)) {
-          LOG.info("Renamed \"" + file.getAbsolutePath() + "\" to \"" + renamed.getAbsolutePath() + "\"");
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  private boolean toFullscreenMedia(int gameId, VPinScreen screen) throws IOException {
-    Game game = frontendService.getOriginalGame(gameId);
-    List<File> mediaFiles = frontendService.getMediaFiles(game, screen);
-    if (mediaFiles.size() == 1) {
-      File mediaFile = mediaFiles.get(0);
-      String name = mediaFile.getName();
-      String baseName = FilenameUtils.getBaseName(name);
-      String suffix = FilenameUtils.getExtension(name);
-      String updatedBaseName = baseName + "(SCREEN3)." + suffix;
-
-      LOG.info("Renaming " + mediaFile.getAbsolutePath() + " to '" + updatedBaseName + "'");
-      boolean renamed = mediaFile.renameTo(new File(mediaFile.getParentFile(), updatedBaseName));
-      if (!renamed) {
-        LOG.error("Renaming to " + updatedBaseName + " failed.");
-        return false;
-      }
-
-      File target = new File(mediaFile.getParentFile(), name);
-
-      LOG.info("Copying blank asset to " + target.getAbsolutePath());
-      FileOutputStream out = new FileOutputStream(target);
-      //copy base64 encoded 0s video
-      IOUtils.write(EMPTY_MP4, out);
-      out.close();
-
-      return true;
-    }
-    return false;
-  }
-
-  private boolean addBlank(int gameId, VPinScreen screen) throws IOException {
-    Game game = frontendService.getOriginalGame(gameId);
-    File target = gameMediaService.uniqueMediaAsset(game, screen);
-    FileOutputStream out = new FileOutputStream(target);
-    // copy base64 asset
-    if (screen.equals(VPinScreen.AudioLaunch) || screen.equals(VPinScreen.Audio)) {
-      IOUtils.write(EMPTY_MP3, out);
-    }
-    else {
-      IOUtils.write(EMPTY_MP4, out);
-    }
-    LOG.info("Written blank asset \"" + target.getAbsolutePath() + "\"");
-    out.close();
-    return true;
-  }
-
 }

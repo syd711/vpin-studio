@@ -188,7 +188,7 @@ public class BackupRestoreDialogController implements Initializable, DialogContr
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
     BackupSettings backupSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.BACKUP_SETTINGS, BackupSettings.class);
 
-    List<GameEmulatorRepresentation> emulators = client.getEmulatorService().getFilteredEmulatorsWithAllVpx(uiSettings);
+    List<GameEmulatorRepresentation> emulators = client.getEmulatorService().getFilteredEmulatorsWithoutAllVpx(uiSettings);
     ObservableList<GameEmulatorRepresentation> data = FXCollections.observableList(emulators);
     this.emulatorCombo.setItems(data);
     this.emulatorCombo.setValue(data.get(0));

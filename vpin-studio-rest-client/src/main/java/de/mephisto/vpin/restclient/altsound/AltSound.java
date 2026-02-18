@@ -20,7 +20,7 @@ public class AltSound {
   private boolean missingAudioFiles;
   private List<ValidationState> validationStates;
 
-  private int emulatorId;
+  private int gameId;
   private String folder;
 
   //altsound2
@@ -53,12 +53,12 @@ public class AltSound {
     this.folder = folder;
   }
 
-  public int getEmulatorId() {
-    return emulatorId;
+  public int getGameId() {
+    return gameId;
   }
 
-  public void setEmulatorId(int emulatorId) {
-    this.emulatorId = emulatorId;
+  public void setGameId(int gameId) {
+    this.gameId = gameId;
   }
 
   public int getCommandSkipCount() {

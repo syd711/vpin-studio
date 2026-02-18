@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.recorder;
 
-import de.mephisto.vpin.commons.MonitorInfoUtil;
 import de.mephisto.vpin.commons.fx.ImageUtil;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
@@ -34,8 +33,8 @@ import org.springframework.stereotype.Service;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.zip.ZipOutputStream;
 
 import static de.mephisto.vpin.commons.SystemInfo.RESOURCES;
@@ -250,16 +249,22 @@ public class ScreenshotService {
     long start = System.currentTimeMillis();
     PauseMenuSettings pauseMenuSettings = preferencesService.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
 
-    List<BufferedImage> images = new ArrayList<>();
-    List<MonitorInfo> monitorInfos = new ArrayList<>();
-    if (pauseMenuSettings.isDesktopUser()) {
-      monitorInfos.add(MonitorInfoUtil.getPrimaryMonitor());
-    }
-    else {
-      monitorInfos.addAll(systemService.getMonitorInfos());
+    // add DMD capture image, the sooner the better, before new frame is received
+    BufferedImage dmdImage = null;
+    if (pauseMenuSettings.isIncludeDmdFrame()) {
+      // mind when network stream is not enabled or DMDDevice is not used, the dmdImage is null
+      dmdImage = screenDmdRecorder.getCurrentImage();
     }
 
-    Collections.sort(monitorInfos, new Comparator<MonitorInfo>() {
+    List<BufferedImage> images = new ArrayList<>();
+    List<MonitorInfo> screenshotMonitors = new ArrayList<>();
+    for (MonitorInfo monitorInfo : systemService.getMonitorInfos()) {
+      if (pauseMenuSettings.getMultiScreenIds().contains(monitorInfo.getId())) {
+        screenshotMonitors.add(monitorInfo);
+      }
+    }
+
+    Collections.sort(screenshotMonitors, new Comparator<MonitorInfo>() {
       @Override
       public int compare(MonitorInfo o1, MonitorInfo o2) {
         if (o1.isPrimary()) {
@@ -269,42 +274,31 @@ public class ScreenshotService {
       }
     });
 
-    for (MonitorInfo monitorInfo : monitorInfos) {
+    for (MonitorInfo monitorInfo : screenshotMonitors) {
       try {
         BufferedImage bufferedImage = screenPreviewService.capture(monitorInfo);
-        if (monitorInfo.isPrimary() && !pauseMenuSettings.isDesktopUser()) {
+        if (monitorInfo.isPrimary()) {
           bufferedImage = ImageUtil.rotateRight(bufferedImage);
         }
         images.add(bufferedImage);
-//        drawTimestamp(bufferedImage);
       }
       catch (Exception e) {
         LOG.error("Error writing monitor screenshot: {}", e.getMessage(), e);
       }
     }
 
-    // add DMD capture image
-    if (pauseMenuSettings.isIncludeDmdFrame() && !pauseMenuSettings.isDesktopUser()) {
-      BufferedImage dmdImage = screenDmdRecorder.getCurrentImage();
-      // when network stream is not enabled or DMDDevice is not used, the dmdImage is null
-      if (dmdImage != null) {
-        images.add(dmdImage);
-      }
+    if (dmdImage != null) {
+      images.add(dmdImage);
     }
 
-    BufferedImage summaryImage = null;
-    if (pauseMenuSettings.isDesktopUser()) {
-      summaryImage = images.get(0);
-      summaryImage = ImageUtil.resizeImage(summaryImage, 1920, 1080);
-    }
-    else {
-      summaryImage = generateSummaryImage(images);
+    BufferedImage summaryImage = generateSummaryImage(images);
+    if (summaryImage != null) {
       int width = summaryImage.getWidth() / 2;
       int height = summaryImage.getHeight() / 2;
       summaryImage = ImageUtil.resizeImage(summaryImage, width, height);
+      LOG.info("Screenshot generation took {}ms.", (System.currentTimeMillis() - start));
     }
 
-    LOG.info("Screenshot generation took {}ms.", (System.currentTimeMillis() - start));
     return summaryImage;
   }
 

@@ -34,7 +34,6 @@ import de.mephisto.vpin.restclient.mania.ManiaServiceClient;
 import de.mephisto.vpin.restclient.notifications.NotificationsServiceClient;
 import de.mephisto.vpin.restclient.patcher.PatcherServiceClient;
 import de.mephisto.vpin.restclient.players.PlayersServiceClient;
-import de.mephisto.vpin.restclient.playlists.PlaylistMediaServiceClient;
 import de.mephisto.vpin.restclient.playlists.PlaylistsServiceClient;
 import de.mephisto.vpin.restclient.preferences.PreferencesServiceClient;
 import de.mephisto.vpin.restclient.puppacks.PupPackServiceClient;
@@ -114,7 +113,6 @@ public class VPinStudioClient {
   private final ResServiceClient resServiceClient;
   private final PINemHiServiceClient pinemHiServiceClient;
   private final PlaylistsServiceClient playlistsServiceClient;
-  private final PlaylistMediaServiceClient playlistMediaServiceClient;
   private final MediaConversionServiceClient mediaConversionServiceClient;
   private final VpxServiceClient vpxServiceClient;
   private final VpsServiceClient vpsServiceClient;
@@ -170,7 +168,6 @@ public class VPinStudioClient {
     this.pinVolServiceClient = new PinVolServiceClient(this);
     this.pinemHiServiceClient = new PINemHiServiceClient(this);
     this.playlistsServiceClient = new PlaylistsServiceClient(this);
-    this.playlistMediaServiceClient = new PlaylistMediaServiceClient(this);
     this.higscoreBackupServiceClient = new HigscoreBackupServiceClient(this);
     this.mediaConversionServiceClient = new MediaConversionServiceClient(this);
     this.wovpServiceClient = new WOVPServiceClient(this);
@@ -246,10 +243,6 @@ public class VPinStudioClient {
 
   public DOFLinxServiceClient getDofLinxService() {
     return dofLinxServiceClient;
-  }
-
-  public PlaylistMediaServiceClient getPlaylistMediaService() {
-    return playlistMediaServiceClient;
   }
 
   public IniServiceClient getIniService() {

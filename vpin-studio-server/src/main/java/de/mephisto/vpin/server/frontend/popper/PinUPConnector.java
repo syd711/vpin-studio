@@ -969,6 +969,14 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
   @NonNull
   public Playlist getPlaylist(int id) {
+    if (id == PlaylistRepresentation.PLAYLIST_FAVORITE_ID) {
+      return getFavsPlaylist();
+    }
+    if (id == PlaylistRepresentation.PLAYLIST_GLOBALFAV_ID) {
+      return getGlobalFavsPlaylist();
+    }
+    // else
+
     Playlist playlist = new Playlist();
     Connection connect = this.connect();
     try {
@@ -1039,13 +1047,8 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Playlists;");
 
-      Playlist favsPlaylist = new Playlist();
-      favsPlaylist.setId(PlaylistRepresentation.PLAYLIST_FAVORITE_ID);
-      favsPlaylist.setName("Playlist Favorites");
-
-      Playlist globalFavsPlaylist = new Playlist();
-      globalFavsPlaylist.setId(PlaylistRepresentation.PLAYLIST_GLOBALFAV_ID);
-      globalFavsPlaylist.setName("Global Favorites");
+      Playlist favsPlaylist = getFavsPlaylist();
+      Playlist globalFavsPlaylist = getGlobalFavsPlaylist();
 
       result.add(favsPlaylist);
       result.add(globalFavsPlaylist);
@@ -1067,6 +1070,20 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
     Collections.sort(result, Comparator.comparingInt(Playlist::getDisplayOrder));
     return result;
+  }
+
+  private Playlist getGlobalFavsPlaylist() {
+    Playlist globalFavsPlaylist = new Playlist();
+    globalFavsPlaylist.setId(PlaylistRepresentation.PLAYLIST_GLOBALFAV_ID);
+    globalFavsPlaylist.setName("Global Favorites");
+    return globalFavsPlaylist;
+  }
+
+  private Playlist getFavsPlaylist() {
+    Playlist favsPlaylist = new Playlist();
+    favsPlaylist.setId(PlaylistRepresentation.PLAYLIST_FAVORITE_ID);
+    favsPlaylist.setName("Playlist Favorites");
+    return favsPlaylist;
   }
 
 
@@ -1151,7 +1168,6 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       this.disconnect(connect);
     }
   }
-
 
   @Override
   public void savePlaylistOrder(PlaylistOrder playlistOrder) {
@@ -2367,7 +2383,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   @Override
   public MediaAccessStrategy getMediaAccessStrategy() {
     if (this.pinUPMediaAccessStrategy == null) {
-      this.pinUPMediaAccessStrategy = new PinUPMediaAccessStrategy(this);
+      this.pinUPMediaAccessStrategy = new PinUPMediaAccessStrategyNext(this);
     }
     return pinUPMediaAccessStrategy;
   }

@@ -1,12 +1,14 @@
 package de.mephisto.vpin.server.playlists;
 
 import de.mephisto.vpin.connectors.assets.TableAsset;
+import de.mephisto.vpin.restclient.assets.AssetMetaData;
 import de.mephisto.vpin.restclient.frontend.FrontendMedia;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.server.assets.TableAssetsService;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -27,6 +29,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
+import java.util.Map;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static de.mephisto.vpin.server.util.RequestUtil.CONTENT_LENGTH;
@@ -42,10 +45,10 @@ public class PlaylistMediaResource {
   private PlaylistMediaService playlistMediaService;
 
   @Autowired
-  private PlaylistService playlistService;
+  private TableAssetsService tableAssetsService;
 
   @Autowired
-  private TableAssetsService tableAssetsService;
+  private FrontendService frontendService;
 
 
   @GetMapping("/{playlistId}")
@@ -53,35 +56,21 @@ public class PlaylistMediaResource {
     return playlistMediaService.getPlaylistMedia(playlistId);
   }
 
-  @DeleteMapping("/{playlistId}/{screen}/{file}")
-  public boolean deleteMedia(@PathVariable("playlistId") int playlistId, 
-                             @PathVariable("screen") VPinScreen screen, 
-                             @PathVariable("file") String filename) {
-    return playlistMediaService.deleteMedia(playlistId, screen, filename);
-  }
-
-
   @PostMapping("/{playlistId}/{screen}/{append}")
   public boolean downloadPlaylistAsset(@PathVariable("playlistId") int playlistId,
                                        @PathVariable("screen") VPinScreen screen,
                                        @PathVariable("append") boolean append,
                                        @RequestBody TableAsset asset) throws Exception {
     LOG.info("Starting download of " + asset.getName() + "(appending: " + append + ")");
-    Playlist playlist = playlistService.getPlaylist(playlistId);
-    if (playlist == null) {
-      LOG.error("No playlist for media upload.");
-      return false;
-    }
-
-    String suffix = FilenameUtils.getExtension(asset.getName());
-    File out = playlistMediaService.buildMediaAsset(playlist, screen, suffix, append);
-    tableAssetsService.download(asset, out);
+    Playlist playlist = frontendService.getPlayList(playlistId);
+    File target = frontendService.getFrontendConnector().getMediaAccessStrategy().createMedia(playlist, screen, asset.getFileSuffix(), append);
+    tableAssetsService.download(asset, target);
     return true;
   }
 
   @GetMapping("/{id}/{screen}/{name}")
-  public ResponseEntity<Resource> getMedia(@PathVariable("id") int id, 
-                                           @PathVariable("screen") VPinScreen screen, 
+  public ResponseEntity<Resource> getMedia(@PathVariable("id") int id,
+                                           @PathVariable("screen") VPinScreen screen,
                                            @PathVariable("name") String name) throws IOException {
     FrontendMedia frontendMedia = playlistMediaService.getPlaylistMedia(id);
     if (frontendMedia != null) {
@@ -124,14 +113,12 @@ public class PlaylistMediaResource {
         return JobDescriptorFactory.error("Upload request did not contain a file object.");
       }
 
-      Playlist playlist = playlistService.getPlaylist(playlistId);
-      if (playlist == null) {
+      String suffix = FilenameUtils.getExtension(file.getOriginalFilename());
+      File out = playlistMediaService.uniqueMediaAsset(playlistId, screen, suffix, append);
+      if (out == null) {
         LOG.error("No playlist for media upload.");
         return JobDescriptorFactory.error("No playlist found for media upload.");
       }
-
-      String suffix = FilenameUtils.getExtension(file.getOriginalFilename());
-      File out = playlistMediaService.buildMediaAsset(playlist, screen, suffix, append);
       LOG.info("Uploading " + out.getAbsolutePath());
       UploadUtil.upload(file, out);
 
@@ -141,4 +128,51 @@ public class PlaylistMediaResource {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Playlist media upload failed: " + e.getMessage());
     }
   }
+
+  //--------------------------------
+
+  @GetMapping("/metadata/{playlistId}/{screen}/{file}")
+  public AssetMetaData metadata(@PathVariable("playlistId") int playlistId, @PathVariable("screen") VPinScreen screen, @PathVariable("file") String filename) {
+    return playlistMediaService.getMetadata(playlistId, screen, filename);
+  }
+
+  @DeleteMapping("/media/{playlistId}/{screen}/{file}")
+  public boolean deleteMedia(@PathVariable("playlistId") int playlistId,
+                             @PathVariable("screen") VPinScreen screen,
+                             @PathVariable("file") String filename) {
+    return playlistMediaService.deleteMedia(playlistId, screen, filename);
+  }
+
+  @DeleteMapping("/media/{playlistId}")
+  public boolean deleteMedia(@PathVariable("playlistId") int playlistId) {
+    return playlistMediaService.deleteMedia(playlistId);
+  }
+
+  @PutMapping("/media/{playlistId}/{screen}")
+  public boolean doPut(@PathVariable("playlistId") int playlistId, @PathVariable("screen") VPinScreen screen, @RequestBody Map<String, String> data) throws Exception {
+    try {
+      if (data.containsKey("fullscreen")) {
+        return playlistMediaService.toFullscreenMedia(playlistId, screen);
+      }
+      if (data.containsKey("blank")) {
+        return playlistMediaService.addBlank(playlistId, screen);
+      }
+      if (data.containsKey("setDefault")) {
+        return playlistMediaService.setDefaultAsset(playlistId, screen, data.get("setDefault"));
+      }
+      if (data.containsKey("oldName")) {
+        return playlistMediaService.renameAsset(playlistId, screen, data.get("oldName"), data.get("newName"));
+      }
+      if (data.containsKey("copy")) {
+        VPinScreen target = VPinScreen.valueOf(data.get("target"));
+        return playlistMediaService.copyAsset(playlistId, screen, data.get("copy"), target);
+      }
+      return true;
+    }
+    catch (Exception e) {
+      LOG.error("Failed to execute media change request: " + e.getMessage(), e);
+    }
+    return false;
+  }
+
 }

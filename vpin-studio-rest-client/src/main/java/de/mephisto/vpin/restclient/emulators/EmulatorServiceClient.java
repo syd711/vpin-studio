@@ -99,6 +99,22 @@ public class EmulatorServiceClient extends VPinStudioClientService {
     return filtered;
   }
 
+  public List<GameEmulatorRepresentation> getFilteredEmulatorsWithoutAllVpx(UISettings uiSettings) {
+    List<GameEmulatorRepresentation> emulators = getGameEmulatorsUncached();
+    List<GameEmulatorRepresentation> filtered = emulators.stream().filter(e -> e.isEnabled()).filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId()))).collect(Collectors.toList());
+
+    Collections.sort(filtered, new Comparator<GameEmulatorRepresentation>() {
+      @Override
+      public int compare(GameEmulatorRepresentation o1, GameEmulatorRepresentation o2) {
+        if(o1.isVpxEmulator()) {
+          return -1;
+        }
+        return 1;
+      }
+    });
+    return filtered;
+  }
+
   public boolean isAllVpx(GameEmulatorRepresentation emu) {
     return emu != null ? emu.getId() == ALL_VPX_ID : true;
   }

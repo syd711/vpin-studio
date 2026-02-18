@@ -30,8 +30,6 @@ public class GameEmulator {
 
   private String mameDirectory;
   private String romDirectory;
-  private String nvramDirectory;
-  private String cfgDirectory;
 
   private String keepDisplays;
 
@@ -203,20 +201,8 @@ public class GameEmulator {
     this.mameDirectory = mameDirectory;
   }
 
-  public String getNvramDirectory() {
-    return nvramDirectory;
-  }
-
-  public void setNvramDirectory(String nvramDirectory) {
-    this.nvramDirectory = nvramDirectory;
-  }
-
-  public String getCfgDirectory() {
-    return cfgDirectory;
-  }
-
-  public void setCfgDirectory(String cfgDirectory) {
-    this.cfgDirectory = cfgDirectory;
+  public String getInstallationDirectory() {
+    return installationDirectory;
   }
 
   public String getRomDirectory() {
@@ -225,10 +211,6 @@ public class GameEmulator {
 
   public void setRomDirectory(String romDirectory) {
     this.romDirectory = romDirectory;
-  }
-
-  public String getInstallationDirectory() {
-    return installationDirectory;
   }
 
   @Nullable
@@ -273,57 +255,6 @@ public class GameEmulator {
     return exeParameters;
   }
 
-
-  @NonNull
-  @JsonIgnore
-  public File getNvramFolder() {
-    return new File(getNvramDirectory());
-  }
-
-  @NonNull
-  @JsonIgnore
-  public File getCfgFolder() {
-    return new File(getCfgDirectory());
-  }
-
-  @NonNull
-  @JsonIgnore
-  public File getVPRegFile() {
-    return new File(getUserFolder(), VPREG_STG);
-  }
-
-  @NonNull
-  @JsonIgnore
-  public File getMusicFolder() {
-    return new File(getInstallationFolder(), "Music");
-  }
-
-  @NonNull
-  @JsonIgnore
-  public File getAltSoundFolder() {
-    return new File(getMameFolder(), "altsound");
-  }
-
-  public String getAltSoundDirectory() {
-    return getAltSoundFolder().getAbsolutePath();
-  }
-
-  @NonNull
-  @JsonIgnore
-  public File getAltColorFolder() {
-    return new File(getMameFolder(), "altcolor");
-  }
-
-  public String getAltColorDirectory() {
-    return getAltColorFolder().getAbsolutePath();
-  }
-
-  @NonNull
-  @JsonIgnore
-  public File getRomFolder() {
-    return new File(romDirectory);
-  }
-
   @NonNull
   @JsonIgnore
   public File getMameFolder() {
@@ -332,18 +263,6 @@ public class GameEmulator {
       return new File(dir);
     }
     return new File("./");
-  }
-
-  @NonNull
-  @JsonIgnore
-  public File getScriptsFolder() {
-    return new File(getInstallationFolder(), "scripts");
-  }
-
-  @NonNull
-  @JsonIgnore
-  public File getUserFolder() {
-    return new File(getInstallationFolder(), "User");
   }
 
   @Nullable

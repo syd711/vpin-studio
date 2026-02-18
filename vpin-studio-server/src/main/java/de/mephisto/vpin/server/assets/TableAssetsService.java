@@ -18,13 +18,15 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 @Service
 public class TableAssetsService {
-  private final static Logger LOG = LoggerFactory.getLogger(TableAssetsService.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @Autowired
   private FrontendService frontendService;
@@ -108,7 +110,6 @@ public class TableAssetsService {
           return;
         }
       }
-      target.getParentFile().mkdirs();
       try (FileOutputStream fileOutputStream = new FileOutputStream(target)) {
         adapter.get().writeAsset(fileOutputStream, asset, -1, -1);
         LOG.info("Downloaded file {}", target.getAbsolutePath());

@@ -17,8 +17,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 
-public class VPReg {
-  private final static Logger LOG = LoggerFactory.getLogger(VPReg.class);
+public class VPRegFile {
+  private final static Logger LOG = LoggerFactory.getLogger(VPRegFile.class);
 
   public static final String ARCHIVE_FILENAME = "vpreg-stg.json";
 
@@ -47,15 +47,14 @@ public class VPReg {
     adapters.put("numericListAnonymous3", new NumericListAnonymousVPRegHighscoreAdapter("hsa%s"));
   }
 
+  private ScoreParsingSummary scoreParsingSummary;
 
-  public VPReg(File vpregFile) {
-    this.vpregFile = vpregFile;
-  }
 
-  public VPReg(File vpregFile, String rom, String tablename) {
+  public VPRegFile(File vpregFile, String rom, String tablename) {
     this.vpregFile = vpregFile;
     this.rom = rom;
     this.tablename = tablename;
+    this.readHighscores();
   }
 
   public List<String> getEntries() {
@@ -130,29 +129,6 @@ public class VPReg {
         }
       }
     }
-  }
-
-  public boolean containsGame() {
-    POIFSFileSystem fs = null;
-    try {
-      fs = new POIFSFileSystem(vpregFile, false);
-      DirectoryEntry root = fs.getRoot();
-      return getGameDirectory(root) != null;
-    }
-    catch (Exception e) {
-      LOG.error("Failed to read VPReg: " + e.getMessage());
-    }
-    finally {
-      if (fs != null) {
-        try {
-          fs.close();
-        }
-        catch (IOException e) {
-          //ignore
-        }
-      }
-    }
-    return false;
   }
 
   public boolean resetHighscores(long score) {
@@ -275,8 +251,11 @@ public class VPReg {
     }
   }
 
-  @Nullable
-  public ScoreParsingSummary readHighscores() {
+  public void readHighscores() {
+    if (!vpregFile.exists()) {
+      return;
+    }
+
     POIFSFileSystem fs = null;
     try {
       fs = new POIFSFileSystem(vpregFile, true);
@@ -285,7 +264,7 @@ public class VPReg {
       if (gameFolder != null) {
         for (VPRegHighscoreAdapter adapter : adapters.values()) {
           if (adapter.isApplicable(gameFolder)) {
-            return adapter.readHighscore(gameFolder);
+            scoreParsingSummary = adapter.readHighscore(gameFolder);
           }
         }
       }
@@ -303,7 +282,6 @@ public class VPReg {
         }
       }
     }
-    return null;
   }
 
   public void deleteEntry(String amh) {
@@ -354,6 +332,12 @@ public class VPReg {
       }
     }
 
+    for (String entryName : entryNames) {
+      if (entryName.equalsIgnoreCase(rom + "_VPX")) {
+        return (DirectoryEntry) root.getEntry(entryName);
+      }
+    }
+
     if (tablename != null) {
       for (String entryName : entryNames) {
         if (entryName.equalsIgnoreCase(tablename)) {
@@ -383,14 +367,34 @@ public class VPReg {
     return root.createDirectory(rom);
   }
 
+  public ScoreParsingSummary getScoreParsingSummary() {
+    return scoreParsingSummary;
+  }
+
+  public String getCanonicalPath() throws IOException {
+    return vpregFile.getCanonicalPath();
+  }
+
+  public Date getLastModified() {
+    return new Date(vpregFile.lastModified());
+  }
+
+  public boolean isValid() {
+    return scoreParsingSummary != null;
+  }
+
+  public File getFile() {
+    return vpregFile;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof VPReg)) return false;
+    if (!(o instanceof VPRegFile)) return false;
 
-    VPReg vpReg = (VPReg) o;
+    VPRegFile vpRegFile = (VPRegFile) o;
 
-    return vpregFile.equals(vpReg.vpregFile);
+    return vpregFile.equals(vpRegFile.vpregFile);
   }
 
   @Override

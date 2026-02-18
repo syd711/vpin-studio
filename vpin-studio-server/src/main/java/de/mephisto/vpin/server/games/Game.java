@@ -431,7 +431,7 @@ public class Game {
     this.gameStatus = gameStatus;
   }
 
-  @Nullable
+  @NonNull
   @JsonIgnore
   public GameEmulator getEmulator() {
     return emulator;
@@ -462,29 +462,34 @@ public class Game {
 
   @NonNull
   @JsonIgnore
+  public File getGameFolder() {
+    return getGameFile().getParentFile();
+  }
+
+
+  @NonNull
+  @JsonIgnore
   public File getPOVFile() {
-    return new File(getGameFile().getParentFile(), FilenameUtils.getBaseName(gameFileName) + ".pov");
+    return new File(getGameFolder(), FilenameUtils.getBaseName(gameFileName) + ".pov");
   }
 
 
   @NonNull
   @JsonIgnore
   public File getIniFile() {
-    return new File(getGameFile().getParentFile(), FilenameUtils.getBaseName(gameFileName) + ".ini");
+    return new File(getGameFolder(), FilenameUtils.getBaseName(gameFileName) + ".ini");
   }
-
-  // getHighscoreIniFile moved in HighscoreResolution
 
   @NonNull
   @JsonIgnore
   public File getVBSFile() {
-    return new File(getGameFile().getParentFile(), FilenameUtils.getBaseName(gameFileName) + ".vbs");
+    return new File(getGameFolder(), FilenameUtils.getBaseName(gameFileName) + ".vbs");
   }
 
   @NonNull
   @JsonIgnore
   public File getResFile() {
-    return new File(getGameFile().getParentFile(), FilenameUtils.getBaseName(gameFileName) + ".res");
+    return new File(getGameFolder(), FilenameUtils.getBaseName(gameFileName) + ".res");
   }
 
   @NonNull
@@ -713,40 +718,6 @@ public class Game {
     this.altSoundAvailable = altSoundAvailable;
   }
 
-  // getAltSoundFolder() -> moved in altSoundService
-
-  // getAltColorFolder() -> moved in altColorService
-
-  // getMusicFolder() -> moved in musicService
-
-  @Nullable
-  @JsonIgnore
-  public File getCfgFile() {
-    if (!StringUtils.isEmpty(this.getRom())) {
-      return new File(new File(emulator.getMameFolder(), "cfg"), this.getRom() + ".cfg");
-    }
-    return null;
-  }
-
-  @Nullable
-  @JsonIgnore
-  public File getRomFile() {
-    if (!StringUtils.isEmpty(this.getRom()) && emulator.getRomDirectory() != null) {
-      return new File(emulator.getRomDirectory(), this.getRom() + ".zip");
-    }
-    return null;
-  }
-
-  @Nullable
-  @JsonIgnore
-  public File getNvramFile() {
-    if (!StringUtils.isEmpty(this.getRom()) && emulator.getNvramDirectory() != null) {
-      return new File(emulator.getNvramDirectory(), this.getRom() + ".nv");
-    }
-    return null;
-  }
-
-
   /**
    * Only relevant for tables that are located in a separate folder
    *
@@ -768,11 +739,6 @@ public class Game {
     return null;
   }
 
-  public boolean isRomExists() {
-    File romFile = getRomFile();
-    return romFile != null && romFile.exists();
-  }
-
   @NonNull
   @JsonIgnore
   public File getBAMCfgFile() {
@@ -784,7 +750,7 @@ public class Game {
   @JsonIgnore
   public File getDirectB2SFile() {
     String baseName = FilenameUtils.getBaseName(this.getGameFileName());
-    return new File(getGameFile().getParentFile(), baseName + ".directb2s");
+    return new File(getGameFolder(), baseName + ".directb2s");
   }
 
   @NonNull
@@ -831,4 +797,5 @@ public class Game {
   public int hashCode() {
     return id;
   }
+
 }

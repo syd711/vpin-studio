@@ -97,10 +97,10 @@ public abstract class BasePrevNextController implements Initializable, DialogCon
 
   @Override
   public void onKeyPressed(KeyEvent ke) {
-    if (ke.getCode() == KeyCode.PAGE_UP) {
+    if (ke.getCode() == KeyCode.PAGE_UP && !prevButton.isDisabled()) {
       onPrevious(null);
     }
-    if (ke.getCode() == KeyCode.PAGE_DOWN) {
+    if (ke.getCode() == KeyCode.PAGE_DOWN && !nextButton.isDisabled()) {
       onNext(null);
     }
     if (ke.getCode() == KeyCode.S && ke.isControlDown()) {

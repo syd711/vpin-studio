@@ -4,12 +4,13 @@ import de.mephisto.vpin.restclient.converter.MediaConversionCommand;
 import de.mephisto.vpin.restclient.converter.MediaConversionCommand.ImageOp;
 import de.mephisto.vpin.restclient.converter.MediaOperation;
 import de.mephisto.vpin.restclient.converter.MediaOperationResult;
-import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.frontend.FrontendService;
-import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.frontend.MediaService;
+import de.mephisto.vpin.server.games.GameMediaService;
+import de.mephisto.vpin.server.playlists.PlaylistMediaService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.commons.fx.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -37,21 +38,22 @@ public class MediaConverterService implements InitializingBean {
   @Autowired
   private FrontendService frontendService;
 
+  @Autowired
+  private GameMediaService gameMediaService;
+
+  @Autowired
+  private PlaylistMediaService playlistMediaService;
+
   public MediaOperationResult convert(@NonNull MediaOperation operation) {
     MediaOperationResult result = new MediaOperationResult();
     result.setMediaOperation(operation);
     LOG.info("Executing video conversion for {} / {} ", operation.getFilename(), operation.getCommand());
     try {
-      Game game = frontendService.getOriginalGame(operation.getGameId());
-      if (game == null) {
-        return result;
-      }
-
-      List<File> mediaItemFiles = getMediaItemFiles(game, result, operation);
+      List<File> mediaItemFiles = getMediaItemFiles(result, operation);
       List<File> filteredFiles = filterMediaFiles(mediaItemFiles, operation.getCommand().getType());
 
       for (File mediaItemFile : filteredFiles) {
-        convert(game, operation.getCommand(), result, mediaItemFile);
+        convert(operation.getCommand(), result, mediaItemFile);
       }
     }
     catch (Exception e) {
@@ -82,7 +84,7 @@ public class MediaConverterService implements InitializingBean {
     return filtered;
   }
 
-  public void convert(@NonNull Game game, @NonNull MediaConversionCommand command, @NonNull MediaOperationResult operationResult, @NonNull File mediaFile) throws Exception {
+  public void convert(@NonNull MediaConversionCommand command, @NonNull MediaOperationResult operationResult, @NonNull File mediaFile) throws Exception {
     if (command.getType() == MediaConversionCommand.TYPE_FILE) {
       File batFile = new File(command.getCommand());
       if (batFile.exists()) {
@@ -105,30 +107,23 @@ public class MediaConverterService implements InitializingBean {
     }
   }
 
-  private List<File> getMediaItemFiles(@NonNull Game game, @NonNull MediaOperationResult operationResult, @NonNull MediaOperation operation) {
+  private List<File> getMediaItemFiles(@NonNull MediaOperationResult operationResult, @NonNull MediaOperation operation) {
+    MediaService mediaService = operation.isPlaylistMode() ? playlistMediaService : gameMediaService;
     List<File> result = new ArrayList<>();
     if (operation.getFilename() != null) {
-      FrontendMediaItem mediaItem = frontendService.getMediaItem(game, operation.getScreen(), operation.getFilename());
-      if (mediaItem == null) {
+      File mediaFile = mediaService.getMediaFile(operation.getObjectId(), operation.getScreen(), operation.getFilename());
+      if (mediaFile == null || !mediaFile.exists()) {
         LOG.info("No media item found for " + operation.getFilename());
         operationResult.setResult("No media item found for " + operation.getFilename());
         return result;
       }
-
-      File file = mediaItem.getFile();
-      if (file.exists()) {
-        result.add(file);
-      }
+      result.add(mediaFile);
     }
     else {
-      List<FrontendMediaItem> mediaItems = frontendService.getGameMedia(game).getMediaItems(operation.getScreen());
-      for (FrontendMediaItem mediaItem : mediaItems) {
-        if (mediaItem == null) {
-          continue;
-        }
-        File file = mediaItem.getFile();
-        if (file.exists()) {
-          result.add(file);
+      List<File> mediaFiles = mediaService.getMediaFiles(operation.getObjectId(), operation.getScreen());
+      for (File mediaFile : mediaFiles) {
+        if (mediaFile.exists()) {
+          result.add(mediaFile);
         }
       }
     }

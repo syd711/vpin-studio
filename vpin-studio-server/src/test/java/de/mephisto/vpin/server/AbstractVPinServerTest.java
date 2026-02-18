@@ -1,10 +1,11 @@
 package de.mephisto.vpin.server;
 
+import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.backups.BackupType;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
-import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
+import de.mephisto.vpin.restclient.frontend.popper.PopperSettings;
 import de.mephisto.vpin.server.backups.BackupService;
 import de.mephisto.vpin.server.backups.adapters.TableBackupAdapterFactory;
 import de.mephisto.vpin.server.assets.AssetRepository;
@@ -17,6 +18,7 @@ import de.mephisto.vpin.server.games.*;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.players.PlayerRepository;
+import de.mephisto.vpin.server.playlists.PlaylistMediaService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusEventsResource;
 
@@ -62,6 +64,12 @@ abstract public class AbstractVPinServerTest {
 
   @Autowired
   protected GameService gameService;
+
+  @Autowired
+  protected GameMediaService gameMediaService;
+
+  @Autowired
+  protected PlaylistMediaService playlistMediaService;
 
   @Autowired
   private GameDetailsRepositoryService gameDetailsRepositoryService;
@@ -114,8 +122,6 @@ abstract public class AbstractVPinServerTest {
     emulator.setInstallationDirectory("../testsystem/vPinball/VisualPinball/");
     emulator.setMameDirectory("../testsystem/vPinball/VisualPinball/VPinMAME/");
     emulator.setRomDirectory("../testsystem/vPinball/VisualPinball/VPinMAME/roms/");
-    emulator.setNvramDirectory("../testsystem/vPinball/VisualPinball/VPinMAME/nvram/");
-    emulator.setCfgDirectory("../testsystem/vPinball/VisualPinball/VPinMAME/cfg/");
     emulator.setMediaDirectory("../testsystem/vPinball/PinUPSystem/POPMedia");
     emulator.setGamesDirectory("../testsystem/vPinball/VisualPinball/Tables/");
     emulator.setGameExt("vpx");
@@ -134,6 +140,14 @@ abstract public class AbstractVPinServerTest {
     try {
       frontendService.deleteGames(1);
       clearVPinStudioDatabase();
+
+      // configure popper global settings for tests
+      JsonSettings settings = frontendService.getSettings();
+      if (settings instanceof PopperSettings) {
+        PopperSettings popperSettings = (PopperSettings) settings;
+        popperSettings.setGlobalMediaDir("../testsystem/vPinball/PinUPSystem/POPMedia/Default");
+        frontendService.saveSettings(popperSettings);
+      }
 
       systemService.setBackupType(BackupType.VPA);
 
