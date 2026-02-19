@@ -473,7 +473,6 @@ public class Game {
     return new File(getGameFolder(), FilenameUtils.getBaseName(gameFileName) + ".pov");
   }
 
-
   @NonNull
   @JsonIgnore
   public File getIniFile() {

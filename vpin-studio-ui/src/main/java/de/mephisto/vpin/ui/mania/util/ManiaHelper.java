@@ -114,7 +114,6 @@ public class ManiaHelper {
         }
       }
       ManiaAvatarCache.clear();
-      ManiaPermissions.invalidate();
       client.getManiaService().clearCache();
 
       client.getPreferenceService().clearCache(PreferenceNames.MANIA_SETTINGS);

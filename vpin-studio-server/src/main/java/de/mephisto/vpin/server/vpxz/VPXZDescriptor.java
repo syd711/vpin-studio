@@ -15,6 +15,7 @@ public class VPXZDescriptor {
   private String filename;
   private String absoluteFileName;
   private long size;
+  private boolean installed;
 
   public VPXZDescriptor() {
     //used for JSON serialization
@@ -28,6 +29,14 @@ public class VPXZDescriptor {
     this.filename = filename;
     this.absoluteFileName= absoluteFileName;
     this.size = size;
+  }
+
+  public boolean isInstalled() {
+    return installed;
+  }
+
+  public void setInstalled(boolean installed) {
+    this.installed = installed;
   }
 
   public String getAbsoluteFileName() {

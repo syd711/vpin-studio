@@ -13,8 +13,26 @@ public class VPXZSettings extends JsonSettings {
   private boolean vpx = true;
 
   private boolean isOverwriteFile = true;
+  private String webserverHost;
+  private int webserverPost;
 
   private boolean enabled = false;
+
+  public String getWebserverHost() {
+    return webserverHost;
+  }
+
+  public void setWebserverHost(String webserverHost) {
+    this.webserverHost = webserverHost;
+  }
+
+  public int getWebserverPost() {
+    return webserverPost;
+  }
+
+  public void setWebserverPost(int webserverPost) {
+    this.webserverPost = webserverPost;
+  }
 
   public boolean isEnabled() {
     return enabled;

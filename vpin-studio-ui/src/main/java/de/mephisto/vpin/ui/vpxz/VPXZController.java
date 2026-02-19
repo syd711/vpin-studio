@@ -7,10 +7,7 @@ import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.vpxz.*;
-import de.mephisto.vpin.ui.NavigationController;
-import de.mephisto.vpin.ui.NavigationOptions;
-import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.StudioFXController;
+import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
@@ -61,7 +58,16 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
   private Button downloadBtn;
 
   @FXML
+  private Button installBtn;
+
+  @FXML
   private Label labelCount;
+
+  @FXML
+  private Label connectionStatusLabel;
+
+  @FXML
+  private Label connectionVersionLabel;
 
   @FXML
   private ComboBox<VPXZSourceRepresentation> sourceCombo;
@@ -71,6 +77,9 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
 
   @FXML
   private TableColumn<VPXZModel, VPXZModel> romColumn;
+
+  @FXML
+  private TableColumn<VPXZModel, VPXZModel> installedColumn;
 
   @FXML
   private TableColumn<VPXZModel, VPXZModel> povColumn;
@@ -127,6 +136,15 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
     if (uploaded) {
       doReload(Optional.empty());
     }
+  }
+
+  @FXML
+  private void onInstall() {
+  }
+
+  @FXML
+  private void onConnectionSettings() {
+    PreferencesController.open("vpxz");
   }
 
   @FXML

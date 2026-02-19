@@ -22,6 +22,7 @@ import de.mephisto.vpin.server.music.MusicService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.puppack.PupPacksService;
+import de.mephisto.vpin.server.vpx.FolderLookupService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import net.lingala.zip4j.ZipFile;
 import org.apache.commons.lang3.StringUtils;
@@ -70,6 +71,10 @@ public class VPXZFileService implements InitializingBean {
   @Autowired
   private PreferencesService preferencesService;
 
+  @Autowired
+  private FolderLookupService folderLookupService;
+
+
   public ZipFile createVpxzZip(@NonNull File target) {
     return VpxzArchiveUtil.createZipFile(target);
   }
@@ -80,11 +85,9 @@ public class VPXZFileService implements InitializingBean {
                          JobDescriptor jobDescriptor,
                          BiConsumer<File, String> zipOut,
                          Game game, TableDetails tableDetails) throws IOException {
-    File gameFolder = game.getGameFile().getParentFile();
-
     VPXZSettings vpxzSettings = preferencesService.getJsonPreference(PreferenceNames.VPXZ_SETTINGS, VPXZSettings.class);
 
-    File romFile = game.getRomFile();
+    File romFile = folderLookupService.getRomFile(game);
     if (vpxzSettings.isRom() && romFile != null && romFile.exists()) {
       packageInfo.setRom(VPXZFileInfoFactory.create(romFile));
       if (!zipFile(jobDescriptor, romFile, MAME_FOLDER + "/roms/" + romFile.getName(), zipOut)) {
@@ -92,7 +95,7 @@ public class VPXZFileService implements InitializingBean {
       }
     }
 
-    File nvramFile = game.getNvramFile();
+    File nvramFile = folderLookupService.getNvRamFolder(game);
     if (vpxzSettings.isNvRam() && nvramFile != null && nvramFile.exists()) {
       packageInfo.setNvRam(VPXZFileInfoFactory.create(nvramFile));
       if (!zipFile(jobDescriptor, romFile, MAME_FOLDER + "/nvram/" + nvramFile.getName(), zipOut)) {
@@ -142,7 +145,7 @@ public class VPXZFileService implements InitializingBean {
     }
 
     // Cfg
-    File cfgFile = game.getCfgFile();
+    File cfgFile = folderLookupService.getCfgFile(game);
     if (cfgFile != null && cfgFile.exists()) {
       packageInfo.setCfg(VPXZFileInfoFactory.create(cfgFile));
       if (!zipFile(jobDescriptor, cfgFile, MAME_FOLDER + "/cfg/" + cfgFile.getName(), zipOut)) {
