@@ -409,7 +409,22 @@
                                     <ToggleGroup fx:id="tutorialScreenGroup" />
                                  </toggleGroup>
                               </RadioButton>
-                              <RadioButton fx:id="tutorialScreenRadio" layoutX="10.0" layoutY="43.0" mnemonicParsing="false" styleClass="default-text" text="Display Tutorial Videos on VPin Screen" toggleGroup="$tutorialScreenGroup" />
+                              <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                 <children>
+                                    <RadioButton fx:id="tutorialScreenRadio" mnemonicParsing="false" styleClass="default-text" text="Display Tutorial Videos on VPin Screen" toggleGroup="$tutorialScreenGroup" />
+                                    <Label fx:id="publicReadAPIHint11111" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip prefWidth="300.0" text="If you use PinUP Popper as frontend for your cabinet, this is the recommended setting." wrapText="true" />
+                                       </tooltip>
+                                    </Label>
+                                 </children>
+                              </HBox>
                               <ComboBox fx:id="screenTutorialComboBox" prefWidth="250.0">
                                  <VBox.margin>
                                     <Insets left="24.0" />
