@@ -32,14 +32,14 @@ import org.springframework.stereotype.Service;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.sql.Date;
 import java.util.*;
 import java.util.List;
 
 @Service
 public class FrontendService implements InitializingBean, PreferenceChangedListener {
-
-  private final static Logger LOG = LoggerFactory.getLogger(FrontendService.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @Autowired
   private SystemService systemService;
@@ -747,7 +747,11 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     try {
       emulatorService.setFrontendService(this);
       getFrontendConnector().initializeConnector();
+
+      long start = System.currentTimeMillis();
+      LOG.info("Initializing emulators");
       emulatorService.loadEmulators();
+      LOG.info("Initial emulator load took {}ms", (System.currentTimeMillis() - start));
 
       getFrontendConnector().getFrontendPlayerDisplays();
       preferencesService.addChangeListener(this);

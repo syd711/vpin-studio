@@ -7,15 +7,20 @@ import de.mephisto.vpin.restclient.validation.GameEmulatorValidationCode;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class GameEmulatorValidationService {
+public class GameEmulatorValidationService implements InitializingBean {
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public List<ValidationState> validate(@NonNull FrontendType frontendType, @NonNull GameEmulator emulator, boolean findFirst) {
     List<ValidationState> result = new ArrayList<>();
@@ -80,5 +85,10 @@ public class GameEmulatorValidationService {
     }
 
     return result;
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

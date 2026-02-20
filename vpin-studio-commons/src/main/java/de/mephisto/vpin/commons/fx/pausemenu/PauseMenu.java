@@ -288,7 +288,7 @@ public class PauseMenu extends Application {
           Boolean isMuted = WindowsVolumeControl.isMuted();
           alreadyMuted = isMuted != null && isMuted;
 
-          if (pauseMenuSettings.isMuteOnPause() && !alreadyMuted && !pauseMenuSettings.isTutorialsOnScreen()) {
+          if (pauseMenuSettings.isMuteOnPause() && !alreadyMuted) {
             NirCmd.muteSystem(true);
           }
           return true;
@@ -348,7 +348,7 @@ public class PauseMenu extends Application {
         NirCmd.focusWindow("Visual Pinball Player");
       }
 
-      if (pauseMenuSettings.isMuteOnPause() && !alreadyMuted && !pauseMenuSettings.isTutorialsOnScreen()) {
+      if (pauseMenuSettings.isMuteOnPause() && !alreadyMuted) {
         NirCmd.muteSystem(false);
       }
     }

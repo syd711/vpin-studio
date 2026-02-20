@@ -1,3 +1,11 @@
+## Release Notes 4.6.6
+
+## Changes
+
+- **Pause Menu**: Reverted the ignoring of the "Mute System" option for tutorial videos.
+
+---
+
 ## Release Notes 4.6.5
 
 ## Changes (including a breaking one!)

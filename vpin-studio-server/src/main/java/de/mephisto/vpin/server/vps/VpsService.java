@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -42,7 +43,7 @@ import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 @Service
 public class VpsService implements InitializingBean {
-  private final static Logger LOG = LoggerFactory.getLogger(VpsService.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @Autowired
   private VPXService vpxService;

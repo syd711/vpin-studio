@@ -4,13 +4,17 @@ package de.mephisto.vpin.commons;
 import de.mephisto.vpin.commons.utils.WinRegistry;
 import de.mephisto.vpin.restclient.util.OSUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 public class SystemInfo {
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   public static String RESOURCES = "./resources/";
 
   public final static String PINUP_SYSTEM_INSTALLATION_DIR = "pinupSystem.installationDir";
@@ -169,11 +173,18 @@ public class SystemInfo {
   }
 
   //----------------------------------------------------------------------
+  private final boolean logRegistry = false;
 
   @NonNull
   public List<String> getCurrentUserKeys(String path) {
     if (OSUtil.isWindows()) {
-      return WinRegistry.getCurrentUserKeys(path);
+      long start = System.currentTimeMillis();
+      List<String> currentUserKeys = WinRegistry.getCurrentUserKeys(path);
+      if (logRegistry) {
+        LOG.info("Current user keys fetch for {} took {}ms", path, System.currentTimeMillis() - start);
+      }
+
+      return currentUserKeys;
     }
     return Collections.emptyList();
   }
@@ -181,7 +192,14 @@ public class SystemInfo {
   @NonNull
   public Map<String, Object> getCurrentUserValues(String path) {
     if (OSUtil.isWindows()) {
-      return WinRegistry.getCurrentUserValues(path);
+      long start = System.currentTimeMillis();
+      Map<String, Object> currentUserValues = WinRegistry.getCurrentUserValues(path);
+      if (logRegistry) {
+        LOG.info("Current user value fetch for {} took {}ms", path, System.currentTimeMillis() - start);
+      }
+
+      return currentUserValues;
+
     }
     return Collections.emptyMap();
   }

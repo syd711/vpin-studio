@@ -15,6 +15,7 @@ import de.mephisto.vpin.server.mame.MameService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Lazy;
@@ -22,12 +23,13 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class EmulatorService {
-  private final static Logger LOG = LoggerFactory.getLogger(EmulatorService.class);
+public class EmulatorService implements InitializingBean {
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @Autowired
   private GameEmulatorValidationService gameEmulatorValidationService;
@@ -131,7 +133,9 @@ public class EmulatorService {
     List<GameEmulator> ems = frontendConnector.getEmulators();
     this.emulators.clear();
     for (GameEmulator emulator : ems) {
+      long start = System.currentTimeMillis();
       loadEmulator(emulator);
+      LOG.info("Loading of emulator {} took {}ms.", emulator.getName(), (System.currentTimeMillis() - start));
     }
 
     if (this.emulators.isEmpty()) {
@@ -237,5 +241,10 @@ public class EmulatorService {
 
   public void addEmulatorChangeListener(EmulatorChangeListener listener) {
     this.listeners.add(listener);
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

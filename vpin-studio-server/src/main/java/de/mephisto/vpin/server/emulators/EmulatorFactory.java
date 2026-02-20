@@ -13,16 +13,21 @@ import de.mephisto.vpin.server.steam.SteamService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 
 @Service
-public class EmulatorFactory implements ApplicationContextAware {
+public class EmulatorFactory implements ApplicationContextAware, InitializingBean {
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private ApplicationContext applicationContext;
 
@@ -436,5 +441,10 @@ public class EmulatorFactory implements ApplicationContextAware {
   @Override
   public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
     this.applicationContext = applicationContext;
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

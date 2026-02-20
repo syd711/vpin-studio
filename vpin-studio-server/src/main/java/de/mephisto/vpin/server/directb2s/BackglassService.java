@@ -521,11 +521,9 @@ public class BackglassService implements InitializingBean {
   }
 
   private void reloadDirectB2SAndVersions() {
-    cacheDirectB2SVersion.clear();
-
-    List<DirectB2S> result = new ArrayList<>();
-
     long start = System.currentTimeMillis();
+
+    cacheDirectB2SVersion.clear();
     List<GameEmulator> gameEmulators = emulatorService.getBackglassGameEmulators();
     for (GameEmulator gameEmulator : gameEmulators) {
       if (!gameEmulator.isEnabled()) {
@@ -560,7 +558,6 @@ public class BackglassService implements InitializingBean {
           currentDirectB2S.setEmulatorId(gameEmulator.getId());
           addGameInfo(currentDirectB2S, gameEmulator, FilenameUtils.removeExtension(mainName));
 
-          result.add(currentDirectB2S);
           // add in cache
           setDirectB2SAndVersions(gameEmulator.getId(), mainName, currentDirectB2S);
         }
