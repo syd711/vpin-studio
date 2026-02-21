@@ -19,6 +19,7 @@ import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.SystemUtil;
+import de.mephisto.vpin.ui.vpxz.dialogs.VPXZInstallationProgressModel;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -155,16 +156,8 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
       return;
     }
 
-    JFXFuture.supplyAsync(() -> {
-      return client.getVpxzService().ping();
-    }).thenAcceptLater(version -> {
-      if (version == null) {
-        WidgetFactory.showAlert(Studio.stage, "Installation Failed", "Invalid connection or the phone is in energy saving mode.");
-      }
-      else {
-        client.getVpxzService().install(selectedItem.get().getBean());
-      }
-    });
+    VPXZDescriptorRepresentation descriptor = selectedItem.getBean();
+    ProgressDialog.createProgressDialog(new VPXZInstallationProgressModel("Upload & Install", descriptor));
   }
 
   @FXML
@@ -403,11 +396,15 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
       if (value.getSize() == 0) {
         return new Label("-");
       }
-      return new Label(FileUtils.readableFileSize(value.getSize()));
+      Label label = new Label(FileUtils.readableFileSize(value.getSize()));
+      label.getStyleClass().add("default-text");
+      return label;
     }, this, true);
 
     BaseLoadingColumn.configureColumn(createdAtColumn, (value, model) -> {
-      return new Label(DateFormat.getInstance().format(value.getCreatedAt()));
+      Label label = new Label(DateFormat.getInstance().format(value.getCreatedAt()));
+      label.getStyleClass().add("default-text");
+      return label;
     }, this, true);
 
 
@@ -415,6 +412,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       VPXZSourceRepresentation vpxzSource = sourceCombo.getValue();
 
+      installBtn.setDisable(newSelection == null);
       deleteBtn.setDisable(!vpxzSource.getType().equals(VPXZSourceType.Folder.name()) || newSelection == null);
       addVpxzButton.setDisable(!vpxzSource.getType().equals(VPXZSourceType.Folder.name()));
       downloadBtn.setDisable(!vpxzSource.getType().equals(VPXZSourceType.Folder.name()) || tableView.getSelectionModel().getSelectedItems().size() == 0);

@@ -82,7 +82,7 @@
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <ComboBox fx:id="sourceCombo" prefHeight="30.0" prefWidth="286.0" GridPane.columnIndex="1" />
+                                    <ComboBox fx:id="sourceCombo" prefHeight="30.0" prefWidth="300.0" GridPane.columnIndex="1" />
                                     <Label styleClass="default-text" text="Target:" />
                                     <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Overwrite Settings:" GridPane.rowIndex="2" />
                                     <CheckBox fx:id="overwriteCheckbox" mnemonicParsing="false" text="Overwrite Existing .vpxz Files" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
@@ -92,7 +92,7 @@
                                     </CheckBox>
                                     <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                        <children>
-                                          <ComboBox fx:id="filesCombo" prefHeight="30.0" prefWidth="286.0" />
+                                          <ComboBox fx:id="filesCombo" prefHeight="30.0" prefWidth="300.0" />
                                           <Button fx:id="syncBtn" mnemonicParsing="false" onAction="#onSynchronize" text="Synchronize with Github">
                                              <font>
                                                 <Font size="14.0" />

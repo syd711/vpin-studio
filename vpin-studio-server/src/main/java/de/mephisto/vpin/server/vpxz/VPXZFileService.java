@@ -82,6 +82,9 @@ public class VPXZFileService implements InitializingBean {
   private FolderLookupService folderLookupService;
 
 
+  private static final int TARGET_WHEEL_SIZE_WIDTH = 150;
+
+
   public ZipFile createVpxzZip(@NonNull File target) {
     return VpxzArchiveUtil.createZipFile(target);
   }
@@ -232,7 +235,7 @@ public class VPXZFileService implements InitializingBean {
         if (wheelFileName.equalsIgnoreCase("apng")) {
           byte[] bytes = PngFrameCapture.captureFirstFrame(mediaFile);
           BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes));
-          BufferedImage resizedImage = ImageUtil.resizeImage(image, BackupPackageInfo.TARGET_WHEEL_SIZE_WIDTH);
+          BufferedImage resizedImage = ImageUtil.resizeImage(image, TARGET_WHEEL_SIZE_WIDTH);
           File tmp = File.createTempFile(wheelFileName, ".png");
           tmp.deleteOnExit();
           ImageUtil.write(resizedImage, tmp);
@@ -241,7 +244,7 @@ public class VPXZFileService implements InitializingBean {
         }
         else {
           BufferedImage image = ImageUtil.loadImage(mediaFile);
-          BufferedImage resizedImage = ImageUtil.resizeImage(image, BackupPackageInfo.TARGET_WHEEL_SIZE_WIDTH);
+          BufferedImage resizedImage = ImageUtil.resizeImage(image, TARGET_WHEEL_SIZE_WIDTH);
           File tmp = File.createTempFile(wheelFileName, ".png");
           tmp.deleteOnExit();
           ImageUtil.write(resizedImage, tmp);

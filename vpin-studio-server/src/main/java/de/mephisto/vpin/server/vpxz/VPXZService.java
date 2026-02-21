@@ -3,11 +3,14 @@ package de.mephisto.vpin.server.vpxz;
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.connectors.github.GithubFileDownloader;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.VPXZExportDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.preferences.VPXZSettings;
+import de.mephisto.vpin.restclient.vpxz.VPXMobileClient;
 import de.mephisto.vpin.restclient.vpxz.VPXZSourceRepresentation;
 import de.mephisto.vpin.restclient.vpxz.VPXZSourceType;
 import de.mephisto.vpin.restclient.vpxz.models.Tables;
@@ -19,11 +22,17 @@ import de.mephisto.vpin.server.jobs.JobService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -60,21 +69,46 @@ public class VPXZService implements InitializingBean {
 
   public Version ping() {
     VPXZSettings vpxzSettings = preferencesService.getJsonPreference(PreferenceNames.VPXZ_SETTINGS, VPXZSettings.class);
-    MobileDeviceClient client = new MobileDeviceClient(vpxzSettings.getWebserverHost(), vpxzSettings.getWebserverPort());
+    VPXMobileClient client = new VPXMobileClient(vpxzSettings.getWebserverHost(), vpxzSettings.getWebserverPort());
     return client.getInfo();
   }
 
   public Tables getMobileDeviceTables() {
     VPXZSettings vpxzSettings = preferencesService.getJsonPreference(PreferenceNames.VPXZ_SETTINGS, VPXZSettings.class);
-    MobileDeviceClient client = new MobileDeviceClient(vpxzSettings.getWebserverHost(), vpxzSettings.getWebserverPort());
+    VPXMobileClient client = new VPXMobileClient(vpxzSettings.getWebserverHost(), vpxzSettings.getWebserverPort());
     return client.getTables();
   }
 
   public String install(VPXZDescriptor descriptor) {
     VPXZSettings vpxzSettings = preferencesService.getJsonPreference(PreferenceNames.VPXZ_SETTINGS, VPXZSettings.class);
-    MobileDeviceClient client = new MobileDeviceClient(vpxzSettings.getWebserverHost(), vpxzSettings.getWebserverPort());
-//    return client.upload();
-    return null;
+    VPXMobileClient client = new VPXMobileClient(vpxzSettings.getWebserverHost(), vpxzSettings.getWebserverPort());
+
+    String targetFolder = FilenameUtils.getBaseName(descriptor.getFilename());
+    client.createFolder(targetFolder);
+
+    try {
+      String url = getRestClient().getBaseUrl() + API + "games/upload";
+      LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+      map.add("mode", uploadType.name());
+      map.add("gameId", gameId);
+      map.add("emuId", emuId);
+      HttpEntity<MultiValueMap<String, Object>> upload = createUpload(map, file, -1, null, AssetType.TABLE, listener);
+      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
+      finalizeUpload(upload);
+      return exchange.getBody();
+    }
+    catch (Exception e) {
+      LOG.error("Table upload failed: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
+  public boolean cancelInstall() {
+    return true;
+  }
+
+  public double progressInstall() {
+    return 0;
   }
 
   public List<String> getVpxStandaloneFiles(boolean forceReload) {

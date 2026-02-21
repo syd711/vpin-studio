@@ -69,6 +69,16 @@ public class VPXZResource {
     return vpxzService.install(descriptor);
   }
 
+  @GetMapping("/device/cancelinstall")
+  public boolean cancelInstall() {
+    return vpxzService.cancelInstall();
+  }
+
+  @GetMapping("/device/progressinstall")
+  public double progressInstall() {
+    return vpxzService.progressInstall();
+  }
+
   @GetMapping()
   public List<VPXZDescriptorRepresentation> getVPXZFiles() {
     List<VPXZDescriptor> descriptors = vpxzService.getVPXZDescriptors();
