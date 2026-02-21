@@ -178,6 +178,8 @@ public class AltSoundService implements InitializingBean {
     this.altSoundFolder2AltSound.clear();
 
     List<GameEmulator> vpxGameEmulators = emulatorService.getVpxGameEmulators();
+    //folderLookupService.getAltSoundFolders(vpxGameEmulators).forEach(altSoundDir -> createAltSound(altSoundDir));
+
     for (GameEmulator emulator : vpxGameEmulators) {
       File altSoundFolder = new File(emulator.getMameFolder(), "altsound/");
       if (altSoundFolder.exists()) {

@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.PropertyWriter;
 import com.fasterxml.jackson.databind.ser.ResolvableSerializer;
 import com.fasterxml.jackson.databind.ser.std.BeanSerializerBase;
-import de.mephisto.vpin.server.vpx.FolderLookupService;
+import de.mephisto.vpin.server.mame.MameService;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -18,11 +18,11 @@ import java.util.Iterator;
  */
 public class GameSerializer extends JsonSerializer<Game> implements ResolvableSerializer {
 
-  private final FolderLookupService folderLookupService;
+  private final MameService mameService;
   private final JsonSerializer<Object> defaultSerializer;
 
-  public GameSerializer(FolderLookupService folderLookupService, JsonSerializer<Object> defaultSerializer) {
-    this.folderLookupService = folderLookupService;
+  public GameSerializer(MameService mameService, JsonSerializer<Object> defaultSerializer) {
+    this.mameService = mameService;
     this.defaultSerializer = defaultSerializer;
   }
 
@@ -53,7 +53,7 @@ public class GameSerializer extends JsonSerializer<Game> implements ResolvableSe
     }
 
     // Add custom fields here
-    gen.writeBooleanField("romExists", folderLookupService.isRomExists(game));
+    gen.writeBooleanField("romExists", mameService.isRomExists(game));
 
     gen.writeEndObject();
   }

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
-import de.mephisto.vpin.server.vpx.FolderLookupService;
+import de.mephisto.vpin.server.mame.MameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 public class JacksonConfig {
 
   @Autowired
-  private FolderLookupService folderLookupService;
+  private MameService mameService;
 
   @Bean
   public Module gameSerializerModule() {
@@ -25,7 +25,7 @@ public class JacksonConfig {
       @Override
       public JsonSerializer<?> modifySerializer(SerializationConfig config, BeanDescription beanDesc, JsonSerializer<?> serializer) {
         if (beanDesc.getBeanClass() == Game.class) {
-          return new GameSerializer(folderLookupService, (JsonSerializer<Object>) serializer);
+          return new GameSerializer(mameService, (JsonSerializer<Object>) serializer);
         }
         return serializer;
       }

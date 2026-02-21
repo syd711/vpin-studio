@@ -145,7 +145,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (isVPX && isValidationEnabled(game, GameValidationCode.CODE_ROM_NOT_EXISTS)) {
-      if (game.isRomRequired() && !folderLookupService.isRomExists(game)) {
+      if (game.isRomRequired() && !mameService.isRomExists(game)) {
         result.add(ValidationStateFactory.create(GameValidationCode.CODE_ROM_NOT_EXISTS));
         if (findFirst) {
           return result;

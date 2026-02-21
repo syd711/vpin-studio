@@ -88,10 +88,9 @@ public class MameService implements InitializingBean {
     long l = System.currentTimeMillis();
     romValidationCache.clear();
     List<File> folders = new ArrayList<>();
-    List<GameEmulator> filteredEmulators = gameEmulators.stream().filter(g -> g.isVpxEmulator()).collect(Collectors.toList());
-    for (GameEmulator filteredEmulator : filteredEmulators) {
-      if (!folders.contains(filteredEmulator.getMameFolder())) {
-        folders.add(filteredEmulator.getMameFolder());
+    for (GameEmulator gameEmulator : gameEmulators) {
+      if (gameEmulator.isVpxEmulator() && !folders.contains(gameEmulator.getMameFolder())) {
+        folders.add(gameEmulator.getMameFolder());
       }
     }
 
@@ -274,6 +273,12 @@ public class MameService implements InitializingBean {
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.NV, nvramFolder);
   }
 
+  public boolean isRomExists(@NonNull Game game) {
+    File romFile = folderLookupService.getRomFile(game);
+    return romFile != null && romFile.exists();
+  }
+
+  //TODO 
   public boolean isRomExists(String name) {
     if (StringUtils.isEmpty(name)) {
       return false;
