@@ -54,8 +54,9 @@ public class MameService implements InitializingBean {
 
   public final static String MAME_REG_FOLDER_KEY = "SOFTWARE\\Freeware\\Visual PinMame\\";
 
-  private final Map<String, MameOptions> mameCache = new ConcurrentHashMap<>();
+  private final Map<String, MameOptions> mameOptionsCache = new ConcurrentHashMap<>();
   private final Map<String, Boolean> romValidationCache = new ConcurrentHashMap<>();
+  private final List<String> mameRegistryEntriesCache = new ArrayList<>();
 
   @Autowired
   protected SystemService systemService;
@@ -65,22 +66,21 @@ public class MameService implements InitializingBean {
 
   private File mameFolder;
 
+
   public boolean clearGamesCache(List<Game> knownGames) {
     this.mameFolder = null;
     getMameFolder();
 
     long l = System.currentTimeMillis();
-    mameCache.clear();
-    List<String> romFolders = systemService.getCurrentUserKeys(MAME_REG_FOLDER_KEY);
-    LOG.info("Reading of " + romFolders.size() + " total mame options (" + (System.currentTimeMillis() - l) + "ms)");
+    mameOptionsCache.clear();
 
-    for (String romFolder : romFolders) {
+    for (String romFolder : getMameEntries(false)) {
       List<Game> matches = knownGames.stream().filter(g -> (g.getRom() != null && g.getRom().equalsIgnoreCase(romFolder)) || (g.getRomAlias() != null && g.getRomAlias().equalsIgnoreCase(romFolder))).collect(Collectors.toList());
       if (!matches.isEmpty()) {
-        mameCache.put(romFolder.toLowerCase(), getOptions(romFolder));
+        mameOptionsCache.put(romFolder.toLowerCase(), getOptions(romFolder));
       }
     }
-    LOG.info("Read " + this.mameCache.size() + " mame options (" + (System.currentTimeMillis() - l) + "ms)");
+    LOG.info("Read " + this.mameOptionsCache.size() + " mame options (" + (System.currentTimeMillis() - l) + "ms)");
     return true;
   }
 
@@ -103,7 +103,7 @@ public class MameService implements InitializingBean {
 
   public boolean clearCacheFor(@Nullable String rom) {
     if (!StringUtils.isEmpty(rom)) {
-      mameCache.remove(rom.toLowerCase());
+      mameOptionsCache.remove(rom.toLowerCase());
       getOptions(rom);
       return true;
     }
@@ -116,7 +116,7 @@ public class MameService implements InitializingBean {
       return null;
     }
 
-    List<String> romFolders = systemService.getCurrentUserKeys(MAME_REG_FOLDER_KEY);
+    List<String> romFolders = getMameEntries(false);
     if (romFolders.contains(rom.toLowerCase()) || romFolders.contains(rom)) {
       return systemService.getCurrentUserValues(MAME_REG_FOLDER_KEY + rom);
     }
@@ -126,11 +126,11 @@ public class MameService implements InitializingBean {
 
   @NonNull
   public MameOptions getOptions(@NonNull String rom) {
-    if (mameCache.containsKey(rom.toLowerCase())) {
-      return mameCache.get(rom.toLowerCase());
+    if (mameOptionsCache.containsKey(rom.toLowerCase())) {
+      return mameOptionsCache.get(rom.toLowerCase());
     }
 
-    List<String> romFolders = systemService.getCurrentUserKeys(MAME_REG_FOLDER_KEY);
+    List<String> romFolders = getMameEntries(false);
     MameOptions options = new MameOptions();
     options.setRom(rom);
     options.setExistInRegistry(romFolders.contains(rom.toLowerCase()) || romFolders.contains(rom));
@@ -152,7 +152,7 @@ public class MameService implements InitializingBean {
     options.setSoundMode(getInteger(values, KEY_SOUND_MODE));
     options.setForceStereo(getBoolean(values, KEY_FORCE_STEREO));
 
-    mameCache.put(options.getRom().toLowerCase(), options);
+    mameOptionsCache.put(options.getRom().toLowerCase(), options);
     return options;
   }
 
@@ -195,13 +195,14 @@ public class MameService implements InitializingBean {
     systemService.setUserIntValue(MAME_REG_FOLDER_KEY + rom, KEY_SOUND_MODE, options.getSoundMode());
     systemService.setUserIntValue(MAME_REG_FOLDER_KEY + rom, KEY_FORCE_STEREO, options.isForceStereo() ? 1 : 0);
 
-    mameCache.put(options.getRom().toLowerCase(), options);
+    mameOptionsCache.put(options.getRom().toLowerCase(), options);
+    getMameEntries(true);
     return getOptions(rom);
   }
 
   public boolean deleteOptions(String rom) {
     systemService.deleteUserKey(MAME_REG_FOLDER_KEY + rom);
-    mameCache.remove(rom.toLowerCase());
+    mameOptionsCache.remove(rom.toLowerCase());
     return true;
   }
 
@@ -211,7 +212,7 @@ public class MameService implements InitializingBean {
    * @return true if the DmdPosition is rom specific or false if this is default
    */
   public boolean fillDmdPosition(String rom, DMDInfoZone dmdinfo) {
-    List<String> romFolders = systemService.getCurrentUserKeys(MAME_REG_FOLDER_KEY);
+    List<String> romFolders = getMameEntries(false);
     boolean existInRegistry = romFolders.contains(rom.toLowerCase());
 
     Map<String, Object> values = systemService.getCurrentUserValues(MAME_REG_FOLDER_KEY +
@@ -224,15 +225,16 @@ public class MameService implements InitializingBean {
   }
 
   public boolean saveDmdPosition(String rom, DMDInfoZone dmdinfo) {
-    List<String> romFolders = systemService.getCurrentUserKeys(MAME_REG_FOLDER_KEY);
+    List<String> romFolders = getMameEntries(true);
     if (!romFolders.contains(rom.toLowerCase())) {
       systemService.createUserKey(MAME_REG_FOLDER_KEY + rom);
+      getMameEntries(true);
     }
     String regkey = MAME_REG_FOLDER_KEY + rom;
-    systemService.setUserIntValue(regkey, "dmd_pos_x", (int) dmdinfo.getX());
-    systemService.setUserIntValue(regkey, "dmd_pos_y", (int) dmdinfo.getY());
-    systemService.setUserIntValue(regkey, "dmd_width", (int) dmdinfo.getWidth());
-    systemService.setUserIntValue(regkey, "dmd_height", (int) dmdinfo.getHeight());
+    systemService.setUserIntValue(regkey, "dmd_pos_x", dmdinfo.getX());
+    systemService.setUserIntValue(regkey, "dmd_pos_y", dmdinfo.getY());
+    systemService.setUserIntValue(regkey, "dmd_width", dmdinfo.getWidth());
+    systemService.setUserIntValue(regkey, "dmd_height", dmdinfo.getHeight());
     return true;
   }
 
@@ -307,11 +309,6 @@ public class MameService implements InitializingBean {
           sorted.sort(String::compareTo);
           LOG.info("MAME rom validation finished: " + romValidationCache.size() + " invalid ROMs found: " + String.join(",", sorted));
         }
-
-//        StringBuilder err = executor.getStandardErrorFromCommand();
-//        if (err != null && !StringUtils.isEmpty(err.toString())) {
-//          LOG.error("MAME command failed: " + err);
-//        }
       }
     }
     catch (Exception e) {
@@ -464,8 +461,17 @@ public class MameService implements InitializingBean {
     return true;
   }
 
+  private List<String> getMameEntries(boolean forceReload) {
+    if (forceReload || this.mameRegistryEntriesCache.isEmpty()) {
+      long l = System.currentTimeMillis();
+      this.mameRegistryEntriesCache.addAll(systemService.getCurrentUserKeys(MAME_REG_FOLDER_KEY));
+      LOG.info("Reading of " + mameRegistryEntriesCache.size() + " total mame options (" + (System.currentTimeMillis() - l) + "ms)");
+    }
+    return mameRegistryEntriesCache;
+  }
 
   @Override
   public void afterPropertiesSet() {
+    LOG.info("Initialized {}", this.getClass().getSimpleName());
   }
 }

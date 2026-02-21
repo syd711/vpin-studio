@@ -86,6 +86,31 @@ public class RestClient implements ClientHttpRequestInterceptor {
     restTemplate.setMessageConverters(messageConverters);
   }
 
+  public void initRestClientWithTimeoutMs(int ms) {
+    List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
+    interceptors.add(this);
+
+    SimpleClientHttpRequestFactory httpRequestFactory = new SimpleClientHttpRequestFactory();
+    httpRequestFactory.setConnectTimeout(ms);
+    httpRequestFactory.setReadTimeout(ms);
+    restTemplate = new RestTemplate(httpRequestFactory);
+    restTemplate.setInterceptors(interceptors);
+
+    List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
+    MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+    converter.setPrettyPrint(true);
+    converter.getObjectMapper()
+        .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+        .setTimeZone(TimeZone.getDefault())
+        .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+
+    // Note: here we are making this converter to process any kind of response,
+    // not only application/*json, which is the default behaviour
+    converter.setSupportedMediaTypes(Collections.singletonList(MediaType.ALL));
+    messageConverters.add(converter);
+    restTemplate.setMessageConverters(messageConverters);
+  }
+
   public void setErrorHandler(VPinStudioClientErrorHandler errorHandler) {
 //    this.errorHandler = errorHandler;
   }

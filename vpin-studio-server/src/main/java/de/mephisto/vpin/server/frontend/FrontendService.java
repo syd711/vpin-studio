@@ -223,7 +223,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
       Map<String, Object> data = JsonSettings.objectMapper.readValue(serialize, HashMap.class);
       saveSettings(data);
     }
-    catch(IOException ioe) {
+    catch (IOException ioe) {
       LOG.error("Cannot save settings", ioe);
     }
   }
@@ -747,7 +747,11 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     try {
       emulatorService.setFrontendService(this);
       getFrontendConnector().initializeConnector();
+
+      long start = System.currentTimeMillis();
+      LOG.info("Initializing emulators");
       emulatorService.loadEmulators();
+      LOG.info("Initial emulator load took {}ms", (System.currentTimeMillis() - start));
 
       getFrontendConnector().getFrontendPlayerDisplays();
       preferencesService.addChangeListener(this);

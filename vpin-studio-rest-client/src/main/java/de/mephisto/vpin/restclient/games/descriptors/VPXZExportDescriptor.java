@@ -1,11 +1,25 @@
 package de.mephisto.vpin.restclient.games.descriptors;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class VPXZExportDescriptor {
-  private List<Integer> gameIds = new ArrayList<>();
+  private int gameId;
   private long sourceId;
+  private String vpxStandaloneFile;
+
+  public int getGameId() {
+    return gameId;
+  }
+
+  public void setGameId(int gameId) {
+    this.gameId = gameId;
+  }
+
+  public String getVpxStandaloneFile() {
+    return vpxStandaloneFile;
+  }
+
+  public void setVpxStandaloneFile(String vpxStandaloneFile) {
+    this.vpxStandaloneFile = vpxStandaloneFile;
+  }
 
   public long getSourceId() {
     return sourceId;
@@ -13,13 +27,5 @@ public class VPXZExportDescriptor {
 
   public void setSourceId(long sourceId) {
     this.sourceId = sourceId;
-  }
-
-  public List<Integer> getGameIds() {
-    return gameIds;
-  }
-
-  public void setGameIds(List<Integer> gameIds) {
-    this.gameIds = gameIds;
   }
 }

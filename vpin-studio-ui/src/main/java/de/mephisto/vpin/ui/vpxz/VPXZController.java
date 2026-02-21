@@ -7,6 +7,8 @@ import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.vpxz.*;
+import de.mephisto.vpin.restclient.vpxz.models.Table;
+import de.mephisto.vpin.restclient.vpxz.models.Tables;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
@@ -29,6 +31,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import org.apache.commons.io.FilenameUtils;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +40,9 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -105,12 +111,16 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
   @FXML
   private ToolBar toolbar;
 
+  private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
   private List<VPXZModel> filteredData;
 
   private TablesController tablesController;
   private ChangeListener<VPXZSourceRepresentation> sourceComboChangeListener;
   private SystemSummary systemSummary;
   private List<VPXZDescriptorRepresentation> data;
+  private MobileDeviceCheckRunnable mobileDeviceCheckRunnable;
+  private Tables installedTables;
 
   // Add a public no-args constructor
   public VPXZController() {
@@ -140,6 +150,21 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
 
   @FXML
   private void onInstall() {
+    VPXZModel selectedItem = tableView.getSelectionModel().getSelectedItem();
+    if (selectedItem == null) {
+      return;
+    }
+
+    JFXFuture.supplyAsync(() -> {
+      return client.getVpxzService().ping();
+    }).thenAcceptLater(version -> {
+      if (version == null) {
+        WidgetFactory.showAlert(Studio.stage, "Installation Failed", "Invalid connection or the phone is in energy saving mode.");
+      }
+      else {
+        client.getVpxzService().install(selectedItem.get().getBean());
+      }
+    });
   }
 
   @FXML
@@ -211,6 +236,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
       }
 
       labelCount.setText(tableView.getItems().size() + " .vpxz files");
+      labelCount.setVisible(!tableView.getItems().isEmpty());
       this.searchTextField.setDisable(false);
       tableView.setVisible(true);
       endReload();
@@ -239,6 +265,8 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize("vpxz", "vpxz", new VPXZColumnSorter(this));
+
+    labelCount.managedProperty().bindBidirectional(labelCount.visibleProperty());
 
     openFolderButton.setDisable(true);
     clearBtn.setVisible(false);
@@ -298,6 +326,26 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
       created.setStyle("-fx-font-size: 12px;");
       vBox.getChildren().add(created);
       return vBox;
+    }, this, true);
+
+    BaseLoadingColumn.configureColumn(installedColumn, (value, model) -> {
+      String baseName = FilenameUtils.getBaseName(value.getFilename());
+      if (this.installedTables != null) {
+        Optional<Table> installedTable = this.installedTables.getTables().stream().filter(t -> t.getName().equalsIgnoreCase(baseName)).findFirst();
+        if (installedTable.isPresent()) {
+          return WidgetFactory.createCheckIcon();
+        }
+        else {
+          return WidgetFactory.createUnsupportedIcon();
+        }
+      }
+
+      FontIcon icon = WidgetFactory.createIcon("mdi2c-cloud-question");
+      icon.setIconSize(22);
+      Label label = new Label();
+      label.setTooltip(new Tooltip("No connection to validate installation"));
+      label.setGraphic(icon);
+      return label;
     }, this, true);
 
     BaseLoadingColumn.configureColumn(povColumn, (value, model) -> {
@@ -400,6 +448,35 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
 
     deleteBtn.setDisable(true);
     downloadBtn.setDisable(true);
+
+    mobileDeviceCheckRunnable = new MobileDeviceCheckRunnable(this);
+    mobileDeviceCheckRunnable.setPaused(true);
+    scheduler.scheduleAtFixedRate(mobileDeviceCheckRunnable, 1, 5, TimeUnit.SECONDS);
+  }
+
+  public void refreshConnection() {
+    JFXFuture.supplyAsync(() -> {
+      return client.getVpxzService().ping();
+    }).thenAcceptLater(version -> {
+      if (version == null) {
+        connectionVersionLabel.setText("-");
+        connectionStatusLabel.setText("-");
+      }
+      else {
+        connectionVersionLabel.setText(version.getVersion());
+        connectionStatusLabel.setText("Connected");
+      }
+
+      if (version != null) {
+        Tables tables = client.getVpxzService().getTables();
+        boolean refresh = (this.installedTables == null && tables != null) || (tables == null && this.installedTables != null);
+        this.installedTables = tables;
+
+        if (refresh) {
+          tableView.refresh();
+        }
+      }
+    });
   }
 
   @Override
@@ -413,6 +490,16 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
     }
     EventManager.getInstance().removeListener(this);
     EventManager.getInstance().addListener(this);
+
+    mobileDeviceCheckRunnable.setPaused(false);
+
+    onReload();
+  }
+
+  @Override
+  public void onViewDeactivated() {
+    EventManager.getInstance().removeListener(this);
+    mobileDeviceCheckRunnable.setPaused(true);
   }
 
   public void refreshView(Optional<VPXZDescriptorRepresentation> selection) {
@@ -420,11 +507,6 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
       toolbar.getItems().stream().forEach(i -> i.setDisable(false));
       this.doReload(selection);
     });
-  }
-
-  @Override
-  public void onViewDeactivated() {
-    EventManager.getInstance().removeListener(this);
   }
 
   private void updateSelection(Optional<VPXZDescriptorRepresentation> newSelection) {

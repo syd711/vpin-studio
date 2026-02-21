@@ -1,5 +1,7 @@
 package de.mephisto.vpin.server.vpxz;
 
+import de.mephisto.vpin.commons.SystemInfo;
+import de.mephisto.vpin.connectors.github.GithubFileDownloader;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
@@ -8,15 +10,13 @@ import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.preferences.VPXZSettings;
 import de.mephisto.vpin.restclient.vpxz.VPXZSourceRepresentation;
 import de.mephisto.vpin.restclient.vpxz.VPXZSourceType;
-import de.mephisto.vpin.restclient.vpxz.VPXZType;
-import de.mephisto.vpin.server.backups.BackupSource;
+import de.mephisto.vpin.restclient.vpxz.models.Tables;
+import de.mephisto.vpin.restclient.vpxz.models.Version;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.jobs.JobService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.vpauthenticators.VPAuthenticationService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
@@ -26,12 +26,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.FilenameFilter;
+import java.lang.invoke.MethodHandles;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class VPXZService implements InitializingBean {
-  private final static Logger LOG = LoggerFactory.getLogger(VPXZService.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
+  private static final String REPO_URL = "https://github.com/jsm174/vpx-standalone-scripts";
+  public final static String VPX_SCRIPTS_FOLDER = SystemInfo.RESOURCES + "/vpxscripts";
 
   @Autowired
   private GameService gameService;
@@ -49,12 +54,53 @@ public class VPXZService implements InitializingBean {
   private VPXZFileService vpxzFileService;
 
   @Autowired
-  private VPAuthenticationService vpAuthenticationService;
-
-  @Autowired
   private PreferencesService preferencesService;
 
   private final Map<Long, VPXZSourceAdapter> vpxMobileSourcesCache = new LinkedHashMap<>();
+
+  public Version ping() {
+    VPXZSettings vpxzSettings = preferencesService.getJsonPreference(PreferenceNames.VPXZ_SETTINGS, VPXZSettings.class);
+    MobileDeviceClient client = new MobileDeviceClient(vpxzSettings.getWebserverHost(), vpxzSettings.getWebserverPort());
+    return client.getInfo();
+  }
+
+  public Tables getMobileDeviceTables() {
+    VPXZSettings vpxzSettings = preferencesService.getJsonPreference(PreferenceNames.VPXZ_SETTINGS, VPXZSettings.class);
+    MobileDeviceClient client = new MobileDeviceClient(vpxzSettings.getWebserverHost(), vpxzSettings.getWebserverPort());
+    return client.getTables();
+  }
+
+  public String install(VPXZDescriptor descriptor) {
+    VPXZSettings vpxzSettings = preferencesService.getJsonPreference(PreferenceNames.VPXZ_SETTINGS, VPXZSettings.class);
+    MobileDeviceClient client = new MobileDeviceClient(vpxzSettings.getWebserverHost(), vpxzSettings.getWebserverPort());
+//    return client.upload();
+    return null;
+  }
+
+  public List<String> getVpxStandaloneFiles(boolean forceReload) {
+    File folder = new File(VPX_SCRIPTS_FOLDER);
+    try {
+      if (forceReload) {
+        GithubFileDownloader downloader = new GithubFileDownloader(REPO_URL);
+        downloader.downloadVbsFiles(folder);
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to download VPX sources: {}", e.getMessage());
+    }
+
+    File[] files = folder.listFiles(new FilenameFilter() {
+      @Override
+      public boolean accept(File dir, String name) {
+        return name.endsWith(".vbs");
+      }
+    });
+
+    if (files != null) {
+      return Arrays.stream(files).map(File::getName).collect(Collectors.toList());
+    }
+    return Collections.emptyList();
+  }
 
   public List<VPXZDescriptor> getVPXZDescriptorForGame(int gameId) {
     Game game = gameService.getGame(gameId);
@@ -90,10 +136,6 @@ public class VPXZService implements InitializingBean {
 
   @NonNull
   public List<VPXZDescriptor> getVPXZDescriptors(long sourceId) {
-    if (!vpAuthenticationService.isAuthenticated()) {
-      return Collections.emptyList();
-    }
-
     VPXZSourceAdapter adapter = getVPXMobileSourceAdapter(sourceId);
     List<VPXZDescriptor> VPXZDescriptors = new ArrayList<>(adapter.getVPXZDescriptors());
     VPXZDescriptors.sort((o1, o2) -> {
@@ -182,25 +224,17 @@ public class VPXZService implements InitializingBean {
     return updatedSource;
   }
 
-  public boolean createVpxz(@NonNull VPXZExportDescriptor vpxzDescriptor) {
-    boolean result = true;
-    List<Integer> gameIds = vpxzDescriptor.getGameIds();
-    for (Integer gameId : gameIds) {
-      Game game = gameService.getGame(gameId);
-      if (game != null && game.getGameFile().exists()) {
-        if (!createVpxz(game, vpxzDescriptor)) {
-          result = false;
-        }
-      }
-      else {
-        LOG.error("Cancelled backup for id " + game + ", invalid game data.");
-        result = false;
-      }
+  public void createVpxz(@NonNull VPXZExportDescriptor vpxzDescriptor) {
+    Game game = gameService.getGame(vpxzDescriptor.getGameId());
+    if (game != null && game.getGameFile().exists()) {
+      createVpxz(game, vpxzDescriptor);
     }
-    return result;
+    else {
+      LOG.error("Cancelled backup for id " + game + ", invalid game data.");
+    }
   }
 
-  private boolean createVpxz(@NonNull Game game, @NonNull VPXZExportDescriptor vpxzDescriptor) {
+  private void createVpxz(@NonNull Game game, @NonNull VPXZExportDescriptor vpxzDescriptor) {
     JobDescriptor descriptor = new JobDescriptor(JobType.VPXZ_EXPORT);
     descriptor.setCancelable(true);
     descriptor.setTitle("Creating .vpxz for \"" + game.getGameDisplayName() + "\"");
@@ -211,16 +245,13 @@ public class VPXZService implements InitializingBean {
       TableDetails tableDetails = frontendService.getTableDetails(game.getId());
       VPXZSettings vpxzSettings = preferencesService.getJsonPreference(PreferenceNames.VPXZ_SETTINGS, VPXZSettings.class);
 
-      descriptor.setJob(new VPXZCreationJob(vpxzFileService, source.get(), game, tableDetails, vpxzSettings));
+      descriptor.setJob(new VPXZCreationJob(vpxzFileService, source.get(), game, tableDetails, vpxzSettings, vpxzDescriptor.getVpxStandaloneFile()));
       jobService.offer(descriptor);
       LOG.info("Offered vpxz export job for '" + game.getGameDisplayName() + "'");
-      return true;
     }
     else {
       LOG.error("No matching vps source found for {}", vpxzDescriptor.getSourceId());
     }
-
-    return false;
   }
 
   @Override

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.VPXZSettings;
@@ -17,6 +18,7 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
 import java.util.List;
@@ -47,6 +49,31 @@ public class VPXZRepositoriesPreferencesController implements Initializable {
 
   @FXML
   private CheckBox enabledCheckbox;
+
+  @FXML
+  private TextField serverHost;
+
+  @FXML
+  private TextField serverPort;
+
+  @FXML
+  private Button testBtn;
+
+  @FXML
+  private void onTest() {
+    testBtn.setDisable(true);
+    JFXFuture.supplyAsync(() -> {
+      return client.getVpxzService().ping();
+    }).thenAcceptLater(ping -> {
+      testBtn.setDisable(false);
+      if (ping == null) {
+        WidgetFactory.showAlert(Studio.stage, "Ping Failed", "Make sure that the IP matches with the one on your mobile device.", "The VPX application must be open and active.");
+      }
+      else {
+        WidgetFactory.showInformation(Studio.stage, "Ping Successful", "Version: " + ping.getVersion());
+      }
+    });
+  }
 
   @FXML
   private void onEdit() {
@@ -174,6 +201,31 @@ public class VPXZRepositoriesPreferencesController implements Initializable {
       editBtn.setDisable(disable);
     });
 
+    serverHost.setText(vpxzSettings.getWebserverHost());
+    serverHost.textProperty().addListener(new ChangeListener<String>() {
+      @Override
+      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+        vpxzSettings.setWebserverHost(newValue.trim());
+        client.getPreferenceService().setJsonPreference(vpxzSettings);
+        updateTestBtn();
+      }
+    });
+
+    serverPort.setText(String.valueOf(vpxzSettings.getWebserverPort()));
+    serverPort.textProperty().addListener(new ChangeListener<String>() {
+      @Override
+      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+        try {
+          vpxzSettings.setWebserverPort(Integer.parseInt(newValue));
+          client.getPreferenceService().setJsonPreference(vpxzSettings);
+        }
+        catch (NumberFormatException e) {
+          //ignore
+        }
+        updateTestBtn();
+      }
+    });
+
     tableView.setRowFactory(tv -> {
       TableRow<VPXZSourceRepresentation> row = new TableRow<>();
       row.setOnMouseClicked(event -> {
@@ -185,5 +237,10 @@ public class VPXZRepositoriesPreferencesController implements Initializable {
     });
 
     onReload();
+    updateTestBtn();
+  }
+
+  private void updateTestBtn() {
+    this.testBtn.setDisable(StringUtils.isEmpty(serverHost.getText()) || StringUtils.isEmpty(serverPort.getText()));
   }
 }

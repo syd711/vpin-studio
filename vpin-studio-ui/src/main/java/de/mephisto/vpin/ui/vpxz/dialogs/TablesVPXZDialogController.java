@@ -8,22 +8,19 @@ import de.mephisto.vpin.restclient.preferences.VPXZSettings;
 import de.mephisto.vpin.restclient.vpxz.VPXZSourceRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.jobs.JobPoller;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -38,8 +35,11 @@ public class TablesVPXZDialogController implements Initializable, DialogControll
   @FXML
   private ComboBox<VPXZSourceRepresentation> sourceCombo;
 
+  @FXML
+  private ComboBox<String> filesCombo;
 
-  private List<GameRepresentation> games;
+  private GameRepresentation game;
+  private List<String> vpxStandaloneFiles;
 
   @FXML
   private void onExportClick(ActionEvent e) throws Exception {
@@ -47,7 +47,8 @@ public class TablesVPXZDialogController implements Initializable, DialogControll
 
     VPXZExportDescriptor descriptor = new VPXZExportDescriptor();
     descriptor.setSourceId(source.getId());
-    descriptor.getGameIds().addAll(games.stream().map(GameRepresentation::getId).collect(Collectors.toList()));
+    descriptor.setGameId(game.getId());
+    descriptor.setVpxStandaloneFile(filesCombo.getSelectionModel().getSelectedItem());
     Studio.client.getVpxzService().createVpxzFile(descriptor);
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
@@ -56,13 +57,31 @@ public class TablesVPXZDialogController implements Initializable, DialogControll
     new Thread(() -> {
       try {
         Thread.sleep(1000);
-      } catch (InterruptedException ex) {
+      }
+      catch (InterruptedException ex) {
         //ignore
       }
       Platform.runLater(() -> {
         JobPoller.getInstance().setPolling();
       });
     }).start();
+  }
+
+
+  @FXML
+  private void onSynchronize(ActionEvent event) {
+    ProgressDialog.createProgressDialog(new VPXZSyncProgressModel("VPX Standalone File Synchronization"));
+    vpxStandaloneFiles = client.getVpxzService().getVpxStandaloneFiles(false);
+    List<String> entries = new ArrayList<>(vpxStandaloneFiles);
+    entries.add(0, "");
+    this.filesCombo.setItems(FXCollections.observableList(entries));
+  }
+
+  @FXML
+  private void onHyperlink(ActionEvent e) {
+    Hyperlink link = (Hyperlink) e.getSource();
+    String linkText = link.getText();
+    Studio.browse(linkText);
   }
 
   @FXML
@@ -88,6 +107,16 @@ public class TablesVPXZDialogController implements Initializable, DialogControll
       vpxzSettings.setOverwriteFile(newValue);
       client.getPreferenceService().setJsonPreference(vpxzSettings);
     });
+
+    vpxStandaloneFiles = client.getVpxzService().getVpxStandaloneFiles(false);
+    if (vpxStandaloneFiles.isEmpty()) {
+      ProgressDialog.createProgressDialog(new VPXZSyncProgressModel("VPX Standalone File Synchronization"));
+      vpxStandaloneFiles = client.getVpxzService().getVpxStandaloneFiles(false);
+    }
+
+    List<String> entries = new ArrayList<>(vpxStandaloneFiles);
+    entries.add(0, "");
+    this.filesCombo.setItems(FXCollections.observableList(entries));
   }
 
   @Override
@@ -95,13 +124,8 @@ public class TablesVPXZDialogController implements Initializable, DialogControll
 
   }
 
-  public void setGames(List<GameRepresentation> games) {
-    this.games = games;
-    if(games.size() == 1) {
-      this.titleLabel.setText(games.get(0).getGameDisplayName());
-    }
-    else {
-      this.titleLabel.setText("Creating .vpxz package of " + games.size() + " tables");
-    }
+  public void setGames(GameRepresentation game) {
+    this.game = game;
+    this.titleLabel.setText(game.getGameDisplayName());
   }
 }

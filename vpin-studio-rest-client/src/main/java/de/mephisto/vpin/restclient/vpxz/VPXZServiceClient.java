@@ -7,6 +7,8 @@ import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.*;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
+import de.mephisto.vpin.restclient.vpxz.models.Tables;
+import de.mephisto.vpin.restclient.vpxz.models.Version;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
@@ -114,5 +116,21 @@ public class VPXZServiceClient extends VPinStudioClientService {
 
   public boolean createVpxzFile(VPXZExportDescriptor exportDescriptor) {
     return getRestClient().post(API + "vpxz/create", exportDescriptor, Boolean.class);
+  }
+
+  public Version ping() {
+    return getRestClient().get(API + "vpxz/device/ping", Version.class);
+  }
+
+  public Tables getTables() {
+    return getRestClient().get(API + "vpxz/device/tables", Tables.class);
+  }
+
+  public String install(VPXZDescriptorRepresentation descriptor) {
+    return getRestClient().post(API + "vpxz/device/install", descriptor, String.class);
+  }
+
+  public List<String> getVpxStandaloneFiles(boolean forceReload) {
+    return Arrays.asList(getRestClient().get(API + "vpxz/vpxfiles/" + forceReload, String[].class));
   }
 }

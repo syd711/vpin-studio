@@ -14,10 +14,10 @@ import java.util.List;
 
 public class VPXZDialogs {
 
-  public static void openTablesVpxzDialog(List<GameRepresentation> games) {
+  public static void openTablesVpxzDialog(GameRepresentation game) {
     Stage stage = Dialogs.createStudioDialogStage(TablesVPXZDialogController.class, "dialog-tables-vpxz.fxml", "VPXZ Table Packager");
     TablesVPXZDialogController controller = (TablesVPXZDialogController) stage.getUserData();
-    controller.setGames(games);
+    controller.setGames(game);
     stage.showAndWait();
   }
 

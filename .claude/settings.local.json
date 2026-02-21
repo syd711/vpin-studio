@@ -9,7 +9,9 @@
       "Bash(for f in *.java)",
       "Bash(do sed -i 's/package de\\\\.mephisto\\\\.vpin\\\\.restclient\\\\.backups/package de.mephisto.vpin.restclient.vpxmobile/g; s/import de\\\\.mephisto\\\\.vpin\\\\.restclient\\\\.backups/import de.mephisto.vpin.restclient.vpxmobile/g; s/BackupDescriptorRepresentation/VPXMobileDescriptorRepresentation/g; s/BackupSourceRepresentation/VPXMobileSourceRepresentation/g; s/BackupFileInfoFactory/VPXMobileFileInfoFactory/g; s/BackupFileInfo/VPXMobileFileInfo/g; s/BackupPackageInfo/VPXMobilePackageInfo/g; s/BackupServiceClient/VPXMobileServiceClient/g; s/BackupSourceType/VPXMobileSourceType/g; s/BackupMameData/VPXMobileMameData/g; s/BackupDataStudio/VPXMobileDataStudio/g; s/StudioBackupDescriptor/StudioVPXMobileDescriptor/g; s/BackupType/VPXMobileType/g' \"$f\")",
       "Bash(done)",
-      "Bash(do sed -i 's/backupsCached/vpxMobileCached/g; s/getBackupsForSource/getVPXMobilesForSource/g; s/getBackupsForGame/getVPXMobilesForGame/g; s/getBackups/getVPXMobiles/g; s/getBackupSources/getVPXMobileSources/g; s/deleteBackupSource/deleteVPXMobileSource/g; s/deleteBackup/deleteVPXMobile/g; s/saveBackupSource/saveVPXMobileSource/g; s/invalidateBackupCache/invalidateVPXMobileCache/g; s/uploadBackupFuture/uploadVPXMobileFuture/g; s/uploadBackup/uploadVPXMobile/g; s/backupTable/vpxMobileTable/g; s/\\\\\"\"backups\\\\//\\\\\"\"vpxmobile\\\\//g; s/API + \"\"backups\"\"/API + \"\"vpxmobile\"\"/g' \"$f\")"
+      "Bash(do sed -i 's/backupsCached/vpxMobileCached/g; s/getBackupsForSource/getVPXMobilesForSource/g; s/getBackupsForGame/getVPXMobilesForGame/g; s/getBackups/getVPXMobiles/g; s/getBackupSources/getVPXMobileSources/g; s/deleteBackupSource/deleteVPXMobileSource/g; s/deleteBackup/deleteVPXMobile/g; s/saveBackupSource/saveVPXMobileSource/g; s/invalidateBackupCache/invalidateVPXMobileCache/g; s/uploadBackupFuture/uploadVPXMobileFuture/g; s/uploadBackup/uploadVPXMobile/g; s/backupTable/vpxMobileTable/g; s/\\\\\"\"backups\\\\//\\\\\"\"vpxmobile\\\\//g; s/API + \"\"backups\"\"/API + \"\"vpxmobile\"\"/g' \"$f\")",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:api.github.com)"
     ]
   }
 }

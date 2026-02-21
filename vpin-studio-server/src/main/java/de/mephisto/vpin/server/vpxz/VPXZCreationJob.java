@@ -12,6 +12,7 @@ import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import net.lingala.zip4j.ZipFile;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -30,6 +31,7 @@ public class VPXZCreationJob implements Job {
   private final Game game;
   private final TableDetails tableDetails;
   private final VPXZSettings vpxzSettings;
+  private final String vpxStandaloneFile;
   private final VPXZFileService vpxzFileService;
   private boolean cancelled = false;
 
@@ -37,12 +39,14 @@ public class VPXZCreationJob implements Job {
                          @NonNull VPXZSource source,
                          @NonNull Game game,
                          @NonNull TableDetails tableDetails,
-                         @NonNull VPXZSettings vpxzSettings) {
+                         @NonNull VPXZSettings vpxzSettings,
+                         @Nullable String vpxStandaloneFile) {
     this.vpxzFileService = vpxzFileService;
     this.source = source;
     this.game = game;
     this.tableDetails = tableDetails;
     this.vpxzSettings = vpxzSettings;
+    this.vpxStandaloneFile = vpxStandaloneFile;
   }
 
   public void execute(@NonNull JobDescriptor jobDescriptor) {
@@ -83,7 +87,7 @@ public class VPXZCreationJob implements Job {
       LOG.info("Creating temporary vpxz file " + tempFile.getAbsolutePath());
 
       ZipFile zipOut = vpxzFileService.createVpxzZip(tempFile);
-      vpxzFileService.createVpxz(packageInfo, jobDescriptor, (fileToZip, fileName) -> {
+      vpxzFileService.createVpxz(packageInfo, jobDescriptor, vpxStandaloneFile, (fileToZip, fileName) -> {
         if (cancelled) {
           return;
         }

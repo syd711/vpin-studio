@@ -6,6 +6,8 @@ import de.mephisto.vpin.restclient.vpxz.VPXZPackageInfo;
 import de.mephisto.vpin.restclient.vpxz.VPXZSourceRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
+import de.mephisto.vpin.restclient.vpxz.models.Tables;
+import de.mephisto.vpin.restclient.vpxz.models.Version;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -47,6 +49,26 @@ public class VPXZResource {
     return true;
   }
 
+  @GetMapping("/vpxfiles/{forceReload}")
+  public List<String> getVpxStandaloneFiles(@PathVariable("forceReload") boolean forceReload) {
+    return vpxzService.getVpxStandaloneFiles(forceReload);
+  }
+
+  @GetMapping("/device/ping")
+  public Version ping() {
+    return vpxzService.ping();
+  }
+
+  @GetMapping("/device/tables")
+  public Tables getTables() {
+    return vpxzService.getMobileDeviceTables();
+  }
+
+  @PostMapping("/device/install")
+  public String install(VPXZDescriptor descriptor) {
+    return vpxzService.install(descriptor);
+  }
+
   @GetMapping()
   public List<VPXZDescriptorRepresentation> getVPXZFiles() {
     List<VPXZDescriptor> descriptors = vpxzService.getVPXZDescriptors();
@@ -76,7 +98,7 @@ public class VPXZResource {
 
   @DeleteMapping("/{sourceId}/{filename}")
   public boolean deleteVPXMobile(@PathVariable("sourceId") long sourceId,
-                              @PathVariable("filename") String filename) {
+                                 @PathVariable("filename") String filename) {
     return vpxzService.deleteVPXZ(sourceId, filename);
   }
 

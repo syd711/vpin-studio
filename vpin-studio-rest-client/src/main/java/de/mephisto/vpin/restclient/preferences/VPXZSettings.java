@@ -14,7 +14,7 @@ public class VPXZSettings extends JsonSettings {
 
   private boolean isOverwriteFile = true;
   private String webserverHost;
-  private int webserverPost;
+  private int webserverPort = 2112;
 
   private boolean enabled = false;
 
@@ -26,12 +26,12 @@ public class VPXZSettings extends JsonSettings {
     this.webserverHost = webserverHost;
   }
 
-  public int getWebserverPost() {
-    return webserverPost;
+  public int getWebserverPort() {
+    return webserverPort;
   }
 
-  public void setWebserverPost(int webserverPost) {
-    this.webserverPost = webserverPost;
+  public void setWebserverPort(int webserverPort) {
+    this.webserverPort = webserverPort;
   }
 
   public boolean isEnabled() {

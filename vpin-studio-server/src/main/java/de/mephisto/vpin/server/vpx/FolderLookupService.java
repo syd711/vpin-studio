@@ -160,6 +160,34 @@ public class FolderLookupService {
   }
 
   @Nullable
+  public File getNvRamFile(@NonNull Game game) {
+    if (game.getEmulator() == null || game.getEmulator().getMameDirectory() == null) {
+      return null;
+    }
+
+    File nvRamFolder = getNvRamFolder(game);
+    String rom = game.getRom();
+    File defaultNvRam = new File(nvRamFolder, rom + ".nv");
+    if (defaultNvRam.exists() && game.getNvOffset() == 0) {
+      return defaultNvRam;
+    }
+
+    //if the text file exists, the version matches with the current table, so this one was played last and the default nvram has the latest score
+    File versionTextFile = new File(nvRamFolder, game.getRom() + " v" + game.getNvOffset() + ".txt");
+    if (versionTextFile.exists()) {
+      return defaultNvRam;
+    }
+
+    //else, we can check if a nv file with the alias and version exists which means the another table with the same rom has been played after this table
+    File nvOffsettedNvRam = new File(nvRamFolder, rom + " v" + game.getNvOffset() + ".nv");
+    if (nvOffsettedNvRam.exists()) {
+      return nvOffsettedNvRam;
+    }
+
+    return defaultNvRam;
+  }
+
+  @Nullable
   public File getCfgFile(@NonNull Game game) {
     File folder = getCfgFolder(game);
     if (!StringUtils.isEmpty(game.getRom()) && folder != null) {

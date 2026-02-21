@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.vpxz.dialogs.VPXZInstallationController">
+   <top>
+      <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
+   </top>
+   <bottom>
+      <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+               <HBox.margin>
+                  <Insets right="12.0" />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUploadClick" styleClass="submit-button" text="Bundle Table">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </Button>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+         </BorderPane.margin>
+      </HBox>
+   </bottom>
+   <center>
+      <BorderPane BorderPane.alignment="CENTER">
+         <center>
+            <VBox>
+               <children>
+                  <Label layoutX="10.0" layoutY="37.0" styleClass="preference-description" text="The tables will be added to the selected .vpxz folder.">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin></Label>
+                  <GridPane vgap="3.0">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="213.5999755859375" minWidth="10.0" prefWidth="148.8" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="455.1999755859375" minWidth="10.0" prefWidth="406.40000000000003" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
+                           <children>
+                              <ComboBox fx:id="filesCombo" />
+                              <Button fx:id="syncBtn" mnemonicParsing="false" onAction="#onSynchronize" text="Synchronize Files">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </HBox>
+                        <Label text="VBS File:" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </GridPane>
+               </children>
+            </VBox>
+         </center>
+         <BorderPane.margin>
+            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+         </BorderPane.margin>
+      </BorderPane>
+   </center>
+</BorderPane>
