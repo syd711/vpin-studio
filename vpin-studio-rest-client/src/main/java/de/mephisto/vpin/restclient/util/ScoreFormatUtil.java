@@ -13,7 +13,7 @@ import java.util.Map;
 public class ScoreFormatUtil {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  private static Map<Locale, DecimalFormat> formats = new HashMap<>();
+  private final static Map<Locale, DecimalFormat> formats = new HashMap<>();
 
   public static String formatScore(long score) {
     return formatScore(score, Locale.getDefault());
@@ -37,6 +37,7 @@ public class ScoreFormatUtil {
       // see https://bugs.openjdk.org/browse/JDK-8274768, french whitespace separators changed in Java17
       formattedScore = formattedScore.replace('\u00A0', ' ');
       formattedScore = formattedScore.replace('\u202F', ' ');
+      formattedScore = formattedScore.replaceAll(" {2}", " ");
       return formattedScore;
     }
     catch (NumberFormatException e) {
