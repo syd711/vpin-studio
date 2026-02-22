@@ -1,17 +1,11 @@
-## Release Notes 4.6.7
-
-## Changes
-
-- **Backglass Manager**: Fix default value for "bring forms", should be Form To Front when not set.
-- **DMDDevice**: Increase buffer size for messages from freezy dmd
-
----
-
 ## Release Notes 4.6.6
 
 ## Changes
 
-- **Pause Menu**: Reverted the ignoring of the "Mute System" option for tutorial videos.
+- **Backglass Manager**: Fix default value for "bring forms", should be Form To Front when not set.
+- **Pause Menu**: 
+  - Reverted the ignoring of the "Mute System" option for tutorial videos.
+  - Increased buffer size for messages from freezy dmd, used for screenshots of real DMD
 - **Score Formatting**: Fixed score formatting where replacing special character from the pinemhi output may have resulted in duplicated whitespaces.
 
 ---
