@@ -1,3 +1,10 @@
+## Release Notes 4.6.7
+
+## Changes
+
+- **Backglass Manager**: Fix default value for "bring forms", should be Form To Front when not set.
+
+
 ## Release Notes 4.6.6
 
 ## Changes
