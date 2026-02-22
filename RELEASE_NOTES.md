@@ -3,6 +3,7 @@
 ## Changes
 
 - **Pause Menu**: Reverted the ignoring of the "Mute System" option for tutorial videos.
+- **Score Formatting**: Fixed score formatting where replacing special character from the pinemhi output may have resulted in duplicated whitespaces.
 
 ---
 
