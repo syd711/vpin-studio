@@ -86,6 +86,14 @@
                   <Tooltip text="Uploads an archive bundle so it can be installed afterwards." />
                </tooltip>
             </Button>
+            <Button fx:id="deleteDeviceBtn" layoutX="877.0" layoutY="11.0" mnemonicParsing="false" onAction="#onVpxzDeviceDelete" text="Delete from Device" textFill="#ff3333">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+               </graphic>
+            </Button>
             <Separator layoutX="500.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
                   <Button fx:id="addVpxzButton" layoutX="298.0" layoutY="10.0" mnemonicParsing="false" onAction="#onVPXZUpload" text="Upload" textFill="WHITE">
                       <font>
@@ -143,7 +151,7 @@
             </Label>
          </right>
          <top>
-            <BorderPane styleClass="info-container" BorderPane.alignment="CENTER">
+            <BorderPane fx:id="infoContainer" styleClass="info-container" BorderPane.alignment="CENTER">
                <left>
                   <GridPane BorderPane.alignment="CENTER">
                     <columnConstraints>

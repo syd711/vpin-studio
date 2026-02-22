@@ -138,6 +138,10 @@ public class VPXZServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "vpxz/device/cancelinstall", Boolean.class);
   }
 
+  public void deleteFromDevice(@NonNull String uuid) {
+    getRestClient().delete(API + "vpxz/device/" + uuid);
+  }
+
   public List<String> getVpxStandaloneFiles(boolean forceReload) {
     return Arrays.asList(getRestClient().get(API + "vpxz/vpxfiles/" + forceReload, String[].class));
   }

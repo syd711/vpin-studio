@@ -10,17 +10,21 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -40,6 +44,7 @@ public class TablesVPXZDialogController implements Initializable, DialogControll
 
   private GameRepresentation game;
   private List<String> vpxStandaloneFiles;
+  private List<String> entries;
 
   @FXML
   private void onExportClick(ActionEvent e) throws Exception {
@@ -114,9 +119,23 @@ public class TablesVPXZDialogController implements Initializable, DialogControll
       vpxStandaloneFiles = client.getVpxzService().getVpxStandaloneFiles(false);
     }
 
-    List<String> entries = new ArrayList<>(vpxStandaloneFiles);
+    entries = new ArrayList<>(vpxStandaloneFiles);
     entries.add(0, "");
     this.filesCombo.setItems(FXCollections.observableList(entries));
+
+
+    filesCombo.getEditor().textProperty().addListener(new ChangeListener<String>() {
+      @Override
+      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+        if(!StringUtils.isEmpty(newValue)) {
+          List<String> filtered = entries.stream().filter(e -> e.toLowerCase().contains(newValue.toLowerCase())).collect(Collectors.toList());
+          filesCombo.setItems(FXCollections.observableList(filtered));
+        }
+        else {
+          filesCombo.setItems(FXCollections.observableList(entries));
+        }
+      }
+    });
   }
 
   @Override

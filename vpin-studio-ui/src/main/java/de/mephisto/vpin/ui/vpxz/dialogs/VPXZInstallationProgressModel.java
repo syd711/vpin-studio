@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.vpxz.VPXZDescriptorRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
+import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +53,6 @@ public class VPXZInstallationProgressModel extends ProgressModel<VPXZDescriptorR
   @Override
   public void processNext(ProgressResultModel progressResultModel, VPXZDescriptorRepresentation next) {
     client.getVpxzService().install(next);
-
     waitForInstallation(progressResultModel);
   }
 
@@ -60,26 +60,22 @@ public class VPXZInstallationProgressModel extends ProgressModel<VPXZDescriptorR
     if (cancelled.get()) {
       return;
     }
-    JFXFuture.supplyAsync(() -> {
-      return client.getVpxzService().getProgress();
-    }).thenAcceptLater(progress -> {
-      if (progress == -1) {
-        WidgetFactory.showAlert(Studio.stage, "Installation Failed", "Invalid connection or the phone is in energy saving mode.");
-      }
-      else {
-        progressResultModel.setProgress(progress);
-        try {
-          Thread.sleep(1000);
-        }
-        catch (InterruptedException e) {
-          //ignore
-        }
-
-        if (progress < 1) {
-          waitForInstallation(progressResultModel);
-        }
-      }
+    double progress = client.getVpxzService().getProgress();
+    Platform.runLater(() -> {
+      progressResultModel.setProgress(progress / 100);
     });
+
+    try {
+      Thread.sleep(600);
+    }
+    catch (InterruptedException e) {
+      //ignore
+    }
+
+    if (progress != 1 && progress != -1) {
+      waitForInstallation(progressResultModel);
+    }
+    LOG.info("VPXZ installation finished: {}", progress);
   }
 
   @Override

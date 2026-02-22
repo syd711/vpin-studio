@@ -3,16 +3,15 @@ package de.mephisto.vpin.server.vpxz;
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.connectors.github.GithubFileDownloader;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
-import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.VPXZExportDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.preferences.VPXZSettings;
 import de.mephisto.vpin.restclient.vpxz.VPXMobileClient;
 import de.mephisto.vpin.restclient.vpxz.VPXZSourceRepresentation;
 import de.mephisto.vpin.restclient.vpxz.VPXZSourceType;
+import de.mephisto.vpin.restclient.vpxz.models.Table;
 import de.mephisto.vpin.restclient.vpxz.models.Tables;
 import de.mephisto.vpin.restclient.vpxz.models.Version;
 import de.mephisto.vpin.server.frontend.FrontendService;
@@ -27,12 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -67,6 +61,8 @@ public class VPXZService implements InitializingBean {
 
   private final Map<Long, VPXZSourceAdapter> vpxMobileSourcesCache = new LinkedHashMap<>();
 
+  private double progress = 0;
+
   public Version ping() {
     VPXZSettings vpxzSettings = preferencesService.getJsonPreference(PreferenceNames.VPXZ_SETTINGS, VPXZSettings.class);
     VPXMobileClient client = new VPXMobileClient(vpxzSettings.getWebserverHost(), vpxzSettings.getWebserverPort());
@@ -79,36 +75,65 @@ public class VPXZService implements InitializingBean {
     return client.getTables();
   }
 
+  public boolean deleteFromDevice(String uuid) {
+    VPXZSettings vpxzSettings = preferencesService.getJsonPreference(PreferenceNames.VPXZ_SETTINGS, VPXZSettings.class);
+    VPXMobileClient client = new VPXMobileClient(vpxzSettings.getWebserverHost(), vpxzSettings.getWebserverPort());
+    Tables tables = client.getTables();
+    Optional<Table> table = tables.getTables().stream().filter(t -> t.getUuid().equalsIgnoreCase(uuid)).findFirst();
+    if(table.isPresent()) {
+      String name = table.get().getName();
+      client.deleteTable(name);
+      client.refreshTables();
+      return true;
+    }
+    return false;
+  }
+
   public String install(VPXZDescriptor descriptor) {
+    progress = 0;
     VPXZSettings vpxzSettings = preferencesService.getJsonPreference(PreferenceNames.VPXZ_SETTINGS, VPXZSettings.class);
     VPXMobileClient client = new VPXMobileClient(vpxzSettings.getWebserverHost(), vpxzSettings.getWebserverPort());
 
     String targetFolder = FilenameUtils.getBaseName(descriptor.getFilename());
     client.createFolder(targetFolder);
 
-    try {
-      String url = getRestClient().getBaseUrl() + API + "games/upload";
-      LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-      map.add("mode", uploadType.name());
-      map.add("gameId", gameId);
-      map.add("emuId", emuId);
-      HttpEntity<MultiValueMap<String, Object>> upload = createUpload(map, file, -1, null, AssetType.TABLE, listener);
-      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
-      finalizeUpload(upload);
-      return exchange.getBody();
+    File vpxzfile = new File(descriptor.getAbsoluteFileName());
+    if (vpxzfile.exists()) {
+
+      new Thread(() -> {
+        Thread.currentThread().setName("VPXZ Uploader for " + descriptor.getFilename());
+        long start = System.currentTimeMillis();
+        try {
+          client.uploadFile(vpxzfile, targetFolder, new VPXMobileClient.UploadProgressListener() {
+            @Override
+            public void onProgress(long bytesUploaded, long totalBytes) {
+              progress = (double) (bytesUploaded * 100) / totalBytes;
+              LOG.info("Upload progress: {}%", progress);
+            }
+          });
+
+          client.extract(targetFolder, descriptor.getFilename());
+          client.refreshTables();
+        }
+        catch (Exception e) {
+          LOG.error("VPXZ upload failed: {}", e.getMessage(), e);
+        }
+        finally {
+          progress = -1;
+          LOG.error("VPXZ upload finished, took {}ms", System.currentTimeMillis() - start);
+        }
+      }).start();
     }
-    catch (Exception e) {
-      LOG.error("Table upload failed: " + e.getMessage(), e);
-      throw e;
-    }
+    return null;
   }
 
   public boolean cancelInstall() {
+    progress = -1;
     return true;
   }
 
   public double progressInstall() {
-    return 0;
+    return progress;
   }
 
   public List<String> getVpxStandaloneFiles(boolean forceReload) {
@@ -268,23 +293,23 @@ public class VPXZService implements InitializingBean {
     }
   }
 
-  private void createVpxz(@NonNull Game game, @NonNull VPXZExportDescriptor vpxzDescriptor) {
+  private void createVpxz(@NonNull Game game, @NonNull VPXZExportDescriptor exportDescriptor) {
     JobDescriptor descriptor = new JobDescriptor(JobType.VPXZ_EXPORT);
     descriptor.setCancelable(true);
     descriptor.setTitle("Creating .vpxz for \"" + game.getGameDisplayName() + "\"");
     descriptor.setGameId(game.getId());
 
-    Optional<VPXZSource> source = vpxzSourceRepository.findById(vpxzDescriptor.getSourceId());
+    Optional<VPXZSource> source = vpxzSourceRepository.findById(exportDescriptor.getSourceId());
     if (source.isPresent()) {
       TableDetails tableDetails = frontendService.getTableDetails(game.getId());
       VPXZSettings vpxzSettings = preferencesService.getJsonPreference(PreferenceNames.VPXZ_SETTINGS, VPXZSettings.class);
 
-      descriptor.setJob(new VPXZCreationJob(vpxzFileService, source.get(), game, tableDetails, vpxzSettings, vpxzDescriptor.getVpxStandaloneFile()));
+      descriptor.setJob(new VPXZCreationJob(vpxzFileService, source.get(), game, tableDetails, vpxzSettings, exportDescriptor.getVpxStandaloneFile()));
       jobService.offer(descriptor);
       LOG.info("Offered vpxz export job for '" + game.getGameDisplayName() + "'");
     }
     else {
-      LOG.error("No matching vps source found for {}", vpxzDescriptor.getSourceId());
+      LOG.error("No matching vps source found for {}", exportDescriptor.getSourceId());
     }
   }
 

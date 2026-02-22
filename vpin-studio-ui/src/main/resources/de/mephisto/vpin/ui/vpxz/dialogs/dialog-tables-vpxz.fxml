@@ -92,7 +92,7 @@
                                     </CheckBox>
                                     <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                        <children>
-                                          <ComboBox fx:id="filesCombo" prefHeight="30.0" prefWidth="300.0" />
+                                          <ComboBox fx:id="filesCombo" editable="true" prefHeight="30.0" prefWidth="300.0" />
                                           <Button fx:id="syncBtn" mnemonicParsing="false" onAction="#onSynchronize" text="Synchronize with Github">
                                              <font>
                                                 <Font size="14.0" />

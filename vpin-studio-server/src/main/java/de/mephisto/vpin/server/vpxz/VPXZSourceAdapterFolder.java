@@ -42,23 +42,23 @@ public class VPXZSourceAdapterFolder implements VPXZSourceAdapter {
   public synchronized Collection<VPXZDescriptor> getVPXZDescriptors() {
     if (cache.isEmpty()) {
       long start = System.currentTimeMillis();
-      File[] vpaFiles = archiveFolder.listFiles((dir, name) -> name.endsWith("." + VPXZType.VPXZ.name().toLowerCase()));
-      if (vpaFiles != null) {
-        for (File archiveFile : vpaFiles) {
+      File[] vpxzFiles = archiveFolder.listFiles((dir, name) -> name.endsWith("." + VPXZType.VPXZ.name().toLowerCase()));
+      if (vpxzFiles != null) {
+        for (File vpxzFile : vpxzFiles) {
           try {
-            TableDetails manifest = VpxzArchiveUtil.readTableDetails(archiveFile);
+            TableDetails manifest = VpxzArchiveUtil.readTableDetails(vpxzFile);
             if(manifest != null) {
-              VPXZPackageInfo packageInfo = VpxzArchiveUtil.readPackageInfo(archiveFile);
-              VPXZDescriptor descriptor = new VPXZDescriptor(source, manifest, packageInfo, new Date(archiveFile.lastModified()), archiveFile.getName(), archiveFile.getAbsolutePath(), archiveFile.length());
+              VPXZPackageInfo packageInfo = VpxzArchiveUtil.readPackageInfo(vpxzFile);
+              VPXZDescriptor descriptor = new VPXZDescriptor(source, manifest, packageInfo, new Date(vpxzFile.lastModified()), vpxzFile.getName(), vpxzFile.getAbsolutePath(), vpxzFile.length());
               cache.add(descriptor);
             }
           }
           catch (Exception e) {
-            LOG.error("Failed to read " + archiveFile.getAbsolutePath() + ": " + e.getMessage(), e);
+            LOG.error("Failed to read " + vpxzFile.getAbsolutePath() + ": " + e.getMessage(), e);
           }
         }
         if (!cache.isEmpty()) {
-          LOG.info("Loaded existing vpxz: {}, took " + (System.currentTimeMillis() - start) + "ms.", vpaFiles.length);
+          LOG.info("Loaded existing vpxz: {}, took " + (System.currentTimeMillis() - start) + "ms.", vpxzFiles.length);
         }
       }
     }

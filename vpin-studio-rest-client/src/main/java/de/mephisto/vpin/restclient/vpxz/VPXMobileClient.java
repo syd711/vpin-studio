@@ -13,6 +13,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 
 public class VPXMobileClient {
 
@@ -21,6 +22,8 @@ public class VPXMobileClient {
   private static final int CHUNK_SIZE = 512 * 1024; // 512 KB per chunk
 
   private RestClient restClient;
+
+  private boolean uploadCancelled = false;
 
   public VPXMobileClient(@NonNull String host, int port) {
     restClient = RestClient.createInstance(host, port);
@@ -32,12 +35,43 @@ public class VPXMobileClient {
   }
 
   public Tables getTables() {
-    return restClient.get("download?q=10.8%2Ftables.json", Tables.class);
+    return restClient.get("download?q=10.8/tables.json", Tables.class);
   }
 
   public void createFolder(@NonNull String name) {
-    String folder = URLEncoder.encode(name, StandardCharsets.UTF_8);
-    restClient.post("folder?q=" + folder, Object.class, Object.class);
+    try {
+      restClient.post("folder?q=" + name, String.class, String.class);
+    }
+    catch (Exception e) {
+      LOG.warn("Folder created: {}", e.getMessage());
+    }
+  }
+
+  public void extract(@NonNull String folder, @NonNull String name) {
+    try {
+      restClient.post("extract?q=" + folder + "/" + name, String.class, String.class);
+    }
+    catch (Exception e) {
+      LOG.warn("File extracted: {}", e.getMessage());
+    }
+  }
+
+  public void deleteTable(String name) {
+    try {
+      restClient.delete("delete?q=" + name, new HashMap<>());
+    }
+    catch (Exception e) {
+      LOG.warn("Table deleted: {}", e.getMessage());
+    }
+  }
+
+  public void refreshTables() {
+    try {
+      restClient.post("command?cmd=refresh_tables", String.class, String.class);
+    }
+    catch (Exception e) {
+      LOG.warn("File extracted: {}", e.getMessage());
+    }
   }
 
   /**
@@ -51,6 +85,7 @@ public class VPXMobileClient {
    * @throws IOException if any chunk fails or the file cannot be read
    */
   public void uploadFile(@NonNull File file, @NonNull String folderName, UploadProgressListener progressListener) throws IOException {
+    uploadCancelled = false;
     long fileSize = file.length();
     String encodedFolder = URLEncoder.encode(folderName, StandardCharsets.UTF_8);
     String encodedFile = URLEncoder.encode(file.getName(), StandardCharsets.UTF_8);
@@ -62,7 +97,7 @@ public class VPXMobileClient {
       long offset = 0;
       int bytesRead;
 
-      while ((bytesRead = fis.read(buffer)) != -1) {
+      while ((bytesRead = fis.read(buffer)) != -1 && !uploadCancelled) {
         String path = "upload?offset=" + offset
             + "&q=" + encodedFolder
             + "&file=" + encodedFile
@@ -97,6 +132,11 @@ public class VPXMobileClient {
 
     LOG.info("Upload complete: '{}'", file.getName());
   }
+
+  public void cancelUpload() {
+    this.uploadCancelled = true;
+  }
+
 
   @FunctionalInterface
   public interface UploadProgressListener {

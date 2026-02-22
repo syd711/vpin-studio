@@ -12,7 +12,16 @@ public class VPXZDescriptorRepresentation {
   private String filename;
   private long size;
   private String archiveType;
+  private String absoluteFileName;
   private VPXZPackageInfo packageInfo;
+
+  public String getAbsoluteFileName() {
+    return absoluteFileName;
+  }
+
+  public void setAbsoluteFileName(String absoluteFileName) {
+    this.absoluteFileName = absoluteFileName;
+  }
 
   public VPXZPackageInfo getPackageInfo() {
     return packageInfo;

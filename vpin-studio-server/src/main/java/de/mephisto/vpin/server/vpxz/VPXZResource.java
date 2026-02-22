@@ -54,6 +54,11 @@ public class VPXZResource {
     return vpxzService.getVpxStandaloneFiles(forceReload);
   }
 
+  @DeleteMapping("/device/{uuid}")
+  public boolean deleteFromDevice(@PathVariable("uuid") String uuid) {
+    return vpxzService.deleteFromDevice(uuid);
+  }
+
   @GetMapping("/device/ping")
   public Version ping() {
     return vpxzService.ping();
@@ -65,7 +70,7 @@ public class VPXZResource {
   }
 
   @PostMapping("/device/install")
-  public String install(VPXZDescriptor descriptor) {
+  public String install(@RequestBody VPXZDescriptor descriptor) {
     return vpxzService.install(descriptor);
   }
 
@@ -207,6 +212,7 @@ public class VPXZResource {
     representation.setTableDetails(descriptor.getTableDetails());
     representation.setCreatedAt(descriptor.getCreatedAt());
     representation.setSize(descriptor.getSize());
+    representation.setAbsoluteFileName(descriptor.getAbsoluteFileName());
     representation.setArchiveType(FilenameUtils.getExtension(descriptor.getFilename()));
 
     VPXZPackageInfo packageInfo = descriptor.getPackageInfo();

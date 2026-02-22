@@ -4,7 +4,6 @@ import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.jobs.JobType;
-import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.vpxz.*;
 import de.mephisto.vpin.restclient.vpxz.models.Table;
@@ -21,6 +20,7 @@ import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.SystemUtil;
 import de.mephisto.vpin.ui.vpxz.dialogs.VPXZInstallationProgressModel;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -30,9 +30,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.io.FilenameUtils;
-import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +56,9 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
   private Button deleteBtn;
 
   @FXML
+  private Button deleteDeviceBtn;
+
+  @FXML
   private Button openFolderButton;
 
   @FXML
@@ -69,6 +72,9 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
 
   @FXML
   private Label labelCount;
+
+  @FXML
+  private Pane infoContainer;
 
   @FXML
   private Label connectionStatusLabel;
@@ -114,11 +120,8 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
 
   private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-  private List<VPXZModel> filteredData;
-
   private TablesController tablesController;
   private ChangeListener<VPXZSourceRepresentation> sourceComboChangeListener;
-  private SystemSummary systemSummary;
   private List<VPXZDescriptorRepresentation> data;
   private MobileDeviceCheckRunnable mobileDeviceCheckRunnable;
   private Tables installedTables;
@@ -156,8 +159,14 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
       return;
     }
 
+    if (this.connectionVersionLabel.getText().equalsIgnoreCase("-")) {
+      WidgetFactory.showAlert(Studio.stage, "Error", "Mobile device is not connected.");
+      return;
+    }
+
     VPXZDescriptorRepresentation descriptor = selectedItem.getBean();
     ProgressDialog.createProgressDialog(new VPXZInstallationProgressModel("Upload & Install", descriptor));
+    doReload(Optional.empty());
   }
 
   @FXML
@@ -171,6 +180,32 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
     if (!selectedItems.isEmpty()) {
       List<VPXZDescriptorRepresentation> vpxzFiles = selectedItems.stream().map(s -> s.getBean()).collect(Collectors.toList());
       VPXZDialogs.openVpxzDownloadDialog(vpxzFiles);
+    }
+  }
+
+  @FXML
+  public void onVpxzDeviceDelete() {
+    VPXZModel selectedItem = tableView.getSelectionModel().getSelectedItem();
+    if (selectedItem == null) {
+      return;
+    }
+
+    if (this.connectionVersionLabel.getText().equalsIgnoreCase("-")) {
+      WidgetFactory.showAlert(Studio.stage, "Error", "Mobile device is not connected.");
+      return;
+    }
+
+    String baseName = FilenameUtils.getBaseName(selectedItem.getBean().getFilename());
+    Optional<Table> installedTable = this.installedTables.getTables().stream().filter(t -> t.getName().equalsIgnoreCase(baseName)).findFirst();
+    if (installedTable.isEmpty()) {
+      WidgetFactory.showAlert(Studio.stage, "Error", "No installation found for this table.");
+      return;
+    }
+
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete the table \"" + selectedItem.getName() + "\" from your device?");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      client.getVpxzService().deleteFromDevice(installedTable.get().getUuid());
+      doReload(Optional.empty());
     }
   }
 
@@ -259,6 +294,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize("vpxz", "vpxz", new VPXZColumnSorter(this));
 
+    infoContainer.setStyle("-fx-background-color: " + WidgetFactory.ERROR_COLOR);
     labelCount.managedProperty().bindBidirectional(labelCount.visibleProperty());
 
     openFolderButton.setDisable(true);
@@ -269,7 +305,6 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
     downloadBtn.managedProperty().bindBidirectional(downloadBtn.visibleProperty());
     tableView.setPlaceholder(new Label("This VPXZ source does not contain any files."));
 
-    systemSummary = client.getSystemService().getSystemSummary();
     openFolderButton.setVisible(client.getSystemService().isLocal());
     endSeparator.setVisible(client.getSystemService().isLocal());
     downloadBtn.setVisible(!client.getSystemService().isLocal());
@@ -322,23 +357,10 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
     }, this, true);
 
     BaseLoadingColumn.configureColumn(installedColumn, (value, model) -> {
-      String baseName = FilenameUtils.getBaseName(value.getFilename());
-      if (this.installedTables != null) {
-        Optional<Table> installedTable = this.installedTables.getTables().stream().filter(t -> t.getName().equalsIgnoreCase(baseName)).findFirst();
-        if (installedTable.isPresent()) {
-          return WidgetFactory.createCheckIcon();
-        }
-        else {
-          return WidgetFactory.createUnsupportedIcon();
-        }
+      if (isInstalled(model)) {
+        return WidgetFactory.createCheckIcon();
       }
-
-      FontIcon icon = WidgetFactory.createIcon("mdi2c-cloud-question");
-      icon.setIconSize(22);
-      Label label = new Label();
-      label.setTooltip(new Tooltip("No connection to validate installation"));
-      label.setGraphic(icon);
-      return label;
+      return WidgetFactory.createUnsupportedIcon();
     }, this, true);
 
     BaseLoadingColumn.configureColumn(povColumn, (value, model) -> {
@@ -413,6 +435,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
       VPXZSourceRepresentation vpxzSource = sourceCombo.getValue();
 
       installBtn.setDisable(newSelection == null);
+      deleteDeviceBtn.setDisable(newSelection == null || !isInstalled(newSelection));
       deleteBtn.setDisable(!vpxzSource.getType().equals(VPXZSourceType.Folder.name()) || newSelection == null);
       addVpxzButton.setDisable(!vpxzSource.getType().equals(VPXZSourceType.Folder.name()));
       downloadBtn.setDisable(!vpxzSource.getType().equals(VPXZSourceType.Folder.name()) || tableView.getSelectionModel().getSelectedItems().size() == 0);
@@ -452,6 +475,19 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
     scheduler.scheduleAtFixedRate(mobileDeviceCheckRunnable, 1, 5, TimeUnit.SECONDS);
   }
 
+  private boolean isInstalled(@Nullable VPXZModel model) {
+    if (model == null) {
+      return false;
+    }
+
+    String baseName = FilenameUtils.getBaseName(model.getBean().getFilename());
+    if (this.installedTables != null) {
+      Optional<Table> installedTable = this.installedTables.getTables().stream().filter(t -> t.getName().equalsIgnoreCase(baseName)).findFirst();
+      return installedTable.isPresent();
+    }
+    return false;
+  }
+
   public void refreshConnection() {
     JFXFuture.supplyAsync(() -> {
       return client.getVpxzService().ping();
@@ -459,20 +495,18 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
       if (version == null) {
         connectionVersionLabel.setText("-");
         connectionStatusLabel.setText("-");
+        infoContainer.setStyle("-fx-background-color: " + WidgetFactory.ERROR_COLOR);
       }
       else {
         connectionVersionLabel.setText(version.getVersion());
         connectionStatusLabel.setText("Connected");
+        infoContainer.setStyle("-fx-background-color: " + WidgetFactory.OK_DARK_COLOR);
       }
 
       if (version != null) {
         Tables tables = client.getVpxzService().getTables();
-        boolean refresh = (this.installedTables == null && tables != null) || (tables == null && this.installedTables != null);
         this.installedTables = tables;
-
-        if (refresh) {
-          tableView.refresh();
-        }
+        tableView.refresh();
       }
     });
   }
@@ -561,10 +595,6 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
     sourceCombo.setItems(FXCollections.observableList(repositories));
     sourceCombo.getSelectionModel().select(0);
     sourceCombo.valueProperty().addListener(sourceComboChangeListener);
-  }
-
-  public int getCount() {
-    return this.filteredData != null ? this.filteredData.size() : 0;
   }
 
   public void setRootController(TablesController tablesController) {

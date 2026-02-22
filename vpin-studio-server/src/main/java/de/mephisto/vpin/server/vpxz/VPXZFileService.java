@@ -82,7 +82,7 @@ public class VPXZFileService implements InitializingBean {
   private FolderLookupService folderLookupService;
 
 
-  private static final int TARGET_WHEEL_SIZE_WIDTH = 150;
+  private static final int TARGET_WHEEL_SIZE_WIDTH = 300;
 
 
   public ZipFile createVpxzZip(@NonNull File target) {
