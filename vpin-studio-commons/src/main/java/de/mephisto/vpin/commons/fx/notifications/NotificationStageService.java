@@ -10,6 +10,7 @@ import javafx.stage.WindowEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.lang.invoke.MethodHandles;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -47,6 +48,11 @@ public class NotificationStageService extends Application {
 
   public void pollNotifications() {
     LOG.info("Polling notifications (Queue size: " + queue.size() + ")");
+    if(GraphicsEnvironment.isHeadless()) {
+      queue.clear();
+      return;
+    }
+
     Platform.runLater(() -> {
       pollQueue();
     });
