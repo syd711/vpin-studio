@@ -5,7 +5,7 @@
 - **Backglass Manager**: Fix default value for "bring forms", should be Form To Front when not set.
 - **Pause Menu**: 
   - Reverted the ignoring of the "Mute System" option for tutorial videos.
-  - Increased buffer size for messages from freezy dmd, used for screenshots of real DMD
+  - Increased the buffer size for messages from Freezy DMD, used for screenshots of real DMD.
 - **Score Formatting**: Fixed score formatting where replacing special character from the pinemhi output may have resulted in duplicated whitespaces.
 - **Table Data Manager**: Fixed missing update of the highscore filename and alternative ROM name fields when cycling through different tables.
 - **In-Game Recorder**: Fixed multiple issues causing in-game recordings to fail.
