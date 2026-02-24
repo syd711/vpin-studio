@@ -54,7 +54,7 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
     ByteBuffer frameData = message.getPayload().order(ByteOrder.LITTLE_ENDIAN);
     String typeString = stringFromData(frameData, true);
 
-    LOG.info("New Binary Message Received " + typeString);
+//    LOG.info("New Binary Message Received " + typeString);
   
     FrameType type = FrameType.getEnum(typeString);
   

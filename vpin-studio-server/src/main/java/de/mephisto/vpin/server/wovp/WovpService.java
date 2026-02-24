@@ -4,6 +4,7 @@ import de.mephisto.vpin.connectors.wovp.Wovp;
 import de.mephisto.vpin.connectors.wovp.models.*;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.competitions.CompetitionScore;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
@@ -12,9 +13,13 @@ import de.mephisto.vpin.restclient.wovp.WOVPSettings;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.competitions.wovp.WOVPCompetitionSynchronizer;
+import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.server.frontend.FrontendStatusService;
+import de.mephisto.vpin.server.frontend.TableStatusChangeListener;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.GameStatusService;
+import de.mephisto.vpin.server.games.TableStatusChangedEvent;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.recorder.ScreenshotService;
@@ -33,7 +38,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class WovpService implements InitializingBean, PreferenceChangedListener {
+public class WovpService implements InitializingBean, PreferenceChangedListener, TableStatusChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(WovpService.class);
 
   @Autowired
@@ -56,6 +61,12 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
 
   @Autowired
   private SystemService systemService;
+
+  @Autowired
+  private FrontendService frontendService;
+
+  @Autowired
+  private FrontendStatusService frontendStatusService;
 
   private WOVPSettings wovpSettings;
 
@@ -252,20 +263,6 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
     }
   }
 
-  @Override
-  public void afterPropertiesSet() throws Exception {
-    wovpSettings = preferencesService.getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
-    preferencesService.addChangeListener(this);
-    new Thread(() -> {
-      List<String> apiKeys = wovpSettings.getApiKeys();
-      for (String apiKey : apiKeys) {
-        validateKey(apiKey);
-      }
-      synchronize(false);
-    }).start();
-    LOG.info("Initialized {}", this.getClass().getSimpleName());
-  }
-
   public boolean clearCache() {
     Wovp.clearCache();
     wovpSettings = preferencesService.getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
@@ -274,5 +271,42 @@ public class WovpService implements InitializingBean, PreferenceChangedListener 
       validateKey(apiKey);
     }
     return true;
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    wovpSettings = preferencesService.getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
+    preferencesService.addChangeListener(this);
+    new Thread(() -> {
+      Thread.currentThread().setName("WOVP Synchronizer");
+      List<String> apiKeys = wovpSettings.getApiKeys();
+      for (String apiKey : apiKeys) {
+        validateKey(apiKey);
+      }
+      synchronize(false);
+
+      frontendStatusService.addTableStatusChangeListener(this);
+    }).start();
+    LOG.info("Initialized {}", this.getClass().getSimpleName());
+  }
+
+  @Override
+  public void tableLaunched(TableStatusChangedEvent event) {
+    Game game = event.getGame();
+    TableDetails tableDetails = frontendService.getTableDetails(game.getId());
+    String tourneyId = tableDetails.getTourneyId();
+    if (!StringUtils.isEmpty(tourneyId) && tourneyId.contains("vps://")) {
+      Thread.currentThread().setName("WOVP Synchronizer");
+      List<String> apiKeys = wovpSettings.getApiKeys();
+      for (String apiKey : apiKeys) {
+        validateKey(apiKey);
+      }
+      synchronize(true);
+    }
+  }
+
+  @Override
+  public void tableExited(TableStatusChangedEvent event) {
+    //unused
   }
 }

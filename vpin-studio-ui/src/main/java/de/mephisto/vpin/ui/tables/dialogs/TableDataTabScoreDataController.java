@@ -149,6 +149,9 @@ public class TableDataTabScoreDataController implements Initializable {
     JFXFuture.supplyAsync(() -> {
       return client.getGameService().getHighscoreFiles(game.getId());
     }).thenAcceptLater((highscoreFiles) -> {
+      this.altRomName.setPromptText("");
+      this.highscoreFileName.setPromptText("");
+
       List<String> availableRoms = new ArrayList<>();
       if (highscoreFiles.getNvRams() != null) {
         availableRoms.addAll(highscoreFiles.getNvRams());

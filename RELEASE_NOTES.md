@@ -4,6 +4,8 @@
 
 - **Pause Menu**: Reverted the ignoring of the "Mute System" option for tutorial videos.
 - **Score Formatting**: Fixed score formatting where replacing special character from the pinemhi output may have resulted in duplicated whitespaces.
+- **Table Data Manager**: Fixed missing update of the highscore filename and alternative ROM name fields when cycling through different tables.
+- **In-Game Recorder** Fixed multiple issues causing in-game recordings to fail.
 
 ---
 
