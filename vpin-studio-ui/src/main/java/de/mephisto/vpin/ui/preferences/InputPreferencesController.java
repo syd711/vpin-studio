@@ -44,7 +44,6 @@ public class InputPreferencesController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     fullScreenWarning.managedProperty().bindBidirectional(fullScreenWarning.visibleProperty());
-    filterListText.setVisible(false);
 
     PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
 
