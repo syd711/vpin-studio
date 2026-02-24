@@ -5,7 +5,8 @@
 - **Pause Menu**: Reverted the ignoring of the "Mute System" option for tutorial videos.
 - **Score Formatting**: Fixed score formatting where replacing special character from the pinemhi output may have resulted in duplicated whitespaces.
 - **Table Data Manager**: Fixed missing update of the highscore filename and alternative ROM name fields when cycling through different tables.
-- **In-Game Recorder** Fixed multiple issues causing in-game recordings to fail.
+- **In-Game Recorder**: Fixed multiple issues causing in-game recordings to fail.
+- **System Manager**: The release selection for the backglass server, FlexDMD, Freezy and VPinMAME are filled with all releases now. This allows you to downgrade your installation too in case there are issues with the latest releases.
 
 ---
 

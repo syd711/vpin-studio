@@ -15,9 +15,9 @@ public class GithubReleaseFactory {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static List<GithubRelease> loadReleases(@NonNull String url, @NonNull List<String> allowList, @NonNull List<String> ignoreList) throws IOException {
-    long start = System.currentTimeMillis();
     List<GithubRelease> githubReleases = readReleases(url, false);
     for (GithubRelease githubRelease : githubReleases) {
+      long start = System.currentTimeMillis();
       loadArtifacts(url, allowList, ignoreList, githubRelease);
       LOG.info("Loaded release info for " + url + ", took " + (System.currentTimeMillis() - start) + "ms.");
     }
@@ -25,9 +25,9 @@ public class GithubReleaseFactory {
   }
 
   public static GithubRelease loadRelease(@NonNull String url, @NonNull List<String> allowList, @NonNull List<String> ignoreList) throws IOException {
-    long start = System.currentTimeMillis();
     List<GithubRelease> githubReleases = readReleases(url, true);
     for (GithubRelease githubRelease : githubReleases) {
+      long start = System.currentTimeMillis();
       loadArtifacts(url, allowList, ignoreList, githubRelease);
       LOG.info("Loaded release info for " + url + ", took " + (System.currentTimeMillis() - start) + "ms.");
       return githubRelease;
