@@ -23,11 +23,12 @@ public class DirectB2STableSettings implements DirectB2sConstants {
   private int dualMode = 1; //0 NotSet, 1 Authentic, 2 Fantasy
 
   /**
+   * Default position is FORM_TO_FRONT when nothing is set
    * 0 => FormToBack = 1
    * 1 => FormToFront = 1
    * 2 (Standard) FormToBack = 0 & FormToFront = 0 
    */
-  private int formToPosition = FORM_TO_STANDARD;
+  private int formToPosition = FORM_TO_FRONT;
 
   public boolean isHideB2SBackglass() {
     return hideB2SBackglass;

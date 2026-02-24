@@ -72,10 +72,12 @@ public class B2STableSettingsParser extends DefaultHandler {
           Element element = (Element) romElement;
 
           DirectB2STableSettings settings = new DirectB2STableSettings();
-          settings.setRom(element.getTagName());
-          parse(element, settings, (s, name, value) -> setTableValue(s, name, value));
-
-          tableSettings.put(element.getTagName(), settings);
+          boolean hasChild = parse(element, settings, (s, name, value) -> setTableValue(s, name, value));
+          // if the node does not have child, it is not a table entry so skip it
+          if (hasChild) {
+            settings.setRom(element.getTagName());
+            tableSettings.put(element.getTagName(), settings);
+          }
         }
       }
       
@@ -86,16 +88,19 @@ public class B2STableSettingsParser extends DefaultHandler {
     }
   }
 
-  private <T> void parse(Element element, T settings, SettingsSetter<T> setter) {
+  private <T> boolean parse(Element element, T settings, SettingsSetter<T> setter) {
     NodeList childNodes = element.getChildNodes();
+    boolean hasChild = false;
     for (int i = 0; i < childNodes.getLength(); i++) {
       Node settingsNode = childNodes.item(i);
       if (settingsNode.getNodeType() == Node.ELEMENT_NODE) {
         String name = settingsNode.getNodeName();
         String value = settingsNode.getTextContent().trim();
         setter.setValue(settings, name, value);
+        hasChild = true;
       }
     }
+    return hasChild;
   }
 
   //---------------------------------------
@@ -276,15 +281,21 @@ public class B2STableSettingsParser extends DefaultHandler {
         settings.setDisableFuzzyMatching(Integer.parseInt(value) == 1);
         break;
       }
-      case "FormToBack": {
-        if (Integer.parseInt(value) == 1) {
-          settings.setFormToPosition(DirectB2sConstants.FORM_TO_BACK);
+      case "FormToFront": {
+        // if formToBack=1 and formToFront=1 =>keep formToBack
+        if (settings.getFormToPosition() != DirectB2sConstants.FORM_TO_BACK) {
+          if (Integer.parseInt(value) == 1) {
+            settings.setFormToPosition(DirectB2sConstants.FORM_TO_FRONT);
+          }
+          else if (Integer.parseInt(value) == 0) {
+            settings.setFormToPosition(DirectB2sConstants.FORM_TO_STANDARD);
+          }
         }
         break;
       }
-      case "FormToFront": {
+      case "FormToBack": {
         if (Integer.parseInt(value) == 1) {
-          settings.setFormToPosition(DirectB2sConstants.FORM_TO_FRONT);
+          settings.setFormToPosition(DirectB2sConstants.FORM_TO_BACK);
         }
         break;
       }
