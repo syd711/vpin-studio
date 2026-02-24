@@ -48,7 +48,7 @@ public class NotificationStageService extends Application {
 
   public void pollNotifications() {
     LOG.info("Polling notifications (Queue size: " + queue.size() + ")");
-    if(GraphicsEnvironment.isHeadless()) {
+    if (GraphicsEnvironment.isHeadless()) {
       queue.clear();
       return;
     }
