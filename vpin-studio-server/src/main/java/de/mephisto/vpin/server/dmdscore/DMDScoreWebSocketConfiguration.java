@@ -26,12 +26,24 @@ public class DMDScoreWebSocketConfiguration implements WebSocketConfigurer {
 
   @Bean
   public ServletServerContainerFactoryBean createServletServerContainerFactoryBean() {
-    ServletServerContainerFactoryBean factoryBean = new ServletServerContainerFactoryBean();
-    factoryBean.setMaxTextMessageBufferSize(2048 * 2048);
-    factoryBean.setMaxBinaryMessageBufferSize(2048 * 2048);
-    factoryBean.setMaxSessionIdleTimeout(2048L * 2048L);
-    factoryBean.setAsyncSendTimeout(2048L * 2048L);
-    return factoryBean;
+    return new ServletServerContainerFactoryBean() {
+      {
+        setMaxTextMessageBufferSize(2048 * 2048);
+        setMaxBinaryMessageBufferSize(2048 * 2048);
+        setMaxSessionIdleTimeout(2048L * 2048L);
+        setAsyncSendTimeout(2048L * 2048L);
+      }
+
+      @Override
+      public void afterPropertiesSet() {
+        try {
+          super.afterPropertiesSet();
+        }
+        catch (IllegalStateException e) {
+          LOG.warn("WebSocket server container not available, skipping configuration: {}", e.getMessage());
+        }
+      }
+    };
   }
 
   @Override
