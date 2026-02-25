@@ -10,6 +10,7 @@
 - **Table Data Manager**: Fixed missing update of the highscore filename and alternative ROM name fields when cycling through different tables.
 - **In-Game Recorder**: Fixed multiple issues causing in-game recordings to fail.
 - **System Manager**: The release selection for the backglass server, FlexDMD, Freezy and VPinMAME are filled with all releases now. This allows you to downgrade your installation too in case there are issues with the latest releases.
+- **DMD Device**: Added missing **dmddevice.ini** lookup using the environment variable **DMDDEVICE_CONFIG**, set by the freezy installer.
 
 ---
 
