@@ -300,6 +300,10 @@ public class VPXFileScanner {
     if (StringUtils.isNotEmpty(pGameName)) {
       result.setPupPackName(pGameName);
     }
+    pGameName = evalctxt.getVarValue("cPuPPack");
+    if (StringUtils.isNotEmpty(pGameName)) {
+      result.setPupPackName(pGameName);
+    }
 
     Object vrroom = ObjectUtils.firstNonNull(evalctxt.getVarValue("vrroom"), evalctxt.getVarValue("vr_room"));
     if (vrroom != null) {

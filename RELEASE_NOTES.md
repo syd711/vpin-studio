@@ -1,3 +1,9 @@
+## Release Notes 4.6.7 
+
+## Changes
+
+- **Table Scans**: Improved PUP pack detection.
+
 ## Release Notes 4.6.6
 
 ## Changes
