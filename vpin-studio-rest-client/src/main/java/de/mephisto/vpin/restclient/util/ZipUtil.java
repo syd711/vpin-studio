@@ -163,9 +163,8 @@ public class ZipUtil {
     }
 
     if (fileToZip.isDirectory()) {
-      LOG.info("Zipping " + fileToZip.getCanonicalPath());
-
       if (fileName.endsWith("/")) {
+        LOG.info("Zipping {} as {}", fileToZip.getCanonicalPath(), fileName);
         zipOut.putNextEntry(new ZipEntry(fileName));
         zipOut.closeEntry();
       }
@@ -183,6 +182,7 @@ public class ZipUtil {
       return;
     }
 
+    LOG.info("Zipping {} as {}", fileToZip.getCanonicalPath(), fileName);
     FileInputStream fis = new FileInputStream(fileToZip);
     ZipEntry zipEntry = new ZipEntry(fileName);
     zipOut.putNextEntry(zipEntry);
@@ -231,6 +231,44 @@ public class ZipUtil {
     zipParameters.setEncryptFiles(true);
     zipParameters.setCompressionLevel(CompressionLevel.HIGHER);
     zipParameters.setEncryptionMethod(EncryptionMethod.AES);
+    zipParameters.setFileNameInZip(fileName);
+    zipOut.addFile(fileToZip, zipParameters);
+  }
+
+
+  public static void zipFileUnencrypted(File fileToZip, String fileName, net.lingala.zip4j.ZipFile zipOut) throws IOException {
+    if (fileToZip.isHidden()) {
+      return;
+    }
+
+    if (fileToZip.isDirectory()) {
+      LOG.info("Zipping [{}]: {}", fileToZip.getAbsolutePath(), fileName);
+
+      if (!fileName.endsWith("/")) {
+        fileName = fileName + "/";
+      }
+
+      File[] children = fileToZip.listFiles();
+      if (children != null) {
+        for (File childFile : children) {
+          ZipParameters zipParameters = new ZipParameters();
+          zipParameters.setEncryptFiles(false);
+          zipParameters.setCompressionLevel(CompressionLevel.HIGHER);
+          zipParameters.setFileNameInZip(fileName + childFile.getName());
+          zipOut.addFile(childFile, zipParameters);
+
+          if (childFile.isDirectory()) {
+            zipFileEncrypted(childFile, fileName + childFile.getName(), zipOut);
+          }
+        }
+      }
+
+      return;
+    }
+
+    ZipParameters zipParameters = new ZipParameters();
+    zipParameters.setEncryptFiles(false);
+    zipParameters.setCompressionLevel(CompressionLevel.HIGHER);
     zipParameters.setFileNameInZip(fileName);
     zipOut.addFile(fileToZip, zipParameters);
   }

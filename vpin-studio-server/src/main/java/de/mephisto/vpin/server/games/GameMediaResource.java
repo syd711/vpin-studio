@@ -8,7 +8,6 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.MimeTypeUtil;
 import de.mephisto.vpin.server.assets.TableAssetSourcesService;
 import de.mephisto.vpin.server.assets.TableAssetsService;
@@ -33,7 +32,10 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -89,7 +91,7 @@ public class GameMediaResource {
   @PostMapping("/assets/search")
   public TableAssetSearch searchTableAssets(@RequestBody TableAssetSearch search) throws Exception {
     Game game = gameService.getGame(search.getGameId());
-    EmulatorType emulatorType = game != null && game.getEmulator() != null ? game.getEmulator().getType() : EmulatorType.VisualPinball;
+    EmulatorType emulatorType = game != null ? game.getEmulator().getType() : EmulatorType.VisualPinball;
     TableAssetSource source = tableAssetSourcesService.getAssetSource(search.getAssetSourceId());
 
     List<TableAsset> result = tableAssetsService.search(source, emulatorType, search.getScreen().getSegment(), game, search.getTerm());
@@ -105,11 +107,7 @@ public class GameMediaResource {
     try {
       LOG.info("Starting download of " + asset.getName() + "(appending: " + append + ")");
       Game game = frontendService.getOriginalGame(gameId);
-      File mediaFolder = frontendService.getMediaFolder(game, screen, asset.getFileSuffix(), false);
-      File target = new File(mediaFolder, game.getGameName() + "." + asset.getFileSuffix());
-      if (target.exists() && append) {
-        target = FileUtils.uniqueAsset(target);
-      }
+      File target = frontendService.getFrontendConnector().getMediaAccessStrategy().createMedia(game, screen, asset.getFileSuffix(), append);
       tableAssetsService.download(asset, target);
 
       // for PLayfield, if the tableAsset is in a different orientation than frontend, rotate the asset
@@ -146,7 +144,7 @@ public class GameMediaResource {
                             @PathVariable("gameId") int gameId,
                             @PathVariable("url") String url) throws Exception {
     Game game = gameService.getGame(gameId);
-    EmulatorType emulatorType = game != null && game.getEmulator() != null ? game.getEmulator().getType() : EmulatorType.VisualPinball;
+    EmulatorType emulatorType = game != null ? game.getEmulator().getType() : EmulatorType.VisualPinball;
 
     String decode = URLDecoder.decode(url, StandardCharsets.UTF_8);
     String folder = decode.substring(0, decode.lastIndexOf("/"));
@@ -392,7 +390,7 @@ public class GameMediaResource {
       }
 
       String suffix = FilenameUtils.getExtension(file.getOriginalFilename());
-      File out = gameMediaService.uniqueMediaAsset(gameId, screen, suffix, true, append);
+      File out = gameMediaService.uniqueMediaAsset(gameId, screen, suffix, append);
       if (out == null) {
         LOG.error("No game found for media upload.");
         return JobDescriptorFactory.error("No game found for media upload.");

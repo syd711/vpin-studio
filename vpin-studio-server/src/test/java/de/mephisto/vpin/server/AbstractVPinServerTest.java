@@ -122,8 +122,6 @@ abstract public class AbstractVPinServerTest {
     emulator.setInstallationDirectory("../testsystem/vPinball/VisualPinball/");
     emulator.setMameDirectory("../testsystem/vPinball/VisualPinball/VPinMAME/");
     emulator.setRomDirectory("../testsystem/vPinball/VisualPinball/VPinMAME/roms/");
-    emulator.setNvramDirectory("../testsystem/vPinball/VisualPinball/VPinMAME/nvram/");
-    emulator.setCfgDirectory("../testsystem/vPinball/VisualPinball/VPinMAME/cfg/");
     emulator.setMediaDirectory("../testsystem/vPinball/PinUPSystem/POPMedia");
     emulator.setGamesDirectory("../testsystem/vPinball/VisualPinball/Tables/");
     emulator.setGameExt("vpx");

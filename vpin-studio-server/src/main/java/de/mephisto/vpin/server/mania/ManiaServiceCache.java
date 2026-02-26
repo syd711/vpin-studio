@@ -58,7 +58,7 @@ public class ManiaServiceCache {
     if (playerCache.isEmpty()) {
       List<Player> buildInPlayers = playerService.getBuildInPlayers();
       for (Player buildInPlayer : buildInPlayers) {
-        Account accountByUuid = maniaService.getClient().getAccountClient().getAccountByUuid(buildInPlayer.getTournamentUserUuid());
+        Account accountByUuid = maniaService.getClient().getAccountClient().getAccountByUuid(buildInPlayer.getManiaAccountUuid());
         playerCache.put(buildInPlayer.getInitials(), accountByUuid);
       }
     }

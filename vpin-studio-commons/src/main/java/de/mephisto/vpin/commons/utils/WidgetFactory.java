@@ -82,6 +82,7 @@ public class WidgetFactory {
   public static final String TODO_COLOR = UPDATE_COLOR;
   public static final String OUTDATED_COLOR = "#FFCC66";
   public static final String OK_COLOR = "#66FF66";
+  public static final String OK_DARK_COLOR = "#11aa11";
   public static final String OK_STYLE = "-fx-font-color: " + OK_COLOR + ";-fx-text-fill:" + OK_COLOR + ";";
   public static final String MEDIA_CONTAINER_LABEL = "-fx-font-size: 14px;-fx-text-fill: #666666;";
   public static final int DEFAULT_ICON_SIZE = 18;

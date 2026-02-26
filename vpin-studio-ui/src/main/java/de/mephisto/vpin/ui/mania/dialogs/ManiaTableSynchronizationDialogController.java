@@ -106,7 +106,7 @@ public class ManiaTableSynchronizationDialogController implements DialogControll
     });
 
     try {
-      accounts = maniaClient.getAccountClient().getAccounts();
+      accounts = maniaClient.getAccountClient().getAccounts(maniaClient.getCabinetClient().getDefaultCabinetCached().getId());
     }
     catch (Exception e) {
       LOG.error("Failed to fetch accounts: {}", e.getMessage(), e);

@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.mania.dialogs;
 
-import de.mephisto.vpin.commons.utils.FXResizeHelper;
 import de.mephisto.vpin.restclient.mania.ManiaRegistration;
 import de.mephisto.vpin.restclient.mania.ManiaTableSyncResult;
 import de.mephisto.vpin.ui.util.Dialogs;
@@ -18,13 +17,6 @@ public class ManiaDialogs {
     ManiaRegistrationDialogController controller = (ManiaRegistrationDialogController) stage.getUserData();
     stage.showAndWait();
     return controller.getManiaRegistration();
-  }
-
-  public static void openAccountSearchDialog() {
-    Stage stage = Dialogs.createStudioDialogStage(FriendSearchDialogController.class, "dialog-friend-search.fxml", "VPin Mania Cabinet Search");
-    FriendSearchDialogController controller = (FriendSearchDialogController) stage.getUserData();
-    controller.setStage(stage);
-    stage.showAndWait();
   }
 
   public static void openTableSyncResult(List<ManiaTableSyncResult> results) {

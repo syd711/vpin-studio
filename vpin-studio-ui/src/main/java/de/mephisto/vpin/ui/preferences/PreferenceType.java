@@ -1,5 +1,5 @@
 package de.mephisto.vpin.ui.preferences;
 
 public enum PreferenceType {
-  serverSettings, uiSettings, backglassServer, validationSettings, competitionSettings, vpsSettings, backups
+  serverSettings, uiSettings, backglassServer, validationSettings, competitionSettings, vpsSettings, backups, vpxz
 }

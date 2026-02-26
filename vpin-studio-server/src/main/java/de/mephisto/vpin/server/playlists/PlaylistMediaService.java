@@ -8,8 +8,8 @@ import de.mephisto.vpin.server.frontend.MediaService;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.frontend.WheelIconDelete;
 import edu.umd.cs.findbugs.annotations.NonNull;
-
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,6 +78,7 @@ public class PlaylistMediaService extends MediaService {
 
   //-------------------------
 
+  @NotNull
   @Override
   public List<File> getMediaFiles(int playlistId, VPinScreen screen) {
     Playlist playlist = playlistService.getPlaylist(playlistId);
@@ -88,12 +89,10 @@ public class PlaylistMediaService extends MediaService {
   }
 
   @Override
-  protected File uniqueMediaAsset(int playlistId, VPinScreen screen, String suffix, boolean createFolder, boolean append) {
+  protected File uniqueMediaAsset(int playlistId, VPinScreen screen, String suffix, boolean append) {
     Playlist playlist = playlistService.getPlaylist(playlistId);
     if (playlist != null) {
-      File mediaFolder = frontendService.getPlaylistMediaFolder(playlist, screen, createFolder);
-      String mediaName = !StringUtils.isEmpty(playlist.getMediaName()) ? playlist.getMediaName() : playlist.getName();
-      return buildMediaAsset(mediaFolder, mediaName, suffix, append);
+      return frontendService.getFrontendConnector().getMediaAccessStrategy().createMedia(playlist, screen, suffix, append);
     }
     return null;
   }

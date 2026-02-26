@@ -154,21 +154,6 @@ public class EmulatorService implements InitializingBean {
 
       if (emulator.isVpxEmulator()) {
         File registryFolder = mameService.getNvRamFolder();
-        if (registryFolder != null && registryFolder.exists()) {
-          emulator.setNvramDirectory(registryFolder.getAbsolutePath());
-        }
-        else {
-          emulator.setNvramDirectory(new File(mameFolder, "nvram").getAbsolutePath());
-        }
-
-        File cfgFolder = mameService.getCfgFolder();
-        if (cfgFolder != null && cfgFolder.exists()) {
-          emulator.setCfgDirectory(cfgFolder.getAbsolutePath());
-        }
-        else {
-          emulator.setCfgDirectory(new File(mameFolder, "nvram").getAbsolutePath());
-        }
-
         // mind that popper may set a specific romDirectory
         if (StringUtils.isEmpty(emulator.getRomDirectory())) {
           File romFolder = mameService.getRomsFolder();

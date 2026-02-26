@@ -2,9 +2,9 @@ package de.mephisto.vpin.ui.preferences.dialogs;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.restclient.util.ini.IniSettings;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
-import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.FontSelectorDialog;
 import javafx.application.Platform;

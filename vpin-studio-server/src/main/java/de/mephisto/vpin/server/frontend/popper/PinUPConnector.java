@@ -2383,7 +2383,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   @Override
   public MediaAccessStrategy getMediaAccessStrategy() {
     if (this.pinUPMediaAccessStrategy == null) {
-      this.pinUPMediaAccessStrategy = new PinUPMediaAccessStrategy(this);
+      this.pinUPMediaAccessStrategy = new PinUPMediaAccessStrategyNext(this);
     }
     return pinUPMediaAccessStrategy;
   }

@@ -252,7 +252,7 @@ public class UniversalUploadService {
           }
           if (!StringUtils.isEmpty(rom)) {
             String altSoundFolder = analysis.getAltSoundFolder();
-            JobDescriptor jobExecutionResult = altSoundService.installAltSound(uploadDescriptor.getEmulatorId(), rom, tempFile, altSoundFolder);
+            JobDescriptor jobExecutionResult = altSoundService.installAltSound(game, rom, tempFile, altSoundFolder);
             uploadDescriptor.setError(jobExecutionResult.getError());
             gameLifecycleService.notifyGameAssetsChanged(assetType, rom);
           }
@@ -319,9 +319,7 @@ public class UniversalUploadService {
           String rom = null;
           if (game != null) {
             rom = game.getRom();
-          }
-          musicService.installMusic(tempFile, uploadDescriptor.getEmulatorId(), analysis, rom, uploadDescriptor.isAcceptAllAudioAsMusic());
-          if (game != null) {
+            musicService.installMusic(tempFile, game, analysis, rom, uploadDescriptor.isAcceptAllAudioAsMusic());
             gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, updatedAssetName);
           }
         }
@@ -329,7 +327,7 @@ public class UniversalUploadService {
       }
       case ROM: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.ROM) == null) {
-          mameService.installRom(uploadDescriptor, gameEmulator, tempFile, analysis);
+          mameService.installRom(uploadDescriptor, game, gameEmulator, tempFile, analysis);
           gameLifecycleService.notifyGameAssetsChanged(assetType, updatedAssetName);
         }
         break;
@@ -343,14 +341,14 @@ public class UniversalUploadService {
       }
       case NV: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.NV) == null) {
-          mameService.installNvRam(uploadDescriptor, gameEmulator, tempFile, analysis);
+          mameService.installNvRam(uploadDescriptor, game, gameEmulator, tempFile, analysis);
           gameLifecycleService.notifyGameAssetsChanged(assetType, updatedAssetName);
         }
         break;
       }
       case CFG: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.CFG) == null) {
-          mameService.installCfg(uploadDescriptor, gameEmulator, tempFile, analysis);
+          mameService.installCfg(uploadDescriptor, game, gameEmulator, tempFile, analysis);
           gameLifecycleService.notifyGameAssetsChanged(assetType, updatedAssetName);
         }
         break;
@@ -451,6 +449,9 @@ public class UniversalUploadService {
       importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.BAM_CFG, true);
     }
 
+    /*
+     * BACKUP MODE Restore
+     */
     if (uploadDescriptor.isBackupRestoreMode()) {
       File tempFile = new File(uploadDescriptor.getTempFilename());
       ZipFile zipFile = vpaService.createProtectedArchive(tempFile);
@@ -463,10 +464,11 @@ public class UniversalUploadService {
       }
 
       String highscoreBackupZipEntry = analysis.getFileNameWithPathForExtension(HighscoreBackupService.FILE_SUFFIX);
-      if (!StringUtils.isEmpty(highscoreBackupZipEntry)) {
+      Game game = gameService.getGame(uploadDescriptor.getGameId());
+      if (game != null && !StringUtils.isEmpty(highscoreBackupZipEntry)) {
         File highscoreBackupTempFile = VpaArchiveUtil.extractFile(zipFile, highscoreBackupZipEntry);
         uploadDescriptor.getTempFiles().add(highscoreBackupTempFile);
-        highscoreBackupService.restoreBackupFile(gameEmulator, highscoreBackupTempFile);
+        highscoreBackupService.restoreBackupFile(game, gameEmulator, highscoreBackupTempFile);
       }
     }
 

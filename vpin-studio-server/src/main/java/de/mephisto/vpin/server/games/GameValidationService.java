@@ -6,12 +6,14 @@ import de.mephisto.vpin.connectors.vps.model.VpsUrl;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
+import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.ValidationStateFactory;
+import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
@@ -24,6 +26,7 @@ import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.highscores.HighscoreResolver;
 import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegService;
 import de.mephisto.vpin.server.mame.MameRomAliasService;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
@@ -31,6 +34,7 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vps.VpsService;
+import de.mephisto.vpin.server.vpx.FolderLookupService;
 import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -96,7 +100,13 @@ public class GameValidationService implements InitializingBean, PreferenceChange
   private VpsService vpsService;
 
   @Autowired
+  private VPRegService vpRegService;
+
+  @Autowired
   private VPXService vpxService;
+
+  @Autowired
+  private FolderLookupService folderLookupService;
 
   private ValidationSettings validationSettings;
   private IgnoredValidationSettings ignoredValidationSettings;
@@ -135,7 +145,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (isVPX && isValidationEnabled(game, GameValidationCode.CODE_ROM_NOT_EXISTS)) {
-      if (!game.isRomExists() && game.isRomRequired()) {
+      if (game.isRomRequired() && !mameService.isRomExists(game)) {
         result.add(ValidationStateFactory.create(GameValidationCode.CODE_ROM_NOT_EXISTS));
         if (findFirst) {
           return result;
@@ -183,7 +193,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
     if (isVPX && isValidationEnabled(game, GameValidationCode.CODE_SCRIPT_FILES_MISSING)) {
       if (game.getScripts() != null) {
-        File scriptFolder = game.getEmulator().getScriptsFolder();
+        File scriptFolder = folderLookupService.getScriptsFolder(game);
         for (String script : game.getScripts()) {
           File scriptFile = new File(game.getGameFile().getParentFile(), script);
           if (!scriptFile.exists()) {
@@ -304,7 +314,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     if (isVPX && isValidationEnabled(game, CODE_SCRIPT_CONTROLLER_STOP_MISSING)) {
       HighscoreType highscoreType = game.getHighscoreType();
       if (highscoreType == null || highscoreType.equals(HighscoreType.NVRam)) {
-        File romFile = game.getRomFile();
+        File romFile = folderLookupService.getRomFile(game);
         if (romFile != null && romFile.exists()) {
           if (game.isFoundTableExit() && !game.isFoundControllerStop()) {
             result.add(ValidationStateFactory.create(GameValidationCode.CODE_SCRIPT_CONTROLLER_STOP_MISSING));
@@ -519,32 +529,32 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
     List<ValidationState> result = new ArrayList<>();
 
-    MameOptions options = mameService.getOptions(MameOptions.DEFAULT_KEY);
-
     AltColor altColor = altColorService.getAltColor(game);
     AltColorTypes altColorType = altColor.getAltColorType();
     if (altColorType == null) {
       return Collections.emptyList();
     }
 
-    //File mameFolder = mameService.getMameFolder();
-    File mameFolder = mameService.getMameFolder();
-    File dmdDevicedll = new File(mameFolder, "DmdDevice.dll");
-    File dmdDevice64dll = new File(mameFolder, "DmdDevice64.dll");
-    File dmdextexe = new File(mameFolder, "dmdext.exe");
-    File dmdDeviceIni = new File(mameFolder, "DmdDevice.ini");
+    // skip this check in standalone as DmdDevice is part of the VPX bundle
+    if (!Features.IS_STANDALONE) {
+      File mameFolder = mameService.getMameFolder();
+      File dmdDevicedll = new File(mameFolder, "DmdDevice.dll");
+      File dmdDevice64dll = new File(mameFolder, "DmdDevice64.dll");
+      File dmdextexe = new File(mameFolder, "dmdext.exe");
+      File dmdDeviceIni = new File(mameFolder, "DmdDevice.ini");
 
-    if (isValidationEnabled(game, CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING)) {
-      if (!dmdDevicedll.exists() && !dmdDevice64dll.exists()) {
-        result.add(ValidationStateFactory.create(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING, dmdDevicedll.getName()));
-      }
+      if (isValidationEnabled(game, CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING)) {
+        if (!dmdDevicedll.exists() && !dmdDevice64dll.exists()) {
+          result.add(ValidationStateFactory.create(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING, dmdDevicedll.getName()));
+        }
 
-      if (!dmdextexe.exists()) {
-        result.add(ValidationStateFactory.create(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING, dmdextexe.getName()));
-      }
+        if (!dmdextexe.exists()) {
+          result.add(ValidationStateFactory.create(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING, dmdextexe.getName()));
+        }
 
-      if (!dmdDeviceIni.exists()) {
-        result.add(ValidationStateFactory.create(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING, dmdDeviceIni.getName()));
+        if (!dmdDeviceIni.exists()) {
+          result.add(ValidationStateFactory.create(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING, dmdDeviceIni.getName()));
+        }
       }
     }
 
@@ -596,6 +606,8 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         }
       }
       else {
+        MameOptions options = mameService.getOptions(MameOptions.DEFAULT_KEY);
+
         //no in registry, so check against defaults
         if (isValidationEnabled(game, CODE_ALT_COLOR_COLORIZE_DMD_ENABLED) && !options.isColorizeDmd()) {
           result.add(ValidationStateFactory.create(CODE_ALT_COLOR_COLORIZE_DMD_ENABLED));
@@ -610,15 +622,18 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
   public List<ValidationState> validateAltSound(Game game) {
     List<ValidationState> result = new ArrayList<>();
-    if (isValidationEnabled(game, CODE_ALT_SOUND_NOT_ENABLED)) {
-      if (game.isAltSoundAvailable() && altSoundService.getAltSoundMode(game) <= 0) {
-        result.add(ValidationStateFactory.create(GameValidationCode.CODE_ALT_SOUND_NOT_ENABLED));
+    if (game.isAltSoundAvailable()) {
+      if (isValidationEnabled(game, CODE_ALT_SOUND_NOT_ENABLED)) {
+        if (altSoundService.getAltSoundMode(game) <= 0) {
+          result.add(ValidationStateFactory.create(GameValidationCode.CODE_ALT_SOUND_NOT_ENABLED));
+        }
       }
-    }
 
-    if (isValidationEnabled(game, CODE_ALT_SOUND_FILE_MISSING)) {
-      if (game.isAltSoundAvailable() && altSoundService.getAltSound(game).isMissingAudioFiles()) {
-        result.add(ValidationStateFactory.create(GameValidationCode.CODE_ALT_SOUND_FILE_MISSING));
+      if (isValidationEnabled(game, CODE_ALT_SOUND_FILE_MISSING)) {
+        AltSound altSound = altSoundService.getAltSound(game);
+        if (altSound != null && altSound.isMissingAudioFiles()) {
+          result.add(ValidationStateFactory.create(GameValidationCode.CODE_ALT_SOUND_FILE_MISSING));
+        }
       }
     }
     return result;
@@ -718,8 +733,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     validation.setValidScoreConfiguration(true);
 
     ScoringDB scoringDB = systemService.getScoringDatabase();
-    List<String> vpRegEntries = highscoreService.getVPRegEntries();
-    List<String> highscoreFiles = highscoreService.getHighscoreFiles();
+    HighscoreFiles highscoreFiles = highscoreService.getHighscoreFiles(game);
 
     String rom = TableDataUtil.getEffectiveRom(tableDetails, gameDetails);
     if (game.isRomRequired() && !mameService.isRomExists(rom)) {
@@ -764,7 +778,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     //the ROM was found as VPReg.stg entry
-    if (vpRegEntries.contains(String.valueOf(rom)) || vpRegEntries.contains(tableName)) {
+    if (vpRegService.isValid(game)) {
       validation.setRomIcon(GameScoreValidation.OK_ICON);
       validation.setRomIconColor(GameScoreValidation.OK_COLOR);
       validation.setRomStatus(GameScoreValidation.STATUS_VPREG_STG_MATCH_FOUND);
@@ -782,7 +796,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     File nvRamFile = highscoreResolver.getNvRamFile(game);
 
     //not played and the ROM VPReg.stg entry not found
-    if (!game.isPlayed() && !vpRegEntries.contains(String.valueOf(rom)) && !vpRegEntries.contains(rom) && (nvRamFile == null || !nvRamFile.exists())) {
+    if (!game.isPlayed() && (nvRamFile == null || !nvRamFile.exists()) && !vpRegService.isValid(game)) {
       validation.setRomIcon(GameScoreValidation.UNPLAYED_ICON);
       validation.setRomIconColor(GameScoreValidation.OK_COLOR);
       validation.setRomStatus(GameScoreValidation.STATUS_NOT_PLAYED_NO_MATCH_FOUND);
@@ -826,7 +840,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     //game has been played, but the .nvram or VPReg has not been found
-    if (game.isPlayed() && !StringUtils.isEmpty(rom) && !vpRegEntries.contains(rom) && !vpRegEntries.contains(rom.toLowerCase()) && !vpRegEntries.contains(tableName) && (nvRamFile == null || !nvRamFile.exists())) {
+    if (game.isPlayed() && !StringUtils.isEmpty(rom) && (nvRamFile == null || !nvRamFile.exists()) && !vpRegService.isValid(game)) {
       validation.setValidScoreConfiguration(false);
       validation.setRomIcon(GameScoreValidation.ERROR_ICON);
       validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);

@@ -187,8 +187,6 @@ public class SystemResource {
   @GetMapping("")
   public SystemId system() {
     SystemId id = new SystemId();
-    id.setSystemId(SystemUtil.getUniqueSystemId());
-
     String name = (String) preferencesService.getPreferenceValue(PreferenceNames.SYSTEM_NAME);
     if (StringUtils.isEmpty(name)) {
       name = UIDefaults.VPIN_NAME;
@@ -204,8 +202,6 @@ public class SystemResource {
     SystemSummary info = new SystemSummary();
     try {
       info.setScreenInfos(systemService.getMonitorInfos());
-      info.setBackupType(systemService.getBackupType());
-      info.setSystemId(SystemUtil.getUniqueSystemId());
     }
     catch (Exception e) {
       LOG.error("Failed to read system info: " + e.getMessage());

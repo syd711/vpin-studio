@@ -151,3 +151,4 @@ vpin-studio-logs.zip
 /resources/vlc/
 .claude/settings.local.json
 /nul
+/resources/vpxscripts/**

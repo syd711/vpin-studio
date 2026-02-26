@@ -1,7 +1,9 @@
 package de.mephisto.vpin.ui.mania.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.mania.ManiaRegistration;
+import de.mephisto.vpin.restclient.mania.ManiaSettings;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -10,8 +12,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +39,9 @@ public class ManiaRegistrationDialogController implements DialogController, Init
   private VBox playersRoot;
 
   @FXML
+  private VBox dataBox;
+
+  @FXML
   private CheckBox registrationCheckbox;
 
   @FXML
@@ -45,6 +52,9 @@ public class ManiaRegistrationDialogController implements DialogController, Init
 
   @FXML
   private CheckBox synchronizeRatingsCheckbox;
+
+  @FXML
+  private TextField apiKeyText;
 
   private final List<CheckBox> playerCheckboxes = new ArrayList<>();
 
@@ -67,6 +77,7 @@ public class ManiaRegistrationDialogController implements DialogController, Init
     maniaRegistration.setSubmitRatings(synchronizeRatingsCheckbox.isSelected());
     maniaRegistration.setSubmitPlayCount(synchronizeRatingsCheckbox.isSelected());
     maniaRegistration.setSubmitTables(synchronizeTablesCheckbox.isSelected());
+    maniaRegistration.setApiKey(apiKeyText.getText());
 
     for (CheckBox playerCheckbox : playerCheckboxes) {
       if (playerCheckbox.isSelected()) {
@@ -83,6 +94,7 @@ public class ManiaRegistrationDialogController implements DialogController, Init
   public void initialize(URL location, ResourceBundle resources) {
     playerList.managedProperty().bindBidirectional(playerList.visibleProperty());
     playersRoot.managedProperty().bindBidirectional(playersRoot.visibleProperty());
+    apiKeyText.setDisable(true);
 
     synchronizeRatingsCheckbox.setDisable(true);
     synchronizeRatingsCheckbox.setSelected(true);
@@ -97,7 +109,7 @@ public class ManiaRegistrationDialogController implements DialogController, Init
         synchronizeRatingsCheckbox.setDisable(!newValue);
         synchronizePlayCountCheckbox.setDisable(!newValue);
         synchronizeTablesCheckbox.setDisable(!newValue);
-        okButton.setDisable(!newValue);
+        apiKeyText.setDisable(!newValue);
 
         for (CheckBox playerCheckbox : playerCheckboxes) {
           playerCheckbox.setDisable(!newValue);
@@ -118,6 +130,19 @@ public class ManiaRegistrationDialogController implements DialogController, Init
       playerList.getChildren().add(checkBox);
       playerCheckboxes.add(checkBox);
     }
+
+    okButton.setDisable(true);
+    apiKeyText.textProperty().addListener(new ChangeListener<String>() {
+      @Override
+      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+        okButton.setDisable(StringUtils.isEmpty(newValue));
+      }
+    });
+
+    ManiaSettings maniaSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
+    apiKeyText.setText(maniaSettings.getApiKey());
+
+
   }
 
   public ManiaRegistration getManiaRegistration() {

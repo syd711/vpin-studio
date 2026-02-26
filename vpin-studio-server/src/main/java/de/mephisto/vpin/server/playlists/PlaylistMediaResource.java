@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.server.assets.TableAssetsService;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -46,6 +47,9 @@ public class PlaylistMediaResource {
   @Autowired
   private TableAssetsService tableAssetsService;
 
+  @Autowired
+  private FrontendService frontendService;
+
 
   @GetMapping("/{playlistId}")
   public FrontendMedia getPlaylistMedia(@PathVariable("playlistId") int playlistId) {
@@ -58,20 +62,15 @@ public class PlaylistMediaResource {
                                        @PathVariable("append") boolean append,
                                        @RequestBody TableAsset asset) throws Exception {
     LOG.info("Starting download of " + asset.getName() + "(appending: " + append + ")");
-
-    String suffix = FilenameUtils.getExtension(asset.getName());
-    File out = playlistMediaService.uniqueMediaAsset(playlistId, screen, suffix, false, true);
-    if (out == null) {
-      LOG.error("No playlist for media upload.");
-      return false;
-    }
-    tableAssetsService.download(asset, out);
+    Playlist playlist = frontendService.getPlayList(playlistId);
+    File target = frontendService.getFrontendConnector().getMediaAccessStrategy().createMedia(playlist, screen, asset.getFileSuffix(), append);
+    tableAssetsService.download(asset, target);
     return true;
   }
 
   @GetMapping("/{id}/{screen}/{name}")
-  public ResponseEntity<Resource> getMedia(@PathVariable("id") int id, 
-                                           @PathVariable("screen") VPinScreen screen, 
+  public ResponseEntity<Resource> getMedia(@PathVariable("id") int id,
+                                           @PathVariable("screen") VPinScreen screen,
                                            @PathVariable("name") String name) throws IOException {
     FrontendMedia frontendMedia = playlistMediaService.getPlaylistMedia(id);
     if (frontendMedia != null) {
@@ -115,7 +114,7 @@ public class PlaylistMediaResource {
       }
 
       String suffix = FilenameUtils.getExtension(file.getOriginalFilename());
-      File out = playlistMediaService.uniqueMediaAsset(playlistId, screen, suffix, true, append);
+      File out = playlistMediaService.uniqueMediaAsset(playlistId, screen, suffix, append);
       if (out == null) {
         LOG.error("No playlist for media upload.");
         return JobDescriptorFactory.error("No playlist found for media upload.");
@@ -138,8 +137,8 @@ public class PlaylistMediaResource {
   }
 
   @DeleteMapping("/media/{playlistId}/{screen}/{file}")
-  public boolean deleteMedia(@PathVariable("playlistId") int playlistId, 
-                             @PathVariable("screen") VPinScreen screen, 
+  public boolean deleteMedia(@PathVariable("playlistId") int playlistId,
+                             @PathVariable("screen") VPinScreen screen,
                              @PathVariable("file") String filename) {
     return playlistMediaService.deleteMedia(playlistId, screen, filename);
   }

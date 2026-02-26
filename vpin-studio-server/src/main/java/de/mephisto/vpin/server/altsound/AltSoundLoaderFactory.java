@@ -17,7 +17,7 @@ public class AltSoundLoaderFactory {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @Nullable
-  public static AltSound create(@NonNull File altSoundFolder, int emulatorId) {
+  public static AltSound create(@NonNull File altSoundFolder) {
     File ini = new File(altSoundFolder, "altsound.ini");
     File gSoundCsv = new File(altSoundFolder, "g-sound.csv");
     File altSoundCsv = new File(altSoundFolder, "altsound.csv");
@@ -27,7 +27,6 @@ public class AltSoundLoaderFactory {
     altSound.setFolder(altSoundFolder.getAbsolutePath());
 
     if (ini.exists() || gSoundCsv.exists() || altSoundCsv.exists()) {
-      altSound.setEmulatorId(emulatorId);
       altSound.setName(altSoundFolder.getParentFile().getName());
       return altSound;
     }
@@ -38,11 +37,11 @@ public class AltSoundLoaderFactory {
   public static AltSound load(@NonNull AltSound altSound) {
     String folder = altSound.getFolder();
     File altSoundFolder = new File(folder);
-    return load(altSoundFolder, altSound.getEmulatorId());
+    return load(altSoundFolder);
   }
 
   @NonNull
-  public static AltSound load(@NonNull File altSoundFolder, int emulatorId) {
+  public static AltSound load(@NonNull File altSoundFolder) {
     try {
       File ini = new File(altSoundFolder, "altsound.ini");
       File gSoundCsv = new File(altSoundFolder, "g-sound.csv");
@@ -67,13 +66,11 @@ public class AltSoundLoaderFactory {
           String format = formatNode.getString("format");
           if (format.equals(AltSoundFormats.gsound) && gSoundCsv.exists()) {
             AltSound altSound = new AltSound2Loader(iniConfiguration, gSoundCsv).load();
-            altSound.setEmulatorId(emulatorId);
             altSound.setFolder(altSoundFolder.getAbsolutePath());
             return altSound;
           }
           else if (altSoundCsv.exists()) {
             AltSound altSound = new AltSoundLoader(altSoundCsv).load();
-            altSound.setEmulatorId(emulatorId);
             altSound.setFolder(altSoundFolder.getAbsolutePath());
             return altSound;
           }
@@ -82,7 +79,6 @@ public class AltSoundLoaderFactory {
       else if (gSoundCsv.exists()) {
         //init file does not exists, but g-sound.csv, which means that the table has not been started yet.
         AltSound altSound = new AltSound();
-        altSound.setEmulatorId(emulatorId);
         altSound.setFolder(altSoundFolder.getAbsolutePath());
         altSound.setName(gSoundCsv.getParentFile().getName());
         altSound.setFormat(AltSoundFormats.gsound);

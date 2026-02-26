@@ -223,7 +223,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
       Map<String, Object> data = JsonSettings.objectMapper.readValue(serialize, HashMap.class);
       saveSettings(data);
     }
-    catch(IOException ioe) {
+    catch (IOException ioe) {
       LOG.error("Cannot save settings", ioe);
     }
   }
@@ -591,7 +591,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     if (mediaStrategy != null) {
       File mediaFolder = mediaStrategy.getPlaylistMediaFolder(playList, screen, false);
       mediaStrategy.stopMonitoring(mediaFolder);
-      return FileUtils.deleteFolder(mediaFolder);
+      return mediaStrategy.deleteMedia(playList, screen);
     }
     return false;
   }
@@ -601,7 +601,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     if (mediaStrategy != null) {
       File mediaFolder = mediaStrategy.getGameMediaFolder(game, screen, extension, false);
       mediaStrategy.stopMonitoring(mediaFolder);
-      return FileUtils.deleteFolder(mediaFolder);
+      return mediaStrategy.deleteMedia(game, screen);
     }
     return false;
   }

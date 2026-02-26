@@ -13,6 +13,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.FileUpdateWriter;
+import de.mephisto.vpin.server.vpx.FolderLookupService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -61,7 +62,11 @@ public class MameService implements InitializingBean {
   @Autowired
   protected SystemService systemService;
 
+  @Autowired
+  private FolderLookupService folderLookupService;
+
   private File mameFolder;
+
 
   public boolean clearGamesCache(List<Game> knownGames) {
     this.mameFolder = null;
@@ -84,10 +89,9 @@ public class MameService implements InitializingBean {
     long l = System.currentTimeMillis();
     romValidationCache.clear();
     List<File> folders = new ArrayList<>();
-    List<GameEmulator> filteredEmulators = gameEmulators.stream().filter(g -> g.isVpxEmulator()).collect(Collectors.toList());
-    for (GameEmulator filteredEmulator : filteredEmulators) {
-      if (!folders.contains(filteredEmulator.getMameFolder())) {
-        folders.add(filteredEmulator.getMameFolder());
+    for (GameEmulator gameEmulator : gameEmulators) {
+      if (gameEmulator.isVpxEmulator() && !folders.contains(gameEmulator.getMameFolder())) {
+        folders.add(gameEmulator.getMameFolder());
       }
     }
 
@@ -249,27 +253,33 @@ public class MameService implements InitializingBean {
   //---------------------------------
 
   public boolean deleteCfg(@NonNull Game game) {
-    File cfgFile = game.getCfgFile();
+    File cfgFile = folderLookupService.getCfgFile(game);
     return cfgFile != null && cfgFile.exists() && FileUtils.delete(cfgFile);
   }
 
   public boolean deleteRom(@NonNull Game game) {
-    File romFile = game.getRomFile();
+    File romFile = folderLookupService.getRomFile(game);
     return romFile != null && romFile.exists() && FileUtils.delete(romFile);
   }
 
   //--------------------------------
 
-  public void installRom(UploadDescriptor uploadDescriptor, GameEmulator gameEmulator, File tempFile, UploaderAnalysis analysis) throws IOException {
-    File romFolder = gameEmulator != null ? gameEmulator.getRomFolder() : getRomsFolder();
+  public void installRom(UploadDescriptor uploadDescriptor, Game game, GameEmulator emulator, File tempFile, UploaderAnalysis analysis) throws IOException {
+    File romFolder = game != null ? folderLookupService.getRomFolder(game) : getRomsFolder();
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.ZIP, romFolder);
   }
 
-  public void installNvRam(UploadDescriptor uploadDescriptor, GameEmulator gameEmulator, File tempFile, UploaderAnalysis analysis) throws IOException {
-    File nvramFolder = gameEmulator != null ? gameEmulator.getNvramFolder() : getNvRamFolder();
+  public void installNvRam(UploadDescriptor uploadDescriptor, Game game, GameEmulator emulator, File tempFile, UploaderAnalysis analysis) throws IOException {
+    File nvramFolder = game != null ? folderLookupService.getNvRamFolder(game) : getNvRamFolder();
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.NV, nvramFolder);
   }
 
+  public boolean isRomExists(@NonNull Game game) {
+    File romFile = folderLookupService.getRomFile(game);
+    return romFile != null && romFile.exists();
+  }
+
+  //TODO
   public boolean isRomExists(String name) {
     if (StringUtils.isEmpty(name)) {
       return false;
@@ -312,8 +322,8 @@ public class MameService implements InitializingBean {
     }
   }
 
-  public void installCfg(UploadDescriptor uploadDescriptor, GameEmulator gameEmulator, File tempFile, UploaderAnalysis analysis) throws IOException {
-    File cfgFolder = gameEmulator != null ? gameEmulator.getCfgFolder() : getCfgFolder();
+  public void installCfg(UploadDescriptor uploadDescriptor, Game game, GameEmulator emulator, File tempFile, UploaderAnalysis analysis) throws IOException {
+    File cfgFolder = game != null ? folderLookupService.getCfgFolder(game) : getCfgFolder();
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.CFG, cfgFolder);
   }
 

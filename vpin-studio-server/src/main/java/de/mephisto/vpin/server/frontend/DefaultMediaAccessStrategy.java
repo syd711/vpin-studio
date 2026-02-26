@@ -2,11 +2,15 @@ package de.mephisto.vpin.server.frontend;
 
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.playlists.Playlist;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +19,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 abstract public class DefaultMediaAccessStrategy implements MediaAccessStrategy {
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final Map<String, MediaMonitor> monitors = new ConcurrentHashMap<>();
 
@@ -74,5 +79,42 @@ abstract public class DefaultMediaAccessStrategy implements MediaAccessStrategy 
       file.mkdirs();
     }
     return file;
+  }
+
+  @Override
+  public File createMedia(@NonNull Game game, @NonNull VPinScreen screen, String suffix, boolean append) {
+    File gameMediaFolder = getGameMediaFolder(game, screen, suffix, true);
+    return createMediaFile(gameMediaFolder, game.getGameName(), suffix, append);
+  }
+
+  @Override
+  public File createMedia(@NonNull Playlist playlist, @NonNull VPinScreen screen, String suffix, boolean append) {
+    File mediaFolder = getPlaylistMediaFolder(playlist, screen, true);
+    String mediaName = !StringUtils.isEmpty(playlist.getMediaName()) ? playlist.getMediaName() : playlist.getName();
+    return createMediaFile(mediaFolder, mediaName, suffix, append);
+  }
+
+  /**
+   * Utility method to create a unique media file in the target folder.
+   */
+  private File createMediaFile(File mediaFolder, String mediaName, String suffix, boolean append) {
+    if (!mediaFolder.exists()) {
+      if (mediaFolder.mkdirs()) {
+        LOG.info("Created media directory {}", mediaFolder.getAbsolutePath());
+      }
+      else {
+        LOG.warn("Failed to create media directory {}", mediaFolder.getAbsolutePath());
+      }
+    }
+    File out = new File(mediaFolder, mediaName + "." + suffix);
+    if (append) {
+      int index = 1;
+      while (out.exists()) {
+        String nameIndex = index <= 9 ? "0" + index : String.valueOf(index);
+        out = new File(out.getParentFile(), mediaName + nameIndex + "." + suffix);
+        index++;
+      }
+    }
+    return out;
   }
 }

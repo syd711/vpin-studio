@@ -14,9 +14,10 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.*;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -40,9 +41,6 @@ public class ServerSettingsPreferencesController implements Initializable {
 
   @FXML
   private Label versionLabel;
-
-  @FXML
-  private Label systemIdLabel;
 
   @FXML
   private CheckBox useOriginalVbsFilesCheckbox;
@@ -79,14 +77,6 @@ public class ServerSettingsPreferencesController implements Initializable {
 
   @FXML
   private VBox popperDataMappingFields;
-
-  @FXML
-  private void onCopySystemId() {
-    Clipboard clipboard = Clipboard.getSystemClipboard();
-    ClipboardContent content = new ClipboardContent();
-    content.putString(systemIdLabel.getText());
-    clipboard.setContent(content);
-  }
 
   @FXML
   private void onMediaIndex() {
@@ -153,7 +143,6 @@ public class ServerSettingsPreferencesController implements Initializable {
     Date startupTime = client.getSystemService().getStartupTime();
     startupTimeLabel.setText(DateFormat.getDateTimeInstance().format(startupTime));
     versionLabel.setText(client.getSystemService().getVersion());
-    systemIdLabel.setText(client.getSystemService().getSystemId().getSystemId());
 
     ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
 

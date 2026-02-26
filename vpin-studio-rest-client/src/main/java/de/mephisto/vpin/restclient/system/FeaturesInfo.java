@@ -3,7 +3,6 @@ package de.mephisto.vpin.restclient.system;
 public class FeaturesInfo {
 
   public boolean MANIA_ENABLED = true;
-  public boolean MANIA_TOURNAMENTS_ENABLED = false;
   public boolean MANIA_SOCIAL_ENABLED = true;
   public boolean ISCORED_ENABLED = true;
   /** Whether competitions are supported by the frontend */
@@ -71,5 +70,7 @@ public class FeaturesInfo {
 
     /** Specific flag for standalone mode */
   public boolean IS_STANDALONE = false;
+
+  public boolean VPXZ_ENABLED  = true;
 
 }

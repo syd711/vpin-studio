@@ -5,8 +5,9 @@ import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.connectors.mania.model.CabinetSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.mania.ManiaSettings;
+import de.mephisto.vpin.ui.HeaderResizeableController;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.mania.panels.FriendCabinetRowPanelController;
+import de.mephisto.vpin.ui.mania.panels.CabinetRowPanelController;
 import de.mephisto.vpin.ui.mania.util.ManiaHelper;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -83,8 +84,13 @@ public class ManiaPrivacySettingsController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    if (!ManiaHelper.isRegistered()) {
+      HeaderResizeableController.toggleManiaView();
+      return;
+    }
+
     settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
-    Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
+    Cabinet cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
 
     syncTablesBtn.setDisable(true);
     syncScoresBtn.setDisable(true);
@@ -215,10 +221,10 @@ public class ManiaPrivacySettingsController implements Initializable {
     });
 
     try {
-      FXMLLoader loader = new FXMLLoader(FriendCabinetRowPanelController.class.getResource("friend-cabinet-row-panel.fxml"));
+      FXMLLoader loader = new FXMLLoader(CabinetRowPanelController.class.getResource("cabinet-row-panel.fxml"));
       Pane node = loader.load();
-      FriendCabinetRowPanelController friendController = loader.getController();
-      friendController.setData(this, maniaClient.getCabinetClient().getCabinetCached());
+      CabinetRowPanelController friendController = loader.getController();
+      friendController.setData(this, maniaClient.getCabinetClient().getDefaultCabinetCached());
       playersBox.getChildren().add(node);
     }
     catch (Exception e) {

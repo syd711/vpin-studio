@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.vpxz.dialogs.TablesVPXZDialogController">
+   <top>
+      <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
+   </top>
+   <bottom>
+      <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
+         <children>
+          <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+               <HBox.margin>
+                  <Insets right="12.0" />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="exportBtn" defaultButton="true" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onExportClick" styleClass="submit-button" text="Create">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </Button>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+         </BorderPane.margin>
+      </HBox>
+   </bottom>
+   <center>
+      <BorderPane BorderPane.alignment="TOP_LEFT">
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+         <center>
+            <BorderPane>
+               <center>
+                  <VBox BorderPane.alignment="CENTER">
+                     <children>
+                        <Label layoutX="36.0" layoutY="36.0" styleClass="preference-description" text="The .vpxz file will be created for the selected table and target folder." />
+                        <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="Select a standalone file if the name matches with the one of your tables. ">
+                           <VBox.margin>
+                              <Insets top="6.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="60.0" styleClass="preference-description" text="It ensures that the table will run on mobile devices - but is not required for all tables!" />
+                        <Label layoutX="10.0" layoutY="32.0" styleClass="preference-description" text="The standalone files are provided by jsm174.">
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Hyperlink onAction="#onHyperlink" text="https://github.com/jsm174/vpx-standalone-scripts">
+                           <VBox.margin>
+                              <Insets left="-6.0" />
+                           </VBox.margin>
+                        </Hyperlink>
+                        <HBox alignment="CENTER_LEFT" spacing="6.0">
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                           <children>
+                              <GridPane hgap="3.0" vgap="3.0">
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="353.2000732421875" minWidth="10.0" prefWidth="155.2000732421875" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="620.7999511718749" minWidth="10.0" prefWidth="563.9999267578125" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                                    <ComboBox fx:id="sourceCombo" prefHeight="30.0" prefWidth="300.0" GridPane.columnIndex="1" />
+                                    <Label styleClass="default-text" text="Target:" />
+                                    <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Overwrite Settings:" GridPane.rowIndex="2" />
+                                    <CheckBox fx:id="overwriteCheckbox" mnemonicParsing="false" text="Overwrite Existing .vpxz Files" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                       <children>
+                                          <ComboBox fx:id="filesCombo" editable="true" prefHeight="30.0" prefWidth="300.0" />
+                                          <Button fx:id="syncBtn" mnemonicParsing="false" onAction="#onSynchronize" text="Synchronize with Github">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
+                                             </graphic>
+                                          </Button>
+                                       </children>
+                                    </HBox>
+                                    <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="VPX Standalone Script:" GridPane.rowIndex="1" />
+                                 </children>
+                              </GridPane>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </center>
+               <top>
+                  <Label fx:id="titleLabel" styleClass="default-headline" text="title" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                     <BorderPane.margin>
+                        <Insets top="12.0" />
+                     </BorderPane.margin>
+                  </Label>
+               </top>
+               <padding>
+                  <Insets bottom="12.0" left="12.0" right="12.0" />
+               </padding>
+            </BorderPane>
+         </center>
+      </BorderPane>
+   </center>
+</BorderPane>

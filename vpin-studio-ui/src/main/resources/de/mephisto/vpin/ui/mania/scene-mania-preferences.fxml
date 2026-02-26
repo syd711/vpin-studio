@@ -23,7 +23,7 @@
                            <children>
                               <VBox fx:id="maniaGroup">
                                  <children>
-                                    <Label alignment="BASELINE_LEFT" layoutX="10.0" layoutY="10.0" styleClass="preference-section" text="ACCOUNT">
+                                    <Label alignment="BASELINE_LEFT" layoutX="10.0" layoutY="10.0" styleClass="preference-section" text="CABINET">
                                        <font>
                                           <Font size="13.0" />
                                        </font>
@@ -31,35 +31,12 @@
                                           <Insets top="24.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <Button fx:id="initialButton" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onAccount" styleClass="preference-button" text="Account Settings" />
+                                    <Button fx:id="initialButton" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onAccount" styleClass="preference-button" text="Cabinet Settings" />
                                  </children>
                               </VBox>
                               <VBox fx:id="menuItemsPanel">
                                  <children>
                                     <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPrivacySettings" styleClass="preference-button" text="Data &amp; Privacy Settings" />
-                                    <Label alignment="BASELINE_LEFT" styleClass="preference-section" text="FRIENDS">
-                                       <font>
-                                          <Font size="13.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets top="24.0" />
-                                       </VBox.margin>
-                                    </Label>
-                                    <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onFriendsList" styleClass="preference-button" text="All" />
-                                    <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onFriendsPendingInvites" styleClass="preference-button" text="Pending Invites" />
-                                    <VBox fx:id="tournamentsBox">
-                                       <children>
-                                          <Label alignment="BASELINE_LEFT" styleClass="preference-section" text="TOURNAMENTS">
-                                             <font>
-                                                <Font size="13.0" />
-                                             </font>
-                                          </Label>
-                                          <Button fx:id="tournamentsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onTournaments" styleClass="preference-button" text="Tournament Settings" />
-                                       </children>
-                                       <VBox.margin>
-                                          <Insets top="24.0" />
-                                       </VBox.margin>
-                                    </VBox>
                                  </children>
                               </VBox>
                            </children>
