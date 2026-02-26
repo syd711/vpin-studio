@@ -2,8 +2,10 @@ package de.mephisto.vpin.ui.vpxz;
 
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.jobs.JobType;
+import de.mephisto.vpin.restclient.preferences.VPXZSettings;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.vpxz.*;
 import de.mephisto.vpin.restclient.vpxz.models.Table;
@@ -33,6 +35,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +49,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class VPXZController extends BaseTableController<VPXZDescriptorRepresentation, VPXZModel> implements Initializable, StudioFXController, StudioEventListener {
@@ -489,6 +493,11 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
   }
 
   public void refreshConnection() {
+    VPXZSettings vpxzSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPXZ_SETTINGS, VPXZSettings.class);
+    if (!Features.VPXZ_ENABLED || !vpxzSettings.isEnabled() || StringUtils.isEmpty(vpxzSettings.getWebserverHost())) {
+      return;
+    }
+
     JFXFuture.supplyAsync(() -> {
       return client.getVpxzService().ping();
     }).thenAcceptLater(version -> {

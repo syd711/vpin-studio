@@ -22,6 +22,7 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -65,6 +66,9 @@ public class VPXZService implements InitializingBean {
 
   public Version ping() {
     VPXZSettings vpxzSettings = preferencesService.getJsonPreference(PreferenceNames.VPXZ_SETTINGS, VPXZSettings.class);
+    if (!vpxzSettings.isEnabled() || StringUtils.isEmpty(vpxzSettings.getWebserverHost())) {
+      return null;
+    }
     VPXMobileClient client = new VPXMobileClient(vpxzSettings.getWebserverHost(), vpxzSettings.getWebserverPort());
     return client.getInfo();
   }
@@ -80,7 +84,7 @@ public class VPXZService implements InitializingBean {
     VPXMobileClient client = new VPXMobileClient(vpxzSettings.getWebserverHost(), vpxzSettings.getWebserverPort());
     Tables tables = client.getTables();
     Optional<Table> table = tables.getTables().stream().filter(t -> t.getUuid().equalsIgnoreCase(uuid)).findFirst();
-    if(table.isPresent()) {
+    if (table.isPresent()) {
       String name = table.get().getName();
       client.deleteTable(name);
       client.refreshTables();
