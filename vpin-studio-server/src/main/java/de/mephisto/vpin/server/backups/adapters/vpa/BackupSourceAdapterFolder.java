@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.backups.adapters.vpa;
 
 import de.mephisto.vpin.restclient.backups.BackupPackageInfo;
-import de.mephisto.vpin.restclient.backups.BackupType;
 import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.server.backups.BackupDescriptor;
@@ -16,7 +15,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class BackupSourceAdapterFolder implements BackupSourceAdapter {
   private final static Logger LOG = LoggerFactory.getLogger(BackupSourceAdapterFolder.class);
@@ -46,7 +44,7 @@ public class BackupSourceAdapterFolder implements BackupSourceAdapter {
   public synchronized Collection<BackupDescriptor> getBackupDescriptors() {
     if (cache.isEmpty()) {
       long start = System.currentTimeMillis();
-      File[] vpaFiles = archiveFolder.listFiles((dir, name) -> name.endsWith("." + BackupType.VPA.name().toLowerCase()));
+      File[] vpaFiles = archiveFolder.listFiles((dir, name) -> name.endsWith(".vpa"));
       if (vpaFiles != null) {
         for (File archiveFile : vpaFiles) {
           try {

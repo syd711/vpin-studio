@@ -4,7 +4,6 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.backups.BackupDescriptorRepresentation;
-import de.mephisto.vpin.restclient.backups.BackupType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.BackupRestoreDescriptor;
 import de.mephisto.vpin.restclient.preferences.BackupSettings;
@@ -157,8 +156,7 @@ public class BackupRestoreDialogController implements Initializable, DialogContr
     }
     titleLabel.setText(title);
 
-    BackupType backupType = client.getSystemService().getSystemSummary().getBackupType();
-    emuGrid.setVisible(backupType.equals(BackupType.VPA));
+    emuGrid.setVisible(true);
   }
 
   private void refreshImportsSelection(BackupSettings backupSettings) {

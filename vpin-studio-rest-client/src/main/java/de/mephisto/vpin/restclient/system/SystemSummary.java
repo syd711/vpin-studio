@@ -1,21 +1,9 @@
 package de.mephisto.vpin.restclient.system;
 
-import de.mephisto.vpin.restclient.backups.BackupType;
-import de.mephisto.vpin.restclient.vpxz.VPXZType;
-
 import java.util.List;
 
 public class SystemSummary {
-  private BackupType backupType;
   private List<MonitorInfo> monitorInfos;
-
-  public BackupType getBackupType() {
-    return backupType;
-  }
-
-  public void setBackupType(BackupType backupType) {
-    this.backupType = backupType;
-  }
 
   public List<MonitorInfo> getMonitorInfos() {
     return monitorInfos;

@@ -1,38 +1,36 @@
 package de.mephisto.vpin.server;
 
 import de.mephisto.vpin.restclient.JsonSettings;
-import de.mephisto.vpin.restclient.backups.BackupType;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.popper.PopperSettings;
-import de.mephisto.vpin.server.backups.BackupService;
-import de.mephisto.vpin.server.backups.adapters.TableBackupAdapterFactory;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.assets.AssetService;
+import de.mephisto.vpin.server.backups.BackupService;
+import de.mephisto.vpin.server.backups.adapters.TableBackupAdapterFactory;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.competitions.CompetitionsRepository;
 import de.mephisto.vpin.server.frontend.FrontendResource;
-import de.mephisto.vpin.server.games.*;
-import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
-import de.mephisto.vpin.server.highscores.HighscoreService;
-import de.mephisto.vpin.server.players.PlayerRepository;
-import de.mephisto.vpin.server.playlists.PlaylistMediaService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusEventsResource;
-
+import de.mephisto.vpin.server.games.*;
+import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
+import de.mephisto.vpin.server.players.PlayerRepository;
+import de.mephisto.vpin.server.playlists.PlaylistMediaService;
 import de.mephisto.vpin.server.system.SystemService;
 import org.jcodec.common.logging.Logger;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static de.mephisto.vpin.server.VPinStudioServer.Features;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 abstract public class AbstractVPinServerTest {
@@ -148,8 +146,6 @@ abstract public class AbstractVPinServerTest {
         popperSettings.setGlobalMediaDir("../testsystem/vPinball/PinUPSystem/POPMedia/Default");
         frontendService.saveSettings(popperSettings);
       }
-
-      systemService.setBackupType(BackupType.VPA);
 
       frontendService.importGame(EM_TABLE, 1);
       frontendService.importGame(VPREG_TABLE, 1);

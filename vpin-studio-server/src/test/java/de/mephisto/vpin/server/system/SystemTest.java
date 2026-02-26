@@ -4,10 +4,8 @@ import de.mephisto.vpin.server.AbstractVPinServerTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 public class SystemTest extends AbstractVPinServerTest {
@@ -16,7 +14,6 @@ public class SystemTest extends AbstractVPinServerTest {
   public void testMaintenanceMode() {
     assertTrue(systemService.getPinemhiCommandFile().exists());
     assertTrue(systemService.getBackupFolder().exists());
-    assertNotNull(systemService.getBackupType());
     assertFalse(systemService.getCompetitionBadges().isEmpty());
   }
 

@@ -3,7 +3,6 @@ package de.mephisto.vpin.server.backups;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.backups.BackupSourceRepresentation;
 import de.mephisto.vpin.restclient.backups.BackupSourceType;
-import de.mephisto.vpin.restclient.backups.BackupType;
 import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.descriptors.BackupRestoreDescriptor;
@@ -278,22 +277,20 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
     preferencesService.addChangeListener(this);
 
     //VPA files
-    if (systemService.getBackupType().equals(BackupType.VPA)) {
-      List<BackupSource> all = backupSourceRepository.findAll();
-      if (all.isEmpty()) {
-        BackupSource backupSource = new BackupSource();
-        backupSource = new BackupSource();
-        backupSource.setCreatedAt(new Date());
-        backupSource.setName("Default Backups Folder");
-        backupSource.setType(BackupSourceType.Folder.name());
-        backupSource.setLocation(VpaBackupSource.FOLDER.getAbsolutePath());
-        backupSource.setEnabled(true);
-        backupSourceRepository.saveAndFlush(backupSource);
-      }
+    List<BackupSource> all = backupSourceRepository.findAll();
+    if (all.isEmpty()) {
+      BackupSource backupSource = new BackupSource();
+      backupSource = new BackupSource();
+      backupSource.setCreatedAt(new Date());
+      backupSource.setName("Default Backups Folder");
+      backupSource.setType(BackupSourceType.Folder.name());
+      backupSource.setLocation(VpaBackupSource.FOLDER.getAbsolutePath());
+      backupSource.setEnabled(true);
+      backupSourceRepository.saveAndFlush(backupSource);
     }
 
     //EXTERNAL
-    List<BackupSource> all = backupSourceRepository.findAll();
+    all = backupSourceRepository.findAll();
     for (BackupSource as : all) {
       BackupSourceAdapter vpaSourceAdapter = null;
       try {

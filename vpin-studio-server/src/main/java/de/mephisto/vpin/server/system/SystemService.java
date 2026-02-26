@@ -8,14 +8,12 @@ import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.commons.utils.controller.GameController;
-import de.mephisto.vpin.restclient.backups.BackupType;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.system.FeaturesInfo;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.restclient.system.NVRamsInfo;
 import de.mephisto.vpin.restclient.system.ScoringDB;
-import de.mephisto.vpin.restclient.vpxz.VPXZType;
 import de.mephisto.vpin.server.ServerUpdatePreProcessing;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.VPinStudioServer;
@@ -101,7 +99,6 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   private File backupFolder;
 
-  private BackupType backupType = BackupType.VPA;
   private FrontendType frontendType = FrontendType.Popper;
 
   @Value("${system.properties}")
@@ -117,7 +114,6 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   private void initBaseFolders() throws VPinStudioException {
     try {
       PropertiesStore store = PropertiesStore.create(RESOURCES, systemProperties);
-      this.backupType = BackupType.VPA;
 
       // Determination of the installed Frontend
       //Standalone Folder
@@ -162,13 +158,13 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       File extractionFolder = getRawImageExtractionFolder();
       if (!extractionFolder.exists()) {
         if (!extractionFolder.mkdirs()) {
-          LOG.error("Failed to create b2s image directory " + extractionFolder.getAbsolutePath());
+          LOG.error("Failed to create b2s image directory {}", extractionFolder.getAbsolutePath());
         }
       }
 
       this.backupFolder = new File(RESOURCES, "backups");
       if (!this.backupFolder.exists() && !this.backupFolder.mkdirs()) {
-        LOG.error("Failed to create backup folder " + this.backupFolder.getAbsolutePath());
+        LOG.error("Failed to create backup folder {}", this.backupFolder.getAbsolutePath());
       }
 
       // B2S Server is not installed in Standalone mode
@@ -346,6 +342,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       return true;
     }
     catch (IOException e) {
+      //ignore
     }
     finally {
       if (ds != null) {
@@ -452,14 +449,6 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       }
     }
     return false;
-  }
-
-  public BackupType getBackupType() {
-    return backupType;
-  }
-
-  public void setBackupType(BackupType backupType) {
-    this.backupType = backupType;
   }
 
   public List<MonitorInfo> getMonitorInfos() {

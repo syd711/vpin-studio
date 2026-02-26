@@ -3,9 +3,7 @@ package de.mephisto.vpin.ui.backups.dialogs;
 import de.mephisto.vpin.restclient.backups.BackupSourceType;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.backups.BackupType;
 import de.mephisto.vpin.restclient.backups.BackupSourceRepresentation;
-import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
@@ -86,7 +84,7 @@ public class BackupUploadController implements Initializable, DialogController {
   private void onFileSelect(ActionEvent event) {
     Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
 
-    List<String> filters = Arrays.asList("*." + BackupType.VPA.name().toLowerCase());
+    List<String> filters = Arrays.asList("*.vpa");
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select Archives");
     fileChooser.getExtensionFilters().addAll(

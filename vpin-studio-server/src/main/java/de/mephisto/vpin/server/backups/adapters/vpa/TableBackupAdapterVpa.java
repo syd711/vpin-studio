@@ -3,7 +3,6 @@ package de.mephisto.vpin.server.backups.adapters.vpa;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.restclient.backups.BackupPackageInfo;
-import de.mephisto.vpin.restclient.backups.BackupType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.preferences.BackupSettings;
@@ -66,7 +65,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
       targetFolder = VpaBackupSource.FOLDER;
     }
 
-    File target = new File(targetFolder, baseName + "." + BackupType.VPA.name().toLowerCase());
+    File target = new File(targetFolder, baseName + ".vpa");
     if (target.exists() && !backupSettings.isOverwriteBackup()) {
       target = FileUtils.uniqueFile(target);
     }

@@ -613,7 +613,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
     for (BackupDescriptorRepresentation archive : archives) {
       if (archive.getFilename() != null) {
         String filename = archive.getFilename().toLowerCase();
-        if (systemSummary.getBackupType().equals(BackupType.VPA) && !filename.endsWith("." + BackupType.VPA.name().toLowerCase())) {
+        if (!filename.endsWith(".vpa")) {
           continue;
         }
 
