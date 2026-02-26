@@ -153,8 +153,10 @@ public class RecorderService {
       return jobDescriptor;
     }
 
-    jobDescriptor.setProgress(1);
-    jobDescriptor.setStatus("Cancelled, no active screens");
+    if (jobDescriptor != null) {
+      jobDescriptor.setProgress(1);
+      jobDescriptor.setStatus("Cancelled, no active screens");
+    }
     return jobDescriptor;
   }
 

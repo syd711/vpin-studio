@@ -75,6 +75,9 @@ public class InGameRecorderJob extends FrontendRecorderJob implements Job {
         LOG.info("Recordings for " + recordingDataSummary.size() + " games finished.");
         jobDescriptor.setProgress(1);
         jobDescriptor.setGameId(-1);
+        if (gameRecorder != null) {
+          gameRecorder.finalizeRecordings();
+        }
         recorderService.notifyGameAssetsChanged(game.getId(), AssetType.FRONTEND_MEDIA, null);
       }
     }

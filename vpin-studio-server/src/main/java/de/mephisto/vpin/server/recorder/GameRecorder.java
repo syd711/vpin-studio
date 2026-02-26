@@ -89,7 +89,11 @@ public class GameRecorder {
               result.setRecordingScreenOptions(option);
               result.setRecordingTempFile(recordingTempFile);
 
-              int count = (int) jobDescriptor.getUserData();
+
+              int count = 0;
+              if(jobDescriptor.getUserData() != null) {
+               count = (int) jobDescriptor.getUserData();
+              }
               jobDescriptor.setUserData((count + 1));
 
               return result;
@@ -113,7 +117,9 @@ public class GameRecorder {
       try {
         for (Future<RecordingResult> future : futures) {
           RecordingResult recordingResult = future.get();
-          recordingResults.add(recordingResult);
+          if (recordingResult != null) {
+            recordingResults.add(recordingResult);
+          }
           LOG.info("Recording finished: {}", recordingResult.toString());
         }
       }
