@@ -61,13 +61,9 @@ import static de.mephisto.vpin.server.VPinStudioServer.Features;
 public class SystemService extends SystemInfo implements InitializingBean, ApplicationContextAware {
   private final static Logger LOG = LoggerFactory.getLogger(SystemService.class);
 
-  public final static String ARCHIVE_TYPE = "archive.type";
-
   public static final String COMPETITION_BADGES = "competition-badges";
 
   public static final String RAW_MEDIA_FOLDER = "media-raw/";
-
-  public static String ARCHIVES_FOLDER = RESOURCES + "archives";
 
   public static final String DEFAULT_BACKGROUND = "background.png";
   public static final String PREVIEW = "preview.png";
@@ -389,7 +385,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     for (ProcessHandle process : filteredProceses) {
       String cmd = process.info().command().get();
       boolean b = process.destroyForcibly();
-      LOG.info("Destroyed process '" + cmd + "', result: " + b);
+      LOG.info("Destroyed process '{}', result: {}", cmd, b);
       if (!success && b) {
         success = true;
       }
@@ -429,7 +425,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
         String cmdName = p.info().command().get();
         String fileName = cmdName.substring(cmdName.lastIndexOf("\\") + 1);
         if (fileName.toLowerCase().contains("Visual Pinball".toLowerCase()) || fileName.toLowerCase().contains("VisualPinball".toLowerCase()) || fileName.toLowerCase().contains("VPinball".toLowerCase())) {
-          LOG.info("Found active VPX process: " + fileName);
+          LOG.info("Found active VPX process: {}", fileName);
           return true;
         }
       }
@@ -443,7 +439,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
         String cmdName = p.info().command().get();
         String fileName = cmdName.substring(cmdName.lastIndexOf("\\") + 1);
         if (fileName.toLowerCase().contains("Future Pinball")) {
-          LOG.info("Found active FP process: " + fileName);
+          LOG.info("Found active FP process: {}", fileName);
           return true;
         }
       }
@@ -513,6 +509,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       return true;
     }
     catch (IOException e) {
+      //ignore
     }
     finally {
       if (ds != null) {

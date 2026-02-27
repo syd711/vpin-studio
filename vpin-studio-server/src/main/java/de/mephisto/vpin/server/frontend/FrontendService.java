@@ -9,7 +9,6 @@ import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.preferences.AutoFillSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.*;
@@ -192,10 +191,6 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     return setGameEmulator(getFrontendConnector().getGamesByEmulator(emulatorId));
   }
 
-  public List<Game> getGamesByFilename(String filename) {
-    return setGameEmulator(getFrontendConnector().getGamesByFilename(filename));
-  }
-
   public Game getGameByName(int emulatorId, String gameName) {
     return setGameEmulator(getFrontendConnector().getGameByName(emulatorId, gameName));
   }
@@ -372,7 +367,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
               }
             }
 
-            LOG.info("Auto-applied VPS table version \"" + tableVersion + "\" (" + tableVersion.getId() + ")");
+            LOG.info("Auto-applied VPS table version \"{}\" ({})", tableVersion, tableVersion.getId());
           }
         }
         else {
@@ -385,11 +380,11 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     }
 
     if (simulate) {
-      LOG.info("Finished simulated auto-fill for \"" + game.getGameDisplayName() + "\"");
+      LOG.info("Finished simulated auto-fill for \"{}\"", game.getGameDisplayName());
     }
     else {
       saveTableDetails(game.getId(), tableDetails);
-      LOG.info("Finished auto-fill for \"" + game.getGameDisplayName() + "\"");
+      LOG.info("Finished auto-fill for \"{}\"", game.getGameDisplayName());
     }
 
     return tableDetails;
@@ -413,7 +408,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     int count = 1;
     while (gameByName != null) {
       formattedBaseName = FilenameUtils.getBaseName(file.getName()) + count;
-      LOG.info("Found existing gamename that exists while importing \"" + file.getName() + "\", trying again with \"" + formattedBaseName + "\"");
+      LOG.info("Found existing gamename that exists while importing \"{}\", trying again with \"{}\"", file.getName(), formattedBaseName);
       gameByName = getGameByName(emuId, formattedBaseName);
       count++;
     }

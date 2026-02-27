@@ -151,13 +151,18 @@ public class WovpMenuItemController implements Initializable {
   private void refreshScores(PauseMenuItem pauseMenuItem) {
     this.pauseMenuItem = pauseMenuItem;
     scoresLoader.setVisible(true);
+    scoresBox.getChildren().removeAll(scoresBox.getChildren());
+
     JFXFuture.supplyAsync(() -> {
       CompetitionRepresentation competition = pauseMenuItem.getCompetition();
       return client.getCompetitionService().getWeeklyCompetitionScores(competition.getUuid());
     }).thenAcceptLater(weeklyCompetitionScores -> {
       List<Pane> children = new ArrayList<>();
       try {
-        Optional<CompetitionScore> myScore = weeklyCompetitionScores.stream().filter(s -> s.isMyScore()).findFirst();
+        Optional<CompetitionScore> myScore = Optional.empty();
+        if (wovpPlayer != null) {
+          myScore = weeklyCompetitionScores.stream().filter(s -> s.getParticipantId() != null && s.getParticipantId().equalsIgnoreCase(wovpPlayer.getId())).findFirst();
+        }
         int myScoreIndex = -1;
         if (myScore.isPresent()) {
           myScoreIndex = weeklyCompetitionScores.indexOf(myScore.get());
@@ -251,6 +256,7 @@ public class WovpMenuItemController implements Initializable {
       rightBtn.setVisible(playerSelectionIndex + 1 != players.size());
       wovpPlayer = players.get(playerSelectionIndex);
       refreshViewForPlayer();
+      refreshScores(pauseMenuItem);
       return true;
     }
 
@@ -268,6 +274,7 @@ public class WovpMenuItemController implements Initializable {
       leftBtn.setVisible(playerSelectionIndex != 0);
       wovpPlayer = players.get(playerSelectionIndex);
       refreshViewForPlayer();
+      refreshScores(pauseMenuItem);
       return true;
     }
 

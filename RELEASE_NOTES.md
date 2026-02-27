@@ -9,7 +9,6 @@ With version 4.7.0, we are building the foundation for the upcoming VPX 10.8.1 r
 Please note that not all companion software supports the new folder layout yet. For example, PinUP Popper currently does not look into the actual table folder for assets. Therefore, the transition will take some time, and we are working closely with the VPX team to ensure full support.
 
 **Right now, nothing changes for you.** We needed to implement major server-side changes to support the new format for all available companion assets.
-
 First, we will ensure everything continues to work with the old folder structure. Later, we will enable specific flags in the backup restore process that allow backups to be extracted into the new folder structure.
 
 Further reading:
@@ -17,8 +16,7 @@ https://github.com/vpinball/vpinball/blob/master/docs/FileLayout.md
 
 ### .vpxz File Support
 
-Support for .vpxz files has been added. Check out the YouTube video to see how you can connect your phone with VPin Studio (https://www.youtube.com/watch?v=A-mzXOkTD7E
-) and upload and install .vpxz files on your mobile device.
+Support for .vpxz files has been added. Check out the YouTube video to see how you can connect your phone with VPin Studio (https://www.youtube.com/watch?v=A-mzXOkTD7E) and upload and install .vpxz files on your mobile device.
 
 A huge shoutout to @jsm174 for his awesome VPX app!
 
@@ -35,6 +33,9 @@ No! Although you now need to re-register with a real user account, your existing
 
 **Table statistics are not affected by this update — rankings and play counts remain intact.**
 
-## Bugfixes
+## Changes
 
 - **Table Scans**: Improved PUP pack detection.
+- **Pause Menu**: Fixed misaligned position when "too many" entries have been added on the pause menu item list. 
+- **Pause Menu**: For the **WOVP** menu entry, the scoring list is refreshed for the selected player (if you have multiple account registered). 
+- **Kill Button**: Added MAME to the list of processes to kill when all processes should be stopped. 
