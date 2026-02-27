@@ -13,142 +13,160 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="rootBorderPane" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.pausemenu.MenuController">
-   <center>
-      <StackPane styleClass="root" BorderPane.alignment="CENTER">
-         <children>
-            <StackPane fx:id="screenStack">
-               <StackPane.margin>
-                  <Insets bottom="1200.0" />
-               </StackPane.margin>
-               <children>
-                  <ImageView fitHeight="800.0" fitWidth="1400.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@screen.png" />
-                     </image>
-                     <StackPane.margin>
-                        <Insets top="50.0" />
-                     </StackPane.margin>
-                  </ImageView>
-                  <BorderPane fx:id="customView" maxHeight="730.0" maxWidth="1200.0" prefHeight="675.0" prefWidth="1200.0">
-                     <StackPane.margin>
-                        <Insets top="40.0" />
-                     </StackPane.margin>
-                  </BorderPane>
-                  <BorderPane fx:id="scoreView" maxHeight="730.0" maxWidth="1200.0" prefHeight="675.0" prefWidth="1200.0">
-                     <StackPane.margin>
-                        <Insets top="40.0" />
-                     </StackPane.margin>
-                  </BorderPane>
-                  <MediaView fx:id="mediaView" fitHeight="675.0" fitWidth="1200.0" />
-                  <ImageView fx:id="screenImageView" fitHeight="675.0" fitWidth="1200.0" pickOnBounds="true" preserveRatio="true">
-                     <StackPane.margin>
-                        <Insets bottom="10.0" />
-                     </StackPane.margin></ImageView>
-               </children>
-            </StackPane>
-            <BorderPane fx:id="footer">
-               <center>
-                  <StackPane BorderPane.alignment="CENTER">
-                     <children>
-                        <StackPane fx:id="footerStack">
-                           <children>
-                              <ImageView fitHeight="150.0" fitWidth="1200.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@footer.png" />
-                                 </image>
-                              </ImageView>
-                              <BorderPane maxWidth="1080.0">
-                                 <StackPane.margin>
-                                    <Insets top="-90.0" />
-                                 </StackPane.margin>
-                                 <center>
-                                    <Label fx:id="nameLabel" text="Loading Tables..." textFill="WHITE">
-                                       <font>
-                                          <Font size="36.0" />
-                                       </font>
-                                    </Label>
-                                 </center>
-                                 <left>
-                                    <FontIcon fx:id="arrowLeft" iconColor="WHITE" iconLiteral="mdi2a-arrow-left-bold" iconSize="46" visible="false" BorderPane.alignment="CENTER" />
-                                 </left>
-                                 <right>
-                                    <FontIcon fx:id="arrowRight" iconColor="WHITE" iconLiteral="mdi2a-arrow-right-bold" iconSize="46" visible="false" BorderPane.alignment="CENTER" />
-                                 </right>
-                              </BorderPane>
-                           </children>
-                           <StackPane.margin>
-                              <Insets />
-                           </StackPane.margin>
-                        </StackPane>
-                     </children>
-                  </StackPane>
-               </center>
-               <StackPane.margin>
-                  <Insets />
-               </StackPane.margin>
-            </BorderPane>
-            <ImageView fx:id="rowImage" fitHeight="440.0" fitWidth="2200.0" nodeOrientation="RIGHT_TO_LEFT" pickOnBounds="true" StackPane.alignment="CENTER">
-               <image>
-                  <Image url="@row.png" />
-               </image>
-               <StackPane.margin>
-                  <Insets top="30.0" />
-               </StackPane.margin>
-            </ImageView>
-            <BorderPane fx:id="baseSelector" layoutX="110.0" layoutY="110.0" maxHeight="400.0" maxWidth="400.0" styleClass="base-selector">
-               <center>
-                  <ImageView fitHeight="440.0" fitWidth="440.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
-                     <image>
-                        <Image url="@blue.png" />
-                     </image>
-                  </ImageView>
-               </center></BorderPane>
-            <HBox fx:id="menuItemsRow" alignment="CENTER_LEFT" prefWidth="500.0">
-               <padding>
-                  <Insets top="20.0" />
-               </padding></HBox>
-            <BorderPane fx:id="bluePanel" layoutX="110.0" layoutY="110.0" maxHeight="400.0" maxWidth="400.0" styleClass="red-selector">
-               <center>
-                  <StackPane styleClass="root" BorderPane.alignment="CENTER">
-                     <children>
-                        <ImageView fitHeight="440.0" fitWidth="440.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@blue.png" />
-                           </image>
+<BorderPane fx:id="rootBorderPane" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.pausemenu.MenuController">
+    <center>
+        <StackPane styleClass="root" BorderPane.alignment="CENTER">
+            <children>
+                <StackPane fx:id="screenStack">
+                    <StackPane.margin>
+                        <Insets bottom="1200.0"/>
+                    </StackPane.margin>
+                    <children>
+                        <ImageView fitHeight="800.0" fitWidth="1400.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@screen.png"/>
+                            </image>
+                            <StackPane.margin>
+                                <Insets top="50.0"/>
+                            </StackPane.margin>
                         </ImageView>
-                        <Label fx:id="blueLabel" text="Archive Table" textAlignment="CENTER" wrapText="true">
-                           <font>
-                              <Font name="Impact" size="88.0" />
-                           </font>
-                        </Label>
-                     </children>
-                  </StackPane>
-               </center>
-            </BorderPane>
-            <BorderPane fx:id="loadMask" maxHeight="400.0" maxWidth="400.0" opacity="0.0" styleClass="loading-selector">
-               <center>
-                  <StackPane BorderPane.alignment="CENTER">
-                     <children>
-                        <Label fx:id="loadLabel" text="Loading..." textAlignment="CENTER" wrapText="true">
-                           <font>
-                              <Font name="Impact" size="88.0" />
-                           </font>
-                        </Label>
-                        <ProgressIndicator minHeight="400.0" minWidth="400.0" />
-                     </children>
-                  </StackPane>
-               </center>
-            </BorderPane>
-            <ImageView fx:id="wheelImage" fitHeight="550.0" fitWidth="550.0" pickOnBounds="true" preserveRatio="true" styleClass="main">
-               <image>
-                  <Image url="@wheel.png" />
-               </image>
-            </ImageView>
-         </children>
-      </StackPane>
-   </center>
-   <styleClass>
-      <String fx:value="root" />
-   </styleClass>
+                        <BorderPane fx:id="customView" maxHeight="730.0" maxWidth="1200.0" prefHeight="675.0"
+                                    prefWidth="1200.0">
+                            <StackPane.margin>
+                                <Insets top="40.0"/>
+                            </StackPane.margin>
+                        </BorderPane>
+                        <BorderPane fx:id="scoreView" maxHeight="730.0" maxWidth="1200.0" prefHeight="675.0"
+                                    prefWidth="1200.0">
+                            <StackPane.margin>
+                                <Insets top="40.0"/>
+                            </StackPane.margin>
+                        </BorderPane>
+                        <MediaView fx:id="mediaView" fitHeight="675.0" fitWidth="1200.0"/>
+                        <ImageView fx:id="screenImageView" fitHeight="675.0" fitWidth="1200.0" pickOnBounds="true"
+                                   preserveRatio="true">
+                            <StackPane.margin>
+                                <Insets bottom="10.0"/>
+                            </StackPane.margin>
+                        </ImageView>
+                    </children>
+                </StackPane>
+                <BorderPane fx:id="footer">
+                    <center>
+                        <StackPane BorderPane.alignment="CENTER">
+                            <children>
+                                <StackPane fx:id="footerStack">
+                                    <children>
+                                        <ImageView fitHeight="150.0" fitWidth="1200.0" pickOnBounds="true"
+                                                   preserveRatio="true">
+                                            <image>
+                                                <Image url="@footer.png"/>
+                                            </image>
+                                        </ImageView>
+                                        <BorderPane maxWidth="1080.0">
+                                            <StackPane.margin>
+                                                <Insets top="-90.0"/>
+                                            </StackPane.margin>
+                                            <center>
+                                                <Label fx:id="nameLabel" text="Loading Tables..." textFill="WHITE">
+                                                    <font>
+                                                        <Font size="36.0"/>
+                                                    </font>
+                                                </Label>
+                                            </center>
+                                            <left>
+                                                <FontIcon fx:id="arrowLeft" iconColor="WHITE"
+                                                          iconLiteral="mdi2a-arrow-left-bold" iconSize="46"
+                                                          visible="false" BorderPane.alignment="CENTER"/>
+                                            </left>
+                                            <right>
+                                                <FontIcon fx:id="arrowRight" iconColor="WHITE"
+                                                          iconLiteral="mdi2a-arrow-right-bold" iconSize="46"
+                                                          visible="false" BorderPane.alignment="CENTER"/>
+                                            </right>
+                                        </BorderPane>
+                                    </children>
+                                    <StackPane.margin>
+                                        <Insets/>
+                                    </StackPane.margin>
+                                </StackPane>
+                            </children>
+                        </StackPane>
+                    </center>
+                    <StackPane.margin>
+                        <Insets/>
+                    </StackPane.margin>
+                </BorderPane>
+                <ImageView fx:id="rowImage" fitHeight="440.0" fitWidth="2200.0" nodeOrientation="RIGHT_TO_LEFT"
+                           pickOnBounds="true" StackPane.alignment="CENTER">
+                    <image>
+                        <Image url="@row.png"/>
+                    </image>
+                    <StackPane.margin>
+                        <Insets top="30.0"/>
+                    </StackPane.margin>
+                </ImageView>
+                <BorderPane fx:id="baseSelector" layoutX="110.0" layoutY="110.0" maxHeight="400.0" maxWidth="400.0"
+                            styleClass="base-selector">
+                    <center>
+                        <ImageView fitHeight="440.0" fitWidth="440.0" pickOnBounds="true" preserveRatio="true"
+                                   BorderPane.alignment="CENTER">
+                            <image>
+                                <Image url="@blue.png"/>
+                            </image>
+                        </ImageView>
+                    </center>
+                </BorderPane>
+                <HBox fx:id="menuItemsRow" alignment="CENTER_LEFT" minWidth="0">
+                    <padding>
+                        <Insets top="20.0"/>
+                    </padding>
+                </HBox>
+                <BorderPane fx:id="bluePanel" layoutX="110.0" layoutY="110.0" maxHeight="400.0" maxWidth="400.0"
+                            styleClass="red-selector">
+                    <center>
+                        <StackPane styleClass="root" BorderPane.alignment="CENTER">
+                            <children>
+                                <ImageView fitHeight="440.0" fitWidth="440.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@blue.png"/>
+                                    </image>
+                                </ImageView>
+                                <Label fx:id="blueLabel" text="Archive Table" textAlignment="CENTER" wrapText="true">
+                                    <font>
+                                        <Font name="Impact" size="88.0"/>
+                                    </font>
+                                </Label>
+                            </children>
+                        </StackPane>
+                    </center>
+                </BorderPane>
+                <BorderPane fx:id="loadMask" maxHeight="400.0" maxWidth="400.0" opacity="0.0"
+                            styleClass="loading-selector">
+                    <center>
+                        <StackPane BorderPane.alignment="CENTER">
+                            <children>
+                                <Label fx:id="loadLabel" text="Loading..." textAlignment="CENTER" wrapText="true">
+                                    <font>
+                                        <Font name="Impact" size="88.0"/>
+                                    </font>
+                                </Label>
+                                <ProgressIndicator minHeight="400.0" minWidth="400.0"/>
+                            </children>
+                        </StackPane>
+                    </center>
+                </BorderPane>
+                <ImageView fx:id="wheelImage" fitHeight="550.0" fitWidth="550.0" pickOnBounds="true"
+                           preserveRatio="true" styleClass="main">
+                    <image>
+                        <Image url="@wheel.png"/>
+                    </image>
+                </ImageView>
+            </children>
+        </StackPane>
+    </center>
+    <styleClass>
+        <String fx:value="root"/>
+    </styleClass>
 </BorderPane>

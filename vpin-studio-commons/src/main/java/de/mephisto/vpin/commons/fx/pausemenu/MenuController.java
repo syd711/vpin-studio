@@ -456,13 +456,7 @@ public class MenuController implements Initializable {
 
     //ensures that the scrolling row is centered to the screen.
     Pane node = (Pane) menuItemsRow.getChildren().get(0);
-    int size = menuItemsRow.getChildren().size() * PauseMenuUIDefaults.THUMBNAIL_SIZE;
-    if (size < PauseMenuUIDefaults.getScreenWidth()) {
-      menuItemsRow.setTranslateX(PauseMenuUIDefaults.getScreenWidth() / 2);
-    }
-    else {
-      menuItemsRow.setTranslateX(size / 2);
-    }
+    menuItemsRow.setTranslateX(PauseMenuUIDefaults.getScreenWidth() / 2);
 
     BorderPane child = (BorderPane) menuItemsRow.getChildren().get(selectionIndex);
     TransitionUtil.createTranslateByXTransition(child, SELECTION_SCALE_DURATION, -PauseMenuUIDefaults.SCROLL_OFFSET).play();
