@@ -53,7 +53,7 @@ public class GithubFileDownloader {
       ZipEntry entry;
       while ((entry = zis.getNextEntry()) != null) {
         if (!entry.isDirectory() && entry.getName().endsWith(".vbs")) {
-          String fileName = stripLeadingNumber(new File(entry.getName()).getName());
+          String fileName = new File(entry.getName()).getName();
           File target = new File(targetDir, fileName);
 
           try (FileOutputStream fos = new FileOutputStream(target)) {
@@ -82,10 +82,5 @@ public class GithubFileDownloader {
   private String buildZipUrl() {
     String base = repoUrl.endsWith("/") ? repoUrl.substring(0, repoUrl.length() - 1) : repoUrl;
     return base + "/archive/refs/heads/master.zip";
-  }
-
-  /** Removes a leading numeric prefix and its separator from a filename, e.g. {@code 01_foo.vbs} → {@code foo.vbs}. */
-  String stripLeadingNumber(String fileName) {
-    return fileName; //fileName.replaceFirst("^\\d+[_\\-.]", "");
   }
 }

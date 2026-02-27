@@ -42,14 +42,4 @@ public class GithubFileDownloaderTest {
       assertTrue(file.length() > 0, "Extracted file should not be empty: " + file.getAbsolutePath());
     }
   }
-
-  @Test
-  void testStripLeadingNumber() {
-    GithubFileDownloader downloader = new GithubFileDownloader(REPO_URL);
-
-    assertEquals("foo.vbs", downloader.stripLeadingNumber("01_foo.vbs"));
-    assertEquals("foo.vbs", downloader.stripLeadingNumber("1_foo.vbs"));
-    assertEquals("foo.vbs", downloader.stripLeadingNumber("123-foo.vbs"));
-    assertEquals("foo.vbs", downloader.stripLeadingNumber("foo.vbs")); // no prefix → unchanged
-  }
 }
