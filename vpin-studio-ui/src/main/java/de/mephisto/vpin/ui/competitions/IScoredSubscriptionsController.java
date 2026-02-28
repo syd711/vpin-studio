@@ -304,6 +304,11 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
           validGameRooms.add(gameRoom);
         }
       }
+
+      if (forceReload) {
+        client.getCompetitionService().synchronizeGameRooms();
+      }
+
       return iScoredSubscriptions;
     }).thenAcceptLater((iScoredSubscriptions) -> {
 

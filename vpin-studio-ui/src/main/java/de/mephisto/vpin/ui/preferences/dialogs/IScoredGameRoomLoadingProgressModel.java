@@ -15,6 +15,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static de.mephisto.vpin.ui.Studio.client;
+
 public class IScoredGameRoomLoadingProgressModel extends ProgressModel<String> {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private final List<String> urls;
@@ -63,6 +65,11 @@ public class IScoredGameRoomLoadingProgressModel extends ProgressModel<String> {
   @Override
   public String nextToString(String item) {
     return "Loading \"" + item + "\"";
+  }
+
+  @Override
+  public void finalizeModel(ProgressResultModel progressResultModel) {
+    super.finalizeModel(progressResultModel);
   }
 
   @Override

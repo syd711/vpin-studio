@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionService;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.frontend.TableStatusChangeListener;
 import de.mephisto.vpin.server.games.Game;
@@ -182,8 +183,18 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
         deleteSubscription(iScoredSubscriptions, iScoredSubscription);
         LOG.info("Deleted competition {} because no matching table found for VPS table/version: {}/{}", iScoredSubscription, iScoredSubscription.getVpsTableId(), iScoredSubscription.getVpsTableVersionId());
       }
+      else {
+        synchronizeBadge(iScoredGameRoom, gameByVpsTable);
+      }
     }
     LOG.info("Existing competitions sync took {}ms", (System.currentTimeMillis() - start));
+  }
+
+  private void synchronizeBadge(IScoredGameRoom iScoredGameRoom, Game game) {
+    frontendStatusService.deAugmentWheel(game);
+    if (!StringUtils.isEmpty(iScoredGameRoom.getBadge())) {
+      frontendStatusService.augmentWheel(game, iScoredGameRoom.getBadge());
+    }
   }
 
   private void deleteSubscription(List<Competition> iScoredSubscriptions, Competition iScoredSubscription) {
@@ -231,6 +242,11 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
       LOG.info("Skipped synchronization of iScored game \"{}\": No local game found that matches this VPS settings (all versions enabled: {}).", game.getName(), game.isAllVersionsEnabled());
       return;
     }
+
+    for (Game match : matches) {
+      synchronizeBadge(iScoredGameRoom, match);
+    }
+
 
     Competition competition = new Competition();
     competition.setType(CompetitionType.ISCORED.name());
