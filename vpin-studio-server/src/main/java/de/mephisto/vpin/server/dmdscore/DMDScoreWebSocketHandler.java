@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -54,7 +56,7 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
     ByteBuffer frameData = message.getPayload().order(ByteOrder.LITTLE_ENDIAN);
     String typeString = stringFromData(frameData, true);
 
-    LOG.info("New Binary Message Received " + typeString);
+	//LOG.info("New Binary Message Received " + typeString);
   
     FrameType type = FrameType.getEnum(typeString);
   
@@ -77,7 +79,7 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
         processFrame(type, frameData.getInt(), paletteFromData(frameData), planesFromData(frameData), 6);
         break;
       case RGB24:
-        //int[] rawImage = DmdImageUtils._toRawImageFromRgb24(planes, width, height);
+        processRGBFrame(type, frameData.getInt(), planesFromData(frameData));
         break;
       case GRAY_2_PLANES:
         processFrame(type, frameData.getInt(), palette, planesFromData(frameData), 2);
@@ -143,6 +145,61 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
         catch (Exception e) {
           LOG.warn("Error while processing frame by {}: {}", processor.getClass().getName(), e.getMessage());
         }
+      }
+    }
+  }
+
+  private void processRGBFrame(FrameType type, int timeStamp, byte[] colours) {
+    if (width < 0 || height < 0) {
+      LOG.warn("Don't try to process any frames that may come before we know the size of the display");
+      return;
+    }
+    if (colours.length % 3 != 0) {
+      LOG.error("Planes length not a multiple of 3 in RGB24: %s", colours.length);
+      return;
+    }
+
+    if (firstTimeStamp < 0) {
+      firstTimeStamp = timeStamp;
+    }
+
+    // a palette indexed by color, the value being the position incremented in the palette
+    byte nbInPalette = 0;
+    Map<Integer, Byte> mapPalette = new HashMap<>();
+
+    // discover new color, add in palette, generate new position and reference in FrameBytes
+    final byte[] frameBytes = new byte[width * height];
+    for (int y = 0; y < height; y++) {
+      int yWidth = y * width;
+      for (int x = 0; x < width; x++) {
+        final int index = (yWidth + x) * 3;
+        // RGB24 is in BGR order
+        final int r = (0xFF & colours[index]);
+        final int g = (0xFF & colours[index + 1]);
+        final int b = (0xFF & colours[index + 2]);
+        int color = DmdImageUtils.rgb(r, g, b);
+        Byte pos = mapPalette.get(color);
+        if (pos == null) {
+          pos = nbInPalette++;
+          mapPalette.put(color, pos);
+        }
+        frameBytes[y * width + x] = pos;
+      }
+    }
+
+    // Rebuild the palette
+    int[] palette = new int[mapPalette.size()];
+    for (Map.Entry<Integer, Byte> entry : mapPalette.entrySet()) {
+      palette[entry.getValue()] = entry.getKey();
+    }
+
+    Frame frame = new Frame(type, timeStamp - firstTimeStamp, frameBytes, width, height, palette);
+    for (DMDScoreProcessor processor : processors) {
+      try {
+        processor.onFrameReceived(frame);
+      }
+      catch (Exception e) {
+        LOG.warn("Error while processing frame by {}: {}", processor.getClass().getName(), e.getMessage());
       }
     }
   }
