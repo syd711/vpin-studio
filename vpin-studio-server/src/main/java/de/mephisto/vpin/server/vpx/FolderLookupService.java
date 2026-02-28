@@ -101,7 +101,7 @@ public class FolderLookupService {
   public File getScriptsFolder(@NonNull Game game) {
     GameEmulator emulator = game.getEmulator();
     if (isPreferLegacyFileStructure(emulator)) {
-      return new File(emulator.getMameFolder(), "scripts");
+      return new File(emulator.getInstallationFolder(), "scripts");
     }
 
     return new File(game.getGameFolder(), "pinmame/scripts/");
