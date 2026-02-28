@@ -49,7 +49,7 @@ public class WinRegistry {
       return Advapi32Util.registryGetValues(WinReg.HKEY_CLASSES_ROOT, path);
     }
     catch (Exception e) {
-      LOG.info("Failed to read registry key '" + path + "': " + e.getMessage());
+      LOG.info("Failed to read registry key for classes value '{}': {}", path, e.getMessage());
     }
     return Collections.emptyMap();
   }
@@ -60,7 +60,7 @@ public class WinRegistry {
       return Advapi32Util.registryGetValues(WinReg.HKEY_CURRENT_USER, path);
     }
     catch (Exception e) {
-      LOG.info("Failed to read registry key '" + path + "': " + e.getMessage());
+      LOG.info("Failed to read registry key for current user values '{}': {}", path, e.getMessage());
     }
     return Collections.emptyMap();
   }
@@ -70,7 +70,7 @@ public class WinRegistry {
       return Advapi32Util.registryGetStringValue(WinReg.HKEY_CURRENT_USER, path, key);
     }
     catch (Exception e) {
-      LOG.info("Failed to read registry key '" + path + "': " + e.getMessage());
+      LOG.info("Failed to read registry key for user value '{}': {}", path, e.getMessage());
     }
     return null;
   }
@@ -78,27 +78,27 @@ public class WinRegistry {
   public static void setUserIntValue(@NonNull String path, @NonNull String key, int value) {
     try {
       Advapi32Util.registrySetIntValue(WinReg.HKEY_CURRENT_USER, path, key, value);
-      LOG.info("Written userInt " + path + "\\" + key + " => " + value);
+      LOG.info("Written userInt {}/{} => {}", path, key, value);
     }
     catch (Exception e) {
-      LOG.error("Failed to write value for path '" + path + "\\" + key + ": " + e.getMessage());
+      LOG.error("Failed to write user int value for path {}/{}: {}", path, key, e.getMessage());
     }
   }
 
   public static void setUserValue(@NonNull String path, @NonNull String key, String value) {
     try {
       Advapi32Util.registrySetStringValue(WinReg.HKEY_CURRENT_USER, path, key, value);
-      LOG.info("Written userString " + path + "\\" + key + " => " + value);
+      LOG.info("Written userString {}/{} => {}", path, key, value);
     }
     catch (Exception e) {
-      LOG.error("Failed to write value for path '" + path + "\\" + key + ": " + e.getMessage());
+      LOG.error("Failed to write user value for path {}/{}: {}", path, key, e.getMessage());
     }
   }
 
   public static void createUserKey(@NonNull String key) {
     try {
       Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, key);
-      LOG.info("Created key " + key + "\\" + key);
+      LOG.info("Created key {}\\{}", key, key);
     }
     catch (Exception e) {
       LOG.error("Failed to write value for path '" + key + "\\" + key + ": " + e.getMessage());

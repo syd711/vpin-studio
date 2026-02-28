@@ -135,8 +135,11 @@ public class MameService implements InitializingBean {
     options.setRom(rom);
     options.setExistInRegistry(romFolders.contains(rom.toLowerCase()) || romFolders.contains(rom));
 
-    Map<String, Object> values = systemService.getCurrentUserValues(MAME_REG_FOLDER_KEY +
-        (options.isExistInRegistry() ? rom : MameOptions.DEFAULT_KEY));
+    String key = options.isExistInRegistry() ? rom : MameOptions.DEFAULT_KEY;
+    Map<String, Object> values = systemService.getCurrentUserValues(MAME_REG_FOLDER_KEY + key);
+    if (values.isEmpty()) {
+      values = systemService.getCurrentUserValues(MAME_REG_FOLDER_KEY + MameOptions.DEFAULT_KEY);
+    }
 
     options.setSkipPinballStartupTest(getBoolean(values, KEY_SKIP_STARTUP_TEST));
     options.setUseSound(getBoolean(values, KEY_USE_SOUND));

@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.frontend;
 
+import de.mephisto.vpin.restclient.tagging.TaggingUtil;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -371,7 +373,7 @@ public class TableDetails {
   }
 
   public void setTags(String tags) {
-    this.tags = tags;
+    this.tags = TaggingUtil.merge(this.tags, tags);
   }
 
   public String getAuthor() {
