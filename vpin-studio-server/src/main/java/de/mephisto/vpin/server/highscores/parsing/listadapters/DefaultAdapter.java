@@ -120,7 +120,7 @@ public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAda
   }
 
 
-  private static Pattern pattern = Pattern.compile("\\d?\\d?([., ?]?\\d\\d\\d)*$");
+  private static Pattern pattern = Pattern.compile("\\d?\\d?([., ?\u00a0\u202f\ufffd\u00ff]?\\d\\d\\d)*$");
 
   @Nullable
   public Score createScore(@NonNull Date createdAt, @NonNull String line, @Nullable String source, int gameId) {
