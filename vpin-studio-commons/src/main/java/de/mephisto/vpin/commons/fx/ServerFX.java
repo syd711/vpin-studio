@@ -274,9 +274,11 @@ public class ServerFX extends Application {
   }
 
   public void exitPauseMenu() {
-    Platform.runLater(() -> {
-      PauseMenu.getInstance().exitPauseMenu();
-    });
+    if (!GraphicsEnvironment.isHeadless()) {
+      Platform.runLater(() -> {
+        PauseMenu.getInstance().exitPauseMenu();
+      });
+    }
   }
 
   public void showHighscoreCard(@NonNull CardSettings cardSettings, @Nullable FrontendPlayerDisplay display, String mimeType, File file) {
