@@ -37,7 +37,9 @@ No! Although you now need to re-register with a real user account, your existing
 
 - **Table Scans**: Improved PUP pack detection.
 - **Pause Menu**: Fixed misaligned position when "too many" entries have been added on the pause menu item list. 
-- **Pause Menu**: For the **WOVP** menu entry, the scoring list is refreshed for the selected player (if you have multiple account registered). 
+- **Pause Menu**: For the **WOVP** menu entry, the scoring list is refreshed for the selected player (if you have multiple account registered).
+- **Pause Menu**: For colorized DMD, the frame is now correctly processed and included in screenshot.
 - **Kill Button**: Added MAME to the list of processes to kill when all processes should be stopped. 
 - **VPinMAME Settings**: Fixed applying the default values which simply have been deleted before.
 - **Tagging**: Fixed issue where tags have been added multiple times for tables.
+- **HighScores**: Fix parsing of french highscores.

@@ -28,10 +28,8 @@ public class DMDScoreWebSocketConfiguration implements WebSocketConfigurer {
   public ServletServerContainerFactoryBean createServletServerContainerFactoryBean() {
     return new ServletServerContainerFactoryBean() {
       {
-        setMaxTextMessageBufferSize(2048 * 2048);
-        setMaxBinaryMessageBufferSize(2048 * 2048);
-        setMaxSessionIdleTimeout(2048L * 2048L);
-        setAsyncSendTimeout(2048L * 2048L);
+        setMaxTextMessageBufferSize(1024 * 128);
+        setMaxBinaryMessageBufferSize(1024 * 128);
       }
 
       @Override

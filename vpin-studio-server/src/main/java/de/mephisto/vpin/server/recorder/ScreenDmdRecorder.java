@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import de.mephisto.vpin.server.dmdscore.DMDScoreProcessor;
+import de.mephisto.vpin.server.dmdscore.DMDScoreProcessorFrameDump;
 import de.mephisto.vpin.server.dmdscore.DMDScoreProcessorLedDump;
 import de.mephisto.vpin.server.dmdscore.DMDScoreWebSocketHandler;
 import de.mephisto.vpin.server.dmdscore.Frame;
@@ -29,6 +30,11 @@ public class ScreenDmdRecorder implements InitializingBean {
   public BufferedImage getCurrentImage() {
     return currentFrame != null ? DMDScoreProcessorLedDump.frameToImage(currentFrame) : null;
   }
+
+  public String getCurrentFrameDump() {
+    return currentFrame != null ? DMDScoreProcessorFrameDump.frameToString(currentFrame) : null;
+  }
+
 
   //--------------------------------------------
 

@@ -253,6 +253,9 @@ public class ScreenshotService {
     BufferedImage dmdImage = null;
     if (pauseMenuSettings.isIncludeDmdFrame()) {
       // mind when network stream is not enabled or DMDDevice is not used, the dmdImage is null
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("Include DMD Frame image in screenshot :\n{}", screenDmdRecorder.getCurrentFrameDump());
+      }
       dmdImage = screenDmdRecorder.getCurrentImage();
     }
 
