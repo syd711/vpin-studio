@@ -137,6 +137,8 @@ public class MameService implements InitializingBean {
 
     String key = options.isExistInRegistry() ? rom : MameOptions.DEFAULT_KEY;
     Map<String, Object> values = systemService.getCurrentUserValues(MAME_REG_FOLDER_KEY + key);
+    options.setExistInRegistry(!values.isEmpty());
+
     if (values.isEmpty()) {
       values = systemService.getCurrentUserValues(MAME_REG_FOLDER_KEY + MameOptions.DEFAULT_KEY);
     }
