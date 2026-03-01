@@ -20,6 +20,12 @@ public class TaggingUtil {
     return result;
   }
 
+  public static String merge(String tags, String tags1) {
+    Set<String> existing = new HashSet<>(getTags(tags));
+    existing.addAll(getTags(tags1));
+    return String.join(", ", existing);
+  }
+
   public void resetColors() {
     COLOR_MAP.clear();
   }

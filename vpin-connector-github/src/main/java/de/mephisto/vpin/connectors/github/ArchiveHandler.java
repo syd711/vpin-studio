@@ -228,6 +228,8 @@ public class ArchiveHandler {
   }
 
   private boolean isExcluded(String name) {
+    name = new File(name).getName();
+
     for (String includedFile : includedFiles) {
       if (name.contains(includedFile)) {
         return false;

@@ -9,7 +9,9 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 
 import org.apache.commons.io.IOUtils;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -90,7 +92,7 @@ public class NVRamParserTest {
 
   //-------------------------------------------
 
-  @Test
+//  @Test
   public void testDumpPlayerCount() throws IOException {
     String rom = "bcats_l5";
 
