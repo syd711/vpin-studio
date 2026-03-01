@@ -358,7 +358,7 @@
                                           <Insets top="6.0" />
                                        </VBox.margin>
                                     </CheckBox>
-                                    <Label styleClass="checkbox-description" text="If enabled, the existing display name of the table is kept insteaf of using the uploads file name." textFill="WHITE" wrapText="true" />
+                                    <Label styleClass="checkbox-description" text="If enabled, the existing display name of the table is kept instead of using the uploads file name." textFill="WHITE" wrapText="true" />
                                     <CheckBox fx:id="backupTableOnOverwriteCheckbox" layoutX="10.0" layoutY="58.0" mnemonicParsing="false" text="Create backup from existing table." textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
