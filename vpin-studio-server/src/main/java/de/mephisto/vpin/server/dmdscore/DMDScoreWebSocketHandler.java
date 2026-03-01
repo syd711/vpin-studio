@@ -53,60 +53,65 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
    */
   @Override
   protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) throws IOException {
-    ByteBuffer frameData = message.getPayload().order(ByteOrder.LITTLE_ENDIAN);
-    String typeString = stringFromData(frameData, true);
+    try {
+      ByteBuffer frameData = message.getPayload().order(ByteOrder.LITTLE_ENDIAN);
+      String typeString = stringFromData(frameData, true);
 
-	//LOG.info("New Binary Message Received " + typeString);
-  
-    FrameType type = FrameType.getEnum(typeString);
-  
-    switch (type) {
-      case GAME_NAME:
-        processGameStart(stringFromData(frameData, false));
-        break;
-      case DIMENSIONS:
-        width = frameData.getInt();
-        height = frameData.getInt();
-        LOG.info("Game dimension for {} :{} x {}", gameName, width, height);
-        break;
-      case COLORED_GRAY_2:
-        processFrame(type, frameData.getInt(), paletteFromData(frameData), planesFromData(frameData), 2);
-        break;
-      case COLORED_GRAY_4:
-        processFrame(type, frameData.getInt(), paletteFromData(frameData), planesFromData(frameData), 4);
-        break;
-      case COLORED_GRAY_6:
-        processFrame(type, frameData.getInt(), paletteFromData(frameData), planesFromData(frameData), 6);
-        break;
-      case RGB24:
-        processRGBFrame(type, frameData.getInt(), planesFromData(frameData));
-        break;
-      case GRAY_2_PLANES:
-        processFrame(type, frameData.getInt(), palette, planesFromData(frameData), 2);
-        break;
-      case GRAY_4_PLANES:
-        processFrame(type, frameData.getInt(), palette, planesFromData(frameData), 4);
-        break;
-      case COLOUR:
-        int color = frameData.getInt();
-        palette = DmdImageUtils.paletteFromColor(color, 4);
-        LOG.info("Colour frame: {}", color);
-        break;
-      case CLEAR_COLOUR:
-        palette = DmdImageUtils.paletteFromColor(DEFAULT_COLOR, 4);
-        LOG.info("Clear colour frame");
-        break;
-      case PALETTE:
-        palette = paletteFromData(frameData);
-        LOG.info("Palette frame of length: {}", palette.length);
-        break;
-      case CLEAR_PALETTE:
-        palette = null;
-        LOG.info("Clear palette frame");
-        break;
-      case UNKNOWN:
-        LOG.info("Message received with unknown type {}", typeString);
-        break;
+    //LOG.info("New Binary Message Received " + typeString);
+    
+      FrameType type = FrameType.getEnum(typeString);
+    
+      switch (type) {
+        case GAME_NAME:
+          processGameStart(stringFromData(frameData, false));
+          break;
+        case DIMENSIONS:
+          width = frameData.getInt();
+          height = frameData.getInt();
+          LOG.info("Game dimension for {} :{} x {}", gameName, width, height);
+          break;
+        case COLORED_GRAY_2:
+          processFrame(type, frameData.getInt(), paletteFromData(frameData), planesFromData(frameData), 2);
+          break;
+        case COLORED_GRAY_4:
+          processFrame(type, frameData.getInt(), paletteFromData(frameData), planesFromData(frameData), 4);
+          break;
+        case COLORED_GRAY_6:
+          processFrame(type, frameData.getInt(), paletteFromData(frameData), planesFromData(frameData), 6);
+          break;
+        case RGB24:
+          processRGBFrame(type, frameData.getInt(), planesFromData(frameData));
+          break;
+        case GRAY_2_PLANES:
+          processFrame(type, frameData.getInt(), palette, planesFromData(frameData), 2);
+          break;
+        case GRAY_4_PLANES:
+          processFrame(type, frameData.getInt(), palette, planesFromData(frameData), 4);
+          break;
+        case COLOUR:
+          int color = frameData.getInt();
+          palette = DmdImageUtils.paletteFromColor(color, 4);
+          LOG.info("Colour frame: {}", color);
+          break;
+        case CLEAR_COLOUR:
+          palette = DmdImageUtils.paletteFromColor(DEFAULT_COLOR, 4);
+          LOG.info("Clear colour frame");
+          break;
+        case PALETTE:
+          palette = paletteFromData(frameData);
+          LOG.info("Palette frame of length: {}", palette.length);
+          break;
+        case CLEAR_PALETTE:
+          palette = null;
+          LOG.info("Clear palette frame");
+          break;
+        case UNKNOWN:
+          LOG.info("Message received with unknown type {}", typeString);
+          break;
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Error in handling frame", e);
     }
   }
 
@@ -188,7 +193,7 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
     }
 
     // Rebuild the palette
-    int[] palette = new int[mapPalette.size()];
+    int[] palette = new int[nbInPalette];
     for (Map.Entry<Integer, Byte> entry : mapPalette.entrySet()) {
       palette[entry.getValue()] = entry.getKey();
     }
