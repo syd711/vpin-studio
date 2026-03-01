@@ -173,7 +173,7 @@ public class GameMediaService extends MediaService {
 
     //fix input and save input
     String gameFilename = updatedTableDetails.getGameFileName();
-    if (game.isVpxGame() && !gameFilename.endsWith(".vpx")) {
+    if (game.isVpxGame() && (!gameFilename.endsWith(".vpx") && !gameFilename.endsWith(".vpt"))) {
       gameFilename = gameFilename + ".vpx";
       updatedTableDetails.setGameFileName(gameFilename);
     }
@@ -291,7 +291,8 @@ public class GameMediaService extends MediaService {
         File tableBackupsFolder = gameEmulator.getTableBackupsFolder();
         tableBackupsFolder.mkdirs();
         String format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
-        File backup = new File(tableBackupsFolder, FilenameUtils.getBaseName(existingVPXFile.getName()) + "[" + format + "].vpx");
+        String suffix = FilenameUtils.getExtension(existingVPXFile.getName());
+        File backup = new File(tableBackupsFolder, FilenameUtils.getBaseName(existingVPXFile.getName()) + "[" + format + "]." + suffix);
         org.apache.commons.io.FileUtils.copyFile(existingVPXFile, backup);
         LOG.info("Created backup VPX file \"" + backup.getAbsolutePath() + "\"");
       }

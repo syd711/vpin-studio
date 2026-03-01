@@ -446,8 +446,13 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
     preferencesBtn.setOnShowing(new EventHandler<Event>() {
       @Override
       public void handle(Event event) {
-        muted = client.getSystemService().isMuted();
-        refreshMuteState();
+        try {
+          muted = client.getSystemService().isMuted();
+          refreshMuteState();
+        }
+        catch (Exception e) {
+          LOG.error("Failed to refresh mute state for menu: {}", e.getMessage(), e);
+        }
       }
     });
   }

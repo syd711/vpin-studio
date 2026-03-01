@@ -307,7 +307,7 @@ public class TableUploadController implements Initializable, DialogController {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select VPX File");
 
-    List<String> filters = Arrays.asList("*.vpx", "*.zip", "*.rar", "*.7z");
+    List<String> filters = Arrays.asList("*.vpx", "*.vpt", "*.zip", "*.rar", "*.7z");
     String description = "FP file";
     GameEmulatorRepresentation value = emulatorCombo.getValue();
     if (value != null && value.isFpEmulator()) {
@@ -565,7 +565,7 @@ public class TableUploadController implements Initializable, DialogController {
     assetPupPackLabel.managedProperty().bindBidirectional(assetPupPackLabel.visibleProperty());
     assetMediaLabel.managedProperty().bindBidirectional(assetMediaLabel.visibleProperty());
 
-    root.setOnDragOver(new FileSelectorDragEventHandler(root, "vpx", PackageUtil.ARCHIVE_ZIP, PackageUtil.ARCHIVE_RAR, PackageUtil.ARCHIVE_7Z));
+    root.setOnDragOver(new FileSelectorDragEventHandler(root, "vpx", "vpt", PackageUtil.ARCHIVE_ZIP, PackageUtil.ARCHIVE_RAR, PackageUtil.ARCHIVE_7Z));
     root.setOnDragDropped(new FileSelectorDropEventHandler(fileNameField, file -> {
       selection = file;
       setSelection(true);

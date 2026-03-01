@@ -553,7 +553,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
     TableDetails tableDetails = tableDetailsBinder.getBean();
     if (tableDetails != null) {
       String updatedGameFileName = tableDetails.getGameFileName();
-      if (client.getEmulatorService().isVpxGame(game) && !updatedGameFileName.toLowerCase().endsWith(".vpx")) {
+      if (client.getEmulatorService().isVpxGame(game) && (!updatedGameFileName.toLowerCase().endsWith(".vpx") && !updatedGameFileName.toLowerCase().endsWith(".fpt"))) {
         updatedGameFileName = updatedGameFileName + ".vpx";
       }
       else if (client.getEmulatorService().isFpGame(game) && !updatedGameFileName.toLowerCase().endsWith(".fpt")) {
