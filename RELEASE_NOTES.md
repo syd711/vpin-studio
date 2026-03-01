@@ -25,7 +25,7 @@ A huge shoutout to @jsm174 for his awesome VPX app!
 ### VPin Mania 2.0
 
 VPin Mania has been relaunched with a new registration system and additional features.
-Please watch the YouTube video to get an overview of what has changed or visit the [VPin Mania Announcement](https://discord.com/channels/1043199618172858500/1376784123238023168) channel.
+Please watch the YouTube video (https://youtu.be/gjTapjVT3qY) to get an overview of what has changed or visit the [VPin Mania Announcement](https://discord.com/channels/1043199618172858500/1376784123238023168) channel.
 
 **So, is all my data gone now?**
 
