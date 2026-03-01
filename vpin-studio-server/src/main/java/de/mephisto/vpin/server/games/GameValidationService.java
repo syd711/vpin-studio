@@ -49,6 +49,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.restclient.validation.GameValidationCode.*;
@@ -246,9 +247,14 @@ public class GameValidationService implements InitializingBean, PreferenceChange
               if (altColorFile.getUrls().isEmpty() || altColorFile.getUrls().stream().allMatch(VpsUrl::isBroken)) {
                 continue;
               }
-              result.add(ValidationStateFactory.create(CODE_VPS_ALTCOLOR_MISSING));
-              if (findFirst) {
-                return result;
+
+              List<VpsUrl> urls = altColorFile.getUrls();
+              Optional<VpsUrl> nonPinsound = urls.stream().filter(u -> u.getUrl() != null && !u.getUrl().contains("pinsound")).findFirst();
+              if (nonPinsound.isPresent()) {
+                result.add(ValidationStateFactory.create(CODE_VPS_ALTCOLOR_MISSING));
+                if (findFirst) {
+                  return result;
+                }
               }
               break;
             }

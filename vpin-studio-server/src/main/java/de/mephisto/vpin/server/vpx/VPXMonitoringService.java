@@ -108,6 +108,10 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
     LOG.info("Detected VPX running with table filename \"" + tableName + ".vpx\", resolving game for it.");
 
     Game game = gameService.getGameByFilename(emuId, tableName + ".vpx");
+    if (game == null) {
+      game = gameService.getGameByFilename(emuId, tableName + ".vpt");
+    }
+
     if (game != null) {
       LOG.info(this.getClass().getSimpleName() + " notifying table start event of \"" + game.getGameDisplayName() + "\"");
       frontendStatusService.notifyTableStatusChange(game, true, TableStatusChangedOrigin.ORIGIN_POPPER);

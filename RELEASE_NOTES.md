@@ -1,3 +1,13 @@
+## Release Notes 4.7.1
+
+- **Table Management**: Added support for older VPX file format **.vpt**.
+- **Preferences Menu**: Fixed rendering the menu, even if the status check for the server fails.
+- **Table Validation**: The missing ALT color validation error is only triggered when a non-pinsound bundle is available. 
+- **Table Validation**: Fixed lookup of the scripts folder which caused validation issues. 
+
+---
+
+
 ## Release Notes 4.7.0
 
 ## Changes
