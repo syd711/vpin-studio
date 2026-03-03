@@ -372,6 +372,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     List<File> files = new ArrayList<>();
     if (emulator.isVpxEmulator()) {
       files.addAll(FileUtils.listFiles(gamesFolder, new String[]{"vpx"}, true));
+      files.addAll(FileUtils.listFiles(gamesFolder, new String[]{"vpt"}, true));
     }
     else if (emulator.isFpEmulator()) {
       files.addAll(FileUtils.listFiles(gamesFolder, new String[]{"fpt"}, true));

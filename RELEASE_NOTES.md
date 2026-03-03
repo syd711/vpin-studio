@@ -2,6 +2,7 @@
 
 - **WOVP Competitions**: Added proper cleanup of games that are no longer competed on WOVP (augmented wheels and competition ids).
 - **VPin MAME Settings**: Fixed override and apply of default values (finally).
+- **.vpt File Support**: Added missing detection of .vpt files for the table import dialog.
 
 
 ---
