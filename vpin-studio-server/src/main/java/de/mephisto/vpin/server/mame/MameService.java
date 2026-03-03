@@ -30,7 +30,6 @@ import java.lang.invoke.MethodHandles;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 /**
  * See https://www.vpforums.org/index.php?showtopic=37182
@@ -55,9 +54,7 @@ public class MameService implements InitializingBean {
 
   public final static String MAME_REG_FOLDER_KEY = "SOFTWARE\\Freeware\\Visual PinMame\\";
 
-  private final Map<String, MameOptions> mameOptionsCache = new ConcurrentHashMap<>();
   private final Map<String, Boolean> romValidationCache = new ConcurrentHashMap<>();
-  private final List<String> mameRegistryEntriesCache = new ArrayList<>();
 
   @Autowired
   protected SystemService systemService;
@@ -69,19 +66,6 @@ public class MameService implements InitializingBean {
 
 
   public boolean clearGamesCache(List<Game> knownGames) {
-    this.mameFolder = null;
-    getMameFolder();
-
-    long l = System.currentTimeMillis();
-    mameOptionsCache.clear();
-
-    for (String romFolder : getMameEntries(false)) {
-      List<Game> matches = knownGames.stream().filter(g -> (g.getRom() != null && g.getRom().equalsIgnoreCase(romFolder)) || (g.getRomAlias() != null && g.getRomAlias().equalsIgnoreCase(romFolder))).collect(Collectors.toList());
-      if (!matches.isEmpty()) {
-        mameOptionsCache.put(romFolder.toLowerCase(), getOptions(romFolder));
-      }
-    }
-    LOG.info("Read {} mame options ({}ms)", this.mameOptionsCache.size(), System.currentTimeMillis() - l);
     return true;
   }
 
@@ -102,11 +86,6 @@ public class MameService implements InitializingBean {
   }
 
   public boolean clearCacheFor(@Nullable String rom) {
-    if (!StringUtils.isEmpty(rom)) {
-      mameOptionsCache.remove(rom.toLowerCase());
-      getOptions(rom);
-      return true;
-    }
     return false;
   }
 
@@ -126,17 +105,11 @@ public class MameService implements InitializingBean {
 
   @NonNull
   public MameOptions getOptions(@NonNull String rom) {
-    if (mameOptionsCache.containsKey(rom.toLowerCase())) {
-      return mameOptionsCache.get(rom.toLowerCase());
-    }
-
     MameOptions options = new MameOptions();
     options.setRom(rom);
 
-    String key = options.isExistInRegistry() ? rom : MameOptions.DEFAULT_KEY;
-    Map<String, Object> values = systemService.getCurrentUserValues(MAME_REG_FOLDER_KEY + key);
+    Map<String, Object> values = systemService.getCurrentUserValues(MAME_REG_FOLDER_KEY + rom);
     options.setExistInRegistry(!values.isEmpty());
-
     if (values.isEmpty()) {
       values = systemService.getCurrentUserValues(MAME_REG_FOLDER_KEY + MameOptions.DEFAULT_KEY);
     }
@@ -154,8 +127,6 @@ public class MameService implements InitializingBean {
     options.setColorizeDmd(getBoolean(values, KEY_COLORIZE_DMD));
     options.setSoundMode(getInteger(values, KEY_SOUND_MODE));
     options.setForceStereo(getBoolean(values, KEY_FORCE_STEREO));
-
-    mameOptionsCache.put(options.getRom().toLowerCase(), options);
     return options;
   }
 
@@ -198,19 +169,17 @@ public class MameService implements InitializingBean {
     systemService.setUserIntValue(MAME_REG_FOLDER_KEY + rom, KEY_SOUND_MODE, options.getSoundMode());
     systemService.setUserIntValue(MAME_REG_FOLDER_KEY + rom, KEY_FORCE_STEREO, options.isForceStereo() ? 1 : 0);
 
-    mameOptionsCache.put(options.getRom().toLowerCase(), options);
     getMameEntries(true);
     return getOptions(rom);
   }
 
   public boolean deleteOptions(String rom) {
     systemService.deleteUserKey(MAME_REG_FOLDER_KEY + rom);
-    mameOptionsCache.remove(rom.toLowerCase());
     return true;
   }
 
   /**
-   * Fill the zone with infor form registry
+   * Fill the zone with info form registry
    *
    * @return true if the DmdPosition is rom specific or false if this is default
    */
@@ -471,12 +440,7 @@ public class MameService implements InitializingBean {
   }
 
   private List<String> getMameEntries(boolean forceReload) {
-    if (forceReload || this.mameRegistryEntriesCache.isEmpty()) {
-      long l = System.currentTimeMillis();
-      this.mameRegistryEntriesCache.addAll(systemService.getCurrentUserKeys(MAME_REG_FOLDER_KEY));
-      LOG.info("Reading of {} total mame options ({}ms)", mameRegistryEntriesCache.size(), System.currentTimeMillis() - l);
-    }
-    return mameRegistryEntriesCache;
+    return systemService.getCurrentUserKeys(MAME_REG_FOLDER_KEY);
   }
 
   @Override

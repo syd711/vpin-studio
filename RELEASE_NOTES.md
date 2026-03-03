@@ -1,3 +1,11 @@
+## Release Notes 4.7.2
+
+- **WOVP Competitions**: Added proper cleanup of games that are no longer competed on WOVP (augmented wheels and competition ids).
+- **VPin MAME Settings**: Fixed override and apply of default values (finally).
+
+
+---
+
 ## Release Notes 4.7.1
 
 - **Table Management**: Added support for older VPX file format **.vpt**.

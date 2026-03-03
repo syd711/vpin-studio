@@ -12,7 +12,10 @@ import de.mephisto.vpin.server.competitions.CompetitionIdUpdater;
 import de.mephisto.vpin.server.competitions.CompetitionLifecycleService;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.server.frontend.FrontendStatusService;
+import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameMediaService;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreBackupService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
@@ -60,6 +63,9 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
   private GameService gameService;
 
   @Autowired
+  private FrontendStatusService frontendStatusService;
+
+  @Autowired
   private CompetitionIdUpdater competitionIdUpdater;
 
   public synchronized boolean synchronizeWovp(String apiKey, boolean forceReload) {
@@ -83,6 +89,8 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
             if (!competitionIdUpdater.isCompeted(tableDetails, weeklyCompetitions, false)) {
               competitionIdUpdater.unsetTourneyId(tableDetails, CompetitionType.WEEKLY, gameId);
               LOG.info("Cleared {} competition id from {}", CompetitionType.WEEKLY, tableDetails.getGameDisplayName());
+
+              frontendStatusService.deAugmentWheel(gameService.getGame(gameId));
             }
           }
         }
