@@ -5,6 +5,7 @@ import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
+import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.frontend.popper.PopperSettings;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
@@ -522,6 +523,31 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     }
     catch (SQLException e) {
       LOG.error("Failed to read game by filename '" + filename + "': " + e.getMessage(), e);
+    }
+    finally {
+      this.disconnect(connect);
+    }
+    return result;
+  }
+
+  @NonNull
+  @Override
+  public List<Integer> getCompetedGamesIds(@NonNull CompetitionType competitionType) {
+    Connection connect = this.connect();
+    List<Integer> result = new ArrayList<>();
+    try {
+      Statement statement = Objects.requireNonNull(connect).createStatement();
+      ResultSet rs = statement.executeQuery(
+          "SELECT g.GameID FROM Games g where g.TourneyID LIKE '%" + competitionType.name() + "%';");
+      while (rs.next()) {
+        int id = rs.getInt("GameID");
+        result.add(id);
+      }
+      rs.close();
+      statement.close();
+    }
+    catch (SQLException e) {
+      LOG.error("Failed to read games by competition type '" + competitionType + "': " + e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);

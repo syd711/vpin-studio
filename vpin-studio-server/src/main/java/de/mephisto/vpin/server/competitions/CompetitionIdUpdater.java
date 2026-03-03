@@ -114,6 +114,23 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
     }
   }
 
+  public void unsetTourneyId(@Nullable TableDetails tableDetails, @NonNull CompetitionType competitionType, int gameId) {
+    String tournamentId = tableDetails.getTourneyId();
+    String[] split = tournamentId.split(",");
+    List<String> updated = new ArrayList<>();
+    for (String s : split) {
+      if (StringUtils.isEmpty(s)) {
+        continue;
+      }
+      if (s.toLowerCase().contains(competitionType.name().toLowerCase())) {
+        continue;
+      }
+      updated.add(s);
+    }
+    tableDetails.setTourneyId(String.join(",", updated));
+    gameMediaService.saveTableDetails(tableDetails, gameId, false);
+  }
+
   private void unsetTourneyId(@NonNull Competition competition, @Nullable TableDetails tableDetails, int gameId) {
     if (tableDetails != null) {
       boolean isOwner = competition.getOwner() == null || competition.getOwner().equals(String.valueOf(discordService.getBotId()));
@@ -162,6 +179,22 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
       gameMediaService.saveTableDetails(tableDetails, gameId, false);
       LOG.info("Written competition id of game " + tableDetails.getGameFileName() + ", updated TourneyId to \"" + tableDetails.getTourneyId() + "\"");
     }
+  }
+
+  public boolean isCompeted(TableDetails tableDetails, List<Competition> weeklyCompetitions, boolean isOwner) {
+    String tournamentId = tableDetails.getTourneyId();
+    if (!StringUtils.isEmpty(tournamentId)) {
+      for (Competition competition : weeklyCompetitions) {
+        String competitionId = CompetitionIdFactory.createId(competition, isOwner);
+        String[] split = tournamentId.split(",");
+        for (String s : split) {
+          if (s.equals(competitionId)) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
   }
 
   @Override

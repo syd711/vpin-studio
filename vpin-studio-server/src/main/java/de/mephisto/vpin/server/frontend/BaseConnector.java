@@ -9,6 +9,7 @@ import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
+import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -66,7 +67,7 @@ public abstract class BaseConnector implements FrontendConnector {
   /**
    * Map id <-> GameEntry
    */
-  private Map<Integer, GameEntry> mapFilenames = new HashMap<>();
+  private final Map<Integer, GameEntry> mapFilenames = new HashMap<>();
 
   /**
    * set of favorite gameId
@@ -76,7 +77,7 @@ public abstract class BaseConnector implements FrontendConnector {
   /**
    * A cache of Playlists indexed by their id
    */
-  private Map<Integer, Playlist> playlists = new HashMap<>();
+  private final Map<Integer, Playlist> playlists = new HashMap<>();
 
   /**
    * map between gameId and stat
@@ -310,6 +311,18 @@ public abstract class BaseConnector implements FrontendConnector {
   public List<Game> getGamesByFilename(String filename) {
     String gameFileName = filename.replaceAll("'", "''");
     return getGames().stream().filter(g -> StringUtils.containsIgnoreCase(g.getGameFileName(), gameFileName)).collect(Collectors.toList());
+  }
+
+  @NonNull
+  @Override
+  public List<Integer> getCompetedGamesIds(@NonNull CompetitionType competitionType) {
+    List<Game> games = getGames();
+    List<Integer> result = new ArrayList<>();
+    for (Game game : games) {
+      GameEntry e = mapFilenames.get(game.getId());
+      //TODO ???
+    }
+    return result;
   }
 
   @Override

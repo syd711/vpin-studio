@@ -6,6 +6,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
+import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.preferences.AutoFillSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -189,6 +190,10 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   public List<Game> getGamesByEmulator(int emulatorId) {
     return setGameEmulator(getFrontendConnector().getGamesByEmulator(emulatorId));
+  }
+
+  public List<Integer> getCompetedGamesIds(@NonNull CompetitionType competitionType) {
+    return getFrontendConnector().getCompetedGamesIds(competitionType);
   }
 
   public Game getGameByName(int emulatorId, String gameName) {

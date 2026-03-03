@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.StringSimilarity;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
@@ -488,7 +489,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
       gameDetails.setEventLog(log.toJson());
       gameDetailsRepositoryService.saveAndFlush(gameDetails);
       gameLifecycleService.notifyGameUpdated(log.getGameId());
-      LOG.info("Saved event log for " + log.getGameId());
+      LOG.info("Saved event log for {}", log.getGameId());
     }
     catch (Exception e) {
       LOG.error("Failed to save event log: {}", e.getMessage(), e);
@@ -531,7 +532,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
         gameDetails.setUpdates(updates);
         gameDetailsRepositoryService.saveAndFlush(gameDetails);
         gameLifecycleService.notifyGameUpdated(gameId);
-        LOG.info("Resetted updates for " + gameId + " and removed \"" + diffType + "\", new update list: \"" + updates.trim() + "\"");
+        LOG.info("Resetted updates for {} and removed \"{}\", new update list: \"{}\"", gameId, diffType, updates.trim());
       }
     }
     catch (Exception e) {
@@ -551,7 +552,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
             updates = String.join(",", existingUpdates);
             gameDetails.setUpdates(updates);
             gameDetailsRepositoryService.saveAndFlush(gameDetails);
-            LOG.info("Resetted updates for " + gameDetails.getPupId() + " and removed \"" + diffType + "\", new update list: \"" + updates.trim() + "\"");
+            LOG.info("Resetted updates for {} and removed \"{}\", new update list: \"{}\"", gameDetails.getPupId(), diffType, updates.trim());
             gameLifecycleService.notifyGameUpdated(gameDetails.getPupId());
           }
         }
