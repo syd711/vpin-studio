@@ -30,12 +30,10 @@ public class MusicService {
 
   public void installMusic(@NonNull File out, @NonNull Game game, @NonNull UploaderAnalysis analysis, @Nullable String rom, boolean acceptAllAudio) throws IOException {
     File musicFolder = folderLookupService.getMusicFolder(game);
-    if (musicFolder.exists()) {
-      MusicInstallationUtil.unpack(out, musicFolder, analysis, rom, analysis.getRelativeMusicPath(acceptAllAudio));
-    }
-    else {
+    if (musicFolder == null || !musicFolder.exists()) {
       LOG.warn("Skipped installation of music bundle, no music folder {} found.", musicFolder.getAbsolutePath());
     }
+    MusicInstallationUtil.unpack(out, musicFolder, analysis, rom, analysis.getRelativeMusicPath(acceptAllAudio));
   }
 
   public boolean delete(Game game) {

@@ -13,6 +13,7 @@
 - **Preferences Menu**: Fixed rendering the menu, even if the status check for the server fails.
 - **Table Validation**: The missing ALT color validation error is only triggered when a non-pinsound bundle is available. 
 - **Table Validation**: Fixed lookup of the scripts folder which caused validation issues. 
+- **Universal Installer**: Fixed extraction of music bundles.
 
 ---
 
