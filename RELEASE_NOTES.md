@@ -1,3 +1,9 @@
+## Release Notes 4.7.3
+
+- **Table Backups/Deletions**: Fixed additional issues with the VPX music folder during table deletions and backups.
+
+---
+
 ## Release Notes 4.7.2
 
 - **WOVP Competitions**: Added proper cleanup of games that are no longer competed on WOVP (augmented wheels and competition ids).
