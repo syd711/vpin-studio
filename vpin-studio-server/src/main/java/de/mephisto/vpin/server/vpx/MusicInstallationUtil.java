@@ -30,6 +30,10 @@ public class MusicInstallationUtil {
       LOG.error("Music upload failed, no music folder found for default emulator.");
     }
 
+    if (!StringUtils.isEmpty(rom) && !StringUtils.isEmpty(relativePath) && relativePath.startsWith(rom)) {
+      relativePath = "./";
+    }
+
     LOG.info("Extracting music pack into \"" + musicFolder.getAbsolutePath() + "\" with ROM value \"" + rom + "\", relative path: {}", relativePath);
     String suffix = FilenameUtils.getExtension(archiveFile.getName());
     if (suffix.equalsIgnoreCase(AssetType.ZIP.name())) {
@@ -41,7 +45,7 @@ public class MusicInstallationUtil {
         File tableMusicFolder = new File(musicFolder, rom);
         PackageUtil.unpackTargetFolder(archiveFile, tableMusicFolder, analysis.getMusicFolder(), Collections.emptyList(), null);
       }
-      else{
+      else {
         LOG.error("The backup contains a music folder but no ROM information for the extraction.");
       }
     }

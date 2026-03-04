@@ -213,6 +213,7 @@ public class FileUtils {
       return true;
     }
     try {
+      LOG.info("Deleting folder {}", folder.getAbsolutePath());
       org.apache.commons.io.FileUtils.deleteDirectory(folder);
     }
     catch (IOException e) {

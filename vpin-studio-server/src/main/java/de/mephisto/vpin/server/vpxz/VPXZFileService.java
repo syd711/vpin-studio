@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.commons.fx.ImageUtil;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.backups.BackupPackageInfo;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
@@ -184,7 +183,7 @@ public class VPXZFileService implements InitializingBean {
   public long calculateTotalSize(Game game) {
     long totalSizeExpected = 0;
 
-    File musicFolder = musicService.getMusicFolder(game);
+    File musicFolder = musicService.getGameMusicFolder(game);
     if (musicFolder != null && musicFolder.exists()) {
       totalSizeExpected += org.apache.commons.io.FileUtils.sizeOfDirectory(musicFolder);
     }

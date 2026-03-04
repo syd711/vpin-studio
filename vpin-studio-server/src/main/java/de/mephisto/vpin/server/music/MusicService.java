@@ -24,12 +24,12 @@ public class MusicService {
   private FolderLookupService folderLookupService;
 
   @Nullable
-  public File getMusicFolder(Game game) {
-    return folderLookupService.getMusicFolder(game);
+  public File getGameMusicFolder(Game game) {
+    return folderLookupService.getGameMusicFolder(game, null);
   }
 
   public void installMusic(@NonNull File out, @NonNull Game game, @NonNull UploaderAnalysis analysis, @Nullable String rom, boolean acceptAllAudio) throws IOException {
-    File musicFolder = folderLookupService.getMusicFolder(game);
+    File musicFolder = folderLookupService.getGameMusicFolder(game, rom);
     if (musicFolder == null || !musicFolder.exists()) {
       LOG.warn("Skipped installation of music bundle, no music folder {} found.", musicFolder.getAbsolutePath());
     }
@@ -37,7 +37,7 @@ public class MusicService {
   }
 
   public boolean delete(Game game) {
-    File musicFolder = getMusicFolder(game);
+    File musicFolder = getGameMusicFolder(game);
     return FileUtils.deleteFolder(musicFolder);
   }
 }
