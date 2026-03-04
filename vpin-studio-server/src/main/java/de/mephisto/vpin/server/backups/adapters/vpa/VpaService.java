@@ -242,7 +242,7 @@ public class VpaService implements InitializingBean {
 
     //always zip music files if they are in a ROM named folder
     if (backupSettings.isMusic()) {
-      File musicFolder = musicService.getMusicFolder(game);
+      File musicFolder = musicService.getGameMusicFolder(game);
       if (musicFolder != null && musicFolder.exists()) {
         packageInfo.setMusic(BackupFileInfoFactory.create(musicFolder));
         if (!zipFile(jobDescriptor, musicFolder, "Music/" + musicFolder.getName(), zipOut)) {
@@ -342,7 +342,7 @@ public class VpaService implements InitializingBean {
   public long calculateTotalSize(Game game) {
     long totalSizeExpected = 0;
 
-    File musicFolder = musicService.getMusicFolder(game);
+    File musicFolder = musicService.getGameMusicFolder(game);
     if (musicFolder != null && musicFolder.exists()) {
       totalSizeExpected += org.apache.commons.io.FileUtils.sizeOfDirectory(musicFolder);
     }

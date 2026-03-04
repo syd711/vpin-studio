@@ -1,10 +1,25 @@
+## Release Notes 4.7.3
+
+- **Table Backups/Deletions**: Fixed additional issues with the VPX music folder during table deletions and backups.
+
+---
+
+## Release Notes 4.7.2
+
+- **WOVP Competitions**: Added proper cleanup of games that are no longer competed on WOVP (augmented wheels and competition ids).
+- **VPin MAME Settings**: Fixed override and apply of default values (finally).
+- **.vpt File Support**: Added missing detection of .vpt files for the table import dialog.
+- **Universal Installer**: Fixed extraction of music bundles.
+
+---
+
 ## Release Notes 4.7.1
 
 - **Table Management**: Added support for older VPX file format **.vpt**.
 - **Preferences Menu**: Fixed rendering the menu, even if the status check for the server fails.
 - **Table Validation**: The missing ALT color validation error is only triggered when a non-pinsound bundle is available. 
 - **Table Validation**: Fixed lookup of the scripts folder which caused validation issues. 
-
+- 
 ---
 
 

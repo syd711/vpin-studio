@@ -25,7 +25,6 @@ import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.vps.VpsService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,11 +38,6 @@ import org.springframework.stereotype.Service;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -387,7 +381,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
       Cabinet newCab = new Cabinet();
       newCab.setCreationDate(new Date());
       newCab.setSettings(new CabinetSettings());
-      newCab.setUuid(getCabinetUuidFileValue());//refresh an existing one from a former installation
+      newCab.setUuid(null);
       newCab.setDisplayName(systemName != null ? systemName : "My VPin");
       Cabinet registeredCabinet = maniaClient.getCabinetClient().register(newCab, avatar, null);
       if (registeredCabinet == null) {
@@ -537,10 +531,6 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
       maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
 
       refreshDefaultCabinet();
-      Cabinet cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
-      if (cabinet != null) {
-        updateCabinetUuidFile(cabinet.getUuid());
-      }
     }
   }
 
@@ -607,41 +597,6 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
     }
   }
 
-  private static void updateCabinetUuidFile(@NonNull String uuid) {
-    try {
-      String localAppData = System.getenv("LOCALAPPDATA");
-      Path appDataPath = Paths.get(localAppData, "VPin-Studio");
-      Files.createDirectories(appDataPath);
-      File idFile = new File(appDataPath.toFile(), VPIN_MANIA_ID_TXT);
-      if (idFile.exists() && !idFile.delete()) {
-        LOG.error("Failed to delete mania id file");
-        return;
-      }
-      Files.writeString(idFile.toPath(), uuid);
-    }
-    catch (Exception e) {
-      LOG.error("Failed to write mania id file: {}", e.getMessage());
-    }
-  }
-
-  private static String getCabinetUuidFileValue() {
-    try {
-      String localAppData = System.getenv("LOCALAPPDATA");
-      Path appDataPath = Paths.get(localAppData, "VPin-Studio");
-      File idFile = new File(appDataPath.toFile(), VPIN_MANIA_ID_TXT);
-      if (idFile.exists()) {
-        List<String> strings = FileUtils.readLines(idFile, Charset.defaultCharset());
-        if (!strings.isEmpty()) {
-          return strings.get(0).trim();
-        }
-      }
-    }
-    catch (Exception e) {
-      LOG.error("Failed to read mania id file: {}", e.getMessage());
-    }
-    return null;
-  }
-
 
   public boolean deleteCabinet() {
     try {
@@ -655,23 +610,6 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
       LOG.info("Failed to delete cabinet from VPin Mania: {}", e.getMessage(), e);
     }
     return false;
-  }
-
-  private static void updateIdFile(@NonNull String uuid) {
-    try {
-      String localAppData = System.getenv("LOCALAPPDATA");
-      Path appDataPath = Paths.get(localAppData, "VPin-Studio");
-      Files.createDirectories(appDataPath);
-      File idFile = new File(appDataPath.toFile(), VPIN_MANIA_ID_TXT);
-      if (idFile.exists() && !idFile.delete()) {
-        LOG.error("Failed to delete mania id file");
-        return;
-      }
-      Files.writeString(idFile.toPath(), uuid);
-    }
-    catch (Exception e) {
-      LOG.error("Failed to write mania id file: {}", e.getMessage());
-    }
   }
 
   public void shutdown() {
@@ -742,14 +680,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
         refreshDefaultCabinet();
         Cabinet cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
-        if (cabinet != null) {
-          updateCabinetUuidFile(cabinet.getUuid());
-        }
         preferencesService.addChangeListener(this);
-
-        if (cabinet != null) {
-          updateIdFile(cabinet.getUuid());
-        }
 
         new Thread(() -> {
           setOnline(cabinet);

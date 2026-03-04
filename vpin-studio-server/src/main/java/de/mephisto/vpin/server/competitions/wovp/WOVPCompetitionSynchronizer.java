@@ -8,10 +8,14 @@ import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.tagging.TaggingUtil;
 import de.mephisto.vpin.restclient.wovp.WOVPSettings;
 import de.mephisto.vpin.server.competitions.Competition;
+import de.mephisto.vpin.server.competitions.CompetitionIdUpdater;
 import de.mephisto.vpin.server.competitions.CompetitionLifecycleService;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.server.frontend.FrontendStatusService;
+import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameMediaService;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreBackupService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
@@ -29,6 +33,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -57,6 +62,12 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
   @Autowired
   private GameService gameService;
 
+  @Autowired
+  private FrontendStatusService frontendStatusService;
+
+  @Autowired
+  private CompetitionIdUpdater competitionIdUpdater;
+
   public synchronized boolean synchronizeWovp(String apiKey, boolean forceReload) {
     try {
       LOG.info("------------------------------- WOVP SYNC -----------------------------------------------------------");
@@ -69,6 +80,18 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
           for (Challenge challenge : challenges.getItems()) {
             LOG.info("------------------------------> Sync of {}", challenge.getName());
             synchronizeChallenge(challenge, weeklyCompetitions, wovpSettings, forceReload);
+          }
+
+          //clean old competition ids
+          List<Integer> games = frontendService.getCompetedGamesIds(CompetitionType.WEEKLY);
+          for (int gameId : games) {
+            TableDetails tableDetails = frontendService.getTableDetails(gameId);
+            if (!competitionIdUpdater.isCompeted(tableDetails, weeklyCompetitions, false)) {
+              competitionIdUpdater.unsetTourneyId(tableDetails, CompetitionType.WEEKLY, gameId);
+              LOG.info("Cleared {} competition id from {}", CompetitionType.WEEKLY, tableDetails.getGameDisplayName());
+
+              frontendStatusService.deAugmentWheel(gameService.getGame(gameId));
+            }
           }
         }
         return true;

@@ -96,7 +96,7 @@ public class ImageUtil {
       return ImageIO.read(file);
     }
     catch (IOException e) {
-      LOG.error("Failed to read " + file.getAbsolutePath() + ": " + e.getMessage(), e);
+      LOG.error("Failed to read " + file.getAbsolutePath() + ": " + e.getMessage());
       throw e;
     }
   }

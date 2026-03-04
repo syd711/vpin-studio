@@ -8,6 +8,7 @@ import java.util.Map;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
+import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
@@ -55,6 +56,9 @@ public interface FrontendConnector {
 
   @NonNull
   List<Game> getGamesByFilename(String filename);
+
+  @NonNull
+  List<Integer> getCompetedGamesIds(@NonNull CompetitionType competitionType);
 
   @Nullable
   Game getGameByName(int emuId, String gameName);

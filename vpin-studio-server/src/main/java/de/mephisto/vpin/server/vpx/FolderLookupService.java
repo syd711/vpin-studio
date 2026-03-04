@@ -118,19 +118,20 @@ public class FolderLookupService {
   }
 
   @Nullable
-  public File getMusicFolder(@NonNull Game game) {
+  public File getGameMusicFolder(@NonNull Game game, @Nullable String rom) {
     GameEmulator emulator = game.getEmulator();
     if (isPreferLegacyFileStructure(game.getEmulator())) {
-      File folder = new File(emulator.getInstallationFolder(), "Music");
-      if (!StringUtils.isEmpty(game.getRom())) {
-        File musicFolder = new File(folder, game.getRom());
-        if (musicFolder.exists()) {
-          return musicFolder;
-        }
+      if (!StringUtils.isEmpty(rom)) {
+        return new File(emulator.getInstallationFolder(), "Music/" + rom);
       }
+      return new File(emulator.getInstallationFolder(), "Music/" + game.getRom());
     }
 
-    return null;
+    File folder = new File(game.getGameFolder(), "music/");
+    if (!folder.exists() && !folder.mkdirs()) {
+      LOG.warn("Failed to create game music folder {}", folder.getAbsolutePath());
+    }
+    return folder;
   }
 
   @NonNull
