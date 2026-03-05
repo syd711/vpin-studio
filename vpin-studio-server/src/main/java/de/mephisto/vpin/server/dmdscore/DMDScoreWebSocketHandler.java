@@ -130,7 +130,7 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
     }
   }
 
-  private void processFrame(FrameType type, int timeStamp, int[] palette, byte[] planes, int nbPlanes) {
+  private void processFrame(FrameType type, int timeStamp, int[] palette, byte[] planes, int bitLength) {
     if (width < 0 || height < 0) {
       LOG.warn("Don't try to process any frames that may come before we know the size of the display");
       return;
@@ -140,7 +140,7 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
       firstTimeStamp = timeStamp;
     }
 
-    byte[] frameBytes = DmdImageUtils.toPlane(planes, nbPlanes, width, height);
+    byte[] frameBytes = DmdImageUtils.toPlane(type, planes, bitLength, width, height);
     if (frameBytes != null) {
       Frame frame = new Frame(type, timeStamp - firstTimeStamp, frameBytes, width, height, palette);
       for (DMDScoreProcessor processor : processors) {
