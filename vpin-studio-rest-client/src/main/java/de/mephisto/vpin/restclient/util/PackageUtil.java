@@ -16,7 +16,7 @@ public class PackageUtil {
   public static String[] ARCHIVE_SUFFIXES = {ARCHIVE_ZIP, ARCHIVE_RAR, ARCHIVE_7Z, ARCHIVE_VPA};
 
   public static boolean isSupportedArchive(String suffix) {
-    return Arrays.asList(ARCHIVE_SUFFIXES).contains(suffix);
+    return Arrays.asList(ARCHIVE_SUFFIXES).contains(suffix.toLowerCase());
   }
 
   public static String contains(File file, String suffix) {

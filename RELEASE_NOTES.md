@@ -1,6 +1,7 @@
 ## Release Notes 4.7.3
 
 - **Table Backups/Deletions**: Fixed additional issues with the VPX music folder during table deletions and backups.
+- **Table Installation**: Fixed issue that upper case .ZIP files were rejected for uploading.
 
 ---
 

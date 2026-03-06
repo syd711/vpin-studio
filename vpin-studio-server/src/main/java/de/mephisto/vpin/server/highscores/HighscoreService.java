@@ -342,7 +342,7 @@ public class HighscoreService implements InitializingBean {
       if (highscore.isPresent()) {
         Highscore h = highscore.get();
         if (!StringUtils.isEmpty(h.getRaw())) {
-          List<Score> scores = parseScores(h.getCreatedAt(), h.getRaw(), game, serverId);
+          List<Score> scores = parseScores(h.getLastModified() != null ? h.getLastModified() : h.getCreatedAt(), h.getRaw(), game, serverId);
           summary.setRaw(h.getRaw());
           summary.getScores().addAll(scores);
         }
