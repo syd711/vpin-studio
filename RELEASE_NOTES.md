@@ -2,6 +2,8 @@
 
 - **Table Backups/Deletions**: Fixed additional issues with the VPX music folder during table deletions and backups.
 - **Table Installation**: Fixed issue that upper case .ZIP files were rejected for uploading.
+- **VPin Mania Score Dates**: Fixed issue that the creation dates were used instead of the last modification dates for the score submitting to VPin Mania.
+- **Studio Window Manager**: Fixed _gtk_window_resize: assertion 'height > 0' failed_ error (blind fix).
 
 ---
 
