@@ -7,25 +7,25 @@ public class DmdImageUtils {
 
   private final static Logger LOG = LoggerFactory.getLogger(DmdImageUtils.class);
 
-  public static byte[] toPlane(final byte[] planes, final int planeSize, final int width, final int height) {
-    if (planesAreValid(planes, planeSize, width, height)) {
-      return joinPlanes(planes, planeSize, width, height);
+  public static byte[] toPlane(final FrameType type, final byte[] planes, final int bitLength, final int width, final int height) {
+    if (planesAreValid(planes, bitLength, width, height)) {
+      return joinPlanes(planes, bitLength, width, height);
     }
-    LOG.warn("Planes data was not valid, planeSize: {}, dim: {} x {}, planesLength: {}", planeSize, width, height, planes.length);
+    LOG.warn("Planes data was not valid for frame type {}, bitLength: {}, dim: {} x {}, planesLength: {}", type, bitLength, width, height, planes.length);
     return null;
   }
  /**
    * Sanity check that we have a valid set of planes data compared to expected values
    */
-  private static boolean planesAreValid(final byte[] planes, final int planeSize, final int width, final int height) {
+  private static boolean planesAreValid(final byte[] planes, final int bitLength, final int width, final int height) {
   return (width * height) % 8 == 0 &&
-      planes.length % planeSize == 0 &&
-      planes.length / planeSize == (width * height) / 8;
+      planes.length % bitLength == 0 &&
+      planes.length * 8 / bitLength == (width * height);
   }
 
-  private static byte[] joinPlanes(final byte[] planes, final int planeSize, final int width, int height) {
+  private static byte[] joinPlanes(final byte[] planes, final int bitLength, final int width, int height) {
     final byte[] plane = new byte[width * height];
-    final int bytes = width * height / 8;
+    final int planeSize = planes.length / bitLength;
 
     // A bit plane is a byte array with the same dimensions as the original frame,
 		// but since it's bits, a pixel can be either one or zero, so they are packed
@@ -40,10 +40,10 @@ public class DmdImageUtils {
     // column value from each plane and then split them into bits to get a combined value that
     // represents the colour palette lookup value, most significant bit first.
     // For 2 planes we have a colour palette of 4, for 4 planes we have 16.
-    for (int bytePos = 0; bytePos < bytes; bytePos++) {
+    for (int bytePos = 0; bytePos < planeSize; bytePos++) {
         for (int bitPos = 7; bitPos >= 0; bitPos--) {
-            for (int planePos = 0; planePos < planeSize; planePos++) {
-                final int bit = theBit(planes[bytes * planePos + bytePos], bitPos);
+            for (int planePos = 0; planePos < bitLength ; planePos++) {
+                final int bit = theBit(planes[planeSize * planePos + bytePos], bitPos);
                 plane[bytePos * 8 + bitPos] |= (bit << planePos);
             }
         }

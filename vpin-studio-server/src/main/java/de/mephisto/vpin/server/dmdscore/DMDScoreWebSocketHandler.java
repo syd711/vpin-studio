@@ -130,7 +130,7 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
     }
   }
 
-  private void processFrame(FrameType type, int timeStamp, int[] palette, byte[] planes, int nbPlanes) {
+  private void processFrame(FrameType type, int timeStamp, int[] palette, byte[] planes, int bitLength) {
     if (width < 0 || height < 0) {
       LOG.warn("Don't try to process any frames that may come before we know the size of the display");
       return;
@@ -140,7 +140,7 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
       firstTimeStamp = timeStamp;
     }
 
-    byte[] frameBytes = DmdImageUtils.toPlane(planes, nbPlanes, width, height);
+    byte[] frameBytes = DmdImageUtils.toPlane(type, planes, bitLength, width, height);
     if (frameBytes != null) {
       Frame frame = new Frame(type, timeStamp - firstTimeStamp, frameBytes, width, height, palette);
       for (DMDScoreProcessor processor : processors) {
@@ -160,7 +160,7 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
       return;
     }
     if (colours.length % 3 != 0) {
-      LOG.error("Planes length not a multiple of 3 in RGB24: %s", colours.length);
+      LOG.error("Planes length not a multiple of 3 in RGB24: {}", colours.length);
       return;
     }
 
@@ -169,8 +169,8 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
     }
 
     // a palette indexed by color, the value being the position incremented in the palette
-    byte nbInPalette = 0;
-    Map<Integer, Byte> mapPalette = new HashMap<>();
+    int nbInPalette = 0;
+    Map<Integer, Integer> mapPalette = new HashMap<>();
 
     // discover new color, add in palette, generate new position and reference in FrameBytes
     final byte[] frameBytes = new byte[width * height];
@@ -183,18 +183,22 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
         final int g = (0xFF & colours[index + 1]);
         final int b = (0xFF & colours[index + 2]);
         int color = DmdImageUtils.rgb(r, g, b);
-        Byte pos = mapPalette.get(color);
+        Integer pos = mapPalette.get(color);
         if (pos == null) {
           pos = nbInPalette++;
           mapPalette.put(color, pos);
         }
-        frameBytes[y * width + x] = pos;
+        frameBytes[y * width + x] = pos.byteValue();
       }
+    }
+
+    if (nbInPalette > 255) {
+      LOG.warn("Palette is too big: {}. Some color won't be rendered properly.", nbInPalette);
     }
 
     // Rebuild the palette
     int[] palette = new int[nbInPalette];
-    for (Map.Entry<Integer, Byte> entry : mapPalette.entrySet()) {
+    for (Map.Entry<Integer, Integer> entry : mapPalette.entrySet()) {
       palette[entry.getValue()] = entry.getKey();
     }
 
