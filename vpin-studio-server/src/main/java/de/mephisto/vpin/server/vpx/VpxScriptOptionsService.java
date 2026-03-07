@@ -22,17 +22,17 @@ public class VpxScriptOptionsService {
 
     private static final Logger LOG = LoggerFactory.getLogger(VpxScriptOptionsService.class);
 
-    static final String INI_SECTION = "TableOptions";
+    static final String INI_SECTION = "TableOption";
 
     private static final Pattern OPTION_PATTERN = Pattern.compile(
-            "Table1\\.Option\\s*\\(\\s*" +
+            "\\w+\\.Option\\s*\\(\\s*" +
                     "\"([^\"]+)\"\\s*,\\s*" +
                     "([+-]?[\\d]*\\.?[\\d]+(?:[eE][+-]?[\\d]+)?)\\s*,\\s*" +
                     "([+-]?[\\d]*\\.?[\\d]+(?:[eE][+-]?[\\d]+)?)\\s*,\\s*" +
                     "([+-]?[\\d]*\\.?[\\d]+(?:[eE][+-]?[\\d]+)?)\\s*,\\s*" +
                     "([+-]?[\\d]*\\.?[\\d]+(?:[eE][+-]?[\\d]+)?)\\s*,\\s*" +
                     "([01])" +
-                    "(?:\\s*,\\s*Array\\s*\\(([^)]+)\\))?" +
+                    "(?:\\s*,\\s*Array\\s*\\((.*?)\\))?" +
                     "\\s*\\)",
             Pattern.CASE_INSENSITIVE
     );
@@ -41,9 +41,6 @@ public class VpxScriptOptionsService {
 
     @Autowired
     private GameService gameService;
-
-    @Autowired
-    private VPXService vpxService;
 
     // ── Public API ────────────────────────────────────────────────────────────
 
@@ -54,8 +51,7 @@ public class VpxScriptOptionsService {
             return new ArrayList<>();
         }
 
-        // Use the existing VPXService.getScript() which handles VBS extraction
-        String script = vpxService.getScript(game);
+        String script = VPXUtil.readScript(game.getGameFile());
         if (script == null || script.isBlank()) {
             LOG.debug("getOptions: no script content for game {}", gameId);
             return new ArrayList<>();
@@ -76,6 +72,8 @@ public class VpxScriptOptionsService {
         File iniFile = getIniFile(game);
         try {
             INIConfiguration ini = loadOrCreateIni(iniFile);
+
+            ini.clearTree(INI_SECTION);
 
             for (TableScriptOption option : options) {
                 ini.setProperty(INI_SECTION + "." + option.getName(),
