@@ -21,7 +21,7 @@
         <junit.version>5.8.2</junit.version>
         <javafx.version>11</javafx.version>
         <skipMacOSBuild>false</skipMacOSBuild>
-        <macOSBuild>true</macOSBuild>
+        <macOSBuild>false</macOSBuild>
     </properties>
 
     <repositories>
