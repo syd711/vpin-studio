@@ -186,6 +186,12 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
     }).thenAcceptLater((weeklySubscriptions) -> {
       filterCompetitions(weeklySubscriptions);
 
+      //refresh re-synced tables
+      for (CompetitionRepresentation weeklySubscription : weeklySubscriptions) {
+        int gameId = weeklySubscription.getGameId();
+        EventManager.getInstance().notifyTableChange(gameId, null);
+      }
+
       if (selection != null && tableView.getItems().contains(selection)) {
         tableView.getSelectionModel().select(selection);
       }
