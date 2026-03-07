@@ -1051,7 +1051,7 @@
                           </content>
                         </Tab>
                          <Tab text="Script Options" closable="false">
-                             <fx:include source="tab-script-options.fxml" fx:id="scriptOptions"/>
+                             <fx:include source="dialog-table-data-tab-script-options.fxml" fx:id="scriptOptions"/>
                          </Tab>
                      </tabs>
                   </TabPane>

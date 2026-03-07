@@ -64,6 +64,8 @@ import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.ui.tables.dialogs.TableDataTabScriptOptionsController;
+
 
 public class TableDataController extends BasePrevNextController implements AutoCompleteTextFieldChangeListener, ChangeListener<VpsTableVersion> {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -280,6 +282,9 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
   @FXML
   private Node vpsPanel;
+
+  @FXML
+  private TableDataTabScriptOptionsController scriptOptionsController;
 
   @FXML
   private ComboBox<VpsTableVersion> tableVersionsCombo;
@@ -576,6 +581,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
       success &= tableScreensController.save();
       success &= tableDataTabCommentsController.save(tableDetails);
       success &= tableDataTabScoreDataController.save();
+      success &= scriptOptionsController.save();  // ← add this
 
       if (tableDetails != null) {
         tableDetails = client.getFrontendService().saveTableDetails(tableDetails, game.getId());
@@ -683,7 +689,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
   private void loadTabs() {
     try {
-      FXMLLoader loader = new FXMLLoader(TableDataTabScreensController.class.getResource("dialog-table-data-tab-screens.fxml"));
+      FXMLLoader loader = new FXMLLoader(TableDataTabScriptOptionsController.class.getResource("dialog-table-data-tab-screens.fxml"));
       Parent builtInRoot = loader.load();
       tableScreensController = loader.getController();
       screensTab.setContent(builtInRoot);
@@ -1068,6 +1074,11 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
       if (tablesSidebarPlaylistsController != null) {
         tablesSidebarPlaylistsController.setGames(Arrays.asList(game));
+      }
+
+      if (scriptOptionsController != null) {
+        boolean isVpx = client.getEmulatorService().isVpxGame(game);
+        scriptOptionsController.setGame(isVpx ? game.getId() : -1);
       }
 
       setDialogDirty(false);

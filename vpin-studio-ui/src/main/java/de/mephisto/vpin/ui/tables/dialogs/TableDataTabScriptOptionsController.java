@@ -1,8 +1,8 @@
 package de.mephisto.vpin.ui.tables.dialogs;
-import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.ui.Studio;
 
 import de.mephisto.vpin.restclient.vpx.TableScriptOption;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.ui.Studio;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -19,43 +19,15 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
 
-/**
- * Controller for the "Script Options" tab on the TableData screen.
- *
- * Lifecycle:
- *   1. {@link #initialize} wires up FXML fields and sets an empty state.
- *   2. The parent TableDataController calls {@link #setGame(int)} when the
- *      selected table changes.
- *   3. Options are loaded asynchronously so the UI stays responsive.
- *   4. Each option is rendered as a labelled row containing either a
- *      {@link Slider} (numeric) or a {@link ComboBox} (literal strings).
- *   5. "Save" calls the REST endpoint; "Reset to Defaults" restores all
- *      controls to the script-declared default value.
- *
- * ─── Integration note ───────────────────────────────────────────────────────
- * Add this tab to the existing TableDataController FXML/code:
- *
- *   // In TableDataController.fxml, inside the TabPane:
- *   <Tab text="Script Options" fx:id="scriptOptionsTab" closable="false">
- *     <fx:include source="tab-script-options.fxml" fx:id="scriptOptions"/>
- *   </Tab>
- *
- *   // In TableDataController.java, inject the sub-controller:
- *   FXML private TabScriptOptionsController scriptOptionsController;
- *
- *   // Then, when the selected game changes:
- *   scriptOptionsController.setGame(selectedGame.getId());
- */
-public class TabScriptOptionsController implements Initializable {
+public class TableDataTabScriptOptionsController implements Initializable {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TabScriptOptionsController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TableDataTabScriptOptionsController.class);
 
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0.##");
 
     // ── FXML fields ───────────────────────────────────────────────────────────
 
     @FXML private Label statusLabel;
-    @FXML private Button saveButton;
     @FXML private Button resetButton;
     @FXML private StackPane placeholderPane;
     @FXML private Label placeholderLabel;
@@ -107,26 +79,15 @@ public class TabScriptOptionsController implements Initializable {
         loadOptionsAsync(gameId);
     }
 
-    // ── FXML handlers ─────────────────────────────────────────────────────────
+    // ── Called by TableDataController.doSave() ────────────────────────────────
 
-    @FXML
-    private void onSaveClicked() {
-        if (currentGameId < 0 || currentOptions.isEmpty()) return;
-
-        saveButton.setDisable(true);
-        executor.submit(() -> {
-            boolean ok = Studio.client.getScriptOptionsService()
-                                     .saveOptions(currentGameId, currentOptions);
-            Platform.runLater(() -> {
-                saveButton.setDisable(false);
-                if (ok) {
-                    WidgetFactory.showInformation(Studio.stage, "Script Options", "Options saved successfully.");
-
-                } else {
-                    WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save options. Check the server log for details.");
-                }
-            });
-        });
+    /**
+     * Persists current option values. Called by the parent controller when the
+     * user clicks Save or Save & Close — same pattern as other tabs.
+     */
+    public boolean save() {
+        if (currentGameId < 0 || currentOptions.isEmpty()) return true;
+        return Studio.client.getScriptOptionsService().saveOptions(currentGameId, currentOptions);
     }
 
     @FXML
@@ -151,7 +112,6 @@ public class TabScriptOptionsController implements Initializable {
                 resetButton.setDisable(false);
                 if (!ok) {
                     WidgetFactory.showAlert(Studio.stage, "Error", "Reset failed. Check the server log for details.");
-
                 }
             });
         });
@@ -186,9 +146,8 @@ public class TabScriptOptionsController implements Initializable {
         optionsVBox.getChildren().clear();
 
         if (options.isEmpty()) {
-            showPlaceholder("No Table1.Option declarations found in this table's script.\n"
-                + "Options become available when the script uses VPX 10.8 Table1.Option() calls.", false);
-            saveButton.setDisable(true);
+            showPlaceholder("No Option declarations found in this table's script.\n"
+                    + "Options become available when the script uses VPX 10.8 Option() calls.", false);
             resetButton.setDisable(true);
             return;
         }
@@ -200,7 +159,6 @@ public class TabScriptOptionsController implements Initializable {
 
         int count = options.size();
         statusLabel.setText(count + " option" + (count == 1 ? "" : "s"));
-        saveButton.setDisable(false);
         resetButton.setDisable(false);
     }
 
@@ -343,7 +301,6 @@ public class TabScriptOptionsController implements Initializable {
         placeholderPane.setVisible(true);
         optionsScrollPane.setVisible(false);
         statusLabel.setText("");
-        saveButton.setDisable(true);
         resetButton.setDisable(true);
     }
 

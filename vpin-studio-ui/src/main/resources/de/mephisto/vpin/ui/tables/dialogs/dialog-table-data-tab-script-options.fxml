@@ -6,7 +6,7 @@
 <?import javafx.scene.text.*?>
 
 <!--
-  tab-script-options.fxml
+  dialog-table-data-tab-script-options.fxml
   ─────────────────────────────────────────────────────────────────────────────
   Layout for the "Script Options" tab on the TableData screen.
 
@@ -19,7 +19,7 @@
 -->
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="de.mephisto.vpin.ui.tables.dialogs.TabScriptOptionsController"
+      fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableDataTabScriptOptionsController"
       spacing="0"
       styleClass="tab-content-root">
 
@@ -41,12 +41,6 @@
             onAction="#onResetClicked"
             disable="true"/>
 
-    <!-- Save changes -->
-    <Button fx:id="saveButton"
-            text="Save"
-            styleClass="primary-button"
-            onAction="#onSaveClicked"
-            disable="true"/>
   </HBox>
 
   <!-- ── Divider ───────────────────────────────────────────────────────────── -->

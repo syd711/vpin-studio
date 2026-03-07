@@ -20,8 +20,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <junit.version>5.8.2</junit.version>
         <javafx.version>11</javafx.version>
-        <skipMacOSBuild>true</skipMacOSBuild>
-        <macOSBuild>false</macOSBuild>
+        <skipMacOSBuild>false</skipMacOSBuild>
+        <macOSBuild>true</macOSBuild>
     </properties>
 
     <repositories>
