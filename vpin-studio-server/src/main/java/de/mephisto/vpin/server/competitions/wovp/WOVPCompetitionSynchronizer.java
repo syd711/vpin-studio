@@ -13,9 +13,7 @@ import de.mephisto.vpin.server.competitions.CompetitionLifecycleService;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
-import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameMediaService;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreBackupService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
@@ -33,7 +31,6 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -82,17 +79,7 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
             synchronizeChallenge(challenge, weeklyCompetitions, wovpSettings, forceReload);
           }
 
-          //clean old competition ids
-          List<Integer> games = frontendService.getCompetedGamesIds(CompetitionType.WEEKLY);
-          for (int gameId : games) {
-            TableDetails tableDetails = frontendService.getTableDetails(gameId);
-            if (!competitionIdUpdater.isCompeted(tableDetails, weeklyCompetitions, false)) {
-              competitionIdUpdater.unsetTourneyId(tableDetails, CompetitionType.WEEKLY, gameId);
-              LOG.info("Cleared {} competition id from {}", CompetitionType.WEEKLY, tableDetails.getGameDisplayName());
-
-              frontendStatusService.deAugmentWheel(gameService.getGame(gameId));
-            }
-          }
+          runCleanupCheck(weeklyCompetitions);
         }
         return true;
       }
@@ -104,6 +91,24 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
       LOG.info("------------------------------- /WOVP SYNC ----------------------------------------------------------");
     }
     return false;
+  }
+
+  private void runCleanupCheck(List<Competition> weeklyCompetitions) {
+    //clean old competition ids
+    List<Integer> games = frontendService.getCompetedGamesIds(CompetitionType.WEEKLY);
+    for (int gameId : games) {
+      runCleanupCheck(weeklyCompetitions, gameId);
+    }
+  }
+
+  private void runCleanupCheck(List<Competition> weeklyCompetitions, int gameId) {
+    TableDetails tableDetails = frontendService.getTableDetails(gameId);
+    LOG.info("Running WOVP tournament id cleanup check for {}", tableDetails.getGameDisplayName());
+    if (!competitionIdUpdater.isCompeted(tableDetails, weeklyCompetitions, false)) {
+      competitionIdUpdater.unsetTourneyId(tableDetails, CompetitionType.WEEKLY, gameId);
+      LOG.info("Cleared {} competition id from {}", CompetitionType.WEEKLY, tableDetails.getGameDisplayName());
+      frontendStatusService.deAugmentWheel(gameService.getGame(gameId));
+    }
   }
 
 
@@ -118,7 +123,7 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
         if (!challengeId.equals(competition.getUuid()) || game == null || forceReload) {
           //run de-augmentation for finished competitions
           competition.setEndDate(new Date());
-          competitionService.save(competition);
+          competitionService.save(competition);//TOOD required?
           competitionLifecycleService.notifyCompetitionDeleted(competition);
           refreshTags(game, wovpSettings, false);
 
@@ -184,6 +189,7 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
         LOG.info("Applying game \"{}\" for weekly challenge \"{}\"", game.getGameDisplayName(), challenge.getChallengeTypeCode());
       }
       else {
+        competition.setGameId(-1);
         LOG.warn("WOVP game validation failed, did not find phrase \"{}\" in {}", scriptMatchKeywords, game.getGameFileName());
         addIssue(competition, "WOVP game validation failed, required phrases not found in " + game.getGameFileName() + ", invalid table version.");
         addIssue(competition, "Please check the VPS matching of the existing table or download the correct version.");
