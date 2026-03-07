@@ -7,6 +7,8 @@ import de.mephisto.vpin.restclient.mania.ManiaTableSyncResult;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.ui.Studio;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -32,6 +34,12 @@ public class ManiaTableSynchronizationDialogController implements DialogControll
 
   @FXML
   private Label statsLabel;
+
+  @FXML
+  private Label tableNameLabel;
+
+  @FXML
+  private Label tableStatusLabel;
 
   @FXML
   private TableView<ManiaTableSynchronizationDialogController.ManiaTableSyncResultModel> tableView;
@@ -112,6 +120,19 @@ public class ManiaTableSynchronizationDialogController implements DialogControll
       LOG.error("Failed to fetch accounts: {}", e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to fetch accounts: " + e.getMessage());
     }
+
+    tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ManiaTableSyncResultModel>() {
+      @Override
+      public void changed(ObservableValue<? extends ManiaTableSyncResultModel> observable, ManiaTableSyncResultModel oldValue, ManiaTableSyncResultModel newValue) {
+        tableNameLabel.setText("-");
+        tableStatusLabel.setText("-");
+
+        if (newValue != null) {
+          tableNameLabel.setText(newValue.getTableName());
+          tableStatusLabel.setText(newValue.getResult());
+        }
+      }
+    });
   }
 
   public void setSynchronizationResult(List<ManiaTableSyncResult> result) {
