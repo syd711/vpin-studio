@@ -1050,6 +1050,9 @@
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                           </content>
                         </Tab>
+                         <Tab text="Script Options" closable="false">
+                             <fx:include source="tab-script-options.fxml" fx:id="scriptOptions"/>
+                         </Tab>
                      </tabs>
                   </TabPane>
                </children>

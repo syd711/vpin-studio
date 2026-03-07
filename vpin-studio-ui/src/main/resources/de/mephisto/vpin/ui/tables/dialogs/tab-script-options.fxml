@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<!--
+  tab-script-options.fxml
+  ─────────────────────────────────────────────────────────────────────────────
+  Layout for the "Script Options" tab on the TableData screen.
+
+  The tab shows all Table1.Option(...) declarations found in the selected
+  table's VBScript, letting the user adjust values and save them to the
+  per-table INI file that VPX 10.8+ reads on startup.
+
+  Controller: de.mephisto.vpin.ui.tables.dialogs.TabScriptOptionsController
+  ─────────────────────────────────────────────────────────────────────────────
+-->
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="de.mephisto.vpin.ui.tables.dialogs.TabScriptOptionsController"
+      spacing="0"
+      styleClass="tab-content-root">
+
+  <!-- ── Toolbar ───────────────────────────────────────────────────────────── -->
+  <HBox styleClass="table-data-header" alignment="CENTER_LEFT" spacing="8">
+    <padding><Insets top="6" right="12" bottom="6" left="12"/></padding>
+
+    <Label text="Script Options" styleClass="tab-header-label" HBox.hgrow="ALWAYS"/>
+
+    <!-- Status label: "No options found", "3 options", etc. -->
+    <Label fx:id="statusLabel" styleClass="tab-status-label"/>
+
+    <Region HBox.hgrow="ALWAYS"/>
+
+    <!-- Reset to defaults -->
+    <Button fx:id="resetButton"
+            text="Reset to Defaults"
+            styleClass="secondary-button"
+            onAction="#onResetClicked"
+            disable="true"/>
+
+    <!-- Save changes -->
+    <Button fx:id="saveButton"
+            text="Save"
+            styleClass="primary-button"
+            onAction="#onSaveClicked"
+            disable="true"/>
+  </HBox>
+
+  <!-- ── Divider ───────────────────────────────────────────────────────────── -->
+  <Separator/>
+
+  <!-- ── Loading / empty placeholder ─────────────────────────────────────── -->
+  <StackPane fx:id="placeholderPane" VBox.vgrow="ALWAYS" visible="true">
+    <VBox alignment="CENTER" spacing="10" maxWidth="340">
+      <Label fx:id="placeholderLabel"
+             text="Select a VPX table to see its script options."
+             styleClass="placeholder-label"
+             wrapText="true"
+             textAlignment="CENTER"/>
+      <ProgressIndicator fx:id="loadingSpinner" visible="false" maxWidth="40" maxHeight="40"/>
+    </VBox>
+  </StackPane>
+
+  <!-- ── Options list ──────────────────────────────────────────────────────── -->
+  <!--
+    Each option is rendered as a row inside optionsVBox (created programmatically
+    by the controller so we can generate the right control type — slider vs combo).
+    The ScrollPane makes it handle long lists gracefully.
+  -->
+  <ScrollPane fx:id="optionsScrollPane"
+              VBox.vgrow="ALWAYS"
+              fitToWidth="true"
+              hbarPolicy="NEVER"
+              visible="false">
+    <padding><Insets top="8" right="16" bottom="16" left="16"/></padding>
+    <VBox fx:id="optionsVBox" spacing="14"/>
+  </ScrollPane>
+
+</VBox>

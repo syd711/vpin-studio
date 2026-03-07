@@ -48,6 +48,7 @@ import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.restclient.vpauthenticators.VpAuthenticationServiceClient;
 import de.mephisto.vpin.restclient.vps.VpsServiceClient;
 import de.mephisto.vpin.restclient.vpx.VpxServiceClient;
+import de.mephisto.vpin.restclient.client.VpxScriptOptionsServiceClient;
 import de.mephisto.vpin.restclient.wovp.WOVPServiceClient;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.IOUtils;
@@ -117,8 +118,9 @@ public class VPinStudioClient {
   private final VpxServiceClient vpxServiceClient;
   private final VpsServiceClient vpsServiceClient;
   private final WOVPServiceClient wovpServiceClient;
+  private final VpxScriptOptionsServiceClient VpxScriptOptionsServiceClient;
 
-  public VPinStudioClient(String host) {
+    public VPinStudioClient(String host) {
     restClient = RestClient.createInstance(host, SystemUtil.getPort());
     this.preferencesServiceClient = new PreferencesServiceClient(this);
 
@@ -165,6 +167,7 @@ public class VPinStudioClient {
     this.taggingServiceClient = new TaggingServiceClient(this);
     this.vpxServiceClient = new VpxServiceClient(this);
     this.vpsServiceClient = new VpsServiceClient(this);
+    this.VpxScriptOptionsServiceClient = new VpxScriptOptionsServiceClient(this);
     this.pinVolServiceClient = new PinVolServiceClient(this);
     this.pinemHiServiceClient = new PINemHiServiceClient(this);
     this.playlistsServiceClient = new PlaylistsServiceClient(this);
@@ -380,6 +383,10 @@ public class VPinStudioClient {
   public VpxServiceClient getVpxService() {
     return vpxServiceClient;
   }
+
+  public VpxScriptOptionsServiceClient getScriptOptionsService() {
+        return VpxScriptOptionsServiceClient;
+    }
 
   public void clearDiscordCache() {
     restClient.clearCache("discord/");
