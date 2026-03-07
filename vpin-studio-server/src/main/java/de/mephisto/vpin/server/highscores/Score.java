@@ -19,6 +19,7 @@ public class Score {
   private int position;
   private Date createdAt;
   private boolean external;
+  private String label;       // optional label for titled scores, high-scores, buy-in scores....
 
   public Score(Date createdAt, int gameId, String playerInitials, Player player, String rawScore, long score, int position) {
     this.createdAt = createdAt;
@@ -102,6 +103,14 @@ public class Score {
     this.rawScore = rawScore;
   }
 
+  public String getLabel() {
+    return label;
+  }
+
+  public void setLabel(String label) {
+    this.label = label;
+  }
+  
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof Score)) {

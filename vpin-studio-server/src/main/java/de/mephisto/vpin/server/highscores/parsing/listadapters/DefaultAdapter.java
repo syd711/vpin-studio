@@ -52,7 +52,7 @@ public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAda
 
           //the next line could be a raw score without a positions
           if (!isScoreLine(scoreLine, (i + 1))) {
-            Score score = createTitledScore(createdAt, scoreLine, source, gameId);
+            Score score = createTitledScore(createdAt, line.trim(), scoreLine, source, gameId);
             if (score != null) {
               scores.add(score);
             }
@@ -71,7 +71,7 @@ public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAda
         }
 
         if (scores.size() >= 3 && StringUtils.isEmpty(line)) {
-          break;
+            break;
         }
       }
 
@@ -97,7 +97,7 @@ public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAda
    * These scores do not have a leading position number.
    */
   @Nullable
-  protected Score createTitledScore(@NonNull Date createdAt, @NonNull String line, @Nullable String source, int gameId) {
+  protected Score createTitledScore(@NonNull Date createdAt, @NonNull String title, @NonNull String line, @Nullable String source, int gameId) {
     String initials = "???";
     if (line.trim().length() >= 3) {
       initials = line.trim().substring(0, 3);
@@ -108,7 +108,9 @@ public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAda
         return null;
       }
 
-      return new Score(createdAt, gameId, initials, null, scoreString, scoreValue, 1);
+      Score sc = new Score(createdAt, gameId, initials, null, scoreString, scoreValue, 1);
+      sc.setLabel(title);
+      return sc;
     }
 
     long scoreValue = toNumericScore(line.trim(), source, false);

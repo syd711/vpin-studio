@@ -90,6 +90,22 @@ public class PINemHiService implements InitializingBean {
     startMonitor();
     return true;
   }
+  
+  public String[] getPinemhiSupportedNVRams() {
+    try {
+      List<String> commands = Arrays.asList(PINEMHI_COMMAND, "-lr");
+      SystemCommandExecutor executor = new SystemCommandExecutor(commands);
+      executor.setDir(new File(PINEMHI_FOLDER));
+      executor.executeCommand();
+      StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
+      String stdOut = standardOutputFromCommand.toString();
+      return stdOut.split("\n");
+    } 
+    catch (IOException | InterruptedException e) {
+      LOG.error("Cannot extract supported rams", e);
+      return new String[0];
+    }
+  }
 
   //----------------------
 
@@ -167,6 +183,11 @@ public class PINemHiService implements InitializingBean {
   public static final File getPinemhiIni() {
     return new File(PINEMHI_FOLDER, PINEMHI_INI);
   }
+
+  public static File getPinemhiExe() {
+    return new File(PINEMHI_FOLDER, PINEMHI_COMMAND);
+  }
+
 
   //----------------------
 

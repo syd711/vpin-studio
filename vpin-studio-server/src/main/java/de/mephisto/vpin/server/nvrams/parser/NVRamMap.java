@@ -129,7 +129,7 @@ public class NVRamMap extends NVRamObject {
 
   public NVRamRegion getMemoryArea(Integer address, String memType) {
 		NVRamPlatform platform = getRamPlatform();
-    List<NVRamRegion> layout = platform.getMemoryLayout();
+    List<NVRamRegion> layout = platform != null ? platform.getMemoryLayout() : new ArrayList<>();
     for (NVRamRegion region : layout) {
       if (address != null) {
         int start = BcdUtils.toInt(region.getAddress());

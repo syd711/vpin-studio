@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.nvrams.parser;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Formatter;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -15,27 +16,34 @@ public class NVRamToolHexDump {
 
   private static final int HEX_DUMP_BYTES_PER_LINE = 16;
 
-  public void hexDump(NVRamMap mapJson, SparseMemory memory, Locale locale) throws IOException {
+  public String hexDump(NVRamMap mapJson, SparseMemory memory, Locale locale) throws IOException {
     Appendable bld = new StringBuilder(3000);
     hexDumpMemory(mapJson, memory, bld, locale, mapJson.getMemoryArea(null, "nvram"));
     hexDumpPinmameData(memory, bld, locale);
+    return bld.toString();
   }
 
+  //---------------
+
   private void hexDumpMemory(NVRamMap mapJson, SparseMemory memory, Appendable bld, Locale locale, NVRamRegion memoryArea) throws IOException {
-    int startAddr = BcdUtils.toInt(memoryArea.getAddress());
+    int startAddr = memoryArea != null ? BcdUtils.toInt(memoryArea.getAddress()) : 0;
     byte[] data = memory.findRegion(startAddr).data;
-    int size = BcdUtils.toInt(memoryArea.getSize());
-    Nibble nibble = memoryArea.getNibble();
+    int size = memoryArea != null? BcdUtils.toInt(memoryArea.getSize()) : data.length;
+    Nibble nibble = memoryArea != null? memoryArea.getNibble() : Nibble.BOTH;
 
     // Build offset -> mapping dictionary
     Map<Integer, Object> entryMap = new LinkedHashMap<>();
-    /*TBD 
-    for (NVRamMapping m : mapJson.getMappings()) {
-      if ("dip_switches".equals(m.getSection()) || "dipsw".equals(m.getEncoding())) continue;
-      List<Integer> offs = m.offsets();
-      entryMap.put(offs.get(0), m);
+    // audits and adjustments
+    fillMapOfMappings(entryMap, mapJson.getAudits());
+    fillMapOfMappings(entryMap, mapJson.getAdjustments());
+
+    // game_state
+    if (mapJson.getGameState() != null) {
+      fillMappings(entryMap, mapJson.getGameState().getMappings());
     }
-    */
+    fillMappings(entryMap, mapJson.getHighScores());
+    fillMappings(entryMap, mapJson.getModeChampions());
+
     for (ChecksumMapping checksum : mapJson.getChecksumEntries()) {
       entryMap.put(checksum.offsets().get(0), checksum);
     }
@@ -53,6 +61,12 @@ public class NVRamToolHexDump {
         String lbl = rm.formatLabel(key, false);
         String value = StringUtils.defaultString(rm.formatEntry(mapJson, memory, locale), rm.getDefaultVal());
         text = (lbl != null ? lbl + ": " : "") + value;
+      } 
+      else if (mappingObj instanceof NVRamScore) {
+        NVRamScore score = (NVRamScore) mappingObj;
+        count = score.offsets().size();
+        String lv = score.formatHighScore(mapJson, memory, locale);
+        text = lv;
       } 
       else if (mappingObj instanceof ChecksumMapping) {
         ChecksumMapping cm = (ChecksumMapping) mappingObj;
@@ -74,6 +88,33 @@ public class NVRamToolHexDump {
     }
   }
 
+  private void fillMapOfMappings(Map<Integer,Object> entryMap, Map<String,NVRamMappings> mapMappings) {
+    if (mapMappings != null) {
+      mapMappings.values().forEach(m -> fillMappings(entryMap, m.mappings()));
+    }
+  }
+
+  private void fillMappings(Map<Integer,Object> entryMap, Collection<NVRamMapping> mappings) {
+    if (mappings != null) {
+      for (NVRamMapping m : mappings) {
+        if ("dipsw".equals(m.getEncoding())) continue;
+        List<Integer> offs = m.offsets();
+        entryMap.put(offs.get(0), m);
+      }
+    }
+  }
+
+  private void fillMappings(Map<Integer,Object> entryMap, List<NVRamScore> scores) {
+    if (scores != null) {
+      for (NVRamScore m : scores) {
+        List<Integer> offs = m.offsets();
+        entryMap.put(offs.get(0), m);
+      }
+    }
+  }
+
+  //---------------
+
   private void hexDumpPinmameData(SparseMemory memory, Appendable bld, Locale locale) throws IOException {
     byte[] pinmameData = memory.getPinmameData();
     if (pinmameData == null) return;
@@ -85,12 +126,14 @@ public class NVRamToolHexDump {
       while (count < HEX_DUMP_BYTES_PER_LINE && offset + count < length) count++;
       byte[] line = Arrays.copyOfRange(pinmameData, offset, offset + count);
       
-      System.out.printf("%04X: %s%n", offset, hexLine(line, Nibble.BOTH, null, locale));
+      printLine(bld, "%04X: %s%n", locale, offset, hexLine(line, Nibble.BOTH, null, locale));
       offset += count;
     }
     byte[] dipLine = Arrays.copyOfRange(pinmameData, offset, offset + 6);
     printLine(bld, "%04X: %s%n", locale, offset, hexLine(dipLine, Nibble.BOTH, "DIP Switches", locale));
   }
+
+  //---------------
 
   public String hexLine(byte[] data, Nibble nibble, String text, Locale locale) {
     List<String> b = new ArrayList<>();
@@ -134,6 +177,5 @@ public class NVRamToolHexDump {
     try (Formatter formatter = new Formatter(bld)) {
       formatter.format(locale, format, args);
     }
-    bld.append("\n");
   }
 }

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.nvrams.parser;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,5 +23,9 @@ public class NVRamMappings extends NVRamObject {
 
   public NVRamMapping get(String key) {
     return mappings.get(key);
+  }
+
+  public Collection<NVRamMapping> mappings() {
+    return mappings.values();
   }
 }
