@@ -14,6 +14,7 @@
   <HideB2SDMD>0</HideB2SDMD>
   <HideDMD>2</HideDMD>
   <FormToBack>0</FormToBack>
+  <FormNoFocus>0</FormNoFocus>
   <FormToFront>0</FormToFront>
   <ShowStartupError>0</ShowStartupError>
   <ScreenshotPath/>

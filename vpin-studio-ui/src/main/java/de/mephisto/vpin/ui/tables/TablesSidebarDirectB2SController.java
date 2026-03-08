@@ -211,6 +211,9 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   private ComboBox<B2SFormPosition> formToPosition;
 
   @FXML
+  private CheckBox formNoFocus;
+
+  @FXML
   private Button backglassManagerBtn;
 
   private Optional<GameRepresentation> game = Optional.empty();
@@ -411,6 +414,12 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
       tableSettings.setFormToPosition(newValue.getId());
       save();
     });
+
+    formNoFocus.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      tableSettings.setFormNoFocus(newValue);
+      save();
+    });
+
   }
 
   private void save() {

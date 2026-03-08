@@ -104,7 +104,7 @@ public class EmulatorService implements InitializingBean {
   }
 
   public List<GameEmulator> getBackglassGameEmulators() {
-    return getGameEmulators().stream().filter(GameEmulator::isValid).filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
+    return getGameEmulators().stream().filter(e -> e.isVpxEmulator() && e.isValid()).collect(Collectors.toList());
   }
 
   public void setFrontendService(FrontendService frontendService) {
@@ -153,7 +153,6 @@ public class EmulatorService implements InitializingBean {
       }
 
       if (emulator.isVpxEmulator()) {
-        File registryFolder = mameService.getNvRamFolder();
         // mind that popper may set a specific romDirectory
         if (StringUtils.isEmpty(emulator.getRomDirectory())) {
           File romFolder = mameService.getRomsFolder();

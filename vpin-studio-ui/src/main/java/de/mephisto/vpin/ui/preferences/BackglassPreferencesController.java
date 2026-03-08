@@ -52,6 +52,9 @@ public class BackglassPreferencesController implements Initializable {
   @FXML
   private ComboBox<B2SFormPosition> formToPosition;
 
+    @FXML
+  private CheckBox formNoFocusCheckbox;
+
   @FXML
   private Label backglassServerFolder;
 
@@ -94,6 +97,7 @@ public class BackglassPreferencesController implements Initializable {
       extendedSearchCheckbox.setDisable(!serverInstalled);
       hideDMDCheckbox.setDisable(!serverInstalled);
       formToPosition.setDisable(!serverInstalled);
+      formNoFocusCheckbox.setDisable(!serverInstalled);
       usedLEDType.setDisable(!serverInstalled);
 
       if (serverInstalled) {
@@ -153,6 +157,12 @@ public class BackglassPreferencesController implements Initializable {
         formToPosition.setValue(TablesSidebarDirectB2SController.FORM_POSITIONS.stream().filter(v -> v.getId() == backglassServerSettings.getFormToPosition()).findFirst().orElse(null));
         formToPosition.valueProperty().addListener((observable, oldValue, newValue) -> {
           backglassServerSettings.setFormToPosition(newValue.getId());
+          saveSettings();
+        });
+
+        formNoFocusCheckbox.setSelected(backglassServerSettings.isFormNoFocus());
+        formNoFocusCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+          backglassServerSettings.setFormNoFocus(newValue);
           saveSettings();
         });
 

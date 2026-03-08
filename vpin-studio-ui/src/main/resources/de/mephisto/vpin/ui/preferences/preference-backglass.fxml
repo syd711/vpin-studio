@@ -149,7 +149,20 @@
                   <ComboBox fx:id="formToPosition" prefWidth="320.0">
                      <VBox.margin>
                         <Insets top="6.0" />
-                     </VBox.margin></ComboBox>
+                     </VBox.margin>
+                  </ComboBox>
+
+                  <CheckBox fx:id="formNoFocusCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="No Focus" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <Label layoutX="10.0" layoutY="252.0" styleClass="checkbox-description" text="Complementing FormToFront, When set, also FormToFront will stay in front and will ignore mouse key presses." textFill="WHITE" wrapText="true" >
+                     <VBox.margin>
+                        <Insets bottom="12.0" />
+                     </VBox.margin>
+                  </Label>
+                
 
                </children>
             </VBox>

@@ -299,6 +299,10 @@ public class B2STableSettingsParser extends DefaultHandler {
         }
         break;
       }
+      case "FormNoFocus": {
+        settings.setFormNoFocus(Integer.parseInt(value) == 1);
+        break;
+      }
     }
   }
 
