@@ -11,6 +11,7 @@
 - **VPin Mania Score Dates**: Fixed issue that the creation date was used instead of the last modification date for the score submitting to VPin Mania.
 - **Studio Window Manager**: Fixed _gtk_window_resize: assertion 'height > 0' failed_ error (blind fix).
 - **VPin MAME Settings**: Added input field for the table volume. Note that this field is not support for all tables and the values vary for ROM/table.
+- **Card Template Designer**: Fixed possible server error applying templates.
 - **Highscore Parsing**: Fixed table "Eye of the Tiger".
 - **WOVP Synchronization**: Fixed issue that if the game script validation fails, the old game id was not resetted. 
 - **WOVP Settings**: Added option to disable API keys/users. 
