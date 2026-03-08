@@ -1,11 +1,24 @@
 ## Release Notes 4.7.3
+ 
+- **Table Options**: Added "Options" tab to the table data manager dialog. The new tab analysis the table script options so that you canfigure them into a .ini file for the table.
+   
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/table-options.png?raw=true" width="550" />
 
 - **Table Backups/Deletions**: Fixed additional issues with the VPX music folder during table deletions and backups.
 - **Table Installation**: Fixed issue that upper case .ZIP files were rejected for uploading.
 - **Backglass Manager**: Added 'No Focus' setting on backglass server preferences and by table
 - **Backglass Manager**: When a new backglass is setup, default all values from server settings
-- **VPin Mania Score Dates**: Fixed issue that the creation dates were used instead of the last modification dates for the score submitting to VPin Mania.
+- **VPin Mania Score Dates**: Fixed issue that the creation date was used instead of the last modification date for the score submitting to VPin Mania.
 - **Studio Window Manager**: Fixed _gtk_window_resize: assertion 'height > 0' failed_ error (blind fix).
+- **VPin MAME Settings**: Added input field for the table volume. Note that this field is not support for all tables and the values vary for ROM/table.
+- **Highscore Parsing**: Fixed table "Eye of the Tiger".
+- **WOVP Synchronization**: Fixed issue that if the game script validation fails, the old game id was not resetted. 
+- **WOVP Settings**: Added option to disable API keys/users. 
+- **WOVP Pause Menu Item**: 
+  - Fixed issue that the existing score of the player was not shown anymore. 
+  - Added score reload after score submissions with a small delay which should show the updated score that was submitted.
+  - Fixed layout glitches.  
+
 
 ---
 
@@ -23,8 +36,9 @@
 - **Table Management**: Added support for older VPX file format **.vpt**.
 - **Preferences Menu**: Fixed rendering the menu, even if the status check for the server fails.
 - **Table Validation**: The missing ALT color validation error is only triggered when a non-pinsound bundle is available. 
-- **Table Validation**: Fixed lookup of the scripts folder which caused validation issues. 
-- 
+- **Table Validation**: Fixed lookup of the scripts folder which caused validation issues.
+
+
 ---
 
 

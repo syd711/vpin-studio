@@ -438,6 +438,7 @@
                             <AnchorPane minHeight="0.0" minWidth="0.0" />
                           </content>
                         </Tab>
+                         <Tab fx:id="optionsTab" text="Options" closable="false" />
                         <Tab fx:id="commentsTab" closable="false" text="Tags &amp; Comments" />
                         <Tab fx:id="playlistsTab" closable="false" text="Playlists" />
                         <Tab fx:id="metaDataTab" closable="false" text="Meta Data">

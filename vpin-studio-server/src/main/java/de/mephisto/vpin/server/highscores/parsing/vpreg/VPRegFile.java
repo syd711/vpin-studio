@@ -27,7 +27,7 @@ public class VPRegFile {
   private String tablename;
 
 
-  private static Map<String, VPRegHighscoreAdapter> adapters = new LinkedHashMap<>();
+  private final static Map<String, VPRegHighscoreAdapter> adapters = new LinkedHashMap<>();
 
   static {
     adapters.put("numericList", new NumericListVPRegHighscoreAdapter());
@@ -265,6 +265,7 @@ public class VPRegFile {
         for (VPRegHighscoreAdapter adapter : adapters.values()) {
           if (adapter.isApplicable(gameFolder)) {
             scoreParsingSummary = adapter.readHighscore(gameFolder);
+            break;
           }
         }
       }

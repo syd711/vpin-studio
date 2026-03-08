@@ -17,6 +17,7 @@ import de.mephisto.vpin.server.vpx.FolderLookupService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
+import org.jcodec.common.DictionaryCompressor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -51,6 +52,7 @@ public class MameService implements InitializingBean {
   private final static String KEY_COLORIZE_DMD = "dmd_colorize";
   private final static String KEY_SOUND_MODE = "sound_mode";
   private final static String KEY_FORCE_STEREO = "force_stereo";
+  private final static String KEY_VOLUME = "volume";
 
   public final static String MAME_REG_FOLDER_KEY = "SOFTWARE\\Freeware\\Visual PinMame\\";
 
@@ -128,6 +130,7 @@ public class MameService implements InitializingBean {
     options.setColorizeDmd(getBoolean(values, KEY_COLORIZE_DMD));
     options.setSoundMode(getInteger(values, KEY_SOUND_MODE));
     options.setForceStereo(getBoolean(values, KEY_FORCE_STEREO));
+    options.setVolume(getHex(values, KEY_VOLUME));
     return options;
   }
 
@@ -169,6 +172,7 @@ public class MameService implements InitializingBean {
     systemService.setUserIntValue(MAME_REG_FOLDER_KEY + rom, KEY_COLORIZE_DMD, options.isColorizeDmd() ? 1 : 0);
     systemService.setUserIntValue(MAME_REG_FOLDER_KEY + rom, KEY_SOUND_MODE, options.getSoundMode());
     systemService.setUserIntValue(MAME_REG_FOLDER_KEY + rom, KEY_FORCE_STEREO, options.isForceStereo() ? 1 : 0);
+    systemService.setUserIntValue(MAME_REG_FOLDER_KEY + rom, KEY_VOLUME, options.getVolume());
 
     getMameEntries(true);
     return getOptions(rom);
@@ -214,6 +218,24 @@ public class MameService implements InitializingBean {
 
   private boolean getBoolean(Map<String, Object> values, String key) {
     return values.containsKey(key) && values.get(key) instanceof Integer && (((Integer) values.get(key)) == 1);
+  }
+
+  private int getHex(Map<String, Object> values, String key) {
+    int volume = 0;
+    if (values.containsKey(key)) {
+      String v = String.valueOf(values.get(key));
+      try {
+        volume = Integer.decode(v);
+      }
+      catch (NumberFormatException e) {
+        //ignore
+      }
+    }
+    return volume;
+  }
+
+  private String toHex(int value) {
+    return String.format("0x%08x", value);
   }
 
   private int getInteger(Map<String, Object> values, String key) {

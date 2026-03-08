@@ -161,7 +161,7 @@ public class WovpMenuItemController implements Initializable {
       try {
         Optional<CompetitionScore> myScore = Optional.empty();
         if (wovpPlayer != null) {
-          myScore = weeklyCompetitionScores.stream().filter(s -> s.getParticipantId() != null && s.getParticipantId().equalsIgnoreCase(wovpPlayer.getId())).findFirst();
+          myScore = weeklyCompetitionScores.stream().filter(s -> s.getUserId() != null && s.getUserId().equalsIgnoreCase(wovpPlayer.getId())).findFirst();
         }
         int myScoreIndex = -1;
         if (myScore.isPresent()) {
@@ -318,7 +318,17 @@ public class WovpMenuItemController implements Initializable {
         submitBtn.setText("Your highscore has been submitted.");
       }
 
-//      refreshScores(pauseMenuItem);
+      JFXFuture.supplyAsync(() -> {
+        try {
+          Thread.sleep(2000);
+        }
+        catch (InterruptedException e) {
+          //ignore
+        }
+        return true;
+      }).thenAcceptLater((b) -> {
+        refreshScores(pauseMenuItem);
+      });
     });
   }
 
