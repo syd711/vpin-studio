@@ -5,13 +5,10 @@ import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.ScoreListFactory;
-import de.mephisto.vpin.server.highscores.parsing.ini.adapters.DefaultIniHighscoreFileAdapter;
 import de.mephisto.vpin.server.highscores.parsing.ini.adapters.IniScoreFileAdapter;
 import de.mephisto.vpin.server.highscores.parsing.text.TextHighscoreAdapters;
-import de.mephisto.vpin.server.highscores.parsing.text.adapters.ScoreTextFileAdapter;
 import de.mephisto.vpin.server.highscores.parsing.text.adapters.ScoreTextFileAdapterImpl;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 
@@ -27,8 +24,6 @@ import static de.mephisto.vpin.server.highscores.parsing.ini.IniHighscoreAdapter
 import static org.junit.jupiter.api.Assertions.*;
 
 public class HighscoreIniToRawTest {
-
-  private static final ScoringDB scoringDB = ScoringDB.load();
 
   @Test
   public void testAllTextFiles() {

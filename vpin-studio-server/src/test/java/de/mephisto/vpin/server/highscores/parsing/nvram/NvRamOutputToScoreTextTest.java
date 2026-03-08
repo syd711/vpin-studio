@@ -4,6 +4,10 @@ import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.ScoreListFactory;
+import de.mephisto.vpin.server.nvrams.parser.NVRamMap;
+import de.mephisto.vpin.server.nvrams.parser.NVRamParser;
+import de.mephisto.vpin.server.nvrams.parser.NVRamScore;
+import de.mephisto.vpin.server.nvrams.parser.SparseMemory;
 import de.mephisto.vpin.server.pinemhi.PINemHiService;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Disabled;
@@ -244,6 +248,40 @@ public class NvRamOutputToScoreTextTest {
     assertFalse(parse.isEmpty(), "Parsed scores is empty for nvram '" + nv + "'");
     if (expected != null) {
       assertEquals(expected.trim(), scores.toString().trim());
+    }
+  }
+
+  @Test
+  public void compareNV() throws Exception {
+
+    String nv = "afm_113b.nv";
+
+    Game game = new Game();
+    game.setGameDisplayName("Dummy test game for " + nv);
+    game.setRom(nv.replace(".nv", ""));
+
+    File testFolder = new File("../testsystem/vPinball/VisualPinball/VPinMAME/nvram/");
+    // Set the path to this GameEmulator so that nv files can be found
+    PINemHiService.adjustVPPathForEmulator(testFolder, getPinemhiIni(), true);
+
+    Locale loc = Locale.ENGLISH;
+
+    File entry = new File(testFolder, nv);
+    String raw = NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(getPinemhiExe(), entry);
+    List<Score> scores = ScoreListFactory.create(raw, new Date(entry.length()), game, scoringDB);
+    for (Score score : scores) {
+      System.out.println(score.getFormattedScore(loc));
+    }
+ 
+    System.out.println("---------------------");
+
+    NVRamParser parser = new NVRamParser();
+    NVRamMap map = parser.getMap(nv, null);
+    
+    byte[] data = Files.readAllBytes(entry.toPath());
+    SparseMemory memory = parser.setNvram(map, data);
+    for (NVRamScore m : map.getHighScores()) {
+      System.out.println( m.formatHighScore(map, memory, loc) );
     }
   }
 

@@ -9,9 +9,7 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -21,6 +19,7 @@ import de.mephisto.vpin.server.nvrams.parser.NVRamMap;
 import de.mephisto.vpin.server.nvrams.parser.NVRamMapping;
 import de.mephisto.vpin.server.nvrams.parser.NVRamParser;
 import de.mephisto.vpin.server.nvrams.parser.NVRamToolDump;
+import de.mephisto.vpin.server.nvrams.parser.NVRamToolHexDump;
 import de.mephisto.vpin.server.nvrams.parser.SparseMemory;
 
 /**
@@ -34,7 +33,7 @@ public class NVRamParserTest {
 
   public static final String TEST_ROOT = "https://github.com/tomlogic/py-pinmame-nvmaps/raw/refs/heads/main/test/";
 
-  @Test
+  //@Test
   public void testAllDump() throws IOException {
     NVRamParser parser = new NVRamParser(MAPS_ROOT);
     String indexJsonUrl = MAPS_ROOT + "index.json";
@@ -103,6 +102,40 @@ public class NVRamParserTest {
         assertEquals("1", e);
     });
   }
+
+  @Test
+  public void testExeDump() throws IOException {
+    String rom = "freddy";
+
+    NVRamParser parser = new NVRamParser(MAPS_ROOT);
+    parseNVRam(parser, rom, (mapJson, memory) -> {
+        try {
+          NVRamToolHexDump dump = new NVRamToolHexDump();
+          String d = dump.hexDump(mapJson, memory, Locale.ENGLISH);
+          System.out.println(d);
+        }
+        catch (IOException ioe) {
+          ioe.printStackTrace();
+        }
+    });
+  }
+
+  @Test
+  public void testBruteExeDump() throws IOException {
+    String rom = "freddy";
+    String testnv = TEST_ROOT + "nvram/" + rom + ".nv";
+
+    NVRamParser parser = new NVRamParser(MAPS_ROOT);
+    String d = parser.download(testnv, in -> {
+      byte[] bytes = IOUtils.toByteArray(in);
+      NVRamMap mapJson = new NVRamMap();
+      SparseMemory memory = parser.setNvram(mapJson, bytes);
+      NVRamToolHexDump dump = new NVRamToolHexDump();
+      return dump.hexDump(mapJson, memory, Locale.ENGLISH);
+    });
+    System.out.println(d);            
+  }
+
 
   //-------------------------------------------
 

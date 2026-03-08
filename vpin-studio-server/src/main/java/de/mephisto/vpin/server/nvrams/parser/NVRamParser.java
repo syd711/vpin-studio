@@ -71,10 +71,6 @@ public class NVRamParser {
 
     // load the map from JSON
     NVRamMap mapJson = mapForRom(nvramName, rom);
-    if (mapJson!=null) {
-      // initiate mappings
-      processMappings(mapJson);
-    }
     return mapJson;
   }
 
@@ -144,8 +140,8 @@ public class NVRamParser {
 
   public SparseMemory setNvram(NVRamMap mapJson, byte[] nvData) {
     NVRamRegion nvramMem = mapJson.getMemoryArea(null, "nvram");
-    int base = nvramMem.getAddress();
-    int length = ObjectUtils.defaultIfNull(nvramMem.getSize(), nvData.length);
+    int base = nvramMem != null ? nvramMem.getAddress() : 0;
+    int length = ObjectUtils.defaultIfNull(nvramMem != null ? nvramMem.getSize() : null, nvData.length);
     if (length > nvData.length) length = nvData.length;
 
     SparseMemory memory = new SparseMemory();
@@ -239,11 +235,8 @@ public class NVRamParser {
     ensureCacheMapForRom();
     String mapPath = cacheMapForRom.get(rom);
     if (mapPath != null) {
-      String pathUrl = mapRoot + mapPath;
-      mapJson= download(pathUrl, in -> {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(in, NVRamMap.class);
-      });
+      ;
+      mapJson= getMapFromPath(mapPath);
       String romname = romName(rom);
       mapJson.setNvramName(nvramName);
       mapJson.setRom(rom, romname);
@@ -257,6 +250,21 @@ public class NVRamParser {
       return null;
     }
   }
+
+  public NVRamMap getMapFromPath(String mapPath) throws IOException {
+    String pathUrl = mapRoot + mapPath;
+    NVRamMap mapJson =  download(pathUrl, in -> {
+      ObjectMapper mapper = new ObjectMapper();
+      return mapper.readValue(in, NVRamMap.class);
+    });
+
+    // initiate mappings
+    if (mapJson != null) {
+      processMappings(mapJson);
+    }
+
+    return mapJson;
+}
 
 	/**
 	 * Take a rom and return its name from romnames.json
