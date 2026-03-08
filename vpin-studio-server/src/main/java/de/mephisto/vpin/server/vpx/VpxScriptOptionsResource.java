@@ -55,7 +55,7 @@ public class VpxScriptOptionsResource {
 
   /**
    * Resets all options for the given game to their declared default values by
-   * removing the [TableOptions] section from the companion INI file entries.
+   * removing the [TableOption] section from the companion INI file entries.
    *
    * @return {@code true} on success, {@code false} on failure.
    */
