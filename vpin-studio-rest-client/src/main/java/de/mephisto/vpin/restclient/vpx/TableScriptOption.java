@@ -12,7 +12,7 @@ import java.util.List;
  * unit: 0 = None, 1 = Percent
  * <p>
  * Values are persisted in a per-table INI file located alongside the .vpx file,
- * under the [TableOptions] section.
+ * under the [TableOption] section.
  */
 public class TableScriptOption {
 

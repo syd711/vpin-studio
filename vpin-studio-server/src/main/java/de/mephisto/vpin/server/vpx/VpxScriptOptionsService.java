@@ -24,20 +24,21 @@ public class VpxScriptOptionsService {
 
   private static final Logger LOG = LoggerFactory.getLogger(VpxScriptOptionsService.class);
 
-  static final String INI_SECTION = "TableOptions";
+  /* VPX uses TableOption to store data (not TableOptions) */
+  static final String INI_SECTION = "TableOption";
 
-  private static final Pattern OPTION_PATTERN = Pattern.compile(
-      "Table1\\.Option\\s*\\(\\s*" +
-          "\"([^\"]+)\"\\s*,\\s*" +
-          "([+-]?[\\d]*\\.?[\\d]+(?:[eE][+-]?[\\d]+)?)\\s*,\\s*" +
-          "([+-]?[\\d]*\\.?[\\d]+(?:[eE][+-]?[\\d]+)?)\\s*,\\s*" +
-          "([+-]?[\\d]*\\.?[\\d]+(?:[eE][+-]?[\\d]+)?)\\s*,\\s*" +
-          "([+-]?[\\d]*\\.?[\\d]+(?:[eE][+-]?[\\d]+)?)\\s*,\\s*" +
-          "([01])" +
-          "(?:\\s*,\\s*Array\\s*\\(([^)]+)\\))?" +
-          "\\s*\\)",
-      Pattern.CASE_INSENSITIVE
-  );
+    private static final Pattern OPTION_PATTERN = Pattern.compile(
+            "^[^'\n]*\\w+\\.Option\\s*\\(\\s*" +
+                    "\"([^\"]+)\"\\s*,\\s*" +
+                    "([+-]?[\\d]*\\.?[\\d]+(?:[eE][+-]?[\\d]+)?)\\s*,\\s*" +
+                    "([+-]?[\\d]*\\.?[\\d]+(?:[eE][+-]?[\\d]+)?)\\s*,\\s*" +
+                    "([+-]?[\\d]*\\.?[\\d]+(?:[eE][+-]?[\\d]+)?)\\s*,\\s*" +
+                    "([+-]?[\\d]*\\.?[\\d]+(?:[eE][+-]?[\\d]+)?)\\s*,\\s*" +
+                    "([01])" +
+                    "(?:\\s*,\\s*Array\\s*\\((.*?)\\))?" +
+                    "\\s*\\)",
+            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE
+    );
 
   private static final Pattern ARRAY_STRING_PATTERN = Pattern.compile("\"([^\"]+)\"");
 
@@ -83,9 +84,16 @@ public class VpxScriptOptionsService {
     try {
       INIConfiguration ini = loadOrCreateIni(iniFile);
 
-      for (TableScriptOption option : options) {
-        ini.setProperty(INI_SECTION + "." + option.getName(), formatValue(option.getCurrentValue()));
-      }
+ /*Clear the section first*/
+        ini.clearTree(INI_SECTION);
+
+/*Sort (VPX writes alphabetically, let's match) */
+        List<TableScriptOption> sorted = new ArrayList<>(options);
+        sorted.sort(Comparator.comparing(TableScriptOption::getName, String.CASE_INSENSITIVE_ORDER));
+
+        for (TableScriptOption option : sorted) {
+            ini.setProperty(INI_SECTION + "." + option.getName(), formatValue(option.getCurrentValue()));
+        }
 
       try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(iniFile), StandardCharsets.UTF_8))) {
         ini.write(writer);
@@ -194,10 +202,8 @@ public class VpxScriptOptionsService {
     return ini;
   }
 
-  private String formatValue(double value) {
-    if (value == Math.floor(value) && !Double.isInfinite(value)) {
-      return String.valueOf((long) value);
+    private String formatValue(double value) {
+     /* Formatted to match how VPX writes the options */
+        return String.format("%.6f", value);
     }
-    return String.valueOf(value);
-  }
 }
