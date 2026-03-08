@@ -192,26 +192,11 @@ public class VPXService implements InitializingBean {
   //---------------------------------------------------- GAME Management ---
 
   public String getScript(Game game) {
-    if (game != null) {
-      File target = vpxCommandLineService.export(game, "-ExtractVBS", "vbs");
-      if (target.exists()) {
-        try {
-          LOG.info("Reading vbs file " + target.getAbsolutePath() + " (" + FileUtils.readableFileSize(target.length()) + ")");
-          Path filePath = Path.of(target.toURI());
-          return Files.readString(filePath);
-        }
-        catch (IOException e) {
-          LOG.error("Failed to read " + target.getAbsolutePath() + ": " + e.getMessage(), e);
-        }
-        finally {
-          if (!target.delete()) {
-            LOG.error("Failed to clean up vbs file " + target.getAbsolutePath());
-          }
-        }
-      }
+    if (game != null && game.getGameFile().exists()) {
+      return VPXUtil.readScript(game.getGameFile());
     }
     else {
-      LOG.error("No game found for script extraction");
+      LOG.error("No game or game file found for script extraction");
     }
     return null;
   }

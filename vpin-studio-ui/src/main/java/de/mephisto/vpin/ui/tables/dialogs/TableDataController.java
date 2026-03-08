@@ -65,6 +65,7 @@ import java.util.stream.Collectors;
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
+
 public class TableDataController extends BasePrevNextController implements AutoCompleteTextFieldChangeListener, ChangeListener<VpsTableVersion> {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -266,6 +267,8 @@ public class TableDataController extends BasePrevNextController implements AutoC
   @FXML
   private Tab screensTab;
   @FXML
+  private Tab optionsTab;
+  @FXML
   private Tab statisticsTab;
 
 
@@ -299,6 +302,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
   private TableDataTabScreensController tableScreensController;
   private TableDataTabScoreDataController tableDataTabScoreDataController;
   private TableDataTabCommentsController tableDataTabCommentsController;
+  private TableDataTabScriptOptionsController tableDataTabScriptOptionsController;
   private TablesSidebarPlaylistsController tablesSidebarPlaylistsController;
   private PropperRenamingController propperRenamingController;
   private Pane propertRenamingRoot;
@@ -576,6 +580,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
       success &= tableScreensController.save();
       success &= tableDataTabCommentsController.save(tableDetails);
       success &= tableDataTabScoreDataController.save();
+      success &= tableDataTabScriptOptionsController.save();
 
       if (tableDetails != null) {
         tableDetails = client.getFrontendService().saveTableDetails(tableDetails, game.getId());
@@ -679,6 +684,20 @@ public class TableDataController extends BasePrevNextController implements AutoC
     List<VpsTable> tables = client.getVpsService().getTables();
     List<String> collect = new ArrayList<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
     autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, collect);
+
+    tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
+      @Override
+      public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
+        refreshTabSelection(newValue);
+      }
+    });
+  }
+
+  private void refreshTabSelection(Tab activeTab) {
+    if (activeTab != null && activeTab.equals(optionsTab) && game != null) {
+      boolean isVpx = client.getEmulatorService().isVpxGame(game);
+      tableDataTabScriptOptionsController.setGame(isVpx ? game.getId() : -1);
+    }
   }
 
   private void loadTabs() {
@@ -730,6 +749,17 @@ public class TableDataController extends BasePrevNextController implements AutoC
     }
     catch (IOException e) {
       LOG.error("Failed to load dialog-table-data-tab-comments.fxml: " + e.getMessage(), e);
+    }
+
+    try {
+      FXMLLoader loader = new FXMLLoader(TableDataTabScriptOptionsController.class.getResource("dialog-table-data-tab-script-options.fxml"));
+      Parent optionsRoot = loader.load();
+      tableDataTabScriptOptionsController = loader.getController();
+      tableDataTabScriptOptionsController.setStage(this.stage);
+      optionsTab.setContent(optionsRoot);
+    }
+    catch (IOException e) {
+      LOG.error("Failed to load dialog-table-data-tab-script-options.fxml: " + e.getMessage(), e);
     }
 
     try {
@@ -959,7 +989,6 @@ public class TableDataController extends BasePrevNextController implements AutoC
       TableDataController.lastTab = tab;
     }
     tabPane.getSelectionModel().select(TableDataController.lastTab);
-
     switchGame(game);
   }
 
@@ -972,6 +1001,8 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
       this.nextButton.setDisable(false);
       this.prevButton.setDisable(false);
+
+      refreshTabSelection(tabPane.getSelectionModel().getSelectedItem());
     });
   }
 
@@ -1044,10 +1075,17 @@ public class TableDataController extends BasePrevNextController implements AutoC
         gameDisplayName.setText(game.getGameDisplayName());
       }
 
+      boolean isVpx = client.getEmulatorService().isVpxGame(game);
+
       metaDataTab.setDisable(hasNoDetail);
       customizationTab.setDisable(hasNoDetail);
       extrasTab.setDisable(hasNoDetail);
       screensTab.setDisable(hasNoDetail);
+      optionsTab.setDisable(!isVpx);
+
+      if (tabPane.getSelectionModel().getSelectedItem().isDisabled()) {
+        tabPane.getSelectionModel().select(0);
+      }
 
       initVpsStatus();
       if (Features.STATISTICS_ENABLED && tableStatisticsController != null) {
@@ -1068,6 +1106,10 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
       if (tablesSidebarPlaylistsController != null) {
         tablesSidebarPlaylistsController.setGames(Arrays.asList(game));
+      }
+
+      if (tableDataTabScriptOptionsController != null) {
+//        tableDataTabScriptOptionsController.setGame(isVpx ? game.getId() : -1);
       }
 
       setDialogDirty(false);
