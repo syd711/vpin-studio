@@ -27,18 +27,18 @@ public class VpxScriptOptionsService {
   /* VPX uses TableOption to store data (not TableOptions) */
   static final String INI_SECTION = "TableOption";
 
-  private static final Pattern OPTION_PATTERN = Pattern.compile(
-          "\\w+\\.Option\\s*\\(\\s*" +
-                  "\"([^\"]+)\"\\s*,\\s*" +
-                  "([+-]?[\\d]*\\.?[\\d]+(?:[eE][+-]?[\\d]+)?)\\s*,\\s*" +
-                  "([+-]?[\\d]*\\.?[\\d]+(?:[eE][+-]?[\\d]+)?)\\s*,\\s*" +
-                  "([+-]?[\\d]*\\.?[\\d]+(?:[eE][+-]?[\\d]+)?)\\s*,\\s*" +
-                  "([+-]?[\\d]*\\.?[\\d]+(?:[eE][+-]?[\\d]+)?)\\s*,\\s*" +
-                  "([01])" +
-                  "(?:\\s*,\\s*Array\\s*\\((.*?)\\))?" +
-                  "\\s*\\)",
-      Pattern.CASE_INSENSITIVE
-  );
+    private static final Pattern OPTION_PATTERN = Pattern.compile(
+            "^[^'\n]*\\w+\\.Option\\s*\\(\\s*" +
+                    "\"([^\"]+)\"\\s*,\\s*" +
+                    "([+-]?[\\d]*\\.?[\\d]+(?:[eE][+-]?[\\d]+)?)\\s*,\\s*" +
+                    "([+-]?[\\d]*\\.?[\\d]+(?:[eE][+-]?[\\d]+)?)\\s*,\\s*" +
+                    "([+-]?[\\d]*\\.?[\\d]+(?:[eE][+-]?[\\d]+)?)\\s*,\\s*" +
+                    "([+-]?[\\d]*\\.?[\\d]+(?:[eE][+-]?[\\d]+)?)\\s*,\\s*" +
+                    "([01])" +
+                    "(?:\\s*,\\s*Array\\s*\\((.*?)\\))?" +
+                    "\\s*\\)",
+            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE
+    );
 
   private static final Pattern ARRAY_STRING_PATTERN = Pattern.compile("\"([^\"]+)\"");
 
