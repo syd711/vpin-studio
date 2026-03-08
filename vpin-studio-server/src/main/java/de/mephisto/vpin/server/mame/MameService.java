@@ -80,6 +80,7 @@ public class MameService implements InitializingBean {
     }
 
     for (File folder : folders) {
+      LOG.info("validate Roms folder '{}'...", folder.getAbsolutePath());
       validateRoms(folder);
     }
     LOG.info("ROM validation took " + (System.currentTimeMillis() - l) + "ms.");

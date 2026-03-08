@@ -55,6 +55,17 @@ public class WinRegistry {
   }
 
   @NonNull
+  public static boolean hasCurrentUserValues(@NonNull String path) {
+    try {
+      return Advapi32Util.registryKeyExists(WinReg.HKEY_CURRENT_USER, path);
+    }
+    catch (Exception e) {
+      return false;
+    }
+  }
+
+
+  @NonNull
   public static Map<String, Object> getCurrentUserValues(@NonNull String path) {
     try {
       return Advapi32Util.registryGetValues(WinReg.HKEY_CURRENT_USER, path);

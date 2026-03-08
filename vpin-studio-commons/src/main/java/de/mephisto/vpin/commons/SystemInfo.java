@@ -193,13 +193,13 @@ public class SystemInfo {
   public Map<String, Object> getCurrentUserValues(String path) {
     if (OSUtil.isWindows()) {
       long start = System.currentTimeMillis();
-      Map<String, Object> currentUserValues = WinRegistry.getCurrentUserValues(path);
-      if (logRegistry) {
-        LOG.info("Current user value fetch for {} took {}ms", path, System.currentTimeMillis() - start);
+      if (WinRegistry.hasCurrentUserValues(path)) {
+        Map<String, Object> currentUserValues = WinRegistry.getCurrentUserValues(path);
+        if (logRegistry) {
+          LOG.info("Current user value fetch for {} took {}ms", path, System.currentTimeMillis() - start);
+        }
+        return currentUserValues;
       }
-
-      return currentUserValues;
-
     }
     return Collections.emptyMap();
   }
