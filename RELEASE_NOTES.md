@@ -6,13 +6,18 @@
 
 - **Table Backups/Deletions**: Fixed additional issues with the VPX music folder during table deletions and backups.
 - **Table Installation**: Fixed issue that upper case .ZIP files were rejected for uploading.
-- **Backglass Manager**: Added 'No Focus' setting on backglass server preferences and by table.
-- **Backglass Manager**: When a new backglass is setup, default all values from server settings.
-- **DMD Position Tool**: Restore type correctly when dmd is deactivated and use backglass scores.
-- **DMD Position Tool**: Store latest margin value as default and restore it on new usage.
+- **Backglass Manager**: 
+  - Added 'No Focus' setting on backglass server preferences and by table.
+  - When a new backglass is setup, default all values from server settings.
+- **DMD Position Tool**: 
+  - Restore type correctly when dmd is deactivated and use backglass scores.
+  - Store latest margin value as default and restore it on new usage.
 - **VPin Mania Score Dates**: Fixed issue that the creation date was used instead of the last modification date for the score submitting to VPin Mania.
 - **Studio Window Manager**: Fixed _gtk_window_resize: assertion 'height > 0' failed_ error (blind fix).
 - **VPin MAME Settings**: Added input field for the table volume. Note that this field is not support for all tables and the values vary for ROM/table.
+- **Card Template Designer**: 
+  - Fixed possible server error applying templates.
+  - Fixed issue that background images were shown unscaled (hopefully this time).
 - **Highscore Parsing**: Fixed table "Eye of the Tiger".
 - **WOVP Synchronization**: Fixed issue that if the game script validation fails, the old game id was not resetted. 
 - **WOVP Settings**: Added option to disable API keys/users. 

@@ -596,8 +596,8 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
         else {
           assetDeleteBtn.setDisable(false);
           assetViewBtn.setDisable(false);
-          assetMediaPlayer = WidgetFactory.createAssetMediaPlayer(client, defaultMediaItem, false, false);
-          mediaPane.setCenter(assetMediaPlayer);
+          AssetMediaPlayer sidebarPlayer = WidgetFactory.createAssetMediaPlayer(client, defaultMediaItem, false, false);
+          mediaPane.setCenter(sidebarPlayer);
         }
       });
     }
@@ -711,7 +711,9 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
             if (defaultMediaItem != null) {
               assetMediaPlayer = WidgetFactory.createAssetMediaPlayer(client, defaultMediaItem, true, false);
               assetMediaPlayer.addListener(this);
-              assetMediaPlayer.setMediaViewSize(cardPreview.getWidth(), cardPreview.getHeight());
+              if (cardPreview.getWidth() > 0 && cardPreview.getHeight() > 0) {
+                assetMediaPlayer.setMediaViewSize(cardPreview.getWidth(), cardPreview.getHeight());
+              }
               previewOverlayPanel.setCenter(assetMediaPlayer);
 
               //images do not have a media player
@@ -737,7 +739,9 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
           BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
       p.setBackground(new Background(myBI));
       assetMediaPlayer.setCenter(p);
-      assetMediaPlayer.setMediaViewSize(cardPreview.getWidth(), cardPreview.getHeight());
+      if (cardPreview.getWidth() > 0 && cardPreview.getHeight() > 0) {
+        assetMediaPlayer.setMediaViewSize(cardPreview.getWidth(), cardPreview.getHeight());
+      }
 
       previewOverlayPanel.setCenter(assetMediaPlayer);
       previewOverlayPanel.setVisible(true);

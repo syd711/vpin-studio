@@ -204,12 +204,14 @@ public class CardTemplatesService {
       game.setTemplateId(templateType, templateId);
       gameService.save(game);
 
-      Optional<TemplateMapping> oldTemplate = templateMappingRepository.findById(oldTemplateId);
-      if (oldTemplate.isPresent()) {
-        TemplateMapping oldTemplateMapping = oldTemplate.get();
-        CardTemplate template = oldTemplateMapping.getTemplate();
-        if (template.getName().contains(CardTemplate.CARD_TEMPLATE_PREFIX)) {
-          templateMappingRepository.delete(oldTemplateMapping);
+      if (oldTemplateId != null) {
+        Optional<TemplateMapping> oldTemplate = templateMappingRepository.findById(oldTemplateId);
+        if (oldTemplate.isPresent()) {
+          TemplateMapping oldTemplateMapping = oldTemplate.get();
+          CardTemplate template = oldTemplateMapping.getTemplate();
+          if (template.getName().contains(CardTemplate.CARD_TEMPLATE_PREFIX)) {
+            templateMappingRepository.delete(oldTemplateMapping);
+          }
         }
       }
       return true;
