@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
@@ -49,6 +48,18 @@ public class WOVPPreferencesController implements Initializable {
   private Button testBtn4;
   @FXML
   private Button testBtn5;
+
+
+  @FXML
+  private CheckBox enabledCheckbox1;
+  @FXML
+  private CheckBox enabledCheckbox2;
+  @FXML
+  private CheckBox enabledCheckbox3;
+  @FXML
+  private CheckBox enabledCheckbox4;
+  @FXML
+  private CheckBox enabledCheckbox5;
 
   @FXML
   private Button invalidateAllBtn;
@@ -241,6 +252,46 @@ public class WOVPPreferencesController implements Initializable {
           WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
         }
       }, 100);
+    });
+
+    enabledCheckbox1.setSelected(wovpSettings.isApiKey1Enabled());
+    apiKeyText1.setDisable(!wovpSettings.isApiKey1Enabled());
+    enabledCheckbox1.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      wovpSettings.setApiKey1Enabled(newValue);
+      apiKeyText1.setDisable(!newValue);
+      client.getPreferenceService().setJsonPreference(wovpSettings);
+    });
+
+    enabledCheckbox2.setSelected(wovpSettings.isApiKey2Enabled());
+    apiKeyText2.setDisable(!wovpSettings.isApiKey2Enabled());
+    enabledCheckbox2.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      wovpSettings.setApiKey2Enabled(newValue);
+      apiKeyText2.setDisable(!newValue);
+      client.getPreferenceService().setJsonPreference(wovpSettings);
+    });
+
+    enabledCheckbox3.setSelected(wovpSettings.isApiKey3Enabled());
+    apiKeyText3.setDisable(!wovpSettings.isApiKey3Enabled());
+    enabledCheckbox3.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      wovpSettings.setApiKey3Enabled(newValue);
+      apiKeyText3.setDisable(!newValue);
+      client.getPreferenceService().setJsonPreference(wovpSettings);
+    });
+
+    enabledCheckbox4.setSelected(wovpSettings.isApiKey4Enabled());
+    apiKeyText4.setDisable(!wovpSettings.isApiKey4Enabled());
+    enabledCheckbox4.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      wovpSettings.setApiKey4Enabled(newValue);
+      apiKeyText4.setDisable(!newValue);
+      client.getPreferenceService().setJsonPreference(wovpSettings);
+    });
+
+    enabledCheckbox5.setSelected(wovpSettings.isApiKey5Enabled());
+    apiKeyText5.setDisable(!wovpSettings.isApiKey5Enabled());
+    enabledCheckbox5.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      wovpSettings.setApiKey5Enabled(newValue);
+      apiKeyText5.setDisable(!newValue);
+      client.getPreferenceService().setJsonPreference(wovpSettings);
     });
 
 

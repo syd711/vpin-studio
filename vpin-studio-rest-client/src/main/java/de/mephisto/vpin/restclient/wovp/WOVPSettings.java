@@ -16,6 +16,13 @@ public class WOVPSettings extends JsonSettings {
   private String apiKey5;
   private boolean badgeEnabled;
   private boolean enabled;
+
+  private boolean apiKey1Enabled = true;
+  private boolean apiKey2Enabled = true;
+  private boolean apiKey3Enabled = true;
+  private boolean apiKey4Enabled = true;
+  private boolean apiKey5Enabled = true;
+
   private boolean taggingEnabled;
   private boolean resetHighscores = true;
   private boolean useScoreSubmitter = true;
@@ -46,11 +53,35 @@ public class WOVPSettings extends JsonSettings {
   }
 
   @JsonIgnore
+  public boolean isApiKeyEnabled(int activeUser) {
+    switch (activeUser) {
+      case 1: {
+        return isApiKey1Enabled();
+      }
+      case 2: {
+        return isApiKey2Enabled();
+      }
+      case 3: {
+        return isApiKey3Enabled();
+      }
+      case 4: {
+        return isApiKey4Enabled();
+      }
+      case 5: {
+        return isApiKey5Enabled();
+      }
+      default: {
+        throw new UnsupportedOperationException("No valid user id set.");
+      }
+    }
+  }
+
+  @JsonIgnore
   public String getAnyApiKey() {
     int index = 1;
     while (index <= 5) {
       String apiKey = getApiKey(index);
-      if (!StringUtils.isEmpty(apiKey)) {
+      if (!StringUtils.isEmpty(apiKey) && isApiKeyEnabled(index)) {
         return apiKey;
       }
       index++;
@@ -64,12 +95,52 @@ public class WOVPSettings extends JsonSettings {
     int index = 1;
     while (index <= 5) {
       String apiKey = getApiKey(index);
-      if (!StringUtils.isEmpty(apiKey)) {
+      if (!StringUtils.isEmpty(apiKey) && isApiKeyEnabled(index)) {
         result.add(apiKey);
       }
       index++;
     }
     return result;
+  }
+
+  public boolean isApiKey1Enabled() {
+    return apiKey1Enabled;
+  }
+
+  public void setApiKey1Enabled(boolean apiKey1Enabled) {
+    this.apiKey1Enabled = apiKey1Enabled;
+  }
+
+  public boolean isApiKey2Enabled() {
+    return apiKey2Enabled;
+  }
+
+  public void setApiKey2Enabled(boolean apiKey2Enabled) {
+    this.apiKey2Enabled = apiKey2Enabled;
+  }
+
+  public boolean isApiKey3Enabled() {
+    return apiKey3Enabled;
+  }
+
+  public void setApiKey3Enabled(boolean apiKey3Enabled) {
+    this.apiKey3Enabled = apiKey3Enabled;
+  }
+
+  public boolean isApiKey4Enabled() {
+    return apiKey4Enabled;
+  }
+
+  public void setApiKey4Enabled(boolean apiKey4Enabled) {
+    this.apiKey4Enabled = apiKey4Enabled;
+  }
+
+  public boolean isApiKey5Enabled() {
+    return apiKey5Enabled;
+  }
+
+  public void setApiKey5Enabled(boolean apiKey5Enabled) {
+    this.apiKey5Enabled = apiKey5Enabled;
   }
 
   public boolean isUseScoreSubmitter() {

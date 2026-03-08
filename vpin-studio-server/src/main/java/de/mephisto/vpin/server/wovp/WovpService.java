@@ -257,6 +257,7 @@ public class WovpService implements InitializingBean, PreferenceChangedListener,
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
     if (PreferenceNames.WOVP_SETTINGS.equals(propertyName)) {
       wovpSettings = preferencesService.getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
+      clearCache();
       new Thread(() -> {
         synchronize(false);
       }).start();
