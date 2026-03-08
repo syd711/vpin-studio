@@ -9,6 +9,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
@@ -140,6 +141,31 @@
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
+                        <VBox fx:id="romValueBox" spacing="3.0">
+                           <children>
+                              <Label styleClass="default-text" text="Volume:" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                 <children>
+                                    <Spinner fx:id="volumeSpinner" editable="true" />
+                                    <Label>
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" text="󰘥" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip prefWidth="300.0" text="The number is a scaled integer representing the ROM’s volume level. Common range (varies by ROM/system): roughly 0 – ~4000 and around 2000–2600 is common default. Note that this value is not supported by all tables!" wrapText="true" />
+                                       </tooltip>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
                         <Label styleClass="default-text" text="Sound Mode" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
