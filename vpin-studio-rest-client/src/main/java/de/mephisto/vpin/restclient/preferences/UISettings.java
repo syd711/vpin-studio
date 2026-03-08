@@ -31,6 +31,7 @@ public class UISettings extends JsonSettings {
 
   /** Whether DMD position are auto-saved */
   private boolean autoSaveDmdPosition = true;
+  private int defaultDmdMargin = 0;
 
   private String localFavsColor = "#ffcc00";
   private String globalFavsColor = "#cc6600";
@@ -514,6 +515,14 @@ public class UISettings extends JsonSettings {
 
   public void setAutoSaveDmdPosition(boolean autoSaveDmdPosition) {
     this.autoSaveDmdPosition = autoSaveDmdPosition;
+  }
+
+  public int getDefaultDmdMargin() {
+    return defaultDmdMargin;
+  }
+
+  public void setDefaultDmdMargin(int defaultDmdMargin) {
+    this.defaultDmdMargin = defaultDmdMargin;
   }
 
   public boolean isPropperAuthorField() {

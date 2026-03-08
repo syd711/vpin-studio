@@ -7,7 +7,7 @@ public class IniUtil {
     return safeGet(conf, key, 0);
   }
 
-  public static int safeGet(SubnodeConfiguration conf, String key, int defValue) {
+  public static Integer safeGet(SubnodeConfiguration conf, String key, Integer defValue) {
     if (conf != null && !conf.isEmpty() && conf.containsKey(key)) {
       try {
         double value = conf.getDouble(key);
@@ -20,7 +20,7 @@ public class IniUtil {
     return defValue;
   }
 
-  public static boolean safeGetBoolean(SubnodeConfiguration conf, String key, boolean defValue) {
+  public static Boolean safeGetBoolean(SubnodeConfiguration conf, String key, Boolean defValue) {
     return conf != null && !conf.isEmpty() && conf.containsKey(key) ? conf.getBoolean(key) : defValue;
   }
 }

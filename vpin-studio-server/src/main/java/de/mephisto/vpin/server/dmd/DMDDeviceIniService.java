@@ -222,6 +222,8 @@ public class DMDDeviceIniService {
         // as the virtualdmd is globally deactivated, no need to add a property
         conf.clearProperty("alphanumeric enabled");
       }
+
+      saveDmdDeviceIni(game.getEmulator(), iniConfiguration);
     }
   }
 
