@@ -13,7 +13,6 @@ import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.server.directb2s.BackglassService;
 import de.mephisto.vpin.server.frontend.VPinScreenService;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.mame.MameService;
@@ -22,9 +21,6 @@ import de.mephisto.vpin.server.system.DefaultPictureService;
 
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
-import org.apache.commons.io.ByteOrderMark;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +31,6 @@ import javax.imageio.ImageIO;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -128,10 +123,11 @@ public class DMDPositionService {
           SubnodeConfiguration virtualdmdConf = iniConfiguration.getSection("virtualdmd");
           SubnodeConfiguration alphaNumericConf = iniConfiguration.getSection("alphanumeric");
           SubnodeConfiguration conf = iniConfiguration.getSection(dmdinfo.getDmdStoreName());
-          boolean virtualDmdEnabled = safeGetBoolean(conf, "virtualdmd enabled", safeGetBoolean(virtualdmdConf, "enabled", false));
+          Boolean virtualDmdEnabled = safeGetBoolean(conf, "virtualdmd enabled", safeGetBoolean(virtualdmdConf, "enabled", null));
           boolean alphaNumericEnabled = safeGetBoolean(conf, "alphanumeric enabled", safeGetBoolean(alphaNumericConf, "enabled", false));
           type = alphaNumericEnabled ? DMDType.AlphaNumericDMD :
-              virtualDmdEnabled ? DMDType.VirtualDMD : DMDType.VpinMAMEDMD;
+              virtualDmdEnabled == null? DMDType.VpinMAMEDMD: 
+              virtualDmdEnabled ? DMDType.VirtualDMD : DMDType.NoDMD;
         }
 
         boolean hasRomInDmdDeviceIni = fillDMDInfoFromIni(dmdinfo, mainZone, alphaNumZones, iniConfiguration);
