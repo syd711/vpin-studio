@@ -7,8 +7,6 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import java.io.IOException;
 
 public interface VPRegHighscoreAdapter {
-  String BASE64_ZERO_SCORE = "AAA=";
-
   boolean isApplicable(DirectoryEntry gameFolder) throws IOException;
 
   ScoreParsingSummary readHighscore(DirectoryEntry gameFolder) throws IOException;
