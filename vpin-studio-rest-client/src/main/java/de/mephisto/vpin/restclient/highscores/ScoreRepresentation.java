@@ -17,6 +17,7 @@ public class ScoreRepresentation {
   private long score;
   private int gameId;
   private Date createdAt;
+  private String label;       // optional label for titled scores, high-scores, buy-in scores....
 
   public Date getCreatedAt() {
     return createdAt;
@@ -86,6 +87,14 @@ public class ScoreRepresentation {
     this.rawScore = rawScore;
   }
 
+  public String getLabel() {
+    return label;
+  }
+
+  public void setLabel(String label) {
+    this.label = label;
+  }
+
   @JsonIgnore
   public String getFormattedScore() {
     String formattedScore = ScoreFormatUtil.formatScore(this.getScore());
@@ -105,5 +114,4 @@ public class ScoreRepresentation {
     }
     return "#" + this.getPosition() + " " + name + "   " + getFormattedScore();
   }
-
 }
