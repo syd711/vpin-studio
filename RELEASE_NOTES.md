@@ -1,4 +1,8 @@
 ## Release Notes 4.7.3
+ 
+- **Table Options**: Added "Options" tab to the table data manager dialog. The new tab analysis the table script options so that you canfigure them into a .ini file for the table.
+   
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/table-options.png?raw=true" width="550" />
 
 - **Table Backups/Deletions**: Fixed additional issues with the VPX music folder during table deletions and backups.
 - **Table Installation**: Fixed issue that upper case .ZIP files were rejected for uploading.
