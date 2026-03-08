@@ -186,10 +186,10 @@ public class TableDataTabScriptOptionsController implements Initializable {
   private void applyOptions(List<TableScriptOption> options) {
     currentOptions = options;
     optionsVBox.getChildren().clear();
-
+/* Changed to not reference Table1. Fringe cases might have older tables with added options that don't use the Table1 format */
     if (options.isEmpty()) {
-      showPlaceholder("No Table1.Option declarations found in this table's script.\n"
-          + "Options become available when the script uses VPX 10.8 Table1.Option() calls.", false);
+      showPlaceholder("No Option declarations found in this table's script.\n"
+          + "Options become available when the script uses VPX 10.8 Option() calls.", false);
       resetButton.setDisable(true);
       return;
     }
