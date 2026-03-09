@@ -494,6 +494,10 @@ public class PinballXConnector extends BaseConnector {
   }
 
   private void createPlayfieldDisplay(INIConfiguration iniConfiguration, List<FrontendPlayerDisplay> players) {
+    if (GraphicsEnvironment.isHeadless()) {
+      return;
+    }
+
     SubnodeConfiguration display = iniConfiguration.getSection("Display");
     int monitor = Integer.parseInt(display.getString("Monitor", display.getString("monitor", "0")));
     GraphicsDevice[] gds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
