@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.system.ScoringDBMapping;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegFile;
+import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -26,16 +27,9 @@ public class FolderLookupService {
   @Autowired
   private SystemService systemService;
 
-  @NonNull
-  public File getAltSoundFolder(@NonNull Game game, String subfolder) {
-    GameEmulator emulator = game.getEmulator();
-    if (isPreferLegacyFileStructure(emulator)) {
-      File folder = new File(emulator.getMameFolder(), "altsound");
-      return new File(folder, subfolder);
-    }
+  @Autowired
+  private MameService mameService;
 
-    return new File(game.getGameFolder(), "altsound/" + subfolder);
-  }
 
   /*
   public Stream<File> getAltSoundFolders(List<GameEmulator> emulators) {
@@ -67,10 +61,21 @@ public class FolderLookupService {
   */
 
   @NonNull
+  public File getAltSoundFolder(@NonNull Game game, String subfolder) {
+    GameEmulator emulator = game.getEmulator();
+    if (isPreferLegacyFileStructure(emulator)) {
+      File folder = new File(emulator.getMameFolder(), "altsound");
+      return new File(folder, subfolder);
+    }
+
+    return new File(game.getGameFolder(), "altsound/" + subfolder);
+  }
+
+  @NonNull
   public File getAltColorFolder(@NonNull Game game, String subfolder) {
     GameEmulator emulator = game.getEmulator();
     if (isPreferLegacyFileStructure(emulator)) {
-      File folder = new File(emulator.getMameFolder(), "altcolor");
+      File folder = mameService.getAltColorFolder();
       return new File(folder, subfolder);
     }
 
@@ -81,7 +86,7 @@ public class FolderLookupService {
   public File getNvRamFolder(@NonNull Game game) {
     GameEmulator emulator = game.getEmulator();
     if (isPreferLegacyFileStructure(emulator)) {
-      return new File(emulator.getMameFolder(), "nvram");
+      return mameService.getNvRamFolder();
     }
 
     return new File(game.getGameFolder(), "pinmame/nvram/");
@@ -91,7 +96,7 @@ public class FolderLookupService {
   public File getRomFolder(@NonNull Game game) {
     GameEmulator emulator = game.getEmulator();
     if (isPreferLegacyFileStructure(emulator)) {
-      return new File(emulator.getMameFolder(), "roms");
+      return mameService.getRomsFolder();
     }
 
     return new File(game.getGameFolder(), "pinmame/roms/");
@@ -111,7 +116,7 @@ public class FolderLookupService {
   public File getCfgFolder(@NonNull Game game) {
     GameEmulator emulator = game.getEmulator();
     if (isPreferLegacyFileStructure(emulator)) {
-      return new File(emulator.getMameFolder(), "cfg");
+      return new File(mameService.getCfgFolder(), "cfg");
     }
 
     return new File(game.getGameFolder(), "pinmame/cfg/");

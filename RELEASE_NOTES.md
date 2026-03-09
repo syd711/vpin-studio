@@ -25,6 +25,7 @@
   - Fixed issue that the existing score of the player was not shown anymore. 
   - Added score reload after score submissions with a small delay which should show the updated score that was submitted.
   - Fixed layout glitches.  
+- **VPinMAME**: Fixed lookup of the correct ROM folder and nvrams folder if no defaults are configured. 
 
 
 ---
