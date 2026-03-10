@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.sqlite.jdbc4.JDBC4ResultSet;
 
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -2137,7 +2138,6 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     playlist.setDisplayOrder(displayOrder);
     playlist.setHideSysLists(rs.getInt("HideSysLists") == 1);
     playlist.setUseDefaults(rs.getInt("useDefaults") == 1);
-    playlist.setDofCommand(rs.getString("DOFStuff"));
     playlist.setName(name);
     playlist.setPlayListSQL(sql);
     playlist.setMenuColor(rs.getInt("MenuColor"));
@@ -2157,6 +2157,13 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
     if (playlist.isSqlPlayList() && StringUtils.isEmpty(sql)) {
       playlist.setSqlError("Missing SQL query");
+    }
+
+    try {
+      playlist.setDofCommand(rs.getString("DOFStuff"));
+    }
+    catch (SQLException e) {
+      //ignore
     }
 
     if (globalFavsPlaylist != null && favsPlaylist != null) {

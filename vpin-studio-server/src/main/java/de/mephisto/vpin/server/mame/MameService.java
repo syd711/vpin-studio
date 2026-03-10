@@ -366,11 +366,13 @@ public class MameService implements InitializingBean {
   private File romsFolder = null;
   private File cfgFolder = null;
 
+  @Nullable
   private File getVpinMameSetupFolder(String directoryType) {
     Map<String, Object> values = systemService.getCurrentUserValues(MameService.MAME_REG_FOLDER_KEY + MameOptions.GLOBALS_KEY);
     return values.containsKey(directoryType) ? new File((String) values.get(directoryType)) : null;
   }
 
+  @Nullable
   public File getNvRamFolder() {
     if (nvRamFolder == null) {
       nvRamFolder = getVpinMameSetupFolder(NVRAM_DIRECTORY);
@@ -379,6 +381,7 @@ public class MameService implements InitializingBean {
     return nvRamFolder;
   }
 
+  @Nullable
   public File getCfgFolder() {
     if (cfgFolder == null) {
       cfgFolder = getVpinMameSetupFolder(CFG_DIRECTORY);
@@ -391,6 +394,7 @@ public class MameService implements InitializingBean {
     return new File(getMameFolder(), "altcolor");
   }
 
+  @Nullable
   public File getRomsFolder() {
     if (romsFolder == null) {
       romsFolder = getVpinMameSetupFolder(ROMS_DIRECTORY);

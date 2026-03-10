@@ -86,7 +86,11 @@ public class FolderLookupService {
   public File getNvRamFolder(@NonNull Game game) {
     GameEmulator emulator = game.getEmulator();
     if (isPreferLegacyFileStructure(emulator)) {
-      return mameService.getNvRamFolder();
+      File folder = mameService.getNvRamFolder();
+      if (folder == null) {
+        folder = new File(emulator.getMameFolder(), "nvram");
+      }
+      return folder;
     }
 
     return new File(game.getGameFolder(), "pinmame/nvram/");
@@ -96,7 +100,11 @@ public class FolderLookupService {
   public File getRomFolder(@NonNull Game game) {
     GameEmulator emulator = game.getEmulator();
     if (isPreferLegacyFileStructure(emulator)) {
-      return mameService.getRomsFolder();
+      File folder = mameService.getRomsFolder();
+      if (folder == null) {
+        folder = new File(emulator.getMameFolder(), "roms");
+      }
+      return folder;
     }
 
     return new File(game.getGameFolder(), "pinmame/roms/");
@@ -116,7 +124,11 @@ public class FolderLookupService {
   public File getCfgFolder(@NonNull Game game) {
     GameEmulator emulator = game.getEmulator();
     if (isPreferLegacyFileStructure(emulator)) {
-      return new File(mameService.getCfgFolder(), "cfg");
+      File folder = mameService.getCfgFolder();
+      if (folder == null) {
+        folder = new File(emulator.getMameFolder(), "cfg");
+      }
+      return folder;
     }
 
     return new File(game.getGameFolder(), "pinmame/cfg/");
