@@ -19,12 +19,39 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="directb2sRoot" prefWidth="600.0" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarDirectB2SController">
+<BorderPane fx:id="directb2sRoot" prefWidth="600.0" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarDirectB2SController">
     <center>
       <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
               <VBox>
                <children>
+                  <VBox fx:id="versionSelectorPane" prefHeight="200.0" prefWidth="100.0" spacing="3.0">
+                     <children>
+                        <VBox fx:id="noneActiveInfo" styleClass="info-container">
+                           <children>
+                              <Label text="None of the backglasses is currently activated." textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                                 </padding>
+                              </Label>
+                           </children>
+                        </VBox>
+                        <Label text="Version" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="directB2SLabel" prefHeight="30.0" styleClass="default-text" text="--" />
+                        <ComboBox fx:id="directB2SCombo" prefHeight="30.0" />
+                        <CheckBox fx:id="activateCheckbox" mnemonicParsing="false" styleClass="default-text" text="Active backglass" />
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                     </VBox.margin>
+                  </VBox>
                   <VBox alignment="TOP_CENTER" maxHeight="310.0" minHeight="310.0" prefHeight="310.0">
                      <children>
                         <GridPane hgap="6.0">
