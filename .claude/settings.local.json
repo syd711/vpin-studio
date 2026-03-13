@@ -11,7 +11,8 @@
       "Bash(done)",
       "Bash(do sed -i 's/backupsCached/vpxMobileCached/g; s/getBackupsForSource/getVPXMobilesForSource/g; s/getBackupsForGame/getVPXMobilesForGame/g; s/getBackups/getVPXMobiles/g; s/getBackupSources/getVPXMobileSources/g; s/deleteBackupSource/deleteVPXMobileSource/g; s/deleteBackup/deleteVPXMobile/g; s/saveBackupSource/saveVPXMobileSource/g; s/invalidateBackupCache/invalidateVPXMobileCache/g; s/uploadBackupFuture/uploadVPXMobileFuture/g; s/uploadBackup/uploadVPXMobile/g; s/backupTable/vpxMobileTable/g; s/\\\\\"\"backups\\\\//\\\\\"\"vpxmobile\\\\//g; s/API + \"\"backups\"\"/API + \"\"vpxmobile\"\"/g' \"$f\")",
       "WebFetch(domain:github.com)",
-      "WebFetch(domain:api.github.com)"
+      "WebFetch(domain:api.github.com)",
+      "Bash(find /c/workspace/vpin-studio -name \"*validators*screens*preferences*\" -o -name \"*validators*vpx*preferences*\" 2>/dev/null | grep -E \"\\\\.\\(fxml|xml\\)$\")"
     ]
   }
 }

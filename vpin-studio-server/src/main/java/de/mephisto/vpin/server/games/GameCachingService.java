@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.dmd.DMDPackageTypes;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.ValidationStateFactory;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
@@ -146,7 +147,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     try {
       game = frontendService.getOriginalGame(gameId);
       if (game != null) {
-        applyGameDetails(game, true, true, null);
+        applyGameDetails(game, true, true, null, true);
         mameService.clearCacheFor(game.getRom());
         if (game.isVpxGame()) {
           highscoreService.scanScore(game, EventOrigin.USER_INITIATED);
@@ -179,7 +180,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
         return null;
       }
 
-      applyGameDetails(game, false, true, null);
+      applyGameDetails(game, false, true, null, true);
       List<Game> games = allGamesByEmulatorId.computeIfAbsent(game.getEmulatorId(), k -> new ArrayList<>());
       games.add(game);
     }
@@ -201,7 +202,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
   public List<Game> getGamesByRom(int emulatorId, @NonNull String rom) {
     List<Game> games = frontendService.getGamesByEmulator(emulatorId);
     for (Game game : games) {
-      applyGameDetails(game, false, false, null);
+      applyGameDetails(game, false, false, null, true);
     }
     return games.stream()
         .filter(g ->
@@ -268,10 +269,12 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
   private void fetchEmulatorGames(@NonNull GameEmulator emulator, @NonNull Map<Integer, GameDetails> mappedGameDetails) {
     long start = System.currentTimeMillis();
     List<Game> gamesByEmulator = frontendService.getGamesByEmulator(emulator.getId());
+    FilterSettings filterSettings = preferencesService.getJsonPreference(PreferenceNames.FILTER_SETTINGS, FilterSettings.class);
+    boolean findFirstIssueOnly = filterSettings.getIssueType() == -1;
     boolean killFrontend = false;
     for (Game game : gamesByEmulator) {
       GameDetails gameDetails = mappedGameDetails.get(game.getId());
-      boolean newGame = applyGameDetails(game, false, false, gameDetails);
+      boolean newGame = applyGameDetails(game, false, false, gameDetails, findFirstIssueOnly);
       if (newGame) {
         gameLifecycleService.notifyGameCreated(game.getId());
         highscoreService.scanScore(game, EventOrigin.INITIAL_SCAN);
@@ -292,7 +295,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     LOG.info("Game fetch for emulator " + emulator.getName() + " took " + duration + "ms / " + gamesByEmulator.size() + " games / " + avg + "ms avg.");
   }
 
-  private boolean applyGameDetails(@NonNull Game game, boolean forceScan, boolean forceScoreScan, @Nullable GameDetails gameDetails) {
+  private boolean applyGameDetails(@NonNull Game game, boolean forceScan, boolean forceScoreScan, @Nullable GameDetails gameDetails, boolean findFirstIssueOnly) {
     if (gameDetails == null) {
       gameDetails = gameDetailsRepositoryService.findByPupId(game.getId());
     }
@@ -470,14 +473,14 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     }
 
     //run validations at the end!!!
-    List<ValidationState> validate = gameValidationService.validate(game, true);
-    game.setHasMissingAssets(gameValidationService.hasMissingAssets(validate));
-    game.setHasOtherIssues(gameValidationService.hasOtherIssues(validate));
+    List<ValidationState> validationStates = gameValidationService.validate(game, findFirstIssueOnly);
+    game.setHasMissingAssets(gameValidationService.hasMissingAssets(validationStates));
+    game.setIssueTypes(validationStates.stream().map(ValidationState::getCode).collect(Collectors.toList()));
 
-    if (validate.isEmpty()) {
-      validate.add(ValidationStateFactory.empty());
+    if (validationStates.isEmpty()) {
+      validationStates.add(ValidationStateFactory.empty());
     }
-    game.setValidationState(validate.get(0));
+    game.setValidationState(validationStates.get(0));
 
     GameScoreValidation scoreValidation = gameValidationService.validateHighscoreStatus(game, gameDetails, tableDetails, frontendService.getFrontendType(), serverSettings);
     game.setValidScoreConfiguration(scoreValidation.isValidScoreConfiguration());

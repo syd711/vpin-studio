@@ -1,5 +1,9 @@
 package de.mephisto.vpin.restclient.validation;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public interface GameValidationCode {
   int CODE_NO_ROM = 1;
   int CODE_ROM_NOT_EXISTS = 3;
@@ -47,4 +51,56 @@ public interface GameValidationCode {
 
   int CODE_SCRIPT_CONTROLLER_STOP_MISSING = 90;
   int CODE_SCRIPT_FILES_MISSING = 91;
+
+  static String name(int code) {
+    switch (code) {
+      case CODE_NO_ROM: return "No ROM name resolved";
+      case CODE_ROM_NOT_EXISTS: return "ROM file does not exist";
+      case CODE_VPX_NOT_EXISTS: return "VPX file does not exist";
+      case CODE_NVOFFSET_MISMATCH: return "NVOffset mismatch";
+      case CODE_ROM_INVALID: return "ROM file is invalid";
+      case CODE_VR_DISABLED: return "VR room setting disabled";
+      case CODE_SCREEN_SIZE_ISSUE: return "Invalid screen size configuration";
+      case CODE_NO_DIRECTB2S_OR_PUPPACK: return "No directb2s or PUP pack found";
+      case CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED: return "PUP pack not enabled";
+      case CODE_NO_DMDFOLDER: return "DMD folder not found";
+      case CODE_BACKGLASS_AND_BACKGLASSES_DISABLED: return "Backglasses disabled";
+      case CODE_NO_AUDIO: return "Audio asset missing";
+      case CODE_NO_AUDIO_LAUNCH: return "Audio Launch asset missing";
+      case CODE_NO_APRON: return "Full DMD asset missing";
+      case CODE_NO_INFO: return "Info asset missing";
+      case CODE_NO_HELP: return "Help asset missing";
+      case CODE_NO_TOPPER: return "Topper asset missing";
+      case CODE_NO_BACKGLASS: return "Backglass asset missing";
+      case CODE_NO_DMD: return "DMD asset missing";
+      case CODE_NO_PLAYFIELD: return "Playfield asset missing";
+      case CODE_NO_LOADING: return "Loading asset missing";
+      case CODE_NO_OTHER2: return "Other2 asset missing";
+      case CODE_NO_WHEEL_IMAGE: return "Wheel image missing";
+      case CODE_NO_LOGO: return "Logo asset missing";
+      case CODE_ALT_SOUND_NOT_ENABLED: return "ALT sound not enabled";
+      case CODE_ALT_SOUND_FILE_MISSING: return "ALT sound file missing";
+      case CODE_FORCE_STEREO: return "Force Stereo not enabled";
+      case CODE_PUP_PACK_FILE_MISSING: return "PUP pack media file missing";
+      case CODE_VPS_MAPPING_MISSING: return "VPS mapping missing";
+      case CODE_VPS_ALTCOLOR_MISSING: return "VPS ALT color missing";
+      case CODE_VPS_ALTSOUND_MISSING: return "VPS ALT sound missing";
+      case CODE_VPS_PUPPACK_MISSING: return "VPS PUP pack missing";
+      case CODE_ALT_COLOR_COLORIZE_DMD_ENABLED: return "Colorize DMD not enabled";
+      case CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED: return "External DMD not enabled";
+      case CODE_ALT_COLOR_FILES_MISSING: return "ALT color files missing";
+      case CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING: return "DMD device files missing";
+      case CODE_SCRIPT_CONTROLLER_STOP_MISSING: return "Controller.stop call missing";
+      case CODE_SCRIPT_FILES_MISSING: return "Included script missing";
+      default: return "Unknown validation code (" + code + ")";
+    }
+  }
+
+  static List<Integer> values() {
+    return Arrays.stream(GameValidationCode.class.getFields())
+        .filter(f -> f.getType() == int.class)
+        .map(f -> { try { return f.getInt(null); } catch (Exception e) { return -1; } })
+        .filter(v -> v >= 0)
+        .collect(Collectors.toList());
+  }
 }

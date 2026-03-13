@@ -51,7 +51,7 @@ public class Game {
 
   private ValidationState validationState;
   private boolean hasMissingAssets;
-  private boolean hasOtherIssues;
+  private List<Integer> issueTypes = new ArrayList<>();
   private boolean validScoreConfiguration;
 
   private List<Integer> ignoredValidations = new ArrayList<>();
@@ -685,12 +685,12 @@ public class Game {
     this.hasMissingAssets = hasMissingAssets;
   }
 
-  public boolean isHasOtherIssues() {
-    return hasOtherIssues;
+  public List<Integer> getIssueTypes() {
+    return issueTypes;
   }
 
-  public void setHasOtherIssues(boolean hasOtherIssues) {
-    this.hasOtherIssues = hasOtherIssues;
+  public void setIssueTypes(List<Integer> issueTypes) {
+    this.issueTypes = issueTypes;
   }
 
   public boolean isValidScoreConfiguration() {

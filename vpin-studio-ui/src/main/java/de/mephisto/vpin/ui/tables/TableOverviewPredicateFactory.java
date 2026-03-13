@@ -130,7 +130,7 @@ public class TableOverviewPredicateFactory {
         }
 
         if (vpxGame) {
-          if (filterSettings.isOtherIssues() && !game.isHasOtherIssues()) {
+          if (filterSettings.getIssueType() != -1 && !game.getIssueTypes().contains(filterSettings.getIssueType())) {
             return false;
           }
 

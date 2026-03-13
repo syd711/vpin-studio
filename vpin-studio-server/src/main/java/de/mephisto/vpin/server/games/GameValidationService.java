@@ -707,33 +707,6 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     return false;
   }
 
-  public boolean hasOtherIssues(List<ValidationState> states) {
-    List<Integer> codes = states.stream().map(s -> s.getCode()).collect(Collectors.toList());
-    if (codes.isEmpty()) {
-      return false;
-    }
-
-    if (codes.contains(CODE_NO_DIRECTB2S_OR_PUPPACK)
-        || codes.contains(CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED)
-        || codes.contains(CODE_BACKGLASS_AND_BACKGLASSES_DISABLED)
-        || codes.contains(CODE_NO_ROM)
-        || codes.contains(CODE_ROM_NOT_EXISTS)
-        || codes.contains(CODE_VPX_NOT_EXISTS)
-        || codes.contains(CODE_ALT_SOUND_NOT_ENABLED)
-        || codes.contains(CODE_ALT_SOUND_FILE_MISSING)
-        || codes.contains(CODE_FORCE_STEREO)
-        || codes.contains(CODE_PUP_PACK_FILE_MISSING)
-        || codes.contains(CODE_ALT_COLOR_COLORIZE_DMD_ENABLED)
-        || codes.contains(CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED)
-        || codes.contains(CODE_ALT_COLOR_FILES_MISSING)
-        || codes.contains(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING)
-        || codes.contains(CODE_SCRIPT_FILES_MISSING)
-    ) {
-      return true;
-    }
-    return false;
-  }
-
   public GameScoreValidation validateHighscoreStatus(Game game, GameDetails gameDetails, TableDetails tableDetails, FrontendType frontendType, ServerSettings serverSettings) {
     GameScoreValidation validation = new GameScoreValidation();
     validation.setValidScoreConfiguration(true);
