@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.JFXFuture;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.CommentType;
@@ -22,6 +23,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.Pane;
@@ -33,6 +35,7 @@ import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.Studio.stage;
 
 public class TableFilterController extends BaseFilterController<GameRepresentation, GameRepresentationModel> implements Initializable, PreferenceChangeListener {
 
@@ -230,6 +233,18 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
       }
       else {
         filterSettings.setIssueType(-1);
+      }
+
+      if (oldValue == null && newValue != null && tableController instanceof TableOverviewController) {
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Reload all tables?",
+            "Filtering by issue type requires all tables to be loaded.", "Do you want to reload now?");
+        if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+          ((TableOverviewController) tableController).doReload();
+        }
+        else {
+          issueTypesCombo.setValue(null);
+          return;
+        }
       }
 
       applyFilters();
