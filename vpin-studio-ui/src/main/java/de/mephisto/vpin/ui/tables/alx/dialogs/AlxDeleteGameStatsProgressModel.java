@@ -8,6 +8,7 @@ import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -16,7 +17,7 @@ import java.util.List;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class AlxDeleteGameStatsProgressModel extends ProgressModel<GameRepresentation> {
-  private final static Logger LOG = LoggerFactory.getLogger(AlxDeleteGameStatsProgressModel.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final Iterator<GameRepresentation> iterator;
   private final GameRepresentation gameRepresentation;

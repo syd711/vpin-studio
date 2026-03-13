@@ -36,7 +36,7 @@ public class VPinMAMEComponent implements ComponentFacade {
 
   @Override
   public List<GithubRelease> loadReleases() throws IOException {
-    return Collections.singletonList(GithubReleaseFactory.loadRelease(getReleasesUrl(), Arrays.asList("win-", "VPinMAME"), Arrays.asList("linux", "osx")));
+    return GithubReleaseFactory.loadReleases(getReleasesUrl(), Arrays.asList("win-", "VPinMAME"), Arrays.asList("linux", "osx"));
   }
 
   @NonNull
@@ -61,7 +61,7 @@ public class VPinMAMEComponent implements ComponentFacade {
   @NonNull
   @Override
   public List<String> getExcludedFilenames() {
-    return Arrays.asList("VPMAlias.txt");
+    return Arrays.asList("VPMAlias.txt", "DMDDevice.ini");
   }
 
   @Override

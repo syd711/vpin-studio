@@ -56,9 +56,14 @@ public class VPinStudioClientService {
   }
 
   public static void finalizeUpload(HttpEntity<MultiValueMap<String, Object>> upload) {
-    Map<String, List<Object>> data = upload.getBody();
-    List<?> fields = data.get("file");
-    ProgressableFileSystemResource resource = (ProgressableFileSystemResource) fields.get(0);
-    resource.close();
+    try {
+      Map<String, List<Object>> data = upload.getBody();
+      List<?> fields = data.get("file");
+      ProgressableFileSystemResource resource = (ProgressableFileSystemResource) fields.get(0);
+      resource.close();
+    }
+    catch (Exception e) {
+      //ignore
+    }
   }
 }

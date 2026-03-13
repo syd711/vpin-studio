@@ -6,14 +6,13 @@ import de.mephisto.vpin.commons.fx.apng.ApngImageLoaderFactory;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.commons.fx.pausemenu.model.FrontendScreenAsset;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
-import de.mephisto.vpin.restclient.OverlayClient;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
+import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.preferences.OverlaySettings;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
-import de.mephisto.vpin.restclient.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Application;
@@ -28,9 +27,11 @@ import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -47,14 +48,14 @@ import java.util.concurrent.CountDownLatch;
  * -x
  */
 public class ServerFX extends Application {
-  private final static org.slf4j.Logger LOG = LoggerFactory.getLogger(ServerFX.class);
+  private final static org.slf4j.Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static final CountDownLatch latch = new CountDownLatch(1);
   public static int TO_FRONT_DELAY = 2500;
 
   private BorderPane root;
 
-  public static OverlayClient client;
+  public static VPinStudioClient client;
   public static VPinManiaClient maniaClient;
   private OverlayController overlayController;
 
@@ -98,7 +99,7 @@ public class ServerFX extends Application {
       }
     }
     catch (InterruptedException e) {
-      LOG.warn("Overlay wating failed: {}", e.getMessage());
+      LOG.warn("Overlay waiting failed: {}", e.getMessage());
     }
   }
 
@@ -183,7 +184,7 @@ public class ServerFX extends Application {
     String resource = "uhd";
 
     OverlaySettings overlaySettings = ServerFX.client.getJsonPreference(PreferenceNames.OVERLAY_SETTINGS, OverlaySettings.class);
-    MonitorInfo screen = ServerFX.client.getScreenInfo(overlaySettings.getOverlayScreenId());
+    MonitorInfo screen = ServerFX.client.getSystemService().getScreenInfo(overlaySettings.getOverlayScreenId());
     double width = screen.getWidth();
     if (screen.getWidth() < screen.getHeight()) {
       width = screen.getHeight();
@@ -212,7 +213,7 @@ public class ServerFX extends Application {
 
     BorderPane root = new BorderPane();
     OverlaySettings overlaySettings = ServerFX.client.getJsonPreference(PreferenceNames.OVERLAY_SETTINGS, OverlaySettings.class);
-    MonitorInfo screen = ServerFX.client.getScreenInfo(overlaySettings.getOverlayScreenId());
+    MonitorInfo screen = ServerFX.client.getSystemService().getScreenInfo(overlaySettings.getOverlayScreenId());
     final Scene scene = new Scene(root, screen.getWidth(), screen.getHeight(), true, SceneAntialiasing.BALANCED);
     scene.setCursor(Cursor.NONE);
 
@@ -230,7 +231,8 @@ public class ServerFX extends Application {
       String resource = "scene-maintenance.fxml";
       FXMLLoader loader = new FXMLLoader(MaintenanceController.class.getResource(resource));
       Parent widgetRoot = loader.load();
-      /*MaintenanceController controller =*/ loader.getController();
+      /*MaintenanceController controller =*/
+      loader.getController();
       root.setCenter(widgetRoot);
     }
     catch (IOException e) {
@@ -245,7 +247,7 @@ public class ServerFX extends Application {
 
   public void togglePauseMenu() {
     Platform.runLater(() -> {
-      PauseMenu.togglePauseMenu();
+      PauseMenu.getInstance().togglePauseMenu();
     });
   }
 
@@ -256,7 +258,7 @@ public class ServerFX extends Application {
     Platform.runLater(() -> {
       LOG.info("Received pause menu test event for game id " + gameId);
 
-      PauseMenu.togglePauseMenu(gameStatus, true);
+      PauseMenu.getInstance().togglePauseMenu(gameStatus, true);
     });
 
     try {
@@ -267,14 +269,16 @@ public class ServerFX extends Application {
     }
 
     Platform.runLater(() -> {
-      PauseMenu.togglePauseMenu(gameStatus, true);
+      PauseMenu.getInstance().togglePauseMenu(gameStatus, true);
     });
   }
 
   public void exitPauseMenu() {
-    Platform.runLater(() -> {
-      PauseMenu.exitPauseMenu();
-    });
+    if (!GraphicsEnvironment.isHeadless()) {
+      Platform.runLater(() -> {
+        PauseMenu.getInstance().exitPauseMenu();
+      });
+    }
   }
 
   public void showHighscoreCard(@NonNull CardSettings cardSettings, @Nullable FrontendPlayerDisplay display, String mimeType, File file) {
@@ -299,7 +303,7 @@ public class ServerFX extends Application {
         asset.setRotation(rotation);
         asset.setDuration(notificationTime);
         asset.setMimeType(mimeType);
-        asset.setInputStream(new FileInputStream(file));
+        asset.setUrl(file.toURI().toURL());
 
         FrontendScreensManager.getInstance().showScreen(asset);
       }
@@ -319,21 +323,30 @@ public class ServerFX extends Application {
     this.overlayStage = primaryStage;
     Platform.setImplicitExit(false);
 
-    root = new BorderPane();
-    MonitorInfo screen = MonitorInfoUtil.getPrimaryMonitor();
-    final Scene scene = new Scene(root, screen.getWidth(), screen.getHeight(), true, SceneAntialiasing.BALANCED);
-    scene.setCursor(Cursor.NONE);
+    try {
+      root = new BorderPane();
+      MonitorInfo screen = MonitorInfoUtil.getPrimaryMonitor();
+      final Scene scene = new Scene(root, screen.getWidth(), screen.getHeight(), true, SceneAntialiasing.BALANCED);
+      scene.setCursor(Cursor.NONE);
 
-    overlayStage.setX(screen.getX());
-    overlayStage.setY(screen.getY());
+      overlayStage.setX(screen.getX());
+      overlayStage.setY(screen.getY());
 
-    overlayStage.setScene(scene);
-    overlayStage.setFullScreenExitHint("");
-    overlayStage.setAlwaysOnTop(true);
-    overlayStage.setFullScreen(true);
-    overlayStage.getScene().getStylesheets().add(ServerFX.class.getResource("stylesheet.css").toExternalForm());
+      overlayStage.setScene(scene);
+      overlayStage.setFullScreenExitHint("");
+      overlayStage.setAlwaysOnTop(true);
+      overlayStage.setFullScreen(true);
+      overlayStage.getScene().getStylesheets().add(ServerFX.class.getResource("stylesheet.css").toExternalForm());
 
-    PauseMenu.loadPauseMenu();
+      PauseMenu.getInstance().loadPauseMenu();
+    }
+    catch (Exception e) {
+      LOG.error("ServerFX startup error: {}", e.getMessage());
+    }
     latch.countDown();
+  }
+
+  public void shutdown() {
+    Platform.exit();
   }
 }

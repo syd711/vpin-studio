@@ -67,7 +67,6 @@ public class SuperHacTableAssetAdapter extends DefaultTableAssetAdapter  {
         }
         break;
       }
-      case GameInfo:
       case GameHelp: {
         String url = createUrl(game.getExtTableId(), "fss");
         boolean check = HttpUtils.check(url);
@@ -94,6 +93,14 @@ public class SuperHacTableAssetAdapter extends DefaultTableAssetAdapter  {
         boolean check = HttpUtils.check(url);
         if (check) {
           result.add(toTableAsset(source, EmulatorType.valueOf(emulatorName), screenSegment, url, "wheel"));
+        }
+        break;
+      }
+      case GameInfo: {
+        String url = createBaseUrl(game.getExtTableId(), "flyer");
+        boolean check = HttpUtils.check(url);
+        if (check) {
+          result.add(toTableAsset(source, EmulatorType.valueOf(emulatorName), screenSegment, url, "flyer"));
         }
         break;
       }

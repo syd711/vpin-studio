@@ -40,7 +40,7 @@ public class JobQueue implements InitializingBean {
       else {
         descriptor.getJob().execute(descriptor);
         descriptor.setProgress(1);
-        LOG.info("Finished {}, queue size is {}", descriptor, queue.size());
+        LOG.info("Finished {}, queue size is {} and will be cleared on restart or menu cleanup.", descriptor, queue.size());
       }
       return descriptor;
     };

@@ -30,6 +30,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +41,7 @@ import static de.mephisto.vpin.commons.utils.WidgetFactory.ERROR_STYLE;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class AltSound2EditorController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(AltSound2EditorController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private GameRepresentation game;
   private AltSound altSound;
@@ -258,7 +259,7 @@ public class AltSound2EditorController implements Initializable {
             btn.setOnAction(event -> {
               fontIcon.setIconLiteral("bi-stop");
 
-              final String fileUrl = client.getAltSoundService().getAudioUrl(altSound, game.getEmulatorId(), item.filename.get());
+              final String fileUrl = client.getAltSoundService().getAudioUrl(altSound, game.getId(), item.filename.get());
               String url = client.getURL(fileUrl);
 
               Media media = new Media(url);

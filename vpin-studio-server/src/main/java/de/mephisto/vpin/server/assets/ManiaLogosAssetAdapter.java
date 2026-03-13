@@ -49,7 +49,7 @@ public class ManiaLogosAssetAdapter extends DefaultTableAssetAdapter {
       return Collections.emptyList();
     }
 
-    if (game == null || StringUtils.isEmpty(game.getExtTableId())) {
+    if (game != null && StringUtils.isEmpty(game.getExtTableId())) {
       return Collections.emptyList();
     }
 
@@ -69,7 +69,7 @@ public class ManiaLogosAssetAdapter extends DefaultTableAssetAdapter {
     }
 
     for (String logo : logos) {
-      if (logo.toLowerCase().startsWith(term.toLowerCase())) {
+      if (logo.toLowerCase().contains(term.toLowerCase())) {
         String url = createUrl(logo);
         result.add(toTableAsset(source, EmulatorType.valueOf(emulatorName), screenSegment, url, logo));
       }

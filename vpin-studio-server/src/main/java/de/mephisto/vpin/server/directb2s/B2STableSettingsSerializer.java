@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -31,11 +32,11 @@ public class B2STableSettingsSerializer {
 
   private final static List<String> tableEntries = Arrays.asList("HideGrill", "HideB2SDMD", "HideB2SBackglass", "HideDMD",
       "LampsSkipFrames", "SolenoidsSkipFrames", "GIStringsSkipFrames", "LEDsSkipFrames", "DualMode",
-      "UsedLEDType", "IsGlowBulbOn", "GlowIndex", "StartAsEXE", "StartBackground", "FormToFront", "FormToBack", "Animations");
+      "UsedLEDType", "IsGlowBulbOn", "GlowIndex", "StartAsEXE", "StartBackground", "FormToFront", "FormToBack", "FormNoFocus", "Animations");
 
   private final static List<String> serverEntries = Arrays.asList(
       "ArePluginsOn", "DefaultStartMode", "ShowStartupError", "DisableFuzzyMatching",
-      "HideGrill", "HideB2SDMD", "HideDMD", "FormToFront", "FormToBack", "UsedLEDType");
+      "HideGrill", "HideB2SDMD", "HideDMD", "FormToFront", "FormToBack", "FormNoFocus", "UsedLEDType");
 
   private final static List<String> skippedWhenMinusOne = Arrays.asList("UsedLEDType");
 
@@ -125,18 +126,20 @@ public class B2STableSettingsSerializer {
     }
 
     if (rootNodeByRom.getNodeType() == Node.ELEMENT_NODE) {
-      Node insertionPoint = findFirstChildWithChildNodes(rootNodeByRom);
+      Node insertionPoint = null;
       for (String tableEntry : tableEntries) {
         String newValue = getter.getValue(settings, tableEntry);
         Node settingsNode = findChild(rootNodeByRom, tableEntry);
         if (!StringUtils.isEmpty(newValue) && !(newValue.equals("-1") && skippedWhenMinusOne.contains(tableEntry))) {
           if (settingsNode == null) {
             settingsNode = doc.createElement(tableEntry);
-            rootNodeByRom.insertBefore(settingsNode, insertionPoint);
+            Node n = insertionPoint != null ? findNextSibling(insertionPoint) : findFirstChildWithChildNodes(rootNodeByRom);
+            rootNodeByRom.insertBefore(settingsNode, n);
           }
           if (settingsNode.getNodeType() == Node.ELEMENT_NODE) {
             settingsNode.setTextContent(newValue);
           }
+          insertionPoint = settingsNode;
         }
         else {
           if (settingsNode != null) {
@@ -158,12 +161,26 @@ public class B2STableSettingsSerializer {
     return null;
   }
 
+  private Node findNextSibling(Node node) {
+    Node sibling = node;
+    do {
+      sibling = sibling.getNextSibling();
+    }
+    while (!(sibling instanceof Element) && sibling != null);
+    return sibling;
+  }
+
   private Node findFirstChildWithChildNodes(Node node) {
     NodeList childNodes = node.getChildNodes();
     for (int i = 0; i < childNodes.getLength(); i++) {
       Node settingsNode = childNodes.item(i);
       if (settingsNode.hasChildNodes()) {
-        return settingsNode;
+        NodeList subchildNodes = settingsNode.getChildNodes();
+        for (int j = 0; j < subchildNodes.getLength(); j++) {
+          if (subchildNodes.item(i) instanceof Element) {
+            return settingsNode;
+          }
+        }
       }
     }
     return null;
@@ -306,6 +323,9 @@ public class B2STableSettingsSerializer {
       }
       case "FormToBack": {
         return intValue(settings.isFormToBack());
+      }
+      case "FormNoFocus": {
+        return intValue(settings.isFormNoFocus());
       }
       case "Animations": {
         return "";

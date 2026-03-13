@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.NirCmd;
 import de.mephisto.vpin.commons.utils.Updater;
+import de.mephisto.vpin.commons.utils.WindowsVolumeControl;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.system.*;
@@ -40,6 +41,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.zip.ZipOutputStream;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
@@ -111,7 +113,9 @@ public class SystemResource {
   public String logs() {
     try {
       Path filePath = Path.of("./vpin-studio-server.log");
-      return Files.readString(filePath);
+      List<String> lines = Files.readAllLines(filePath);
+      List<String> filtered = lines.stream().filter(l -> l.trim().startsWith("at ") || l.trim().contains("ERROR")).collect(Collectors.toList());
+      return String.join("\n", filtered);
     }
     catch (IOException e) {
       LOG.error("Error reading log: " + e.getMessage(), e);
@@ -183,8 +187,6 @@ public class SystemResource {
   @GetMapping("")
   public SystemId system() {
     SystemId id = new SystemId();
-    id.setSystemId(SystemUtil.getUniqueSystemId());
-
     String name = (String) preferencesService.getPreferenceValue(PreferenceNames.SYSTEM_NAME);
     if (StringUtils.isEmpty(name)) {
       name = UIDefaults.VPIN_NAME;
@@ -200,8 +202,6 @@ public class SystemResource {
     SystemSummary info = new SystemSummary();
     try {
       info.setScreenInfos(systemService.getMonitorInfos());
-      info.setBackupType(systemService.getBackupType());
-      info.setSystemId(SystemUtil.getUniqueSystemId());
     }
     catch (Exception e) {
       LOG.error("Failed to read system info: " + e.getMessage());
@@ -213,6 +213,11 @@ public class SystemResource {
   public boolean muteSystem(@PathVariable("mute") int mute) {
     NirCmd.muteSystem(mute == 1);
     return true;
+  }
+
+  @GetMapping("/muted")
+  public boolean isMuted() {
+    return WindowsVolumeControl.isMuted();
   }
 
 
@@ -316,8 +321,10 @@ public class SystemResource {
   public boolean installServerUpdate() throws IOException {
     File serverUpdate = new File("./VPin-Studio-Server.zip");
     if (!serverUpdate.exists()) {
+      LOG.info("No {} file found, skipping update installation,", Updater.SERVER_ZIP);
       return false;
     }
+    LOG.info("{} file found, installing update.", Updater.SERVER_ZIP);
     Updater.installServerUpdate();
     new Thread(() -> {
       try {

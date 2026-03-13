@@ -20,14 +20,40 @@ public class DirectB2STableSettings implements DirectB2sConstants {
   private int startAsEXE = 2; // standard
   private int startBackground = 2; // standard
   private boolean disableFuzzyMatching = true;
-  private int dualMode = 1; //0 NotSet, 1 Authentic, 2 Fantasy
+  private int dualMode = 0; //0 NotSet, 1 Authentic, 2 Fantasy
 
   /**
+   * Default position is FORM_TO_FRONT when nothing is set
    * 0 => FormToBack = 1
    * 1 => FormToFront = 1
    * 2 (Standard) FormToBack = 0 & FormToFront = 0 
    */
-  private int formToPosition = FORM_TO_STANDARD;
+  private int formToPosition = FORM_TO_FRONT;
+
+  private boolean formNoFocus;
+
+  public DirectB2STableSettings() {
+  }
+
+  public DirectB2STableSettings(DirectB2STableSettings that) {
+    this.hideGrill = that.hideGrill;
+    this.hideB2SDMD = that.hideB2SDMD;
+    this.hideB2SBackglass = that.hideB2SBackglass;
+    this.hideDMD = that.hideDMD;
+    this.lampsSkipFrames = that.lampsSkipFrames;
+    this.solenoidsSkipFrames = that.solenoidsSkipFrames;
+    this.giStringsSkipFrames = that.giStringsSkipFrames;
+    this.ledsSkipFrames = that.ledsSkipFrames;
+    this.usedLEDType = that.usedLEDType;
+    this.isGlowBulbOn = that.isGlowBulbOn;
+    this.glowIndex = that.glowIndex;
+    this.startAsEXE = that.startAsEXE;
+    this.startBackground = that.startBackground;
+    this.disableFuzzyMatching = that.disableFuzzyMatching;
+    this.dualMode = that.dualMode;
+    this.formToPosition = that.formToPosition;
+    this.formNoFocus = that.formNoFocus;
+  }
 
   public boolean isHideB2SBackglass() {
     return hideB2SBackglass;
@@ -161,6 +187,14 @@ public class DirectB2STableSettings implements DirectB2sConstants {
   }
   public void setFormToPosition(int formToPosition) {
     this.formToPosition = formToPosition;
+  }
+  
+  public boolean isFormNoFocus() {
+    return formNoFocus;
+  }
+
+  public void setFormNoFocus(boolean formNoFocus) {
+    this.formNoFocus = formNoFocus;
   }
 
   public boolean isHideGrill() {

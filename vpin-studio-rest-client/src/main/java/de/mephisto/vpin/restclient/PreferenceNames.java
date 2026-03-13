@@ -10,11 +10,8 @@ import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.mania.ManiaSettings;
 import de.mephisto.vpin.restclient.monitor.MonitoringSettings;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
-import de.mephisto.vpin.restclient.preferences.BackupSettings;
-import de.mephisto.vpin.restclient.preferences.OverlaySettings;
-import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
-import de.mephisto.vpin.restclient.preferences.ServerSettings;
-import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.preferences.*;
+import de.mephisto.vpin.restclient.recorder.RecorderFilterSettings;
 import de.mephisto.vpin.restclient.recorder.RecorderSettings;
 import de.mephisto.vpin.restclient.tagging.TaggingSettings;
 import de.mephisto.vpin.restclient.validation.IgnoredValidationSettings;
@@ -24,6 +21,7 @@ import de.mephisto.vpin.restclient.vpf.VPFSettings;
 import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.restclient.vpu.VPUSettings;
 import de.mephisto.vpin.restclient.webhooks.WebhookSettings;
+import de.mephisto.vpin.restclient.wovp.WOVPSettings;
 
 import javax.swing.text.html.HTML;
 
@@ -51,6 +49,7 @@ public interface PreferenceNames {
   String SERVER_SETTINGS = "serverSettings";
   String NOTIFICATION_SETTINGS = "notificationSettings";
   String FILTER_SETTINGS = "filterSettings";
+  String RECORDINGS_FILTER_SETTINGS = "recordingsFilterSettings";
   String MONITORING_SETTINGS = "monitoringSettings";
 
   String PINBALLX_SETTINGS = "pinballXSettings";
@@ -70,7 +69,7 @@ public interface PreferenceNames {
   String DISCORD_DYNAMIC_SUBSCRIPTIONS = "discordDynamicSubscriptions";
   String DISCORD_BOT_ALLOW_LIST = "discordBotAllowList";
   String DISCORD_BOT_COMMANDS_ENABLED = "discordBotCommandsEnabled";
-  String MANIA_SETTINGS = "tournamentSettings";
+  String MANIA_SETTINGS = "maniaSettings";
   String TAGGING_SETTINGS = "taggingSettings";
 
   String RECORDER_SETTINGS = "recorderSettings";
@@ -86,6 +85,8 @@ public interface PreferenceNames {
   String PINEMHI_AUTOSTART_ENABLED = "pinemhiAutoStartEnabled";
 
   String BACKUP_SETTINGS = "backupSettings";
+  String VPXZ_SETTINGS = "vpxzSettings";
+  String WOVP_SETTINGS = "wovpSettings";
 
   static Class<? extends JsonSettings> getClassFromKey(String key) {
     switch (key) {
@@ -128,6 +129,9 @@ public interface PreferenceNames {
       case PreferenceNames.FILTER_SETTINGS: {
         return FilterSettings.class;
       }
+      case PreferenceNames.RECORDINGS_FILTER_SETTINGS: {
+        return RecorderFilterSettings.class;
+      }
       case PreferenceNames.VPU_SETTINGS: {
         return VPUSettings.class;
       }
@@ -163,6 +167,12 @@ public interface PreferenceNames {
       }
       case PreferenceNames.TAGGING_SETTINGS: {
         return TaggingSettings.class;
+      }
+      case PreferenceNames.WOVP_SETTINGS: {
+        return WOVPSettings.class;
+      }
+      case PreferenceNames.VPXZ_SETTINGS: {
+        return VPXZSettings.class;
       }
       default: {
         throw new UnsupportedOperationException("JSON format not supported for preference '" + key + "'");

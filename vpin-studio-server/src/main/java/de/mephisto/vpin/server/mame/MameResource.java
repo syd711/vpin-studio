@@ -19,12 +19,13 @@ import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 
 @RestController
 @RequestMapping(API_SEGMENT + "mame")
 public class MameResource {
-  private final static Logger LOG = LoggerFactory.getLogger(MameResource.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @Autowired
   private GameService gameService;

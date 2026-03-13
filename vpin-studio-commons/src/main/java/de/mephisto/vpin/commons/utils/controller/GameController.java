@@ -4,17 +4,20 @@ import net.java.games.input.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class GameController {
-  private final static Logger LOG = LoggerFactory.getLogger(GameController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private static GameController INSTANCE;
 
   private final List<GameControllerInputListener> listeners = new ArrayList<>();
+
+  private boolean running = true;
 
   private GameController() {
     new Thread(() -> {
@@ -37,7 +40,7 @@ public class GameController {
 
       LOG.info("Starting GameController");
       Event event = new Event();
-      while (true) {
+      while (running) {
         for (Controller controller : filteredControllers) {
           if (controller.getType().equals(Controller.Type.MOUSE)) {
             continue;
@@ -80,6 +83,10 @@ public class GameController {
       INSTANCE = new GameController();
     }
     return INSTANCE;
+  }
+
+  public void shutdown() {
+    running = false;
   }
 
   public void addListener(GameControllerInputListener listener) {

@@ -6,12 +6,12 @@ import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
+import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.system.FileInfo;
 import de.mephisto.vpin.restclient.validation.ValidationState;
-import de.mephisto.vpin.server.assets.AssetService;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.emulators.EmulatorService;
-import de.mephisto.vpin.server.fp.FPService;
+import de.mephisto.vpin.server.fp.FuturePinballService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.ScoreList;
@@ -51,7 +51,7 @@ public class GamesResource {
   private FrontendService frontendService;
 
   @Autowired
-  private FPService fpService;
+  private FuturePinballService futurePinballService;
 
   @Autowired
   private SystemService systemService;
@@ -116,9 +116,9 @@ public class GamesResource {
         return false;
       }
 
-      EmulatorType type = gameEmulator.getType();
       if (game.isVpxGame()) {
         frontendService.killFrontend();
+        SLOG.initLog(game.getId());
         if (vpxService.play(game, altExe, option)) {
           gameStatusService.setActiveStatus(id);
           return true;
@@ -126,13 +126,15 @@ public class GamesResource {
       }
       else if (game.isFpGame()) {
         frontendService.killFrontend();
-        if (fpService.play(game, altExe)) {
+        SLOG.initLog(game.getId());
+        if (futurePinballService.play(game, altExe)) {
           gameStatusService.setActiveStatus(id);
           return true;
         }
       }
       else if (game.isZenGame() || game.isZaccariaGame()) {
         frontendService.killFrontend();
+        SLOG.initLog(game.getId());
         if (steamService.play(game)) {
           gameStatusService.setActiveStatus(id);
           return true;
@@ -183,6 +185,9 @@ public class GamesResource {
     return gameService.getGameScoreValidation(id);
   }
 
+  /**
+   * Checks if the scoring settings of the table details match with the files found for these settings.
+   */
   @PostMapping("/scorevalidation/{id}")
   public GameScoreValidation getGameScoreValidation(@PathVariable("id") int id, @RequestBody TableDetails tableDetails) {
     return gameService.getGameScoreValidation(id, tableDetails);

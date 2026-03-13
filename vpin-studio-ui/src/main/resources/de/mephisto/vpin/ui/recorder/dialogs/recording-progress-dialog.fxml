@@ -36,16 +36,6 @@
                </children>
             </HBox>
          </right>
-         <left>
-            <HBox alignment="CENTER_LEFT" styleClass="info-container" BorderPane.alignment="CENTER">
-               <children>
-                  <Label styleClass="default-text" text="Note that recordings do not work with the GL version of VPX." />
-               </children>
-               <padding>
-                  <Insets left="6.0" right="6.0" />
-               </padding>
-            </HBox>
-         </left>
       </BorderPane>
    </bottom>
    <center>

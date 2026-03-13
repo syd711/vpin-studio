@@ -12,6 +12,7 @@ public class VpsAuthoredUrls implements VPSEntity {
   private String version;
   private long createdAt;
   private String id;
+  private String comment;
 
   public String getId() {
     return id;
@@ -52,6 +53,15 @@ public class VpsAuthoredUrls implements VPSEntity {
   public void setUrls(List<VpsUrl> urls) {
     this.urls = urls;
   }
+
+  public String getComment() {
+    return comment;
+  }
+
+  public void setComment(String comment) {
+    this.comment = comment;
+  }
+  
 
   public boolean isContainedIn(List<? extends VpsAuthoredUrls> urls) {
     for (VpsAuthoredUrls url : urls) {
@@ -125,6 +135,12 @@ public class VpsAuthoredUrls implements VPSEntity {
     if (version != null) {
       builder.append("- Version: ");
       builder.append(version);
+      builder.append("\n");
+    }
+
+    if(comment != null) {
+      builder.append("- Comment: ");
+      builder.append(comment);
       builder.append("\n");
     }
 

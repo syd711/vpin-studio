@@ -70,7 +70,7 @@ public class WidgetCompetitionScoreItemController extends WidgetController imple
     String date = simpleDateFormat.format(score.getCreatedAt());
     changeDateLabel.setText("Updated: " + date);
 
-    InputStream competitionBackground = ServerFX.client.getCompetitionBackground(gameId);
+    InputStream competitionBackground = ServerFX.client.getCompetitionService().getCompetitionBackground(gameId);
     if (competitionBackground != null) {
       Image backgroundImage = new Image(competitionBackground);
       BackgroundImage myBI = new BackgroundImage(backgroundImage,

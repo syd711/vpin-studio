@@ -10,6 +10,7 @@ import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Iterator;
 import java.util.List;
 
@@ -17,7 +18,7 @@ import static de.mephisto.vpin.commons.fx.pausemenu.PauseMenuUIDefaults.MAX_REFR
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class HighscoreResetProgressModel extends ProgressModel<GameRepresentation> {
-  private final static Logger LOG = LoggerFactory.getLogger(HighscoreResetProgressModel.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private List<GameRepresentation> games;
 
   private final Iterator<GameRepresentation> gameIterator;

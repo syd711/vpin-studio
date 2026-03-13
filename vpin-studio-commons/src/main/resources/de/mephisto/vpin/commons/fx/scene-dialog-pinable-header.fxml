@@ -9,7 +9,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="header" styleClass="dialog-header" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.DialogHeaderController">
+<BorderPane fx:id="header" styleClass="dialog-header" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.DialogHeaderResizeableController">
    <left>
       <Label fx:id="titleLabel" text="VPin Studio" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
          <font>
@@ -29,6 +29,16 @@
             <Insets bottom="3.0" left="3.0" right="6.0" top="6.0" />
          </BorderPane.margin>
          <children>
+	         <Button fx:id="minimizeBtn" mnemonicParsing="false" onAction="#onHideClick" prefHeight="24.0" prefWidth="24.0" styleClass="header-button" stylesheets="@stylesheet.css">
+	            <graphic>
+	               <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-minimize" iconSize="16" />
+	            </graphic>
+	         </Button>
+	         <Button fx:id="maximizeBtn" mnemonicParsing="false" onAction="#onMaximize" prefHeight="24.0" prefWidth="24.0" styleClass="header-button" stylesheets="@stylesheet.css">
+	            <graphic>
+	               <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-maximize" iconSize="16" />
+	            </graphic>
+	         </Button>
             <Button fx:id="modalBtn" mnemonicParsing="false" onAction="#onModalToggle" prefHeight="24.0" prefWidth="24.0" styleClass="header-button" stylesheets="@stylesheet.css">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2p-pin" iconSize="16" />

@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -98,17 +98,20 @@ public class DnDOverlayController implements Initializable {
       tableTitleLabel.setVisible(true);
       tableLabel.setVisible(true);
       tableWheelImage.setVisible(true);
-
-      FrontendMediaRepresentation frontendMedia = client.getFrontendService().getFrontendMedia(game.getId());
-      FrontendMediaItemRepresentation item = frontendMedia.getDefaultMediaItem(VPinScreen.Wheel);
-      if (item != null) {
-        ByteArrayInputStream gameMediaItem = client.getWheelIcon(game.getId(), true);
-        tableWheelImage.setImage(new Image(gameMediaItem));
-      }
-      else {
-        tableWheelImage.setImage(new Image(Studio.class.getResourceAsStream("avatar-blank.png")));
-      }
       tableLabel.setText("\"" + game.getGameDisplayName() + "\"");
+
+      JFXFuture.supplyAsync(() -> {
+        FrontendMediaRepresentation frontendMedia = client.getFrontendService().getFrontendMedia(game.getId());
+        return frontendMedia.getDefaultMediaItem(VPinScreen.Wheel);
+      }).thenAcceptLater((image) -> {
+        if (image != null) {
+          ByteArrayInputStream gameMediaItem = client.getWheelIcon(game.getId(), true);
+          tableWheelImage.setImage(new Image(gameMediaItem));
+        }
+        else {
+          tableWheelImage.setImage(new Image(Studio.class.getResourceAsStream("avatar-blank.png")));
+        }
+      });
     }
   }
 

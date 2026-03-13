@@ -8,11 +8,13 @@ import de.mephisto.vpin.restclient.highscores.logging.EventLogMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
+
 /*********************************************************************************************************************
  * DOF
  ********************************************************************************************************************/
 public class DOFServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(DOFServiceClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public DOFServiceClient(VPinStudioClient client) {
     super(client);

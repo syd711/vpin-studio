@@ -15,11 +15,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class AssetFilterPanelController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(AssetFilterPanelController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private Label assetPupPackLabel;
@@ -80,7 +81,9 @@ public class AssetFilterPanelController implements Initializable {
     }
 
     assetFilterBtn.setText("Filter Selection");
+    assetFilterBtn.getStyleClass().remove("error-title");
     if (!uploaderAnalysis.getExclusions().isEmpty()) {
+      assetFilterBtn.getStyleClass().add("error-title");
       if (uploaderAnalysis.getExclusions().size() == 1) {
         assetFilterBtn.setText("Filter Selection (" + uploaderAnalysis.getExclusions().size() + " excluded asset)");
       }

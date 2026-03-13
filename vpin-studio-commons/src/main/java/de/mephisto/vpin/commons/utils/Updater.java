@@ -12,6 +12,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
@@ -23,7 +24,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Updater {
-  private final static Logger LOG = LoggerFactory.getLogger(Updater.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public final static String BASE_URL = "https://github.com/syd711/vpin-studio/releases/download/%s/";
   private final static String LATEST_RELEASE_URL = "https://github.com/syd711/vpin-studio/releases/latest";
@@ -31,11 +32,11 @@ public class Updater {
 
   public final static String SERVER_ZIP = "VPin-Studio-Server.zip";
   public final static String SERVER_EXE = "VPin-Studio-Server.exe";
-  public final static long SERVER_ZIP_SIZE = 232 * 1000 * 1000;
+  public final static long SERVER_ZIP_SIZE = 251 * 1000 * 1000;
 
   public final static String UI_ZIP = "VPin-Studio.zip";
   public final static String UI_JAR_ZIP = "vpin-studio-ui-jar.zip";
-  public final static long UI_ZIP_SIZE = 103 * 1000 * 1000;
+  public final static long UI_ZIP_SIZE = 137 * 1000 * 1000;
 
   private final static String DOWNLOAD_SUFFIX = ".bak";
 
@@ -77,9 +78,6 @@ public class Updater {
       connection.setReadTimeout(5000);
       connection.setDoOutput(true);
       BufferedInputStream in = new BufferedInputStream(url.openStream());
-      String CheckBasePath = getWriteableBaseFolder().getAbsolutePath();
-      LOG.info("Setting tmp File at Base Path : " + CheckBasePath + ":" + target.getName() + ":" + DOWNLOAD_SUFFIX);
-
       File tmp = new File(getWriteableBaseFolder(), target.getName() + DOWNLOAD_SUFFIX);
 
       if (tmp.exists()) {
@@ -95,14 +93,20 @@ public class Updater {
       fileOutputStream.close();
 
       if (overwrite && target.exists() && !target.delete()) {
-        LOG.error("Failed to overwrite target file \"" + target.getAbsolutePath() + "\"");
+        LOG.error("Failed to overwrite target file \"{}\"", target.getAbsolutePath());
         return;
       }
 
-      if (!tmp.renameTo(target)) {
-        LOG.error("Failed to rename download temp file to " + target.getAbsolutePath());
+      if (!FileUtils.checkedCopy(tmp, target)) {
+        LOG.error("Failed to copy download temp file {} to {}", tmp.getAbsolutePath(), target.getAbsolutePath());
       }
-      LOG.info("Downloaded file " + target.getAbsolutePath());
+      LOG.info("Download of {}/({}) finished", target.getAbsolutePath(), target.length());
+      if (tmp.delete()) {
+        LOG.info("Deleted downloaded temp file {}", tmp.getAbsolutePath());
+      }
+      else {
+        LOG.info("Failed to deleted downloaded temp file {}", tmp.getAbsolutePath());
+      }
     }
     catch (Exception e) {
       LOG.error("Updater Failed to execute download: " + e.getMessage(), e);
@@ -225,7 +229,7 @@ public class Updater {
       return LATEST_VERSION;
     }
     catch (Exception e) {
-      LOG.error("Update check failed: " + e.getMessage(), e);
+      LOG.error("Update check failed: " + e.getMessage());
     }
     return null;
   }

@@ -8,16 +8,14 @@ import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.UISettings;
-import de.mephisto.vpin.restclient.recorder.RecorderSettings;
-import de.mephisto.vpin.restclient.recorder.RecordingData;
-import de.mephisto.vpin.restclient.recorder.RecordingDataSummary;
-import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
+import de.mephisto.vpin.restclient.recorder.*;
 import de.mephisto.vpin.restclient.validation.*;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -787,8 +785,12 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     });
   }
 
+  @Override
+  protected FilterSettings getFilterSettings() {
+    return client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDINGS_FILTER_SETTINGS, RecorderFilterSettings.class);
+  }
 
-//----------------------- Model classes ------------------------------------------------------------------------------
+  //----------------------- Model classes ------------------------------------------------------------------------------
 
   class GameEmulatorChangeListener implements ChangeListener<GameEmulatorRepresentation> {
     @Override

@@ -21,11 +21,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 
 public class FrontendScreensManager {
-  private final static Logger LOG = LoggerFactory.getLogger(FrontendScreensManager.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  private static FrontendScreensManager instance = new FrontendScreensManager();
+  private static final FrontendScreensManager instance = new FrontendScreensManager();
 
   public static FrontendScreensManager getInstance() {
     return instance;
@@ -36,7 +37,7 @@ public class FrontendScreensManager {
       BorderPane root = new BorderPane();
       root.setStyle("-fx-background-color: transparent;");
 
-      MonitorInfo screen = ServerFX.client.getScreenInfo(-1);
+      MonitorInfo screen = ServerFX.client.getSystemService().getScreenInfo(-1);
       final Scene scene = new Scene(root, screen.getWidth(), screen.getHeight(), true, SceneAntialiasing.BALANCED);
       scene.setFill(Color.TRANSPARENT);
       scene.setCursor(Cursor.NONE);
@@ -56,13 +57,15 @@ public class FrontendScreensManager {
         FrontendScreenController screenController = loader.getController();
         screenController.setMediaAsset(asset);
         root.setCenter(widgetRoot);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.error("Failed to frontend screen: " + e.getMessage(), e);
       }
 
       showStage(screenStage, asset.getDuration());
       return screenStage;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to open screen stage: " + e.getMessage(), e);
     }
     return null;
@@ -85,7 +88,8 @@ public class FrontendScreensManager {
         else {
           ServerFX.toFront(stage, stage.isShowing());
         }
-      } catch (InterruptedException e) {
+      }
+      catch (InterruptedException e) {
         //ignore
       }
     }).start();

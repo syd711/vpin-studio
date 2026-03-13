@@ -9,10 +9,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.nio.charset.Charset;
 
 public class VPinStudioServerStateManager {
-  private final static Logger LOG = LoggerFactory.getLogger(VPinStudioServerStateManager.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private static final String SERVICE_NAME = "vpin-studio-server";
   private static final String SERVICE_JAR = SERVICE_NAME + ".jar";

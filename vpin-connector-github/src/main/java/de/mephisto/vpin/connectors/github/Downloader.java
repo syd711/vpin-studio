@@ -9,12 +9,13 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.lang.invoke.MethodHandles;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DecimalFormat;
 
 public class Downloader {
-  private final static Logger LOG = LoggerFactory.getLogger(GithubReleaseFactory.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private final String downloadUrl;
   private final ReleaseArtifactActionLog installLog;
 

@@ -4,6 +4,7 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -13,7 +14,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 public class DateUtil {
-  private final static Logger LOG = LoggerFactory.getLogger(DateUtil.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final static List<String> MINUTE_INTERVALS = Arrays.asList("00", "15", "30", "45");
 

@@ -7,6 +7,7 @@ import javax.net.ssl.HttpsURLConnection;
 import java.awt.*;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.*;
  * Class used to execute Discord Webhooks with low effort
  */
 public class DiscordWebhook {
-  private final static Logger LOG = LoggerFactory.getLogger(DiscordWebhook.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final String url;
   private String content;

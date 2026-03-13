@@ -8,12 +8,13 @@ import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Iterator;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableImportProgressModel extends ProgressModel<GameListItem> {
-  private final static Logger LOG = LoggerFactory.getLogger(TableImportProgressModel.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final Iterator<GameListItem> iterator;
   private final GameList gameList;

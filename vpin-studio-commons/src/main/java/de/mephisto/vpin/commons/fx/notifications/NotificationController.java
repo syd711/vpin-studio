@@ -17,11 +17,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class NotificationController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(NotificationController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private Label title1;
@@ -98,7 +99,7 @@ public class NotificationController implements Initializable {
     }
 
     NotificationSettings notificationSettings = ServerFX.client.getJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, NotificationSettings.class);
-    MonitorInfo screen = ServerFX.client.getScreenInfo(notificationSettings.getNotificationsScreenId());
+    MonitorInfo screen = ServerFX.client.getSystemService().getScreenInfo(notificationSettings.getNotificationsScreenId());
     int padding = 0;
     padding += notification.getTextBoxMargin();
 

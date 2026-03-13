@@ -9,10 +9,11 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 
 public class VPSDiscordListenerAdapter extends ListenerAdapter {
-  private final static Logger LOG = LoggerFactory.getLogger(VPSDiscordListenerAdapter.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private final VPSBot bot;
 
   public VPSDiscordListenerAdapter(VPSBot bot) {

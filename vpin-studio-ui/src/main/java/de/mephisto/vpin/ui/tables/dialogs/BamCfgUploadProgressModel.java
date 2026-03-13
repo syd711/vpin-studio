@@ -10,10 +10,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 
 public class BamCfgUploadProgressModel extends UploadProgressModel {
-  private final static Logger LOG = LoggerFactory.getLogger(BamCfgUploadProgressModel.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private double percentage = 0;
   private final int gameId;
@@ -26,7 +27,7 @@ public class BamCfgUploadProgressModel extends UploadProgressModel {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      UploadDescriptor descriptor = Studio.client.getFpService().uploadCfg(gameId, next, percent -> {
+      UploadDescriptor descriptor = Studio.client.getFuturePinballService().uploadCfg(gameId, next, percent -> {
         double total = percentage + percent;
         progressResultModel.setProgress(total / getMax());
       });

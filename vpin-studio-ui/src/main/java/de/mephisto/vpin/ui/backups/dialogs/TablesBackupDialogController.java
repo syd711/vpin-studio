@@ -41,6 +41,12 @@ public class TablesBackupDialogController implements Initializable, DialogContro
   private CheckBox directb2sCheckBox;
 
   @FXML
+  private CheckBox studioDataCheckBox;
+
+  @FXML
+  private CheckBox dmdDataCheckBox;
+
+  @FXML
   private CheckBox pupPackCheckBox;
 
   @FXML
@@ -150,6 +156,8 @@ public class TablesBackupDialogController implements Initializable, DialogContro
     registryDataCheckBox.setSelected(backupSettings.isRegistryData());
     b2sSettingsCheckbox.setSelected(backupSettings.isB2sSettings());
     b2sSettingsCheckbox.setDisable(!directb2sCheckBox.isSelected());
+    studioDataCheckBox.setSelected(backupSettings.isStudioData());
+    dmdDataCheckBox.setSelected(backupSettings.isDmdDeviceData());
 
     overwriteCheckbox.setSelected(backupSettings.isOverwriteBackup());
   }
@@ -236,6 +244,14 @@ public class TablesBackupDialogController implements Initializable, DialogContro
     });
     b2sSettingsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       backupSettings.setB2sSettings(newValue);
+      client.getPreferenceService().setJsonPreference(backupSettings);
+    });
+    studioDataCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      backupSettings.setStudioData(newValue);
+      client.getPreferenceService().setJsonPreference(backupSettings);
+    });
+    dmdDataCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      backupSettings.setDmdDeviceData(newValue);
       client.getPreferenceService().setJsonPreference(backupSettings);
     });
 

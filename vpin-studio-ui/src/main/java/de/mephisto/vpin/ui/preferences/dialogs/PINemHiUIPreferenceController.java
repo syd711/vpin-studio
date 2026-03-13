@@ -2,9 +2,9 @@ package de.mephisto.vpin.ui.preferences.dialogs;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.restclient.util.ini.IniSettings;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
-import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.FontSelectorDialog;
 import javafx.application.Platform;
@@ -283,8 +283,8 @@ public class PINemHiUIPreferenceController implements Initializable, DialogContr
     });
 
     SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
-    screenInfoComboBox.setItems(FXCollections.observableList(systemSummary.getScreenInfos()));
-    screenInfoComboBox.valueProperty().setValue(systemSummary.getScreenInfo(settings.getInt(SETTING_SCREEN)));
+    screenInfoComboBox.setItems(FXCollections.observableList(systemSummary.getMonitorInfos()));
+    screenInfoComboBox.valueProperty().setValue(systemSummary.getMonitorInfo(settings.getInt(SETTING_SCREEN)));
     screenInfoComboBox.valueProperty().addListener(new ChangeListener<MonitorInfo>() {
       @Override
       public void changed(ObservableValue<? extends MonitorInfo> observableValue, MonitorInfo monitorInfo, MonitorInfo t1) {

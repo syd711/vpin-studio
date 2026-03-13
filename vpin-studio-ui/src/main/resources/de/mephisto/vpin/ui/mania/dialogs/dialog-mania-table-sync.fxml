@@ -7,7 +7,11 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 
 <BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="600.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.mania.dialogs.ManiaTableSynchronizationDialogController">
    <top>
@@ -19,21 +23,54 @@
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>
          <center>
-            <HBox alignment="CENTER_RIGHT" spacing="6.0">
+            <HBox alignment="CENTER_RIGHT" spacing="6.0" />
+         </center>
+         <left>
+            <VBox BorderPane.alignment="CENTER">
+               <children>
+                  <VBox prefWidth="600.0" styleClass="info-container">
+                     <children>
+                        <GridPane>
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="288.199951171875" minWidth="10.0" prefWidth="77.3999267578125" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="507.8000732421875" minWidth="10.0" prefWidth="507.8000732421875" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Label fx:id="tableNameLabel" styleClass="default-text" text="-" GridPane.columnIndex="1" />
+                              <Label fx:id="tableStatusLabel" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Label styleClass="default-text" text="Table:" />
+                              <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Status:" GridPane.rowIndex="1" />
+                           </children>
+                        </GridPane>
+                     </children>
+                     <padding>
+                        <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets bottom="12.0" />
+                     </VBox.margin>
+                  </VBox>
+                  <Label fx:id="statsLabel" styleClass="default-text" text="highscores have been synchronized with vpin-mania.net." />
+               </children>
+            </VBox>
+         </left>
+         <right>
+            <VBox alignment="BOTTOM_CENTER" BorderPane.alignment="CENTER">
                <children>
                 <Button defaultButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Close" />
                </children>
-            </HBox>
-         </center>
-         <left>
-            <Label fx:id="statsLabel" styleClass="default-text" text="highscores have been synchronized with vpin-mania.net." BorderPane.alignment="CENTER" />
-         </left>
+            </VBox>
+         </right>
       </BorderPane>
    </bottom>
    <center>
       <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
-            <TableView fx:id="tableView" prefHeight="700.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+            <TableView fx:id="tableView" prefHeight="630.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
               <columns>
                   <TableColumn fx:id="statusColumn" prefWidth="50.0" style="-fx-alignment: BASELINE_CENTER;" />
                 <TableColumn fx:id="nameColumn" prefWidth="500.0" sortable="false" style="-fx-alignment: BASELINE_LEFT;" text="Table" />

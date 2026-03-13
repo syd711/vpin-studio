@@ -2,17 +2,27 @@ package de.mephisto.vpin.ui.playlistmanager;
 
 import de.mephisto.vpin.commons.utils.FXResizeHelper;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.stage.Stage;
 
+import static de.mephisto.vpin.ui.Studio.client;
+
 public class PlaylistDialogs {
 
-  public static void openPlaylistManager(TableOverviewController tableOverviewController) {
-    openPlaylistManager(tableOverviewController, null);
+  public static void openPlaylistManager(TableOverviewController tableOverviewController, PlaylistRepresentation selectedPlaylist) {
+    if (client.getFrontendService().isFrontendRunning()) {
+      if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
+        openPlaylistManagerChecked(tableOverviewController, selectedPlaylist);
+      }
+    }
+    else {
+      openPlaylistManagerChecked(tableOverviewController, selectedPlaylist);
+    }
   }
 
-  public static void openPlaylistManager(TableOverviewController tableOverviewController, PlaylistRepresentation selectedPlaylist) {
+  private static void openPlaylistManagerChecked(TableOverviewController tableOverviewController, PlaylistRepresentation selectedPlaylist) {
     Stage stage = Dialogs.createStudioDialogStage(PlaylistManagerController.class, "dialog-playlist-manager.fxml", "Playlist Manager", "playlistManager");
     PlaylistManagerController controller = (PlaylistManagerController) stage.getUserData();
 

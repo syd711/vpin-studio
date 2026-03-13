@@ -72,6 +72,8 @@ public class Preferences {
 
   private String filterSettings;
 
+  private String recordingsFilterSettings;
+
   private String vpuSettings;
 
   private String vpfSettings;
@@ -87,6 +89,10 @@ public class Preferences {
   private String iScoredSettings;
 
   private String taggingSettings;
+
+  private String wovpSettings;
+
+  private String vpxzSettings;
 
   @Column(length = 1024)
   private String doNotShowAgains;
@@ -116,6 +122,22 @@ public class Preferences {
 
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
+
+  public String getVpxzSettings() {
+    return vpxzSettings;
+  }
+
+  public void setVpxzSettings(String vpxzSettings) {
+    this.vpxzSettings = vpxzSettings;
+  }
+
+  public String getWovpSettings() {
+    return wovpSettings;
+  }
+
+  public void setWovpSettings(String wovpSettings) {
+    this.wovpSettings = wovpSettings;
+  }
 
   public String getTaggingSettings() {
     return taggingSettings;
@@ -211,6 +233,14 @@ public class Preferences {
     this.vpfSettings = vpfSettings;
   }
 
+  public String getRecordingsFilterSettings() {
+    return recordingsFilterSettings;
+  }
+
+  public void setRecordingsFilterSettings(String recordingsFilterSettings) {
+    this.recordingsFilterSettings = recordingsFilterSettings;
+  }
+
   public String getFilterSettings() {
     return filterSettings;
   }
@@ -251,8 +281,7 @@ public class Preferences {
     this.serverSettings = serverSettings;
   }
 
-  @Column(length = 8192)
-  private String tournamentSettings;
+  private String maniaSettings;
 
   public String getPauseMenuSettings() {
     return pauseMenuSettings;
@@ -262,12 +291,12 @@ public class Preferences {
     this.pauseMenuSettings = pauseMenuSettings;
   }
 
-  public String getTournamentSettings() {
-    return tournamentSettings;
+  public String getManiaSettings() {
+    return maniaSettings;
   }
 
-  public void setTournamentSettings(String tournamentSettings) {
-    this.tournamentSettings = tournamentSettings;
+  public void setManiaSettings(String maniaSettings) {
+    this.maniaSettings = maniaSettings;
   }
 
   public String getHighscoreCardSettings() {

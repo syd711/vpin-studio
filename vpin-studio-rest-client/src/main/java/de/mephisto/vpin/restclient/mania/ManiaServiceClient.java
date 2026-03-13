@@ -6,11 +6,13 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
+
 /*********************************************************************************************************************
  * Mania
  ********************************************************************************************************************/
 public class ManiaServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(ManiaServiceClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public ManiaServiceClient(VPinStudioClient client) {
     super(client);
@@ -22,6 +24,10 @@ public class ManiaServiceClient extends VPinStudioClientService {
 
   public ManiaTableSyncResult synchronizeHighscore(String vpsTableId) {
     return getRestClient().get(API + "mania/synchronize/highscore/" + vpsTableId, ManiaTableSyncResult.class);
+  }
+
+  public Boolean deleteCabinet() {
+    return getRestClient().delete(API + "mania/cabinet");
   }
 
   public boolean synchronizeTables() {

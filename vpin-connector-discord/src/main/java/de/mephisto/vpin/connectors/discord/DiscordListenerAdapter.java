@@ -12,11 +12,12 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DiscordListenerAdapter extends ListenerAdapter {
-  private final static Logger LOG = LoggerFactory.getLogger(DiscordListenerAdapter.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private List<Long> commandsAllowList = new ArrayList<>();
   private final DiscordClient discordClient;

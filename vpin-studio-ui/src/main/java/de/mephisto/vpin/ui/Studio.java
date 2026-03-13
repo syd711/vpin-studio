@@ -15,7 +15,6 @@ import de.mephisto.vpin.restclient.mania.ManiaConfig;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.system.FeaturesInfo;
-import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
 import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.restclient.util.OSUtil;
@@ -368,8 +367,8 @@ public class Studio extends Application {
     try {
       if (Features.MANIA_ENABLED) {
         ManiaConfig config = Studio.client.getManiaService().getConfig();
-        SystemSummary summary = Studio.client.getSystemService().getSystemSummary();
-        Studio.maniaClient = new VPinManiaClient(config.getUrl(), summary.getSystemId());
+
+        Studio.maniaClient = new VPinManiaClient(config.getUrl(), null);
         ServerFX.maniaClient = Studio.maniaClient;
       }
     }

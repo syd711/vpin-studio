@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -39,7 +40,7 @@ import java.util.ResourceBundle;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablesSidebarPUPPackController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarPUPPackController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private Optional<GameRepresentation> game = Optional.empty();
 
@@ -307,7 +308,7 @@ public class TablesSidebarPUPPackController implements Initializable {
     reloadBtn.setDisable(g.isEmpty());
     enabledCheckbox.setDisable(g.isEmpty());
     scriptOnlyCheckbox.setSelected(false);
-    pupPackEditorBtn.setDisable(g.isEmpty());
+    pupPackEditorBtn.setDisable(g.isEmpty() || !client.getSystemService().isLocal());
 
     screensPanel.setVisible(true);
 
@@ -360,10 +361,9 @@ public class TablesSidebarPUPPackController implements Initializable {
 
       uploadBtn.setDisable(StringUtils.isEmpty(game.getRom()));
       deleteBtn.setDisable(!pupPackAvailable);
-      pupPackEditorBtn.setDisable(!pupPackAvailable);
+      pupPackEditorBtn.setDisable(!pupPackAvailable || !client.getSystemService().isLocal());
 
       if (pupPackAvailable) {
-        pupPackEditorBtn.setDisable(false);
         nameLabel.setText(pupPack.getName());
         enabledCheckbox.setSelected(pupPack.isEnabled());
 

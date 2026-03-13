@@ -14,10 +14,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileReader;
+import java.lang.invoke.MethodHandles;
 import java.util.*;
 
 public class AltSound2Loader {
-  private final static Logger LOG = LoggerFactory.getLogger(AltSound2Loader.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final INIConfiguration iniConfiguration;
   private final File gSoundCsv;

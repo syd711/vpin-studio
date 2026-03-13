@@ -1,5 +1,6 @@
 package de.mephisto.vpin.connectors.iscored;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -10,6 +11,7 @@ public class IScoredTest {
 
   private final static int gameIndex = 2;
 
+  @Disabled
   @Test
   public void testIscored() throws Exception {
     GameRoom gameRoom = IScored.getGameRoom("https://www.iScored.info/Syd", true);

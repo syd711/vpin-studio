@@ -1,5 +1,6 @@
 package de.mephisto.vpin.connectors.vps.matcher;
 
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -12,7 +13,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class VpsAutomatcher {
-  private final static Logger LOG = LoggerFactory.getLogger(VpsAutomatcher.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private VpsDebug debug;
 
@@ -83,9 +84,6 @@ public class VpsAutomatcher {
       // Step 1, decompose the filename in elements:
       // tablename (manuf year) author version extra
       TableNameParts parts = tableNameSplitter.parseFilename(gameFileName);
-
-      LOG.info("parsed : Table=" + parts.tableName + " | Manuf=" + parts.manufacturer + " | year=" + parts.year + " | extra=" + parts.extra);
-
       //------------------------------------------------------
       // Step 2, match the table elements with VPS database
 
@@ -210,8 +208,6 @@ public class VpsAutomatcher {
       if (StringUtils.isNotEmpty(version) && (StringUtils.isEmpty(vpsMatch.getVersion()) || overwrite)) {
         vpsMatch.setVersion(version);
       }
-
-      LOG.info("Finished auto-match for \"" + gameFileName + "\"");
     }
     catch (Exception e) {
       LOG.error("Error auto-matching table data: " + e.getMessage(), e);

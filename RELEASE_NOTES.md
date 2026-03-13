@@ -1,137 +1,102 @@
-## Release Notes 4.4.2
+## Release Notes 4.7.4
 
-## Changes
+- **WOVP Pause Menu Item**: Screenshots for portrait mode screens are not rotated anymore.
 
-- Fixed saving the view state of the Table Data Manager dialog.
-- Fixed competition summary widget which did not render values from finished competitions.
-- Added missing frontend-running check for table uploads which will fail when the database is locked by the frontend management tool, e.g. PinUP Popper Setup.
-- Fixed reading and writing of backglass settings that use an aliased ROM name. 
-- Fixed highscore parsing for "King Kong".
-- Re-enabled PUP pack editor and the 3rd party tool PUPPackTweaker (https://github.com/mat1111x/PupPackScreenTweaker). The tools are visible in the PUP packs side section. Shout out to @YabbaDabbaDoo who provided an updated version build from the latest sources.
-- Added quick-edit button to the title of the **Script Details** section. This way, you can quickly open the table script without the need to expand the section. Note that always the default system editor for .vbs files is used here!
-- Added automatic fill-up of highscore lists: For older pinball tables (especially EM tables) often only 1x highscore entry was shown on highscore cards. By default, the Studio increases the list with up to five values which are taking from the highscore history of the table.
-- Added preview checkbox for the media upload dialog. The status is persisted and the checkbox is enabled by default. 
+## Release Notes 4.7.3
+ 
+- **Table Options**: Added "Options" tab to the table data manager dialog. The new tab analysis the table script options so that you canfigure them into a .ini file for the table.
+   
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/table-options.png?raw=true" width="550" />
+
+- **Table Backups/Deletions**: Fixed additional issues with the VPX music folder during table deletions and backups.
+- **Table Installation**: Fixed issue that upper case .ZIP files were rejected for uploading.
+- **Backglass Manager**: 
+  - Added 'No Focus' setting on backglass server preferences and by table.
+  - When a new backglass is setup, default all values from server settings.
+- **DMD Position Tool**: 
+  - Restore type correctly when dmd is deactivated and use backglass scores.
+  - Store latest margin value as default and restore it on new usage.
+- **VPin Mania Score Dates**: Fixed issue that the creation date was used instead of the last modification date for the score submitting to VPin Mania.
+- **Studio Window Manager**: Fixed _gtk_window_resize: assertion 'height > 0' failed_ error (blind fix).
+- **VPin MAME Settings**: Added input field for the table volume. Note that this field is not support for all tables and the values vary for ROM/table.
+- **Card Template Designer**: 
+  - Fixed possible server error applying templates.
+  - Fixed issue that background images were shown unscaled (hopefully this time).
+- **Highscore Parsing**: Fixed table "Eye of the Tiger".
+- **WOVP Synchronization**: Fixed issue that if the game script validation fails, the old game id was not resetted. 
+- **WOVP Settings**: Added option to disable API keys/users. 
+- **WOVP Pause Menu Item**: 
+  - Fixed issue that the existing score of the player was not shown anymore. 
+  - Added score reload after score submissions with a small delay which should show the updated score that was submitted.
+  - Fixed layout glitches.  
+- **VPinMAME**: Fixed lookup of the correct ROM folder and nvrams folder if no defaults are configured. 
+
 
 ---
 
-## Release Notes 4.4.1
+## Release Notes 4.7.2
 
-## Changes
-
-- Added some blind fixes for possible errors in the "Table Subscriptions" view.
-- Added missing logo index file (which fixes empty search results for logos).
+- **WOVP Competitions**: Added proper cleanup of games that are no longer competed on WOVP (augmented wheels and competition ids).
+- **VPin MAME Settings**: Fixed override and apply of default values (finally).
+- **.vpt File Support**: Added missing detection of .vpt files for the table import dialog.
+- **Universal Installer**: Fixed extraction of music bundles.
 
 ---
 
-## Release Notes 4.4.0
+## Release Notes 4.7.1
+
+- **Table Management**: Added support for older VPX file format **.vpt**.
+- **Preferences Menu**: Fixed rendering the menu, even if the status check for the server fails.
+- **Table Validation**: The missing ALT color validation error is only triggered when a non-pinsound bundle is available. 
+- **Table Validation**: Fixed lookup of the scripts folder which caused validation issues.
+
+
+---
+
+
+## Release Notes 4.7.0
 
 ## Changes
 
-- **Highscore Cards / Wheel Designer**
-    - Added wheel generator, default template generates Tarcissio styled-wheels.
-    - The **Highscore Card** tab has been renamed to **Designer** accordingly.
-    - In the frame sidebar section, the option to upload frame images has been added. A Tarcissio wheel frame and a
-      black wheel frame are provided by default.
-    - The **logo** media from the **Logo** media source can be used in your wheel, it is accessible in **Other Media**
-      section of the designer. This is even the main reason behind its introduction.
-    - Added possibility to backup existing assets when generating cards. An option has been added to the highscores card
-      preferences.
-    - Refactored how the VPin Studio finds a previously generated card. If backup is activated, existing cards not being tagged,
-      the server will generate new highscore cards in addition to the existing one. Old ones can be deleted as obsolete.
-      The new ones will be updated automatically.
+### VPX 10.8.1 Support
 
-      <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/cards/wheel-designer.png?raw=true" width="700" />
-    
-- **Tag Management**
-    - The Studio comes with a comprehensive tag management now. Tags are displayed as part of the Table Data Manager
-      dialog and are also visible in the Table Data section. The tagging support contains the following features:
-        - Managing table tags in the Table Data Manager dialog.
-        - Remove tags or filter by tags by clicking on them when shown in the Table Data section.
-        - Tag filtering support for the filter section.
-        - Auto-tagging support for new table uploads (see Preferences -> Table Validators).
-        - Auto-tagging support for new backglass uploads (see Preferences -> Backglass Validators).
-        - Auto-tagging support for media asset changes (see Preferences -> Screen Validators).
-        - Bulk tag adding/removing via context menu action for the selected tables.
+With version 4.7.0, we are building the foundation for the upcoming VPX 10.8.1 release, which introduces a completely new folder structure for VPX files and their companion files (table override INI file, backglass file, PuP video folder, DMD colorization, music, etc.).
 
-      <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/tagging.png?raw=true" width="600" />
+Please note that not all companion software supports the new folder layout yet. For example, PinUP Popper currently does not look into the actual table folder for assets. Therefore, the transition will take some time, and we are working closely with the VPX team to ensure full support.
 
-- **Zen Studio and Zaccaria Tables Support**
-    - The emulator support for Zaccaria and Zen Emulators have been improved. The table overview does show now more
-      accurate table columns and sidepanels depending on the selected emulator.
-    - The play button is now shown for these emulators too. It allows launching tables via the Popper frontend or via
-      **Steam**.
+**Right now, nothing changes for you.** We needed to implement major server-side changes to support the new format for all available companion assets.
+First, we will ensure everything continues to work with the old folder structure. Later, we will enable specific flags in the backup restore process that allow backups to be extracted into the new folder structure.
 
-      <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/launch-steam.png?raw=true" width="500" />
+Further reading:
+https://github.com/vpinball/vpinball/blob/master/docs/FileLayout.md
 
-    - **ALT Color** management has been enabled for FX and FX3. Note that you need to configure the game itself in order
-      to
-      support external DMD providers.
-    - The paths information for these emulators are automatically resolved when created, including the Steam path.
-    - The Studio comes with integrated .pupgames lists now: When a new emulator is added, related games are
-      automatically added to the game library.
+### .vpxz File Support
 
-      <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/system-manager/new-emulator.png?raw=true" width="500" />
+Support for .vpxz files has been added. Check out the YouTube video to see how you can connect your phone with VPin Studio (https://www.youtube.com/watch?v=A-mzXOkTD7E) and upload and install .vpxz files on your mobile device.
 
-- **System Tray**
-    - Added "Restart" menu item.
+A huge shoutout to @jsm174 for his awesome VPX app!
 
-- **Discord Notifications**:
-    - Added more logging for related events. No Discord notifications are emitted when the Studio detects a
-      highscore for the first time. This should avoid sending update events for initial scores. An additional log
-      message has been added to the "Event Log" for this.
+<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/vpxz/vpxz-view.png?raw=true" width="700" />
 
-- **Table Overview**
-    - Replaced the white "checked" icons or .ini, .res and .directb2s files with edit button. These files can now
-      directly be edited via the systems default text editor. For backglasses, the corresponding backglass is selected
-      in the backglass manager.
+### VPin Mania 2.0
 
-      <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/table-buttons.png?raw=true" width="600" />
+VPin Mania has been relaunched with a new registration system and additional features.
+Please watch the YouTube video (https://youtu.be/gjTapjVT3qY) to get an overview of what has changed or visit the [VPin Mania Announcement](https://discord.com/channels/1043199618172858500/1376784123238023168) channel.
 
-    - Switched order of the backglass and the PUP pack column.
-    - Detection of included VBS scripts when parsing the table script and analysis of these scripts when scanning game.
-    - Saved VP-spreadsheet ID in XML database file for PinballX / PinballY.
-    - Added VPX validator, triggered when an included script is not present in the **scripts** folder.
-    - Added **Save globally** button to store DMD position globally.
-    - Added detection of dual Backglasses and support of mode in backglass setup.
-    - Removed .ini section since the .ini file can now directly be edited from the table overview.
-    - Added edit, upload and delete actions for .ini, .res. and .pov files to the section "Table Data".
+**So, is all my data gone now?**
 
-      <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/table-files.png?raw=true" width="500" />
+No! Although you now need to re-register with a real user account, your existing cabinet data will be reused once you link your cabinet to VPin Mania again. If this does not work, you can always perform a complete sync between your cabinet and VPin Mania.
 
-- **Media Management**
-    - **Added a new media type: Logo**. It generally corresponds to a small horizontal image. Like a wheel, it helps
-      to identify a table visually but is simpler, generally the name of the table written with the font of the table.
-    - Added zones to upload and search logos in MediaManager and in the Table Media sidebar.
-    - Added checkbox in media preference to add a validator that check presence of logo.
-    - For PinballX and PinballY, auto-invert playfield assets when copied from non PinballX assets source.
-    - For PinballY, added search section on Superhac, Kongedam tutorials and personal assets sources.
+**Table statistics are not affected by this update — rankings and play counts remain intact.**
 
-        <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/logo-asset.png?raw=true" width="600" />
+## Changes
 
-    - Added new default asset source: Table logos. These assets are solely for the "Logo" screen and can be used
-      for highscore cards or wheel designs.
-
-      <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/logo-source.png?raw=true" width="600" />
-
-- **Backglass Server Preferences**
-
-  - Added option **Extended "B2STableSettings.xml" Search** which allows to configure where to look for the B2STableSettings.xml file.
-
-- **Deletion Dialog**
-  - General revamp of the dialog to improve the user experience. 
-  - Added option to delete
-    - entries from the DMDDevice.ini file.
-    - entries from the B2STableSettings.xml file.
-    - entries from the VPMAlias.txt file.
-    - the ROM file.
-  
-    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/table-delete.png?raw=true" width="500" />
-
-## Bugfixes
-
-- **ALT Color**: Fixed deletion of ALT color files.
-- **VPS Updates**: The VPS update indicator in the table overview is working correctly now. E.g. the VPS version **1.4**
-  and the table version **1.4.0** where detected as identical now which wasn't the case before.  
-- **Backups**: Added custom B2STableSettings.xml to backups when the file is part of a separate table folder. 
-- **Backups**: The backup is now written into a temporary local file and then copied to the target folder. This should solve issues when creating backus for a NAS device. 
-
+- **Table Scans**: Improved PUP pack detection.
+- **Pause Menu**: Fixed misaligned position when "too many" entries have been added on the pause menu item list. 
+- **Pause Menu**: For the **WOVP** menu entry, the scoring list is refreshed for the selected player (if you have multiple account registered).
+- **Pause Menu**: For colorized DMD, the frame is now correctly processed and included in screenshot.
+- **Kill Button**: Added MAME to the list of processes to kill when all processes should be stopped. 
+- **VPinMAME Settings**: Fixed applying the default values which simply have been deleted before.
+- **Tagging**: Fixed issue where tags have been added multiple times for tables.
+- **HighScores**: Fix parsing of french highscores.
+- **iScored**: Fixed wheel badges for iScored competitions.

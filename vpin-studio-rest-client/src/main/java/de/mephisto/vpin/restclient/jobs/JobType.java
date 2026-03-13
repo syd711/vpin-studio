@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.jobs;
 
 public enum JobType {
+  VPXZ_EXPORT,
   TABLE_BACKUP,
   TABLE_IMPORT,
   PUP_INSTALL,

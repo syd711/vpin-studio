@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables.vps;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -12,7 +13,7 @@ import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 
 public class VpsInstallerProgressModel extends ProgressModel<String> {
-  private final static Logger LOG = LoggerFactory.getLogger(VpsInstallerProgressModel.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private String link;
 

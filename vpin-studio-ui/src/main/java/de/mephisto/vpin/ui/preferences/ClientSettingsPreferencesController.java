@@ -64,6 +64,24 @@ public class ClientSettingsPreferencesController implements Initializable {
   private Button dropInFolderButton;
 
   @FXML
+  private RadioButton radioDoNothing;
+  @FXML
+  private RadioButton radioMoveToFolder;
+  @FXML
+  private RadioButton radioDoMove;
+  @FXML
+  private RadioButton radioDoDelete;
+
+  @FXML
+  private TextField dropInMoveTargetTextField;
+  @FXML
+  private Button dropInMoveTargetButton;
+  @FXML
+  private CheckBox dropInMoveTargetCheckbox;
+  @FXML
+  private CheckBox dropInMoveTrashCheckbox;
+
+  @FXML
   private TextField dropInTextField;
 
   @FXML
@@ -137,6 +155,8 @@ public class ClientSettingsPreferencesController implements Initializable {
   private CheckBox columnVpsStatus;
   @FXML
   private CheckBox uiHideCustomIcons;
+  @FXML
+  private CheckBox uiHideGreenMarker;
 
   @FXML
   private VBox networkSettings;
@@ -189,6 +209,16 @@ public class ClientSettingsPreferencesController implements Initializable {
     }
   }
 
+  @FXML
+  private void onDropInMoveTargetFolderSelection() {
+    StudioFolderChooser chooser = new StudioFolderChooser();
+    chooser.setTitle("Select Target Folder");
+    File targetFolder = chooser.showOpenDialog(stage);
+    if (targetFolder != null && targetFolder.exists()) {
+      dropInMoveTargetTextField.setText(targetFolder.getAbsolutePath());
+    }
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     columnPupPack.managedProperty().bindBidirectional(columnPupPack.visibleProperty());
@@ -201,14 +231,12 @@ public class ClientSettingsPreferencesController implements Initializable {
 
     dropInFolderCheckbox.setSelected(LocalUISettings.getBoolean(LocalUISettings.DROP_IN_FOLDER_ENABLED));
     dropInFolderCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      setDropInFieldEnabled(t1);
       LocalUISettings.saveProperty(LocalUISettings.DROP_IN_FOLDER_ENABLED, t1.toString());
-      dropInTextField.setDisable(!t1);
-      dropInFolderButton.setDisable(!t1);
     });
 
-    dropInTextField.setDisable(!dropInFolderCheckbox.isSelected());
+    setDropInFieldEnabled(dropInFolderCheckbox.isSelected());
     dropInTextField.setText(LocalUISettings.getString(LocalUISettings.DROP_IN_FOLDER));
-    dropInFolderButton.setDisable(!dropInFolderCheckbox.isSelected());
 
     sectionPlaylists.managedProperty().bindBidirectional(sectionPlaylists.visibleProperty());
     columnPlaylists.managedProperty().bindBidirectional(columnPlaylists.visibleProperty());
@@ -227,6 +255,88 @@ public class ClientSettingsPreferencesController implements Initializable {
 
     uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
 
+    // dropin setup
+    ToggleGroup toggleGroup = new ToggleGroup();
+    radioDoNothing.setToggleGroup(toggleGroup);
+    radioMoveToFolder.setToggleGroup(toggleGroup);
+    radioDoMove.setToggleGroup(toggleGroup);
+    radioDoDelete.setToggleGroup(toggleGroup);
+
+    // disable fields depending toggle selection
+    toggleGroup.selectedToggleProperty().addListener((obs, old, t) -> {
+      dropInMoveTargetCheckbox.setDisable(t!=radioMoveToFolder);
+      dropInMoveTargetButton.setDisable(t!=radioMoveToFolder);
+      dropInMoveTargetTextField.setDisable(t!=radioMoveToFolder);
+      dropInMoveTrashCheckbox.setDisable(t!=radioDoDelete);
+
+      if (t==radioDoNothing) {
+        uiSettings.setDropinPostAction(UISettings.DROP_IN_POSTACTION_DONOTHING);
+      }
+      else if (t==radioMoveToFolder) {
+        uiSettings.setDropinPostAction(dropInMoveTargetCheckbox.isSelected() ?
+             UISettings.DROP_IN_POSTACTION_MOVETOTABLEFOLDER : UISettings.DROP_IN_POSTACTION_MOVETOFOLDER);
+      }
+      else if (t==radioDoMove) {
+        uiSettings.setDropinPostAction(UISettings.DROP_IN_POSTACTION_MOVETO);
+      }
+      else if (t==radioDoDelete) {
+        uiSettings.setDropinPostAction(dropInMoveTrashCheckbox.isSelected() ?
+             UISettings.DROP_IN_POSTACTION_MOVETOTRASH : UISettings.DROP_IN_POSTACTION_DELETE);
+      }
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
+    });
+
+    dropInMoveTargetCheckbox.setSelected(false);
+    dropInMoveTrashCheckbox.setSelected(false);
+    int postAction = uiSettings.getDropinPostAction();
+    switch (postAction) {
+      case UISettings.DROP_IN_POSTACTION_DONOTHING:
+        radioDoNothing.setSelected(true);
+        break;
+      case UISettings.DROP_IN_POSTACTION_MOVETOFOLDER:
+        radioMoveToFolder.setSelected(true);
+        break;
+      case UISettings.DROP_IN_POSTACTION_MOVETOTABLEFOLDER:
+        // order is important
+        dropInMoveTargetCheckbox.setSelected(true);
+        radioMoveToFolder.setSelected(true);
+        break;
+      case UISettings.DROP_IN_POSTACTION_MOVETO:
+        radioDoMove.setSelected(true);
+        break;
+      case UISettings.DROP_IN_POSTACTION_MOVETOTRASH:
+        // order is important
+        dropInMoveTrashCheckbox.setSelected(true);
+        radioDoDelete.setSelected(true);
+        break;
+      case UISettings.DROP_IN_POSTACTION_DELETE:
+        radioDoDelete.setSelected(true);
+        break;
+      default:
+        break;
+    }
+
+    dropInMoveTargetCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setDropinPostAction(t1? UISettings.DROP_IN_POSTACTION_MOVETOTABLEFOLDER : UISettings.DROP_IN_POSTACTION_MOVETOFOLDER);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
+    });
+    dropInMoveTargetTextField.setText(uiSettings.getDropinPostTargetFolder());
+    dropInMoveTargetTextField.textProperty().addListener((observableValue, old, newFolder) -> {
+      uiSettings.setDropinPostTargetFolder(newFolder);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
+    });
+
+    dropInMoveTrashCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setDropinPostAction(t1 ? UISettings.DROP_IN_POSTACTION_MOVETOTRASH : UISettings.DROP_IN_POSTACTION_DELETE);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
+    });
+
+    //-------
+
     uiShowVersion.setSelected(!uiSettings.isHideVersions());
     uiShowVersion.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setHideVersions(!t1);
@@ -235,9 +345,15 @@ public class ClientSettingsPreferencesController implements Initializable {
     });
 
     uiHideCustomIcons.setSelected(uiSettings.isHideCustomIcons());
-
     uiHideCustomIcons.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setHideCustomIcons(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
+    });
+
+    uiHideGreenMarker.setSelected(!uiSettings.isHideGreenMarker());
+    uiHideGreenMarker.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setHideGreenMarker(!t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
       client.getPreferenceService().setJsonPreference(uiSettings);
     });
@@ -542,6 +658,20 @@ public class ClientSettingsPreferencesController implements Initializable {
       client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
+  }
+
+  private void setDropInFieldEnabled(Boolean enabled) {
+    dropInTextField.setDisable(!enabled);
+    dropInFolderButton.setDisable(!enabled);
+    radioDoNothing.setDisable(!enabled);
+    radioMoveToFolder.setDisable(!enabled);
+    radioDoMove.setDisable(!enabled);
+    radioDoDelete.setDisable(!enabled);
+    dropInMoveTargetTextField.setDisable(!enabled);
+    dropInFolderButton.setDisable(!enabled);
+    dropInMoveTargetCheckbox.setDisable(!enabled);
+    dropInMoveTrashCheckbox.setDisable(!enabled);
+    dropInMoveTargetButton.setDisable(!enabled);
   }
 
   private void refreshNetworkStatusLabel(String newValue) {

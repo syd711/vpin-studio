@@ -7,7 +7,13 @@ import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import de.mephisto.vpin.server.system.SystemService;
+
 public class IpdbDatabaseTest {
+
+  static {
+    SystemService.RESOURCES = "../resources/";
+  }
 
   @Test
   public void testUpdate() throws IOException {

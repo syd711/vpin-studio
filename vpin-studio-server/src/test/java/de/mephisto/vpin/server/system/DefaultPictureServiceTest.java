@@ -8,9 +8,12 @@ import org.junit.jupiter.api.Test;
 
 public class DefaultPictureServiceTest {
 
+  static {
+    SystemService.RESOURCES = "../resources/";
+  }
+
   @Test
   public void testManufacturerPicture() {
-    SystemService.RESOURCES = "../resources/";
     DefaultPictureService svc = new DefaultPictureService();
 
     File f;

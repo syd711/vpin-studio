@@ -5,12 +5,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
 public class ConnectionProperties {
-  private static final Logger LOG = LoggerFactory.getLogger(ConnectionProperties.class);
+  private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final PropertiesStore store;
   public static final String ID_PREFIX = "connection";

@@ -20,7 +20,6 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-
 <BorderPane xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.backglassmanager.BackglassManagerSidebarController">
    <center>
       <ScrollPane styleClass="base-component" stylesheets="@../stylesheet.css">
@@ -45,7 +44,7 @@
                               </VBox.margin>
                           </VBox>
       
-                                      <Label text="Version" textFill="WHITE">
+                          <Label text="Version" textFill="WHITE">
                               <font>
                                   <Font name="System Bold" size="14.0" />
                               </font>
@@ -54,7 +53,7 @@
                               </VBox.margin>
                           </Label>
       
-                                      <Label fx:id="directB2SLabel" prefHeight="30.0" styleClass="default-text" text="--">
+                        <Label fx:id="directB2SLabel" prefHeight="30.0" styleClass="default-text" text="--">
                     </Label>
                           <ComboBox fx:id="directB2SCombo" prefHeight="30.0" />
       
@@ -153,11 +152,17 @@
                                                                               <graphic>
                                                                                   <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="14" />
                                                                               </graphic>
+                                                               <tooltip>
+                                                                  <Tooltip text="Uploads a new image used as DMD background. The existing image will be replaced." />
+                                                               </tooltip>
                                                                           </Button>
                                                                           <Button fx:id="downloadDMDBtn" mnemonicParsing="false" onAction="#onDMDDownload" textFill="WHITE" BorderPane.alignment="CENTER">
                                                                               <graphic>
                                                                                   <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="14" />
                                                                               </graphic>
+                                                                              <tooltip>
+                                                                                <Tooltip prefWidth="400.0" text="Export the DMD image and save it on disk." wrapText="true" />
+                                                                              </tooltip>
                                                                           </Button>
                                                                           <Button fx:id="useAsMediaDMDBtn" mnemonicParsing="false" onAction="#onDMDUseAsMedia" textFill="WHITE" BorderPane.alignment="CENTER">
                                                                               <graphic>
@@ -171,9 +176,9 @@
                                                                               <graphic>
                                                                                   <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="14" />
                                                                               </graphic>
-                                                               <tooltip>
-                                                                  <Tooltip onCloseRequest="#onBackglassDelete" text="Delete backglass file" />
-                                                               </tooltip>
+                                                                              <tooltip>
+                                                                                  <Tooltip onCloseRequest="#onBackglassDelete" text="Delete backglass file" />
+                                                                              </tooltip>
                                                                           </Button>
                                                                       </HBox>
                                                                   </right>
@@ -211,6 +216,7 @@
                                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
                                         </columnConstraints>
                                         <rowConstraints>
+                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -317,6 +323,11 @@
                                                     <Font size="14.0" />
                                                 </font>
                                             </Label>
+                                            <Label layoutX="10.0" layoutY="284.0" text="No Focus:" textFill="WHITE" GridPane.rowIndex="17">
+                                                <font>
+                                                    <Font size="14.0" />
+                                                </font>
+                                            </Label>
                                             
                                             <ComboBox fx:id="hideGrill" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                             <CheckBox fx:id="hideB2SBackglass" layoutX="162.0" layoutY="120.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
@@ -334,6 +345,7 @@
                                             <ComboBox fx:id="startAsExe" layoutX="162.0" layoutY="386.0" GridPane.columnIndex="1" GridPane.rowIndex="14" />
                                             <CheckBox fx:id="startAsExeServer" disable="true" layoutX="196.0" layoutY="453.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="15" />
                                             <ComboBox fx:id="formToPosition" layoutX="173.0" layoutY="117.0" GridPane.columnIndex="1" GridPane.rowIndex="16" />
+                                            <CheckBox fx:id="formNoFocus" layoutX="176.0" layoutY="352.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="17" />
 
                                             <Label GridPane.columnIndex="2" GridPane.rowIndex="6">
                                                 <font>

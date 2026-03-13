@@ -4,12 +4,13 @@ import de.mephisto.vpin.commons.utils.FileMonitoringThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
 public class WakeOnLan {
-  private final static Logger LOG = LoggerFactory.getLogger(WakeOnLan.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static final int DEFAULT_PORT = 9; // Default WoL port
 

@@ -21,13 +21,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
+import java.lang.invoke.MethodHandles;
 import java.text.DateFormat;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class VPSBot {
-  private final static Logger LOG = LoggerFactory.getLogger(VPSBot.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   public static final int MAX_VPS_ENTRIES = 15;
 
   private final JDA jda;

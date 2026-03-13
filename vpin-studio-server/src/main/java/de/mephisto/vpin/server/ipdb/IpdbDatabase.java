@@ -15,6 +15,8 @@ import org.htmlunit.html.HtmlSubmitInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.mephisto.vpin.commons.SystemInfo;
+
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -105,10 +107,7 @@ public class IpdbDatabase {
   //----------------- LOADERS
 
   private File getIpdbFile() {
-    File folder = new File("./resources");
-    if (!folder.exists()) {
-      folder = new File("../resources");
-    }
+    File folder = new File(SystemInfo.RESOURCES);
     return new File(folder, "ipdb.html");
   }
 

@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.lang.invoke.MethodHandles;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -25,7 +26,7 @@ import java.util.zip.ZipInputStream;
 import static de.mephisto.vpin.restclient.util.FileUtils.isFileBelowFolder;
 
 public class UploaderAnalysis {
-  private final static Logger LOG = LoggerFactory.getLogger(UploaderAnalysis.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private final static List<String> romSuffixes = Arrays.asList("bin", "rom", "cpu", "snd", "dat", "s2", "l1");
   private final static List<String> altColorSuffixes = Arrays.asList("vni", "crz", "pal", "pac");
   private final static List<String> mediaSuffixes = Arrays.asList("mp3", "png", "apng", "jpg", "mp4");
@@ -35,7 +36,9 @@ public class UploaderAnalysis {
   public final static String VNI_SUFFIX = "vni";
   public final static String PAC_SUFFIX = "pac";
   public final static String SERUM_SUFFIX = "cRZ";
+  public final static String CROMC_SUFFIX = "cROMc";
   public final static String NVRAM_SUFFIX = "nv";
+  public final static String FPL_SUFFIX = "fpl";
   public final static String CFG_SUFFIX = "cfg";
   public final static String BAM_CFG_SUFFIX = "cfg";
 
@@ -470,6 +473,10 @@ public class UploaderAnalysis {
   }
 
   public List<String> getFileNamesForAssetType(AssetType assetType) {
+    if (assetType.equals(AssetType.FP_MODEL_PACK)) {
+      return getFpModelPacks();
+    }
+
     List<String> result = new ArrayList<>();
     for (String file : getFilteredFilenamesWithPath()) {
       String fileName = getFileName(file);
@@ -480,14 +487,15 @@ public class UploaderAnalysis {
     return result;
   }
 
-  public String getFileNameForExtension(String extension) {
+  public List<String> getFileNamesForExtension(String extension) {
+    List<String> result = new ArrayList<>();
     for (String file : getFilteredFilenamesWithPath()) {
       String fileName = getFileName(file);
       if (fileName.toLowerCase().endsWith("." + extension.toLowerCase())) {
-        return fileName;
+        result.add(fileName);
       }
     }
-    return null;
+    return result;
   }
 
   public String getFileNameWithPathForExtension(String extension) {
@@ -526,7 +534,7 @@ public class UploaderAnalysis {
         return "This archive does not not contain a .res file.";
       }
       case ROM: {
-        if (isRom() || hasFileWithSuffixAndNot("zip", "pup", "pov")) {
+        if ((isRom() || hasFileWithSuffixAndNot("zip", "pup", "pov")) && !isFpTable()) {
           return null;
         }
         return "This archive does not not contain a ROM file.";
@@ -536,6 +544,12 @@ public class UploaderAnalysis {
           return null;
         }
         return "This archive does not not contain a DMD bundle.";
+      }
+      case FP_MODEL_PACK: {
+        if (!getFpModelPacks().isEmpty()) {
+          return null;
+        }
+        return "This archive does not not contain a Future Pinball Model bundle.";
       }
       case DIF: {
         if (hasFileWithSuffix("dif")) {
@@ -555,6 +569,12 @@ public class UploaderAnalysis {
         }
         return "This archive does not have a .nv file.";
       }
+      case FPL: {
+        if (hasFileWithSuffix(FPL_SUFFIX)) {
+          return null;
+        }
+        return "This archive does not have a .fpl file.";
+      }
       case CFG: {
         if (hasFileWithSuffix(CFG_SUFFIX)) {
           return null;
@@ -571,6 +591,7 @@ public class UploaderAnalysis {
       case PAC:
       case VNI:
       case CRZ:
+      case CROMC:
       case PAL: {
         if (isAltColor()) {
           return null;
@@ -609,6 +630,7 @@ public class UploaderAnalysis {
         return "This archive does not not contain a .ini file.";
       }
       default: {
+        LOG.error("Unmapped asset type: {}", assetType + "/" + assetType.name());
         throw new UnsupportedOperationException("Unmapped asset type: " + assetType + "/" + assetType.name());
       }
     }
@@ -628,6 +650,10 @@ public class UploaderAnalysis {
       result.add(AssetType.BAM_CFG);
     }
 
+    if (hasFileWithSuffix("fpl")) {
+      result.add(AssetType.FPL);
+    }
+
     if (hasFileWithSuffix("vpx") && hasFileWithSuffix("cfg")) {
       result.add(AssetType.CFG);
     }
@@ -638,6 +664,10 @@ public class UploaderAnalysis {
 
     if (hasFileWithSuffix("cRZ")) {
       result.add(AssetType.CRZ);
+    }
+
+    if (hasFileWithSuffix("cROMc")) {
+      result.add(AssetType.CROMC);
     }
 
     if (hasFileWithSuffix("directb2s")) {
@@ -785,6 +815,24 @@ public class UploaderAnalysis {
     return false;
   }
 
+  private List<String> getFpModelPacks() {
+    List<String> result = new ArrayList<>();
+    for (String fileName : getFilteredFilenamesWithPath()) {
+      String suffix = FilenameUtils.getExtension(fileName);
+      String name = FilenameUtils.getBaseName(fileName);
+      if (AssetType.FPT.name().equalsIgnoreCase(suffix)) {
+        String modelFile = name + ".zip";
+        for (String s : getFilteredFilenamesWithPath()) {
+          if (s.endsWith(modelFile)) {
+            result.add(s);
+            break;
+          }
+        }
+      }
+    }
+    return result;
+  }
+
   public boolean isMusic() {
     return !isAltSound() && getMusicFolder() != null;
   }
@@ -893,6 +941,10 @@ public class UploaderAnalysis {
   }
 
   private boolean isRom() {
+    if (isFpTable()) {
+      return false;
+    }
+
     if (getFilteredFolders().isEmpty()) {
       for (String fileName : getFilteredFilenamesWithPath()) {
         String suffix = FilenameUtils.getExtension(fileName);

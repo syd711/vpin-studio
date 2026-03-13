@@ -7,8 +7,10 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
+
 public abstract class JsonSettings {
-  private final static Logger LOG = LoggerFactory.getLogger(JsonSettings.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   public final static ObjectMapper objectMapper = new ObjectMapper();
 
   static {
@@ -23,7 +25,7 @@ public abstract class JsonSettings {
         return t;
       }
     } catch (Exception e) {
-      LOG.warn("Error parsing settings json '" + json + " for class '" + clazz.getSimpleName() + "': " + e.getMessage());
+      LOG.warn("Error parsing settings json \"{}\" for class \"{}\": {}. Creating a plain new instance instead.", json, clazz, e.getMessage());
     }
     return clazz.getDeclaredConstructor().newInstance();
   }

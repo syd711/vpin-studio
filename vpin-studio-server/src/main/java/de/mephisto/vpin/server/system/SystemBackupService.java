@@ -91,7 +91,7 @@ public class SystemBackupService {
           Player playerForInitials = playerService.getPlayerForInitials(-1, entry.getInitials());
           if (playerForInitials == null || !playerForInitials.getName().equalsIgnoreCase(entry.getName())) {
             entry.setId(0l);
-            entry.setTournamentUserUuid(null);
+            entry.setManiaAccountUuid(null);
             entry.setAvatar(null);
             Player save = playerService.save(entry);
             LOG.info("Restored player {}", save);

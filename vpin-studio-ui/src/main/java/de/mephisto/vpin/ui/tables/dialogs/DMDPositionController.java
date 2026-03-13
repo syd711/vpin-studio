@@ -20,6 +20,7 @@ import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import javafx.application.Platform;
@@ -52,6 +53,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,7 +64,9 @@ import java.util.function.Function;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class DMDPositionController extends BasePrevNextController {
-  private final static Logger LOG = LoggerFactory.getLogger(DMDPositionController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
+  private final Debouncer debouncer = new Debouncer();
 
   private BaseTableController<?, ? extends BaseGameModel> baseMgrController;
 
@@ -236,7 +240,7 @@ public class DMDPositionController extends BasePrevNextController {
   }
 
   private void switchGame(int gameId) {
-    JFXFuture.supplyAsync(() -> client.getGame(gameId))
+    JFXFuture.supplyAsync(() -> client.getGameService().getGame(gameId))
     .thenAcceptLater(game -> {
       if (game != null) {
         setGame(game, baseMgrController);
@@ -532,18 +536,24 @@ public class DMDPositionController extends BasePrevNextController {
         });
 
     // Load user preferences
-    try {
-      UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS);
+    JFXFuture.supplyAsync(() -> client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class))
+    .thenAcceptLater(uiSettings -> {
       autosaveCheckbox.setSelected(uiSettings.isAutoSaveDmdPosition());
       autosaveCheckbox.selectedProperty().addListener((obs, o, v) -> {
         UISettings modifiedUISettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS);
         modifiedUISettings.setAutoSaveDmdPosition(v);
         client.getPreferenceService().setJsonPreference(modifiedUISettings);
       });
-    }
-    catch (Exception e) {
-      LOG.error("Cannot set UI preference, exception ignored : " + e.getMessage());
-    }
+
+      marginSpinner.getValueFactory().setValue(uiSettings.getDefaultDmdMargin());
+      marginSpinner.valueProperty().addListener((obs, o, v) -> {
+        debouncer.debounce("defaultDmdMargin", () -> {
+          UISettings modifiedUISettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS);
+          modifiedUISettings.setDefaultDmdMargin(v);
+          client.getPreferenceService().setJsonPreference(modifiedUISettings);
+        }, 500);
+      });
+    });
   }
 
   private void configureSpinner(Spinner<Integer> spinner, ObjectProperty<Integer> property,

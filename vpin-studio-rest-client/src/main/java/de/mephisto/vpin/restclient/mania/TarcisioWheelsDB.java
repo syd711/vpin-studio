@@ -3,17 +3,17 @@ package de.mephisto.vpin.restclient.mania;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import de.mephisto.vpin.restclient.OverlayClient;
-import de.mephisto.vpin.restclient.system.ScoringDB;
+import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.lang.invoke.MethodHandles;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class TarcisioWheelsDB {
-  private final static Logger LOG = LoggerFactory.getLogger(ScoringDB.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final static ObjectMapper objectMapper;
   private final static String WHEEL_DB = "https://www.vpin-mania.net/wheels/wheels.json";
@@ -26,7 +26,7 @@ public class TarcisioWheelsDB {
 
   private static TarcisioWheels wheels = new TarcisioWheels();
 
-  public static InputStream getWheelImage(Class resourceClass, OverlayClient client, String vpsTableId) {
+  public static InputStream getWheelImage(Class resourceClass, VPinStudioClient client, String vpsTableId) {
     String wheelImage = getWheelIcon(vpsTableId);
     if (wheelImage == null) {
       return resourceClass.getResourceAsStream("avatar-blank.png");

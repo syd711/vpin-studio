@@ -6,11 +6,12 @@ import org.slf4j.LoggerFactory;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
 
+import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 import java.util.Map;
 
 public class VPXKeyManager {
-  private final static Logger LOG = LoggerFactory.getLogger(VPXKeyManager.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public final static String LFlipKey = "LFlipKey";
   public final static String RFlipKey = "RFlipKey";

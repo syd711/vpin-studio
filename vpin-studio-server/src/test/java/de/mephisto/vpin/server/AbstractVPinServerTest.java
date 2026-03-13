@@ -1,36 +1,36 @@
 package de.mephisto.vpin.server;
 
-import de.mephisto.vpin.restclient.backups.BackupType;
+import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
-import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
-import de.mephisto.vpin.server.backups.BackupService;
-import de.mephisto.vpin.server.backups.adapters.TableBackupAdapterFactory;
+import de.mephisto.vpin.restclient.frontend.popper.PopperSettings;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.assets.AssetService;
+import de.mephisto.vpin.server.backups.BackupService;
+import de.mephisto.vpin.server.backups.adapters.TableBackupAdapterFactory;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.competitions.CompetitionsRepository;
 import de.mephisto.vpin.server.frontend.FrontendResource;
-import de.mephisto.vpin.server.games.*;
-import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
-import de.mephisto.vpin.server.highscores.HighscoreService;
-import de.mephisto.vpin.server.players.PlayerRepository;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusEventsResource;
-
+import de.mephisto.vpin.server.games.*;
+import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
+import de.mephisto.vpin.server.players.PlayerRepository;
+import de.mephisto.vpin.server.playlists.PlaylistMediaService;
 import de.mephisto.vpin.server.system.SystemService;
 import org.jcodec.common.logging.Logger;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static de.mephisto.vpin.server.VPinStudioServer.Features;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 abstract public class AbstractVPinServerTest {
@@ -64,7 +64,13 @@ abstract public class AbstractVPinServerTest {
   protected GameService gameService;
 
   @Autowired
-  protected GameDetailsRepository gameDetailsRepository;
+  protected GameMediaService gameMediaService;
+
+  @Autowired
+  protected PlaylistMediaService playlistMediaService;
+
+  @Autowired
+  private GameDetailsRepositoryService gameDetailsRepositoryService;
 
   @Autowired
   protected SystemService systemService;
@@ -114,8 +120,6 @@ abstract public class AbstractVPinServerTest {
     emulator.setInstallationDirectory("../testsystem/vPinball/VisualPinball/");
     emulator.setMameDirectory("../testsystem/vPinball/VisualPinball/VPinMAME/");
     emulator.setRomDirectory("../testsystem/vPinball/VisualPinball/VPinMAME/roms/");
-    emulator.setNvramDirectory("../testsystem/vPinball/VisualPinball/VPinMAME/nvram/");
-    emulator.setCfgDirectory("../testsystem/vPinball/VisualPinball/VPinMAME/cfg/");
     emulator.setMediaDirectory("../testsystem/vPinball/PinUPSystem/POPMedia");
     emulator.setGamesDirectory("../testsystem/vPinball/VisualPinball/Tables/");
     emulator.setGameExt("vpx");
@@ -135,7 +139,13 @@ abstract public class AbstractVPinServerTest {
       frontendService.deleteGames(1);
       clearVPinStudioDatabase();
 
-      systemService.setBackupType(BackupType.VPA);
+      // configure popper global settings for tests
+      JsonSettings settings = frontendService.getSettings();
+      if (settings instanceof PopperSettings) {
+        PopperSettings popperSettings = (PopperSettings) settings;
+        popperSettings.setGlobalMediaDir("../testsystem/vPinball/PinUPSystem/POPMedia/Default");
+        frontendService.saveSettings(popperSettings);
+      }
 
       frontendService.importGame(EM_TABLE, 1);
       frontendService.importGame(VPREG_TABLE, 1);
@@ -147,7 +157,7 @@ abstract public class AbstractVPinServerTest {
   }
 
   protected void clearVPinStudioDatabase() {
-    gameDetailsRepository.deleteAll();
+    gameDetailsRepositoryService.deleteAll();
     competitionsRepository.deleteAll();
     assetRepository.deleteAll();
     playerRepository.deleteAll();

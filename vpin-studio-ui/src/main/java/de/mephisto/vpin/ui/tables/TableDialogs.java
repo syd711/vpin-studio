@@ -6,7 +6,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.altsound.AltSound2DuckingProfile;
 import de.mephisto.vpin.restclient.altsound.AltSound2SampleType;
-import de.mephisto.vpin.restclient.assets.AssetRequest;
+import de.mephisto.vpin.restclient.assets.AssetMetaData;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
@@ -65,39 +65,14 @@ public class TableDialogs {
   private final static Logger LOG = LoggerFactory.getLogger(TableDialogs.class);
 
   public static void directAssetUpload(Stage stage, GameRepresentation game, VPinScreen screen) {
-    StudioFileChooser fileChooser = new StudioFileChooser();
-    fileChooser.setTitle("Select Media");
-    fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("Files", MediaTypesSelector.getFileSelection(screen)));
-
-    List<File> files = fileChooser.showOpenMultipleDialog(stage);
-    if (files != null && !files.isEmpty()) {
-      Platform.runLater(() -> {
-
-        FrontendMediaRepresentation medias = client.getGameMediaService().getGameMedia(game.getId());
-        boolean append = false;
-        if (medias.getMediaItems(screen).size() > 0) {
-          Optional<ButtonType> buttonType = WidgetFactory.showConfirmationWithOption(Studio.stage, "Replace Media?",
-              "A media asset already exists.",
-              "Append new asset or overwrite existing asset?", "Overwrite", "Append");
-          if (buttonType.isPresent() && buttonType.get().equals(ButtonType.OK)) {
-          }
-          else if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
-            append = true;
-          }
-          else {
-            return;
-          }
-        }
-
-        FrontendMediaUploadProgressModel model = new FrontendMediaUploadProgressModel(game,
-            "Media Upload", files, screen, append);
-        ProgressDialog.createProgressDialog(model);
-      });
-    }
+    directAssetUpload(stage, game.getId(), false, screen);
   }
 
   public static void directAssetUpload(Stage stage, PlaylistRepresentation playlist, VPinScreen screen) {
+    directAssetUpload(stage, playlist.getId(), true, screen);
+  }
+
+  public static void directAssetUpload(Stage stage, int id, boolean playlistMode, VPinScreen screen) {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select Media");
     fileChooser.getExtensionFilters().addAll(
@@ -107,7 +82,7 @@ public class TableDialogs {
     if (files != null && !files.isEmpty()) {
       Platform.runLater(() -> {
 
-        FrontendMediaRepresentation medias = client.getPlaylistMediaService().getPlaylistMedia(playlist.getId());
+        FrontendMediaRepresentation medias = client.getGameMediaService().getMedia(id, playlistMode);
         boolean append = false;
         if (medias.getMediaItems(screen).size() > 0) {
           Optional<ButtonType> buttonType = WidgetFactory.showConfirmationWithOption(Studio.stage, "Replace Media?",
@@ -123,7 +98,7 @@ public class TableDialogs {
           }
         }
 
-        FrontendMediaUploadProgressModel model = new FrontendMediaUploadProgressModel(playlist,
+        FrontendMediaUploadProgressModel model = new FrontendMediaUploadProgressModel(id, playlistMode,
             "Media Upload", files, screen, append);
         ProgressDialog.createProgressDialog(model);
       });
@@ -160,16 +135,23 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static void openMetadataDialog(AssetRequest request) {
-    Stage stage = Dialogs.createStudioDialogStage(AssetMetadataController.class, "dialog-asset-metadata.fxml", "Metadata for \"" + request.getName() + "\"");
+  public static void openMetadataDialog(AssetMetaData metadata, String filename) {
+    Stage stage = Dialogs.createStudioDialogStage(AssetMetadataController.class, "dialog-asset-metadata.fxml", "Metadata for \"" + filename + "\"");
     AssetMetadataController controller = (AssetMetadataController) stage.getUserData();
-    controller.setData(request);
+    controller.setData(metadata);
     stage.showAndWait();
   }
 
   public static void openNvRamUploads(File file, Runnable finalizer) {
     Stage stage = Dialogs.createStudioDialogStage(NvRamUploadController.class, "dialog-nvram-upload.fxml", "NvRAM Upload");
     NvRamUploadController controller = (NvRamUploadController) stage.getUserData();
+    controller.setFile(stage, file, null, finalizer);
+    stage.showAndWait();
+  }
+
+  public static void openFplUploads(File file, Runnable finalizer) {
+    Stage stage = Dialogs.createStudioDialogStage(NvRamUploadController.class, "dialog-fpl-upload.fxml", ".fpl File Upload");
+    FplUploadController controller = (FplUploadController) stage.getUserData();
     controller.setFile(stage, file, null, finalizer);
     stage.showAndWait();
   }
@@ -509,17 +491,17 @@ public class TableDialogs {
     return controller.uploadFinished();
   }
 
-  public static Optional<UploadDescriptor> openTableUploadDialog(@Nullable GameRepresentation game, @Nullable EmulatorType emutype, @Nullable UploadType uploadType, UploaderAnalysis analysis) {
+  public static Optional<UploadDescriptor> openTableUploadDialog(@Nullable GameRepresentation game, @Nullable EmulatorType emutype, @Nullable UploadType uploadType, UploaderAnalysis analysis, @Nullable Runnable finalizer) {
     if (Studio.client.getFrontendService().isFrontendRunning()) {
       if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
-        return openTableUploadDialogUnchecked(game, emutype, uploadType, analysis);
+        return openTableUploadDialogUnchecked(game, emutype, uploadType, analysis, finalizer);
       }
       return Optional.empty();
     }
-    return openTableUploadDialogUnchecked(game, emutype, uploadType, analysis);
+    return openTableUploadDialogUnchecked(game, emutype, uploadType, analysis, finalizer);
   }
 
-  private static Optional<UploadDescriptor> openTableUploadDialogUnchecked(@Nullable GameRepresentation game, @Nullable EmulatorType emutype, @Nullable UploadType uploadType, UploaderAnalysis analysis) {
+  private static Optional<UploadDescriptor> openTableUploadDialogUnchecked(@Nullable GameRepresentation game, @Nullable EmulatorType emutype, @Nullable UploadType uploadType, UploaderAnalysis analysis, @Nullable Runnable finalizer) {
     List<GameEmulatorRepresentation> gameEmulators = Studio.client.getEmulatorService().getGameEmulatorsByType(emutype);
     if (gameEmulators.isEmpty()) {
       WidgetFactory.showAlert(Studio.stage, "Error", "No game emulator found.");
@@ -528,7 +510,7 @@ public class TableDialogs {
 
     Stage stage = Dialogs.createStudioDialogStage(TableUploadController.class, "dialog-table-upload.fxml", emutype.shortName() + " Table Upload");
     TableUploadController controller = (TableUploadController) stage.getUserData();
-    controller.setGame(stage, game, uploadType, analysis);
+    controller.setGame(stage, game, uploadType, analysis, finalizer);
     stage.showAndWait();
 
     return controller.uploadFinished();
@@ -734,7 +716,11 @@ public class TableDialogs {
     return controller.uploadFinished();
   }
 
-  public static void openMediaDialog(Stage parent, FrontendMediaItemRepresentation item) {
+  public static void openMediaDialog(@NonNull Stage parent, @Nullable FrontendMediaItemRepresentation item) {
+    if(item == null) {
+      return;
+    }
+
     Stage stage = Dialogs.createStudioDialogStage(parent, MediaPreviewController.class, "dialog-media-preview.fxml", item.getScreen() + " Screen", "dialog-media-preview");
     MediaPreviewController controller = (MediaPreviewController) stage.getUserData();
     controller.setData(stage, item, false);

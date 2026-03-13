@@ -44,6 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -55,7 +56,7 @@ import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableUploadController implements Initializable, DialogController {
-  private final static Logger LOG = LoggerFactory.getLogger(TableUploadController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   public static final int MATCHING_PERCENTAGE = 90;
 
   @FXML
@@ -177,6 +178,7 @@ public class TableUploadController implements Initializable, DialogController {
   private UploaderAnalysis uploaderAnalysis;
   private Stage stage;
   private UISettings uiSettings;
+  private Runnable finalizer;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -222,6 +224,11 @@ public class TableUploadController implements Initializable, DialogController {
 
         GameMediaUploadPostProcessingProgressModel progressModel = new GameMediaUploadPostProcessingProgressModel("Importing Game Media", uploadDescriptor);
         result = UniversalUploadUtil.postProcess(progressModel);
+
+        if (finalizer != null) {
+          finalizer.run();
+        }
+
         if (result.isPresent()) {
           // notify listeners of table import done
           EventManager.getInstance().notifyTableUploaded(result.get());
@@ -300,7 +307,7 @@ public class TableUploadController implements Initializable, DialogController {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select VPX File");
 
-    List<String> filters = Arrays.asList("*.vpx", "*.zip", "*.rar", "*.7z");
+    List<String> filters = Arrays.asList("*.vpx", "*.vpt", "*.zip", "*.rar", "*.7z");
     String description = "FP file";
     GameEmulatorRepresentation value = emulatorCombo.getValue();
     if (value != null && value.isFpEmulator()) {
@@ -464,7 +471,9 @@ public class TableUploadController implements Initializable, DialogController {
     }
 
     assetFilterBtn.setText("Filter Selection");
+    assetFilterBtn.getStyleClass().remove("error-title");
     if (!uploaderAnalysis.getExclusions().isEmpty()) {
+      assetFilterBtn.getStyleClass().add("error-title");
       if (uploaderAnalysis.getExclusions().size() == 1) {
         assetFilterBtn.setText("Filter Selection (" + uploaderAnalysis.getExclusions().size() + " excluded asset)");
       }
@@ -556,7 +565,7 @@ public class TableUploadController implements Initializable, DialogController {
     assetPupPackLabel.managedProperty().bindBidirectional(assetPupPackLabel.visibleProperty());
     assetMediaLabel.managedProperty().bindBidirectional(assetMediaLabel.visibleProperty());
 
-    root.setOnDragOver(new FileSelectorDragEventHandler(root, "vpx", PackageUtil.ARCHIVE_ZIP, PackageUtil.ARCHIVE_RAR, PackageUtil.ARCHIVE_7Z));
+    root.setOnDragOver(new FileSelectorDragEventHandler(root, "vpx", "vpt", PackageUtil.ARCHIVE_ZIP, PackageUtil.ARCHIVE_RAR, PackageUtil.ARCHIVE_7Z));
     root.setOnDragDropped(new FileSelectorDropEventHandler(fileNameField, file -> {
       selection = file;
       setSelection(true);
@@ -711,8 +720,9 @@ public class TableUploadController implements Initializable, DialogController {
     assetCfgLabel.setVisible(false);
   }
 
-  public void setGame(@NonNull Stage stage, @Nullable GameRepresentation game, @Nullable UploadType uploadType, UploaderAnalysis analysis) {
+  public void setGame(@NonNull Stage stage, @Nullable GameRepresentation game, @Nullable UploadType uploadType, UploaderAnalysis analysis, @Nullable Runnable finalizer) {
     this.stage = stage;
+    this.finalizer = finalizer;
     this.uploaderAnalysis = analysis;
 
     if (!StringUtils.isEmpty(uiSettings.getDefaultUploadMode()) && uploadType == null) {

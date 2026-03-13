@@ -23,11 +23,15 @@ public class UISettings extends JsonSettings {
 
   //Hide/Show Unique Custom Vpin Studio Icons
   private boolean hideCustomIcons;
+  private boolean hideGreenMarker = true;
 
   private boolean autoApplyVpsData = true;
 
+  private boolean autoSaveEnabled = false;
+
   /** Whether DMD position are auto-saved */
   private boolean autoSaveDmdPosition = true;
+  private int defaultDmdMargin = 0;
 
   private String localFavsColor = "#ffcc00";
   private String globalFavsColor = "#cc6600";
@@ -36,6 +40,17 @@ public class UISettings extends JsonSettings {
 
   private String defaultUploadMode = UploadType.uploadAndImport.name();
   private boolean uploadMediaPreview = true;
+
+  // dropins setup
+  public static final int DROP_IN_POSTACTION_DONOTHING = 0;
+  public static final int DROP_IN_POSTACTION_MOVETOFOLDER = 1;
+  public static final int DROP_IN_POSTACTION_MOVETOTABLEFOLDER = 2;
+  public static final int DROP_IN_POSTACTION_MOVETO = 3;
+  public static final int DROP_IN_POSTACTION_MOVETOTRASH = 4;
+  public static final int DROP_IN_POSTACTION_DELETE = 5;
+
+  private int dropinPostAction = DROP_IN_POSTACTION_MOVETOTRASH;
+  private String dropinPostTargetFolder;
 
   //open after upload
   private boolean autoEditTableData = true;
@@ -87,6 +102,14 @@ public class UISettings extends JsonSettings {
   private boolean columnTutorial = false;
 
   private LaunchConfiguration launchConfiguration;
+
+  public boolean isAutoSaveEnabled() {
+    return autoSaveEnabled;
+  }
+
+  public void setAutoSaveEnabled(boolean autoSaveEnabled) {
+    this.autoSaveEnabled = autoSaveEnabled;
+  }
 
   public LaunchConfiguration getLaunchConfiguration() {
     return launchConfiguration;
@@ -494,6 +517,14 @@ public class UISettings extends JsonSettings {
     this.autoSaveDmdPosition = autoSaveDmdPosition;
   }
 
+  public int getDefaultDmdMargin() {
+    return defaultDmdMargin;
+  }
+
+  public void setDefaultDmdMargin(int defaultDmdMargin) {
+    this.defaultDmdMargin = defaultDmdMargin;
+  }
+
   public boolean isPropperAuthorField() {
     return propperAuthorField;
   }
@@ -582,12 +613,36 @@ public class UISettings extends JsonSettings {
     this.hideRatingSyncInfo = hideRatingSyncInfo;
   }
 
+  public boolean isHideGreenMarker() {
+    return hideGreenMarker;
+  }
+
+  public void setHideGreenMarker(boolean hideGreenMarker) {
+    this.hideGreenMarker = hideGreenMarker;
+  }
+
   public boolean isHideCustomIcons() {
     return hideCustomIcons;
   }
 
   public void setHideCustomIcons(boolean hideCustomIcons) {
     this.hideCustomIcons = hideCustomIcons;
+  }
+  
+  public int getDropinPostAction() {
+    return dropinPostAction;
+  }
+
+  public void setDropinPostAction(int dropinPostAction) {
+    this.dropinPostAction = dropinPostAction;
+  }
+
+  public String getDropinPostTargetFolder() {
+    return dropinPostTargetFolder;
+  }
+
+  public void setDropinPostTargetFolder(String dropinPostTargetFolder) {
+    this.dropinPostTargetFolder = dropinPostTargetFolder;
   }
 
   @Override

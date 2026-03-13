@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +32,7 @@ import static de.mephisto.vpin.commons.utils.WidgetFactory.getScoreFontText;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableHighscoresAdminController implements Initializable, DialogController {
-  private final static Logger LOG = LoggerFactory.getLogger(TableHighscoresAdminController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private VBox scorePane;

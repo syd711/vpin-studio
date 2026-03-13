@@ -14,13 +14,14 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.Iterator;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 
 public class UploadDispatchAnalysisRarProgressModel extends ProgressModel<ISimpleInArchiveItem> {
-  private final static Logger LOG = LoggerFactory.getLogger(UploadDispatchAnalysisRarProgressModel.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private final RandomAccessFile randomAccessFile;
   private final RandomAccessFileInStream randomAccessFileStream;
   private final ISimpleInArchiveItem[] archiveItems;

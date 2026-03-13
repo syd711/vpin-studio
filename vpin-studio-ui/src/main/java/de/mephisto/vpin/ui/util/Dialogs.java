@@ -13,6 +13,8 @@ import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.launcher.InstallationDialogController;
+import de.mephisto.vpin.ui.mania.dialogs.ManiaDialogs;
+import de.mephisto.vpin.ui.mania.util.ManiaHelper;
 import de.mephisto.vpin.ui.players.dialogs.PlayerDialogController;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.fxml.FXMLLoader;
@@ -25,6 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -34,7 +37,7 @@ import java.util.Optional;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class Dialogs {
-  private final static Logger LOG = LoggerFactory.getLogger(Dialogs.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static void editFile(File file) {
     if (file != null) {
@@ -81,7 +84,7 @@ public class Dialogs {
   }
 
   public static boolean openUpdateDialog(VPinStudioClient client) {
-    Stage stage = createStudioDialogStage("dialog-update.fxml", "VPin Studio Updater");
+    Stage stage = createStudioDialogStage("dialog-updater.fxml", "VPin Studio Updater");
     UpdateDialogController controller = (UpdateDialogController) stage.getUserData();
     controller.setClient(client);
     stage.showAndWait();

@@ -18,6 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
@@ -61,7 +63,6 @@ public class CompetitionService implements InitializingBean {
   @Autowired
   private CompetitionLifecycleService competitionLifecycleService;
 
-
   public List<Competition> getOfflineCompetitions() {
     return competitionsRepository
         .findByTypeOrderByEndDateDesc(CompetitionType.OFFLINE.name())
@@ -72,6 +73,13 @@ public class CompetitionService implements InitializingBean {
   public List<Competition> getDiscordCompetitions() {
     return competitionsRepository
         .findByTypeOrderByEndDateDesc(CompetitionType.DISCORD.name())
+        .stream().map(c -> competitionValidator.validate(c))
+        .collect(Collectors.toList());
+  }
+
+  public List<Competition> getWeeklyCompetitions() {
+    return competitionsRepository
+        .findByTypeOrderByEndDateDesc(CompetitionType.WEEKLY.name())
         .stream().map(c -> competitionValidator.validate(c))
         .collect(Collectors.toList());
   }
@@ -109,7 +117,7 @@ public class CompetitionService implements InitializingBean {
 
   public List<Competition> getFinishedCompetitions(int limit) {
     List<Competition> competitions = competitionsRepository.findByWinnerInitialsIsNotNull();
-    if (competitions.size() > limit) {
+    if (competitions.size() > limit && limit > 0) {
       return competitions.subList(0, limit);
     }
     return competitions;
@@ -273,6 +281,16 @@ public class CompetitionService implements InitializingBean {
     return Collections.emptyList();
   }
 
+  public List<Competition> getFinishedByDateCompetitions() {
+    try {
+      return competitionsRepository.findByEndDateLessThanEqual(new Date());
+    }
+    catch (Exception e) {
+      LOG.error("Failed to read active competitions: " + e.getMessage());
+    }
+    return Collections.emptyList();
+  }
+
   public Competition getActiveCompetition(CompetitionType competitionType) {
     List<Competition> result = competitionsRepository.findByAndWinnerInitialsIsNullAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndType(new Date(), new Date(), competitionType.name());
     if (!result.isEmpty()) {
@@ -324,9 +342,6 @@ public class CompetitionService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    scheduler.scheduleAtFixedRate(new CompetitionCheckRunnable(this), 1000 * 60 * 2);
-
-
     try {
       List<Competition> iScoredSubscriptions = getIScoredSubscriptions();
       LOG.info("---------------------------------- iScored Competitions -----------------------------------------------");
@@ -339,5 +354,16 @@ public class CompetitionService implements InitializingBean {
       LOG.error("iScored summary failed: {}", e.getMessage(), e);
     }
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
+  }
+
+
+  @EventListener(ApplicationReadyEvent.class)
+  public void scheduleCompetitionCheck() {
+    scheduler.scheduleAtFixedRate(new CompetitionCheckRunnable(this), 1000 * 60 * 2);
+  }
+
+  public void shutdown() {
+    scheduler.shutdown();
+    LOG.info("Competition scheduler has been shut down.");
   }
 }

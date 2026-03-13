@@ -4,10 +4,10 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.backups.BackupDescriptorRepresentation;
-import de.mephisto.vpin.restclient.backups.BackupType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.BackupRestoreDescriptor;
 import de.mephisto.vpin.restclient.preferences.BackupSettings;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import javafx.application.Platform;
@@ -85,6 +85,9 @@ public class BackupRestoreDialogController implements Initializable, DialogContr
   private CheckBox dmdCheckBox;
 
   @FXML
+  private CheckBox dmdDataCheckBox;
+
+  @FXML
   private CheckBox vpxCheckBox;
 
   @FXML
@@ -92,6 +95,9 @@ public class BackupRestoreDialogController implements Initializable, DialogContr
 
   @FXML
   private CheckBox b2sSettingsCheckbox;
+
+  @FXML
+  private CheckBox studioDataCheckBox;
 
   @FXML
   private VBox frontendColumn;
@@ -150,8 +156,7 @@ public class BackupRestoreDialogController implements Initializable, DialogContr
     }
     titleLabel.setText(title);
 
-    BackupType backupType = client.getSystemService().getSystemSummary().getBackupType();
-    emuGrid.setVisible(backupType.equals(BackupType.VPA));
+    emuGrid.setVisible(true);
   }
 
   private void refreshImportsSelection(BackupSettings backupSettings) {
@@ -172,11 +177,16 @@ public class BackupRestoreDialogController implements Initializable, DialogContr
     vpxCheckBox.setSelected(backupSettings.isVpx());
     registryDataCheckBox.setSelected(backupSettings.isRegistryData());
     b2sSettingsCheckbox.setSelected(backupSettings.isB2sSettings());
+    studioDataCheckBox.setSelected(backupSettings.isStudioData());
+    dmdDataCheckBox.setSelected(backupSettings.isDmdDeviceData());
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    List<GameEmulatorRepresentation> emulators = client.getEmulatorService().getVpxGameEmulators();
+    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    BackupSettings backupSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.BACKUP_SETTINGS, BackupSettings.class);
+
+    List<GameEmulatorRepresentation> emulators = client.getEmulatorService().getFilteredEmulatorsWithoutAllVpx(uiSettings);
     ObservableList<GameEmulatorRepresentation> data = FXCollections.observableList(emulators);
     this.emulatorCombo.setItems(data);
     this.emulatorCombo.setValue(data.get(0));
@@ -187,8 +197,6 @@ public class BackupRestoreDialogController implements Initializable, DialogContr
     popperMediaCheckBox.managedProperty().bindBidirectional(popperMediaCheckBox.visibleProperty());
 
     frontendColumn.setVisible(!Features.IS_STANDALONE);
-
-    BackupSettings backupSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.BACKUP_SETTINGS, BackupSettings.class);
     refreshImportsSelection(backupSettings);
 
     directb2sCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -257,6 +265,14 @@ public class BackupRestoreDialogController implements Initializable, DialogContr
     });
     b2sSettingsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       backupSettings.setB2sSettings(newValue);
+      client.getPreferenceService().setJsonPreference(backupSettings);
+    });
+    studioDataCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      backupSettings.setStudioData(newValue);
+      client.getPreferenceService().setJsonPreference(backupSettings);
+    });
+    dmdDataCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      backupSettings.setDmdDeviceData(newValue);
       client.getPreferenceService().setJsonPreference(backupSettings);
     });
   }

@@ -7,6 +7,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -30,7 +31,21 @@ public class CompetitionChangeListenerImpl extends DefaultCompetitionChangeListe
   private FrontendStatusService frontendStatusService;
 
   @Override
+  public void competitionStarted(@NonNull Competition competition) {
+    refreshBadge(competition);
+  }
+
+  @Override
   public void competitionChanged(@NonNull Competition competition) {
+    refreshBadge(competition);
+  }
+
+  @Override
+  public void competitionDeleted(@NotNull Competition competition) {
+    refreshBadge(competition);
+  }
+
+  private void refreshBadge(@NotNull Competition competition) {
     Game game = gameService.getGame(competition.getGameId());
     boolean active = competition.isActive();
 

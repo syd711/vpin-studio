@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
+import java.lang.invoke.MethodHandles;
 import java.net.URI;
 import java.net.URL;
 import java.text.DateFormat;
@@ -36,7 +37,7 @@ import java.util.function.Predicate;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class VpsTablesSidebarController extends BaseSideBarController<VpsTable> implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(VpsTablesSidebarController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private final Debouncer debouncer = new Debouncer();
 
   @FXML

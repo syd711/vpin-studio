@@ -18,11 +18,12 @@ import org.apache.commons.lang3.ThreadUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
 public class NotificationStage {
-  private final static Logger LOG = LoggerFactory.getLogger(NotificationStage.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final static int WIDTH = 2400;
   public static final int OFFSET = 30;
@@ -49,7 +50,7 @@ public class NotificationStage {
       stage.getIcons().add(new Image(NotificationController.class.getResourceAsStream("logo-64.png")));
 
       NotificationSettings notificationSettings = ServerFX.client.getJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, NotificationSettings.class);
-      this.screenBounds = ServerFX.client.getScreenInfo(notificationSettings.getNotificationsScreenId());
+      this.screenBounds = ServerFX.client.getSystemService().getScreenInfo(notificationSettings.getNotificationsScreenId());
 
       FXMLLoader loader = new FXMLLoader(NotificationController.class.getResource("notification.fxml"));
       root = loader.load();

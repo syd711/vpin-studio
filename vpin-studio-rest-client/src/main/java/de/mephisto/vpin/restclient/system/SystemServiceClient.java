@@ -17,6 +17,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -24,7 +25,7 @@ import java.util.HashMap;
  * System
  ********************************************************************************************************************/
 public class SystemServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public SystemServiceClient(VPinStudioClient client) {
     super(client);
@@ -87,6 +88,11 @@ public class SystemServiceClient extends VPinStudioClientService {
   public void mute(boolean mute) {
     final RestTemplate restTemplate = new RestTemplate();
     restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/mute/" + (mute ? "1" : "0"), Boolean.class);
+  }
+
+  public boolean isMuted() {
+    final RestTemplate restTemplate = new RestTemplate();
+    return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/muted", Boolean.class);
   }
 
   public void systemShutdown() {
@@ -160,10 +166,10 @@ public class SystemServiceClient extends VPinStudioClientService {
 
   public MonitorInfo getScreenInfo(int screenId) {
     if (screenId == -1) {
-      return getSystemSummary().getPrimaryScreen();
+      return getSystemSummary().getPrimaryMonitor();
     }
     else {
-      return getSystemSummary().getScreenInfo(screenId);
+      return getSystemSummary().getMonitorInfo(screenId);
     }
   }
 

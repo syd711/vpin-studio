@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientErrorHandler;
-import org.apache.commons.io.IOUtils;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.invoke.MethodHandles;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
@@ -26,7 +26,7 @@ import java.util.*;
  *
  */
 public class RestClient implements ClientHttpRequestInterceptor {
-  private final static Logger LOG = LoggerFactory.getLogger(RestTemplate.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   public static final String SCHEME = "http";
   public static final String HOST = "localhost";
   public static final int PORT = 8089;
@@ -69,6 +69,31 @@ public class RestClient implements ClientHttpRequestInterceptor {
     HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(
         HttpClientBuilder.create().build());
     restTemplate = new RestTemplate(clientHttpRequestFactory);
+    restTemplate.setInterceptors(interceptors);
+
+    List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
+    MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+    converter.setPrettyPrint(true);
+    converter.getObjectMapper()
+        .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+        .setTimeZone(TimeZone.getDefault())
+        .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+
+    // Note: here we are making this converter to process any kind of response,
+    // not only application/*json, which is the default behaviour
+    converter.setSupportedMediaTypes(Collections.singletonList(MediaType.ALL));
+    messageConverters.add(converter);
+    restTemplate.setMessageConverters(messageConverters);
+  }
+
+  public void initRestClientWithTimeoutMs(int ms) {
+    List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
+    interceptors.add(this);
+
+    SimpleClientHttpRequestFactory httpRequestFactory = new SimpleClientHttpRequestFactory();
+    httpRequestFactory.setConnectTimeout(ms);
+    httpRequestFactory.setReadTimeout(ms);
+    restTemplate = new RestTemplate(httpRequestFactory);
     restTemplate.setInterceptors(interceptors);
 
     List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
@@ -183,7 +208,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
     return exchange;
   }
 
-  public Boolean put(String url, Map<String, Object> model) throws Exception {
+  public Boolean put(String url, Map<String, Object> model) {
     long start = System.currentTimeMillis();
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
@@ -193,7 +218,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
     return exchange;
   }
 
-  public <T> T put(String url, Map<String, Object> model, Class<T> entityType) throws Exception {
+  public <T> T put(String url, Map<String, Object> model, Class<T> entityType) {
     long start = System.currentTimeMillis();
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);

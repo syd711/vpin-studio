@@ -12,7 +12,6 @@ import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionOfflineDialogController;
 import de.mephisto.vpin.ui.preferences.PreferencesSavingModel;
-import de.mephisto.vpin.ui.tournaments.dialogs.IScoredGameRoomLoadingProgressModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import edu.umd.cs.findbugs.annotations.NonNull;

@@ -3,7 +3,6 @@ package de.mephisto.vpin.server.vpx;
 import com.sun.jna.platform.DesktopWindow;
 import com.sun.jna.platform.WindowUtils;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
@@ -18,13 +17,14 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static de.mephisto.vpin.server.VPinStudioServer.Features;
-
+import javax.annotation.PreDestroy;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 @Service
 public class VPXMonitoringService implements InitializingBean, PreferenceChangedListener, Runnable {
@@ -108,6 +108,10 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
     LOG.info("Detected VPX running with table filename \"" + tableName + ".vpx\", resolving game for it.");
 
     Game game = gameService.getGameByFilename(emuId, tableName + ".vpx");
+    if (game == null) {
+      game = gameService.getGameByFilename(emuId, tableName + ".vpt");
+    }
+
     if (game != null) {
       LOG.info(this.getClass().getSimpleName() + " notifying table start event of \"" + game.getGameDisplayName() + "\"");
       frontendStatusService.notifyTableStatusChange(game, true, TableStatusChangedOrigin.ORIGIN_POPPER);
@@ -116,16 +120,6 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
       LOG.info(this.getClass().getSimpleName() + " registered a VPX window, but the game could not be resolved for name \"" + tableName + "\"");
       gameStatusService.setForceActive(true);
     }
-  }
-
-  @Override
-  public void afterPropertiesSet() throws Exception {
-    if (Features.VPX_MONITORING) {
-      scheduler.scheduleAtFixedRate(this, 0, 5, TimeUnit.SECONDS);
-      preferencesService.addChangeListener(this);
-      preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
-    }
-    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 
   @Override
@@ -146,5 +140,20 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
     catch (Exception e) {
       LOG.error("Failed to update VPX monitoring: " + e.getMessage(), e);
     }
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    if (Features.VPX_MONITORING) {
+      scheduler.scheduleAtFixedRate(this, 0, 5, TimeUnit.SECONDS);
+      preferencesService.addChangeListener(this);
+      preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
+    }
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
+  }
+
+  public void shutdown() {
+    scheduler.shutdownNow();
+    LOG.info("Folder monitoring scheduler has been shut down.");
   }
 }

@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -40,7 +41,7 @@ import java.util.ResourceBundle;
 import static de.mephisto.vpin.commons.fx.ServerFX.client;
 
 public class WidgetPlayerRankController extends WidgetController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(WidgetPlayerRankController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private BorderPane root;
@@ -122,7 +123,7 @@ public class WidgetPlayerRankController extends WidgetController implements Init
           in = client.getCachedUrlImage(value.getAvatarUrl());
         }
         else if (value.getAvatarUuid() != null) {
-          in = new ByteArrayInputStream(client.getAsset(AssetType.AVATAR, value.getAvatarUuid()).readAllBytes());
+          in = new ByteArrayInputStream(client.getAssetService().getAsset(AssetType.AVATAR, value.getAvatarUuid()).readAllBytes());
         }
 
         if (in == null) {
@@ -142,7 +143,7 @@ public class WidgetPlayerRankController extends WidgetController implements Init
     });
 
     OverlaySettings overlaySettings = ServerFX.client.getJsonPreference(PreferenceNames.OVERLAY_SETTINGS, OverlaySettings.class);
-    MonitorInfo screenBounds = ServerFX.client.getScreenInfo(overlaySettings.getOverlayScreenId());
+    MonitorInfo screenBounds = ServerFX.client.getSystemService().getScreenInfo(overlaySettings.getOverlayScreenId());
     if (screenBounds.getWidth() < 2600) {
       columnName.setPrefWidth(280);
     }
@@ -195,7 +196,7 @@ public class WidgetPlayerRankController extends WidgetController implements Init
 
   public void refresh() {
     new Thread(() -> {
-      List<RankedPlayerRepresentation> rankedPlayers = client.getRankedPlayers();
+      List<RankedPlayerRepresentation> rankedPlayers = client.getPlayerService().getRankedPlayers();
 
       Platform.runLater(() -> {
         ObservableList<RankedPlayerRepresentation> data = FXCollections.observableList(rankedPlayers);

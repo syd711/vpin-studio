@@ -1,5 +1,6 @@
 package de.mephisto.vpin.commons.fx;
 
+import de.mephisto.vpin.commons.StudioMediaPlayer;
 import de.mephisto.vpin.commons.fx.pausemenu.model.FrontendScreenAsset;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
@@ -10,31 +11,27 @@ import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaView;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class FrontendScreenController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(FrontendScreenController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private ImageView imageView;
 
   @FXML
-  private MediaView mediaView;
-
-  @FXML
   private StackPane root;
+
+  private StudioMediaPlayer mediaPlayer;
 
   // Add a public no-args constructor
   public FrontendScreenController() {
@@ -46,15 +43,15 @@ public class FrontendScreenController implements Initializable {
   }
 
   public void setMediaAsset(FrontendScreenAsset screenAsset) {
+    screenAsset.setFrontendScreenController(this);
     try {
       root.setPadding(new Insets(0, 0, 0, 0)); //reset of the other options
-      root.setRotate(0);//reset of the other options
 
       if (screenAsset.getDisplay() != null) {
         showOnDisplay(screenAsset);
       }
       else {
-        MonitorInfo screen = ServerFX.client.getScreenInfo(-1);
+        MonitorInfo screen = ServerFX.client.getSystemService().getScreenInfo(-1);
         showCentered(screenAsset, screen);
       }
     }
@@ -64,9 +61,8 @@ public class FrontendScreenController implements Initializable {
   }
 
   private void showCentered(FrontendScreenAsset asset, MonitorInfo screen) throws IOException {
-    InputStream in = asset.getInputStream();
-    Image image = new Image(in);
-    in.close();
+    URL url = asset.getUrl();
+    Image image = new Image(url.openStream());
     LOG.info("Showing asset centered on playfield (" + image.getWidth() + "/" + image.getHeight() + ")");
 
     imageView.setImage(image);
@@ -75,18 +71,14 @@ public class FrontendScreenController implements Initializable {
     imageView.setFitHeight(image.getHeight());
 
     Stage screenStage = asset.getScreenStage();
-//    double x = screen.getWidth() / 2 - image.getWidth() / 2;
-//    double y = screen.getHeight() / 2 - image.getHeight() / 2;
     screenStage.setX(0);
     screenStage.setY(0);
     screenStage.setHeight(screen.getHeight());
     screenStage.setWidth(screen.getWidth());
-//    screenStage.initStyle(StageStyle.UTILITY);
 
     int targetRotation = asset.getRotation() + (-90);
     root.setRotate(targetRotation);
     root.setPadding(new Insets(0, 0, 0, 0));
-
     if (targetRotation == -90 || targetRotation == 90) {
       //move the image a bit up for more distance to the wheel selector
       root.setPadding(new Insets(0, 0, image.getHeight() / 2 + image.getHeight() / 2 / 2, 0));
@@ -102,12 +94,11 @@ public class FrontendScreenController implements Initializable {
     String mimeType = asset.getMimeType();
 
     LOG.info("Showing asset on display \"" + display + "\"");
-    InputStream inputStream = asset.getInputStream();
-    image = new Image(inputStream, display.getWidth(), display.getHeight(), false, true);
-    inputStream.close();
-
     if (mimeType.startsWith("image")) {
-      mediaView.setVisible(false);
+      InputStream inputStream = asset.getUrl().openStream();
+      image = new Image(inputStream, display.getWidth(), display.getHeight(), false, true);
+      inputStream.close();
+
       imageView.setPreserveRatio(false);
       imageView.setFitWidth(display.getWidth());
       imageView.setFitHeight(display.getHeight());
@@ -116,41 +107,52 @@ public class FrontendScreenController implements Initializable {
     else if (mimeType.startsWith("video")) {
       imageView.setVisible(false);
 
-      Media media = new Media(asset.getUrl());
-      MediaPlayer mediaPlayer = new MediaPlayer(media);
-      mediaPlayer.setAutoPlay(true);
-      mediaPlayer.setCycleCount(-1);
-      mediaPlayer.setMute(false);
-
-      mediaView.setPreserveRatio(false);
-      mediaView.setFitWidth(display.getWidth());
-      mediaView.setFitHeight(display.getHeight());
-      mediaView.setMediaPlayer(mediaPlayer);
-
-      asset.setMediaPlayer(mediaPlayer);
+      mediaPlayer = new StudioMediaPlayer();
+      Node node = mediaPlayer.render(display, asset);
+      if (node != null) {
+        root.getChildren().add(node);
+      }
+      else {
+        return;
+      }
     }
     else {
       LOG.error("Unsupported mime type for screen asset: " + mimeType);
       throw new UnsupportedEncodingException("Unsupported mime type for screen asset: " + mimeType);
     }
 
+    showStage(asset, display);
+  }
+
+  private void showStage(FrontendScreenAsset asset, FrontendPlayerDisplay display) {
     Stage screenStage = asset.getScreenStage();
-    screenStage.setX(display.getX());
-    screenStage.setY(display.getY());
+    screenStage.setTitle("VPin UI");
+    screenStage.setX(display.getX() + asset.getOffsetX());
+    screenStage.setY(display.getY() + asset.getOffsetY());
     screenStage.setHeight(display.getHeight());
     screenStage.setWidth(display.getWidth());
 
-    root.setRotate(display.getRotation());
+    if (asset.getRotation() == 90 || asset.getRotation() == 270) {
+      screenStage.setX(screenStage.getX() + ((double) display.getWidth() / 2) - ((double) display.getHeight() / 2));
+      screenStage.setY(screenStage.getY() - ((double) display.getHeight() / 2) + ((double) display.getHeight() / 2));
+      screenStage.setHeight(display.getWidth());
+      screenStage.setWidth(display.getHeight());
+    }
+    else if (asset.getRotation() == 180) {
+      screenStage.setY(screenStage.getY() + display.getHeight());
+    }
 
-    if (display.getRotation() == 90 || display.getRotation() == 270) {
-      root.setPadding(new Insets(display.getHeight() / 2 + display.getHeight() / 2 / 2, 0, 0, 0));
-      if (display.getRotation() == 270) {
-        root.setPadding(new Insets(0, 0, display.getHeight() / 2 + display.getHeight() / 2 / 2, 0));
-      }
+    root.setRotate(asset.getRotation());
+
+    if (asset.getRotation() == 90 || asset.getRotation() == 270) {
+      root.translateXProperty().setValue(-(display.getHeight() + (display.getHeight() / 2)));
     }
   }
 
-  public Node getRoot() {
-    return root;
+  public void dispose() {
+    root.getChildren().removeAll(root.getChildren());
+    if (mediaPlayer != null) {
+      mediaPlayer.dispose();
+    }
   }
 }

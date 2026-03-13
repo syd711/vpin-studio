@@ -4,13 +4,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class ReleaseArtifactActionLog {
-  private final static Logger LOG = LoggerFactory.getLogger(ReleaseArtifactActionLog.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final List<String> logs = new ArrayList<>();
   private final List<DiffEntry> diffEntries = new ArrayList<>();

@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,7 +33,7 @@ import java.util.stream.Collectors;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
-  private final static Logger LOG = LoggerFactory.getLogger(TableMediaFileDropEventHandler.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final VPinScreen screen;
   private final List<String> suffixes;
@@ -79,7 +80,24 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
     try {
       FrontendMediaItemRepresentation media = (FrontendMediaItemRepresentation) event.getDragboard().getContent(DataFormat.URL);
       Platform.runLater(() -> {
-        ProgressDialog.createProgressDialog(new TableMediaCopyProgressModel(screen, media));
+
+        GameRepresentation game = null;
+        PlaylistRepresentation playlist = null;
+        if (this.tablesController != null) {
+          game = tablesController.getSelection();
+        }
+        else if (dialogController.isPlaylistMode()) {
+          playlist = dialogController.getPlaylist();
+        }
+        else {
+          game = dialogController.getGame();
+        }
+
+        if (playlist != null) {
+          ProgressDialog.createProgressDialog(new TableMediaCopyProgressModel(playlist, screen, media));
+        } else {
+          ProgressDialog.createProgressDialog(new TableMediaCopyProgressModel(game, screen, media));
+        }
         refreshView();
       });
     }

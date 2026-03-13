@@ -1,12 +1,15 @@
 package de.mephisto.vpin.server.competitions;
 
+import de.mephisto.vpin.connectors.wovp.Wovp;
+import de.mephisto.vpin.connectors.wovp.models.WovpPlayer;
+import de.mephisto.vpin.restclient.competitions.CompetitionScore;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.competitions.IScoredSyncModel;
+import de.mephisto.vpin.restclient.wovp.ScoreSubmitResult;
 import de.mephisto.vpin.server.competitions.iscored.IScoredCompetitionSynchronizer;
-import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.players.Player;
+import de.mephisto.vpin.server.wovp.WovpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -24,6 +27,9 @@ public class CompetitionResource {
   private CompetitionService competitionService;
 
   @Autowired
+  private WovpService wovpService;
+
+  @Autowired
   private IScoredCompetitionSynchronizer competitionSynchronizer;
 
   @GetMapping("/offline")
@@ -34,6 +40,32 @@ public class CompetitionResource {
   @GetMapping("/discord")
   public List<Competition> getDiscordCompetitions() {
     return competitionService.getDiscordCompetitions();
+  }
+
+  @GetMapping("/weekly")
+  public List<Competition> getWeeklyCompetitions() {
+    return competitionService.getWeeklyCompetitions();
+  }
+
+  @GetMapping("/weekly/synchronize/{forceReload}")
+  public boolean synchronizeWeekly(@PathVariable("forceReload") boolean forceReload) {
+    return wovpService.synchronize(forceReload);
+  }
+
+  @GetMapping("/weekly/scores/{uuid}")
+  public List<CompetitionScore> getWeeklyScore(@PathVariable("uuid") String uuid) {
+    return wovpService.getWeeklyScores(uuid);
+  }
+
+  @GetMapping("/submitter/enabled")
+  public boolean isScoreSubmitEnabled() {
+    return wovpService.isScoreSubmitEnabled();
+  }
+
+  @GetMapping("/weekly/submit/{userId}/{simulate}")
+  public ScoreSubmitResult submitScore(@PathVariable("userId") String userId, @PathVariable("simulate") boolean simulate) {
+    WovpPlayer player = wovpService.getPlayer(userId);
+    return wovpService.submitScore(player, simulate);
   }
 
   @GetMapping("/subscriptions")
@@ -50,6 +82,7 @@ public class CompetitionResource {
   public IScoredSyncModel synchronize(@RequestBody IScoredSyncModel syncModel) {
     return competitionSynchronizer.synchronize(syncModel);
   }
+
   @PostMapping("/iscored/synchronize")
   public boolean synchronize() {
     return competitionSynchronizer.synchronizeGameRooms();

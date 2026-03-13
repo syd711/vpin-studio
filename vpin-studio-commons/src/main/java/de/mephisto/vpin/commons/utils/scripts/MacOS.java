@@ -2,6 +2,7 @@ package de.mephisto.vpin.commons.utils.scripts;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFilePermission;
@@ -18,7 +19,7 @@ import de.mephisto.vpin.restclient.util.FileUtils;
 
 
 public class MacOS {
-  private final static Logger LOG = LoggerFactory.getLogger(MacOS.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 private static final String LOG_PATH = System.getProperty("MAC_WRITE_PATH") + "Logs";
   private static final String UPDATE_CLIENT_SCRIPT_NAME =  "update-client.sh";

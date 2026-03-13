@@ -43,7 +43,7 @@ public class PlayerRankingsPreferencesController implements Initializable {
     SpinnerValueFactory.IntegerSpinnerValueFactory factoryC = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 0);
     spinnerCompetitions.setValueFactory(factoryC);
 
-    PreferenceEntryRepresentation idle = ServerFX.client.getPreference(PreferenceNames.RANKING_POINTS);
+    PreferenceEntryRepresentation idle = ServerFX.client.getPreferenceService().getPreference(PreferenceNames.RANKING_POINTS);
     String pointsString = idle.getValue();
     if(pointsString == null) {
       pointsString = UIDefaults.DEFAULT_POINTS;

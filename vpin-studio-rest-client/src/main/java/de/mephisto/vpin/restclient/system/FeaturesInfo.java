@@ -16,6 +16,7 @@ public class FeaturesInfo {
   public boolean AUTO_INSTALLER = false;
 
   public boolean DROP_IN_FOLDER = true;
+  public boolean DMD_DEVICE_INI = true;
 
   public boolean RECORDER = true;
   public boolean RES_EDITOR = true;
@@ -69,5 +70,7 @@ public class FeaturesInfo {
 
     /** Specific flag for standalone mode */
   public boolean IS_STANDALONE = false;
+
+  public boolean VPXZ_ENABLED  = true;
 
 }

@@ -17,13 +17,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.lang.invoke.MethodHandles;
+
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @RestController
 @RequestMapping(API_SEGMENT + "altcolor")
 public class AltColorResource {
-  private final static Logger LOG = LoggerFactory.getLogger(AltColorResource.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @Autowired
   private AltColorService altColorService;
@@ -37,6 +39,7 @@ public class AltColorResource {
   @Autowired
   private UniversalUploadService universalUploadService;
 
+
   @GetMapping("{id}")
   public AltColor get(@PathVariable("id") int id) {
     Game game = gameService.getGame(id);
@@ -49,7 +52,7 @@ public class AltColorResource {
   @GetMapping("{id}/fileinfo")
   public FileInfo getAltColorFolder(@PathVariable("id") int id) {
     Game game = gameService.getGame(id);
-    return game != null ? FileInfo.folder(altColorService.getAltColorFolder(game), game.getEmulator().getAltColorFolder()) : null;
+    return game != null ? FileInfo.folder(altColorService.getAltColorFolder(game), null) : null;
   }
 
   @DeleteMapping("/{id}/{filename}")

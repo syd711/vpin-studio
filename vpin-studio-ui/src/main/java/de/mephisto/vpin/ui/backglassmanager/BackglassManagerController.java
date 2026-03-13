@@ -466,7 +466,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
     if (model != null) {
       JFXFuture
-          .supplyAsync(() -> client.getGame(model.getGameId()))
+          .supplyAsync(() -> client.getGameService().getGame(model.getGameId()))
           .thenAcceptLater(game -> {
             // Ignore old answer when a new backglass has been selected
             if (game == null || model.getGameId() != game.getId()) {
@@ -608,7 +608,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   protected GameRepresentation getGameFromSelection() {
     DirectB2SModel selection = getSelectedModel();
     if (selection != null && selection.getGameId() > 0) {
-      return client.getGame(selection.getGameId());
+      return client.getGameService().getGame(selection.getGameId());
     }
     return null;
   }

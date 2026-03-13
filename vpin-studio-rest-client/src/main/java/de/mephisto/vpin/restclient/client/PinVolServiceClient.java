@@ -5,11 +5,13 @@ import de.mephisto.vpin.restclient.pinvol.PinVolUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
+
 /*********************************************************************************************************************
  * PinVol
  ********************************************************************************************************************/
 public class PinVolServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 
   private PinVolPreferences pinVolTablePreferences;

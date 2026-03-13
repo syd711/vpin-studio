@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -23,7 +24,7 @@ import javafx.scene.input.KeyEvent;
  * A base dialog class that support Next / prev and autosave buttons
  */
 public abstract class BasePrevNextController implements Initializable, DialogController {
-  private final static Logger LOG = LoggerFactory.getLogger(BaseUploadController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   protected DialogHeaderController headerController;  //fxml magic! Not unused -> id + "Controller"
@@ -59,7 +60,7 @@ public abstract class BasePrevNextController implements Initializable, DialogCon
       autosave(onSuccess);
     }
     else if (headerController.isDirty()) {
-      Optional<ButtonType> result = WidgetFactory.showYesNoConfirmation(Studio.stage, "You have unsaved changes.", "Do you want to save them ?");
+      Optional<ButtonType> result = WidgetFactory.showYesNoConfirmation(Studio.stage, "You have unsaved changes.", "Do you want to save them?");
       if (result.isPresent() && result.get().equals(ButtonType.YES)) {
         autosave(onSuccess);
         return;
@@ -96,10 +97,10 @@ public abstract class BasePrevNextController implements Initializable, DialogCon
 
   @Override
   public void onKeyPressed(KeyEvent ke) {
-    if (ke.getCode() == KeyCode.PAGE_UP) {
+    if (ke.getCode() == KeyCode.PAGE_UP && !prevButton.isDisabled()) {
       onPrevious(null);
     }
-    if (ke.getCode() == KeyCode.PAGE_DOWN) {
+    if (ke.getCode() == KeyCode.PAGE_DOWN && !nextButton.isDisabled()) {
       onNext(null);
     }
     if (ke.getCode() == KeyCode.S && ke.isControlDown()) {

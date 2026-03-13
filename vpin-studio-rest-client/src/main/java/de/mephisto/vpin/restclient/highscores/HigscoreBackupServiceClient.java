@@ -5,12 +5,13 @@ import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 public class HigscoreBackupServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(HigscoreBackupServiceClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public HigscoreBackupServiceClient(VPinStudioClient client) {
     super(client);

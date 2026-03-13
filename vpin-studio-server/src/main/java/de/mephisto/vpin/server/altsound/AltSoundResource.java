@@ -23,6 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static de.mephisto.vpin.server.VPinStudioServer.Features;
@@ -33,7 +34,7 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 @RestController
 @RequestMapping(API_SEGMENT + "altsound")
 public class AltSoundResource {
-  private final static Logger LOG = LoggerFactory.getLogger(AltSoundResource.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @Autowired
   private AltSoundService altSoundService;
@@ -59,7 +60,7 @@ public class AltSoundResource {
   @GetMapping("{id}/fileinfo")
   public FileInfo getAltSoundFolder(@PathVariable("id") int id) {
     Game game = gameService.getGame(id);
-    return game != null ? FileInfo.folder(altSoundService.getAltSoundFolder(game), game.getEmulator().getAltSoundFolder()) : null;
+    return game != null ? FileInfo.folder(altSoundService.getAltSoundFolder(game), null) : null;
   }
 
   @DeleteMapping("{id}")
@@ -80,11 +81,11 @@ public class AltSoundResource {
       altSoundService.save(game, altSound);
       return getAltSound(game);
     }
-    return new AltSound();
+    return null;
   }
 
   @GetMapping("/restore/{id}")
-  public AltSound restore(@PathVariable("id") int id) {
+  public boolean restore(@PathVariable("id") int id) {
     Game game = gameService.getGame(id);
     return altSoundService.restore(game);
   }
@@ -128,9 +129,10 @@ public class AltSoundResource {
     }
   }
 
-  @GetMapping("/stream/{emuId}/{name}/{filename}")
-  public ResponseEntity<Resource> handleRequestWithName(@PathVariable("emuId") int emuId, @PathVariable("name") String altSoundName, @PathVariable("filename") String filename) throws IOException {
-    AltSound altSound = altSoundService.getAltSound(emuId, altSoundName);
+  @GetMapping("/stream/{gameId}/{name}/{filename}")
+  public ResponseEntity<Resource> handleRequestWithName(@PathVariable("gameId") int gameId, @PathVariable("name") String altSoundName, @PathVariable("filename") String filename) throws IOException {
+    Game game = gameService.getGame(gameId);
+    AltSound altSound = altSoundService.getAltSound(game, altSoundName);
     File file = new File(altSound.getCsvFile().getParentFile(), filename);
     if (file.exists()) {
       FileInputStream in = new FileInputStream(file);
@@ -152,7 +154,9 @@ public class AltSoundResource {
 
   private AltSound getAltSound(@NonNull Game game) {
     AltSound altSound = altSoundService.getAltSound(game);
-    altSound.setValidationStates(validationService.validateAltSound(game));
+    if (altSound != null) {
+      altSound.setValidationStates(validationService.validateAltSound(game));
+    }
     return altSound;
   }
 }

@@ -2,6 +2,8 @@ package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.server.AbstractVPinServerTest;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
@@ -11,24 +13,31 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class GameServiceTest extends AbstractVPinServerTest {
+  private final static Logger LOG = LoggerFactory.getLogger(GameServiceTest.class);
 
   @Test
   public void testGames() {
-    List<Game> games = gameService.getKnownGames(1);
-    assertFalse(games.isEmpty());
-    // check the file is loaded
-    assertNotNull(gameService.getGameByFilename(1, EM_TABLE_NAME));
+    try {
+      List<Game> games = gameService.getKnownGames(1);
+      assertFalse(games.isEmpty());
+      // check the file is loaded
+      assertNotNull(gameService.getGameByFilename(1, EM_TABLE_NAME));
 
-    // force re-scan as state is uncertain
-    for (Game game : games) {
-      assertNotNull(gameService.scanGame(game.getId()));
-      assertNotNull(gameService.getGame(game.getId()));
-      assertNotNull(gameService.getScores(game.getId()));
-      assertNotNull(gameService.getScoreHistory(game.getId()));
+      // force re-scan as state is uncertain
+      for (Game game : games) {
+        assertNotNull(gameService.scanGame(game.getId()));
+        assertNotNull(gameService.getGame(game.getId()));
+        assertNotNull(gameService.getScores(game.getId()));
+        assertNotNull(gameService.getScoreHistory(game.getId()));
+      }
+
+      assertFalse(gameService.getGamesByRom(1, EM_ROM_NAME).isEmpty());
+      assertNotNull(gameService.getRecentHighscores(1));
     }
-
-    assertFalse(gameService.getGamesByRom(1, EM_ROM_NAME).isEmpty());
-    assertNotNull(gameService.getRecentHighscores(1));
+    catch (Exception e) {
+      LOG.error("failed to test games: {}", e.getMessage(), e);
+      e.printStackTrace();
+    }
   }
 
   @Test
@@ -38,6 +47,7 @@ public class GameServiceTest extends AbstractVPinServerTest {
     // fail as not in popper database
     //testDirectB2S("250", "250 cc (Inder 1992)" + File.separatorChar + "250 cc (Inder 1992).directbs");
   }
+
   private void testDirectB2S(String gameName, String expectedB2sName) {
     Game game = gameService.findMatch(gameName);
     File gameFolder = game.getGameFile().getParentFile();

@@ -32,9 +32,7 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import static de.mephisto.vpin.ui.Studio.Features;
-import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.maniaClient;
+import static de.mephisto.vpin.ui.Studio.*;
 
 public class HeaderResizeableController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(HeaderResizeableController.class);
@@ -45,6 +43,9 @@ public class HeaderResizeableController implements Initializable {
 
   @FXML
   private Button minimizeBtn;
+
+  @FXML
+  private Button maniaOpenBtn;
 
   @FXML
   private Button maniaBtn;
@@ -71,6 +72,11 @@ public class HeaderResizeableController implements Initializable {
   }
 
   @FXML
+  private void onManiaOpen() {
+    Studio.browse("https://app.vpin-mania.net");
+  }
+
+  @FXML
   private void onMania() {
     if (ToolbarController.newVersion != null) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Update " + ToolbarController.newVersion, "You need the latest VPin Studio version to use these services.", null, "Update");
@@ -80,36 +86,32 @@ public class HeaderResizeableController implements Initializable {
       return;
     }
 
-    Cabinet cabinet = null;
-    try {
-      cabinet = maniaClient.getCabinetClient().getCabinet();
-    }
-    catch (Exception e) {
-      LOG.error("Failed to load cabinet setting: {}", e.getMessage());
-    }
-
-    if (cabinet == null) {
+    if (!ManiaHelper.isRegistered()) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Registration Required", "You need to register your cabinet for the VPin Mania services.", null, "Register Cabinet");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         boolean register = ManiaHelper.register();
         if (register) {
-          toggleFriendsView();
+          toggleManiaView();
         }
       }
       return;
     }
-    toggleFriendsView();
+
+    Cabinet cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
+    if (cabinet != null) {
+      toggleManiaView();
+    }
   }
 
-  public static void toggleFriendsView() {
+  public static void toggleManiaView() {
     boolean open = ManiaSettingsController.toggle();
     if (open) {
-      if (!FRIENDS_BTN.getStyleClass().contains("friends-button-selected")) {
-        FRIENDS_BTN.getStyleClass().add("friends-button-selected");
+      if (!FRIENDS_BTN.getStyleClass().contains("bar-button-selected")) {
+        FRIENDS_BTN.getStyleClass().add("bar-button-selected");
       }
     }
     else {
-      FRIENDS_BTN.getStyleClass().remove("friends-button-selected");
+      FRIENDS_BTN.getStyleClass().remove("bar-button-selected");
     }
   }
 
@@ -148,7 +150,7 @@ public class HeaderResizeableController implements Initializable {
   }
 
   private void refreshWindowMaximizedState(boolean isMaximized) {
-    FontIcon icon = WidgetFactory.createIcon(isMaximized? "mdi2w-window-restore" : "mdi2w-window-maximize");
+    FontIcon icon = WidgetFactory.createIcon(isMaximized ? "mdi2w-window-restore" : "mdi2w-window-maximize");
     icon.setIconSize(16);
     maximizeBtn.setGraphic(icon);
   }
@@ -170,6 +172,12 @@ public class HeaderResizeableController implements Initializable {
 
     maniaBtn.managedProperty().bindBidirectional(maniaBtn.visibleProperty());
     maniaBtn.setVisible(Features.MANIA_SOCIAL_ENABLED && Features.MANIA_ENABLED);
+    maniaOpenBtn.setVisible(Features.MANIA_SOCIAL_ENABLED && Features.MANIA_ENABLED);
+
+    if (Features.MANIA_SOCIAL_ENABLED && Features.MANIA_ENABLED) {
+      ManiaHelper.isRegistered();
+    }
+
     Image maniaImage = new Image(Studio.class.getResourceAsStream("mania.png"));
     ImageView iconMedia = new ImageView(maniaImage);
     iconMedia.setFitWidth(18);
@@ -177,7 +185,7 @@ public class HeaderResizeableController implements Initializable {
     maniaIconLabel.setGraphic(iconMedia);
 
     titleLabel.setText("VPin Studio (" + Studio.getVersion() + ")");
-    PreferenceEntryRepresentation systemNameEntry = client.getPreference(PreferenceNames.SYSTEM_NAME);
+    PreferenceEntryRepresentation systemNameEntry = client.getPreferenceService().getPreference(PreferenceNames.SYSTEM_NAME);
     String name = UIDefaults.VPIN_NAME;
     if (!StringUtils.isEmpty(systemNameEntry.getValue())) {
       name = systemNameEntry.getValue();

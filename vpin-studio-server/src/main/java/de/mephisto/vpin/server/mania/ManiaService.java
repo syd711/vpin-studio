@@ -10,14 +10,13 @@ import de.mephisto.vpin.restclient.mania.ManiaConfig;
 import de.mephisto.vpin.restclient.mania.ManiaRegistration;
 import de.mephisto.vpin.restclient.mania.ManiaSettings;
 import de.mephisto.vpin.restclient.mania.ManiaTableSyncResult;
-import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.frontend.FrontendStatusChangeListener;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.frontend.TableStatusChangeListener;
 import de.mephisto.vpin.server.games.*;
-import de.mephisto.vpin.server.highscores.Score;
+import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
@@ -36,7 +35,6 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PreDestroy;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -49,8 +47,11 @@ import java.util.stream.Collectors;
 import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 @Service
-public class ManiaService implements InitializingBean, FrontendStatusChangeListener, PreferenceChangedListener, TableStatusChangeListener, GameDataChangedListener, GameLifecycleListener, ApplicationListener<ApplicationReadyEvent> {
+public class ManiaService implements InitializingBean, FrontendStatusChangeListener, PreferenceChangedListener, TableStatusChangeListener, GameDataChangedListener, GameLifecycleListener, HighscoreChangeListener, ApplicationListener<ApplicationReadyEvent> {
   private final static Logger LOG = LoggerFactory.getLogger(ManiaService.class);
+
+  //the file contains the UUID of the cabinet
+  public static final String VPIN_MANIA_ID_TXT = ".vpin-mania-id.txt";
 
   @Value("${vpinmania.server.host}")
   private String maniaHost;
@@ -76,14 +77,16 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   private FrontendStatusService frontendStatusService;
 
   @Autowired
-  private GameDetailsRepository gameDetailsRepository;
+  private GameDetailsRepositoryService gameDetailsRepositoryService;
 
   @Autowired
   private PreferencesService preferencesService;
 
+  @Autowired
+  private HighscoreService highscoreService;
+
   private List<CabinetContact> contacts;
   private ManiaSettings maniaSettings;
-  private Cabinet cabinet;
 
   public ManiaTableSyncResult synchronizeHighscore(String vpsTableId) {
     ManiaTableSyncResult result = new ManiaTableSyncResult();
@@ -185,18 +188,36 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   public ManiaConfig getConfig() throws Exception {
     ManiaConfig config = new ManiaConfig();
     config.setUrl(maniaHost);
-    config.setSystemId(SystemUtil.getUniqueSystemId());
     return config;
   }
 
   public boolean clearCache() {
-    this.contacts = null;
-    this.cabinet = this.maniaClient.getCabinetClient().getCabinet();
-    return maniaServiceCache.clear();
+    refreshDefaultCabinet();
+    this.getContacts();
+    maniaServiceCache.clear();
+    LOG.info("Invalidated Mania Caches");
+    return true;
+  }
+
+  private Cabinet refreshDefaultCabinet() {
+    try {
+      if (!StringUtils.isEmpty(maniaSettings.getApiKey()) && !StringUtils.isEmpty(maniaSettings.getCabinetUuid())) {
+        this.maniaClient.getRestClient().setApiKey(maniaSettings.getApiKey());
+        return maniaClient.getCabinetClient().getDefaultCabinetCached(maniaSettings.getCabinetUuid());
+      }
+      else {
+        LOG.info("Mania cabinet refresh failed, no API key set or API key invalid.");
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to refresh default cabinet: {}", e.getMessage());
+    }
+    return null;
   }
 
   public boolean isOnDenyList(@NonNull Game game, @NonNull Score score) {
-    if (Features.MANIA_ENABLED && this.cabinet != null) {
+    Cabinet cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
+    if (Features.MANIA_ENABLED && cabinet != null) {
       String vpsTableId = game.getExtTableId();
       if (!StringUtils.isEmpty(vpsTableId)) {
         List<DeniedScore> deniedScoresByTableId = maniaClient.getHighscoreClient().getDeniedScoresByTableId(vpsTableId);
@@ -231,15 +252,19 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
     }
 
 
+    Cabinet cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
     if (cabinet != null) {
       List<CabinetContact> contacts = getContacts();
 
       for (CabinetContact contact : contacts) {
-        List<Account> accounts = maniaClient.getCabinetClient().getAccounts(contact.getUuid());
-        for (Account account : accounts) {
-          List<TableScore> highscoresByAccount = maniaClient.getHighscoreClient().getHighscoresByAccountAndTable(account.getUuid(), vpsTableId, vpsVersionId);
-          List<Score> scores = highscoresByAccount.stream().map(h -> toScores(game, account, h)).collect(Collectors.toList());
-          result.addAll(scores);
+        Cabinet contactCabinet = maniaClient.getCabinetClient().getCabinet(contact.getUuid());
+        if (contactCabinet != null) {
+          List<Account> accounts = maniaClient.getCabinetClient().getAccounts(contactCabinet.getId());
+          for (Account account : accounts) {
+            List<TableScore> highscoresByAccount = maniaClient.getHighscoreClient().getHighscoresByAccountAndTable(account.getUuid(), vpsTableId, vpsVersionId);
+            List<Score> scores = highscoresByAccount.stream().map(h -> toScores(game, account, h)).collect(Collectors.toList());
+            result.addAll(scores);
+          }
         }
       }
     }
@@ -248,7 +273,10 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
   private List<CabinetContact> getContacts() {
     if (this.contacts == null) {
-      contacts = maniaClient.getContactClient().getContacts();
+      Cabinet cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
+      if (cabinet != null) {
+        contacts = maniaClient.getContactClient().getContacts(cabinet.getId());
+      }
     }
     return contacts;
   }
@@ -262,8 +290,11 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   public void setOffline() {
     if (Features.MANIA_ENABLED) {
       try {
-        Cabinet cabinet = getClient().getCabinetClient().getCabinet();
+        Cabinet cabinet = getClient().getCabinetClient().getDefaultCabinetCached();
         if (cabinet != null) {
+          if (cabinet.getStatus() == null) {
+            cabinet.setStatus(new CabinetStatus());
+          }
           cabinet.getStatus().setStatus(CabinetOnlineStatus.offline);
           cabinet.getStatus().setActiveGame(null);
           getClient().getCabinetClient().update(cabinet);
@@ -280,6 +311,9 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
     if (Features.MANIA_ENABLED) {
       try {
         if (cabinet != null) {
+          if (cabinet.getStatus() == null) {
+            cabinet.setStatus(new CabinetStatus());
+          }
           cabinet.getStatus().setStatus(CabinetOnlineStatus.online);
           cabinet.getStatus().setActiveGame(null);
           getClient().getCabinetClient().update(cabinet);
@@ -289,17 +323,6 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
       catch (Exception e) {
         LOG.error("Error during tournament service shutdown: " + e.getMessage(), e);
       }
-    }
-  }
-
-  /**
-   * In case the Studio has been re-installed, the players of the VPin Mania accounts should be restored too.
-   * //TODO
-   */
-  private void checkPlayerRestoring() {
-    List<Account> accounts = maniaClient.getAccountClient().getAccounts();
-    for (Account account : accounts) {
-      checkAccount(account);
     }
   }
 
@@ -314,12 +337,12 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
       //check if a matching player exists
       if (buildInPlayer.getName().equals(name) && buildInPlayer.getInitials().equals(initial)) {
         //check if the account id is set
-        if (buildInPlayer.getTournamentUserUuid() != null) {
+        if (buildInPlayer.getManiaAccountUuid() != null) {
           return;
         }
 
         //the player exists, but no mania account id is set
-        buildInPlayer.setTournamentUserUuid(account.getUuid());
+        buildInPlayer.setManiaAccountUuid(account.getUuid());
         playerService.save(buildInPlayer);
         return;
       }
@@ -328,7 +351,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
     Player restoredPlayer = new Player();
     restoredPlayer.setInitials(initial);
     restoredPlayer.setName(name);
-    restoredPlayer.setTournamentUserUuid(account.getUuid());
+    restoredPlayer.setManiaAccountUuid(account.getUuid());
     restoredPlayer.setAdministrative(!adminExists);
     Player update = playerService.save(restoredPlayer);
     LOG.info("Restored VPin Mania player for account {}: {}", account.getUuid(), update.toString());
@@ -345,7 +368,10 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
       ManiaSettings maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
       maniaSettings.setSubmitPlayed(registration.isSubmitPlayCount());
       maniaSettings.setSubmitRatings(registration.isSubmitRatings());
-      maniaSettings.setEnabled(true);
+      maniaSettings.setApiKey(registration.getApiKey());
+      preferencesService.savePreference(maniaSettings);
+
+      maniaClient.getRestClient().setApiKey(registration.getApiKey());
 
       BufferedImage avatar = ResourceLoader.getResource("avatar-default.png");
       if (avatarEntry != null) {
@@ -355,13 +381,21 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
       Cabinet newCab = new Cabinet();
       newCab.setCreationDate(new Date());
       newCab.setSettings(new CabinetSettings());
+      newCab.setUuid(null);
       newCab.setDisplayName(systemName != null ? systemName : "My VPin");
-      Cabinet registeredCabinet = maniaClient.getCabinetClient().create(newCab, avatar, null);
+      Cabinet registeredCabinet = maniaClient.getCabinetClient().register(newCab, avatar, null);
       if (registeredCabinet == null) {
         LOG.error("Mania registration failed, no cabinet created.");
         registration.setResult("Registration failed.");
         return registration;
       }
+
+      //refresh instance
+      Cabinet cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached(registeredCabinet.getUuid());
+
+      //save cabinet id
+      maniaSettings.setCabinetUuid(registeredCabinet.getUuid());
+      preferencesService.savePreference(maniaSettings);
 
       List<Long> playerIds = registration.getPlayerIds();
       for (Long playerId : playerIds) {
@@ -373,7 +407,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
         Account account = new Account();
         account.setInitials(buildInPlayer.getInitials());
         account.setDisplayName(buildInPlayer.getName());
-        account.setUuid(buildInPlayer.getTournamentUserUuid());
+        account.setUuid(buildInPlayer.getManiaAccountUuid());
 
         Asset playerAvatarAsset = buildInPlayer.getAvatar();
         BufferedImage playerAvatar = avatar;
@@ -381,8 +415,9 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
           playerAvatar = ImageIO.read(new ByteArrayInputStream(playerAvatarAsset.getData()));
         }
 
-        Account register = maniaClient.getAccountClient().create(account, playerAvatar, null);
-        buildInPlayer.setTournamentUserUuid(register.getUuid());
+
+        Account register = maniaClient.getAccountClient().create(cabinet.getId(), account, playerAvatar, null);
+        buildInPlayer.setManiaAccountUuid(register.getUuid());
         Player save = playerService.save(buildInPlayer);
         LOG.info("Registered VPin Mania player for account {}: {}", account.getUuid(), save.toString());
       }
@@ -392,7 +427,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
     }
     catch (Exception e) {
       LOG.error("Mania Registration failed: {}", e.getMessage(), e);
-      registration.setResult(e.getMessage());
+      registration.setResult(String.valueOf(e.getMessage()).replaceAll("500", "").replaceAll("INTERNAL_SERVER_ERROR", ""));
     }
     return registration;
   }
@@ -402,13 +437,15 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
    */
   public boolean synchronizeTables() {
     try {
+      refreshDefaultCabinet();
+      Cabinet cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
       if (!Features.MANIA_ENABLED || cabinet == null) {
         return false;
       }
 
       // The check is made for re-installation of servers that are already registered on mania
       // If the database for the GameDetails is empty, this is the initial installation boot up.
-      List<GameDetails> rawGames = gameDetailsRepository.findAll();
+      List<GameDetails> rawGames = gameDetailsRepositoryService.findAll();
       if (rawGames.isEmpty()) {
         LOG.info("Skipped table synchronization, no games have been imported yet.");
         return false;
@@ -473,12 +510,12 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
   @Override
   public void frontendLaunched() {
-    this.setOnline(maniaClient.getCabinetClient().getCabinetCached());
+    this.setOnline(maniaClient.getCabinetClient().getDefaultCabinetCached());
   }
 
   @Override
   public void frontendRestarted() {
-    this.setOnline(maniaClient.getCabinetClient().getCabinetCached());
+    this.setOnline(maniaClient.getCabinetClient().getDefaultCabinetCached());
   }
 
   @Override
@@ -492,7 +529,8 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
     if (propertyName.equals(PreferenceNames.MANIA_SETTINGS)) {
       maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
-      cabinet = maniaClient.getCabinetClient().getCabinet();
+
+      refreshDefaultCabinet();
     }
   }
 
@@ -504,7 +542,9 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
       ManiaSettings maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
       Game game = event.getGame();
       if (maniaSettings.isSubmitPlayed() && !StringUtils.isEmpty(game.getExtTableId()) && !StringUtils.isEmpty(game.getExtTableVersionId())) {
-        Cabinet cabinet = maniaClient.getCabinetClient().getCabinetCached();
+        refreshDefaultCabinet();
+        Cabinet cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
+
         if (cabinet != null) {
           LOG.info("Updating mania played counter for \"{}\"", game.getGameDisplayName());
           new Thread(() -> {
@@ -557,61 +597,102 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
     }
   }
 
+
+  public boolean deleteCabinet() {
+    try {
+      maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
+      maniaSettings.setCabinetUuid(null);
+      preferencesService.savePreference(maniaSettings);
+
+      return maniaClient.getCabinetClient().deleteCabinet();
+    }
+    catch (Exception e) {
+      LOG.info("Failed to delete cabinet from VPin Mania: {}", e.getMessage(), e);
+    }
+    return false;
+  }
+
+  public void shutdown() {
+    this.setOffline();
+    LOG.info("Cabinet has been set into offline mode.");
+  }
+
+  @Override
+  public void onApplicationEvent(ApplicationReadyEvent event) {
+    try {
+      if (Features.MANIA_ENABLED) {
+        refreshDefaultCabinet();
+        Cabinet cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
+        if (cabinet != null) {
+          new Thread(() -> {
+            Thread.currentThread().setName("VPin Mania Tables Synchronizer");
+            LOG.info("Cabinet is registered on VPin-Mania");
+            synchronizeTables();
+          }).start();
+        }
+        else {
+          LOG.info("Cabinet is not registered on VPin-Mania");
+        }
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to initialize mania service after startup: {}", e.getMessage(), e);
+    }
+  }
+
+  @Override
+  public void highscoreChanged(@NonNull HighscoreChangeEvent event) {
+
+  }
+
+  @Override
+  public void highscoreUpdated(@NonNull Game game, @NonNull Highscore highscore) {
+    if (Features.MANIA_ENABLED) {
+      Cabinet cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
+      if (cabinet != null) {
+        String extTableId = game.getExtTableId();
+        if (!StringUtils.isEmpty(extTableId)) {
+          synchronizeHighscore(extTableId);
+        }
+      }
+    }
+  }
+
   @Override
   public void afterPropertiesSet() throws Exception {
     if (Features.MANIA_ENABLED) {
       try {
-        LOG.info("Initializing VPin Mania Service, using unique id: {}", SystemUtil.getUniqueSystemId());
+        LOG.info("Initializing VPin Mania Service");
         frontendStatusService.addFrontendStatusChangeListener(this);
         frontendStatusService.addTableStatusChangeListener(this);
         gameLifecycleService.addGameDataChangedListener(this);
         gameLifecycleService.addGameLifecycleListener(this);
 
+        maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
 
         ManiaConfig config = getConfig();
-        maniaClient = new VPinManiaClient(config.getUrl(), config.getSystemId());
+        maniaClient = new VPinManiaClient(config.getUrl(), maniaSettings.getApiKey());
         maniaServiceCache.setManiaService(this);
         ServerFX.maniaClient = maniaClient;
 
-        cabinet = maniaClient.getCabinetClient().getCabinet();
 
-        preferencesService.addChangeListener(this);
         maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
+
+        refreshDefaultCabinet();
+        Cabinet cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
+        preferencesService.addChangeListener(this);
+
         new Thread(() -> {
           setOnline(cabinet);
         }).start();
+
+        highscoreService.addHighscoreChangeListener(this);
       }
       catch (Exception e) {
         LOG.error("Failed to init mania services: {}", e.getMessage(), e);
-        Features.MANIA_ENABLED = false;
+//        Features.MANIA_ENABLED = false;
       }
     }
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
-  }
-
-  public Cabinet getCabinet() {
-    return this.cabinet;
-  }
-
-  @Override
-  public void onApplicationEvent(ApplicationReadyEvent event) {
-    if (Features.MANIA_ENABLED) {
-      Cabinet cabinet = maniaClient.getCabinetClient().getCabinetCached();
-      if (cabinet != null) {
-        new Thread(() -> {
-          Thread.currentThread().setName("VPin Mania Tables Synchronizer");
-          LOG.info("Cabinet is registered on VPin-Mania");
-          synchronizeTables();
-        }).start();
-      }
-      else {
-        LOG.info("Cabinet is not registered on VPin-Mania");
-      }
-    }
-  }
-
-  @PreDestroy
-  public void onShutdown() {
-    this.setOffline();
   }
 }

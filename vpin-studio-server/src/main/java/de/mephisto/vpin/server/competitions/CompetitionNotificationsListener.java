@@ -49,16 +49,6 @@ public class CompetitionNotificationsListener implements CompetitionChangeListen
   }
 
   @Override
-  public void competitionCreated(@NonNull Competition competition) {
-
-  }
-
-  @Override
-  public void competitionChanged(@NonNull Competition competition) {
-
-  }
-
-  @Override
   public void competitionFinished(@NonNull Competition competition, @Nullable Player winner, @NonNull ScoreSummary scoreSummary) {
     if (isEnabled()) {
       Game game = gameService.getGame(competition.getGameId());
@@ -68,10 +58,6 @@ public class CompetitionNotificationsListener implements CompetitionChangeListen
         notificationService.showNotification(notification);
       }
     }
-  }
-
-  @Override
-  public void competitionDeleted(@NonNull Competition competition) {
   }
 
   private boolean isEnabled() {

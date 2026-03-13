@@ -3,12 +3,13 @@ package de.mephisto.vpin.restclient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ObjectCache<T> {
-  private final static Logger LOG = LoggerFactory.getLogger(ObjectCache.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final Map<String, T> objectById = new ConcurrentHashMap<>();
 

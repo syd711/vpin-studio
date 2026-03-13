@@ -1,22 +1,14 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.connectors.vps.model.VpsTutorialUrls;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.pinvol.PinVolPreferences;
-import de.mephisto.vpin.restclient.pinvol.PinVolTableEntry;
 import de.mephisto.vpin.restclient.validation.ValidationSettings;
-import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.tables.GameRepresentationModel;
 import de.mephisto.vpin.ui.tables.panels.BaseColumnSorter;
-import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
 

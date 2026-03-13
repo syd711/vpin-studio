@@ -92,7 +92,7 @@ public class JoinSubscriptionDialogController implements Initializable, DialogCo
   public void initialize(URL url, ResourceBundle resourceBundle) {
     this.nvRamList = client.getNvRamsService().getResettedNVRams();
 
-    long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
+    long guildId = client.getPreferenceService().getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
     this.botStatus = client.getDiscordService().getDiscordStatus(guildId);
 
     competition = new CompetitionRepresentation();
@@ -209,7 +209,7 @@ public class JoinSubscriptionDialogController implements Initializable, DialogCo
     }
 
     //check Discord permissions
-    if (!client.getCompetitionService().hasManagePermissions(competition.getDiscordServerId())) {
+    if (!client.getCompetitionService().hasChannelManagePermissions(competition.getDiscordServerId())) {
       validationTitle.setText("Insufficient Permissions");
       validationDescription.setText("Your Discord bot has insufficient permissions to create posts for that subscription. Please check the documentation for details.");
       return;

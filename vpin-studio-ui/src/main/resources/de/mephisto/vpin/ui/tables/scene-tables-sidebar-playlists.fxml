@@ -48,7 +48,7 @@
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="dialogCommentLabel" text="Modification done in that tab will be stored immediately, no save needed !" wrapText="true">
+                  <Label fx:id="dialogCommentLabel" text="Changes in this tab will be stored immediately, no additional saving is needed!" wrapText="true">
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2a-alert-rhombus-outline" iconSize="18" />
                      </graphic>

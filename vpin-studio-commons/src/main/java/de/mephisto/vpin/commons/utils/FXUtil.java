@@ -7,6 +7,17 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.TitledPane;
 
 public class FXUtil {
+  public static <T> T findParentById(Parent parent, String id) {
+    if (parent == null) {
+      return null;
+    }
+
+    if (parent.getId() != null && parent.getId().equalsIgnoreCase(id)) {
+      return (T) parent;
+    }
+    return findParentById(parent.getParent(), id);
+  }
+
   public static <T> T findChildByID(Parent parent, String id) {
 
     String nodeId;/*from w  w  w.j av a 2s.c om*/

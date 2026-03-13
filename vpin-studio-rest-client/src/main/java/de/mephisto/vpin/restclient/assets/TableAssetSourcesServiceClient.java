@@ -7,21 +7,24 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /*********************************************************************************************************************
  * Table Asset Sources
  ********************************************************************************************************************/
 public class TableAssetSourcesServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public TableAssetSourcesServiceClient(VPinStudioClient client) {
     super(client);
   }
 
   public List<TableAssetSource> getAssetSource(String id) {
-    return Arrays.asList(getRestClient().get(API + "assetsources/" + id, TableAssetSource[].class));
+    TableAssetSource[] sources = getRestClient().get(API + "assetsources/" + id, TableAssetSource[].class);
+    return sources != null ? Arrays.asList(sources) : Collections.emptyList();
   }
 
   @Nullable
@@ -30,7 +33,8 @@ public class TableAssetSourcesServiceClient extends VPinStudioClientService {
   }
 
   public List<TableAssetSource> getAssetSources() {
-    return Arrays.asList(getRestClient().get(API + "assetsources", TableAssetSource[].class));
+    TableAssetSource[] sources = getRestClient().get(API + "assetsources", TableAssetSource[].class);
+    return sources != null ? Arrays.asList(sources) : Collections.emptyList();
   }
 
   public boolean deleteAssetSource(String id) {

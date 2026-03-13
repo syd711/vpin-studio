@@ -6,12 +6,12 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-@Configuration
-@EnableWebMvc
+//@Configuration
+//@EnableWebMvc
 public class ResourceHandlers extends WebMvcConfigurerAdapter {
 
-  @Value("${server.resources.folder}")
-  private String resourcesFolder;
+//  @Value("${server.resources.folder}")
+//  private String resourcesFolder;
 
   @Override
   public void addResourceHandlers(ResourceHandlerRegistry registry) {

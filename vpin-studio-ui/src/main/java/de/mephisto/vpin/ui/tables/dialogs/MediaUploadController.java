@@ -46,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -53,7 +54,7 @@ import java.util.stream.Collectors;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class MediaUploadController extends BaseTableController<String, MediaUploadArchiveItem> implements Initializable, DialogController {
-  private final static Logger LOG = LoggerFactory.getLogger(MediaUploadController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private Node root;
@@ -224,7 +225,7 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
 
           filteredData = allData.stream().map(d -> toModel(d)).filter(m -> m.getAssetType() != null).collect(Collectors.toList());
 
-          if(uiSettings.isUploadMediaPreview()) {
+          if (uiSettings.isUploadMediaPreview()) {
             List<MediaUploadArchiveItem> images = filteredData.stream().filter(m -> m.isImage()).collect(Collectors.toList());
             for (int i = 0; i < images.size(); i++) {
               MediaUploadArchiveItem model = images.get(i);

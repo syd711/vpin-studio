@@ -4,7 +4,9 @@ import java.util.function.Predicate;
 
 import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.animation.Animation;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
@@ -44,6 +46,8 @@ public abstract class BaseFilterController<T, M extends BaseLoadingModel<T, M>> 
   private PlaylistRepresentation playlist;
 
   protected BaseTableController<T, M> tableController;
+
+  protected FilterSettings filterSettings;
 
   //--------------------------------------
   // Initialisation
@@ -196,6 +200,10 @@ public abstract class BaseFilterController<T, M extends BaseLoadingModel<T, M>> 
   }
 
   protected abstract boolean hasFilter();
+
+  public void loadFilterSettings(@NonNull FilterSettings filterSettings) {
+
+  }
 
   public final Predicate<M> buildPredicate() {
     return buildPredicate(searchTerm, playlist);

@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.assets;
 
-import de.mephisto.vpin.restclient.assets.AssetRequest;
+import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.RequestUtil;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FilenameUtils;
@@ -49,17 +49,20 @@ public class AssetsResource {
   @GetMapping("/competition/{gameId}")
   public ResponseEntity<byte[]> getCompetitionBackground(@PathVariable("gameId") int gameId) {
     Asset competitionBackground = assetService.getCompetitionBackground(gameId);
+    if (competitionBackground == null) {
+      File defaultAsset = new File(SystemService.RESOURCES, "competition-bg-default.png");
+      return serializeFile(defaultAsset);
+    }
     return serializeAsset(competitionBackground);
-  }
-
-  @PostMapping("/metadata")
-  public AssetRequest getMetaData(@RequestBody AssetRequest request) {
-    return assetService.getMetadata(request);
   }
 
   @GetMapping("/defaultbackground/{id}")
   public ResponseEntity<byte[]> getRaw(@PathVariable("id") int id) throws Exception {
     byte[] raw = assetService.getRaw(id);
+    if (raw == null) {
+      File defaultAsset = new File(SystemService.RESOURCES, "competition-bg-default.png");
+      return serializeFile(defaultAsset);
+    }
     return RequestUtil.serializeImage(raw, "background-" + id + ".png");
   }
 

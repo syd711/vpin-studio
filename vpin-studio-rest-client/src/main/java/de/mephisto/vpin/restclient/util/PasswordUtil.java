@@ -3,13 +3,14 @@ package de.mephisto.vpin.restclient.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Base64;
 
 /**
  *
  */
 public class PasswordUtil {
-  private final static Logger LOG = LoggerFactory.getLogger(PasswordUtil.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static String encrypt(String plainText) {
     try {

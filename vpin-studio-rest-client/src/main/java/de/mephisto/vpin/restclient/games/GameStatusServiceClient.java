@@ -5,11 +5,13 @@ import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
+
 /*********************************************************************************************************************
  * Game Status
  ********************************************************************************************************************/
 public class GameStatusServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(GameStatusServiceClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public GameStatusServiceClient(VPinStudioClient client) {
     super(client);

@@ -10,13 +10,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.lang.invoke.MethodHandles;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class VPS {
-  private final static Logger LOG = LoggerFactory.getLogger(VPS.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public final static String URL = "https://virtualpinballspreadsheet.github.io/vps-db/db/vpsdb.json";
   public final static String BASE_URL = "https://virtualpinballspreadsheet.github.io";

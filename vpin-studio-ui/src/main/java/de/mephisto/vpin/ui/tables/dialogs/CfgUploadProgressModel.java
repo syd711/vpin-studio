@@ -10,10 +10,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 
 public class CfgUploadProgressModel extends UploadProgressModel {
-  private final static Logger LOG = LoggerFactory.getLogger(CfgUploadProgressModel.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final int emuId;
   private double percentage = 0;

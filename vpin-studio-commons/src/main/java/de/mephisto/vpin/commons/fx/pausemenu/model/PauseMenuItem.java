@@ -9,7 +9,7 @@ public class PauseMenuItem {
   private final String description;
   private final Image image;
 
-  private Image dataImage;
+  private String dataImageUrl;
   private String youTubeUrl;
   private String videoUrl;
   private CompetitionRepresentation competition;
@@ -41,12 +41,12 @@ public class PauseMenuItem {
     return itemType;
   }
 
-  public Image getDataImage() {
-    return dataImage;
+  public String getDataImageUrl() {
+    return dataImageUrl;
   }
 
-  public void setDataImage(Image dataImage) {
-    this.dataImage = dataImage;
+  public void setDataImageUrl(String dataImageUrl) {
+    this.dataImageUrl = dataImageUrl;
   }
 
   public Image getImage() {

@@ -55,10 +55,10 @@ public class GameStatusService implements TableStatusChangeListener, FrontendSta
     LOG.info("GameStatusService saved \"" + event.getGame().getGameDisplayName() + "\" as active game.");
   }
 
-  public void setActiveStatus(int id) {
-    status.setGameId(id);
+  public void setActiveStatus(int gameId) {
+    status.setGameId(gameId);
     status.setStarted(new Date());
-    LOG.info("GameStatusService saved game id \"" + id + "\" as active game.");
+    LOG.info("GameStatusService saved gameId \"" + gameId + "\" as active game.");
   }
 
   @Override

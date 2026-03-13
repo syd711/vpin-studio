@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.*;
@@ -20,32 +21,40 @@ import java.util.*;
 import static de.mephisto.vpin.server.system.SystemService.RESOURCES;
 
 public class ServerUpdatePreProcessing {
-  private final static Logger LOG = LoggerFactory.getLogger(ServerUpdatePreProcessing.class);
-  private final static List<String> deletions = Arrays.asList("PupPackScreenTweaker.exe");
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+  private final static List<String> deletions = List.of("PupPackScreenTweaker.exe");
 
-  private final static List<String> resources = Arrays.asList("PinVol.exe",
-      "ffmpeg.exe",
-      "jptch.exe",
-      "nircmd.exe",
-      "downloader.vbs",
-      "puppacktweaker/PupPackScreenTweaker.exe",
-      "puplauncher.exe",
-      "vpxtool.exe",
-      "maintenance.mp4",
-      ScoringDB.SCORING_DB_NAME,
-      "manufacturers/manufacturers.zip",
-      "logos.txt",
-      "frames/wheel-black.png",
-      "frames/wheel-tarcissio.png");
-  private final static List<String> jvmFiles = Arrays.asList("jinput-dx8_64.dll");
+  private final static List<String> jvmFiles = List.of("jinput-dx8_64.dll");
+
+  private final static String GITHUB_RESOURCES_URL = "https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/";
+
+  private final static Map<String, String> DOWNLOADS = new LinkedHashMap<>();
+
+  static {
+    DOWNLOADS.put("PinVol.exe", GITHUB_RESOURCES_URL + "PinVol.exe");
+    DOWNLOADS.put("ffmpeg.exe", GITHUB_RESOURCES_URL + "ffmpeg.exe");
+    DOWNLOADS.put("jptch.exe", GITHUB_RESOURCES_URL + "jptch.exe");
+    DOWNLOADS.put("nircmd.exe", GITHUB_RESOURCES_URL + "nircmd.exe");
+    DOWNLOADS.put("downloader.vbs", GITHUB_RESOURCES_URL + "downloader.vbs");
+    DOWNLOADS.put("puppacktweaker/PupPackScreenTweaker.exe", GITHUB_RESOURCES_URL + "puppacktweaker/PupPackScreenTweaker.exe");
+    DOWNLOADS.put("puplauncher.exe", GITHUB_RESOURCES_URL + "puplauncher.exe");
+    DOWNLOADS.put("vpxtool.exe", GITHUB_RESOURCES_URL + "vpxtool.exe");
+    DOWNLOADS.put("maintenance.mp4", GITHUB_RESOURCES_URL + "maintenance.mp4");
+    DOWNLOADS.put(ScoringDB.SCORING_DB_NAME, GITHUB_RESOURCES_URL + ScoringDB.SCORING_DB_NAME);
+    DOWNLOADS.put("manufacturers/manufacturers.zip", GITHUB_RESOURCES_URL + "manufacturers/manufacturers.zip");
+    DOWNLOADS.put("logos.txt", GITHUB_RESOURCES_URL + "logos.txt");
+    DOWNLOADS.put("competition-badges/wovp.png", GITHUB_RESOURCES_URL + "competition-badges/wovp.png");
+    DOWNLOADS.put("frames/wheel-black.png", GITHUB_RESOURCES_URL + "frames/wheel-black.png");
+    DOWNLOADS.put("frames/wheel-tarcissio.png", GITHUB_RESOURCES_URL + "frames/wheel-tarcissio.png");
+  }
 
   private final static Map<String, Long> PUP_GAMES = new HashMap<>();
 
   static {
-    PUP_GAMES.put("pinball_fx.json", 234022L);
-    PUP_GAMES.put("pinball_fx3.json", 157062L);
-    PUP_GAMES.put("zaccaria.json", 217581L);
-    PUP_GAMES.put("pinball_m.json", 11574L);
+    PUP_GAMES.put("pinball_fx.json", 229247L);
+    PUP_GAMES.put("pinball_fx3.json", 152207L);
+    PUP_GAMES.put("zaccaria.json", 209785L);
+    PUP_GAMES.put("pinball_m.json", 11143L);
   }
 
   public static void execute() {
@@ -55,28 +64,64 @@ public class ServerUpdatePreProcessing {
       try {
         Thread.currentThread().setName("ServerUpdatePreProcessing");
         long start = System.currentTimeMillis();
+
+
         runJvmCheck();
         runScriptCheck();
         runDeletionChecks();
-        runResourcesCheck();
         runPinVolUpdateCheck();
         runVpxToolsUpdateCheck();
         runLogosUpdateCheck();
         runDOFTesterCheck();
         runPupGamesUpdateCheck();
+        runDownloadableInstallationsCheck();
         runDeletions();
+
 
         new Thread(() -> {
           Thread.currentThread().setName("ServerUpdate Async Preprocessor");
           synchronizeNVRams(false);
         }).start();
 
-        LOG.info("Finished resource updates check, took " + (System.currentTimeMillis() - start) + "ms.");
+        LOG.info("Finished resource updates check, took {}ms.", System.currentTimeMillis() - start);
       }
       catch (Exception e) {
         LOG.error("Server update failed: " + e.getMessage(), e);
       }
     }).start();
+  }
+
+  private static void runDownloadableInstallationsCheck() {
+    for (Map.Entry<String, String> entry : DOWNLOADS.entrySet()) {
+      String key = entry.getKey();
+      String url = entry.getValue();
+
+      if (key.endsWith("/")) {
+        // Folder-based download: download zip and extract into folder
+        File folder = new File(key);
+        if (!folder.exists() || Objects.requireNonNull(folder.listFiles()).length == 0) {
+          LOG.info("Starting installation of {}", url);
+          folder.mkdirs();
+          String fileName = new File(url).getName();
+          File targetFile = new File(folder, fileName);
+          ServerUpdatePreProcessorUI.downloadWithProgressDialog(url, targetFile, folder);
+        }
+      }
+      else {
+        // File-based download: download to RESOURCES/<key>
+        File check = new File(RESOURCES, key);
+        if (!check.exists()) {
+          if (!check.getParentFile().exists()) {
+            check.getParentFile().mkdirs();
+          }
+          LOG.info("Downloading missing resource file {}", check.getAbsolutePath());
+          ServerUpdatePreProcessorUI.downloadWithProgressDialog(url, check, null);
+          if (FilenameUtils.getExtension(check.getName()).equalsIgnoreCase("zip")) {
+            PackageUtil.unpackTargetFolder(check, check.getParentFile(), null, Collections.emptyList(), null);
+          }
+        }
+      }
+    }
   }
 
   private static void runDeletions() {
@@ -99,7 +144,7 @@ public class ServerUpdatePreProcessing {
       long size = check.length();
       if (expectedSize != size) {
         LOG.info("Outdated PinVol.exe found, updating...");
-        Updater.download("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/PinVol.exe", check);
+        Updater.downloadAndOverwrite("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/PinVol.exe", check, true);
       }
     }
   }
@@ -111,7 +156,7 @@ public class ServerUpdatePreProcessing {
       long size = check.length();
       if (expectedSize != size) {
         LOG.info("Outdated vpxtool.exe found, updating...");
-        Updater.download("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/vpxtool.exe", check);
+        Updater.downloadAndOverwrite("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/vpxtool.exe", check, true);
       }
     }
   }
@@ -132,14 +177,11 @@ public class ServerUpdatePreProcessing {
   }
 
   private static void runLogosUpdateCheck() {
-    long expectedSize = 119644;
+    long expectedSize = 119856;
     File check = new File(RESOURCES, "logos.txt");
-    if (check.exists()) {
-      long size = check.length();
-      if (expectedSize != size) {
-        LOG.info("Outdated logos.txt found, updating...");
-        Updater.download("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/logos.txt", check);
-      }
+    if (!check.exists() || expectedSize != check.length()) {
+      LOG.info("Outdated logos.txt found, updating...");
+      Updater.downloadAndOverwrite("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/logos.txt", check, true);
     }
   }
 
@@ -148,9 +190,9 @@ public class ServerUpdatePreProcessing {
       File check = new File(RESOURCES, "pupgames/" + entry.getKey());
       long expectedSize = entry.getValue();
       if (!check.exists() || check.length() != expectedSize) {
-        LOG.info("Outdated {} found, updating...", entry.getKey());
+        LOG.info("Outdated pupgames file {}/({}) found, updating...", entry.getKey(), check.length() + "/" + expectedSize);
         check.getParentFile().mkdirs();
-        Updater.download("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/pupgames/" + entry.getKey(), check);
+        Updater.downloadAndOverwrite("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/pupgames/" + entry.getKey(), check, true);
       }
     }
   }
@@ -181,6 +223,7 @@ public class ServerUpdatePreProcessing {
 
   private static void init7zip() {
     try {
+      LOG.info("Initializing 7z.");
       File sevenZipTempFolder = new File(System.getProperty("java.io.tmpdir"), "sevenZipServer/");
       sevenZipTempFolder.mkdirs();
       SevenZip.initSevenZipFromPlatformJAR(sevenZipTempFolder);
@@ -203,22 +246,6 @@ public class ServerUpdatePreProcessing {
       }
       else {
         LOG.error("No JVM folder found: " + folder.getAbsolutePath());
-      }
-    }
-  }
-
-  private static void runResourcesCheck() {
-    for (String resource : resources) {
-      File check = new File(RESOURCES, resource);
-      if (!check.exists()) {
-        if (!check.getParentFile().mkdirs()) {
-          LOG.error("Failed to create {}", check.getAbsolutePath());
-        }
-        LOG.info("Downloading missing resource file {}", check.getAbsolutePath());
-        Updater.download("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/" + resource, check);
-        if (FilenameUtils.getExtension(check.getName()).equalsIgnoreCase("zip")) {
-          PackageUtil.unpackTargetFolder(check, check.getParentFile(), null, Collections.emptyList(), null);
-        }
       }
     }
   }

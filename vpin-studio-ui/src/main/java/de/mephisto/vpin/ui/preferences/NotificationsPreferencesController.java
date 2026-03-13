@@ -90,7 +90,7 @@ public class NotificationsPreferencesController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     NotificationSettings notificationSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, NotificationSettings.class);
 
-    screenInfoComboBox.setItems(FXCollections.observableList(client.getSystemService().getSystemSummary().getScreenInfos()));
+    screenInfoComboBox.setItems(FXCollections.observableList(client.getSystemService().getSystemSummary().getMonitorInfos()));
     screenInfoComboBox.setValue(client.getSystemService().getScreenInfo(notificationSettings.getNotificationsScreenId()));
     screenInfoComboBox.valueProperty().addListener(new ChangeListener<MonitorInfo>() {
       @Override

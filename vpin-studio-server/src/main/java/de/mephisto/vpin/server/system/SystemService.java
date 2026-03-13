@@ -2,11 +2,12 @@ package de.mephisto.vpin.server.system;
 
 import com.sun.jna.platform.DesktopWindow;
 import com.sun.jna.platform.WindowUtils;
+import com.zaxxer.hikari.HikariDataSource;
 import de.mephisto.vpin.commons.MonitorInfoUtil;
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
-import de.mephisto.vpin.restclient.backups.BackupType;
+import de.mephisto.vpin.commons.utils.controller.GameController;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.system.FeaturesInfo;
@@ -16,9 +17,13 @@ import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.ServerUpdatePreProcessing;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.VPinStudioServer;
+import de.mephisto.vpin.server.competitions.CompetitionService;
+import de.mephisto.vpin.server.inputs.InputEventService;
 import de.mephisto.vpin.server.inputs.ShutdownThread;
+import de.mephisto.vpin.server.mania.ManiaService;
 import de.mephisto.vpin.server.pinemhi.PINemHiService;
 import de.mephisto.vpin.server.util.VersionUtil;
+import de.mephisto.vpin.server.vpx.VPXMonitoringService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
@@ -30,12 +35,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
-
-import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 import java.awt.*;
 import java.io.File;
@@ -45,27 +49,39 @@ import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 @Service
 public class SystemService extends SystemInfo implements InitializingBean, ApplicationContextAware {
   private final static Logger LOG = LoggerFactory.getLogger(SystemService.class);
 
-  public final static String ARCHIVE_TYPE = "archive.type";
-
   public static final String COMPETITION_BADGES = "competition-badges";
 
   public static final String RAW_MEDIA_FOLDER = "media-raw/";
 
-  public static String ARCHIVES_FOLDER = RESOURCES + "archives";
-
   public static final String DEFAULT_BACKGROUND = "background.png";
   public static final String PREVIEW = "preview.png";
   public static final String DMD = "dmd.png";
+
+
+  private static Robot robot;
+  static {
+    try {
+      boolean isHeadless = GraphicsEnvironment.isHeadless();
+      if (!isHeadless) {
+        robot = new Robot();
+      }
+    }
+    catch (AWTException e) {
+      LOG.error("Failed to create robot: {}", e.getMessage());
+    }
+  }
 
   private File pinupInstallationFolder;
   private File pinballXInstallationFolder;
@@ -79,7 +95,6 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   private File backupFolder;
 
-  private BackupType backupType = BackupType.VPA;
   private FrontendType frontendType = FrontendType.Popper;
 
   @Value("${system.properties}")
@@ -95,7 +110,6 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   private void initBaseFolders() throws VPinStudioException {
     try {
       PropertiesStore store = PropertiesStore.create(RESOURCES, systemProperties);
-      this.backupType = BackupType.VPA;
 
       // Determination of the installed Frontend
       //Standalone Folder
@@ -128,7 +142,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       }
       else {
         // for non PinupPopper users, initialize pinupInstallationFolder from player
-        this.pinupInstallationFolder =  resolvePinupPlayerFolder();
+        this.pinupInstallationFolder = resolvePinupPlayerFolder();
       }
 
       // now that frontend is determined, activate or deactivate features
@@ -140,13 +154,13 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       File extractionFolder = getRawImageExtractionFolder();
       if (!extractionFolder.exists()) {
         if (!extractionFolder.mkdirs()) {
-          LOG.error("Failed to create b2s image directory " + extractionFolder.getAbsolutePath());
+          LOG.error("Failed to create b2s image directory {}", extractionFolder.getAbsolutePath());
         }
       }
 
       this.backupFolder = new File(RESOURCES, "backups");
       if (!this.backupFolder.exists() && !this.backupFolder.mkdirs()) {
-        LOG.error("Failed to create backup folder " + this.backupFolder.getAbsolutePath());
+        LOG.error("Failed to create backup folder {}", this.backupFolder.getAbsolutePath());
       }
 
       // B2S Server is not installed in Standalone mode
@@ -299,7 +313,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
           Field activeField = features.getClass().getDeclaredField(value.trim());
           activeField.setAccessible(true);
           activeField.setBoolean(features, enabled);
-          LOG.info("{} feature {}",  enabled ? "Enabled" : "Disabled", value.trim());
+          LOG.info("{} feature {}", enabled ? "Enabled" : "Disabled", value.trim());
         }
         catch (Exception e) {
           LOG.error("Cannot change feature {} : {}", value.trim(), e.getMessage());
@@ -324,6 +338,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       return true;
     }
     catch (IOException e) {
+      //ignore
     }
     finally {
       if (ds != null) {
@@ -370,7 +385,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     for (ProcessHandle process : filteredProceses) {
       String cmd = process.info().command().get();
       boolean b = process.destroyForcibly();
-      LOG.info("Destroyed process '" + cmd + "', result: " + b);
+      LOG.info("Destroyed process '{}', result: {}", cmd, b);
       if (!success && b) {
         success = true;
       }
@@ -395,6 +410,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return windows.stream().anyMatch(wdw -> StringUtils.containsIgnoreCase(wdw.getTitle(), name));
   }
 
+  public static void main(String[] args) {
+    System.out.println(new SystemService().isProcessRunning("Visual Pinball Player"));
+  }
+
 
   public boolean isPinballEmulatorRunning() {
     return isVPXRunning(getProcesses()) || isFPRunning(getProcesses());
@@ -406,7 +425,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
         String cmdName = p.info().command().get();
         String fileName = cmdName.substring(cmdName.lastIndexOf("\\") + 1);
         if (fileName.toLowerCase().contains("Visual Pinball".toLowerCase()) || fileName.toLowerCase().contains("VisualPinball".toLowerCase()) || fileName.toLowerCase().contains("VPinball".toLowerCase())) {
-          LOG.info("Found active VPX process: " + fileName);
+          LOG.info("Found active VPX process: {}", fileName);
           return true;
         }
       }
@@ -420,20 +439,12 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
         String cmdName = p.info().command().get();
         String fileName = cmdName.substring(cmdName.lastIndexOf("\\") + 1);
         if (fileName.toLowerCase().contains("Future Pinball")) {
-          LOG.info("Found active FP process: " + fileName);
+          LOG.info("Found active FP process: {}", fileName);
           return true;
         }
       }
     }
     return false;
-  }
-
-  public BackupType getBackupType() {
-    return backupType;
-  }
-
-  public void setBackupType(BackupType backupType) {
-    this.backupType = backupType;
   }
 
   public List<MonitorInfo> getMonitorInfos() {
@@ -468,7 +479,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   }
 
   /**
-   * Find a monitor by the windows index (used in VPX), 
+   * Find a monitor by the windows index (used in VPX),
    * TODO how to match it with MonitorInfoUtils.getMonitor(), this is still unknown, uses getId() for time being but incorrect
    */
   public MonitorInfo getMonitorFromOS(int monitor) {
@@ -498,6 +509,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       return true;
     }
     catch (IOException e) {
+      //ignore
     }
     finally {
       if (ds != null) {
@@ -561,12 +573,75 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   }
 
   public void shutdown() {
-    ((ConfigurableApplicationContext) context).close();
+    ExecutorService executor = Executors.newSingleThreadExecutor();
+    try {
+      Future<?> submit = executor.submit(new Runnable() {
+        @Override
+        public void run() {
+          try {
+            Thread.currentThread().setName("VPin Studio Shutdown Thread");
+            ServerFX.getInstance().shutdown();
+
+            GameController.getInstance().shutdown();
+
+            InputEventService inputEventService = context.getBean(InputEventService.class);
+            inputEventService.shutdown();
+
+            CompetitionService competitionService = context.getBean(CompetitionService.class);
+            competitionService.shutdown();
+
+            ManiaService maniaService = context.getBean(ManiaService.class);
+            maniaService.shutdown();
+
+            VPXMonitoringService monitoringService = context.getBean(VPXMonitoringService.class);
+            monitoringService.shutdown();
+
+            HikariDataSource dataSource = (HikariDataSource) context.getBean("dataSource");
+            dataSource.close();
+            LOG.info("Database connection has been closed.");
+          }
+          catch (Exception e) {
+            LOG.error("Shutdown failed: {}", e.getMessage());
+          }
+        }
+      });
+
+      submit.get(3, TimeUnit.SECONDS);
+    }
+    catch (Exception e) {
+      LOG.error("Server Shutdown Error: {}", e.getMessage(), e);
+    }
+    finally {
+      executor.shutdownNow();
+    }
+
+    try {
+      SpringApplication.exit(context, () -> 0);
+      ((ConfigurableApplicationContext) context).close();
+    }
+    catch (Exception e) {
+      LOG.error("Server Context Shutdown failed: {}", e.getMessage());
+    }
+
     System.exit(0);
   }
 
   public void systemShutdown() {
-    ShutdownThread.shutdown();
+    ShutdownThread.shutdownSystem();
+  }
+
+  /**
+   * e.g. KeyEvent.VK_P
+   */
+  public void sendKey(int keyCode) {
+    robot.keyPress(keyCode);
+    try {
+      Thread.sleep(100);
+    }
+    catch (InterruptedException ex) {
+      //ignore
+    }
+    robot.keyRelease(keyCode);
   }
 
   public File getComponentArchiveFolder(ComponentType type) {
@@ -648,5 +723,4 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     }
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
-
 }

@@ -39,6 +39,7 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -50,7 +51,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
 public class TablesSidebarDirectB2SController implements Initializable, StudioEventListener {
-  private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarDirectB2SController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final Debouncer debouncer = new Debouncer();
   public static final int DEBOUNCE_MS = 100;
@@ -228,6 +229,9 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
 
   @FXML
   private ComboBox<B2SFormPosition> formToPosition;
+
+  @FXML
+  private CheckBox formNoFocus;
 
   @FXML
   private Button backglassManagerBtn;
@@ -447,6 +451,12 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
       tableSettings.setFormToPosition(newValue.getId());
       save();
     });
+
+    formNoFocus.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      tableSettings.setFormNoFocus(newValue);
+      save();
+    });
+
   }
 
   private void setDirectB2SDisabled() {

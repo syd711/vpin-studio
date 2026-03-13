@@ -33,7 +33,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -178,7 +177,10 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
   private void onMute() {
     client.getSystemService().mute(!muted);
     muted = !muted;
+    refreshMuteState();
+  }
 
+  private void refreshMuteState() {
     if (muted) {
       muteSystemEntry.setText("Unmute System");
       muteSystemEntry.setGraphic(WidgetFactory.createIcon("mdi2v-volume-high"));
@@ -349,6 +351,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
     }
 
     this.monitorBtn.setVisible(Features.RECORDER && !client.getRecorderService().getRecordingScreens().isEmpty() && !client.getSystemService().isLocal());
+//    this.monitorBtn.setVisible(true);
     this.maintenanceBtn.setVisible(!client.getSystemService().isLocal());
 
     EventManager.getInstance().addListener(this);
@@ -432,10 +435,24 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
         }
       }
     }
+
     jobBtn.setOnShowing(new EventHandler<Event>() {
       @Override
       public void handle(Event event) {
         JobPoller.getInstance().refreshJobsUI();
+      }
+    });
+
+    preferencesBtn.setOnShowing(new EventHandler<Event>() {
+      @Override
+      public void handle(Event event) {
+        try {
+          muted = client.getSystemService().isMuted();
+          refreshMuteState();
+        }
+        catch (Exception e) {
+          LOG.error("Failed to refresh mute state for menu: {}", e.getMessage(), e);
+        }
       }
     });
   }
@@ -464,7 +481,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
       dofSyncEntry.setDisable(!valid);
     }
     else if (key.equals(PreferenceNames.PINVOL_AUTOSTART_ENABLED)) {
-      PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.PINVOL_AUTOSTART_ENABLED);
+      PreferenceEntryRepresentation preference = client.getPreferenceService().getPreference(PreferenceNames.PINVOL_AUTOSTART_ENABLED);
       pinVolStartItem.setVisible(client.getSystemService().isLocal() && preference.getBooleanValue());
       pinVolStopItem.setVisible(client.getSystemService().isLocal() && preference.getBooleanValue());
 

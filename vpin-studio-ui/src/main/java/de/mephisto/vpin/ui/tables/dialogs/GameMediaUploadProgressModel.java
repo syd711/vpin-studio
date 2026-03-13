@@ -12,12 +12,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 public class GameMediaUploadProgressModel extends ProgressModel<File> {
-  private final static Logger LOG = LoggerFactory.getLogger(GameMediaUploadProgressModel.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final Iterator<File> iterator;
   private final List<File> files;

@@ -41,6 +41,11 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                </graphic>
             </MenuItem>
+            <MenuItem fx:id="fplItem" mnemonicParsing="false" onAction="#onFplUpload" text="Upload .fpl File">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+               </graphic>
+            </MenuItem>
             <MenuItem fx:id="dmdUploadItem" mnemonicParsing="false" onAction="#onDMDUpload" text="Upload DMD Pack">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />

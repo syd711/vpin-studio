@@ -12,7 +12,7 @@ import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
 import de.mephisto.vpin.restclient.recorder.*;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
-import de.mephisto.vpin.server.fp.FPService;
+import de.mephisto.vpin.server.fp.FuturePinballService;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -75,7 +76,7 @@ public class RecorderService {
   private VPXService vpxService;
 
   @Autowired
-  private FPService fpService;
+  private FuturePinballService futurePinballService;
 
   @Autowired
   private NotificationService notificationService;
@@ -152,8 +153,10 @@ public class RecorderService {
       return jobDescriptor;
     }
 
-    jobDescriptor.setProgress(1);
-    jobDescriptor.setStatus("Cancelled, no active screens");
+    if (jobDescriptor != null) {
+      jobDescriptor.setProgress(1);
+      jobDescriptor.setStatus("Cancelled, no active screens");
+    }
     return jobDescriptor;
   }
 
@@ -235,7 +238,7 @@ public class RecorderService {
       }
     }
     else if (game.isFpGame()) {
-      fpService.play(game, altExe);
+      futurePinballService.play(game, altExe);
     }
     else {
       throw new UnsupportedOperationException("Unsupported emulator: " + game.getEmulator());

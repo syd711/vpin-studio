@@ -21,14 +21,17 @@ import de.mephisto.vpin.restclient.validation.ValidationState;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -37,7 +40,7 @@ import java.util.stream.Collectors;
  * Games
  ********************************************************************************************************************/
 public class GamesServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final Map<Integer, List<GameRepresentation>> allGames = new HashMap<>();
   /**
@@ -94,7 +97,9 @@ public class GamesServiceClient extends VPinStudioClientService {
       map.add("mode", uploadType.name());
       map.add("gameId", gameId);
       map.add("emuId", emuId);
-      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(map, file, -1, null, AssetType.TABLE, listener), UploadDescriptor.class);
+      HttpEntity<MultiValueMap<String, Object>> upload = createUpload(map, file, -1, null, AssetType.TABLE, listener);
+      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
+      finalizeUpload(upload);
       return exchange.getBody();
     }
     catch (Exception e) {
@@ -156,8 +161,16 @@ public class GamesServiceClient extends VPinStudioClientService {
   public GameRepresentation getFirstGameByRom(String rom) {
     List<GameRepresentation> gamesCached = this.getVpxGamesCached();
     for (GameRepresentation gameRepresentation : gamesCached) {
+      String pupPackName = gameRepresentation.getPupPackName();
+      if (!StringUtils.isEmpty(pupPackName) && pupPackName.equalsIgnoreCase(rom)) {
+        return gameRepresentation;
+      }
       String gameRom = gameRepresentation.getRom();
       if (!StringUtils.isEmpty(gameRom) && gameRom.equalsIgnoreCase(rom)) {
+        return gameRepresentation;
+      }
+      String gameTableName = gameRepresentation.getTableName();
+      if (!StringUtils.isEmpty(gameTableName) && gameTableName.equalsIgnoreCase(rom)) {
         return gameRepresentation;
       }
     }
@@ -235,7 +248,7 @@ public class GamesServiceClient extends VPinStudioClientService {
       return gameRepresentation;
     }
     catch (Exception e) {
-      LOG.error("Failed to retrieve game: " + e.getMessage());
+      LOG.error("Failed to retrieve game {}: {}", id, e.getMessage());
     }
     return null;
   }
@@ -503,6 +516,9 @@ public class GamesServiceClient extends VPinStudioClientService {
   public GameRepresentation getVpxGameCached(int gameId) {
     List<GameRepresentation> games = this.getVpxGamesCached();
     Optional<GameRepresentation> first = games.stream().filter(g -> g.getId() == gameId).findFirst();
+    if(first.isEmpty()) {
+      return getGame(gameId);
+    }
     return first.orElse(null);
   }
 

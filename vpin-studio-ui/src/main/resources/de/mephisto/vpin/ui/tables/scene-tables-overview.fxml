@@ -359,6 +359,17 @@
                               <Tooltip text="Backup the selected tables" />
                            </tooltip>
                         </Button>
+                        <Button fx:id="vpxzBtn" mnemonicParsing="false" onAction="#onVpxz" textFill="#FFFFFF">
+                           <font>
+                                 <Font size="14.0" />
+                           </font>
+                           <graphic>
+                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cellphone" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Package the table into .vpxz file" />
+                           </tooltip>
+                        </Button>
                         <Button fx:id="importBtn" mnemonicParsing="false" onAction="#onImport" textFill="WHITE">
                            <font>
                               <Font size="14.0" />

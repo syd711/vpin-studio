@@ -18,11 +18,12 @@ import org.fxmisc.richtext.CodeArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class TableScriptEditorController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(TableScriptEditorController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private BorderPane root;

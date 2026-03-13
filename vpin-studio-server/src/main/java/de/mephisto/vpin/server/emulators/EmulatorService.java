@@ -15,17 +15,21 @@ import de.mephisto.vpin.server.mame.MameService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class EmulatorService {
-  private final static Logger LOG = LoggerFactory.getLogger(EmulatorService.class);
+public class EmulatorService implements InitializingBean {
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @Autowired
   private GameEmulatorValidationService gameEmulatorValidationService;
@@ -100,7 +104,7 @@ public class EmulatorService {
   }
 
   public List<GameEmulator> getBackglassGameEmulators() {
-    return getGameEmulators().stream().filter(GameEmulator::isValid).filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
+    return getGameEmulators().stream().filter(e -> e.isVpxEmulator() && e.isValid()).collect(Collectors.toList());
   }
 
   public void setFrontendService(FrontendService frontendService) {
@@ -129,11 +133,9 @@ public class EmulatorService {
     List<GameEmulator> ems = frontendConnector.getEmulators();
     this.emulators.clear();
     for (GameEmulator emulator : ems) {
+      long start = System.currentTimeMillis();
       loadEmulator(emulator);
-    }
-
-    for (GameEmulator emulator : ems) {
-      synchronizeEmulator(emulator);
+      LOG.info("Loading of emulator {} took {}ms.", emulator.getName(), (System.currentTimeMillis() - start));
     }
 
     if (this.emulators.isEmpty()) {
@@ -151,22 +153,6 @@ public class EmulatorService {
       }
 
       if (emulator.isVpxEmulator()) {
-        File registryFolder = mameService.getNvRamFolder();
-        if (registryFolder != null && registryFolder.exists()) {
-          emulator.setNvramDirectory(registryFolder.getAbsolutePath());
-        }
-        else {
-          emulator.setNvramDirectory(new File(mameFolder, "nvram").getAbsolutePath());
-        }
-
-        File cfgFolder = mameService.getCfgFolder();
-        if (cfgFolder != null && cfgFolder.exists()) {
-          emulator.setCfgDirectory(cfgFolder.getAbsolutePath());
-        }
-        else {
-          emulator.setCfgDirectory(new File(mameFolder, "nvram").getAbsolutePath());
-        }
-
         // mind that popper may set a specific romDirectory
         if (StringUtils.isEmpty(emulator.getRomDirectory())) {
           File romFolder = mameService.getRomsFolder();
@@ -191,6 +177,19 @@ public class EmulatorService {
     return emulatorFactory.create(emulatorType);
   }
 
+
+  @EventListener(ApplicationReadyEvent.class)
+  public void synchronizeEmulators() {
+    for (GameEmulator emulator : this.emulators.values()) {
+      synchronizeEmulator(emulator);
+    }
+  }
+
+  /**
+   * Used to synchronize emulators with .pupgames files to the latest lists.
+   *
+   * @param emulator
+   */
   private void synchronizeEmulator(GameEmulator emulator) {
     if (!emulator.isEnabled()) {
       return;
@@ -226,5 +225,10 @@ public class EmulatorService {
 
   public void addEmulatorChangeListener(EmulatorChangeListener listener) {
     this.listeners.add(listener);
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

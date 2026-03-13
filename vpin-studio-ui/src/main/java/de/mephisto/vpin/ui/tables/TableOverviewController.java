@@ -26,6 +26,7 @@ import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.preferences.VPXZSettings;
 import de.mephisto.vpin.restclient.validation.*;
 import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.ui.*;
@@ -45,6 +46,7 @@ import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.tables.vps.VpsTableColumn;
 import de.mephisto.vpin.ui.tables.vps.VpsTutorialColumn;
 import de.mephisto.vpin.ui.util.*;
+import de.mephisto.vpin.ui.vpxz.VPXZDialogs;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -79,6 +81,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -92,7 +95,7 @@ import static de.mephisto.vpin.ui.Studio.*;
 public class TableOverviewController extends BaseTableController<GameRepresentation, GameRepresentationModel>
     implements Initializable, StudioFXController, ListChangeListener<GameRepresentationModel>, PreferenceChangeListener, StudioEventListener {
 
-  private final static Logger LOG = LoggerFactory.getLogger(TableOverviewController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static final int ALL_VPX_ID = -10;
 
@@ -250,6 +253,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private Button deleteBtn;
 
   @FXML
+  private Button vpxzBtn;
+
+  @FXML
   private Button playlistManagerBtn;
 
   @FXML
@@ -289,6 +295,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private UISettings uiSettings;
   private VpsSettings vpsSettings;
   private ServerSettings serverSettings;
+  private VPXZSettings vpxzSettings;
   private IScoredSettings iScoredSettings;
 
   private final List<Consumer<GameRepresentation>> reloadConsumers = new ArrayList<>();
@@ -436,13 +443,17 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void onTableEdit() {
     GameRepresentation selectedItems = getSelection();
     if (selectedItems != null) {
-      if (Studio.client.getFrontendService().isFrontendRunning()) {
-        if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
-          TableDialogs.openTableDataDialog(this, selectedItems);
+      JFXFuture.supplyAsync(() -> {
+        return Studio.client.getFrontendService().isFrontendRunning();
+      }).thenAcceptLater((running) -> {
+        if (running) {
+          if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
+            TableDialogs.openTableDataDialog(this, selectedItems);
+          }
+          return;
         }
-        return;
-      }
-      TableDialogs.openTableDataDialog(this, selectedItems);
+        TableDialogs.openTableDataDialog(this, selectedItems);
+      });
     }
   }
 
@@ -553,6 +564,14 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }
 
     deleteSelection();
+  }
+
+  @FXML
+  protected void onVpxz(Event e) {
+    GameRepresentation selection = getSelection();
+    if (selection != null) {
+      VPXZDialogs.openTablesVpxzDialog(selection);
+    }
   }
 
   private void deleteSelection() {
@@ -771,6 +790,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     this.validateBtn.setDisable(true);
     this.tableEditBtn.setDisable(true);
     this.deleteBtn.setDisable(true);
+    this.vpxzBtn.setDisable(true);
     this.uploadsButtonController.setDisable(true);
     this.importBtn.setDisable(true);
     this.exportBtn.setDisable(true);
@@ -831,8 +851,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
                 + ". Make sure that all(!) directories are set and reload after fixing these.", frontend));
           }
 
-          GameEmulatorRepresentation emulatorRepresentation = emulatorCombo.valueProperty().get();
-          this.importBtn.setDisable(!isAllVpxSelected);
+          List<GameEmulatorRepresentation> vpxEmus = emulatorCombo.getItems().stream().filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
+
+          this.importBtn.setDisable(!isAllVpxSelected && vpxEmus.size() > 1);
           this.exportBtn.setDisable(!isAllVpxSelected);
           this.stopBtn.setDisable(false);
           this.searchTextField.setDisable(false);
@@ -1044,7 +1065,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       return null;
     }, this, true);
 
-    BaseLoadingColumn.configureLoadingColumn(columnVPS, "Loading...", (value, model) -> {
+    BaseLoadingColumn.configureLoadingColumn(columnVPS, "...", (value, model) -> {
       return new VpsTableColumn(model.getGame().getExtTableId(), model.getGame().getExtTableVersionId(), value.isDisabled(), model.getGame().isIgnoreUpdates(), model.getGame().getVpsUpdates(), vpsSettings);
     });
 
@@ -1196,18 +1217,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         compBtn.setOnAction(event -> {
           Platform.runLater(() -> {
             CompetitionType competitionType = value.getCompetitionTypes().get(0);
-            if (competitionType.equals(CompetitionType.MANIA)) {
-              ManiaSettings maniaSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
-              if (maniaSettings.isTournamentsEnabled()) {
-                NavigationController.navigateTo(NavigationItem.Tournaments, new NavigationOptions(-1));
-              }
-              else {
-                WidgetFactory.showInformation(stage, "Tournaments not enabled!", "You must enable the Mania Tournaments view to navigate there.");
-              }
-            }
-            else {
-              NavigationController.navigateTo(NavigationItem.Competitions, new NavigationOptions(competitionType));
-            }
+            NavigationController.navigateTo(NavigationItem.Competitions, new NavigationOptions(competitionType));
           });
         });
       }
@@ -1259,7 +1269,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       }
 
       ValidationState validationState = value.getValidationState();
-      FontIcon statusIcon = WidgetFactory.createCheckIcon(getIconColor(value));
+      FontIcon statusIcon = uiSettings.isHideGreenMarker() ? null : WidgetFactory.createCheckIcon(getIconColor(value));
       Label statusLabel = new Label();
       if (value.getIgnoredValidations() != null && !value.getIgnoredValidations().contains(-1)) {
         if (validationState != null && validationState.getCode() > 0) {
@@ -1320,10 +1330,10 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       return label;
     }, this, true);
 
-    BaseLoadingColumn.configureColumn(columnTutorials, (value, model) -> {
+    BaseLoadingColumn.configureLoadingColumn(this, columnTutorials, "", "tablesTutorialColumn", (value, model) -> {
       String vpsTableId = value.getExtTableId();
       return new VpsTutorialColumn(vpsTableId);
-    }, this, true);
+    });
 
     BaseLoadingColumn.configureColumn(columnDateAdded, (value, model) -> {
       Label label = null;
@@ -1781,6 +1791,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     validateBtn.setDisable(c.getList().isEmpty());
     deleteBtn.setDisable(c.getList().isEmpty());
+    vpxzBtn.setDisable(c.getList().isEmpty());
     playButtonController.setDisable(disable);
     scanBtn.setDisable(c.getList().isEmpty());
     exportBtn.setDisable(c.getList().isEmpty());
@@ -1829,6 +1840,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     return status;
   }
 
+  public void scrollTo(GameRepresentationModel model) {
+    this.tableView.scrollTo(model);
+  }
 
   public void selectGameInModel(int gameId) {
     Optional<GameRepresentationModel> model = models.stream().filter(m -> m.getGame().getId() == gameId).findFirst();
@@ -1870,6 +1884,10 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       tableView.getColumns().remove(columnTutorials);
       tableView.getColumns().add(tableView.getColumns().indexOf(columnHSType), columnTutorials);
     }
+
+    vpxzSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPXZ_SETTINGS, VPXZSettings.class);
+    vpxzBtn.managedProperty().bindBidirectional(vpxzBtn.visibleProperty());
+    vpxzBtn.setVisible(vpxzSettings.isEnabled());
 
     iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
     columnStatus.setPrefWidth(iScoredSettings != null && iScoredSettings.isEnabled() ? 75 : 55);
@@ -2092,6 +2110,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     this.emulatorBtn.setDisable(newValue == null || newValue.getId() == -1);
     this.exportBtn.setDisable(!vpxOrFpEmulator);
     this.deleteBtn.setVisible(vpxOrFpEmulator);
+    this.vpxzBtn.setVisible(vpxEmulator);
     this.scanBtn.setVisible(vpxEmulator);
 //    this.playButtonController.setVisible(vpxOrFpEmulator);
 //    this.stopBtn.setVisible(vpxOrFpEmulator);
@@ -2151,6 +2170,11 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }
     else if (key.equals(PreferenceNames.SERVER_SETTINGS)) {
       serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+    }
+    else if (key.equals(PreferenceNames.VPXZ_SETTINGS)) {
+      vpxzSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPXZ_SETTINGS, VPXZSettings.class);
+      GameEmulatorRepresentation selectedEmu = emulatorCombo.getValue();
+      vpxzBtn.setVisible(vpxzSettings.isEnabled() && selectedEmu != null && selectedEmu.isVpxEmulator());
     }
     else if (key.equals(PreferenceNames.ISCORED_SETTINGS)) {
       iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);

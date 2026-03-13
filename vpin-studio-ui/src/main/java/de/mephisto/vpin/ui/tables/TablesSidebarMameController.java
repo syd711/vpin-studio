@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
@@ -31,6 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -39,7 +41,8 @@ import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablesSidebarMameController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarMameController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+  private final Debouncer debouncer = new Debouncer();
 
   public final static java.util.List<SoundMode> SOUND_MODES = Arrays.asList(
       new SoundMode(0, "0 - Standard built-in PinMAME emulation"),
@@ -52,6 +55,9 @@ public class TablesSidebarMameController implements Initializable {
 
   @FXML
   private VBox dataBox;
+
+  @FXML
+  private VBox romValueBox;
 
   @FXML
   private VBox emptyDataBox;
@@ -112,6 +118,9 @@ public class TablesSidebarMameController implements Initializable {
 
   @FXML
   private CheckBox forceStereo;
+
+  @FXML
+  private Spinner<Integer> volumeSpinner;
 
   @FXML
   private Button applyDefaultsBtn;
@@ -329,6 +338,7 @@ public class TablesSidebarMameController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     dataBox.managedProperty().bindBidirectional(dataBox.visibleProperty());
+    romValueBox.managedProperty().bindBidirectional(romValueBox.visibleProperty());
     emptyDataBox.managedProperty().bindBidirectional(emptyDataBox.visibleProperty());
     noInputDataBox.managedProperty().bindBidirectional(noInputDataBox.visibleProperty());
     invalidDataBox.managedProperty().bindBidirectional(invalidDataBox.visibleProperty());
@@ -357,6 +367,12 @@ public class TablesSidebarMameController implements Initializable {
     soundModeCombo.setItems(FXCollections.observableList(SOUND_MODES));
     soundModeCombo.valueProperty().addListener((observable, oldValue, newValue) -> saveOptions());
     forceStereo.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
+
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 4000, 0);
+    volumeSpinner.setValueFactory(factory);
+    factory.valueProperty().addListener((observableValue, integer, t1) -> {
+      saveOptions();
+    });
   }
 
 
@@ -397,16 +413,20 @@ public class TablesSidebarMameController implements Initializable {
     colorizeDmd.setSelected(false);
     soundModeCombo.setValue(SOUND_MODES.get(0));
     forceStereo.setSelected(false);
+    volumeSpinner.getValueFactory().setValue(0);
 
     this.errorBox.setVisible(false);
     this.applyDefaultsBtn.setDisable(!gameOptional.isPresent());
     noInputDataBox.setVisible(false);
     tablesBox.setVisible(false);
 
+    romValueBox.setVisible(false);
+
     if (gameOptional.isPresent()) {
       GameRepresentation game = gameOptional.get();
 
       nvOffsetBtn.setDisable(!HighscoreType.NVRam.equals(game.getHighscoreType()));
+      romValueBox.setVisible(HighscoreType.NVRam.equals(game.getHighscoreType()));
       labelRomAlias.setText(!StringUtils.isEmpty(game.getRomAlias()) ? game.getRomAlias() : "-");
       copyRomAliasBtn.setDisable(false);
       scriptBtn.setDisable(false);
@@ -494,6 +514,7 @@ public class TablesSidebarMameController implements Initializable {
           colorizeDmd.setSelected(options.isColorizeDmd());
           soundModeCombo.setValue(SOUND_MODES.get(options.getSoundMode()));
           forceStereo.setSelected(options.isForceStereo());
+          volumeSpinner.getValueFactory().setValue(options.getVolume());
 
           if (game.getValidationState() != null) {
             ValidationState validationState = game.getValidationState();
@@ -529,6 +550,7 @@ public class TablesSidebarMameController implements Initializable {
     colorizeDmd.setDisable(b);
     soundModeCombo.setDisable(b);
     forceStereo.setDisable(b);
+    volumeSpinner.setDisable(b);
 
     applyDefaultsBtn.setText(b ? "Override Defaults" : "Apply Defaults");
 
@@ -556,6 +578,7 @@ public class TablesSidebarMameController implements Initializable {
     options.setColorizeDmd(colorizeDmd.isSelected());
     options.setSoundMode(soundModeCombo.getValue().getId());
     options.setForceStereo(forceStereo.isSelected());
+    options.setVolume(volumeSpinner.getValue());
 
     try {
       client.getMameService().saveOptions(options);

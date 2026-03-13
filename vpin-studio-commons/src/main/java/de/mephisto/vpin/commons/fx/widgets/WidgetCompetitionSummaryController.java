@@ -29,6 +29,7 @@ import org.springframework.lang.NonNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,7 @@ import static de.mephisto.vpin.commons.fx.ServerFX.client;
 import static de.mephisto.vpin.commons.utils.WidgetFactory.getCompetitionScoreFont;
 
 public class WidgetCompetitionSummaryController extends WidgetController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(WidgetCompetitionSummaryController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private Label competitionLabel;
@@ -175,10 +176,10 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
 
     GameRepresentation competedGame = null;
     if (competitionType.equals(CompetitionType.ISCORED)) {
-      competedGame = client.getGameByVpsId(competition.getVpsTableId(), competition.getVpsTableVersionId());
+      competedGame = client.getGameService().getGameByVpsTable(competition.getVpsTableId(), competition.getVpsTableVersionId());
     }
     else {
-      competedGame = client.getGame(competition.getGameId());
+      competedGame = client.getGameService().getGame(competition.getGameId());
     }
 
     if (competedGame != null) {
@@ -222,7 +223,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
         scoreSummary = fromManiaScores(highscoresByTable.getData());
       }
       else {
-        scoreSummary = client.getCompetitionScore(competition.getId());
+        scoreSummary = client.getCompetitionService().getCompetitionScore(competition.getId());
       }
       return scoreSummary;
     }).thenAcceptLater((latestCompetitionScore) -> {
@@ -268,7 +269,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
         }
 
         JFXFuture.supplyAsync(() -> {
-          return client.getFrontendMedia(game.getId());
+          return client.getFrontendService().getFrontendMedia(game.getId());
         }).thenAcceptLater((frontendMedia) -> {
           FrontendMediaItemRepresentation item = frontendMedia.getDefaultMediaItem(VPinScreen.Wheel);
           if (item != null) {
@@ -305,7 +306,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
       }
 
       topBox.setVisible(true);
-      InputStream competitionBackground = client.getCompetitionBackground(game.getId());
+      InputStream competitionBackground = client.getCompetitionService().getCompetitionBackground(game.getId());
       if (competitionBackground != null) {
         Image image = new Image(competitionBackground);
         BackgroundImage myBI = new BackgroundImage(image,

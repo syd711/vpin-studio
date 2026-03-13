@@ -1,21 +1,15 @@
 package de.mephisto.vpin.ui.preferences;
 
-import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 
-import static de.mephisto.vpin.ui.Studio.Features;
-import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.maniaClient;
+import static de.mephisto.vpin.ui.Studio.*;
 
 public class AvatarUploadProgressModel extends ProgressModel<File> {
   private final static Logger LOG = LoggerFactory.getLogger(AvatarUploadProgressModel.class);
@@ -61,15 +55,8 @@ public class AvatarUploadProgressModel extends ProgressModel<File> {
   public void processNext(ProgressResultModel progressResultModel, File f) {
     try {
       client.getPreferenceService().uploadVPinAvatar(f);
-      if (Features.MANIA_ENABLED && maniaClient.getCabinetClient() != null) {
-        maniaClient.getCabinetClient().updateAvatar(f, null, true);
-
-        BufferedImage avtr = ImageIO.read(f);
-        List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
-        for (Tournament tournament : tournaments) {
-          maniaClient.getTournamentClient().updateBadge(avtr, tournament);
-          LOG.info("Updated tournament badge for " + tournament);
-        }
+      if (Features.MANIA_ENABLED && maniaClient.getCabinetClient().getDefaultCabinetCached() != null) {
+        maniaClient.getCabinetClient().updateAvatar(maniaClient.getCabinetClient().getDefaultCabinetCached().getId(), f, null, true);
       }
     } catch (Exception e) {
       LOG.error("Error waiting for server: " + e.getMessage(), e);

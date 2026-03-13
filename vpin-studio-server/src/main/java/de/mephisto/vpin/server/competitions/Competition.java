@@ -68,14 +68,34 @@ public class Competition {
 
   private String name;
 
+  private String mode;
+
   private String score;
 
   private String joinMode;
 
   private String rom;
 
+  private String issues;
+
+  public String getIssues() {
+    return issues;
+  }
+
+  public void setIssues(String issues) {
+    this.issues = issues;
+  }
+
   @Transient
   private ValidationState validationState;
+
+  public String getMode() {
+    return mode;
+  }
+
+  public void setMode(String mode) {
+    this.mode = mode;
+  }
 
   public String getUrl() {
     return url;
@@ -201,6 +221,10 @@ public class Competition {
     return badge;
   }
 
+  /**
+   * Set the file base name here, no image suffix required
+   * @param badge
+   */
   public void setBadge(String badge) {
     this.badge = badge;
   }
@@ -270,6 +294,10 @@ public class Competition {
   }
 
   public boolean isActive() {
+    if (getType().equals(CompetitionType.WEEKLY.name())) {
+      return true;
+    }
+
     if (!StringUtils.isEmpty(getWinnerInitials())) {
       return false;
     }

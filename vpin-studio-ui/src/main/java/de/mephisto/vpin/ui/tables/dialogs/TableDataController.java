@@ -1,8 +1,8 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogHeaderController;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.matcher.VpsMatch;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
@@ -16,13 +16,13 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.tagging.TaggingUtil;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.tables.GameRepresentationModel;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.TablesSidebarPlaylistsController;
@@ -57,6 +57,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -64,8 +65,9 @@ import java.util.stream.Collectors;
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
+
 public class TableDataController extends BasePrevNextController implements AutoCompleteTextFieldChangeListener, ChangeListener<VpsTableVersion> {
-  private final static Logger LOG = LoggerFactory.getLogger(TableDataController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final static TableStatus STATUS_DISABLED = new TableStatus(0, "InActive (Disabled)");
   private final static TableStatus STATUS_NORMAL = new TableStatus(1, "Visible (Normal)");
@@ -93,6 +95,9 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
   @FXML
   private GridPane patchVersionPanel;
+
+  @FXML
+  private CheckBox autosaveCheckbox;
 
   @FXML
   private ComboBox<String> gameTypeCombo;
@@ -262,6 +267,8 @@ public class TableDataController extends BasePrevNextController implements AutoC
   @FXML
   private Tab screensTab;
   @FXML
+  private Tab optionsTab;
+  @FXML
   private Tab statisticsTab;
 
 
@@ -295,6 +302,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
   private TableDataTabScreensController tableScreensController;
   private TableDataTabScoreDataController tableDataTabScoreDataController;
   private TableDataTabCommentsController tableDataTabCommentsController;
+  private TableDataTabScriptOptionsController tableDataTabScriptOptionsController;
   private TablesSidebarPlaylistsController tablesSidebarPlaylistsController;
   private PropperRenamingController propperRenamingController;
   private Pane propertRenamingRoot;
@@ -459,18 +467,26 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
   @Override
   protected void openNext() {
+    this.nextButton.setDisable(true);
+    this.prevButton.setDisable(true);
     tableOverviewController.selectNextModel();
     GameRepresentation selection = tableOverviewController.getSelection();
+    GameRepresentationModel selectedModel = tableOverviewController.getSelectedModel();
     if (selection != null && !selection.equals(this.game)) {
+      tableOverviewController.scrollTo(selectedModel);
       switchGame(selection);
     }
   }
 
   @Override
   protected void openPrev() {
+    this.nextButton.setDisable(true);
+    this.prevButton.setDisable(true);
     tableOverviewController.selectPreviousModel();
     GameRepresentation selection = tableOverviewController.getSelection();
+    GameRepresentationModel selectedModel = tableOverviewController.getSelectedModel();
     if (selection != null && !selection.equals(this.game)) {
+      tableOverviewController.scrollTo(selectedModel);
       switchGame(selection);
     }
   }
@@ -541,7 +557,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
     TableDetails tableDetails = tableDetailsBinder.getBean();
     if (tableDetails != null) {
       String updatedGameFileName = tableDetails.getGameFileName();
-      if (client.getEmulatorService().isVpxGame(game) && !updatedGameFileName.toLowerCase().endsWith(".vpx")) {
+      if (client.getEmulatorService().isVpxGame(game) && (!updatedGameFileName.toLowerCase().endsWith(".vpx") && !updatedGameFileName.toLowerCase().endsWith(".fpt"))) {
         updatedGameFileName = updatedGameFileName + ".vpx";
       }
       else if (client.getEmulatorService().isFpGame(game) && !updatedGameFileName.toLowerCase().endsWith(".fpt")) {
@@ -564,6 +580,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
       success &= tableScreensController.save();
       success &= tableDataTabCommentsController.save(tableDetails);
       success &= tableDataTabScoreDataController.save();
+      success &= tableDataTabScriptOptionsController.save();
 
       if (tableDetails != null) {
         tableDetails = client.getFrontendService().saveTableDetails(tableDetails, game.getId());
@@ -651,6 +668,15 @@ public class TableDataController extends BasePrevNextController implements AutoC
     this.serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
     this.uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
 
+    autosaveCheckbox.setSelected(uiSettings.isAutoSaveEnabled());
+    autosaveCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        uiSettings.setAutoSaveEnabled(newValue);
+        client.getPreferenceService().setJsonPreference(uiSettings);
+      }
+    });
+
     boolean patchVersionEnabled = !StringUtils.isEmpty(serverSettings.getMappingPatchVersion());
     patchVersion.setDisable(!patchVersionEnabled);
     patchVersionPanel.setVisible(Features.FIELDS_EXTENDED && patchVersionEnabled);
@@ -658,6 +684,20 @@ public class TableDataController extends BasePrevNextController implements AutoC
     List<VpsTable> tables = client.getVpsService().getTables();
     List<String> collect = new ArrayList<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
     autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, collect);
+
+    tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
+      @Override
+      public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
+        refreshTabSelection(newValue);
+      }
+    });
+  }
+
+  private void refreshTabSelection(Tab activeTab) {
+    if (activeTab != null && activeTab.equals(optionsTab) && game != null) {
+      boolean isVpx = client.getEmulatorService().isVpxGame(game);
+      tableDataTabScriptOptionsController.setGame(isVpx ? game.getId() : -1);
+    }
   }
 
   private void loadTabs() {
@@ -709,6 +749,17 @@ public class TableDataController extends BasePrevNextController implements AutoC
     }
     catch (IOException e) {
       LOG.error("Failed to load dialog-table-data-tab-comments.fxml: " + e.getMessage(), e);
+    }
+
+    try {
+      FXMLLoader loader = new FXMLLoader(TableDataTabScriptOptionsController.class.getResource("dialog-table-data-tab-script-options.fxml"));
+      Parent optionsRoot = loader.load();
+      tableDataTabScriptOptionsController = loader.getController();
+      tableDataTabScriptOptionsController.setStage(this.stage);
+      optionsTab.setContent(optionsRoot);
+    }
+    catch (IOException e) {
+      LOG.error("Failed to load dialog-table-data-tab-script-options.fxml: " + e.getMessage(), e);
     }
 
     try {
@@ -938,14 +989,25 @@ public class TableDataController extends BasePrevNextController implements AutoC
       TableDataController.lastTab = tab;
     }
     tabPane.getSelectionModel().select(TableDataController.lastTab);
-
     switchGame(game);
   }
 
   protected void switchGame(GameRepresentation game) {
-    try {
+    JFXFuture.supplyAsync(() -> {
+      return client.getFrontendService().getTableDetails(game.getId());
+    }).thenAcceptLater((tableDetails) -> {
       this.game = game;
-      TableDetails tableDetails = client.getFrontendService().getTableDetails(game.getId());
+      switchGame(game, tableDetails);
+
+      this.nextButton.setDisable(false);
+      this.prevButton.setDisable(false);
+
+      refreshTabSelection(tabPane.getSelectionModel().getSelectedItem());
+    });
+  }
+
+  protected void switchGame(GameRepresentation game, TableDetails tableDetails) {
+    try {
       tableDetailsBinder.setBean(tableDetails, true);
 
       if (client.getEmulatorService().isVpxGame(game) || client.getEmulatorService().isFpGame(game)) {
@@ -962,10 +1024,9 @@ public class TableDataController extends BasePrevNextController implements AutoC
       }
 
       if (client.getEmulatorService().isVpxGame(game)) {
-        HighscoreFiles highscoreFiles = client.getGameService().getHighscoreFiles(game.getId());
         scoreDataTab.setDisable(false);
         if (tableDataTabScoreDataController != null) {
-          tableDataTabScoreDataController.setGame(game, tableDetails, highscoreFiles, serverSettings);
+          tableDataTabScoreDataController.setGame(game, tableDetails, serverSettings);
         }
       }
       else {
@@ -1014,10 +1075,17 @@ public class TableDataController extends BasePrevNextController implements AutoC
         gameDisplayName.setText(game.getGameDisplayName());
       }
 
+      boolean isVpx = client.getEmulatorService().isVpxGame(game);
+
       metaDataTab.setDisable(hasNoDetail);
       customizationTab.setDisable(hasNoDetail);
       extrasTab.setDisable(hasNoDetail);
       screensTab.setDisable(hasNoDetail);
+      optionsTab.setDisable(!isVpx);
+
+      if (tabPane.getSelectionModel().getSelectedItem().isDisabled()) {
+        tabPane.getSelectionModel().select(0);
+      }
 
       initVpsStatus();
       if (Features.STATISTICS_ENABLED && tableStatisticsController != null) {
@@ -1038,6 +1106,10 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
       if (tablesSidebarPlaylistsController != null) {
         tablesSidebarPlaylistsController.setGames(Arrays.asList(game));
+      }
+
+      if (tableDataTabScriptOptionsController != null) {
+//        tableDataTabScriptOptionsController.setGame(isVpx ? game.getId() : -1);
       }
 
       setDialogDirty(false);

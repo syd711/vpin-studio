@@ -13,11 +13,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.Optional;
 
 public class UniversalUploadUtil {
-  private final static Logger LOG = LoggerFactory.getLogger(UniversalUploadUtil.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static Optional<UploadDescriptor> upload(File selection, int gameId, UploadType uploadType, int emulatorId) {
     Optional<UploadDescriptor> result = Optional.empty();

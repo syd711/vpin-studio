@@ -6,11 +6,13 @@ import de.mephisto.vpin.restclient.components.ComponentSummary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
+
 /*********************************************************************************************************************
  * DOFLinx
  ********************************************************************************************************************/
 public class DOFLinxServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public DOFLinxServiceClient(VPinStudioClient client) {
     super(client);

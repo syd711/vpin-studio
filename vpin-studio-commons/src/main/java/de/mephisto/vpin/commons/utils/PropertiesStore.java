@@ -9,10 +9,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.*;
 
 public class PropertiesStore {
-  private final static Logger LOG = LoggerFactory.getLogger(PropertiesStore.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   protected final Properties properties = new SortedProperties();
 

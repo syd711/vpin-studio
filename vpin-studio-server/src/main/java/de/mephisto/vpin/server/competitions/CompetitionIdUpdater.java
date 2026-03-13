@@ -13,6 +13,7 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -67,11 +68,6 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
   }
 
   @Override
-  public void competitionChanged(@NonNull Competition competition) {
-    //ignore
-  }
-
-  @Override
   public void competitionFinished(@NonNull Competition competition, @Nullable Player winner, @NonNull ScoreSummary scoreSummary) {
     unsetGamesTournamentId(competition);
   }
@@ -79,6 +75,14 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
   @Override
   public void competitionDeleted(@NonNull Competition competition) {
     unsetGamesTournamentId(competition);
+  }
+
+  @Override
+  public void competitionChanged(@NotNull Competition competition) {
+    TableDetails tableDetails = gameMediaService.getTableDetails(competition.getGameId());
+    if (tableDetails != null) {
+      setTourneyId(competition, tableDetails, competition.getGameId());
+    }
   }
 
   private void setGamesTournamentId(@NonNull Competition competition) {
@@ -108,6 +112,23 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
       TableDetails tableDetails = gameMediaService.getTableDetails(competition.getGameId());
       unsetTourneyId(competition, tableDetails, competition.getGameId());
     }
+  }
+
+  public void unsetTourneyId(@Nullable TableDetails tableDetails, @NonNull CompetitionType competitionType, int gameId) {
+    String tournamentId = tableDetails.getTourneyId();
+    String[] split = tournamentId.split(",");
+    List<String> updated = new ArrayList<>();
+    for (String s : split) {
+      if (StringUtils.isEmpty(s)) {
+        continue;
+      }
+      if (s.toLowerCase().contains(competitionType.name().toLowerCase())) {
+        continue;
+      }
+      updated.add(s);
+    }
+    tableDetails.setTourneyId(String.join(",", updated));
+    gameMediaService.saveTableDetails(tableDetails, gameId, false);
   }
 
   private void unsetTourneyId(@NonNull Competition competition, @Nullable TableDetails tableDetails, int gameId) {
@@ -158,6 +179,22 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
       gameMediaService.saveTableDetails(tableDetails, gameId, false);
       LOG.info("Written competition id of game " + tableDetails.getGameFileName() + ", updated TourneyId to \"" + tableDetails.getTourneyId() + "\"");
     }
+  }
+
+  public boolean isCompeted(TableDetails tableDetails, List<Competition> weeklyCompetitions, boolean isOwner) {
+    String tournamentId = tableDetails.getTourneyId();
+    if (!StringUtils.isEmpty(tournamentId)) {
+      for (Competition competition : weeklyCompetitions) {
+        String competitionId = CompetitionIdFactory.createId(competition, isOwner);
+        String[] split = tournamentId.split(",");
+        for (String s : split) {
+          if (s.equals(competitionId)) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
   }
 
   @Override

@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,7 +30,7 @@ import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableOverviewContextMenu {
-  private final static Logger LOG = LoggerFactory.getLogger(TableOverviewContextMenu.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final TableOverviewController tableOverviewController;
   private ContextMenu ctxMenu;
@@ -309,6 +310,11 @@ public class TableOverviewContextMenu {
       dmdItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
       dmdItem.setOnAction(actionEvent -> tableOverviewController.getUploadsButtonController().onDMDUpload());
       uploadMenu.getItems().add(dmdItem);
+
+      MenuItem fplItem = new MenuItem("Upload .fpl File");
+      fplItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
+      fplItem.setOnAction(actionEvent -> tableOverviewController.getUploadsButtonController().onFplUpload());
+      uploadMenu.getItems().add(fplItem);
 
       MenuItem iniItem = new MenuItem("Upload .ini File");
       iniItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));

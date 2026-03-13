@@ -12,11 +12,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 
 import static de.mephisto.vpin.restclient.jobs.JobType.ALTCOLOR_INSTALL;
 
 public class AltColorUploadProgressModel extends UploadProgressModel {
-  private final static Logger LOG = LoggerFactory.getLogger(AltColorUploadProgressModel.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final int gameId;
 

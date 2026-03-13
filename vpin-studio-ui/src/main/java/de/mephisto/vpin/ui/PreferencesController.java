@@ -84,10 +84,19 @@ public class PreferencesController extends SettingsSceneController implements In
   private Button vpfBtn;
 
   @FXML
+  private Button wovpBtn;
+
+  @FXML
   private Button iScoredBtn;
 
   @FXML
+  private Button dmdDeviceBtn;
+
+  @FXML
   private Button vpsBtn;
+
+  @FXML
+  private Button vpxzBtn;
 
   @FXML
   private Button validators_screensBtn;
@@ -236,6 +245,12 @@ public class PreferencesController extends SettingsSceneController implements In
     load("preference-webhooks.fxml", event);
   }
 
+
+  @FXML
+  private void onWovp(ActionEvent event) throws IOException {
+    load("preference-wovp.fxml", event);
+  }
+
   @FXML
   private void onSystemSettings(ActionEvent event) throws IOException {
     load("preference-system-settings.fxml", event);
@@ -278,6 +293,11 @@ public class PreferencesController extends SettingsSceneController implements In
   }
 
   @FXML
+  private void onVpxzRepositories(ActionEvent event) throws IOException {
+    load("preference-vpxz.fxml", event);
+  }
+
+  @FXML
   private void onArchiveManager(ActionEvent event) throws IOException {
     load("preference-table_manager.fxml", event);
   }
@@ -305,6 +325,11 @@ public class PreferencesController extends SettingsSceneController implements In
   @FXML
   private void onDOF(ActionEvent event) throws IOException {
     load("preference-dof.fxml", event);
+  }
+
+  @FXML
+  private void onDMD(ActionEvent event) throws IOException {
+    load("preference-dmd.fxml", event);
   }
 
   @FXML
@@ -398,6 +423,12 @@ public class PreferencesController extends SettingsSceneController implements In
     load("preference-discord_faq.fxml", event);
   }
 
+  public static void navigate(String preferenceType) {
+    if (instance != null) {
+      instance.load("preference-" + preferenceType + ".fxml", null, preferenceType + "Btn");
+    }
+  }
+
   public static void open(String preferenceType) {
     open();
     Platform.runLater(() -> {
@@ -415,7 +446,7 @@ public class PreferencesController extends SettingsSceneController implements In
     Studio.browse("https://ko-fi.com/syd711");
   }
 
-  private void load(String screen, ActionEvent event) throws IOException {
+  private void load(String screen, ActionEvent event) {
     load(screen, event, null);
   }
 
@@ -472,8 +503,12 @@ public class PreferencesController extends SettingsSceneController implements In
     vpuBtn.managedProperty().bindBidirectional(vpuBtn.visibleProperty());
     vpfBtn.managedProperty().bindBidirectional(vpfBtn.visibleProperty());
     webhooksBtn.managedProperty().bindBidirectional(webhooksBtn.visibleProperty());
+    dmdDeviceBtn.managedProperty().bindBidirectional(dmdDeviceBtn.visibleProperty());
+    vpxzBtn.managedProperty().bindBidirectional(vpxzBtn.visibleProperty());
 
+    vpxzBtn.setVisible(Features.VPXZ_ENABLED);
     repositoriesBtn.setVisible(Features.BACKUPS_ENABLED);
+    dmdDeviceBtn.setVisible(Features.DMD_DEVICE_INI);
 
     // activation of custom options according to installed frontend
     FrontendType frontendType = client.getFrontendService().getFrontendType();

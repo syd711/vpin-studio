@@ -10,6 +10,7 @@
    -fx-base-5: #605E5E;
    -fx-base-6: #222222;
    -fx-base-7: #111111;
+   -fx-info-background: #333366;
 
    -fx-font-1: #FFF8F8;
    -fx-font-2: #B0ABAB;
@@ -22,6 +23,47 @@
    -fx-blue: #333366;
 }
 
+
+.error-container {
+    -fx-border-radius: 3px;
+    -fx-padding: 6 12 6 12;
+    -fx-background-color: #FF3333;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size : 14px;
+    -fx-font-weight : bold;
+}
+
+.submit-button {
+    -fx-border-radius: 3px;
+    -fx-text-fill: #FFFFFF;
+    -fx-base : #111111;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: #6666FF;
+    -fx-border-width: 1;
+    -fx-font-size : 20px;
+    -fx-font-weight: bold;
+    -fx-background-color: #333366;
+    -fx-text-fill: #fff8f8;
+}
+
+.default-button {
+    -fx-border-radius: 3px;
+    -fx-text-fill: #FFFFFF;
+    -fx-base : #111111;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: #111111;
+    -fx-border-width: 1;
+    -fx-font-size : 20px;
+    -fx-background-color: #272b2f;
+    -fx-text-fill: #fff8f8;
+}
+
+
+.debug {
+    -fx-border-style: solid;
+    -fx-border-color: green;
+    -fx-border-width: 2;
+}
 
 /**
  * Main
@@ -82,4 +124,25 @@
     -fx-background-radius: 6 6 6 6;
     -fx-border-radius: 6 6 6 6;
     -fx-background-color: #2a2a2a;
+}
+
+/**
+ * Info Container
+ */
+.info-container {
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: #FFFFFF;
+    -fx-border-width: 1;
+    -fx-border-radius: 3px;
+    -fx-background-color: -fx-info-background;
+}
+/**
+ * Scores Container
+ */
+.scores-container {
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: #FFFFFF;
+    -fx-border-width: 1;
+    -fx-border-radius: 3px;
+    -fx-background-color: #000000;
 }

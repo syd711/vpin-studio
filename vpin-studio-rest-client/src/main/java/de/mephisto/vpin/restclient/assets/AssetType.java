@@ -14,10 +14,12 @@ public enum AssetType {
   DIF,
   NV,
   DIRECTB2S,
+  FPL,
   INI,
   PAL,
   PAC,
   CRZ,
+  CROMC,
   RES,
   VNI,
   VPA,
@@ -26,6 +28,7 @@ public enum AssetType {
   ALT_SOUND,
   PUP_PACK,
   DMD_PACK,
+  FP_MODEL_PACK,
   FRONTEND_MEDIA,
   ROM,
   MUSIC,
@@ -42,7 +45,7 @@ public enum AssetType {
   CARD_ASSET;
 
   static final AssetType[] INSTALLABLE_ASSET_TYPES = {
-      ZIP, RAR, SEVENZIP, RES, DIF, INI, POV, DIRECTB2S, VNI, VPA, VPX, FPT, PAL, PAC, CRZ, CFG, BAM_CFG, NV
+      ZIP, RAR, SEVENZIP, RES, DIF, INI, POV, DIRECTB2S, VNI, VPA, VPX, FPT, PAL, PAC, CROMC, CRZ, CFG, BAM_CFG, NV, FPL
   };
 
   public static AssetType fromExtension(@Nullable EmulatorType emulatorType, String extension) {
@@ -108,6 +111,9 @@ public enum AssetType {
       case FPT: {
         return "FP Table";
       }
+      case FPL: {
+        return "FP Library";
+      }
       case ROM: {
         return "ROM";
       }
@@ -120,8 +126,14 @@ public enum AssetType {
       case DMD_PACK: {
         return "DMD Pack";
       }
+      case FP_MODEL_PACK: {
+        return "FP Model Pack";
+      }
       case CRZ: {
         return ".cRZ File";
+      }
+      case CROMC: {
+        return ".cROMc File";
       }
       case PAC: {
         return ".pac File";
@@ -189,6 +201,9 @@ public enum AssetType {
       case FPT: {
         return "*.fpt";
       }
+      case FPL: {
+        return "*.fpl";
+      }
       case ROM: {
         return "*.zip";
       }
@@ -201,8 +216,14 @@ public enum AssetType {
       case DMD_PACK: {
         return "DMD Pack";
       }
+      case FP_MODEL_PACK: {
+        return "FP Model Pack";
+      }
       case CRZ: {
         return ".cRZ";
+      }
+      case CROMC: {
+        return ".cROMc";
       }
       case PAC: {
         return ".pac";
@@ -224,5 +245,14 @@ public enum AssetType {
         return null;
       }
     }
+  }
+
+  public String getExtension() {
+    switch (this) {
+      case FP_MODEL_PACK: {
+        return "zip";
+      }
+    }
+    return name().toLowerCase();
   }
 }

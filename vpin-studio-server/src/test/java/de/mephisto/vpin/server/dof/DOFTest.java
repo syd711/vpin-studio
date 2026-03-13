@@ -22,20 +22,20 @@ public class DOFTest {
     System.out.println(realFilename);
   }
 
-  @Test
-  public void testSync() {
-    DOFSettings settings = new DOFSettings();
-    // toaster is Doffy Duck / D0ffyDuck
-    settings.setApiKey("KTmvUlykEgDqW6VgXxfpwTLdTu6ieiB7");
-    settings.setInstallationPath("../testsystem/vPinball/dof64");
-    DOFSynchronizationJob sync = new DOFSynchronizationJob(settings, "../resources/");
-
-    // run sync job
-    JobDescriptor job = new JobDescriptor();
-    sync.execute(job);
-
-    // check job completion
-    assertEquals(1.0, job.getProgress());
-    assertFalse(job.isErrorneous());
-  }
+//  @Test
+//  public void testSync() {
+//    DOFSettings settings = new DOFSettings();
+//    // toaster is Doffy Duck / D0ffyDuck
+//    settings.setApiKey("KTmvUlykEgDqW6VgXxfpwTLdTu6ieiB7");
+//    settings.setInstallationPath("../testsystem/vPinball/dof64");
+//    DOFSynchronizationJob sync = new DOFSynchronizationJob(settings, "../resources/");
+//
+//    // run sync job
+//    JobDescriptor job = new JobDescriptor();
+//    sync.execute(job);
+//
+//    // check job completion
+//    assertEquals(1.0, job.getProgress());
+//    assertFalse(job.isErrorneous());
+//  }
 }

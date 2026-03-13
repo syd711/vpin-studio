@@ -10,11 +10,12 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 
 @Component
 @Order(1)
 public class ShutdownResetFilter implements Filter {
-  private final static Logger LOG = LoggerFactory.getLogger(ShutdownResetFilter.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @Autowired
   private InputEventService keyEventService;

@@ -8,12 +8,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 public class ZipProgressModel extends ProgressModel<File> {
-  private final static Logger LOG = LoggerFactory.getLogger(ZipProgressModel.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private List<File> files;
   private final File folder;
   private final File targetZip;

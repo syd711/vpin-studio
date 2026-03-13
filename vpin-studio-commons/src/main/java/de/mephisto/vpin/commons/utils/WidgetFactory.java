@@ -38,6 +38,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -56,6 +58,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.List;
@@ -65,7 +68,7 @@ import java.util.regex.Pattern;
 
 
 public class WidgetFactory {
-  private final static Logger LOG = LoggerFactory.getLogger(WidgetFactory.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static final String DISABLED_TEXT_STYLE = "-fx-font-color: #B0ABAB;-fx-text-fill:#B0ABAB;";
   public static final String DEFAULT_TEXT_STYLE = "-fx-font-color: #FFFFFF;-fx-text-fill:#FFFFFF;";
@@ -79,6 +82,7 @@ public class WidgetFactory {
   public static final String TODO_COLOR = UPDATE_COLOR;
   public static final String OUTDATED_COLOR = "#FFCC66";
   public static final String OK_COLOR = "#66FF66";
+  public static final String OK_DARK_COLOR = "#11aa11";
   public static final String OK_STYLE = "-fx-font-color: " + OK_COLOR + ";-fx-text-fill:" + OK_COLOR + ";";
   public static final String MEDIA_CONTAINER_LABEL = "-fx-font-size: 14px;-fx-text-fill: #666666;";
   public static final int DEFAULT_ICON_SIZE = 18;
@@ -388,7 +392,7 @@ public class WidgetFactory {
           iconLiteral = determineIconLiteral(nameLower);
         }
         catch (Exception e) {
-          LOG.error("Error loading icon literal: " + iconLiteral, e);
+          LOG.error("Error loading icon literal {}: {}", iconLiteral, e.getMessage());
           iconLiteral = "mdi2v-view-list";
         }
       }
@@ -560,6 +564,9 @@ public class WidgetFactory {
 
     char firstChar = nameLower.charAt(0);
     // Default fallback: alphabet letter, number, or standard list
+    if (firstChar == '#') {
+      return "mdi2v-view-list";
+    }
     if (Character.isLetter(firstChar)) {
       return "mdi2a-alpha-" + nameLower.charAt(0) + "-circle";
     }
@@ -570,8 +577,6 @@ public class WidgetFactory {
       // Do something for symbols, punctuation, etc.
       return "mdi2v-view-list";
     }
-
-
   }
 
   public static Stage createStage() {
@@ -655,6 +660,8 @@ public class WidgetFactory {
 
     Node header = root.lookup("#header");
     Object userData = header.getUserData();
+    boolean resizeable = userData instanceof DialogHeaderResizeableController;
+
     if (userData instanceof DialogHeaderController) {
       DialogHeaderController dialogHeaderController = (DialogHeaderController) userData;
       dialogHeaderController.setStage(stage);
@@ -669,7 +676,8 @@ public class WidgetFactory {
         }
       });
     }
-    if (userData instanceof DialogHeaderResizeableController) {
+
+    if (resizeable) {
       DialogHeaderResizeableController dialogHeaderController = (DialogHeaderResizeableController) userData;
       dialogHeaderController.setMaximizeable(LocalUISettings.isMaximizeable(stateId));
     }
@@ -695,7 +703,7 @@ public class WidgetFactory {
         stage.setX(position.getX());
         stage.setY(position.getY());
 
-        if (position.getWidth() > 0 && position.getHeight() > 0) {
+        if (position.getWidth() > 0 && position.getHeight() > 0 && resizeable) {
           stage.setWidth(position.getWidth());
           stage.setHeight(position.getHeight());
         }
@@ -938,7 +946,7 @@ public class WidgetFactory {
     parent.setCenter(label);
   }
 
-  public static AssetMediaPlayer createAssetMediaPlayer(VPinStudioClient client, FrontendMediaItemRepresentation mediaItem, 
+  public static AssetMediaPlayer createAssetMediaPlayer(VPinStudioClient client, FrontendMediaItemRepresentation mediaItem,
                                                         boolean noLoading, boolean usePreview) {
     String mimeType = mediaItem.getMimeType();
     if (mimeType == null) {

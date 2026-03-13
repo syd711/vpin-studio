@@ -15,13 +15,13 @@ public class MenuItemSelectionState extends MenuState {
 
   @Override
   MenuState left() {
-    menuController.scrollGameBarLeft();
+    menuController.left();
     return this;
   }
 
   @Override
   MenuState right() {
-    menuController.scrollGameBarRight();
+    menuController.right();
     return this;
   }
 
@@ -29,14 +29,17 @@ public class MenuItemSelectionState extends MenuState {
   MenuState enter() {
     PauseMenuItem item = menuController.getSelection();
     if (item.getItemType().equals(PauseMenuItemTypes.exit)) {
-      PauseMenu.exitPauseMenu();
+      PauseMenu.getInstance().exitPauseMenu();
+    }
+    else {
+      menuController.enter();
     }
     return this;
   }
 
   @Override
   MenuState back() {
-    PauseMenu.exitPauseMenu();
+    PauseMenu.getInstance().exitPauseMenu();
     return null;
   }
 }

@@ -19,6 +19,7 @@
    <center>
       <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
+
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                <children>
                   <Label styleClass="preference-title" text="DISCORD INTEGRATION" textFill="WHITE" />
@@ -154,7 +155,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-bold" iconSize="18" />
                            </graphic>
                         </Button>
-                        <Label styleClass="preference-description" text="Only servers with your bots admin privileges shown here." textFill="WHITE" GridPane.columnIndex="2" />
+                        <Label styleClass="preference-description" text="Only servers with your bot are shown here." textFill="WHITE" GridPane.columnIndex="2" />
                         <Label layoutX="468.0" layoutY="14.0" styleClass="preference-description" text="This channel will be used for all highscore updates." textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                         <Label layoutX="468.0" layoutY="48.0" styleClass="preference-description" text="New subscriptions will be created here." textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="3" />
                         <Label layoutX="10.0" layoutY="46.0" prefHeight="20.0" styleClass="preference-label" text="Table Updates Channel:" textFill="WHITE" GridPane.rowIndex="2">
@@ -295,6 +296,7 @@
                   <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
                </padding>
             </VBox>
+
          </content>
       </ScrollPane>
    </center>

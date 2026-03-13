@@ -5,21 +5,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.commons.fx.ImageUtil;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.backups.BackupFileInfoFactory;
-import de.mephisto.vpin.restclient.backups.BackupMameData;
-import de.mephisto.vpin.restclient.backups.BackupPackageInfo;
-import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
+import de.mephisto.vpin.restclient.backups.*;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
+import de.mephisto.vpin.restclient.dmd.DMDBackupData;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.preferences.BackupSettings;
+import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.directb2s.BackglassService;
+import de.mephisto.vpin.server.dmd.DMDDeviceIniService;
 import de.mephisto.vpin.server.dmd.DMDService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
@@ -32,6 +32,7 @@ import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.util.PngFrameCapture;
+import de.mephisto.vpin.server.vpx.FolderLookupService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import net.lingala.zip4j.ZipFile;
 import org.apache.commons.io.FilenameUtils;
@@ -91,6 +92,9 @@ public class VpaService implements InitializingBean {
   private DMDService dmdService;
 
   @Autowired
+  private DMDDeviceIniService dmdDeviceIniService;
+
+  @Autowired
   private MameService mameService;
 
   @Autowired
@@ -99,22 +103,31 @@ public class VpaService implements InitializingBean {
   @Autowired
   private PreferencesService preferencesService;
 
+  @Autowired
+  private FolderLookupService folderLookupService;
+
   public ZipFile createProtectedArchive(@NonNull File target) {
     return VpaArchiveUtil.createZipFile(target);
   }
 
   //-------------------------------
-
   public void createBackup(BackupPackageInfo packageInfo,
                            JobDescriptor jobDescriptor,
                            BiConsumer<File, String> zipOut,
                            Game game, TableDetails tableDetails) throws IOException {
+    BackupSettings backupSettings = preferencesService.getJsonPreference(PreferenceNames.BACKUP_SETTINGS, BackupSettings.class);
+    backup(packageInfo, jobDescriptor, zipOut, game, tableDetails, backupSettings);
+  }
+
+  private void backup(BackupPackageInfo packageInfo,
+                      JobDescriptor jobDescriptor,
+                      BiConsumer<File, String> zipOut,
+                      Game game, TableDetails tableDetails,
+                      BackupSettings backupSettings) throws IOException {
     File gameFolder = game.getGameFile().getParentFile();
 
-    BackupSettings backupSettings = preferencesService.getJsonPreference(PreferenceNames.BACKUP_SETTINGS, BackupSettings.class);
-
-    File romFile = game.getRomFile();
-    if (backupSettings.isRom() && romFile != null && romFile.exists()) {
+    File romFile = folderLookupService.getRomFile(game);
+    if (romFile != null && backupSettings.isRom() && romFile.exists()) {
       packageInfo.setRom(BackupFileInfoFactory.create(romFile));
       if (!zipFile(jobDescriptor, romFile, MAME_FOLDER + "/roms/" + romFile.getName(), zipOut)) {
         return;
@@ -229,7 +242,7 @@ public class VpaService implements InitializingBean {
 
     //always zip music files if they are in a ROM named folder
     if (backupSettings.isMusic()) {
-      File musicFolder = musicService.getMusicFolder(game);
+      File musicFolder = musicService.getGameMusicFolder(game);
       if (musicFolder != null && musicFolder.exists()) {
         packageInfo.setMusic(BackupFileInfoFactory.create(musicFolder));
         if (!zipFile(jobDescriptor, musicFolder, "Music/" + musicFolder.getName(), zipOut)) {
@@ -253,7 +266,7 @@ public class VpaService implements InitializingBean {
     }
 
     // Cfg
-    File cfgFile = game.getCfgFile();
+    File cfgFile = folderLookupService.getCfgFile(game);
     if (cfgFile != null && cfgFile.exists()) {
       packageInfo.setCfg(BackupFileInfoFactory.create(cfgFile));
       if (!zipFile(jobDescriptor, cfgFile, MAME_FOLDER + "/cfg/" + cfgFile.getName(), zipOut)) {
@@ -304,6 +317,23 @@ public class VpaService implements InitializingBean {
       }
     }
 
+    if (backupSettings.isStudioData()) {
+      BackupDataStudio studioData = new BackupDataStudio();
+      studioData.setComment(game.getComment());
+      studioData.setCardsDisabled(game.isCardDisabled());
+      studioData.setIgnoredValidations(ValidationState.toIdString(game.getIgnoredValidations()));
+      if (!zipStudioDetails(jobDescriptor, studioData, zipOut)) {
+        return;
+      }
+    }
+
+    if (backupSettings.isDmdDeviceData()) {
+      DMDBackupData backupData = dmdDeviceIniService.getBackupData(game);
+      if (!zipDmdDeviceIni(jobDescriptor, backupData, zipOut)) {
+        return;
+      }
+    }
+
     if (!jobDescriptor.isCancelled()) {
       writeWheelToPackageInfo(packageInfo, game);
     }
@@ -312,7 +342,7 @@ public class VpaService implements InitializingBean {
   public long calculateTotalSize(Game game) {
     long totalSizeExpected = 0;
 
-    File musicFolder = musicService.getMusicFolder(game);
+    File musicFolder = musicService.getGameMusicFolder(game);
     if (musicFolder != null && musicFolder.exists()) {
       totalSizeExpected += org.apache.commons.io.FileUtils.sizeOfDirectory(musicFolder);
     }
@@ -404,6 +434,36 @@ public class VpaService implements InitializingBean {
     }
     if (!tableDetailsTmpFile.delete()) {
       LOG.warn("Failed to delete temporary registry.json file {}", tableDetailsTmpFile.getName());
+    }
+    return true;
+  }
+
+  private boolean zipStudioDetails(@NonNull JobDescriptor jobDescriptor, @NonNull BackupDataStudio backupDataStudio, BiConsumer<File, String> zipOut) throws IOException {
+    String studioDataJson = objectMapper.writeValueAsString(backupDataStudio);
+
+    File tmpStudioDataJson = File.createTempFile("vpin-studio", ".json");
+    tmpStudioDataJson.deleteOnExit();
+    Files.write(tmpStudioDataJson.toPath(), studioDataJson.getBytes());
+    if (!zipFile(jobDescriptor, tmpStudioDataJson, BackupDataStudio.BACKUP_FILENAME, zipOut)) {
+      return false;
+    }
+    if (!tmpStudioDataJson.delete()) {
+      LOG.warn("Failed to delete temporary file {}", tmpStudioDataJson.getName());
+    }
+    return true;
+  }
+
+  private boolean zipDmdDeviceIni(@NonNull JobDescriptor jobDescriptor, @NonNull DMDBackupData data, BiConsumer<File, String> zipOut) throws IOException {
+    String studioDataJson = objectMapper.writeValueAsString(data);
+
+    File tmpDmdDeviceData = File.createTempFile("dmddevice", ".json");
+    tmpDmdDeviceData.deleteOnExit();
+    Files.write(tmpDmdDeviceData.toPath(), studioDataJson.getBytes());
+    if (!zipFile(jobDescriptor, tmpDmdDeviceData, DMDBackupData.BACKUP_FILENAME, zipOut)) {
+      return false;
+    }
+    if (!tmpDmdDeviceData.delete()) {
+      LOG.warn("Failed to delete temporary file {}", tmpDmdDeviceData.getName());
     }
     return true;
   }

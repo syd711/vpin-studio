@@ -6,9 +6,10 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 
 public class AvatarImageUtil {
-  private final static Logger LOG = LoggerFactory.getLogger(AvatarImageUtil.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static File createAvatar(File avatarFile) throws Exception {
     BufferedImage bufferedImage = CommonImageUtil.loadBackground(avatarFile);

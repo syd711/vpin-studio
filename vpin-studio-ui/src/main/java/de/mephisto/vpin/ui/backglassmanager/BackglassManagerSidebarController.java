@@ -213,6 +213,9 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   private ComboBox<B2SFormPosition> formToPosition;
 
   @FXML
+  private CheckBox formNoFocus;
+
+  @FXML
   private Button reloadBtn;
 
   @FXML
@@ -618,6 +621,13 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       }
     });
 
+    formNoFocus.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if (refreshingCounter == 0 && tableSettings != null) {
+        save(() -> tableSettings.setFormNoFocus(newValue));
+      }
+    });
+
+
     // add the overlay for DMD image drag    
     FileDragEventHandler.install(loaderStackImages, dmdThumbnailImagePane, true, "png", "jpg", "jpeg")
         .setOnDragDropped(e -> {
@@ -863,7 +873,6 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
     dualModes.setDisable(true);
     usedLEDType.setDisable(true);
-    lightBulbOn.setDisable(true);
     glowing.setDisable(true);
     startAsExe.setDisable(true);
 
@@ -873,6 +882,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     skipGIFrames.getValueFactory().valueProperty().set(0);
     skipSolenoidFrames.getValueFactory().valueProperty().set(0);
     skipLEDFrames.getValueFactory().valueProperty().set(0);
+    lightBulbOn.setDisable(true);
     lightBulbOn.selectedProperty().setValue(false);
 
     hideGrill.setDisable(true);
@@ -885,6 +895,8 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     hideDMD.setValue(null);
     startBackground.setDisable(true);
     formToPosition.setDisable(true);
+    formNoFocus.setDisable(true);
+    formNoFocus.setSelected(false);
 
     if (gameId > 0) {
       JFXFuture.supplyAllAsync(
@@ -932,6 +944,8 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
             formToPosition.setDisable(false);
             formToPosition.setValue(TablesSidebarDirectB2SController.FORM_POSITIONS.stream().filter(v -> v.getId() == tableSettings.getFormToPosition()).findFirst().orElse(null));
+            formNoFocus.setDisable(false);
+            formNoFocus.selectedProperty().setValue(tableSettings.isFormNoFocus());
 
             this.refreshingCounter--;
           });

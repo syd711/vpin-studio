@@ -18,6 +18,15 @@ public class MameOptions {
   private boolean colorizeDmd;
   private int soundMode;
   private boolean forceStereo;
+  private int volume;
+
+  public int getVolume() {
+    return volume;
+  }
+
+  public void setVolume(int volume) {
+    this.volume = volume;
+  }
 
   public int getSoundMode() {
     return soundMode;

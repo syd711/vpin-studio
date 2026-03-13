@@ -5,6 +5,7 @@ import javafx.scene.media.MediaPlayer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -12,7 +13,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 abstract public class AssetMediaPlayer extends MediaViewPane {
-  private final static Logger LOG = LoggerFactory.getLogger(AssetMediaPlayer.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   protected MediaPlayer mediaPlayer;
 

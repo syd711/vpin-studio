@@ -6,10 +6,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
 
 public class ServerInstallationUtil {
-  private final static Logger LOG = LoggerFactory.getLogger(ServerInstallationUtil.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static File SERVER_EXE = new File("./VPin-Studio-Server.exe");
   public static final String VPIN_STUDIO_SERVER_BAT = "VPin-Studio-Server.bat";

@@ -7,12 +7,13 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class VPSChanges {
-  private final static Logger LOG = LoggerFactory.getLogger(VPSChange.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private final static ObjectMapper objectMapper = new ObjectMapper();
 
   static {

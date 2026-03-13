@@ -10,12 +10,14 @@ import javafx.stage.WindowEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
+import java.lang.invoke.MethodHandles;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class NotificationStageService extends Application {
-  private final static Logger LOG = LoggerFactory.getLogger(NotificationStageService.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final static NotificationStageService INSTANCE = new NotificationStageService();
 
@@ -46,6 +48,11 @@ public class NotificationStageService extends Application {
 
   public void pollNotifications() {
     LOG.info("Polling notifications (Queue size: " + queue.size() + ")");
+    if (GraphicsEnvironment.isHeadless()) {
+      queue.clear();
+      return;
+    }
+
     Platform.runLater(() -> {
       pollQueue();
     });

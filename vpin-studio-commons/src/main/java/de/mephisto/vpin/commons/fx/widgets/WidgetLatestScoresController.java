@@ -24,13 +24,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 public class WidgetLatestScoresController extends WidgetController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(WidgetLatestScoresController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private VBox highscoreVBox;
@@ -71,7 +72,7 @@ public class WidgetLatestScoresController extends WidgetController implements In
     }
 
     OverlaySettings overlaySettings = ServerFX.client.getJsonPreference(PreferenceNames.OVERLAY_SETTINGS, OverlaySettings.class);
-    MonitorInfo screenBounds = ServerFX.client.getScreenInfo(overlaySettings.getOverlayScreenId());
+    MonitorInfo screenBounds = ServerFX.client.getSystemService().getScreenInfo(overlaySettings.getOverlayScreenId());
 
     new Thread(() -> {
       int limit = 12;
@@ -84,7 +85,7 @@ public class WidgetLatestScoresController extends WidgetController implements In
 
       final List<Pane> scoresPanels = new ArrayList<>();
       try {
-        ScoreSummaryRepresentation scoreSummary = ServerFX.client.getRecentScores(limit);
+        ScoreSummaryRepresentation scoreSummary = ServerFX.client.getGameService().getRecentScores(limit);
 
         List<ScoreRepresentation> scores = scoreSummary.getScores();
         if (scores.isEmpty()) {
@@ -95,8 +96,8 @@ public class WidgetLatestScoresController extends WidgetController implements In
         }
         else {
           for (ScoreRepresentation score : scores) {
-            GameRepresentation game = ServerFX.client.getGameCached(score.getGameId());
-            FrontendMediaRepresentation frontendMedia = ServerFX.client.getFrontendMedia(score.getGameId());
+            GameRepresentation game = ServerFX.client.getGameService().getGameCached(score.getGameId());
+            FrontendMediaRepresentation frontendMedia = ServerFX.client.getFrontendService().getFrontendMedia(score.getGameId());
             if (game == null) {
               continue;
             }

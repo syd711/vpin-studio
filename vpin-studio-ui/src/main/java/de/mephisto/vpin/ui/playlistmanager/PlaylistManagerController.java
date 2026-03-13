@@ -66,7 +66,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     SQL_TEMPLATES.put("All '4k' tables", "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND tags LIKE '%4k%' ORDER BY GameDisplay");
     SQL_TEMPLATES.put("All kids-friendly tables", "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND tags LIKE '%Kids%' ORDER BY GameDisplay");
     SQL_TEMPLATES.put("All iScored competed tables", "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND TourneyID like '%iscored%' ORDER BY GameDisplay");
-    SQL_TEMPLATES.put("All tournament competed tables", "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND TourneyID like '%tournament%' ORDER BY GameDisplay");
+    SQL_TEMPLATES.put("All 'World Of Virtual Pinball' competed tables", "SELECT * FROM Games WHERE visible=1 AND TourneyID like '%weekly%' ORDER BY GameDisplay");
   }
 
   @FXML
@@ -382,6 +382,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     mediaNameText.setText("");
     passcodeText.setDisable(value.isEmpty());
     passcodeText.setText("");
+    saveSQLBtn.setDisable(value.isEmpty());
     templateSelector.setDisable(value.isEmpty() || !value.get().isSqlPlayList());
 
     errorContainer.setVisible(false);
@@ -413,6 +414,9 @@ public class PlaylistManagerController implements Initializable, DialogControlle
       }
 
       colorPicker.setValue(Color.web(WidgetFactory.hexColor(plList.getMenuColor())));
+    }
+    else {
+      playlistTableController.setData(Optional.empty());
     }
 
     saveDisabled = false;
@@ -516,7 +520,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
           @Override
           public void handle(ActionEvent event) {
             sqlText.setText(formatQuery(entry.getValue()));
-            savePlaylist();
+            onSQLSave(event);
           }
 
           private String formatQuery(String value) {
@@ -894,6 +898,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     }
 
     TreeItem<PlaylistRepresentation> selectedItem = treeView.getSelectionModel().getSelectedItem();
+    playlistTableController.setData(Optional.empty());
     if (selectedItem != null) {
       PlaylistRepresentation value = selectedItem.getValue();
       try {

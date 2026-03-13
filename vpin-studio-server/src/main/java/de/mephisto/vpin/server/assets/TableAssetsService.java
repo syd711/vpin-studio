@@ -18,13 +18,15 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 @Service
 public class TableAssetsService {
-  private final static Logger LOG = LoggerFactory.getLogger(TableAssetsService.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @Autowired
   private FrontendService frontendService;
@@ -77,9 +79,10 @@ public class TableAssetsService {
 
     List<Future<List<TableAsset>>> searches = executorService.invokeAll(tasks);
     for (Future<List<TableAsset>> search : searches) {
-      result.addAll(search.get(15, TimeUnit.SECONDS));
+      List<TableAsset> tableAssets = search.get(15, TimeUnit.SECONDS);
+      result.addAll(tableAssets);
     }
-    return result;
+    return result.stream().filter(Objects::nonNull).collect(Collectors.toList());
   }
 
   public Optional<TableAsset> get(@Nullable TableAssetSource source,
@@ -107,7 +110,6 @@ public class TableAssetsService {
           return;
         }
       }
-      target.getParentFile().mkdirs();
       try (FileOutputStream fileOutputStream = new FileOutputStream(target)) {
         adapter.get().writeAsset(fileOutputStream, asset, -1, -1);
         LOG.info("Downloaded file {}", target.getAbsolutePath());

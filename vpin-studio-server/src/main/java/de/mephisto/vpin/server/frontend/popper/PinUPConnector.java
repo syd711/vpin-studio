@@ -5,6 +5,7 @@ import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
+import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.frontend.popper.PopperSettings;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
@@ -33,7 +34,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.sqlite.jdbc4.JDBC4ResultSet;
 
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -528,6 +531,31 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     return result;
   }
 
+  @NonNull
+  @Override
+  public List<Integer> getCompetedGamesIds(@NonNull CompetitionType competitionType) {
+    Connection connect = this.connect();
+    List<Integer> result = new ArrayList<>();
+    try {
+      Statement statement = Objects.requireNonNull(connect).createStatement();
+      ResultSet rs = statement.executeQuery(
+          "SELECT g.GameID FROM Games g where g.TourneyID LIKE '%" + competitionType.name() + "%';");
+      while (rs.next()) {
+        int id = rs.getInt("GameID");
+        result.add(id);
+      }
+      rs.close();
+      statement.close();
+    }
+    catch (SQLException e) {
+      LOG.error("Failed to read games by competition type '" + competitionType + "': " + e.getMessage(), e);
+    }
+    finally {
+      this.disconnect(connect);
+    }
+    return result;
+  }
+
   @Nullable
   @Override
   public Game getGameByName(int emulatorId, String gameName) {
@@ -968,6 +996,14 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
   @NonNull
   public Playlist getPlaylist(int id) {
+    if (id == PlaylistRepresentation.PLAYLIST_FAVORITE_ID) {
+      return getFavsPlaylist();
+    }
+    if (id == PlaylistRepresentation.PLAYLIST_GLOBALFAV_ID) {
+      return getGlobalFavsPlaylist();
+    }
+    // else
+
     Playlist playlist = new Playlist();
     Connection connect = this.connect();
     try {
@@ -1038,13 +1074,8 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Playlists;");
 
-      Playlist favsPlaylist = new Playlist();
-      favsPlaylist.setId(PlaylistRepresentation.PLAYLIST_FAVORITE_ID);
-      favsPlaylist.setName("Playlist Favorites");
-
-      Playlist globalFavsPlaylist = new Playlist();
-      globalFavsPlaylist.setId(PlaylistRepresentation.PLAYLIST_GLOBALFAV_ID);
-      globalFavsPlaylist.setName("Global Favorites");
+      Playlist favsPlaylist = getFavsPlaylist();
+      Playlist globalFavsPlaylist = getGlobalFavsPlaylist();
 
       result.add(favsPlaylist);
       result.add(globalFavsPlaylist);
@@ -1066,6 +1097,20 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
     Collections.sort(result, Comparator.comparingInt(Playlist::getDisplayOrder));
     return result;
+  }
+
+  private Playlist getGlobalFavsPlaylist() {
+    Playlist globalFavsPlaylist = new Playlist();
+    globalFavsPlaylist.setId(PlaylistRepresentation.PLAYLIST_GLOBALFAV_ID);
+    globalFavsPlaylist.setName("Global Favorites");
+    return globalFavsPlaylist;
+  }
+
+  private Playlist getFavsPlaylist() {
+    Playlist favsPlaylist = new Playlist();
+    favsPlaylist.setId(PlaylistRepresentation.PLAYLIST_FAVORITE_ID);
+    favsPlaylist.setName("Playlist Favorites");
+    return favsPlaylist;
   }
 
 
@@ -1150,7 +1195,6 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       this.disconnect(connect);
     }
   }
-
 
   @Override
   public void savePlaylistOrder(PlaylistOrder playlistOrder) {
@@ -2094,7 +2138,6 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     playlist.setDisplayOrder(displayOrder);
     playlist.setHideSysLists(rs.getInt("HideSysLists") == 1);
     playlist.setUseDefaults(rs.getInt("useDefaults") == 1);
-    playlist.setDofCommand(rs.getString("DOFStuff"));
     playlist.setName(name);
     playlist.setPlayListSQL(sql);
     playlist.setMenuColor(rs.getInt("MenuColor"));
@@ -2114,6 +2157,13 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
     if (playlist.isSqlPlayList() && StringUtils.isEmpty(sql)) {
       playlist.setSqlError("Missing SQL query");
+    }
+
+    try {
+      playlist.setDofCommand(rs.getString("DOFStuff"));
+    }
+    catch (SQLException e) {
+      //ignore
     }
 
     if (globalFavsPlaylist != null && favsPlaylist != null) {
@@ -2366,7 +2416,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   @Override
   public MediaAccessStrategy getMediaAccessStrategy() {
     if (this.pinUPMediaAccessStrategy == null) {
-      this.pinUPMediaAccessStrategy = new PinUPMediaAccessStrategy(this);
+      this.pinUPMediaAccessStrategy = new PinUPMediaAccessStrategyNext(this);
     }
     return pinUPMediaAccessStrategy;
   }
@@ -2438,6 +2488,18 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   public boolean killFrontend() {
     NirCmd.setTaskBarVisible(true);
     pupEventEmitter.sendPupEvent(11, 2);
+
+    if (systemService.isPinballEmulatorRunning()) {
+      systemService.sendKey(KeyEvent.VK_Q);
+      //give vpx time to quit
+      try {
+        Thread.sleep(300);
+      }
+      catch (InterruptedException e) {
+        //ignore
+      }
+    }
+
     List<ProcessHandle> pinUpProcesses = ProcessHandle
         .allProcesses()
         .filter(p -> p.info().command().isPresent() &&
@@ -2454,6 +2516,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
                     p.info().command().get().contains("Pinball FX") ||
                     p.info().command().get().contains("PinballM") ||
                     p.info().command().get().contains("Zaccaria") ||
+                    p.info().command().get().contains("MAME") ||
                     p.info().command().get().contains("Future Pinball") ||
                     p.info().command().get().contains("B2SBackglassServerEXE"))).collect(Collectors.toList());
 

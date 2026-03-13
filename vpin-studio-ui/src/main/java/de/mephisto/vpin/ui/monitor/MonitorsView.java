@@ -31,7 +31,7 @@ public class MonitorsView implements IMonitoringView {
     MonitoringSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MONITORING_SETTINGS, MonitoringSettings.class);
 
     SystemSummary systemSummary = client.getSystemService().getSystemSummary();
-    List<MonitorInfo> monitorInfos = systemSummary.getScreenInfos();
+    List<MonitorInfo> monitorInfos = systemSummary.getMonitorInfos();
     flowPane = new FlowPane();
     for (MonitorInfo monitorInfo : monitorInfos) {
       try {

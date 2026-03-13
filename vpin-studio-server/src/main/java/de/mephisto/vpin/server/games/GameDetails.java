@@ -18,7 +18,7 @@ import java.util.Date;
 public class GameDetails {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-  @Column(name = "id", nullable = false)
+  @Column(name = "id", nullable = false, unique = true)
   private Long id;
 
   @Column(nullable = false, updatable = false)

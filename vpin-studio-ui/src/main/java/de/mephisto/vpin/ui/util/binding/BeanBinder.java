@@ -11,6 +11,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -22,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.internal.util.Objects;
 
 public class BeanBinder<T> {
-  private final static Logger LOG = LoggerFactory.getLogger(BeanBinder.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private List<BindingChangedListener> listeners = new ArrayList<>();
 

@@ -15,12 +15,13 @@ import javafx.scene.layout.HBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TagButton extends HBox {
-  private final static Logger LOG = LoggerFactory.getLogger(TagButton.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final Label tagText;
 

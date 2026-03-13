@@ -5,10 +5,8 @@ import de.mephisto.vpin.commons.utils.FXUtil;
 import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.mania.ManiaSettings;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.ui.HeaderResizeableController;
-import de.mephisto.vpin.ui.NavigationItem;
 import de.mephisto.vpin.ui.SettingsSceneController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.mania.util.ManiaHelper;
@@ -36,9 +34,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class ManiaSettingsController extends SettingsSceneController implements Initializable, PreferenceChangeListener {
@@ -85,17 +83,6 @@ public class ManiaSettingsController extends SettingsSceneController implements 
   private String lastScreen = "mania-account-settings.fxml";
   private static boolean open = false;
   private static ManiaSettingsController INSTANCE = null;
-
-  public static void open(String preferenceType) {
-    if(!open) {
-      toggle();
-    }
-
-    Platform.runLater(() -> {
-      //TODO btn
-      instance.load("mania-" + preferenceType + ".fxml", null, "tournamentsBtn");
-    });
-  }
 
   public static void navigateTo(String id) {
     try {
@@ -153,12 +140,6 @@ public class ManiaSettingsController extends SettingsSceneController implements 
     load("mania-account-settings.fxml", event);
   }
 
-
-  @FXML
-  private void onTournaments(ActionEvent event) throws IOException {
-    load("mania-tournament-settings.fxml", event);
-  }
-
   @FXML
   private void onClose(ActionEvent event) {
     doClose();
@@ -169,7 +150,7 @@ public class ManiaSettingsController extends SettingsSceneController implements 
     outFader.setOnFinished(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
-        HeaderResizeableController.toggleFriendsView();
+        HeaderResizeableController.toggleManiaView();
       }
     });
     outFader.play();
@@ -180,16 +161,6 @@ public class ManiaSettingsController extends SettingsSceneController implements 
   @FXML
   private void onVersionLInk(ActionEvent event) {
     Dialogs.openUpdateInfoDialog(client.getSystemService().getVersion(), true);
-  }
-
-  @FXML
-  private void onFriendsList(ActionEvent event) throws IOException {
-    load("mania-friends-list.fxml", event);
-  }
-
-  @FXML
-  private void onFriendsPendingInvites(ActionEvent event) throws IOException {
-    load("mania-friends-pending-invites.fxml", event);
   }
 
   @FXML

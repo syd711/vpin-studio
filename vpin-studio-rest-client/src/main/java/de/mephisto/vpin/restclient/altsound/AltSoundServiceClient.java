@@ -15,12 +15,13 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 
 /*********************************************************************************************************************
  * Alt Sound
  ********************************************************************************************************************/
 public class AltSoundServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(AltSoundServiceClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public AltSoundServiceClient(VPinStudioClient client) {
     super(client);
@@ -38,8 +39,8 @@ public class AltSoundServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "altsound/" + gameId + "/fileinfo", FileInfo.class);
   }
 
-  public AltSound restoreAltSound(int gameId) {
-    return getRestClient().get(API + "altsound/restore/" + gameId, AltSound.class);
+  public boolean restoreAltSound(int gameId) {
+    return getRestClient().get(API + "altsound/restore/" + gameId, Boolean.class);
   }
 
   public boolean clearCache() {
@@ -66,7 +67,7 @@ public class AltSoundServiceClient extends VPinStudioClientService {
     }
   }
 
-  public String getAudioUrl(AltSound altSound, int emuId, String item) {
-    return "altsound/stream/" + emuId + "/" + altSound.getName() + "/" + item;
+  public String getAudioUrl(AltSound altSound, int gameId, String item) {
+    return "altsound/stream/" + gameId + "/" + altSound.getName() + "/" + item;
   }
 }

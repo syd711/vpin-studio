@@ -10,13 +10,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class LocalUISettings {
-  private final static Logger LOG = LoggerFactory.getLogger(LocalUISettings.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static final String LAST_FOLDER_SELECTION = "lastFolderSelection";
   public static final String DROP_IN_FOLDER = "dropInFolder";

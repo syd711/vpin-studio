@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.frontend.pinballx;
 
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.server.frontend.DefaultMediaAccessStrategy;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
@@ -17,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.util.StringUtils;
 
 public class PinballXMediaAccessStrategy extends DefaultMediaAccessStrategy {
@@ -119,6 +121,28 @@ public class PinballXMediaAccessStrategy extends DefaultMediaAccessStrategy {
       }
     }
     return lists;
+  }
+
+  @Override
+  public boolean deleteMedia(@NotNull Game game, @NotNull VPinScreen screen) {
+    File mediaFolder = getGameMediaFolder(game, screen, null, false);
+    if(mediaFolder.exists()) {
+      for (File file : mediaFolder.listFiles()) {
+        FileUtils.delete(file);
+      }
+    }
+    return true;
+  }
+
+  @Override
+  public boolean deleteMedia(@NotNull Playlist playlist, @NotNull VPinScreen screen) {
+    File mediaFolder = getPlaylistMediaFolder(playlist, screen, false);
+    if(mediaFolder.exists()) {
+      for (File file : mediaFolder.listFiles()) {
+        FileUtils.delete(file);
+      }
+    }
+    return true;
   }
 
 }

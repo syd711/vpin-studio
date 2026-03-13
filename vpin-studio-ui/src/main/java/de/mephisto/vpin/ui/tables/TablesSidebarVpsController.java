@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.*;
@@ -53,7 +54,7 @@ import java.util.stream.Collectors;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablesSidebarVpsController implements Initializable, AutoCompleteTextFieldChangeListener, ChangeListener<VpsTableVersion>, PreferenceChangeListener {
-  private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarVpsController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private VBox detailsBox;
@@ -311,7 +312,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       String vpsTableVersionId = game.getExtTableVersionId();
 
       if (StringUtils.isEmpty(vpsTableId) || StringUtils.isEmpty(vpsTableVersionId)) {
-        PreferenceEntryRepresentation entry = Studio.client.getPreference(PreferenceNames.IGNORED_VALIDATION_SETTINGS);
+        PreferenceEntryRepresentation entry = Studio.client.getPreferenceService().getPreference(PreferenceNames.IGNORED_VALIDATION_SETTINGS);
         List<String> ignoredCsvValue = entry.getCSVValue();
         if (!game.getIgnoredValidations().contains(GameValidationCode.CODE_VPS_MAPPING_MISSING) && !ignoredCsvValue.contains(String.valueOf(GameValidationCode.CODE_VPS_MAPPING_MISSING))) {
           errorBox.setVisible(games.size() == 1);
@@ -436,26 +437,26 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
     List<Node> entries = new ArrayList<>();
     for (VpsAuthoredUrls authoredUrl : urls) {
-      List<VpsUrl> authoredUrlUrls = authoredUrl.getUrls();
-      if (authoredUrlUrls != null && !authoredUrlUrls.isEmpty()) {
-        String version = authoredUrl.getVersion();
-        long updatedAt = authoredUrl.getCreatedAt();
-        List<String> authors = authoredUrl.getAuthors();
+      String version = authoredUrl.getVersion();
+      long updatedAt = authoredUrl.getCreatedAt();
+      List<String> authors = authoredUrl.getAuthors();
 
-        String updateText = null;
-        if (game != null && showUpdates) {
-          List<VPSChange> changes = game.getVpsUpdates().getChanges();
-          for (VPSChange change : changes) {
-            if (change.getId() != null && authoredUrl.getId() != null && change.getId().equals(authoredUrl.getId())) {
-              VpsTable gameTable = client.getVpsService().getTableById(game.getExtTableId());
-              updateText = change.toString(gameTable);
-              break;
-            }
+      String updateText = null;
+      if (game != null && showUpdates) {
+        List<VPSChange> changes = game.getVpsUpdates().getChanges();
+        for (VPSChange change : changes) {
+          if (change.getId() != null && authoredUrl.getId() != null && change.getId().equals(authoredUrl.getId())) {
+            VpsTable gameTable = client.getVpsService().getTableById(game.getExtTableId());
+            updateText = change.toString(gameTable);
+            break;
           }
         }
+      }
 
-        boolean isFiltered = filterPredicate != null ? filterPredicate.test(authoredUrl) : true;
+      boolean isFiltered = filterPredicate != null ? filterPredicate.test(authoredUrl) : true;
 
+      List<VpsUrl> authoredUrlUrls = authoredUrl.getUrls();
+      if (authoredUrlUrls != null && !authoredUrlUrls.isEmpty()) {
         for (VpsUrl vpsUrl : authoredUrlUrls) {
           String url = vpsUrl.getUrl();
           VpsEntry vpsEntry = new VpsEntry(game, diffTypes, null, null, version, authors, url, updatedAt, updateText, false, isFiltered);
@@ -463,13 +464,16 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
             entries.add(vpsEntry);
           }
         }
-
-        if (authoredUrl instanceof VpsBackglassFile) {
-          VpsBackglassFile backglassFile = (VpsBackglassFile) authoredUrl;
-          if (!StringUtils.isEmpty(backglassFile.getComment())) {
-            entries.add(new VpsEntryComment(backglassFile.getComment()));
-          }
+      }
+      else {
+        VpsEntry vpsEntry = new VpsEntry(game, diffTypes, null, null, version, authors, null, updatedAt, updateText, false, isFiltered);
+        if (!entries.contains(vpsEntry)) {
+          entries.add(vpsEntry);
         }
+      }
+
+      if (!StringUtils.isEmpty(authoredUrl.getComment())) {
+        entries.add(new VpsEntryComment(authoredUrl.getComment()));
       }
     }
 
@@ -545,6 +549,10 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
             entries.add(vpsEntry);
           }
         }
+
+        if (!StringUtils.isEmpty(vpsTableVersion.getComment())) {
+          entries.add(new VpsEntryComment(vpsTableVersion.getComment()));
+        }
       }
 
       // now refresh UI
@@ -602,7 +610,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
         client.getFrontendService().saveVpsMapping(gameRepresentation.getId(), extTableId, updatedId);
 
         if (autoApplyCheckbox.isSelected()) {
-          gameRepresentation = client.getGame(gameRepresentation.getId());
+          gameRepresentation = client.getGameService().getGame(gameRepresentation.getId());
           TableDialogs.openAutoFillSettingsDialog(Studio.stage, Arrays.asList(gameRepresentation), null);
         }
         else {

@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.connectors.vps.model.VpsTutorialUrls;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -13,6 +14,7 @@ import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.system.FeaturesInfo;
+import de.mephisto.vpin.restclient.wovp.WOVPSettings;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.scene.image.Image;
@@ -20,30 +22,43 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.InputStream;
+import java.lang.invoke.MethodHandles;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static de.mephisto.vpin.commons.fx.ServerFX.client;
 
 public class PauseMenuItemsFactory {
-  private final static Logger LOG = LoggerFactory.getLogger(PauseMenuItemsFactory.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  public static List<PauseMenuItem> createPauseMenuItems(@NonNull GameRepresentation game, @NonNull PauseMenuSettings pauseMenuSettings, @Nullable VPinScreen cardScreen, @NonNull FrontendMediaRepresentation frontendMedia) {
+  public static List<PauseMenuItem> createPauseMenuItems(@NonNull PauseMenuState state, @Nullable VPinScreen cardScreen, @NonNull FrontendMediaRepresentation frontendMedia) {
+    GameRepresentation game = state.getGame();
+    PauseMenuSettings pauseMenuSettings = client.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
 
     // get application features
-    FeaturesInfo Features = ServerFX.client.getFeatures();
+    FeaturesInfo Features = ServerFX.client.getSystemService().getFeatures();
 
     List<PauseMenuItem> pauseMenuItems = new ArrayList<>();
     PauseMenuItem item = new PauseMenuItem(PauseMenuItemTypes.exit, "Continue", "Continue Game", new Image(PauseMenu.class.getResourceAsStream("continue.png")));
     pauseMenuItems.add(item);
 
+    if (state.isScoreSubmitterEnabled()) {
+      Optional<CompetitionRepresentation> first = client.getCompetitionService().getWeeklyCompetitions().stream().filter(c -> c.getGameId() == game.getId()).findFirst();
+      PauseMenuItem scoreSubmitterItem = new PauseMenuItem(PauseMenuItemTypes.wovp, "World Of Virtual Pinball", "Score Submitter for World Of Virtual Pinball", new Image(PauseMenu.class.getResourceAsStream("wovp-wheel.png")));
+      scoreSubmitterItem.setCompetition(first.get());
+      pauseMenuItems.add(scoreSubmitterItem);
+    }
+
     if (pauseMenuSettings.isShowIscoredScores() && Features.ISCORED_ENABLED) {
-      List<CompetitionRepresentation> competitions = client.getIScoredSubscriptions();
+      List<CompetitionRepresentation> competitions = client.getCompetitionService().getIScoredSubscriptions();
       for (CompetitionRepresentation competition : competitions) {
-        if (competition.isActive() && competition.getGameId() == game.getId()) {
+        if (competition.isActive()
+            && !StringUtils.isEmpty(game.getExtTableId())
+            && String.valueOf(competition.getVpsTableId()).equalsIgnoreCase(String.valueOf(game.getExtTableId()))
+            && String.valueOf(competition.getVpsTableVersionId()).equals(String.valueOf(game.getExtTableVersionId()))) {
           PauseMenuItem iScoredItem = new PauseMenuItem(PauseMenuItemTypes.iScored, "iScored", "iScored Game Room Scores", new Image(PauseMenu.class.getResourceAsStream("iscored.png")));
           iScoredItem.setCompetition(competition);
           pauseMenuItems.add(iScoredItem);
@@ -52,7 +67,7 @@ public class PauseMenuItemsFactory {
     }
 
     if (pauseMenuSettings.isShowManiaScores() && Features.MANIA_ENABLED) {
-      VpsTableVersion tableVersion = client.getVpsTableVersion(game.getExtTableId(), game.getExtTableVersionId());
+      VpsTableVersion tableVersion = client.getVpsService().getVpsTableVersion(game.getExtTableId(), game.getExtTableVersionId());
       if (tableVersion != null) {
         PauseMenuItem maniaItem = new PauseMenuItem(PauseMenuItemTypes.maniaScores, "VPin Mania", "VPin Mania Scores", new Image(PauseMenu.class.getResourceAsStream("mania-wheel.png")));
         pauseMenuItems.add(maniaItem);
@@ -81,7 +96,7 @@ public class PauseMenuItemsFactory {
       loadMedia(game, pauseMenuItems, PauseMenuItemTypes.help, VPinScreen.GameHelp, frontendMedia, "Rules", "Table Rules", "rules.png", "rules.png");
     }
 
-    if (pauseMenuSettings.isShowTutorials()) {
+    if (pauseMenuSettings.isShowTutorials() && !pauseMenuSettings.isTutorialsOnScreen()) {
       createTutorialEntries(game, pauseMenuSettings, pauseMenuItems);
     }
 
@@ -93,21 +108,24 @@ public class PauseMenuItemsFactory {
     List<VpsTutorialUrls> videoTutorials = getVideoTutorials(game, pauseMenuSettings);
     for (VpsTutorialUrls videoTutorial : videoTutorials) {
       item = new PauseMenuItem(PauseMenuItemTypes.help, "Tutorial", "Tutorial: " + videoTutorial.getTitle(), new Image(PauseMenu.class.getResourceAsStream("tutorial.png")));
-      String videoUrl = "https://assets.vpin-mania.net/tutorials/kongedam/" + game.getExtTableId() + ".mp4";
+      String videoUrl = createVideoUrl(game);
       item.setVideoUrl(videoUrl);
       LOG.info("\"" + game.getGameDisplayName() + "\": found tutorial video " + videoUrl);
       String url = "https://img.youtube.com/vi/" + videoTutorial.getYoutubeId() + "/0.jpg";
-      Image scoreImage = new Image(ServerFX.client.getCachedUrlImage(url));
-      item.setDataImage(scoreImage);
+      item.setDataImageUrl(url);
       pauseMenuItems.add(item);
     }
+  }
+
+  public static String createVideoUrl(GameRepresentation game) {
+    return "https://assets.vpin-mania.net/tutorials/kongedam/" + game.getExtTableId() + ".mp4";
   }
 
   public static List<VpsTutorialUrls> getVideoTutorials(@NonNull GameRepresentation game, @NonNull PauseMenuSettings pauseMenuSettings) {
     List<VpsTutorialUrls> tutorials = new ArrayList<>();
     String extTableId = game.getExtTableId();
     if (!StringUtils.isEmpty(extTableId)) {
-      VpsTable tableById = ServerFX.client.getVpsTable(extTableId);
+      VpsTable tableById = ServerFX.client.getVpsService().getTableById(extTableId);
       if (tableById != null) {
         List<VpsTutorialUrls> tutorialFiles = tableById.getTutorialFiles();
         if (tutorialFiles != null && !tutorialFiles.isEmpty()) {
@@ -150,8 +168,7 @@ public class PauseMenuItemsFactory {
       if (baseType.equals("image")) {
         PauseMenuItem item = new PauseMenuItem(pauseType, title, text, new Image(PauseMenu.class.getResourceAsStream(pictureImage)));
         String url = ServerFX.client.getURL(mediaItem.getUri() + "/" + URLEncoder.encode(mediaItem.getName(), Charset.defaultCharset()));
-        Image scoreImage = new Image(ServerFX.client.getCachedUrlImage(url));
-        item.setDataImage(scoreImage);
+        item.setDataImageUrl(url);
         pauseMenuItems.add(item);
       }
       else if (baseType.equals("video")) {

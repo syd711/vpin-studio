@@ -78,6 +78,7 @@ public class DMDService implements InitializingBean {
         else {
           ValidationState st = new ValidationState();
           st.setCode(GameValidationCode.CODE_NO_DMDFOLDER);
+          st.setOptions(List.of(game.getDMDProjectFolder()));
           dmdPackage.getValidationStates().add(st);
         }
         return dmdPackage;

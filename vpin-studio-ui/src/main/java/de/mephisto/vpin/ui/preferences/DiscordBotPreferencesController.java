@@ -87,12 +87,19 @@ public class DiscordBotPreferencesController implements Initializable {
     Platform.runLater(() -> {
       Studio.client.getDiscordService().clearCache();
       DiscordBotStatus status = client.getDiscordService().validateSettings();
-      if (!status.isValid()) {
+      if (status.getError() != null) {
         validateDefaultSettings();
-        WidgetFactory.showAlert(Studio.stage, "Issues Detected", "There have been issues detected with you Discord settings.", "One or more values have been resetted.");
+        WidgetFactory.showAlert(Studio.stage, "Issues Detected", "There have been issues detected with you Discord settings.", status.getError());
       }
       else {
-        WidgetFactory.showInformation(Studio.stage, "Information", "No issues found.");
+        if (!status.isCanManageCategories()) {
+          WidgetFactory.showInformation(Studio.stage, "Information", "The bot configuration is valid, but your bot has no permission to manage channels.", "Discord allows a maximum of 50 channels for a category. " +
+              "With the channel permission, the bot can automatically create new categories for additional table subscriptions.");
+        }
+        else {
+          WidgetFactory.showInformation(Studio.stage, "Information", "No issues found.");
+        }
+
       }
       validateBtn.setDisable(false);
     });
@@ -121,14 +128,15 @@ public class DiscordBotPreferencesController implements Initializable {
       resetToken();
       client.getPreferenceService().setPreference(PreferenceNames.DISCORD_BOT_TOKEN, token.trim());
       DiscordBotStatus status = client.getDiscordService().validateSettings();
-      if (!status.isValid()) {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Invalid bot configuration found, check your token and retry.");
+      if (status.getError() != null) {
+        WidgetFactory.showAlert(Studio.stage, "Error", "Invalid bot configuration found, check your token and retry.", "Error: " + status.getError());
       }
       else {
         botTokenLabel.setText(token.trim());
         validateDefaultSettings();
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       WidgetFactory.showAlert(Studio.stage, e.getMessage());
     }
   }
@@ -143,7 +151,7 @@ public class DiscordBotPreferencesController implements Initializable {
     tableUpdatesCombo.setDisable(true);
     resetBtn.setDisable(true);
 
-    PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.DISCORD_BOT_TOKEN);
+    PreferenceEntryRepresentation preference = client.getPreferenceService().getPreference(PreferenceNames.DISCORD_BOT_TOKEN);
     String token = !StringUtils.isEmpty(preference.getValue()) ? preference.getValue() : "-";
     botTokenLabel.setText(token);
     if (!StringUtils.isEmpty(token)) {
@@ -155,7 +163,7 @@ public class DiscordBotPreferencesController implements Initializable {
       serverCombo.setItems(FXCollections.observableList(discordServers));
     }
 
-    preference = client.getPreference(PreferenceNames.DISCORD_BOT_COMMANDS_ENABLED);
+    preference = client.getPreferenceService().getPreference(PreferenceNames.DISCORD_BOT_COMMANDS_ENABLED);
     selectUsersBtn.setDisable(!preference.getBooleanValue());
     commandsEnabledCheckbox.setSelected(preference.getBooleanValue());
     commandsEnabledCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -205,7 +213,7 @@ public class DiscordBotPreferencesController implements Initializable {
       }
     });
 
-    PreferenceEntryRepresentation dynamicSubscriptionsPreference = client.getPreference(PreferenceNames.DISCORD_DYNAMIC_SUBSCRIPTIONS);
+    PreferenceEntryRepresentation dynamicSubscriptionsPreference = client.getPreferenceService().getPreference(PreferenceNames.DISCORD_DYNAMIC_SUBSCRIPTIONS);
     dynamicSubscriptions.setSelected(dynamicSubscriptionsPreference.getBooleanValue());
     dynamicSubscriptions.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
@@ -242,14 +250,14 @@ public class DiscordBotPreferencesController implements Initializable {
   private void validateDefaultSettings() {
     client.clearDiscordCache();
 
-    PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.DISCORD_GUILD_ID);
-    PreferenceEntryRepresentation defaultChannelPreference = client.getPreference(PreferenceNames.DISCORD_CHANNEL_ID);
-    PreferenceEntryRepresentation categoryPreference = client.getPreference(PreferenceNames.DISCORD_CATEGORY_ID);
-    PreferenceEntryRepresentation updatesPreference = client.getPreference(PreferenceNames.DISCORD_UPDATES_CHANNEL_ID);
+    PreferenceEntryRepresentation preference = client.getPreferenceService().getPreference(PreferenceNames.DISCORD_GUILD_ID);
+    PreferenceEntryRepresentation defaultChannelPreference = client.getPreferenceService().getPreference(PreferenceNames.DISCORD_CHANNEL_ID);
+    PreferenceEntryRepresentation categoryPreference = client.getPreferenceService().getPreference(PreferenceNames.DISCORD_CATEGORY_ID);
+    PreferenceEntryRepresentation updatesPreference = client.getPreferenceService().getPreference(PreferenceNames.DISCORD_UPDATES_CHANNEL_ID);
 
     botNameLabel.setText("-");
     DiscordBotStatus status = client.getDiscordService().validateSettings();
-    if (status.isValid()) {
+    if (status.getError() == null) {
       List<DiscordServer> servers = client.getDiscordService().getAdministratedDiscordServers();
       ObservableList<DiscordServer> discordServers = FXCollections.observableArrayList(servers);
       serverCombo.setItems(FXCollections.observableList(discordServers));
@@ -263,7 +271,7 @@ public class DiscordBotPreferencesController implements Initializable {
 
     long serverId = preference.getLongValue();
     if (serverId > 0) {
-      DiscordServer discordServer = client.getDiscordServer(serverId);
+      DiscordServer discordServer = client.getDiscordService().getDiscordServer(serverId);
       if (discordServer != null) {
         channelCombo.setDisable(false);
         tableUpdatesCombo.setDisable(false);

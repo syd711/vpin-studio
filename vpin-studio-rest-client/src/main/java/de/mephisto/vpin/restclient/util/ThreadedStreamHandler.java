@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.lang.invoke.MethodHandles;
 
 /**
  * This class is intended to be used with the SystemCommandExecutor
@@ -39,7 +40,7 @@ import java.io.*;
  * http://www.gnu.org/licenses/lgpl.txt
  */
 class ThreadedStreamHandler extends Thread {
-  private final static Logger LOG = LoggerFactory.getLogger(ThreadedStreamHandler.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   InputStream inputStream;
   String adminPassword;

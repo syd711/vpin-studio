@@ -83,7 +83,7 @@ public class CabinetSettingsPreferencesController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     if (Features.MANIA_ENABLED) {
       try {
-        cabinet = maniaClient.getCabinetClient().getCabinet();
+        cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
       }
       catch (Exception e) {
         LOG.error("Failed to read cabinet info: {}", e.getMessage());
@@ -115,7 +115,7 @@ public class CabinetSettingsPreferencesController implements Initializable {
 
     ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
 
-    PreferenceEntryRepresentation idle = ServerFX.client.getPreference(PreferenceNames.IDLE_TIMEOUT);
+    PreferenceEntryRepresentation idle = ServerFX.client.getPreferenceService().getPreference(PreferenceNames.IDLE_TIMEOUT);
     int timeout = idle.getIntValue();
     SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 60, timeout);
     idleSpinner.setValueFactory(factory);

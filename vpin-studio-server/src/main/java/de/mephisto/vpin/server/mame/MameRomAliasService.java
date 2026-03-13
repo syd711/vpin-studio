@@ -182,10 +182,10 @@ public class MameRomAliasService implements InitializingBean {
     if (gameEmulator.isVpxEmulator()) {
       aliasNamToRom.put(gameEmulator.getId(), loadAliasMapping(gameEmulator, null));
     }
-    LOG.info("Loaded Alias Mappings:");
+//    LOG.info("Loaded Alias Mappings:");
     Set<Map.Entry<Integer, Map<String, String>>> entries = aliasNamToRom.entrySet();
     for (Map.Entry<Integer, Map<String, String>> entry : entries) {
-      LOG.info("Alias Mappings for emulator " + entry.getKey() + ": " + entry.getValue().size());
+//      LOG.info("Alias Mappings for emulator " + entry.getKey() + ": " + entry.getValue().size());
     }
   }
 

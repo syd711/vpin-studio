@@ -18,7 +18,7 @@
                   <Insets />
                </BorderPane.margin>
                <padding>
-                  <Insets bottom="12.0" left="12.0" right="6.0" top="12.0" />
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                </padding>
             </BorderPane>
          </top>

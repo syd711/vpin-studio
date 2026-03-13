@@ -31,7 +31,7 @@ public class ScoreListFactory {
     List<Score> scores = new ArrayList<>();
 
     try {
-      LOG.debug("Parsing Highscore text: " + raw);
+      LOG.debug("Parsing Highscore text: {}", raw);
       List<String> lines = Arrays.asList(raw.split("\\n"));
       if (lines.isEmpty()) {
         return scores;

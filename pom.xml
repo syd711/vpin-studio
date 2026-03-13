@@ -6,7 +6,7 @@
 
     <groupId>de.mephisto.vpin</groupId>
     <artifactId>studio</artifactId>
-    <version>4.4.1</version>
+    <version>4.7.3</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -29,6 +29,7 @@
         <module>vpin-connector-github</module>
         <module>vpin-connector-iscored</module>
         <module>vpin-connector-vps</module>
+        <module>vpin-connector-wovp</module>
         <module>vpin-studio-commons</module>
         <module>vpin-studio-app</module>
         <module>vpin-studio-server</module>

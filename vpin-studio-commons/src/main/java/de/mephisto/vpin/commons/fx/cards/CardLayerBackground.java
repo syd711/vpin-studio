@@ -3,6 +3,7 @@ package de.mephisto.vpin.commons.fx.cards;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.lang.invoke.MethodHandles;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
@@ -24,7 +25,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 
 public class CardLayerBackground extends Canvas implements CardLayer {
-  protected final static Logger LOG = LoggerFactory.getLogger(CardLayerDebug.class);
+  protected final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private Image cacheBackground;
   private BufferedImage cacheBackgroundImage;

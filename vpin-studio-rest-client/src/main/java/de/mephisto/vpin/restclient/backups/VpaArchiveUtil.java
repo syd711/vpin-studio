@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
+import de.mephisto.vpin.restclient.dmd.DMDBackupData;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -17,10 +18,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 
 public class VpaArchiveUtil {
-  private final static Logger LOG = LoggerFactory.getLogger(VpaArchiveUtil.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private static final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -53,6 +55,50 @@ public class VpaArchiveUtil {
     }
     catch (Exception e) {
       LOG.error("Failed to read {}: {}", TableDetails.ARCHIVE_FILENAME, e.getMessage(), e);
+    }
+    finally {
+      try {
+        zipFile.close();
+      }
+      catch (IOException e) {
+        //ignore
+      }
+    }
+    return null;
+  }
+
+  public static BackupDataStudio readStudioDetails(File file) throws JsonProcessingException {
+    ZipFile zipFile = VpaArchiveUtil.createZipFile(file);
+    try {
+      String text = readStringFromZip(zipFile, BackupDataStudio.BACKUP_FILENAME);
+      if (text != null) {
+        return objectMapper.readValue(text, BackupDataStudio.class);
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to read {}: {}", BackupDataStudio.BACKUP_FILENAME, e.getMessage(), e);
+    }
+    finally {
+      try {
+        zipFile.close();
+      }
+      catch (IOException e) {
+        //ignore
+      }
+    }
+    return null;
+  }
+
+  public static DMDBackupData readDMDDeviceData(File file) throws JsonProcessingException {
+    ZipFile zipFile = VpaArchiveUtil.createZipFile(file);
+    try {
+      String text = readStringFromZip(zipFile, DMDBackupData.BACKUP_FILENAME);
+      if (text != null) {
+        return objectMapper.readValue(text, DMDBackupData.class);
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to read {}: {}", DMDBackupData.BACKUP_FILENAME, e.getMessage(), e);
     }
     finally {
       try {

@@ -9,10 +9,11 @@ import de.mephisto.vpin.connectors.vps.model.VpsTable;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 
 public class TableMatcherTest {
-  private final static Logger LOG = LoggerFactory.getLogger(TableMatcherTest.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @Test
   public void testDistance() {

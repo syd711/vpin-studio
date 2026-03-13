@@ -10,7 +10,7 @@ import java.util.List;
 public class ScoreSummary {
   private String raw;
   private Date createdAt;
-  private List<Score> scores;
+  private List<Score> scores = new ArrayList<>();
 
   public ScoreSummary() {
     this.scores = new ArrayList<>();
@@ -80,6 +80,33 @@ public class ScoreSummary {
   public void setLimit(int i) {
     if (scores.size() > i) {
       scores = scores.subList(0, 5);
+    }
+  }
+
+  public void addScores(List<Score> scoreHistory) {
+    if (this.scores.isEmpty()) {
+      this.scores.addAll(scoreHistory);
+      sortScores();
+      renumber();
+      return;
+    }
+
+    int index = this.scores.size();
+    Score latestScore = this.scores.get(index - 1);
+    for (Score score : scoreHistory) {
+      if (score.getScore() < latestScore.getScore() && score.getScore() > 0 && !this.contains(score)) {
+        index++;
+        this.scores.add(score);
+      }
+    }
+
+    sortScores();
+    renumber();
+  }
+
+  private void renumber() {
+    for (int i = 0; i < scores.size(); i++) {
+      scores.get(i).setPosition(i + 1);
     }
   }
 }

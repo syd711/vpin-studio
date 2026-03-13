@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.mame;
 
-import de.mephisto.vpin.restclient.backups.BackupMameData;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.backups.BackupMameData;
 import de.mephisto.vpin.restclient.dmd.DMDInfoZone;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.mame.MameOptions;
@@ -9,26 +9,29 @@ import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
-import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.FileUpdateWriter;
+import de.mephisto.vpin.server.vpx.FolderLookupService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
+import org.jcodec.common.DictionaryCompressor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.awt.Desktop;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 /**
  * See https://www.vpforums.org/index.php?showtopic=37182
@@ -36,7 +39,7 @@ import java.util.stream.Collectors;
  */
 @Service
 public class MameService implements InitializingBean {
-  private final static Logger LOG = LoggerFactory.getLogger(MameService.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final static String KEY_SKIP_STARTUP_TEST = "cheat";
   private final static String KEY_USE_SOUND = "sound";
@@ -50,61 +53,44 @@ public class MameService implements InitializingBean {
   private final static String KEY_COLORIZE_DMD = "dmd_colorize";
   private final static String KEY_SOUND_MODE = "sound_mode";
   private final static String KEY_FORCE_STEREO = "force_stereo";
+  private final static String KEY_VOLUME = "volume";
 
   public final static String MAME_REG_FOLDER_KEY = "SOFTWARE\\Freeware\\Visual PinMame\\";
 
-  private final Map<String, MameOptions> mameCache = new ConcurrentHashMap<>();
   private final Map<String, Boolean> romValidationCache = new ConcurrentHashMap<>();
 
   @Autowired
   protected SystemService systemService;
 
+  @Lazy
+  @Autowired
+  private FolderLookupService folderLookupService;
+
   private File mameFolder;
 
+
   public boolean clearGamesCache(List<Game> knownGames) {
-    this.mameFolder = null;
-    getMameFolder();
-
-    long l = System.currentTimeMillis();
-    mameCache.clear();
-    List<String> romFolders = systemService.getCurrentUserKeys(MAME_REG_FOLDER_KEY);
-    LOG.info("Reading of " + romFolders.size() + " total mame options (" + (System.currentTimeMillis() - l) + "ms)");
-
-    for (String romFolder : romFolders) {
-      List<Game> matches = knownGames.stream().filter(g -> (g.getRom() != null && g.getRom().equalsIgnoreCase(romFolder)) || (g.getRomAlias() != null && g.getRomAlias().equalsIgnoreCase(romFolder))).collect(Collectors.toList());
-      if (!matches.isEmpty()) {
-        mameCache.put(romFolder.toLowerCase(), getOptions(romFolder));
-      }
-    }
-    LOG.info("Read " + this.mameCache.size() + " mame options (" + (System.currentTimeMillis() - l) + "ms)");
     return true;
   }
 
-  public boolean clearValidationsCache(List<GameEmulator> gameEmulators) {
+  public void clearValidationsCache(List<GameEmulator> gameEmulators) {
     long l = System.currentTimeMillis();
     romValidationCache.clear();
     List<File> folders = new ArrayList<>();
-    List<GameEmulator> filteredEmulators = gameEmulators.stream().filter(g -> g.isVpxEmulator()).collect(Collectors.toList());
-    for (GameEmulator filteredEmulator : filteredEmulators) {
-      if (!folders.contains(filteredEmulator.getMameFolder())) {
-        folders.add(filteredEmulator.getMameFolder());
+    for (GameEmulator gameEmulator : gameEmulators) {
+      if (gameEmulator.isVpxEmulator() && !folders.contains(gameEmulator.getMameFolder())) {
+        folders.add(gameEmulator.getMameFolder());
       }
     }
 
     for (File folder : folders) {
+      LOG.info("validate Roms folder '{}'...", folder.getAbsolutePath());
       validateRoms(folder);
     }
     LOG.info("ROM validation took " + (System.currentTimeMillis() - l) + "ms.");
-
-    return true;
   }
 
   public boolean clearCacheFor(@Nullable String rom) {
-    if (!StringUtils.isEmpty(rom)) {
-      mameCache.remove(rom.toLowerCase());
-      getOptions(rom);
-      return true;
-    }
     return false;
   }
 
@@ -114,7 +100,7 @@ public class MameService implements InitializingBean {
       return null;
     }
 
-    List<String> romFolders = systemService.getCurrentUserKeys(MAME_REG_FOLDER_KEY);
+    List<String> romFolders = getMameEntries(false);
     if (romFolders.contains(rom.toLowerCase()) || romFolders.contains(rom)) {
       return systemService.getCurrentUserValues(MAME_REG_FOLDER_KEY + rom);
     }
@@ -124,17 +110,14 @@ public class MameService implements InitializingBean {
 
   @NonNull
   public MameOptions getOptions(@NonNull String rom) {
-    if (mameCache.containsKey(rom.toLowerCase())) {
-      return mameCache.get(rom.toLowerCase());
-    }
-
-    List<String> romFolders = systemService.getCurrentUserKeys(MAME_REG_FOLDER_KEY);
     MameOptions options = new MameOptions();
     options.setRom(rom);
-    options.setExistInRegistry(romFolders.contains(rom.toLowerCase()) || romFolders.contains(rom));
 
-    Map<String, Object> values = systemService.getCurrentUserValues(MAME_REG_FOLDER_KEY +
-        (options.isExistInRegistry() ? rom : MameOptions.DEFAULT_KEY));
+    Map<String, Object> values = systemService.getCurrentUserValues(MAME_REG_FOLDER_KEY + rom);
+    options.setExistInRegistry(!values.isEmpty());
+    if (values.isEmpty()) {
+      values = systemService.getCurrentUserValues(MAME_REG_FOLDER_KEY + MameOptions.DEFAULT_KEY);
+    }
 
     options.setSkipPinballStartupTest(getBoolean(values, KEY_SKIP_STARTUP_TEST));
     options.setUseSound(getBoolean(values, KEY_USE_SOUND));
@@ -149,8 +132,7 @@ public class MameService implements InitializingBean {
     options.setColorizeDmd(getBoolean(values, KEY_COLORIZE_DMD));
     options.setSoundMode(getInteger(values, KEY_SOUND_MODE));
     options.setForceStereo(getBoolean(values, KEY_FORCE_STEREO));
-
-    mameCache.put(options.getRom().toLowerCase(), options);
+    options.setVolume(getHex(values, KEY_VOLUME));
     return options;
   }
 
@@ -192,24 +174,24 @@ public class MameService implements InitializingBean {
     systemService.setUserIntValue(MAME_REG_FOLDER_KEY + rom, KEY_COLORIZE_DMD, options.isColorizeDmd() ? 1 : 0);
     systemService.setUserIntValue(MAME_REG_FOLDER_KEY + rom, KEY_SOUND_MODE, options.getSoundMode());
     systemService.setUserIntValue(MAME_REG_FOLDER_KEY + rom, KEY_FORCE_STEREO, options.isForceStereo() ? 1 : 0);
+    systemService.setUserIntValue(MAME_REG_FOLDER_KEY + rom, KEY_VOLUME, options.getVolume());
 
-    mameCache.put(options.getRom().toLowerCase(), options);
+    getMameEntries(true);
     return getOptions(rom);
   }
 
   public boolean deleteOptions(String rom) {
     systemService.deleteUserKey(MAME_REG_FOLDER_KEY + rom);
-    mameCache.remove(rom.toLowerCase());
     return true;
   }
 
   /**
-   * Fill the zone with infor form registry
+   * Fill the zone with info form registry
    *
    * @return true if the DmdPosition is rom specific or false if this is default
    */
   public boolean fillDmdPosition(String rom, DMDInfoZone dmdinfo) {
-    List<String> romFolders = systemService.getCurrentUserKeys(MAME_REG_FOLDER_KEY);
+    List<String> romFolders = getMameEntries(false);
     boolean existInRegistry = romFolders.contains(rom.toLowerCase());
 
     Map<String, Object> values = systemService.getCurrentUserValues(MAME_REG_FOLDER_KEY +
@@ -222,21 +204,40 @@ public class MameService implements InitializingBean {
   }
 
   public boolean saveDmdPosition(String rom, DMDInfoZone dmdinfo) {
-    List<String> romFolders = systemService.getCurrentUserKeys(MAME_REG_FOLDER_KEY);
+    List<String> romFolders = getMameEntries(true);
     if (!romFolders.contains(rom.toLowerCase())) {
       systemService.createUserKey(MAME_REG_FOLDER_KEY + rom);
+      getMameEntries(true);
     }
     String regkey = MAME_REG_FOLDER_KEY + rom;
-    systemService.setUserIntValue(regkey, "dmd_pos_x", (int) dmdinfo.getX());
-    systemService.setUserIntValue(regkey, "dmd_pos_y", (int) dmdinfo.getY());
-    systemService.setUserIntValue(regkey, "dmd_width", (int) dmdinfo.getWidth());
-    systemService.setUserIntValue(regkey, "dmd_height", (int) dmdinfo.getHeight());
+    systemService.setUserIntValue(regkey, "dmd_pos_x", dmdinfo.getX());
+    systemService.setUserIntValue(regkey, "dmd_pos_y", dmdinfo.getY());
+    systemService.setUserIntValue(regkey, "dmd_width", dmdinfo.getWidth());
+    systemService.setUserIntValue(regkey, "dmd_height", dmdinfo.getHeight());
     return true;
   }
 
 
   private boolean getBoolean(Map<String, Object> values, String key) {
     return values.containsKey(key) && values.get(key) instanceof Integer && (((Integer) values.get(key)) == 1);
+  }
+
+  private int getHex(Map<String, Object> values, String key) {
+    int volume = 0;
+    if (values.containsKey(key)) {
+      String v = String.valueOf(values.get(key));
+      try {
+        volume = Integer.decode(v);
+      }
+      catch (NumberFormatException e) {
+        //ignore
+      }
+    }
+    return volume;
+  }
+
+  private String toHex(int value) {
+    return String.format("0x%08x", value);
   }
 
   private int getInteger(Map<String, Object> values, String key) {
@@ -249,27 +250,33 @@ public class MameService implements InitializingBean {
   //---------------------------------
 
   public boolean deleteCfg(@NonNull Game game) {
-    File cfgFile = game.getCfgFile();
+    File cfgFile = folderLookupService.getCfgFile(game);
     return cfgFile != null && cfgFile.exists() && FileUtils.delete(cfgFile);
   }
 
   public boolean deleteRom(@NonNull Game game) {
-    File romFile = game.getRomFile();
+    File romFile = folderLookupService.getRomFile(game);
     return romFile != null && romFile.exists() && FileUtils.delete(romFile);
   }
 
   //--------------------------------
 
-  public void installRom(UploadDescriptor uploadDescriptor, GameEmulator gameEmulator, File tempFile, UploaderAnalysis analysis) throws IOException {
-    File romFolder = gameEmulator != null ? gameEmulator.getRomFolder() : getRomsFolder();
+  public void installRom(UploadDescriptor uploadDescriptor, Game game, GameEmulator emulator, File tempFile, UploaderAnalysis analysis) throws IOException {
+    File romFolder = game != null ? folderLookupService.getRomFolder(game) : getRomsFolder();
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.ZIP, romFolder);
   }
 
-  public void installNvRam(UploadDescriptor uploadDescriptor, GameEmulator gameEmulator, File tempFile, UploaderAnalysis analysis) throws IOException {
-    File nvramFolder = gameEmulator != null ? gameEmulator.getNvramFolder() : getNvRamFolder();
+  public void installNvRam(UploadDescriptor uploadDescriptor, Game game, GameEmulator emulator, File tempFile, UploaderAnalysis analysis) throws IOException {
+    File nvramFolder = game != null ? folderLookupService.getNvRamFolder(game) : getNvRamFolder();
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.NV, nvramFolder);
   }
 
+  public boolean isRomExists(@NonNull Game game) {
+    File romFile = folderLookupService.getRomFile(game);
+    return romFile != null && romFile.exists();
+  }
+
+  //TODO
   public boolean isRomExists(String name) {
     if (StringUtils.isEmpty(name)) {
       return false;
@@ -281,43 +288,6 @@ public class MameService implements InitializingBean {
   public boolean isValidRom(String name) {
     return !romValidationCache.containsKey(name);
   }
-
-//  public boolean validateRom(GameEmulator gameEmulator, String name) {
-//    try {
-//      File romFolder = gameEmulator.getRomFolder();
-//      File romFile = new File(romFolder, name + ".zip");
-//      if (romFile.exists()) {
-//        File mameExe = getMameExe(gameEmulator.getMameFolder());
-//        if (mameExe != null) {
-//          List<String> cmds = Arrays.asList(mameExe.getName(), "-verifyroms", name);
-//          LOG.info("Executing ROM validation: " + String.join(" ", cmds));
-//          SystemCommandExecutor executor = new SystemCommandExecutor(cmds);
-//          executor.setDir(mameExe.getParentFile());
-//          executor.executeCommand();
-//          StringBuilder out = executor.getStandardOutputFromCommand();
-//          if (out != null) {
-//            String result = out.toString();
-//            return result.contains("1 were OK");
-//          }
-//
-//          LOG.error("MAME command failed: " + executor.getStandardErrorFromCommand());
-//        }
-//        else {
-//          LOG.error("MAME exe not found.");
-//          return false;
-//        }
-//      }
-//      else {
-//        LOG.error("ROM file \"" + romFile.getAbsolutePath() + "\" not found.");
-//        return false;
-//      }
-//    }
-//    catch (Exception e) {
-//      LOG.error("ROM validation failed: " + e.getMessage(), e);
-//      return false;
-//    }
-//    return false;
-//  }
 
   public void validateRoms(@NonNull File mameFolder) {
     try {
@@ -340,22 +310,17 @@ public class MameService implements InitializingBean {
           }
           List<String> sorted = new ArrayList<>(romValidationCache.keySet());
           sorted.sort(String::compareTo);
-          LOG.info("MAME rom validation finished: " + romValidationCache.size() + " invalid ROMs found: " + String.join(",", sorted));
+          LOG.info("MAME rom validation finished: {} invalid ROMs found: {}", romValidationCache.size(), String.join(",", sorted));
         }
-
-//        StringBuilder err = executor.getStandardErrorFromCommand();
-//        if (err != null && !StringUtils.isEmpty(err.toString())) {
-//          LOG.error("MAME command failed: " + err);
-//        }
       }
     }
     catch (Exception e) {
-      LOG.error("ROM validation failed: " + e.getMessage(), e);
+      LOG.error("ROM validation failed: {}", e.getMessage(), e);
     }
   }
 
-  public void installCfg(UploadDescriptor uploadDescriptor, GameEmulator gameEmulator, File tempFile, UploaderAnalysis analysis) throws IOException {
-    File cfgFolder = gameEmulator != null ? gameEmulator.getCfgFolder() : getCfgFolder();
+  public void installCfg(UploadDescriptor uploadDescriptor, Game game, GameEmulator emulator, File tempFile, UploaderAnalysis analysis) throws IOException {
+    File cfgFolder = game != null ? folderLookupService.getCfgFolder(game) : getCfgFolder();
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.CFG, cfgFolder);
   }
 
@@ -368,10 +333,10 @@ public class MameService implements InitializingBean {
         throw new IOException("Failed to delete existing " + assetType.name() + " file " + out.getAbsolutePath());
       }
       if (PackageUtil.unpackTargetFile(tempFile, out, nvFileName)) {
-        LOG.info("Installed " + assetType.name() + ": " + out.getAbsolutePath());
+        LOG.info("Installed {}: {}", assetType.name(), out.getAbsolutePath());
       }
       else {
-        LOG.warn("Installing mame asset " + assetType.name() + " failed: " + out.getAbsolutePath());
+        LOG.warn("Installing mame asset {} failed: {}", assetType.name(), out.getAbsolutePath());
       }
     }
     else {
@@ -379,7 +344,7 @@ public class MameService implements InitializingBean {
         throw new IOException("Failed to delete existing " + assetType.name() + " file " + out.getAbsolutePath());
       }
       org.apache.commons.io.FileUtils.copyFile(tempFile, out);
-      LOG.info("Installed " + assetType.name() + ": " + out.getAbsolutePath());
+      LOG.info("Installed MAME asset {}: {}", assetType.name(), out.getAbsolutePath());
     }
   }
 
@@ -401,11 +366,13 @@ public class MameService implements InitializingBean {
   private File romsFolder = null;
   private File cfgFolder = null;
 
+  @Nullable
   private File getVpinMameSetupFolder(String directoryType) {
     Map<String, Object> values = systemService.getCurrentUserValues(MameService.MAME_REG_FOLDER_KEY + MameOptions.GLOBALS_KEY);
     return values.containsKey(directoryType) ? new File((String) values.get(directoryType)) : null;
   }
 
+  @Nullable
   public File getNvRamFolder() {
     if (nvRamFolder == null) {
       nvRamFolder = getVpinMameSetupFolder(NVRAM_DIRECTORY);
@@ -414,6 +381,7 @@ public class MameService implements InitializingBean {
     return nvRamFolder;
   }
 
+  @Nullable
   public File getCfgFolder() {
     if (cfgFolder == null) {
       cfgFolder = getVpinMameSetupFolder(CFG_DIRECTORY);
@@ -426,6 +394,7 @@ public class MameService implements InitializingBean {
     return new File(getMameFolder(), "altcolor");
   }
 
+  @Nullable
   public File getRomsFolder() {
     if (romsFolder == null) {
       romsFolder = getVpinMameSetupFolder(ROMS_DIRECTORY);
@@ -499,8 +468,12 @@ public class MameService implements InitializingBean {
     return true;
   }
 
+  private List<String> getMameEntries(boolean forceReload) {
+    return systemService.getCurrentUserKeys(MAME_REG_FOLDER_KEY);
+  }
 
   @Override
   public void afterPropertiesSet() {
+    LOG.info("Initialized {}", this.getClass().getSimpleName());
   }
 }

@@ -8,7 +8,6 @@ public class FrontendMediaItemRepresentation {
   private String mimeType;
   private String uri;
   private VPinScreen screen;
-  private int gameId;
   private String name;
   private Date modificationDate;
   private long size;
@@ -35,14 +34,6 @@ public class FrontendMediaItemRepresentation {
 
   public void setName(String name) {
     this.name = name;
-  }
-
-  public int getGameId() {
-    return gameId;
-  }
-
-  public void setGameId(int gameId) {
-    this.gameId = gameId;
   }
 
   public String getMimeType() {

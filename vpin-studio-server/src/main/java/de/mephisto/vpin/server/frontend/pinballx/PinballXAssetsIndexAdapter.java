@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.ConnectException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -88,6 +89,9 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
         LOG.error("Failed to rename " + indexFile.getName());
       }
       LOG.info("Written " + indexFile.getAbsolutePath());
+    }
+    catch (ConnectException ce) {
+      LOG.error("Cannot connect to FTP server: {}", ce.getMessage());
     }
     catch (IOException ioe) {
       LOG.error("Error while reloading index file", ioe);

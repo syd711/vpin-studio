@@ -31,6 +31,7 @@
                                           <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="280.0" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
                                           <TableColumn fx:id="columnTemplate" minWidth="70.0" prefWidth="-1.0" style="-fx-alignment: BASELINE_CENTER;" text="Custom" />
                                           <TableColumn fx:id="columnBaseTemplate" minWidth="120.0" prefWidth="-1.0" style="-fx-alignment: BASELINE_LEFT;" text="Base Template" />
+                                          <TableColumn fx:id="columnWheel" sortable="false" minWidth="60.0" prefWidth="-1.0" style="-fx-alignment: BASELINE_CENTER;" text="Wheel" />
                                        </columns>
                                     </TableView>
                                  </children>

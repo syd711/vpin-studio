@@ -39,6 +39,7 @@
                         <TableColumn fx:id="romColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="ROM" />
                         <TableColumn fx:id="topperColumn" prefWidth="110.0" style="-fx-alignment: CENTER;" text="Topper Media" />
                         <TableColumn fx:id="povColumn" style="-fx-alignment: CENTER;" text="POV" />
+                        <TableColumn fx:id="soundColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Sound/Music" />
                         <TableColumn fx:id="altSoundColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="ALT Sound" />
                         <TableColumn fx:id="altColorColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="ALT Color" />
                         <TableColumn fx:id="tutorialColumn" minWidth="2.39996337890625" prefWidth="120.0" style="-fx-alignment: BASELINE_LEFT;" text="Tutorials" />

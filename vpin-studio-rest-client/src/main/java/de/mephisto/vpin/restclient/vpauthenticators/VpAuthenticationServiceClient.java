@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,7 +14,7 @@ import java.util.Map;
  * Authentication Service
  ********************************************************************************************************************/
 public class VpAuthenticationServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(VpAuthenticationServiceClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public VpAuthenticationServiceClient(VPinStudioClient client) {
     super(client);

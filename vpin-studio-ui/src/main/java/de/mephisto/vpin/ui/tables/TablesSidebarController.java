@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
@@ -46,7 +47,7 @@ import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablesSidebarController extends BaseSideBarController<GameRepresentation> implements Initializable, PreferenceChangeListener {
-  private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarController.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
   private Accordion tableAccordion;
@@ -198,10 +199,10 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
       if (this.game.isPresent()) {
         GameRepresentation gameRepresentation = this.game.get();
         FileInfo hsFileInfo = client.getGameService().getHighscoreFileInfo(gameRepresentation.getId());
-        if (hsFileInfo.getFile() != null && FilenameUtils.getExtension(hsFileInfo.getFile().getName()).toLowerCase().endsWith("txt")) {
+        if (hsFileInfo != null && hsFileInfo.getFile() != null && FilenameUtils.getExtension(hsFileInfo.getFile().getName()).toLowerCase().endsWith("txt")) {
           SystemUtil.open(hsFileInfo);
         }
-        else {
+        else if (hsFileInfo != null && hsFileInfo.getFile() != null) {
           SystemUtil.openFile(hsFileInfo.getFile());
         }
       }
@@ -590,7 +591,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
-    PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.PREVIEW_ENABLED);
+    PreferenceEntryRepresentation preference = client.getPreferenceService().getPreference(PreferenceNames.PREVIEW_ENABLED);
     mediaPreviewCheckbox.setSelected(preference.getBooleanValue());
 
     Platform.runLater(() -> {

@@ -15,10 +15,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 
 
 public class PupPackServiceClient extends VPinStudioClientService {
-  private final static Logger LOG = LoggerFactory.getLogger(PupPackServiceClient.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public PupPackServiceClient(VPinStudioClient client) {
     super(client);

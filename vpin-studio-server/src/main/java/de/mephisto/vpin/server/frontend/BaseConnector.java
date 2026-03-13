@@ -9,12 +9,13 @@ import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
+import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.tagging.TaggingUtil;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
-import de.mephisto.vpin.server.fp.FPService;
+import de.mephisto.vpin.server.fp.FuturePinballService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.playlists.Playlist;
@@ -28,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -43,7 +45,7 @@ public abstract class BaseConnector implements FrontendConnector {
   private VPXService vpxService;
 
   @Autowired
-  private FPService fpService;
+  private FuturePinballService futurePinballService;
 
   @Autowired
   protected GameEntryRepository gameEntryRepository;
@@ -65,7 +67,7 @@ public abstract class BaseConnector implements FrontendConnector {
   /**
    * Map id <-> GameEntry
    */
-  private Map<Integer, GameEntry> mapFilenames = new HashMap<>();
+  private final Map<Integer, GameEntry> mapFilenames = new HashMap<>();
 
   /**
    * set of favorite gameId
@@ -75,7 +77,7 @@ public abstract class BaseConnector implements FrontendConnector {
   /**
    * A cache of Playlists indexed by their id
    */
-  private Map<Integer, Playlist> playlists = new HashMap<>();
+  private final Map<Integer, Playlist> playlists = new HashMap<>();
 
   /**
    * map between gameId and stat
@@ -309,6 +311,18 @@ public abstract class BaseConnector implements FrontendConnector {
   public List<Game> getGamesByFilename(String filename) {
     String gameFileName = filename.replaceAll("'", "''");
     return getGames().stream().filter(g -> StringUtils.containsIgnoreCase(g.getGameFileName(), gameFileName)).collect(Collectors.toList());
+  }
+
+  @NonNull
+  @Override
+  public List<Integer> getCompetedGamesIds(@NonNull CompetitionType competitionType) {
+    List<Game> games = getGames();
+    List<Integer> result = new ArrayList<>();
+    for (Game game : games) {
+      GameEntry e = mapFilenames.get(game.getId());
+      //TODO ???
+    }
+    return result;
   }
 
   @Override
@@ -786,6 +800,7 @@ public abstract class BaseConnector implements FrontendConnector {
 
   @Override
   public final List<TableAlxEntry> getAlxData(int gameId) {
+    loadStats();
     List<TableAlxEntry> result = new ArrayList<>();
     TableAlxEntry stat = getGameStat(gameId);
     if (stat != null) {
@@ -860,8 +875,13 @@ public abstract class BaseConnector implements FrontendConnector {
 
   protected File resolveExe(EmulatorType type) {
     switch (type) {
-      case VisualPinball:
-        return systemService.resolveVpx64Exe();
+      case VisualPinball: {
+        File f = systemService.resolveVpx64Exe();
+        if (f == null) {
+          f = systemService.resolveVpxExe();
+        }
+        return f;
+      }
       case VisualPinball9:
         return systemService.resolveVptExe();
       case FuturePinball:
@@ -874,6 +894,9 @@ public abstract class BaseConnector implements FrontendConnector {
   @Override
   public boolean killFrontend() {
     NirCmd.setTaskBarVisible(true);
+    if (systemService.isPinballEmulatorRunning()) {
+      systemService.sendKey(KeyEvent.VK_Q);
+    }
     return killEmulators(true);
   }
 
@@ -893,6 +916,7 @@ public abstract class BaseConnector implements FrontendConnector {
                     p.info().command().get().contains("PinballM") ||
                     p.info().command().get().contains("Zaccaria") ||
                     p.info().command().get().startsWith("VPinball") ||
+                    p.info().command().get().startsWith("MAME") ||
                     p.info().command().get().contains("B2SBackglassServerEXE") ||
                     p.info().command().get().contains("DOF")))
         .collect(Collectors.toList());
@@ -958,7 +982,7 @@ public abstract class BaseConnector implements FrontendConnector {
       return false;
     }
     else if (game.isFpGame()) {
-      return fpService.play(game, null);
+      return futurePinballService.play(game, null);
     }
     else {
       LOG.error("Emulator {} for Game \"{}\" cannot be started", game.getEmulator(), game.getGameFileName());

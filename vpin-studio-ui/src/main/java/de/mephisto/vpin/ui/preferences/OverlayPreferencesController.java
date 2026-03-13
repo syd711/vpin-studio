@@ -60,12 +60,12 @@ public class OverlayPreferencesController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     OverlaySettings overlaySettings = client.getPreferenceService().getJsonPreference(PreferenceNames.OVERLAY_SETTINGS, OverlaySettings.class);
 
-    screenInfoComboBox.setItems(FXCollections.observableList(client.getSystemService().getSystemSummary().getScreenInfos()));
+    screenInfoComboBox.setItems(FXCollections.observableList(client.getSystemService().getSystemSummary().getMonitorInfos()));
     if (overlaySettings.getOverlayScreenId() == -1) {
-      screenInfoComboBox.setValue(client.getSystemService().getSystemSummary().getPrimaryScreen());
+      screenInfoComboBox.setValue(client.getSystemService().getSystemSummary().getPrimaryMonitor());
     }
     else {
-      screenInfoComboBox.setValue(client.getSystemService().getSystemSummary().getScreenInfo(overlaySettings.getOverlayScreenId()));
+      screenInfoComboBox.setValue(client.getSystemService().getSystemSummary().getMonitorInfo(overlaySettings.getOverlayScreenId()));
     }
     screenInfoComboBox.valueProperty().addListener(new ChangeListener<MonitorInfo>() {
       @Override

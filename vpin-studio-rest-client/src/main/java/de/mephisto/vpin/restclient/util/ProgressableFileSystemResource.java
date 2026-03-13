@@ -9,9 +9,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.invoke.MethodHandles;
 
 public class ProgressableFileSystemResource extends FileSystemResource {
-  private final static Logger LOG = LoggerFactory.getLogger(ProgressableFileSystemResource.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private FileUploadProgressListener listener;
   private FileInputStream fileInputStream;
   private ProcessInputStream processInputStream;

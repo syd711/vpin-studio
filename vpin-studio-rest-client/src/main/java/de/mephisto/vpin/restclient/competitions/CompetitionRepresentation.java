@@ -48,11 +48,31 @@ public class CompetitionRepresentation {
 
   private String score;
 
+  private String mode;
+
   private boolean started;
 
   private boolean highscoreReset;
 
   private String rom;
+
+  private String issues;
+
+  public String getIssues() {
+    return issues;
+  }
+
+  public void setIssues(String issues) {
+    this.issues = issues;
+  }
+
+  public String getMode() {
+    return mode;
+  }
+
+  public void setMode(String mode) {
+    this.mode = mode;
+  }
 
   public String getVpsTableId() {
     return vpsTableId;

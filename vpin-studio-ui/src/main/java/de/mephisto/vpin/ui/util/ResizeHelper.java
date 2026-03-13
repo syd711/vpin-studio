@@ -115,13 +115,18 @@ public class ResizeHelper {
             if (stage.getHeight() > minHeight || mouseEventY < 0) {
               double height = stage.getY() - mouseEvent.getScreenY() + stage.getHeight() + sceneOffsetY;
               double y = mouseEvent.getScreenY() - sceneOffsetY;
-              stage.setHeight(height);
+              if (height > 0) {
+                stage.setHeight(height);
+              }
               stage.setY(y);
             }
           }
           else {
             if (stage.getHeight() > minHeight || mouseEventY + startY - stage.getHeight() > 0) {
-              stage.setHeight(mouseEventY + startY + padBottom + padTop);
+              double height = mouseEventY + startY + padBottom + padTop;
+              if (height > 0) {
+                stage.setHeight(height);
+              }
             }
           }
         }

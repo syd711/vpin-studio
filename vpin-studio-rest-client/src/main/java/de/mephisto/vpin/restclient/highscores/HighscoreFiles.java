@@ -1,11 +1,12 @@
 package de.mephisto.vpin.restclient.highscores;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HighscoreFiles {
-  private List<String> textFiles;
-  private List<String> vpRegEntries;
-  private List<String> nvRams;
+  private List<String> textFiles = new ArrayList<>();
+  private List<String> vpRegEntries = new ArrayList<>();
+  private List<String> nvRams = new ArrayList<>();
 
   public List<String> getTextFiles() {
     return textFiles;
@@ -29,5 +30,14 @@ public class HighscoreFiles {
 
   public void setNvRams(List<String> nvRams) {
     this.nvRams = nvRams;
+  }
+
+  public boolean contains(String hsName) {
+    for (String textFile : textFiles) {
+      if (textFile.equalsIgnoreCase(hsName) || textFile.equalsIgnoreCase(hsName + ".txt")) {
+        return true;
+      }
+    }
+    return false;
   }
 }
