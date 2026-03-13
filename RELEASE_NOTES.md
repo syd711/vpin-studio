@@ -1,3 +1,7 @@
+## Release Notes 4.7.4
+
+- **WOVP Pause Menu Item**: Screenshots for portrait mode screens are not rotated anymore.
+
 ## Release Notes 4.7.3
  
 - **Table Options**: Added "Options" tab to the table data manager dialog. The new tab analysis the table script options so that you canfigure them into a .ini file for the table.
