@@ -585,6 +585,35 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     return info;
   }
 
+  @Nullable
+  @Override
+  public Game getGameByDisplayName(int emulatorId, String gameName) {
+    Connection connect = this.connect();
+    Game info = null;
+    try {
+      gameName = gameName.replaceAll("'", "''");
+      Statement statement = Objects.requireNonNull(connect).createStatement();
+      ResultSet rs = statement.executeQuery(
+          "SELECT g.*, s.*, e.Visible as EmuVisible, e.DirGames FROM Games g"
+              + " left join Emulators e on g.EMUID=e.EMUID left join GamesStats s on s.GameID = g.GameID"
+              + " where g.EMUID = " + emulatorId
+              + " and GameDisplay = '" + gameName + "';");
+      while (rs.next()) {
+        info = createGame(rs);
+      }
+
+      rs.close();
+      statement.close();
+    }
+    catch (SQLException e) {
+      LOG.error("Failed to read game by gameName '" + gameName + "': " + e.getMessage(), e);
+    }
+    finally {
+      this.disconnect(connect);
+    }
+    return info;
+  }
+
   @NonNull
   public String getStartupScript() {
     String script = null;

@@ -55,7 +55,7 @@ public class GameServiceTest extends AbstractVPinServerTest {
     File b2sFile = game.getDirectB2SFile();
     assertEquals(gameFolder, b2sFile.getParentFile());
 
-    String b2sFileName = game.getDirectB2SFilename();
+    String b2sFileName = EmulatorHelper.getBackglassFileName(game);
     assertEquals(expectedB2sName, b2sFileName);
   }
 }

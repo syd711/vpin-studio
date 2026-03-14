@@ -396,6 +396,10 @@ public class UniversalUploadService {
     String fileName = FilenameUtils.getBaseName(game.getGameFileName()) + "." + assetType.getExtension();
     File gameAssetFile = new File(game.getGameFile().getParentFile(), fileName);
 
+    if (AssetType.DIRECTB2S.equals(assetType)) {
+      gameAssetFile = EmulatorHelper.getBackglassFile(game);
+    }
+
     if (UploadType.uploadAndAppend.equals(uploadType)) {
       gameAssetFile = FileUtils.uniqueFile(gameAssetFile);
       LOG.info("Creating unique game asset file {}", gameAssetFile.getAbsolutePath());

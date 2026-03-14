@@ -63,6 +63,19 @@
                     </children>
                 </StackPane>
                 <Separator layoutX="1116.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <ComboBox fx:id="emulatorCombo" prefWidth="190.0" />
+            <Button fx:id="emulatorBtn" mnemonicParsing="false" onAction="#onEmulatorManager" textFill="WHITE">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2c-controller" iconSize="18" />
+               </graphic>
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <tooltip>
+                  <Tooltip text="Open Emulator Manager" />
+               </tooltip>
+            </Button>
+            <Separator layoutX="868.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
 
                 <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="200.0" />
 
@@ -151,13 +164,15 @@
                                       <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;">
                                           <columns>
                                               <TableColumn fx:id="statusColumn" minWidth="33" prefWidth="55.0" style="-fx-alignment: CENTER;" text="Status" />
-                                              <TableColumn fx:id="displayNameColumn" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="Table Name" />
+                                              <TableColumn fx:id="displayNameColumn" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="Backglass" />
                                               <TableColumn fx:id="numberDirectB2SColumn" minWidth="50" prefWidth="90.0" style="-fx-alignment: CENTER;" text="# directB2S" />
+                                              <TableColumn fx:id="tableColumn" minWidth="70" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Table Match" />
                                               <TableColumn fx:id="fullDmdColumn" minWidth="50" style="-fx-alignment: CENTER;" text="FullDMD" />
                                               <TableColumn fx:id="grillColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="Grill" />
                                               <TableColumn fx:id="scoreColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="Score" />
                                               <TableColumn fx:id="resColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="RES" />
                                               <TableColumn fx:id="frameColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="Frame" />
+                                              <TableColumn fx:id="emulatorColumn" prefWidth="250.0" style="-fx-alignment: BASELINE_LEFT;" text="Emulator" />
                                           </columns>
                                       </TableView>
                                   </children>

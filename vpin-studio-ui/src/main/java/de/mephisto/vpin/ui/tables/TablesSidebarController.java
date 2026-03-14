@@ -775,16 +775,17 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
     boolean vpxMode = newValue == null || newValue.isVpxEmulator();
     boolean fx1Mode = newValue == null || newValue.getType().equals(EmulatorType.ZenFX);
     boolean fx3Mode = newValue == null || newValue.getType().equals(EmulatorType.ZenFX3);
+    boolean mMode = newValue == null || newValue.getType().equals(EmulatorType.PinballM);
 
     titledPaneHighscores.setVisible(vpxMode);
     titledPanePov.setVisible(vpxMode);
     titledPaneAltSound.setVisible(vpxMode);
-    titledPaneDirectB2s.setVisible(newValue == null || newValue.isVpxEmulator() || newValue.isFpEmulator());
+    titledPaneDirectB2s.setVisible(newValue == null || newValue.isVpxEmulator() || newValue.isFpEmulator() || fx3Mode || fx1Mode || mMode);
     titledPanePUPPack.setVisible(newValue == null || newValue.isVpxEmulator() || newValue.isFpEmulator());
     titledPaneDMD.setVisible(vpxMode);
     titledPaneMame.setVisible(vpxMode);
     //titledPaneVps.setVisible(vpxMode);
-    titledPaneAltColor.setVisible(vpxMode || fx1Mode || fx3Mode);
+    titledPaneAltColor.setVisible(vpxMode || fx1Mode || fx3Mode || mMode);
     titledPaneScriptDetails.setVisible(vpxMode);
 
     if (!getTableOverviewController().isAssetManagerMode()) {

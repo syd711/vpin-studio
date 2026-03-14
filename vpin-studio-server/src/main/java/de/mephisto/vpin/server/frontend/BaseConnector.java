@@ -248,6 +248,10 @@ public abstract class BaseConnector implements FrontendConnector {
     game.setVersion(details != null ? details.getGameVersion() : null);
     game.setRating(details != null && details.getGameRating() != null ? details.getGameRating() : 0);
     game.setRom(details != null && details.getRomName() != null ? details.getRomName() : null);
+    if (emu.isZenEmulator()) {
+      game.setRom(game.getGameDisplayName());
+    }
+
     game.setTags(TaggingUtil.getTags(details != null ? details.getTags() : null));
 
     File table = new File(emu.getGamesDirectory(), filename);
@@ -330,6 +334,14 @@ public abstract class BaseConnector implements FrontendConnector {
     return getGameEntries(emuId).stream()
         .map(e -> getGame(e))
         .filter(g -> StringUtils.containsIgnoreCase(g.getGameName(), gameName))
+        .findFirst().orElse(null);
+  }
+
+  @Override
+  public Game getGameByDisplayName(int emuId, String gameName) {
+    return getGameEntries(emuId).stream()
+        .map(e -> getGame(e))
+        .filter(g -> StringUtils.containsIgnoreCase(g.getGameDisplayName(), gameName))
         .findFirst().orElse(null);
   }
 

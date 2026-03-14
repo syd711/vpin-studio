@@ -1,9 +1,11 @@
 package de.mephisto.vpin.server.emulators;
 
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.emulators.EmulatorValidation;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.validation.ValidationState;
+import de.mephisto.vpin.server.doflinx.DOFLinxService;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.popper.pupgames.PUPGameImporter;
@@ -12,6 +14,8 @@ import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameEmulatorValidationService;
 import de.mephisto.vpin.server.games.GameMediaService;
 import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +32,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class EmulatorService implements InitializingBean {
+public class EmulatorService implements InitializingBean, PreferenceChangedListener {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @Autowired
@@ -43,6 +47,12 @@ public class EmulatorService implements InitializingBean {
   @Lazy
   @Autowired
   private GameMediaService gameMediaService;
+
+  @Autowired
+  private DOFLinxService dofLinxService;
+
+  @Autowired
+  private PreferencesService preferencesService;
 
   private final List<EmulatorChangeListener> listeners = new ArrayList<>();
 
@@ -104,7 +114,7 @@ public class EmulatorService implements InitializingBean {
   }
 
   public List<GameEmulator> getBackglassGameEmulators() {
-    return getGameEmulators().stream().filter(e -> e.isVpxEmulator() && e.isValid()).collect(Collectors.toList());
+    return getGameEmulators().stream().filter(e -> (e.isVpxEmulator() || e.isZenEmulator()) && e.isValid()).collect(Collectors.toList());
   }
 
   public void setFrontendService(FrontendService frontendService) {
@@ -127,7 +137,7 @@ public class EmulatorService implements InitializingBean {
     return true;
   }
 
-  public void loadEmulators() {
+  public void reloadEmulators() {
     FrontendConnector frontendConnector = frontendService.getFrontendConnector();
     frontendConnector.reloadCache();
     List<GameEmulator> ems = frontendConnector.getEmulators();
@@ -164,6 +174,11 @@ public class EmulatorService implements InitializingBean {
           }
         }
       }
+
+      if (emulator.isZenEmulator() && dofLinxService.isValid() && dofLinxService.getBackglassesFolder() != null) {
+        emulator.setBackglassDirectory(dofLinxService.getBackglassesFolder().getAbsolutePath());
+      }
+
       emulators.put(emulator.getId(), emulator);
 
       LOG.info("Loaded Emulator: " + emulator);
@@ -213,7 +228,7 @@ public class EmulatorService implements InitializingBean {
   }
 
   public boolean clearCache() {
-    loadEmulators();
+    reloadEmulators();
     return true;
   }
 
@@ -228,7 +243,15 @@ public class EmulatorService implements InitializingBean {
   }
 
   @Override
+  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
+    if(PreferenceNames.DOFLINX_SETTINGS.equals(propertyName)) {
+      reloadEmulators();
+    }
+  }
+
+  @Override
   public void afterPropertiesSet() throws Exception {
+    preferencesService.addChangeListener(this);
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

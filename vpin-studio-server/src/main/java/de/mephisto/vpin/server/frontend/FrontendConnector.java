@@ -63,6 +63,9 @@ public interface FrontendConnector {
   @Nullable
   Game getGameByName(int emuId, String gameName);
 
+  @Nullable
+  Game getGameByDisplayName(int emuId, String gameName);
+
   int importGame(@NonNull TableDetails tableDetails);
 
   boolean deleteGame(int id);

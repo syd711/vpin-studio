@@ -748,15 +748,7 @@ public class Game {
   @NonNull
   @JsonIgnore
   public File getDirectB2SFile() {
-    String baseName = FilenameUtils.getBaseName(this.getGameFileName());
-    return new File(getGameFolder(), baseName + ".directb2s");
-  }
-
-  @NonNull
-  @JsonIgnore
-  public String getDirectB2SFilename() {
-    String baseName = FilenameUtils.removeExtension(this.getGameFileName());
-    return baseName + ".directb2s";
+    return EmulatorHelper.getBackglassFile(this);
   }
 
   public int getNbDirectB2S() {

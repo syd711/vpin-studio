@@ -228,6 +228,9 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   private Label gameFilenameLabel;
 
   @FXML
+  private Label gameIdLabel;
+
+  @FXML
   private Label emulatorNameLabel;
 
   @FXML
@@ -764,7 +767,8 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       emulatorNameLabel.setText("-");
       gameLabel.setText("-");
       gameFilenameLabel.setText("-");
-    
+      gameIdLabel.setText("-");
+
       // depend on the game selection
       useAsMediaBackglassBtn.setDisable(true);
       useAsMediaDMDBtn.setDisable(true);
@@ -788,6 +792,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
       setLabelandTooltip(gameLabel, game.getGameDisplayName());
       setLabelandTooltip(gameFilenameLabel, game.getGameFileName());
+      setLabelandTooltip(gameIdLabel, String.valueOf(game.getId()));
 
       useAsMediaBackglassBtn.setDisable(false);
       useAsMediaDMDBtn.setDisable(false);

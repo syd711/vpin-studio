@@ -4,7 +4,6 @@ import de.mephisto.vpin.commons.utils.StringSimilarity;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
@@ -162,7 +161,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   public boolean reload() {
     vpxService.clearCache();
     gameCachingService.clearCache();
-    emulatorService.loadEmulators();
+    emulatorService.reloadEmulators();
     List<GameEmulator> emulators = emulatorService.getValidGameEmulators();
     mameRomAliasService.clearCache(emulators);
     gameCachingService.clearCache();
@@ -180,7 +179,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
       gameCachingService.clearCacheForEmulator(emulatorId);
     }
 
-    emulatorService.loadEmulators();
+    emulatorService.reloadEmulators();
     gameCachingService.clearCache();
     getKnownGames(emulatorId);
     return true;

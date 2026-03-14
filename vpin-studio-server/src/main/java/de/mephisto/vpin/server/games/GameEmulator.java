@@ -27,6 +27,7 @@ public class GameEmulator {
   private String installationDirectory;
   private String gamesDirectory;
   private String mediaDirectory;
+  private String backglassDirectory;
 
   private String mameDirectory;
   private String romDirectory;
@@ -64,6 +65,17 @@ public class GameEmulator {
 
   public void setDatabase(String database) {
     this.database = database;
+  }
+
+  public String getBackglassDirectory() {
+    if(backglassDirectory == null) {
+      return getGamesDirectory();
+    }
+    return backglassDirectory;
+  }
+
+  public void setBackglassDirectory(String backglassDirectory) {
+    this.backglassDirectory = backglassDirectory;
   }
 
   public void setType(EmulatorType type) {

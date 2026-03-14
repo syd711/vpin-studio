@@ -2133,7 +2133,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     GameEmulatorRepresentation newValue = emulatorCombo.getValue();
     boolean vpxMode = newValue == null || newValue.isVpxEmulator();
     boolean fpMode = newValue == null || newValue.isFpEmulator();
-    boolean fxMode = newValue == null || newValue.isFxEmulator();
+    boolean zenEmulator = newValue == null || newValue.isFxEmulator();
     boolean fx1Mode = newValue == null || newValue.getType().equals(EmulatorType.ZenFX);
     boolean fx3Mode = newValue == null || newValue.getType().equals(EmulatorType.ZenFX3);
     boolean pinballMMode = newValue != null && newValue.getType().equals(EmulatorType.PinballM);
@@ -2141,15 +2141,15 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     columnVersion.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnVersion());
     columnEmulator.setVisible((vpxMode || fpMode) && !assetManagerMode && !Features.IS_STANDALONE && uiSettings.isColumnEmulator());
-    columnVPS.setVisible((vpxMode || fpMode || fxMode || zaccariaMode) && !assetManagerMode && uiSettings.isColumnVpsStatus());
-    columnPatchVersion.setVisible((vpxMode || fpMode || fxMode) && !assetManagerMode && uiSettings.isColumnPatchVersion());
+    columnVPS.setVisible((vpxMode || fpMode || zenEmulator || zaccariaMode) && !assetManagerMode && uiSettings.isColumnVpsStatus());
+    columnPatchVersion.setVisible((vpxMode || fpMode || zenEmulator) && !assetManagerMode && uiSettings.isColumnPatchVersion());
     columnRom.setVisible(pinballMMode || fx1Mode || (vpxMode && !assetManagerMode && uiSettings.isColumnRom()));
-    columnB2S.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnBackglass());
+    columnB2S.setVisible((vpxMode || fpMode || zenEmulator) && !assetManagerMode && uiSettings.isColumnBackglass());
     columnRating.setVisible((vpxMode || fpMode) && !assetManagerMode && Features.RATINGS && uiSettings.isColumnRating());
     columnPUPPack.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPupPack() && Features.PUPPACKS_ENABLED);
     columnPinVol.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPinVol());
     columnAltSound.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnAltSound());
-    columnAltColor.setVisible((vpxMode || fx1Mode || fx3Mode) && !assetManagerMode && uiSettings.isColumnAltColor());
+    columnAltColor.setVisible((vpxMode || fx1Mode || fx3Mode || pinballMMode) && !assetManagerMode && uiSettings.isColumnAltColor());
     columnPOV.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPov());
     columnTutorials.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnTutorial());
     columnINI.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnIni());
@@ -2158,8 +2158,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     columnDateAdded.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnDateAdded());
     columnDateModified.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnDateModified());
     columnLauncher.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnLauncher());
-    columnComment.setVisible((vpxMode || fpMode || fxMode || zaccariaMode) && !assetManagerMode && uiSettings.isColumnComment());
-    columnPlaylists.setVisible((vpxMode || fpMode || fxMode || zaccariaMode) && !assetManagerMode && Features.PLAYLIST_ENABLED && uiSettings.isColumnPlaylists());
+    columnComment.setVisible((vpxMode || fpMode || zenEmulator || zaccariaMode) && !assetManagerMode && uiSettings.isColumnComment());
+    columnPlaylists.setVisible((vpxMode || fpMode || zenEmulator || zaccariaMode) && !assetManagerMode && Features.PLAYLIST_ENABLED && uiSettings.isColumnPlaylists());
   }
 
   @Override

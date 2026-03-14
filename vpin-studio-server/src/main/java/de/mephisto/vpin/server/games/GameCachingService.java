@@ -373,6 +373,10 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
       game.setRom(gameDetails.getRomName());
     }
 
+    if (game.isZenGame()) {
+      game.setRom(game.getGameDisplayName());
+    }
+
     if (game.getDateAdded() == null) {
       game.setDateAdded(gameDetails.getCreatedAt());
     }
@@ -381,7 +385,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     }
 
     //check alias
-    if (game.getEmulator() != null) {
+    if (game.getEmulator() != null && !game.isZenGame()) {
       String originalRom = mameRomAliasService.getRomForAlias(game.getEmulator(), game.getRom());
       if (!StringUtils.isEmpty(originalRom)) {
         String aliasName = game.getRom();

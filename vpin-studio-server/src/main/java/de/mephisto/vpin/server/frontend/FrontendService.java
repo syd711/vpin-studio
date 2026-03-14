@@ -200,6 +200,10 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     return setGameEmulator(getFrontendConnector().getGameByName(emulatorId, gameName));
   }
 
+  public Game getGameByDisplayName(int emulatorId, String gameName) {
+    return setGameEmulator(getFrontendConnector().getGameByDisplayName(emulatorId, gameName));
+  }
+
   public List<Game> getGames() {
     List<Game> results = setGameEmulator(getFrontendConnector().getGames());
     results.sort(Comparator.comparing(Game::getGameDisplayName));
@@ -750,7 +754,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
       long start = System.currentTimeMillis();
       LOG.info("Initializing emulators");
-      emulatorService.loadEmulators();
+      emulatorService.reloadEmulators();
       LOG.info("Initial emulator load took {}ms", (System.currentTimeMillis() - start));
 
       getFrontendConnector().getFrontendPlayerDisplays();
