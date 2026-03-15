@@ -346,6 +346,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     List<GameEmulatorRepresentation> filtered = emulators.stream()
         .filter(e -> e.isEnabled())
         .filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId())))
+        .sorted(Comparator.comparing(GameEmulatorRepresentation::getName))
         .collect(Collectors.toList());
 
     this.emulatorCombo.setItems(FXCollections.observableList(filtered));

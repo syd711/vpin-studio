@@ -72,7 +72,7 @@ public class EmulatorRecorderJob extends FrontendRecorderJob {
         recorderService.launchGame(game, recorderSettings);
 
         int secondToWait = EMULATOR_WAITING_TIMEOUT_SECONDS;
-        while (!WindowsUtil.isProcessRunning("Future Pinball", "Visual Pinball Player") && secondToWait > 0) {
+        while (!WindowsUtil.isProcessRunning("Future Pinball", "Visual Pinball Player", "mame", "PinballFX", "Pinball FX", "PinballM") && secondToWait > 0) {
           Thread.sleep(1000);
           secondToWait--;
         }
