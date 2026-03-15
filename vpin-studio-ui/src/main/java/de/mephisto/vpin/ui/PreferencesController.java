@@ -182,7 +182,7 @@ public class PreferencesController extends SettingsSceneController implements In
         instance = controller;
       }
       catch (IOException e) {
-        LOG.error("Failed to load preferences: " + e.getMessage(), e);
+        LOG.error("Failed to load preferences: {}", e.getMessage(), e);
       }
     }
     instance.onOpen();

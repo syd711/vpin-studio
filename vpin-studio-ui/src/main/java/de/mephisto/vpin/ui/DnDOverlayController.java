@@ -178,7 +178,7 @@ public class DnDOverlayController implements Initializable {
       return controller;
     }
     catch (IOException e) {
-      LOG.error("Failed to load loading overlay: " + e.getMessage());
+      LOG.error("Failed to load loading overlay: {}", e.getMessage());
       return null;
     }
   }

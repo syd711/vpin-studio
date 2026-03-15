@@ -190,7 +190,7 @@ public class NavigationController implements Initializable, StudioEventListener,
         activeNavigation.getController().onViewActivated(options);
       }
       catch (IOException e) {
-        LOG.info("Failed to load main view: " + e.getMessage(), e);
+        LOG.info("Failed to load main view: {}", e.getMessage(), e);
       }
     }
   }
@@ -217,7 +217,7 @@ public class NavigationController implements Initializable, StudioEventListener,
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to refresh avatar tile: " + e.getMessage());
+      LOG.error("Failed to refresh avatar tile: {}", e.getMessage());
     }
 
     Studio.stage.setTitle("VPin Studio (" + Studio.getVersion() + ") - " + name);

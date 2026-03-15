@@ -39,7 +39,7 @@ public class SplashScreenController implements Initializable {
       factLabel.setText("\"" + fact + "\"");
     }
     catch (Exception e) {
-      LOG.error("Splash screen init failed: " + e.getMessage(), e);
+      LOG.error("Splash screen init failed: {}", e.getMessage(), e);
     }
   }
 
