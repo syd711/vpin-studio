@@ -343,7 +343,10 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
     this.emulatorCombo.setDisable(true);
     List<GameEmulatorRepresentation> emulators = new ArrayList<>(client.getEmulatorService().getGameEmulatorsUncached());
-    List<GameEmulatorRepresentation> filtered = emulators.stream().filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId()))).collect(Collectors.toList());
+    List<GameEmulatorRepresentation> filtered = emulators.stream()
+        .filter(e -> e.isEnabled())
+        .filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId())))
+        .collect(Collectors.toList());
 
     this.emulatorCombo.setItems(FXCollections.observableList(filtered));
     this.emulatorCombo.setDisable(false);

@@ -181,8 +181,8 @@ public class EmulatorFactory implements ApplicationContextAware, InitializingBea
         "\n" +
         "cd \"C:\\MAME\"\n" +
         "\n" +
-        "START \"\" \"mamelayplus.exe\" \"[GAMEFULLNAME]\"\n"));
-    emu.setExitScript(createScript(false, "\"[STARTDIR]LAUNCH\\PUPCLOSER.EXE\" PROC \"mamelayplus\" 3 1\n"));
+        "START \"\" \"mame.exe\" \"[GAMEFULLNAME]\"\n"));
+    emu.setExitScript(createScript(false, "\"[STARTDIR]LAUNCH\\PUPCLOSER.EXE\" PROC \"mame\" 3 1\n"));
 
     setMediaDir(emulatorType, emu);
     validation.setGameEmulator(emu);
