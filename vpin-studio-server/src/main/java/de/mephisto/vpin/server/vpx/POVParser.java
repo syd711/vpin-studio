@@ -67,7 +67,7 @@ public class POVParser extends DefaultHandler {
         }
       }
 
-      LOG.info("Finished parsing of " + povFile.getAbsolutePath());
+      LOG.info("Finished parsing of {}", povFile.getAbsolutePath());
     } catch (Exception e) {
       String msg = "Failed to parse pov file '" + povFile.getAbsolutePath() + "': " + e.getMessage();
       LOG.error(msg, e);

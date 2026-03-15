@@ -36,7 +36,7 @@ public class ScreenPreviewService implements InitializingBean {
       ImageUtil.writeJPG(bufferedImage, out);
     }
     catch (Exception e) {
-      LOG.error("Failed to generated screen capture for " + display + ": {}", e.getMessage(), e);
+      LOG.error("Failed to generated screen capture for {}: {}", display, e.getMessage(), e);
     }
   }
 
@@ -47,7 +47,7 @@ public class ScreenPreviewService implements InitializingBean {
       ImageUtil.writeJPG(bufferedImage, out);
     }
     catch (Exception e) {
-      LOG.error("Failed to generated screen capture for monitor #" + display + ": {}", e.getMessage(), e);
+      LOG.error("Failed to generated screen capture for monitor #{}: {}", display, e.getMessage(), e);
     }
   }
 
@@ -72,7 +72,7 @@ public class ScreenPreviewService implements InitializingBean {
       return robot.createScreenCapture(rectangle);
     }
     catch (Exception e) {
-      LOG.error("Failed to generated screen capture for monitor #" + display + ": {}", e.getMessage(), e);
+      LOG.error("Failed to generated screen capture for monitor #{}: {}", display, e.getMessage(), e);
     }
     return null;
   }

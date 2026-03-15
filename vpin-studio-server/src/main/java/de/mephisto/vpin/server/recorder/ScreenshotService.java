@@ -190,7 +190,7 @@ public class ScreenshotService {
 
     for (File screenshotFile : screenshotFiles) {
       if (!screenshotFile.delete()) {
-        LOG.warn("Failed to delete temporary screenshot file " + screenshotFile.getAbsolutePath());
+        LOG.warn("Failed to delete temporary screenshot file {}", screenshotFile.getAbsolutePath());
       }
       else {
         LOG.info("Delete temporary screenshot {}", screenshotFile.getAbsolutePath());
@@ -233,7 +233,7 @@ public class ScreenshotService {
           file.renameTo(target);
 
           screenshotFiles.add(target);
-          LOG.info("Written screenshot " + target.getAbsolutePath());
+          LOG.info("Written screenshot {}", target.getAbsolutePath());
         }
       }
       catch (Exception e) {

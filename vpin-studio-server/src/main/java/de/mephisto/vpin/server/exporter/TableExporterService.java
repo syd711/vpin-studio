@@ -90,14 +90,14 @@ public class TableExporterService extends ExporterService {
             }
           }
           catch (Exception e) {
-            LOG.error("Export failed for table \"" + game.getGameDisplayName() + "\":" + e.getMessage(), e);
+            LOG.error("Export failed for table \"{}\":{}", game.getGameDisplayName(), e.getMessage(), e);
           }
         }
       }
       return builder.toString();
     }
     catch (Exception e) {
-      LOG.error("Export failed: " + e.getMessage(), e);
+      LOG.error("Export failed: {}", e.getMessage(), e);
       return "Export failed: " + e.getMessage();
     }
   }

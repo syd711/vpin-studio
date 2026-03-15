@@ -116,18 +116,18 @@ public class BackglassExportService extends ExporterService {
             }
 
             printer.printRecord(records);
-            LOG.info("Finished backglass export of " + game);
+            LOG.info("Finished backglass export of {}", game);
           }
         }
         catch (Exception e) {
-          LOG.error("Export failed for table \"" + game.getGameDisplayName() + "\":" + e.getMessage(), e);
+          LOG.error("Export failed for table \"{}\":{}", game.getGameDisplayName(), e.getMessage(), e);
         }
       }
 
       return builder.toString();
     }
     catch (Exception e) {
-      LOG.error("Failed to export highscore data: " + e.getMessage(), e);
+      LOG.error("Failed to export highscore data: {}", e.getMessage(), e);
       return "Failed to export highscore data: " + e.getMessage();
     }
   }

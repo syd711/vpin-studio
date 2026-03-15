@@ -75,13 +75,13 @@ public class MediaRenamer {
 						renameToTable(p, target, path.relativize(p), name, parts, addExtras, undo);
 					}
 					else {
-						LOG.warn(" >>> No Match for " + p.getFileName());
+						LOG.warn(" >>> No Match for {}", p.getFileName());
 					}
 				});
 
 			}
 		catch(IOException ioe) {
-			LOG.error("Error while listing files of " + path, ioe);
+			LOG.error("Error while listing files of {}", path, ioe);
 		}
 		finally {
 			Path undotxt = path.resolve("undo.txt");
@@ -133,7 +133,7 @@ public class MediaRenamer {
 		String subfolder = relativePath.toFile().getParent();
 		String ext = StringUtils.substringAfterLast(relativePath.toString(), ".").toLowerCase();
 		
-		LOG.info("Match " + relativePath.getFileName() + " with " + tableName);
+		LOG.info("Match {} with {}", relativePath.getFileName(), tableName);
 
 		String fileName = tableName;
 		if (addExtras && StringUtils.isNotEmpty(parts.getExtra())) {
@@ -163,7 +163,7 @@ public class MediaRenamer {
 				undo.append("mv \"").append(newPath.toAbsolutePath()).append("\" \"").append(p.toAbsolutePath()).append("\";\n");
 			}
 			catch (IOException ioe) {
-				LOG.error("Cannot move file " + p.toString(), ioe);
+				LOG.error("Cannot move file {}", p.toString(), ioe);
 			}
 		}
 	}

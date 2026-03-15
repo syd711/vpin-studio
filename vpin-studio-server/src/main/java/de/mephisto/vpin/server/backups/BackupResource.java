@@ -123,7 +123,7 @@ public class BackupResource {
       in.close();
       out.close();
 
-      LOG.info("Finished download of \"" + backupDescriptor.getTableDetails().getGameDisplayName() + "\"");
+      LOG.info("Finished download of \"{}\"", backupDescriptor.getTableDetails().getGameDisplayName());
       invalidateCache();
     }
     catch (IOException ex) {
@@ -147,7 +147,7 @@ public class BackupResource {
       }
     }
     catch (Exception e) {
-      LOG.error("Archive upload failed: " + e.getMessage(), e);
+      LOG.error("Archive upload failed: {}", e.getMessage(), e);
       return JobDescriptorFactory.error("Archive upload failed: " + e.getMessage());
     }
     return JobDescriptorFactory.error(null);

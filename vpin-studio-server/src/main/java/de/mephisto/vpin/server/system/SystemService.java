@@ -686,7 +686,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       FileUtils.copyFile(source, target);
     }
     catch (IOException e) {
-      LOG.error("Failed to backup DB: " + e.getMessage(), e);
+      LOG.error("Failed to backup DB: {}", e.getMessage(), e);
     }
     return target.getName();
   }

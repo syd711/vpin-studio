@@ -153,7 +153,7 @@ public class SystemBackupService {
             }
 
             gameService.save(game);
-            LOG.info("Restored game settings for \"" + game.getGameFileName() + "\"");
+            LOG.info("Restored game settings for \"{}\"", game.getGameFileName());
           }
         }
       }

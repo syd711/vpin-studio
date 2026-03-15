@@ -221,7 +221,7 @@ public class DirectB2SResource {
       res.contentLength(resource.contentLength());
     }
     catch (IOException ioe) {
-      LOG.warn("Cannot determine content Length for " + name);
+      LOG.warn("Cannot determine content Length for {}", name);
     }
 
     // add content Type
@@ -340,7 +340,7 @@ public class DirectB2SResource {
       return backglassService.saveServerSettings(settings);
     }
     catch (Exception e) {
-      LOG.error("Saving b2s server settings failed: " + e.getMessage(), e);
+      LOG.error("Saving b2s server settings failed: {}", e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Saving b2s server settings failed: " + e.getMessage());
     }
   }
@@ -362,7 +362,7 @@ public class DirectB2SResource {
       return descriptor;
     }
     catch (Exception e) {
-      LOG.error("Directb2s upload failed: " + e.getMessage(), e);
+      LOG.error("Directb2s upload failed: {}", e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "DirectB2S upload failed: " + e.getMessage());
     }
     finally {

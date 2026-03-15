@@ -232,7 +232,7 @@ public class GamesResource {
    */
   @GetMapping("/scan/{id}")
   public Game scanGame(@PathVariable("id") int pupId) {
-    LOG.info("Client initiated game scan for " + pupId);
+    LOG.info("Client initiated game scan for {}", pupId);
     Game game = gameService.scanGame(pupId);
     if (game != null) {
       gameService.scanScore(game.getId(), EventOrigin.INITIAL_SCAN);

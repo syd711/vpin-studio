@@ -35,7 +35,7 @@ public class UniversalUploadResource {
       descriptor.upload();
     }
     catch (Exception e) {
-      LOG.error("Table upload failed: " + e.getMessage(), e);
+      LOG.error("Table upload failed: {}", e.getMessage(), e);
       descriptor.setError("Table upload failed: " + e.getMessage());
       descriptor.finalizeUpload();
     }

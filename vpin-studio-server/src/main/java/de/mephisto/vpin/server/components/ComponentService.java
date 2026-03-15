@@ -87,7 +87,7 @@ public class ComponentService implements InitializingBean {
       component.setInstalledVersion(version);
       componentRepository.saveAndFlush(component);
       getComponent(type).setInstalledVersion(version);
-      LOG.info("Applied version " + version + " for " + type.name());
+      LOG.info("Applied version {} for {}", version, type.name());
       return true;
     }
     return false;
@@ -106,7 +106,7 @@ public class ComponentService implements InitializingBean {
       List<String> listWithoutDuplicates = new ArrayList<>(new HashSet<>(values));
       component.setIgnoredVersions(String.join(",", listWithoutDuplicates));
       componentRepository.saveAndFlush(component);
-      LOG.info("Ignored version " + version + " for " + type.name());
+      LOG.info("Ignored version {} for {}", version, type.name());
       loadReleases(component);
       return true;
     }
@@ -143,7 +143,7 @@ public class ComponentService implements InitializingBean {
           boolean diff = install.isDiffering();
           if (!diff) {
             component.setInstalledVersion(githubRelease.getTag());
-            LOG.info("Applied current version \"" + githubRelease.getTag() + " for " + component.getType());
+            LOG.info("Applied current version \"{} for {}", githubRelease.getTag(), component.getType());
           }
 
           component.setLastCheck(new Date());
@@ -231,7 +231,7 @@ public class ComponentService implements InitializingBean {
       this.releaseCache.put(component.getType(), githubReleases);
     }
     catch (IOException e) {
-      LOG.error("Failed to initialize release for " + component + ": " + e.getMessage(), e);
+      LOG.error("Failed to initialize release for {}: {}", component, e.getMessage(), e);
     }
   }
 

@@ -43,7 +43,7 @@ public class TextHighscoreAdapters implements InitializingBean {
 
   public boolean resetHighscores(@NonNull ScoringDB scoringDB, @NonNull File file, long score) {
     if (scoringDB.getIgnoredTextFiles().contains(file.getName())) {
-      LOG.info("\"" + file.getName() + "\" was marked as to be ignored for text file based and will not be resetted.");
+      LOG.info("\"{}\" was marked as to be ignored for text file based and will not be resetted.", file.getName());
       return false;
     }
 
@@ -54,18 +54,18 @@ public class TextHighscoreAdapters implements InitializingBean {
       fileInputStream.close();
       for (ScoreTextFileAdapter adapter : adapters) {
         if (adapter.isApplicable(file, lines)) {
-          LOG.info("Resetting \"" + file.getAbsolutePath() + "\" using " + adapter.getClass().getSimpleName());
+          LOG.info("Resetting \"{}\" using {}", file.getAbsolutePath(), adapter.getClass().getSimpleName());
           List<String> resetHighscoreText = adapter.resetHighscore(file, lines, score);
           if (resetHighscoreText != null) {
             FileUtils.writeLines(file, StandardCharsets.UTF_8.name(), resetHighscoreText);
-            LOG.info("Resetted \"" + file.getAbsolutePath() + "\"");
+            LOG.info("Resetted \"{}\"", file.getAbsolutePath());
             return true;
           }
         }
       }
     }
     catch (IOException e) {
-      LOG.error("Error reading EM highscore file: " + e.getMessage(), e);
+      LOG.error("Error reading EM highscore file: {}", e.getMessage(), e);
     }
     return false;
   }
@@ -82,17 +82,17 @@ public class TextHighscoreAdapters implements InitializingBean {
       List<String> lines = IOUtils.readLines(fileInputStream, Charset.defaultCharset());
       for (ScoreTextFileAdapter adapter : adapters) {
         if (adapter.isApplicable(file, lines)) {
-          LOG.info("Converted score with converter class name \"" + adapter.getClass().getSimpleName() + "\", " + lines.size() + " lines.");
+          LOG.info("Converted score with converter class name \"{}\", {} lines.", adapter.getClass().getSimpleName(), lines.size());
           SLOG.info("Converted score with converter class name \"" + adapter.getClass().getSimpleName() + "\", " + lines.size() + " lines.");
           return adapter.convert(file, lines);
         }
       }
-      LOG.info("No parser found for " + file.getName() + ", length: " + lines.size() + " rows.");
+      LOG.info("No parser found for {}, length: {} rows.", file.getName(), lines.size());
       metadata.setStatus("No parser found for highscore file \"" + file.getName() + "\". Please report this table.");
     }
     catch (IOException e) {
       SLOG.error("Error reading EM highscore file: " + e.getMessage());
-      LOG.error("Error reading EM highscore file: " + e.getMessage(), e);
+      LOG.error("Error reading EM highscore file: {}", e.getMessage(), e);
     }
     finally {
       if (fileInputStream != null) {
@@ -135,10 +135,10 @@ public class TextHighscoreAdapters implements InitializingBean {
 
         adapters.add(adapter);
       }
-      LOG.info("Text parser creation finished, loaded " + highscoreTextParsers.size() + " parsers.");
+      LOG.info("Text parser creation finished, loaded {} parsers.", highscoreTextParsers.size());
     }
     catch (Exception e) {
-      LOG.error(this.getClass().getSimpleName() + " initialization failed: " + e.getMessage(), e);
+      LOG.error("{} initialization failed: {}", this.getClass().getSimpleName(), e.getMessage(), e);
     }
   }
 
@@ -149,7 +149,7 @@ public class TextHighscoreAdapters implements InitializingBean {
       }
     }
     catch (Exception e) {
-      LOG.error("Error setting parser param '" + key + "': " + e.getMessage(), e);
+      LOG.error("Error setting parser param '{}': {}", key, e.getMessage(), e);
     }
   }
 

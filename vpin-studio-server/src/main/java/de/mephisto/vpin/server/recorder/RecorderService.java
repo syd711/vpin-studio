@@ -21,8 +21,10 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.jobs.JobService;
+import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.notifications.NotificationService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.steam.SteamService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -77,6 +79,12 @@ public class RecorderService {
 
   @Autowired
   private FuturePinballService futurePinballService;
+
+  @Autowired
+  private SteamService steamService;
+
+  @Autowired
+  private MameService mameService;
 
   @Autowired
   private NotificationService notificationService;
@@ -239,6 +247,12 @@ public class RecorderService {
     }
     else if (game.isFpGame()) {
       futurePinballService.play(game, altExe);
+    }
+    else if (game.isZaccariaGame() || game.isZenGame()) {
+      steamService.play(game);
+    }
+    else if (game.isMameGame()) {
+      mameService.play(game);
     }
     else {
       throw new UnsupportedOperationException("Unsupported emulator: " + game.getEmulator());

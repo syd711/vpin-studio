@@ -57,12 +57,12 @@ public class WheelAugmenter {
 
   public void augment(File badgeFile) {
     if (!wheelIcon.exists()) {
-      LOG.error("Could not augment wheel icon " + wheelIcon.getAbsolutePath() + ", file does not exist.");
+      LOG.error("Could not augment wheel icon {}, file does not exist.", wheelIcon.getAbsolutePath());
       return;
     }
 
     if (backupWheelIcon.exists()) {
-      LOG.info("Skipped wheel augmentation, because back file " + backupWheelIcon.getAbsolutePath() + " already exists.");
+      LOG.info("Skipped wheel augmentation, because back file {} already exists.", backupWheelIcon.getAbsolutePath());
       return;
     }
 
@@ -112,9 +112,9 @@ public class WheelAugmenter {
       BufferedImage thumbnailSm = ImageUtil.resizeImage(thumbnail, 90);
       ImageUtil.write(thumbnailSm, wheelIconThumbnailSm);
 
-      LOG.info("Augmented " + wheelIconThumbnail.getAbsolutePath());
+      LOG.info("Augmented {}", wheelIconThumbnail.getAbsolutePath());
     } catch (Exception e) {
-      LOG.error("Wheel augmentation failed: " + e.getMessage(), e);
+      LOG.error("Wheel augmentation failed: {}", e.getMessage(), e);
     }
     resetThumbs();
   }
@@ -125,7 +125,7 @@ public class WheelAugmenter {
         FileUtils.deleteDirectory(thumbsFolder);
       }
     } catch (IOException e) {
-      LOG.info("Failed to reset thumbnails: " + e.getMessage(), e);
+      LOG.info("Failed to reset thumbnails: {}", e.getMessage(), e);
     }
   }
 
@@ -141,22 +141,22 @@ public class WheelAugmenter {
   private boolean deAugment(File backup, File target) {
     if (backup.exists()) {
       if (target.exists() && !target.delete()) {
-        LOG.warn("Failed to delete augmented file '" + target.getAbsolutePath() + "'");
+        LOG.warn("Failed to delete augmented file '{}'", target.getAbsolutePath());
         return false;
       }
       else {
-        LOG.info("Deleted augmented file '" + target.getAbsolutePath() + "'");
+        LOG.info("Deleted augmented file '{}'", target.getAbsolutePath());
       }
 
       try {
         FileUtils.copyFile(backup, target);
-        LOG.info("Copied un-augmented wheel icon '" + backup.getAbsolutePath() + "' back to '" + target.getAbsolutePath() + "'");
+        LOG.info("Copied un-augmented wheel icon '{}' back to '{}'", backup.getAbsolutePath(), target.getAbsolutePath());
         if (!backup.delete()) {
-          LOG.error("Failed to delete backup file " + backup.getAbsolutePath());
+          LOG.error("Failed to delete backup file {}", backup.getAbsolutePath());
         }
         return true;
       } catch (IOException e) {
-        LOG.error("Failed to restore original wheel icon '" + target.getAbsolutePath() + "': " + e.getMessage(), e);
+        LOG.error("Failed to restore original wheel icon '{}': {}", target.getAbsolutePath(), e.getMessage(), e);
       }
     }
     return false;

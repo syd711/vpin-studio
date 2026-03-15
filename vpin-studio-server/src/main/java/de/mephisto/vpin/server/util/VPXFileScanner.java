@@ -90,19 +90,19 @@ public class VPXFileScanner {
         }
 
         if (StringUtils.isEmpty(result.getRom()) && allLines.size() > 1) {
-          LOG.info("Regular scan failed, running deep scan for " + gameFile.getAbsolutePath());
+          LOG.info("Regular scan failed, running deep scan for {}", gameFile.getAbsolutePath());
           runDeepScan(gameFile, result);
         }
 
         if (!StringUtils.isEmpty(result.getRom())) {
-          LOG.info("Finished scan of table " + gameFile.getAbsolutePath() + ", found ROM '" + result.getRom() + "', took " + (System.currentTimeMillis() - start) + " ms for " + allLines.size() + " lines.");
+          LOG.info("Finished scan of table {}, found ROM '{}', took {} ms for {} lines.", gameFile.getAbsolutePath(), result.getRom(), (System.currentTimeMillis() - start), allLines.size());
         }
         else if (StringUtils.isEmpty(result.getRom()) && StringUtils.isEmpty(result.getTableName()) && !StringUtils.isEmpty(result.getHsFileName())) {
           result.setTableName(FilenameUtils.getBaseName(result.getHsFileName()));
-          LOG.info("Finished scan of table " + gameFile.getAbsolutePath() + ", found EM highscore filename '" + result.getHsFileName() + "', took " + (System.currentTimeMillis() - start) + " ms for " + allLines.size() + " lines.");
+          LOG.info("Finished scan of table {}, found EM highscore filename '{}', took {} ms for {} lines.", gameFile.getAbsolutePath(), result.getHsFileName(), (System.currentTimeMillis() - start), allLines.size());
         }
         else {
-          LOG.info("Finished scan of table " + gameFile.getAbsolutePath() + ", no ROM found" + "', took " + (System.currentTimeMillis() - start) + " ms for " + allLines.size() + " lines.");
+          LOG.info("Finished scan of table {}, no ROM found', took {} ms for {} lines.", gameFile.getAbsolutePath(), (System.currentTimeMillis() - start), allLines.size());
         }
 
         if (!result.isFoundControllerStop()) {
@@ -165,7 +165,7 @@ public class VPXFileScanner {
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to read rom line '" + line + "' for  " + gameFile.getAbsolutePath() + ": " + e.getMessage(), e);
+      LOG.error("Failed to read rom line '{}' for  {}: {}", line, gameFile.getAbsolutePath(), e.getMessage(), e);
     }
     finally {
       try {
@@ -178,7 +178,7 @@ public class VPXFileScanner {
         }
       }
       catch (Exception e) {
-        LOG.error("Failed to close vpx file stream: " + e.getMessage(), e);
+        LOG.error("Failed to close vpx file stream: {}", e.getMessage(), e);
       }
     }
   }
@@ -333,7 +333,7 @@ public class VPXFileScanner {
       lineSearchScript(includedScripts, line, evalctxt);
     }
     catch (Exception e) {
-      LOG.error("error on line " + nbline, e);
+      LOG.error("error on line {}", nbline, e);
     }
   }
 
@@ -408,7 +408,7 @@ public class VPXFileScanner {
         result.setNvOffset(Integer.parseInt(nvOffsetString));
       }
       catch (Exception e) {
-        LOG.error("Failed to read NVOffset from line \"" + line + "\" and segment \"" + nvOffsetString + "\": " + e.getMessage());
+        LOG.error("Failed to read NVOffset from line \"{}\" and segment \"{}\": {}", line, nvOffsetString, e.getMessage());
       }
     }
   }

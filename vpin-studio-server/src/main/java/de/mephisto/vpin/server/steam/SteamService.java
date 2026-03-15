@@ -80,13 +80,13 @@ public class SteamService implements InitializingBean {
 
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
       if (standardErrorFromCommand != null && !StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-        LOG.error("Steam command failed:\n" + standardErrorFromCommand);
+        LOG.error("Steam command failed:\n{}", standardErrorFromCommand);
         return false;
       }
       return true;
     }
     catch (Exception e) {
-      LOG.error("Error executing Steam command: " + e.getMessage(), e);
+      LOG.error("Error executing Steam command: {}", e.getMessage(), e);
     }
     return false;
   }

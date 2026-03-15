@@ -81,7 +81,7 @@ public abstract class MediaService  {
     if (mediaFile != null && mediaFile.exists()) {
       File renamed = new File(mediaFile.getParentFile(), newName);
       if (mediaFile.renameTo(renamed)) {
-        LOG.info("Renamed \"" + mediaFile.getAbsolutePath() + "\" to \"" + renamed.getAbsolutePath() + "\"");
+        LOG.info("Renamed \"{}\" to \"{}\"", mediaFile.getAbsolutePath(), renamed.getAbsolutePath());
         return true;
       }
     }
@@ -114,16 +114,16 @@ public abstract class MediaService  {
       String suffix = FilenameUtils.getExtension(name);
       String updatedBaseName = baseName + "(SCREEN3)." + suffix;
 
-      LOG.info("Renaming " + mediaFile.getAbsolutePath() + " to '" + updatedBaseName + "'");
+      LOG.info("Renaming {} to '{}'", mediaFile.getAbsolutePath(), updatedBaseName);
       boolean renamed = mediaFile.renameTo(new File(mediaFile.getParentFile(), updatedBaseName));
       if (!renamed) {
-        LOG.error("Renaming to " + updatedBaseName + " failed.");
+        LOG.error("Renaming to {} failed.", updatedBaseName);
         return false;
       }
 
       File target = new File(mediaFile.getParentFile(), name);
 
-      LOG.info("Copying blank asset to " + target.getAbsolutePath());
+      LOG.info("Copying blank asset to {}", target.getAbsolutePath());
       FileOutputStream out = new FileOutputStream(target);
       //copy base64 encoded 0s video
       IOUtils.write(EMPTY_MP4, out);
@@ -150,7 +150,7 @@ public abstract class MediaService  {
       else {
         IOUtils.write(EMPTY_MP4, out);
       }
-      LOG.info("Written blank asset \"" + target.getAbsolutePath() + "\"");
+      LOG.info("Written blank asset \"{}\"", target.getAbsolutePath());
     }
     return true;
   }

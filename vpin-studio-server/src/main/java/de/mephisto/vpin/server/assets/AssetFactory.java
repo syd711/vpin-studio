@@ -31,7 +31,7 @@ public class AssetFactory {
       GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
       ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, ServerFX.class.getResourceAsStream("digital_counter_7.ttf")));
     } catch (Exception e) {
-      LOG.error("Error loading font: " + e.getMessage(), e);
+      LOG.error("Error loading font: {}", e.getMessage(), e);
     }
   }
 
@@ -93,7 +93,7 @@ public class AssetFactory {
 
       return ImageUtil.toBytes(background);
     } catch (Exception e) {
-      LOG.error("Failed to get subscription background " + e.getMessage(), e);
+      LOG.error("Failed to get subscription background {}", e.getMessage(), e);
     }
     return null;
   }
@@ -173,7 +173,7 @@ public class AssetFactory {
 
       return ImageUtil.toBytes(background);
     } catch (Exception e) {
-      LOG.error("Failed to get competition background " + e.getMessage(), e);
+      LOG.error("Failed to get competition background {}", e.getMessage(), e);
     }
     return null;
   }
@@ -296,7 +296,7 @@ public class AssetFactory {
 
       return ImageUtil.toBytes(background);
     } catch (Exception e) {
-      LOG.error("Failed to get competition background " + e.getMessage(), e);
+      LOG.error("Failed to get competition background {}", e.getMessage(), e);
     }
     return null;
   }

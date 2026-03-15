@@ -19,7 +19,7 @@ public class PinballYSettingsParser {
       load(p, file);
     }
     catch (Exception e) {
-      LOG.error("cannot parse settings file " + pinballYSettings, e);
+      LOG.error("cannot parse settings file {}", pinballYSettings, e);
     }
     return p;
   }

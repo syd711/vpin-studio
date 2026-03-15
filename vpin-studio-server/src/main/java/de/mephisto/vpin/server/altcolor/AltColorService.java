@@ -88,7 +88,7 @@ public class AltColorService implements InitializingBean {
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to delete altcolor directory for " + game + ": " + e.getMessage(), e);
+      LOG.error("Failed to delete altcolor directory for {}: {}", game, e.getMessage(), e);
     }
     return false;
   }
@@ -223,11 +223,11 @@ public class AltColorService implements InitializingBean {
         }
       }
       catch (IOException e) {
-        LOG.error("Failed to copy alt color file: " + e.getMessage(), e);
+        LOG.error("Failed to copy alt color file: {}", e.getMessage(), e);
         return JobDescriptorFactory.error("Failed to copy alt color file: " + e.getMessage());
       }
     }
-    LOG.info("Successfully imported ALT color from temp file " + out.getAbsolutePath());
+    LOG.info("Successfully imported ALT color from temp file {}", out.getAbsolutePath());
     setAltColorEnabled(game, true);
     return JobDescriptorFactory.empty();
   }
@@ -270,13 +270,13 @@ public class AltColorService implements InitializingBean {
             backup = new File(backupsFolder, FilenameUtils.getBaseName(name) + "[" + format + "]." + FilenameUtils.getExtension(name));
           }
           FileUtils.copyFile(existingFile, backup);
-          LOG.info("Created backup ALTColor backup file \"" + backup.getAbsolutePath() + "\"");
+          LOG.info("Created backup ALTColor backup file \"{}\"", backup.getAbsolutePath());
           if (!existingFile.delete()) {
-            LOG.error("Failed to delete existing ALTColor file \"" + existingFile.getAbsolutePath() + "\"");
+            LOG.error("Failed to delete existing ALTColor file \"{}\"", existingFile.getAbsolutePath());
           }
         }
         catch (Exception e) {
-          LOG.error("Failed to backup ALTColor file \"" + existingFile.getAbsolutePath() + "\": " + e.getMessage(), e);
+          LOG.error("Failed to backup ALTColor file \"{}\": {}", existingFile.getAbsolutePath(), e.getMessage(), e);
         }
       }
     }

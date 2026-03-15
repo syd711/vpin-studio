@@ -42,7 +42,7 @@ public class FreezySummarizer {
       try {
         iniConfiguration.read(reader);
       } catch (Exception e) {
-        LOG.error("Failed to read: " + iniFile.getAbsolutePath() + ": " + e.getMessage(), e);
+        LOG.error("Failed to read: {}: {}", iniFile.getAbsolutePath(), e.getMessage(), e);
         throw e;
       } finally {
         in.close();
@@ -115,7 +115,7 @@ public class FreezySummarizer {
       }
 
     } catch (Exception e) {
-      LOG.error("Failed to load " + iniFile.getAbsolutePath() + ": " + e.getMessage(), e);
+      LOG.error("Failed to load {}: {}", iniFile.getAbsolutePath(), e.getMessage(), e);
       summary.setError("Error creating freezy summary: " + e.getMessage());
     }
     return summary;

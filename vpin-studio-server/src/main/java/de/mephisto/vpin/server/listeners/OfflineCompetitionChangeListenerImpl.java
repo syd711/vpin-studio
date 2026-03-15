@@ -113,7 +113,7 @@ public class OfflineCompetitionChangeListenerImpl extends DefaultCompetitionChan
           frontendStatusService.augmentWheel(game, competition.getBadge());
         }
       } catch (Exception e) {
-        LOG.error("Error creating offline competition: " + e.getMessage(), e);
+        LOG.error("Error creating offline competition: {}", e.getMessage(), e);
       }
     }
   }
@@ -148,7 +148,7 @@ public class OfflineCompetitionChangeListenerImpl extends DefaultCompetitionChan
             }
           }
           else {
-            LOG.warn("Skipped finish notification for " + competition + ", invalid Discord configuration.");
+            LOG.warn("Skipped finish notification for {}, invalid Discord configuration.", competition);
           }
         }
       }

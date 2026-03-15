@@ -19,7 +19,7 @@ public class VersionUtil {
       resourceAsStream.close();
       return properties.getProperty("vpin.studio.version");
     } catch (IOException e) {
-      LOG.error("Failed to read version number: " + e.getMessage(), e);
+      LOG.error("Failed to read version number: {}", e.getMessage(), e);
     }
     return null;
   }

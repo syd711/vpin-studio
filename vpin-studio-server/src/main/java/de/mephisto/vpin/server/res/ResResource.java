@@ -39,7 +39,7 @@ public class ResResource {
       return descriptor;
     }
     catch (Exception e) {
-      LOG.error("Res upload failed: " + e.getMessage(), e);
+      LOG.error("Res upload failed: {}", e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Res upload failed: " + e.getMessage());
     }
     finally {

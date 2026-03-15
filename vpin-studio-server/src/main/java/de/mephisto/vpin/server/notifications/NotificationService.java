@@ -180,7 +180,7 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to initialize " + this + ": " + e.getMessage(), e);
+      LOG.error("Failed to initialize {}: {}", this, e.getMessage(), e);
     }
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }

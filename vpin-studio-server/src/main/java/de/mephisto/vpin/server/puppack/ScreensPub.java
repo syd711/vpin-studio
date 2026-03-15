@@ -40,7 +40,7 @@ public class ScreensPub {
         }
       }
     } catch (Exception e) {
-      LOG.error("Failed to load " + screensPupFile.getAbsolutePath() + ": " + e.getMessage(), e);
+      LOG.error("Failed to load {}: {}", screensPupFile.getAbsolutePath(), e.getMessage(), e);
     } finally {
       if (in != null) {
         try {

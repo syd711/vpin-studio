@@ -79,10 +79,10 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
 
   private IScoredSyncModel synchronize(IScoredSyncModel syncModel, List<Game> knownGames) {
     if (syncModel.getGame() != null) {
-      LOG.info("--- ------- iScored Sync (" + syncModel.getGame().getName() + ")-----------------");
+      LOG.info("--- ------- iScored Sync ({})-----------------", syncModel.getGame().getName());
     }
     else {
-      LOG.info("--- ------- iScored Sync (" + syncModel.getiScoredGameRoom().getUrl() + ")-----------------");
+      LOG.info("--- ------- iScored Sync ({})-----------------", syncModel.getiScoredGameRoom().getUrl());
     }
 
     GameRoom gameRoom = IScored.getGameRoom(syncModel.getiScoredGameRoom().getUrl(), syncModel.isInvalidate());
@@ -108,7 +108,7 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
       LOG.info("Cancelled sync, game room could not be loaded.");
     }
 
-    LOG.info("--- ------- /iScored Sync (" + syncModel.getiScoredGameRoom().getUrl() + ")-----------------");
+    LOG.info("--- ------- /iScored Sync ({})-----------------", syncModel.getiScoredGameRoom().getUrl());
     return syncModel;
   }
 

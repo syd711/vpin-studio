@@ -71,7 +71,7 @@ public class VPRegFile {
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to read VPReg: " + e.getMessage());
+      LOG.error("Failed to read VPReg: {}", e.getMessage());
     }
     finally {
       if (fs != null) {
@@ -117,7 +117,7 @@ public class VPRegFile {
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to read VPReg: " + e.getMessage());
+      LOG.error("Failed to read VPReg: {}", e.getMessage());
     }
     finally {
       if (fs != null) {
@@ -140,7 +140,7 @@ public class VPRegFile {
       if (gameFolder != null) {
         for (VPRegHighscoreAdapter adapter : adapters.values()) {
           if (adapter.isApplicable(gameFolder)) {
-            LOG.info("Resetting highscore using " + adapter.getClass().getSimpleName());
+            LOG.info("Resetting highscore using {}", adapter.getClass().getSimpleName());
             return adapter.resetHighscore(fs, gameFolder, score);
           }
         }
@@ -191,7 +191,7 @@ public class VPRegFile {
       return objectMapper.writeValueAsString(target);
     }
     catch (IOException e) {
-      LOG.error("Failed to read VPReg.stg: " + e.getMessage(), e);
+      LOG.error("Failed to read VPReg.stg: {}", e.getMessage(), e);
     }
     finally {
       if (fs != null) {
@@ -237,7 +237,7 @@ public class VPRegFile {
       fs.writeFilesystem();
     }
     catch (IOException e) {
-      LOG.error("Failed to read VPReg.stg: " + e.getMessage(), e);
+      LOG.error("Failed to read VPReg.stg: {}", e.getMessage(), e);
     }
     finally {
       if (fs != null) {
@@ -271,7 +271,7 @@ public class VPRegFile {
       }
     }
     catch (IOException e) {
-      LOG.error("Failed to read VPReg.stg: " + e.getMessage(), e);
+      LOG.error("Failed to read VPReg.stg: {}", e.getMessage(), e);
     }
     finally {
       if (fs != null) {
@@ -305,7 +305,7 @@ public class VPRegFile {
       fs.writeFilesystem();
     }
     catch (IOException e) {
-      LOG.error("Failed to deleting entry from VPReg.stg: " + e.getMessage(), e);
+      LOG.error("Failed to deleting entry from VPReg.stg: {}", e.getMessage(), e);
     }
     finally {
       if (fs != null) {

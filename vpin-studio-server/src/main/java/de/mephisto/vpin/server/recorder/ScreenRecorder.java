@@ -52,7 +52,7 @@ public class ScreenRecorder {
 
     try {
       if (options.getInitialDelay() > 0) {
-        LOG.info(this + " is waiting for the initial recording delay of " + options.getInitialDelay() + " seconds.");
+        LOG.info("{} is waiting for the initial recording delay of {} seconds.", this, options.getInitialDelay());
         for (int i = 0; i < options.getInitialDelay(); i++) {
           Thread.sleep(1000);
           if (cancelled) {
@@ -155,7 +155,7 @@ public class ScreenRecorder {
     if (temporaryTarget.exists()) {
       temporaryTarget.delete();
     }
-    LOG.info("Finished cancellation of " + this);
+    LOG.info("Finished cancellation of {}", this);
   }
 
   @Override

@@ -283,7 +283,7 @@ public class VPXZService implements InitializingBean {
 
     VPXZSourceAdapter VPXZSourceAdapter = VPXZSourceAdapterFactory.create(this, updatedSource, vpxzFileService);
     vpxMobileSourcesCache.put(updatedSource.getId(), VPXZSourceAdapter);
-    LOG.info("(Re)created vpxz source adapter \"" + updatedSource + "\"");
+    LOG.info("(Re)created vpxz source adapter \"{}\"", updatedSource);
     return updatedSource;
   }
 
@@ -293,7 +293,7 @@ public class VPXZService implements InitializingBean {
       createVpxz(game, vpxzDescriptor);
     }
     else {
-      LOG.error("Cancelled backup for id " + game + ", invalid game data.");
+      LOG.error("Cancelled backup for id {}, invalid game data.", game);
     }
   }
 
@@ -310,7 +310,7 @@ public class VPXZService implements InitializingBean {
 
       descriptor.setJob(new VPXZCreationJob(vpxzFileService, source.get(), game, tableDetails, vpxzSettings, exportDescriptor.getVpxStandaloneFile()));
       jobService.offer(descriptor);
-      LOG.info("Offered vpxz export job for '" + game.getGameDisplayName() + "'");
+      LOG.info("Offered vpxz export job for '{}'", game.getGameDisplayName());
     }
     else {
       LOG.error("No matching vps source found for {}", exportDescriptor.getSourceId());

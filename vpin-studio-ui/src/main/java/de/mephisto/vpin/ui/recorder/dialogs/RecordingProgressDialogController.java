@@ -26,6 +26,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -86,6 +87,12 @@ public class RecordingProgressDialogController implements Initializable, DialogC
 
   @FXML
   private ComboBox<String> launcherCombo;
+
+  @FXML
+  private VBox emulatorSettings;
+
+  @FXML
+  private Pane vpxSettings;
 
 
   private Stage stage;
@@ -258,11 +265,15 @@ public class RecordingProgressDialogController implements Initializable, DialogC
     });
   }
 
-  public void setData(Stage stage, RecorderController recorderController, RecordingDataSummary recordingDataSummary) {
+  public void setData(Stage stage, GameEmulatorRepresentation emulator, RecorderController recorderController, RecordingDataSummary recordingDataSummary) {
     this.stage = stage;
     this.recorderController = recorderController;
     this.recordingDataSummary = recordingDataSummary;
     tablesLabel.setText(recordingDataSummary.size() + " tables selected");
+
+
+    vpxSettings.setVisible(emulator.isVpxEmulator());
+
     if (recordingDataSummary.size() == 1) {
       GameRepresentation game = client.getGameService().getGame(recordingDataSummary.getRecordingData().get(0).getGameId());
       tablesLabel.setText(game.getGameDisplayName());
@@ -271,7 +282,7 @@ public class RecordingProgressDialogController implements Initializable, DialogC
     List<RecordingData> recordingData = recordingDataSummary.getRecordingData();
     for (RecordingData data : recordingData) {
       GameRepresentation game = client.getGameService().getGame(data.getGameId());
-      if (!client.getEmulatorService().isVpxGame(game)) {
+      if (!emulator.isVpxEmulator() && !emulator.isZaccariaEmulator() && !emulator.isFxEmulator() && !emulator.isMameEmulator() && !emulator.isFpEmulator()) {
         frontendRecordingRadio.setSelected(true);
         emulatorRecordingRadio.setDisable(true);
         launcherCombo.setDisable(true);
@@ -299,6 +310,8 @@ public class RecordingProgressDialogController implements Initializable, DialogC
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     settings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+
+    vpxSettings.managedProperty().bindBidirectional(vpxSettings.visibleProperty());
 
     stopBtn.managedProperty().bindBidirectional(stopBtn.visibleProperty());
     recordBtn.managedProperty().bindBidirectional(recordBtn.visibleProperty());

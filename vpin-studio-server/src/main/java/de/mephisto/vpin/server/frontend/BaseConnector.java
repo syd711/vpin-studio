@@ -117,7 +117,7 @@ public abstract class BaseConnector implements FrontendConnector {
       }
       gamesByEmu.put(emu.getId(), games);
 
-      LOG.info("Parsed games for emulator " + emu.getId() + ", " + emu.getName() + ": " + filenames.size() + " games");
+      LOG.info("Parsed games for emulator {}, {}: {} games", emu.getId(), emu.getName(), filenames.size());
     }
 
     // remaining entries in the List are orphaned, delete them
@@ -731,7 +731,7 @@ public abstract class BaseConnector implements FrontendConnector {
         }
       }
       catch (IOException ioe) {
-        LOG.error("Ignored error, cannot read file " + playlistConfFile.getAbsolutePath(), ioe);
+        LOG.error("Ignored error, cannot read file {}", playlistConfFile.getAbsolutePath(), ioe);
       }
     }
     return new JsonObject();
@@ -758,7 +758,7 @@ public abstract class BaseConnector implements FrontendConnector {
         Files.write(playlistConfFile.toPath(), content.getBytes(StandardCharsets.UTF_8));
       }
       catch (IOException ioe) {
-        LOG.error("Ignored error, cannot write file " + playlistConfFile.getAbsolutePath(), ioe);
+        LOG.error("Ignored error, cannot write file {}", playlistConfFile.getAbsolutePath(), ioe);
       }
     }
   }
@@ -773,7 +773,7 @@ public abstract class BaseConnector implements FrontendConnector {
         Files.write(playlistConfFile.toPath(), content.getBytes(StandardCharsets.UTF_8));
       }
       catch (IOException ioe) {
-        LOG.error("Ignored error, cannot write file " + playlistConfFile.getAbsolutePath(), ioe);
+        LOG.error("Ignored error, cannot write file {}", playlistConfFile.getAbsolutePath(), ioe);
       }
     }
   }
@@ -941,7 +941,7 @@ public abstract class BaseConnector implements FrontendConnector {
     for (ProcessHandle process : processes) {
       String cmd = process.info().command().get();
       boolean b = process.destroyForcibly();
-      LOG.info("Destroyed process '" + cmd + "', result: " + b);
+      LOG.info("Destroyed process '{}', result: {}", cmd, b);
     }
     return true;
   }
@@ -970,12 +970,12 @@ public abstract class BaseConnector implements FrontendConnector {
       //StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
       if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-        LOG.error(exe + " restart failed: {}", standardErrorFromCommand);
+        LOG.error("{} restart failed: {}", exe, standardErrorFromCommand);
         return false;
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to start " + exe + " again: " + e.getMessage(), e);
+      LOG.error("Failed to start {} again: {}", exe, e.getMessage(), e);
       return false;
     }
     return true;

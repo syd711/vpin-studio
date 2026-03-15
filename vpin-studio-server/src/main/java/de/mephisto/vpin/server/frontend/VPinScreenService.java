@@ -293,7 +293,7 @@ public class VPinScreenService implements InitializingBean {
       return StringUtils.isNotBlank(formattedValue) ? parseIntSafe(formattedValue) : defaultValue;
     }
     catch (NumberFormatException e) {
-      LOG.warn("Invalid number read from VPinballX.ini file. Unable to parse " + value + " to a valid integer number, assuming '" + defaultValue + "' instead.");
+      LOG.warn("Invalid number read from VPinballX.ini file. Unable to parse {} to a valid integer number, assuming '{}' instead.", value, defaultValue);
     }
     return defaultValue;
   }

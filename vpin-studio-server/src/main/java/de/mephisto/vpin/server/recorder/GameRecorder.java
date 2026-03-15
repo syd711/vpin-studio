@@ -52,7 +52,7 @@ public class GameRecorder {
   }
 
   public RecordingResult startRecording() {
-    LOG.info("Launching recording of \"" + game.getGameDisplayName() + "\"");
+    LOG.info("Launching recording of \"{}\"", game.getGameDisplayName());
     RecordingResult status = new RecordingResult();
 
     List<Callable<RecordingResult>> callables = new ArrayList<>();
@@ -78,7 +78,7 @@ public class GameRecorder {
           Callable<RecordingResult> screenRecordable = new Callable<RecordingResult>() {
             @Override
             public RecordingResult call() {
-              LOG.info("Starting recording for \"" + game.getGameDisplayName() + "\", " + screen.name() + ": " + recordingTempFile.getAbsolutePath());
+              LOG.info("Starting recording for \"{}\", {}: {}", game.getGameDisplayName(), screen.name(), recordingTempFile.getAbsolutePath());
               recorderSettings.getRecordingScreenOption(screen);
               ScreenRecorder screenRecorder = new ScreenRecorder(recordingScreen, recordingTempFile);
               screenRecorders.add(screenRecorder);
@@ -128,7 +128,7 @@ public class GameRecorder {
       }
     }
     else {
-      LOG.info("Skipped recording of " + game.getGameDisplayName() + ", no screens to record.");
+      LOG.info("Skipped recording of {}, no screens to record.", game.getGameDisplayName());
     }
     return status;
   }
@@ -137,12 +137,12 @@ public class GameRecorder {
   protected RecordingScreenOptions validateScreen(VPinScreen screen) {
     RecordingScreenOptions option = recorderSettings.getRecordingScreenOption(screen);
     if (!option.isEnabled()) {
-      LOG.info("Skipped recording for " + screen + ", screen is not enabled.");
+      LOG.info("Skipped recording for {}, screen is not enabled.", screen);
       return null;
     }
 
     if (!isRecordingRequired(game, screen, option.getRecordMode())) {
-      LOG.info("Skipped recording for " + screen + ", asset not missing.");
+      LOG.info("Skipped recording for {}, asset not missing.", screen);
       return null;
     }
     return option;

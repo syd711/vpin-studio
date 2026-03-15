@@ -119,9 +119,9 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
       return;
     }
 
-    LOG.info("Synchronizing mania table scores for \"" + game + "\"");
+    LOG.info("Synchronizing mania table scores for \"{}\"", game);
     List<Account> cachedPlayerAccounts = maniaServiceCache.getCachedPlayerAccounts();
-    LOG.info("Found " + cachedPlayerAccounts.size() + " eligable local players to synchronize.");
+    LOG.info("Found {} eligable local players to synchronize.", cachedPlayerAccounts.size());
 
     ScoreSummary scores = gameService.getScores(game.getId());
     List<Score> scoreList = scores.getScores();
@@ -162,7 +162,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
             continue;
           }
 
-          LOG.info("Found score match to synchronize for " + playerInitials + ": " + score);
+          LOG.info("Found score match to synchronize for {}: {}", playerInitials, score);
           TableScore submitted = maniaClient.getHighscoreClient().submitOrUpdate(tableScore);
           result.setTableScore(submitted);
           result.setResult("The highscore was successfully synchronized.");
@@ -173,7 +173,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
         }
       }
       catch (Exception e) {
-        LOG.error("Failed to submit mania highscore during sync: " + e.getMessage(), e);
+        LOG.error("Failed to submit mania highscore during sync: {}", e.getMessage(), e);
         result.setResult("Failed to submit mania highscore during sync: " + e.getMessage());
       }
     }
@@ -302,7 +302,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
         LOG.info("Switched cabinet to modus: {}", CabinetOnlineStatus.offline);
       }
       catch (Exception e) {
-        LOG.error("Error during tournament service shutdown: " + e.getMessage(), e);
+        LOG.error("Error during tournament service shutdown: {}", e.getMessage(), e);
       }
     }
   }
@@ -321,7 +321,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
         LOG.info("Switched cabinet to modus: {}", CabinetOnlineStatus.online);
       }
       catch (Exception e) {
-        LOG.error("Error during tournament service shutdown: " + e.getMessage(), e);
+        LOG.error("Error during tournament service shutdown: {}", e.getMessage(), e);
       }
     }
   }

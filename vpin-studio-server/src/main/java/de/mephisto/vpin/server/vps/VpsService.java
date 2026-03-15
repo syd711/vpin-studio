@@ -245,7 +245,7 @@ public class VpsService implements InitializingBean {
             VPSChanges changes = tableDiff.getTableChanges();
             String json = changes.toJson();
             List<String> changeTypes = changes.getChanges().stream().map(c -> c.getDiffType().name()).collect(Collectors.toList());
-            LOG.info("Updating change list for \"" + game.getGameDisplayName() + "\" (" + tableDiff.getChanges().getChanges().size() + " entries): " + String.join(", ", changeTypes));
+            LOG.info("Updating change list for \"{}\" ({} entries): {}", game.getGameDisplayName(), tableDiff.getChanges().getChanges().size(), String.join(", ", changeTypes));
             gameDetails.setUpdates(json);
             gameDetailsRepositoryService.saveAndFlush(gameDetails);
             gameLifecycleService.notifyGameUpdated(game.getId());
@@ -253,7 +253,7 @@ public class VpsService implements InitializingBean {
         }
       }
       catch (Exception e) {
-        LOG.error("Failed to update game details for VPS changes: " + e.getMessage(), e);
+        LOG.error("Failed to update game details for VPS changes: {}", e.getMessage(), e);
       }
     }
   }
@@ -267,7 +267,7 @@ public class VpsService implements InitializingBean {
       return installer != null ? installer.login() : "Source not supported";
     }
     catch (IOException ioe) {
-      LOG.error("Check login for " + link + " failed, " + ioe.getMessage());
+      LOG.error("Check login for {} failed, {}", link, ioe.getMessage());
       return "Error while authenticating, please try again";
     }
   }
@@ -279,13 +279,13 @@ public class VpsService implements InitializingBean {
         LOG.info("Get all links for {}:", link);
         List<VpsInstallLink> links = installer.getInstallLinks(link);
         for (VpsInstallLink l : links) {
-          LOG.info("link " + l.getOrder() + ", " + l.getName() + " (" + l.getSize() + ")");
+          LOG.info("link {}, {} ({})", l.getOrder(), l.getName(), l.getSize());
         }
         return links;
       }
     }
     catch (IOException ioe) {
-      LOG.error("Couldn't get links for " + link + ", " + ioe.getMessage());
+      LOG.error("Couldn't get links for {}, {}", link, ioe.getMessage());
     }
     return new ArrayList<>();
   }
@@ -322,7 +322,7 @@ public class VpsService implements InitializingBean {
       this.vpsDatabase.reload();
     }
     catch (Exception e) {
-      LOG.info("Failed to initialize VPS service: " + e.getMessage(), e);
+      LOG.info("Failed to initialize VPS service: {}", e.getMessage(), e);
     }
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }

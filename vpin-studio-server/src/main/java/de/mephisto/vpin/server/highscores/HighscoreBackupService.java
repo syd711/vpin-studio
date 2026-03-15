@@ -65,7 +65,7 @@ public class HighscoreBackupService implements InitializingBean {
     if (archive.exists() && !archive.delete()) {
       throw new UnsupportedOperationException("Failed to delete " + archive.getAbsolutePath());
     }
-    LOG.info("Deleted " + archive.getAbsolutePath());
+    LOG.info("Deleted {}", archive.getAbsolutePath());
     return true;
   }
 
@@ -134,7 +134,7 @@ public class HighscoreBackupService implements InitializingBean {
       return objectMapper.readValue(json, HighscoreBackup.class);
     }
     catch (Exception e) {
-      LOG.error("Failed to read " + archiveFile.getAbsolutePath() + ": " + e.getMessage(), e);
+      LOG.error("Failed to read {}: {}", archiveFile.getAbsolutePath(), e.getMessage(), e);
     }
     return null;
   }

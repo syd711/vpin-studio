@@ -28,26 +28,26 @@ public class ScoreFilter implements InitializingBean, PreferenceChangedListener 
 
   public boolean isScoreFiltered(@NonNull Score score) {
     if (StringUtils.isEmpty(score.getPlayerInitials())) {
-      LOG.info("Filtered highscore update \"" + score + "\": player initials are empty");
+      LOG.info("Filtered highscore update \"{}\": player initials are empty", score);
       SLOG.info("Filtered highscore update \"" + score + "\": player initials are empty");
       return true;
     }
 
     if (score.getScore() < UIDefaults.MAX_RESET_SCORE_VALUE) {
-      LOG.info("Filtered highscore update \"" + score + "\": the score is lower than the allowed threshold of " + UIDefaults.MAX_RESET_SCORE_VALUE);
+      LOG.info("Filtered highscore update \"{}\": the score is lower than the allowed threshold of {}", score, UIDefaults.MAX_RESET_SCORE_VALUE);
       SLOG.info("Filtered highscore update \"" + score + "\": the score is lower than the allowed threshold of " + UIDefaults.MAX_RESET_SCORE_VALUE);
       return true;
     }
 
     if (playerService.getAdminPlayer() == null && score.getPlayerInitials().equalsIgnoreCase("???")) {
-      LOG.info("Filtered highscore update \"" + score + "\": player initials are ??? and there is no default player set.");
+      LOG.info("Filtered highscore update \"{}\": player initials are ??? and there is no default player set.", score);
       SLOG.info("Filtered highscore update \"" + score + "\": player initials are ??? and there is no default player set.");
       return true;
     }
 
     if (highscoreFilterEnabled && !playerService.getBuildInPlayers().isEmpty()) {
       if (playerService.getPlayerForInitials(-1, score.getPlayerInitials()) == null) {
-        LOG.info("Filtered highscore update \"" + score + "\": player initials '" + score.getPlayerInitials() + "' are not on the allow list");
+        LOG.info("Filtered highscore update \"{}\": player initials '{}' are not on the allow list", score, score.getPlayerInitials());
         SLOG.info("Filtered highscore update \"" + score + "\": player initials '" + score.getPlayerInitials() + "' are not on the allow list");
         return true;
       }
@@ -66,7 +66,7 @@ public class ScoreFilter implements InitializingBean, PreferenceChangedListener 
 
   private void refreshScoreFilterSettings() {
     highscoreFilterEnabled = (boolean) preferencesService.getPreferenceValue(PreferenceNames.HIGHSCORE_FILTER_ENABLED, false);
-    LOG.info("Highscore Filter Toggle: " + highscoreFilterEnabled);
+    LOG.info("Highscore Filter Toggle: {}", highscoreFilterEnabled);
   }
 
   @Override

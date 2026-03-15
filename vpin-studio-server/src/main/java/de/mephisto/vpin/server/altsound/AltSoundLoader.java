@@ -93,7 +93,7 @@ public class AltSoundLoader {
       altSound.setFilesize(size);
       altSound.setFiles(audioFiles.size());
     } catch (Exception e) {
-      LOG.error("Failed to read altsound CSV " + csvFile.getAbsolutePath() + ": " + e.getMessage());
+      LOG.error("Failed to read altsound CSV {}: {}", csvFile.getAbsolutePath(), e.getMessage());
     }
     return altSound;
   }
@@ -106,7 +106,7 @@ public class AltSoundLoader {
 
       return Integer.parseInt(value.trim());
     } catch (NumberFormatException e) {
-      LOG.error("AltSoundLoader failed to format value '" + value + "' (" + e.getMessage() + ")");
+      LOG.error("AltSoundLoader failed to format value '{}' ({})", value, e.getMessage());
     }
     return 0;
   }

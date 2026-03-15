@@ -233,7 +233,7 @@ public class BackglassService implements InitializingBean {
         return true;
       }
       catch (Exception e) {
-        LOG.error("Error while updating " + filename, e);
+        LOG.error("Error while updating {}", filename, e);
       }
     }
     return false;
@@ -251,7 +251,7 @@ public class BackglassService implements InitializingBean {
           updater.upddateScoresDisplayState(directB2SFile, state, false);
         }
         catch (Exception e) {
-          LOG.error("Error while updating " + directB2SFileName, e);
+          LOG.error("Error while updating {}", directB2SFileName, e);
         }
       }
     }
@@ -369,7 +369,7 @@ public class BackglassService implements InitializingBean {
       return settings;
     }
     catch (VPinStudioException e) {
-      LOG.error("Failed to save table settings for \"" + game.getId() + "\": " + e.getMessage(), e);
+      LOG.error("Failed to save table settings for \"{}\": {}", game.getId(), e.getMessage(), e);
       throw e;
     }
   }
@@ -467,7 +467,7 @@ public class BackglassService implements InitializingBean {
       return getServerSettings();
     }
     catch (VPinStudioException e) {
-      LOG.error("Failed to save server settings: " + e.getMessage(), e);
+      LOG.error("Failed to save server settings: {}", e.getMessage(), e);
       throw e;
     }
   }
@@ -490,7 +490,7 @@ public class BackglassService implements InitializingBean {
         }
       }
       catch (IOException ioe) {
-        LOG.error("Cannot find backglass server in " + emu.getInstallationDirectory() + ", skip this emulator for B2S server search", ioe);
+        LOG.error("Cannot find backglass server in {}, skip this emulator for B2S server search", emu.getInstallationDirectory(), ioe);
       }
     }
     // not installed, use default folder
@@ -521,7 +521,7 @@ public class BackglassService implements InitializingBean {
       }
     }
     catch (IOException e) {
-      LOG.error("Cannot create file " + xml.getAbsolutePath(), e);
+      LOG.error("Cannot create file {}", xml.getAbsolutePath(), e);
     }
     throw new RuntimeException("Cannot find nor create file " + xml.getAbsolutePath());
   }
@@ -729,11 +729,11 @@ public class BackglassService implements InitializingBean {
         File b2sNewFile = new File(emulator.getGamesDirectory(), newVersion);
         if (b2sFile.exists() && b2sFile.renameTo(b2sNewFile)) {
           cacheRemove(emulatorId, b2sFile);
-          LOG.info("Renamed \"" + b2sFile + "\" to \"" + b2sNewFile + "\"");
+          LOG.info("Renamed \"{}\" to \"{}\"", b2sFile, b2sNewFile);
           b2s.addVersion(newVersion);
         }
         else {
-          LOG.error("Cannot rename \"" + b2sFile + "\" to \"" + b2sNewFile + "\"");
+          LOG.error("Cannot rename \"{}\" to \"{}\"", b2sFile, b2sNewFile);
         }
       }
 
@@ -751,11 +751,11 @@ public class BackglassService implements InitializingBean {
     try {
       File target = FileUtils.uniqueFile(b2sFile);
       org.apache.commons.io.FileUtils.copyFile(b2sFile, target);
-      LOG.info("Copied \"" + fileName + "\" to \"" + target.getAbsolutePath() + "\"");
+      LOG.info("Copied \"{}\" to \"{}\"", fileName, target.getAbsolutePath());
       return reloadDirectB2SAndVersions(emulator, fileName);
     }
     catch (IOException e) {
-      LOG.error("Failed to duplicate backglass " + b2sFile.getAbsolutePath() + ": " + e.getMessage(), e);
+      LOG.error("Failed to duplicate backglass {}: {}", b2sFile.getAbsolutePath(), e.getMessage(), e);
       throw e;
     }
   }
@@ -810,10 +810,10 @@ public class BackglassService implements InitializingBean {
         File b2sFile = new File(emulator.getBackglassDirectory(), version);
         if (b2sFile.exists() && b2sFile.delete()) {
           cacheRemove(emulatorId, b2sFile);
-          LOG.info("Deleted " + b2sFile.getAbsolutePath());
+          LOG.info("Deleted {}", b2sFile.getAbsolutePath());
         }
         else {
-          LOG.info("Cannot delete " + b2sFile.getAbsolutePath());
+          LOG.info("Cannot delete {}", b2sFile.getAbsolutePath());
           success = false;
         }
       }
@@ -826,7 +826,7 @@ public class BackglassService implements InitializingBean {
     File b2sFile = new File(emulator.getGamesDirectory(), filename);
     if (b2sFile.exists() && b2sFile.delete()) {
       cacheRemove(emulatorId, b2sFile);
-      LOG.info("Deleted " + b2sFile.getAbsolutePath());
+      LOG.info("Deleted {}", b2sFile.getAbsolutePath());
     }
     return reloadDirectB2SAndVersions(emulator, filename);
   }
@@ -1010,7 +1010,7 @@ public class BackglassService implements InitializingBean {
       return lines;
     }
     catch (Exception e) {
-      LOG.error("Cannor open screen res file " + target.getAbsolutePath(), e);
+      LOG.error("Cannor open screen res file {}", target.getAbsolutePath(), e);
       return null;
     }
   }
@@ -1226,7 +1226,7 @@ public class BackglassService implements InitializingBean {
       return frameFile.getAbsolutePath();
     }
     else {
-      LOG.error("Cannot create _frames Folder " + emulator.getGamesDirectory());
+      LOG.error("Cannot create _frames Folder {}", emulator.getGamesDirectory());
       return null;
     }
   }
@@ -1265,7 +1265,7 @@ public class BackglassService implements InitializingBean {
           return Files.readAllBytes(item.getFile().toPath());
         }
         catch (IOException e) {
-          LOG.error("Failed to copy resource file as background: " + e.getMessage(), e);
+          LOG.error("Failed to copy resource file as background: {}", e.getMessage(), e);
         }
       }
       else if ("video".equals(baseType)) {

@@ -130,7 +130,7 @@ public class VPXResource {
       return ResponseEntity.notFound().build();
     }
     catch (Exception e) {
-      LOG.error("Screenshot extraction failed: " + e.getMessage(), e);
+      LOG.error("Screenshot extraction failed: {}", e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Screenshot extraction failed: " + e.getMessage());
     }
   }
@@ -165,7 +165,7 @@ public class VPXResource {
       return descriptor;
     }
     catch (Exception e) {
-      LOG.error("POV upload failed: " + e.getMessage(), e);
+      LOG.error("POV upload failed: {}", e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Music upload failed: " + e.getMessage());
     }
     finally {
@@ -184,7 +184,7 @@ public class VPXResource {
       return descriptor;
     }
     catch (Exception e) {
-      LOG.error("POV upload failed: " + e.getMessage(), e);
+      LOG.error("POV upload failed: {}", e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "POV upload failed: " + e.getMessage());
     }
     finally {

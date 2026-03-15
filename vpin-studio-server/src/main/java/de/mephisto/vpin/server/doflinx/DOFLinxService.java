@@ -58,7 +58,7 @@ public class DOFLinxService implements InitializingBean, PreferenceChangedListen
       return dofLinxSettings.isAutostart();
     }
     catch (Exception e) {
-      LOG.error("Failed to set PinVol autostart flag: " + e.getMessage(), e);
+      LOG.error("Failed to set PinVol autostart flag: {}", e.getMessage(), e);
     }
     return false;
   }
@@ -95,7 +95,7 @@ public class DOFLinxService implements InitializingBean, PreferenceChangedListen
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to launch DOFLinx.exe: " + e.getMessage(), e);
+      LOG.error("Failed to launch DOFLinx.exe: {}", e.getMessage(), e);
     }
   }
 

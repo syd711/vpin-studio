@@ -181,10 +181,10 @@ public class EmulatorService implements InitializingBean, PreferenceChangedListe
 
       emulators.put(emulator.getId(), emulator);
 
-      LOG.info("Loaded Emulator: " + emulator);
+      LOG.info("Loaded Emulator: {}", emulator);
     }
     catch (Exception e) {
-      LOG.error("Emulator initialization failed: " + e.getMessage(), e);
+      LOG.error("Emulator initialization failed: {}", e.getMessage(), e);
     }
   }
 

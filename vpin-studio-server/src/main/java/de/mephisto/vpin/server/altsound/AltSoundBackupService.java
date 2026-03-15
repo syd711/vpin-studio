@@ -30,7 +30,7 @@ public class AltSoundBackupService {
       try {
         org.apache.commons.io.FileUtils.copyFile(file, backup);
       } catch (IOException e) {
-        LOG.error("Error creating alt sound backup file " + file.getAbsolutePath() + ": " + e.getMessage(), e);
+        LOG.error("Error creating alt sound backup file {}: {}", file.getAbsolutePath(), e.getMessage(), e);
       }
     }
   }
@@ -55,7 +55,7 @@ public class AltSoundBackupService {
         }
         org.apache.commons.io.FileUtils.copyFile(backup, file);
       } catch (IOException e) {
-        LOG.error("Error restoring backup file " + file.getAbsolutePath() + ": " + e.getMessage(), e);
+        LOG.error("Error restoring backup file {}: {}", file.getAbsolutePath(), e.getMessage(), e);
       }
     }
   }

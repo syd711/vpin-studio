@@ -86,7 +86,7 @@ public class VPinMameService implements InitializingBean {
       LOG.info("validate Roms folder '{}'...", folder.getAbsolutePath());
       validateRoms(folder);
     }
-    LOG.info("ROM validation took " + (System.currentTimeMillis() - l) + "ms.");
+    LOG.info("ROM validation took {}ms.", (System.currentTimeMillis() - l));
   }
 
   public boolean clearCacheFor(@Nullable String rom) {
@@ -293,7 +293,7 @@ public class VPinMameService implements InitializingBean {
       File mameExe = getMameExe(mameFolder);
       if (mameExe != null) {
         List<String> cmds = Arrays.asList(mameExe.getName(), "-verifyroms");
-        LOG.info("Executing ROM validation: " + String.join(" ", cmds));
+        LOG.info("Executing ROM validation: {}", String.join(" ", cmds));
         SystemCommandExecutor executor = new SystemCommandExecutor(cmds);
         executor.setDir(mameExe.getParentFile());
         executor.executeCommand();

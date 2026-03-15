@@ -86,7 +86,7 @@ public class PinballYStatisticsParser {
         e.setLastPlayed(statisticsSdf.parse(lastPlayed));
       }
       catch (ParseException pe) {
-        LOG.error("Cannot parse date " + lastPlayed + "," + pe.getMessage());
+        LOG.error("Cannot parse date {},{}", lastPlayed, pe.getMessage());
       }
 
       String playTime = safeGet(record, "Play Time");
@@ -173,7 +173,7 @@ public class PinballYStatisticsParser {
               visitor.accept(record, g);
             }
             catch (Exception ge) {
-              LOG.error("Ignored error while processing record for game " + game + ", " + ge.getMessage());
+              LOG.error("Ignored error while processing record for game {}, {}", game, ge.getMessage());
             } 
             break;
           }
@@ -285,7 +285,7 @@ public class PinballYStatisticsParser {
       gamestatsW.renameTo(gamestats);
     }
     catch (IOException ioe) {
-      LOG.error("Cannot delete file " + gamestats + ", statistics not saved !", ioe);
+      LOG.error("Cannot delete file {}, statistics not saved !", gamestats, ioe);
     }
   }
 

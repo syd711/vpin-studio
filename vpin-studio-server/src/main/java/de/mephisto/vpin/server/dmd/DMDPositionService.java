@@ -450,7 +450,7 @@ public class DMDPositionService {
         preferenceService.savePreference(serverSettings);
       }
       catch (Exception e) {
-        LOG.error("Cannot save server preference for disable options, exception ignored : " + e.getMessage());
+        LOG.error("Cannot save server preference for disable options, exception ignored : {}", e.getMessage());
       }
 
       return true;
@@ -496,7 +496,7 @@ public class DMDPositionService {
         preferenceService.savePreference(serverSettings);
       }
       catch (Exception e) {
-        LOG.error("Cannot save server preference for disable options, exception ignored : " + e.getMessage());
+        LOG.error("Cannot save server preference for disable options, exception ignored : {}", e.getMessage());
       }
 
       setMameOptions(rom, false, true);

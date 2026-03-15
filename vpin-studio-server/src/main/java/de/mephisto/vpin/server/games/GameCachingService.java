@@ -291,7 +291,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     if (!gamesByEmulator.isEmpty()) {
       avg = duration / gamesByEmulator.size();
     }
-    LOG.info("Game fetch for emulator " + emulator.getName() + " took " + duration + "ms / " + gamesByEmulator.size() + " games / " + avg + "ms avg.");
+    LOG.info("Game fetch for emulator {} took {}ms / {} games / {}ms avg.", emulator.getName(), duration, gamesByEmulator.size(), avg);
   }
 
   private boolean applyGameDetails(@NonNull Game game, boolean forceScan, boolean forceScoreScan, @Nullable GameDetails gameDetails, boolean findFirstIssueOnly) {

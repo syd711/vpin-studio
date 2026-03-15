@@ -52,7 +52,7 @@ public class DMDService implements InitializingBean {
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to delete DMD directory for " + game + ": " + e.getMessage(), e);
+      LOG.error("Failed to delete DMD directory for {}: {}", game, e.getMessage(), e);
     }
     return false;
   }

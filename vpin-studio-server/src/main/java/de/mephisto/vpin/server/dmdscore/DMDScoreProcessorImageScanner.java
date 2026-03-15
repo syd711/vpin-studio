@@ -33,7 +33,7 @@ public class DMDScoreProcessorImageScanner implements DMDScoreProcessor {
   public void onFrameStart(String gameName) {
     try {
       this.folder = Files.createTempDirectory(gameName).toFile();
-      LOG.info("Use temp folder to store images : " + folder.getAbsolutePath());
+      LOG.info("Use temp folder to store images : {}", folder.getAbsolutePath());
     }
     catch (Exception e) {
       LOG.error("Cannot create temp folder");
@@ -78,7 +78,7 @@ public class DMDScoreProcessorImageScanner implements DMDScoreProcessor {
     try {
       ImageIO.write(SwingFXUtils.fromFXImage(img, null), "png", imgFile);
     } catch (IOException e) {
-      LOG.error("cannot generate image " + filename);
+      LOG.error("cannot generate image {}", filename);
     }
 
     return imgFile;
@@ -98,23 +98,23 @@ public class DMDScoreProcessorImageScanner implements DMDScoreProcessor {
       StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
       if (StringUtils.isNotEmpty(standardErrorFromCommand)) {
-        LOG.error("Ignored error executing Tesseract; " + standardErrorFromCommand);
+        LOG.error("Ignored error executing Tesseract; {}", standardErrorFromCommand);
       }
       if (StringUtils.isNotEmpty(standardOutputFromCommand)) {
-        LOG.info("Warning executing Tesseract: " + standardOutputFromCommand);
+        LOG.info("Warning executing Tesseract: {}", standardOutputFromCommand);
       }
 
       outFile = new File(folder, "out.txt");
       if (outFile.exists()) {
         String content = Files.readString(outFile.toPath());
-        LOG.info("Text recognized\n" + content);
+        LOG.info("Text recognized\n{}", content);
         outFile.delete();
 
         return content;
       }  
     }
     catch (Exception e) {
-      LOG.error("Error executing Tesseract: " + e.getMessage());
+      LOG.error("Error executing Tesseract: {}", e.getMessage());
     }    
     return null;
   }

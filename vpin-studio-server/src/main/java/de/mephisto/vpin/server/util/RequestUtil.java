@@ -48,7 +48,7 @@ public class RequestUtil {
           .cacheControl(CacheControl.maxAge(3600 * 24 * 7, TimeUnit.SECONDS).cachePublic())
           .body(bytes);
     } catch (Exception e) {
-      LOG.error("Failed to serialize image " + filename + ": " + e.getMessage(), e);
+      LOG.error("Failed to serialize image {}: {}", filename, e.getMessage(), e);
       throw e;
     }
   }
@@ -64,7 +64,7 @@ public class RequestUtil {
             .cacheControl(CacheControl.maxAge(3600 * 24 * 7, TimeUnit.SECONDS).cachePublic())
             .body(IOUtils.toByteArray(in));
       } catch (Exception e) {
-        LOG.error("Failed to serialize image " + file.getAbsolutePath() + ": " + e.getMessage(), e);
+        LOG.error("Failed to serialize image {}: {}", file.getAbsolutePath(), e.getMessage(), e);
         throw e;
       } finally {
         in.close();
@@ -73,7 +73,7 @@ public class RequestUtil {
     }
     else {
       if (file != null) {
-        LOG.info("Image " + file.getAbsolutePath() + " not found.");
+        LOG.info("Image {} not found.", file.getAbsolutePath());
       }
     }
     return null;

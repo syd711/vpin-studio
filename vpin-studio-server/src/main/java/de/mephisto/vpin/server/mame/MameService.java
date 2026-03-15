@@ -44,13 +44,13 @@ public class MameService {
 
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
       if (standardErrorFromCommand != null && !StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-        LOG.error("MAME command failed:\n" + standardErrorFromCommand);
+        LOG.error("MAME command failed:\n{}", standardErrorFromCommand);
         return false;
       }
       return true;
     }
     catch (Exception e) {
-      LOG.error("Error executing MAME command: " + e.getMessage(), e);
+      LOG.error("Error executing MAME command: {}", e.getMessage(), e);
     }
     return false;
   }

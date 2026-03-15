@@ -167,7 +167,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
       }
 
       if (!wheelTemplate && (summary.getScores().isEmpty() || StringUtils.isEmpty(summary.getRaw()))) {
-        LOG.info("Skipped card generation for \"" + game.getGameDisplayName() + "\", no scores found.");
+        LOG.info("Skipped card generation for \"{}\", no scores found.", game.getGameDisplayName());
         SLOG.info("Skipped card generation for \"" + game.getGameDisplayName() + "\", no scores found.");
         return false;
       }
@@ -179,7 +179,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
       }
 
       if (!wheelTemplate && game.isCardDisabled()) {
-        LOG.info("Skipped card generation for \"" + game.getGameDisplayName() + "\", generation not enabled.");
+        LOG.info("Skipped card generation for \"{}\", generation not enabled.", game.getGameDisplayName());
         SLOG.info("Skipped card generation for \"" + game.getGameDisplayName() + "\", generation not enabled.");
         return false;
       }
@@ -198,7 +198,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
         }
         else {
           ImageUtil.writePNG(bufferedImage, highscoreCard, "Highscore Card");
-          LOG.info("Written highscore card: " + highscoreCard.getAbsolutePath());
+          LOG.info("Written highscore card: {}", highscoreCard.getAbsolutePath());
           SLOG.info("Written highscore card: " + highscoreCard.getAbsolutePath());
         }
       }

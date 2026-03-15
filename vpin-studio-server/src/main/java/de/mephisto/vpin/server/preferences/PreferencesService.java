@@ -133,7 +133,7 @@ public class PreferencesService implements InitializingBean, PreferenceChangedLi
     newAvatar.setData(bytes);
     newAvatar.setUuid(UUID.randomUUID().toString());
     newAvatar.setMimeType(mimeType);
-    LOG.info("Created asset " + newAvatar);
+    LOG.info("Created asset {}", newAvatar);
 
     Asset asset = assetRepository.saveAndFlush(newAvatar);
     preferences.setAvatar(asset);
@@ -169,7 +169,7 @@ public class PreferencesService implements InitializingBean, PreferenceChangedLi
       return jsonSettings.getDeclaredConstructor().newInstance();
     }
     catch (Exception e) {
-      LOG.error("Failed to read JSON preferences: " + e.getMessage(), e);
+      LOG.error("Failed to read JSON preferences: {}", e.getMessage(), e);
     }
     return null;
   }
@@ -215,7 +215,7 @@ public class PreferencesService implements InitializingBean, PreferenceChangedLi
       if (propertyName.equals(PreferenceNames.SERVER_SETTINGS)) {
         ServerSettings serverSettings = getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
         systemService.setStickyKeysEnabled(serverSettings.isStickyKeysEnabled());
-        LOG.info("Sticky keys enabled: " + serverSettings.isStickyKeysEnabled());
+        LOG.info("Sticky keys enabled: {}", serverSettings.isStickyKeysEnabled());
       }
     }
     catch (Exception e) {

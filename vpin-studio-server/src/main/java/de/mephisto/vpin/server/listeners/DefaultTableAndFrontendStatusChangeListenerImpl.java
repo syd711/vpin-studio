@@ -88,7 +88,7 @@ public class DefaultTableAndFrontendStatusChangeListenerImpl implements Initiali
       }
     }
     catch (Exception e) {
-      LOG.info("Failed to refresh game: " + e.getMessage(), e);
+      LOG.info("Failed to refresh game: {}", e.getMessage(), e);
     }
 
     //this only works for Popper since for other methods VPX is already running
@@ -119,17 +119,17 @@ public class DefaultTableAndFrontendStatusChangeListenerImpl implements Initiali
       }
     }
     catch (Exception e) {
-      LOG.info("Error showing highscore card: " + e.getMessage(), e);
+      LOG.info("Error showing highscore card: {}", e.getMessage(), e);
     }
   }
 
   @Override
   public void tableExited(TableStatusChangedEvent event) {
     Game game = event.getGame();
-    LOG.info("Executing table exit commands for '" + game + "'");
+    LOG.info("Executing table exit commands for '{}'", game);
     SLOG.info("Executing table exit commands for '" + game + "'");
     discordService.setActivity(null);
-    LOG.info("Starting " + EXIT_DELAY + "ms update delay before updating highscores.");
+    LOG.info("Starting {}ms update delay before updating highscores.", EXIT_DELAY);
     SLOG.info("Starting " + EXIT_DELAY + "ms update delay before updating highscores.");
     try {
       Thread.sleep(EXIT_DELAY);
@@ -137,7 +137,7 @@ public class DefaultTableAndFrontendStatusChangeListenerImpl implements Initiali
     catch (InterruptedException e) {
       //ignore
     }
-    LOG.info("Finished " + EXIT_DELAY + "ms update delay, updating highscores.");
+    LOG.info("Finished {}ms update delay, updating highscores.", EXIT_DELAY);
     SLOG.info("Finished " + EXIT_DELAY + "ms update delay, updating highscores.");
     highscoreService.scanScore(game, EventOrigin.TABLE_EXIT_EVENT);
 

@@ -137,7 +137,7 @@ public class TextEditService {
 
     }
     catch (Exception e) {
-      LOG.error("Error reading text file: " + e.getMessage(), e);
+      LOG.error("Error reading text file: {}", e.getMessage(), e);
       throw e;
     }
     return monitoredTextFile;
@@ -162,7 +162,7 @@ public class TextEditService {
             out.write('\ufeff');
             out.write(monitoredTextFile.getContent());
             out.close();
-            LOG.info("Written " + iniFile.getAbsolutePath());
+            LOG.info("Written {}", iniFile.getAbsolutePath());
           }
           else {
             throw new IOException("Failed to delete target file.");
@@ -183,7 +183,7 @@ public class TextEditService {
             out.write('\ufeff');
             out.write(monitoredTextFile.getContent());
             out.close();
-            LOG.info("Written " + dofLinxIni.getAbsolutePath());
+            LOG.info("Written {}", dofLinxIni.getAbsolutePath());
           }
           else {
             throw new IOException("Failed to delete target file.");
@@ -209,12 +209,12 @@ public class TextEditService {
             VPXUtil.importVBS(gameFile, monitoredTextFile.getContent(), serverSettings.isKeepVbsFiles());
             monitoredTextFile.setLastModified(new Date(gameFile.lastModified()));
             monitoredTextFile.setSize(monitoredTextFile.getContent().getBytes().length);
-            LOG.info("Saved " + gameFile.getAbsolutePath() + ", performing table table.");
+            LOG.info("Saved {}, performing table table.", gameFile.getAbsolutePath());
             gameService.scanGame(game.getId());
             return monitoredTextFile;
           }
           else {
-            LOG.error("No game found with game name '" + monitoredTextFile.getFileId() + "'");
+            LOG.error("No game found with game name '{}'", monitoredTextFile.getFileId());
           }
         }
         case LOCAL_GAME_FILE: {
@@ -223,7 +223,7 @@ public class TextEditService {
           List<String> allLines = Arrays.asList(lines);
           String content = String.join("\n", allLines);
           FileUtils.writeStringToFile(f, content, Charset.defaultCharset());
-          LOG.info("Written " + f.getAbsolutePath());
+          LOG.info("Written {}", f.getAbsolutePath());
           monitoredTextFile.setLastModified(new Date(f.lastModified()));
           monitoredTextFile.setSize(monitoredTextFile.getContent().getBytes().length);
           return monitoredTextFile;
@@ -234,7 +234,7 @@ public class TextEditService {
           List<String> allLines = Arrays.asList(lines);
           String content = String.join("\n", allLines);
           FileUtils.writeStringToFile(f, content, Charset.defaultCharset());
-          LOG.info("Written " + f.getAbsolutePath());
+          LOG.info("Written {}", f.getAbsolutePath());
           monitoredTextFile.setLastModified(new Date(f.lastModified()));
           monitoredTextFile.setSize(monitoredTextFile.getContent().getBytes().length);
           return monitoredTextFile;
@@ -245,7 +245,7 @@ public class TextEditService {
       }
     }
     catch (IOException e) {
-      LOG.error("Error reading text file: " + e.getMessage(), e);
+      LOG.error("Error reading text file: {}", e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, e.getMessage());
     }
   }

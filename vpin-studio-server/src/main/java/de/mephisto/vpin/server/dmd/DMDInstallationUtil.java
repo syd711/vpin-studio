@@ -31,7 +31,7 @@ public class DMDInstallationUtil {
     try {
 
       if (dmdFolder.exists() && !dmdFolder.delete()) {
-        LOG.error("Failed to delete existing DMD file " + dmdFolder.getAbsolutePath());
+        LOG.error("Failed to delete existing DMD file {}", dmdFolder.getAbsolutePath());
       }
       dmdFolder.mkdirs();
       String dmdFolderName = dmdFolder.getName();
@@ -57,7 +57,7 @@ public class DMDInstallationUtil {
         RandomAccessFile rafOut = new RandomAccessFile(targetFile, "rw");
         RandomAccessFileOutStream fos = new RandomAccessFileOutStream(rafOut);
         ExtractOperationResult result = item.extractSlow(fos);
-        LOG.info("Unrar \"" + targetFile.getAbsolutePath() + "\":" + result.name());
+        LOG.info("Unrar \"{}\":{}", targetFile.getAbsolutePath(), result.name());
         fos.close();
         rafOut.close();
       }
@@ -66,7 +66,7 @@ public class DMDInstallationUtil {
       randomAccessFile.close();
     }
     catch (Exception e) {
-      LOG.error("Unrar of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
+      LOG.error("Unrar of {} failed: {}", archiveFile.getAbsolutePath(), e.getMessage(), e);
     }
   }
 }

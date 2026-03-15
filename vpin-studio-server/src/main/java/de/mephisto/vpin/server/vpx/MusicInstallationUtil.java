@@ -34,7 +34,7 @@ public class MusicInstallationUtil {
       relativePath = "./";
     }
 
-    LOG.info("Extracting music pack into \"" + musicFolder.getAbsolutePath() + "\" with ROM value \"" + rom + "\", relative path: {}", relativePath);
+    LOG.info("Extracting music pack into \"{}\" with ROM value \"{}\", relative path: {}", musicFolder.getAbsolutePath(), rom, relativePath);
     String suffix = FilenameUtils.getExtension(archiveFile.getName());
     if (suffix.equalsIgnoreCase(AssetType.ZIP.name())) {
       //TODO replace with PackageUtil
@@ -103,7 +103,7 @@ public class MusicInstallationUtil {
 
           target.getParentFile().mkdirs();
           if (target.exists() && !target.delete()) {
-            LOG.warn("Failed to overwrite existing music file \"" + target.getAbsolutePath() + "\"");
+            LOG.warn("Failed to overwrite existing music file \"{}\"", target.getAbsolutePath());
           }
           else {
             FileOutputStream fos = new FileOutputStream(target);
@@ -112,7 +112,7 @@ public class MusicInstallationUtil {
               fos.write(buffer, 0, len);
             }
             fos.close();
-            LOG.info("Written music pack file " + target.getAbsolutePath());
+            LOG.info("Written music pack file {}", target.getAbsolutePath());
             count++;
           }
         }
@@ -124,11 +124,11 @@ public class MusicInstallationUtil {
       zis.close();
     }
     catch (Exception e) {
-      LOG.error("Unzipping of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
+      LOG.error("Unzipping of {} failed: {}", archiveFile.getAbsolutePath(), e.getMessage(), e);
       throw e;
     }
     finally {
-      LOG.info("Music bundle was installed with " + count + " files, used relative path '" + relativePath + "'");
+      LOG.info("Music bundle was installed with {} files, used relative path '{}'", count, relativePath);
     }
   }
 
@@ -169,14 +169,14 @@ public class MusicInstallationUtil {
 
           target.getParentFile().mkdirs();
           if (target.exists() && !target.delete()) {
-            LOG.warn("Failed to overwrite existing music file \"" + target.getAbsolutePath() + "\"");
+            LOG.warn("Failed to overwrite existing music file \"{}\"", target.getAbsolutePath());
           }
           else {
             RandomAccessFile rafOut = new RandomAccessFile(target, "rw");
             RandomAccessFileOutStream fos = new RandomAccessFileOutStream(rafOut);
             ExtractOperationResult result = item.extractSlow(fos);
 
-            LOG.info("Unrar \"" + target.getAbsolutePath() + "\": " + result.name());
+            LOG.info("Unrar \"{}\": {}", target.getAbsolutePath(), result.name());
             fos.close();
             rafOut.close();
             count++;
@@ -189,10 +189,10 @@ public class MusicInstallationUtil {
       randomAccessFile.close();
     }
     catch (Exception e) {
-      LOG.error("Unrar of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
+      LOG.error("Unrar of {} failed: {}", archiveFile.getAbsolutePath(), e.getMessage(), e);
     }
     finally {
-      LOG.info("Music bundle was installed with " + count + " files, used relative path '" + relativePath + "'");
+      LOG.info("Music bundle was installed with {} files, used relative path '{}'", count, relativePath);
     }
   }
 }

@@ -86,7 +86,7 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
       }
     }
     catch (Exception e) {
-      LOG.info("VPX Monitor Thread failed: " + e.getMessage(), e);
+      LOG.info("VPX Monitor Thread failed: {}", e.getMessage(), e);
     }
   }
 
@@ -95,17 +95,17 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
     Game game = gameId > 0 ? gameService.getGame(gameId) : null;
 
     if (game != null) {
-      LOG.info(this.getClass().getSimpleName() + " notifying table end event of \"" + game.getGameDisplayName() + "\"");
+      LOG.info("{} notifying table end event of \"{}\"", this.getClass().getSimpleName(), game.getGameDisplayName());
       frontendStatusService.notifyTableStatusChange(game, false, TableStatusChangedOrigin.ORIGIN_POPPER);
     }
     else {
-      LOG.info(this.getClass().getSimpleName() + " unregistered a VPX window, but the game could not be resolved");
+      LOG.info("{} unregistered a VPX window, but the game could not be resolved", this.getClass().getSimpleName());
       gameStatusService.setForceActive(false);
     }
   }
 
   private void notifyTableStartByFileName(int emuId, @NonNull String tableName) {
-    LOG.info("Detected VPX running with table filename \"" + tableName + ".vpx\", resolving game for it.");
+    LOG.info("Detected VPX running with table filename \"{}.vpx\", resolving game for it.", tableName);
 
     Game game = gameService.getGameByFilename(emuId, tableName + ".vpx");
     if (game == null) {
@@ -113,11 +113,11 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
     }
 
     if (game != null) {
-      LOG.info(this.getClass().getSimpleName() + " notifying table start event of \"" + game.getGameDisplayName() + "\"");
+      LOG.info("{} notifying table start event of \"{}\"", this.getClass().getSimpleName(), game.getGameDisplayName());
       frontendStatusService.notifyTableStatusChange(game, true, TableStatusChangedOrigin.ORIGIN_POPPER);
     }
     else {
-      LOG.info(this.getClass().getSimpleName() + " registered a VPX window, but the game could not be resolved for name \"" + tableName + "\"");
+      LOG.info("{} registered a VPX window, but the game could not be resolved for name \"{}\"", this.getClass().getSimpleName(), tableName);
       gameStatusService.setForceActive(true);
     }
   }
@@ -138,7 +138,7 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to update VPX monitoring: " + e.getMessage(), e);
+      LOG.error("Failed to update VPX monitoring: {}", e.getMessage(), e);
     }
   }
 

@@ -140,7 +140,7 @@ public class PinballYConnector extends BaseConnector {
       return preferencesService.getJsonPreference(PreferenceNames.PINBALLY_SETTINGS, PinballYSettings.class);
     }
     catch (Exception e) {
-      LOG.error("Getting pinballY settings failed: " + e.getMessage(), e);
+      LOG.error("Getting pinballY settings failed: {}", e.getMessage(), e);
       return null;
     }
   }
@@ -148,7 +148,7 @@ public class PinballYConnector extends BaseConnector {
   private Properties loadPinballYSettings() {
     File pinballYSettings = getPinballYSettings();
     if (!pinballYSettings.exists()) {
-      LOG.warn("Settings.txt file not found " + pinballYSettings);
+      LOG.warn("Settings.txt file not found {}", pinballYSettings);
       return null;
     }
     PinballYSettingsParser parser = new PinballYSettingsParser();
@@ -238,9 +238,7 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
       e.setExeName(exe.getName());
     }
     else {
-      LOG.error("Executable '" + executable + "' not or wrongly set for " + emuname + " in PinballY options "
-          + "default exe couldn't be determined. VPin Studio won't be able to launch tables. "
-          + "Please fill in the full path to executable !");
+      LOG.error("Executable '{}' not or wrongly set for {} in PinballY options default exe couldn't be determined. VPin Studio won't be able to launch tables. Please fill in the full path to executable !", executable, emuname);
     }
 
     e.setGameExt(type.getExtension());
@@ -573,7 +571,7 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
         Files.write(getPinballYSettings().toPath(), settingsFileLines, StandardCharsets.UTF_8);
       }
       catch (IOException e) {
-        LOG.error("Failed to update settings.txt with RunBefore and RunAfter commands: " + e.getMessage(), e);
+        LOG.error("Failed to update settings.txt with RunBefore and RunAfter commands: {}", e.getMessage(), e);
       }
     }
   }

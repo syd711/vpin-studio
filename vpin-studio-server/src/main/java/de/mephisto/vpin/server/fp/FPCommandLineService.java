@@ -58,13 +58,13 @@ public class FPCommandLineService implements ApplicationContextAware {
 
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
       if (standardErrorFromCommand != null && !StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-        LOG.error("FP command failed:\n" + standardErrorFromCommand);
+        LOG.error("FP command failed:\n{}", standardErrorFromCommand);
         return false;
       }
       return true;
     }
     catch (Exception e) {
-      LOG.error("Error executing FP command: " + e.getMessage(), e);
+      LOG.error("Error executing FP command: {}", e.getMessage(), e);
     }
     return false;
   }
@@ -78,18 +78,18 @@ public class FPCommandLineService implements ApplicationContextAware {
 
     try {
       List<String> strings = Arrays.asList(fpExe.getName(), commandParam, "\"" + gameFile.getAbsolutePath() + "\"");
-      LOG.info("Executing FP " + commandParam + "command: " + String.join(" ", strings));
+      LOG.info("Executing FP {}command: {}", commandParam, String.join(" ", strings));
       SystemCommandExecutor executor = new SystemCommandExecutor(strings);
       executor.setDir(fpExe.getParentFile());
       executor.executeCommandAsync();
 
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
       if (standardErrorFromCommand != null && !StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-        LOG.error("FP command failed:\n" + standardErrorFromCommand);
+        LOG.error("FP command failed:\n{}", standardErrorFromCommand);
       }
     }
     catch (Exception e) {
-      LOG.error("Error executing FP command: " + e.getMessage(), e);
+      LOG.error("Error executing FP command: {}", e.getMessage(), e);
     }
 
     int count = 0;
@@ -102,7 +102,7 @@ public class FPCommandLineService implements ApplicationContextAware {
         //ignore
       }
       if (count > 20) {
-        LOG.error("Timeout waiting for the generation of " + target.getAbsolutePath());
+        LOG.error("Timeout waiting for the generation of {}", target.getAbsolutePath());
         systemService.killProcesses("Future Pinball");
         break;
       }
@@ -125,12 +125,12 @@ public class FPCommandLineService implements ApplicationContextAware {
 
           StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
           if (standardErrorFromCommand != null && !StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-            LOG.error("FP command failed:\n" + standardErrorFromCommand);
+            LOG.error("FP command failed:\n{}", standardErrorFromCommand);
             return false;
           }
         }
         catch (Exception e) {
-          LOG.error("Error executing VPX command: " + e.getMessage(), e);
+          LOG.error("Error executing VPX command: {}", e.getMessage(), e);
           return false;
         }
         return true;

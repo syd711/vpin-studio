@@ -40,7 +40,7 @@ public class RomService {
             ScoringDBMapping scoringDBMapping = first.get();
             if (!StringUtils.isEmpty(scoringDBMapping.getScannedRom())) {
               updateScanResult(scoringDBMapping, scan);
-              LOG.info("Applied scoring DB post processing for scan of \"" + game.getGameDisplayName() + "\"");
+              LOG.info("Applied scoring DB post processing for scan of \"{}\"", game.getGameDisplayName());
             }
           }
           else {
@@ -49,7 +49,7 @@ public class RomService {
               //enrich the scan result with data from the scoringdb.json
               ScoringDBMapping scoringDBMapping = first.get();
               updateScanResult(scoringDBMapping, scan);
-              LOG.info("Applied scoring DB post processing for scan of \"" + game.getGameDisplayName() + "\"");
+              LOG.info("Applied scoring DB post processing for scan of \"{}\"", game.getGameDisplayName());
             }
           }
         }
@@ -57,10 +57,10 @@ public class RomService {
         return scan;
       }
 
-      LOG.info("Skipped reading of \"" + game.getGameDisplayName() + "\", VPX file '" + game.getGameFile().getAbsolutePath() + "' does not exist.");
+      LOG.info("Skipped reading of \"{}\", VPX file '{}' does not exist.", game.getGameDisplayName(), game.getGameFile().getAbsolutePath());
       return new ScanResult();
     }
-    LOG.info("Skipped reading of \"" + game.getGameDisplayName() + "\" (emulator '" + game.getEmulator() + "'), only VPX tables can be scanned.");
+    LOG.info("Skipped reading of \"{}\" (emulator '{}'), only VPX tables can be scanned.", game.getGameDisplayName(), game.getEmulator());
     return new ScanResult();
   }
 

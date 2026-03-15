@@ -110,7 +110,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   public List<Game> getGames() {
     long start = System.currentTimeMillis();
     List<Game> games = getKnownGames(-1);
-    LOG.info("Game details fetch took " + (System.currentTimeMillis() - start) + "ms.");
+    LOG.info("Game details fetch took {}ms.", (System.currentTimeMillis() - start));
     return games;
   }
 
@@ -309,7 +309,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     }
 
     long duration = System.currentTimeMillis() - start;
-    LOG.info("Recent score fetch took " + duration + "ms.");
+    LOG.info("Recent score fetch took {}ms.", duration);
     return summary;
   }
 
@@ -366,7 +366,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   public GameList getImportableTables(int emuId) {
     GameEmulator emulator = emulatorService.getGameEmulator(emuId);
     if (emulator == null) {
-      LOG.warn("No emulator found for id " + emuId);
+      LOG.warn("No emulator found for id {}", emuId);
       return new GameList();
     }
 
@@ -464,7 +464,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     }
 
 
-    LOG.info("Resource Game Event Handler resolved \"" + game + "\" for table name \"" + table + "\" from emulator {}", emuId);
+    LOG.info("Resource Game Event Handler resolved \"{}\" for table name \"{}\" from emulator {}", game, table, emuId);
     return game;
   }
 
@@ -512,7 +512,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     gameDetails.setExtTableId(extTableId);
     gameDetails.setExtTableVersionId(extTableVersionId);
     gameDetailsRepositoryService.saveAndFlush(gameDetails);
-    LOG.info("Linked game " + gameId + " to " + extTableId + "/" + extTableVersionId);
+    LOG.info("Linked game {} to {}/{}", gameId, extTableId, extTableVersionId);
     // update the table in the frontend
     frontendService.vpsLink(gameId, extTableId, extTableVersionId);
 
@@ -525,7 +525,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     if (overwrite || StringUtils.isEmpty(gameDetails.getTableVersion())) {
       gameDetails.setTableVersion(version);
       gameDetailsRepositoryService.saveAndFlush(gameDetails);
-      LOG.info("Version saved for " + gameId + " to " + version);
+      LOG.info("Version saved for {} to {}", gameId, version);
       gameLifecycleService.notifyGameUpdated(gameId);
       return true;
     }
@@ -547,7 +547,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to reset update flag for " + gameId + ": " + e.getMessage(), e);
+      LOG.error("Failed to reset update flag for {}: {}", gameId, e.getMessage(), e);
     }
   }
 
@@ -597,7 +597,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to read event log: " + e.getMessage(), e);
+      LOG.error("Failed to read event log: {}", e.getMessage(), e);
     }
     return null;
   }
@@ -627,14 +627,14 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     }
 
     if (tableMatch != null && match <= MATCHING_THRESHOLD) {
-      LOG.info("Found matching table '" + tableMatch.getGameDisplayName() + "' with matching value of '" + match + "' for term '" + term + "'");
+      LOG.info("Found matching table '{}' with matching value of '{}' for term '{}'", tableMatch.getGameDisplayName(), match, term);
       return tableMatch;
     }
     if (tableMatch != null) {
-      LOG.info("Closed table match '" + tableMatch.getGameDisplayName() + "' with value '" + match + "' not sufficient for term '" + term + "'");
+      LOG.info("Closed table match '{}' with value '{}' not sufficient for term '{}'", tableMatch.getGameDisplayName(), match, term);
     }
     else {
-      LOG.info("No match for term '" + term + "'");
+      LOG.info("No match for term '{}'", term);
     }
     return null;
   }
@@ -673,7 +673,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
       highscoreService.setGameService(this);
     }
     catch (Exception e) {
-      LOG.error("Error initializing GameService: " + e.getMessage(), e);
+      LOG.error("Error initializing GameService: {}", e.getMessage(), e);
     }
     clearAliasCache();
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());

@@ -74,7 +74,7 @@ public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChan
       try {
         Game game = gameService.getGame(competition.getGameId());
         if (game == null) {
-          LOG.info("No game found for id " + competition.getGameId() + ", seems it has been removed before the competition was started.");
+          LOG.info("No game found for id {}, seems it has been removed before the competition was started.", competition.getGameId());
           return;
         }
 
@@ -86,7 +86,7 @@ public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChan
         //check if the database has been resetted and we only join a competition that we created earlier
         boolean active = discordService.isCompetitionActive(serverId, channelId, competition.getUuid());
         if (active) {
-          LOG.info("The " + competition + " is still available and active, skipping init process.");
+          LOG.info("The {} is still available and active, skipping init process.", competition);
         }
         else if (isOwner) {
           final String description = "This is an online competition and player bots can join it.\nUse the **initials of your bot** when you create a new highscore.\n" +
@@ -111,20 +111,20 @@ public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChan
           }
           long messageId = discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", imageMessage + "\n\n" + base64Data);
           discordService.initCompetition(serverId, channelId, messageId, "Competition Channel for Table \"" + game.getGameDisplayName() + "\"");
-          LOG.info("Finished Discord update of \"" + competition.getName() + "\"");
+          LOG.info("Finished Discord update of \"{}\"", competition.getName());
         }
 
         if (highscoreBackupService.backup(game) != null) {
           highscoreService.resetHighscore(game);
         }
-        LOG.info("Resetted highscores of " + game.getGameDisplayName() + " for " + competition);
+        LOG.info("Resetted highscores of {} for {}", game.getGameDisplayName(), competition);
 
         if (competition.getBadge() != null && competition.isActive()) {
           frontendStatusService.augmentWheel(game, competition.getBadge());
         }
       }
       catch (Exception e) {
-        LOG.error("Error starting discord competition: " + e.getMessage(), e);
+        LOG.error("Error starting discord competition: {}", e.getMessage(), e);
       }
     }
   }
@@ -148,11 +148,11 @@ public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChan
           long msgId = discordService.sendMessage(discordServerId, discordChannelId, discordChannelMessageFactory.createCompetitionJoinedMessage(competition, bot));
           discordService.addCompetitionPlayer(discordServerId, discordChannelId, msgId);
 
-          LOG.info("Discord bot \"" + bot + "\" has joined \"" + competition + "\"");
+          LOG.info("Discord bot \"{}\" has joined \"{}\"", bot, competition);
         }
       }
       catch (Exception e) {
-        LOG.error("Error creating discord competition: " + e.getMessage(), e);
+        LOG.error("Error creating discord competition: {}", e.getMessage(), e);
       }
     }
   }
@@ -191,7 +191,7 @@ public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChan
             }
           }
           else {
-            LOG.warn("Skipped finish notification, you are not the owner of " + competition);
+            LOG.warn("Skipped finish notification, you are not the owner of {}", competition);
           }
         }
       }

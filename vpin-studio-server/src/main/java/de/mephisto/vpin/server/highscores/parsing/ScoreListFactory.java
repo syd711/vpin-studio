@@ -51,7 +51,7 @@ public class ScoreListFactory {
       return adapter.getScores(game, createdAt, lines, titles);
     }
     catch (Exception e) {
-      LOG.error("Failed to parse highscore: " + e.getMessage() + "\nRaw Data:\n==================================\n" + raw, e);
+      LOG.error("Failed to parse highscore: {}\nRaw Data:\n==================================\n{}", e.getMessage(), raw, e);
     }
     return scores;
   }

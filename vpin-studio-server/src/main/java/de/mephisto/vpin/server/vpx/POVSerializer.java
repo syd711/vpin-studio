@@ -86,7 +86,7 @@ public class POVSerializer {
     StreamResult result = new StreamResult(writer);
     transformer.transform(source, result);
     writer.close();
-    LOG.info("Written " + povFile.getAbsolutePath());
+    LOG.info("Written {}", povFile.getAbsolutePath());
   }
 
   private static void writeNode(POV pov, String qName, Node node) {

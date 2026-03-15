@@ -77,7 +77,7 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
       return Collections.emptyList();
     }
 
-    LOG.info("Searching term '" + term + "'' for screen  " + screenSegment);
+    LOG.info("Searching term '{}'' for screen  {}", term, screenSegment);
 
     VPinScreen screen = VPinScreen.valueOfSegment(screenSegment);
     String[] screenToFolders = screen != null ? fromScreenToFolders(screen) : null;
@@ -114,7 +114,7 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
       };
 
       searchRecursive(results, ftp, "", filter, isScreenEmulatorIndependent(screen), emulator, false, folders, screenSegment);
-      LOG.info("PinballX search finished, took " + (System.currentTimeMillis() - start) + "ms.");
+      LOG.info("PinballX search finished, took {}ms.", (System.currentTimeMillis() - start));
       for (TableAsset asset : results) {
         asset.setSourceId(TableAssetSourceType.PinballX.name());
         asset.setAuthor("gameex");
@@ -125,12 +125,12 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
 
     }
     catch (Exception e) {
-      LOG.error("Error during search for term " + term + " for screen " + screen + ": " + e.getMessage());
+      LOG.error("Error during search for term {} for screen {}: {}", term, screen, e.getMessage());
     }
     finally {
       close(ftp);
     }
-    LOG.info("Search for '" + term + "'' returns " + results.size() + " results");
+    LOG.info("Search for '{}'' returns {} results", term, results.size());
     return results;
   }
 
@@ -151,7 +151,7 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
     FTPFile[] files = ftp.listFiles(rootfolder + "/" + folder, filter);
     for (FTPFile file : files) {
       if (file.isDirectory()) {
-        LOG.info("Searching FTP dir: " + file.getName());
+        LOG.info("Searching FTP dir: {}", file.getName());
         String name = clean(file.getName());
         searchRecursive(results, ftp, folder + "/" + file.getName(), filter,
             isForEmulator || isForEmulator(name, emulator), emulator,
@@ -245,7 +245,7 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
       String url = tableAsset.getUrl();
       String decodeUrl = URLDecoder.decode(url, StandardCharsets.UTF_8);
       decodeUrl = decodeUrl.substring(1);
-      LOG.info("downloading " + decodeUrl);
+      LOG.info("downloading {}", decodeUrl);
 
       String folder = StringUtils.substringBeforeLast(decodeUrl, "/");
       String name = StringUtils.substringAfterLast(decodeUrl, "/");
@@ -254,7 +254,7 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
       ftp.setFileType(FTP.BINARY_FILE_TYPE);
 
       try (InputStream in = ftp.retrieveFileStream(name)) {
-        LOG.info("Read FTP file \"" + decodeUrl + "\", " + ftp.getReplyString());
+        LOG.info("Read FTP file \"{}\", {}", decodeUrl, ftp.getReplyString());
         if (start < 0) {
           IOUtils.copy(in, outputStream);
         }
@@ -264,7 +264,7 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
       }
     }
     catch (CopyStreamException cse) {
-      LOG.error("Error while downloading asset: " + cse.getMessage());
+      LOG.error("Error while downloading asset: {}", cse.getMessage());
     }
     finally {
       close(ftp);

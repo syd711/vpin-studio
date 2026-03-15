@@ -64,7 +64,7 @@ public class B2STableSettingsSerializer {
         doc = db.parse(xmlFile);
       }
       catch (Exception e) {
-        LOG.error("Cannot parse " + xmlFile + ", recreate an empty one.", e);
+        LOG.error("Cannot parse {}, recreate an empty one.", xmlFile, e);
         doc = db.newDocument();
       }
 
@@ -89,7 +89,7 @@ public class B2STableSettingsSerializer {
         removeChild(settings, rom, tableEntries, getter, root, doc);
       }
       XMLUtil.write(xmlFile, doc, true);
-      LOG.info("Written " + xmlFile.getAbsolutePath());
+      LOG.info("Written {}", xmlFile.getAbsolutePath());
     }
     catch (Exception e) {
       String msg = "Failed to write '" + xmlFile.getAbsolutePath() + "': " + e.getMessage();

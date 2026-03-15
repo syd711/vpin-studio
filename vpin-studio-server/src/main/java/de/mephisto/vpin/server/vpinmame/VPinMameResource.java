@@ -99,7 +99,7 @@ public class VPinMameResource {
       return descriptor;
     }
     catch (Exception e) {
-      LOG.error(AssetType.ROM.name() + " upload failed: " + e.getMessage(), e);
+      LOG.error("{} upload failed: {}", AssetType.ROM.name(), e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.ROM + " upload failed: " + e.getMessage());
     } finally {
       descriptor.finalizeUpload();
@@ -118,7 +118,7 @@ public class VPinMameResource {
       return descriptor;
     }
     catch (Exception e) {
-      LOG.error(AssetType.CFG.name() + " upload failed: " + e.getMessage(), e);
+      LOG.error("{} upload failed: {}", AssetType.CFG.name(), e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.CFG + " upload failed: " + e.getMessage());
     } finally {
       descriptor.finalizeUpload();
@@ -137,7 +137,7 @@ public class VPinMameResource {
       return descriptor;
     }
     catch (Exception e) {
-      LOG.error(AssetType.NV.name() + " upload failed: " + e.getMessage(), e);
+      LOG.error("{} upload failed: {}", AssetType.NV.name(), e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.NV + " upload failed: " + e.getMessage());
     } finally {
       descriptor.finalizeUpload();

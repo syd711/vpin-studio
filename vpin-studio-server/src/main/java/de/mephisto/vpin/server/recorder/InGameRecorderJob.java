@@ -35,7 +35,7 @@ public class InGameRecorderJob extends FrontendRecorderJob implements Job {
     for (RecordingData data : recordingDataSummary.getRecordingData()) {
       Game game = recorderService.getGame(data);
 
-      LOG.info("************************ \"" + game.getGameDisplayName() + "\" ************************");
+      LOG.info("************************ \"{}\" ************************", game.getGameDisplayName());
       try {
         if (showStartNotification(jobDescriptor, data)) {
           return;
@@ -61,7 +61,7 @@ public class InGameRecorderJob extends FrontendRecorderJob implements Job {
         }
 
         updateSingleProgress(jobDescriptor, recordingDataSummary, 90);
-        LOG.info("Recording for \"" + game.getGameDisplayName() + "\" finished.");
+        LOG.info("Recording for \"{}\" finished.", game.getGameDisplayName());
         jobDescriptor.setTasksExecuted(jobDescriptor.getTasksExecuted() + 1);
         double progress = jobDescriptor.getTasksExecuted() * 100d / recordingDataSummary.size() / 100d;
         jobDescriptor.setProgress(progress);
@@ -72,7 +72,7 @@ public class InGameRecorderJob extends FrontendRecorderJob implements Job {
         LOG.error("Game recording failed: {}", e.getMessage(), e);
       }
       finally {
-        LOG.info("Recordings for " + recordingDataSummary.size() + " games finished.");
+        LOG.info("Recordings for {} games finished.", recordingDataSummary.size());
         jobDescriptor.setProgress(1);
         jobDescriptor.setGameId(-1);
         if (gameRecorder != null) {
@@ -117,7 +117,7 @@ public class InGameRecorderJob extends FrontendRecorderJob implements Job {
         if (jobDescriptor.isFinished() || jobDescriptor.isCancelled()) {
           return true;
         }
-        LOG.info("Recording starting in " + seconds + " seconds.");
+        LOG.info("Recording starting in {} seconds.", seconds);
         seconds--;
       }
       Thread.sleep(300);

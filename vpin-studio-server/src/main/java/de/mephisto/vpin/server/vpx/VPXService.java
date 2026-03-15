@@ -158,11 +158,11 @@ public class VPXService implements InitializingBean {
     if (game != null) {
       File povFile = game.getPOVFile();
       if (povFile.exists()) {
-        LOG.info("Deleting " + povFile.getAbsolutePath());
+        LOG.info("Deleting {}", povFile.getAbsolutePath());
         return povFile.delete();
       }
       else {
-        LOG.info("POV file " + povFile.getAbsolutePath() + " does not exist for deletion");
+        LOG.info("POV file {} does not exist for deletion", povFile.getAbsolutePath());
       }
     }
     else {
@@ -180,7 +180,7 @@ public class VPXService implements InitializingBean {
         }
       }
       catch (Exception e) {
-        LOG.error("Error executing shutdown: " + e.getMessage(), e);
+        LOG.error("Error executing shutdown: {}", e.getMessage(), e);
       }
     }
     else {
@@ -211,7 +211,7 @@ public class VPXService implements InitializingBean {
           return new TableInfo(values);
         }
         catch (Exception e) {
-          LOG.error("Failed to read table info: " + e.getMessage());
+          LOG.error("Failed to read table info: {}", e.getMessage());
         }
       }
     }
@@ -238,7 +238,7 @@ public class VPXService implements InitializingBean {
       if (gameFile.exists()) {
         try {
           VPXUtil.importVBS(gameFile, vbs, useTempFile);
-          LOG.info("Written table sources " + gameFile.getAbsolutePath());
+          LOG.info("Written table sources {}", gameFile.getAbsolutePath());
           return true;
         }
         catch (IOException e) {
@@ -276,7 +276,7 @@ public class VPXService implements InitializingBean {
         return VPXUtil.getChecksum(gameFile);
       }
       else {
-        LOG.info("Game file " + gameFile.getAbsolutePath() + " does not exist for reading the checksum.");
+        LOG.info("Game file {} does not exist for reading the checksum.", gameFile.getAbsolutePath());
       }
     }
     else {
@@ -331,7 +331,7 @@ public class VPXService implements InitializingBean {
         this.keyManager = new VPXKeyManager(getPlayerConfiguration(false));
       }
       catch (Exception e) {
-        LOG.error("Failed to read VPX ini file: " + e.getMessage(), e);
+        LOG.error("Failed to read VPX ini file: {}", e.getMessage(), e);
       }
     }
   }

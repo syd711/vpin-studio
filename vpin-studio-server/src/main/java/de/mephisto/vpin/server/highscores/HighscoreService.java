@@ -672,7 +672,7 @@ public class HighscoreService implements InitializingBean {
       }
     }
     catch (Exception e) {
-      LOG.info("Failed to calculate score change: " + e.getMessage(), e);
+      LOG.info("Failed to calculate score change: {}", e.getMessage(), e);
     }
     return changes;
   }

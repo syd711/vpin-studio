@@ -54,11 +54,11 @@ public class VPXZSourceAdapterFolder implements VPXZSourceAdapter {
             }
           }
           catch (Exception e) {
-            LOG.error("Failed to read " + vpxzFile.getAbsolutePath() + ": " + e.getMessage(), e);
+            LOG.error("Failed to read {}: {}", vpxzFile.getAbsolutePath(), e.getMessage(), e);
           }
         }
         if (!cache.isEmpty()) {
-          LOG.info("Loaded existing vpxz: {}, took " + (System.currentTimeMillis() - start) + "ms.", vpxzFiles.length);
+          LOG.info("Loaded existing vpxz: {}, took {}ms.", vpxzFiles.length, (System.currentTimeMillis() - start));
         }
       }
     }
@@ -74,9 +74,9 @@ public class VPXZSourceAdapterFolder implements VPXZSourceAdapter {
     File file = new File(archiveFolder, descriptor.getFilename());
     LOG.info("Deleting {}", file.getAbsolutePath());
     if (file.exists() && !Desktop.getDesktop().moveToTrash(file)) {
-      LOG.error("Failed moving file to trash: " + file.getAbsolutePath());
+      LOG.error("Failed moving file to trash: {}", file.getAbsolutePath());
       if (!file.delete()) {
-        LOG.error("Failed to delete " + file.getAbsolutePath());
+        LOG.error("Failed to delete {}", file.getAbsolutePath());
         return false;
       }
     }

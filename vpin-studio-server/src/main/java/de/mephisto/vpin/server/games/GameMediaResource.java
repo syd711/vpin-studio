@@ -105,7 +105,7 @@ public class GameMediaResource {
                                     @PathVariable("append") boolean append,
                                     @RequestBody TableAsset asset) throws Exception {
     try {
-      LOG.info("Starting download of " + asset.getName() + "(appending: " + append + ")");
+      LOG.info("Starting download of {}(appending: {})", asset.getName(), append);
       Game game = frontendService.getOriginalGame(gameId);
       File target = frontendService.getFrontendConnector().getMediaAccessStrategy().createMedia(game, screen, asset.getFileSuffix(), append);
       tableAssetsService.download(asset, target);
@@ -396,7 +396,7 @@ public class GameMediaResource {
         return JobDescriptorFactory.error("No game found for media upload.");
       }
 
-      LOG.info("Uploading " + out.getAbsolutePath());
+      LOG.info("Uploading {}", out.getAbsolutePath());
       UploadUtil.upload(file, out);
       gameLifecycleService.notifyGameScreenAssetsChanged(gameId, screen, out);
       return JobDescriptorFactory.empty();
@@ -456,7 +456,7 @@ public class GameMediaResource {
       return true;
     }
     catch (Exception e) {
-      LOG.error("Failed to execute media change request: " + e.getMessage(), e);
+      LOG.error("Failed to execute media change request: {}", e.getMessage(), e);
     }
     finally {
       gameLifecycleService.notifyGameAssetsChanged(gameId, AssetType.FRONTEND_MEDIA, null);

@@ -58,7 +58,7 @@ public class IScoredService implements PreferenceChangedListener, InitializingBe
       }
     }
     else {
-      LOG.warn("No iScored game room found for " + iScoredGame.getGameRoomUrl());
+      LOG.warn("No iScored game room found for {}", iScoredGame.getGameRoomUrl());
       SLOG.warn("No iScored game room found for " + iScoredGame.getGameRoomUrl());
     }
   }

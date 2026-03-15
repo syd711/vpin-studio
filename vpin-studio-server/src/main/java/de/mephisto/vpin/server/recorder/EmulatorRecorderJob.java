@@ -43,7 +43,7 @@ public class EmulatorRecorderJob extends FrontendRecorderJob {
         continue;
       }
 
-      LOG.info("************************ \"" + game.getGameDisplayName() + "\" ************************");
+      LOG.info("************************ \"{}\" ************************", game.getGameDisplayName());
       try {
         if (jobDescriptor.isFinished() || jobDescriptor.isCancelled()) {
           break;
@@ -90,7 +90,7 @@ public class EmulatorRecorderJob extends FrontendRecorderJob {
         gameRecorder.startRecording();
 
         updateSingleProgress(jobDescriptor, recordingDataSummary, 90);
-        LOG.info("Recording for \"" + game.getGameDisplayName() + "\" finished.");
+        LOG.info("Recording for \"{}\" finished.", game.getGameDisplayName());
         jobDescriptor.setTasksExecuted(jobDescriptor.getTasksExecuted() + 1);
         double progress = jobDescriptor.getTasksExecuted() * 100d / recordingDataSummary.size() / 100d;
         jobDescriptor.setProgress(progress);
@@ -105,7 +105,7 @@ public class EmulatorRecorderJob extends FrontendRecorderJob {
         recorderService.notifyGameAssetsChanged(game.getId(), AssetType.FRONTEND_MEDIA, null);
       }
     }
-    LOG.info("Recordings for " + recordingDataSummary.size() + " games finished.");
+    LOG.info("Recordings for {} games finished.", recordingDataSummary.size());
     jobDescriptor.setProgress(1);
     jobDescriptor.setGameId(-1);
 

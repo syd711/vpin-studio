@@ -26,7 +26,7 @@ public class ShutdownThread extends Thread {
 
   public void run() {
     Thread.currentThread().setName("System Shutdown Listener");
-    LOG.info("Started " + Thread.currentThread().getName() + " (" + preferencesService.getPreferenceValue(PreferenceNames.IDLE_TIMEOUT) + " minutes timeout)");
+    LOG.info("Started {} ({} minutes timeout)", Thread.currentThread().getName(), preferencesService.getPreferenceValue(PreferenceNames.IDLE_TIMEOUT));
     while (running) {
       try {
         Thread.sleep(60 * 1000);
@@ -43,22 +43,22 @@ public class ShutdownThread extends Thread {
         if (preferenceValue != null) {
           int idlePreference = Integer.parseInt(String.valueOf(preferenceValue));
           if (idlePreference > 0) {
-            LOG.info("Current timeout minutes: " + idleMinutes + " of " + preferenceValue);
+            LOG.info("Current timeout minutes: {} of {}", idleMinutes, preferenceValue);
           }
 
           if (idlePreference > 0 && idlePreference <= idleMinutes) {
             if (!queue.isEmpty()) {
-              LOG.info("Cancelled shutdown, because job queue is still executing " + queue.size() + " jobs.");
+              LOG.info("Cancelled shutdown, because job queue is still executing {} jobs.", queue.size());
             }
             else {
-              LOG.info("Executing shutdown after being idle for " + idleMinutes + " minutes");
+              LOG.info("Executing shutdown after being idle for {} minutes", idleMinutes);
               shutdownSystem();
             }
           }
         }
       }
       catch (InterruptedException e) {
-        LOG.error("Error in shutdown thread: " + e.getMessage());
+        LOG.error("Error in shutdown thread: {}", e.getMessage());
       }
     }
   }
@@ -83,7 +83,7 @@ public class ShutdownThread extends Thread {
       executor.executeCommand();
     }
     catch (Exception e) {
-      LOG.error("Error executing shutdown: " + e.getMessage(), e);
+      LOG.error("Error executing shutdown: {}", e.getMessage(), e);
     }
   }
 

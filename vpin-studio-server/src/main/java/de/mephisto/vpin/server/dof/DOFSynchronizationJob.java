@@ -36,7 +36,7 @@ public class DOFSynchronizationJob implements Job {
   public void execute(JobDescriptor result) {
     try {
       String downloadUrl = "https://configtool.vpuniverse.com/api.php?query=getconfig&apikey=" + settings.getApiKey();
-      LOG.info("Downloading " + "https://configtool.vpuniverse.com/api.php?query=getconfig&apikey=XXXXXXXXXXX");
+      LOG.info("Downloading https://configtool.vpuniverse.com/api.php?query=getconfig&apikey=XXXXXXXXXXX");
       result.setStatus("Downloading " + "https://configtool.vpuniverse.com/api.php?query=getconfig&apikey=XXXXXXXXXXX");
 
       File zipFile = new File(workingDir, "directoutputconfig.zip");
@@ -49,14 +49,14 @@ public class DOFSynchronizationJob implements Job {
       LOG.info("DOF download finished: {}", output);
 
       if (zipFile.exists()) {
-        LOG.info("Downloaded file " + zipFile.getAbsolutePath());
+        LOG.info("Downloaded file {}", zipFile.getAbsolutePath());
         if (!StringUtils.isEmpty(settings.getInstallationPath())) {
           File targetFolder = new File(settings.getInstallationPath(), "Config");
           if (!targetFolder.exists()) {
             result.setError("Invalid target folder for synchronization: " + targetFolder.getAbsolutePath());
             return;
           }
-          LOG.info("Extracting DOF config folder " + targetFolder.getAbsolutePath());
+          LOG.info("Extracting DOF config folder {}", targetFolder.getAbsolutePath());
           result.setStatus("Extracting DOF config folder " + settings.getInstallationPath());
           RarUtil.unrar(zipFile, targetFolder);
         }
@@ -73,7 +73,7 @@ public class DOFSynchronizationJob implements Job {
       result.setProgress(1);
     }
     catch (Exception e) {
-      LOG.error("Failed to execute download: " + e.getMessage(), e);
+      LOG.error("Failed to execute download: {}", e.getMessage(), e);
       result.setError("Failed to execute download: " + e.getMessage());
     }
     finally {
@@ -107,6 +107,6 @@ public class DOFSynchronizationJob implements Job {
   @Override
   public void cancel(JobDescriptor jobDescriptor) {
     Job.super.cancel(jobDescriptor);
-    LOG.info("Cancelled " + this);
+    LOG.info("Cancelled {}", this);
   }
 }

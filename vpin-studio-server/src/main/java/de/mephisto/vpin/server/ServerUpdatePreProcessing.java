@@ -87,7 +87,7 @@ public class ServerUpdatePreProcessing {
         LOG.info("Finished resource updates check, took {}ms.", System.currentTimeMillis() - start);
       }
       catch (Exception e) {
-        LOG.error("Server update failed: " + e.getMessage(), e);
+        LOG.error("Server update failed: {}", e.getMessage(), e);
       }
     }).start();
   }
@@ -129,7 +129,7 @@ public class ServerUpdatePreProcessing {
     for (String deletion : deletions) {
       File check = new File(RESOURCES, deletion);
       if (check.exists() && !check.delete()) {
-        LOG.error("Failed to clean up file: " + check.getAbsolutePath());
+        LOG.error("Failed to clean up file: {}", check.getAbsolutePath());
       }
     }
   }
@@ -218,7 +218,7 @@ public class ServerUpdatePreProcessing {
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to scripting: " + e.getMessage());
+      LOG.error("Failed to scripting: {}", e.getMessage());
     }
   }
 
@@ -231,7 +231,7 @@ public class ServerUpdatePreProcessing {
       LOG.info("7z initialized.");
     }
     catch (Exception e) {
-      LOG.error("Failed to initialize sevenzip: " + e.getMessage());
+      LOG.error("Failed to initialize sevenzip: {}", e.getMessage());
     }
   }
 
@@ -241,12 +241,12 @@ public class ServerUpdatePreProcessing {
       if (folder.exists()) {
         File check = new File("win32\\java\\bin\\", resource);
         if (!check.exists()) {
-          LOG.info("Downloading missing JVM file " + check.getAbsolutePath());
+          LOG.info("Downloading missing JVM file {}", check.getAbsolutePath());
           Updater.download("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/jvm/" + resource, check);
         }
       }
       else {
-        LOG.error("No JVM folder found: " + folder.getAbsolutePath());
+        LOG.error("No JVM folder found: {}", folder.getAbsolutePath());
       }
     }
   }
@@ -275,7 +275,7 @@ public class ServerUpdatePreProcessing {
         File nvramFile = new File(nvramFolder, nvRam + ".nv");
         if (nvramFile.exists() && deleteAll) {
           if (nvramFile.delete()) {
-            LOG.info("Deleted " + nvramFile.getAbsolutePath());
+            LOG.info("Deleted {}", nvramFile.getAbsolutePath());
           }
         }
 

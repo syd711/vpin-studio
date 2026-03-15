@@ -209,7 +209,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
         client.getRecorderService().stopRecording(recording);
       }
     }
-    RecorderDialogs.openRecordingDialog(this, selection);
+    RecorderDialogs.openRecordingDialog(this,this.emulatorCombo.getValue(), selection);
   }
 
   @FXML

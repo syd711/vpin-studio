@@ -87,7 +87,7 @@ public class VPinMameRomAliasService implements InitializingBean {
       }
     }
     catch (IOException e) {
-      LOG.error("Error loading " + vpmAliasFile.getAbsolutePath() + ": " + e.getMessage(), e);
+      LOG.error("Error loading {}: {}", vpmAliasFile.getAbsolutePath(), e.getMessage(), e);
     }
     return monitoredTextFile;
   }
@@ -114,14 +114,14 @@ public class VPinMameRomAliasService implements InitializingBean {
       if (vpmAliasFile.exists() && vpmAliasFile.delete()) {
         text = text.replaceAll("\n", "\r\n");
         FileUtils.writeStringToFile(vpmAliasFile, text, Charset.defaultCharset());
-        LOG.info("Written alias file " + vpmAliasFile.getAbsolutePath());
+        LOG.info("Written alias file {}", vpmAliasFile.getAbsolutePath());
 
         clearCache(emulatorService.getVpxGameEmulators());
         invalidateAliasMappings();
       }
     }
     catch (IOException e) {
-      LOG.error("Error saving " + vpmAliasFile.getAbsolutePath() + ": " + e.getMessage(), e);
+      LOG.error("Error saving {}: {}", vpmAliasFile.getAbsolutePath(), e.getMessage(), e);
     }
   }
 
@@ -165,7 +165,7 @@ public class VPinMameRomAliasService implements InitializingBean {
       }
     }
     catch (IOException e) {
-      LOG.error("Error loading " + vpmAliasFile.getAbsolutePath() + ": " + e.getMessage(), e);
+      LOG.error("Error loading {}: {}", vpmAliasFile.getAbsolutePath(), e.getMessage(), e);
     }
     return aliasToRomMapping;
   }

@@ -50,7 +50,7 @@ public class ResourceHandler {
       inputStream.close();
       return ResponseEntity.ok().contentType(mimeType).body(body);
     } catch (Exception e) {
-      LOG.error("Failed to return resources: " + e.getMessage(), e);
+      LOG.error("Failed to return resources: {}", e.getMessage(), e);
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There was an error completing the action.");
     }
   }

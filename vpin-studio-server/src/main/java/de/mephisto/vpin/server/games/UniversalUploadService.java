@@ -108,7 +108,7 @@ public class UniversalUploadService {
   public UploadDescriptor process(@RequestBody UploadDescriptor uploadDescriptor) {
     Thread.currentThread().setName("Universal Upload Thread");
     long start = System.currentTimeMillis();
-    LOG.info("*********** Importing " + uploadDescriptor.getTempFilename() + " ************************");
+    LOG.info("*********** Importing {} ************************", uploadDescriptor.getTempFilename());
     try {
       // If the file is not a real file but a pointer to an external resource, it is time to get the real file...
       resolveLinks(uploadDescriptor);
@@ -132,12 +132,12 @@ public class UniversalUploadService {
       processGameAssets(uploadDescriptor, analysis);
     }
     catch (Exception e) {
-      LOG.error("Processing \"" + uploadDescriptor.getTempFilename() + "\" failed: " + e.getMessage(), e);
+      LOG.error("Processing \"{}\" failed: {}", uploadDescriptor.getTempFilename(), e.getMessage(), e);
       uploadDescriptor.setError("Processing failed: " + e.getMessage());
     }
     finally {
       uploadDescriptor.finalizeUpload();
-      LOG.info("Import finished, took " + (System.currentTimeMillis() - start) + " ms.");
+      LOG.info("Import finished, took {} ms.", (System.currentTimeMillis() - start));
     }
     LOG.info("****************************** /Import Finished *************************************");
     return uploadDescriptor;
@@ -172,7 +172,7 @@ public class UniversalUploadService {
       return;
     }
 
-    LOG.info("---> Executing table asset archive import for type \"" + assetType.name() + "\" <---");
+    LOG.info("---> Executing table asset archive import for type \"{}\" <---", assetType.name());
     File temporaryUploadDescriptorBundleFile = new File(uploadDescriptor.getTempFilename());
     Game game = gameService.getGame(uploadDescriptor.getGameId());
     if (game == null) {
@@ -197,7 +197,7 @@ public class UniversalUploadService {
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to import " + assetType.name() + " file:" + e.getMessage(), e);
+      LOG.error("Failed to import {} file:{}", assetType.name(), e.getMessage(), e);
       throw e;
     }
     finally {
@@ -218,7 +218,7 @@ public class UniversalUploadService {
   }
 
   public void importArchiveBasedAssets(@NonNull UploadDescriptor uploadDescriptor, @Nullable UploaderAnalysis analysis, @NonNull AssetType assetType, boolean validateAssetType) throws Exception {
-    LOG.info("---> Executing asset archive import for type \"" + assetType.name() + "\" <---");
+    LOG.info("---> Executing asset archive import for type \"{}\" <---", assetType.name());
     // For backup imports, check if the AssetType was enabled
     if (!isImportEnabled(uploadDescriptor, assetType)) {
       LOG.info("Skipped import of asset type \"{}\", disabled for backup imports.", assetType.name());
@@ -408,7 +408,7 @@ public class UniversalUploadService {
     boolean replaced = false;
     if (gameAssetFile.exists()) {
       if (!gameAssetFile.delete()) {
-        LOG.error("Failed to delete existing game asset file " + gameAssetFile.getAbsolutePath());
+        LOG.error("Failed to delete existing game asset file {}", gameAssetFile.getAbsolutePath());
         throw new UnsupportedOperationException("Failed to delete existing game asset file " + gameAssetFile.getAbsolutePath());
       }
       replaced = true;
@@ -416,10 +416,10 @@ public class UniversalUploadService {
 
     org.apache.commons.io.FileUtils.copyFile(temporaryUploadDescriptorBundleFile, gameAssetFile);
     if (replaced) {
-      LOG.info("Replaced \"" + gameAssetFile.getAbsolutePath() + "\" with \"" + temporaryUploadDescriptorBundleFile.getAbsolutePath() + "\"");
+      LOG.info("Replaced \"{}\" with \"{}\"", gameAssetFile.getAbsolutePath(), temporaryUploadDescriptorBundleFile.getAbsolutePath());
     }
     else {
-      LOG.info("Copied \"" + temporaryUploadDescriptorBundleFile.getAbsolutePath() + "\" to \"" + gameAssetFile.getAbsolutePath() + "\"");
+      LOG.info("Copied \"{}\" to \"{}\"", temporaryUploadDescriptorBundleFile.getAbsolutePath(), gameAssetFile.getAbsolutePath());
     }
   }
 

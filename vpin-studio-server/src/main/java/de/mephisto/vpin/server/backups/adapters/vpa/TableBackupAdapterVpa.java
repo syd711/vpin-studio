@@ -57,7 +57,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
 
     jobDescriptor.setStatus("Calculating export size of " + game.getGameDisplayName());
     long totalSizeExpected = vpaService.calculateTotalSize(game);
-    LOG.info("Calculated total approx. size of " + FileUtils.readableFileSize(totalSizeExpected) + " for the archive of " + game.getGameDisplayName());
+    LOG.info("Calculated total approx. size of {} for the archive of {}", FileUtils.readableFileSize(totalSizeExpected), game.getGameDisplayName());
 
     String baseName = FilenameUtils.getBaseName(game.getGameFileName());
     File targetFolder = new File(backupSource.getLocation());
@@ -74,10 +74,10 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
     try {
       File tempFile = File.createTempFile(target.getName(), ".bak");
       //---------
-      LOG.info("Packaging " + game.getGameDisplayName());
+      LOG.info("Packaging {}", game.getGameDisplayName());
       long start = System.currentTimeMillis();
 
-      LOG.info("Creating temporary archive file " + tempFile.getAbsolutePath());
+      LOG.info("Creating temporary archive file {}", tempFile.getAbsolutePath());
 
       ZipFile zipOut = vpaService.createProtectedArchive(tempFile);
       vpaService.createBackup(packageInfo, jobDescriptor, (fileToZip, fileName) -> {
@@ -96,7 +96,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
           ZipUtil.zipFileEncrypted(fileToZip, fileName, zipOut);
         }
         catch (IOException ioe) {
-          LOG.error("Cannot add in zip " + fileName, ioe);
+          LOG.error("Cannot add in zip {}", fileName, ioe);
         }
       }, game, tableDetails);
 
@@ -144,10 +144,10 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
 
       boolean renamed = temporaryTarget.renameTo(target);
       if (renamed) {
-        LOG.info("Finished packing of " + target.getAbsolutePath() + ", took " + ((System.currentTimeMillis() - start) / 1000) + " seconds, " + FileUtils.readableFileSize(target.length()));
+        LOG.info("Finished packing of {}, took {} seconds, {}", target.getAbsolutePath(), ((System.currentTimeMillis() - start) / 1000), FileUtils.readableFileSize(target.length()));
       }
       else {
-        LOG.error("Final renaming export file to " + target.getAbsolutePath() + " failed.");
+        LOG.error("Final renaming export file to {} failed.", target.getAbsolutePath());
         jobDescriptor.setError("Final renaming export file to " + target.getAbsolutePath() + " failed.");
       }
 
@@ -156,7 +156,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
       }
     }
     catch (Exception e) {
-      LOG.error("Create VPA for " + game.getGameDisplayName() + " failed: " + e.getMessage(), e);
+      LOG.error("Create VPA for {} failed: {}", game.getGameDisplayName(), e.getMessage(), e);
       jobDescriptor.setError("Create VPA for " + game.getGameDisplayName() + " failed: " + e.getMessage());
       return;
     }
