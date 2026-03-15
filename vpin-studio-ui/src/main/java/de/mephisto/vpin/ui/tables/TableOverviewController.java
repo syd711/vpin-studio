@@ -2138,12 +2138,13 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     boolean fx3Mode = newValue == null || newValue.getType().equals(EmulatorType.ZenFX3);
     boolean pinballMMode = newValue != null && newValue.getType().equals(EmulatorType.PinballM);
     boolean zaccariaMode = newValue == null || newValue.isZaccariaEmulator();
+    boolean mameMode = newValue == null || newValue.isMameEmulator();
 
     columnVersion.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnVersion());
     columnEmulator.setVisible((vpxMode || fpMode) && !assetManagerMode && !Features.IS_STANDALONE && uiSettings.isColumnEmulator());
     columnVPS.setVisible((vpxMode || fpMode || zenEmulator || zaccariaMode) && !assetManagerMode && uiSettings.isColumnVpsStatus());
     columnPatchVersion.setVisible((vpxMode || fpMode || zenEmulator) && !assetManagerMode && uiSettings.isColumnPatchVersion());
-    columnRom.setVisible(pinballMMode || fx1Mode || (vpxMode && !assetManagerMode && uiSettings.isColumnRom()));
+    columnRom.setVisible(mameMode || pinballMMode || fx1Mode || (vpxMode && !assetManagerMode && uiSettings.isColumnRom()));
     columnB2S.setVisible((vpxMode || fpMode || zenEmulator) && !assetManagerMode && uiSettings.isColumnBackglass());
     columnRating.setVisible((vpxMode || fpMode) && !assetManagerMode && Features.RATINGS && uiSettings.isColumnRating());
     columnPUPPack.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPupPack() && Features.PUPPACKS_ENABLED);
@@ -2155,11 +2156,11 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     columnINI.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnIni());
     columnRES.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnRes());
     columnHSType.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnHighscore());
-    columnDateAdded.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnDateAdded());
-    columnDateModified.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnDateModified());
+    columnDateAdded.setVisible((mameMode || vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnDateAdded());
+    columnDateModified.setVisible((mameMode || vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnDateModified());
     columnLauncher.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnLauncher());
     columnComment.setVisible((vpxMode || fpMode || zenEmulator || zaccariaMode) && !assetManagerMode && uiSettings.isColumnComment());
-    columnPlaylists.setVisible((vpxMode || fpMode || zenEmulator || zaccariaMode) && !assetManagerMode && Features.PLAYLIST_ENABLED && uiSettings.isColumnPlaylists());
+    columnPlaylists.setVisible((vpxMode || fpMode || zenEmulator || zaccariaMode || mameMode) && !assetManagerMode && Features.PLAYLIST_ENABLED && uiSettings.isColumnPlaylists());
   }
 
   @Override

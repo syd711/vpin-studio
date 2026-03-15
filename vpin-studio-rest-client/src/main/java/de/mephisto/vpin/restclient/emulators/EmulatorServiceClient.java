@@ -173,4 +173,9 @@ public class EmulatorServiceClient extends VPinStudioClientService {
     GameEmulatorRepresentation gameEmulator = getGameEmulator(game.getEmulatorId());
     return gameEmulator != null && gameEmulator.isZaccariaEmulator();
   }
+
+  public boolean isMameGame(GameRepresentation game) {
+    GameEmulatorRepresentation gameEmulator = getGameEmulator(game.getEmulatorId());
+    return gameEmulator != null && gameEmulator.isMameEmulator();
+  }
 }

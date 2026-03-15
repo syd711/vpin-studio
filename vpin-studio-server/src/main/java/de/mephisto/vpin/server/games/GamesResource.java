@@ -16,6 +16,7 @@ import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.listeners.EventOrigin;
+import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.steam.SteamService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpx.VPXService;
@@ -58,6 +59,9 @@ public class GamesResource {
 
   @Autowired
   private GameStatusService gameStatusService;
+
+  @Autowired
+  private MameService mameService;
 
   @Autowired
   private GameLifecycleService gameLifecycleService;
@@ -136,6 +140,14 @@ public class GamesResource {
         frontendService.killFrontend();
         SLOG.initLog(game.getId());
         if (steamService.play(game)) {
+          gameStatusService.setActiveStatus(id);
+          return true;
+        }
+      }
+      else if (game.isMameGame()) {
+        frontendService.killFrontend();
+        SLOG.initLog(game.getId());
+        if (mameService.play(game)) {
           gameStatusService.setActiveStatus(id);
           return true;
         }

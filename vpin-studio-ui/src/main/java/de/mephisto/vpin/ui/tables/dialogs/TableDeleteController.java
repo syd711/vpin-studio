@@ -325,7 +325,7 @@ public class TableDeleteController implements Initializable, DialogController {
     this.validationTitle.setVisible(false);
     this.validationDescription.setVisible(false);
 
-    GameEmulatorRepresentation emulator = tableOverviewController.getEmulatorSelection();
+    GameEmulatorRepresentation emulator = client.getEmulatorService().getGameEmulator(selectedGames.get(0).getEmulatorId());
 
     //whole columns
     settingsColumn.setVisible(emulator.isVpxEmulator() || emulator.isFpEmulator());
@@ -345,7 +345,7 @@ public class TableDeleteController implements Initializable, DialogController {
   }
 
   private void refreshArchivesCheck(List<GameRepresentation> selectedGames, List<GameRepresentation> allGames) {
-    GameEmulatorRepresentation emulator = tableOverviewController.getEmulatorSelection();
+    GameEmulatorRepresentation emulator = client.getEmulatorService().getGameEmulator(selectedGames.get(0).getEmulatorId());
     if (Features.BACKUPS_ENABLED && emulator.isVpxEmulator()) {
       for (GameRepresentation selectedGame : selectedGames) {
         boolean hasNoArchives = client.getBackupService().getBackupsForGame(selectedGame.getId()).isEmpty();

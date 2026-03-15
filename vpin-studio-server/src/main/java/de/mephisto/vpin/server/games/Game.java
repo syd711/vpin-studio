@@ -262,6 +262,11 @@ public class Game {
   }
 
   @JsonIgnore
+  public boolean isMameGame() {
+    return this.emulator != null && this.emulator.isMameEmulator();
+  }
+
+  @JsonIgnore
   public boolean isFpGame() {
     return this.emulator.isFpEmulator();
   }
