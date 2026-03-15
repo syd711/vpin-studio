@@ -754,7 +754,7 @@ public class GameMediaService extends MediaService {
           }
         }
 
-        if (descriptor.isDeleteAlias()) {
+        if (descriptor.isDeleteAlias() && game.isVpxGame()) {
           if (!mameRomAliasService.deleteAlias(gameEmulator, game.getRomAlias())) {
             success = false;
           }
@@ -794,7 +794,7 @@ public class GameMediaService extends MediaService {
         }
 
         //cfg files belong to MAME
-        if (descriptor.isDeleteCfg()) {
+        if (descriptor.isDeleteCfg() && game.isVpxGame()) {
           if (!mameService.deleteCfg(game)) {
             success = false;
           }
@@ -814,7 +814,7 @@ public class GameMediaService extends MediaService {
           }
         }
 
-        if (descriptor.isDeleteMusic()) {
+        if (descriptor.isDeleteMusic() && game.isVpxGame()) {
           if (!musicService.delete(game)) {
             success = false;
           }

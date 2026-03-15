@@ -40,6 +40,7 @@ public class ServerUpdatePreProcessing {
     DOWNLOADS.put("puplauncher.exe", GITHUB_RESOURCES_URL + "puplauncher.exe");
     DOWNLOADS.put("vpxtool.exe", GITHUB_RESOURCES_URL + "vpxtool.exe");
     DOWNLOADS.put("maintenance.mp4", GITHUB_RESOURCES_URL + "maintenance.mp4");
+    DOWNLOADS.put("mame-gamelist.txt", GITHUB_RESOURCES_URL + "mame-gamelist.txt");
     DOWNLOADS.put(ScoringDB.SCORING_DB_NAME, GITHUB_RESOURCES_URL + ScoringDB.SCORING_DB_NAME);
     DOWNLOADS.put("manufacturers/manufacturers.zip", GITHUB_RESOURCES_URL + "manufacturers/manufacturers.zip");
     DOWNLOADS.put("logos.txt", GITHUB_RESOURCES_URL + "logos.txt");

@@ -853,8 +853,10 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
           List<GameEmulatorRepresentation> vpxEmus = emulatorCombo.getItems().stream().filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
 
-          this.importBtn.setDisable(!isAllVpxSelected && vpxEmus.size() > 1);
-          this.exportBtn.setDisable(!isAllVpxSelected);
+          GameEmulatorRepresentation emulatorRepresentation = emulatorCombo.getValue();
+          this.importBtn.setDisable(!emulatorRepresentation.isVpxEmulator() && !emulatorRepresentation.isMameEmulator());
+          this.exportBtn.setVisible(emulatorRepresentation.isVpxEmulator());
+          this.exportBtn.setDisable(!emulatorRepresentation.isVpxEmulator());
           this.stopBtn.setDisable(false);
           this.searchTextField.setDisable(false);
           this.reloadBtn.setDisable(false);
@@ -1794,7 +1796,6 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     vpxzBtn.setDisable(c.getList().isEmpty());
     playButtonController.setDisable(disable);
     scanBtn.setDisable(c.getList().isEmpty());
-    exportBtn.setDisable(c.getList().isEmpty());
     assetManagerBtn.setDisable(disable);
     tableEditBtn.setDisable(disable);
     setValidationVisible(c.getList().size() != 1);
@@ -2098,22 +2099,21 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   private void refreshViewForEmulator() {
     FrontendType frontendType = client.getFrontendService().getFrontendType();
-    GameEmulatorRepresentation newValue = emulatorCombo.getValue();
-    getTableFilterController().setEmulator(newValue);
-    boolean vpxOrFpEmulator = newValue == null || newValue.isVpxEmulator() || newValue.isFpEmulator();
-    boolean vpxEmulator = newValue == null || newValue.isVpxEmulator();
-    boolean fpEmulator = newValue == null || newValue.isFpEmulator();
+    GameEmulatorRepresentation emulator = emulatorCombo.getValue();
+    getTableFilterController().setEmulator(emulator);
+    boolean vpxOrFpEmulator = emulator == null || emulator.isVpxEmulator() || emulator.isFpEmulator();
+    boolean vpxEmulator = emulator == null || emulator.isVpxEmulator();
+    boolean fpEmulator = emulator == null || emulator.isFpEmulator();
 
     this.exportBtn.setVisible(Features.BACKUPS_ENABLED);
     this.importBtn.setVisible(!frontendType.equals(FrontendType.Standalone));
     this.importSeparator.setVisible(!frontendType.equals(FrontendType.Standalone));
-    this.emulatorBtn.setDisable(newValue == null || newValue.getId() == -1);
-    this.exportBtn.setDisable(!vpxOrFpEmulator);
-    this.deleteBtn.setVisible(vpxOrFpEmulator);
+    this.emulatorBtn.setDisable(emulator == null || emulator.getId() == -1);
+    this.exportBtn.setDisable(!emulator.isVpxEmulator());
+    this.exportBtn.setVisible(emulator.isVpxEmulator());
+    this.deleteBtn.setVisible(vpxOrFpEmulator || emulator.isMameEmulator());
     this.vpxzBtn.setVisible(vpxEmulator);
     this.scanBtn.setVisible(vpxEmulator);
-//    this.playButtonController.setVisible(vpxOrFpEmulator);
-//    this.stopBtn.setVisible(vpxOrFpEmulator);
 
     this.uploadsButtonController.updateVisibility(vpxOrFpEmulator, vpxEmulator, fpEmulator);
 
@@ -2121,7 +2121,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     refreshColumns();
 
-    tablesController.getTablesSideBarController().refreshViewForEmulator(newValue);
+    tablesController.getTablesSideBarController().refreshViewForEmulator(emulator);
   }
 
   private TableFilterController getTableFilterController() {

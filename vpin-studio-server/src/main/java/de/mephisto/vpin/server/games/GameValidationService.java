@@ -810,7 +810,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     //game has been played, but the text file has not been generated
-    if (game.isPlayed() && !StringUtils.isEmpty(hsName) && !highscoreFiles.contains(hsName)) {
+    if (game.isPlayed() && !StringUtils.isEmpty(hsName) && !highscoreFiles.contains(hsName) && !highscoreFiles.contains(game.getScannedHsFileName())) {
       validation.setValidScoreConfiguration(false);
       validation.setRomIcon(GameScoreValidation.ERROR_ICON);
       validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);
@@ -819,7 +819,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     //game has been played, but the .nvram or VPReg has not been found
-    if (game.isPlayed() && !StringUtils.isEmpty(rom) && (nvRamFile == null || !nvRamFile.exists()) && !vpRegService.isValid(game)) {
+    if (game.isPlayed() && !StringUtils.isEmpty(rom) && (nvRamFile == null || !nvRamFile.exists()) && !vpRegService.isValid(game) && !highscoreFiles.contains(hsName) && !highscoreFiles.contains(game.getScannedHsFileName())) {
       validation.setValidScoreConfiguration(false);
       validation.setRomIcon(GameScoreValidation.ERROR_ICON);
       validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);

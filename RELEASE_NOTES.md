@@ -7,3 +7,5 @@
   - Added combobox to filter backglasses by emulator.
   - Added emulator name column (which also better explains why for duplicated emulators, backglasses are shown multiple times).
   - Enabled "Backglass" section for the table overview and Zen Studio tables.
+- **MAME Support**:
+  - Added import support for MAME roms. These 

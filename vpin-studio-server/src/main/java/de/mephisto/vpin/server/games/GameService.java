@@ -28,6 +28,7 @@ import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,9 +39,11 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static de.mephisto.vpin.commons.SystemInfo.RESOURCES;
 
 
 @Order(10)
@@ -390,11 +393,41 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
         item.setFileName(file.getAbsolutePath());
         item.setFileSize(file.length());
         item.setEmuId(emulator.getId());
+
+        if (emulator.isMameEmulator()) {
+          String fullName = resolveMAMENameFor(FilenameUtils.getBaseName(file.getName()));
+          item.setName(fullName);
+        }
+
         list.getItems().add(item);
       }
     }
     Collections.sort(list.getItems(), Comparator.comparing(o -> o.getName().toLowerCase()));
     return list;
+  }
+
+  private String resolveMAMENameFor(String baseName) {
+    File gameList = new File(RESOURCES, "mame-gamelist.txt");
+    if (gameList.exists()) {
+      try (BufferedReader reader = new BufferedReader(new FileReader(gameList))) {
+        String line;
+        while ((line = reader.readLine()) != null) {
+          int sep = line.indexOf(' ');
+          if (sep > 0 && line.substring(0, sep).equalsIgnoreCase(baseName)) {
+            String quoted = line.substring(sep).trim();
+            int start = quoted.indexOf('"');
+            int end = quoted.lastIndexOf('"');
+            if (start >= 0 && end > start) {
+              return quoted.substring(start + 1, end);
+            }
+          }
+        }
+      }
+      catch (Exception e) {
+        LOG.error("Failed to resolve MAME name for \"{}\": {}", baseName, e.getMessage());
+      }
+    }
+    return baseName;
   }
 
   public Game getGameByTableAndEmuParameter(@NonNull String table, @Nullable String emuDirOrName) {

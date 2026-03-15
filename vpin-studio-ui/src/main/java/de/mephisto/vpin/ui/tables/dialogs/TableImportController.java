@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -110,6 +111,7 @@ public class TableImportController implements Initializable, DialogController {
       FrontendUtil.replaceNames(text2Description, frontend, frontend.getName());
 
       List<GameEmulatorRepresentation> filtered = new ArrayList<>(client.getEmulatorService().getFilteredEmulatorsWithAllVpx(uiSettings));
+      filtered = filtered.stream().filter(e -> !e.isZaccariaEmulator() && !e.isFxEmulator()).collect(Collectors.toList());
       this.emulatorCombo.setItems(FXCollections.observableList(filtered));
 
       this.emulatorCombo.valueProperty().addListener(new ChangeListener<GameEmulatorRepresentation>() {

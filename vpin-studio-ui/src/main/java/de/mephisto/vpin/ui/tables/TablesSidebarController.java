@@ -776,6 +776,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
     boolean fx1Mode = newValue == null || newValue.getType().equals(EmulatorType.ZenFX);
     boolean fx3Mode = newValue == null || newValue.getType().equals(EmulatorType.ZenFX3);
     boolean mMode = newValue == null || newValue.getType().equals(EmulatorType.PinballM);
+    boolean fpMode = newValue == null || newValue.getType().equals(EmulatorType.FuturePinball);
 
     titledPaneHighscores.setVisible(vpxMode);
     titledPanePov.setVisible(vpxMode);
@@ -784,7 +785,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
     titledPanePUPPack.setVisible(newValue == null || newValue.isVpxEmulator() || newValue.isFpEmulator());
     titledPaneDMD.setVisible(vpxMode);
     titledPaneMame.setVisible(vpxMode);
-    //titledPaneVps.setVisible(vpxMode);
+    titledPaneVps.setVisible(vpxMode || mMode || fx1Mode || fx3Mode || fpMode);
     titledPaneAltColor.setVisible(vpxMode || fx1Mode || fx3Mode || mMode);
     titledPaneScriptDetails.setVisible(vpxMode);
 
