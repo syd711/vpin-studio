@@ -5,12 +5,12 @@ import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
-import de.mephisto.vpin.restclient.mame.MameOptions;
+import de.mephisto.vpin.restclient.vpinmame.VPinMameOptions;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameLifecycleService;
-import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.vpx.FolderLookupService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FileUtils;
@@ -33,8 +33,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static de.mephisto.vpin.server.VPinStudioServer.Features;
-
 /**
  *
  */
@@ -43,7 +41,7 @@ public class AltColorService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @Autowired
-  private MameService mameService;
+  private VPinMameService vPinMameService;
 
   @Autowired
   private GameLifecycleService gameLifecycleService;
@@ -54,10 +52,10 @@ public class AltColorService implements InitializingBean {
   public void setAltColorEnabled(@NonNull Game game, boolean b) {
     String rom = game.getRom();
     if (game.isVpxGame() && !StringUtils.isEmpty(rom)) {
-      MameOptions options = mameService.getOptions(rom);
+      VPinMameOptions options = vPinMameService.getOptions(rom);
       options.setColorizeDmd(b);
       options.setUseExternalDmd(b);
-      mameService.saveOptions(options);
+      vPinMameService.saveOptions(options);
       gameLifecycleService.notifyGameAssetsChanged(AssetType.ALT_COLOR, rom);
     }
   }
@@ -102,7 +100,7 @@ public class AltColorService implements InitializingBean {
   public File getAltColorFolder(@NonNull Game game) {
     File altColorFolder = null;
     if (game.isZenGame()) {
-      File altColorFolderRoot = mameService.getAltColorFolder();
+      File altColorFolderRoot = vPinMameService.getAltColorFolder();
       altColorFolder = new File(altColorFolderRoot, game.getGameName());
     }
     else if (!StringUtils.isEmpty(game.getRomAlias()) && game.getEmulator() != null) {

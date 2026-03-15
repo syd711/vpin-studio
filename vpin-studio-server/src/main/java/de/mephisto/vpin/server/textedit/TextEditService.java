@@ -10,8 +10,8 @@ import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.mame.MameRomAliasService;
-import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.vpinmame.VPinMameRomAliasService;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.vpx.VPXService;
 import de.mephisto.vpin.server.vpx.VPXUtil;
@@ -48,10 +48,10 @@ public class TextEditService {
   private GameService gameService;
 
   @Autowired
-  private MameService mameService;
+  private VPinMameService vPinMameService;
 
   @Autowired
-  private MameRomAliasService mameRomAliasService;
+  private VPinMameRomAliasService VPinMameRomAliasService;
 
   @Autowired
   private PreferencesService preferencesService;
@@ -69,7 +69,7 @@ public class TextEditService {
       VPinFile vPinFile = monitoredTextFile.getvPinFile();
       switch (vPinFile) {
         case DmdDeviceIni: {
-          File mameFolder = mameService.getMameFolder();
+          File mameFolder = vPinMameService.getMameFolder();
           File init = new File(mameFolder, "DmdDevice.ini");
           Path filePath = init.toPath();
           String iniText = Files.readString(filePath);
@@ -105,7 +105,7 @@ public class TextEditService {
         }
         case VPMAliasTxt: {
           GameEmulator defaultGameEmulator = emulatorService.getGameEmulator(monitoredTextFile.getEmulatorId());
-          return mameRomAliasService.loadAliasFile(defaultGameEmulator);
+          return VPinMameRomAliasService.loadAliasFile(defaultGameEmulator);
         }
         case VBScript: {
           Game game = frontendService.getOriginalGame(Integer.parseInt(monitoredTextFile.getFileId()));
@@ -150,7 +150,7 @@ public class TextEditService {
       VPinFile vPinFile = monitoredTextFile.getvPinFile();
       switch (vPinFile) {
         case DmdDeviceIni: {
-          File mameFolder = mameService.getMameFolder();
+          File mameFolder = vPinMameService.getMameFolder();
           File iniFile = new File(mameFolder, "DmdDevice.ini");
           File backup = new File(mameFolder, "DmdDevice.ini.bak");
           if (!backup.exists()) {
@@ -199,8 +199,8 @@ public class TextEditService {
           sorted.sort(Comparator.comparing(String::toLowerCase));
           String content = String.join("\n", sorted);
 
-          mameRomAliasService.saveAliasFile(defaultGameEmulator, content);
-          return mameRomAliasService.loadAliasFile(defaultGameEmulator);
+          VPinMameRomAliasService.saveAliasFile(defaultGameEmulator, content);
+          return VPinMameRomAliasService.loadAliasFile(defaultGameEmulator);
         }
         case VBScript: {
           Game game = frontendService.getOriginalGame(Integer.parseInt(monitoredTextFile.getFileId()));

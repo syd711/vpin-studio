@@ -25,7 +25,7 @@ import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.HighscoreBackupService;
-import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.music.MusicService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPack;
@@ -95,7 +95,7 @@ public class VpaService implements InitializingBean {
   private DMDDeviceIniService dmdDeviceIniService;
 
   @Autowired
-  private MameService mameService;
+  private VPinMameService vPinMameService;
 
   @Autowired
   private BackglassService backglassService;
@@ -302,7 +302,7 @@ public class VpaService implements InitializingBean {
     zipTableDetails(jobDescriptor, game, tableDetails, zipOut);
 
     if (backupSettings.isRegistryData()) {
-      Map<String, Object> options = mameService.getOptionsRaw(game.getRom());
+      Map<String, Object> options = vPinMameService.getOptionsRaw(game.getRom());
       if (options == null) {
         options = new HashMap<>();
       }

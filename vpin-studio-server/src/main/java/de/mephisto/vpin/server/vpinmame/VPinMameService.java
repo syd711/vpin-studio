@@ -1,10 +1,10 @@
-package de.mephisto.vpin.server.mame;
+package de.mephisto.vpin.server.vpinmame;
 
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.backups.BackupMameData;
 import de.mephisto.vpin.restclient.dmd.DMDInfoZone;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
-import de.mephisto.vpin.restclient.mame.MameOptions;
+import de.mephisto.vpin.restclient.vpinmame.VPinMameOptions;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
@@ -17,7 +17,6 @@ import de.mephisto.vpin.server.vpx.FolderLookupService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
-import org.jcodec.common.DictionaryCompressor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -38,7 +37,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * for a description about all mame options.
  */
 @Service
-public class MameService implements InitializingBean {
+public class VPinMameService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final static String KEY_SKIP_STARTUP_TEST = "cheat";
@@ -109,14 +108,14 @@ public class MameService implements InitializingBean {
 
 
   @NonNull
-  public MameOptions getOptions(@NonNull String rom) {
-    MameOptions options = new MameOptions();
+  public VPinMameOptions getOptions(@NonNull String rom) {
+    VPinMameOptions options = new VPinMameOptions();
     options.setRom(rom);
 
     Map<String, Object> values = systemService.getCurrentUserValues(MAME_REG_FOLDER_KEY + rom);
     options.setExistInRegistry(!values.isEmpty());
     if (values.isEmpty()) {
-      values = systemService.getCurrentUserValues(MAME_REG_FOLDER_KEY + MameOptions.DEFAULT_KEY);
+      values = systemService.getCurrentUserValues(MAME_REG_FOLDER_KEY + VPinMameOptions.DEFAULT_KEY);
     }
 
     options.setSkipPinballStartupTest(getBoolean(values, KEY_SKIP_STARTUP_TEST));
@@ -154,7 +153,7 @@ public class MameService implements InitializingBean {
     }
   }
 
-  public MameOptions saveOptions(@NonNull MameOptions options) {
+  public VPinMameOptions saveOptions(@NonNull VPinMameOptions options) {
     String rom = options.getRom();
 
     if (!options.isExistInRegistry()) {
@@ -195,7 +194,7 @@ public class MameService implements InitializingBean {
     boolean existInRegistry = romFolders.contains(rom.toLowerCase());
 
     Map<String, Object> values = systemService.getCurrentUserValues(MAME_REG_FOLDER_KEY +
-        (existInRegistry ? rom : MameOptions.DEFAULT_KEY));
+        (existInRegistry ? rom : VPinMameOptions.DEFAULT_KEY));
     dmdinfo.setX(getInteger(values, "dmd_pos_x"));
     dmdinfo.setY(getInteger(values, "dmd_pos_y"));
     dmdinfo.setWidth(getInteger(values, "dmd_width"));
@@ -368,7 +367,7 @@ public class MameService implements InitializingBean {
 
   @Nullable
   private File getVpinMameSetupFolder(String directoryType) {
-    Map<String, Object> values = systemService.getCurrentUserValues(MameService.MAME_REG_FOLDER_KEY + MameOptions.GLOBALS_KEY);
+    Map<String, Object> values = systemService.getCurrentUserValues(VPinMameService.MAME_REG_FOLDER_KEY + VPinMameOptions.GLOBALS_KEY);
     return values.containsKey(directoryType) ? new File((String) values.get(directoryType)) : null;
   }
 

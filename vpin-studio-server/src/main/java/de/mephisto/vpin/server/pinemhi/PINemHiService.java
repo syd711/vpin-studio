@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.pinemhi;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
-import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import org.apache.commons.configuration2.INIConfiguration;
@@ -38,7 +38,7 @@ public class PINemHiService implements InitializingBean {
   private SystemService systemService;
 
   @Autowired
-  private MameService mameService;
+  private VPinMameService vPinMameService;
 
 
   private boolean enabled = false;
@@ -222,7 +222,7 @@ public class PINemHiService implements InitializingBean {
               Updater.downloadAndOverwrite("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/pinemhi/" + resource, check, true);
             }
 
-            File nvramFolder = mameService.getNvRamFolder();
+            File nvramFolder = vPinMameService.getNvRamFolder();
             if (nvramFolder != null && nvramFolder.exists()) {
               adjustVPPathForEmulator(nvramFolder, getPinemhiIni(), true);
             }
@@ -276,7 +276,7 @@ public class PINemHiService implements InitializingBean {
       LOG.info("Auto-started Pinemhi " + PROCESS_NAME);
     }
 
-    File nvramFolder = mameService.getNvRamFolder();
+    File nvramFolder = vPinMameService.getNvRamFolder();
     if (nvramFolder != null && nvramFolder.exists()) {
       adjustVPPathForEmulator(nvramFolder, getPinemhiIni(), true);
     }

@@ -29,7 +29,7 @@ import de.mephisto.vpin.restclient.highscores.HigscoreBackupServiceClient;
 import de.mephisto.vpin.restclient.hooks.HooksServiceClient;
 import de.mephisto.vpin.restclient.ini.IniServiceClient;
 import de.mephisto.vpin.restclient.jobs.JobsServiceClient;
-import de.mephisto.vpin.restclient.mame.MameServiceClient;
+import de.mephisto.vpin.restclient.vpinmame.VPinMameServiceClient;
 import de.mephisto.vpin.restclient.mania.ManiaServiceClient;
 import de.mephisto.vpin.restclient.notifications.NotificationsServiceClient;
 import de.mephisto.vpin.restclient.patcher.PatcherServiceClient;
@@ -96,7 +96,7 @@ public class VPinStudioClient {
   private final IniServiceClient iniServiceClient;
   private final ImageCache imageCache;
   private final JobsServiceClient jobsServiceClient;
-  private final MameServiceClient mameServiceClient;
+  private final VPinMameServiceClient vPinMameServiceClient;
   private final TableAssetSourcesServiceClient tableAssetSourcesServiceClient;
   private final ManiaServiceClient maniaServiceClient;
   private final NVRamsServiceClient nvRamsServiceClient;
@@ -151,7 +151,7 @@ public class VPinStudioClient {
     this.imageCache = new ImageCache(this);
     this.iniServiceClient = new IniServiceClient(this);
     this.jobsServiceClient = new JobsServiceClient(this);
-    this.mameServiceClient = new MameServiceClient(this);
+    this.vPinMameServiceClient = new VPinMameServiceClient(this);
     this.maniaServiceClient = new ManiaServiceClient(this);
     this.tableAssetSourcesServiceClient = new TableAssetSourcesServiceClient(this);
     this.nvRamsServiceClient = new NVRamsServiceClient(this);
@@ -316,8 +316,8 @@ public class VPinStudioClient {
     return altColorServiceClient;
   }
 
-  public MameServiceClient getMameService() {
-    return mameServiceClient;
+  public VPinMameServiceClient getMameService() {
+    return vPinMameServiceClient;
   }
 
   public PupPackServiceClient getPupPackService() {

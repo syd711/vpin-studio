@@ -1,6 +1,6 @@
-package de.mephisto.vpin.restclient.mame;
+package de.mephisto.vpin.restclient.vpinmame;
 
-public class MameOptions {
+public class VPinMameOptions {
   public final static String DEFAULT_KEY = "default";
   public final static String GLOBALS_KEY = "globals";
 

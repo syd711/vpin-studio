@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.PropertyWriter;
 import com.fasterxml.jackson.databind.ser.ResolvableSerializer;
 import com.fasterxml.jackson.databind.ser.std.BeanSerializerBase;
-import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -18,11 +18,11 @@ import java.util.Iterator;
  */
 public class GameSerializer extends JsonSerializer<Game> implements ResolvableSerializer {
 
-  private final MameService mameService;
+  private final VPinMameService vPinMameService;
   private final JsonSerializer<Object> defaultSerializer;
 
-  public GameSerializer(MameService mameService, JsonSerializer<Object> defaultSerializer) {
-    this.mameService = mameService;
+  public GameSerializer(VPinMameService vPinMameService, JsonSerializer<Object> defaultSerializer) {
+    this.vPinMameService = vPinMameService;
     this.defaultSerializer = defaultSerializer;
   }
 
@@ -53,7 +53,7 @@ public class GameSerializer extends JsonSerializer<Game> implements ResolvableSe
     }
 
     // Add custom fields here
-    gen.writeBooleanField("romExists", mameService.isRomExists(game));
+    gen.writeBooleanField("romExists", vPinMameService.isRomExists(game));
 
     gen.writeEndObject();
   }

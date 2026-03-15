@@ -26,9 +26,8 @@ import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.listeners.EventOrigin;
-import de.mephisto.vpin.server.mame.MameRomAliasService;
-import de.mephisto.vpin.server.mame.MameService;
-import de.mephisto.vpin.server.pinemhi.PINemHiService;
+import de.mephisto.vpin.server.vpinmame.VPinMameRomAliasService;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -67,7 +66,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
   private GameDetailsRepositoryService gameDetailsRepositoryService;
 
   @Autowired
-  private MameRomAliasService mameRomAliasService;
+  private VPinMameRomAliasService VPinMameRomAliasService;
 
   @Autowired
   private BackglassService backglassService;
@@ -94,7 +93,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
   private PreferencesService preferencesService;
 
   @Autowired
-  private MameService mameService;
+  private VPinMameService vPinMameService;
 
   @Autowired
   private RomService romService;
@@ -148,7 +147,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
       game = frontendService.getOriginalGame(gameId);
       if (game != null) {
         applyGameDetails(game, true, true, null, true);
-        mameService.clearCacheFor(game.getRom());
+        vPinMameService.clearCacheFor(game.getRom());
         if (game.isVpxGame()) {
           highscoreService.scanScore(game, EventOrigin.USER_INITIATED);
         }
@@ -386,7 +385,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
 
     //check alias
     if (game.getEmulator() != null && !game.isZenGame()) {
-      String originalRom = mameRomAliasService.getRomForAlias(game.getEmulator(), game.getRom());
+      String originalRom = VPinMameRomAliasService.getRomForAlias(game.getEmulator(), game.getRom());
       if (!StringUtils.isEmpty(originalRom)) {
         String aliasName = game.getRom();
         game.setRom(originalRom);
@@ -634,7 +633,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    mameRomAliasService.setGameCachingService(this);
+    VPinMameRomAliasService.setGameCachingService(this);
 
     serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
 

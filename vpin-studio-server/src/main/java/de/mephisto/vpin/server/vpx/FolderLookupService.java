@@ -4,7 +4,7 @@ import de.mephisto.vpin.restclient.system.ScoringDBMapping;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegFile;
-import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -28,7 +28,7 @@ public class FolderLookupService {
   private SystemService systemService;
 
   @Autowired
-  private MameService mameService;
+  private VPinMameService vPinMameService;
 
 
   /*
@@ -75,7 +75,7 @@ public class FolderLookupService {
   public File getAltColorFolder(@NonNull Game game, String subfolder) {
     GameEmulator emulator = game.getEmulator();
     if (isPreferLegacyFileStructure(emulator)) {
-      File folder = mameService.getAltColorFolder();
+      File folder = vPinMameService.getAltColorFolder();
       return new File(folder, subfolder);
     }
 
@@ -86,7 +86,7 @@ public class FolderLookupService {
   public File getNvRamFolder(@NonNull Game game) {
     GameEmulator emulator = game.getEmulator();
     if (isPreferLegacyFileStructure(emulator)) {
-      File folder = mameService.getNvRamFolder();
+      File folder = vPinMameService.getNvRamFolder();
       if (folder == null) {
         folder = new File(emulator.getMameFolder(), "nvram");
       }
@@ -100,7 +100,7 @@ public class FolderLookupService {
   public File getRomFolder(@NonNull Game game) {
     GameEmulator emulator = game.getEmulator();
     if (isPreferLegacyFileStructure(emulator)) {
-      File folder = mameService.getRomsFolder();
+      File folder = vPinMameService.getRomsFolder();
       if (folder == null) {
         folder = new File(emulator.getMameFolder(), "roms");
       }
@@ -124,7 +124,7 @@ public class FolderLookupService {
   public File getCfgFolder(@NonNull Game game) {
     GameEmulator emulator = game.getEmulator();
     if (isPreferLegacyFileStructure(emulator)) {
-      File folder = mameService.getCfgFolder();
+      File folder = vPinMameService.getCfgFolder();
       if (folder == null) {
         folder = new File(emulator.getMameFolder(), "cfg");
       }

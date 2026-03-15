@@ -8,14 +8,14 @@ import de.mephisto.vpin.restclient.directb2s.DirectB2sScreenRes;
 import de.mephisto.vpin.restclient.dmd.*;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.mame.MameOptions;
+import de.mephisto.vpin.restclient.vpinmame.VPinMameOptions;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.server.directb2s.BackglassService;
 import de.mephisto.vpin.server.frontend.VPinScreenService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.DefaultPictureService;
 
@@ -48,7 +48,7 @@ public class DMDPositionService {
   @Autowired
   private BackglassService backglassService;
   @Autowired
-  private MameService mameService;
+  private VPinMameService vPinMameService;
   @Autowired
   private VPinScreenService screenService;
   @Autowired
@@ -249,7 +249,7 @@ public class DMDPositionService {
   private void fillDMDInfoFromRegistry(DMDInfo dmdinfo, DMDInfoZone zone) {
     if (dmdinfo.getGameRom() != null) {
       dmdinfo.setUseRegistry(true);
-      boolean existInRegistry = mameService.fillDmdPosition(dmdinfo.getGameRom(), zone);
+      boolean existInRegistry = vPinMameService.fillDmdPosition(dmdinfo.getGameRom(), zone);
       dmdinfo.setLocallySaved(existInRegistry);
     }
   }
@@ -464,7 +464,7 @@ public class DMDPositionService {
 
       // then save positions in registry
       DMDInfoZone mainZone = getMainZone(dmdinfo);
-      return mameService.saveDmdPosition(rom, mainZone);
+      return vPinMameService.saveDmdPosition(rom, mainZone);
     }
     //----------
     // case of VirtualDMD
@@ -518,19 +518,19 @@ public class DMDPositionService {
   // Utilities
 
   private boolean isShowDmd(String rom) {
-    return rom != null ? mameService.getOptions(rom).isShowDmd() : false;
+    return rom != null ? vPinMameService.getOptions(rom).isShowDmd() : false;
   }
 
   private boolean useExternalDmd(String rom) {
-    return rom != null ? mameService.getOptions(rom).isUseExternalDmd() : true;
+    return rom != null ? vPinMameService.getOptions(rom).isUseExternalDmd() : true;
   }
 
   private void setMameOptions(String rom, boolean showDmd, boolean useExternalDmd) {
     if (rom != null) {
-      MameOptions options = mameService.getOptions(rom);
+      VPinMameOptions options = vPinMameService.getOptions(rom);
       options.setShowDmd(showDmd);
       options.setUseExternalDmd(useExternalDmd);
-      mameService.saveOptions(options);
+      vPinMameService.saveOptions(options);
       gameLifecycleService.notifyGameAssetsChanged(AssetType.DMD_PACK, rom);
     }
   }

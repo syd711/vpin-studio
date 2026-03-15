@@ -35,8 +35,8 @@ import de.mephisto.vpin.server.frontend.WheelIconDelete;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.listeners.EventOrigin;
-import de.mephisto.vpin.server.mame.MameRomAliasService;
-import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.vpinmame.VPinMameRomAliasService;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.music.MusicService;
 import de.mephisto.vpin.server.pinvol.PinVolService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -74,7 +74,7 @@ public class GameMediaService extends MediaService {
   private DMDDeviceIniService dmdDeviceIniService;
 
   @Autowired
-  private MameRomAliasService mameRomAliasService;
+  private VPinMameRomAliasService VPinMameRomAliasService;
 
   @Autowired
   private PinVolService pinVolService;
@@ -83,7 +83,7 @@ public class GameMediaService extends MediaService {
   private AssetRepository assetRepository;
 
   @Autowired
-  private MameService mameService;
+  private VPinMameService vPinMameService;
 
   @Autowired
   private GameService gameService;
@@ -755,7 +755,7 @@ public class GameMediaService extends MediaService {
         }
 
         if (descriptor.isDeleteAlias() && game.isVpxGame()) {
-          if (!mameRomAliasService.deleteAlias(gameEmulator, game.getRomAlias())) {
+          if (!VPinMameRomAliasService.deleteAlias(gameEmulator, game.getRomAlias())) {
             success = false;
           }
         }
@@ -788,19 +788,19 @@ public class GameMediaService extends MediaService {
         }
 
         if (descriptor.isDeleteDMDDeviceIni()) {
-          if (!mameService.deleteDMDDeviceIniEntry(game)) {
+          if (!vPinMameService.deleteDMDDeviceIniEntry(game)) {
             success = false;
           }
         }
 
         //cfg files belong to MAME
         if (descriptor.isDeleteCfg() && game.isVpxGame()) {
-          if (!mameService.deleteCfg(game)) {
+          if (!vPinMameService.deleteCfg(game)) {
             success = false;
           }
 
           if (!StringUtils.isEmpty(game.getRom())) {
-            if (!mameService.deleteOptions(game.getRom())) {
+            if (!vPinMameService.deleteOptions(game.getRom())) {
               success = false;
             }
           }
@@ -808,7 +808,7 @@ public class GameMediaService extends MediaService {
 
         if (descriptor.isDeleteRom()) {
           if (!StringUtils.isEmpty(game.getRom())) {
-            if (!mameService.deleteRom(game)) {
+            if (!vPinMameService.deleteRom(game)) {
               success = false;
             }
           }

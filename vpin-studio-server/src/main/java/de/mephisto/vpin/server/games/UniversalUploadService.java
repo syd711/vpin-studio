@@ -23,8 +23,8 @@ import de.mephisto.vpin.server.dmd.DMDService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.fp.FuturePinballService;
 import de.mephisto.vpin.server.highscores.HighscoreBackupService;
-import de.mephisto.vpin.server.mame.MameRomAliasService;
-import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.vpinmame.VPinMameRomAliasService;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.music.MusicService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
@@ -61,7 +61,7 @@ public class UniversalUploadService {
   private DMDService dmdService;
 
   @Autowired
-  private MameService mameService;
+  private VPinMameService vPinMameService;
 
   @Autowired
   private FuturePinballService futurePinballService;
@@ -88,7 +88,7 @@ public class UniversalUploadService {
   private DiscordService discordService;
 
   @Autowired
-  private MameRomAliasService mameRomAliasService;
+  private VPinMameRomAliasService VPinMameRomAliasService;
 
   @Autowired
   private PreferencesService preferencesService;
@@ -327,7 +327,7 @@ public class UniversalUploadService {
       }
       case ROM: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.ROM) == null) {
-          mameService.installRom(uploadDescriptor, game, gameEmulator, tempFile, analysis);
+          vPinMameService.installRom(uploadDescriptor, game, gameEmulator, tempFile, analysis);
           gameLifecycleService.notifyGameAssetsChanged(assetType, updatedAssetName);
         }
         break;
@@ -341,14 +341,14 @@ public class UniversalUploadService {
       }
       case NV: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.NV) == null) {
-          mameService.installNvRam(uploadDescriptor, game, gameEmulator, tempFile, analysis);
+          vPinMameService.installNvRam(uploadDescriptor, game, gameEmulator, tempFile, analysis);
           gameLifecycleService.notifyGameAssetsChanged(assetType, updatedAssetName);
         }
         break;
       }
       case CFG: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.CFG) == null) {
-          mameService.installCfg(uploadDescriptor, game, gameEmulator, tempFile, analysis);
+          vPinMameService.installCfg(uploadDescriptor, game, gameEmulator, tempFile, analysis);
           gameLifecycleService.notifyGameAssetsChanged(assetType, updatedAssetName);
         }
         break;
@@ -463,8 +463,8 @@ public class UniversalUploadService {
       GameEmulator gameEmulator = emulatorService.getGameEmulator(uploadDescriptor.getEmulatorId());
 
       if (mameData != null) {
-        mameService.saveRegistryData(mameData);
-        mameRomAliasService.writeAlias(gameEmulator, mameData.getRom(), mameData.getAlias());
+        vPinMameService.saveRegistryData(mameData);
+        VPinMameRomAliasService.writeAlias(gameEmulator, mameData.getRom(), mameData.getAlias());
       }
 
       String highscoreBackupZipEntry = analysis.getFileNameWithPathForExtension(HighscoreBackupService.FILE_SUFFIX);

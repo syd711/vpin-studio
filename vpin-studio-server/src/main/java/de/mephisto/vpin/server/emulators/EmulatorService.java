@@ -13,7 +13,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameEmulatorValidationService;
 import de.mephisto.vpin.server.games.GameMediaService;
-import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import org.apache.commons.lang3.StringUtils;
@@ -39,7 +39,7 @@ public class EmulatorService implements InitializingBean, PreferenceChangedListe
   private GameEmulatorValidationService gameEmulatorValidationService;
 
   @Autowired
-  private MameService mameService;
+  private VPinMameService vPinMameService;
 
   @Autowired
   private EmulatorFactory emulatorFactory;
@@ -165,7 +165,7 @@ public class EmulatorService implements InitializingBean, PreferenceChangedListe
       if (emulator.isVpxEmulator()) {
         // mind that popper may set a specific romDirectory
         if (StringUtils.isEmpty(emulator.getRomDirectory())) {
-          File romFolder = mameService.getRomsFolder();
+          File romFolder = vPinMameService.getRomsFolder();
           if (romFolder != null && romFolder.exists()) {
             emulator.setRomDirectory(romFolder.getAbsolutePath());
           }

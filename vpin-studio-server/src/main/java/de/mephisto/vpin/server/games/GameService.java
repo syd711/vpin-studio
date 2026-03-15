@@ -17,8 +17,8 @@ import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.listeners.EventOrigin;
-import de.mephisto.vpin.server.mame.MameRomAliasService;
-import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.vpinmame.VPinMameRomAliasService;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
@@ -72,7 +72,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   private PreferencesService preferencesService;
 
   @Autowired
-  private MameRomAliasService mameRomAliasService;
+  private VPinMameRomAliasService VPinMameRomAliasService;
 
   @Autowired
   private VpsService vpsService;
@@ -87,7 +87,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   private PlayerService playerService;
 
   @Autowired
-  private MameService mameService;
+  private VPinMameService vPinMameService;
 
   @Autowired
   private EmulatorService emulatorService;
@@ -166,7 +166,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     gameCachingService.clearCache();
     emulatorService.reloadEmulators();
     List<GameEmulator> emulators = emulatorService.getValidGameEmulators();
-    mameRomAliasService.clearCache(emulators);
+    VPinMameRomAliasService.clearCache(emulators);
     gameCachingService.clearCache();
     getKnownGames(-1);
     return true;
@@ -178,7 +178,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   public boolean reloadEmulator(int emulatorId) {
     GameEmulator emulator = emulatorService.getGameEmulator(emulatorId);
     if (emulator != null) {
-      mameRomAliasService.clearCache(Arrays.asList(emulator));
+      VPinMameRomAliasService.clearCache(Arrays.asList(emulator));
       gameCachingService.clearCacheForEmulator(emulatorId);
     }
 
@@ -669,18 +669,18 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   }
 
   public boolean clearMameCaches() {
-    mameRomAliasService.clearCache(emulatorService.getVpxGameEmulators());
+    VPinMameRomAliasService.clearCache(emulatorService.getVpxGameEmulators());
     List<Game> games = getKnownGames(-1);
-    return mameService.clearGamesCache(games);
+    return vPinMameService.clearGamesCache(games);
   }
 
   public boolean clearMameCacheFor(String rom) {
-    return mameService.clearCacheFor(rom);
+    return vPinMameService.clearCacheFor(rom);
   }
 
   public boolean clearAliasCache() {
     List<GameEmulator> gameEmulators = emulatorService.getValidGameEmulators();
-    return mameRomAliasService.clearCache(gameEmulators);
+    return VPinMameRomAliasService.clearCache(gameEmulators);
   }
 
   @Override
@@ -710,7 +710,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
         clearMameCaches();
 
         List<GameEmulator> gameEmulators = emulatorService.getValidGameEmulators();
-        mameService.clearValidationsCache(gameEmulators);
+        vPinMameService.clearValidationsCache(gameEmulators);
       }).start();
     }
   }
