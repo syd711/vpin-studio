@@ -976,34 +976,6 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   }
 
 
-  public PlaylistGame getPlaylistGame(int playlistId, int gameId) {
-    Connection connect = this.connect();
-    String sql = "SELECT * FROM PlayListDetails WHERE GameID=" + gameId + " AND PlayListID=" + playlistId + ";";
-    PlaylistGame game = null;
-    try {
-      Statement stmt = Objects.requireNonNull(connect).createStatement();
-      ResultSet rs = stmt.executeQuery(sql);
-      while (rs.next()) {
-        game = new PlaylistGame();
-        game.setId(gameId);
-
-        int favMode = rs.getInt(IS_FAV);
-        game.setFav(favMode == 1);
-        game.setGlobalFav(favMode == 2);
-        break;
-      }
-      rs.close();
-      stmt.close();
-    }
-    catch (Exception e) {
-      LOG.error("Failed to read playlist game [" + sql + "]: " + e.getMessage(), e);
-    }
-    finally {
-      this.disconnect(connect);
-    }
-    return game;
-  }
-
   @NonNull
   public Playlist clearPlaylist(int id) {
     Connection connect = this.connect();
@@ -1393,7 +1365,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
     //this can not be executed within a fetch!!!
     for (GameEmulator emulator : result) {
-      if (emulator.getType().isVpxEmulator() || emulator.getType().isFpEmulator()) {
+      if (emulator.getType().isVpxEmulator() || emulator.getType().isFpEmulator() || emulator.getType().isZaccariaEmulator() || emulator.getType().isMameEmulator()) {
         initEmulatorScripts(emulator);
       }
     }
@@ -2105,7 +2077,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       statement.close();
     }
     catch (SQLException e) {
-      LOG.error("Failed to read exit script or " + emuName + ": " + e.getMessage(), e);
+      LOG.error("Failed to read exit script or {}: {}", emuName, e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -2127,29 +2099,12 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       LOG.info("Update of " + scriptName + " for '" + emuName + "' successful.");
     }
     catch (Exception e) {
-      LOG.error("Failed to update script " + scriptName + " [" + sql + "]: " + e.getMessage(), e);
+      LOG.error("Failed to update script {} [{}]: {}", scriptName, sql, e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
     }
   }
-
-  /*
-    ResultSet rs = statement.executeQuery("SELECT * FROM Emulators;");
-
-    e.setId(rs.getInt("EMUID"));
-      e.setName(rs.getString("EmuName"));
-      e.setDisplayName(rs.getString("EmuDisplay"));
-      e.setDirMedia(rs.getString("DirMedia"));
-      e.setDirGames(rs.getString("DirGames"));
-      e.setDirRoms(rs.getString("DirRoms"));
-      e.setDescription(rs.getString("Description"));
-      e.setEmuLaunchDir(rs.getString("EmuLaunchDir"));
-      e.setLaunchScript(rs.getString("LaunchScript"));
-      e.setGamesExt(rs.getString("GamesExt"));
-      e.setVisible(rs.getInt("Visible") == 1);
-
-   */
 
   @NonNull
   private Playlist createPlaylist(ResultSet rs, Playlist globalFavsPlaylist, Playlist favsPlaylist) throws SQLException {
