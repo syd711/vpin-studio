@@ -22,3 +22,4 @@
 - **WOVP Pause Menu Item**: Screenshots for portrait mode screens are not rotated anymore.
 - **Table Overview**: Fixed backup button being visible for all emulator types.
 - **Media Recorder**: Added filtering of disabled emulators.
+- **Table Data Manager**: Fixed tab focus order for all tabs.
