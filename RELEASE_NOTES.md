@@ -20,6 +20,8 @@
 ### Bugfixes
 
 - **WOVP Pause Menu Item**: Screenshots for portrait mode screens are not rotated anymore.
+- **WOVP Synchronization**: Fixed issue that discontinued competition types have not been removed automatically.
 - **Table Overview**: Fixed backup button being visible for all emulator types.
 - **Media Recorder**: Added filtering of disabled emulators.
 - **Table Data Manager**: Fixed tab focus order for all tabs.
+- **Wheel Augmentation**: Fixed various issues when applying badges to wheels.

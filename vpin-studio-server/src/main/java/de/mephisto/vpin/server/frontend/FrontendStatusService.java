@@ -235,12 +235,25 @@ public class FrontendStatusService implements InitializingBean {
     }
   }
 
+  public boolean isWheelAugmented(Game game) {
+    FrontendMediaItem frontendMediaItem = frontendService.getGameMedia(game).getDefaultMediaItem(VPinScreen.Wheel);
+    if (frontendMediaItem != null) {
+      File wheelIcon = frontendMediaItem.getFile();
+      return new WheelAugmenter(wheelIcon).isAugmented();
+    }
+    return false;
+  }
+
   public void deAugmentWheel(Game game) {
     FrontendMediaItem frontendMediaItem = frontendService.getGameMedia(game).getDefaultMediaItem(VPinScreen.Wheel);
     if (frontendMediaItem != null) {
       File wheelIcon = frontendMediaItem.getFile();
-      new WheelAugmenter(wheelIcon).deAugment();
-      new WheelIconDelete(wheelIcon).delete();
+      WheelAugmenter augmenter = new WheelAugmenter(wheelIcon);
+      if(augmenter.isAugmented()) {
+        augmenter.deAugment();
+        new WheelIconDelete(wheelIcon).delete();
+      }
+
       gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.FRONTEND_MEDIA, null);
     }
   }

@@ -124,7 +124,6 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
     }
   }
 
-
   private void synchronizeChallenge(Challenge challenge, List<Competition> weeklyCompetitions, WOVPSettings wovpSettings, boolean forceReload) {
     String challengeId = challenge.getId();
     ChallengeTypeCode challengeTypeCode = challenge.getChallengeTypeCode();
@@ -136,7 +135,7 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
         if (!challengeId.equals(competition.getUuid()) || game == null || forceReload) {
           //run de-augmentation for finished competitions
           competition.setEndDate(new Date());
-          competitionService.save(competition);//TOOD required?
+//          competitionService.save(competition);//TOOD required?
           competitionLifecycleService.notifyCompetitionDeleted(competition);
           refreshTags(game, wovpSettings, false);
 

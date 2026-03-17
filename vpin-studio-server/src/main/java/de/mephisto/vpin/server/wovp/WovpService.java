@@ -305,9 +305,4 @@ public class WovpService implements InitializingBean, PreferenceChangedListener,
       synchronize(true);
     }
   }
-
-  @Override
-  public void tableExited(TableStatusChangedEvent event) {
-    //unused
-  }
 }

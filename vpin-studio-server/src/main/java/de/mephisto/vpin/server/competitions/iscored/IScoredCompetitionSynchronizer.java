@@ -191,9 +191,13 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
   }
 
   private void synchronizeBadge(IScoredGameRoom iScoredGameRoom, Game game) {
-    frontendStatusService.deAugmentWheel(game);
-    if (!StringUtils.isEmpty(iScoredGameRoom.getBadge())) {
+    boolean wheelAugmented = frontendStatusService.isWheelAugmented(game);
+    boolean setBadge = !StringUtils.isEmpty(iScoredGameRoom.getBadge());
+    if (setBadge && !wheelAugmented) {
       frontendStatusService.augmentWheel(game, iScoredGameRoom.getBadge());
+    }
+    else if (!setBadge && wheelAugmented) {
+      frontendStatusService.deAugmentWheel(game);
     }
   }
 

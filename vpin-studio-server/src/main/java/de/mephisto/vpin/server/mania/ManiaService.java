@@ -555,11 +555,6 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
     }
   }
 
-  @Override
-  public void tableExited(TableStatusChangedEvent event) {
-    //ignore
-  }
-
   //-------------------- GameDataChangedListener -----------------------------------------------------------------------
 
   @Override

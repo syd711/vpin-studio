@@ -48,7 +48,7 @@ public class WheelAugmenter {
 
 
   public boolean isAugmented() {
-    return backupWheelIcon.exists() && wheelIconThumbnail.exists();
+    return backupWheelIcon.exists();
   }
 
   public File getBackupWheelIcon() {
@@ -58,11 +58,6 @@ public class WheelAugmenter {
   public void augment(File badgeFile) {
     if (!wheelIcon.exists()) {
       LOG.error("Could not augment wheel icon {}, file does not exist.", wheelIcon.getAbsolutePath());
-      return;
-    }
-
-    if (backupWheelIcon.exists()) {
-      LOG.info("Skipped wheel augmentation, because back file {} already exists.", backupWheelIcon.getAbsolutePath());
       return;
     }
 
@@ -91,6 +86,9 @@ public class WheelAugmenter {
         FileUtils.copyFile(wheelIconThumbnailSm, backupWheelIconThumbnailSm);
       }
 
+      resetThumbs();
+      wheelIconThumbnail.getParentFile().mkdirs();
+
       BufferedImage bufferedWheelImage = ImageUtil.loadImage(wheelIcon);
       BufferedImage badgeIcon = ImageUtil.loadImage(badgeFile);
 
@@ -116,7 +114,6 @@ public class WheelAugmenter {
     } catch (Exception e) {
       LOG.error("Wheel augmentation failed: {}", e.getMessage(), e);
     }
-    resetThumbs();
   }
 
   private void resetThumbs() {
@@ -140,11 +137,11 @@ public class WheelAugmenter {
 
   private boolean deAugment(File backup, File target) {
     if (backup.exists()) {
-      if (target.exists() && !target.delete()) {
-        LOG.warn("Failed to delete augmented file '{}'", target.getAbsolutePath());
-        return false;
-      }
-      else {
+      if (target.exists()) {
+        if (!target.delete()) {
+          LOG.warn("Failed to delete augmented file '{}'", target.getAbsolutePath());
+          return false;
+        }
         LOG.info("Deleted augmented file '{}'", target.getAbsolutePath());
       }
 
