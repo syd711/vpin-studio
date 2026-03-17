@@ -77,54 +77,39 @@
                                                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                   </rowConstraints>
                                                    <children>
-                                                      <Label layoutX="253.0" layoutY="16.0" textFill="WHITE" GridPane.rowIndex="2">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                         <tooltip>
-                                                            <Tooltip text="Every table will be added to the first playlist that is found." />
-                                                         </tooltip>
-                                                      </Label>
+                                                      <!-- row 0: Display Name -->
                                                       <Label styleClass="default-text" text="Display Name:" textFill="WHITE">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Label>
+                                                      <TextField fx:id="gameDisplayName" layoutX="171.0" layoutY="81.0" GridPane.columnIndex="1">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </TextField>
+                                                      <HBox alignment="CENTER_LEFT" GridPane.columnIndex="2">
+                                                         <children>
+                                                            <Label>
+                                                               <tooltip>
+                                                                  <Tooltip prefWidth="300.0" text="If enabled, the display name will be updated on table version selection." wrapText="true" />
+                                                               </tooltip>
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <HBox.margin>
+                                                                  <Insets left="6.0" />
+                                                               </HBox.margin>
+                                                            </Label>
+                                                         </children>
+                                                      </HBox>
+                                                      <!-- row 1: File Name -->
                                                       <Label layoutX="10.0" layoutY="137.0" styleClass="default-text" text="File Name:" GridPane.rowIndex="1">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Asset Name:" textFill="WHITE" GridPane.rowIndex="2">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <VBox spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                                         <children>
-                                                            <TextField fx:id="gameName">
-                                                               <font>
-                                                                  <Font size="14.0" />
-                                                               </font>
-                                                            </TextField>
-                                                         </children>
-                                                      </VBox>
                                                       <TextField fx:id="gameFileName" layoutX="168.0" layoutY="132.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </TextField>
-                                                      <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="Version:*" GridPane.rowIndex="3">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <TextField fx:id="gameVersion" layoutX="191.0" layoutY="44.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </TextField>
-                                                      <TextField fx:id="gameDisplayName" layoutX="171.0" layoutY="81.0" GridPane.columnIndex="1">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -143,6 +128,29 @@
                                                             <Insets left="3.0" />
                                                          </GridPane.margin>
                                                       </Label>
+                                                      <!-- row 2: Asset Name -->
+                                                      <Label layoutX="253.0" layoutY="16.0" textFill="WHITE" GridPane.rowIndex="2">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                         <tooltip>
+                                                            <Tooltip text="Every table will be added to the first playlist that is found." />
+                                                         </tooltip>
+                                                      </Label>
+                                                      <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Asset Name:" textFill="WHITE" GridPane.rowIndex="2">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <VBox spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                                         <children>
+                                                            <TextField fx:id="gameName">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                         </children>
+                                                      </VBox>
                                                       <Label GridPane.columnIndex="2" GridPane.rowIndex="2">
                                                          <font>
                                                             <Font size="14.0" />
@@ -157,6 +165,17 @@
                                                             <Insets left="3.0" />
                                                          </GridPane.margin>
                                                       </Label>
+                                                      <!-- row 3: Version -->
+                                                      <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="Version:*" GridPane.rowIndex="3">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <TextField fx:id="gameVersion" layoutX="191.0" layoutY="44.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </TextField>
                                                       <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
                                                          <children>
                                                             <Button fx:id="fixVersionBtn" mnemonicParsing="false" onAction="#onVersionFix" text="Fix Version" textFill="WHITE">
@@ -177,21 +196,6 @@
                                                                <tooltip>
                                                                   <Tooltip prefWidth="300.0" text="Enabled if the spreadsheet version differs with the value stored in the database." wrapText="true" />
                                                                </tooltip>
-                                                            </Label>
-                                                         </children>
-                                                      </HBox>
-                                                      <HBox alignment="CENTER_LEFT" GridPane.columnIndex="2">
-                                                         <children>
-                                                            <Label>
-                                                               <tooltip>
-                                                                  <Tooltip prefWidth="300.0" text="If enabled, the display name will be updated on table version selection." wrapText="true" />
-                                                               </tooltip>
-                                                               <font>
-                                                                  <Font size="14.0" />
-                                                               </font>
-                                                               <HBox.margin>
-                                                                  <Insets left="6.0" />
-                                                               </HBox.margin>
                                                             </Label>
                                                          </children>
                                                       </HBox>
@@ -513,16 +517,36 @@
                                                       <RowConstraints valignment="TOP" />
                                                    </rowConstraints>
                                                    <children>
-                                                      <Label styleClass="default-text" text="Tournament Id:" GridPane.rowIndex="16">
+                                                      <!-- row 0: Status -->
+                                                      <Label text="Status:" textFill="WHITE">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label styleClass="default-text" text="Web DB Id:" GridPane.rowIndex="13">
+                                                      <ComboBox fx:id="statusCombo" prefHeight="30.0" prefWidth="300.0" GridPane.columnIndex="1" />
+                                                      <!-- row 1: Media Search -->
+                                                      <Label layoutX="10.0" layoutY="15.0" text="Media Search:" textFill="WHITE" GridPane.rowIndex="1">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Label>
+                                                      <TextField fx:id="mediaSearch" layoutX="213.0" layoutY="481.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </TextField>
+                                                      <Label fx:id="hintWebId1" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                         <graphic>
+                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                         </graphic>
+                                                         <tooltip>
+                                                            <Tooltip prefWidth="350.0" text="This value is used for the media search. If you want to use the filename, leave this value blank. Otherwise make sure the value ends with a '*' symbol, e.g. &quot;MyTable*&quot;" wrapText="true" />
+                                                         </tooltip>
+                                                      </Label>
+                                                      <!-- row 2: Game Type -->
                                                       <Label layoutX="13.0" layoutY="120.0" GridPane.rowIndex="2">
                                                          <font>
                                                             <Font size="14.0" />
@@ -536,7 +560,15 @@
                                                          </graphic>
                                                       </Label>
                                                       <ComboBox fx:id="gameTypeCombo" editable="true" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                      <!-- row 3: Game Theme -->
                                                       <Label styleClass="default-text" text="Game Theme:*" GridPane.rowIndex="3">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <ComboBox fx:id="gameTheme" editable="true" layoutX="213.0" layoutY="44.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                      <!-- row 4: Game Year -->
+                                                      <Label styleClass="default-text" text="Game Year:*" GridPane.rowIndex="4">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -550,16 +582,14 @@
                                                             </TextField>
                                                          </children>
                                                       </HBox>
-                                                      <Label styleClass="default-text" text="Game Year:*" GridPane.rowIndex="4">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </Label>
+                                                      <!-- row 5: Manufacturer -->
                                                       <Label styleClass="default-text" text="Manufacturer:*" GridPane.rowIndex="5">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Label>
+                                                      <ComboBox fx:id="manufacturer" editable="true" layoutX="213.0" layoutY="78.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                                      <!-- row 6: Author -->
                                                       <Label styleClass="default-text" text="Author:*" GridPane.rowIndex="6">
                                                          <font>
                                                             <Font size="14.0" />
@@ -570,23 +600,28 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                       </TextField>
+                                                      <!-- row 7: Category -->
                                                       <Label styleClass="default-text" text="Category:*" GridPane.rowIndex="7">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Label>
+                                                      <ComboBox fx:id="category" editable="true" layoutX="213.0" layoutY="78.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                                                      <!-- row 8: Number of Players -->
                                                       <Label styleClass="default-text" text="Number of Players:*" GridPane.rowIndex="8">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Label>
                                                       <Spinner fx:id="numberOfPlayers" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                                                      <!-- row 9: Game Rating -->
                                                       <Label styleClass="default-text" text="Game Rating:" GridPane.rowIndex="9">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Label>
                                                       <Spinner fx:id="gameRating" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                                                      <!-- row 10: IPDB Number -->
                                                       <Label styleClass="default-text" text="IPDB Number:*" GridPane.rowIndex="10">
                                                          <font>
                                                             <Font size="14.0" />
@@ -597,22 +632,24 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                       </TextField>
+                                                      <Button fx:id="idpdBtn" mnemonicParsing="false" onAction="#onIdpdProperty" styleClass="link-component" GridPane.columnIndex="2" GridPane.rowIndex="10">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                         <graphic>
+                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" />
+                                                         </graphic>
+                                                         <tooltip>
+                                                            <Tooltip text="https://virtual-pinball-spreadsheet.web.app/" />
+                                                         </tooltip>
+                                                      </Button>
+                                                      <!-- row 11: URL -->
                                                       <Label styleClass="default-text" text="URL:*" GridPane.rowIndex="11">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Label>
                                                       <TextField fx:id="url" GridPane.columnIndex="1" GridPane.rowIndex="11">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </TextField>
-                                                      <Label styleClass="default-text" text="Designed By:*" GridPane.rowIndex="12">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <TextField fx:id="designedBy" GridPane.columnIndex="1" GridPane.rowIndex="12">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -631,33 +668,19 @@
                                                             <Insets />
                                                          </GridPane.margin>
                                                       </Button>
-                                                      <TextArea fx:id="notes" prefHeight="90.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="17" />
-                                                      <Label styleClass="default-text" text="Notes:*" GridPane.rowIndex="17">
+                                                      <!-- row 12: Designed By -->
+                                                      <Label styleClass="default-text" text="Designed By:*" GridPane.rowIndex="12">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Label>
-                                                      <ComboBox fx:id="statusCombo" prefHeight="30.0" prefWidth="300.0" GridPane.columnIndex="1" />
-                                                      <Label text="Status:" textFill="WHITE">
+                                                      <TextField fx:id="designedBy" GridPane.columnIndex="1" GridPane.rowIndex="12">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
-                                                      </Label>
-                                                      <ComboBox fx:id="gameTheme" editable="true" layoutX="213.0" layoutY="44.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                                      <ComboBox fx:id="manufacturer" editable="true" layoutX="213.0" layoutY="78.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                                                      <ComboBox fx:id="category" editable="true" layoutX="213.0" layoutY="78.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                                                      <Button fx:id="idpdBtn" mnemonicParsing="false" onAction="#onIdpdProperty" styleClass="link-component" GridPane.columnIndex="2" GridPane.rowIndex="10">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                         <graphic>
-                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" />
-                                                         </graphic>
-                                                         <tooltip>
-                                                            <Tooltip text="https://virtual-pinball-spreadsheet.web.app/" />
-                                                         </tooltip>
-                                                      </Button>
-                                                      <Label styleClass="default-text" text="Web Link:" GridPane.rowIndex="14">
+                                                      </TextField>
+                                                      <!-- row 13: Web DB Id -->
+                                                      <Label styleClass="default-text" text="Web DB Id:" GridPane.rowIndex="13">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -678,6 +701,12 @@
                                                             <Tooltip prefWidth="350.0" text="This field is reserved by the VPin Studio. Check the Server Settings for details." wrapText="true" />
                                                          </tooltip>
                                                       </Label>
+                                                      <!-- row 14: Web Link -->
+                                                      <Label styleClass="default-text" text="Web Link:" GridPane.rowIndex="14">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
                                                       <TextField fx:id="webLink" GridPane.columnIndex="1" GridPane.rowIndex="14">
                                                          <font>
                                                             <Font size="14.0" />
@@ -697,6 +726,7 @@
                                                             <Insets />
                                                          </GridPane.margin>
                                                       </Button>
+                                                      <!-- row 15: Is Mod -->
                                                       <Label styleClass="default-text" text="Is Mod:" GridPane.rowIndex="15">
                                                          <font>
                                                             <Font size="14.0" />
@@ -707,32 +737,24 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                       </CheckBox>
+                                                      <!-- row 16: Tournament Id -->
+                                                      <Label styleClass="default-text" text="Tournament Id:" GridPane.rowIndex="16">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
                                                       <TextField fx:id="tourneyId" GridPane.columnIndex="1" GridPane.rowIndex="16">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
                                                       </TextField>
-                                                      <TextField fx:id="mediaSearch" layoutX="213.0" layoutY="481.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </TextField>
-                                                      <Label layoutX="10.0" layoutY="15.0" text="Media Search:" textFill="WHITE" GridPane.rowIndex="1">
+                                                      <!-- row 17: Notes -->
+                                                      <Label styleClass="default-text" text="Notes:*" GridPane.rowIndex="17">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label fx:id="hintWebId1" GridPane.columnIndex="2" GridPane.rowIndex="1">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                         <graphic>
-                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                                         </graphic>
-                                                         <tooltip>
-                                                            <Tooltip prefWidth="350.0" text="This value is used for the media search. If you want to use the filename, leave this value blank. Otherwise make sure the value ends with a '*' symbol, e.g. &quot;MyTable*&quot;" wrapText="true" />
-                                                         </tooltip>
-                                                      </Label>
+                                                      <TextArea fx:id="notes" prefHeight="90.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="17" />
                                                    </children>
                                                    <VBox.margin>
                                                       <Insets top="6.0" />
