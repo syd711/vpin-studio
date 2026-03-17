@@ -1,16 +1,15 @@
 package de.mephisto.vpin.server.recorder;
 
+import de.mephisto.vpin.commons.utils.NirCmd;
+import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.recorder.RecorderSettings;
 import de.mephisto.vpin.restclient.recorder.RecordingData;
 import de.mephisto.vpin.restclient.recorder.RecordingDataSummary;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.util.WindowsUtil;
-import de.mephisto.vpin.commons.utils.NirCmd;
-import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
-
+import de.mephisto.vpin.server.system.SystemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +71,7 @@ public class EmulatorRecorderJob extends FrontendRecorderJob {
         recorderService.launchGame(game, recorderSettings);
 
         int secondToWait = EMULATOR_WAITING_TIMEOUT_SECONDS;
-        while (!WindowsUtil.isProcessRunning("Future Pinball", "Visual Pinball Player", "mame", "PinballFX", "Pinball FX", "PinballM") && secondToWait > 0) {
+        while (!SystemService.isPinballEmulatorRunning() && secondToWait > 0) {
           Thread.sleep(1000);
           secondToWait--;
         }
