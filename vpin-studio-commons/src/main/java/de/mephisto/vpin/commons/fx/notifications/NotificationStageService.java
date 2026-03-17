@@ -1,7 +1,6 @@
 package de.mephisto.vpin.commons.fx.notifications;
 
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
-import de.mephisto.vpin.restclient.util.SystemUtil;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -37,6 +36,7 @@ public class NotificationStageService extends Application {
 
   public void queueNotification(Notification notification, boolean poll) {
     queue.offer(notification);
+    LOG.info("Queued {} (Queue size: {}) polling={}", queue.size(), notification, poll);
     if (poll) {
       pollNotifications();
     }
