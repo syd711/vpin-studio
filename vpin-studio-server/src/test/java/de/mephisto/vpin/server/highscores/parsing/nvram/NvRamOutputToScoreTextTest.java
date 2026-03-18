@@ -254,11 +254,11 @@ public class NvRamOutputToScoreTextTest {
   @Test
   public void compareNV() throws Exception {
 
-    String nv = "afm_113b.nv";
+    String rom = "afm_113b";
 
     Game game = new Game();
-    game.setGameDisplayName("Dummy test game for " + nv);
-    game.setRom(nv.replace(".nv", ""));
+    game.setGameDisplayName("Dummy test game for " + rom);
+    game.setRom(rom);
 
     File testFolder = new File("../testsystem/vPinball/VisualPinball/VPinMAME/nvram/");
     // Set the path to this GameEmulator so that nv files can be found
@@ -266,7 +266,7 @@ public class NvRamOutputToScoreTextTest {
 
     Locale loc = Locale.ENGLISH;
 
-    File entry = new File(testFolder, nv);
+    File entry = new File(testFolder, rom + ".nv");
     String raw = NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(getPinemhiExe(), entry);
     List<Score> scores = ScoreListFactory.create(raw, new Date(entry.length()), game, scoringDB);
     for (Score score : scores) {
@@ -276,7 +276,7 @@ public class NvRamOutputToScoreTextTest {
     System.out.println("---------------------");
 
     NVRamParser parser = new NVRamParser();
-    NVRamMap map = parser.getMap(nv, null);
+    NVRamMap map = parser.getMap(rom);
     
     byte[] data = Files.readAllBytes(entry.toPath());
     SparseMemory memory = parser.setNvram(map, data);

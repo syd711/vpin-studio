@@ -5,14 +5,16 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Simplified mapping object used for checksum values.
+ * A checksum region in the NVRAM map.
+ * The checksum is computed as the sum of all bytes in [start, end]
+ * modulo 65536, then stored big-endian at {@code checksum} 
+ * (or immediately following the region in older map versions).
  */
 public class ChecksumMapping {
 
   private String label;
   private boolean bigEndian;
   private boolean checksum16;
-  private String formatting;
   private Integer start;
   private Integer end;
   private int checksum;
@@ -22,7 +24,6 @@ public class ChecksumMapping {
     this.label = label;
     this.bigEndian = bigEndian;
     this.checksum16 = checksum16;
-    this.formatting = checksum16 ? "0x%04X" : "0x%02X";
     this.start = start;
     this.end = end;
 
@@ -112,9 +113,9 @@ public class ChecksumMapping {
       lbl = String.format("checksum8[%X:%X]", start, end - 1);
     }
 
-    String value = String.format(formatting, stored);
+    String value = formatValue(stored, locale);
     if (stored != calculated) {
-      value += " != " + String.format(formatting, calculated);
+      value += " != " + formatValue(calculated, locale);
     }
     if (label != null && !label.isEmpty()) {
       value += " (" + label + ")";
@@ -122,9 +123,14 @@ public class ChecksumMapping {
     return new String[]{lbl, value};
   }
 
+  public String formatValue(int value, Locale locale) {
+    String formatting = checksum16 ? "0x%04X" : "0x%02X";
+    return String.format(locale, formatting, value);
+  }
+
+
   public int getStart() { return start; }
   public int getEnd() { return end; }
   public int getChecksum() { return checksum; }
-  public String getFormatting() { return formatting; }
   public String getLabel() { return label; }
 }

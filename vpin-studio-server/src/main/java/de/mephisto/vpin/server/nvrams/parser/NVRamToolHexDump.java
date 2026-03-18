@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 public class NVRamToolHexDump {
@@ -28,7 +29,7 @@ public class NVRamToolHexDump {
   private void hexDumpMemory(NVRamMap mapJson, SparseMemory memory, Appendable bld, Locale locale, NVRamRegion memoryArea) throws IOException {
     int startAddr = memoryArea != null ? BcdUtils.toInt(memoryArea.getAddress()) : 0;
     byte[] data = memory.findRegion(startAddr).data;
-    int size = memoryArea != null? BcdUtils.toInt(memoryArea.getSize()) : data.length;
+    int size = ObjectUtils.defaultIfNull(memoryArea != null ? memoryArea.getSize() : null, data.length);
     Nibble nibble = memoryArea != null? memoryArea.getNibble() : Nibble.BOTH;
 
     // Build offset -> mapping dictionary

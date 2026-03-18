@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
@@ -18,7 +17,13 @@ public class ScoreListAdapterBase {
 
   private final static Logger LOG = LoggerFactory.getLogger(DefaultAdapter.class);
 
-  protected long toNumericScore(@NonNull String score, @Nullable String source, boolean log) {
+  protected long toNumericScore(@Nullable String score, @Nullable String source, boolean log) {
+    if (StringUtils.isEmpty(score)) {
+      if (log) {
+        LOG.warn("Cannot parse empty numeric highscore, ignoring this segment, source: {}", source);
+      }
+      return -1;
+    }
     try {
       String cleanScore = ScoreFormatUtil.cleanScore(score);
       return Long.parseLong(cleanScore);

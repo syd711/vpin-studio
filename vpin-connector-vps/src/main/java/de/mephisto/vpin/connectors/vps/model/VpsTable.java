@@ -1,6 +1,7 @@
 package de.mephisto.vpin.connectors.vps.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -26,6 +27,8 @@ public class VpsTable implements VPSEntity {
 
   private String ipdbUrl;
   private String manufacturer;
+  @JsonProperty("MPU")
+  private String MPU;
   private int players;
   private String type;
   private int year;
@@ -117,6 +120,14 @@ public class VpsTable implements VPSEntity {
 
   public void setManufacturer(String manufacturer) {
     this.manufacturer = manufacturer;
+  }
+
+  public String getMPU() {
+    return MPU;
+  }
+
+  public void setMPU(String mPU) {
+    this.MPU = mPU;
   }
 
   public List<VpsBackglassFile> getB2sFiles() {

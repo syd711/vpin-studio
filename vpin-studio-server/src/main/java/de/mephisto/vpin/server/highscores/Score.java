@@ -20,6 +20,7 @@ public class Score {
   private Date createdAt;
   private boolean external;
   private String label;       // optional label for titled scores, high-scores, buy-in scores....
+  private String suffix;      // optional suffix for non high scores: 100M, 100Gb, 100 combos, 100 martians,... Include initial space if this is a unit
 
   public Score(Date createdAt, int gameId, String playerInitials, Player player, String rawScore, long score, int position) {
     this.createdAt = createdAt;
@@ -111,6 +112,14 @@ public class Score {
     this.label = label;
   }
   
+  public String getSuffix() {
+    return suffix;
+  }
+
+  public void setSuffix(String suffix) {
+    this.suffix = suffix;
+  }
+
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof Score)) {

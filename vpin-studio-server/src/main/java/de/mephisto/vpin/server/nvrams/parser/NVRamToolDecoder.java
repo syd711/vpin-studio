@@ -2,77 +2,165 @@ package de.mephisto.vpin.server.nvrams.parser;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.function.Supplier;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.internal.Streams;
-import com.google.gson.stream.JsonWriter;
-
+import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.system.ScoringDB;
-import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.server.highscores.Score;
+import de.mephisto.vpin.server.highscores.parsing.ScoreListFactory;
 import de.mephisto.vpin.server.highscores.parsing.nvram.NvRamOutputToScoreTextConverter;
+import de.mephisto.vpin.server.nvrams.parser.SimpleLogger.LEVEL;
 import de.mephisto.vpin.server.pinemhi.PINemHiService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  */
 public class NVRamToolDecoder {
-  private final static Logger LOG = LoggerFactory.getLogger(NVRamParser.class);
+  private final static SimpleCaptureLogger LOG = //LoggerFactory.getLogger(NVRamToolDecoder.class);
+    new SimpleCaptureLogger(NVRamToolDecoder.class, LEVEL.WARN);
 
-  private static final int MAX_NUMBER_BYTES = 16;
+  // The max number of bytes used for BCD encoding, 8 means 16 digits..., generally it is 5
+  private static final int MAX_LENGTH = 8;
 
-  private static ScoringDB scoringDB = ScoringDB.load();
+  private static ScoringDB scoringDB;
+  private static VPS vps;
 
-  private static final String[] LABELS = {"First Place", "Second Place", "Third Place", "Fourth Place",
-    "Fifth Place", "Sixth Place", "Seventh Place", "Eighth Place"
-  };
-  private static final String[] SHORT_LABELS = {"1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th" };
+  File _mainFolder = new File("./testsystem/vPinball/VisualPinball/VPinMAME/nvram/");
 
+  static {
+    scoringDB = ScoringDB.load();
+    vps = new VPS();
+    vps.reload();
+  }
 
   public static void main(String[] args) throws Exception {
     NVRamToolDecoder decoder = new NVRamToolDecoder();
-    decoder.checkRom("alpok_b6");
+    //decoder.decodeAll();  
+    //decoder.decodeFully("gladiatr", null);
+    //decoder.decodeFully("godzilla", "Godzilla (Sega 1998)"); 
+    decoder.decodeFully("afm_113b", "Attack from Mars (Bally 1995)"); 
   }
 
-  private void checkRom(String rom) throws Exception {
-    LOG.info("Decoding {}...", rom);
+  private void decodeAll() throws Exception {
 
-    boolean useHexForPosition = true;
+    Files.list(_mainFolder.toPath()).forEach(p -> {
+      String rom = FilenameUtils.getBaseName(p.getFileName().toString());
+      try {
+        if (!rom.endsWith(".nv")) {
+          decode(p.toFile(), rom, null);
+            LOG.warn("----------------------");
+        }
+      }
+      catch (Exception e) {
+        LOG.error("!!!!! Cannot process {} : {}", rom, e.getMessage());
+      }
+    });
+  }
 
-    File mainFolder = new File("./testsystem/vPinball/VisualPinball/VPinMAME/nvram/");
+  private void decodeFully(String rom, String tablename) throws Exception {
+    File entry = new File(_mainFolder, rom + ".nv");
+
+    decode(entry, rom, tablename);
+
+    // now do some tests
+    NVRamParser parser = new NVRamParser();
+    NVRamMap map = parser.getLocalMap(rom);
+    if (map != null) {
+      byte[] bytes = Files.readAllBytes(entry.toPath());
+      SparseMemory memory = parser.setNvram(map, bytes);
+      
+      NVRamToolHexDump hexdump = new NVRamToolHexDump();
+      String hex = hexdump.hexDump(map, memory, Locale.ENGLISH);
+      LOG.info("\n\n==================================");
+      LOG.info(hex);
+      LOG.info("==================================");
+
+      LOG.info("Dump of nv {} is :", entry.getAbsolutePath());
+      NVRamToolDump dump = new NVRamToolDump();
+      String txt = dump.dump(map, memory, Locale.ENGLISH, true);
+      LOG.info(txt);
+
+      if (!map.getHighScores().isEmpty()) {
+        NVRamScore score = map.getHighScores().get(0);
+        score.reset(777777);
+      }
+
+      for (ChecksumMapping c : map.getChecksumEntries()) {
+        
+      }
+
+    }
+  }
+
+
+  private void decode(File entry, String rom, String tablename) throws Exception {
+    // new rom to be decoded
+    LOG.reset();
+
+    LOG.warn("Decoding {}...", rom);
+
+    // First try to determine associated VpsTable
+    VpsTable table = null;
+    if (StringUtils.isNotEmpty(tablename)) {
+      List<VpsTable> tables = vps.getTables().stream().filter(t -> StringUtils.containsIgnoreCase(t.getDisplayName(), tablename)).collect(Collectors.toList());
+      if (tables.size() == 1) {
+        table = tables.get(0);
+          LOG.warn("Table found by name {}", table.getDisplayName());
+      }
+    }
+    // table  not found by name, search in all tables by rom
+    if (table == null) {
+      List<VpsTable> tables = vps.getTables().stream()
+        .filter(t -> t.getRomFiles() != null && t.getRomFiles().stream().anyMatch(r -> StringUtils.equalsIgnoreCase(rom, r.getVersion())))
+        .collect(Collectors.toList());
+      if (tables.size() == 1) {
+        table = tables.get(0);
+          LOG.warn("Table found by rom {}", table.getDisplayName());
+      }
+      else if (tables.size() > 1) {
+          LOG.warn("Several tables found for rom {}, please choose one !", rom);
+        for (VpsTable t : tables) {
+            LOG.warn("=> {}", t.getDisplayName());
+        }
+        return;
+      }
+      else {
+          LOG.warn("No Table associated with rom {} in VPS ??", rom);
+      }
+    }
+
+    //---------------------------------
 
     // other nvram folders for validation of scores
     File[] testFolders = new File[] { 
       new File("C:/Github/py-pinmame-nvmaps/test/nvram"),
+      new File("C:/temp/_NVRAMS/Matt"),
+      new File("C:/temp/_NVRAMS/ed209"),
+      new File("C:/Visual Pinball/VPinMAME/nvram"),
       new File("C:/Github/vpin-studio/resources/nvrams")    // resetted nvrams
     };
 
     // load pinhemi and parse scores
-    File entry = new File(mainFolder, rom + ".nv");
+    LOG.warn("...get scores from Pinemhi");
+  
     List<Score> scores = getScoresFromPinemhi(entry, rom, true);
     if (scores.isEmpty()) {
       LOG.warn("Found empty highscore for nvram {} !!!", entry.getAbsolutePath());
@@ -85,25 +173,56 @@ public class NVRamToolDecoder {
 
     // Load nvram file and parse it
     byte[] bytes = Files.readAllBytes(entry.toPath());
+
+    // calculate score mappings, not presuming any score encoding length
+    LinkedHashMap<Score, SearchResult> selectedScores = parseScores(bytes, rom, testFolders, scores, cacheScores, -1);
+
+    if (selectedScores.size() > 0) {
+
+      LinkedHashMap<String, SearchResult> checksums = parseChecksum(bytes, selectedScores);
+
+      // generate the map
+      NVRamToolMapGenerator generator = new NVRamToolMapGenerator();
+
+      boolean useHexForPosition = false;
+      generator.generateHighscores(rom, table, useHexForPosition, 
+        selectedScores, checksums);
+
+      generator.appendText(rom, "\n/*\n" + LOG.getText() + "\n*/\n");
+    }
+  }
+
+  //---------------------------------------------
+
+  private LinkedHashMap<Score, SearchResult> parseScores(byte[] bytes, String rom, File[] testFolders,
+      List<Score> scores, Map<File, List<Score>> cacheScores, int forcedScoreLength) {
     // an array to mark bytes that are consumed
     boolean[] used = new boolean[bytes.length];
-
     LinkedHashMap<Score, SearchResult> selectedScores = new LinkedHashMap<>();
 
     for (int s = 0; s < scores.size(); s++) {
       final Score sc = scores.get(s);
       final int scPos = s;
 
-      LOG.info("...checking score \"{}\", position {}", sc, scPos);
+        LOG.warn("...checking score \"{}\", position {}", sc, scPos);
 
       // search using INITIALS followed by SCORE pattern
-      SearchResult result = search(bytes, sc.getPlayerInitials(), sc.getScore(), MAX_NUMBER_BYTES);
+      SearchResult result = search(bytes, sc.getPlayerInitials(), sc.getScore(), MAX_LENGTH);
       
       // not found try not contiguous
       if (result == null) {
         // search all position for initials and scores
         List<Integer> initials = searchString(bytes, sc.getPlayerInitials());
-        List<SearchResult> positions = searchNumber(bytes, sc.getScore(), -1, MAX_NUMBER_BYTES);
+        List<SearchResult> positions = searchNumber(bytes, sc.getScore(), forcedScoreLength, MAX_LENGTH, true);
+        // remove initials positions that conflict with previously selected SearchResult
+        CollectionUtils.filter(initials, p -> {
+          for (int i = 0; i < 3; i++) {
+            if (used[p + i]) {
+              return false;
+            }
+          }
+          return true;
+        });
         // remove positions that conflict with previously selected SearchResult
         CollectionUtils.filter(positions, p -> {
           for (int i = 0; i < p.scoreLength; i++) {
@@ -115,10 +234,16 @@ public class NVRamToolDecoder {
         });
 
         result = findOrContinue(initials, positions, () -> {
+          LOG.warn("  Several positions, check with alternative nvrams..");
           // check in alternative nvrams
           for (File testFolder : testFolders) {
             File altentry = new File(testFolder, rom + ".nv");
-            LOG.warn("Several positions, check with alternative nvrams {}...", altentry.getAbsolutePath());
+            // check that the file exists
+            if (!altentry.exists()) {
+              continue;
+            }
+
+            LOG.warn("    check with nvram {}...", altentry.getAbsolutePath());
 
             // parse and cache for alternative nvrams
             List<Score> altscores = cacheScores.get(altentry);
@@ -153,12 +278,13 @@ public class NVRamToolDecoder {
               }
             }
             else {
-              LOG.warn("nvram {} has different number of scores {} compared to {}, ignored and continue...", altentry.getAbsolutePath(), altscores.size(), scores.size());
+              LOG.warn("nvram {} has different number of pinhemi scores {} compared to {}, ignored and continue...", altentry.getAbsolutePath(), altscores.size(), scores.size());
+              getScoresFromPinemhi(altentry, rom, true);
             }
           }
           //-------------------------------------------
           return findOrContinue(initials, positions, () -> {
-            LOG.warn(">>>>>>>> still different positions so return first one...");
+            LOG.warn("  >>>>>>>> still different positions so return first one...");
             SearchResult res = positions.get(0);
             if (initials.size() > 0) {
               res.initialPosition = initials.get(0);
@@ -169,6 +295,7 @@ public class NVRamToolDecoder {
       }
       if (result != null) {
         selectedScores.put(sc, result);
+        // now flagged the bytes consumed by this result so that next scores don't use them
         if (result.initialPosition >= 0) {
           for (int i = 0; i < 3; i++) {
             used[result.initialPosition + i] = true;
@@ -183,52 +310,27 @@ public class NVRamToolDecoder {
       }
     }
 
+    // When parseScore method is called with forcedScoreLength=-1, the parser will try to guess the encoding length for each score
+    // For number, when it encounters 00 00 10 00 00 00, it cannot determine easily the length, could be 4 5 or 6 bytes
+    // The below code is to normalize length of scores by calculating the length that appears most time in the list 
+    // and use it to normalize all scores by relaunching teh method, enforcing the score length
+    if (forcedScoreLength < 0) {
+      // calculate most frequent number and occurrence
+      Map.Entry<Integer, Long> occur = selectedScores.values().stream()
+              .collect(Collectors.groupingBy(sr -> sr.scoreLength, Collectors.counting()))
+              .entrySet().stream()
+              .max(Map.Entry.comparingByValue())
+              .orElse(null);
 
-    //-----------------------
-    // now generate the map
-
-    JsonObject map = new JsonObject();
-
-    JsonArray notes = new JsonArray();
-    notes.add("Compiled from brute force scan of scores by vpin-studio.");
-    map.add("_notes", notes);
-
-    map.addProperty("_fileformat", 0.8);
-
-    JsonArray highScores = new JsonArray();
-    
-    int index = 1;
-    for (Entry<Score, SearchResult> sr : selectedScores.entrySet()) {
-      Score sc = sr.getKey();
-      SearchResult result = sr.getValue();
-
-      String label = sc.getLabel();
-      String shortLabel;
-      if (label != null) {
-        label = capitalize(label);
-        shortLabel = abbreviate(label);
+      if (occur != null && occur.getValue() < selectedScores.size()) {
+          LOG.warn("All scores not stored on same length, normalize to the most frequent length {}, appearring {} times on {}\n", 
+            occur.getKey(), occur.getValue(), selectedScores.size());
+          // now start again the computation forcing a score length
+        return parseScores(bytes, rom, testFolders, scores, cacheScores, occur.getKey());
       }
-      else {
-        label = index < LABELS.length ? LABELS[index] : "Position " + index;
-        shortLabel = index < SHORT_LABELS.length ? SHORT_LABELS[index] : index + "th";
-        index++;
-      }
-
-      JsonObject score = new JsonObject();
-      score.addProperty("label", label);
-      score.addProperty("short_label", shortLabel);
-      score.add("initials", createMapping(result.initialPosition, 3, "ch", useHexForPosition));
-      score.add("score", createMapping(result.scorePosition, result.scoreLength, "bcd", useHexForPosition));
-      highScores.add(score);
     }
-    map.add("high_scores", highScores);
-
-    StringWriter stringWriter = new StringWriter();
-    JsonWriter jsonWriter = new JsonWriter(stringWriter);
-    jsonWriter.setIndent("  ");
-    jsonWriter.setLenient(true);
-    Streams.write(map, jsonWriter);
-    System.out.println(stringWriter.toString());
+    // else we have our score mappings
+    return selectedScores;
   }
 
   //------------------------------------------------
@@ -266,9 +368,10 @@ public class NVRamToolDecoder {
     try {
       String raw = NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(PINemHiService.getPinemhiExe(), nvramFile);
       if (displayResult) {
-        LOG.info(raw);
+        LOG.warn("\n");
+        LOG.warn(raw);
       }
-      return parseRaw(raw);
+      return ScoreListFactory.create(raw, new Date(), null, scoringDB, true);
     } 
     catch (Exception e) {
       LOG.error("Cannot getscores from pinhemi", e);
@@ -276,149 +379,52 @@ public class NVRamToolDecoder {
     }
   }
 
-  private List<Score> parseRaw(String raw) {
-    List<Score> scores = new ArrayList<>();
-    List<String> lines = Arrays.asList(raw.split("\\n"));
-    if (lines.isEmpty()) {
-      return scores;
+  //--------------------------------------------------
+
+  private LinkedHashMap<String, SearchResult> parseChecksum(byte[] bytes, LinkedHashMap<Score,SearchResult> selectedScores) {
+    LinkedHashMap<String, Integer> checksums = new LinkedHashMap<>();
+    
+    // first loop, calculate the checksums by label pf scores
+    for (Map.Entry<Score,SearchResult> e : selectedScores.entrySet()) {
+      Score score = e.getKey();
+      SearchResult positions = e.getValue();
+
+      String label = StringUtils.defaultString(score.getLabel(), "High Scores");
+      Integer sum = ObjectUtils.defaultIfNull(checksums.get(label), 0xFFFF);
+      for (int i = positions.initialPosition; i < positions.initialPosition + 3; i++) {
+        sum -= bytes[i] & 0XFF;
+      }
+      for (int i = positions.scorePosition; i < positions.scorePosition + positions.scoreLength; i++) {
+        sum -= bytes[i] & 0xFF;
+      }
+      checksums.put(label, sum);
     }
 
-    List<String> titles = scoringDB.getHighscoreTitles();
+    LinkedHashMap<String, SearchResult> results = new LinkedHashMap<>();
+    for (Map.Entry<String, Integer> e : checksums.entrySet()) {
+      String label = e.getKey();
+      Integer checksum = e.getValue();
 
-    String currentTitle = null;
-    for (int i = 0; i < lines.size(); i++) {
-      String line = lines.get(i);
-
-      //Check if there is a highscore title, in that case...
-      if (titles.contains(line.trim()) && ((i + 1) < titles.size())) {
-        if (i + 1 >= lines.size()) {
-          continue;
-        }
-
-        String scoreLine = lines.get(i + 1);
-        int idx = isScoreLine(scoreLine);
-
-        //the next line could be a raw score without a positions
-        if (idx < 0) {
-          Score score = createTitledScore(line.trim(), scoreLine);
-          if (score != null) {
-            scores.add(score);
-          }
-          //do not increase index, as we still search for #1
-          continue;
-        }
+      List<SearchResult> res = searchNumber(bytes, checksum, 2, 2, false);
+      SearchResult checksumPos = null;
+      if (res.size() == 0) {
+        LOG.warn("No checksum found for '{}'", label);
+      }
+      else if (res.size() == 1) {
+        checksumPos = res.get(0);
+      }
+      else if (res.size() > 1) {
+        LOG.warn(">>> Several position for checksum for '{}'', use first one", label);
+        checksumPos = res.get(0);
       }
 
-      int idx = isScoreLine(line);
-      if (idx > 0) {
-        Score score = createScore(currentTitle, line);
-        if (score != null) {
-          score.setPosition(idx);
-          scores.add(score);
-        }
-      }
-      else if (StringUtils.isEmpty(currentTitle)) {
-        currentTitle = line;
-      }
-
-      if (StringUtils.isEmpty(line)) {
-        // restart a possible new sequence
-        currentTitle = null;
+      if (checksumPos != null) {
+        results.put(label, checksumPos);
       }
     }
-
-    return scores;
+    return results;
   }
 
-
-  private static Pattern patternRank = Pattern.compile("^((\\d\\d?\\))|(#\\d\\d?)|(\\d\\d?#)|(\\d\\d?\\.:))[\\s \u00a0\u202f\ufffd\u00ff]");
-
-  /**
-   * Return the index if it is a score line, else -1 
-   */
-  public int isScoreLine(String line) {
-    Matcher m = patternRank.matcher(line);
-    if (m.find()) {
-      String idx = m.group(1);
-      idx = StringUtils.remove(idx, ')');
-      idx = StringUtils.remove(idx, '#');
-      idx = StringUtils.remove(idx, ".:");
-      return Integer.parseInt(idx);
-    }
-    return -1;
-  }
-
-  /**
-   * Parses score that are shown right behind a possible title.
-   * These scores do not have a leading position number.
-   */
-  @Nullable
-  protected Score createTitledScore(@NonNull String title, @NonNull String line) {
-    String initials = "???";
-    if (line.trim().length() >= 3) {
-      initials = line.trim().substring(0, 3);
-
-      String scoreString = line.substring(4).trim();
-      String cleanScore = ScoreFormatUtil.cleanScore(scoreString);
-      long scoreValue = Long.parseLong(cleanScore);
-      if (scoreValue == -1) {
-        return null;
-      }
-
-      Score sc = new Score(null, -1, initials, null, scoreString, scoreValue, 1);
-      sc.setLabel(title);
-      return sc;
-    }
-
-    String cleanScore = ScoreFormatUtil.cleanScore(line.trim());
-    long scoreValue = Long.parseLong(cleanScore);
-    if (scoreValue == -1) {
-      return null;
-    }
-
-    return new Score(null, -1, initials, null, line.trim(), scoreValue, 1);
-  }
-
-  private static Pattern pattern = Pattern.compile("\\d?\\d?([., ?\u00a0\u202f\ufffd\u00ff]?\\d\\d\\d)*$");
-
-  @Nullable
-  public Score createScore(@Nullable String title, @NonNull String line) {
-    if (line.indexOf(" ") < -1) {
-      return null;
-    }
-    line = StringUtils.substringAfter(line, " ").trim();
-    Matcher m = pattern.matcher(line);
-    if (m.find()) {
-      int p = m.start();
-      String score = line.substring(p);
-      String cleanScore = ScoreFormatUtil.cleanScore(score.trim());
-      long v = Long.parseLong(cleanScore);
-      if (v == -1) {
-        return null;
-      }
-      String initials = p > 0 ? line.substring(0, p - 1).trim() : "";
-      initials = ScoreFormatUtil.cleanInitials(initials);
-      Score sc = new Score(null, -1, initials, null, score, v, -1);
-      if (StringUtils.isNotEmpty(title)) {
-        sc.setLabel(title);
-      }
-      return sc;
-    }
-    return null;
-  }
-
-
-  private JsonObject createMapping(int position, int length, String encoding, boolean useHexForPosition) {
-    JsonObject mapping = new JsonObject();
-    if (useHexForPosition) {
-      mapping.addProperty("start", "0x" + Integer.toHexString(position).toUpperCase());
-    } else {
-      mapping.addProperty("start", position);
-    }
-    mapping.addProperty("encoding", encoding);
-    mapping.addProperty("length", length);
-    return mapping;
-  }
 
   //--------------------------------------------------
 
@@ -441,16 +447,17 @@ public class NVRamToolDecoder {
    * @param nbBytes optional length,, -1 to let the system calculate it
    * @param maxNumberBytes Max number of bytes for encoding when nbBytes is -1
    */
-  public List<SearchResult> searchNumber(byte[] data, long number, int nbBytes, int maxNumberBytes) {
+  public List<SearchResult> searchNumber(byte[] data, long number, int nbBytes, int maxNumberBytes, boolean useBcd) {
     List<SearchResult> positions = new ArrayList<>();
     for (int matchPos = 0; matchPos < data.length; matchPos++) {
       if (nbBytes < 0) {
-        int len = isBCDNumber(data, number, matchPos, maxNumberBytes);
+        int len = isNumber(data, number, matchPos, maxNumberBytes, useBcd);
         if (len >= 0) {
           positions.add(new SearchResult(-1, matchPos, len));
         }
       } else {
-        if (decodeBCD(data, matchPos, nbBytes) == number) {
+        long nb = useBcd ? decodeBCD(data, matchPos, nbBytes): decodeInt(data, matchPos, nbBytes);
+        if (nb == number) {
           positions.add(new SearchResult(-1, matchPos, nbBytes));
         }
       }
@@ -478,7 +485,7 @@ public class NVRamToolDecoder {
       }
 
       int afterString = matchPos + pattern.length;
-      int len = isBCDNumber(data, targetNumber, afterString, maxNumberBytes);
+      int len = isNumber(data, targetNumber, afterString, maxNumberBytes, true);
       if (len >= 0) {
         return new SearchResult(matchPos, afterString, len);
       }
@@ -487,10 +494,10 @@ public class NVRamToolDecoder {
   }
 
   /** Find if number is stored at position and if yes, return the length of encoding else -1 */
-  public int isBCDNumber(byte[] data, long number, int position, int maxNumberBytes) {
+  public int isNumber(byte[] data, long number, int position, int maxNumberBytes, boolean useBcd) {
     // Try all possible byte lengths for the BCD-encoded number
     for (int len = 1; len <= maxNumberBytes; len++) {
-      long decoded = decodeBCD(data, position, len);
+      long decoded = useBcd ? decodeBCD(data, position, len): decodeInt(data, position, len);
       if (decoded < 0) {
         break;
       }
@@ -545,6 +552,19 @@ public class NVRamToolDecoder {
     return value;
   }
 
+  private long decodeInt(byte[] data, int offset, int length) {
+    if (offset + length > data.length) {
+      return -1;
+    }
+
+    long value = 0;
+    for (int i = 0; i < length; i++) {
+      int b = data[offset + i] & 0xFF;
+      value = (value << 8) | (b & 0xFF);
+    }
+    return value;
+  }
+
   /**
    * Searches for a byte pattern in a byte array starting from a given position.
    *
@@ -570,19 +590,6 @@ public class NVRamToolDecoder {
   }
 
   //------------------------------------
-
-  public static String capitalize(String input) {
-    return Arrays.stream(input.trim().split("\\s+"))
-                 .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1).toLowerCase())
-                 .collect(Collectors.joining(" "));
-  }
-
-  public static String abbreviate(String input) {
-    return Arrays.stream(input.trim().split("\\s+"))
-                 .map(word -> String.valueOf(word.charAt(0)))
-                 .collect(Collectors.joining())
-                 .toUpperCase();
-  }
 
   /**
    * Search result containing position and match details

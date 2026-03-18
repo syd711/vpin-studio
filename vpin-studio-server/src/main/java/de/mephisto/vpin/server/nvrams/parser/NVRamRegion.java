@@ -29,7 +29,7 @@ public class NVRamRegion extends NVRamObject {
 
   //----------------------------------------------
 
-  public static NVRamRegion createDefault(String label, int size) {
+  public static NVRamRegion createDefault(String label, Integer size) {
     NVRamRegion region = new NVRamRegion();
     region.label = label;
     region.address = 0;
@@ -37,6 +37,17 @@ public class NVRamRegion extends NVRamObject {
     region.type = "nvram";
     region.nibble = Nibble.BOTH;
     return region;
+  }
+
+  public boolean contains(int pos) {
+    int regionStart = BcdUtils.toInt(address);
+    if (size != null) {
+      int regionEnd = regionStart + BcdUtils.toInt(size) - 1;
+      return (regionStart <= pos && pos <= regionEnd);
+    }
+    else {
+      return (regionStart <= pos);
+    }
   }
 
   public String getLabel() {

@@ -18,6 +18,7 @@ public class ScoreRepresentation {
   private int gameId;
   private Date createdAt;
   private String label;       // optional label for titled scores, high-scores, buy-in scores....
+  private String suffix;      // optional suffix
 
   public Date getCreatedAt() {
     return createdAt;
@@ -93,6 +94,14 @@ public class ScoreRepresentation {
 
   public void setLabel(String label) {
     this.label = label;
+  }
+
+  public String getSuffix() {
+    return suffix;
+  }
+
+  public void setSuffix(String suffix) {
+    this.suffix = suffix;
   }
 
   @JsonIgnore
