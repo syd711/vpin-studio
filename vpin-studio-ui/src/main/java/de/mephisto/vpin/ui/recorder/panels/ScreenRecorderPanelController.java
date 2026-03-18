@@ -24,6 +24,8 @@ import javafx.scene.layout.Pane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javafx.util.StringConverter;
+
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -210,7 +212,12 @@ public class ScreenRecorderPanelController implements Initializable {
     });
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(3, 3600, option.getRecordingDuration());
+    factory.setConverter(new StringConverter<Integer>() {
+      @Override public String toString(Integer v)   { return v == null ? "3" : v.toString(); }
+      @Override public Integer fromString(String s) { return s.isEmpty() ? 3 : Integer.parseInt(s); }
+    });
     durationSpinner.setValueFactory(factory);
+    durationSpinner.getEditor().setTextFormatter(new TextFormatter<>(change -> change.getControlNewText().matches("\\d*") ? change : null));
     String key = "duration" + option.getDisplayName();
     durationSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
       debouncer.debounce(key, () -> {
@@ -222,7 +229,12 @@ public class ScreenRecorderPanelController implements Initializable {
     });
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory1 = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 3600, option.getInitialDelay());
+    factory1.setConverter(new StringConverter<Integer>() {
+      @Override public String toString(Integer v)   { return v == null ? "0" : v.toString(); }
+      @Override public Integer fromString(String s) { return s.isEmpty() ? 0 : Integer.parseInt(s); }
+    });
     delaySpinner.setValueFactory(factory1);
+    delaySpinner.getEditor().setTextFormatter(new TextFormatter<>(change -> change.getControlNewText().matches("\\d*") ? change : null));
     String spinnerKey = "delay" + option.getDisplayName();
     delaySpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
       debouncer.debounce(spinnerKey, () -> {
