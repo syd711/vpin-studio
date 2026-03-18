@@ -129,18 +129,26 @@ public class DefaultTableAndFrontendStatusChangeListenerImpl implements Initiali
     LOG.info("Executing table exit commands for '{}'", game);
     SLOG.info("Executing table exit commands for '" + game + "'");
     discordService.setActivity(null);
-    LOG.info("Starting {}ms update delay before updating highscores.", EXIT_DELAY);
-    SLOG.info("Starting " + EXIT_DELAY + "ms update delay before updating highscores.");
-    try {
-      Thread.sleep(EXIT_DELAY);
-    }
-    catch (InterruptedException e) {
-      //ignore
-    }
-    LOG.info("Finished {}ms update delay, updating highscores.", EXIT_DELAY);
-    SLOG.info("Finished " + EXIT_DELAY + "ms update delay, updating highscores.");
-    highscoreService.scanScore(game, EventOrigin.TABLE_EXIT_EVENT);
 
+    long delay = EXIT_DELAY - event.getEventAgeMs();
+    if (delay > 0) {
+      LOG.info("Starting {}ms update delay before updating highscores.", delay);
+      SLOG.info("Starting " + delay + "ms update delay before updating highscores.");
+      try {
+        Thread.sleep(delay);
+      }
+      catch (InterruptedException e) {
+        //ignore
+      }
+      LOG.info("Finished {}ms update delay, updating highscores.", delay);
+      SLOG.info("Finished " + delay + "ms update delay, updating highscores.");
+    }
+    else {
+      LOG.info("Skipped highscore update delay, already exceeded.");
+      SLOG.info("Skipped highscore update delay, already exceeded.");
+    }
+
+    highscoreService.scanScore(game, EventOrigin.TABLE_EXIT_EVENT);
     if (notificationSettings.isHighscoreCheckedNotification()) {
       File wheelImage = frontendService.getWheelImage(game);
       Notification notification = NotificationFactory.createNotification(wheelImage, game.getGameDisplayName(), "Highscore scan finished!");
