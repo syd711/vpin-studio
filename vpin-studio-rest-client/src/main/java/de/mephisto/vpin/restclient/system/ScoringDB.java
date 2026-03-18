@@ -70,7 +70,7 @@ public class ScoringDB {
 
   public static void update() {
     try {
-      LOG.info("Downloading " + SCORING_DB_NAME);
+      LOG.info("Updating Scoring Database " + SCORING_DB_NAME);
       java.net.URL url = new URL(ScoringDB.URL);
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.setDoOutput(true);
