@@ -6,9 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -30,8 +29,17 @@ public class ScoringDBTest {
     String[] split = stdOut.split("\n");
     System.out.println("Missing roms in DB:");
     List<String> result = new ArrayList<>();
+
+//    List<String> collect = db.getSupportedNvRams().stream().distinct().sorted().collect(Collectors.toList());
+//    for (String s : collect) {
+//      System.out.print("\"");
+//      System.out.print(s);
+//      System.out.println("\",");
+//    }
+
+
     for (String s : split) {
-      if(!db.getSupportedNvRams().contains(s)) {
+      if(!db.getSupportedNvRams().contains(s.trim())) {
         System.out.println("\"" + s + "\",");
         result.add(s);
       }
