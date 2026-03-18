@@ -215,7 +215,7 @@ public class PINemHiService implements InitializingBean {
           }
           else {
             LOG.info("PINemHi is outdated ({} vs. {}), checking for updates.", version, pinemhiVersion);
-            List<String> resources = Arrays.asList("PINemHi.exe", "pinemhi_rom_monitor.exe", "PINemHi_Leaderboard.exe");
+            List<String> resources = Arrays.asList("PINemHi.exe", "pinemhi_rom_monitor.exe", "PINemHi_Leaderboard.exe", "romfind.ini");
             for (String resource : resources) {
               File check = new File(PINEMHI_FOLDER, resource);
               LOG.info("Downloading PINemHi file {}", check.getAbsolutePath());
