@@ -1,14 +1,10 @@
 package de.mephisto.vpin.server.highscores.cards;
 
-import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.cards.CardResolution;
-import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.cards.CardTemplateType;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-
 import org.apache.commons.collections4.ListUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -222,7 +218,7 @@ public class CardTemplatesService {
   //-------------------------------------------------- Merge of templates
 
   private CardTemplate mappingToTemplate(TemplateMapping m) {
-    CardTemplate template = checkVersion(m.getTemplate());
+    CardTemplate template = m.getTemplate();
     if (!template.isTemplate()) {
       mergeWithParent(template);
     }
@@ -240,58 +236,6 @@ public class CardTemplatesService {
     }
 
     return templateMerger._merge(template, parent);
-  }
-
-  //-------------------------------------------------- Template version management
-
-  private CardTemplate checkVersion(CardTemplate template) {
-    Integer version = template.getVersion();
-    if (version == null || version == 1) {
-      template = upgradeFromVersion1(template);
-      template.setVersion(CURRENT_VERSION);
-      template = save(template);
-    }
-
-    return template;
-  }
-
-  private CardTemplate upgradeFromVersion1(CardTemplate template) {
-    CardSettings cardSettings = preferencesService.getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS);
-    CardResolution res = cardSettings.getCardResolution();
-    if (res != null) {
-      double width = res.toWidth();
-      double height = res.toHeight();
-
-      template.setCanvasX(template.getCanvasX() / width);
-      template.setCanvasY(template.getCanvasY() / height);
-      template.setCanvasWidth(template.getCanvasWidth() / width);
-      template.setCanvasHeight(template.getCanvasHeight() / height);
-
-      double currentY = template.getMarginTop();
-      template.setTitleY(currentY / height);
-      template.setTitleHeight(template.getTitleFontSize() / height);
-
-      currentY += template.getTitleFontSize();
-      template.setTableY(currentY / height);
-      template.setTableHeight(template.getTableFontSize() / height);
-
-      currentY += template.getTableFontSize();
-      template.setWheelY(currentY / height);
-      template.setScoresY(currentY / height);
-      template.setScoresHeight((height - currentY - template.getMarginBottom()) / height);
-
-
-      double currentX = template.getMarginLeft();
-      template.setWheelX(currentX / width);
-      if (template.isRenderWheelIcon()) {
-        currentX += template.getWheelSize();
-      }
-      template.setWheelSize(template.getWheelSize() / width);
-
-      template.setScoresX(currentX / width);
-      template.setScoresWidth((width - currentX - template.getMarginRight()) / width);
-    }
-    return template;
   }
 }
 
