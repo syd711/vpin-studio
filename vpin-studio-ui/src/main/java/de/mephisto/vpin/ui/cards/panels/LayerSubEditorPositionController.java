@@ -83,8 +83,9 @@ public class LayerSubEditorPositionController {
     SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(min, max, 0);
     spinner.setValueFactory(factory);
     factory.valueProperty().addListener((observableValue, integer, t1) -> {
-      CardResolution res = binder.getResolution();
-      int size = useWidth ? res.toWidth(): res.toHeight();
+      int cardWith = binder.getWidth();
+      int cardHeight = binder.getHeight();
+      int size = useWidth ? cardWith: cardHeight;
       double val = Double.parseDouble(String.valueOf(t1)) / size;
       binder.setProperty(property, val);
     });
@@ -92,11 +93,11 @@ public class LayerSubEditorPositionController {
 
   //------------
 
-  public void setTemplate(String prefix, CardTemplate cardTemplate, CardResolution res, boolean useAlignment) {
-    setValue(xSpinner, cardTemplate, prefix + "X", res.toWidth());
-    setValue(ySpinner, cardTemplate, prefix + "Y", res.toHeight());
-    setValue(widthSpinner, cardTemplate, prefix + "Width", res.toWidth());
-    setValue(heightSpinner, cardTemplate, prefix + "Height", res.toHeight());
+  public void setTemplate(String prefix, CardTemplate cardTemplate, int cardWidth, int cardHeight, boolean useAlignment) {
+    setValue(xSpinner, cardTemplate, prefix + "X", cardWidth);
+    setValue(ySpinner, cardTemplate, prefix + "Y", cardHeight);
+    setValue(widthSpinner, cardTemplate, prefix + "Width", cardWidth);
+    setValue(heightSpinner, cardTemplate, prefix + "Height", cardHeight);
 
     if (useAlignment) {
       setAlignment(alignLeftButton, cardTemplate, prefix + "Alignment", CardTemplate.LEFT);

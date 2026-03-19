@@ -53,7 +53,7 @@ public class LayerEditorScoresController extends LayerEditorBaseController {
     }
   }
 
-  public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
+  public void setTemplate(CardTemplate cardTemplate, int cardWidth, int cardHeight, Optional<GameRepresentation> game) {
     setIconVisibility(cardTemplate.isRenderScores());
     setIconLock(cardTemplate.isLockScores(), cardTemplate.isTemplate());
 
@@ -61,7 +61,7 @@ public class LayerEditorScoresController extends LayerEditorBaseController {
     CardTemplateBinder.setColorPickerValue(fontColorSelector, cardTemplate, "fontColor");
     CardTemplateBinder.setColorPickerValue(friendsFontColorSelector, cardTemplate, "friendsFontColor");
 
-    positionController.setTemplate("scores", cardTemplate, res, true);
+    positionController.setTemplate("scores", cardTemplate, cardWidth, cardHeight, true);
 
     maxScoresSpinner.getValueFactory().setValue(cardTemplate.getMaxScores());
     rowSeparatorSpinner.getValueFactory().setValue(cardTemplate.getRowMargin());

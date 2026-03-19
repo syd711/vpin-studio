@@ -21,14 +21,17 @@ import org.slf4j.LoggerFactory;
 public class CardGraphicsHighscore extends StackPane {
   protected final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  /** Whether autosize is active or not, depends on how it is embeded ? */
+  /**
+   * Whether autosize is active or not, depends on how it is embeded ?
+   */
   private boolean resizable;
 
   private boolean maintainAspectRatio = false;
 
   private CardTemplate template;
   private CardData data;
-  private CardResolution res;
+  private int cardWidth;
+  private int cardHeight;
 
   CardLayerBackground backgroundLayer = new CardLayerBackground();
   CardLayerFrame frameLayer = new CardLayerFrame();
@@ -40,10 +43,12 @@ public class CardGraphicsHighscore extends StackPane {
   CardLayerOtherMedia otherMediaLayer = new CardLayerOtherMedia();
   CardLayerScores scoresLayer = new CardLayerScores();
 
-  List<CardLayer> layers = Arrays.asList(backgroundLayer, frameLayer, canvasLayer, manufacturerLayer, otherMediaLayer, wheelLayer, 
+  List<CardLayer> layers = Arrays.asList(backgroundLayer, frameLayer, canvasLayer, manufacturerLayer, otherMediaLayer, wheelLayer,
       titleLayer, tableNameLayer, scoresLayer);
 
-  /** Activate the layers to visualize the disposition */
+  /**
+   * Activate the layers to visualize the disposition
+   */
   private boolean debug = false;
   private CardLayerDebug debugLayer;
 
@@ -67,8 +72,12 @@ public class CardGraphicsHighscore extends StackPane {
     this.maintainAspectRatio = maintainAspectRatio;
   }
 
-  public CardResolution getCardResolution() {
-    return res;
+  public int getCardWidth() {
+    return cardWidth;
+  }
+
+  public int getCardHeight() {
+    return cardHeight;
   }
 
   @Override
@@ -76,9 +85,10 @@ public class CardGraphicsHighscore extends StackPane {
     return resizable;
   }
 
-  public void setData(CardData data, CardResolution res) {
+  public void setData(CardData data, int width, int height) {
     this.data = data;
-    this.res = res;
+    this.cardWidth = width;
+    this.cardHeight = height;
     this.requestLayout();
   }
 
@@ -86,7 +96,8 @@ public class CardGraphicsHighscore extends StackPane {
     return data != null && gameId == data.getGameId();
   }
 
-  @Override protected void layoutChildren() {
+  @Override
+  protected void layoutChildren() {
     double width = getWidth();
     double height = getHeight();
     if (width == 0 || height == 0) {
@@ -99,13 +110,13 @@ public class CardGraphicsHighscore extends StackPane {
     }
 
     // calculate zoom factors and calculate WIDTH/HEIGHT in the dimensions of the template
-    // As we manipulate both dimension in template coordinate system and image coordinate, 
+    // As we manipulate both dimension in template coordinate system and image coordinate,
     // a WIDTH uppercase refers to template coordinate and width lowercase, refer to the image
     // then width = WIDTH * zoomX and height = HEIGHT * zoomY
 
-    double zoomX = res == null ? 1.0 : width / res.toWidth();
+    double zoomX = width / cardWidth;
     double WIDTH = width / zoomX;
-    double zoomY = res == null ? 1.0 : height / res.toHeight();
+    double zoomY = height / cardHeight;
     double HEIGHT = height / zoomY;
 
     if (maintainAspectRatio) {
@@ -134,10 +145,10 @@ public class CardGraphicsHighscore extends StackPane {
 
     if (template.isRenderCanvas()) {
       canvasLayer.setVisible(true);
-      resizeRelocate(canvasLayer, 
-        WIDTH * template.getCanvasX(), HEIGHT * template.getCanvasY(), 
-        WIDTH * template.getCanvasWidth(), HEIGHT * template.getCanvasHeight(), 
-        zoomX, zoomY);
+      resizeRelocate(canvasLayer,
+          WIDTH * template.getCanvasX(), HEIGHT * template.getCanvasY(),
+          WIDTH * template.getCanvasWidth(), HEIGHT * template.getCanvasHeight(),
+          zoomX, zoomY);
     }
     else {
       canvasLayer.setVisible(false);
@@ -145,10 +156,10 @@ public class CardGraphicsHighscore extends StackPane {
 
     if (template.isRenderManufacturerLogo()) {
       manufacturerLayer.setVisible(true);
-      resizeRelocate(manufacturerLayer, 
-        WIDTH * template.getManufacturerLogoX(), HEIGHT * template.getManufacturerLogoY(), 
-        WIDTH * template.getManufacturerLogoWidth(), HEIGHT * template.getManufacturerLogoHeight(), 
-        zoomX, zoomY);
+      resizeRelocate(manufacturerLayer,
+          WIDTH * template.getManufacturerLogoX(), HEIGHT * template.getManufacturerLogoY(),
+          WIDTH * template.getManufacturerLogoWidth(), HEIGHT * template.getManufacturerLogoHeight(),
+          zoomX, zoomY);
     }
     else {
       manufacturerLayer.setVisible(false);
@@ -156,10 +167,10 @@ public class CardGraphicsHighscore extends StackPane {
 
     if (template.isRenderOtherMedia()) {
       otherMediaLayer.setVisible(true);
-      resizeRelocate(otherMediaLayer, 
-        WIDTH * template.getOtherMediaX(), HEIGHT * template.getOtherMediaY(), 
-        WIDTH * template.getOtherMediaWidth(), HEIGHT * template.getOtherMediaHeight(), 
-        zoomX, zoomY);
+      resizeRelocate(otherMediaLayer,
+          WIDTH * template.getOtherMediaX(), HEIGHT * template.getOtherMediaY(),
+          WIDTH * template.getOtherMediaWidth(), HEIGHT * template.getOtherMediaHeight(),
+          zoomX, zoomY);
     }
     else {
       otherMediaLayer.setVisible(false);
@@ -169,9 +180,9 @@ public class CardGraphicsHighscore extends StackPane {
       wheelLayer.setVisible(true);
 
       double wheelSize = WIDTH * template.getWheelSize();
-      resizeRelocate(wheelLayer, 
-        WIDTH * template.getWheelX(), HEIGHT * template.getWheelY(), 
-        wheelSize, wheelSize, zoomX, zoomY);
+      resizeRelocate(wheelLayer,
+          WIDTH * template.getWheelX(), HEIGHT * template.getWheelY(),
+          wheelSize, wheelSize, zoomX, zoomY);
     }
     else {
       wheelLayer.setVisible(false);
@@ -180,10 +191,10 @@ public class CardGraphicsHighscore extends StackPane {
     // textLayers occupy the full width of the card and text is centered in it
     if (template.isRenderTitle()) {
       titleLayer.setVisible(true);
-      resizeRelocate(titleLayer, 
-        WIDTH * template.getTitleX(), HEIGHT * template.getTitleY(), 
-        WIDTH * template.getTitleWidth(), HEIGHT * template.getTitleHeight(), 
-        zoomX, zoomY);
+      resizeRelocate(titleLayer,
+          WIDTH * template.getTitleX(), HEIGHT * template.getTitleY(),
+          WIDTH * template.getTitleWidth(), HEIGHT * template.getTitleHeight(),
+          zoomX, zoomY);
     }
     else {
       titleLayer.setVisible(false);
@@ -191,10 +202,10 @@ public class CardGraphicsHighscore extends StackPane {
 
     if (template.isRenderTableName()) {
       tableNameLayer.setVisible(true);
-      resizeRelocate(tableNameLayer, 
-        WIDTH * template.getTableX(), HEIGHT * template.getTableY(), 
-        WIDTH * template.getTableWidth(), HEIGHT * template.getTableHeight(), 
-        zoomX, zoomY);
+      resizeRelocate(tableNameLayer,
+          WIDTH * template.getTableX(), HEIGHT * template.getTableY(),
+          WIDTH * template.getTableWidth(), HEIGHT * template.getTableHeight(),
+          zoomX, zoomY);
     }
     else {
       tableNameLayer.setVisible(false);
@@ -202,10 +213,10 @@ public class CardGraphicsHighscore extends StackPane {
 
     if (template.isRenderScores()) {
       scoresLayer.setVisible(true);
-      resizeRelocate(scoresLayer, 
-        WIDTH * template.getScoresX(), HEIGHT * template.getScoresY(), 
-        WIDTH * template.getScoresWidth(), HEIGHT * template.getScoresHeight(), 
-        zoomX, zoomY);
+      resizeRelocate(scoresLayer,
+          WIDTH * template.getScoresX(), HEIGHT * template.getScoresY(),
+          WIDTH * template.getScoresWidth(), HEIGHT * template.getScoresHeight(),
+          zoomX, zoomY);
     }
     else {
       scoresLayer.setVisible(false);
@@ -218,7 +229,8 @@ public class CardGraphicsHighscore extends StackPane {
         getChildren().add(debugLayer);
       }
       resizeRelocate(debugLayer, 0, 0, WIDTH, HEIGHT, zoomX, zoomY);
-    } else {
+    }
+    else {
       if (debugLayer != null) {
         getChildren().remove(debugLayer);
         debugLayer = null;
@@ -228,7 +240,7 @@ public class CardGraphicsHighscore extends StackPane {
 
 
   public void resizeRelocate(CardLayer layer, double x, double y, double width, double height, double zoomX, double zoomY) {
-    // don't change the order 
+    // don't change the order
     layer.setWidth(width * zoomX);
     layer.setHeight(height * zoomY);
     layer.relocate(x * zoomX, y * zoomY);
@@ -239,7 +251,7 @@ public class CardGraphicsHighscore extends StackPane {
       LOG.debug(this.getClass().getSimpleName() + " drawn in (ms) " + (System.currentTimeMillis() - startTime));
     }
   }
-  
+
   //----------------------------------------------------------------
 
   /**
@@ -261,7 +273,7 @@ public class CardGraphicsHighscore extends StackPane {
 
   public CardLayer selectCardLayer(double x, double y) {
     // look from top to bottom
-    for (int i = layers.size() - 1; i>=0; i--) {
+    for (int i = layers.size() - 1; i >= 0; i--) {
       CardLayer layer = layers.get(i);
       if (layer.isSelectable() && layer.isVisible() && contains(layer, x, y)) {
         return layer;

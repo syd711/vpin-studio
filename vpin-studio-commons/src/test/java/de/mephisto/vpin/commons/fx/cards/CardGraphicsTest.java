@@ -76,7 +76,7 @@ public class CardGraphicsTest extends Application {
     }
 
     CardData data = CardDataMock.create();
-    graphics.setData(data, CardResolution.HD);
+    graphics.setData(data, CardResolution.HD.toWidth(), CardResolution.HD.toHeight());
 
     return graphics;
   }

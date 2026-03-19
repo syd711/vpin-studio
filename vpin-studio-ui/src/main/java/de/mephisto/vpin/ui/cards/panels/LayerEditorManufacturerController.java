@@ -16,11 +16,11 @@ public class LayerEditorManufacturerController extends LayerEditorBaseController
   @FXML
   private CheckBox manufacturerLogoKeepARCheckBox;
 
-  public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
+  public void setTemplate(CardTemplate cardTemplate, int cardWidth, int cardHeight, Optional<GameRepresentation> game) {
     setIconVisibility(cardTemplate.isRenderManufacturerLogo());
     setIconLock(cardTemplate.isLockManufacturerLogo(), cardTemplate.isTemplate());
 
-    positionController.setTemplate("manufacturerLogo", cardTemplate, res, true);
+    positionController.setTemplate("manufacturerLogo", cardTemplate, cardWidth, cardHeight, true);
 
     manufacturerLogoUseHistoricalCheckBox.setSelected(cardTemplate.isManufacturerLogoUseYear());
     manufacturerLogoKeepARCheckBox.setSelected(cardTemplate.isManufacturerLogoKeepAspectRatio());

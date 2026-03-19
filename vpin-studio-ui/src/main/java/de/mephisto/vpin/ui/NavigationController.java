@@ -87,6 +87,8 @@ public class NavigationController implements Initializable, StudioEventListener,
 
   private final List<Pane> buttons = new ArrayList();
 
+  private NavigationView highscoreCardsNavigationView;
+
   // Add a public no-args constructor
   public NavigationController() {
   }
@@ -255,7 +257,9 @@ public class NavigationController implements Initializable, StudioEventListener,
 
   @Override
   public void preferencesChanged(String key, Object value) {
-
+    if (PreferenceNames.HIGHSCORE_CARD_SETTINGS.equals(key)) {
+      highscoreCardsNavigationView.setController(null);
+    }
   }
 
   @Override
@@ -286,7 +290,9 @@ public class NavigationController implements Initializable, StudioEventListener,
     navigationItemMap.put(NavigationItem.Players, new NavigationView(NavigationItem.Players, PlayersController.class, playersBtn, "scene-players.fxml"));
 
     navigationItemMap.put(NavigationItem.Competitions, new NavigationView(NavigationItem.Competitions, CompetitionsController.class, competitionsBtn, "scene-competitions.fxml"));
-    navigationItemMap.put(NavigationItem.HighscoreCards, new NavigationView(NavigationItem.HighscoreCards, HighscoreCardsController.class, cardsBtn, "scene-highscore-cards.fxml"));
+
+    this.highscoreCardsNavigationView = new NavigationView(NavigationItem.HighscoreCards, HighscoreCardsController.class, cardsBtn, "scene-highscore-cards.fxml");
+    navigationItemMap.put(NavigationItem.HighscoreCards, highscoreCardsNavigationView);
 
     navigationItemMap.put(NavigationItem.SystemManager, new NavigationView(NavigationItem.SystemManager, ComponentsController.class, systemManagerBtn, "scene-components.fxml"));
 

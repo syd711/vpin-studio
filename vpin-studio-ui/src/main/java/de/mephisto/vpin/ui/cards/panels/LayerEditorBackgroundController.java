@@ -164,7 +164,7 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
     }
   }
 
-  public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
+  public void setTemplate(CardTemplate cardTemplate, int cardWidth, int cardHeight, Optional<GameRepresentation> game) {
 
     this.game = game;
     setIconVisibility(cardTemplate.isRenderBackground());

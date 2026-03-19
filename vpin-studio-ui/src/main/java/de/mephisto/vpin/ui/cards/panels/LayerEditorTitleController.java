@@ -47,7 +47,7 @@ public class LayerEditorTitleController extends LayerEditorBaseController {
     }
   }
 
-  public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
+  public void setTemplate(CardTemplate cardTemplate, int cardWidth, int cardHeight, Optional<GameRepresentation> game) {
     setIconVisibility(cardTemplate.isRenderTitle());
     setIconLock(cardTemplate.isLockTitle(), cardTemplate.isTemplate());
 
@@ -57,7 +57,7 @@ public class LayerEditorTitleController extends LayerEditorBaseController {
     titleUseDefaultColor.setSelected(cardTemplate.isTitleUseDefaultColor());
     CardTemplateBinder.setColorPickerValue(titleFontColorSelector, cardTemplate, "titleColor");
 
-    positionController.setTemplate("title", cardTemplate, res, true);
+    positionController.setTemplate("title", cardTemplate, cardWidth, cardHeight, true);
   }
 
   @Override

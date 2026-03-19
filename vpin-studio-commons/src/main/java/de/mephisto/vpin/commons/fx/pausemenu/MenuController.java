@@ -369,9 +369,17 @@ public class MenuController implements Initializable {
                   return client.getCardData(game, template);
                 })
                 .thenAcceptLater(carddata -> {
+                  CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
+                  int width = CardResolution.HDReady.toWidth();
+                  int height = CardResolution.HDReady.toHeight();
+                  if(cardSettings.isCustomResolution()) {
+                    width = cardSettings.getCardWidth();
+                    height = cardSettings.getCardHeight();
+                  }
+
                   CardGraphicsHighscore highscoreCard = new CardGraphicsHighscore(true);
                   highscoreCard.setTemplate(template);
-                  highscoreCard.setData(carddata, CardResolution.HDReady);
+                  highscoreCard.setData(carddata, width, height);
                   scoreView.setCenter(highscoreCard);
                 });
           });
