@@ -436,7 +436,6 @@ public class GameMediaService extends MediaService {
           backedUpTableDetails.setGameFileName(newTableDetails.getGameFileName());
           backedUpTableDetails.setDateAdded(new Date());
           backedUpTableDetails.setTourneyId(null);
-          backedUpTableDetails.setWebGameId(null);
           backedUpTableDetails.setLastPlayed(null);
           backedUpTableDetails.setEmulatorId(uploadDescriptor.getEmulatorId());
           frontendService.saveTableDetails(game.getId(), backedUpTableDetails);

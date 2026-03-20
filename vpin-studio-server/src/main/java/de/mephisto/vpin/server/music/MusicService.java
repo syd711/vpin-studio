@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.music;
 
 
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.vpx.FolderLookupService;
@@ -37,7 +36,7 @@ public class MusicService {
   }
 
   public void installMusic(@NonNull File out, @NonNull Game game, @NonNull UploaderAnalysis analysis, boolean acceptAllAudio) throws IOException {
-    File musicFolder = folderLookupService.getGameMusicFolder(game);
+    File musicFolder = folderLookupService.getMusicFolder(game);
     if (musicFolder == null || !musicFolder.exists()) {
       LOG.warn("Skipped installation of music bundle, no music folder {} found.", musicFolder);
       return;
@@ -126,7 +125,17 @@ public class MusicService {
   }
 
   public boolean delete(Game game) {
-    File musicFolder = getGameMusicFolder(game);
-    return FileUtils.deleteFolder(musicFolder);
+    List<File> mp3Files = getMp3Files(game);
+    boolean result = true;
+    for (File mp3File : mp3Files) {
+      if(!mp3File.delete()) {
+        result = false;
+        LOG.warn("Deleted failed for {}", mp3File.getAbsolutePath());
+      }
+      else {
+        LOG.info("Deleted {}", mp3File.getAbsolutePath());
+      }
+    }
+    return result;
   }
 }

@@ -49,6 +49,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.function.BiConsumer;
 
@@ -242,10 +243,12 @@ public class VpaService implements InitializingBean {
 
     if (backupSettings.isMusic()) {
       List<File> mp3Files = musicService.getMp3Files(game);
-      if (!mp3Files.isEmpty()) {
+      File musicFolder = folderLookupService.getMusicFolder(game);
+      if (!mp3Files.isEmpty() && musicFolder != null) {
         packageInfo.setMusic(BackupFileInfoFactory.create(game.getRom(), null, mp3Files));
         for (File mp3File : mp3Files) {
-          if (!zipFile(jobDescriptor, mp3File, "Music/", zipOut)) {
+          Path relativize = musicFolder.toPath().relativize(mp3File.toPath());
+          if (!zipFile(jobDescriptor, mp3File, "Music/" + relativize, zipOut)) {
             return;
           }
         }

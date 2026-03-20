@@ -32,3 +32,4 @@
 - **Table Data Manager**: Fixed tab focus order for all tabs.
 - **Wheel Augmentation**: Fixed various issues and superfluous calls when applying badges to wheels.
 - **Media Recorder**: Added timeout of 10 minutes for recordings in case the in-game recorder is never turned off.
+- **Table Backups**: Fixed issue that the VPS mapping was not detected on restore.
