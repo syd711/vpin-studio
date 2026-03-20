@@ -17,6 +17,7 @@ import de.mephisto.vpin.ui.tables.models.TableStatus;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
 import de.mephisto.vpin.ui.util.tags.TagField;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -239,7 +240,9 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
         Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Reload all tables?",
             "Filtering by issue type requires all tables to be loaded.", "Do you want to reload now?");
         if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-          ((TableOverviewController) tableController).doReload();
+          Platform.runLater(() -> {
+            ((TableOverviewController) tableController).onReload();
+          });
         }
         else {
           issueTypesCombo.setValue(null);

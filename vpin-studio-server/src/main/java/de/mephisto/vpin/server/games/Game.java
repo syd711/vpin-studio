@@ -93,6 +93,8 @@ public class Game {
   private String dmdGameName;
   private String dmdProjectFolder;
 
+  private String assets;
+
   private String[] scripts;
 
   private boolean ignoreUpdates = false;
@@ -165,6 +167,15 @@ public class Game {
 
   public void setVrRoomEnabled(boolean vrRoomEnabled) {
     this.vrRoomEnabled = vrRoomEnabled;
+  }
+
+  @JsonIgnore
+  public String getAssets() {
+    return assets;
+  }
+
+  public void setAssets(String assets) {
+    this.assets = assets;
   }
 
   @JsonIgnore

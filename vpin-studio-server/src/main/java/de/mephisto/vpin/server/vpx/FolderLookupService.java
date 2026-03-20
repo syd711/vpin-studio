@@ -14,8 +14,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.File;
 import java.lang.invoke.MethodHandles;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * check VPX-10.8.1-FileLayout.md
@@ -135,13 +140,63 @@ public class FolderLookupService {
   }
 
   @Nullable
-  public File getGameMusicFolder(@NonNull Game game, @Nullable String rom) {
+  public File getGameMusicFolder(@NonNull Game game) {
+    File musicRoot = getMusicFolder(game);
+    if (musicRoot == null) {
+      return null;
+    }
+
+    String effectiveRom = game.getRom();
+    String assetsStr = game.getAssets();
+
+    if (StringUtils.isEmpty(assetsStr)) {
+      // No assets scanned — fall back to music root + ROM name as subfolder
+      return StringUtils.isEmpty(effectiveRom) ? musicRoot : new File(musicRoot, effectiveRom);
+    }
+
+    // Collect distinct folder paths from the asset paths (e.g. "MFDOOM" from "MFDOOM/Attract*.mp3")
+    Set<String> folders = new LinkedHashSet<>();
+    for (String asset : assetsStr.split("\\|")) {
+      if (StringUtils.isEmpty(asset)) {
+        continue;
+      }
+      String folder = StringUtils.strip(FilenameUtils.getPath(asset), "/");
+      if (!StringUtils.isEmpty(folder)) {
+        folders.add(folder);
+      }
+    }
+
+    if (folders.isEmpty()) {
+      // All assets sit at the root level — return the root
+      return musicRoot;
+    }
+
+    if (folders.size() == 1) {
+      return new File(musicRoot, folders.iterator().next());
+    }
+
+    // Multiple folders: prefer the one whose last component matches the ROM name
+    if (!StringUtils.isEmpty(effectiveRom)) {
+      for (String folder : folders) {
+        if (FilenameUtils.getName(folder).equalsIgnoreCase(effectiveRom)) {
+          return new File(musicRoot, folder);
+        }
+      }
+    }
+
+    // No ROM match: pick the deepest folder (most path components)
+    String deepest = folders.stream()
+        .max(Comparator.comparingInt(f -> StringUtils.countMatches(f, '/') + 1))
+        .orElseThrow();
+    return new File(musicRoot, deepest);
+  }
+
+
+  @Nullable
+  public File getMusicFolder(@NonNull Game game) {
     GameEmulator emulator = game.getEmulator();
     if (isPreferLegacyFileStructure(game.getEmulator())) {
-      if (!StringUtils.isEmpty(rom)) {
-        return new File(emulator.getInstallationFolder(), "Music/" + rom);
-      }
-      return new File(emulator.getInstallationFolder(), "Music/" + game.getRom());
+      return new File(emulator.getInstallationFolder(), "Music/");
     }
 
     File folder = new File(game.getGameFolder(), "music/");

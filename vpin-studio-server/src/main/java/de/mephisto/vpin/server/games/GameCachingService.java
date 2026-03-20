@@ -394,6 +394,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     }
 
     // fill scanned values
+    game.setAssets(gameDetails.getAssets());
     game.setScannedRom(gameDetails.getRomName());
     game.setScannedHsFileName(gameDetails.getHsFileName());
     game.setScannedAltRom(gameDetails.getTableName());

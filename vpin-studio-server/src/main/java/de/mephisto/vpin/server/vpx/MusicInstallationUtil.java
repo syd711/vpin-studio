@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.vpx;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import net.sf.sevenzipjbinding.ExtractOperationResult;
@@ -25,11 +26,12 @@ import java.util.zip.ZipInputStream;
 public class MusicInstallationUtil {
   private final static Logger LOG = LoggerFactory.getLogger(MusicInstallationUtil.class);
 
-  public static boolean unpack(@NonNull File archiveFile, @NonNull File musicFolder, @NonNull UploaderAnalysis analysis, @Nullable String rom, @Nullable String relativePath) throws IOException {
+  public static boolean unpack(@NonNull File archiveFile, @NonNull File musicFolder, @NonNull UploaderAnalysis analysis, @NonNull Game game, @Nullable String relativePath) throws IOException {
     if (!musicFolder.exists()) {
       LOG.error("Music upload failed, no music folder found for default emulator.");
     }
 
+    String rom = game.getRom();
     if (!StringUtils.isEmpty(rom) && !StringUtils.isEmpty(relativePath) && relativePath.startsWith(rom)) {
       relativePath = "./";
     }

@@ -38,6 +38,7 @@ public interface GameValidationCode {
   int CODE_FORCE_STEREO = 52;
 
   int CODE_PUP_PACK_FILE_MISSING = 60;
+  int CODE_MUSIC_FILE_MISSING = 61;
 
   int CODE_VPS_MAPPING_MISSING = 70;
   int CODE_VPS_ALTCOLOR_MISSING = 71;
@@ -82,6 +83,7 @@ public interface GameValidationCode {
       case CODE_ALT_SOUND_FILE_MISSING: return "ALT sound file missing";
       case CODE_FORCE_STEREO: return "Force Stereo not enabled";
       case CODE_PUP_PACK_FILE_MISSING: return "PUP pack media file missing";
+      case CODE_MUSIC_FILE_MISSING: return "Music file missing";
       case CODE_VPS_MAPPING_MISSING: return "VPS mapping missing";
       case CODE_VPS_ALTCOLOR_MISSING: return "VPS ALT color missing";
       case CODE_VPS_ALTSOUND_MISSING: return "VPS ALT sound missing";

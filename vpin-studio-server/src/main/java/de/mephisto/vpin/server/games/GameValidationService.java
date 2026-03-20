@@ -27,6 +27,7 @@ import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.highscores.HighscoreResolver;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegService;
+import de.mephisto.vpin.server.music.MusicService;
 import de.mephisto.vpin.server.vpinmame.VPinMameRomAliasService;
 import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
@@ -105,6 +106,9 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
   @Autowired
   private VPXService vpxService;
+
+  @Autowired
+  private MusicService musicService;
 
   @Autowired
   private FolderLookupService folderLookupService;
@@ -349,6 +353,13 @@ public class GameValidationService implements InitializingBean, PreferenceChange
             }
           }
         }
+      }
+    }
+
+    if (isVPX && isValidationEnabled(game, CODE_MUSIC_FILE_MISSING)) {
+      List<String> missingResources = musicService.getMissingMp3Files(game);
+      if (missingResources != null && !missingResources.isEmpty()) {
+        result.add(ValidationStateFactory.create(CODE_MUSIC_FILE_MISSING, missingResources));
       }
     }
     return result;

@@ -240,13 +240,14 @@ public class VpaService implements InitializingBean {
       }
     }
 
-    //always zip music files if they are in a ROM named folder
     if (backupSettings.isMusic()) {
-      File musicFolder = musicService.getGameMusicFolder(game);
-      if (musicFolder != null && musicFolder.exists()) {
-        packageInfo.setMusic(BackupFileInfoFactory.create(musicFolder));
-        if (!zipFile(jobDescriptor, musicFolder, "Music/" + musicFolder.getName(), zipOut)) {
-          return;
+      List<File> mp3Files = musicService.getMp3Files(game);
+      if (!mp3Files.isEmpty()) {
+        packageInfo.setMusic(BackupFileInfoFactory.create(game.getRom(), null, mp3Files));
+        for (File mp3File : mp3Files) {
+          if (!zipFile(jobDescriptor, mp3File, "Music/", zipOut)) {
+            return;
+          }
         }
       }
     }

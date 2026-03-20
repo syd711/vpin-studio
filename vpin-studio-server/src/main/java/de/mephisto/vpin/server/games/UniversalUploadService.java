@@ -316,10 +316,8 @@ public class UniversalUploadService {
       }
       case MUSIC: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.MUSIC) == null) {
-          String rom = null;
           if (game != null) {
-            rom = game.getRom();
-            musicService.installMusic(tempFile, game, analysis, rom, uploadDescriptor.isAcceptAllAudioAsMusic());
+            musicService.installMusic(tempFile, game, analysis, uploadDescriptor.isAcceptAllAudioAsMusic());
             gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, updatedAssetName);
           }
         }

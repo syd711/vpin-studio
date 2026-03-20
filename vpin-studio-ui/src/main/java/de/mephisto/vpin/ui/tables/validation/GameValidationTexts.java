@@ -189,6 +189,20 @@ public class GameValidationTexts {
         }
         break;
       }
+      case CODE_MUSIC_FILE_MISSING: {
+        label = "Music file is missing.";
+        if (state.getOptions().size() > 1) {
+          label = "Music files are missing.";
+        }
+        if (state.getOptions().size() > 2) {
+          List<String> entries = state.getOptions().subList(0, 2);
+          text = "The table script references invalid file(s): \"" + String.join("\", \"", entries) + "\" (+" + (state.getOptions().size() - 2) + " more files)";
+        }
+        else {
+          text = "The table script references invalid file(s): \"" + String.join("\", \"", state.getOptions()) + "\"";
+        }
+        break;
+      }
       case CODE_VPS_MAPPING_MISSING: {
         label = "No \"Virtual Pinball Spreadsheet\" match found.";
         text = "The table and its version has not been matched against the Virtual Pinball Spreadsheet.";

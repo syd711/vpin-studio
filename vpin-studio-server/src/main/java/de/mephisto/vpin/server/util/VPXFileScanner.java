@@ -55,7 +55,11 @@ public class VPXFileScanner {
 
   private static final Pattern HS_FILENAME_PATTERN = Pattern.compile(".*HSFileName.*=.*\".*\".*");
   private static final Pattern TXT_FILENAME_PATTERN = Pattern.compile(".*\".*\\.txt\".*");
-  private static final Pattern MP3_IN_QUOTES_PATTERN = Pattern.compile("\"([^\"]+\\.mp3)\"", Pattern.CASE_INSENSITIVE);
+  // Matches a VBScript string-concat expression: sequence of quoted strings and identifiers joined by & or +
+  // e.g. "MFDOOM\Attract" & i & ".mp3"  or  "Jingel1" + ".mp3"  or  "intro.mp3"
+  private static final Pattern MP3_EXPRESSION_PATTERN = Pattern.compile(
+      "(?:\"[^\"]*\"|\\w+)(?:\\s*[&+]\\s*(?:\"[^\"]*\"|\\w+))*",
+      Pattern.CASE_INSENSITIVE);
 
   private static final Pattern VAR_PATTERN = Pattern.compile("(?:Set *)?(\\w*)\\s*=\\s*(.*)");
 
@@ -220,11 +224,98 @@ public class VPXFileScanner {
     if (!line.contains(".mp3") && !line.contains(".MP3")) {
       return;
     }
-    Matcher matcher = MP3_IN_QUOTES_PATTERN.matcher(line);
+    Matcher matcher = MP3_EXPRESSION_PATTERN.matcher(line);
     while (matcher.find()) {
-      String group = matcher.group(1);
-      result.getAssets().add(group);
+      String expr = matcher.group();
+      if (!StringUtils.containsIgnoreCase(expr, ".mp3")) {
+        continue;
+      }
+      String filename = buildMp3Wildcard(expr);
+      if (filename != null) {
+        if (filename.equalsIgnoreCase(".mp3") || filename.equalsIgnoreCase("*.mp3")) {
+          continue;
+        }
+        addAsset(result, filename.replaceAll("\\\\", "/"));
+      }
     }
+  }
+
+  /**
+   * Adds an mp3 asset path to the result, deduplicating by filename.
+   * If the same filename (basename) is already present, the entry with the path wins over
+   * the plain filename — i.e. "sounds/intro.mp3" replaces "intro.mp3", but not vice versa.
+   */
+  private static void addAsset(ScanResult result, String newAsset) {
+    String newName = FilenameUtils.getName(newAsset);
+    boolean newHasPath = !newName.equals(newAsset);
+    List<String> assets = result.getAssets();
+    for (int i = 0; i < assets.size(); i++) {
+      String existing = assets.get(i);
+      if (FilenameUtils.getName(existing).equalsIgnoreCase(newName)) {
+        // Same base filename already present — upgrade to the path-qualified version if needed
+        boolean existingHasPath = !FilenameUtils.getName(existing).equals(existing);
+        if (newHasPath && !existingHasPath) {
+          assets.set(i, newAsset);
+        }
+        return;
+      }
+    }
+    assets.add(newAsset);
+  }
+
+  /**
+   * Converts a VBScript concat expression into a wildcard filename.
+   * Quoted parts contribute their literal content; variable tokens become *.
+   * e.g. "MFDOOM\Attract" & i & ".mp3"  ->  MFDOOM\Attract*.mp3
+   */
+  private static String buildMp3Wildcard(String expr) {
+    StringBuilder sb = new StringBuilder();
+    for (String part : splitOnAmpersandOutsideQuotes(expr)) {
+      if (part.startsWith("\"") && part.endsWith("\"") && part.length() >= 2) {
+        sb.append(part, 1, part.length() - 1);
+      }
+      else {
+        // variable or number — use wildcard, but don't double up
+        if (sb.length() == 0 || sb.charAt(sb.length() - 1) != '*') {
+          sb.append('*');
+        }
+      }
+    }
+    String result = sb.toString();
+    return StringUtils.containsIgnoreCase(result, ".mp3") ? result : null;
+  }
+
+  /**
+   * Splits a VBScript concat expression by & or + while respecting quoted strings.
+   * e.g. "bgout_T&Jfoo" & var & ".mp3"  ->  ["\"bgout_T&Jfoo\"", "var", "\".mp3\""]
+   * e.g. "Jingel1" + ".mp3"             ->  ["\"Jingel1\"", "\".mp3\""]
+   */
+  private static List<String> splitOnAmpersandOutsideQuotes(String expr) {
+    List<String> parts = new ArrayList<>();
+    StringBuilder current = new StringBuilder();
+    boolean inString = false;
+    for (int i = 0; i < expr.length(); i++) {
+      char c = expr.charAt(i);
+      if (c == '"') {
+        inString = !inString;
+        current.append(c);
+      }
+      else if ((c == '&' || c == '+') && !inString) {
+        String part = current.toString().trim();
+        if (!part.isEmpty()) {
+          parts.add(part);
+        }
+        current.setLength(0);
+      }
+      else {
+        current.append(c);
+      }
+    }
+    String last = current.toString().trim();
+    if (!last.isEmpty()) {
+      parts.add(last);
+    }
+    return parts;
   }
 
   public static List<String> scanLines(File gameFile, File scriptFolder, ScanResult result, String script) {
