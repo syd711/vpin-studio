@@ -19,14 +19,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 public class GameRecorder {
   private final static Logger LOG = LoggerFactory.getLogger(GameRecorder.class);
+  private final static int TIMEOUT_MINUTES = 10;
 
   private final FrontendConnector frontend;
   private final Game game;
@@ -91,8 +89,8 @@ public class GameRecorder {
 
 
               int count = 0;
-              if(jobDescriptor.getUserData() != null) {
-               count = (int) jobDescriptor.getUserData();
+              if (jobDescriptor.getUserData() != null) {
+                count = (int) jobDescriptor.getUserData();
               }
               jobDescriptor.setUserData((count + 1));
 
@@ -116,7 +114,7 @@ public class GameRecorder {
 
       try {
         for (Future<RecordingResult> future : futures) {
-          RecordingResult recordingResult = future.get();
+          RecordingResult recordingResult = future.get(TIMEOUT_MINUTES, TimeUnit.MINUTES);
           if (recordingResult != null) {
             recordingResults.add(recordingResult);
           }
@@ -124,7 +122,7 @@ public class GameRecorder {
         }
       }
       catch (Exception e) {
-        LOG.error("Error waiting for recording result: {}", e.getMessage(), e);
+        LOG.error("Error waiting for recording errorResult: {}", e.getMessage(), e);
       }
     }
     else {
