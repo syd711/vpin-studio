@@ -259,7 +259,7 @@ public class NavigationController implements Initializable, StudioEventListener,
     if (PreferenceNames.HIGHSCORE_CARD_SETTINGS.equals(key)) {
       highscoreCardsNavigationView.setController(null);
 
-      if (activeNavigation.getItem().equals(NavigationItem.HighscoreCards)) {
+      if (activeNavigation != null && activeNavigation.getItem().equals(NavigationItem.HighscoreCards)) {
         navigateTo(NavigationItem.HighscoreCards);
       }
     }
