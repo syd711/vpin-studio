@@ -55,10 +55,14 @@ public class VPXFileScanner {
 
   private static final Pattern HS_FILENAME_PATTERN = Pattern.compile(".*HSFileName.*=.*\".*\".*");
   private static final Pattern TXT_FILENAME_PATTERN = Pattern.compile(".*\".*\\.txt\".*");
+  private static final Pattern MP3_FILENAME_PATTERN = Pattern.compile(".*\".*\\.mp3\".*");
+  private static final Pattern MP3_IN_QUOTES_PATTERN = Pattern.compile("\"([^\"]+\\.mp3)\"", Pattern.CASE_INSENSITIVE);
 
   private static final Pattern VAR_PATTERN = Pattern.compile("(?:Set *)?(\\w*)\\s*=\\s*(.*)");
 
-  /** all lower case ! */
+  /**
+   * all lower case !
+   */
   private final static List<String> IGNORED_SCRIPTS = Arrays.asList("core.vbs", "controller.vbs", "vpmkeys.vbs");
 
   private static final ExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -217,6 +221,16 @@ public class VPXFileScanner {
     }
   }
 
+  private static void lineSearchMp3FileName(ScanResult result, String line) {
+    if (!MP3_FILENAME_PATTERN.matcher(line).matches()) {
+      return;
+    }
+    Matcher matcher = MP3_IN_QUOTES_PATTERN.matcher(line);
+    while (matcher.find()) {
+      result.getAssets().add(matcher.group(1));
+    }
+  }
+
   public static List<String> scanLines(File gameFile, File scriptFolder, ScanResult result, String script) {
     EvaluationContext evalctxt = new EvaluationContext();
 
@@ -325,6 +339,7 @@ public class VPXFileScanner {
       lineSearchNvOffset(result, line);
       lineSearchHsFileName(result, line);
       lineSearchTextFileName(result, line);
+      lineSearchMp3FileName(result, line);
       lineSearchControllerStop(result, line);
       //lineSearchVRRoom(result, line);
       lineSearchDMDType(result, line);

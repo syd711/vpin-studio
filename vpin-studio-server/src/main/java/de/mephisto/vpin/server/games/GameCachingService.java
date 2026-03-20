@@ -336,7 +336,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
         gameDetails.setDMDProjectFolder(scanResult.getDMDProjectFolder());
 
         gameDetails.setPupPack(scanResult.getPupPackName());
-        gameDetails.setAssets(StringUtils.join(scanResult.getAssets(), ","));
+        gameDetails.setAssets(StringUtils.join(scanResult.getAssets(), "|"));
         gameDetails.setScripts(StringUtils.join(scanResult.getScripts(), ","));
       }
       else {
