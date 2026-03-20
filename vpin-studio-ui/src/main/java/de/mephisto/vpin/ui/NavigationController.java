@@ -243,22 +243,25 @@ public class NavigationController implements Initializable, StudioEventListener,
 
   @Override
   public void thirdPartyVersionUpdated(@NonNull ComponentType type) {
-    JFXFuture.supplyAsync(() -> Studio.client.getComponentService().getComponents())
-        .thenAcceptLater(components -> {
-          systemManagerOverlay.getChildren().remove(updateIcon);
-          for (ComponentRepresentation component : components) {
-            if (component.isVersionDiff()) {
-              systemManagerOverlay.getChildren().add(updateIcon);
-              break;
-            }
-          }
-        });
+    JFXFuture.supplyAsync(() -> Studio.client.getComponentService().getComponents()).thenAcceptLater(components -> {
+      systemManagerOverlay.getChildren().remove(updateIcon);
+      for (ComponentRepresentation component : components) {
+        if (component.isVersionDiff()) {
+          systemManagerOverlay.getChildren().add(updateIcon);
+          break;
+        }
+      }
+    });
   }
 
   @Override
   public void preferencesChanged(String key, Object value) {
     if (PreferenceNames.HIGHSCORE_CARD_SETTINGS.equals(key)) {
       highscoreCardsNavigationView.setController(null);
+
+      if (activeNavigation.getItem().equals(NavigationItem.HighscoreCards)) {
+        navigateTo(NavigationItem.HighscoreCards);
+      }
     }
   }
 
