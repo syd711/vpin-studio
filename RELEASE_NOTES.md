@@ -20,10 +20,10 @@
   - Added support for custom highscore card sizes. You can change the size in the "Highscore Cards Settings". 
 - **Pause Menu for non-VPX Games (first draft)**
   - Added pause menu support for **Zaccaria, Pinball FX/3/M and MAME** games. Note that you need to have the graphics settings set to "borderless window". Otherwise you will run into focus issues.
-- **Music Management**: The music management for VPX games has been reimplemented. Audio files from the "Music" folder are detected through the table script including those that are computed from variables. As a result from this...
+- **Music Management**: The music management for VPX games has been reimplemented. Audio files from the "Music" folder are detected through the table script including those that are computed from variables. Note that there are still some tables (e.g. Iron Maiden) where the .mp3 filename computation prohibits the detection of the actual filenames. As a result from this...
   - **You need to perform a re-scan of all tables to detect the table's audio files**.
-  - Backups include the table's audio files now. (Previous implementations took only the subfolder from **Music/<ROM NAME>** for the backup.)
-  - A new "Missing Audio Files** validators shows if the resolved .mp3 files have been found.
+  - Backups include the table's audio files now. Previous implementations took only the subfolder from **Music/<ROM NAME>** for the backup - if available.
+  - A new **Missing Audio Files** validators shows if the resolved .mp3 files have been found.
 - **Drop-In Manager**: Added search field to filter assets.
 
 ### Bugfixes
