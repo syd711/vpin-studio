@@ -84,6 +84,9 @@ public class PreferencesController extends SettingsSceneController implements In
   private Button vpfBtn;
 
   @FXML
+  private Button vrBtn;
+
+  @FXML
   private Button wovpBtn;
 
   @FXML
@@ -236,6 +239,11 @@ public class PreferencesController extends SettingsSceneController implements In
   }
 
   @FXML
+  private void onVR(ActionEvent event) throws IOException {
+    load("preference-vr.fxml", event);
+  }
+
+  @FXML
   private void onClientSettings(ActionEvent event) throws IOException {
     load("preference-settings_client.fxml", event);
   }
@@ -244,7 +252,6 @@ public class PreferencesController extends SettingsSceneController implements In
   private void onWebhooks(ActionEvent event) throws IOException {
     load("preference-webhooks.fxml", event);
   }
-
 
   @FXML
   private void onWovp(ActionEvent event) throws IOException {
@@ -505,6 +512,7 @@ public class PreferencesController extends SettingsSceneController implements In
     webhooksBtn.managedProperty().bindBidirectional(webhooksBtn.visibleProperty());
     dmdDeviceBtn.managedProperty().bindBidirectional(dmdDeviceBtn.visibleProperty());
     vpxzBtn.managedProperty().bindBidirectional(vpxzBtn.visibleProperty());
+    vrBtn.managedProperty().bindBidirectional(vrBtn.visibleProperty());
 
     vpxzBtn.setVisible(Features.VPXZ_ENABLED);
     repositoriesBtn.setVisible(Features.BACKUPS_ENABLED);

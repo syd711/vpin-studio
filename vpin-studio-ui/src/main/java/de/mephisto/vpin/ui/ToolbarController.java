@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.hooks.HookCommand;
 import de.mephisto.vpin.restclient.monitor.MonitoringSettings;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
+import de.mephisto.vpin.restclient.preferences.VRSettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.dropins.DropInManager;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -33,8 +34,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,6 +99,9 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
   private Label breadcrumb;
 
   @FXML
+  private ToggleButton vrModeButton;
+
+  @FXML
   private SplitMenuButton preferencesBtn;
 
   @FXML
@@ -107,6 +113,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
   public static ToolbarController INSTANCE;
   private Stage monitorStage;
   private TableOverviewController tableOverviewController;
+  private VRSettings vrSettings;
 
   // Add a public no-args constructor
   public ToolbarController() {
@@ -126,6 +133,20 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
     }).thenAcceptLater((b) -> {
       preferencesChanged(PreferenceNames.PINVOL_AUTOSTART_ENABLED, null);
     });
+  }
+
+  @FXML
+  private void onVrToggle() {
+    FontIcon fontIcon = (FontIcon) vrModeButton.getGraphic();
+    if (vrModeButton.isSelected()) {
+      fontIcon.setIconColor(Paint.valueOf(WidgetFactory.OK_DARK_COLOR));
+      vrSettings.setVrEnabled(true);
+    }
+    else {
+      fontIcon.setIconColor(Paint.valueOf(WidgetFactory.DISABLED_COLOR));
+      vrSettings.setVrEnabled(false);
+    }
+    client.getPreferenceService().setJsonPreference(vrSettings);
   }
 
   @FXML
@@ -317,6 +338,8 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
     updateBtn.managedProperty().bindBidirectional(updateBtn.visibleProperty());
     frontendMenuBtn.managedProperty().bindBidirectional(frontendMenuBtn.visibleProperty());
     dropInsBtn.managedProperty().bindBidirectional(dropInsBtn.visibleProperty());
+    vrModeButton.managedProperty().bindBidirectional(vrModeButton.visibleProperty());
+    vrModeButton.setVisible(false);
 
     Frontend frontend = client.getFrontendService().getFrontendCached();
 
@@ -455,6 +478,11 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
         }
       }
     });
+
+    vrSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VR_SETTINGS, VRSettings.class);
+    vrModeButton.setSelected(!vrSettings.isVrEnabled());
+    vrModeButton.setVisible(vrSettings.isEnabled());
+    toggleMonitor();
   }
 
   private void onCabSwitch(ConnectionEntry connection) {
@@ -475,7 +503,11 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
 
   @Override
   public void preferencesChanged(String key, Object value) {
-    if (key.equals(PreferenceNames.DOF_SETTINGS)) {
+    if (key.equals(PreferenceNames.VR_SETTINGS)) {
+      vrSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VR_SETTINGS, VRSettings.class);
+      vrModeButton.setVisible(vrSettings.isEnabled());
+    }
+    else if (key.equals(PreferenceNames.DOF_SETTINGS)) {
       DOFSettings settings = client.getDofService().getSettings();
       boolean valid = settings.isValidDOFFolder() && !StringUtils.isEmpty(settings.getApiKey());
       dofSyncEntry.setDisable(!valid);

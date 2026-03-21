@@ -86,6 +86,7 @@ public interface PreferenceNames {
 
   String BACKUP_SETTINGS = "backupSettings";
   String VPXZ_SETTINGS = "vpxzSettings";
+  String VR_SETTINGS = "vrSettings";
   String WOVP_SETTINGS = "wovpSettings";
 
   static Class<? extends JsonSettings> getClassFromKey(String key) {
@@ -173,6 +174,9 @@ public interface PreferenceNames {
       }
       case PreferenceNames.VPXZ_SETTINGS: {
         return VPXZSettings.class;
+      }
+      case PreferenceNames.VR_SETTINGS: {
+        return VRSettings.class;
       }
       default: {
         throw new UnsupportedOperationException("JSON format not supported for preference '" + key + "'");
