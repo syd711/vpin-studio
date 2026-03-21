@@ -869,6 +869,14 @@ public class UploaderAnalysis {
     return null;
   }
 
+  public String getRelativeMusicPathWithoutMusicFolder() {
+    String filenameWithPath = getRelativeMusicPath();
+    if (filenameWithPath != null && filenameWithPath.toLowerCase().contains("music/")) {
+      filenameWithPath = filenameWithPath.substring(filenameWithPath.indexOf("/") + 1);
+    }
+    return filenameWithPath;
+  }
+
   public String getDMDPath() {
     String pupPackRoot = getPupPackRootDirectory();
     for (String filenameWithPath : getFilteredFolders()) {
