@@ -195,11 +195,17 @@ public class FolderLookupService {
   @Nullable
   public File getMusicFolder(@NonNull Game game) {
     GameEmulator emulator = game.getEmulator();
-    if (isPreferLegacyFileStructure(game.getEmulator())) {
+    return getMusicFolder(emulator);
+  }
+
+
+  @Nullable
+  public File getMusicFolder(@NonNull GameEmulator emulator) {
+    if (isPreferLegacyFileStructure(emulator)) {
       return new File(emulator.getInstallationFolder(), "Music/");
     }
 
-    File folder = new File(game.getGameFolder(), "music/");
+    File folder = new File(emulator.getGamesFolder(), "music/");
     if (!folder.exists() && !folder.mkdirs()) {
       LOG.warn("Failed to create game music folder {}", folder.getAbsolutePath());
     }

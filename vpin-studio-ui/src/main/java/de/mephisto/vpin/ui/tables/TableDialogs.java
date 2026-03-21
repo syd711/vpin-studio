@@ -167,8 +167,8 @@ public class TableDialogs {
     });
   }
 
-  public static void onMusicUploads(File file, UploaderAnalysis analysis, Runnable finalizer) {
-    TableDialogs.openMusicUploadDialog(file, analysis, finalizer);
+  public static void onMusicUploads(File file, UploaderAnalysis analysis, int gameId, Runnable finalizer) {
+    TableDialogs.openMusicUploadDialog(file, analysis, gameId, finalizer);
   }
 
 
@@ -670,10 +670,11 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static void openMusicUploadDialog(File file, UploaderAnalysis analysis, Runnable finalizer) {
+  public static void openMusicUploadDialog(File file, UploaderAnalysis analysis, int gameId, Runnable finalizer) {
     Stage stage = Dialogs.createStudioDialogStage(MusicUploadController.class, "dialog-music-upload.fxml", "Music Upload");
     MusicUploadController controller = (MusicUploadController) stage.getUserData();
     controller.setFile(stage, file, analysis, finalizer);
+    controller.setGameId(gameId);
     stage.showAndWait();
   }
 

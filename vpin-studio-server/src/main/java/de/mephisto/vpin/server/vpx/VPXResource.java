@@ -155,11 +155,14 @@ public class VPXResource {
     return vpxService.delete(gameService.getGame(id));
   }
 
-  @PostMapping("/music/upload")
-  public UploadDescriptor uploadMusic(@RequestParam(value = "file", required = false) MultipartFile file) {
+  @PostMapping("/music/upload/{emulatorId}")
+  public UploadDescriptor uploadMusic(@RequestParam(value = "file", required = false) MultipartFile file,
+                                      @RequestParam("objectId") Integer gameId,
+                                      @PathVariable("emulatorId") Integer emulatorId) {
     UploadDescriptor descriptor = universalUploadService.create(file);
+    descriptor.setEmulatorId(emulatorId);
+    descriptor.setGameId(gameId);
     try {
-      descriptor.setAcceptAllAudioAsMusic(true);
       descriptor.upload();
       universalUploadService.importArchiveBasedAssets(descriptor, null, AssetType.MUSIC);
       return descriptor;

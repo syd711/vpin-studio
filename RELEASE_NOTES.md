@@ -19,7 +19,8 @@
 - **Designer**
   - Added support for custom highscore card sizes. You can change the size in the "Highscore Cards Settings". 
 - **Pause Menu for non-VPX Games (first draft)**
-  - Added pause menu support for **Zaccaria, Pinball FX/3/M and MAME** games. Note that you need to have the graphics settings set to "borderless window". Otherwise you will run into focus issues. 
+  - Added pause menu support for **Zaccaria, Pinball FX/3/M and MAME** games. Note that you need to have the graphics settings set to "borderless window". Otherwise you will run into focus issues.
+- **Music Management**
 
 ### Bugfixes
 
@@ -33,3 +34,4 @@
 - **Wheel Augmentation**: Fixed various issues and superfluous calls when applying badges to wheels.
 - **Media Recorder**: Added timeout of 10 minutes for recordings in case the in-game recorder is never turned off.
 - **Table Backups**: Fixed issue that the VPS mapping was not detected on restore.
+- **VPS Tables**: Fixed sorting of the sound column.

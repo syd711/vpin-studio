@@ -1,8 +1,11 @@
 package de.mephisto.vpin.server.music;
 
 
+import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.vpx.FolderLookupService;
 import de.mephisto.vpin.server.vpx.MusicInstallationUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -35,13 +38,28 @@ public class MusicService {
     return folderLookupService.getGameMusicFolder(game);
   }
 
-  public void installMusic(@NonNull File out, @NonNull Game game, @NonNull UploaderAnalysis analysis, boolean acceptAllAudio) throws IOException {
-    File musicFolder = folderLookupService.getMusicFolder(game);
+  public void installMusic(@NonNull File out, @Nullable Game game, @Nullable GameEmulator gameEmulator, @NonNull UploaderAnalysis analysis) throws IOException {
+    File musicFolder = null;
+    if (gameEmulator != null) {
+      musicFolder = folderLookupService.getMusicFolder(gameEmulator);
+    }
+    if (musicFolder == null && game != null) {
+      musicFolder = folderLookupService.getMusicFolder(game);
+    }
+
     if (musicFolder == null || !musicFolder.exists()) {
       LOG.warn("Skipped installation of music bundle, no music folder {} found.", musicFolder);
       return;
     }
-    MusicInstallationUtil.unpack(out, musicFolder, analysis, game, analysis.getRelativeMusicPath(acceptAllAudio));
+
+    String suffix = FilenameUtils.getExtension(out.getName());
+    if (suffix.equalsIgnoreCase(AssetType.VPA.name())) {
+      PackageUtil.unpackTargetFolder(out, musicFolder, analysis.getMusicFolder(), Collections.emptyList(), null);
+    }
+    else {
+      String relativeMusicPath = analysis.getRelativeMusicPath();
+      MusicInstallationUtil.unpack(out, musicFolder, analysis, game, relativeMusicPath);
+    }
   }
 
   public List<File> getMp3Files(Game game) {
@@ -128,7 +146,7 @@ public class MusicService {
     List<File> mp3Files = getMp3Files(game);
     boolean result = true;
     for (File mp3File : mp3Files) {
-      if(!mp3File.delete()) {
+      if (!mp3File.delete()) {
         result = false;
         LOG.warn("Deleted failed for {}", mp3File.getAbsolutePath());
       }

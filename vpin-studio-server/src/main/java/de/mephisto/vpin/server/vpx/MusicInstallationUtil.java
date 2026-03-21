@@ -1,12 +1,10 @@
 package de.mephisto.vpin.server.vpx;
 
-import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class MusicInstallationUtil {
@@ -22,36 +19,29 @@ public class MusicInstallationUtil {
 
   private static final List<String> MUSIC_SUFFIXES = Arrays.asList("mp3", "ogg", "wav");
 
-  public static boolean unpack(@NonNull File archiveFile, @NonNull File musicFolder, @NonNull UploaderAnalysis analysis, @NonNull Game game, @Nullable String relativePath) throws IOException {
+  public static boolean unpack(@NonNull File archiveFile, @NonNull File musicFolder, @NonNull UploaderAnalysis analysis, @Nullable Game game, @Nullable String relativePath) throws IOException {
     if (!musicFolder.exists()) {
       LOG.error("Music upload failed, no music folder found for default emulator.");
     }
 
-    LOG.info("Extracting music pack into \"{}\" with relative path: {}", musicFolder.getAbsolutePath(), relativePath);
-
-    String suffix = FilenameUtils.getExtension(archiveFile.getName());
-
-    if (suffix.equalsIgnoreCase(AssetType.VPA.name())) {
-      PackageUtil.unpackTargetFolder(archiveFile, musicFolder, analysis.getMusicFolder(), Collections.emptyList(), null);
-    }
-    else {
-      // ZIP, RAR, 7z: determine the archive folder prefix to extract from.
-      // relativePath == null  → scan for a "music/" folder in the archive
-      // relativePath == "/"   → audio files are at the archive root, no prefix to strip
-      // relativePath == "X/"  → audio files are under folder X; strip that prefix on extraction
-      String archiveFolderName;
-      if (StringUtils.isEmpty(relativePath)) {
-        archiveFolderName = "music/";
+    // Determine which archive-root folder to strip.
+    // If the archive wraps files under a generic "Music/" folder (e.g. "Music/cyberrace/file.mp3"),
+    // strip only that top-level component so the game-specific subfolder is preserved in the target.
+    // If the first component is already game-specific (e.g. "cyberrace/file.mp3") or there is no
+    // subfolder at all, pass null so all entries are extracted with their full relative paths intact.
+    String archiveFolderName = null;
+    if (relativePath != null) {
+      int firstSlash = relativePath.indexOf('/');
+      if (firstSlash >= 0) {
+        String firstFolder = relativePath.substring(0, firstSlash);
+        if (firstFolder.equalsIgnoreCase("music")) {
+          archiveFolderName = relativePath.substring(0, firstSlash + 1); // e.g. "Music/"
+        }
       }
-      else if (relativePath.equals("/")) {
-        archiveFolderName = null;
-      }
-      else {
-        archiveFolderName = relativePath;
-      }
-      PackageUtil.unpackTargetFolder(archiveFile, musicFolder, archiveFolderName, MUSIC_SUFFIXES, null);
     }
 
+    LOG.info("Extracting music pack into \"{}\" using archive folder prefix: {}", musicFolder.getAbsolutePath(), archiveFolderName);
+    PackageUtil.unpackTargetFolder(archiveFile, musicFolder, archiveFolderName, MUSIC_SUFFIXES, null);
     return true;
   }
 }

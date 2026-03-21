@@ -316,8 +316,8 @@ public class UniversalUploadService {
       }
       case MUSIC: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.MUSIC) == null) {
+          musicService.installMusic(tempFile, game, gameEmulator, analysis);
           if (game != null) {
-            musicService.installMusic(tempFile, game, analysis, uploadDescriptor.isAcceptAllAudioAsMusic());
             gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, updatedAssetName);
           }
         }

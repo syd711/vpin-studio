@@ -125,7 +125,7 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
       //check if we have the musicFolder bundle here
       if (musicFolder.equals(this.getName()) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.MUSIC) == null) {
         assetType = AssetType.MUSIC_BUNDLE;
-        targetDisplayName = emulator.getInstallationDirectory() + "\\Music\\" + uploaderAnalysis.getRelativeMusicPath(false).replaceAll("/", "\\\\");
+        targetDisplayName = emulator.getInstallationDirectory() + "\\Music\\" + uploaderAnalysis.getRelativeMusicPath().replaceAll("/", "\\\\");
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
 

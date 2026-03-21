@@ -17,7 +17,8 @@
       "Bash(cd C:/workspace/vpin-studio && python fix_log_concat.py 2>&1)",
       "Bash(cd C:/workspace/vpin-studio && python fix_log_concat.py)",
       "Bash(cd C:/workspace/vpin-studio && python -c \"print\\('hello'\\)\")",
-      "Bash(cd C:/workspace/vpin-studio && timeout 10 python -c \"\nimport glob, os\nBASE = r'C:\\\\workspace\\\\vpin-studio\\\\vpin-studio-ui\\\\src\\\\main\\\\java'\nfiles = glob.glob\\(os.path.join\\(BASE, '**', '*.java'\\), recursive=True\\)\nprint\\(f'Found {len\\(files\\)} files'\\)\n\" 2>&1)"
+      "Bash(cd C:/workspace/vpin-studio && timeout 10 python -c \"\nimport glob, os\nBASE = r'C:\\\\workspace\\\\vpin-studio\\\\vpin-studio-ui\\\\src\\\\main\\\\java'\nfiles = glob.glob\\(os.path.join\\(BASE, '**', '*.java'\\), recursive=True\\)\nprint\\(f'Found {len\\(files\\)} files'\\)\n\" 2>&1)",
+      "Bash(cd:*)"
     ]
   }
 }

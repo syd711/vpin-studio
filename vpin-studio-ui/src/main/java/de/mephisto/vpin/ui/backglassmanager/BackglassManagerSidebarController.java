@@ -267,21 +267,6 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
   @FXML
   private void onBackglassDelete(Event e) {
-//    try {
-//      DirectB2SModel selection = backglassManagerController.getSelectedModel();
-//      if (selection != null) {
-//        //Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-//        Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Backglass", "Delete backglass file \"" + selection.getFileName() + "\"?", "This also deletes all version of this backglass.", "Delete");
-//        if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-//          if (client.getBackglassServiceClient().deleteBackglass(selection.getEmulatorId(), selection.getFileName())) {
-//            backglassManagerController.delete(selection);
-//          }
-//        }
-//      }
-//    }
-//    catch (Exception ex) {
-//      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to delete backglass file: " + ex.getMessage());
-//    }
     try {
       DirectB2SModel selection = backglassManagerController.getSelectedModel();
       String selectedVersion = getSelectedVersion();

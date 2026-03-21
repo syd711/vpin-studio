@@ -573,7 +573,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
         }
 
         GameEmulatorRepresentation emulator = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
-        dmdPositionBtn.setDisable(emulator.isVpxEmulator());
+        dmdPositionBtn.setDisable(!emulator.isVpxEmulator());
         resBtn.setDisable(emulator.isFxEmulator());
         uploadBtn.setDisable(false);
         openBtn.setDisable(false);

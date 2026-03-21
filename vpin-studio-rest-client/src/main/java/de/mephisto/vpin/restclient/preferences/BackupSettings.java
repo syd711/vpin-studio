@@ -25,6 +25,7 @@ public class BackupSettings extends JsonSettings {
   private boolean b2sSettings = true;
   private boolean dmdDeviceData = true;
   private boolean studioData = true;
+  private int emulatorId;
 
   private boolean overwriteBackup = true;
 
@@ -75,6 +76,14 @@ public class BackupSettings extends JsonSettings {
       }
     }
     return false;
+  }
+
+  public int getEmulatorId() {
+    return emulatorId;
+  }
+
+  public void setEmulatorId(int emulatorId) {
+    this.emulatorId = emulatorId;
   }
 
   public boolean isDmdDeviceData() {

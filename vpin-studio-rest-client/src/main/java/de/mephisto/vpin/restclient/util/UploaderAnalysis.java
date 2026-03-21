@@ -842,41 +842,28 @@ public class UploaderAnalysis {
   }
 
 
-  public String getRelativeMusicPath(boolean acceptAllAudio) {
+  public String getRelativeMusicPath() {
     String pupPackRootDirectory = getPupPackRootDirectory();
 
     for (String filenameWithPath : getFilteredFilenamesWithPath()) {
+      //ignore pup pack audio files
       if (pupPackRootDirectory != null && isFileBelowFolder(pupPackRootDirectory, filenameWithPath)) {
         continue;
       }
 
+      //analyze audio files only
       String suffix = FilenameUtils.getExtension(filenameWithPath);
-
       if (suffix.equalsIgnoreCase("ogg") || suffix.equalsIgnoreCase("mp3")) {
-        if (acceptAllAudio) {
-          if (filenameWithPath.contains("/")) {
-            filenameWithPath = filenameWithPath.substring(0, filenameWithPath.lastIndexOf("/") + 1);
-          }
-          return filenameWithPath;
+        //strip the actual file name first
+        if (filenameWithPath.contains("/")) {
+          filenameWithPath = filenameWithPath.substring(0, filenameWithPath.lastIndexOf("/") + 1);
         }
 
-        if (filenameWithPath.toLowerCase().contains("music/")) {
-          String path = filenameWithPath.substring(filenameWithPath.toLowerCase().indexOf("music/") + "music/".length());
-          if (path.contains("/")) {
-            path = path.substring(0, path.lastIndexOf("/") + 1);
-          }
-          return path;
-        }
-        else if (filenameWithPath.contains("/")) {
-          String path = filenameWithPath.substring(0, filenameWithPath.lastIndexOf("/") + 1);
-          while (StringUtils.countMatches(path, "/") > 1) {
-            path = path.substring(path.indexOf("/") + 1);
-          }
-          return path;
-        }
-        else {
-          return "/";
-        }
+//        if (filenameWithPath.toLowerCase().contains("music/")) {
+//          filenameWithPath = filenameWithPath.substring(filenameWithPath.indexOf("/") + 1);
+//        }
+
+        return filenameWithPath;
       }
     }
     return null;

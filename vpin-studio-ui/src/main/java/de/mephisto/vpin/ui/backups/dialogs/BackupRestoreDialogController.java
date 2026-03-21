@@ -11,6 +11,8 @@ import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -28,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.Features;
@@ -198,6 +201,22 @@ public class BackupRestoreDialogController implements Initializable, DialogContr
 
     frontendColumn.setVisible(!Features.IS_STANDALONE);
     refreshImportsSelection(backupSettings);
+
+    if (backupSettings.getEmulatorId() > 0) {
+      Optional<GameEmulatorRepresentation> first = emulators.stream().filter(e -> e.getId() == backupSettings.getEmulatorId()).findFirst();
+      if (first.isPresent()) {
+        emulatorCombo.setValue(first.get());
+      }
+    }
+    emulatorCombo.valueProperty().addListener(new ChangeListener<GameEmulatorRepresentation>() {
+      @Override
+      public void changed(ObservableValue<? extends GameEmulatorRepresentation> observable, GameEmulatorRepresentation oldValue, GameEmulatorRepresentation newValue) {
+        if (newValue != null) {
+          backupSettings.setEmulatorId(newValue.getId());
+          client.getPreferenceService().setJsonPreference(backupSettings);
+        }
+      }
+    });
 
     directb2sCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       backupSettings.setDirectb2s(newValue);

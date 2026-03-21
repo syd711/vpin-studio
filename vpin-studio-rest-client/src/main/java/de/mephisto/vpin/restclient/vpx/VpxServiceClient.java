@@ -141,10 +141,10 @@ public class VpxServiceClient extends VPinStudioClientService {
     return null;
   }
 
-  public UploadDescriptor uploadMusic(File file, FileUploadProgressListener listener) throws Exception {
+  public UploadDescriptor uploadMusic(File file, int emulatorId, int gameId, FileUploadProgressListener listener) throws Exception {
     try {
-      String url = getRestClient().getBaseUrl() + API + "vpx/music/upload";
-      HttpEntity upload = createUpload(file, -1, null, AssetType.MUSIC, listener);
+      String url = getRestClient().getBaseUrl() + API + "vpx/music/upload/" + emulatorId;
+      HttpEntity upload = createUpload(file, gameId, null, AssetType.MUSIC, listener);
       ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
       finalizeUpload(upload);
       return exchange.getBody();
