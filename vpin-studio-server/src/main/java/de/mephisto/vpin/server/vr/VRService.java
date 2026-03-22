@@ -16,6 +16,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 @Service
@@ -45,11 +46,19 @@ public class VRService implements InitializingBean, PreferenceChangedListener, E
   }
 
   private void onVRToggle() {
-    Collection<GameEmulator> gameEmulators = emulatorService.getGameEmulators();
+    Collection<GameEmulator> gameEmulators = new ArrayList<>(emulatorService.getGameEmulators());
     for (GameEmulator gameEmulator : gameEmulators) {
       toggleEmulator(gameEmulator);
     }
     emulatorService.clearCache();
+  }
+
+  public GameEmulatorScript getEmulatorVRLaunchScript(int emulatorId) {
+    return emulatorDetailsService.getGameEmulatorVRLaunchScript(emulatorId);
+  }
+
+  public GameEmulatorScript saveVRLaunchScript(int emulatorId, GameEmulatorScript script) {
+    return emulatorDetailsService.saveEmulatorVRLaunchScript(emulatorId, script);
   }
 
   private void toggleEmulator(GameEmulator gameEmulator) {
@@ -71,7 +80,9 @@ public class VRService implements InitializingBean, PreferenceChangedListener, E
         }
       }
 
+      emulatorService.removeEmulatorChangeListener(this);
       emulatorService.save(gameEmulator);
+      emulatorService.addEmulatorChangeListener(this);
     }
   }
 
@@ -86,7 +97,7 @@ public class VRService implements InitializingBean, PreferenceChangedListener, E
   @Override
   public void emulatorChanged(int emulatorId) {
     GameEmulator gameEmulator = emulatorService.getGameEmulator(emulatorId);
-    toggleEmulator(gameEmulator);
+//    toggleEmulator(gameEmulator);
   }
 
   @Override

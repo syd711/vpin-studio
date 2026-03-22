@@ -242,6 +242,10 @@ public class EmulatorService implements InitializingBean, PreferenceChangedListe
     this.listeners.add(listener);
   }
 
+  public void removeEmulatorChangeListener(EmulatorChangeListener listener) {
+    this.listeners.remove(listener);
+  }
+
   @Override
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
     if(PreferenceNames.DOFLINX_SETTINGS.equals(propertyName)) {

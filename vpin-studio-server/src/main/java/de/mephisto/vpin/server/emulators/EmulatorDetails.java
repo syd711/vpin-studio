@@ -11,23 +11,12 @@ import javax.persistence.*;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EmulatorDetails {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  @Column(name = "id", nullable = false, unique = true)
-  private Long id;
-
+  @Column(name = "emulatorId", nullable = false, unique = true)
   private int emulatorId;
 
   private String vrLaunchScript;
 
   private String originalLaunchScript;
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
 
   public int getEmulatorId() {
     return emulatorId;

@@ -1,11 +1,10 @@
 package de.mephisto.vpin.server.vr;
 
+import de.mephisto.vpin.restclient.emulators.GameEmulatorScript;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 
@@ -18,9 +17,20 @@ public class VRResource {
   private VRService vrService;
 
   @GetMapping("toggle")
-  public boolean toggleVR() throws Exception {
+  public boolean toggleVR() {
     boolean b = vrService.toggleVRMode();
     LOG.info("VR Mode enabled: {}", b);
     return b;
+  }
+
+  @GetMapping("launchscript/{emulatorId}")
+  public GameEmulatorScript getEmulatorVRLaunchScript(@PathVariable("emulatorId") int emulatorId) {
+    return vrService.getEmulatorVRLaunchScript(emulatorId);
+  }
+
+  @PostMapping("/save/{emulatorId}")
+  public GameEmulatorScript saveVrLaunchScript(@PathVariable("emulatorId") int emulatorId,
+                                               @RequestBody GameEmulatorScript script) {
+    return vrService.saveVRLaunchScript(emulatorId, script);
   }
 }

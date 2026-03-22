@@ -21,12 +21,12 @@ public class EmulatorDetailsService {
   @Autowired
   public EmulatorDetailsRepository emulatorDetailsRepository;
 
-  public void saveEmulatorVRLaunchScript(int emulatorId, @NonNull GameEmulatorScript script) {
-    saveScript(emulatorId, script, EmulatorDetails::setVrLaunchScript, "VR");
+  public GameEmulatorScript saveEmulatorVRLaunchScript(int emulatorId, @NonNull GameEmulatorScript script) {
+    return saveScript(emulatorId, script, EmulatorDetails::setVrLaunchScript, "VR");
   }
 
-  public void saveEmulatorLaunchScript(int emulatorId, @NonNull GameEmulatorScript script) {
-    saveScript(emulatorId, script, EmulatorDetails::setOriginalLaunchScript, "original");
+  public GameEmulatorScript saveEmulatorLaunchScript(int emulatorId, @NonNull GameEmulatorScript script) {
+    return saveScript(emulatorId, script, EmulatorDetails::setOriginalLaunchScript, "original");
   }
 
   @Nullable
@@ -39,16 +39,22 @@ public class EmulatorDetailsService {
     return readScript(emulatorId, EmulatorDetails::getVrLaunchScript);
   }
 
-  private void saveScript(int emulatorId, GameEmulatorScript script, BiConsumer<EmulatorDetails, String> setter, String label) {
+  private GameEmulatorScript saveScript(int emulatorId, GameEmulatorScript script, BiConsumer<EmulatorDetails, String> setter, String label) {
     try {
       EmulatorDetails details = emulatorDetailsRepository.findByEmulatorId(emulatorId)
-          .orElseGet(() -> { EmulatorDetails d = new EmulatorDetails(); d.setEmulatorId(emulatorId); return d; });
+          .orElseGet(() -> {
+            EmulatorDetails d = new EmulatorDetails();
+            d.setEmulatorId(emulatorId);
+            return d;
+          });
       setter.accept(details, JsonSettings.objectMapper.writeValueAsString(script));
       emulatorDetailsRepository.saveAndFlush(details);
+      return script;
     }
     catch (Exception e) {
       LOG.error("Failed to write {} script json from emulator details {}: {}", label, emulatorId, e.getMessage(), e);
     }
+    return null;
   }
 
   @Nullable

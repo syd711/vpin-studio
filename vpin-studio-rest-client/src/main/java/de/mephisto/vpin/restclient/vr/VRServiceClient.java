@@ -2,6 +2,7 @@ package de.mephisto.vpin.restclient.vr;
 
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorScript;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +20,20 @@ public class VRServiceClient extends VPinStudioClientService {
 
   public boolean toggleVR() {
     return getRestClient().get(API + "vr/toggle", Boolean.class);
+  }
+
+  public GameEmulatorScript getVrLaunchScript(int emulatorId) {
+    return getRestClient().get(API + "vr/launchscript/" + emulatorId, GameEmulatorScript.class);
+  }
+
+  public GameEmulatorScript saveVrEmulatorLaunchScript(int emulatorId, GameEmulatorScript script) {
+    try {
+      return getRestClient().post(API + "vr/save/" + emulatorId, script, GameEmulatorScript.class);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to save GameEmulatorScript: {}", e.getMessage(), e);
+      throw e;
+    }
   }
 
 //  public UploadDescriptor uploadMusic(File file, int emulatorId, int gameId, FileUploadProgressListener listener) throws Exception {
