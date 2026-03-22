@@ -113,7 +113,6 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
   public static ToolbarController INSTANCE;
   private Stage monitorStage;
   private TableOverviewController tableOverviewController;
-  private VRSettings vrSettings;
 
   // Add a public no-args constructor
   public ToolbarController() {
@@ -138,15 +137,13 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
   @FXML
   private void onVrToggle() {
     FontIcon fontIcon = (FontIcon) vrModeButton.getGraphic();
-    if (vrModeButton.isSelected()) {
+    boolean enabled = client.getVRService().toggleVR();
+    if (enabled) {
       fontIcon.setIconColor(Paint.valueOf(WidgetFactory.OK_DARK_COLOR));
-      vrSettings.setVrEnabled(true);
     }
     else {
       fontIcon.setIconColor(Paint.valueOf(WidgetFactory.DISABLED_COLOR));
-      vrSettings.setVrEnabled(false);
     }
-    client.getPreferenceService().setJsonPreference(vrSettings);
   }
 
   @FXML
@@ -479,10 +476,9 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
       }
     });
 
-    vrSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VR_SETTINGS, VRSettings.class);
-    vrModeButton.setSelected(!vrSettings.isVrEnabled());
+    VRSettings vrSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VR_SETTINGS, VRSettings.class);
+    vrModeButton.setSelected(vrSettings.isVrEnabled());
     vrModeButton.setVisible(vrSettings.isEnabled());
-    toggleMonitor();
   }
 
   private void onCabSwitch(ConnectionEntry connection) {
@@ -504,8 +500,9 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
   @Override
   public void preferencesChanged(String key, Object value) {
     if (key.equals(PreferenceNames.VR_SETTINGS)) {
-      vrSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VR_SETTINGS, VRSettings.class);
+      VRSettings vrSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VR_SETTINGS, VRSettings.class);
       vrModeButton.setVisible(vrSettings.isEnabled());
+      vrModeButton.setSelected(vrSettings.isVrEnabled());
     }
     else if (key.equals(PreferenceNames.DOF_SETTINGS)) {
       DOFSettings settings = client.getDofService().getSettings();

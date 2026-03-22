@@ -49,6 +49,7 @@ import de.mephisto.vpin.restclient.vpauthenticators.VpAuthenticationServiceClien
 import de.mephisto.vpin.restclient.vps.VpsServiceClient;
 import de.mephisto.vpin.restclient.vpx.VpxServiceClient;
 import de.mephisto.vpin.restclient.vpx.VpxScriptOptionsServiceClient;
+import de.mephisto.vpin.restclient.vr.VRServiceClient;
 import de.mephisto.vpin.restclient.wovp.WOVPServiceClient;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.IOUtils;
@@ -119,6 +120,7 @@ public class VPinStudioClient {
   private final VpsServiceClient vpsServiceClient;
   private final WOVPServiceClient wovpServiceClient;
   private final VpxScriptOptionsServiceClient vpxScriptOptionsServiceClient;
+  private final VRServiceClient vrServiceClient;
 
     public VPinStudioClient(String host) {
     restClient = RestClient.createInstance(host, SystemUtil.getPort());
@@ -174,10 +176,15 @@ public class VPinStudioClient {
     this.higscoreBackupServiceClient = new HigscoreBackupServiceClient(this);
     this.mediaConversionServiceClient = new MediaConversionServiceClient(this);
     this.wovpServiceClient = new WOVPServiceClient(this);
+    this.vrServiceClient = new VRServiceClient(this);
   }
 
   public String getHost() {
     return restClient.getHost();
+  }
+
+  public VRServiceClient getVRService() {
+    return vrServiceClient;
   }
 
   public WOVPServiceClient getWovpService() {

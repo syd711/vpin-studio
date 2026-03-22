@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.VRSettings;
+import de.mephisto.vpin.ui.preferences.dialogs.PreferencesDialogs;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -20,6 +21,12 @@ public class VRPreferencesController implements Initializable {
 
   @FXML
   private CheckBox enabledCheckbox;
+
+  @FXML
+  private void onButtonRecord() {
+    PreferencesDialogs.openButtonRecorder();
+  }
+
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
