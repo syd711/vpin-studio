@@ -63,6 +63,13 @@ public class EmulatorScriptPanelController implements Initializable, IEmulatorSc
   }
 
   @Override
+  public void setDisabled(boolean b) {
+    this.keywordList.setDisable(b);
+    this.scriptText.setDisable(b);
+    this.insertBtn.setDisable(b);
+  }
+
+  @Override
   public void applyValues() {
     if (script.isPresent()) {
       this.script.get().setScript(scriptText.getText());

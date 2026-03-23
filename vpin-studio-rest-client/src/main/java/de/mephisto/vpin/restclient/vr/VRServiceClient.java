@@ -1,11 +1,17 @@
 package de.mephisto.vpin.restclient.vr;
 
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorScript;
+import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 
+import java.io.File;
 import java.lang.invoke.MethodHandles;
 
 /*********************************************************************************************************************
@@ -26,6 +32,10 @@ public class VRServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "vr/launchscript/" + emulatorId, GameEmulatorScript.class);
   }
 
+  public VRFilesInfo getVRFiles(int emulatorId) {
+    return getRestClient().get(API + "vr/files/" + emulatorId, VRFilesInfo.class);
+  }
+
   public GameEmulatorScript saveVrEmulatorLaunchScript(int emulatorId, GameEmulatorScript script) {
     try {
       return getRestClient().post(API + "vr/save/" + emulatorId, script, GameEmulatorScript.class);
@@ -36,17 +46,17 @@ public class VRServiceClient extends VPinStudioClientService {
     }
   }
 
-//  public UploadDescriptor uploadMusic(File file, int emulatorId, int gameId, FileUploadProgressListener listener) throws Exception {
-//    try {
-//      String url = getRestClient().getBaseUrl() + API + "vpx/music/upload/" + emulatorId;
-//      HttpEntity upload = createUpload(file, gameId, null, AssetType.MUSIC, listener);
-//      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
-//      finalizeUpload(upload);
-//      return exchange.getBody();
-//    }
-//    catch (Exception e) {
-//      LOG.error("Music upload failed: " + e.getMessage(), e);
-//      throw e;
-//    }
-//  }
+  public boolean uploadFile(File file, int emulatorId, FileUploadProgressListener listener) throws Exception {
+    try {
+      String url = getRestClient().getBaseUrl() + API + "vr/files/" + emulatorId;
+      HttpEntity upload = createUpload(file, emulatorId, null, AssetType.INI, listener);
+      ResponseEntity<Boolean> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, Boolean.class);
+      finalizeUpload(upload);
+      return exchange.getBody();
+    }
+    catch (Exception e) {
+      LOG.error("VR file upload failed: {}", e.getMessage(), e);
+      throw e;
+    }
+  }
 }

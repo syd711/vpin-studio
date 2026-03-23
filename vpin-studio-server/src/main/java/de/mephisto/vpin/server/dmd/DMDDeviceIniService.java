@@ -47,6 +47,11 @@ public class DMDDeviceIniService {
   @Autowired
   private SystemService systemService;
 
+  @NonNull
+  public File getDmdDeviceIniFile(@NonNull GameEmulator gameEmulator) {
+    return new File(gameEmulator.getMameFolder(), DMD_DEVICE_INI);
+  }
+
   @Nullable
   public DMDDeviceIniConfiguration getDmdDeviceIni(@NonNull GameEmulator gameEmulator) {
     loadDmdDeviceIni(gameEmulator);

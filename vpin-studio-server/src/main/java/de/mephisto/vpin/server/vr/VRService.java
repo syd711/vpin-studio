@@ -3,12 +3,15 @@ package de.mephisto.vpin.server.vr;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorScript;
 import de.mephisto.vpin.restclient.preferences.VRSettings;
+import de.mephisto.vpin.restclient.vr.VRFilesInfo;
+import de.mephisto.vpin.server.dmd.DMDDeviceIniService;
 import de.mephisto.vpin.server.emulators.EmulatorChangeListener;
 import de.mephisto.vpin.server.emulators.EmulatorDetailsService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.vpx.VPXService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,8 +19,11 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import static de.mephisto.vpin.commons.SystemInfo.RESOURCES;
 
 @Service
 public class VRService implements InitializingBean, PreferenceChangedListener, EmulatorChangeListener {
@@ -32,10 +38,17 @@ public class VRService implements InitializingBean, PreferenceChangedListener, E
   @Autowired
   private EmulatorService emulatorService;
 
+  @Autowired
+  private VPXService vpxService;
+
+  @Autowired
+  private DMDDeviceIniService dmdDeviceIniService;
+
   private VRSettings vrSettings;
 
   public boolean toggleVRMode() {
     try {
+      LOG.info("Toggling VR Mode: " + !vrSettings.isVrEnabled());
       vrSettings.setVrEnabled(!vrSettings.isVrEnabled());
       preferencesService.savePreference(vrSettings);
     }
@@ -54,7 +67,20 @@ public class VRService implements InitializingBean, PreferenceChangedListener, E
   }
 
   public GameEmulatorScript getEmulatorVRLaunchScript(int emulatorId) {
-    return emulatorDetailsService.getGameEmulatorVRLaunchScript(emulatorId);
+    GameEmulatorScript vrLaunchScript = emulatorDetailsService.getGameEmulatorVRLaunchScript(emulatorId);
+    GameEmulator gameEmulator = emulatorService.getGameEmulator(emulatorId);
+    GameEmulatorScript launchScript = gameEmulator.getLaunchScript();
+
+    if (vrLaunchScript == null && launchScript != null) {
+      vrLaunchScript = emulatorDetailsService.cloneScript(launchScript);
+    }
+    return vrLaunchScript;
+  }
+
+  public File getVRResourcesFolder(int emulatorId) {
+    File resources = new File(RESOURCES, "vr/" + emulatorId + "/");
+    resources.mkdirs();
+    return resources;
   }
 
   public GameEmulatorScript saveVRLaunchScript(int emulatorId, GameEmulatorScript script) {
@@ -64,26 +90,43 @@ public class VRService implements InitializingBean, PreferenceChangedListener, E
   private void toggleEmulator(GameEmulator gameEmulator) {
     boolean enabled = vrSettings.isEnabled();
     if (gameEmulator.isVpxEmulator()) {
-      GameEmulatorScript originalLaunchScript = emulatorDetailsService.getGameEmulatorLaunchScript(gameEmulator.getId());
-      GameEmulatorScript vrLaunchScript = emulatorDetailsService.getGameEmulatorVRLaunchScript(gameEmulator.getId());
-
-      if (enabled) {
-        if (originalLaunchScript != null && vrLaunchScript != null && !StringUtils.isEmpty(vrLaunchScript.getScript())) {
-          emulatorDetailsService.saveEmulatorLaunchScript(gameEmulator.getId(), originalLaunchScript);
-          gameEmulator.setLaunchScript(vrLaunchScript);
-        }
-      }
-      else {
-        if (originalLaunchScript != null && vrLaunchScript != null && !StringUtils.isEmpty(originalLaunchScript.getScript())) {
-          emulatorDetailsService.saveEmulatorVRLaunchScript(gameEmulator.getId(), vrLaunchScript);
-          gameEmulator.setLaunchScript(originalLaunchScript);
-        }
-      }
-
-      emulatorService.removeEmulatorChangeListener(this);
-      emulatorService.save(gameEmulator);
-      emulatorService.addEmulatorChangeListener(this);
+      toggleEmulatorScripts(gameEmulator, enabled);
+      toggleVRFiles(gameEmulator, enabled);
     }
+  }
+
+  private void toggleVRFiles(GameEmulator gameEmulator, boolean enabled) {
+    VRFilesInfo vrFiles = getVRFiles(gameEmulator.getId());
+    if (enabled) {
+
+    }
+  }
+
+  private void toggleEmulatorScripts(GameEmulator gameEmulator, boolean enabled) {
+    GameEmulatorScript originalLaunchScript = emulatorDetailsService.getGameEmulatorLaunchScript(gameEmulator.getId());
+    GameEmulatorScript vrLaunchScript = emulatorDetailsService.getGameEmulatorVRLaunchScript(gameEmulator.getId());
+
+    //initialize VR script
+    if (vrLaunchScript == null && originalLaunchScript != null) {
+      vrLaunchScript = emulatorDetailsService.cloneScript(originalLaunchScript);
+    }
+
+    if (enabled) {
+      if (originalLaunchScript != null && vrLaunchScript != null && !StringUtils.isEmpty(vrLaunchScript.getScript())) {
+        emulatorDetailsService.saveEmulatorLaunchScript(gameEmulator.getId(), originalLaunchScript);
+        gameEmulator.setLaunchScript(vrLaunchScript);
+      }
+    }
+    else {
+      if (originalLaunchScript != null && vrLaunchScript != null && !StringUtils.isEmpty(originalLaunchScript.getScript())) {
+        emulatorDetailsService.saveEmulatorVRLaunchScript(gameEmulator.getId(), vrLaunchScript);
+        gameEmulator.setLaunchScript(originalLaunchScript);
+      }
+    }
+
+    emulatorService.removeEmulatorChangeListener(this);
+    emulatorService.save(gameEmulator);
+    emulatorService.addEmulatorChangeListener(this);
   }
 
   @Override
@@ -92,6 +135,35 @@ public class VRService implements InitializingBean, PreferenceChangedListener, E
       vrSettings = preferencesService.getJsonPreference(PreferenceNames.VR_SETTINGS, VRSettings.class);
       onVRToggle();
     }
+  }
+
+  public VRFilesInfo getVRFiles(int emulatorId) {
+    GameEmulator gameEmulator = emulatorService.getGameEmulator(emulatorId);
+    if (gameEmulator != null && gameEmulator.isVpxEmulator()) {
+      VRFilesInfo info = new VRFilesInfo();
+
+      //dmd deviceini
+      File dmdDeviceIniFile = dmdDeviceIniService.getDmdDeviceIniFile(gameEmulator);
+      File dmdDeviceIniFileVr = new File(getVRResourcesFolder(emulatorId), dmdDeviceIniFile.getName());
+      if (dmdDeviceIniFileVr.exists()) {
+        info.setDmdDeviceIniVrFile(dmdDeviceIniFileVr);
+      }
+      if (dmdDeviceIniFile.exists()) {
+        info.setDmdDeviceIniFile(dmdDeviceIniFile);
+      }
+
+      //vpinballx.ini
+      File vpxIniFile = vpxService.getVPXFile();
+      File vpxIniFileVr = new File(getVRResourcesFolder(emulatorId), vpxIniFile.getName());
+      if (vpxIniFileVr.exists()) {
+        info.setvPinballXIniVrFile(vpxIniFileVr);
+      }
+      if (vpxIniFile.exists()) {
+        info.setvPinballXIniFile(vpxIniFile);
+      }
+      return info;
+    }
+    return null;
   }
 
   @Override

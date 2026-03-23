@@ -322,6 +322,7 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
   }
 
   public void setSelection(Optional<GameEmulatorRepresentation> model) {
+    int index = tabPane.getSelectionModel().getSelectedIndex();
     this.emulator = model;
 
     emulatorNameLabel.setText("-");
@@ -350,23 +351,27 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
     saveBtn.setDisable(model.isEmpty());
     deleteBtn.setDisable(model.isEmpty());
 
-    tabPane.getTabs().remove(vrStartScriptTab);
-
     if (startScriptController != null) {
       startScriptController.setData(model, model.map(GameEmulatorRepresentation::getLaunchScript));
       exitScriptController.setData(model, model.map(GameEmulatorRepresentation::getExitScript));
     }
 
+    client.getPreferenceService().clearCache(PreferenceNames.VR_SETTINGS);
     VRSettings vrSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VR_SETTINGS, VRSettings.class);
+    this.setEnabled(true);
+    vrStartScriptTab.setDisable(true);
 
     if (model.isPresent()) {
       GameEmulatorRepresentation emulator = model.get();
+      vrStartScriptTab.setDisable(!emulator.isVpxEmulator());
+
       if (emulator.isVpxEmulator()) {
-        this.setEnabled(vrSettings.isVrEnabled());
+        boolean vrEnabled = vrSettings.isVrEnabled();
+        this.setEnabled(!vrEnabled);
 
         GameEmulatorScript vrLaunchScript = client.getVRService().getVrLaunchScript(emulator.getId());
         vrStartScriptController.setData(model, vrLaunchScript != null ? Optional.of(vrLaunchScript) : Optional.of(new GameEmulatorScript()));
-        tabPane.getTabs().add(1, vrStartScriptTab);
+        tabPane.getSelectionModel().select(0);
       }
 
       emulatorNameLabel.setText(emulator.getName());
@@ -390,6 +395,8 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
         customField2.setText(emulator.getExeName());
         customField1.setText(emulator.getExeParameters());
       }
+
+      tabPane.getSelectionModel().select(index);
     }
   }
 
@@ -412,9 +419,18 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
     this.selectFolderButtonMedia.setDisable(!vrEnabled);
     this.selectFolderButtonLaunch.setDisable(!vrEnabled);
     this.selectFolderButtonRoms.setDisable(!vrEnabled);
+
+    vrStartScriptTab.setDisable(!vrEnabled);
+    startScriptTab.setDisable(!vrEnabled);
+    exitScriptTab.setDisable(!vrEnabled);
+
+    startScriptController.setDisabled(!vrEnabled);
+    vrStartScriptController.setDisabled(!vrEnabled);
+    exitScriptController.setDisabled(!vrEnabled);
   }
 
   public void onViewActivated() {
+    client.getPreferenceService().notifyPreferenceChange(PreferenceNames.VR_SETTINGS, null);
     Platform.runLater(() -> {
       refreshTableWidth();
 

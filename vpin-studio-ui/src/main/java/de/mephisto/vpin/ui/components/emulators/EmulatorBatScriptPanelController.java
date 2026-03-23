@@ -95,6 +95,16 @@ public class EmulatorBatScriptPanelController implements Initializable, IEmulato
   }
 
   @Override
+  public void setDisabled(boolean b) {
+    this.executableField.setDisable(b);
+    this.parametersField.setDisable(b);
+    this.workingDirectoryField.setDisable(b);
+    this.waitForExitCheckbox.setDisable(b);
+    this.enabledCheckbox.setDisable(b);
+    this.hideWindowCheckbox.setDisable(b);
+  }
+
+  @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     infoContainer.managedProperty().bindBidirectional(infoContainer.visibleProperty());
   }

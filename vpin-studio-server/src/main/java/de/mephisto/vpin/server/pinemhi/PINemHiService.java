@@ -239,8 +239,6 @@ public class PINemHiService implements InitializingBean {
   /**
    * Load pinhemi.ini, update the VP path with the nvRam foldr of the emulator
    * and save
-   *
-   * @param emulator The GameEmulator to get the path
    */
   public static void adjustVPPathForEmulator(File nvRamFolder, File ini, boolean forcePath) {
     if (nvRamFolder.exists()) {

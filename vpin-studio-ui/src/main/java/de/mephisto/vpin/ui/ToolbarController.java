@@ -144,6 +144,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
     else {
       fontIcon.setIconColor(Paint.valueOf(WidgetFactory.DISABLED_COLOR));
     }
+    client.getPreferenceService().notifyPreferenceChange(PreferenceNames.VR_SETTINGS, null);
   }
 
   @FXML
@@ -500,6 +501,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
   @Override
   public void preferencesChanged(String key, Object value) {
     if (key.equals(PreferenceNames.VR_SETTINGS)) {
+      client.getPreferenceService().clearCache(PreferenceNames.VR_SETTINGS);
       VRSettings vrSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VR_SETTINGS, VRSettings.class);
       vrModeButton.setVisible(vrSettings.isEnabled());
       vrModeButton.setSelected(vrSettings.isVrEnabled());

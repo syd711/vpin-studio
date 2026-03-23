@@ -12,4 +12,6 @@ public interface IEmulatorScriptPanel {
   void applyValues();
 
   Optional<GameEmulatorScript> getScript();
+
+  void setDisabled(boolean b);
 }

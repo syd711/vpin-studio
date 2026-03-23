@@ -21,6 +21,21 @@ public class EmulatorDetailsService {
   @Autowired
   public EmulatorDetailsRepository emulatorDetailsRepository;
 
+  @NonNull
+  public GameEmulatorScript cloneScript(@Nullable GameEmulatorScript script) {
+    if (script == null) {
+      return new GameEmulatorScript();
+    }
+    try {
+      String json = JsonSettings.objectMapper.writeValueAsString(script);
+      return JsonSettings.fromJson(GameEmulatorScript.class, json);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to clone emulator script: {}", e.getMessage());
+    }
+    return null;
+  }
+
   public GameEmulatorScript saveEmulatorVRLaunchScript(int emulatorId, @NonNull GameEmulatorScript script) {
     return saveScript(emulatorId, script, EmulatorDetails::setVrLaunchScript, "VR");
   }
