@@ -167,7 +167,12 @@ public class TableOverviewContextMenu {
     KeyCombination vpsResetKey = new KeyCodeCombination(KeyCode.W, KeyCombination.CONTROL_DOWN);
     vpsResetItem.setAccelerator(vpsResetKey);
     vpsResetItem.setOnAction(actionEvent -> tableOverviewController.onVpsResetUpdates());
-    vpsResetItem.setDisable(game.getVpsUpdates().isEmpty());
+    if (!multiSelection) {
+      vpsResetItem.setDisable(game.getVpsUpdates().isEmpty());
+    }
+    else {
+      vpsResetItem.setDisable(false);
+    }
     vpsResetItem.setGraphic(iconVpsReset);
     ctxMenu.getItems().add(vpsResetItem);
 
@@ -210,7 +215,7 @@ public class TableOverviewContextMenu {
 
     ctxMenu.getItems().add(new SeparatorMenuItem());
 
-    if(client.getEmulatorService().isVpxGame(game)) {
+    if (client.getEmulatorService().isVpxGame(game)) {
       MenuItem eventLogItem = new MenuItem("Event Log");
       KeyCombination eventLogItemKey = new KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN);
       eventLogItem.setAccelerator(eventLogItemKey);
@@ -224,7 +229,7 @@ public class TableOverviewContextMenu {
     }
 
 
-    if(client.getEmulatorService().isVpxGame(game)) {
+    if (client.getEmulatorService().isVpxGame(game)) {
       MenuItem pinVolItem = new MenuItem("PinVol Settings");
       pinVolItem.setOnAction(actionEvent -> TableDialogs.openPinVolSettings(tableView.getSelectionModel().getSelectedItems().stream().map(m -> m.getGame()).collect(Collectors.toList())));
 //    pinVolItem.setDisable(games.isEmpty());
