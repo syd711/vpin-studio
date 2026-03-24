@@ -52,7 +52,7 @@ public class VRService implements InitializingBean, PreferenceChangedListener, E
   private VRSettings vrSettings;
 
   public boolean toggleVRMode() {
-    if (vrSettings.isEnabled()) {
+    if (!vrSettings.isEnabled()) {
       return false;
     }
 

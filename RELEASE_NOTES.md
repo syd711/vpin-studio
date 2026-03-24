@@ -1,5 +1,8 @@
 ## Release Notes 4.8.0
 
+
+<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/vr-mode.png?raw=true" width="400" />
+
 - **Filter Settings**: The table filter panel allows you to filter by issue type now.
 - **Backglass Manager**:
   - Added support for **Zen Studio** tables (you must configure DOFLinx first!).
@@ -40,3 +43,4 @@
 - **Media Recorder**: Added timeout of 10 minutes for recordings in case the in-game recorder is never turned off.
 - **Table Backups**: Fixed issue that the VPS mapping was not detected on restore.
 - **VPS Tables**: Fixed sorting of the sound column.
+- **Table Tagging**: Fixed removing of tags.
