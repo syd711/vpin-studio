@@ -255,7 +255,7 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
         }
 
         if (dirty) {
-          tableDetails.setTags(String.join(",", tagList));
+          tableDetails.setTags(TaggingUtil.join(tagList));
           frontendService.saveTableDetails(game.getId(), tableDetails);
         }
       }

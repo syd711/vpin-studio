@@ -25,6 +25,7 @@
   - Backups include the table's audio files now. Previous implementations took only the subfolder from **Music/<ROM NAME>** for the backup - if available.
   - A new **Missing Audio Files** validators shows if the resolved .mp3 files have been found.
 - **Drop-In Manager**: Added search field to filter assets.
+- **Studio System Backup**: Added the pinvol and pinemhi .ini files to the VPin Studio backup file.
 
 ### Bugfixes
 

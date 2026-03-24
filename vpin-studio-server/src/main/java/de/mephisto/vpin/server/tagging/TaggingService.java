@@ -108,7 +108,7 @@ public class TaggingService implements InitializingBean, GameDataChangedListener
     }
     if (added) {
       LOG.info("Auto-applied new tags to {}, updating tags.", tableDetails.getGameDisplayName());
-      tableDetails.setTags(String.join(",", gameTags));
+      tableDetails.setTags(TaggingUtil.join(gameTags));
       frontendService.saveTableDetails(gameId, tableDetails);
     }
   }

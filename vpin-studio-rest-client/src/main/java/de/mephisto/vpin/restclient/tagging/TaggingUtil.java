@@ -20,10 +20,8 @@ public class TaggingUtil {
     return result;
   }
 
-  public static String merge(String tags, String tags1) {
-    Set<String> existing = new HashSet<>(getTags(tags));
-    existing.addAll(getTags(tags1));
-    return String.join(", ", existing);
+  public static String join(List<String> tagList) {
+    return tagList.stream().distinct().collect(Collectors.joining(","));
   }
 
   public void resetColors() {

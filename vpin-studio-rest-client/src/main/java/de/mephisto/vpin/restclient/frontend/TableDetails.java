@@ -373,7 +373,7 @@ public class TableDetails {
   }
 
   public void setTags(String tags) {
-    this.tags = TaggingUtil.merge(this.tags, tags);
+    this.tags = tags;
   }
 
   public String getAuthor() {

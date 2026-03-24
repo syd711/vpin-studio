@@ -43,7 +43,7 @@ public class TagButton extends HBox {
         try {
           List<String> tableTags = TaggingUtil.getTags(tableDetails.getTags());
           tableTags.remove(tag);
-          tableDetails.setTags(String.join(",", tableTags));
+          tableDetails.setTags(TaggingUtil.join(tableTags));
           client.getFrontendService().saveTableDetails(tableDetails, gameId);
           EventManager.getInstance().notifyTableChange(gameId, null);
         }

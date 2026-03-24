@@ -215,17 +215,17 @@ public class PinVolService implements InitializingBean, FileChangeListener {
     }
   }
 
-  private File getPinVolTablesIniFile() {
+  public File getPinVolTablesIniFile() {
     File pinvolExe = getPinVolExe();
     return new File(pinvolExe.getParentFile(), PIN_VOL_TABLES_INI);
   }
 
-  private File getPinVolSettingsIniFile() {
+  public File getPinVolSettingsIniFile() {
     File pinvolExe = getPinVolExe();
     return new File(pinvolExe.getParentFile(), PIN_VOL_SETTINGS_INI);
   }
 
-  private File getPinVolVolIniFile() {
+  public File getPinVolVolIniFile() {
     File pinvolExe = getPinVolExe();
     return new File(pinvolExe.getParentFile(), PIN_VOL_VOL_INI);
   }

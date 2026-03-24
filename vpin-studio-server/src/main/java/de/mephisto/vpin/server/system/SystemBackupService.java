@@ -6,12 +6,15 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.restclient.backups.StudioBackupDescriptor;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.pinemhi.PINemHiService;
+import de.mephisto.vpin.server.pinvol.PinVolService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.preferences.Preferences;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.vpsdb.VpsDbEntry;
 import de.mephisto.vpin.server.vpsdb.VpsEntryService;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.beans.PropertyDescriptor;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Service
@@ -38,6 +43,12 @@ public class SystemBackupService {
 
   @Autowired
   private GameService gameService;
+
+  @Autowired
+  private PINemHiService pinemhiService;
+
+  @Autowired
+  private PinVolService pinVolService;
 
   private final static List<String> IGNORED_PREFERENCES = Arrays.asList("id", "class", "filterSettings", "ignoredValidations");
 
@@ -75,6 +86,26 @@ public class SystemBackupService {
 
     List<VpsDbEntry> allVpsEntries = vpsEntryService.getAllVpsEntries();
     backup.put("vpsEntries", allVpsEntries);
+
+    File pinemhiIni = PINemHiService.getPinemhiIni();
+    if (pinemhiIni.exists()) {
+      backup.put("pinemhiIni", FileUtils.readFileToString(pinemhiIni, StandardCharsets.UTF_8));
+    }
+
+    File pinVolVolIni = pinVolService.getPinVolVolIniFile();
+    if (pinVolVolIni.exists()) {
+      backup.put("pinVolVolIni", FileUtils.readFileToString(pinVolVolIni, StandardCharsets.UTF_8));
+    }
+
+    File pinVolSettingsIni = pinVolService.getPinVolSettingsIniFile();
+    if (pinVolSettingsIni.exists()) {
+      backup.put("pinVolSettingsIni", FileUtils.readFileToString(pinVolSettingsIni, StandardCharsets.UTF_8));
+    }
+
+    File pinVolTablesIni = pinVolService.getPinVolTablesIniFile();
+    if (pinVolTablesIni.exists()) {
+      backup.put("pinVolTablesIni", FileUtils.readFileToString(pinVolTablesIni, StandardCharsets.UTF_8));
+    }
 
     return objectMapper.writeValueAsString(backup);
   }
@@ -155,6 +186,38 @@ public class SystemBackupService {
             gameService.save(game);
             LOG.info("Restored game settings for \"{}\"", game.getGameFileName());
           }
+        }
+      }
+
+      if (backupDescriptor.isPinemhi()) {
+        String pinemhiIniContent = (String) map.get("pinemhiIni");
+        if (!StringUtils.isEmpty(pinemhiIniContent)) {
+          File pinemhiIni = PINemHiService.getPinemhiIni();
+          FileUtils.writeStringToFile(pinemhiIni, pinemhiIniContent, StandardCharsets.UTF_8);
+          LOG.info("Restored {}", pinemhiIni.getAbsolutePath());
+        }
+      }
+
+      if (backupDescriptor.isPinvol()) {
+        String pinVolVolContent = (String) map.get("pinVolVolIni");
+        if (!StringUtils.isEmpty(pinVolVolContent)) {
+          File pinVolVolIni = pinVolService.getPinVolVolIniFile();
+          FileUtils.writeStringToFile(pinVolVolIni, pinVolVolContent, StandardCharsets.UTF_8);
+          LOG.info("Restored {}", pinVolVolIni.getAbsolutePath());
+        }
+
+        String pinVolSettingsContent = (String) map.get("pinVolSettingsIni");
+        if (!StringUtils.isEmpty(pinVolSettingsContent)) {
+          File pinVolSettingsIni = pinVolService.getPinVolSettingsIniFile();
+          FileUtils.writeStringToFile(pinVolSettingsIni, pinVolSettingsContent, StandardCharsets.UTF_8);
+          LOG.info("Restored {}", pinVolSettingsIni.getAbsolutePath());
+        }
+
+        String pinVolTablesContent = (String) map.get("pinVolTablesIni");
+        if (!StringUtils.isEmpty(pinVolTablesContent)) {
+          File pinVolTablesIni = pinVolService.getPinVolTablesIniFile();
+          FileUtils.writeStringToFile(pinVolTablesIni, pinVolTablesContent, StandardCharsets.UTF_8);
+          LOG.info("Restored {}", pinVolTablesIni.getAbsolutePath());
         }
       }
     }
