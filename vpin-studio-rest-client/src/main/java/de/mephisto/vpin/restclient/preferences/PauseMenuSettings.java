@@ -46,6 +46,7 @@ public class PauseMenuSettings extends JsonSettings {
   private String screenshotButton;
   private String resetButton;
   private String recordingButton;
+  private String vrToggleButton;
   private String inputFilterList;
 
   public boolean isAlwaysTakeScreenshot() {
@@ -234,6 +235,14 @@ public class PauseMenuSettings extends JsonSettings {
 
   public void setPauseMenuScreenId(int pauseMenuScreenId) {
     this.pauseMenuScreenId = pauseMenuScreenId;
+  }
+
+  public String getVrToggleButton() {
+    return vrToggleButton;
+  }
+
+  public void setVrToggleButton(String vrToggleButton) {
+    this.vrToggleButton = vrToggleButton;
   }
 
   public String getRecordingButton() {

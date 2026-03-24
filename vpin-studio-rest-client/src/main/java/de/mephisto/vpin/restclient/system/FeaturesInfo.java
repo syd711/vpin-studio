@@ -72,5 +72,4 @@ public class FeaturesInfo {
   public boolean IS_STANDALONE = false;
 
   public boolean VPXZ_ENABLED  = true;
-
 }

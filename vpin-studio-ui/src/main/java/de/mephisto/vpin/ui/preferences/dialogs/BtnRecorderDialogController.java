@@ -55,6 +55,9 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
   private Button deleteRightBtn;
 
   @FXML
+  private Button deleteVrBtn;
+
+  @FXML
   private Button deleteResetBtn;
 
   @FXML
@@ -84,6 +87,9 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
   @FXML
   private Button bindRecordingBtn;
 
+  @FXML
+  private Button bindVrButton;
+
 
   @FXML
   private Label keyCodeStart;
@@ -110,6 +116,9 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
   private Label keyCodeRecording;
 
   @FXML
+  private Label keyToggleVr;
+
+  @FXML
   private CheckBox expertModeCheckbox;
 
   @FXML
@@ -132,6 +141,9 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
 
   @FXML
   private TextField textResetBtn;
+
+  @FXML
+  private TextField textToggleVrBtn;
 
   @FXML
   private TextField textRecordingBtn;
@@ -165,6 +177,9 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
     }
     else if (source.equals(deleteRecordingBtn)) {
       pauseMenuSettings.setRecordingButton(null);
+    }
+    else if (source.equals(deleteVrBtn)) {
+      pauseMenuSettings.setVrToggleButton(null);
     }
     refreshView();
   }
@@ -221,6 +236,12 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
       keyCodeRecording.setText(PRESS_KEY);
       keyCodeRecording.requestFocus();
     }
+    else if (source.equals(bindVrButton)) {
+      bindVrButton.setDisable(true);
+      textToggleVrBtn.setDisable(true);
+      keyToggleVr.setText(PRESS_KEY);
+      keyToggleVr.requestFocus();
+    }
   }
 
   private void refreshView() {
@@ -232,6 +253,7 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
     bindResetBtn.setDisable(false);
     bindRecordingBtn.setDisable(false);
     bindScreenshotBtn.setDisable(false);
+    bindVrButton.setDisable(false);
 
     keyCodePause.setText(getInputValue(pauseMenuSettings.getPauseButton()));
     keyCodeStart.setText(getInputValue(pauseMenuSettings.getStartButton()));
@@ -241,6 +263,7 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
     keyCodeScreenshot.setText(getInputValue(pauseMenuSettings.getScreenshotButton()));
     keyCodeReset.setText(getInputValue(pauseMenuSettings.getResetButton()));
     keyCodeRecording.setText(getInputValue(pauseMenuSettings.getRecordingButton()));
+    keyToggleVr.setText(getInputValue(pauseMenuSettings.getVrToggleButton()));
 
     textScreenshotBtn.setText(pauseMenuSettings.getScreenshotButton());
     textStartBtn.setText(pauseMenuSettings.getStartButton());
@@ -250,6 +273,7 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
     textRightBtn.setText(pauseMenuSettings.getRightButton());
     textResetBtn.setText(pauseMenuSettings.getResetButton());
     textRecordingBtn.setText(pauseMenuSettings.getRecordingButton());
+    textToggleVrBtn.setText(pauseMenuSettings.getVrToggleButton());
   }
 
   private String getInputValue(String customButton) {
@@ -284,6 +308,7 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
     pauseMenuSettings.setResetButton(null);
     pauseMenuSettings.setRecordingButton(null);
     pauseMenuSettings.setScreenshotButton(null);
+    pauseMenuSettings.setVrToggleButton(null);
     client.getPreferenceService().setJsonPreference(pauseMenuSettings);
     refreshView();
   }
@@ -300,6 +325,7 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
     textRightBtn.managedProperty().bindBidirectional(textRightBtn.visibleProperty());
     textResetBtn.managedProperty().bindBidirectional(textResetBtn.visibleProperty());
     textRecordingBtn.managedProperty().bindBidirectional(textRecordingBtn.visibleProperty());
+    textToggleVrBtn.managedProperty().bindBidirectional(textToggleVrBtn.visibleProperty());
 
     textScreenshotBtn.setVisible(false);
     textStartBtn.setVisible(false);
@@ -309,6 +335,7 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
     textRightBtn.setVisible(false);
     textResetBtn.setVisible(false);
     textRecordingBtn.setVisible(false);
+    textToggleVrBtn.setVisible(false);
 
     keyCodeScreenshot.managedProperty().bindBidirectional(keyCodeScreenshot.visibleProperty());
     textScreenshotBtn.textProperty().addListener((observable, oldValue, newValue) -> pauseMenuSettings.setScreenshotButton(newValue));
@@ -334,6 +361,9 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
     keyCodeRecording.managedProperty().bindBidirectional(keyCodeRecording.visibleProperty());
     textRecordingBtn.textProperty().addListener((observable, oldValue, newValue) -> pauseMenuSettings.setRecordingButton(newValue));
 
+    keyToggleVr.managedProperty().bindBidirectional(keyToggleVr.visibleProperty());
+    textToggleVrBtn.textProperty().addListener((observable, oldValue, newValue) -> pauseMenuSettings.setVrToggleButton(newValue));
+
     expertModeCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -345,6 +375,7 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
         textRightBtn.setVisible(newValue);
         textResetBtn.setVisible(newValue);
         textRecordingBtn.setVisible(newValue);
+        textToggleVrBtn.setVisible(newValue);
 
         keyCodeScreenshot.setVisible(!newValue);
         keyCodeStart.setVisible(!newValue);
@@ -354,6 +385,7 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
         keyCodeRight.setVisible(!newValue);
         keyCodeReset.setVisible(!newValue);
         keyCodeRecording.setVisible(!newValue);
+        keyToggleVr.setVisible(!newValue);
       }
     });
 
@@ -433,6 +465,14 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
         keyCodeRecording.setText(value);
         textRecordingBtn.setText(value);
         pauseMenuSettings.setRecordingButton(value);
+        LOG.info("Registered " + value + " for recording.");
+      }
+      else if (bindVrButton.isDisabled()) {
+        bindVrButton.setDisable(false);
+        textToggleVrBtn.setDisable(false);
+        keyToggleVr.setText(value);
+        textToggleVrBtn.setText(value);
+        pauseMenuSettings.setVrToggleButton(value);
         LOG.info("Registered " + value + " for recording.");
       }
       refreshView();

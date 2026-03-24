@@ -2,9 +2,13 @@ package de.mephisto.vpin.ui.components.emulators;
 
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorScript;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
+import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
+import de.mephisto.vpin.restclient.preferences.VRSettings;
 import de.mephisto.vpin.restclient.system.FolderRepresentation;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.Studio;
@@ -39,7 +43,7 @@ import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
-public class EmulatorsController implements Initializable {
+public class EmulatorsController implements Initializable, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(EmulatorsController.class);
 
   @FXML
@@ -89,6 +93,9 @@ public class EmulatorsController implements Initializable {
 
   @FXML
   private Tab startScriptTab;
+
+  @FXML
+  private Tab vrStartScriptTab;
 
   @FXML
   private Tab exitScriptTab;
@@ -155,6 +162,7 @@ public class EmulatorsController implements Initializable {
   private EmulatorsTableController tableController;
 
   private IEmulatorScriptPanel startScriptController;
+  private IEmulatorScriptPanel vrStartScriptController;
   private IEmulatorScriptPanel exitScriptController;
 
   @FXML
@@ -242,8 +250,12 @@ public class EmulatorsController implements Initializable {
       if (startScriptController != null) {
         startScriptController.applyValues();
         exitScriptController.applyValues();
+        vrStartScriptController.applyValues();
       }
 
+      if (emu.isVpxEmulator() && vrStartScriptController.getScript().isPresent()) {
+        client.getVRService().saveVrEmulatorLaunchScript(emu.getId(), vrStartScriptController.getScript().get());
+      }
       client.getEmulatorService().saveGameEmulator(emu);
     }).thenLater(() -> {
       onReload();
@@ -310,6 +322,7 @@ public class EmulatorsController implements Initializable {
   }
 
   public void setSelection(Optional<GameEmulatorRepresentation> model) {
+    int index = tabPane.getSelectionModel().getSelectedIndex();
     this.emulator = model;
 
     emulatorNameLabel.setText("-");
@@ -343,9 +356,23 @@ public class EmulatorsController implements Initializable {
       exitScriptController.setData(model, model.map(GameEmulatorRepresentation::getExitScript));
     }
 
+    client.getPreferenceService().clearCache(PreferenceNames.VR_SETTINGS);
+    VRSettings vrSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VR_SETTINGS, VRSettings.class);
+    this.setEnabled(true);
+    vrStartScriptTab.setDisable(true);
 
     if (model.isPresent()) {
       GameEmulatorRepresentation emulator = model.get();
+      vrStartScriptTab.setDisable(!emulator.isVpxEmulator());
+
+      if (emulator.isVpxEmulator()) {
+        boolean vrEnabled = vrSettings.isVrEnabled();
+        this.setEnabled(!vrEnabled);
+
+        GameEmulatorScript vrLaunchScript = client.getVRService().getVrLaunchScript(emulator.getId());
+        vrStartScriptController.setData(model, vrLaunchScript != null ? Optional.of(vrLaunchScript) : Optional.of(new GameEmulatorScript()));
+        tabPane.getSelectionModel().select(0);
+      }
 
       emulatorNameLabel.setText(emulator.getName());
       emulatorIdLabel.setText("(ID #" + emulator.getId() + ")");
@@ -368,10 +395,42 @@ public class EmulatorsController implements Initializable {
         customField2.setText(emulator.getExeName());
         customField1.setText(emulator.getExeParameters());
       }
+
+      tabPane.getSelectionModel().select(index);
     }
   }
 
+  private void setEnabled(boolean vrEnabled) {
+    this.saveBtn.setDisable(!vrEnabled);
+    this.createBtn.setDisable(!vrEnabled);
+    this.deleteBtn.setDisable(!vrEnabled);
+    this.duplicateBtn.setDisable(!vrEnabled);
+    this.enabledCheckbox.setDisable(!vrEnabled);
+    this.nameField.setDisable(!vrEnabled);
+    this.descriptionField.setDisable(!vrEnabled);
+    this.gamesFolderField.setDisable(!vrEnabled);
+    this.launchFolderField.setDisable(!vrEnabled);
+    this.romsFolderField.setDisable(!vrEnabled);
+    this.customField1.setDisable(!vrEnabled);
+    this.customField2.setDisable(!vrEnabled);
+    this.safeNameField.setDisable(!vrEnabled);
+
+    this.selectFolderButtonGames.setDisable(!vrEnabled);
+    this.selectFolderButtonMedia.setDisable(!vrEnabled);
+    this.selectFolderButtonLaunch.setDisable(!vrEnabled);
+    this.selectFolderButtonRoms.setDisable(!vrEnabled);
+
+    vrStartScriptTab.setDisable(!vrEnabled);
+    startScriptTab.setDisable(!vrEnabled);
+    exitScriptTab.setDisable(!vrEnabled);
+
+    startScriptController.setDisabled(!vrEnabled);
+    vrStartScriptController.setDisabled(!vrEnabled);
+    exitScriptController.setDisabled(!vrEnabled);
+  }
+
   public void onViewActivated() {
+    client.getPreferenceService().notifyPreferenceChange(PreferenceNames.VR_SETTINGS, null);
     Platform.runLater(() -> {
       refreshTableWidth();
 
@@ -405,6 +464,15 @@ public class EmulatorsController implements Initializable {
       LOG.error("Failed to load emulator table: " + e.getMessage(), e);
     }
 
+    try {
+      FXMLLoader loader = new FXMLLoader(EmulatorScriptPanelController.class.getResource("panel-emulator-script.fxml"));
+      Parent builtInRoot = loader.load();
+      vrStartScriptController = loader.getController();
+      vrStartScriptTab.setContent(builtInRoot);
+    }
+    catch (IOException e) {
+      LOG.error("Failed to load emulator table: " + e.getMessage(), e);
+    }
 
     try {
       FXMLLoader loader = new FXMLLoader(EmulatorScriptPanelController.class.getResource("panel-emulator-script.fxml"));
@@ -526,9 +594,18 @@ public class EmulatorsController implements Initializable {
 
       refreshTableWidth();
     });
+
+    client.getPreferenceService().addListener(this);
   }
 
   public void select(GameEmulatorRepresentation gameEmulator) {
     this.tableController.select(gameEmulator);
+  }
+
+  @Override
+  public void preferencesChanged(String key, Object value) {
+    if (PreferenceNames.VR_SETTINGS.equals(key)) {
+      setSelection(this.emulator);
+    }
   }
 }

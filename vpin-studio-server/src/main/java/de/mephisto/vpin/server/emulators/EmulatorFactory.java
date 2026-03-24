@@ -418,7 +418,6 @@ public class EmulatorFactory implements ApplicationContextAware, InitializingBea
   private GameEmulatorScript createScript(boolean startScript, String script) {
     GameEmulatorScript s = new GameEmulatorScript();
     s.setScript(script);
-    s.setStartScript(startScript);
     return s;
   }
 

@@ -13,9 +13,9 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameEmulatorValidationService;
 import de.mephisto.vpin.server.games.GameMediaService;
-import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -240,6 +240,10 @@ public class EmulatorService implements InitializingBean, PreferenceChangedListe
 
   public void addEmulatorChangeListener(EmulatorChangeListener listener) {
     this.listeners.add(listener);
+  }
+
+  public void removeEmulatorChangeListener(EmulatorChangeListener listener) {
+    this.listeners.remove(listener);
   }
 
   @Override

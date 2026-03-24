@@ -23,6 +23,7 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.recorder.RecorderService;
 import de.mephisto.vpin.server.recorder.ScreenshotService;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.vr.VRService;
 import javafx.application.Platform;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -61,6 +62,9 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
 
   @Autowired
   private ScreenshotService screenshotService;
+
+  @Autowired
+  private VRService vrService;
 
   @Autowired
   private JobQueue queue;
@@ -102,6 +106,7 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
     String recordBtn = pauseMenuSettings.getRecordingButton();
     String screenshotBtn = pauseMenuSettings.getScreenshotButton();
     String resetBtn = pauseMenuSettings.getResetButton();
+    String vrToggleBtn = pauseMenuSettings.getVrToggleButton();
 
     if (name.equals("Q")) {
       HighscoreEventLog highscoreEventLog = SLOG.finalizeEventLog();
@@ -162,6 +167,12 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
       onResetEvent();
       return;
     }
+
+    //handle key based vr toggle
+    if (name.equals(vrToggleBtn)) {
+      onVrToggle();
+      return;
+    }
   }
 
   //-------------- Event Execution -------------------------------------------------------------------------------------
@@ -198,6 +209,12 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
     new Thread(() -> {
       frontendService.restartFrontend();
       frontendStatusService.notifyFrontendRestart();
+    }).start();
+  }
+
+  private void onVrToggle() {
+    new Thread(() -> {
+      vrService.toggleVRMode();
     }).start();
   }
 

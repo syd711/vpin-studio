@@ -10,4 +10,8 @@ public interface IEmulatorScriptPanel {
   void setData(Optional<GameEmulatorRepresentation> emulator, Optional<GameEmulatorScript> script);
 
   void applyValues();
+
+  Optional<GameEmulatorScript> getScript();
+
+  void setDisabled(boolean b);
 }
