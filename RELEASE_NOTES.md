@@ -2,7 +2,6 @@
 
 - **VR Support**
     
-
   <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/vr-mode.png?raw=true" width="400" />
 
 
@@ -25,7 +24,8 @@
 - **Media Recorder**
   - Added emulator recording support for **Zaccaria, Pinball FX/3/M and MAME games**.
 - **Designer**
-  - Added support for custom highscore card sizes. You can change the size in the "Highscore Cards Settings". 
+  - Added support for custom highscore card sizes. You can change the size in the "Highscore Cards Settings".
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/custom-cards.png?raw=true" width="700" />
 - **Pause Menu for non-VPX Games (first draft)**
   - Added pause menu support for **Zaccaria, Pinball FX/3/M and MAME** games. Note that you need to have the graphics settings set to "borderless window". Otherwise you will run into focus issues.
 - **Music Management**: The music management for VPX games has been reimplemented. Audio files from the "Music" folder are detected through the table script including those that are computed from variables. Note that there are still some tables (e.g. Iron Maiden) where the .mp3 filename computation prohibits the detection of the actual filenames. As a result from this...
