@@ -27,11 +27,6 @@
         </dependency>
         <dependency>
             <groupId>de.mephisto.vpin</groupId>
-            <artifactId>vpin-studio-server</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.mephisto.vpin</groupId>
             <artifactId>vpin-connector-vps</artifactId>
             <version>${project.version}</version>
         </dependency>

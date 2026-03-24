@@ -1,11 +1,11 @@
 ## Release Notes 4.8.0
 
-- **VR Support**
+- **VR Support (Experimental)**: Added support to toggle you installation into VR mode. More details about this can be found here:
     
-  <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/vr-mode.png?raw=true" width="400" />
-
+  <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/vr-mode.png?raw=true" width="500" />
 
 - **Filter Settings**: The table filter panel allows you to filter by issue type now.
+ 
     <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/issue-filter.png?raw=true" width="400" />
 
 - **Backglass Manager**:
@@ -23,8 +23,7 @@
   - The **curl** calls to tell the Studio server that a game has been launched or exited have been added to the emulator types **Zaccaria, Pinball FX/3/M and MAME**. This allows the **in-game recording and pause menu** for these emulators.
 - **Media Recorder**
   - Added emulator recording support for **Zaccaria, Pinball FX/3/M and MAME games**.
-- **Designer**
-  - Added support for custom highscore card sizes. You can change the size in the "Highscore Cards Settings".
+- **Designer**: Added support for custom highscore card sizes. You can change the size in the "Highscore Cards Settings".
     <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/custom-cards.png?raw=true" width="700" />
 - **Pause Menu for non-VPX Games (first draft)**
   - Added pause menu support for **Zaccaria, Pinball FX/3/M and MAME** games. Note that you need to have the graphics settings set to "borderless window". Otherwise you will run into focus issues.
