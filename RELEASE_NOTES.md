@@ -1,9 +1,14 @@
 ## Release Notes 4.8.0
 
+- **VR Support**
+    
 
-<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/vr-mode.png?raw=true" width="400" />
+  <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/vr-mode.png?raw=true" width="400" />
+
 
 - **Filter Settings**: The table filter panel allows you to filter by issue type now.
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/issue-filter.png?raw=true" width="400" />
+
 - **Backglass Manager**:
   - Added support for **Zen Studio** tables (you must configure DOFLinx first!).
   - Added combobox to filter backglasses by emulator.
