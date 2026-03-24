@@ -5,32 +5,20 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.File;
 
 public class VRFilesInfo {
-  private int emulatorId;
-
   private File dmdDeviceIniFile;
   private File dmdDeviceIniVrFile;
 
   private File vPinballXIniFile;
   private File vPinballXIniVrFile;
 
-  public int getEmulatorId() {
-    return emulatorId;
-  }
-
-  public void setEmulatorId(int emulatorId) {
-    this.emulatorId = emulatorId;
-  }
+  private String dmdDeviceIni;
+  private String dmdDeviceIniVr;
+  private String vPinballXIni;
+  private String vPinballXIniVr;
 
   @JsonIgnore
   public File getDmdDeviceIniFile() {
     return dmdDeviceIniFile;
-  }
-
-  public String getDmdDeviceIni() {
-    if (dmdDeviceIniFile != null) {
-      return dmdDeviceIniFile.getAbsolutePath();
-    }
-    return null;
   }
 
   public void setDmdDeviceIniFile(File dmdDeviceIniFile) {
@@ -42,13 +30,6 @@ public class VRFilesInfo {
     return dmdDeviceIniVrFile;
   }
 
-  public String getDmdDeviceIniVr() {
-    if (dmdDeviceIniVrFile != null) {
-      return dmdDeviceIniVrFile.getAbsolutePath();
-    }
-    return null;
-  }
-
   public void setDmdDeviceIniVrFile(File dmdDeviceIniVrFile) {
     this.dmdDeviceIniVrFile = dmdDeviceIniVrFile;
   }
@@ -56,13 +37,6 @@ public class VRFilesInfo {
   @JsonIgnore
   public File getvPinballXIniFile() {
     return vPinballXIniFile;
-  }
-
-  public String getvPinballXIni() {
-    if (vPinballXIniFile != null) {
-      return vPinballXIniFile.getAbsolutePath();
-    }
-    return null;
   }
 
   public void setvPinballXIniFile(File vPinballXIniFile) {
@@ -74,14 +48,39 @@ public class VRFilesInfo {
     return vPinballXIniVrFile;
   }
 
-  public String getvPinballXIniVr() {
-    if (vPinballXIniVrFile != null) {
-      return vPinballXIniVrFile.getAbsolutePath();
-    }
-    return null;
-  }
-
   public void setvPinballXIniVrFile(File vPinballXIniVrFile) {
     this.vPinballXIniVrFile = vPinballXIniVrFile;
+  }
+
+  public String getDmdDeviceIni() {
+    return dmdDeviceIni;
+  }
+
+  public void setDmdDeviceIni(String dmdDeviceIni) {
+    this.dmdDeviceIni = dmdDeviceIni;
+  }
+
+  public String getDmdDeviceIniVr() {
+    return dmdDeviceIniVr;
+  }
+
+  public void setDmdDeviceIniVr(String dmdDeviceIniVr) {
+    this.dmdDeviceIniVr = dmdDeviceIniVr;
+  }
+
+  public String getvPinballXIni() {
+    return vPinballXIni;
+  }
+
+  public void setvPinballXIni(String vPinballXIni) {
+    this.vPinballXIni = vPinballXIni;
+  }
+
+  public String getvPinballXIniVr() {
+    return vPinballXIniVr;
+  }
+
+  public void setvPinballXIniVr(String vPinballXIniVr) {
+    this.vPinballXIniVr = vPinballXIniVr;
   }
 }

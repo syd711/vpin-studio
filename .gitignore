@@ -152,3 +152,5 @@ vpin-studio-logs.zip
 .claude/settings.local.json
 /nul
 /resources/vpxscripts/**
+/resources/vr/**
+/vpin-tools/highscore-analysis.csv

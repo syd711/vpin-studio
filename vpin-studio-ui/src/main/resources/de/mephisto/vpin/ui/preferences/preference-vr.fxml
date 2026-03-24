@@ -23,6 +23,17 @@
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="800.0" styleClass="subpanel">
                <children>
                   <Label styleClass="preference-title" text="VPIN STUDIO FRONTEND PREFERENCES" textFill="WHITE" />
+                  <HBox prefWidth="200.0" styleClass="info-container">
+                     <children>
+                        <Label styleClass="default-headline" text="This feature is still in an experimental state and needs more testing." />
+                     </children>
+                     <padding>
+                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets top="24.0" />
+                     </VBox.margin>
+                  </HBox>
                   <Label styleClass="preference-subtitle" text="VR Settings">
                      <VBox.margin>
                         <Insets />

@@ -136,15 +136,20 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
 
   @FXML
   private void onVrToggle() {
+    client.getVRService().toggleVR();
+    refreshVrState();
+  }
+
+  private void refreshVrState() {
     FontIcon fontIcon = (FontIcon) vrModeButton.getGraphic();
-    boolean enabled = client.getVRService().toggleVR();
-    if (enabled) {
+    client.getPreferenceService().clearCache(PreferenceNames.VR_SETTINGS);
+    VRSettings vrSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VR_SETTINGS, VRSettings.class);
+    if (vrSettings.isVrEnabled()) {
       fontIcon.setIconColor(Paint.valueOf(WidgetFactory.OK_DARK_COLOR));
     }
     else {
       fontIcon.setIconColor(Paint.valueOf(WidgetFactory.DISABLED_COLOR));
     }
-    client.getPreferenceService().notifyPreferenceChange(PreferenceNames.VR_SETTINGS, null);
   }
 
   @FXML
@@ -480,6 +485,8 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
     VRSettings vrSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VR_SETTINGS, VRSettings.class);
     vrModeButton.setSelected(vrSettings.isVrEnabled());
     vrModeButton.setVisible(vrSettings.isEnabled());
+
+    refreshVrState();
   }
 
   private void onCabSwitch(ConnectionEntry connection) {

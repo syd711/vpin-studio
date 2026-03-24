@@ -147,22 +147,22 @@ public class VRPreferencesController implements Initializable {
     vPinballXIniTextVr.setText("-");
     vPinballXIniTextVr.setTooltip(null);
 
-    if (vrFiles.getDmdDeviceIniFile() != null) {
-      dmdDeviceIniText.setText(vrFiles.getDmdDeviceIniFile());
-      dmdDeviceIniText.setTooltip(new Tooltip(vrFiles.getDmdDeviceIniFile()));
+    if (vrFiles.getDmdDeviceIni() != null) {
+      dmdDeviceIniText.setText(vrFiles.getDmdDeviceIni());
+      dmdDeviceIniText.setTooltip(new Tooltip(vrFiles.getDmdDeviceIni()));
     }
-    if (vrFiles.getDmdDeviceIniVrFile() != null) {
-      dmdDeviceIniTextVr.setText(vrFiles.getDmdDeviceIniVrFile());
-      dmdDeviceIniTextVr.setTooltip(new Tooltip(vrFiles.getDmdDeviceIniVrFile()));
+    if (vrFiles.getDmdDeviceIniVr() != null) {
+      dmdDeviceIniTextVr.setText(vrFiles.getDmdDeviceIniVr());
+      dmdDeviceIniTextVr.setTooltip(new Tooltip(vrFiles.getDmdDeviceIniVr()));
     }
 
-    if (vrFiles.getvPinballXIniFile() != null) {
-      vPinballXIniText.setText(vrFiles.getvPinballXIniFile());
-      vPinballXIniText.setTooltip(new Tooltip(vrFiles.getvPinballXIniFile()));
+    if (vrFiles.getvPinballXIni() != null) {
+      vPinballXIniText.setText(vrFiles.getvPinballXIni());
+      vPinballXIniText.setTooltip(new Tooltip(vrFiles.getvPinballXIni()));
     }
-    if (vrFiles.getvPinballXIniVrFile() != null) {
-      vPinballXIniTextVr.setText(vrFiles.getvPinballXIniVrFile());
-      vPinballXIniTextVr.setTooltip(new Tooltip(vrFiles.getvPinballXIniVrFile()));
+    if (vrFiles.getvPinballXIniVr() != null) {
+      vPinballXIniTextVr.setText(vrFiles.getvPinballXIniVr());
+      vPinballXIniTextVr.setTooltip(new Tooltip(vrFiles.getvPinballXIniVr()));
     }
   }
 }

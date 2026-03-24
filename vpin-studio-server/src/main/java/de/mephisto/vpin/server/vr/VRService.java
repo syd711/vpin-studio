@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.vr;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorScript;
 import de.mephisto.vpin.restclient.preferences.VRSettings;
 import de.mephisto.vpin.restclient.vr.VRFilesInfo;
@@ -19,7 +20,11 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -27,7 +32,7 @@ import static de.mephisto.vpin.commons.SystemInfo.RESOURCES;
 
 @Service
 public class VRService implements InitializingBean, PreferenceChangedListener, EmulatorChangeListener {
-  private final static Logger LOG = LoggerFactory.getLogger(VRResource.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @Autowired
   private PreferencesService preferencesService;
@@ -47,10 +52,15 @@ public class VRService implements InitializingBean, PreferenceChangedListener, E
   private VRSettings vrSettings;
 
   public boolean toggleVRMode() {
+    if (vrSettings.isEnabled()) {
+      return false;
+    }
+
     try {
       LOG.info("Toggling VR Mode: " + !vrSettings.isVrEnabled());
       vrSettings.setVrEnabled(!vrSettings.isVrEnabled());
       preferencesService.savePreference(vrSettings);
+      onVRToggle();
     }
     catch (Exception e) {
       LOG.error("Failed to toggle VR mode: {}", e.getMessage(), e);
@@ -88,7 +98,7 @@ public class VRService implements InitializingBean, PreferenceChangedListener, E
   }
 
   private void toggleEmulator(GameEmulator gameEmulator) {
-    boolean enabled = vrSettings.isEnabled();
+    boolean enabled = vrSettings.isVrEnabled();
     if (gameEmulator.isVpxEmulator()) {
       toggleEmulatorScripts(gameEmulator, enabled);
       toggleVRFiles(gameEmulator, enabled);
@@ -97,8 +107,72 @@ public class VRService implements InitializingBean, PreferenceChangedListener, E
 
   private void toggleVRFiles(GameEmulator gameEmulator, boolean enabled) {
     VRFilesInfo vrFiles = getVRFiles(gameEmulator.getId());
-    if (enabled) {
+    if (vrFiles == null) {
+      return;
+    }
+    toggleFile(gameEmulator, vrFiles.getDmdDeviceIniFile(), vrFiles.getDmdDeviceIniVrFile(), enabled);
+    toggleFile(gameEmulator, vrFiles.getvPinballXIniFile(), vrFiles.getvPinballXIniVrFile(), enabled);
+  }
 
+  /**
+   * Toggles a single config file between its original and VR version.
+   *
+   * @param originalFile the file used at runtime (e.g. dmddevice.ini)
+   * @param vrSourceFile the VR replacement stored in resources/vr/<emulatorId>/
+   * @param enable       true  → backup original and put VR file in place
+   *                     false → remove VR file and restore original backup
+   */
+  private void toggleFile(GameEmulator emulator, File originalFile, File vrSourceFile, boolean enable) {
+    if (originalFile == null) {
+      return;
+    }
+    if (enable) {
+      enableVRFile(emulator, originalFile, vrSourceFile);
+    }
+    else {
+      disableVRFile(emulator, originalFile);
+    }
+  }
+
+  private void enableVRFile(GameEmulator emulator, File originalFile, File vrSourceFile) {
+    File vrFile = new File(getVRResourcesFolder(emulator.getId()), originalFile.getName());
+    File backup = new File(originalFile.getAbsolutePath() + ".vr");
+
+    if (originalFile.exists() && vrFile.exists()) {
+      if (backup.exists()) {
+        return;
+      }
+
+      if (!originalFile.renameTo(backup)) {
+        LOG.error("Failed to rename {} to {}", originalFile.getAbsolutePath(), backup.getAbsolutePath());
+        return;
+      }
+      LOG.info("Backed up {} → {}", originalFile.getAbsolutePath(), backup.getAbsolutePath());
+      try {
+        FileUtils.copyFile(vrSourceFile, originalFile);
+        LOG.info("Copied VR file {} → {}", vrSourceFile.getAbsolutePath(), originalFile.getAbsolutePath());
+      }
+      catch (Exception e) {
+        LOG.error("Failed to copy VR file {} to {}: {}", vrSourceFile.getAbsolutePath(), originalFile.getAbsolutePath(), e.getMessage(), e);
+      }
+    }
+  }
+
+  private void disableVRFile(GameEmulator emulator, File originalFile) {
+    File backup = new File(originalFile.getAbsolutePath() + ".vr");
+    if (backup.exists() && originalFile.exists()) {
+      // Remove the currently active (VR) file so we can restore the backup
+      if (!originalFile.delete()) {
+        LOG.error("Failed to delete active VR file {}", originalFile.getAbsolutePath());
+        return;
+      }
+      LOG.info("Removed active VR file {}", originalFile.getAbsolutePath());
+      if (!backup.renameTo(originalFile)) {
+        LOG.error("Failed to restore {} → {}", backup.getAbsolutePath(), originalFile.getAbsolutePath());
+      }
+      else {
+        LOG.info("Restored {} → {}", backup.getAbsolutePath(), originalFile.getAbsolutePath());
+      }
     }
   }
 
@@ -133,7 +207,6 @@ public class VRService implements InitializingBean, PreferenceChangedListener, E
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
     if (PreferenceNames.VR_SETTINGS.equals(propertyName)) {
       vrSettings = preferencesService.getJsonPreference(PreferenceNames.VR_SETTINGS, VRSettings.class);
-      onVRToggle();
     }
   }
 
@@ -145,6 +218,8 @@ public class VRService implements InitializingBean, PreferenceChangedListener, E
       //dmd deviceini
       File dmdDeviceIniFile = dmdDeviceIniService.getDmdDeviceIniFile(gameEmulator);
       File dmdDeviceIniFileVr = new File(getVRResourcesFolder(emulatorId), dmdDeviceIniFile.getName());
+      info.setDmdDeviceIni(dmdDeviceIniFile.getAbsolutePath());
+      info.setDmdDeviceIniVr(dmdDeviceIniFileVr.getAbsolutePath());
       if (dmdDeviceIniFileVr.exists()) {
         info.setDmdDeviceIniVrFile(dmdDeviceIniFileVr);
       }
@@ -155,6 +230,8 @@ public class VRService implements InitializingBean, PreferenceChangedListener, E
       //vpinballx.ini
       File vpxIniFile = vpxService.getVPXFile();
       File vpxIniFileVr = new File(getVRResourcesFolder(emulatorId), vpxIniFile.getName());
+      info.setvPinballXIni(vpxIniFile.getAbsolutePath());
+      info.setvPinballXIniVr(vpxIniFileVr.getAbsolutePath());
       if (vpxIniFileVr.exists()) {
         info.setvPinballXIniVrFile(vpxIniFileVr);
       }
