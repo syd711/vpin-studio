@@ -1,6 +1,7 @@
 ## Release Notes 4.8.0
 
 - **VR Support (Experimental)**: Added support to toggle you installation into VR mode. More details about this can be found here:
+   https://github.com/syd711/vpin-studio/wiki/VR-Support
     
   <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/vr-mode.png?raw=true" width="500" />
 
@@ -48,3 +49,4 @@
 - **Table Backups**: Fixed issue that the VPS mapping was not detected on restore.
 - **VPS Tables**: Fixed sorting of the sound column.
 - **Table Tagging**: Fixed removing of tags.
+- **Media Manager**: Fixed blank video.
