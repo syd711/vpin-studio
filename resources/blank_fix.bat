@@ -41,3 +41,4 @@ echo. >> "%LOG_FILE%"
 echo Total found: !COUNT! >> "%LOG_FILE%"
 echo.
 echo Done. !COUNT! file(s) found. Log written to %LOG_FILE%
+pause
