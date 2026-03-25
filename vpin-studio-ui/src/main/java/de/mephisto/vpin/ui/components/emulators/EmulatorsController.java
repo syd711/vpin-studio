@@ -5,7 +5,6 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorScript;
-import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.VRSettings;
@@ -13,9 +12,10 @@ import de.mephisto.vpin.restclient.system.FolderRepresentation;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.components.emulators.dialogs.EmulatorDialogs;
+import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.util.FolderChooserDialog;
 import de.mephisto.vpin.ui.util.ProgressDialog;
-import de.mephisto.vpin.ui.util.StudioFolderChooser;
 import de.mephisto.vpin.ui.util.SystemUtil;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -28,7 +28,6 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,11 +38,9 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import static de.mephisto.vpin.ui.Studio.Features;
-import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.stage;
+import static de.mephisto.vpin.ui.Studio.*;
 
-public class EmulatorsController implements Initializable, PreferenceChangeListener {
+public class EmulatorsController implements Initializable, PreferenceChangeListener, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(EmulatorsController.class);
 
   @FXML
@@ -596,10 +593,18 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
     });
 
     client.getPreferenceService().addListener(this);
+    EventManager.getInstance().addListener(this);
   }
 
   public void select(GameEmulatorRepresentation gameEmulator) {
     this.tableController.select(gameEmulator);
+  }
+
+  @Override
+  public void vrModeEnabled(boolean b) {
+    Platform.runLater(() -> {
+      setSelection(this.emulator);
+    });
   }
 
   @Override

@@ -136,8 +136,9 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
 
   @FXML
   private void onVrToggle() {
-    client.getVRService().toggleVR();
+    boolean b = client.getVRService().toggleVR();
     refreshVrState();
+    EventManager.getInstance().notifyVRModeEnabled(b);
   }
 
   private void refreshVrState() {
