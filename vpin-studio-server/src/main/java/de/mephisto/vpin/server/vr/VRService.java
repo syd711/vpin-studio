@@ -177,24 +177,24 @@ public class VRService implements InitializingBean, PreferenceChangedListener, E
   }
 
   private void toggleEmulatorScripts(GameEmulator gameEmulator, boolean enabled) {
-    GameEmulatorScript originalLaunchScript = emulatorDetailsService.getGameEmulatorLaunchScript(gameEmulator.getId());
+    GameEmulatorScript launchScript = gameEmulator.getLaunchScript();
+    GameEmulatorScript launchScriptBackup = emulatorDetailsService.getGameEmulatorLaunchScript(gameEmulator.getId());
     GameEmulatorScript vrLaunchScript = emulatorDetailsService.getGameEmulatorVRLaunchScript(gameEmulator.getId());
 
-    //initialize VR script
-    if (vrLaunchScript == null && originalLaunchScript != null) {
-      vrLaunchScript = emulatorDetailsService.cloneScript(originalLaunchScript);
-    }
-
     if (enabled) {
-      if (originalLaunchScript != null && vrLaunchScript != null && !StringUtils.isEmpty(vrLaunchScript.getScript())) {
-        emulatorDetailsService.saveEmulatorLaunchScript(gameEmulator.getId(), originalLaunchScript);
+      //create a backup of the original script only when enabling VR
+      if (launchScript != null) {
+        launchScriptBackup = emulatorDetailsService.cloneScript(launchScript);
+        emulatorDetailsService.saveEmulatorLaunchScript(gameEmulator.getId(), launchScriptBackup);
+      }
+
+      if (vrLaunchScript != null) {
         gameEmulator.setLaunchScript(vrLaunchScript);
       }
     }
     else {
-      if (originalLaunchScript != null && vrLaunchScript != null && !StringUtils.isEmpty(originalLaunchScript.getScript())) {
-        emulatorDetailsService.saveEmulatorVRLaunchScript(gameEmulator.getId(), vrLaunchScript);
-        gameEmulator.setLaunchScript(originalLaunchScript);
+      if (launchScriptBackup != null) {
+        gameEmulator.setLaunchScript(launchScriptBackup);
       }
     }
 
