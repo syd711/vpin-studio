@@ -112,12 +112,13 @@ public abstract class MediaService  {
       String name = mediaFile.getName();
       String baseName = FilenameUtils.getBaseName(name);
       String suffix = FilenameUtils.getExtension(name);
-      String updatedBaseName = baseName + "(SCREEN3)." + suffix;
+      String updatedBaseName = baseName + "01(SCREEN3)." + suffix;
 
       LOG.info("Renaming {} to '{}'", mediaFile.getAbsolutePath(), updatedBaseName);
-      boolean renamed = mediaFile.renameTo(new File(mediaFile.getParentFile(), updatedBaseName));
+      File renameTarget = new File(mediaFile.getParentFile(), updatedBaseName);
+      boolean renamed = mediaFile.renameTo(renameTarget);
       if (!renamed) {
-        LOG.error("Renaming to {} failed.", updatedBaseName);
+        LOG.error("Renaming to {} failed, file already exists: {}", updatedBaseName, renameTarget.exists());
         return false;
       }
 

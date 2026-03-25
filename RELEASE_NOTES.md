@@ -49,4 +49,5 @@
 - **Table Backups**: Fixed issue that the VPS mapping was not detected on restore.
 - **VPS Tables**: Fixed sorting of the sound column.
 - **Table Tagging**: Fixed removing of tags.
-- **Media Manager**: Fixed blank video.
+- **Media Manager**: Fixed blank video. The existing file was corrupted and caused issues with the new PinUP Popper version.
+- **Media Manager**: Fixed blank video naming which was missing the file number before the screen info.
