@@ -1,6 +1,6 @@
 ## Release Notes 4.8.0
 
-- **VR Support (Experimental)**: Added support to toggle you installation into VR mode. More details about this can be found here:
+- **VR Support (Experimental)**: Added support to toggle your installation into VR mode. More details about this can be found here:
    https://github.com/syd711/vpin-studio/wiki/VR-Support
     
   <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/vr-mode.png?raw=true" width="500" />
@@ -31,7 +31,7 @@
 - **Music Management**: The music management for VPX games has been reimplemented. Audio files from the "Music" folder are detected through the table script including those that are computed from variables. Note that there are still some tables (e.g. Iron Maiden) where the .mp3 filename computation prohibits the detection of the actual filenames. As a result from this...
   - **You need to perform a re-scan of all tables to detect the table's audio files**.
   - Backups include the table's audio files now. Previous implementations took only the subfolder from **Music/<ROM NAME>** for the backup - if available.
-  - A new **Missing Audio Files** validators shows if the resolved .mp3 files have been found.
+  - A new **Missing Audio Files** validator shows if the resolved .mp3 files have been found.
 - **Drop-In Manager**: Added search field to filter assets.
 - **Studio System Backup**: Added the pinvol and pinemhi .ini files to the VPin Studio backup file.
 
@@ -50,5 +50,5 @@
 - **VPS Tables**: Fixed sorting of the sound column.
 - **Table Tagging**: Fixed removing of tags.
 - **Media Manager**: 
-  - Fixed blank video: The existing file was corrupted and caused issues with the new PinUP Popper version. You can fix all broken blank videos by download this script (https://raw.githubusercontent.com/syd711/vpin-studio/refs/heads/main/resources/blank_fix.bat), copy and execute it in your PinUP installation directory (e.g. C:\vPinball\PinUPSystem).   
+  - Fixed blank video: The existing file was corrupted and caused issues with the new PinUP Popper version. You can fix all broken blank videos by downloading this script (https://raw.githubusercontent.com/syd711/vpin-studio/refs/heads/main/resources/blank_fix.bat), copy and execute it in your PinUP installation directory (e.g. C:\vPinball\PinUPSystem).   
   - Fixed blank video naming which was missing the file number before the screen info.
