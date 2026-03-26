@@ -100,7 +100,7 @@ public class FrontendServiceClient extends VPinStudioClientService {
   }
 
   public FrontendMediaItemRepresentation getDefaultFrontendMediaItem(int gameId, VPinScreen screen) {
-    return getRestClient().get(API + API_SEGMENT_FRONTEND + "/media/" + gameId + "/" + screen, 
+    return getRestClient().get(API + API_SEGMENT_FRONTEND + "/media/" + gameId + "/" + screen,
         FrontendMediaItemRepresentation.class);
   }
 
@@ -208,9 +208,14 @@ public class FrontendServiceClient extends VPinStudioClientService {
 
 
   public boolean clearCache() {
-    this.frontendMediaCache.clear();
-    final RestTemplate restTemplate = new RestTemplate();
-    return restTemplate.getForObject(getRestClient().getBaseUrl() + API + API_SEGMENT_FRONTEND + "/clearcache", Boolean.class);
+    try {
+      this.frontendMediaCache.clear();
+      return getRestClient().get(API + API_SEGMENT_FRONTEND + "/clearcache", Boolean.class);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to clean frontend cache: {}", e.getMessage(), e);
+    }
+    return false;
   }
 
   //-----------------------------
