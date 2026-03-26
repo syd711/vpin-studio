@@ -49,6 +49,7 @@
 - **Table Backups**: Fixed issue that the VPS mapping was not detected on restore.
 - **VPS Tables**: Fixed sorting of the sound column.
 - **Table Tagging**: Fixed removing of tags.
+- **Dashboard**: Fixed possible error in the ranking view.
 - **Media Manager**: 
   - Fixed blank video: The existing file was corrupted and caused issues with the new PinUP Popper version. You can fix all broken blank videos by downloading this script (https://raw.githubusercontent.com/syd711/vpin-studio/refs/heads/main/resources/blank_fix.bat), copy and execute it in your PinUP installation directory (e.g. C:\vPinball\PinUPSystem).   
   - Fixed blank video naming which was missing the file number before the screen info.
