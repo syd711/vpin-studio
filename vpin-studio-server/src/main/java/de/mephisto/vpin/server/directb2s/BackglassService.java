@@ -14,7 +14,7 @@ import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.doflinx.DOFLinxService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
-import de.mephisto.vpin.server.games.EmulatorHelper;
+import de.mephisto.vpin.server.games.BackglassNamingHelper;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.system.JCodec;
@@ -106,7 +106,7 @@ public class BackglassService implements InitializingBean {
    */
   public DirectB2SData getDirectB2SData(@Nullable Game game) {
     if (game != null) {
-      String directB2SFilename = EmulatorHelper.getBackglassFileName(game);
+      String directB2SFilename = BackglassNamingHelper.getBackglassFileName(game);
       String baseName = FilenameUtils.removeExtension(directB2SFilename).trim();
       DirectB2S b2s = cacheDirectB2SVersion.get(game.getEmulatorId() + "@" + baseName);
       if (b2s == null) {
@@ -243,7 +243,7 @@ public class BackglassService implements InitializingBean {
   public void upddateScoresDisplayState(Game game, boolean state) {
     if (game != null && game.getDirectB2SPath() != null) {
       File directB2SFile = game.getDirectB2SFile();
-      String directB2SFileName = EmulatorHelper.getBackglassFileName(game);
+      String directB2SFileName = BackglassNamingHelper.getBackglassFileName(game);
       DirectB2SData data = getDirectB2SData(directB2SFile, game.getEmulatorId(), directB2SFileName);
       if (data != null && data.getNbScores() > 0) {
         try {
@@ -619,7 +619,7 @@ public class BackglassService implements InitializingBean {
   @Nullable
   public DirectB2S getDirectB2SAndVersions(Game game) {
     if (game != null) {
-      String backglassFileName = EmulatorHelper.getBackglassFileName(game);
+      String backglassFileName = BackglassNamingHelper.getBackglassFileName(game);
       return reloadDirectB2SAndVersions(game.getEmulator(), backglassFileName);
     }
     return null;
@@ -836,7 +836,7 @@ public class BackglassService implements InitializingBean {
   public DirectB2sScreenRes getScreenRes(Game game, boolean perTableOnly) {
     if (game != null) {
       File b2sFile = game.getDirectB2SFile();
-      String b2sFilename = EmulatorHelper.getBackglassFileName(game);
+      String b2sFilename = BackglassNamingHelper.getBackglassFileName(game);
       DirectB2sScreenRes res = getScreenRes(b2sFile, perTableOnly);
       if (res != null) {
         res.setEmulatorId(game.getEmulatorId());
@@ -1249,7 +1249,7 @@ public class BackglassService implements InitializingBean {
       byte[] img = grabFromFrontendMedia(item);
       if (img != null) {
         String base64 = DatatypeConverter.printBase64Binary(img);
-        setDmdImage(game.getEmulatorId(), EmulatorHelper.getBackglassFileName(game), item.getFile().getName(), base64);
+        setDmdImage(game.getEmulatorId(), BackglassNamingHelper.getBackglassFileName(game), item.getFile().getName(), base64);
       }
     }
     catch (Exception ioe) {

@@ -764,7 +764,7 @@ public class Game {
   @NonNull
   @JsonIgnore
   public File getDirectB2SFile() {
-    return EmulatorHelper.getBackglassFile(this);
+    return BackglassNamingHelper.getBackglassFile(this);
   }
 
   public int getNbDirectB2S() {

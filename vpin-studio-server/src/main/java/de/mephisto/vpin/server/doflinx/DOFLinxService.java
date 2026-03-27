@@ -6,6 +6,8 @@ import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.doflinx.DOFLinxSettings;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
+import de.mephisto.vpin.server.games.BackglassNamingHelper;
+import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -13,6 +15,7 @@ import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,8 +26,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileReader;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Date;
+import java.util.*;
 
 @Service
 public class DOFLinxService implements InitializingBean, PreferenceChangedListener {
@@ -86,6 +88,11 @@ public class DOFLinxService implements InitializingBean, PreferenceChangedListen
     return null;
   }
 
+  @NonNull
+  public String getGameNameForAltSound(@NonNull String gameName) {
+    return FilenameUtils.getBaseName(gameName).replaceAll("Table_", "");
+  }
+
   private void startDOFLinx() {
     try {
       if (isValid()) {
@@ -102,9 +109,43 @@ public class DOFLinxService implements InitializingBean, PreferenceChangedListen
   }
 
   @Nullable
+  public File getBackglassFile(Game game) {
+    GameEmulator emulator = game.getEmulator();
+    B2SMapping mapping = BackglassNamingHelper.findBackglassName(game);
+    if (mapping != null) {
+      File backglassesFolder = getBackglassesFolder(emulator);
+      if (backglassesFolder != null && backglassesFolder.exists()) {
+        return new File(backglassesFolder, mapping.getDirectb2s());
+      }
+    }
+    return null;
+  }
+
+  @Nullable
   public File getBackglassesFolder(@NonNull GameEmulator gameEmulator) {
     if (isValid()) {
-      return new File(dofLinxSettings.getInstallationFolder(), "B2S");
+      INIConfiguration configuration = getConfiguration();
+      String path = null;
+      switch (gameEmulator.getType()) {
+        case ZenFX3: {
+          path = configuration.getString("PATH_FX3_B2S");
+          break;
+        }
+        case ZenFX: {
+          path = configuration.getString("PATH_FX_B2S");
+          break;
+        }
+        case PinballM: {
+          path = configuration.getString("PATH_LINX_B2S");
+          break;
+        }
+      }
+
+      if (path == null || !new File(path).exists()) {
+        return new File(getInstallationFolder(), "B2S");
+      }
+
+      return new File(path);
     }
     return null;
   }

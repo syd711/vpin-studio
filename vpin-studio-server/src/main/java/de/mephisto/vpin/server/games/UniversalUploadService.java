@@ -20,6 +20,7 @@ import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.backups.adapters.vpa.VpaService;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.dmd.DMDService;
+import de.mephisto.vpin.server.doflinx.DOFLinxService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.fp.FuturePinballService;
 import de.mephisto.vpin.server.highscores.HighscoreBackupService;
@@ -101,6 +102,9 @@ public class UniversalUploadService {
 
   @Autowired
   private HighscoreBackupService highscoreBackupService;
+
+  @Autowired
+  private DOFLinxService dofLinxService;
 
   @Autowired
   private VpaService vpaService;
@@ -390,12 +394,15 @@ public class UniversalUploadService {
     }
   }
 
-  private static void copyGameFileAsset(File temporaryUploadDescriptorBundleFile, Game game, AssetType assetType, @Nullable UploadType uploadType) throws IOException {
+  private void copyGameFileAsset(File temporaryUploadDescriptorBundleFile, Game game, AssetType assetType, @Nullable UploadType uploadType) throws IOException {
     String fileName = FilenameUtils.getBaseName(game.getGameFileName()) + "." + assetType.getExtension();
     File gameAssetFile = new File(game.getGameFile().getParentFile(), fileName);
 
-    if (AssetType.DIRECTB2S.equals(assetType)) {
-      gameAssetFile = EmulatorHelper.getBackglassFile(game);
+    if (AssetType.DIRECTB2S.equals(assetType) && game.getEmulator().isZenEmulator()) {
+      gameAssetFile = dofLinxService.getBackglassFile(game);
+    }
+    else if (AssetType.DIRECTB2S.equals(assetType)) {
+      gameAssetFile = BackglassNamingHelper.getBackglassFile(game);
     }
 
     if (UploadType.uploadAndAppend.equals(uploadType)) {
@@ -404,20 +411,25 @@ public class UniversalUploadService {
     }
 
     boolean replaced = false;
-    if (gameAssetFile.exists()) {
-      if (!gameAssetFile.delete()) {
-        LOG.error("Failed to delete existing game asset file {}", gameAssetFile.getAbsolutePath());
-        throw new UnsupportedOperationException("Failed to delete existing game asset file " + gameAssetFile.getAbsolutePath());
+    if(gameAssetFile != null) {
+      if (gameAssetFile.exists()) {
+        if (!gameAssetFile.delete()) {
+          LOG.error("Failed to delete existing game asset file {}", gameAssetFile.getAbsolutePath());
+          throw new UnsupportedOperationException("Failed to delete existing game asset file " + gameAssetFile.getAbsolutePath());
+        }
+        replaced = true;
       }
-      replaced = true;
-    }
 
-    org.apache.commons.io.FileUtils.copyFile(temporaryUploadDescriptorBundleFile, gameAssetFile);
-    if (replaced) {
-      LOG.info("Replaced \"{}\" with \"{}\"", gameAssetFile.getAbsolutePath(), temporaryUploadDescriptorBundleFile.getAbsolutePath());
+      org.apache.commons.io.FileUtils.copyFile(temporaryUploadDescriptorBundleFile, gameAssetFile);
+      if (replaced) {
+        LOG.info("Replaced \"{}\" with \"{}\"", gameAssetFile.getAbsolutePath(), temporaryUploadDescriptorBundleFile.getAbsolutePath());
+      }
+      else {
+        LOG.info("Copied \"{}\" to \"{}\"", temporaryUploadDescriptorBundleFile.getAbsolutePath(), gameAssetFile.getAbsolutePath());
+      }
     }
     else {
-      LOG.info("Copied \"{}\" to \"{}\"", temporaryUploadDescriptorBundleFile.getAbsolutePath(), gameAssetFile.getAbsolutePath());
+      LOG.warn("No matching game asset name found for game {} and asset type {}", game.getGameDisplayName(), assetType);
     }
   }
 

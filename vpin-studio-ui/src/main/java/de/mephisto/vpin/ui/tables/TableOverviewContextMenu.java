@@ -237,16 +237,16 @@ public class TableOverviewContextMenu {
       ctxMenu.getItems().add(pinVolItem);
     }
 
+    MenuItem reloadItem = new MenuItem("Reload");
+    KeyCombination reloadItemKey = new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN);
+    reloadItem.setAccelerator(reloadItemKey);
+    reloadItem.setGraphic(WidgetFactory.createIcon("mdi2r-refresh"));
+    reloadItem.setOnAction(actionEvent -> tableOverviewController.onTableReload());
+    ctxMenu.getItems().add(reloadItem);
+
+
     if (client.getEmulatorService().isVpxGame(game)) {
       ctxMenu.getItems().add(new SeparatorMenuItem());
-
-      MenuItem reloadItem = new MenuItem("Reload");
-      KeyCombination reloadItemKey = new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN);
-      reloadItem.setAccelerator(reloadItemKey);
-      reloadItem.setGraphic(WidgetFactory.createIcon("mdi2r-refresh"));
-      reloadItem.setOnAction(actionEvent -> tableOverviewController.onTableReload());
-      ctxMenu.getItems().add(reloadItem);
-
       MenuItem scanItem = new MenuItem("Scan");
       KeyCombination scanItemKey = new KeyCodeCombination(KeyCode.J, KeyCombination.CONTROL_DOWN);
       scanItem.setAccelerator(scanItemKey);

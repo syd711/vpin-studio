@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.restclient.vpinmame.VPinMameOptions;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.server.doflinx.DOFLinxService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.vpinmame.VPinMameService;
@@ -42,6 +43,9 @@ public class AltColorService implements InitializingBean {
 
   @Autowired
   private VPinMameService vPinMameService;
+
+  @Autowired
+  private DOFLinxService dofLinxService;
 
   @Autowired
   private GameLifecycleService gameLifecycleService;
@@ -101,7 +105,7 @@ public class AltColorService implements InitializingBean {
     File altColorFolder = null;
     if (game.isZenGame()) {
       File altColorFolderRoot = vPinMameService.getAltColorFolder();
-      altColorFolder = new File(altColorFolderRoot, game.getGameName());
+      altColorFolder = new File(altColorFolderRoot, dofLinxService.getGameNameForAltSound(game.getGameName()));
     }
     else if (!StringUtils.isEmpty(game.getRomAlias()) && game.getEmulator() != null) {
       altColorFolder = getAltColorFolder(game, game.getRomAlias());
@@ -179,8 +183,9 @@ public class AltColorService implements InitializingBean {
     installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.VNI, "pin2dmd.vni");
 
     if (game.isZenGame()) {
-      installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.CRZ, "pin2dmd." + UploaderAnalysis.SERUM_SUFFIX);
-      installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.CROMC, "pin2dmd." + UploaderAnalysis.CROMC_SUFFIX);
+      String name = dofLinxService.getGameNameForAltSound(game.getGameName());
+      installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.CRZ, name + "." + UploaderAnalysis.SERUM_SUFFIX);
+      installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.CROMC, name + "." + UploaderAnalysis.CROMC_SUFFIX);
     }
     else {
       installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.CRZ, game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX);
@@ -214,8 +219,9 @@ public class AltColorService implements InitializingBean {
         installAltColorFromFile(name, folder, out, "pin2dmd.vni");
         installAltColorFromFile(name, folder, out, "pin2dmd.pal");
         if (game.isZenGame()) {
-          installAltColorFromFile(name, folder, out, "pin2dmd." + UploaderAnalysis.SERUM_SUFFIX);
-          installAltColorFromFile(name, folder, out, "pin2dmd." + UploaderAnalysis.CROMC_SUFFIX);
+          String targetName = dofLinxService.getGameNameForAltSound(game.getGameName());
+          installAltColorFromFile(name, folder, out, targetName + "." + UploaderAnalysis.SERUM_SUFFIX);
+          installAltColorFromFile(name, folder, out, targetName + "." + UploaderAnalysis.CROMC_SUFFIX);
         }
         else {
           installAltColorFromFile(name, folder, out, game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX);

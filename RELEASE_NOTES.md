@@ -1,3 +1,7 @@
+## Release Notes 4.8.1
+
+- **DOFLinx**: Fixed upload for Zen ALTColor files.
+
 ## Release Notes 4.8.0
 
 - **VR Support (Experimental - feedback needed!)**: Added support to toggle your installation into VR mode. More details about this can be found here:

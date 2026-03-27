@@ -141,7 +141,7 @@ public class DirectB2SResource {
     if (game == null) {
       throw new RuntimeException("No Game found for id " + gameId);
     }
-    return getBackground(game.getEmulatorId(), EmulatorHelper.getBackglassFileName(game));
+    return getBackground(game.getEmulatorId(), BackglassNamingHelper.getBackglassFileName(game));
   }
 
   @GetMapping("/background/{emulatorId}/{fileName}")
@@ -160,7 +160,7 @@ public class DirectB2SResource {
     if (game == null) {
       throw new RuntimeException("No Game found for id " + gameId);
     }
-    return getDmdImage(game.getEmulatorId(), EmulatorHelper.getBackglassFileName(game));
+    return getDmdImage(game.getEmulatorId(), BackglassNamingHelper.getBackglassFileName(game));
   }
 
   @GetMapping("/dmdimage/{emulatorId}/{fileName}")
