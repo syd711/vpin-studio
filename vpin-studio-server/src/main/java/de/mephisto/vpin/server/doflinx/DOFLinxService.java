@@ -6,9 +6,11 @@ import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.doflinx.DOFLinxSettings;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.lang3.StringUtils;
@@ -100,7 +102,7 @@ public class DOFLinxService implements InitializingBean, PreferenceChangedListen
   }
 
   @Nullable
-  public File getBackglassesFolder() {
+  public File getBackglassesFolder(@NonNull GameEmulator gameEmulator) {
     if (isValid()) {
       return new File(dofLinxSettings.getInstallationFolder(), "B2S");
     }

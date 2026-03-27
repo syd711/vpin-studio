@@ -190,7 +190,7 @@ public class BackglassService implements InitializingBean {
   private File getB2sFile(int emuId, String filename) {
     GameEmulator emulator = emulatorService.getGameEmulator(emuId);
     if (emulator.isZenEmulator()) {
-      return new File(dofLinxService.getBackglassesFolder(), filename);
+      return new File(dofLinxService.getBackglassesFolder(emulator), filename);
     }
 
     if (emulator.getGamesDirectory() != null) {
@@ -561,7 +561,7 @@ public class BackglassService implements InitializingBean {
       }
 
       if (gameEmulator.isZenEmulator() && dofLinxService.isValid()) {
-        File b2sFolder = dofLinxService.getBackglassesFolder();
+        File b2sFolder = dofLinxService.getBackglassesFolder(gameEmulator);
         if (b2sFolder != null && b2sFolder.exists()) {
           LOG.info("Running emulator {} backglass scan for: {}", gameEmulator.getName(), b2sFolder.getAbsolutePath());
           loadBackglassForFolder(gameEmulator, b2sFolder);

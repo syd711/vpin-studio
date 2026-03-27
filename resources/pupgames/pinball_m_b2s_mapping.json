@@ -1,0 +1,37 @@
+[
+  {
+    "gameName": "Table_171",
+    "gameDisplayName": "Chucky's Killer Pinball",
+    "directb2s": "M_ChucksKiller.directb2s"
+  },
+  {
+    "gameName": "Table_174",
+    "gameDisplayName": "Dead By Daylight Pinball",
+    "directb2s": "M_DeadByDaylight.directb2s"
+  },
+  {
+    "gameName": "Table_176",
+    "gameDisplayName": "Duke Nukem's Big Shot Pinball",
+    "directb2s": "M_DukeNukemBigShot.directb2s"
+  },
+  {
+    "gameName": "Table_183",
+    "gameDisplayName": "System Shock Pinball",
+    "directb2s": "M_SystemShock.directb2s"
+  },
+  {
+    "gameName": "Table_180",
+    "gameDisplayName": "Texas Chainsaw Massacre Pinball",
+    "directb2s": "M_TexasChainsaw.directb2s"
+  },
+  {
+    "gameName": "Table_175",
+    "gameDisplayName": "The Thing Pinball",
+    "directb2s": "M_TheThing.directb2s"
+  },
+  {
+    "gameName": "Table_147",
+    "gameDisplayName": "Wrath of The Elder Gods",
+    "directb2s": "M_WrathElderGods.directb2s"
+  }
+]

@@ -175,8 +175,11 @@ public class EmulatorService implements InitializingBean, PreferenceChangedListe
         }
       }
 
-      if (emulator.isZenEmulator() && dofLinxService.isValid() && dofLinxService.getBackglassesFolder() != null) {
-        emulator.setBackglassDirectory(dofLinxService.getBackglassesFolder().getAbsolutePath());
+      if (emulator.isZenEmulator() && dofLinxService.isValid() && dofLinxService.getBackglassesFolder(emulator) != null) {
+        File backglassesFolder = dofLinxService.getBackglassesFolder(emulator);
+        if (backglassesFolder != null) {
+          emulator.setBackglassDirectory(backglassesFolder.getAbsolutePath());
+        }
       }
 
       emulators.put(emulator.getId(), emulator);
@@ -248,7 +251,7 @@ public class EmulatorService implements InitializingBean, PreferenceChangedListe
 
   @Override
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
-    if(PreferenceNames.DOFLINX_SETTINGS.equals(propertyName)) {
+    if (PreferenceNames.DOFLINX_SETTINGS.equals(propertyName)) {
       reloadEmulators();
     }
   }

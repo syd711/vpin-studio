@@ -1,0 +1,687 @@
+[
+  {
+    "gameName": "Table_188",
+    "gameDisplayName": "Banzai Run",
+    "directb2s": "WMSBanzaiRun.directb2s"
+  },
+  {
+    "gameName": "Table_189",
+    "gameDisplayName": "Earthshaker",
+    "directb2s": "WMSEarthShaker.directb2s"
+  },
+  {
+    "gameName": "Table_190",
+    "gameDisplayName": "Black Knight 2000",
+    "directb2s": "WMSBlackKnight2000.directb2s"
+  },
+  {
+    "gameName": "Table_184",
+    "gameDisplayName": "The Princess Bride Pinball",
+    "directb2s": "PrincessBride.directb2s"
+  },
+  {
+    "gameName": "Table_187",
+    "gameDisplayName": "Goat Simulator Pinball",
+    "directb2s": "GoatSimulator.directb2s"
+  },
+  {
+    "gameName": "Table_177",
+    "gameDisplayName": "Knight Rider Pinball",
+    "directb2s": "KnightRider.directb2s"
+  },
+  {
+    "gameName": "Table_167",
+    "gameDisplayName": "Xena Princess Warrior",
+    "directb2s": "XENA.directb2s"
+  },
+  {
+    "gameName": "Table_186",
+    "gameDisplayName": "Pacific Rim Pinball",
+    "directb2s": "PacificRim.directb2s"
+  },
+  {
+    "gameName": "Table_170",
+    "gameDisplayName": "Battlestar Galactica",
+    "directb2s": "BSGalactica.directb2s"
+  },
+  {
+    "gameName": "Table_36",
+    "gameDisplayName": "Football Super League",
+    "directb2s": "FootballSL.directb2s"
+  },
+  {
+    "gameName": "Table_166",
+    "gameDisplayName": "Star Trek Pinball: Kelvin Timeline",
+    "directb2s": "StarTrekKelvinTimeline.directb2s"
+  },
+  {
+    "gameName": "Table_169",
+    "gameDisplayName": "Star Trek Pinball: Pinball Discovery",
+    "directb2s": "StarTrekDiscovery.directb2s"
+  },
+  {
+    "gameName": "Table_172",
+    "gameDisplayName": "Star Trek Pinball: Deep Space Nine",
+    "directb2s": "StarTrekDeepSpaceNine.directb2s"
+  },
+  {
+    "gameName": "Table_173",
+    "gameDisplayName": "Terraforming Mars Pinball",
+    "directb2s": "TerraformingMars.directb2s"
+  },
+  {
+    "gameName": "Table_178",
+    "gameDisplayName": "Exploding Kittens: A Pinball Cat-astrophe",
+    "directb2s": "ExplodingKittens.directb2s"
+  },
+  {
+    "gameName": "Table_179",
+    "gameDisplayName": "Gloomhaven Pinball",
+    "directb2s": "Gloomhaven.directb2s"
+  },
+  {
+    "gameName": "Table_181",
+    "gameDisplayName": "A Charlie Brown Christmas Pinball",
+    "directb2s": "CharlieBrownChristmas.directb2s"
+  },
+  {
+    "gameName": "Table_20",
+    "gameDisplayName": "Excalibur",
+    "directb2s": "Excalibur.directb2s"
+  },
+  {
+    "gameName": "Table_67",
+    "gameDisplayName": "Epic Quest",
+    "directb2s": "EpicQuest.directb2s"
+  },
+  {
+    "gameName": "Table_59",
+    "gameDisplayName": "X-Men",
+    "directb2s": "XMen.directb2s"
+  },
+  {
+    "gameName": "Table_56",
+    "gameDisplayName": "World War Hulk",
+    "directb2s": "WorldWarHulk.directb2s"
+  },
+  {
+    "gameName": "Table_71",
+    "gameDisplayName": "Wolverine",
+    "directb2s": "Wolverine.directb2s"
+  },
+  {
+    "gameName": "Table_73",
+    "gameDisplayName": "Venom",
+    "directb2s": "Venom.directb2s"
+  },
+  {
+    "gameName": "Table_7",
+    "gameDisplayName": "Thor",
+    "directb2s": "Thor.directb2s"
+  },
+  {
+    "gameName": "Table_103",
+    "gameDisplayName": "The Last Jedi",
+    "directb2s": "StarWarsLastJedi.directb2s"
+  },
+  {
+    "gameName": "Table_60",
+    "gameDisplayName": "The Infinity Gauntlet",
+    "directb2s": "TheInfinityGauntlet.directb2s"
+  },
+  {
+    "gameName": "Table_88",
+    "gameDisplayName": "The Force Awakens",
+    "directb2s": "StarWarsPinballTheForceAwakens.directb2s"
+  },
+  {
+    "gameName": "Table_47",
+    "gameDisplayName": "The Clone Wars",
+    "directb2s": "StarWarsTheCloneWars.directb2s"
+  },
+  {
+    "gameName": "Table_6",
+    "gameDisplayName": "Starfighter Assault",
+    "directb2s": "StarWarsStarfighterAssault.directb2s"
+  },
+  {
+    "gameName": "Table_77",
+    "gameDisplayName": "Star Wars Rebels",
+    "directb2s": "StarWarsPinballStarWarsRebels.directb2s"
+  },
+  {
+    "gameName": "Table_46",
+    "gameDisplayName": "Spider-Man",
+    "directb2s": "Spiderman.directb2s"
+  },
+  {
+    "gameName": "Table_4",
+    "gameDisplayName": "South Park Pinball",
+    "directb2s": "SouthParkSuperSweetPinball.directb2s"
+  },
+  {
+    "gameName": "Table_80",
+    "gameDisplayName": "Son of Zeus",
+    "directb2s": "SonOfZeus.directb2s"
+  },
+  {
+    "gameName": "Table_105",
+    "gameDisplayName": "Solo",
+    "directb2s": "StarWarsSolo.directb2s"
+  },
+  {
+    "gameName": "Table_31",
+    "gameDisplayName": "Rome",
+    "directb2s": "Rome.directb2s"
+  },
+  {
+    "gameName": "Table_98",
+    "gameDisplayName": "Rogue One",
+    "directb2s": "StarWarsPinballRogueOne.directb2s"
+  },
+  {
+    "gameName": "Table_23",
+    "gameDisplayName": "Pasha",
+    "directb2s": "Pasha.directb2s"
+  },
+  {
+    "gameName": "Table_49",
+    "gameDisplayName": "Moon Knight",
+    "directb2s": "MoonKnight.directb2s"
+  },
+  {
+    "gameName": "Table_89",
+    "gameDisplayName": "Might of the First Order",
+    "directb2s": "StarWarsPinballMightoftheFirstOrder.directb2s"
+  },
+  {
+    "gameName": "Table_2",
+    "gameDisplayName": "Masters of the Force",
+    "directb2s": "StarWarsPinballMastersoftheForce.directb2s"
+  },
+  {
+    "gameName": "Table_94",
+    "gameDisplayName": "Marvel's Women of Power: Champions",
+    "directb2s": "MarvelsWomenofPowerChampions.directb2s"
+  },
+  {
+    "gameName": "Table_93",
+    "gameDisplayName": "Marvel's Women of Power: A-Force",
+    "directb2s": "MarvelsWomenofPowerAForce.directb2s"
+  },
+  {
+    "gameName": "Table_17",
+    "gameDisplayName": "Marvel's The Avengers",
+    "directb2s": "MarvelsTheAvengers.directb2s"
+  },
+  {
+    "gameName": "Table_50",
+    "gameDisplayName": "Marvel's Guardians of the Galaxy",
+    "directb2s": "GuardiansoftheGalaxy.directb2s"
+  },
+  {
+    "gameName": "Table_78",
+    "gameDisplayName": "Marvel's Avengers: Age of Ultron",
+    "directb2s": "MarvelsAvengersAgeofUltron.directb2s"
+  },
+  {
+    "gameName": "Table_79",
+    "gameDisplayName": "Marvel's Ant-Man",
+    "directb2s": "MarvelsAntMan.directb2s"
+  },
+  {
+    "gameName": "Table_101",
+    "gameDisplayName": "Jurassic World Pinball",
+    "directb2s": "JurassicWorld.directb2s"
+  },
+  {
+    "gameName": "Table_102",
+    "gameDisplayName": "Jurassic Park Pinball Mayhem",
+    "directb2s": "JurassicMayhem.directb2s"
+  },
+  {
+    "gameName": "Table_100",
+    "gameDisplayName": "Jurassic Park Pinball",
+    "directb2s": "JurassicPark.directb2s"
+  },
+  {
+    "gameName": "Table_65",
+    "gameDisplayName": "Iron Man",
+    "directb2s": "IronMan.directb2s"
+  },
+  {
+    "gameName": "Table_126",
+    "gameDisplayName": "Hurricane",
+    "directb2s": "WMSHurricane.directb2s"
+  },
+  {
+    "gameName": "Table_10",
+    "gameDisplayName": "Han Solo",
+    "directb2s": "StarWarsPinballHanSolo.directb2s"
+  },
+  {
+    "gameName": "Table_21",
+    "gameDisplayName": "Ghost Rider",
+    "directb2s": "GhostRider.directb2s"
+  },
+  {
+    "gameName": "Table_5",
+    "gameDisplayName": "Fear Itself",
+    "directb2s": "FearItself.directb2s"
+  },
+  {
+    "gameName": "Table_38",
+    "gameDisplayName": "Fantastic Four",
+    "directb2s": "FantasticFour.directb2s"
+  },
+  {
+    "gameName": "Table_24",
+    "gameDisplayName": "Episode VI Return of the Jedi",
+    "directb2s": "StarWarsEpisodeVIReturnoftheJedi.directb2s"
+  },
+  {
+    "gameName": "Table_43",
+    "gameDisplayName": "Episode V The Empire Strikes Back",
+    "directb2s": "StarWarsEpisodeVTheEmpireStrikesBack.directb2s"
+  },
+  {
+    "gameName": "Table_12",
+    "gameDisplayName": "Episode IV A New Hope",
+    "directb2s": "StarWarsPinballEpisodeIVANewHope.directb2s"
+  },
+  {
+    "gameName": "Table_96",
+    "gameDisplayName": "E.T. Pinball",
+    "directb2s": "ET.directb2s"
+  },
+  {
+    "gameName": "Table_58",
+    "gameDisplayName": "Droids",
+    "directb2s": "StarWarsPinballDroids.directb2s"
+  },
+  {
+    "gameName": "Table_30",
+    "gameDisplayName": "Doctor Strange",
+    "directb2s": "DoctorStrange.directb2s"
+  },
+  {
+    "gameName": "Table_22",
+    "gameDisplayName": "Deadpool",
+    "directb2s": "Deadpool.directb2s"
+  },
+  {
+    "gameName": "Table_28",
+    "gameDisplayName": "Darth Vader",
+    "directb2s": "STARWARSDARTHVADER.directb2s"
+  },
+  {
+    "gameName": "Table_1",
+    "gameDisplayName": "Civil War",
+    "directb2s": "CivilWar.directb2s"
+  },
+  {
+    "gameName": "Table_40",
+    "gameDisplayName": "Castle Storm",
+    "directb2s": "CastleStorm.directb2s"
+  },
+  {
+    "gameName": "Table_48",
+    "gameDisplayName": "Captain America",
+    "directb2s": "CaptainAmerica.directb2s"
+  },
+  {
+    "gameName": "Table_106",
+    "gameDisplayName": "Calrissian Chronicles",
+    "directb2s": "StarWarsCalrissianChronicles.directb2s"
+  },
+  {
+    "gameName": "Table_55",
+    "gameDisplayName": "Butters' Very Own Pinball Game",
+    "directb2s": "SouthParkButtersVeryOwnPinballGame.directb2s"
+  },
+  {
+    "gameName": "Table_45",
+    "gameDisplayName": "Blade",
+    "directb2s": "BLade.directb2s"
+  },
+  {
+    "gameName": "Table_27",
+    "gameDisplayName": "Biolab",
+    "directb2s": "BioLab.directb2s"
+  },
+  {
+    "gameName": "Table_107",
+    "gameDisplayName": "Battle of Mimban",
+    "directb2s": "StarWarsBattleOfMimban.directb2s"
+  },
+  {
+    "gameName": "Table_97",
+    "gameDisplayName": "Back to the Future Pinball",
+    "directb2s": "BackToTheFuture.directb2s"
+  },
+  {
+    "gameName": "Table_104",
+    "gameDisplayName": "Ahch-To Island",
+    "directb2s": "StarWarsAhchToIsland.directb2s"
+  },
+  {
+    "gameName": "Table_29",
+    "gameDisplayName": "Adventure Land",
+    "directb2s": "AdventureLand.directb2s"
+  },
+  {
+    "gameName": "Table_154",
+    "gameDisplayName": "World War Z Pinball",
+    "directb2s": "WorldWarZ.directb2s"
+  },
+  {
+    "gameName": "Table_157",
+    "gameDisplayName": "World Cup Soccer",
+    "directb2s": "WMSWorldCupSoccer.directb2s"
+  },
+  {
+    "gameName": "Table_124",
+    "gameDisplayName": "White Water",
+    "directb2s": "WMSWhiteWater.directb2s"
+  },
+  {
+    "gameName": "Table_168",
+    "gameDisplayName": "Whirlwind",
+    "directb2s": "WMSWhirlwind.directb2s"
+  },
+  {
+    "gameName": "Table_164",
+    "gameDisplayName": "Vern's Mysterious Island",
+    "directb2s": "VernesMysteriousIsland.directb2s"
+  },
+  {
+    "gameName": "Table_162",
+    "gameDisplayName": "Twilight Zone",
+    "directb2s": "WMSTwilightZone.directb2s"
+  },
+  {
+    "gameName": "Table_140",
+    "gameDisplayName": "Trolls Pinball",
+    "directb2s": "Trolls.directb2s"
+  },
+  {
+    "gameName": "Table_136",
+    "gameDisplayName": "The Mandalorian",
+    "directb2s": "StarWarsTheMandalorian.directb2s"
+  },
+  {
+    "gameName": "Table_156",
+    "gameDisplayName": "Addams Family The ",
+    "directb2s": "WMSAddamsFamily.directb2s"
+  },
+  {
+    "gameName": "Table_132",
+    "gameDisplayName": "Tales of the Arabian Nights",
+    "directb2s": "WMSTalesoftheArabianNights.directb2s"
+  },
+  {
+    "gameName": "Table_163",
+    "gameDisplayName": "Star Trek TNG",
+    "directb2s": "WMSStarTrektheNextGeneration.directb2s"
+  },
+  {
+    "gameName": "Table_113",
+    "gameDisplayName": "Sky Pirates:Treasures of the Clouds",
+    "directb2s": "SkyPirates.directb2s"
+  },
+  {
+    "gameName": "Table_66",
+    "gameDisplayName": "Secrets of the Deep",
+    "directb2s": "SecretsoftheDeep.directb2s"
+  },
+  {
+    "gameName": "Table_125",
+    "gameDisplayName": "Red and Ted's Road Show",
+    "directb2s": "WMSRedAndTedRoadShow.directb2s"
+  },
+  {
+    "gameName": "Table_123",
+    "gameDisplayName": "Pinball Noir",
+    "directb2s": "Noir.directb2s"
+  },
+  {
+    "gameName": "Table_146",
+    "gameDisplayName": "Peanuts' Snoopy Pinball",
+    "directb2s": "PeanutsSnoopy.directb2s"
+  },
+  {
+    "gameName": "Table_128",
+    "gameDisplayName": "No Good Gofers",
+    "directb2s": "WMSNoGoodGofers.directb2s"
+  },
+  {
+    "gameName": "Table_130",
+    "gameDisplayName": "Monster Bash",
+    "directb2s": "WMSMonsterBash.directb2s"
+  },
+  {
+    "gameName": "Table_139",
+    "gameDisplayName": "Kung Fu Panda Pinball",
+    "directb2s": "KungFuPanda.directb2s"
+  },
+  {
+    "gameName": "Table_153",
+    "gameDisplayName": "Kong Pinball",
+    "directb2s": "Kong.directb2s"
+  },
+  {
+    "gameName": "Table_95",
+    "gameDisplayName": "Jaws Pinball",
+    "directb2s": "Jaws.directb2s"
+  },
+  {
+    "gameName": "Table_141",
+    "gameDisplayName": "How to Train Your Dragon Pinball",
+    "directb2s": "Dragons.directb2s"
+  },
+  {
+    "gameName": "Table_138",
+    "gameDisplayName": "Hasbro's MY LITTLE PONY",
+    "directb2s": "MyLittlePony.directb2s"
+  },
+  {
+    "gameName": "Table_155",
+    "gameDisplayName": "Grimm Tales",
+    "directb2s": "GrimmTale.directb2s"
+  },
+  {
+    "gameName": "Table_160",
+    "gameDisplayName": "Godzilla vs Kong Pinball",
+    "directb2s": "GodzillavsKong.directb2s"
+  },
+  {
+    "gameName": "Table_158",
+    "gameDisplayName": "Godzilla Pinball",
+    "directb2s": "Godzilla.directb2s"
+  },
+  {
+    "gameName": "Table_145",
+    "gameDisplayName": "Garfield Pinball",
+    "directb2s": "Garfield.directb2s"
+  },
+  {
+    "gameName": "Table_112",
+    "gameDisplayName": "Curse of the Mummy",
+    "directb2s": "CurseMummy.directb2s"
+  },
+  {
+    "gameName": "Table_161",
+    "gameDisplayName": "Crypt of the NecroDancer Pinball",
+    "directb2s": "CryptoftheNecrodancer.directb2s"
+  },
+  {
+    "gameName": "Table_131",
+    "gameDisplayName": "Creature from the Black Lagoon",
+    "directb2s": "BallyCreatureBlackLagoon.directb2s"
+  },
+  {
+    "gameName": "Table_137",
+    "gameDisplayName": "Classic Collectibles",
+    "directb2s": "StarWarsClassicCollectibles.directb2s"
+  },
+  {
+    "gameName": "Table_127",
+    "gameDisplayName": "Cirqus Voltaire",
+    "directb2s": "WMSCirqusVoltaire.directb2s"
+  },
+  {
+    "gameName": "Table_151",
+    "gameDisplayName": "Brothers in Arms: Win the War Pinball",
+    "directb2s": "BrothersinArms.directb2s"
+  },
+  {
+    "gameName": "Table_152",
+    "gameDisplayName": "Borderlands: Vault Hunter Pinball",
+    "directb2s": "BorderlandsVaultHunter.directb2s"
+  },
+  {
+    "gameName": "Table_53",
+    "gameDisplayName": "Boba Fett",
+    "directb2s": "BobaFett.directb2s"
+  },
+  {
+    "gameName": "Table_165",
+    "gameDisplayName": "A Samurai's Vengeance",
+    "directb2s": "SamiuraisVengence.directb2s"
+  },
+  {
+    "gameName": "Table_147",
+    "gameDisplayName": "Wrath of the Elder Gods",
+    "directb2s": "WrathoftheElderGods.directb2s"
+  },
+  {
+    "gameName": "Table_75",
+    "gameDisplayName": "Wild West Rampage",
+    "directb2s": "WildWestRampage.directb2s"
+  },
+  {
+    "gameName": "Table_117",
+    "gameDisplayName": "Theatre of Magic",
+    "directb2s": "BallyTheatreOfMagic.directb2s"
+  },
+  {
+    "gameName": "Table_120",
+    "gameDisplayName": "Party Zone The",
+    "directb2s": "BallyPartyZone.directb2s"
+  },
+  {
+    "gameName": "Table_148",
+    "gameDisplayName": "The Machine : Bride of Pin-Bot",
+    "directb2s": "WMSBrideofPinBot.directB2S"
+  },
+  {
+    "gameName": "Table_111",
+    "gameDisplayName": "Getaway: High Speed II The ",
+    "directb2s": "WMSGetaway.directb2s"
+  },
+  {
+    "gameName": "Table_121",
+    "gameDisplayName": "Champion Pub The ",
+    "directb2s": "BallyTheChampionPub.directb2s"
+  },
+  {
+    "gameName": "Table_149",
+    "gameDisplayName": "Swords of Fury",
+    "directb2s": "WMSSwordsofFury.directb2s"
+  },
+  {
+    "gameName": "Table_129",
+    "gameDisplayName": "Space Station",
+    "directb2s": "WMSSpaceStation.directb2s"
+  },
+  {
+    "gameName": "Table_33",
+    "gameDisplayName": "Sorcerer's Lair",
+    "directb2s": "SorcerersLair.directb2s"
+  },
+  {
+    "gameName": "Table_122",
+    "gameDisplayName": "Safe Cracker",
+    "directb2s": "BallySafeCracker.directb2s"
+  },
+  {
+    "gameName": "Table_109",
+    "gameDisplayName": "Medieval Madness",
+    "directb2s": "WMSMedievalMadness.directb2s"
+  },
+  {
+    "gameName": "Table_110",
+    "gameDisplayName": "JunkYard",
+    "directb2s": "WMSJunkYard.directb2s"
+  },
+  {
+    "gameName": "Table_133",
+    "gameDisplayName": "Indiana Jones: The Pinball Adventure",
+    "directb2s": "WMSIndianaJones.directb2s"
+  },
+  {
+    "gameName": "Table_150",
+    "gameDisplayName": "Homeworld Journey to Hiigara",
+    "directb2s": "HomeworldJourneytoHiigara.directb2s"
+  },
+  {
+    "gameName": "Table_134",
+    "gameDisplayName": "FunHouse",
+    "directb2s": "WMSFunHouse.directb2s"
+  },
+  {
+    "gameName": "Table_108",
+    "gameDisplayName": "Fish Tales",
+    "directb2s": "WMSFishTales.directb2s"
+  },
+  {
+    "gameName": "Table_135",
+    "gameDisplayName": "Dr. Dude and his Excellent Ray (FX)",
+    "directb2s": "MidwayDrDude.directb2s"
+  },
+  {
+    "gameName": "Table_118",
+    "gameDisplayName": "Black Rose",
+    "directb2s": "BallyBlackRose.directb2s"
+  },
+  {
+    "gameName": "Table_119",
+    "gameDisplayName": "Attack from Mars",
+    "directb2s": "BallyAttackFromMars.directb2s"
+  },
+  {
+    "gameName": "Table_182",
+    "gameDisplayName": "Tomb Raider Pinball: Adventures of Lara Croft",
+    "directb2s": null
+  },
+  {
+    "gameName": "Table_192",
+    "gameDisplayName": "Tomb Raider Pinball: Secrets of Croft Manor",
+    "directb2s": null
+  },
+  {
+    "gameName": "Table_194",
+    "gameDisplayName": "PIN BOT",
+    "directb2s": "WMSPinbot.directb2s"
+  },
+  {
+    "gameName": "Table_195",
+    "gameDisplayName": "WHO dunnit",
+    "directb2s": "WMSWhoDunnit.directb2s"
+  },
+  {
+    "gameName": "Table_196",
+    "gameDisplayName": "TAXI",
+    "directb2s": "WMSTaxi.directb2s"
+  },
+  {
+    "gameName": "Table_198",
+    "gameDisplayName": "Scared Stiff",
+    "directb2s": "ScaredStiff.directb2s"
+  },
+  {
+    "gameName": "Table_197",
+    "gameDisplayName": "Elvira and the Party Monsters",
+    "directb2s": "ElviraPartyMonsters.directb2s"
+  }
+]
