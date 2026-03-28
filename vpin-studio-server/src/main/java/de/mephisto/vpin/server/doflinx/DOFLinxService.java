@@ -4,8 +4,11 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.components.ComponentSummary;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.doflinx.DOFLinxSettings;
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
+import de.mephisto.vpin.server.frontend.popper.pupgames.PUPGameImporter;
 import de.mephisto.vpin.server.games.BackglassNamingHelper;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
@@ -89,8 +92,20 @@ public class DOFLinxService implements InitializingBean, PreferenceChangedListen
   }
 
   @NonNull
-  public String getGameNameForAltSound(@NonNull String gameName) {
-    return FilenameUtils.getBaseName(gameName).replaceAll("Table_", "");
+  public String getGameNameForAltSound(@NonNull Game game) {
+    if (game.getEmulator().getType().equals(EmulatorType.ZenFX) || game.getEmulator().getType().equals(EmulatorType.PinballM)) {
+      return FilenameUtils.getBaseName(game.getGameName()).replaceAll("Table_", "");
+    }
+
+    if (game.getEmulator().getType().equals(EmulatorType.ZenFX3)) {
+      GameEmulator emulator = game.getEmulator();
+      List<TableDetails> tableDetailList = PUPGameImporter.read(emulator.getType(), emulator.getId());
+      Optional<TableDetails> td = tableDetailList.stream().filter(t -> t.getGameName().equals(game.getGameName())).findFirst();
+      if (td.isPresent()) {
+        return td.get().getManufacturer().toUpperCase() + "_" + game.getGameDisplayName().replaceAll(" ", "_");
+      }
+    }
+    return game.getRom();
   }
 
   private void startDOFLinx() {

@@ -2,7 +2,9 @@
 
 - **ALTColor**: Fixed upload for Zen ALTColor files.
 - **ZEN Games**: Fixed upload and detection of backglass files for Zen Studio games. I did not do my homework here and the whole feature needs probably a few more releases to mature.
+- **MAME Games**: Added option not only to import existing ROMs, but also to upload new ones (which will also result in a game creation for the frontend).
 - **VPX Launcher**: Added auto-focus of the **Visual Pinball Player** window after a VPX table has been launched.
+- **Wheel Augmenatation**: The augmented wheel rotation is skipped if the playfield is roated already.
 
 ---
 

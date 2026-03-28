@@ -19,7 +19,7 @@ public class WheelAugmentationTest {
 
     WheelAugmenter augmenter = new WheelAugmenter(wheelIcon);
     augmenter.deAugment();
-    augmenter.augment(badge);
+    augmenter.augment(badge, false);
 
     assertNotEquals(augmenter.getBackupWheelIcon().length(), 0);
     assertNotEquals(augmenter.getBackupWheelIcon().length(), wheelIcon.length());

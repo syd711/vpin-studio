@@ -108,6 +108,9 @@ public class PopperSettingsPreferencesController implements Initializable {
   @FXML
   private CheckBox volumeChange;
 
+  @FXML
+  private CheckBox autoStart;
+
   private PopperSettings popperSettings;
 
 
@@ -299,6 +302,12 @@ public class PopperSettingsPreferencesController implements Initializable {
       popperSettings.setWatchDog(t1);
       save();
     });
+
+    autoStart.setSelected(popperSettings.isAutoStart());
+    autoStart.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      popperSettings.setAutoStart(t1);
+      save();
+    });
   }
 
   private void save() {
@@ -347,6 +356,7 @@ public class PopperSettingsPreferencesController implements Initializable {
     wheelUpdateMS.setDisable(b);
     joyAxisMove.setDisable(b);
     volumeChange.setDisable(b);
+    autoStart.setDisable(b);
   }
 
   static class FadeoutLoading {

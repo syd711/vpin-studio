@@ -34,6 +34,15 @@ public class PopperSettings extends JsonSettings {
   private boolean useAltWheels = false;
   private boolean watchDog;
   private String globalMediaDir;
+  private boolean autoStart;
+
+  public boolean isAutoStart() {
+    return autoStart;
+  }
+
+  public void setAutoStart(boolean autoStart) {
+    this.autoStart = autoStart;
+  }
 
   public String getGlobalMediaDir() {
     return globalMediaDir;
@@ -273,6 +282,8 @@ public class PopperSettings extends JsonSettings {
     builder.append("VolumeChange=" + (volumeChange ? "1" : "0"));
     builder.append("\r\n");
     builder.append("useAltWheels=" + (useAltWheels ? "1" : "0"));
+    builder.append("\r\n");
+    builder.append("autoStart=" + (autoStart ? "1" : "0"));
 
     return builder.toString();
   }
@@ -389,6 +400,10 @@ public class PopperSettings extends JsonSettings {
               }
               case "Watchdog": {
                 this.watchDog = value == 1;
+                break;
+              }
+              case "autoStart": {
+                this.autoStart = value == 1;
                 break;
               }
             }
