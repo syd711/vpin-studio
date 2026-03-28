@@ -138,7 +138,7 @@ public class PupPacksResource {
     }
     catch (
         Exception e) {
-      LOG.error(AssetType.PUP_PACK.name() + " upload failed: " + e.getMessage(), e);
+      LOG.error("{} upload failed: {}", AssetType.PUP_PACK.name(), e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.PUP_PACK.name() + " upload failed: " + e.getMessage());
     }
     finally {

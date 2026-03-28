@@ -7,6 +7,7 @@
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitMenuButton?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.Tooltip?>
@@ -15,7 +16,6 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<?import javafx.scene.control.SeparatorMenuItem?>
 <BorderPane xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.ToolbarController">
    <center>
       <BorderPane fx:id="mainToolbar" stylesheets="@stylesheet.css">
@@ -47,6 +47,14 @@
                               <Font size="14.0" />
                            </font>
                         </Button>
+                        <ToggleButton fx:id="vrModeButton" mnemonicParsing="false" onAction="#onVrToggle" text="VR Mode">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="#898989" iconLiteral="mdi2c-circle-slice-8" iconSize="18" />
+                           </graphic>
+                        </ToggleButton>
                         <ToggleButton fx:id="maintenanceBtn" maxWidth="150.0" mnemonicParsing="false" onAction="#onMaintenance" text="Maintenance Mode">
                            <HBox.margin>
                               <Insets />
@@ -139,7 +147,7 @@
                               <SeparatorMenuItem />
                               <MenuItem mnemonicParsing="false" onAction="#onClearCache" text="Clear Cache">
                                   <graphic>
-                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18"/>
+                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
                                   </graphic>
                               </MenuItem>
                               <SeparatorMenuItem />

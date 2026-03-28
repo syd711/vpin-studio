@@ -50,7 +50,7 @@ public class FrontendRecorderJob implements Job {
         continue;
       }
 
-      LOG.info("************************ \"" + game.getGameDisplayName() + "\" ************************");
+      LOG.info("************************ \"{}\" ************************", game.getGameDisplayName());
       try {
         if (jobDescriptor.isFinished() || jobDescriptor.isCancelled()) {
           break;
@@ -100,7 +100,7 @@ public class FrontendRecorderJob implements Job {
         }
 
         updateSingleProgress(jobDescriptor, recordingDataSummary, 90);
-        LOG.info("Recording for \"" + game.getGameDisplayName() + "\" finished.");
+        LOG.info("Recording for \"{}\" finished.", game.getGameDisplayName());
         jobDescriptor.setTasksExecuted(jobDescriptor.getTasksExecuted() + 1);
         double progress = jobDescriptor.getTasksExecuted() * 100d / recordingDataSummary.size() / 100d;
         jobDescriptor.setProgress(progress);
@@ -116,7 +116,7 @@ public class FrontendRecorderJob implements Job {
         recorderService.notifyGameAssetsChanged(game.getId(), AssetType.FRONTEND_MEDIA, null);
       }
     }
-    LOG.info("Recordings for " + recordingDataSummary.size() + " games finished.");
+    LOG.info("Recordings for {} games finished.", recordingDataSummary.size());
     jobDescriptor.setProgress(1);
     jobDescriptor.setGameId(-1);
 
@@ -141,7 +141,7 @@ public class FrontendRecorderJob implements Job {
   public void cancel(JobDescriptor jobDescriptor) {
     FrontendConnector frontend = recorderService.getFrontendConnector();
     frontend.killFrontend();
-    LOG.info("Cancelling recorder job, " + jobDescriptor.getTasksExecuted() + " of " + this.recordingDataSummary.size() + " processed.");
+    LOG.info("Cancelling recorder job, {} of {} processed.", jobDescriptor.getTasksExecuted(), this.recordingDataSummary.size());
     if (gameRecorder != null) {
       gameRecorder.cancel(jobDescriptor);
     }

@@ -15,7 +15,7 @@ import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.ValidationStateFactory;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
-import de.mephisto.vpin.restclient.mame.MameOptions;
+import de.mephisto.vpin.restclient.vpinmame.VPinMameOptions;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.util.MimeTypeUtil;
@@ -27,8 +27,9 @@ import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.highscores.HighscoreResolver;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegService;
-import de.mephisto.vpin.server.mame.MameRomAliasService;
-import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.music.MusicService;
+import de.mephisto.vpin.server.vpinmame.VPinMameRomAliasService;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
@@ -77,7 +78,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
   private PupPacksService pupPacksService;
 
   @Autowired
-  private MameService mameService;
+  private VPinMameService vPinMameService;
 
   @Autowired
   private FrontendService frontendService;
@@ -92,7 +93,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
   private HighscoreResolver highscoreResolver;
 
   @Autowired
-  private MameRomAliasService mameRomAliasService;
+  private VPinMameRomAliasService VPinMameRomAliasService;
 
   @Autowired
   private GameDetailsRepositoryService gameDetailsRepositoryService;
@@ -105,6 +106,9 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
   @Autowired
   private VPXService vpxService;
+
+  @Autowired
+  private MusicService musicService;
 
   @Autowired
   private FolderLookupService folderLookupService;
@@ -137,7 +141,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (isVPX && isValidationEnabled(game, CODE_ROM_INVALID)) {
-      if (!StringUtils.isEmpty(game.getRom()) && !mameService.isValidRom(game.getRom())) {
+      if (!StringUtils.isEmpty(game.getRom()) && !vPinMameService.isValidRom(game.getRom())) {
         result.add(ValidationStateFactory.create(GameValidationCode.CODE_ROM_INVALID));
         if (findFirst) {
           return result;
@@ -146,7 +150,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (isVPX && isValidationEnabled(game, GameValidationCode.CODE_ROM_NOT_EXISTS)) {
-      if (game.isRomRequired() && !mameService.isRomExists(game)) {
+      if (game.isRomRequired() && !vPinMameService.isRomExists(game)) {
         result.add(ValidationStateFactory.create(GameValidationCode.CODE_ROM_NOT_EXISTS));
         if (findFirst) {
           return result;
@@ -351,6 +355,13 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         }
       }
     }
+
+    if (isVPX && isValidationEnabled(game, CODE_MUSIC_FILE_MISSING)) {
+      List<String> missingResources = musicService.getMissingMp3Files(game);
+      if (missingResources != null && !missingResources.isEmpty()) {
+        result.add(ValidationStateFactory.create(CODE_MUSIC_FILE_MISSING, missingResources));
+      }
+    }
     return result;
   }
 
@@ -510,8 +521,8 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     List<ValidationState> result = new ArrayList<>();
 
     if (isValidationEnabled(game, CODE_FORCE_STEREO) && !StringUtils.isEmpty(game.getRom()) && !game.isAltSoundAvailable()) {
-      MameOptions gameOptions = mameService.getOptions(game.getRom());
-      MameOptions options = mameService.getOptions(MameOptions.DEFAULT_KEY);
+      VPinMameOptions gameOptions = vPinMameService.getOptions(game.getRom());
+      VPinMameOptions options = vPinMameService.getOptions(VPinMameOptions.DEFAULT_KEY);
 
       if (gameOptions.isExistInRegistry()) {
         //no in registry, so check against defaults
@@ -543,7 +554,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
     // skip this check in standalone as DmdDevice is part of the VPX bundle
     if (!Features.IS_STANDALONE) {
-      File mameFolder = mameService.getMameFolder();
+      File mameFolder = vPinMameService.getMameFolder();
       File dmdDevicedll = new File(mameFolder, "DmdDevice.dll");
       File dmdDevice64dll = new File(mameFolder, "DmdDevice64.dll");
       File dmdextexe = new File(mameFolder, "dmdext.exe");
@@ -602,7 +613,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (game.isVpxGame() && !StringUtils.isEmpty(game.getRom())) {
-      MameOptions gameOptions = mameService.getOptions(game.getRom());
+      VPinMameOptions gameOptions = vPinMameService.getOptions(game.getRom());
       if (gameOptions.isExistInRegistry()) {
         if (isValidationEnabled(game, CODE_ALT_COLOR_COLORIZE_DMD_ENABLED) && !gameOptions.isColorizeDmd()) {
           result.add(ValidationStateFactory.create(CODE_ALT_COLOR_COLORIZE_DMD_ENABLED));
@@ -612,7 +623,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         }
       }
       else {
-        MameOptions options = mameService.getOptions(MameOptions.DEFAULT_KEY);
+        VPinMameOptions options = vPinMameService.getOptions(VPinMameOptions.DEFAULT_KEY);
 
         //no in registry, so check against defaults
         if (isValidationEnabled(game, CODE_ALT_COLOR_COLORIZE_DMD_ENABLED) && !options.isColorizeDmd()) {
@@ -707,33 +718,6 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     return false;
   }
 
-  public boolean hasOtherIssues(List<ValidationState> states) {
-    List<Integer> codes = states.stream().map(s -> s.getCode()).collect(Collectors.toList());
-    if (codes.isEmpty()) {
-      return false;
-    }
-
-    if (codes.contains(CODE_NO_DIRECTB2S_OR_PUPPACK)
-        || codes.contains(CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED)
-        || codes.contains(CODE_BACKGLASS_AND_BACKGLASSES_DISABLED)
-        || codes.contains(CODE_NO_ROM)
-        || codes.contains(CODE_ROM_NOT_EXISTS)
-        || codes.contains(CODE_VPX_NOT_EXISTS)
-        || codes.contains(CODE_ALT_SOUND_NOT_ENABLED)
-        || codes.contains(CODE_ALT_SOUND_FILE_MISSING)
-        || codes.contains(CODE_FORCE_STEREO)
-        || codes.contains(CODE_PUP_PACK_FILE_MISSING)
-        || codes.contains(CODE_ALT_COLOR_COLORIZE_DMD_ENABLED)
-        || codes.contains(CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED)
-        || codes.contains(CODE_ALT_COLOR_FILES_MISSING)
-        || codes.contains(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING)
-        || codes.contains(CODE_SCRIPT_FILES_MISSING)
-    ) {
-      return true;
-    }
-    return false;
-  }
-
   public GameScoreValidation validateHighscoreStatus(Game game, GameDetails gameDetails, TableDetails tableDetails, FrontendType frontendType, ServerSettings serverSettings) {
     GameScoreValidation validation = new GameScoreValidation();
     validation.setValidScoreConfiguration(true);
@@ -742,14 +726,14 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     HighscoreFiles highscoreFiles = highscoreService.getHighscoreFiles(game);
 
     String rom = TableDataUtil.getEffectiveRom(tableDetails, gameDetails);
-    if (game.isRomRequired() && !mameService.isRomExists(rom)) {
+    if (game.isRomRequired() && !vPinMameService.isRomExists(rom)) {
       validation.setRomIcon(GameScoreValidation.ERROR_ICON);
       validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);
       validation.setRomStatus(GameScoreValidation.STATUS_ROM_NOT_FOUND);
       return validation;
     }
 
-    String originalRom = mameRomAliasService.getRomForAlias(game.getEmulator(), rom);
+    String originalRom = VPinMameRomAliasService.getRomForAlias(game.getEmulator(), rom);
     boolean aliasedRom = false;
     if (!StringUtils.isEmpty(originalRom)) {
       aliasedRom = true;
@@ -837,7 +821,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     //game has been played, but the text file has not been generated
-    if (game.isPlayed() && !StringUtils.isEmpty(hsName) && !highscoreFiles.contains(hsName)) {
+    if (game.isPlayed() && !StringUtils.isEmpty(hsName) && !highscoreFiles.contains(hsName) && !highscoreFiles.contains(game.getScannedHsFileName())) {
       validation.setValidScoreConfiguration(false);
       validation.setRomIcon(GameScoreValidation.ERROR_ICON);
       validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);
@@ -846,7 +830,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     //game has been played, but the .nvram or VPReg has not been found
-    if (game.isPlayed() && !StringUtils.isEmpty(rom) && (nvRamFile == null || !nvRamFile.exists()) && !vpRegService.isValid(game)) {
+    if (game.isPlayed() && !StringUtils.isEmpty(rom) && (nvRamFile == null || !nvRamFile.exists()) && !vpRegService.isValid(game) && !highscoreFiles.contains(hsName) && !highscoreFiles.contains(game.getScannedHsFileName())) {
       validation.setValidScoreConfiguration(false);
       validation.setRomIcon(GameScoreValidation.ERROR_ICON);
       validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);

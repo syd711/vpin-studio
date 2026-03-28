@@ -21,7 +21,7 @@ public class ClientUpdatePostProcessing {
       }
     }
     catch (Exception e) {
-      LOG.error("Client update post processing failed: " + e.getMessage(), e);
+      LOG.error("Client update post processing failed: {}", e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Client update post processing failed: " + e.getMessage());
     }
   }

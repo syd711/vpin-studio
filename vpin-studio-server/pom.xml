@@ -6,7 +6,7 @@
 
     <groupId>de.mephisto.vpin</groupId>
     <artifactId>vpin-studio-server</artifactId>
-    <version>4.7.3</version>
+    <version>4.8.0</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -415,6 +415,7 @@
                                         <include>sendKeys.bat</include>
                                         <include>update-runtime.bat</include>
                                         <include>highscore-card-background-*.jpg</include>
+                                        <include>mame-gamelist.txt</include>
                                         <include>maintenance.jpg</include>
                                         <include>maintenance.mp4</include>
                                         <include>competition-bg-default.png</include>

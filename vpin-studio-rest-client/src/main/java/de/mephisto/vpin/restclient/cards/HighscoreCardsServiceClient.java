@@ -33,8 +33,8 @@ public class HighscoreCardsServiceClient extends VPinStudioClientService {
     super(client);
   }
 
-  public CardResolution getCardResolution(CardTemplateType templateType) {
-    return getRestClient().get(API + "cards/resolution/" + templateType, CardResolution.class);
+  public List<Integer> getCardResolution(CardTemplateType templateType) {
+    return Arrays.asList(getRestClient().get(API + "cards/resolution/" + templateType, Integer[].class));
   }
 
   public String getHighscoreCardUrl(GameRepresentation game, CardTemplateType templateType) {

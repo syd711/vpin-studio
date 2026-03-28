@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
@@ -290,6 +291,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   public void initialize(URL url, ResourceBundle resourceBundle) {
     dataBoxScrollPane.managedProperty().bindBidirectional(dataBoxScrollPane.visibleProperty());
     emptyDataBox.managedProperty().bindBidirectional(emptyDataBox.visibleProperty());
+    dmdPositionBtn.managedProperty().bindBidirectional(dmdPositionBtn.visibleProperty());
 
 
     Image image5 = new Image(Studio.class.getResourceAsStream("b2s.png"));
@@ -490,13 +492,17 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
     resolutionLabel.setText("");
     dmdResolutionLabel.setText("");
 
-    deleteBtn.setDisable(!g.isPresent() || !directb2sAvailable);
-    dmdPositionBtn.setDisable(!g.isPresent() || !directb2sAvailable);
-    backglassManagerBtn.setDisable(!g.isPresent() || !directb2sAvailable);
+    deleteBtn.setDisable(g.isEmpty() || !directb2sAvailable);
+    dmdPositionBtn.setDisable(g.isEmpty() || !directb2sAvailable);
+    backglassManagerBtn.setDisable(g.isEmpty() || !directb2sAvailable);
 
     if (g.isPresent() && directb2sAvailable) {
       new Thread(() -> {
         Platform.runLater(() -> {
+          GameRepresentation game = g.get();
+          GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
+          dmdPositionBtn.setVisible(emulatorRepresentation.isVpxEmulator());
+
           nameLabel.setText(tableData.getName());
           typeLabel.setText(DirectB2SData.getTableType(tableData.getTableType()));
           authorLabel.setText(tableData.getAuthor());

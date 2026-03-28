@@ -7,4 +7,6 @@ public interface TableStatusChangedEvent {
   Game getGame();
 
   TableStatusChangedOrigin getOrigin();
+
+  long getEventAgeMs();
 }

@@ -43,7 +43,7 @@ public class ScreenEntry {
       return transparency.trim().equals("1");
     }
     catch (Exception e) {
-      LOG.warn("Invalid transparency value: " + e.getMessage());
+      LOG.warn("Invalid transparency value: {}", e.getMessage());
       return false;
     }
   }
@@ -63,7 +63,7 @@ public class ScreenEntry {
       return ScreenMode.valueOf(screenMode);
     }
     catch (Exception e) {
-      LOG.warn("Invalid screen mode: " + e.getMessage());
+      LOG.warn("Invalid screen mode: {}", e.getMessage());
       return null;
     }
   }

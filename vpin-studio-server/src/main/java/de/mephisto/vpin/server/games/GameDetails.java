@@ -31,7 +31,6 @@ public class GameDetails {
   @LastModifiedDate
   private Date updatedAt;
 
-  @Column(length = 4096)
   public String assets;
 
   @Column(length = 4096)

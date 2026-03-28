@@ -71,7 +71,7 @@ public class PupServer {
       return;
     }
 
-    LOG.info("Launching PuPServer on port " + PORT);
+    LOG.info("Launching PuPServer on port {}", PORT);
     File installationFolder = pinUPConnector.getInstallationFolder();
     List<String> params = Arrays.asList("PuPServer.exe", "-wwwport", String.valueOf(PORT), "-sockport", "8888");
     SystemCommandExecutor executor = new SystemCommandExecutor(params, true);

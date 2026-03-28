@@ -83,7 +83,7 @@ public class StandaloneConnector extends BaseConnector {
         return fexe;
       }
     }
-    LOG.error("Cannot find a valid standard executable in " + installFolder + ", tables cannot be properly launched !");
+    LOG.error("Cannot find a valid standard executable in {}, tables cannot be properly launched !", installFolder);
     // cannot be null
     return new File(installFolder, "vpx_not_found.exe");
   }
@@ -141,14 +141,14 @@ public class StandaloneConnector extends BaseConnector {
     File vpxInstallDir = getInstallationFolder();
     File vpxTableDir = getTablesFolder();
     if (vpxInstallDir != null && vpxInstallDir.exists() && vpxTableDir != null && vpxTableDir.exists()) {
-      LOG.info("VPX tables folder detected in " + vpxTableDir.getAbsolutePath());
+      LOG.info("VPX tables folder detected in {}", vpxTableDir.getAbsolutePath());
       String emuName = vpxInstallDir.getName();
       GameEmulator vpxemu = createEmulator(vpxInstallDir, vpxTableDir, VPX_EMUID, emuName);
       vpxemu.setDescription("default");
       emulators.add(vpxemu);
     }
     else {
-      LOG.error("No VPX installation found in folder \"" + vpxInstallDir + "\"");
+      LOG.error("No VPX installation found in folder \"{}\"", vpxInstallDir);
     }
     return emulators;
   }

@@ -43,7 +43,7 @@ public class DOFService implements InitializingBean {
       return getSettings();
     }
     catch (Exception e) {
-      LOG.error("Saving dof settings failed: " + e.getMessage(), e);
+      LOG.error("Saving dof settings failed: {}", e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Saving dof settings failed: " + e.getMessage());
     }
   }
@@ -55,7 +55,7 @@ public class DOFService implements InitializingBean {
       return settings;
     }
     catch (Exception e) {
-      LOG.error("Getting dof settings failed: " + e.getMessage(), e);
+      LOG.error("Getting dof settings failed: {}", e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Get of settings failed: " + e.getMessage());
     }
   }
@@ -162,12 +162,12 @@ public class DOFService implements InitializingBean {
 
           if (doSync) {
             sync(false);
-            LOG.info("DOF Synchronizer finished, took " + (System.currentTimeMillis() - start) + "ms.");
+            LOG.info("DOF Synchronizer finished, took {}ms.", (System.currentTimeMillis() - start));
           }
         }
       }
       catch (Exception e) {
-        LOG.error("Failed to synchronize DOF settings: " + e.getMessage(), e);
+        LOG.error("Failed to synchronize DOF settings: {}", e.getMessage(), e);
       }
     }).start();
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());

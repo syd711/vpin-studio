@@ -74,8 +74,7 @@ public class PinballXTableParser extends DefaultHandler {
                 try {
                   readNode(detail, name, content);
                 } catch (Exception e) {
-                  LOG.warn("Ignored exception while parsing " + name + " '" + content+ "' of table '" + gameName + 
-                    " for emulator "  + emu.getName() +  "': " + e.getMessage());
+                  LOG.warn("Ignored exception while parsing {} '{}' of table '{} for emulator {}': {}", name, content, gameName, emu.getName(), e.getMessage());
                 }
               }
             }
@@ -86,7 +85,7 @@ public class PinballXTableParser extends DefaultHandler {
           }
         }
       }
-      LOG.info("Finished parsing of " + xmlFile.getAbsolutePath());
+      LOG.info("Finished parsing of {}", xmlFile.getAbsolutePath());
     } catch (Exception e) {
       String msg = "Failed to parse database file '" + xmlFile.getAbsolutePath() + "': " + e.getMessage();
       LOG.error(msg, e);
@@ -239,7 +238,7 @@ public class PinballXTableParser extends DefaultHandler {
         pinballXDb.createNewFile();
       }
       catch (IOException ioe) {
-        LOG.error("Cannot create file " + pinballXDb, ioe);
+        LOG.error("Cannot create file {}", pinballXDb, ioe);
       }
     }
     
@@ -281,7 +280,7 @@ public class PinballXTableParser extends DefaultHandler {
       writer.append("</menu>");
     }
     catch (Exception e) {
-      LOG.error("Error while writing " + pinballXDb, e);
+      LOG.error("Error while writing {}", pinballXDb, e);
     }
   }
 

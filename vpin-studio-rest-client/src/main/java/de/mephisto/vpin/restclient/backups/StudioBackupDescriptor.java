@@ -9,6 +9,8 @@ public class StudioBackupDescriptor {
   private boolean gameVpsMapping;
   private boolean gameCardSettings;
   private boolean gameVersion;
+  private boolean pinemhi;
+  private boolean pinvol;
 
   public boolean isGames() {
     return games;
@@ -72,5 +74,21 @@ public class StudioBackupDescriptor {
 
   public void setVpsComments(boolean vpsComments) {
     this.vpsComments = vpsComments;
+  }
+
+  public boolean isPinemhi() {
+    return pinemhi;
+  }
+
+  public void setPinemhi(boolean pinemhi) {
+    this.pinemhi = pinemhi;
+  }
+
+  public boolean isPinvol() {
+    return pinvol;
+  }
+
+  public void setPinvol(boolean pinvol) {
+    this.pinvol = pinvol;
   }
 }

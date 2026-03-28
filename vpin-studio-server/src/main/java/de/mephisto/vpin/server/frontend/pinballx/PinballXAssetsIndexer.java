@@ -50,7 +50,7 @@ public class PinballXAssetsIndexer {
         }
       }
     }
-    LOG.info("PinballX index finished, took " + (System.currentTimeMillis() - start) + "ms.");
+    LOG.info("PinballX index finished, took {}ms.", (System.currentTimeMillis() - start));
     return index;
   }
 
@@ -65,7 +65,7 @@ public class PinballXAssetsIndexer {
    */
   private void searchRecursive(PinballXIndex index, FTPClient ftp, String rootfolder, String folder, 
         EmulatorType emulator, VPinScreen screen, String author) throws IOException {
-    LOG.debug("GameEx Search Indexer: " + rootfolder + folder + ", collected " + index.size() + " assets.");
+    LOG.debug("GameEx Search Indexer: {}{}, collected {} assets.", rootfolder, folder, index.size());
     FTPFile[] files = ftp.listFiles(rootfolder + folder);
 
     boolean hasEmulatorAndScreen = screen!=null && (emulator!=null || PinballXIndex.isScreenEmulatorIndependent(screen));

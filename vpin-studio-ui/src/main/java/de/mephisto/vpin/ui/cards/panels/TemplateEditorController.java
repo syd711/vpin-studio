@@ -503,7 +503,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     openImageBtn.setDisable(true);
 
     nagBarLabel.setText("");
-    cardPreview.setData(null, null);
+    cardPreview.setData(null, 0, 0);
     previewStack.getChildren().remove(waitOverlay);
     previewStack.getChildren().add(waitOverlay);
   }
@@ -533,17 +533,19 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
       refreshNagBar(cardTemplate, this.gameRepresentation);
 
-      CardResolution res = templateBeanBinder.getResolution();
-      layerEditorOverlayController.setTemplate(cardTemplate, res, this.gameRepresentation);
-      layerEditorBackgroundController.setTemplate(cardTemplate, res, this.gameRepresentation);
-      layerEditorFrameController.setTemplate(cardTemplate, res, this.gameRepresentation);
-      layerEditorCanvasController.setTemplate(cardTemplate, res, this.gameRepresentation);
-      layerEditorTitleController.setTemplate(cardTemplate, res, this.gameRepresentation);
-      layerEditorTableNameController.setTemplate(cardTemplate, res, this.gameRepresentation);
-      layerEditorWheelController.setTemplate(cardTemplate, res, this.gameRepresentation);
-      layerEditorManufacturerController.setTemplate(cardTemplate, res, this.gameRepresentation);
-      layerEditorOtherMediaController.setTemplate(cardTemplate, res, this.gameRepresentation);
-      layerEditorScoresController.setTemplate(cardTemplate, res, this.gameRepresentation);
+      int cardWidth = templateBeanBinder.getWidth();
+      int cardHeight = templateBeanBinder.getHeight();
+
+      layerEditorOverlayController.setTemplate(cardTemplate, cardWidth, cardHeight, this.gameRepresentation);
+      layerEditorBackgroundController.setTemplate(cardTemplate, cardWidth, cardHeight, this.gameRepresentation);
+      layerEditorFrameController.setTemplate(cardTemplate, cardWidth, cardHeight, this.gameRepresentation);
+      layerEditorCanvasController.setTemplate(cardTemplate, cardWidth, cardHeight, this.gameRepresentation);
+      layerEditorTitleController.setTemplate(cardTemplate, cardWidth, cardHeight, this.gameRepresentation);
+      layerEditorTableNameController.setTemplate(cardTemplate, cardWidth, cardHeight, this.gameRepresentation);
+      layerEditorWheelController.setTemplate(cardTemplate, cardWidth, cardHeight, this.gameRepresentation);
+      layerEditorManufacturerController.setTemplate(cardTemplate, cardWidth, cardHeight, this.gameRepresentation);
+      layerEditorOtherMediaController.setTemplate(cardTemplate, cardWidth, cardHeight, this.gameRepresentation);
+      layerEditorScoresController.setTemplate(cardTemplate, cardWidth, cardHeight, this.gameRepresentation);
 
       templateBeanBinder.setPaused(false);
 
@@ -665,7 +667,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
         this.generateAllBtn.setDisable(true);
         this.generateWheelBtn.setDisable(true);
 
-        cardPreview.setData(null, null);
+        cardPreview.setData(null, CardResolution.HDReady.toWidth(), CardResolution.HDReady.toHeight());
         previewStack.getChildren().remove(waitOverlay);
         previewStack.getChildren().add(waitOverlay);
       }
@@ -674,8 +676,10 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
       JFXFuture.supplyAsync(() -> client.getCardData(game.get(), getSelectedCardTemplate()))
           .thenAcceptLater(cardData -> {
-            CardResolution res = templateBeanBinder.getResolution();
-            cardPreview.setData(cardData, res);
+            int cardWidth = templateBeanBinder.getWidth();
+            int cardHeight = templateBeanBinder.getHeight();
+
+            cardPreview.setData(cardData, cardWidth, cardHeight);
 
             previewStack.getChildren().remove(waitOverlay);
             this.openImageBtn.setDisable(false);
@@ -691,7 +695,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       this.generateWheelBtn.setDisable(true);
       mediaPlayerControl.setVisible(false);
 
-      cardPreview.setData(null, null);
+      cardPreview.setData(null, CardResolution.HDReady.toWidth(), CardResolution.HDReady.toHeight());
     }
   }
 
@@ -873,7 +877,8 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     JFXFuture
         .supplyAsync(() -> client.getHighscoreCardsService().getCardResolution(getSelectedTemplateType()))
         .thenAcceptLater(res -> {
-          templateBeanBinder.setResolution(res);
+          templateBeanBinder.setWidth(res.get(0));
+          templateBeanBinder.setHeight(res.get(1));
           // If the resolution changes, the preview must be adjusted
           resolutionLabel.setText(res.toString());
           resizeCardPreview(previewStack.getWidth(), previewStack.getHeight(), true);
@@ -952,10 +957,11 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
   private void resizeCardPreview(double width, double height, boolean forceWidth) {
     try {
-      CardResolution res = templateBeanBinder.getResolution();
+      int cardWidth = templateBeanBinder.getWidth();
+      int cardHeight = templateBeanBinder.getHeight();
       // make sure the panel is full size always
-      if (width > 0 && height > 0 && res != null) {
-        double aspectRatio = ((double) res.toWidth()) / res.toHeight();
+      if (width > 0 && height > 0) {
+        double aspectRatio = ((double) cardWidth) / cardHeight;
 
         Insets in1 = previewStack.getInsets();
         width -= in1.getRight() + in1.getLeft();
@@ -1059,10 +1065,11 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       // The canvas box
       PositionResizer dragBox = new PositionResizer();
 
-      CardResolution res = templateBeanBinder.getResolution();
-      double zoomX = res == null ? 1.0 : cardPreview.getWidth() / res.toWidth();
+      int cardWidth = templateBeanBinder.getWidth();
+      int cardHeight = templateBeanBinder.getHeight();
+      double zoomX = cardPreview.getWidth() / cardWidth;
       double WIDTH = cardPreview.getWidth() / zoomX;
-      double zoomY = res == null ? 1.0 : cardPreview.getHeight() / res.toHeight();
+      double zoomY = cardPreview.getHeight() / cardHeight;
       double HEIGHT = cardPreview.getHeight() / zoomY;
 
       // keep the order of setters !

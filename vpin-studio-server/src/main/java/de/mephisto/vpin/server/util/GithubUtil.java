@@ -24,11 +24,11 @@ public class GithubUtil {
       String s = conn.getURL().toString();
       String versionSegment = s.substring(s.lastIndexOf("/") + 1);
       if (!referenceVersion.equalsIgnoreCase(versionSegment)) {
-        LOG.info("Found version diff: " + referenceVersion + " => " + versionSegment);
+        LOG.info("Found version diff: {} => {}", referenceVersion, versionSegment);
         return versionSegment;
       }
     } catch (Exception e) {
-      LOG.error("Update check failed: " + e.getMessage());
+      LOG.error("Update check failed: {}", e.getMessage());
     }
     return null;
   }

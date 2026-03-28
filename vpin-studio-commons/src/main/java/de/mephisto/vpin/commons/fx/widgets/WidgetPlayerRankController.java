@@ -144,11 +144,14 @@ public class WidgetPlayerRankController extends WidgetController implements Init
 
     OverlaySettings overlaySettings = ServerFX.client.getJsonPreference(PreferenceNames.OVERLAY_SETTINGS, OverlaySettings.class);
     MonitorInfo screenBounds = ServerFX.client.getSystemService().getScreenInfo(overlaySettings.getOverlayScreenId());
-    if (screenBounds.getWidth() < 2600) {
-      columnName.setPrefWidth(280);
-    }
-    if (screenBounds.getWidth() < 2000) {
-      columnName.setPrefWidth(260);
+    columnName.setPrefWidth(260);
+    if(screenBounds != null) {
+      if (screenBounds.getWidth() < 2600) {
+        columnName.setPrefWidth(280);
+      }
+      if (screenBounds.getWidth() < 2000) {
+        columnName.setPrefWidth(260);
+      }
     }
 
     columnFirst.setCellValueFactory(cellData -> {

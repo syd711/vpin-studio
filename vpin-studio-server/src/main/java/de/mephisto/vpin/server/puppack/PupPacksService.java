@@ -74,7 +74,7 @@ public class PupPacksService implements InitializingBean {
     PupPack pupPack = getPupPack(game);
     if (pupPack != null) {
       if (pupPack.delete()) {
-        LOG.info("Deleting " + pupPack.getPupPackFolder().getAbsolutePath());
+        LOG.info("Deleting {}", pupPack.getPupPackFolder().getAbsolutePath());
         clearCache();
         gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.PUP_PACK, pupPack.getName());
       }
@@ -128,7 +128,7 @@ public class PupPacksService implements InitializingBean {
     this.pupPackCache.clear();
     long start = System.currentTimeMillis();
     File pupPackFolder = getPupPackFolder();
-    LOG.info("Refreshing PUP pack info from \"" + pupPackFolder.getAbsolutePath() + "\"");
+    LOG.info("Refreshing PUP pack info from \"{}\"", pupPackFolder.getAbsolutePath());
     if (pupPackFolder.exists()) {
       File[] pupPacks = pupPackFolder.listFiles((dir, name) -> new File(dir, name).isDirectory());
       if (pupPacks != null) {
@@ -138,10 +138,10 @@ public class PupPacksService implements InitializingBean {
       }
     }
     else {
-      LOG.error("PUP pack folder " + pupPackFolder.getAbsolutePath() + " does not exist.");
+      LOG.error("PUP pack folder {} does not exist.", pupPackFolder.getAbsolutePath());
     }
     long end = System.currentTimeMillis();
-    LOG.info("Finished PUP pack scan, found " + pupPackCache.size() + " packs (" + (end - start) + "ms)");
+    LOG.info("Finished PUP pack scan, found {} packs ({}ms)", pupPackCache.size(), (end - start));
     pupPackScanActive.set(false);
   }
 
@@ -216,17 +216,17 @@ public class PupPacksService implements InitializingBean {
           File hideNextFile = new File(pupPackFolder, "PUPHideNext.txt");
           if (!hideNextFile.exists()) {
             FileUtils.touch(hideNextFile);
-            LOG.info("Written PUPHideNext.txt for " + game.getRom());
+            LOG.info("Written PUPHideNext.txt for {}", game.getRom());
             gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.PUP_PACK, pupPack.getName());
           }
           else {
-            LOG.info("PUPHideNext.txt already exists for " + game.getRom());
+            LOG.info("PUPHideNext.txt already exists for {}", game.getRom());
           }
         }
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to create PUPHideNext.txt for " + game.getGameDisplayName() + ": " + e.getMessage(), e);
+      LOG.error("Failed to create PUPHideNext.txt for {}: {}", game.getGameDisplayName(), e.getMessage(), e);
     }
   }
 
@@ -242,7 +242,7 @@ public class PupPacksService implements InitializingBean {
       return;
     }
 
-    LOG.info("Extracting PUP pack to " + pupVideosFolder.getAbsolutePath());
+    LOG.info("Extracting PUP pack to {}", pupVideosFolder.getAbsolutePath());
     if (!pupVideosFolder.exists()) {
       if (!pupVideosFolder.mkdirs()) {
         uploadDescriptor.setError("Failed to create PUP pack directory " + pupVideosFolder.getAbsolutePath());
@@ -263,7 +263,7 @@ public class PupPacksService implements InitializingBean {
       pupPackFolder.mkdirs();
     }
 
-    LOG.info("Starting PUP pack extraction for ROM '" + rom + "'");
+    LOG.info("Starting PUP pack extraction for ROM '{}'", rom);
     PupPackInstallerJob job = new PupPackInstallerJob(this, tempFile, pupVideosFolder, analysis.getPupPackRootDirectory(), rom, async);
     if (!async) {
       JobDescriptor jobDescriptor = new JobDescriptor(JobType.PUP_INSTALL);
@@ -305,12 +305,12 @@ public class PupPacksService implements InitializingBean {
           FileUtils.copyFile(defaultVideo, defaultPicture);
         }
         catch (IOException e) {
-          LOG.error("failed to copy: " + e.getMessage());
+          LOG.error("failed to copy: {}", e.getMessage());
         }
       }
       else {
         if (JCodec.export(defaultVideo, defaultPicture)) {
-          LOG.info("Successfully extracted default background image " + defaultPicture.getAbsolutePath());
+          LOG.info("Successfully extracted default background image {}", defaultPicture.getAbsolutePath());
         }
       }
     }
@@ -350,7 +350,7 @@ public class PupPacksService implements InitializingBean {
         refresh();
       }
       catch (Exception e) {
-        LOG.error("Error in PUP Pack Scanner thread: " + e.getMessage(), e);
+        LOG.error("Error in PUP Pack Scanner thread: {}", e.getMessage(), e);
       }
     }).start();
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());

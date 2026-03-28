@@ -121,7 +121,7 @@ public class AltSoundResource {
       return descriptor;
     }
     catch (Exception e) {
-      LOG.error(AssetType.ALT_SOUND.name() + " upload failed: " + e.getMessage(), e);
+      LOG.error("{} upload failed: {}", AssetType.ALT_SOUND.name(), e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.ALT_SOUND + " upload failed: " + e.getMessage());
     }
     finally {

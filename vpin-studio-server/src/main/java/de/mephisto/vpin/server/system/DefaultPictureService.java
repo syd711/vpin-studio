@@ -103,7 +103,7 @@ public class DefaultPictureService implements ApplicationListener<ApplicationRea
 
   private void extractDefaultPicture(@NonNull Game game, File target, boolean usePreview) {
     if (!target.getParentFile().exists() && !target.getParentFile().mkdirs()) {
-      LOG.error("Failed to create raw default picture folder: " + target.getParentFile().getAbsolutePath());
+      LOG.error("Failed to create raw default picture folder: {}", target.getParentFile().getAbsolutePath());
     }
 
     // extract Preview with frame, no grill is hidden...
@@ -132,7 +132,7 @@ public class DefaultPictureService implements ApplicationListener<ApplicationRea
           DirectB2SImageExporter.export(target, data);
         }
         catch (VPinStudioException e) {
-          LOG.error("Failed to extract background image: " + e.getMessage(), e);
+          LOG.error("Failed to extract background image: {}", e.getMessage(), e);
         }
       }
     }
@@ -192,7 +192,7 @@ public class DefaultPictureService implements ApplicationListener<ApplicationRea
           return true;
         }
         catch (IOException e) {
-          LOG.error("Failed to copy resource file as background: " + e.getMessage(), e);
+          LOG.error("Failed to copy resource file as background: {}", e.getMessage(), e);
         }
       }
       else if ("video".equals(baseType)) {
@@ -266,7 +266,7 @@ public class DefaultPictureService implements ApplicationListener<ApplicationRea
       }
 
       BufferedImage resized = ImageUtil.resizeImage(image, cropWidth);
-      LOG.info("Resized to " + resized.getWidth() + "x" + resized.getHeight());
+      LOG.info("Resized to {}x{}", resized.getWidth(), resized.getHeight());
       if (resized.getHeight() < cropHeight) {
         resized = ImageUtil.crop(resized, DirectB2SImageRatio.RATIO_16X9.getXRatio(), DirectB2SImageRatio.RATIO_16X9.getYRatio());
       }
@@ -280,7 +280,7 @@ public class DefaultPictureService implements ApplicationListener<ApplicationRea
       return blurred;
     }
     catch (Exception e) {
-      LOG.warn("Error creating competition image for " + game.getGameDisplayName() + ": " + e.getMessage(), e);
+      LOG.warn("Error creating competition image for {}: {}", game.getGameDisplayName(), e.getMessage(), e);
     }
     return null;
   }

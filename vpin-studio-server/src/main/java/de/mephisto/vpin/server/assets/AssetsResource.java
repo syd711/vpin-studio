@@ -159,7 +159,7 @@ public class AssetsResource {
           .body(IOUtils.toByteArray(new FileInputStream(file)));
     }
     catch (IOException e) {
-      LOG.error("Faild to serialize file " + file.getAbsolutePath() + ": " + e.getMessage(), e);
+      LOG.error("Faild to serialize file {}: {}", file.getAbsolutePath(), e.getMessage(), e);
     }
     return null;
   }

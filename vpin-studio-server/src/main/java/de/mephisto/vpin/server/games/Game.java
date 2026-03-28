@@ -51,7 +51,7 @@ public class Game {
 
   private ValidationState validationState;
   private boolean hasMissingAssets;
-  private boolean hasOtherIssues;
+  private List<Integer> issueTypes = new ArrayList<>();
   private boolean validScoreConfiguration;
 
   private List<Integer> ignoredValidations = new ArrayList<>();
@@ -92,6 +92,8 @@ public class Game {
   private DMDPackageTypes dmdType;
   private String dmdGameName;
   private String dmdProjectFolder;
+
+  private String assets;
 
   private String[] scripts;
 
@@ -165,6 +167,15 @@ public class Game {
 
   public void setVrRoomEnabled(boolean vrRoomEnabled) {
     this.vrRoomEnabled = vrRoomEnabled;
+  }
+
+  @JsonIgnore
+  public String getAssets() {
+    return assets;
+  }
+
+  public void setAssets(String assets) {
+    this.assets = assets;
   }
 
   @JsonIgnore
@@ -259,6 +270,11 @@ public class Game {
   @JsonIgnore
   public boolean isZenGame() {
     return this.emulator != null && this.emulator.isZenEmulator();
+  }
+
+  @JsonIgnore
+  public boolean isMameGame() {
+    return this.emulator != null && this.emulator.isMameEmulator();
   }
 
   @JsonIgnore
@@ -685,12 +701,12 @@ public class Game {
     this.hasMissingAssets = hasMissingAssets;
   }
 
-  public boolean isHasOtherIssues() {
-    return hasOtherIssues;
+  public List<Integer> getIssueTypes() {
+    return issueTypes;
   }
 
-  public void setHasOtherIssues(boolean hasOtherIssues) {
-    this.hasOtherIssues = hasOtherIssues;
+  public void setIssueTypes(List<Integer> issueTypes) {
+    this.issueTypes = issueTypes;
   }
 
   public boolean isValidScoreConfiguration() {
@@ -748,15 +764,7 @@ public class Game {
   @NonNull
   @JsonIgnore
   public File getDirectB2SFile() {
-    String baseName = FilenameUtils.getBaseName(this.getGameFileName());
-    return new File(getGameFolder(), baseName + ".directb2s");
-  }
-
-  @NonNull
-  @JsonIgnore
-  public String getDirectB2SFilename() {
-    String baseName = FilenameUtils.removeExtension(this.getGameFileName());
-    return baseName + ".directb2s";
+    return BackglassNamingHelper.getBackglassFile(this);
   }
 
   public int getNbDirectB2S() {

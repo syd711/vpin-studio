@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.commons.utils.FXUtil;
 import de.mephisto.vpin.commons.utils.JFXFuture;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.CommentType;
@@ -10,36 +10,33 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
-import de.mephisto.vpin.restclient.recorder.RecorderFilterSettings;
+import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
 import de.mephisto.vpin.ui.tables.models.TableStatus;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
 import de.mephisto.vpin.ui.util.tags.TagField;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.TabPane;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.Studio.stage;
 
 public class TableFilterController extends BaseFilterController<GameRepresentation, GameRepresentationModel> implements Initializable, PreferenceChangeListener {
 
@@ -53,7 +50,7 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
   private CheckBox withNVOffsetCheckBox;
 
   @FXML
-  private CheckBox otherIssuesCheckbox;
+  private ComboBox<ValidationType> issueTypesCombo;
 
   @FXML
   private CheckBox vpsUpdatesCheckBox;
@@ -132,7 +129,7 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
 
   private VpsSettings vpsSettings;
 
-  private TableOverviewPredicateFactory predicateFactory = new TableOverviewPredicateFactory();
+  private final TableOverviewPredicateFactory predicateFactory = new TableOverviewPredicateFactory();
   private TagField tagField;
 
 
@@ -164,18 +161,14 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
 
   protected void resetFilters() {
     GameEmulatorRepresentation emulatorSelection = getEmulatorSelection();
-    if (!filterSettings.isResetted(emulatorSelection == null || emulatorSelection.isVpxEmulator())) {
-      try {
-        this.filterSettings = this.filterSettings.getClass().getConstructor().newInstance();
-      }
-      catch (Exception e) {
-        //ignore
-      }
+    boolean resetted = filterSettings.isResetted(emulatorSelection == null || emulatorSelection.isVpxEmulator());
+    if (!resetted) {
+      this.filterSettings.reset();
 
       statusCombo.setValue(null);
       commentsCombo.setValue(null);
+      issueTypesCombo.setValue(null);
       missingAssetsCheckBox.setSelected(filterSettings.isMissingAssets());
-      otherIssuesCheckbox.setSelected(filterSettings.isOtherIssues());
       vpsUpdatesCheckBox.setSelected(filterSettings.isVpsUpdates());
       versionUpdatesCheckBox.setSelected(filterSettings.isVersionUpdates());
       notPlayedCheckBox.setSelected(filterSettings.isNotPlayed());
@@ -225,9 +218,38 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
       filterSettings.setMissingAssets(newValue);
       applyFilters();
     });
-    otherIssuesCheckbox.setSelected(filterSettings.isOtherIssues());
-    otherIssuesCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      filterSettings.setOtherIssues(newValue);
+
+    List<ValidationType> issueTypes = GameValidationCode.values().stream().map(code -> new ValidationType(code, GameValidationCode.name(code))).collect(Collectors.toList());
+    issueTypes.sort(Comparator.comparing(o -> o.name));
+    issueTypes.add(0, null);
+    issueTypesCombo.setItems(FXCollections.observableList(issueTypes));
+
+    if (filterSettings.getIssueType() != -1) {
+      issueTypesCombo.setValue(new ValidationType(filterSettings.getIssueType(), GameValidationCode.name(filterSettings.getIssueType())));
+    }
+
+    issueTypesCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      if (newValue != null) {
+        filterSettings.setIssueType(newValue.code);
+      }
+      else {
+        filterSettings.setIssueType(-1);
+      }
+
+      if (oldValue == null && newValue != null && tableController instanceof TableOverviewController) {
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Reload all tables?",
+            "Filtering by issue type requires all tables to be loaded.", "Do you want to reload now?");
+        if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+          Platform.runLater(() -> {
+            ((TableOverviewController) tableController).onReload();
+          });
+        }
+        else {
+          issueTypesCombo.setValue(null);
+          return;
+        }
+      }
+
       applyFilters();
     });
     vpsUpdatesCheckBox.setSelected(filterSettings.isVpsUpdates());
@@ -389,6 +411,33 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
     else if (PreferenceNames.TAGGING_SETTINGS.equals(key)) {
       List<String> initialTags = client.getTaggingService().getTags();
       tagField.setSuggestions(initialTags);
+    }
+  }
+
+  class ValidationType {
+    private final int code;
+    private final String name;
+
+    ValidationType(int code, String name) {
+      this.code = code;
+      this.name = name;
+    }
+
+    @Override
+    public String toString() {
+      return name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (o == null || getClass() != o.getClass()) return false;
+      ValidationType that = (ValidationType) o;
+      return code == that.code && Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(code, name);
     }
   }
 }

@@ -162,6 +162,17 @@ public class BackupsSidebarController implements Initializable, StudioFXControll
   private Label designedBy;
 
   @FXML
+  private Label custom2;
+  @FXML
+  private Label custom3;
+  @FXML
+  private Label custom4;
+  @FXML
+  private Label custom5;
+  @FXML
+  private Label webDbId;
+
+  @FXML
   private Label notes;
 
   @Override
@@ -197,6 +208,11 @@ public class BackupsSidebarController implements Initializable, StudioFXControll
     povLabel.setText(applyValue(povLabel, null));
     highscoreLabel.setText(applyValue(highscoreLabel, null));
     registryLabel.setText(applyValue(registryLabel, null));
+    custom2.setText(applyValue(custom2, null));
+    custom3.setText(applyValue(custom3, null));
+    custom4.setText(applyValue(custom4, null));
+    custom5.setText(applyValue(custom5, null));
+    webDbId.setText(applyValue(webDbId, null));
 
     filenameLabel.setText("-");
     filenameLabel.setTooltip(null);
@@ -263,6 +279,13 @@ public class BackupsSidebarController implements Initializable, StudioFXControll
       url.setText(StringUtils.isEmpty(tableDetails.getUrl()) ? "-" : tableDetails.getUrl());
       designedBy.setText(StringUtils.isEmpty(tableDetails.getDesignedBy()) ? "-" : tableDetails.getDesignedBy());
       notes.setText(StringUtils.isEmpty(tableDetails.getNotes()) ? "-" : tableDetails.getNotes());
+
+
+      custom2.setText(StringUtils.isEmpty(tableDetails.getCustom2()) ? "-" : tableDetails.getCustom2());
+      custom3.setText(StringUtils.isEmpty(tableDetails.getCustom3()) ? "-" : tableDetails.getCustom3());
+      custom4.setText(StringUtils.isEmpty(tableDetails.getCustom4()) ? "-" : tableDetails.getCustom4());
+      custom5.setText(StringUtils.isEmpty(tableDetails.getCustom5()) ? "-" : tableDetails.getCustom5());
+      webDbId.setText(StringUtils.isEmpty(tableDetails.getWebGameId()) ? "-" : tableDetails.getWebGameId());
     }
     else {
 

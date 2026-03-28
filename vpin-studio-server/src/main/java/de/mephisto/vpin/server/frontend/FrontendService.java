@@ -13,6 +13,7 @@ import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.*;
+import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -55,6 +56,9 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   @Autowired
   private EmulatorService emulatorService;
+
+  @Autowired
+  private MameService mameService;
 
   @Autowired
   private Map<String, FrontendConnector> frontendsMap; // autowiring of Frontends
@@ -198,6 +202,10 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   public Game getGameByName(int emulatorId, String gameName) {
     return setGameEmulator(getFrontendConnector().getGameByName(emulatorId, gameName));
+  }
+
+  public Game getGameByDisplayName(int emulatorId, String gameName) {
+    return setGameEmulator(getFrontendConnector().getGameByDisplayName(emulatorId, gameName));
   }
 
   public List<Game> getGames() {
@@ -429,6 +437,15 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     tableDetails.setGameFileName(gameFileName);
     tableDetails.setGameDisplayName(gameDisplayName);
     tableDetails.setDateModified(new Date(file.lastModified()));
+
+    if (gameEmulator.isMameEmulator()) {
+      String fullName = mameService.resolveMAMENameFor(baseName);
+      if(!StringUtils.isEmpty(fullName)) {
+        tableDetails.setGameDisplayName(fullName);
+      }
+      tableDetails.setRomName(baseName);
+    }
+
     return importGame(tableDetails);
   }
 
@@ -750,7 +767,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
       long start = System.currentTimeMillis();
       LOG.info("Initializing emulators");
-      emulatorService.loadEmulators();
+      emulatorService.reloadEmulators();
       LOG.info("Initial emulator load took {}ms", (System.currentTimeMillis() - start));
 
       getFrontendConnector().getFrontendPlayerDisplays();

@@ -58,7 +58,7 @@ public class BackglassValidationService implements InitializingBean, PreferenceC
 
     GameEmulator emulator = emulatorService.getGameEmulator(directb2s.getEmulatorId());
 
-    if (isValidationEnabled(directb2s, CODE_NO_GAME)) {
+    if (isValidationEnabled(directb2s, CODE_NO_GAME) && !emulator.isZenEmulator()) {
       String mainBaseName = FileUtils.baseUniqueFile(directb2s.getFilename());
       String gameFilename = mainBaseName + "." + emulator.getGameExt();
       boolean gameAvailable = new File(emulator.getGamesDirectory(), gameFilename).exists();

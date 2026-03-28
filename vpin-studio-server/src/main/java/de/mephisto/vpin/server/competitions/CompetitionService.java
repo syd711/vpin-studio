@@ -128,7 +128,7 @@ public class CompetitionService implements InitializingBean {
       return competitionsRepository.findByWinnerInitialsIsNullAndEndDateLessThanEqualOrderByEndDate(new Date());
     }
     catch (Exception e) {
-      LOG.error("Failed to read competitions: " + e.getMessage());
+      LOG.error("Failed to read competitions: {}", e.getMessage());
       return Collections.emptyList();
     }
   }
@@ -179,7 +179,7 @@ public class CompetitionService implements InitializingBean {
       c.setType(CompetitionType.OFFLINE.name());
     }
     Competition updated = competitionsRepository.saveAndFlush(c);
-    LOG.info("Saved " + updated);
+    LOG.info("Saved {}", updated);
     if (isNew) {
       competitionLifecycleService.notifyCompetitionCreation(updated);
     }
@@ -197,10 +197,10 @@ public class CompetitionService implements InitializingBean {
     //check all competitions for their finish state, this includes Discord ones, since the date can't be changed
     List<Competition> openCompetitions = getCompetitionToBeFinished();
     if (!openCompetitions.isEmpty()) {
-      LOG.info("Running automated competition status check, found " + openCompetitions.size() + " candidates.");
+      LOG.info("Running automated competition status check, found {} candidates.", openCompetitions.size());
     }
     for (Competition openCompetition : openCompetitions) {
-      LOG.info("Finishing " + openCompetition);
+      LOG.info("Finishing {}", openCompetition);
       finishCompetition(openCompetition);
     }
 
@@ -208,7 +208,7 @@ public class CompetitionService implements InitializingBean {
     List<Competition> activeCompetitions = getActiveCompetitions();
     for (Competition activeCompetition : activeCompetitions) {
       if (activeCompetition.isActive() && !activeCompetition.isStarted()) {
-        LOG.info("Starting " + activeCompetition);
+        LOG.info("Starting {}", activeCompetition);
         //update state
         activeCompetition.setStarted(true);
         competitionsRepository.saveAndFlush(activeCompetition);
@@ -221,7 +221,7 @@ public class CompetitionService implements InitializingBean {
         long channelId = activeCompetition.getDiscordChannelId();
         boolean active = discordService.isCompetitionActive(serverId, channelId, activeCompetition.getUuid());
         if (!active) {
-          LOG.info("Found active competition " + activeCompetition + ", trying to resolve winner data.");
+          LOG.info("Found active competition {}, trying to resolve winner data.", activeCompetition);
           ScoreSummary competitionScore = getCompetitionsFinalScore(activeCompetition);
           if (competitionScore.getScores().isEmpty()) {
             activeCompetition.setWinnerInitials("???");
@@ -232,7 +232,7 @@ public class CompetitionService implements InitializingBean {
             activeCompetition.setWinnerInitials(initials);
           }
           competitionsRepository.saveAndFlush(activeCompetition);
-          LOG.info("Finished " + activeCompetition + ", winner is '" + activeCompetition.getWinnerInitials() + "'");
+          LOG.info("Finished {}, winner is '{}'", activeCompetition, activeCompetition.getWinnerInitials());
         }
       }
     }
@@ -244,11 +244,11 @@ public class CompetitionService implements InitializingBean {
 
   @NonNull
   public Competition finishCompetition(@NonNull Competition competition) {
-    LOG.info("Running finishing process for " + competition);
+    LOG.info("Running finishing process for {}", competition);
     ScoreSummary competitionScore = getCompetitionsFinalScore(competition);
 
     if (competitionScore.getScores().isEmpty()) {
-      LOG.error("Failed to finished " + competition + " correctly, no score could be determined, using John Doe.");
+      LOG.error("Failed to finished {} correctly, no score could be determined, using John Doe.", competition);
       competition.setWinnerInitials("???");
     }
     else {
@@ -276,7 +276,7 @@ public class CompetitionService implements InitializingBean {
       return competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(new Date(), new Date());
     }
     catch (Exception e) {
-      LOG.error("Failed to read active competitions: " + e.getMessage());
+      LOG.error("Failed to read active competitions: {}", e.getMessage());
     }
     return Collections.emptyList();
   }
@@ -286,7 +286,7 @@ public class CompetitionService implements InitializingBean {
       return competitionsRepository.findByEndDateLessThanEqual(new Date());
     }
     catch (Exception e) {
-      LOG.error("Failed to read active competitions: " + e.getMessage());
+      LOG.error("Failed to read active competitions: {}", e.getMessage());
     }
     return Collections.emptyList();
   }
@@ -305,11 +305,11 @@ public class CompetitionService implements InitializingBean {
       assetService.deleteCompetitionBackground(c.get().getGameId());
       competitionsRepository.deleteById(id);
       competitionLifecycleService.notifyCompetitionDeleted(c.get());
-      LOG.error("Deleted competition " + c.get().getName());
+      LOG.error("Deleted competition {}", c.get().getName());
       return true;
     }
     else {
-      LOG.error("No competition exists for id " + id);
+      LOG.error("No competition exists for id {}", id);
     }
     return false;
   }
@@ -346,7 +346,7 @@ public class CompetitionService implements InitializingBean {
       List<Competition> iScoredSubscriptions = getIScoredSubscriptions();
       LOG.info("---------------------------------- iScored Competitions -----------------------------------------------");
       for (Competition s : iScoredSubscriptions) {
-        LOG.info(s.toString() + " [" + s.getUrl() + "], [" + VPS.getVpsTableUrl(s.getVpsTableId(), s.getVpsTableVersionId()) + "], ID: " + s.getGameId());
+        LOG.info("{} [{}], [{}], ID: {}", s.toString(), s.getUrl(), VPS.getVpsTableUrl(s.getVpsTableId(), s.getVpsTableVersionId()), s.getGameId());
       }
       LOG.info("--------------------------------- /iScored Competitions -----------------------------------------------");
     }

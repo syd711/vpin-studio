@@ -36,6 +36,12 @@ public class StudioRestoreBackupDialogController implements Initializable, Dialo
   private Button createBtn;
 
   @FXML
+  private CheckBox pinemHiCheckbox;
+
+  @FXML
+  private CheckBox pinVolCheckbox;
+
+  @FXML
   private CheckBox preferencesCheckbox;
 
   @FXML
@@ -76,6 +82,8 @@ public class StudioRestoreBackupDialogController implements Initializable, Dialo
     descriptor.setPreferences(preferencesCheckbox.isSelected());
     descriptor.setVpsComments(vpsNotesCheckbox.isSelected());
     descriptor.setPlayers(playersCheckbox.isSelected());
+    descriptor.setPinemhi(pinemHiCheckbox.isSelected());
+    descriptor.setPinvol(pinVolCheckbox.isSelected());
 
     descriptor.setGames(gamesCheckbox.isSelected());
     descriptor.setGameCardSettings(gamesCardSettingsCheckbox.isSelected());

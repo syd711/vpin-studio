@@ -57,4 +57,8 @@ public interface StudioEventListener {
   default void maintenanceEnabled(boolean b) {
 
   }
+
+  default void vrModeEnabled(boolean b) {
+
+  }
 }

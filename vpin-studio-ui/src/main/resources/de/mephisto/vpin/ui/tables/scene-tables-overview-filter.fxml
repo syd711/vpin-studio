@@ -64,7 +64,11 @@
                   </CheckBox>
                   <HBox fx:id="configurationIssuesFilter" spacing="6.0">
                      <children>
-                        <CheckBox fx:id="otherIssuesCheckbox" mnemonicParsing="false" styleClass="default-text" text="Configuration Issues" />
+                        <Label styleClass="default-text" text="Validation Issue Type:">
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </Label>
                         <Label>
                            <font>
                               <Font size="14.0" />
@@ -73,14 +77,18 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="Includes all other validation issues that are not related to missing media assets." wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="Changing this filter requires a full validation of all tables which might take a bit longer depending on the amount of tables." wrapText="true" />
                            </tooltip>
                            <HBox.margin>
                               <Insets />
                            </HBox.margin>
                         </Label>
                      </children>
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
                   </HBox>
+                  <ComboBox fx:id="issueTypesCombo" prefWidth="200.0" />
                   <VBox fx:id="tableAssetFilters" spacing="6.0">
                      <children>
                         <Label styleClass="default-title" text="Table Asset Filters">

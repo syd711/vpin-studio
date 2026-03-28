@@ -86,14 +86,14 @@ public class AssetService {
         }
       }
       else {
-        LOG.warn("No GameInfo found for id " + gameId);
+        LOG.warn("No GameInfo found for id {}", gameId);
       }
 
       InputStream in = ResourceLoader.class.getResourceAsStream("empty-preview.png");
       return IOUtils.toByteArray(in);
     }
     catch (Exception e) {
-      LOG.error("Failed to load default image: " + e.getMessage(), e);
+      LOG.error("Failed to load default image: {}", e.getMessage(), e);
     }
     return null;
   }
@@ -112,7 +112,7 @@ public class AssetService {
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to read video metadata: " + e.getMessage());
+      LOG.error("Failed to read video metadata: {}", e.getMessage());
     }
     return null;
   }
@@ -208,7 +208,7 @@ public class AssetService {
 
     File rawDefaultPicture = defaultPictureService.getRawDefaultPicture(game);
 
-    LOG.info("Uploading " + rawDefaultPicture.getAbsolutePath());
+    LOG.info("Uploading {}", rawDefaultPicture.getAbsolutePath());
     return UploadUtil.upload(file, rawDefaultPicture);
   }
 
@@ -230,7 +230,7 @@ public class AssetService {
       return asset.get();
     }
     catch (Exception e) {
-      LOG.warn("Failed to get competition background " + e.getMessage());
+      LOG.warn("Failed to get competition background {}", e.getMessage());
     }
     return null;
   }
@@ -270,7 +270,7 @@ public class AssetService {
     Optional<Asset> byId = assetRepository.findById((long) gameId);
     if (byId.isPresent()) {
       assetRepository.delete(byId.get());
-      LOG.info("Deleted assets for " + game.getGameDisplayName());
+      LOG.info("Deleted assets for {}", game.getGameDisplayName());
       return true;
     }
 
@@ -299,7 +299,7 @@ public class AssetService {
     asset.setMimeType(mimeType);
     asset.setExternalId(externalId);
     Asset updated = assetRepository.saveAndFlush(asset);
-    LOG.info("Saved " + updated);
+    LOG.info("Saved {}", updated);
     return updated;
   }
 

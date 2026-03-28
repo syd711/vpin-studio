@@ -65,6 +65,9 @@ public class VpsTablesColumnSorter implements BaseColumnSorter<VpsTableModel> {
       else if (column.equals(vpsTablesController.updatedColumn)) {
         comp = Comparator.comparing(o -> new Date(o.getVpsTable().getUpdatedAt()));
       }
+      else if (column.equals(vpsTablesController.soundColumn)) {
+        comp = Comparator.comparing(o ->VpsUtil.isDataAvailable(o.getVpsTable().getSoundFiles()));
+      }
 
       // optionally reverse order 
       if (comp != null && column.getSortType().equals(TableColumn.SortType.DESCENDING)) {

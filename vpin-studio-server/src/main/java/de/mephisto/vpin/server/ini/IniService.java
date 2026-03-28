@@ -82,7 +82,7 @@ public class IniService {
       iniConfiguration.read(fileReader);
     }
     catch (Exception e) {
-      LOG.error("Failed to read: " + iniFile.getAbsolutePath() + ": " + e.getMessage(), e);
+      LOG.error("Failed to read: {}: {}", iniFile.getAbsolutePath(), e.getMessage(), e);
       throw e;
     }
     finally {
@@ -121,7 +121,7 @@ public class IniService {
       iniConfiguration.write(fileWriter);
     }
     catch (Exception e) {
-      LOG.error("Failed to write ini: " + e.getMessage(), e);
+      LOG.error("Failed to write ini: {}", e.getMessage(), e);
     }
     finally {
       try {

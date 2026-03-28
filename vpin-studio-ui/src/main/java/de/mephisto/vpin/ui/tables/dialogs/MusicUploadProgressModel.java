@@ -12,21 +12,26 @@ import java.lang.invoke.MethodHandles;
 
 public class MusicUploadProgressModel extends UploadProgressModel {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+  private final int emulatorId;
+  private final int gameId;
 
-  public MusicUploadProgressModel(String title, File file) {
+  public MusicUploadProgressModel(String title, File file, int emulatorId, int gameId) {
     super(file, title);
+    this.emulatorId = emulatorId;
+    this.gameId = gameId;
   }
 
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      Studio.client.getVpxService().uploadMusic(next, percent -> {
+      Studio.client.getVpxService().uploadMusic(next, emulatorId, gameId, percent -> {
         Platform.runLater(() -> {
               progressResultModel.setProgress(percent);
             }
         );
       });
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Music upload failed: " + e.getMessage(), e);
     }
   }

@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.mame;
+package de.mephisto.vpin.server.vpinmame;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
@@ -24,8 +24,8 @@ import java.nio.charset.Charset;
 import java.util.*;
 
 @Service
-public class MameRomAliasService implements InitializingBean {
-  private final static Logger LOG = LoggerFactory.getLogger(MameRomAliasService.class);
+public class VPinMameRomAliasService implements InitializingBean {
+  private final static Logger LOG = LoggerFactory.getLogger(VPinMameRomAliasService.class);
 
   private final static String VPM_ALIAS = VPinFile.VPMAliasTxt.toString();
 
@@ -87,7 +87,7 @@ public class MameRomAliasService implements InitializingBean {
       }
     }
     catch (IOException e) {
-      LOG.error("Error loading " + vpmAliasFile.getAbsolutePath() + ": " + e.getMessage(), e);
+      LOG.error("Error loading {}: {}", vpmAliasFile.getAbsolutePath(), e.getMessage(), e);
     }
     return monitoredTextFile;
   }
@@ -114,14 +114,14 @@ public class MameRomAliasService implements InitializingBean {
       if (vpmAliasFile.exists() && vpmAliasFile.delete()) {
         text = text.replaceAll("\n", "\r\n");
         FileUtils.writeStringToFile(vpmAliasFile, text, Charset.defaultCharset());
-        LOG.info("Written alias file " + vpmAliasFile.getAbsolutePath());
+        LOG.info("Written alias file {}", vpmAliasFile.getAbsolutePath());
 
         clearCache(emulatorService.getVpxGameEmulators());
         invalidateAliasMappings();
       }
     }
     catch (IOException e) {
-      LOG.error("Error saving " + vpmAliasFile.getAbsolutePath() + ": " + e.getMessage(), e);
+      LOG.error("Error saving {}: {}", vpmAliasFile.getAbsolutePath(), e.getMessage(), e);
     }
   }
 
@@ -165,7 +165,7 @@ public class MameRomAliasService implements InitializingBean {
       }
     }
     catch (IOException e) {
-      LOG.error("Error loading " + vpmAliasFile.getAbsolutePath() + ": " + e.getMessage(), e);
+      LOG.error("Error loading {}: {}", vpmAliasFile.getAbsolutePath(), e.getMessage(), e);
     }
     return aliasToRomMapping;
   }

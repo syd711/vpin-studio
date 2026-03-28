@@ -167,7 +167,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
       }
 
       if (!wheelTemplate && (summary.getScores().isEmpty() || StringUtils.isEmpty(summary.getRaw()))) {
-        LOG.info("Skipped card generation for \"" + game.getGameDisplayName() + "\", no scores found.");
+        LOG.info("Skipped card generation for \"{}\", no scores found.", game.getGameDisplayName());
         SLOG.info("Skipped card generation for \"" + game.getGameDisplayName() + "\", no scores found.");
         return false;
       }
@@ -179,7 +179,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
       }
 
       if (!wheelTemplate && game.isCardDisabled()) {
-        LOG.info("Skipped card generation for \"" + game.getGameDisplayName() + "\", generation not enabled.");
+        LOG.info("Skipped card generation for \"{}\", generation not enabled.", game.getGameDisplayName());
         SLOG.info("Skipped card generation for \"" + game.getGameDisplayName() + "\", generation not enabled.");
         return false;
       }
@@ -198,7 +198,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
         }
         else {
           ImageUtil.writePNG(bufferedImage, highscoreCard, "Highscore Card");
-          LOG.info("Written highscore card: " + highscoreCard.getAbsolutePath());
+          LOG.info("Written highscore card: {}", highscoreCard.getAbsolutePath());
           SLOG.info("Written highscore card: " + highscoreCard.getAbsolutePath());
         }
       }
@@ -221,16 +221,16 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
     BufferedImage[] generatedImage = {null};
     Platform.runLater(() -> {
       try {
-        CardResolution res = getCardResolution(template.getTemplateType());
+        int[] res = getCardResolution(template.getTemplateType());
 
         CardGraphicsHighscore cardGraphics = new CardGraphicsHighscore(false);
         cardGraphics.setTemplate(template);
 
         CardData data = getCardData(game, summary, template, true);
 
-        cardGraphics.setData(data, res);
+        cardGraphics.setData(data, res[0], res[1]);
         // resize the cards to the needed resolution
-        cardGraphics.resize(res.toWidth(), res.toHeight());
+        cardGraphics.resize(res[0], res[1]);
 
         // then export image
         generatedImage[0] = cardGraphics.snapshot();
@@ -247,17 +247,20 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
     return generatedImage[0];
   }
 
-  public CardResolution getCardResolution(CardTemplateType templateType) {
+  public int[] getCardResolution(CardTemplateType templateType) {
     switch (templateType) {
-      case HIGSCORE_CARD:
-        return cardSettings.getCardResolution();
+      case HIGSCORE_CARD: {
+        if (cardSettings.isCustomResolution()) {
+          return new int[]{cardSettings.getCardWidth(), cardSettings.getCardHeight()};
+        }
+        return new int[]{cardSettings.getCardResolution().toWidth(), cardSettings.getCardResolution().toHeight()};
+      }
       case INSTRUCTIONS_CARD:
-        //TODO add settings like Highscore, reuse same ?
-        return CardResolution.HDReady;
+        return new int[]{CardResolution.HDReady.toWidth(), CardResolution.HDReady.toHeight()};
       case WHEEL:
-        return CardResolution.WHEEL;
+        return new int[]{CardResolution.WHEEL.toWidth(), CardResolution.WHEEL.toHeight()};
     }
-    return null;
+    return new int[]{CardResolution.HDReady.toWidth(), CardResolution.HDReady.toHeight()};
   }
 
 //-----------------------------------------

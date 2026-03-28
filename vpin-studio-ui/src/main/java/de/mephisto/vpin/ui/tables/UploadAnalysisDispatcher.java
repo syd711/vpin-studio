@@ -139,7 +139,7 @@ public class UploadAnalysisDispatcher {
         break;
       }
       case MUSIC: {
-        TableDialogs.openMusicUploadDialog(file, analysis, finalizer);
+        TableDialogs.openMusicUploadDialog(file, analysis, game.getId(), finalizer);
         break;
       }
       case PUP_PACK: {

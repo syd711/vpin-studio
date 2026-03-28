@@ -8,7 +8,7 @@ import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
@@ -32,7 +32,7 @@ public class DMDService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(DMDService.class);
 
   @Autowired
-  private MameService mameService;
+  private VPinMameService vPinMameService;
 
   public File getDmdFolder(Game game) {
     File tablesFolder = game.getGameFile().getParentFile();
@@ -52,7 +52,7 @@ public class DMDService implements InitializingBean {
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to delete DMD directory for " + game + ": " + e.getMessage(), e);
+      LOG.error("Failed to delete DMD directory for {}: {}", game, e.getMessage(), e);
     }
     return false;
   }
@@ -110,7 +110,7 @@ public class DMDService implements InitializingBean {
   }
 
   public ComponentSummary getFreezySummary() {
-    File mameFolder = mameService.getMameFolder();
+    File mameFolder = vPinMameService.getMameFolder();
     return FreezySummarizer.summarizeFreezy(mameFolder);
   }
 

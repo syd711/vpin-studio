@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.pinemhi;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
-import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import org.apache.commons.configuration2.INIConfiguration;
@@ -38,7 +38,7 @@ public class PINemHiService implements InitializingBean {
   private SystemService systemService;
 
   @Autowired
-  private MameService mameService;
+  private VPinMameService vPinMameService;
 
 
   private boolean enabled = false;
@@ -55,7 +55,7 @@ public class PINemHiService implements InitializingBean {
       return enabled;
     }
     catch (Exception e) {
-      LOG.error("Failed to set PINemHi autostart flag: " + e.getMessage(), e);
+      LOG.error("Failed to set PINemHi autostart flag: {}", e.getMessage(), e);
     }
     return false;
   }
@@ -82,7 +82,7 @@ public class PINemHiService implements InitializingBean {
 //    executor.setCodePage("65001");
     executor.setDir(new File(PINEMHI_FOLDER));
     executor.executeCommandAsync();
-    LOG.info("Executed " + PROCESS_NAME + " command: " + String.join(" ", commands));
+    LOG.info("Executed {} command: {}", PROCESS_NAME, String.join(" ", commands));
   }
 
   public boolean restart() {
@@ -133,7 +133,7 @@ public class PINemHiService implements InitializingBean {
       saveIni(ini, iniConfiguration);
     }
     catch (Exception e) {
-      LOG.error("Failed to save pinemhi.ini: " + e.getMessage(), e);
+      LOG.error("Failed to save pinemhi.ini: {}", e.getMessage(), e);
     }
     return settings;
   }
@@ -175,7 +175,7 @@ public class PINemHiService implements InitializingBean {
       return entries;
     }
     catch (Exception e) {
-      LOG.error("Failed to load pinemhi.ini: " + e.getMessage(), e);
+      LOG.error("Failed to load pinemhi.ini: {}", e.getMessage(), e);
     }
     return Collections.emptyMap();
   }
@@ -210,19 +210,19 @@ public class PINemHiService implements InitializingBean {
           String version = s.trim().split(" ")[1];
           String pinemhiVersion = systemService.getScoringDatabase().getPinemhiVersion();
           if (version.equals(pinemhiVersion)) {
-            LOG.info("Using latest version of PINemHi (" + version + ")");
+            LOG.info("Using latest version of PINemHi ({})", version);
             break;
           }
           else {
-            LOG.info("PINemHi is outdated (" + version + " vs. " + pinemhiVersion + "), checking for updates.");
-            List<String> resources = Arrays.asList("PINemHi.exe", "pinemhi_rom_monitor.exe", "PINemHi_Leaderboard.exe");
+            LOG.info("PINemHi is outdated ({} vs. {}), checking for updates.", version, pinemhiVersion);
+            List<String> resources = Arrays.asList("PINemHi.exe", "pinemhi_rom_monitor.exe", "PINemHi_Leaderboard.exe", "romfind.ini", "showboard.exe");
             for (String resource : resources) {
               File check = new File(PINEMHI_FOLDER, resource);
-              LOG.info("Downloading PINemHi file " + check.getAbsolutePath());
+              LOG.info("Downloading PINemHi file {}", check.getAbsolutePath());
               Updater.downloadAndOverwrite("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/pinemhi/" + resource, check, true);
             }
 
-            File nvramFolder = mameService.getNvRamFolder();
+            File nvramFolder = vPinMameService.getNvRamFolder();
             if (nvramFolder != null && nvramFolder.exists()) {
               adjustVPPathForEmulator(nvramFolder, getPinemhiIni(), true);
             }
@@ -232,15 +232,13 @@ public class PINemHiService implements InitializingBean {
 
     }
     catch (Exception e) {
-      LOG.error("Failed to check for pinemhi updates: " + e.getMessage(), e);
+      LOG.error("Failed to check for pinemhi updates: {}", e.getMessage(), e);
     }
   }
 
   /**
    * Load pinhemi.ini, update the VP path with the nvRam foldr of the emulator
    * and save
-   *
-   * @param emulator The GameEmulator to get the path
    */
   public static void adjustVPPathForEmulator(File nvRamFolder, File ini, boolean forcePath) {
     if (nvRamFolder.exists()) {
@@ -254,11 +252,11 @@ public class PINemHiService implements InitializingBean {
           iniConfiguration.getSection("paths").setProperty("VP", vp.getAbsolutePath().replaceAll("\\\\", "/") + "/");
 
           saveIni(ini, iniConfiguration);
-          LOG.info("Changed VP path to " + vp.getAbsolutePath());
+          LOG.info("Changed VP path to {}", vp.getAbsolutePath());
         }
       }
       catch (Exception e) {
-        LOG.error("Failed to update VP path in pinemhi.ini: " + e.getMessage(), e);
+        LOG.error("Failed to update VP path in pinemhi.ini: {}", e.getMessage(), e);
       }
     }
   }
@@ -273,10 +271,10 @@ public class PINemHiService implements InitializingBean {
     this.enabled = getAutoStart();
     if (enabled) {
       startMonitor();
-      LOG.info("Auto-started Pinemhi " + PROCESS_NAME);
+      LOG.info("Auto-started Pinemhi {}", PROCESS_NAME);
     }
 
-    File nvramFolder = mameService.getNvRamFolder();
+    File nvramFolder = vPinMameService.getNvRamFolder();
     if (nvramFolder != null && nvramFolder.exists()) {
       adjustVPPathForEmulator(nvramFolder, getPinemhiIni(), true);
     }

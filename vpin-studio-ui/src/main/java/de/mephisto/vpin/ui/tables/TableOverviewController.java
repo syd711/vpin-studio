@@ -853,8 +853,10 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
           List<GameEmulatorRepresentation> vpxEmus = emulatorCombo.getItems().stream().filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
 
-          this.importBtn.setDisable(!isAllVpxSelected && vpxEmus.size() > 1);
-          this.exportBtn.setDisable(!isAllVpxSelected);
+          GameEmulatorRepresentation emulatorRepresentation = emulatorCombo.getValue();
+          this.importBtn.setDisable(!emulatorRepresentation.isVpxEmulator() && !emulatorRepresentation.isMameEmulator());
+          this.exportBtn.setVisible(emulatorRepresentation.isVpxEmulator());
+          this.exportBtn.setDisable(!emulatorRepresentation.isVpxEmulator());
           this.stopBtn.setDisable(false);
           this.searchTextField.setDisable(false);
           this.reloadBtn.setDisable(false);
@@ -1794,7 +1796,6 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     vpxzBtn.setDisable(c.getList().isEmpty());
     playButtonController.setDisable(disable);
     scanBtn.setDisable(c.getList().isEmpty());
-    exportBtn.setDisable(c.getList().isEmpty());
     assetManagerBtn.setDisable(disable);
     tableEditBtn.setDisable(disable);
     setValidationVisible(c.getList().size() != 1);
@@ -2098,22 +2099,21 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   private void refreshViewForEmulator() {
     FrontendType frontendType = client.getFrontendService().getFrontendType();
-    GameEmulatorRepresentation newValue = emulatorCombo.getValue();
-    getTableFilterController().setEmulator(newValue);
-    boolean vpxOrFpEmulator = newValue == null || newValue.isVpxEmulator() || newValue.isFpEmulator();
-    boolean vpxEmulator = newValue == null || newValue.isVpxEmulator();
-    boolean fpEmulator = newValue == null || newValue.isFpEmulator();
+    GameEmulatorRepresentation emulator = emulatorCombo.getValue();
+    getTableFilterController().setEmulator(emulator);
+    boolean vpxOrFpEmulator = emulator == null || emulator.isVpxEmulator() || emulator.isFpEmulator();
+    boolean vpxEmulator = emulator == null || emulator.isVpxEmulator();
+    boolean fpEmulator = emulator == null || emulator.isFpEmulator();
 
     this.exportBtn.setVisible(Features.BACKUPS_ENABLED);
     this.importBtn.setVisible(!frontendType.equals(FrontendType.Standalone));
     this.importSeparator.setVisible(!frontendType.equals(FrontendType.Standalone));
-    this.emulatorBtn.setDisable(newValue == null || newValue.getId() == -1);
-    this.exportBtn.setDisable(!vpxOrFpEmulator);
-    this.deleteBtn.setVisible(vpxOrFpEmulator);
+    this.emulatorBtn.setDisable(emulator == null || emulator.getId() == -1);
+    this.exportBtn.setDisable(!emulator.isVpxEmulator());
+    this.exportBtn.setVisible(emulator.isVpxEmulator());
+    this.deleteBtn.setVisible(vpxOrFpEmulator || emulator.isMameEmulator());
     this.vpxzBtn.setVisible(vpxEmulator);
     this.scanBtn.setVisible(vpxEmulator);
-//    this.playButtonController.setVisible(vpxOrFpEmulator);
-//    this.stopBtn.setVisible(vpxOrFpEmulator);
 
     this.uploadsButtonController.updateVisibility(vpxOrFpEmulator, vpxEmulator, fpEmulator);
 
@@ -2121,7 +2121,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     refreshColumns();
 
-    tablesController.getTablesSideBarController().refreshViewForEmulator(newValue);
+    tablesController.getTablesSideBarController().refreshViewForEmulator(emulator);
   }
 
   private TableFilterController getTableFilterController() {
@@ -2133,33 +2133,34 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     GameEmulatorRepresentation newValue = emulatorCombo.getValue();
     boolean vpxMode = newValue == null || newValue.isVpxEmulator();
     boolean fpMode = newValue == null || newValue.isFpEmulator();
-    boolean fxMode = newValue == null || newValue.isFxEmulator();
+    boolean zenEmulator = newValue == null || newValue.isFxEmulator();
     boolean fx1Mode = newValue == null || newValue.getType().equals(EmulatorType.ZenFX);
     boolean fx3Mode = newValue == null || newValue.getType().equals(EmulatorType.ZenFX3);
     boolean pinballMMode = newValue != null && newValue.getType().equals(EmulatorType.PinballM);
     boolean zaccariaMode = newValue == null || newValue.isZaccariaEmulator();
+    boolean mameMode = newValue == null || newValue.isMameEmulator();
 
     columnVersion.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnVersion());
     columnEmulator.setVisible((vpxMode || fpMode) && !assetManagerMode && !Features.IS_STANDALONE && uiSettings.isColumnEmulator());
-    columnVPS.setVisible((vpxMode || fpMode || fxMode || zaccariaMode) && !assetManagerMode && uiSettings.isColumnVpsStatus());
-    columnPatchVersion.setVisible((vpxMode || fpMode || fxMode) && !assetManagerMode && uiSettings.isColumnPatchVersion());
-    columnRom.setVisible(pinballMMode || fx1Mode || (vpxMode && !assetManagerMode && uiSettings.isColumnRom()));
-    columnB2S.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnBackglass());
+    columnVPS.setVisible((vpxMode || fpMode || zenEmulator || zaccariaMode) && !assetManagerMode && uiSettings.isColumnVpsStatus());
+    columnPatchVersion.setVisible((vpxMode || fpMode || zenEmulator) && !assetManagerMode && uiSettings.isColumnPatchVersion());
+    columnRom.setVisible(mameMode || pinballMMode || fx1Mode || (vpxMode && !assetManagerMode && uiSettings.isColumnRom()));
+    columnB2S.setVisible((vpxMode || fpMode || zenEmulator) && !assetManagerMode && uiSettings.isColumnBackglass());
     columnRating.setVisible((vpxMode || fpMode) && !assetManagerMode && Features.RATINGS && uiSettings.isColumnRating());
     columnPUPPack.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPupPack() && Features.PUPPACKS_ENABLED);
     columnPinVol.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPinVol());
     columnAltSound.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnAltSound());
-    columnAltColor.setVisible((vpxMode || fx1Mode || fx3Mode) && !assetManagerMode && uiSettings.isColumnAltColor());
+    columnAltColor.setVisible((vpxMode || fx1Mode || fx3Mode || pinballMMode) && !assetManagerMode && uiSettings.isColumnAltColor());
     columnPOV.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPov());
     columnTutorials.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnTutorial());
     columnINI.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnIni());
     columnRES.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnRes());
     columnHSType.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnHighscore());
-    columnDateAdded.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnDateAdded());
-    columnDateModified.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnDateModified());
+    columnDateAdded.setVisible((mameMode || vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnDateAdded());
+    columnDateModified.setVisible((mameMode || vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnDateModified());
     columnLauncher.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnLauncher());
-    columnComment.setVisible((vpxMode || fpMode || fxMode || zaccariaMode) && !assetManagerMode && uiSettings.isColumnComment());
-    columnPlaylists.setVisible((vpxMode || fpMode || fxMode || zaccariaMode) && !assetManagerMode && Features.PLAYLIST_ENABLED && uiSettings.isColumnPlaylists());
+    columnComment.setVisible((vpxMode || fpMode || zenEmulator || zaccariaMode) && !assetManagerMode && uiSettings.isColumnComment());
+    columnPlaylists.setVisible((vpxMode || fpMode || zenEmulator || zaccariaMode || mameMode) && !assetManagerMode && Features.PLAYLIST_ENABLED && uiSettings.isColumnPlaylists());
   }
 
   @Override

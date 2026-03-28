@@ -17,7 +17,7 @@ public class ResourceLoader {
       BufferedImage read = ImageIO.read(ResourceLoader.class.getResource(s));
       return read;
     } catch (Exception e) {
-      LOG.error("Resource not found: " + s);
+      LOG.error("Resource not found: {}", s);
     }
     return null;
   }

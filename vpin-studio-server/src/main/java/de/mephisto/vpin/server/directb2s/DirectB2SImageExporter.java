@@ -36,13 +36,13 @@ public class DirectB2SImageExporter {
 
   private static void write(byte[] bytes, File target) throws VPinStudioException {
     if (!target.getParentFile().exists() && !target.getParentFile().mkdirs()) {
-      LOG.error("Failed to created export directb2s export folder \"" + target.getParentFile().getAbsolutePath() + "\"");
+      LOG.error("Failed to created export directb2s export folder \"{}\"", target.getParentFile().getAbsolutePath());
       return;
     }
     try (FileOutputStream out = new FileOutputStream(target)) {
       IOUtils.write(bytes, out);
       out.close();
-      LOG.info("Written backglass export image \"" + target.getAbsolutePath() + "\"");
+      LOG.info("Written backglass export image \"{}\"", target.getAbsolutePath());
     } 
     catch (Exception e) {
       String msg = "Failed to write directB2S image : " + e.getMessage();

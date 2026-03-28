@@ -137,7 +137,10 @@ public class UploadsButtonController implements Initializable {
 
   @FXML
   public void onMusicUpload() {
-    TableDialogs.onMusicUploads(null, null, null);
+    GameRepresentation selectedItem = getSelection();
+    if (selectedItem != null) {
+      TableDialogs.onMusicUploads(null, null, selectedItem.getId(), null);
+    }
   }
 
 
@@ -308,6 +311,7 @@ public class UploadsButtonController implements Initializable {
     resItem.setDisable(disable);
     backglassUploadItem.setDisable(disable);
     iniUploadMenuItem.setDisable(disable);
+    musicUploadItem.setDisable(disable);
   }
 
   public void setCompact(boolean b) {

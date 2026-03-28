@@ -79,10 +79,10 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
 
   private IScoredSyncModel synchronize(IScoredSyncModel syncModel, List<Game> knownGames) {
     if (syncModel.getGame() != null) {
-      LOG.info("--- ------- iScored Sync (" + syncModel.getGame().getName() + ")-----------------");
+      LOG.info("--- ------- iScored Sync ({})-----------------", syncModel.getGame().getName());
     }
     else {
-      LOG.info("--- ------- iScored Sync (" + syncModel.getiScoredGameRoom().getUrl() + ")-----------------");
+      LOG.info("--- ------- iScored Sync ({})-----------------", syncModel.getiScoredGameRoom().getUrl());
     }
 
     GameRoom gameRoom = IScored.getGameRoom(syncModel.getiScoredGameRoom().getUrl(), syncModel.isInvalidate());
@@ -108,7 +108,7 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
       LOG.info("Cancelled sync, game room could not be loaded.");
     }
 
-    LOG.info("--- ------- /iScored Sync (" + syncModel.getiScoredGameRoom().getUrl() + ")-----------------");
+    LOG.info("--- ------- /iScored Sync ({})-----------------", syncModel.getiScoredGameRoom().getUrl());
     return syncModel;
   }
 
@@ -191,9 +191,13 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
   }
 
   private void synchronizeBadge(IScoredGameRoom iScoredGameRoom, Game game) {
-    frontendStatusService.deAugmentWheel(game);
-    if (!StringUtils.isEmpty(iScoredGameRoom.getBadge())) {
+    boolean wheelAugmented = frontendStatusService.isWheelAugmented(game);
+    boolean setBadge = !StringUtils.isEmpty(iScoredGameRoom.getBadge());
+    if (setBadge && !wheelAugmented) {
       frontendStatusService.augmentWheel(game, iScoredGameRoom.getBadge());
+    }
+    else if (!setBadge && wheelAugmented) {
+      frontendStatusService.deAugmentWheel(game);
     }
   }
 
@@ -288,12 +292,54 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
   @Override
   public void tableExited(TableStatusChangedEvent event) {
     IScoredSettings iScoredSettings = preferencesService.getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
-    if (iScoredSettings.isEnabled()) {
-      LOG.info("Running iScored game room sync after table exit.");
-      synchronizeGameRooms();
+    if (!iScoredSettings.isEnabled()) {
+      return;
+    }
+
+    Game game = event.getGame();
+    LOG.info("Running iScored game room sync after table exit for '{}'.", game.getGameDisplayName());
+
+    List<Game> knownGames = gameService.getKnownGames(-1);
+    for (IScoredGameRoom gameRoom : iScoredSettings.getGameRooms()) {
+      if (!gameRoom.isSynchronize()) {
+        continue;
+      }
+      GameRoom gr = IScored.getGameRoom(gameRoom.getUrl(), true);
+      if (gr == null) {
+        continue;
+      }
+      IScoredGame iScoredGame = gr.getGameByVps(game.getExtTableId(), game.getExtTableVersionId());
+      if (iScoredGame == null) {
+        continue;
+      }
+      IScoredSyncModel model = new IScoredSyncModel();
+      model.setiScoredGameRoom(gameRoom);
+      model.setGame(iScoredGame);
+      model.setInvalidate(true);
+      synchronize(model, knownGames);
     }
   }
 
+  /**
+   *   The dependency chain:
+   *
+   *   1. FrontendStatusService fires tableExited on all listeners sorted by priority descending (o2.getPriority() - o1.getPriority(), line 67).
+   *   2. IScoredCompetitionSynchronizer.tableExited() runs first (priority=100) → calls synchronizeGameRooms() → calls synchronizeGame() → creates the Competition record in the database for any game that exists in an iScored game room but doesn't have a local subscription yet.
+   *   3. DefaultTableAndFrontendStatusChangeListenerImpl.tableExited() runs after (default priority=-1) → calls highscoreService.scanScore() → which detects a new highscore and fires HighscoreChangeEvent.
+   *   4. IScoredHighscoreChangeListener.highscoreChanged() handles that event → calls competitionService.getIScoredSubscriptions() → calls filterForMatchingCompetitions() (line 99):
+   *   boolean isCompetitionAvailable = filterForMatchingCompetitions(iScoredSubscriptions, iScoredGame);
+   *   if (!isCompetitionAvailable) {
+   *       LOG.info("Found matching game room game \"{}\", but no matching iScored competition was created for them.");
+   *       continue;  // ← score submission is silently skipped
+   *   }
+   *   iScoredService.submitScore(iScoredGame, newScore);
+   *
+   *   If the order were reversed — i.e., highscoreChanged fires before synchronizeGameRooms() has run — filterForMatchingCompetitions() finds no Competition record in the DB yet and returns false,
+   *   so the score is never submitted to iScored for that session. The IScoredHighscoreChangeListener even acknowledges this dependency explicitly in the comment at line 71: "a reload
+   *   is not required, since the synchronizer will take care of that".
+   *
+   *   In short: the Competition record must exist before highscoreChanged fires, and tableExited with priority=100 is what guarantees that ordering.
+   */
   @Override
   public int getPriority() {
     //we need a higher priority here since we need to run the sync before the highscore change event firing.

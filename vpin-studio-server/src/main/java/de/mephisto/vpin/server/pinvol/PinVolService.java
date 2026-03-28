@@ -81,7 +81,7 @@ public class PinVolService implements InitializingBean, FileChangeListener {
           SystemCommandExecutor executor = new SystemCommandExecutor(commands);
           executor.setDir(new File(SystemService.RESOURCES));
           executor.executeCommand();
-          LOG.info("Executed PinVol command: " + String.join(" ", commands));
+          LOG.info("Executed PinVol command: {}", String.join(" ", commands));
         }
         else {
           LOG.error("Failed to start PinVol.bat, file does not exist: {}", file.getAbsolutePath());
@@ -92,7 +92,7 @@ public class PinVolService implements InitializingBean, FileChangeListener {
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to launch PinVol.exe: " + e.getMessage(), e);
+      LOG.error("Failed to launch PinVol.exe: {}", e.getMessage(), e);
     }
   }
 
@@ -159,7 +159,7 @@ public class PinVolService implements InitializingBean, FileChangeListener {
             preferences.getTableEntries().add(e);
           }
         }
-        LOG.info("Loaded " + preferences.getTableEntries().size() + " PinVOL table entries.");
+        LOG.info("Loaded {} PinVOL table entries.", preferences.getTableEntries().size());
       }
       File volIni = getPinVolVolIniFile();
       if (volIni.exists()) {
@@ -215,17 +215,17 @@ public class PinVolService implements InitializingBean, FileChangeListener {
     }
   }
 
-  private File getPinVolTablesIniFile() {
+  public File getPinVolTablesIniFile() {
     File pinvolExe = getPinVolExe();
     return new File(pinvolExe.getParentFile(), PIN_VOL_TABLES_INI);
   }
 
-  private File getPinVolSettingsIniFile() {
+  public File getPinVolSettingsIniFile() {
     File pinvolExe = getPinVolExe();
     return new File(pinvolExe.getParentFile(), PIN_VOL_SETTINGS_INI);
   }
 
-  private File getPinVolVolIniFile() {
+  public File getPinVolVolIniFile() {
     File pinvolExe = getPinVolExe();
     return new File(pinvolExe.getParentFile(), PIN_VOL_VOL_INI);
   }

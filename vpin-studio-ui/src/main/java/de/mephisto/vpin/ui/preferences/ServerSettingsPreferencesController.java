@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -109,7 +110,7 @@ public class ServerSettingsPreferencesController implements Initializable {
           String name = "VPin-Studio-Backup[" + new SimpleDateFormat("yyyy-MM-dd--HH-mm").format(new Date()) + "].json";
           File file = new File(selection, name);
           FileOutputStream fileOutputStream = new FileOutputStream(file);
-          IOUtils.write(backup, fileOutputStream);
+          IOUtils.write(backup, fileOutputStream, StandardCharsets.UTF_8);
           LOG.info("Written backup file {}", file.getAbsolutePath());
           fileOutputStream.close();
           WidgetFactory.showInformation(Studio.stage, "Backup Finished", "Written backup file \"" + file.getAbsolutePath() + "\".");

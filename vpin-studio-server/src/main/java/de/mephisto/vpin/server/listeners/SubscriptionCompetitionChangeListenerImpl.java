@@ -102,7 +102,7 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
               return;
             }
 
-            LOG.info("Created text channel " + subscriptionChannel);
+            LOG.info("Created text channel {}", subscriptionChannel);
             if (subscriptionChannel != null) {
               long channelId = subscriptionChannel.getId();
 
@@ -138,7 +138,7 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
         }
       }
       catch (Exception e) {
-        LOG.error("Error creating table subscription: " + e.getMessage(), e);
+        LOG.error("Error creating table subscription: {}", e.getMessage(), e);
       }
     }
   }
@@ -195,7 +195,7 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
     //the bot is not the owner, so it has joined the subscription OR re-joined it
     long msgId = discordService.sendMessage(competition.getDiscordServerId(), competition.getDiscordChannelId(), discordSubscriptionMessageFactory.createSubscriptionJoinedMessage(competition, bot));
     discordService.addCompetitionPlayer(competition.getDiscordServerId(), competition.getDiscordChannelId(), msgId);
-    LOG.info("Discord bot \"" + bot + "\" has joined \"" + competition + "\"");
+    LOG.info("Discord bot \"{}\" has joined \"{}\"", bot, competition);
   }
 
   @Override

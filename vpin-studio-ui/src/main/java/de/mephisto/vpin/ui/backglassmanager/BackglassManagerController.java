@@ -9,6 +9,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.backglassmanager.dialogs.BackglassManagerDialogs;
@@ -26,6 +27,7 @@ import de.mephisto.vpin.ui.util.WaitProgressModel;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -34,17 +36,19 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.paint.Paint;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.io.File;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static de.mephisto.vpin.ui.Studio.*;
 
@@ -89,6 +93,9 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   TableColumn<DirectB2SModel, DirectB2SModel> numberDirectB2SColumn;
 
   @FXML
+  TableColumn<DirectB2SModel, DirectB2SModel> tableColumn;
+
+  @FXML
   TableColumn<DirectB2SModel, DirectB2SModel> fullDmdColumn;
 
   @FXML
@@ -102,6 +109,15 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
   @FXML
   TableColumn<DirectB2SModel, DirectB2SModel> frameColumn;
+
+  @FXML
+  TableColumn<DirectB2SModel, DirectB2SModel> emulatorColumn;
+
+  @FXML
+  private ComboBox<GameEmulatorRepresentation> emulatorCombo;
+
+  @FXML
+  private Button emulatorBtn;
 
   //-------------
 
@@ -119,6 +135,14 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
   //-------------
   @FXML
+  private void onEmulatorManager() {
+    GameEmulatorRepresentation emu = emulatorCombo.getSelectionModel().getSelectedItem();
+    if (emu != null) {
+      NavigationController.navigateTo(NavigationItem.SystemManager, new NavigationOptions(emulatorCombo.getSelectionModel().getSelectedItem()));
+    }
+  }
+
+  @FXML
   private void onTableMouseClicked(MouseEvent mouseEvent) {
     if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
       if (mouseEvent.getClickCount() == 2) {
@@ -131,8 +155,11 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   private void onDMDPosition() {
     GameRepresentation game = getGameFromSelection();
     if (game != null) {
-      LOG.info("open DMD Position dialog for game " + game.getId());
-      TableDialogs.openDMDPositionDialog(game, this);
+      GameEmulatorRepresentation emulator = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
+      if (emulator.isVpxEmulator()) {
+        LOG.info("open DMD Position dialog for game " + game.getId());
+        TableDialogs.openDMDPositionDialog(game, this);
+      }
     }
   }
 
@@ -251,9 +278,15 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     startReload("Loading Backglasses...");
 
     refreshPlaylists();
+    refreshEmulators();
 
     JFXFuture.supplyAsync(() -> client.getBackglassServiceClient().getBackglasses()).thenAcceptLater(data -> {
-      setItems(data);
+      if (emulatorCombo.getValue() == null) {
+        setItems(data);
+      }
+      else {
+        setItems(data.stream().filter(d -> d.getEmulatorId() == emulatorCombo.getValue().getId()).collect(Collectors.toList()));
+      }
       endReload();
     });
   }
@@ -263,9 +296,33 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     PreferencesController.open("validators_backglass");
   }
 
+  public void refreshEmulators() {
+    GameEmulatorRepresentation selected = this.emulatorCombo.getValue();
+    this.emulatorCombo.setDisable(true);
+    JFXFuture.supplyAsync(() -> {
+      return getEmulatorList();
+    }).thenAcceptLater(emulators -> {
+      List<GameEmulatorRepresentation> pl = new ArrayList<>(emulators);
+      pl.add(0, null);
+      emulatorCombo.setItems(FXCollections.observableList(pl));
+
+      if (selected != null) {
+        selectItem(emulatorCombo, p -> p.getId() == selected.getId());
+      }
+      this.emulatorCombo.setDisable(false);
+    });
+  }
+
+  private List<GameEmulatorRepresentation> getEmulatorList() {
+    List<GameEmulatorRepresentation> validatedGameEmulators = client.getEmulatorService().getValidatedGameEmulators();
+    return validatedGameEmulators.stream().filter(e -> e.isVpxEmulator() || e.isFpEmulator() || e.isFxEmulator()).collect(Collectors.toList());
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize("backglass", "backglasses", new BackglassManagerColumnSorter(this));
+
+    tableView.setPlaceholder(new Label("No backglasses found."));
 
     resBtn.managedProperty().bindBidirectional(resBtn.visibleProperty());
 
@@ -289,6 +346,25 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     // Install the handler for backglass selection
     this.tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
       refreshView(newValue);
+    });
+
+    JFXFuture.supplyAsync(() -> {
+      return getEmulatorList();
+    }).thenAcceptLater(emulators -> {
+      emulatorCombo.setItems(FXCollections.observableList(emulators));
+      emulatorCombo.valueProperty().addListener(new ChangeListener<GameEmulatorRepresentation>() {
+        @Override
+        public void changed(ObservableValue<? extends GameEmulatorRepresentation> observable, GameEmulatorRepresentation oldValue, GameEmulatorRepresentation newValue) {
+          if (emulatorCombo.isDisabled()) {
+            return;
+          }
+          doReload();
+        }
+      });
+
+      if (!emulators.isEmpty()) {
+        emulatorCombo.setValue(emulators.get(0));
+      }
     });
 
     // add the overlay for drag and drop
@@ -347,6 +423,17 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       label.getStyleClass().add("default-text");
       label.setStyle(getLabelCss(value));
       return label;
+    }, this, true);
+
+    BaseLoadingColumn.configureColumn(tableColumn, (value, model) -> {
+      if (model.getGameId() > 0) {
+        FontIcon checkIcon = WidgetFactory.createCheckIcon(getIconColor(value));
+        if (value.isEnabled()) {
+          checkIcon.setIconColor(Paint.valueOf(WidgetFactory.DEFAULT_COLOR));
+        }
+        return checkIcon;
+      }
+      return new Label("");
     }, this, true);
 
     BaseLoadingColumn.configureColumn(numberDirectB2SColumn, (value, model) -> {
@@ -436,6 +523,15 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       }
     });
     frameColumn.setVisible(Features.RES_EDITOR);
+
+
+    BaseLoadingColumn.configureColumn(emulatorColumn, (value, model) -> {
+      GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getGameEmulator(model.getEmulatorId());
+      Label label = new Label(gameEmulator.getName());
+      label.getStyleClass().add("default-text");
+      label.setStyle(getLabelCss(value));
+      return label;
+    }, this, true);
   }
 
   @Override
@@ -465,25 +561,28 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     backglassManagerSideBarController.resetGame();
 
     if (model != null) {
-      JFXFuture
-          .supplyAsync(() -> client.getGameService().getGame(model.getGameId()))
-          .thenAcceptLater(game -> {
-            // Ignore old answer when a new backglass has been selected
-            if (game == null || model.getGameId() != game.getId()) {
-              return;
-            }
+      JFXFuture.supplyAsync(() -> {
+        if (model.getGameId() == -1) {
+          return null;
+        }
+        return client.getGameService().getGame(model.getGameId());
+      }).thenAcceptLater(game -> {
+        // Ignore old answer when a new backglass has been selected
+        if (game == null || model.getGameId() != game.getId()) {
+          return;
+        }
 
-            if (game != null) {
-              dmdPositionBtn.setDisable(false);
-              resBtn.setDisable(false);
-              uploadBtn.setDisable(false);
-              openBtn.setDisable(false);
-              renameBtn.setDisable(false);
-              vpsOpenBtn.setDisable(client.getVpsService().getTableById(game.getExtTableId()) == null);
-            }
-            // Pass Game to sidebar so that it also updates the Game section
-            backglassManagerSideBarController.setGame(game, model.isGameAvailable());
-          });
+        GameEmulatorRepresentation emulator = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
+        dmdPositionBtn.setDisable(!emulator.isVpxEmulator());
+        resBtn.setDisable(emulator.isFxEmulator());
+        uploadBtn.setDisable(false);
+        openBtn.setDisable(false);
+        renameBtn.setDisable(false);
+        vpsOpenBtn.setDisable(client.getVpsService().getTableById(game.getExtTableId()) == null);
+
+        // Pass Game to sidebar so that it also updates the Game section
+        backglassManagerSideBarController.setGame(game, model.isGameAvailable());
+      });
 
       int validationCode = model.getValidationCode();
       if (validationCode > 0) {
@@ -505,14 +604,14 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
       // at calling time, the list may not have been populated so register a listener in that case
       if (models != null && !models.isEmpty()) {
-        selectGame(gameBaseName);
+        selectGame(gameBaseName, game.getGameDisplayName());
       }
       else {
         ChangeListener<ObservableList<DirectB2SModel>> listener = new ChangeListener<>() {
           @Override
           public void changed(ObservableValue<? extends ObservableList<DirectB2SModel>> observable,
                               ObservableList<DirectB2SModel> oldValue, ObservableList<DirectB2SModel> newValue) {
-            selectGame(gameBaseName);
+            selectGame(gameBaseName, game.getGameDisplayName());
             tableView.itemsProperty().removeListener(this);
           }
         };
@@ -521,12 +620,17 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     }
   }
 
-  private void selectGame(String gameBaseName) {
+  private void selectGame(String gameBaseName, String gameDisplayName) {
     for (DirectB2SModel backglass : models) {
       if (StringUtils.startsWithIgnoreCase(backglass.getFileName(), gameBaseName)) {
         tableView.scrollTo(backglass);
         tableView.getSelectionModel().select(backglass);
-        break;
+        return;
+      }
+      if (gameDisplayName != null && StringUtils.startsWithIgnoreCase(backglass.getFileName(), gameDisplayName)) {
+        tableView.scrollTo(backglass);
+        tableView.getSelectionModel().select(backglass);
+        return;
       }
     }
   }

@@ -1,4 +1,4 @@
-package de.mephisto.vpin.restclient.mame;
+package de.mephisto.vpin.restclient.vpinmame;
 
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
@@ -23,15 +23,15 @@ import java.lang.invoke.MethodHandles;
 /*********************************************************************************************************************
  * Mame
  ********************************************************************************************************************/
-public class MameServiceClient extends VPinStudioClientService {
+public class VPinMameServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  public MameServiceClient(VPinStudioClient client) {
+  public VPinMameServiceClient(VPinStudioClient client) {
     super(client);
   }
 
-  public MameOptions getOptions(String name) {
-    return getRestClient().get(API + "mame/options/" + name, MameOptions.class);
+  public VPinMameOptions getOptions(String name) {
+    return getRestClient().get(API + "mame/options/" + name, VPinMameOptions.class);
   }
 
   public File getDmdDeviceIni() {
@@ -111,7 +111,7 @@ public class MameServiceClient extends VPinStudioClientService {
     return getRestClient().delete(API + "mame/options/" + rom);
   }
 
-  public MameOptions saveOptions(MameOptions options) throws Exception {
-    return getRestClient().post(API + "mame/options/", options, MameOptions.class);
+  public VPinMameOptions saveOptions(VPinMameOptions options) throws Exception {
+    return getRestClient().post(API + "mame/options/", options, VPinMameOptions.class);
   }
 }

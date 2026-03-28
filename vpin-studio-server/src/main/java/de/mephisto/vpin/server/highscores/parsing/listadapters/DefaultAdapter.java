@@ -85,7 +85,7 @@ public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAda
     }
     catch (Exception e) {
       if (game != null) {
-        LOG.error("Score parsing failed for \"" + game.getGameDisplayName() + "\": {}", e.getMessage(), e);
+        LOG.error("Score parsing failed for \"{}\": {}", game.getGameDisplayName(), e.getMessage(), e);
       }
       else {
         LOG.error("Score parsing failed: {}", e.getMessage(), e);

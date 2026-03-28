@@ -4,7 +4,7 @@ import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
-import de.mephisto.vpin.restclient.mame.MameOptions;
+import de.mephisto.vpin.restclient.vpinmame.VPinMameOptions;
 import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
 import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
@@ -159,7 +159,7 @@ public class TablesSidebarMameController implements Initializable {
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
-  private MameOptions options;
+  private VPinMameOptions options;
 
   private boolean saveDisabled = false;
 
@@ -301,7 +301,7 @@ public class TablesSidebarMameController implements Initializable {
       }
       else {
         noInputDataBox.setVisible(false);
-        MameOptions defaultOptions = client.getMameService().getOptions(MameOptions.DEFAULT_KEY);
+        VPinMameOptions defaultOptions = client.getMameService().getOptions(VPinMameOptions.DEFAULT_KEY);
 
         options.setSkipPinballStartupTest(defaultOptions.isSkipPinballStartupTest());
         options.setUseSound(defaultOptions.isUseSound());
@@ -563,7 +563,7 @@ public class TablesSidebarMameController implements Initializable {
       return;
     }
 
-    MameOptions options = new MameOptions();
+    VPinMameOptions options = new VPinMameOptions();
     options.setRom(game.get().getRom());
 
     options.setIgnoreRomCrcError(ignoreRomCrcError.isSelected());

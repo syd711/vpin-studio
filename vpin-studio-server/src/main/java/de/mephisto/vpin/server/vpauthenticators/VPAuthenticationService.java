@@ -59,7 +59,7 @@ public class VPAuthenticationService {
             return msg;
           }
 
-          LOG.info("Authentication using " + authenticationProvider);
+          LOG.info("Authentication using {}", authenticationProvider);
           switch (authenticationProvider) {
             case VPF: {
               VPFSettings settings = preferencesService.getJsonPreference(PreferenceNames.VPF_SETTINGS, VPFSettings.class);
@@ -86,7 +86,7 @@ public class VPAuthenticationService {
     }
     catch (Exception e) {
       String msg = "Timeout running backup authentication, please try again later. (" + e.getMessage() + ")";
-      LOG.error(msg + ": {}", e.getMessage());
+      LOG.error("{}: {}", msg, e.getMessage());
       return msg;
     }
   }

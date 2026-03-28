@@ -56,7 +56,7 @@ public class LayerEditorTableNameController extends LayerEditorBaseController {
     }
   }
 
-  public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
+  public void setTemplate(CardTemplate cardTemplate, int cardWidth, int cardHeight, Optional<GameRepresentation> game) {
     setIconVisibility(cardTemplate.isRenderTableName());
     setIconLock(cardTemplate.isLockTableName(), cardTemplate.isTemplate());
 
@@ -68,7 +68,7 @@ public class LayerEditorTableNameController extends LayerEditorBaseController {
     tableUseDefaultColor.setSelected(cardTemplate.isRawScore());
     CardTemplateBinder.setColorPickerValue(tableFontColorSelector, cardTemplate, "tableColor");
 
-    positionController.setTemplate("table", cardTemplate, res, true);
+    positionController.setTemplate("table", cardTemplate, cardWidth, cardHeight, true);
   }
 
   @Override

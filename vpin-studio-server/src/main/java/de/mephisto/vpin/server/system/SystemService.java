@@ -71,6 +71,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
 
   private static Robot robot;
+
   static {
     try {
       boolean isHeadless = GraphicsEnvironment.isHeadless();
@@ -400,7 +401,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return !filteredProceses.isEmpty();
   }
 
-  public List<ProcessHandle> getProcesses() {
+  public static List<ProcessHandle> getProcesses() {
     return ProcessHandle.allProcesses()
         .filter(p -> p.info().command().isPresent()).collect(Collectors.toList());
   }
@@ -415,11 +416,54 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   }
 
 
-  public boolean isPinballEmulatorRunning() {
-    return isVPXRunning(getProcesses()) || isFPRunning(getProcesses());
+  public static boolean isPinballEmulatorRunning() {
+    List<ProcessHandle> processes = getProcesses();
+    return isVPXRunning(processes) || isFPRunning(processes) || isMameRunning(processes) || isZenRunning(processes) || isZaccariaRunning(processes);
   }
 
-  public boolean isVPXRunning(List<ProcessHandle> allProcesses) {
+  private static boolean isZaccariaRunning(List<ProcessHandle> processes) {
+    for (ProcessHandle p : processes) {
+      if (p.info().command().isPresent()) {
+        String cmdName = p.info().command().get();
+        String fileName = cmdName.substring(cmdName.lastIndexOf("\\") + 1);
+        if (fileName.toLowerCase().contains("zaccaria")) {
+          LOG.info("Found active zaccaria process: {}", fileName);
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  private static boolean isZenRunning(List<ProcessHandle> processes) {
+    for (ProcessHandle p : processes) {
+      if (p.info().command().isPresent()) {
+        String cmdName = p.info().command().get();
+        String fileName = cmdName.substring(cmdName.lastIndexOf("\\") + 1);
+        if (fileName.toLowerCase().contains("pinballfx") || fileName.toLowerCase().contains("pinball fx") || fileName.toLowerCase().contains("pinballm")) {
+          LOG.info("Found active Zen process: {}", fileName);
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  private static boolean isMameRunning(List<ProcessHandle> processes) {
+    for (ProcessHandle p : processes) {
+      if (p.info().command().isPresent()) {
+        String cmdName = p.info().command().get();
+        String fileName = cmdName.substring(cmdName.lastIndexOf("\\") + 1);
+        if (fileName.toLowerCase().contains("mame")) {
+          LOG.info("Found active MAME process: {}", fileName);
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  public static boolean isVPXRunning(List<ProcessHandle> allProcesses) {
     for (ProcessHandle p : allProcesses) {
       if (p.info().command().isPresent()) {
         String cmdName = p.info().command().get();
@@ -433,7 +477,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return false;
   }
 
-  public boolean isFPRunning(List<ProcessHandle> allProcesses) {
+  public static boolean isFPRunning(List<ProcessHandle> allProcesses) {
     for (ProcessHandle p : allProcesses) {
       if (p.info().command().isPresent()) {
         String cmdName = p.info().command().get();
@@ -686,7 +730,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       FileUtils.copyFile(source, target);
     }
     catch (IOException e) {
-      LOG.error("Failed to backup DB: " + e.getMessage(), e);
+      LOG.error("Failed to backup DB: {}", e.getMessage(), e);
     }
     return target.getName();
   }

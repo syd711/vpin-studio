@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.system.ScoringDBMapping;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegFile;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -13,8 +14,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.File;
 import java.lang.invoke.MethodHandles;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * check VPX-10.8.1-FileLayout.md
@@ -26,16 +32,9 @@ public class FolderLookupService {
   @Autowired
   private SystemService systemService;
 
-  @NonNull
-  public File getAltSoundFolder(@NonNull Game game, String subfolder) {
-    GameEmulator emulator = game.getEmulator();
-    if (isPreferLegacyFileStructure(emulator)) {
-      File folder = new File(emulator.getMameFolder(), "altsound");
-      return new File(folder, subfolder);
-    }
+  @Autowired
+  private VPinMameService vPinMameService;
 
-    return new File(game.getGameFolder(), "altsound/" + subfolder);
-  }
 
   /*
   public Stream<File> getAltSoundFolders(List<GameEmulator> emulators) {
@@ -67,10 +66,21 @@ public class FolderLookupService {
   */
 
   @NonNull
+  public File getAltSoundFolder(@NonNull Game game, String subfolder) {
+    GameEmulator emulator = game.getEmulator();
+    if (isPreferLegacyFileStructure(emulator)) {
+      File folder = new File(emulator.getMameFolder(), "altsound");
+      return new File(folder, subfolder);
+    }
+
+    return new File(game.getGameFolder(), "altsound/" + subfolder);
+  }
+
+  @NonNull
   public File getAltColorFolder(@NonNull Game game, String subfolder) {
     GameEmulator emulator = game.getEmulator();
     if (isPreferLegacyFileStructure(emulator)) {
-      File folder = new File(emulator.getMameFolder(), "altcolor");
+      File folder = vPinMameService.getAltColorFolder();
       return new File(folder, subfolder);
     }
 
@@ -81,7 +91,11 @@ public class FolderLookupService {
   public File getNvRamFolder(@NonNull Game game) {
     GameEmulator emulator = game.getEmulator();
     if (isPreferLegacyFileStructure(emulator)) {
-      return new File(emulator.getMameFolder(), "nvram");
+      File folder = vPinMameService.getNvRamFolder();
+      if (folder == null) {
+        folder = new File(emulator.getMameFolder(), "nvram");
+      }
+      return folder;
     }
 
     return new File(game.getGameFolder(), "pinmame/nvram/");
@@ -91,7 +105,11 @@ public class FolderLookupService {
   public File getRomFolder(@NonNull Game game) {
     GameEmulator emulator = game.getEmulator();
     if (isPreferLegacyFileStructure(emulator)) {
-      return new File(emulator.getMameFolder(), "roms");
+      File folder = vPinMameService.getRomsFolder();
+      if (folder == null) {
+        folder = new File(emulator.getMameFolder(), "roms");
+      }
+      return folder;
     }
 
     return new File(game.getGameFolder(), "pinmame/roms/");
@@ -111,23 +129,83 @@ public class FolderLookupService {
   public File getCfgFolder(@NonNull Game game) {
     GameEmulator emulator = game.getEmulator();
     if (isPreferLegacyFileStructure(emulator)) {
-      return new File(emulator.getMameFolder(), "cfg");
+      File folder = vPinMameService.getCfgFolder();
+      if (folder == null) {
+        folder = new File(emulator.getMameFolder(), "cfg");
+      }
+      return folder;
     }
 
     return new File(game.getGameFolder(), "pinmame/cfg/");
   }
 
   @Nullable
-  public File getGameMusicFolder(@NonNull Game game, @Nullable String rom) {
-    GameEmulator emulator = game.getEmulator();
-    if (isPreferLegacyFileStructure(game.getEmulator())) {
-      if (!StringUtils.isEmpty(rom)) {
-        return new File(emulator.getInstallationFolder(), "Music/" + rom);
-      }
-      return new File(emulator.getInstallationFolder(), "Music/" + game.getRom());
+  public File getGameMusicFolder(@NonNull Game game) {
+    File musicRoot = getMusicFolder(game);
+    if (musicRoot == null) {
+      return null;
     }
 
-    File folder = new File(game.getGameFolder(), "music/");
+    String effectiveRom = game.getRom();
+    String assetsStr = game.getAssets();
+
+    if (StringUtils.isEmpty(assetsStr)) {
+      // No assets scanned — fall back to music root + ROM name as subfolder
+      return StringUtils.isEmpty(effectiveRom) ? musicRoot : new File(musicRoot, effectiveRom);
+    }
+
+    // Collect distinct folder paths from the asset paths (e.g. "MFDOOM" from "MFDOOM/Attract*.mp3")
+    Set<String> folders = new LinkedHashSet<>();
+    for (String asset : assetsStr.split("\\|")) {
+      if (StringUtils.isEmpty(asset)) {
+        continue;
+      }
+      String folder = StringUtils.strip(FilenameUtils.getPath(asset), "/");
+      if (!StringUtils.isEmpty(folder)) {
+        folders.add(folder);
+      }
+    }
+
+    if (folders.isEmpty()) {
+      // All assets sit at the root level — return the root
+      return musicRoot;
+    }
+
+    if (folders.size() == 1) {
+      return new File(musicRoot, folders.iterator().next());
+    }
+
+    // Multiple folders: prefer the one whose last component matches the ROM name
+    if (!StringUtils.isEmpty(effectiveRom)) {
+      for (String folder : folders) {
+        if (FilenameUtils.getName(folder).equalsIgnoreCase(effectiveRom)) {
+          return new File(musicRoot, folder);
+        }
+      }
+    }
+
+    // No ROM match: pick the deepest folder (most path components)
+    String deepest = folders.stream()
+        .max(Comparator.comparingInt(f -> StringUtils.countMatches(f, '/') + 1))
+        .orElseThrow();
+    return new File(musicRoot, deepest);
+  }
+
+
+  @Nullable
+  public File getMusicFolder(@NonNull Game game) {
+    GameEmulator emulator = game.getEmulator();
+    return getMusicFolder(emulator);
+  }
+
+
+  @Nullable
+  public File getMusicFolder(@NonNull GameEmulator emulator) {
+    if (isPreferLegacyFileStructure(emulator)) {
+      return new File(emulator.getInstallationFolder(), "Music/");
+    }
+
+    File folder = new File(emulator.getGamesFolder(), "music/");
     if (!folder.exists() && !folder.mkdirs()) {
       LOG.warn("Failed to create game music folder {}", folder.getAbsolutePath());
     }

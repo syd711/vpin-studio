@@ -79,13 +79,29 @@ public class EmulatorBatScriptPanelController implements Initializable, IEmulato
 
   @Override
   public void applyValues() {
-    GameEmulatorScript s = this.script.get();
-    s.setEnabled(enabledCheckbox.isSelected());
-    s.setWaitForExit(waitForExitCheckbox.isSelected());
-    s.setHideWindow(hideWindowCheckbox.isSelected());
-    s.setWorkingDirectory(workingDirectoryField.getText());
-    s.setExecuteable(executableField.getText());
-    s.setParameters(parametersField.getText());
+    if (script.isPresent()) {
+      GameEmulatorScript s = this.script.get();
+      s.setEnabled(enabledCheckbox.isSelected());
+      s.setWaitForExit(waitForExitCheckbox.isSelected());
+      s.setHideWindow(hideWindowCheckbox.isSelected());
+      s.setWorkingDirectory(workingDirectoryField.getText());
+      s.setExecuteable(executableField.getText());
+      s.setParameters(parametersField.getText());
+    }
+  }
+
+  public Optional<GameEmulatorScript> getScript() {
+    return script;
+  }
+
+  @Override
+  public void setDisabled(boolean b) {
+    this.executableField.setDisable(b);
+    this.parametersField.setDisable(b);
+    this.workingDirectoryField.setDisable(b);
+    this.waitForExitCheckbox.setDisable(b);
+    this.enabledCheckbox.setDisable(b);
+    this.hideWindowCheckbox.setDisable(b);
   }
 
   @Override

@@ -54,7 +54,7 @@ public class IScoredHighscoreChangeListener implements HighscoreChangeListener, 
     Score newScore = event.getNewScore();
 
     if (event.isInitialScore()) {
-      LOG.info("Ignored iScored highscore change, because the highscore " + newScore.getFormattedScore() + " was detected as initial (default) score.");
+      LOG.info("Ignored iScored highscore change, because the highscore {} was detected as initial (default) score.", newScore.getFormattedScore());
       SLOG.info("Ignored iScored highscore change, because the highscore " + newScore.getFormattedScore() + " was detected as initial (default) score.");
       return;
     }
@@ -78,7 +78,7 @@ public class IScoredHighscoreChangeListener implements HighscoreChangeListener, 
 
         if (iScoredGame.matches(game.getExtTableId(), game.getExtTableVersionId())) {
           if (iScoredGame.isGameLocked() || iScoredGame.isDisabled()) {
-            LOG.info("Found matching game room game \"" + iScoredGame.getName() + "\", but it is disabled or locked.");
+            LOG.info("Found matching game room game \"{}\", but it is disabled or locked.", iScoredGame.getName());
             SLOG.info("Found matching game room game \"" + iScoredGame.getName() + "\", but it is disabled or locked.");
             continue;
           }
@@ -98,7 +98,7 @@ public class IScoredHighscoreChangeListener implements HighscoreChangeListener, 
       for (IScoredGame iScoredGame : gameRoomGamesForTable) {
         boolean isCompetitionAvailable = filterForMatchingCompetitions(iScoredSubscriptions, iScoredGame);
         if (!isCompetitionAvailable) {
-          LOG.info("Found matching game room game \"" + iScoredGame.getName() + "\", but no matching iScored competition was created for them.");
+          LOG.info("Found matching game room game \"{}\", but no matching iScored competition was created for them.", iScoredGame.getName());
           SLOG.info("Found matching game room game \"" + iScoredGame.getName() + "\", but no matching iScored competition was created for them.");
           continue;
         }
@@ -107,7 +107,7 @@ public class IScoredHighscoreChangeListener implements HighscoreChangeListener, 
       }
     }
     catch (Exception e) {
-      LOG.error("Failed emitting iScored highscore: " + e.getMessage(), e);
+      LOG.error("Failed emitting iScored highscore: {}", e.getMessage(), e);
       SLOG.error("Failed emitting iScored highscore: " + e.getMessage());
     }
   }

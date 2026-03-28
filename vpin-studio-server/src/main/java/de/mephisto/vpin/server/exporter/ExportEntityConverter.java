@@ -52,7 +52,7 @@ public class ExportEntityConverter {
       property = s.getName();
     }
     else {
-      LOG.warn("Unmapped field type: " + property.getClass().getSimpleName() + ", field name:" + name);
+      LOG.warn("Unmapped field type: {}, field name:{}", property.getClass().getSimpleName(), name);
     }
     return String.valueOf(property)
         .replaceAll("\n", " ")

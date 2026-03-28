@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -134,6 +135,12 @@ public class TableDeleteController implements Initializable, DialogController {
   @FXML
   private VBox frontendSelectionField;
 
+  @FXML
+  private VBox settingsColumn;
+
+  @FXML
+  private VBox mediaColumn;
+
   private List<GameRepresentation> games;
 
   private TableOverviewController tableOverviewController;
@@ -194,6 +201,17 @@ public class TableDeleteController implements Initializable, DialogController {
     validationContainer.managedProperty().bindBidirectional(validationContainer.visibleProperty());
     validationDescription.managedProperty().bindBidirectional(validationDescription.visibleProperty());
     validationTitle.managedProperty().bindBidirectional(validationTitle.visibleProperty());
+    settingsColumn.managedProperty().bindBidirectional(settingsColumn.visibleProperty());
+    mediaColumn.managedProperty().bindBidirectional(mediaColumn.visibleProperty());
+
+    deleteAllFilesCheckbox.managedProperty().bindBidirectional(deleteAllFilesCheckbox.visibleProperty());
+
+    directb2sCheckbox.managedProperty().bindBidirectional(directb2sCheckbox.visibleProperty());
+    povCheckbox.managedProperty().bindBidirectional(povCheckbox.visibleProperty());
+    iniCheckbox.managedProperty().bindBidirectional(iniCheckbox.visibleProperty());
+    resCheckbox.managedProperty().bindBidirectional(resCheckbox.visibleProperty());
+    vbsCheckbox.managedProperty().bindBidirectional(vbsCheckbox.visibleProperty());
+    vpxFileCheckbox.managedProperty().bindBidirectional(vpxFileCheckbox.visibleProperty());
 
     this.frontendSelectionField.setVisible(!Features.IS_STANDALONE);
     this.pupPackCheckbox.setVisible(Features.PUPPACKS_ENABLED);
@@ -307,12 +325,28 @@ public class TableDeleteController implements Initializable, DialogController {
     this.validationTitle.setVisible(false);
     this.validationDescription.setVisible(false);
 
+    GameEmulatorRepresentation emulator = client.getEmulatorService().getGameEmulator(selectedGames.get(0).getEmulatorId());
+
+    //whole columns
+    settingsColumn.setVisible(emulator.isVpxEmulator() || emulator.isFpEmulator());
+    mediaColumn.setVisible(emulator.isVpxEmulator() || emulator.isFpEmulator());
+
+    //checkboxes
+    directb2sCheckbox.setVisible(emulator.isVpxEmulator() || emulator.isFpEmulator());
+    povCheckbox.setVisible(emulator.isVpxEmulator() || emulator.isFpEmulator());
+    iniCheckbox.setVisible(emulator.isVpxEmulator() || emulator.isFpEmulator());
+    resCheckbox.setVisible(emulator.isVpxEmulator() || emulator.isFpEmulator());
+    vbsCheckbox.setVisible(emulator.isVpxEmulator() || emulator.isFpEmulator());
+    vpxFileCheckbox.setVisible(emulator.isVpxEmulator() || emulator.isFpEmulator());
+    deleteAllFilesCheckbox.setVisible(emulator.isVpxEmulator() || emulator.isFpEmulator());
+
     refreshVariantsCheck(selectedGames, allGames);
     refreshArchivesCheck(selectedGames, allGames);
   }
 
   private void refreshArchivesCheck(List<GameRepresentation> selectedGames, List<GameRepresentation> allGames) {
-    if (Features.BACKUPS_ENABLED) {
+    GameEmulatorRepresentation emulator = client.getEmulatorService().getGameEmulator(selectedGames.get(0).getEmulatorId());
+    if (Features.BACKUPS_ENABLED && emulator.isVpxEmulator()) {
       for (GameRepresentation selectedGame : selectedGames) {
         boolean hasNoArchives = client.getBackupService().getBackupsForGame(selectedGame.getId()).isEmpty();
         if (hasNoArchives) {

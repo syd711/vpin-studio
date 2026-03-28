@@ -67,6 +67,7 @@ public class ZipUtil {
               if (!itempath.toLowerCase().startsWith(archiveFolder.toLowerCase())) {
                 zis.closeEntry();
                 zipEntry = zis.getNextEntry();
+                LOG.info("Skipping zip entry \"{}\" because it is not part of the archive folder {}", itempath, archiveFolder);
                 continue;
               }
               itempath = itempath.substring(archiveFolder.length());

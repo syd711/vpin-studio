@@ -93,7 +93,7 @@ public class AltColorResource {
       return descriptor;
     }
     catch (Exception e) {
-      LOG.error(AssetType.ALT_COLOR.name() + " upload failed: " + e.getMessage(), e);
+      LOG.error("{} upload failed: {}", AssetType.ALT_COLOR.name(), e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.ALT_COLOR.name() + " upload failed: " + e.getMessage());
     }
     finally {

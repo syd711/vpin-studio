@@ -5,14 +5,14 @@ import de.mephisto.vpin.restclient.altsound.AltSoundFormats;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
-import de.mephisto.vpin.restclient.mame.MameOptions;
+import de.mephisto.vpin.restclient.vpinmame.VPinMameOptions;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameLifecycleService;
-import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.vpx.FolderLookupService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -43,7 +43,7 @@ public class AltSoundService implements InitializingBean {
   private AltSoundBackupService altSoundBackupService;
 
   @Autowired
-  private MameService mameService;
+  private VPinMameService vPinMameService;
 
   @Autowired
   private EmulatorService emulatorService;
@@ -133,15 +133,15 @@ public class AltSoundService implements InitializingBean {
 
   public void setAltSoundEnabled(@NonNull String rom, boolean b) {
     if (!StringUtils.isEmpty(rom)) {
-      MameOptions options = mameService.getOptions(rom);
+      VPinMameOptions options = vPinMameService.getOptions(rom);
       options.setSoundMode(b ? 1 : 0);
-      mameService.saveOptions(options);
+      vPinMameService.saveOptions(options);
     }
   }
 
   public int getAltSoundMode(@NonNull Game game) {
     if (!StringUtils.isEmpty(game.getRom())) {
-      MameOptions options = mameService.getOptions(game.getRom());
+      VPinMameOptions options = vPinMameService.getOptions(game.getRom());
       return options.getSoundMode();
     }
     return -1;

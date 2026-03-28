@@ -67,7 +67,7 @@ public class DiscordCompetitionService {
 
       highscoreService.scanScore(game, EventOrigin.COMPETITION_UPDATE);
 
-      LOG.info("Synchronizing " + competition);
+      LOG.info("Synchronizing {}", competition);
       Date startDate = competition.getCreatedAt();
       ScoreList scoreHistory = highscoreService.getScoresBetween(game, startDate, new Date(), competition.getDiscordServerId());
       List<ScoreSummary> versionedScores = new ArrayList<>(scoreHistory.getScores());
@@ -78,7 +78,7 @@ public class DiscordCompetitionService {
       //oldest versionedScores first to replay in the correct order
       Collections.sort(versionedScores, Comparator.comparing(ScoreSummary::getCreatedAt));
 
-      LOG.info("Fetched " + versionedScores.size() + " highscore versions for " + competition);
+      LOG.info("Fetched {} highscore versions for {}", versionedScores.size(), competition);
       for (int i = 0; i < versionedScores.size(); i++) {
         ScoreSummary versionedScoreSummary = versionedScores.get(i);
         List<Score> newScores = versionedScoreSummary.getScores();
@@ -93,7 +93,7 @@ public class DiscordCompetitionService {
         List<HighscoreChangeEvent> highscoreChangeEvents = new ArrayList<>();
         List<Integer> changedPositions = highscoreService.calculateChangedPositions(game.getGameDisplayName(), oldScores, newScores);
         if (!changedPositions.isEmpty()) {
-          LOG.info("Calculated " + changedPositions.size() + " score differences for score created at " + versionedScoreSummary.getCreatedAt());
+          LOG.info("Calculated {} score differences for score created at {}", changedPositions.size(), versionedScoreSummary.getCreatedAt());
           for (Integer changedPosition : changedPositions) {
             Score oldScore = oldScores.get(changedPosition - 1);
             Score newScore = newScores.get(changedPosition - 1);
@@ -108,7 +108,7 @@ public class DiscordCompetitionService {
       }
     }
     else {
-      LOG.info("Sync for " + competition + " cancelled, no channel data was found.");
+      LOG.info("Sync for {} cancelled, no channel data was found.", competition);
     }
     return true;
   }
@@ -124,11 +124,11 @@ public class DiscordCompetitionService {
   public void runDiscordServerUpdate(@NonNull Game game, @NonNull Score newScore, @NonNull Competition competition, @Nullable DiscordCompetitionData competitionData) {
     DiscordBotStatus botStatus = discordService.getStatus(competition.getDiscordServerId());
 
-    LOG.info("****** Processing Discord Highscore Change Event for " + game.getGameDisplayName() + " | " + competition.getType() + " *********");
-    LOG.info("The new score: " + newScore);
+    LOG.info("****** Processing Discord Highscore Change Event for {} | {} *********", game.getGameDisplayName(), competition.getType());
+    LOG.info("The new score: {}", newScore);
     String validationMsg = CompetitionScoreValidator.validate(competitionData, game, competition, newScore, botStatus);
     if (validationMsg != null) {
-      LOG.warn("Highscore Validation: " + validationMsg);
+      LOG.warn("Highscore Validation: {}", validationMsg);
       return;
     }
 
@@ -136,7 +136,7 @@ public class DiscordCompetitionService {
     long discordChannelId = competition.getDiscordChannelId();
     ScoreSummary discordScoreSummary = discordService.getScoreSummary(highscoreParser, competition.getUuid(), discordServerId, discordChannelId);
     if (discordScoreSummary.getScores().isEmpty()) {
-      LOG.info("Emitting initial highscore message for " + competition);
+      LOG.info("Emitting initial highscore message for {}", competition);
       int scoreLimit = resolveScoreLimit(CompetitionType.valueOf(competition.getType()), competitionData);
       String msg = createInitialHighscoreMessage(game, newScore, competition, scoreLimit);
       long newHighscoreMessageId = discordService.sendMessage(discordServerId, discordChannelId, msg);
@@ -144,20 +144,20 @@ public class DiscordCompetitionService {
     }
     else {
       List<Score> oldScores = discordScoreSummary.getScores();
-      LOG.info("The current online score for " + competition + " (" + oldScores.size() + " entries):");
+      LOG.info("The current online score for {} ({} entries):", competition, oldScores.size());
       for (Score oldScore : oldScores) {
-        LOG.info("[" + oldScore + "]");
+        LOG.info("[{}]", oldScore);
       }
 
       if (discordScoreSummary.contains(newScore)) {
         DiscordChannel channel = discordService.getChannel(competition.getDiscordServerId(), competition.getDiscordChannelId());
-        LOG.info("The score " + newScore + " already exists for " + competition + " in channel \"" + channel.getName() + "\"'s highscore list, skipping update");
+        LOG.info("The score {} already exists for {} in channel \"{}\"'s highscore list, skipping update", newScore, competition, channel.getName());
         return;
       }
 
       int position = highscoreService.calculateChangedPositionByScore(oldScores, newScore);
       if (position == -1) {
-        LOG.info("No highscore change detected for " + game + " of discord competition '" + competition.getName() + "', skipping highscore message.");
+        LOG.info("No highscore change detected for {} of discord competition '{}', skipping highscore message.", game, competition.getName());
       }
       else {
         List<Score> updatedScores = new ArrayList<>(oldScores);
@@ -170,7 +170,7 @@ public class DiscordCompetitionService {
         Player player = this.discordService.getPlayerByInitials(discordServerId, newScore.getPlayerInitials());
         newScore.setPlayer(player);
 
-        LOG.info("Emitting Discord highscore changed message for discord competition " + competition);
+        LOG.info("Emitting Discord highscore changed message for discord competition {}", competition);
         String msg = createHighscoreMessage(game, newScore, competition, updatedScores, oldScore);
         long newHighscoreMessageId = discordService.sendMessage(discordServerId, discordChannelId, msg);
         discordService.updateHighscoreMessage(discordServerId, discordChannelId, newHighscoreMessageId);
@@ -202,7 +202,7 @@ public class DiscordCompetitionService {
     for (Score updatedScore : updatedScores) {
       Optional<Score> first = sanitized.stream().filter(s -> !s.getPlayerInitials().contains("?") && s.matches(updatedScore)).findFirst();
       if (first.isPresent()) {
-        LOG.warn("Found duplicated score " + updatedScore);
+        LOG.warn("Found duplicated score {}", updatedScore);
         continue;
       }
       updatedScore.setPosition(index);
@@ -217,7 +217,7 @@ public class DiscordCompetitionService {
         Score score = new Score(new Date(), gameId, "???", null, "0", 0, index);
         sanitized.add(score);
         index++;
-        LOG.info("Appended empty default score: " + score);
+        LOG.info("Appended empty default score: {}", score);
       }
     }
 
@@ -232,7 +232,7 @@ public class DiscordCompetitionService {
     for (int i = 0; i < sanitized.size(); i++) {
       Score s = sanitized.get(i);
       s.setPosition(i + 1);
-      LOG.info("[" + s + "]");
+      LOG.info("[{}]", s);
     }
 
     return sanitized;

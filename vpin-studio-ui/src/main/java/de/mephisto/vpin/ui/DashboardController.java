@@ -62,7 +62,7 @@ public class DashboardController implements Initializable, StudioFXController, C
       widgetLatestScore.setLeft(root);
     }
     catch (IOException e) {
-      LOG.error("Failed to load score widget: " + e.getMessage(), e);
+      LOG.error("Failed to load score widget: {}", e.getMessage(), e);
     }
 
 //    try {
@@ -102,7 +102,7 @@ public class DashboardController implements Initializable, StudioFXController, C
       widgetRight.setCenter(playersBorderPane);
     }
     catch (IOException e) {
-      LOG.error("Failed to load finished players widget: " + e.getMessage(), e);
+      LOG.error("Failed to load finished players widget: {}", e.getMessage(), e);
     }
 
   }

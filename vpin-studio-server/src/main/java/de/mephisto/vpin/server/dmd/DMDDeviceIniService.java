@@ -4,7 +4,7 @@ import de.mephisto.vpin.restclient.dmd.*;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
-import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -42,15 +42,25 @@ public class DMDDeviceIniService {
 
   @Lazy
   @Autowired
-  private MameService mameService;
+  private VPinMameService vPinMameService;
 
   @Autowired
   private SystemService systemService;
 
+  @NonNull
+  public File getDmdDeviceIniFile(@NonNull GameEmulator gameEmulator) {
+    return new File(gameEmulator.getMameFolder(), DMD_DEVICE_INI);
+  }
+
+  @Nullable
   public DMDDeviceIniConfiguration getDmdDeviceIni(@NonNull GameEmulator gameEmulator) {
     loadDmdDeviceIni(gameEmulator);
 
     INIConfiguration dmdDeviceIni = dmdDeviceIniFiles.get(gameEmulator.getId());
+    if (dmdDeviceIni == null) {
+      LOG.warn("No dmddevice.ini found for {}", gameEmulator.getName());
+      return null;
+    }
 
     DMDDeviceIniConfiguration config = new DMDDeviceIniConfiguration();
     config.setEmulatorId(gameEmulator.getId());
@@ -245,7 +255,7 @@ public class DMDDeviceIniService {
       saveDmdDeviceIni(game.getEmulator(), iniConfiguration);
     }
 
-    return mameService.saveDmdPosition(rom, dmdinfo);
+    return vPinMameService.saveDmdPosition(rom, dmdinfo);
   }
 
   @Nullable
@@ -271,7 +281,6 @@ public class DMDDeviceIniService {
 
   public String getStoreName(Game game) {
     String storeName = StringUtils.defaultString(game.getRomAlias(), game.getRom());
-    ;
     if (DMDPackageTypes.UltraDMD.equals(game.getDMDType())) {
       storeName = FilenameUtils.getBaseName(game.getGameFileName());
       // cf https://github.com/vbousquet/flexdmd/blob/6357c1874e896777a53348094eafa86f386dd8fe/FlexDMD/FlexDMD.cs#L188
@@ -282,6 +291,7 @@ public class DMDDeviceIniService {
       // cf https://github.com/vbousquet/flexdmd/blob/6357c1874e896777a53348094eafa86f386dd8fe/FlexDMD/FlexDMD.cs#L188
       storeName = storeName.replaceAll("[\\s_vV][\\d_\\.]+[a-z]?(-DOF)?\\*?$", "").trim();
     }
+    storeName = storeName.replaceAll("\\.", " ");
     return storeName;
   }
 
@@ -320,7 +330,7 @@ public class DMDDeviceIniService {
     GameEmulator emulator = game.getEmulator();
     if (emulator != null) {
       DMDDeviceIniConfiguration dmdDeviceIni = getDmdDeviceIni(emulator);
-      if (!dmdDeviceIni.isUseRegistry()) {
+      if (dmdDeviceIni != null && !dmdDeviceIni.isUseRegistry()) {
         INIConfiguration iniConfiguration = getIniConfiguration(game);
         if (iniConfiguration != null) {
           String dmdStoreName = getStoreName(game);

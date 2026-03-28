@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.dmd.DMDPackageTypes;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.ValidationStateFactory;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
@@ -25,9 +26,8 @@ import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.listeners.EventOrigin;
-import de.mephisto.vpin.server.mame.MameRomAliasService;
-import de.mephisto.vpin.server.mame.MameService;
-import de.mephisto.vpin.server.pinemhi.PINemHiService;
+import de.mephisto.vpin.server.vpinmame.VPinMameRomAliasService;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -66,7 +66,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
   private GameDetailsRepositoryService gameDetailsRepositoryService;
 
   @Autowired
-  private MameRomAliasService mameRomAliasService;
+  private VPinMameRomAliasService VPinMameRomAliasService;
 
   @Autowired
   private BackglassService backglassService;
@@ -93,7 +93,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
   private PreferencesService preferencesService;
 
   @Autowired
-  private MameService mameService;
+  private VPinMameService vPinMameService;
 
   @Autowired
   private RomService romService;
@@ -146,8 +146,8 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     try {
       game = frontendService.getOriginalGame(gameId);
       if (game != null) {
-        applyGameDetails(game, true, true, null);
-        mameService.clearCacheFor(game.getRom());
+        applyGameDetails(game, true, true, null, true);
+        vPinMameService.clearCacheFor(game.getRom());
         if (game.isVpxGame()) {
           highscoreService.scanScore(game, EventOrigin.USER_INITIATED);
         }
@@ -179,7 +179,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
         return null;
       }
 
-      applyGameDetails(game, false, true, null);
+      applyGameDetails(game, false, true, null, true);
       List<Game> games = allGamesByEmulatorId.computeIfAbsent(game.getEmulatorId(), k -> new ArrayList<>());
       games.add(game);
     }
@@ -201,7 +201,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
   public List<Game> getGamesByRom(int emulatorId, @NonNull String rom) {
     List<Game> games = frontendService.getGamesByEmulator(emulatorId);
     for (Game game : games) {
-      applyGameDetails(game, false, false, null);
+      applyGameDetails(game, false, false, null, true);
     }
     return games.stream()
         .filter(g ->
@@ -268,10 +268,12 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
   private void fetchEmulatorGames(@NonNull GameEmulator emulator, @NonNull Map<Integer, GameDetails> mappedGameDetails) {
     long start = System.currentTimeMillis();
     List<Game> gamesByEmulator = frontendService.getGamesByEmulator(emulator.getId());
+    FilterSettings filterSettings = preferencesService.getJsonPreference(PreferenceNames.FILTER_SETTINGS, FilterSettings.class);
+    boolean findFirstIssueOnly = filterSettings.getIssueType() == -1;
     boolean killFrontend = false;
     for (Game game : gamesByEmulator) {
       GameDetails gameDetails = mappedGameDetails.get(game.getId());
-      boolean newGame = applyGameDetails(game, false, false, gameDetails);
+      boolean newGame = applyGameDetails(game, false, false, gameDetails, findFirstIssueOnly);
       if (newGame) {
         gameLifecycleService.notifyGameCreated(game.getId());
         highscoreService.scanScore(game, EventOrigin.INITIAL_SCAN);
@@ -289,10 +291,10 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     if (!gamesByEmulator.isEmpty()) {
       avg = duration / gamesByEmulator.size();
     }
-    LOG.info("Game fetch for emulator " + emulator.getName() + " took " + duration + "ms / " + gamesByEmulator.size() + " games / " + avg + "ms avg.");
+    LOG.info("Game fetch for emulator {} took {}ms / {} games / {}ms avg.", emulator.getName(), duration, gamesByEmulator.size(), avg);
   }
 
-  private boolean applyGameDetails(@NonNull Game game, boolean forceScan, boolean forceScoreScan, @Nullable GameDetails gameDetails) {
+  private boolean applyGameDetails(@NonNull Game game, boolean forceScan, boolean forceScoreScan, @Nullable GameDetails gameDetails, boolean findFirstIssueOnly) {
     if (gameDetails == null) {
       gameDetails = gameDetailsRepositoryService.findByPupId(game.getId());
     }
@@ -334,7 +336,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
         gameDetails.setDMDProjectFolder(scanResult.getDMDProjectFolder());
 
         gameDetails.setPupPack(scanResult.getPupPackName());
-        gameDetails.setAssets(StringUtils.join(scanResult.getAssets(), ","));
+        gameDetails.setAssets(StringUtils.join(scanResult.getAssets(), "|"));
         gameDetails.setScripts(StringUtils.join(scanResult.getScripts(), ","));
       }
       else {
@@ -370,6 +372,10 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
       game.setRom(gameDetails.getRomName());
     }
 
+    if (game.isZenGame()) {
+      game.setRom(game.getGameDisplayName());
+    }
+
     if (game.getDateAdded() == null) {
       game.setDateAdded(gameDetails.getCreatedAt());
     }
@@ -378,8 +384,8 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     }
 
     //check alias
-    if (game.getEmulator() != null) {
-      String originalRom = mameRomAliasService.getRomForAlias(game.getEmulator(), game.getRom());
+    if (game.getEmulator() != null && !game.isZenGame()) {
+      String originalRom = VPinMameRomAliasService.getRomForAlias(game.getEmulator(), game.getRom());
       if (!StringUtils.isEmpty(originalRom)) {
         String aliasName = game.getRom();
         game.setRom(originalRom);
@@ -388,6 +394,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     }
 
     // fill scanned values
+    game.setAssets(gameDetails.getAssets());
     game.setScannedRom(gameDetails.getRomName());
     game.setScannedHsFileName(gameDetails.getHsFileName());
     game.setScannedAltRom(gameDetails.getTableName());
@@ -470,14 +477,14 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     }
 
     //run validations at the end!!!
-    List<ValidationState> validate = gameValidationService.validate(game, true);
-    game.setHasMissingAssets(gameValidationService.hasMissingAssets(validate));
-    game.setHasOtherIssues(gameValidationService.hasOtherIssues(validate));
+    List<ValidationState> validationStates = gameValidationService.validate(game, findFirstIssueOnly);
+    game.setHasMissingAssets(gameValidationService.hasMissingAssets(validationStates));
+    game.setIssueTypes(validationStates.stream().map(ValidationState::getCode).collect(Collectors.toList()));
 
-    if (validate.isEmpty()) {
-      validate.add(ValidationStateFactory.empty());
+    if (validationStates.isEmpty()) {
+      validationStates.add(ValidationStateFactory.empty());
     }
-    game.setValidationState(validate.get(0));
+    game.setValidationState(validationStates.get(0));
 
     GameScoreValidation scoreValidation = gameValidationService.validateHighscoreStatus(game, gameDetails, tableDetails, frontendService.getFrontendType(), serverSettings);
     game.setValidScoreConfiguration(scoreValidation.isValidScoreConfiguration());
@@ -627,7 +634,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    mameRomAliasService.setGameCachingService(this);
+    VPinMameRomAliasService.setGameCachingService(this);
 
     serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
 

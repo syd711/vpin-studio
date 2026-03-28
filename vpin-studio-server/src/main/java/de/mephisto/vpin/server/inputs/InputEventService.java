@@ -23,6 +23,7 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.recorder.RecorderService;
 import de.mephisto.vpin.server.recorder.ScreenshotService;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.vr.VRService;
 import javafx.application.Platform;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -61,6 +62,9 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
 
   @Autowired
   private ScreenshotService screenshotService;
+
+  @Autowired
+  private VRService vrService;
 
   @Autowired
   private JobQueue queue;
@@ -102,6 +106,7 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
     String recordBtn = pauseMenuSettings.getRecordingButton();
     String screenshotBtn = pauseMenuSettings.getScreenshotButton();
     String resetBtn = pauseMenuSettings.getResetButton();
+    String vrToggleBtn = pauseMenuSettings.getVrToggleButton();
 
     if (name.equals("Q")) {
       HighscoreEventLog highscoreEventLog = SLOG.finalizeEventLog();
@@ -162,15 +167,21 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
       onResetEvent();
       return;
     }
+
+    //handle key based vr toggle
+    if (name.equals(vrToggleBtn)) {
+      onVrToggle();
+      return;
+    }
   }
 
   //-------------- Event Execution -------------------------------------------------------------------------------------
 
   private void onToggleOverlayEvent(String eventName) {
-    LOG.info("Toggling overlay for key event '" + eventName + "'");
+    LOG.info("Toggling overlay for key event '{}'", eventName);
     this.overlayVisible = !overlayVisible;
     Platform.runLater(() -> {
-      LOG.info("Toggle overlay visibility, was visible: " + !overlayVisible);
+      LOG.info("Toggle overlay visibility, was visible: {}", !overlayVisible);
       SLOG.info("Toggle overlay visibility, was visible: " + !overlayVisible);
       ServerFX.getInstance().showOverlay(overlayVisible);
     });
@@ -198,6 +209,12 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
     new Thread(() -> {
       frontendService.restartFrontend();
       frontendStatusService.notifyFrontendRestart();
+    }).start();
+  }
+
+  private void onVrToggle() {
+    new Thread(() -> {
+      vrService.toggleVRMode();
     }).start();
   }
 
@@ -315,7 +332,7 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
         case PreferenceNames.OVERLAY_SETTINGS: {
           OverlaySettings overlaySettings = preferencesService.getJsonPreference(PreferenceNames.OVERLAY_SETTINGS, OverlaySettings.class);
           this.launchOverlayOnStartup = overlaySettings.isShowOnStartup();
-          LOG.info("Show overlay on startup: " + this.launchOverlayOnStartup);
+          LOG.info("Show overlay on startup: {}", this.launchOverlayOnStartup);
           break;
         }
         case PreferenceNames.PAUSE_MENU_SETTINGS: {
@@ -326,7 +343,7 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
       }
     }
     catch (Exception e) {
-      LOG.error("Error updating " + this.getClass().getSimpleName() + " settings: " + e.getMessage(), e);
+      LOG.error("Error updating {} settings: {}", this.getClass().getSimpleName(), e.getMessage(), e);
     }
   }
 
@@ -351,7 +368,7 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
 
     try {
       InetAddress localHost = InetAddress.getLocalHost();
-      LOG.info("Server Address: " + localHost.getHostName() + "/" + localHost.getHostAddress());
+      LOG.info("Server Address: {}/{}", localHost.getHostName(), localHost.getHostAddress());
     }
     catch (UnknownHostException e) {
       //
@@ -372,7 +389,7 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
     frontendStatusService.addFrontendStatusChangeListener(this);
 
     GameController.getInstance().addListener(this);
-    LOG.info("Server startup finished, running version is " + systemService.getVersion());
+    LOG.info("Server startup finished, running version is {}", systemService.getVersion());
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 

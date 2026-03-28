@@ -23,11 +23,11 @@ public class LayerEditorOtherMediaController extends LayerEditorBaseController {
   @FXML
   private ComboBox<VPinScreen> otherMediaScreensComboBox;
 
-  public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
+  public void setTemplate(CardTemplate cardTemplate, int cardWidth, int cardHeight, Optional<GameRepresentation> game) {
     setIconVisibility(cardTemplate.isRenderOtherMedia());
     setIconLock(cardTemplate.isLockOtherMedia(), cardTemplate.isTemplate());
 
-    positionController.setTemplate("otherMedia", cardTemplate, res, true);
+    positionController.setTemplate("otherMedia", cardTemplate, cardWidth, cardHeight, true);
 
     otherMediaKeepARCheckBox.setSelected(cardTemplate.isOtherMediaKeepAspectRatio());
     otherMediaScreensComboBox.getSelectionModel().select(cardTemplate.getOtherMediaScreen());

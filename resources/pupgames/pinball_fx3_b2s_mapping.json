@@ -1,0 +1,497 @@
+[
+  {
+    "gameName": "Amusement_Park",
+    "gameDisplayName": "Adventure Land (Zen Studios 2017)",
+    "directb2s": "AdventureLand.directb2s"
+  },
+  {
+    "gameName": "Alien_Isolation",
+    "gameDisplayName": "Alien Isolation Pinball (Zen Studios 2016)",
+    "directb2s": "AlienIsolationPinball.directb2s"
+  },
+  {
+    "gameName": "Alien_vs_Predator",
+    "gameDisplayName": "Alien vs Predator Pinball (Zen Studios 2016)",
+    "directb2s": "AlienvsPredatorPinball.directb2s"
+  },
+  {
+    "gameName": "Aliens",
+    "gameDisplayName": "Aliens Pinball (Zen Studios 2016)",
+    "directb2s": "AliensPinball.directb2s"
+  },
+  {
+    "gameName": "AmericanDad",
+    "gameDisplayName": "American Dad! Pinball (Zen Studios 2015)",
+    "directb2s": "AmericanDad.directb2s"
+  },
+  {
+    "gameName": "Archer",
+    "gameDisplayName": "Archer Pinball (Zen Studios 2015)",
+    "directb2s": "ArcherPinball.directb2s"
+  },
+  {
+    "gameName": "BALLY_Attack_from_Mars",
+    "gameDisplayName": "Attack from Mars (Bally 1995)",
+    "directb2s": "BallyAttackFromMars.directb2s"
+  },
+  {
+    "gameName": "UNIVERSAL_BTTF",
+    "gameDisplayName": "Back to the Future Pinball (Zen Studios 2017)",
+    "directb2s": "BackToTheFuture.directb2s"
+  },
+  {
+    "gameName": "BioLab",
+    "gameDisplayName": "Biolab (Zen Studios 2013)",
+    "directb2s": "BioLab.directb2s"
+  },
+  {
+    "gameName": "BALLY_BlackRose",
+    "gameDisplayName": "Black Rose (Bally 1992)",
+    "directb2s": "BallyBlackRose.directb2s"
+  },
+  {
+    "gameName": "MARVEL_Blade",
+    "gameDisplayName": "Blade (Zen Studios 2013)",
+    "directb2s": "BLade.directb2s"
+  },
+  {
+    "gameName": "BobsBurgers",
+    "gameDisplayName": "Bob's Burgers Pinball (Zen Studios 2015)",
+    "directb2s": "BobsBurgersPinball.directb2s"
+  },
+  {
+    "gameName": "MARVEL_CaptainAmerica",
+    "gameDisplayName": "Captain America (Zen Studios 2013)",
+    "directb2s": "CaptainAmerica.directb2s"
+  },
+  {
+    "gameName": "CastleStorm",
+    "gameDisplayName": "Castle Storm (Zen Studios 2015)",
+    "directb2s": "CastleStorm.directb2s"
+  },
+  {
+    "gameName": "BALLY_Cirqus_Voltaire",
+    "gameDisplayName": "Cirqus Voltaire (Bally 1997)",
+    "directb2s": "WMSCirqusVoltaire.directb2s"
+  },
+  {
+    "gameName": "MARVEL_CivilWar",
+    "gameDisplayName": "Civil War (Zen Studios 2013)",
+    "directb2s": "CivilWar.directb2s"
+  },
+  {
+    "gameName": "BALLY_Creature_from_the_Black_Lagoon",
+    "gameDisplayName": "Creature from the Black Lagoon (Bally 1992)",
+    "directb2s": "BallyCreatureBlackLagoon.directb2s"
+  },
+  {
+    "gameName": "MARVEL_Deadpool",
+    "gameDisplayName": "Deadpool (Zen Studios 2014)",
+    "directb2s": "Deadpool.directb2s"
+  },
+  {
+    "gameName": "MARVEL_DrStrange",
+    "gameDisplayName": "Doctor Strange (Zen Studios 2013)",
+    "directb2s": "DoctorStrange.directb2s"
+  },
+  {
+    "gameName": "BETHESDA_Doom",
+    "gameDisplayName": "Doom Pinball (Zen Studios 2016)",
+    "directb2s": "DOOMPinball.directb2s"
+  },
+  {
+    "gameName": "BALLY_Dr_Dude",
+    "gameDisplayName": "Dr. Dude And His Excellent Ray (Bally 1990)",
+    "directb2s": "MidwayDrDude.directb2s"
+  },
+  {
+    "gameName": "UNIVERSAL_ET",
+    "gameDisplayName": "E.T. Pinball (Zen Studios 2017)",
+    "directb2s": "ET.directb2s"
+  },
+  {
+    "gameName": "EarthDefense",
+    "gameDisplayName": "Earth Defense (Zen Studios 2013)",
+    "directb2s": "EarthDefense.directb2s"
+  },
+  {
+    "gameName": "Eldorado",
+    "gameDisplayName": "El Dorado (Zen Studios 2013)",
+    "directb2s": "Eldorado.directb2s"
+  },
+  {
+    "gameName": "Looter",
+    "gameDisplayName": "Epic Quest (Zen Studios 2013)",
+    "directb2s": "EpicQuest.directb2s"
+  },
+  {
+    "gameName": "Excalibur",
+    "gameDisplayName": "Excalibur (Zen Studios 2013)",
+    "directb2s": "Excalibur.directb2s"
+  },
+  {
+    "gameName": "BETHESDA_Fallout",
+    "gameDisplayName": "Fallout Pinball (Zen Studios 2016)",
+    "directb2s": "FalloutPinball.directb2s"
+  },
+  {
+    "gameName": "FamilyGuy",
+    "gameDisplayName": "Family Guy Pinball (Zen Studios 2015)",
+    "directb2s": "FamilyGuyPinball.directb2s"
+  },
+  {
+    "gameName": "MARVEL_FantasticFour",
+    "gameDisplayName": "Fantastic Four (Zen Studios 2013)",
+    "directb2s": "FantasticFour.directb2s"
+  },
+  {
+    "gameName": "MARVEL_FearItSelf",
+    "gameDisplayName": "Fear Itself (Zen Studios 2014)",
+    "directb2s": "FearItself.directb2s"
+  },
+  {
+    "gameName": "WMS_Fish_Tales",
+    "gameDisplayName": "Fish Tales (Williams 1992)",
+    "directb2s": "WMSFishTales.directb2s"
+  },
+  {
+    "gameName": "WMS_Funhouse",
+    "gameDisplayName": "Funhouse (Williams 1990)",
+    "directb2s": "WMSFunHouse.directb2s"
+  },
+  {
+    "gameName": "MARVEL_GhostRider",
+    "gameDisplayName": "Ghost Rider (Zen Studios 2013)",
+    "directb2s": "GhostRider.directb2s"
+  },
+  {
+    "gameName": "MARVEL_Guardians",
+    "gameDisplayName": "Guardians of the Galaxy (Zen Studios 2014)",
+    "directb2s": "GuardiansoftheGalaxy.directb2s"
+  },
+  {
+    "gameName": "WMS_Hurricane",
+    "gameDisplayName": "Hurricane (Williams 1991)",
+    "directb2s": "WMSHurricane.directb2s"
+  },
+  {
+    "gameName": "MARVEL_IronMan",
+    "gameDisplayName": "Iron Man (Zen Studios 2013)",
+    "directb2s": "IronMan.directb2s"
+  },
+  {
+    "gameName": "UNIVERSAL_Jaws",
+    "gameDisplayName": "Jaws Pinball (Zen Studios 2017)",
+    "directb2s": "Jaws.directb2s"
+  },
+  {
+    "gameName": "WMS_Junkyard",
+    "gameDisplayName": "Junk Yard (Williams 1996)",
+    "directb2s": "WMSJunkYard.directb2s"
+  },
+  {
+    "gameName": "UNIVERSAL_Jurassic_Park",
+    "gameDisplayName": "Jurassic Park Pinball (Zen Studios 2018)",
+    "directb2s": "JurassicPark.directb2s"
+  },
+  {
+    "gameName": "UNIVERSAL_Jurassic_Theme_Park",
+    "gameDisplayName": "Jurassic Park Pinball Mayhem (Zen Studios 2018)",
+    "directb2s": "JurassicMayhem.directb2s"
+  },
+  {
+    "gameName": "UNIVERSAL_Jurassic_World",
+    "gameDisplayName": "Jurassic World Pinball (Zen Studios 2018)",
+    "directb2s": "JurassicWorld.directb2s"
+  },
+  {
+    "gameName": "Mars",
+    "gameDisplayName": "Mars (Zen Studios 2013)",
+    "directb2s": "Mars.directb2s"
+  },
+  {
+    "gameName": "MARVEL_Ant-Man",
+    "gameDisplayName": "Marvel's Ant-Man (Zen Studios 2015)",
+    "directb2s": "MarvelsAntMan.directb2s"
+  },
+  {
+    "gameName": "MARVEL_Age_of_Ultron",
+    "gameDisplayName": "Marvel's Avengers Age of Ultron (Zen Studios 2015)",
+    "directb2s": "MarvelsAvengersAgeofUltron.directb2s"
+  },
+  {
+    "gameName": "MARVEL_Avengers",
+    "gameDisplayName": "Marvel's The Avengers (Zen Studios 2014)",
+    "directb2s": "MarvelsTheAvengers.directb2s"
+  },
+  {
+    "gameName": "MARVEL_MsMarvel",
+    "gameDisplayName": "Marvel's Women of Power A-Force (Zen Studios 2016)",
+    "directb2s": "MarvelsWomenofPowerAForce.directb2s"
+  },
+  {
+    "gameName": "MARVEL_WOP_TheNextGeneration",
+    "gameDisplayName": "Marvel's Women of Power Champions (Zen Studios 2016)",
+    "directb2s": "MarvelsWomenofPowerChampions.directb2s"
+  },
+  {
+    "gameName": "WMS_Medieval_Madness",
+    "gameDisplayName": "Medieval Madness (Williams 1997)",
+    "directb2s": "WMSMedievalMadness.directb2s"
+  },
+  {
+    "gameName": "WMS_Monster_Bash",
+    "gameDisplayName": "Monster Bash (Williams 1998)",
+    "directb2s": "WMSMonsterBash.directb2s"
+  },
+  {
+    "gameName": "MARVEL_MoonKnight",
+    "gameDisplayName": "Moon Knight (Zen Studios 2013)",
+    "directb2s": "MoonKnight.directb2s"
+  },
+  {
+    "gameName": "WMS_No_Good_Gofers",
+    "gameDisplayName": "No Good Gofers (Williams 1997)",
+    "directb2s": "WMSNoGoodGofers.directb2s"
+  },
+  {
+    "gameName": "Paranormal",
+    "gameDisplayName": "Paranormal (Zen Studios 2013)",
+    "directb2s": "Paranormal.directb2s"
+  },
+  {
+    "gameName": "Pasha",
+    "gameDisplayName": "Pasha (Zen Studios 2013)",
+    "directb2s": "Pasha.directb2s"
+  },
+  {
+    "gameName": "Portal",
+    "gameDisplayName": "Portal (Zen Studios 2015)",
+    "directb2s": "Portal.directb2s"
+  },
+  {
+    "gameName": "WMS_Roadshow",
+    "gameDisplayName": "Red & Ted's Road Show (Williams 1994)",
+    "directb2s": "WMSRedAndTedRoadShow.directb2s"
+  },
+  {
+    "gameName": "Rome",
+    "gameDisplayName": "Rome (Zen Studios 2013)",
+    "directb2s": "Rome.directb2s"
+  },
+  {
+    "gameName": "BALLY_Safe_Cracker",
+    "gameDisplayName": "Safe Cracker (Bally 1996)",
+    "directb2s": "BallySafeCracker.directb2s"
+  },
+  {
+    "gameName": "Atlantis",
+    "gameDisplayName": "Secrets of the Deep (Zen Studios 2013)",
+    "directb2s": "SecretsoftheDeep.directb2s"
+  },
+  {
+    "gameName": "Shaman",
+    "gameDisplayName": "Shaman (Zen Studios 2013)",
+    "directb2s": "Shaman.directb2s"
+  },
+  {
+    "gameName": "Hercules",
+    "gameDisplayName": "Son of Zeus (Zen Studios 2017)",
+    "directb2s": "SonOfZeus.directb2s"
+  },
+  {
+    "gameName": "Citadel",
+    "gameDisplayName": "Sorcerer's Lair (Zen Studios 2013)",
+    "directb2s": "SorcerersLair.directb2s"
+  },
+  {
+    "gameName": "WMS_Space_Station",
+    "gameDisplayName": "Space Station (Williams 1987)",
+    "directb2s": "WMSSpaceStation.directb2s"
+  },
+  {
+    "gameName": "MARVEL_SpiderMan",
+    "gameDisplayName": "Spider-Man (Zen Studios 2013)",
+    "directb2s": "Spiderman.directb2s"
+  },
+  {
+    "gameName": "SpaceBear2",
+    "gameDisplayName": "Star Wars Pinball - Ahch-To Island (Zen Studios 2018)",
+    "directb2s": "StarWarsAhchToIsland.directb2s"
+  },
+  {
+    "gameName": "RedCup3",
+    "gameDisplayName": "Star Wars Pinball - Battle of Mimban War (Zen Studios 2018)",
+    "directb2s": "StarWarsBattleOfMimban.directb2s"
+  },
+  {
+    "gameName": "STARWARS_Boba_Fett",
+    "gameDisplayName": "Star Wars Pinball - Boba Fett (Zen Studios 2013)",
+    "directb2s": "BobaFett.directb2s"
+  },
+  {
+    "gameName": "RedCup2",
+    "gameDisplayName": "Star Wars Pinball - Calrissian Chronicles (Zen Studios 2018)",
+    "directb2s": "StarWarsCalrissianChronicles.directb2s"
+  },
+  {
+    "gameName": "STARWARS_Darth_Vader",
+    "gameDisplayName": "Star Wars Pinball - Darth Vader (Zen Studios 2013)",
+    "directb2s": "STARWARSDARTHVADER.directb2s"
+  },
+  {
+    "gameName": "STARWARS_Droids",
+    "gameDisplayName": "Star Wars Pinball - Droids (Zen Studios 2014)",
+    "directb2s": "StarWarsPinballDroids.directb2s"
+  },
+  {
+    "gameName": "STARWARS_Episode_4",
+    "gameDisplayName": "Star Wars Pinball - Episode IV A New Hope (Zen Studios 2014)",
+    "directb2s": "StarWarsPinballEpisodeIVANewHope.directb2s"
+  },
+  {
+    "gameName": "STARWARS_Episode_5",
+    "gameDisplayName": "Star Wars Pinball - Episode V The Empire Strikes Back (Zen Studios 2013)",
+    "directb2s": "StarWarsEpisodeVTheEmpireStrikesBack.directb2s"
+  },
+  {
+    "gameName": "STARWARS_Episode_6",
+    "gameDisplayName": "Star Wars Pinball - Episode VI Return of the Jedi (Zen Studios 2013)",
+    "directb2s": "StarWarsEpisodeVIReturnoftheJedi.directb2s"
+  },
+  {
+    "gameName": "STARWARS_Han_Solo",
+    "gameDisplayName": "Star Wars Pinball - Han Solo (Zen Studios 2014)",
+    "directb2s": "StarWarsPinballHanSolo.directb2s"
+  },
+  {
+    "gameName": "STARWARS_Light_VS_Dark",
+    "gameDisplayName": "Star Wars Pinball - Masters of the Force (Zen Studios 2014)",
+    "directb2s": "StarWarsPinballMastersoftheForce.directb2s"
+  },
+  {
+    "gameName": "STARWARS_AVCO2",
+    "gameDisplayName": "Star Wars Pinball - Might of the First Order (Zen Studios 2016)",
+    "directb2s": "StarWarsPinballMightoftheFirstOrder.directb2s"
+  },
+  {
+    "gameName": "STARWARS_Rebels",
+    "gameDisplayName": "Star Wars Pinball - Rebels (Zen Studios 2015)",
+    "directb2s": "StarWarsPinballStarWarsRebels.directb2s"
+  },
+  {
+    "gameName": "STARWARS_LAPB",
+    "gameDisplayName": "Star Wars Pinball - Rogue One (Zen Studios 2017)",
+    "directb2s": "StarWarsPinballRogueOne.directb2s"
+  },
+  {
+    "gameName": "RedCup1",
+    "gameDisplayName": "Star Wars Pinball - Solo (Zen Studios 2018)",
+    "directb2s": "StarWarsSolo.directb2s"
+  },
+  {
+    "gameName": "STARWARS_SFA",
+    "gameDisplayName": "Star Wars Pinball - Starfighter Assault (Zen Studios 2013)",
+    "directb2s": "StarWarsStarfighterAssault.directb2s"
+  },
+  {
+    "gameName": "STARWARS_CloneWars",
+    "gameDisplayName": "Star Wars Pinball - The Clone Wars (Zen Studios 2013)",
+    "directb2s": "StarWarsTheCloneWars.directb2s"
+  },
+  {
+    "gameName": "SpaceBear1",
+    "gameDisplayName": "Star Wars Pinball - The Last Jedi (Zen Studios 2018)",
+    "directb2s": "StarWarsLastJedi.directb2s"
+  },
+  {
+    "gameName": "STARWARS_Episode7",
+    "gameDisplayName": "Star Wars Pinball - VII The Force Awakens (Zen Studios 2016)",
+    "directb2s": "StarWarsPinballTheForceAwakens.directb2s"
+  },
+  {
+    "gameName": "WMS_Tales_of_the_Arabian_Nights",
+    "gameDisplayName": "Tales of the Arabian Nights (Williams 1996)",
+    "directb2s": "WMSTalesoftheArabianNights.directb2s"
+  },
+  {
+    "gameName": "Tesla",
+    "gameDisplayName": "Tesla (Zen Studios 2013)",
+    "directb2s": "Tesla.directb2s"
+  },
+  {
+    "gameName": "BALLY_Champion_Pub",
+    "gameDisplayName": "The Champion Pub (Bally 1998)",
+    "directb2s": "BallyTheChampionPub.directb2s"
+  },
+  {
+    "gameName": "BETHESDA_Skyrim",
+    "gameDisplayName": "The Elder Scrolls V Skyrim Pinball (Zen Studios 2016)",
+    "directb2s": "TheElderScrollsVSkyrimPinball.directb2s"
+  },
+  {
+    "gameName": "WMS_Getaway",
+    "gameDisplayName": "The Getaway High Speed II (Williams 1992)",
+    "directb2s": "WMSGetaway.directb2s"
+  },
+  {
+    "gameName": "MARVEL_InfinityGauntlet",
+    "gameDisplayName": "The Infinity Gauntlet (Zen Studios 2014)",
+    "directb2s": "TheInfinityGauntlet.directb2s"
+  },
+  {
+    "gameName": "BALLY_Party_Zone",
+    "gameDisplayName": "The Party Zone (Bally 1991)",
+    "directb2s": "BallyPartyZone.directb2s"
+  },
+  {
+    "gameName": "TheWalkingDead",
+    "gameDisplayName": "The Walking Dead (Zen Studios 2014)",
+    "directb2s": "TheWalkingDead.directb2s"
+  },
+  {
+    "gameName": "BALLY_TheatreOfMagic",
+    "gameDisplayName": "Theatre Of Magic (Bally 1995)",
+    "directb2s": "BallyTheatreOfMagic.directb2s"
+  },
+  {
+    "gameName": "MARVEL_Thor",
+    "gameDisplayName": "Thor (Zen Studios 2013)",
+    "directb2s": "Thor.directb2s"
+  },
+  {
+    "gameName": "V12",
+    "gameDisplayName": "V12 (Zen Studios 2013)",
+    "directb2s": "V12.directb2s"
+  },
+  {
+    "gameName": "MARVEL_Venom",
+    "gameDisplayName": "Venom (Zen Studios 2014)",
+    "directb2s": "Venom.directb2s"
+  },
+  {
+    "gameName": "WMS_White_Water",
+    "gameDisplayName": "White Water (Williams 1993)",
+    "directb2s": "WMSWhiteWater.directb2s"
+  },
+  {
+    "gameName": "Western",
+    "gameDisplayName": "Wild West Rampage (Zen Studios 2015)",
+    "directb2s": "WildWestRampage.directb2s"
+  },
+  {
+    "gameName": "MARVEL_Wolverine",
+    "gameDisplayName": "Wolverine (Zen Studios 2013)",
+    "directb2s": "Wolverine.directb2s"
+  },
+  {
+    "gameName": "MARVEL_WWH",
+    "gameDisplayName": "World War Hulk (Zen Studios 2014)",
+    "directb2s": "WorldWarHulk.directb2s"
+  },
+  {
+    "gameName": "MARVEL_XMen",
+    "gameDisplayName": "X-men (Zen Studios 2013)",
+    "directb2s": "XMen.directb2s"
+  }
+]

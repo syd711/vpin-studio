@@ -202,7 +202,7 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
 
     BackupSourceAdapter backupSourceAdapter = BackupSourceAdapterFactory.create(this, updatedSource, vpaService);
     backupSourcesCache.put(updatedSource.getId(), backupSourceAdapter);
-    LOG.info("(Re)created archive source adapter \"" + updatedSource + "\"");
+    LOG.info("(Re)created archive source adapter \"{}\"", updatedSource);
     return updatedSource;
   }
 
@@ -217,10 +217,10 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
       jobDescriptor.setJob(job);
 
       jobService.offer(jobDescriptor);
-      LOG.info("Offered restore job for \"" + backupDescriptor.getTableDetails().getGameDisplayName() + "\"");
+      LOG.info("Offered restore job for \"{}\"", backupDescriptor.getTableDetails().getGameDisplayName());
     }
     catch (Exception e) {
-      LOG.error("Import failed: " + e.getMessage(), e);
+      LOG.error("Import failed: {}", e.getMessage(), e);
       return false;
     }
     return true;
@@ -237,7 +237,7 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
         }
       }
       else {
-        LOG.error("Cancelled backup for id " + game + ", invalid game data.");
+        LOG.error("Cancelled backup for id {}, invalid game data.", game);
         result = false;
       }
     }
@@ -256,7 +256,7 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
 
     descriptor.setJob(new TableBackupJob(frontendService, backupSourceAdapter, adapter, exportDescriptor, game.getId()));
     jobService.offer(descriptor);
-    LOG.info("Offered export job for '" + game.getGameDisplayName() + "'");
+    LOG.info("Offered export job for '{}'", game.getGameDisplayName());
     return true;
   }
 

@@ -33,6 +33,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class WOVPCompetitionSynchronizer implements InitializingBean, ApplicationListener<ApplicationReadyEvent>, PreferenceChangedListener {
@@ -79,7 +80,8 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
             synchronizeChallenge(challenge, weeklyCompetitions, wovpSettings, forceReload);
           }
 
-          runCleanupCheck(weeklyCompetitions);
+          runCompetitionCleanupCheck(challenges, weeklyCompetitions);
+          runGameCleanupCheck();
         }
         return true;
       }
@@ -93,15 +95,26 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
     return false;
   }
 
-  private void runCleanupCheck(List<Competition> weeklyCompetitions) {
-    //clean old competition ids
-    List<Integer> games = frontendService.getCompetedGamesIds(CompetitionType.WEEKLY);
-    for (int gameId : games) {
-      runCleanupCheck(weeklyCompetitions, gameId);
+  private void runCompetitionCleanupCheck(Challenges challenges, List<Competition> weeklyCompetitions) {
+    List<String> challengesIds = challenges.getItems().stream().map(c -> c.getId()).collect(Collectors.toList());
+    for (Competition weeklyCompetition : weeklyCompetitions) {
+      String uuid = weeklyCompetition.getUuid();
+      if (!challengesIds.contains(uuid)) {
+        competitionService.delete(weeklyCompetition.getId());
+      }
     }
   }
 
-  private void runCleanupCheck(List<Competition> weeklyCompetitions, int gameId) {
+  private void runGameCleanupCheck() {
+    //clean old competition ids
+    List<Competition> weeklyCompetitions = competitionService.getWeeklyCompetitions();
+    List<Integer> games = frontendService.getCompetedGamesIds(CompetitionType.WEEKLY);
+    for (int gameId : games) {
+      runGameCleanupCheck(weeklyCompetitions, gameId);
+    }
+  }
+
+  private void runGameCleanupCheck(List<Competition> weeklyCompetitions, int gameId) {
     TableDetails tableDetails = frontendService.getTableDetails(gameId);
     LOG.info("Running WOVP tournament id cleanup check for {}", tableDetails.getGameDisplayName());
     if (!competitionIdUpdater.isCompeted(tableDetails, weeklyCompetitions, false)) {
@@ -110,7 +123,6 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
       frontendStatusService.deAugmentWheel(gameService.getGame(gameId));
     }
   }
-
 
   private void synchronizeChallenge(Challenge challenge, List<Competition> weeklyCompetitions, WOVPSettings wovpSettings, boolean forceReload) {
     String challengeId = challenge.getId();
@@ -123,7 +135,7 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
         if (!challengeId.equals(competition.getUuid()) || game == null || forceReload) {
           //run de-augmentation for finished competitions
           competition.setEndDate(new Date());
-          competitionService.save(competition);//TOOD required?
+//          competitionService.save(competition);//TOOD required?
           competitionLifecycleService.notifyCompetitionDeleted(competition);
           refreshTags(game, wovpSettings, false);
 
@@ -243,7 +255,7 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
         }
 
         if (dirty) {
-          tableDetails.setTags(String.join(",", tagList));
+          tableDetails.setTags(TaggingUtil.join(tagList));
           frontendService.saveTableDetails(game.getId(), tableDetails);
         }
       }

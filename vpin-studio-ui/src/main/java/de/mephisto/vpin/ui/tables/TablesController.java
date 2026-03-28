@@ -501,8 +501,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
   }
 
   public void switchToBackglassManagerTab(GameRepresentation game) {
-    backglassManagerController.selectGame(game);
     tabPane.getSelectionModel().select(backglassManagerTab);
+    backglassManagerController.selectGame(game);
   }
 
   public void switchToBackupsTab(BackupDescriptorRepresentation backup) {

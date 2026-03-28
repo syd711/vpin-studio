@@ -11,7 +11,25 @@
       "Bash(done)",
       "Bash(do sed -i 's/backupsCached/vpxMobileCached/g; s/getBackupsForSource/getVPXMobilesForSource/g; s/getBackupsForGame/getVPXMobilesForGame/g; s/getBackups/getVPXMobiles/g; s/getBackupSources/getVPXMobileSources/g; s/deleteBackupSource/deleteVPXMobileSource/g; s/deleteBackup/deleteVPXMobile/g; s/saveBackupSource/saveVPXMobileSource/g; s/invalidateBackupCache/invalidateVPXMobileCache/g; s/uploadBackupFuture/uploadVPXMobileFuture/g; s/uploadBackup/uploadVPXMobile/g; s/backupTable/vpxMobileTable/g; s/\\\\\"\"backups\\\\//\\\\\"\"vpxmobile\\\\//g; s/API + \"\"backups\"\"/API + \"\"vpxmobile\"\"/g' \"$f\")",
       "WebFetch(domain:github.com)",
-      "WebFetch(domain:api.github.com)"
+      "WebFetch(domain:api.github.com)",
+      "Bash(find /c/workspace/vpin-studio -name \"*validators*screens*preferences*\" -o -name \"*validators*vpx*preferences*\" 2>/dev/null | grep -E \"\\\\.\\(fxml|xml\\)$\")",
+      "Bash(python fix_log_concat.py 2>&1)",
+      "Bash(cd C:/workspace/vpin-studio && python fix_log_concat.py 2>&1)",
+      "Bash(cd C:/workspace/vpin-studio && python fix_log_concat.py)",
+      "Bash(cd C:/workspace/vpin-studio && python -c \"print\\('hello'\\)\")",
+      "Bash(cd C:/workspace/vpin-studio && timeout 10 python -c \"\nimport glob, os\nBASE = r'C:\\\\workspace\\\\vpin-studio\\\\vpin-studio-ui\\\\src\\\\main\\\\java'\nfiles = glob.glob\\(os.path.join\\(BASE, '**', '*.java'\\), recursive=True\\)\nprint\\(f'Found {len\\(files\\)} files'\\)\n\" 2>&1)",
+      "Bash(cd:*)",
+      "Read(//mnt/c/Users/matth/**)",
+      "Bash(unzip -l \"FX.B2S.V7.zip\")",
+      "Read(//mnt/**)",
+      "Read(//c//**)",
+      "Read(//cygdrive/**)",
+      "Bash(unzip -l /mnt/c/Users/matth/Downloads/FX.B2S.V7.zip)",
+      "Bash(unzip -l /c/Users/matth/Downloads/FX.B2S.V7.zip)",
+      "Bash(python3:*)",
+      "Bash(powershell -Command \"Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::OpenRead\\('C:\\\\Users\\\\matth\\\\Downloads\\\\FX.B2S.V7.zip'\\).Entries | Where-Object { $_.Name -like '*.directb2s' -or $_.Name -like '*.directB2S' } | Select-Object -ExpandProperty Name\" 2>&1)",
+      "Bash(powershell -Command \"Get-Content 'C:\\\\workspace\\\\vpin-studio\\\\resources\\\\pupgames\\\\pinball_fx.json' | ConvertFrom-Json | Select-Object -First 3 | ConvertTo-Json -Depth 5\" 2>&1)",
+      "Bash(powershell.exe -File - << 'PWSH'\nGet-Content 'C:\\\\workspace\\\\vpin-studio\\\\resources\\\\pupgames\\\\pinball_fx3.json' | ConvertFrom-Json | Select-Object -ExpandProperty GameExport | Select-Object GameName, GameDisplay | ConvertTo-Json\nPWSH)"
     ]
   }
 }

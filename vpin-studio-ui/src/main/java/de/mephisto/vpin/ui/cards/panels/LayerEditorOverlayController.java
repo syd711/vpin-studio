@@ -18,7 +18,7 @@ public class LayerEditorOverlayController extends LayerEditorBaseController {
   private ComboBox<String> screensComboBox;
 
 
-  public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
+  public void setTemplate(CardTemplate cardTemplate, int cardWidth, int cardHeight, Optional<GameRepresentation> game) {
     setIconVisibility(cardTemplate.isOverlayMode());
     setIconLock(cardTemplate.isLockOverlay(), cardTemplate.isTemplate());
 

@@ -18,13 +18,13 @@ public class LayerEditorCanvasController extends LayerEditorBaseController {
   @FXML
   private Spinner<Integer> canvasBorderRadiusSpinner;
 
-  public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
+  public void setTemplate(CardTemplate cardTemplate, int cardWidth, int cardHeight, Optional<GameRepresentation> game) {
     setIconVisibility(cardTemplate.isRenderCanvas());
     setIconLock(cardTemplate.isLockCanvas(), cardTemplate.isTemplate());
 
     CardTemplateBinder.setColorPickerValue(canvasColorSelector, cardTemplate, "canvasBackground");
 
-    positionController.setTemplate("canvas", cardTemplate, res, false);
+    positionController.setTemplate("canvas", cardTemplate, cardWidth, cardHeight, false);
     canvasBorderRadiusSpinner.getValueFactory().setValue(cardTemplate.getCanvasBorderRadius());
     canvasAlphaPercentageSlider.setValue(cardTemplate.getCanvasAlphaPercentage());
   }

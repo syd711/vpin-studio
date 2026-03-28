@@ -87,6 +87,8 @@ public class NavigationController implements Initializable, StudioEventListener,
 
   private final List<Pane> buttons = new ArrayList();
 
+  private NavigationView highscoreCardsNavigationView;
+
   // Add a public no-args constructor
   public NavigationController() {
   }
@@ -190,7 +192,7 @@ public class NavigationController implements Initializable, StudioEventListener,
         activeNavigation.getController().onViewActivated(options);
       }
       catch (IOException e) {
-        LOG.info("Failed to load main view: " + e.getMessage(), e);
+        LOG.info("Failed to load main view: {}", e.getMessage(), e);
       }
     }
   }
@@ -217,7 +219,7 @@ public class NavigationController implements Initializable, StudioEventListener,
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to refresh avatar tile: " + e.getMessage());
+      LOG.error("Failed to refresh avatar tile: {}", e.getMessage());
     }
 
     Studio.stage.setTitle("VPin Studio (" + Studio.getVersion() + ") - " + name);
@@ -241,21 +243,26 @@ public class NavigationController implements Initializable, StudioEventListener,
 
   @Override
   public void thirdPartyVersionUpdated(@NonNull ComponentType type) {
-    JFXFuture.supplyAsync(() -> Studio.client.getComponentService().getComponents())
-        .thenAcceptLater(components -> {
-          systemManagerOverlay.getChildren().remove(updateIcon);
-          for (ComponentRepresentation component : components) {
-            if (component.isVersionDiff()) {
-              systemManagerOverlay.getChildren().add(updateIcon);
-              break;
-            }
-          }
-        });
+    JFXFuture.supplyAsync(() -> Studio.client.getComponentService().getComponents()).thenAcceptLater(components -> {
+      systemManagerOverlay.getChildren().remove(updateIcon);
+      for (ComponentRepresentation component : components) {
+        if (component.isVersionDiff()) {
+          systemManagerOverlay.getChildren().add(updateIcon);
+          break;
+        }
+      }
+    });
   }
 
   @Override
   public void preferencesChanged(String key, Object value) {
+    if (PreferenceNames.HIGHSCORE_CARD_SETTINGS.equals(key)) {
+      highscoreCardsNavigationView.setController(null);
 
+      if (activeNavigation != null && activeNavigation.getItem().equals(NavigationItem.HighscoreCards)) {
+        navigateTo(NavigationItem.HighscoreCards);
+      }
+    }
   }
 
   @Override
@@ -286,7 +293,9 @@ public class NavigationController implements Initializable, StudioEventListener,
     navigationItemMap.put(NavigationItem.Players, new NavigationView(NavigationItem.Players, PlayersController.class, playersBtn, "scene-players.fxml"));
 
     navigationItemMap.put(NavigationItem.Competitions, new NavigationView(NavigationItem.Competitions, CompetitionsController.class, competitionsBtn, "scene-competitions.fxml"));
-    navigationItemMap.put(NavigationItem.HighscoreCards, new NavigationView(NavigationItem.HighscoreCards, HighscoreCardsController.class, cardsBtn, "scene-highscore-cards.fxml"));
+
+    this.highscoreCardsNavigationView = new NavigationView(NavigationItem.HighscoreCards, HighscoreCardsController.class, cardsBtn, "scene-highscore-cards.fxml");
+    navigationItemMap.put(NavigationItem.HighscoreCards, highscoreCardsNavigationView);
 
     navigationItemMap.put(NavigationItem.SystemManager, new NavigationView(NavigationItem.SystemManager, ComponentsController.class, systemManagerBtn, "scene-components.fxml"));
 

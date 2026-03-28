@@ -119,7 +119,7 @@ public class ComponentsResource {
       }
     }
     catch (Exception e) {
-      LOG.error("Error returning component data for " + component + ": " + e.getMessage(), e);
+      LOG.error("Error returning component data for {}: {}", component, e.getMessage(), e);
     }
     return representation;
   }

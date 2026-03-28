@@ -11,8 +11,10 @@ import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.MimeTypeUtil;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.VPinStudioException;
+import de.mephisto.vpin.server.doflinx.DOFLinxService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.server.games.BackglassNamingHelper;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.system.JCodec;
@@ -60,6 +62,9 @@ public class BackglassService implements InitializingBean {
   private FrontendService frontendService;
 
   @Autowired
+  private DOFLinxService dofLinxService;
+
+  @Autowired
   private BackglassValidationService backglassValidationService;
 
   /**
@@ -99,9 +104,10 @@ public class BackglassService implements InitializingBean {
   /**
    * Manage case where no B2SFile is active for a game, then take first one
    */
-  public DirectB2SData getDirectB2SData(@NonNull Game game) {
+  public DirectB2SData getDirectB2SData(@Nullable Game game) {
     if (game != null) {
-      String baseName = FilenameUtils.removeExtension(game.getGameFileName()).trim();
+      String directB2SFilename = BackglassNamingHelper.getBackglassFileName(game);
+      String baseName = FilenameUtils.removeExtension(directB2SFilename).trim();
       DirectB2S b2s = cacheDirectB2SVersion.get(game.getEmulatorId() + "@" + baseName);
       if (b2s == null) {
         b2s = reloadDirectB2SAndVersions(game.getEmulator(), game.getGameFileName());
@@ -109,8 +115,7 @@ public class BackglassService implements InitializingBean {
       if (b2s != null) {
         if (b2s.isEnabled()) {
           File directB2SFile = game.getDirectB2SFile();
-          String directB2SFileName = game.getDirectB2SFilename();
-          return getDirectB2SData(directB2SFile, game.getEmulatorId(), directB2SFileName);
+          return getDirectB2SData(directB2SFile, game.getEmulatorId(), directB2SFilename);
         }
         else {
           String directB2SFileName = b2s.getVersion(0);
@@ -124,8 +129,9 @@ public class BackglassService implements InitializingBean {
   }
 
   private DirectB2SData getDirectB2SData(@NonNull File directB2SFile, int emulatorId, String filename) {
-    if (cacheDirectB2SData.containsKey(directB2SFile.getPath())) {
-      return cacheDirectB2SData.get(directB2SFile.getPath());
+    DirectB2SData cached = cacheDirectB2SData.get(emulatorId + "|" + directB2SFile.getPath());
+    if (cached != null) {
+      return cached;
     }
     DirectB2SDataExtractor extractor = new DirectB2SDataExtractor();
     DirectB2SData data = extractor.extractData(directB2SFile, emulatorId, filename);
@@ -144,7 +150,7 @@ public class BackglassService implements InitializingBean {
       LOG.error("cannot extract background dimension", ioe);
     }
 
-    cacheDirectB2SData.put(directB2SFile.getPath(), data);
+    cacheAdd(emulatorId, directB2SFile, data);
     return data;
   }
 
@@ -183,12 +189,18 @@ public class BackglassService implements InitializingBean {
   @Nullable
   private File getB2sFile(int emuId, String filename) {
     GameEmulator emulator = emulatorService.getGameEmulator(emuId);
+    if (emulator.isZenEmulator()) {
+      return new File(dofLinxService.getBackglassesFolder(emulator), filename);
+    }
+
     if (emulator.getGamesDirectory() != null) {
       return new File(emulator.getGamesDirectory(), filename);
     }
+
     return null;
   }
 
+  @Nullable
   public String getBackgroundBase64(int emuId, String filename) {
     File b2sFile = getB2sFile(emuId, filename);
     if (b2sFile != null && b2sFile.exists()) {
@@ -199,9 +211,10 @@ public class BackglassService implements InitializingBean {
     return null;
   }
 
+  @Nullable
   public String getDmdBase64(int emuId, String filename) {
     File b2sFile = getB2sFile(emuId, filename);
-    if (b2sFile.exists()) {
+    if (b2sFile != null && b2sFile.exists()) {
       DirectB2SDataExtractor extractor = new DirectB2SDataExtractor();
       extractor.extractData(b2sFile, emuId, filename);
       return extractor.getDmdBase64();
@@ -211,16 +224,16 @@ public class BackglassService implements InitializingBean {
 
   public boolean setDmdImage(int emuId, String filename, String file, String dmdBase64) {
     File b2sFile = getB2sFile(emuId, filename);
-    if (b2sFile.exists()) {
+    if (b2sFile != null && b2sFile.exists()) {
       try {
         DirectB2SDataUpdater updater = new DirectB2SDataUpdater();
         updater.updateDmdImage(b2sFile, file, dmdBase64, false);
         // clean cache
-        cacheDirectB2SData.remove(b2sFile.getPath());
+        cacheRemove(emuId, b2sFile);
         return true;
       }
       catch (Exception e) {
-        LOG.error("Error while updating " + filename, e);
+        LOG.error("Error while updating {}", filename, e);
       }
     }
     return false;
@@ -230,7 +243,7 @@ public class BackglassService implements InitializingBean {
   public void upddateScoresDisplayState(Game game, boolean state) {
     if (game != null && game.getDirectB2SPath() != null) {
       File directB2SFile = game.getDirectB2SFile();
-      String directB2SFileName = game.getDirectB2SFilename();
+      String directB2SFileName = BackglassNamingHelper.getBackglassFileName(game);
       DirectB2SData data = getDirectB2SData(directB2SFile, game.getEmulatorId(), directB2SFileName);
       if (data != null && data.getNbScores() > 0) {
         try {
@@ -238,7 +251,7 @@ public class BackglassService implements InitializingBean {
           updater.upddateScoresDisplayState(directB2SFile, state, false);
         }
         catch (Exception e) {
-          LOG.error("Error while updating " + directB2SFileName, e);
+          LOG.error("Error while updating {}", directB2SFileName, e);
         }
       }
     }
@@ -251,8 +264,11 @@ public class BackglassService implements InitializingBean {
     detail.setEmulatorId(emuId);
     detail.setFilename(filename);
 
-    GameEmulator emulator = emulatorService.getGameEmulator(emuId);
-    File b2sFile = new File(emulator.getGamesDirectory(), filename);
+    File b2sFile = getB2sFile(emuId, filename);
+    if (b2sFile == null) {
+      return null;
+    }
+
     DirectB2SData data = getDirectB2SData(b2sFile, emuId, filename);
 
     if (data != null) {
@@ -340,7 +356,7 @@ public class BackglassService implements InitializingBean {
           B2STableSettingsSerializer serverSettingsSerializer = new B2STableSettingsSerializer();
           serverSettingsSerializer.serializeIni(settings, serverSettings, ini);
           // add in cache
-          this.cacheB2STableSettings.put(settings.getRom(), settings);
+          tableSettingsCacheAdd(settings);
         }
       }
       else {
@@ -353,7 +369,7 @@ public class BackglassService implements InitializingBean {
       return settings;
     }
     catch (VPinStudioException e) {
-      LOG.error("Failed to save table settings for \"" + game.getId() + "\": " + e.getMessage(), e);
+      LOG.error("Failed to save table settings for \"{}\": {}", game.getId(), e.getMessage(), e);
       throw e;
     }
   }
@@ -362,10 +378,7 @@ public class BackglassService implements InitializingBean {
     String rom = game.getRom();
     if (StringUtils.isNotEmpty(rom)) {
       rom = StringUtils.deleteWhitespace(rom);
-      DirectB2STableSettings entry = cacheB2STableSettings.get(rom);
-      if (entry == null && !StringUtils.isEmpty(game.getTableName())) {
-        entry = cacheB2STableSettings.get(game.getTableName());
-      }
+      DirectB2STableSettings entry = tableSettingsCacheGet(rom, game.getTableName());
 
       if (entry != null) {
         try {
@@ -405,7 +418,7 @@ public class BackglassService implements InitializingBean {
         if (ini != null && ini.exists()) {
           B2STableSettingsParser parser = new B2STableSettingsParser();
           entry = parser.parseTableSettingsIni(ini, rom);
-          this.cacheB2STableSettings.put(rom, entry);
+          tableSettingsCacheAdd(entry);
         }
       }
 
@@ -454,12 +467,12 @@ public class BackglassService implements InitializingBean {
       return getServerSettings();
     }
     catch (VPinStudioException e) {
-      LOG.error("Failed to save server settings: " + e.getMessage(), e);
+      LOG.error("Failed to save server settings: {}", e.getMessage(), e);
       throw e;
     }
   }
 
-  //-------------------------------------- Key Files ---
+//-------------------------------------- Key Files ---
 
   @NonNull
   public File getBackglassServerFolder() {
@@ -477,7 +490,7 @@ public class BackglassService implements InitializingBean {
         }
       }
       catch (IOException ioe) {
-        LOG.error("Cannot find backglass server in " + emu.getInstallationDirectory() + ", skip this emulator for B2S server search", ioe);
+        LOG.error("Cannot find backglass server in {}, skip this emulator for B2S server search", emu.getInstallationDirectory(), ioe);
       }
     }
     // not installed, use default folder
@@ -508,12 +521,12 @@ public class BackglassService implements InitializingBean {
       }
     }
     catch (IOException e) {
-      LOG.error("Cannot create file " + xml.getAbsolutePath(), e);
+      LOG.error("Cannot create file {}", xml.getAbsolutePath(), e);
     }
     throw new RuntimeException("Cannot find nor create file " + xml.getAbsolutePath());
   }
 
-  //-------------------------------------------- DirectB2SAndVersions ---
+//-------------------------------------------- DirectB2SAndVersions ---
 
   public List<DirectB2S> getBackglasses() {
     ArrayList<DirectB2S> result = new ArrayList<>(cacheDirectB2SVersion.values());
@@ -531,38 +544,28 @@ public class BackglassService implements InitializingBean {
         continue;
       }
 
-      if (StringUtils.isEmpty(gameEmulator.getGamesDirectory())) {
-        LOG.info("Skipping backglass scan for: {}, no games directory found.", gameEmulator);
-        continue;
-      }
-
-      File tablesFolder = gameEmulator.getGamesFolder();
-      if (!tablesFolder.exists()) {
-        LOG.info("Skipping backglass scan for: {}", tablesFolder.getAbsolutePath());
-        continue;
-      }
-
-      Path tablesPath = tablesFolder.toPath();
-
-      LOG.info("Running backglass scan for: {}", tablesFolder.getAbsolutePath());
-      IOFileFilter filter = new SuffixFileFilter(new String[]{"directb2s"}, IOCase.INSENSITIVE);
-      Iterator<File> iter = org.apache.commons.io.FileUtils.iterateFiles(tablesFolder, filter, DirectoryFileFilter.DIRECTORY);
-      DirectB2S currentDirectB2S = null;
-      while (iter.hasNext()) {
-        File file = iter.next();
-        String fileName = tablesPath.relativize(file.toPath()).toString();
-        String mainName = FileUtils.fromUniqueFile(fileName);
-
-        // new backglass detected
-        if (currentDirectB2S == null || !currentDirectB2S.getFileName().equals(mainName)) {
-          currentDirectB2S = new DirectB2S();
-          currentDirectB2S.setEmulatorId(gameEmulator.getId());
-          addGameInfo(currentDirectB2S, gameEmulator, FilenameUtils.removeExtension(mainName));
-
-          // add in cache
-          setDirectB2SAndVersions(gameEmulator.getId(), mainName, currentDirectB2S);
+      if (gameEmulator.isVpxEmulator()) {
+        if (StringUtils.isEmpty(gameEmulator.getGamesDirectory())) {
+          LOG.info("Skipping backglass scan for: {}, no games directory found.", gameEmulator);
+          continue;
         }
-        currentDirectB2S.addVersion(tablesPath.relativize(file.toPath()).toString());
+
+        File tablesFolder = gameEmulator.getGamesFolder();
+        if (!tablesFolder.exists()) {
+          LOG.info("Skipping backglass scan for: {}", tablesFolder.getAbsolutePath());
+          continue;
+        }
+
+        LOG.info("Running emulator {} backglass scan for: {}", gameEmulator.getName(), tablesFolder.getAbsolutePath());
+        loadBackglassForFolder(gameEmulator, tablesFolder);
+      }
+
+      if (gameEmulator.isZenEmulator() && dofLinxService.isValid()) {
+        File b2sFolder = dofLinxService.getBackglassesFolder(gameEmulator);
+        if (b2sFolder != null && b2sFolder.exists()) {
+          LOG.info("Running emulator {} backglass scan for: {}", gameEmulator.getName(), b2sFolder.getAbsolutePath());
+          loadBackglassForFolder(gameEmulator, b2sFolder);
+        }
       }
     }
 
@@ -570,10 +573,39 @@ public class BackglassService implements InitializingBean {
     LOG.info("Backglass scan finished, scanned {} files in {}ms", cacheDirectB2SVersion.size(), duration);
   }
 
+  private void loadBackglassForFolder(GameEmulator gameEmulator, File tablesFolder) {
+    Path tablesPath = tablesFolder.toPath();
+    IOFileFilter filter = new SuffixFileFilter(new String[]{"directb2s"}, IOCase.INSENSITIVE);
+    Iterator<File> iter = org.apache.commons.io.FileUtils.iterateFiles(tablesFolder, filter, DirectoryFileFilter.DIRECTORY);
+    DirectB2S currentDirectB2S = null;
+    while (iter.hasNext()) {
+      File file = iter.next();
+      String fileName = tablesPath.relativize(file.toPath()).toString();
+      String mainName = FileUtils.fromUniqueFile(fileName);
+
+      // new backglass detected
+      if (currentDirectB2S == null || !currentDirectB2S.getFileName().equals(mainName)) {
+        currentDirectB2S = new DirectB2S();
+        currentDirectB2S.setEmulatorId(gameEmulator.getId());
+        addGameInfo(currentDirectB2S, gameEmulator, FilenameUtils.removeExtension(mainName));
+
+        // add in cache
+        setDirectB2SAndVersions(gameEmulator.getId(), mainName, currentDirectB2S);
+      }
+      currentDirectB2S.addVersion(tablesPath.relativize(file.toPath()).toString());
+    }
+  }
+
   private void addGameInfo(DirectB2S currentDirectB2S, GameEmulator gameEmulator, String mainBaseName) {
     String gameFilename = mainBaseName + "." + gameEmulator.getGameExt();
-    Game g = frontendService.getGameByFilename(gameEmulator.getId(), gameFilename);
-    currentDirectB2S.setGameId(g != null ? g.getId() : -1);
+    if (gameEmulator.isZenEmulator()) {
+      Game g = frontendService.getGameByDisplayName(gameEmulator.getId(), mainBaseName);
+      currentDirectB2S.setGameId(g != null ? g.getId() : -1);
+    }
+    else {
+      Game g = frontendService.getGameByFilename(gameEmulator.getId(), gameFilename);
+      currentDirectB2S.setGameId(g != null ? g.getId() : -1);
+    }
   }
 
   public DirectB2S getCacheDirectB2SAndVersions(Game game) {
@@ -587,7 +619,8 @@ public class BackglassService implements InitializingBean {
   @Nullable
   public DirectB2S getDirectB2SAndVersions(Game game) {
     if (game != null) {
-      return reloadDirectB2SAndVersions(game.getEmulator(), game.getGameFileName());
+      String backglassFileName = BackglassNamingHelper.getBackglassFileName(game);
+      return reloadDirectB2SAndVersions(game.getEmulator(), backglassFileName);
     }
     return null;
   }
@@ -610,23 +643,23 @@ public class BackglassService implements InitializingBean {
   @Nullable
   private DirectB2S reloadDirectB2SAndVersions(@NonNull GameEmulator emulator, String fileName) {
     //do not check this for emulators that do not support backglasses anyway
-    if (emulator.isMameEmulator() || emulator.isOtherEmulator() || emulator.isZaccariaEmulator() || emulator.isZenEmulator()) {
+    if (emulator.isMameEmulator() || emulator.isOtherEmulator() || emulator.isZaccariaEmulator()) {
       return null;
     }
 
-    if (StringUtils.isEmpty(emulator.getGamesDirectory())) {
-      LOG.info("Return DirectB2SAndVersions null, emulator {} has no game directory set.", emulator.getName());
+    if (StringUtils.isEmpty(emulator.getBackglassDirectory())) {
+      LOG.info("Return DirectB2SAndVersions null, emulator {} has no backglass directory set.", emulator.getName());
       return null;
     }
 
-    File gamesDirectory = new File(emulator.getGamesDirectory());
+    File gamesDirectory = new File(emulator.getBackglassDirectory());
     if (!gamesDirectory.exists()) {
-      LOG.info("Return DirectB2SAndVersions null, emulator {} has an invalid game directory set.", emulator.getGamesDirectory());
+      LOG.info("Return DirectB2SAndVersions null, emulator {} has an invalid backglass directory set.", emulator.getGamesDirectory());
       return null;
     }
 
     //It's ok to return an empty object as long as the game directory is there
-    File file = new File(emulator.getGamesDirectory(), fileName);
+    File file = new File(emulator.getBackglassDirectory(), fileName);
     if (file.getParentFile() == null || !file.getParentFile().exists()) {
       return null;
     }
@@ -672,7 +705,7 @@ public class BackglassService implements InitializingBean {
     }
   }
 
-  //-------------------------------------------- OPERATIONS ---
+//-------------------------------------------- OPERATIONS ---
 
   public DirectB2S rename(int emulatorId, String fileName, String newName) {
     String baseName = FileUtils.baseUniqueFile(fileName);
@@ -695,12 +728,12 @@ public class BackglassService implements InitializingBean {
         File b2sFile = new File(emulator.getGamesDirectory(), version);
         File b2sNewFile = new File(emulator.getGamesDirectory(), newVersion);
         if (b2sFile.exists() && b2sFile.renameTo(b2sNewFile)) {
-          cacheDirectB2SData.remove(b2sFile.getPath());
-          LOG.info("Renamed \"" + b2sFile + "\" to \"" + b2sNewFile + "\"");
+          cacheRemove(emulatorId, b2sFile);
+          LOG.info("Renamed \"{}\" to \"{}\"", b2sFile, b2sNewFile);
           b2s.addVersion(newVersion);
         }
         else {
-          LOG.error("Cannot rename \"" + b2sFile + "\" to \"" + b2sNewFile + "\"");
+          LOG.error("Cannot rename \"{}\" to \"{}\"", b2sFile, b2sNewFile);
         }
       }
 
@@ -718,11 +751,11 @@ public class BackglassService implements InitializingBean {
     try {
       File target = FileUtils.uniqueFile(b2sFile);
       org.apache.commons.io.FileUtils.copyFile(b2sFile, target);
-      LOG.info("Copied \"" + fileName + "\" to \"" + target.getAbsolutePath() + "\"");
+      LOG.info("Copied \"{}\" to \"{}\"", fileName, target.getAbsolutePath());
       return reloadDirectB2SAndVersions(emulator, fileName);
     }
     catch (IOException e) {
-      LOG.error("Failed to duplicate backglass " + b2sFile.getAbsolutePath() + ": " + e.getMessage(), e);
+      LOG.error("Failed to duplicate backglass {}: {}", b2sFile.getAbsolutePath(), e.getMessage(), e);
       throw e;
     }
   }
@@ -737,7 +770,7 @@ public class BackglassService implements InitializingBean {
       if (mainFile.exists()) {
         File tempFile = new File(b2sFile.getParentFile(), b2sFile.getName() + ".tmp");
         if (b2sFile.renameTo(tempFile) && mainFile.renameTo(b2sFile)) {
-          cacheDirectB2SData.remove(b2sFile.getPath());
+          cacheRemove(emulatorId, b2sFile);
           b2sFile = tempFile;
         }
         else {
@@ -745,7 +778,7 @@ public class BackglassService implements InitializingBean {
         }
       }
       if (b2sFile.renameTo(mainFile)) {
-        cacheDirectB2SData.remove(mainFile.getPath());
+        cacheRemove(emulatorId, b2sFile);
       }
       else {
         throw new RuntimeException("Cannot rename " + b2sFile + ", operation ignored");
@@ -763,7 +796,7 @@ public class BackglassService implements InitializingBean {
       if (!mainFile.renameTo(target)) {
         throw new RuntimeException("Cannot rename " + mainFile + " to " + target);
       }
-      cacheDirectB2SData.remove(mainFile.getPath());
+      cacheRemove(emulatorId, mainFile);
     }
     return reloadDirectB2SAndVersions(emulator, fileName);
   }
@@ -774,13 +807,13 @@ public class BackglassService implements InitializingBean {
     if (b2s != null) {
       GameEmulator emulator = emulatorService.getGameEmulator(emulatorId);
       for (String version : b2s.getVersions()) {
-        File b2sFile = new File(emulator.getGamesDirectory(), version);
+        File b2sFile = new File(emulator.getBackglassDirectory(), version);
         if (b2sFile.exists() && b2sFile.delete()) {
-          cacheDirectB2SData.remove(b2sFile.getPath());
-          LOG.info("Deleted " + b2sFile.getAbsolutePath());
+          cacheRemove(emulatorId, b2sFile);
+          LOG.info("Deleted {}", b2sFile.getAbsolutePath());
         }
         else {
-          LOG.info("Cannot delete " + b2sFile.getAbsolutePath());
+          LOG.info("Cannot delete {}", b2sFile.getAbsolutePath());
           success = false;
         }
       }
@@ -792,18 +825,18 @@ public class BackglassService implements InitializingBean {
     GameEmulator emulator = emulatorService.getGameEmulator(emulatorId);
     File b2sFile = new File(emulator.getGamesDirectory(), filename);
     if (b2sFile.exists() && b2sFile.delete()) {
-      cacheDirectB2SData.remove(b2sFile.getPath());
-      LOG.info("Deleted " + b2sFile.getAbsolutePath());
+      cacheRemove(emulatorId, b2sFile);
+      LOG.info("Deleted {}", b2sFile.getAbsolutePath());
     }
     return reloadDirectB2SAndVersions(emulator, filename);
   }
 
-  //-------------------------------------------- SCREENRES ---
+//-------------------------------------------- SCREENRES ---
 
   public DirectB2sScreenRes getScreenRes(Game game, boolean perTableOnly) {
     if (game != null) {
       File b2sFile = game.getDirectB2SFile();
-      String b2sFilename = game.getDirectB2SFilename();
+      String b2sFilename = BackglassNamingHelper.getBackglassFileName(game);
       DirectB2sScreenRes res = getScreenRes(b2sFile, perTableOnly);
       if (res != null) {
         res.setEmulatorId(game.getEmulatorId());
@@ -932,7 +965,7 @@ public class BackglassService implements InitializingBean {
       //  4) Screenres.txt ( or whatever you set in the registry) in the folder where the B2SBackglassServerEXE.exe is located
       target = new File(getBackglassServerFolder(), screenresTxt);
 
-      // fall back to tables folder of the first emulator 
+      // fall back to tables folder of the first emulator
       if (!target.exists()) {
         LOG.info("Failed to read Screenres.txt via standard patterns, trying first VPX emulator instead.");
         List<GameEmulator> vpxGameEmulators = emulatorService.getVpxGameEmulators();
@@ -977,7 +1010,7 @@ public class BackglassService implements InitializingBean {
       return lines;
     }
     catch (Exception e) {
-      LOG.error("Cannor open screen res file " + target.getAbsolutePath(), e);
+      LOG.error("Cannor open screen res file {}", target.getAbsolutePath(), e);
       return null;
     }
   }
@@ -998,7 +1031,7 @@ public class BackglassService implements InitializingBean {
           return DirectB2SFrameTypeGenerator.generateAsByte(image, targetW, targetH, frameType, false);
         }
         else {
-          LOG.error("Cannot read screenres and determine image dimensions for {} and emulator {}", filename, emulatorId);  
+          LOG.error("Cannot read screenres and determine image dimensions for {} and emulator {}", filename, emulatorId);
         }
       }
       catch (IOException ioe) {
@@ -1011,8 +1044,8 @@ public class BackglassService implements InitializingBean {
   protected void generateAndSaveFrame(DirectB2sScreenRes screenres, @Nullable Game game) {
     if (screenres.isBackglassCentered() && !DirectB2SFrameType.USE_FRAME.equals(screenres.getFrameType())) {
       byte[] frame = generateFrame(screenres.getEmulatorId(), screenres.getB2SFileName(), game, screenres.getFrameType());
-      if (frame != null) {
-        File b2sFile = getB2sFile(screenres.getEmulatorId(), screenres.getB2SFileName());
+      File b2sFile = getB2sFile(screenres.getEmulatorId(), screenres.getB2SFileName());
+      if (frame != null && b2sFile != null && b2sFile.exists()) {
         File frameFolder = new File(b2sFile.getParent(), "_Frames");
         if (frameFolder.exists() || frameFolder.mkdir()) {
           String name = FilenameUtils.getBaseName(screenres.getB2SFileName());
@@ -1051,7 +1084,7 @@ public class BackglassService implements InitializingBean {
     }
     String templateName = lines.remove(0);
 
-    // if already a table file exists, replace it 
+    // if already a table file exists, replace it
     File screenresFile = StringUtils.containsIgnoreCase(templateName, FilenameUtils.getBaseName(screenres.getB2SFileName())) ?
         new File(templateName) : new File(emulator.getGamesDirectory(), StringUtils.replaceIgnoreCase(screenres.getB2SFileName(), ".directb2s", ".res"));
 
@@ -1131,7 +1164,7 @@ public class BackglassService implements InitializingBean {
                 writer.write(StringUtils.defaultString(screenres.getBackgroundFilePath()));
                 break;
               default:
-                // write all other lines unchanged 
+                // write all other lines unchanged
                 writer.write(line);
             }
           }
@@ -1193,12 +1226,12 @@ public class BackglassService implements InitializingBean {
       return frameFile.getAbsolutePath();
     }
     else {
-      LOG.error("Cannot create _frames Folder " + emulator.getGamesDirectory());
+      LOG.error("Cannot create _frames Folder {}", emulator.getGamesDirectory());
       return null;
     }
   }
 
-  //----------------------------------- FrontendFullMedia manipulation ---
+//----------------------------------- FrontendFullMedia manipulation ---
 
   public void useFrontendFullDMDMedia(int gameId) {
     TableDetails tableDetails = frontendService.getTableDetails(gameId);
@@ -1216,7 +1249,7 @@ public class BackglassService implements InitializingBean {
       byte[] img = grabFromFrontendMedia(item);
       if (img != null) {
         String base64 = DatatypeConverter.printBase64Binary(img);
-        setDmdImage(game.getEmulatorId(), game.getDirectB2SFilename(), item.getFile().getName(), base64);
+        setDmdImage(game.getEmulatorId(), BackglassNamingHelper.getBackglassFileName(game), item.getFile().getName(), base64);
       }
     }
     catch (Exception ioe) {
@@ -1232,7 +1265,7 @@ public class BackglassService implements InitializingBean {
           return Files.readAllBytes(item.getFile().toPath());
         }
         catch (IOException e) {
-          LOG.error("Failed to copy resource file as background: " + e.getMessage(), e);
+          LOG.error("Failed to copy resource file as background: {}", e.getMessage(), e);
         }
       }
       else if ("video".equals(baseType)) {
@@ -1242,7 +1275,7 @@ public class BackglassService implements InitializingBean {
     return null;
   }
 
-  //-------------------------------------------- PREVIEWS in BYTES[] ---
+//-------------------------------------------- PREVIEWS in BYTES[] ---
 
   // need an enriched game with rom
   public byte[] getPreviewBackground(Game game, boolean includeFrame) {
@@ -1348,7 +1381,30 @@ public class BackglassService implements InitializingBean {
     return null;
   }
 
-  //------------------------------
+  private void cacheAdd(int emulatorId, File b2sFile, DirectB2SData data) {
+    cacheDirectB2SData.put(emulatorId + "|" + b2sFile.getPath(), data);
+  }
+
+  private void cacheRemove(int emulatorId, File b2sFile) {
+    cacheDirectB2SData.remove(emulatorId + "|" + b2sFile.getPath());
+  }
+
+
+  private void tableSettingsCacheAdd(DirectB2STableSettings settings) {
+    if (StringUtils.isNotEmpty(settings.getRom())) {
+      cacheB2STableSettings.put(StringUtils.deleteWhitespace(settings.getRom()), settings);
+    }
+  }
+
+  private DirectB2STableSettings tableSettingsCacheGet(String rom, String tableName) {
+    DirectB2STableSettings entry = StringUtils.isNotEmpty(rom) ? cacheB2STableSettings.get(rom) : null;
+    if (entry == null && StringUtils.isNotEmpty(tableName)) {
+      entry = cacheB2STableSettings.get(tableName);
+    }
+    return entry;
+  }
+
+//------------------------------
 
   public static int parseIntSafe(String value) {
     return parseIntSafe(value, 0);

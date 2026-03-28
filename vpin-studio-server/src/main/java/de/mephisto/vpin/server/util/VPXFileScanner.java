@@ -39,7 +39,7 @@ public class VPXFileScanner {
   //private final static int MAX_ROM_FILENAME_LENGTH = 32;
   private final static int MAX_FILENAME_LENGTH = 128;
 
-  private final static List<String> PATTERN_TABLENAME = Arrays.asList("TableName");
+  private final static List<String> PATTERN_TABLENAME = List.of("TableName");
   private final static List<String> PATTERN_ROM = Arrays.asList("cGameName", "cgamename", "RomSet1", "GameName");
   //private final static List<String> PATTERN_PUP_PACK = Arrays.asList("pGameName", "pgamename");
 
@@ -55,10 +55,17 @@ public class VPXFileScanner {
 
   private static final Pattern HS_FILENAME_PATTERN = Pattern.compile(".*HSFileName.*=.*\".*\".*");
   private static final Pattern TXT_FILENAME_PATTERN = Pattern.compile(".*\".*\\.txt\".*");
+  // Matches a VBScript string-concat expression: sequence of quoted strings and identifiers joined by & or +
+  // e.g. "MFDOOM\Attract" & i & ".mp3"  or  "Jingel1" + ".mp3"  or  "intro.mp3"
+  private static final Pattern MP3_EXPRESSION_PATTERN = Pattern.compile(
+      "(?:\"[^\"]*\"|\\w+)(?:\\s*[&+]\\s*(?:\"[^\"]*\"|\\w+))*",
+      Pattern.CASE_INSENSITIVE);
 
   private static final Pattern VAR_PATTERN = Pattern.compile("(?:Set *)?(\\w*)\\s*=\\s*(.*)");
 
-  /** all lower case ! */
+  /**
+   * all lower case !
+   */
   private final static List<String> IGNORED_SCRIPTS = Arrays.asList("core.vbs", "controller.vbs", "vpmkeys.vbs");
 
   private static final ExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -69,56 +76,53 @@ public class VPXFileScanner {
 
   public static ScanResult scan(@NonNull File gameFile, @NonNull File scriptFolder) {
     ScanResult result = new ScanResult();
-    Future<ScanResult> future = scheduler.submit(new Callable<ScanResult>() {
-      @Override
-      public ScanResult call() {
-        long start = System.currentTimeMillis();
+    Future<ScanResult> future = scheduler.submit(() -> {
+      long start = System.currentTimeMillis();
 
-        String script = VPXUtil.readScript(gameFile);
-        List<String> allLines = scanLines(gameFile, scriptFolder, result, script);
+      String script = VPXUtil.readScript(gameFile);
+      List<String> allLines = scanLines(gameFile, scriptFolder, result, script);
 
-        //---------------------
-        // Post manupulations
+      //---------------------
+      // Post manupulations
 
-        if (StringUtils.isNotEmpty(result.getGameName())) {
-          result.setRom(result.getGameName());
-        }
-
-        //apply table name as ROM name, e.g. for EM tables
-        if (StringUtils.isEmpty(result.getRom()) && !StringUtils.isEmpty(result.getTableName())) {
-          result.setRom(result.getTableName());
-        }
-
-        if (StringUtils.isEmpty(result.getRom()) && allLines.size() > 1) {
-          LOG.info("Regular scan failed, running deep scan for " + gameFile.getAbsolutePath());
-          runDeepScan(gameFile, result);
-        }
-
-        if (!StringUtils.isEmpty(result.getRom())) {
-          LOG.info("Finished scan of table " + gameFile.getAbsolutePath() + ", found ROM '" + result.getRom() + "', took " + (System.currentTimeMillis() - start) + " ms for " + allLines.size() + " lines.");
-        }
-        else if (StringUtils.isEmpty(result.getRom()) && StringUtils.isEmpty(result.getTableName()) && !StringUtils.isEmpty(result.getHsFileName())) {
-          result.setTableName(FilenameUtils.getBaseName(result.getHsFileName()));
-          LOG.info("Finished scan of table " + gameFile.getAbsolutePath() + ", found EM highscore filename '" + result.getHsFileName() + "', took " + (System.currentTimeMillis() - start) + " ms for " + allLines.size() + " lines.");
-        }
-        else {
-          LOG.info("Finished scan of table " + gameFile.getAbsolutePath() + ", no ROM found" + "', took " + (System.currentTimeMillis() - start) + " ms for " + allLines.size() + " lines.");
-        }
-
-        if (!result.isFoundControllerStop()) {
-//      LOG.warn("No 'Controller.stop' call found for \"" + gameFile.getAbsolutePath() + "\"");
-        }
-
-        if (!StringUtils.isEmpty(result.getSomeTextFile()) && StringUtils.isEmpty(result.getHsFileName())) {
-          result.setHsFileName(result.getSomeTextFile());
-        }
-
-        if (StringUtils.isEmpty(result.getRom()) && !StringUtils.isEmpty(result.getHsFileName())) {
-          result.setRom(FilenameUtils.getBaseName(result.getHsFileName()));
-        }
-
-        return result;
+      if (StringUtils.isNotEmpty(result.getGameName())) {
+        result.setRom(result.getGameName());
       }
+
+      //apply table name as ROM name, e.g. for EM tables
+      if (StringUtils.isEmpty(result.getRom()) && !StringUtils.isEmpty(result.getTableName())) {
+        result.setRom(result.getTableName());
+      }
+
+      if (StringUtils.isEmpty(result.getRom()) && allLines.size() > 1) {
+        LOG.info("Regular scan failed, running deep scan for {}", gameFile.getAbsolutePath());
+        runDeepScan(gameFile, result);
+      }
+
+      if (!StringUtils.isEmpty(result.getRom())) {
+        LOG.info("Finished scan of table {}, found ROM '{}', took {} ms for {} lines.", gameFile.getAbsolutePath(), result.getRom(), (System.currentTimeMillis() - start), allLines.size());
+      }
+      else if (StringUtils.isEmpty(result.getRom()) && StringUtils.isEmpty(result.getTableName()) && !StringUtils.isEmpty(result.getHsFileName())) {
+        result.setTableName(FilenameUtils.getBaseName(result.getHsFileName()));
+        LOG.info("Finished scan of table {}, found EM highscore filename '{}', took {} ms for {} lines.", gameFile.getAbsolutePath(), result.getHsFileName(), (System.currentTimeMillis() - start), allLines.size());
+      }
+      else {
+        LOG.info("Finished scan of table {}, no ROM found', took {} ms for {} lines.", gameFile.getAbsolutePath(), (System.currentTimeMillis() - start), allLines.size());
+      }
+
+//        if (!result.isFoundControllerStop()) {
+//      LOG.warn("No 'Controller.stop' call found for \"" + gameFile.getAbsolutePath() + "\"");
+//        }
+
+      if (!StringUtils.isEmpty(result.getSomeTextFile()) && StringUtils.isEmpty(result.getHsFileName())) {
+        result.setHsFileName(result.getSomeTextFile());
+      }
+
+      if (StringUtils.isEmpty(result.getRom()) && !StringUtils.isEmpty(result.getHsFileName())) {
+        result.setRom(FilenameUtils.getBaseName(result.getHsFileName()));
+      }
+
+      return result;
     });
 
     try {
@@ -143,8 +147,7 @@ public class VPXFileScanner {
       bufferedReader = new BufferedReader(new InputStreamReader(reverseLineInputStream));
 
       bufferedReader.readLine();//skip last line if empty
-      boolean continueRead = true;
-      while (continueRead) {
+      while (true) {
         line = bufferedReader.readLine();
         if (line == null) {
           line = bufferedReader.readLine();
@@ -165,7 +168,7 @@ public class VPXFileScanner {
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to read rom line '" + line + "' for  " + gameFile.getAbsolutePath() + ": " + e.getMessage(), e);
+      LOG.error("Failed to read rom line '{}' for  {}: {}", line, gameFile.getAbsolutePath(), e.getMessage(), e);
     }
     finally {
       try {
@@ -178,7 +181,7 @@ public class VPXFileScanner {
         }
       }
       catch (Exception e) {
-        LOG.error("Failed to close vpx file stream: " + e.getMessage(), e);
+        LOG.error("Failed to close vpx file stream: {}", e.getMessage(), e);
       }
     }
   }
@@ -217,6 +220,104 @@ public class VPXFileScanner {
     }
   }
 
+  private static void lineSearchMp3FileName(ScanResult result, String line) {
+    if (!line.contains(".mp3") && !line.contains(".MP3")) {
+      return;
+    }
+    Matcher matcher = MP3_EXPRESSION_PATTERN.matcher(line);
+    while (matcher.find()) {
+      String expr = matcher.group();
+      if (!StringUtils.containsIgnoreCase(expr, ".mp3")) {
+        continue;
+      }
+      String filename = buildMp3Wildcard(expr);
+      if (filename != null) {
+        if (filename.equalsIgnoreCase(".mp3") || filename.equalsIgnoreCase("*.mp3")) {
+          continue;
+        }
+        addAsset(result, filename.replaceAll("\\\\", "/"));
+      }
+    }
+  }
+
+  /**
+   * Adds an mp3 asset path to the result, deduplicating by filename.
+   * If the same filename (basename) is already present, the entry with the path wins over
+   * the plain filename — i.e. "sounds/intro.mp3" replaces "intro.mp3", but not vice versa.
+   */
+  private static void addAsset(ScanResult result, String newAsset) {
+    String newName = FilenameUtils.getName(newAsset);
+    boolean newHasPath = !newName.equals(newAsset);
+    List<String> assets = result.getAssets();
+    for (int i = 0; i < assets.size(); i++) {
+      String existing = assets.get(i);
+      if (FilenameUtils.getName(existing).equalsIgnoreCase(newName)) {
+        // Same base filename already present — upgrade to the path-qualified version if needed
+        boolean existingHasPath = !FilenameUtils.getName(existing).equals(existing);
+        if (newHasPath && !existingHasPath) {
+          assets.set(i, newAsset);
+        }
+        return;
+      }
+    }
+    assets.add(newAsset);
+  }
+
+  /**
+   * Converts a VBScript concat expression into a wildcard filename.
+   * Quoted parts contribute their literal content; variable tokens become *.
+   * e.g. "MFDOOM\Attract" & i & ".mp3"  ->  MFDOOM\Attract*.mp3
+   */
+  private static String buildMp3Wildcard(String expr) {
+    StringBuilder sb = new StringBuilder();
+    for (String part : splitOnAmpersandOutsideQuotes(expr)) {
+      if (part.startsWith("\"") && part.endsWith("\"") && part.length() >= 2) {
+        sb.append(part, 1, part.length() - 1);
+      }
+      else {
+        // variable or number — use wildcard, but don't double up
+        if (sb.length() == 0 || sb.charAt(sb.length() - 1) != '*') {
+          sb.append('*');
+        }
+      }
+    }
+    String result = sb.toString();
+    return StringUtils.containsIgnoreCase(result, ".mp3") ? result : null;
+  }
+
+  /**
+   * Splits a VBScript concat expression by & or + while respecting quoted strings.
+   * e.g. "bgout_T&Jfoo" & var & ".mp3"  ->  ["\"bgout_T&Jfoo\"", "var", "\".mp3\""]
+   * e.g. "Jingel1" + ".mp3"             ->  ["\"Jingel1\"", "\".mp3\""]
+   */
+  private static List<String> splitOnAmpersandOutsideQuotes(String expr) {
+    List<String> parts = new ArrayList<>();
+    StringBuilder current = new StringBuilder();
+    boolean inString = false;
+    for (int i = 0; i < expr.length(); i++) {
+      char c = expr.charAt(i);
+      if (c == '"') {
+        inString = !inString;
+        current.append(c);
+      }
+      else if ((c == '&' || c == '+') && !inString) {
+        String part = current.toString().trim();
+        if (!part.isEmpty()) {
+          parts.add(part);
+        }
+        current.setLength(0);
+      }
+      else {
+        current.append(c);
+      }
+    }
+    String last = current.toString().trim();
+    if (!last.isEmpty()) {
+      parts.add(last);
+    }
+    return parts;
+  }
+
   public static List<String> scanLines(File gameFile, File scriptFolder, ScanResult result, String script) {
     EvaluationContext evalctxt = new EvaluationContext();
 
@@ -234,13 +335,10 @@ public class VPXFileScanner {
    * Recursive, sharing EvaluationContext
    */
   private static List<String> scanLines(EvaluationContext evalctxt, File gameFile, File scriptFolder, ScanResult result, String script) {
-    List<String> allLines = new ArrayList<>();
     script = script.replaceAll("\r\n", "\n");
     script = script.replaceAll("\r", "\n");
-    allLines.addAll(Arrays.asList(script.split("\n")));
+    List<String> allLines = new ArrayList<>(Arrays.asList(script.split("\n")));
     LOG.info("Scanning {} lines for {}", allLines.size(), gameFile.getName());
-    //Collections.reverse(allLines);
-
     List<String> includedScripts = new ArrayList<>();
 
     int nbline = 0;
@@ -307,8 +405,8 @@ public class VPXFileScanner {
 
     Object vrroom = ObjectUtils.firstNonNull(evalctxt.getVarValue("vrroom"), evalctxt.getVarValue("vr_room"));
     if (vrroom != null) {
-      result.setVrRoomSupport(vrroom != null);
-      result.setVrRoomDisabled(vrroom == null || vrroom.toString().equals("0"));
+      result.setVrRoomSupport(true);
+      result.setVrRoomDisabled(vrroom.toString().equals("0"));
     }
 
     return allLines;
@@ -316,16 +414,20 @@ public class VPXFileScanner {
 
   private static void detectLine(ScanResult result, List<String> includedScripts, EvaluationContext evalctxt, int nbline, String line) {
     try {
-      lineDetectWith(result, line, evalctxt);
+      lineDetectWith(line, evalctxt);
       lineEvaluateVars(line, evalctxt);
       lineSearchGameName(result, line, evalctxt);
-      //lineSearchRom(result, line);
-      //lineSearchPupPack(result, line);
-      //lineSearchTableName(result, line);
+
+//      lineSearchRom(result, line);
+//      lineSearchPupPack(result, line);
+//      lineSearchTableName(result, line);
+
       lineSearchNvOffset(result, line);
       lineSearchHsFileName(result, line);
       lineSearchTextFileName(result, line);
+      lineSearchMp3FileName(result, line);
       lineSearchControllerStop(result, line);
+
       //lineSearchVRRoom(result, line);
       lineSearchDMDType(result, line);
       lineSearchInitUltraDmd(result, line, evalctxt);
@@ -333,7 +435,7 @@ public class VPXFileScanner {
       lineSearchScript(includedScripts, line, evalctxt);
     }
     catch (Exception e) {
-      LOG.error("error on line " + nbline, e);
+      LOG.error("error on line {}", nbline, e);
     }
   }
 
@@ -356,7 +458,7 @@ public class VPXFileScanner {
       // detection of a column outside a string => capture statement and re-init buffer
       if (c == ':' && !inString) {
         String statement = bld.toString().trim();
-        if (statement.length() > 0) {
+        if (!statement.isEmpty()) {
           statements.add(statement);
         }
         bld.setLength(0);
@@ -373,7 +475,7 @@ public class VPXFileScanner {
     }
     // end of the line, capture latest statement
     String statement = bld.toString().trim();
-    if (statement.length() > 0) {
+    if (!statement.isEmpty()) {
       statements.add(statement);
     }
     return statements.toArray(new String[0]);
@@ -408,7 +510,7 @@ public class VPXFileScanner {
         result.setNvOffset(Integer.parseInt(nvOffsetString));
       }
       catch (Exception e) {
-        LOG.error("Failed to read NVOffset from line \"" + line + "\" and segment \"" + nvOffsetString + "\": " + e.getMessage());
+        LOG.error("Failed to read NVOffset from line \"{}\" and segment \"{}\": {}", line, nvOffsetString, e.getMessage());
       }
     }
   }
@@ -453,7 +555,7 @@ public class VPXFileScanner {
     }
   }
 
-  private static void lineDetectWith(@NonNull ScanResult result, @NonNull String line, EvaluationContext evalctxt) {
+  private static void lineDetectWith(@NonNull String line, EvaluationContext evalctxt) {
     if (line.startsWith("With ")) {
       String object = null;
       if (StringUtils.startsWithIgnoreCase(line, "With Controller")) {
@@ -500,7 +602,7 @@ public class VPXFileScanner {
     }
   }
 
-  /**
+  /*
    * Single line eval for rom name
    */
   /*private static void lineSearchVRRoom(@NonNull ScanResult result, @NonNull String line) {
@@ -584,9 +686,7 @@ public class VPXFileScanner {
     if (StringUtils.containsIgnoreCase(line, "GetTextFile")) {
       String script = StringUtils.substringAfter(line, "GetTextFile");
       script = StringUtils.substringBetween(script, "(", ")").trim();
-      evalctxt.onEvaluateString(script, res -> {
-        includedScripts.add(res);
-      });
+      evalctxt.onEvaluateString(script, includedScripts::add);
     }
   }
 

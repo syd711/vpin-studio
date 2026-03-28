@@ -53,7 +53,7 @@ public class DMDScoreProcessorImageDump implements DMDScoreProcessor {
       ImageIO.write(SwingFXUtils.fromFXImage(img, null), "png", 
         new File("c:/temp/" + gameName + "/" + frame.getTimeStamp() + ".png"));
     } catch (IOException e) {
-      LOG.error("cannot generate image " + frame.getTimeStamp());
+      LOG.error("cannot generate image {}", frame.getTimeStamp());
     }
   }
 

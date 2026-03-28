@@ -61,7 +61,7 @@ public class PlaylistMediaResource {
                                        @PathVariable("screen") VPinScreen screen,
                                        @PathVariable("append") boolean append,
                                        @RequestBody TableAsset asset) throws Exception {
-    LOG.info("Starting download of " + asset.getName() + "(appending: " + append + ")");
+    LOG.info("Starting download of {}(appending: {})", asset.getName(), append);
     Playlist playlist = frontendService.getPlayList(playlistId);
     File target = frontendService.getFrontendConnector().getMediaAccessStrategy().createMedia(playlist, screen, asset.getFileSuffix(), append);
     tableAssetsService.download(asset, target);
@@ -119,7 +119,7 @@ public class PlaylistMediaResource {
         LOG.error("No playlist for media upload.");
         return JobDescriptorFactory.error("No playlist found for media upload.");
       }
-      LOG.info("Uploading " + out.getAbsolutePath());
+      LOG.info("Uploading {}", out.getAbsolutePath());
       UploadUtil.upload(file, out);
 
       return JobDescriptorFactory.empty();
@@ -170,7 +170,7 @@ public class PlaylistMediaResource {
       return true;
     }
     catch (Exception e) {
-      LOG.error("Failed to execute media change request: " + e.getMessage(), e);
+      LOG.error("Failed to execute media change request: {}", e.getMessage(), e);
     }
     return false;
   }

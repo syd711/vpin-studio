@@ -94,6 +94,8 @@ public class Preferences {
 
   private String vpxzSettings;
 
+  private String vrSettings;
+
   @Column(length = 1024)
   private String doNotShowAgains;
 
@@ -122,6 +124,14 @@ public class Preferences {
 
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
+
+  public String getVrSettings() {
+    return vrSettings;
+  }
+
+  public void setVrSettings(String vrSettings) {
+    this.vrSettings = vrSettings;
+  }
 
   public String getVpxzSettings() {
     return vpxzSettings;

@@ -81,7 +81,7 @@ public class B2STableSettingsParser extends DefaultHandler {
         }
       }
       
-      LOG.info("Finished parsing of " + xmlFile.getAbsolutePath());
+      LOG.info("Finished parsing of {}", xmlFile.getAbsolutePath());
     } catch (Exception e) {
       String msg = "Failed to parse B2STableSettings file '" + xmlFile.getAbsolutePath() + "': " + e.getMessage();
       LOG.error(msg, e);
@@ -156,7 +156,7 @@ public class B2STableSettingsParser extends DefaultHandler {
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to read ini file: " + e.getMessage(), e);
+      LOG.error("Failed to read ini file: {}", e.getMessage(), e);
     }
     return settings;
   }
@@ -196,7 +196,7 @@ public class B2STableSettingsParser extends DefaultHandler {
         try {
           defaultStartMode = Integer.parseInt(value);
         } catch (Exception e) {
-          LOG.error("Failed to read start mode (using EXE as default): " + e.getMessage());
+          LOG.error("Failed to read start mode (using EXE as default): {}", e.getMessage());
         }
         settings.setDefaultStartMode(defaultStartMode);
         break;

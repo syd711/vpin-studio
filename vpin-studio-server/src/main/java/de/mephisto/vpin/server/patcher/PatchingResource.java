@@ -45,7 +45,7 @@ public class PatchingResource {
     Thread.currentThread().setName("Patcher Upload Thread");
     long start = System.currentTimeMillis();
     Game game = gameService.getGame(uploadDescriptor.getGameId());
-    LOG.info("*********** Patching " + game.getGameDisplayName() + " ****************");
+    LOG.info("*********** Patching {} ****************", game.getGameDisplayName());
     try {
       File tempFile = new File(uploadDescriptor.getTempFilename());
       UploaderAnalysis analysis = new UploaderAnalysis(Features.PUPPACKS_ENABLED, tempFile);
@@ -92,12 +92,12 @@ public class PatchingResource {
       }
     }
     catch (Exception e) {
-      LOG.error("Processing \"" + uploadDescriptor.getTempFilename() + "\" failed: " + e.getMessage(), e);
+      LOG.error("Processing \"{}\" failed: {}", uploadDescriptor.getTempFilename(), e.getMessage(), e);
       uploadDescriptor.setError(e.getMessage());
     }
     finally {
       uploadDescriptor.finalizeUpload();
-      LOG.info("Import finished, took " + (System.currentTimeMillis() - start) + " ms.");
+      LOG.info("Import finished, took {} ms.", (System.currentTimeMillis() - start));
       gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.DIF, null);
     }
     LOG.info("****************************** /Patcher Finished *************************************");

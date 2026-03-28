@@ -50,7 +50,7 @@ public class NvRamOutputToScoreTextConverter {
       String nvRamFileName = nvRam.getCanonicalFile().getName().toLowerCase();
       String pinemHiSupportedNVRamName = FilenameUtils.getBaseName(nvRamFileName).toLowerCase();
       if (nvRamFileName.contains(" ")) {
-        LOG.info("Stripping NV offset from nvram file \"" + nvRamFileName + "\" to check if supported.");
+        LOG.info("Stripping NV offset from nvram file \"{}\" to check if supported.", nvRamFileName);
         SLOG.info("Stripping NV offset from nvram file \"" + nvRamFileName + "\" to check if supported.");
         pinemHiSupportedNVRamName = nvRamFileName.substring(0, nvRamFileName.indexOf(" "));
 
@@ -62,10 +62,10 @@ public class NvRamOutputToScoreTextConverter {
             backedUpRamFile.delete();
           }
           FileUtils.copyFile(originalNVRamFile, backedUpRamFile);
-          LOG.info("Temporary renamed original nvram file " + originalNVRamFile.getAbsolutePath() + " to " + backedUpRamFile.getAbsolutePath());
+          LOG.info("Temporary renamed original nvram file {} to {}", originalNVRamFile.getAbsolutePath(), backedUpRamFile.getAbsolutePath());
           SLOG.info("Temporary renamed original nvram file " + originalNVRamFile.getAbsolutePath() + " to " + backedUpRamFile.getAbsolutePath());
           FileUtils.copyFile(nvRam, originalNVRamFile);
-          LOG.info("Temporary renamed actual nvram file " + nvRam.getAbsolutePath() + " to " + originalNVRamFile.getAbsolutePath());
+          LOG.info("Temporary renamed actual nvram file {} to {}", nvRam.getAbsolutePath(), originalNVRamFile.getAbsolutePath());
           SLOG.info("Temporary renamed actual nvram file " + nvRam.getAbsolutePath() + " to " + originalNVRamFile.getAbsolutePath());
         }
         nvOffset = true;
@@ -99,7 +99,7 @@ public class NvRamOutputToScoreTextConverter {
     finally {
       if (nvOffset && originalNVRamFile.delete()) {
         FileUtils.copyFile(backedUpRamFile, originalNVRamFile);
-        LOG.info("Restored original nvram " + originalNVRamFile.getAbsolutePath());
+        LOG.info("Restored original nvram {}", originalNVRamFile.getAbsolutePath());
       }
     }
   }

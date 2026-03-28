@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.components.facades;
 
 import de.mephisto.vpin.connectors.github.GithubRelease;
 import de.mephisto.vpin.connectors.github.GithubReleaseFactory;
-import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -20,7 +19,7 @@ import java.util.List;
 public class VPinMAMEComponent implements ComponentFacade {
 
   @Autowired
-  private MameService mameService;
+  private VPinMameService vPinMameService;
 
   @NonNull
   @Override
@@ -42,15 +41,15 @@ public class VPinMAMEComponent implements ComponentFacade {
   @NonNull
   @Override
   public File getTargetFolder() {
-    return mameService.getMameFolder();
+    return vPinMameService.getMameFolder();
   }
 
   @Nullable
   @Override
   public Date getModificationDate() {
-    File setupExe = new File(mameService.getMameFolder(), "Setup64.exe");
+    File setupExe = new File(vPinMameService.getMameFolder(), "Setup64.exe");
     if (!setupExe.exists()) {
-      setupExe = new File(mameService.getMameFolder(), "Setup.exe");
+      setupExe = new File(vPinMameService.getMameFolder(), "Setup.exe");
     }
     if (setupExe.exists()) {
       return new Date(setupExe.lastModified());

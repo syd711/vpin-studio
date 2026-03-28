@@ -35,7 +35,7 @@ public class VPinStudioServerTray {
         client.getSystemService().restart();
       }
       catch (Exception ex) {
-        LOG.error("Failed to restart VPin Studio Server: " + ex.getMessage());
+        LOG.error("Failed to restart VPin Studio Server: {}", ex.getMessage());
       }
       finally {
         restartItem.setEnabled(true);
@@ -54,7 +54,7 @@ public class VPinStudioServerTray {
         }
       }
       catch (IOException ex) {
-        LOG.error("Failed to open log file: " + ex.getMessage());
+        LOG.error("Failed to open log file: {}", ex.getMessage());
       }
     });
     MenuItem exitItem = new MenuItem("Terminate");
@@ -101,7 +101,7 @@ public class VPinStudioServerTray {
       tray.add(trayIcon);
     }
     catch (AWTException e) {
-      LOG.error("TrayIcon could not be added: " + e.getMessage(), e);
+      LOG.error("TrayIcon could not be added: {}", e.getMessage(), e);
     }
   }
 
@@ -114,11 +114,11 @@ public class VPinStudioServerTray {
         executor.executeCommandAsync();
       }
       else {
-        LOG.error("VPin-Studio.exe not found in directory " + new File("./").getAbsolutePath());
+        LOG.error("VPin-Studio.exe not found in directory {}", new File("./").getAbsolutePath());
       }
     }
     catch (Exception ex) {
-      LOG.error("Failed to execute Studio: " + ex.getMessage(), ex);
+      LOG.error("Failed to execute Studio: {}", ex.getMessage(), ex);
     }
   }
 }

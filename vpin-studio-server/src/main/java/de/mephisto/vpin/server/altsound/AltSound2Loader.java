@@ -110,7 +110,7 @@ public class AltSound2Loader {
       altSound.setFiles(audioFiles.size());
     }
     catch (Exception e) {
-      LOG.error("Failed to read g-sound CSV " + gSoundCsv.getAbsolutePath() + ": " + e.getMessage(), e);
+      LOG.error("Failed to read g-sound CSV {}: {}", gSoundCsv.getAbsolutePath(), e.getMessage(), e);
     }
 
     return altSound;
@@ -163,7 +163,7 @@ public class AltSound2Loader {
       }
     }
     catch (Exception e) {
-      LOG.error("Error parsing ducking profile value \"" + profileValue + "\": " + e.getMessage(), e);
+      LOG.error("Error parsing ducking profile value \"{}\": {}", profileValue, e.getMessage(), e);
     }
     return values;
   }
@@ -211,7 +211,7 @@ public class AltSound2Loader {
       }
     }
     catch (Exception e) {
-      LOG.error("Error parsing sample types for \"" + value + "\": " + e.getMessage(), e);
+      LOG.error("Error parsing sample types for \"{}\": {}", value, e.getMessage(), e);
     }
 
     return altSound2SampleTypes;

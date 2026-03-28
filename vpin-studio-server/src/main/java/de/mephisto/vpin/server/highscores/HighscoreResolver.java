@@ -188,7 +188,7 @@ public class HighscoreResolver implements InitializingBean {
         }
       }
       else {
-        LOG.debug("Successfully read highscore for " + game.getGameDisplayName());
+        LOG.debug("Successfully read highscore for {}", game.getGameDisplayName());
         metadata.setRaw(rawScore);
       }
 
@@ -269,7 +269,7 @@ public class HighscoreResolver implements InitializingBean {
       }
       return metadata.getRaw();
     }
-    LOG.debug("No VPReg highscore file found for '" + game.getRom() + "'");
+    LOG.debug("No VPReg highscore file found for '{}'", game.getRom());
     return null;
   }
 
@@ -291,7 +291,7 @@ public class HighscoreResolver implements InitializingBean {
       String nvRamFileName = nvRam.getCanonicalFile().getName().toLowerCase();
       String nvRamName = FilenameUtils.getBaseName(nvRamFileName).toLowerCase();
       if (nvRamFileName.contains(" ")) {
-        LOG.info("Stripping NV offset from nvram file \"" + nvRamFileName + "\" to check if supported.");
+        LOG.info("Stripping NV offset from nvram file \"{}\" to check if supported.", nvRamFileName);
         nvRamName = nvRamFileName.substring(0, nvRamFileName.indexOf(" "));
       }
 

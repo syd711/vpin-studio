@@ -160,7 +160,7 @@ public class WovpService implements InitializingBean, PreferenceChangedListener,
 
       try {
         wovp.submitScore(screenshotFile, challenge.get().getId(), 0, getMetadata(game));
-        LOG.info("[WOVP simulate=" + simulate + "] " + "WOVP score submit finished. Submitted a score for " + cachedPlayer.getName());
+        LOG.info("[WOVP simulate={}] WOVP score submit finished. Submitted a score for {}", simulate, cachedPlayer.getName());
         SLOG.info("[WOVP simulate=" + simulate + "] " + "WOVP score submit finished. Submitted a score for " + cachedPlayer.getName());
       }
       catch (Exception e) {
@@ -304,10 +304,5 @@ public class WovpService implements InitializingBean, PreferenceChangedListener,
       }
       synchronize(true);
     }
-  }
-
-  @Override
-  public void tableExited(TableStatusChangedEvent event) {
-    //unused
   }
 }

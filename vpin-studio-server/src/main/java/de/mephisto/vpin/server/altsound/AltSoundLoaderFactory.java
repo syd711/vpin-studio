@@ -90,10 +90,10 @@ public class AltSoundLoaderFactory {
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to load altsound: " + e.getMessage(), e);
+      LOG.error("Failed to load altsound: {}", e.getMessage(), e);
     }
 
-    LOG.warn("Failed to resolve altsound for folder " + altSoundFolder.getAbsolutePath());
+    LOG.warn("Failed to resolve altsound for folder {}", altSoundFolder.getAbsolutePath());
     return new AltSound();
   }
 

@@ -7,6 +7,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,8 +52,13 @@ public class CompetitionChangeListenerImpl extends DefaultCompetitionChangeListe
 
     //the data has already been saved, check other changes, like the badge
     if (game != null && active) {
-      if (competition.getBadge() != null) {
+      boolean wheelAugmented = frontendStatusService.isWheelAugmented(game);
+      boolean setBadge = !StringUtils.isEmpty(competition.getBadge());
+      if (setBadge && !wheelAugmented) {
         frontendStatusService.augmentWheel(game, competition.getBadge());
+      }
+      else if (!setBadge && wheelAugmented) {
+        frontendStatusService.deAugmentWheel(game);
       }
     }
     runCheckedDeAugmentation(competitionService, gameService, frontendStatusService);

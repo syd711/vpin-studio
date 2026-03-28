@@ -158,6 +158,14 @@ public class EventManager {
     }).start();
   }
 
+  public void notifyVRModeEnabled(boolean b) {
+    new Thread(() -> {
+      for (StudioEventListener listener : listeners) {
+        listener.vrModeEnabled(b);
+      }
+    }).start();
+  }
+
   public void removeListener(StudioEventListener listener) {
     this.listeners.remove(listener);
   }

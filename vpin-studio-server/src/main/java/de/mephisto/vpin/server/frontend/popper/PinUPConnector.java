@@ -29,6 +29,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -41,8 +42,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.sql.Date;
 import java.sql.*;
+import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.*;
@@ -403,7 +404,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.close();
     }
     catch (Exception e) {
-      LOG.error("Failed to save table details: " + e.getMessage(), e);
+      LOG.error("Failed to save table details: {}", e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -438,7 +439,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       LOG.info("Update Game with VPS link information.");
     }
     catch (Exception e) {
-      LOG.error("Failed to Game with VPS Link:" + e.getMessage(), e);
+      LOG.error("Failed to Game with VPS Link: {}", e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -466,7 +467,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       statement.close();
     }
     catch (SQLException e) {
-      LOG.error("Failed to read game by filename '" + filename + "': " + e.getMessage(), e);
+      LOG.error("Failed to read game by filename '{}': {}", filename, e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -493,11 +494,11 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       statement.close();
     }
     catch (SQLException e) {
-      LOG.error("Failed to read game by emulatorId '" + emulatorId + "': " + e.getMessage(), e);
+      LOG.error("Failed to read game by emulatorId '{}': {}", emulatorId, e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
-      LOG.info("Game fetch for emulatorId '" + emulatorId + "' took " + (System.currentTimeMillis() - start) + "ms.");
+      LOG.info("Game fetch for emulatorId '{}' took {}ms.", emulatorId, System.currentTimeMillis() - start);
     }
     return result;
   }
@@ -522,7 +523,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       statement.close();
     }
     catch (SQLException e) {
-      LOG.error("Failed to read game by filename '" + filename + "': " + e.getMessage(), e);
+      LOG.error("Failed to read game by filename '{}': {}", filename, e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -547,7 +548,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       statement.close();
     }
     catch (SQLException e) {
-      LOG.error("Failed to read games by competition type '" + competitionType + "': " + e.getMessage(), e);
+      LOG.error("Failed to read games by competition type '{}': {}", competitionType, e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -576,7 +577,36 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       statement.close();
     }
     catch (SQLException e) {
-      LOG.error("Failed to read game by gameName '" + gameName + "': " + e.getMessage(), e);
+      LOG.error("Failed to read game by gameName '{}': {}", gameName, e.getMessage(), e);
+    }
+    finally {
+      this.disconnect(connect);
+    }
+    return info;
+  }
+
+  @Nullable
+  @Override
+  public Game getGameByDisplayName(int emulatorId, String gameName) {
+    Connection connect = this.connect();
+    Game info = null;
+    try {
+      gameName = gameName.replaceAll("'", "''");
+      Statement statement = Objects.requireNonNull(connect).createStatement();
+      ResultSet rs = statement.executeQuery(
+          "SELECT g.*, s.*, e.Visible as EmuVisible, e.DirGames FROM Games g"
+              + " left join Emulators e on g.EMUID=e.EMUID left join GamesStats s on s.GameID = g.GameID"
+              + " where g.EMUID = " + emulatorId
+              + " and GameDisplay = '" + gameName + "';");
+      while (rs.next()) {
+        info = createGame(rs);
+      }
+
+      rs.close();
+      statement.close();
+    }
+    catch (SQLException e) {
+      LOG.error("Failed to read game by gameName '{}': {}", gameName, e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -597,7 +627,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       statement.close();
     }
     catch (SQLException e) {
-      LOG.error("Failed to read startup script: " + e.getMessage(), e);
+      LOG.error("Failed to read startup script: {}", e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -622,7 +652,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       statement.close();
     }
     catch (SQLException e) {
-      LOG.error("Failed to sysvolume setting: " + e.getMessage(), e);
+      LOG.error("Failed to sysvolume setting: {}", e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -642,7 +672,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       statement.close();
     }
     catch (SQLException e) {
-      LOG.warn("Failed to PinUP Popper Database version: " + e.getMessage() + ", using legacy database schema.", e);
+      LOG.warn("Failed to PinUP Popper Database version: {}, using legacy database schema.", e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -660,7 +690,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       LOG.info("Update of startup script successful.");
     }
     catch (Exception e) {
-      LOG.error("Failed to update startup script script:" + e.getMessage(), e);
+      LOG.error("Failed to update startup script script: {}", e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -705,7 +735,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       LOG.info("Updated of custom options");
     }
     catch (Exception e) {
-      LOG.error("Failed to update custom options:" + e.getMessage(), e);
+      LOG.error("Failed to update custom options: {}", e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -728,10 +758,10 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       }
       preparedStatement.executeUpdate();
       preparedStatement.close();
-      LOG.info("Updated of LaunchCustomVar of \"" + game + "\" to \"" + (enable ? "" : "HIDEPUP") + "\"");
+      LOG.info("Updated of LaunchCustomVar of \"{}\" to \"{}\"", game, enable ? "" : "HIDEPUP");
     }
     catch (Exception e) {
-      LOG.error("Failed to update \"LaunchCustomVar\" " + e.getMessage(), e);
+      LOG.error("Failed to update \"LaunchCustomVar\": {}", e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -780,7 +810,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
       File ini = new File(getInstallationFolder(), "PinUpPlayer.ini");
       if (!ini.exists()) {
-        LOG.error("Failed to find \"" + ini.getAbsolutePath() + "\", no display info found.");
+        LOG.error("Failed to find \"{}\", no display info found.", ini.getAbsolutePath());
         return result;
       }
 
@@ -828,15 +858,15 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
             result.add(display);
           }
           catch (Exception e) {
-            LOG.error("Failed to create PinUPPlayerDisplay: " + e.getMessage());
+            LOG.error("Failed to create PinUPPlayerDisplay: {}", e.getMessage());
           }
         }
       }
 
-      LOG.info("Loaded " + result.size() + " PinUPPlayer displays.");
+      LOG.info("Loaded {} PinUPPlayer displays.", result.size());
     }
     catch (Exception e) {
-      LOG.error("Failed to get player displays: " + e.getMessage(), e);
+      LOG.error("Failed to get player displays: {}", e.getMessage(), e);
     }
     return result;
   }
@@ -885,7 +915,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.executeUpdate();
       preparedStatement.close();
 
-      LOG.info("Added game entry for '" + tableDetails.getGameName() + "', file name '" + tableDetails.getGameFileName() + "', emulator " + tableDetails.getEmulatorId());
+      LOG.info("Added game entry for '{}', file name '{}', emulator {}", tableDetails.getGameName(), tableDetails.getGameFileName(), tableDetails.getEmulatorId());
       try (ResultSet keys = preparedStatement.getGeneratedKeys()) {
         if (keys.next()) {
           return keys.getInt(1);
@@ -917,10 +947,10 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.executeUpdate();
       preparedStatement.close();
 
-      LOG.info("Deleted game entry with id " + gameId);
+      LOG.info("Deleted game entry with id {}", gameId);
     }
     catch (Exception e) {
-      LOG.error("Failed to update game table:" + e.getMessage(), e);
+      LOG.error("Failed to update game table: {}", e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -935,44 +965,16 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.executeUpdate();
       preparedStatement.close();
 
-      LOG.info("Deleted game stats entry with id " + gameId);
+      LOG.info("Deleted game stats entry with id {}", gameId);
     }
     catch (Exception e) {
-      LOG.error("Failed to update game stats table:" + e.getMessage(), e);
+      LOG.error("Failed to update game stats table: {}", e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
     }
   }
 
-
-  public PlaylistGame getPlaylistGame(int playlistId, int gameId) {
-    Connection connect = this.connect();
-    String sql = "SELECT * FROM PlayListDetails WHERE GameID=" + gameId + " AND PlayListID=" + playlistId + ";";
-    PlaylistGame game = null;
-    try {
-      Statement stmt = Objects.requireNonNull(connect).createStatement();
-      ResultSet rs = stmt.executeQuery(sql);
-      while (rs.next()) {
-        game = new PlaylistGame();
-        game.setId(gameId);
-
-        int favMode = rs.getInt(IS_FAV);
-        game.setFav(favMode == 1);
-        game.setGlobalFav(favMode == 2);
-        break;
-      }
-      rs.close();
-      stmt.close();
-    }
-    catch (Exception e) {
-      LOG.error("Failed to read playlist game [" + sql + "]: " + e.getMessage(), e);
-    }
-    finally {
-      this.disconnect(connect);
-    }
-    return game;
-  }
 
   @NonNull
   public Playlist clearPlaylist(int id) {
@@ -1015,7 +1017,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       statement.close();
     }
     catch (SQLException e) {
-      LOG.error("Failed to get playlist: " + e.getMessage(), e);
+      LOG.error("Failed to get playlist: {}", e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -1151,10 +1153,10 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.executeUpdate();
       preparedStatement.close();
 
-      LOG.info("Added game " + gameId + " to playlist " + playlistId);
+      LOG.info("Added game {} to playlist {}", gameId, playlistId);
     }
     catch (SQLException e) {
-      LOG.error("Failed to update playlist details: " + e.getMessage(), e);
+      LOG.error("Failed to update playlist details: {}", e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -1170,7 +1172,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       stmt.close();
     }
     catch (Exception e) {
-      LOG.error("Failed to update playlist [" + sql + "]: " + e.getMessage(), e);
+      LOG.error("Failed to update playlist [{}]: {}", sql, e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -1185,7 +1187,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.executeUpdate();
       preparedStatement.close();
 
-      LOG.info("Removed game " + gameId + " from all playlists");
+      LOG.info("Removed game {} from all playlists", gameId);
     }
     catch (SQLException e) {
       LOG.error("Failed to update playlist details: {}", e.getMessage(), e);
@@ -1302,7 +1304,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.executeUpdate();
       preparedStatement.close();
 
-      LOG.info("Removed game " + gameId + " from playlist " + playlistId);
+      LOG.info("Removed game {} from playlist {}", gameId, playlistId);
     }
     catch (SQLException e) {
       LOG.error("Failed to update playlist details: {}", e.getMessage(), e);
@@ -1363,7 +1365,11 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
     //this can not be executed within a fetch!!!
     for (GameEmulator emulator : result) {
-      if (emulator.getType().isVpxEmulator() || emulator.getType().isFpEmulator()) {
+      if (emulator.getType().isVpxEmulator()
+          || emulator.getType().isFpEmulator()
+          || emulator.getType().isZaccariaEmulator()
+          || emulator.getType().isZenEmulator()
+          || emulator.getType().isMameEmulator()) {
         initEmulatorScripts(emulator);
       }
     }
@@ -1474,7 +1480,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.executeUpdate();
       preparedStatement.close();
 
-      LOG.info("Saved " + emulator);
+      LOG.info("Saved {}", emulator);
       try (ResultSet keys = preparedStatement.getGeneratedKeys()) {
         if (keys.next()) {
           int id = keys.getInt(1);
@@ -1606,8 +1612,9 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
         final Path[] fileFound = {null};
         try {
           Files.walkFileTree(Paths.get(dirGames), new SimpleFileVisitor<Path>() {
+            @NotNull
             @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) {
+            public FileVisitResult visitFile(@NotNull Path file, @NotNull BasicFileAttributes attributes) {
               if (StringUtils.endsWithIgnoreCase(file.toString(), ext)) {
                 fileFound[0] = file;
                 return FileVisitResult.TERMINATE;
@@ -1615,8 +1622,9 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
               return FileVisitResult.CONTINUE;
             }
 
+            @NotNull
             @Override
-            public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+            public FileVisitResult visitFileFailed(@NotNull Path file, @NotNull IOException exc) {
               return FileVisitResult.CONTINUE;
             }
           });
@@ -1701,7 +1709,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       LOG.info("Update of NumberPlays for '{}' successful.", gameId);
     }
     catch (Exception e) {
-      LOG.error("Failed to update NumberPlays for " + gameId + " [" + sql + "]: " + e.getMessage(), e);
+      LOG.error("Failed to update NumberPlays for {} [{}]: {}", gameId, sql, e.getMessage(), e);
       return false;
     }
     finally {
@@ -1721,7 +1729,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       LOG.info("Update of TimePlayedSecs to {} for {} successful.", seconds, gameId);
     }
     catch (Exception e) {
-      LOG.error("Failed to update TimePlayedSecs for " + gameId + " [" + sql + "]: " + e.getMessage(), e);
+      LOG.error("Failed to update TimePlayedSecs for {} [{}]: {}", gameId, sql, e.getMessage(), e);
       return false;
     }
     finally {
@@ -2048,7 +2056,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       statement.close();
     }
     catch (SQLException e) {
-      LOG.error("Failed to read startup script of emulator \"" + emuName + "\": " + e.getMessage(), e);
+      LOG.error("Failed to read startup script of emulator \"{}\": {}", emuName, e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -2075,7 +2083,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       statement.close();
     }
     catch (SQLException e) {
-      LOG.error("Failed to read exit script or " + emuName + ": " + e.getMessage(), e);
+      LOG.error("Failed to read exit script or {}: {}", emuName, e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -2094,32 +2102,15 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.executeUpdate();
       preparedStatement.close();
 
-      LOG.info("Update of " + scriptName + " for '" + emuName + "' successful.");
+      LOG.info("Update of {} for '{}' successful.", scriptName, emuName);
     }
     catch (Exception e) {
-      LOG.error("Failed to update script " + scriptName + " [" + sql + "]: " + e.getMessage(), e);
+      LOG.error("Failed to update script {} [{}]: {}", scriptName, sql, e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
     }
   }
-
-  /*
-    ResultSet rs = statement.executeQuery("SELECT * FROM Emulators;");
-
-    e.setId(rs.getInt("EMUID"));
-      e.setName(rs.getString("EmuName"));
-      e.setDisplayName(rs.getString("EmuDisplay"));
-      e.setDirMedia(rs.getString("DirMedia"));
-      e.setDirGames(rs.getString("DirGames"));
-      e.setDirRoms(rs.getString("DirRoms"));
-      e.setDescription(rs.getString("Description"));
-      e.setEmuLaunchDir(rs.getString("EmuLaunchDir"));
-      e.setLaunchScript(rs.getString("LaunchScript"));
-      e.setGamesExt(rs.getString("GamesExt"));
-      e.setVisible(rs.getInt("Visible") == 1);
-
-   */
 
   @NonNull
   private Playlist createPlaylist(ResultSet rs, Playlist globalFavsPlaylist, Playlist favsPlaylist) throws SQLException {
@@ -2137,7 +2128,6 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     playlist.setDisplayOrder(displayOrder);
     playlist.setHideSysLists(rs.getInt("HideSysLists") == 1);
     playlist.setUseDefaults(rs.getInt("useDefaults") == 1);
-    playlist.setDofCommand(rs.getString("DOFStuff"));
     playlist.setName(name);
     playlist.setPlayListSQL(sql);
     playlist.setMenuColor(rs.getInt("MenuColor"));
@@ -2157,6 +2147,13 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
     if (playlist.isSqlPlayList() && StringUtils.isEmpty(sql)) {
       playlist.setSqlError("Missing SQL query");
+    }
+
+    try {
+      playlist.setDofCommand(rs.getString("DOFStuff"));
+    }
+    catch (SQLException e) {
+      //ignore
     }
 
     if (globalFavsPlaylist != null && favsPlaylist != null) {
@@ -2265,7 +2262,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       statement.close();
     }
     catch (SQLException e) {
-      LOG.error("Failed to read table stats info: " + e.getMessage(), e);
+      LOG.error("Failed to read table stats info: {}", e.getMessage(), e);
     }
   }
 
@@ -2288,7 +2285,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       statement.close();
     }
     catch (SQLException e) {
-      LOG.error("Failed to read table stats info: " + e.getMessage(), e);
+      LOG.error("Failed to read table stats info: {}", e.getMessage(), e);
     }
   }
 
@@ -2312,7 +2309,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       statement.close();
     }
     catch (SQLException e) {
-      LOG.error("Failed to read lookups: " + e.getMessage(), e);
+      LOG.error("Failed to read lookups: {}", e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -2332,7 +2329,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.close();
     }
     catch (Exception e) {
-      LOG.error("Failed to update game extra for " + gameId + ": " + e.getMessage(), e);
+      LOG.error("Failed to update game extra for {}: {}", gameId, e.getMessage(), e);
     }
   }
 
@@ -2346,7 +2343,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
       File ini = new File(getInstallationFolder(), "PinUpPlayer.ini");
       if (!ini.exists()) {
-        LOG.error("Failed to find \"" + ini.getAbsolutePath() + "\", no display info found.");
+        LOG.error("Failed to find \"{}\", no display info found.", ini.getAbsolutePath());
         return result;
       }
 
@@ -2398,7 +2395,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
         }
       }
 
-      LOG.info("Loaded " + result.size() + " PinUPPlayer displays.");
+      LOG.info("Loaded {} PinUPPlayer displays.", result.size());
     }
     catch (Exception e) {
       LOG.error("Failed to get player displays: {}", e.getMessage(), e);
@@ -2432,7 +2429,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       this.assetsAdapter = new CacheTableAssetsAdapter(assetAdapter);
     }
     catch (Exception e) {
-      LOG.error("Unable to find PopperAssetAdapter: " + e.getMessage());
+      LOG.error("Unable to find PopperAssetAdapter: {}", e.getMessage());
     }
   }
 
@@ -2521,7 +2518,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     for (ProcessHandle pinUpProcess : pinUpProcesses) {
       String cmd = pinUpProcess.info().command().get();
       boolean b = pinUpProcess.destroyForcibly();
-      LOG.info("Destroyed process '" + cmd + "', result: " + b);
+      LOG.info("Destroyed process '{}', result: {}", cmd, b);
     }
 
     //actually redundant, but who knows what else is in there
@@ -2532,7 +2529,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       exec.executeCommandAsync();
     }
     else {
-      LOG.info("Popper '" + showTaskbarExe.getAbsolutePath() + "' not found, nircmd.exe has been used before.");
+      LOG.info("Popper '{}' not found, nircmd.exe has been used before.", showTaskbarExe.getAbsolutePath());
     }
 
     return true;
@@ -2597,7 +2594,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       return true;
     }
     catch (Exception e) {
-      LOG.error("Failed to start PinUP Popper again: " + e.getMessage(), e);
+      LOG.error("Failed to start PinUP Popper again: {}", e.getMessage(), e);
     }
     return false;
   }
@@ -2615,8 +2612,6 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
   /**
    * Alternative
-   * <p>
-   * <p>
    * Thread.sleep(4000);
    * WinDef.HWND pinUPMenuPlayer = User32.INSTANCE.FindWindow(null, "PinUP Menu Player");
    * LOG.info("Found PopUP Menu player, sending window command");
@@ -2624,9 +2619,6 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
    * WinDef.HWND hwnd = desktopWindow.getHWND();
    * final int msg = 0x400 + 42;
    * User32.INSTANCE.PostMessage(hwnd, msg, new WinDef.WPARAM(6), new WinDef.LPARAM(game.getId()));
-   *
-   * @param game
-   * @return
    */
   @Override
   public boolean launchGame(Game game) {

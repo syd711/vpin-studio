@@ -40,6 +40,7 @@ public class ServerUpdatePreProcessing {
     DOWNLOADS.put("puplauncher.exe", GITHUB_RESOURCES_URL + "puplauncher.exe");
     DOWNLOADS.put("vpxtool.exe", GITHUB_RESOURCES_URL + "vpxtool.exe");
     DOWNLOADS.put("maintenance.mp4", GITHUB_RESOURCES_URL + "maintenance.mp4");
+    DOWNLOADS.put("mame-gamelist.txt", GITHUB_RESOURCES_URL + "mame-gamelist.txt");
     DOWNLOADS.put(ScoringDB.SCORING_DB_NAME, GITHUB_RESOURCES_URL + ScoringDB.SCORING_DB_NAME);
     DOWNLOADS.put("manufacturers/manufacturers.zip", GITHUB_RESOURCES_URL + "manufacturers/manufacturers.zip");
     DOWNLOADS.put("logos.txt", GITHUB_RESOURCES_URL + "logos.txt");
@@ -52,9 +53,12 @@ public class ServerUpdatePreProcessing {
 
   static {
     PUP_GAMES.put("pinball_fx.json", 229247L);
+    PUP_GAMES.put("pinball_fx_b2s_mapping.json", 18179L);
     PUP_GAMES.put("pinball_fx3.json", 152207L);
+    PUP_GAMES.put("pinball_fx3_b2s_mapping.json", 15554L);
     PUP_GAMES.put("zaccaria.json", 209785L);
     PUP_GAMES.put("pinball_m.json", 11143L);
+    PUP_GAMES.put("pinball_m_b2s_mapping.json", 937L);
   }
 
   public static void execute() {
@@ -86,7 +90,7 @@ public class ServerUpdatePreProcessing {
         LOG.info("Finished resource updates check, took {}ms.", System.currentTimeMillis() - start);
       }
       catch (Exception e) {
-        LOG.error("Server update failed: " + e.getMessage(), e);
+        LOG.error("Server update failed: {}", e.getMessage(), e);
       }
     }).start();
   }
@@ -128,7 +132,7 @@ public class ServerUpdatePreProcessing {
     for (String deletion : deletions) {
       File check = new File(RESOURCES, deletion);
       if (check.exists() && !check.delete()) {
-        LOG.error("Failed to clean up file: " + check.getAbsolutePath());
+        LOG.error("Failed to clean up file: {}", check.getAbsolutePath());
       }
     }
   }
@@ -217,7 +221,7 @@ public class ServerUpdatePreProcessing {
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to scripting: " + e.getMessage());
+      LOG.error("Failed to scripting: {}", e.getMessage());
     }
   }
 
@@ -230,7 +234,7 @@ public class ServerUpdatePreProcessing {
       LOG.info("7z initialized.");
     }
     catch (Exception e) {
-      LOG.error("Failed to initialize sevenzip: " + e.getMessage());
+      LOG.error("Failed to initialize sevenzip: {}", e.getMessage());
     }
   }
 
@@ -240,12 +244,12 @@ public class ServerUpdatePreProcessing {
       if (folder.exists()) {
         File check = new File("win32\\java\\bin\\", resource);
         if (!check.exists()) {
-          LOG.info("Downloading missing JVM file " + check.getAbsolutePath());
+          LOG.info("Downloading missing JVM file {}", check.getAbsolutePath());
           Updater.download("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/jvm/" + resource, check);
         }
       }
       else {
-        LOG.error("No JVM folder found: " + folder.getAbsolutePath());
+        LOG.error("No JVM folder found: {}", folder.getAbsolutePath());
       }
     }
   }
@@ -274,7 +278,7 @@ public class ServerUpdatePreProcessing {
         File nvramFile = new File(nvramFolder, nvRam + ".nv");
         if (nvramFile.exists() && deleteAll) {
           if (nvramFile.delete()) {
-            LOG.info("Deleted " + nvramFile.getAbsolutePath());
+            LOG.info("Deleted {}", nvramFile.getAbsolutePath());
           }
         }
 

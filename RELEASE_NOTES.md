@@ -1,97 +1,59 @@
-## Release Notes 4.7.3
+## Release Notes 4.8.1
+
+- **DOFLinx**: Fixed upload for Zen ALTColor files.
+
+## Release Notes 4.8.0
+
+- **VR Support (Experimental - feedback needed!)**: Added support to toggle your installation into VR mode. More details about this can be found here:
+   https://github.com/syd711/vpin-studio/wiki/VR-Support
+    
+  <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/vr-mode.png?raw=true" width="500" />
+
+- **Filter Settings**: The table filter panel allows you to filter by issue type now.
  
-- **Table Options**: Added "Options" tab to the table data manager dialog. The new tab analysis the table script options so that you canfigure them into a .ini file for the table.
-   
-    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/table-options.png?raw=true" width="550" />
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/issue-filter.png?raw=true" width="400" />
 
-- **Table Backups/Deletions**: Fixed additional issues with the VPX music folder during table deletions and backups.
-- **Table Installation**: Fixed issue that upper case .ZIP files were rejected for uploading.
-- **Backglass Manager**: 
-  - Added 'No Focus' setting on backglass server preferences and by table.
-  - When a new backglass is setup, default all values from server settings.
-- **DMD Position Tool**: 
-  - Restore type correctly when dmd is deactivated and use backglass scores.
-  - Store latest margin value as default and restore it on new usage.
-- **VPin Mania Score Dates**: Fixed issue that the creation date was used instead of the last modification date for the score submitting to VPin Mania.
-- **Studio Window Manager**: Fixed _gtk_window_resize: assertion 'height > 0' failed_ error (blind fix).
-- **VPin MAME Settings**: Added input field for the table volume. Note that this field is not support for all tables and the values vary for ROM/table.
-- **Card Template Designer**: 
-  - Fixed possible server error applying templates.
-  - Fixed issue that background images were shown unscaled (hopefully this time).
-- **Highscore Parsing**: Fixed table "Eye of the Tiger".
-- **WOVP Synchronization**: Fixed issue that if the game script validation fails, the old game id was not resetted. 
-- **WOVP Settings**: Added option to disable API keys/users. 
-- **WOVP Pause Menu Item**: 
-  - Fixed issue that the existing score of the player was not shown anymore. 
-  - Added score reload after score submissions with a small delay which should show the updated score that was submitted.
-  - Fixed layout glitches.  
+- **Backglass Manager**:
+  - Added support for **Zen Studio** tables (you must configure DOFLinx first!).
+  - Added combobox to filter backglasses by emulator.
+  - Added emulator name column (which also better explains why for duplicated emulators, backglasses are shown multiple times).
+  - Enabled "Backglass" section for the table overview and Zen Studio tables.
+- **MAME Game Support (not VPinMAME!)** :
+  - Added import support for MAME games/roms. 
+  - Added deletion support for MAME games.
+  - Added option to the **Play** button to launch MAME games.
+  - Fixed several issues for the overview when MAME emulator was selected.
+  - Added ROM, Playlist and date columns for the overview and MAME emulators.
+- **Emulator Management**
+  - The **curl** calls to tell the Studio server that a game has been launched or exited have been added to the emulator types **Zaccaria, Pinball FX/3/M and MAME**. This allows the **in-game recording and pause menu** for these emulators.
+- **Media Recorder**
+  - Added emulator recording support for **Zaccaria, Pinball FX/3/M and MAME games**.
+- **Designer**: Added support for custom highscore card sizes. You can change the size in the "Highscore Cards Settings".
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/custom-cards.png?raw=true" width="700" />
+- **Pause Menu for non-VPX Games (first draft)**
+  - Added pause menu support for **Zaccaria, Pinball FX/3/M and MAME** games. Note that you need to have the graphics settings set to "borderless window". Otherwise you will run into focus issues.
+- **Music Management**: The music management for VPX games has been reimplemented. Audio files from the "Music" folder are detected through the table script including those that are computed from variables. Note that there are still some tables (e.g. Iron Maiden) where the .mp3 filename computation prohibits the detection of the actual filenames. As a result from this...
+  - **You need to perform a re-scan of all tables to detect the table's audio files**.
+  - Backups include the table's audio files now. Previous implementations took only the subfolder from **Music/<ROM NAME>** for the backup - if available.
+  - A new **Missing Audio Files** validator shows if the resolved .mp3 files have been found.
+- **Drop-In Manager**: Added search field to filter assets.
+- **Studio System Backup**: Added the pinvol and pinemhi .ini files to the VPin Studio backup file.
 
+### Bugfixes
 
----
-
-## Release Notes 4.7.2
-
-- **WOVP Competitions**: Added proper cleanup of games that are no longer competed on WOVP (augmented wheels and competition ids).
-- **VPin MAME Settings**: Fixed override and apply of default values (finally).
-- **.vpt File Support**: Added missing detection of .vpt files for the table import dialog.
-- **Universal Installer**: Fixed extraction of music bundles.
-
----
-
-## Release Notes 4.7.1
-
-- **Table Management**: Added support for older VPX file format **.vpt**.
-- **Preferences Menu**: Fixed rendering the menu, even if the status check for the server fails.
-- **Table Validation**: The missing ALT color validation error is only triggered when a non-pinsound bundle is available. 
-- **Table Validation**: Fixed lookup of the scripts folder which caused validation issues.
-
-
----
-
-
-## Release Notes 4.7.0
-
-## Changes
-
-### VPX 10.8.1 Support
-
-With version 4.7.0, we are building the foundation for the upcoming VPX 10.8.1 release, which introduces a completely new folder structure for VPX files and their companion files (table override INI file, backglass file, PuP video folder, DMD colorization, music, etc.).
-
-Please note that not all companion software supports the new folder layout yet. For example, PinUP Popper currently does not look into the actual table folder for assets. Therefore, the transition will take some time, and we are working closely with the VPX team to ensure full support.
-
-**Right now, nothing changes for you.** We needed to implement major server-side changes to support the new format for all available companion assets.
-First, we will ensure everything continues to work with the old folder structure. Later, we will enable specific flags in the backup restore process that allow backups to be extracted into the new folder structure.
-
-Further reading:
-https://github.com/vpinball/vpinball/blob/master/docs/FileLayout.md
-
-### .vpxz File Support
-
-Support for .vpxz files has been added. Check out the YouTube video to see how you can connect your phone with VPin Studio (https://www.youtube.com/watch?v=A-mzXOkTD7E) and upload and install .vpxz files on your mobile device.
-
-A huge shoutout to @jsm174 for his awesome VPX app!
-
-<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/vpxz/vpxz-view.png?raw=true" width="700" />
-
-### VPin Mania 2.0
-
-VPin Mania has been relaunched with a new registration system and additional features.
-Please watch the YouTube video (https://youtu.be/gjTapjVT3qY) to get an overview of what has changed or visit the [VPin Mania Announcement](https://discord.com/channels/1043199618172858500/1376784123238023168) channel.
-
-**So, is all my data gone now?**
-
-No! Although you now need to re-register with a real user account, your existing cabinet data will be reused once you link your cabinet to VPin Mania again. If this does not work, you can always perform a complete sync between your cabinet and VPin Mania.
-
-**Table statistics are not affected by this update — rankings and play counts remain intact.**
-
-## Changes
-
-- **Table Scans**: Improved PUP pack detection.
-- **Pause Menu**: Fixed misaligned position when "too many" entries have been added on the pause menu item list. 
-- **Pause Menu**: For the **WOVP** menu entry, the scoring list is refreshed for the selected player (if you have multiple account registered).
-- **Pause Menu**: For colorized DMD, the frame is now correctly processed and included in screenshot.
-- **Kill Button**: Added MAME to the list of processes to kill when all processes should be stopped. 
-- **VPinMAME Settings**: Fixed applying the default values which simply have been deleted before.
-- **Tagging**: Fixed issue where tags have been added multiple times for tables.
-- **HighScores**: Fix parsing of french highscores.
-- **iScored**: Fixed wheel badges for iScored competitions.
+- **WOVP Pause Menu Item**: Screenshots for portrait mode screens are not rotated anymore.
+- **WOVP Synchronization**: Fixed issue that discontinued competition types have not been removed automatically.
+- **iScored Synchronization**: On table exit, only the active game is synchronized.
+- **Notification Delay**: Fixed issue that notifications are shown late because of long iScored synchronizations.
+- **Table Overview**: Fixed backup button being visible for all emulator types.
+- **Media Recorder**: Added filtering of disabled emulators.
+- **Table Data Manager**: Fixed tab focus order for all tabs.
+- **Wheel Augmentation**: Fixed various issues and superfluous calls when applying badges to wheels.
+- **Media Recorder**: Added timeout of 10 minutes for recordings in case the in-game recorder is never turned off.
+- **Table Backups**: Fixed issue that the VPS mapping was not detected on restore.
+- **VPS Tables**: Fixed sorting of the sound column.
+- **Table Tagging**: Fixed removing of tags.
+- **Dashboard**: Fixed possible error in the ranking view.
+- **Media Manager**: 
+  - Fixed blank video: The existing file was corrupted and caused issues with the new PinUP Popper version. You can fix all broken blank videos by downloading this script (https://raw.githubusercontent.com/syd711/vpin-studio/refs/heads/main/resources/blank_fix.bat), copy and execute it in your PinUP installation directory (e.g. C:\vPinball\PinUPSystem).   
+  - Fixed blank video naming which was missing the file number before the screen info.

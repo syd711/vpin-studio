@@ -51,6 +51,11 @@
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                             </rowConstraints>
                                             <children>
                                                 <Label layoutX="253.0" layoutY="16.0" textFill="WHITE">
@@ -282,6 +287,56 @@
                                                         <Font size="14.0" />
                                                     </font>
                                                 </Label>
+                                    <Label layoutX="10.0" layoutY="721.0" text="Custom 2:" textFill="WHITE" GridPane.rowIndex="22">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="755.0" text="Custom 3:" textFill="WHITE" GridPane.rowIndex="23">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="788.0" text="Custom 4:" textFill="WHITE" GridPane.rowIndex="24">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="822.0" text="Custom 5:" textFill="WHITE" GridPane.rowIndex="25">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="856.0" text="Web DB Id:" textFill="WHITE" GridPane.rowIndex="26">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="custom2" layoutX="168.0" layoutY="184.0" GridPane.columnIndex="1" GridPane.rowIndex="22">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="custom3" layoutX="168.0" layoutY="755.0" GridPane.columnIndex="1" GridPane.rowIndex="23">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="custom4" layoutX="168.0" layoutY="788.0" GridPane.columnIndex="1" GridPane.rowIndex="24">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="custom5" layoutX="168.0" layoutY="822.0" GridPane.columnIndex="1" GridPane.rowIndex="25">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="webDbId" layoutX="168.0" layoutY="856.0" GridPane.columnIndex="1" GridPane.rowIndex="26">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
 
 
                                             </children>

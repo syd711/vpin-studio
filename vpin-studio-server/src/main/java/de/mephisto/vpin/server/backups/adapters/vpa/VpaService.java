@@ -25,7 +25,7 @@ import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.HighscoreBackupService;
-import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.music.MusicService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPack;
@@ -49,6 +49,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.function.BiConsumer;
 
@@ -95,7 +96,7 @@ public class VpaService implements InitializingBean {
   private DMDDeviceIniService dmdDeviceIniService;
 
   @Autowired
-  private MameService mameService;
+  private VPinMameService vPinMameService;
 
   @Autowired
   private BackglassService backglassService;
@@ -240,13 +241,16 @@ public class VpaService implements InitializingBean {
       }
     }
 
-    //always zip music files if they are in a ROM named folder
     if (backupSettings.isMusic()) {
-      File musicFolder = musicService.getGameMusicFolder(game);
-      if (musicFolder != null && musicFolder.exists()) {
-        packageInfo.setMusic(BackupFileInfoFactory.create(musicFolder));
-        if (!zipFile(jobDescriptor, musicFolder, "Music/" + musicFolder.getName(), zipOut)) {
-          return;
+      List<File> mp3Files = musicService.getMp3Files(game);
+      File musicFolder = folderLookupService.getMusicFolder(game);
+      if (!mp3Files.isEmpty() && musicFolder != null) {
+        packageInfo.setMusic(BackupFileInfoFactory.create(game.getRom(), null, mp3Files));
+        for (File mp3File : mp3Files) {
+          Path relativize = musicFolder.toPath().relativize(mp3File.toPath());
+          if (!zipFile(jobDescriptor, mp3File, "Music/" + relativize, zipOut)) {
+            return;
+          }
         }
       }
     }
@@ -302,7 +306,7 @@ public class VpaService implements InitializingBean {
     zipTableDetails(jobDescriptor, game, tableDetails, zipOut);
 
     if (backupSettings.isRegistryData()) {
-      Map<String, Object> options = mameService.getOptionsRaw(game.getRom());
+      Map<String, Object> options = vPinMameService.getOptionsRaw(game.getRom());
       if (options == null) {
         options = new HashMap<>();
       }

@@ -9,7 +9,7 @@ import java.util.List;
 public class FilterSettings extends JsonSettings {
   private int emulatorId = -1;
   private boolean missingAssets;
-  private boolean otherIssues;
+  private int issueType = -1;
   private boolean vpsUpdates;
   private boolean noVpsTableMapping;
   private boolean noVpsVersionMapping;
@@ -101,14 +101,6 @@ public class FilterSettings extends JsonSettings {
 
   public void setWithNVOffset(boolean withNVOffset) {
     this.withNVOffset = withNVOffset;
-  }
-
-  public boolean isOtherIssues() {
-    return otherIssues;
-  }
-
-  public void setOtherIssues(boolean otherIssues) {
-    this.otherIssues = otherIssues;
   }
 
   public boolean isNoVpsTableMapping() {
@@ -215,10 +207,43 @@ public class FilterSettings extends JsonSettings {
     this.versionUpdates = versionUpdates;
   }
 
+  public int getIssueType() {
+    return issueType;
+  }
+
+  public void setIssueType(int issueType) {
+    this.issueType = issueType;
+  }
+
+  public void reset() {
+    this.missingAssets = false;
+    this.issueType = -1;
+    this.vpsUpdates = false;
+    this.noVpsTableMapping = false;
+    this.noVpsVersionMapping = false;
+    this.iScored = false;
+    this.versionUpdates = false;
+    this.notPlayed = false;
+    this.noHighscoreSettings = false;
+    this.noHighscoreSupport = false;
+    this.withBackglass = false;
+    this.withPupPack = false;
+    this.withAltSound = false;
+    this.withAltColor = false;
+    this.withPov = false;
+    this.withRes = false;
+    this.withIni = false;
+    this.withNVOffset = false;
+    this.withAlias = false;
+    this.tags = new ArrayList<>();
+    this.gameStatus = -1;
+    this.noteType = null;
+  }
+
   public boolean isResetted(boolean vpxMode) {
     if (vpxMode) {
       return !this.missingAssets
-          && !this.otherIssues
+          && this.issueType == -1
           && !this.noHighscoreSettings
           && !this.noHighscoreSupport
           && !this.notPlayed

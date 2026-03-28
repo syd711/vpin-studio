@@ -141,7 +141,7 @@ public class DirectB2SResource {
     if (game == null) {
       throw new RuntimeException("No Game found for id " + gameId);
     }
-    return getBackground(game.getEmulatorId(), game.getDirectB2SFilename());
+    return getBackground(game.getEmulatorId(), BackglassNamingHelper.getBackglassFileName(game));
   }
 
   @GetMapping("/background/{emulatorId}/{fileName}")
@@ -160,7 +160,7 @@ public class DirectB2SResource {
     if (game == null) {
       throw new RuntimeException("No Game found for id " + gameId);
     }
-    return getDmdImage(game.getEmulatorId(), game.getDirectB2SFilename());
+    return getDmdImage(game.getEmulatorId(), BackglassNamingHelper.getBackglassFileName(game));
   }
 
   @GetMapping("/dmdimage/{emulatorId}/{fileName}")
@@ -221,7 +221,7 @@ public class DirectB2SResource {
       res.contentLength(resource.contentLength());
     }
     catch (IOException ioe) {
-      LOG.warn("Cannot determine content Length for " + name);
+      LOG.warn("Cannot determine content Length for {}", name);
     }
 
     // add content Type
@@ -340,7 +340,7 @@ public class DirectB2SResource {
       return backglassService.saveServerSettings(settings);
     }
     catch (Exception e) {
-      LOG.error("Saving b2s server settings failed: " + e.getMessage(), e);
+      LOG.error("Saving b2s server settings failed: {}", e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Saving b2s server settings failed: " + e.getMessage());
     }
   }
@@ -359,10 +359,11 @@ public class DirectB2SResource {
       universalUploadService.importFileBasedAssets(descriptor, AssetType.DIRECTB2S);
       gameService.resetUpdate(gameId, VpsDiffTypes.b2s);
       backglassService.clearCache();
+      gameCachingService.invalidate(gameId);
       return descriptor;
     }
     catch (Exception e) {
-      LOG.error("Directb2s upload failed: " + e.getMessage(), e);
+      LOG.error("Directb2s upload failed: {}", e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "DirectB2S upload failed: " + e.getMessage());
     }
     finally {

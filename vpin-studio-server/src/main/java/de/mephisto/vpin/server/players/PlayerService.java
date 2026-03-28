@@ -138,7 +138,7 @@ public class PlayerService {
     model.setManiaAccountUuid(player.getManiaAccountUuid());
 
     Player updated = playerRepository.saveAndFlush(model);
-    LOG.info("Saved " + updated);
+    LOG.info("Saved {}", updated);
 
     if (existingPlayer) {
       notifyPlayerUpdated(player);
@@ -156,11 +156,11 @@ public class PlayerService {
       Asset avatar = player.getAvatar();
       if (avatar != null) {
         assetRepository.delete(avatar);
-        LOG.info("Deleted asset " + avatar);
+        LOG.info("Deleted asset {}", avatar);
       }
 
       playerRepository.deleteById(id);
-      LOG.info("Deleted player " + id);
+      LOG.info("Deleted player {}", id);
       notifyPlayerDeleted(player);
     }
   }

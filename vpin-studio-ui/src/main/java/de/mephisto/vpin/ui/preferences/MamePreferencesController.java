@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.mame.MameOptions;
+import de.mephisto.vpin.restclient.vpinmame.VPinMameOptions;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TablesSidebarMameController;
@@ -58,8 +58,8 @@ public class MamePreferencesController implements Initializable {
   private CheckBox forceStereo;
 
   private void saveOptions() {
-    MameOptions options = new MameOptions();
-    options.setRom(MameOptions.DEFAULT_KEY);
+    VPinMameOptions options = new VPinMameOptions();
+    options.setRom(VPinMameOptions.DEFAULT_KEY);
 
     options.setIgnoreRomCrcError(ignoreRomCrcError.isSelected());
     options.setSkipPinballStartupTest(skipPinballStartupTest.isSelected());
@@ -87,7 +87,7 @@ public class MamePreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    MameOptions options = client.getMameService().getOptions(MameOptions.DEFAULT_KEY);
+    VPinMameOptions options = client.getMameService().getOptions(VPinMameOptions.DEFAULT_KEY);
 
 
     skipPinballStartupTest.setSelected(options.isSkipPinballStartupTest());

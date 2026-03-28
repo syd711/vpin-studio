@@ -228,6 +228,9 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   private Label gameFilenameLabel;
 
   @FXML
+  private Label gameIdLabel;
+
+  @FXML
   private Label emulatorNameLabel;
 
   @FXML
@@ -264,21 +267,6 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
   @FXML
   private void onBackglassDelete(Event e) {
-//    try {
-//      DirectB2SModel selection = backglassManagerController.getSelectedModel();
-//      if (selection != null) {
-//        //Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-//        Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Backglass", "Delete backglass file \"" + selection.getFileName() + "\"?", "This also deletes all version of this backglass.", "Delete");
-//        if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-//          if (client.getBackglassServiceClient().deleteBackglass(selection.getEmulatorId(), selection.getFileName())) {
-//            backglassManagerController.delete(selection);
-//          }
-//        }
-//      }
-//    }
-//    catch (Exception ex) {
-//      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to delete backglass file: " + ex.getMessage());
-//    }
     try {
       DirectB2SModel selection = backglassManagerController.getSelectedModel();
       String selectedVersion = getSelectedVersion();
@@ -764,7 +752,8 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       emulatorNameLabel.setText("-");
       gameLabel.setText("-");
       gameFilenameLabel.setText("-");
-    
+      gameIdLabel.setText("-");
+
       // depend on the game selection
       useAsMediaBackglassBtn.setDisable(true);
       useAsMediaDMDBtn.setDisable(true);
@@ -788,6 +777,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
       setLabelandTooltip(gameLabel, game.getGameDisplayName());
       setLabelandTooltip(gameFilenameLabel, game.getGameFileName());
+      setLabelandTooltip(gameIdLabel, String.valueOf(game.getId()));
 
       useAsMediaBackglassBtn.setDisable(false);
       useAsMediaDMDBtn.setDisable(false);

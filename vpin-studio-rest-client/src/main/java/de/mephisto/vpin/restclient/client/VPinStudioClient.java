@@ -29,7 +29,7 @@ import de.mephisto.vpin.restclient.highscores.HigscoreBackupServiceClient;
 import de.mephisto.vpin.restclient.hooks.HooksServiceClient;
 import de.mephisto.vpin.restclient.ini.IniServiceClient;
 import de.mephisto.vpin.restclient.jobs.JobsServiceClient;
-import de.mephisto.vpin.restclient.mame.MameServiceClient;
+import de.mephisto.vpin.restclient.vpinmame.VPinMameServiceClient;
 import de.mephisto.vpin.restclient.mania.ManiaServiceClient;
 import de.mephisto.vpin.restclient.notifications.NotificationsServiceClient;
 import de.mephisto.vpin.restclient.patcher.PatcherServiceClient;
@@ -49,6 +49,7 @@ import de.mephisto.vpin.restclient.vpauthenticators.VpAuthenticationServiceClien
 import de.mephisto.vpin.restclient.vps.VpsServiceClient;
 import de.mephisto.vpin.restclient.vpx.VpxServiceClient;
 import de.mephisto.vpin.restclient.vpx.VpxScriptOptionsServiceClient;
+import de.mephisto.vpin.restclient.vr.VRServiceClient;
 import de.mephisto.vpin.restclient.wovp.WOVPServiceClient;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.IOUtils;
@@ -96,7 +97,7 @@ public class VPinStudioClient {
   private final IniServiceClient iniServiceClient;
   private final ImageCache imageCache;
   private final JobsServiceClient jobsServiceClient;
-  private final MameServiceClient mameServiceClient;
+  private final VPinMameServiceClient vPinMameServiceClient;
   private final TableAssetSourcesServiceClient tableAssetSourcesServiceClient;
   private final ManiaServiceClient maniaServiceClient;
   private final NVRamsServiceClient nvRamsServiceClient;
@@ -119,6 +120,7 @@ public class VPinStudioClient {
   private final VpsServiceClient vpsServiceClient;
   private final WOVPServiceClient wovpServiceClient;
   private final VpxScriptOptionsServiceClient vpxScriptOptionsServiceClient;
+  private final VRServiceClient vrServiceClient;
 
     public VPinStudioClient(String host) {
     restClient = RestClient.createInstance(host, SystemUtil.getPort());
@@ -151,7 +153,7 @@ public class VPinStudioClient {
     this.imageCache = new ImageCache(this);
     this.iniServiceClient = new IniServiceClient(this);
     this.jobsServiceClient = new JobsServiceClient(this);
-    this.mameServiceClient = new MameServiceClient(this);
+    this.vPinMameServiceClient = new VPinMameServiceClient(this);
     this.maniaServiceClient = new ManiaServiceClient(this);
     this.tableAssetSourcesServiceClient = new TableAssetSourcesServiceClient(this);
     this.nvRamsServiceClient = new NVRamsServiceClient(this);
@@ -174,10 +176,15 @@ public class VPinStudioClient {
     this.higscoreBackupServiceClient = new HigscoreBackupServiceClient(this);
     this.mediaConversionServiceClient = new MediaConversionServiceClient(this);
     this.wovpServiceClient = new WOVPServiceClient(this);
+    this.vrServiceClient = new VRServiceClient(this);
   }
 
   public String getHost() {
     return restClient.getHost();
+  }
+
+  public VRServiceClient getVRService() {
+    return vrServiceClient;
   }
 
   public WOVPServiceClient getWovpService() {
@@ -316,8 +323,8 @@ public class VPinStudioClient {
     return altColorServiceClient;
   }
 
-  public MameServiceClient getMameService() {
-    return mameServiceClient;
+  public VPinMameServiceClient getMameService() {
+    return vPinMameServiceClient;
   }
 
   public PupPackServiceClient getPupPackService() {

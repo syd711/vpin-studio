@@ -90,7 +90,7 @@ public class RecorderResource {
       LOG.info("Finished exporting screenshots.");
     }
     catch (IOException ex) {
-      LOG.info("Error writing screenshots: " + ex.getLocalizedMessage(), ex);
+      LOG.info("Error writing screenshots: {}", ex.getLocalizedMessage(), ex);
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "IOError writing screenshots file to output stream");
     }
     finally {
@@ -103,7 +103,7 @@ public class RecorderResource {
         }
       }
       catch (IOException e) {
-        LOG.error("Error closing streams: " + e.getMessage(), e);
+        LOG.error("Error closing streams: {}", e.getMessage(), e);
       }
     }
   }
@@ -148,7 +148,7 @@ public class RecorderResource {
         }
       }
       catch (IOException e) {
-        LOG.error("Error closing streams: " + e.getMessage());
+        LOG.error("Error closing streams: {}", e.getMessage());
       }
     }
   }

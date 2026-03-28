@@ -6,10 +6,16 @@ import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.doflinx.DOFLinxSettings;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
+import de.mephisto.vpin.server.games.BackglassNamingHelper;
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.configuration2.INIConfiguration;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,12 +24,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Date;
+import java.io.FileReader;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 @Service
 public class DOFLinxService implements InitializingBean, PreferenceChangedListener {
   private final static Logger LOG = LoggerFactory.getLogger(DOFLinxService.class);
+
+  private final static String DOFLINX_INI = "DOFLinx.INI";
 
   @Autowired
   private PreferencesService preferencesService;
@@ -32,6 +41,7 @@ public class DOFLinxService implements InitializingBean, PreferenceChangedListen
   private SystemService systemService;
 
   private DOFLinxSettings dofLinxSettings;
+  private INIConfiguration iniConfiguration;
 
   public boolean getDOFLinxAutoStart() {
     return preferencesService.getPreferences().getPinVolAutoStartEnabled();
@@ -40,7 +50,7 @@ public class DOFLinxService implements InitializingBean, PreferenceChangedListen
   public boolean isValid() {
     if (!StringUtils.isEmpty(dofLinxSettings.getInstallationFolder())) {
       File folder = new File(dofLinxSettings.getInstallationFolder());
-      return new File(folder, "DOFLinx.exe").exists();
+      return new File(folder, "DOFLinx.exe").exists() && new File(folder, "B2S").exists();
     }
     return false;
   }
@@ -52,7 +62,7 @@ public class DOFLinxService implements InitializingBean, PreferenceChangedListen
       return dofLinxSettings.isAutostart();
     }
     catch (Exception e) {
-      LOG.error("Failed to set PinVol autostart flag: " + e.getMessage(), e);
+      LOG.error("Failed to set PinVol autostart flag: {}", e.getMessage(), e);
     }
     return false;
   }
@@ -78,6 +88,11 @@ public class DOFLinxService implements InitializingBean, PreferenceChangedListen
     return null;
   }
 
+  @NonNull
+  public String getGameNameForAltSound(@NonNull String gameName) {
+    return FilenameUtils.getBaseName(gameName).replaceAll("Table_", "");
+  }
+
   private void startDOFLinx() {
     try {
       if (isValid()) {
@@ -89,8 +104,50 @@ public class DOFLinxService implements InitializingBean, PreferenceChangedListen
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to launch DOFLinx.exe: " + e.getMessage(), e);
+      LOG.error("Failed to launch DOFLinx.exe: {}", e.getMessage(), e);
     }
+  }
+
+  @Nullable
+  public File getBackglassFile(Game game) {
+    GameEmulator emulator = game.getEmulator();
+    B2SMapping mapping = BackglassNamingHelper.findBackglassName(game);
+    if (mapping != null) {
+      File backglassesFolder = getBackglassesFolder(emulator);
+      if (backglassesFolder != null && backglassesFolder.exists()) {
+        return new File(backglassesFolder, mapping.getDirectb2s());
+      }
+    }
+    return null;
+  }
+
+  @Nullable
+  public File getBackglassesFolder(@NonNull GameEmulator gameEmulator) {
+    if (isValid()) {
+      INIConfiguration configuration = getConfiguration();
+      String path = null;
+      switch (gameEmulator.getType()) {
+        case ZenFX3: {
+          path = configuration.getString("PATH_FX3_B2S");
+          break;
+        }
+        case ZenFX: {
+          path = configuration.getString("PATH_FX_B2S");
+          break;
+        }
+        case PinballM: {
+          path = configuration.getString("PATH_LINX_B2S");
+          break;
+        }
+      }
+
+      if (path == null || !new File(path).exists()) {
+        return new File(getInstallationFolder(), "B2S");
+      }
+
+      return new File(path);
+    }
+    return null;
   }
 
   public boolean restart() {
@@ -115,15 +172,37 @@ public class DOFLinxService implements InitializingBean, PreferenceChangedListen
     return summary;
   }
 
+  public File getDOFLinxINI() {
+    return new File(getInstallationFolder(), DOFLINX_INI);
+  }
+
+  @Nullable
+  private INIConfiguration getConfiguration() {
+    File dofLinxINI = getDOFLinxINI();
+    if (dofLinxINI.exists()) {
+      INIConfiguration config = new INIConfiguration();
+      config.setSeparatorUsedInOutput("=");
+      config.setSeparatorUsedInInput("=");
+      config.setCommentLeadingCharsUsedInInput("#");
+
+      try (FileReader fileReader = new FileReader(dofLinxINI, StandardCharsets.UTF_8)) {
+        config.read(fileReader);
+      }
+      catch (Exception e) {
+        LOG.error("Failed to read: {}: {}", dofLinxINI.getAbsolutePath(), e.getMessage(), e);
+      }
+
+      return config;
+    }
+    return null;
+  }
+
   @Override
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) {
     if (propertyName.equals(PreferenceNames.DOFLINX_SETTINGS)) {
       this.dofLinxSettings = preferencesService.getJsonPreference(PreferenceNames.DOFLINX_SETTINGS, DOFLinxSettings.class);
+      this.iniConfiguration = getConfiguration();
     }
-  }
-
-  public File getDOFLinxINI() {
-    return new File(getInstallationFolder(), "DOFLinx.INI");
   }
 
   @Override

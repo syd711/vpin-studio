@@ -8,7 +8,7 @@ import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import de.mephisto.vpin.server.frontend.popper.pupgames.PUPGameImporter;
-import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.steam.SteamService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -123,8 +123,8 @@ public class EmulatorFactory implements ApplicationContextAware, InitializingBea
         "if %FSMODE%==DisableTrueFullScreen (START \"\" \"[STARTDIR]Launch\\PopperKeepFocus.exe\" \"Visual Pinball Player\" 10)\n"));
     emu.setExitScript(createScript(false, "\"[STARTDIR]LAUNCH\\PUPCLOSER.EXE\" WINTIT \"Visual Pinball\" 4 1\n"));
 
-    MameService mameService = getMameService();
-    File romsFolder = mameService.getRomsFolder();
+    VPinMameService vPinMameService = getMameService();
+    File romsFolder = vPinMameService.getRomsFolder();
     if (romsFolder.exists()) {
       emu.setRomDirectory(romsFolder.getAbsolutePath());
     }
@@ -157,8 +157,8 @@ public class EmulatorFactory implements ApplicationContextAware, InitializingBea
         ")"));
     emu.setExitScript(createScript(false, "\"[STARTDIR]LAUNCH\\PUPCLOSER.EXE\" WINTIT \"Visual Pinball\" 10 1"));
 
-    MameService mameService = getMameService();
-    File romsFolder = mameService.getRomsFolder();
+    VPinMameService vPinMameService = getMameService();
+    File romsFolder = vPinMameService.getRomsFolder();
     if (romsFolder.exists()) {
       emu.setRomDirectory(romsFolder.getAbsolutePath());
     }
@@ -181,8 +181,8 @@ public class EmulatorFactory implements ApplicationContextAware, InitializingBea
         "\n" +
         "cd \"C:\\MAME\"\n" +
         "\n" +
-        "START \"\" \"mamelayplus.exe\" \"[GAMEFULLNAME]\"\n"));
-    emu.setExitScript(createScript(false, "\"[STARTDIR]LAUNCH\\PUPCLOSER.EXE\" PROC \"mamelayplus\" 3 1\n"));
+        "START \"\" \"mame.exe\" \"[GAMEFULLNAME]\"\n"));
+    emu.setExitScript(createScript(false, "\"[STARTDIR]LAUNCH\\PUPCLOSER.EXE\" PROC \"mame\" 3 1\n"));
 
     setMediaDir(emulatorType, emu);
     validation.setGameEmulator(emu);
@@ -205,8 +205,8 @@ public class EmulatorFactory implements ApplicationContextAware, InitializingBea
     String dmdDeviceIni = "C:\\vPinball\\VisualPinball\\VPinMAME\\DmdDevice.ini";
     String mamePath = "C:\\vPinball\\VisualPinball\\VPinMAME";
 
-    MameService mameService = getMameService();
-    File dmdDeviceIniFile = mameService.getDmdDeviceIni();
+    VPinMameService vPinMameService = getMameService();
+    File dmdDeviceIniFile = vPinMameService.getDmdDeviceIni();
     if (dmdDeviceIniFile.exists()) {
       dmdDeviceIni = dmdDeviceIniFile.getAbsolutePath();
       mamePath = dmdDeviceIniFile.getParentFile().getAbsolutePath();
@@ -418,7 +418,6 @@ public class EmulatorFactory implements ApplicationContextAware, InitializingBea
   private GameEmulatorScript createScript(boolean startScript, String script) {
     GameEmulatorScript s = new GameEmulatorScript();
     s.setScript(script);
-    s.setStartScript(startScript);
     return s;
   }
 
@@ -430,8 +429,8 @@ public class EmulatorFactory implements ApplicationContextAware, InitializingBea
     return applicationContext.getBean(FrontendService.class);
   }
 
-  private MameService getMameService() {
-    return applicationContext.getBean(MameService.class);
+  private VPinMameService getMameService() {
+    return applicationContext.getBean(VPinMameService.class);
   }
 
   private SystemService getSystemService() {

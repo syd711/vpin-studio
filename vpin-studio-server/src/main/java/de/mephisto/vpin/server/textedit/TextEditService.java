@@ -10,8 +10,8 @@ import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.mame.MameRomAliasService;
-import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.vpinmame.VPinMameRomAliasService;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.vpx.VPXService;
 import de.mephisto.vpin.server.vpx.VPXUtil;
@@ -48,10 +48,10 @@ public class TextEditService {
   private GameService gameService;
 
   @Autowired
-  private MameService mameService;
+  private VPinMameService vPinMameService;
 
   @Autowired
-  private MameRomAliasService mameRomAliasService;
+  private VPinMameRomAliasService VPinMameRomAliasService;
 
   @Autowired
   private PreferencesService preferencesService;
@@ -69,7 +69,7 @@ public class TextEditService {
       VPinFile vPinFile = monitoredTextFile.getvPinFile();
       switch (vPinFile) {
         case DmdDeviceIni: {
-          File mameFolder = mameService.getMameFolder();
+          File mameFolder = vPinMameService.getMameFolder();
           File init = new File(mameFolder, "DmdDevice.ini");
           Path filePath = init.toPath();
           String iniText = Files.readString(filePath);
@@ -105,7 +105,7 @@ public class TextEditService {
         }
         case VPMAliasTxt: {
           GameEmulator defaultGameEmulator = emulatorService.getGameEmulator(monitoredTextFile.getEmulatorId());
-          return mameRomAliasService.loadAliasFile(defaultGameEmulator);
+          return VPinMameRomAliasService.loadAliasFile(defaultGameEmulator);
         }
         case VBScript: {
           Game game = frontendService.getOriginalGame(Integer.parseInt(monitoredTextFile.getFileId()));
@@ -137,7 +137,7 @@ public class TextEditService {
 
     }
     catch (Exception e) {
-      LOG.error("Error reading text file: " + e.getMessage(), e);
+      LOG.error("Error reading text file: {}", e.getMessage(), e);
       throw e;
     }
     return monitoredTextFile;
@@ -150,7 +150,7 @@ public class TextEditService {
       VPinFile vPinFile = monitoredTextFile.getvPinFile();
       switch (vPinFile) {
         case DmdDeviceIni: {
-          File mameFolder = mameService.getMameFolder();
+          File mameFolder = vPinMameService.getMameFolder();
           File iniFile = new File(mameFolder, "DmdDevice.ini");
           File backup = new File(mameFolder, "DmdDevice.ini.bak");
           if (!backup.exists()) {
@@ -162,7 +162,7 @@ public class TextEditService {
             out.write('\ufeff');
             out.write(monitoredTextFile.getContent());
             out.close();
-            LOG.info("Written " + iniFile.getAbsolutePath());
+            LOG.info("Written {}", iniFile.getAbsolutePath());
           }
           else {
             throw new IOException("Failed to delete target file.");
@@ -183,7 +183,7 @@ public class TextEditService {
             out.write('\ufeff');
             out.write(monitoredTextFile.getContent());
             out.close();
-            LOG.info("Written " + dofLinxIni.getAbsolutePath());
+            LOG.info("Written {}", dofLinxIni.getAbsolutePath());
           }
           else {
             throw new IOException("Failed to delete target file.");
@@ -199,8 +199,8 @@ public class TextEditService {
           sorted.sort(Comparator.comparing(String::toLowerCase));
           String content = String.join("\n", sorted);
 
-          mameRomAliasService.saveAliasFile(defaultGameEmulator, content);
-          return mameRomAliasService.loadAliasFile(defaultGameEmulator);
+          VPinMameRomAliasService.saveAliasFile(defaultGameEmulator, content);
+          return VPinMameRomAliasService.loadAliasFile(defaultGameEmulator);
         }
         case VBScript: {
           Game game = frontendService.getOriginalGame(Integer.parseInt(monitoredTextFile.getFileId()));
@@ -209,12 +209,12 @@ public class TextEditService {
             VPXUtil.importVBS(gameFile, monitoredTextFile.getContent(), serverSettings.isKeepVbsFiles());
             monitoredTextFile.setLastModified(new Date(gameFile.lastModified()));
             monitoredTextFile.setSize(monitoredTextFile.getContent().getBytes().length);
-            LOG.info("Saved " + gameFile.getAbsolutePath() + ", performing table table.");
+            LOG.info("Saved {}, performing table table.", gameFile.getAbsolutePath());
             gameService.scanGame(game.getId());
             return monitoredTextFile;
           }
           else {
-            LOG.error("No game found with game name '" + monitoredTextFile.getFileId() + "'");
+            LOG.error("No game found with game name '{}'", monitoredTextFile.getFileId());
           }
         }
         case LOCAL_GAME_FILE: {
@@ -223,7 +223,7 @@ public class TextEditService {
           List<String> allLines = Arrays.asList(lines);
           String content = String.join("\n", allLines);
           FileUtils.writeStringToFile(f, content, Charset.defaultCharset());
-          LOG.info("Written " + f.getAbsolutePath());
+          LOG.info("Written {}", f.getAbsolutePath());
           monitoredTextFile.setLastModified(new Date(f.lastModified()));
           monitoredTextFile.setSize(monitoredTextFile.getContent().getBytes().length);
           return monitoredTextFile;
@@ -234,7 +234,7 @@ public class TextEditService {
           List<String> allLines = Arrays.asList(lines);
           String content = String.join("\n", allLines);
           FileUtils.writeStringToFile(f, content, Charset.defaultCharset());
-          LOG.info("Written " + f.getAbsolutePath());
+          LOG.info("Written {}", f.getAbsolutePath());
           monitoredTextFile.setLastModified(new Date(f.lastModified()));
           monitoredTextFile.setSize(monitoredTextFile.getContent().getBytes().length);
           return monitoredTextFile;
@@ -245,7 +245,7 @@ public class TextEditService {
       }
     }
     catch (IOException e) {
-      LOG.error("Error reading text file: " + e.getMessage(), e);
+      LOG.error("Error reading text file: {}", e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, e.getMessage());
     }
   }

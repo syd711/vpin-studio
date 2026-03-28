@@ -15,7 +15,7 @@ public class MD5ChecksumUtil {
     try {
       mdigest = MessageDigest.getInstance("MD5");
     } catch (NoSuchAlgorithmException e) {
-      LOG.error("Failed to create md5 digest: " + e.getMessage(), e);
+      LOG.error("Failed to create md5 digest: {}", e.getMessage(), e);
     }
   }
 

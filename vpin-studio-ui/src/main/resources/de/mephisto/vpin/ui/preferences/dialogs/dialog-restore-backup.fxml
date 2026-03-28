@@ -120,6 +120,18 @@
                   <Label layoutX="10.0" layoutY="124.0" styleClass="checkbox-description" text="Includes the table versions." textFill="WHITE" />
                </children>
             </VBox>
+            <CheckBox fx:id="pinVolCheckbox" layoutX="22.0" layoutY="228.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="PinVol.ini Files">
+               <VBox.margin>
+                  <Insets top="6.0" />
+               </VBox.margin>
+            </CheckBox>
+            <Label layoutX="22.0" layoutY="248.0" styleClass="checkbox-description" text="All .ini files for the PinVol Studio installation." textFill="WHITE" />
+            <CheckBox fx:id="pinemHiCheckbox" layoutX="22.0" layoutY="509.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="pinemhi.ini File">
+               <VBox.margin>
+                  <Insets top="6.0" />
+               </VBox.margin>
+            </CheckBox>
+            <Label layoutX="22.0" layoutY="529.0" styleClass="checkbox-description" text="Your customized pinemhi.ini file from the PinemHI Studio installation." textFill="WHITE" />
          </children>
          <padding>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

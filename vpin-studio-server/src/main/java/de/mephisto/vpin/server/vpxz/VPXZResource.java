@@ -154,7 +154,7 @@ public class VPXZResource {
       in.close();
       out.close();
 
-      LOG.info("Finished download of \"" + VPXZDescriptor.getTableDetails().getGameDisplayName() + "\"");
+      LOG.info("Finished download of \"{}\"", VPXZDescriptor.getTableDetails().getGameDisplayName());
       invalidateCache();
     }
     catch (IOException ex) {
@@ -178,7 +178,7 @@ public class VPXZResource {
       }
     }
     catch (Exception e) {
-      LOG.error("VPXZ upload failed: " + e.getMessage(), e);
+      LOG.error("VPXZ upload failed: {}", e.getMessage(), e);
       return JobDescriptorFactory.error("VPXZ upload failed: " + e.getMessage());
     }
     return JobDescriptorFactory.error(null);

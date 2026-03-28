@@ -72,6 +72,7 @@ public class BackupUploadController implements Initializable, DialogController {
         if (progressResult.isCancelled()) {
           result = false;
         }
+
       }
       catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);

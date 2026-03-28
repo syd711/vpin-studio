@@ -48,7 +48,7 @@ public class CompetitionDataHelper {
       String json = objectMapper.writeValueAsString(data);
       return new Base64Encoder().encode(json.getBytes(StandardCharsets.UTF_8));
     } catch (JsonProcessingException e) {
-      LOG.error("Failed to persist competition data: " + e.getMessage(), e);
+      LOG.error("Failed to persist competition data: {}", e.getMessage(), e);
     }
     return null;
   }
@@ -91,7 +91,7 @@ public class CompetitionDataHelper {
       }
       return null;
     } catch (JsonProcessingException e) {
-      LOG.info("Failed to read competition data from '" + messageText + "':" + e.getMessage());
+      LOG.info("Failed to read competition data from '{}':{}", messageText, e.getMessage());
     }
     return null;
   }

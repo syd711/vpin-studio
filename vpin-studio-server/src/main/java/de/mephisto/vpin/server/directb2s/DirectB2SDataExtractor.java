@@ -170,7 +170,7 @@ Other elements in XML :  path / from / top (interesting attributes)
       return StringUtils.isNotEmpty(v) ? Integer.parseInt(v) : defaultValue;
     } 
     catch (Exception e) {
-      LOG.warn("Cannot parse integer attribute " + name + ", value " + v + ", ignored error " + e.getMessage());
+      LOG.warn("Cannot parse integer attribute {}, value {}, ignored error {}", name, v, e.getMessage());
       return defaultValue;
     }
   }

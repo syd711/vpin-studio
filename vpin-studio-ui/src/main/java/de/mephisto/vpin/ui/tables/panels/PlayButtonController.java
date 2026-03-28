@@ -118,6 +118,9 @@ public class PlayButtonController implements Initializable, ChangeListener<Launc
       else if (client.getEmulatorService().isZaccariaGame(game)) {
         items.add(new LaunchConfiguration("Launch via Steam", false, null, null));
       }
+      else if (client.getEmulatorService().isMameGame(game)) {
+        items.add(new LaunchConfiguration("Launch via MAME", false, null, null));
+      }
 
       launchCombo.setItems(FXCollections.observableList(items));
       launchCombo.setDisable(items.isEmpty());

@@ -113,7 +113,7 @@ public class MediaConverterService implements InitializingBean {
     if (operation.getFilename() != null) {
       File mediaFile = mediaService.getMediaFile(operation.getObjectId(), operation.getScreen(), operation.getFilename());
       if (mediaFile == null || !mediaFile.exists()) {
-        LOG.info("No media item found for " + operation.getFilename());
+        LOG.info("No media item found for {}", operation.getFilename());
         operationResult.setResult("No media item found for " + operation.getFilename());
         return result;
       }
@@ -133,7 +133,7 @@ public class MediaConverterService implements InitializingBean {
   private String convertWithScript(File batFile, File file) throws Exception {
     // List<String> params = Arrays.asList("cmd", "/c", "start", "\"" + batFile.getAbsolutePath() + "\"", "\"" + file.getAbsolutePath() + "\"");
     List<String> params = Arrays.asList("\"" + batFile.getAbsolutePath() + "\"", "\"" + file.getAbsolutePath() + "\"");
-    LOG.info("Executing: " + String.join(" ", params));
+    LOG.info("Executing: {}", String.join(" ", params));
     SystemCommandExecutor executor = new SystemCommandExecutor(params, false);
     executor.setDir(batFile.getParentFile());
     executor.executeCommand();
@@ -178,7 +178,7 @@ public class MediaConverterService implements InitializingBean {
 
     commandList.add(targetFile.getAbsolutePath());
 
-    LOG.info("Executing: " + String.join(" ", commandList));
+    LOG.info("Executing: {}", String.join(" ", commandList));
     SystemCommandExecutor executor = new SystemCommandExecutor(commandList, false);
 
     executor = new SystemCommandExecutor(commandList);
@@ -215,7 +215,7 @@ public class MediaConverterService implements InitializingBean {
 
     commandList.add(targetFile.getAbsolutePath());
 
-    LOG.info("Executing: " + String.join(" ", commandList));
+    LOG.info("Executing: {}", String.join(" ", commandList));
     SystemCommandExecutor executor = new SystemCommandExecutor(commandList, false);
 
     executor = new SystemCommandExecutor(commandList);

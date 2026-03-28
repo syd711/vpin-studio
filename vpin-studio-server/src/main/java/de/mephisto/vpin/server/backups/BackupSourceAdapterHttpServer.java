@@ -44,7 +44,7 @@ public class BackupSourceAdapterHttpServer implements BackupSourceAdapter {
       }
 
       String url = location + URLEncoder.encode(descriptor.getFilename(), StandardCharsets.UTF_8).replace("+", "%20");
-      LOG.info("Downloading " + url);
+      LOG.info("Downloading {}", url);
       FileOutputStream fout = new FileOutputStream(target);
       HttpURLConnection conn = getConnection(url);
       in = new BufferedInputStream(conn.getInputStream());
@@ -55,7 +55,7 @@ public class BackupSourceAdapterHttpServer implements BackupSourceAdapter {
       fout.close();
       conn.disconnect();
     } catch (IOException e) {
-      LOG.error("Failed to download " + descriptor.getFilename() + ": " + e.getMessage(), e);
+      LOG.error("Failed to download {}: {}", descriptor.getFilename(), e.getMessage(), e);
       target.delete();
     }
     finally {
@@ -80,7 +80,7 @@ public class BackupSourceAdapterHttpServer implements BackupSourceAdapter {
       }
 
       String url = location + URLEncoder.encode(FilenameUtils.getBaseName(descriptor.getFilename()) + ".json", StandardCharsets.UTF_8).replace("+", "%20");
-      LOG.info("Downloading " + url);
+      LOG.info("Downloading {}", url);
       FileOutputStream fout = new FileOutputStream(target);
       HttpURLConnection conn = getConnection(url);
       in = new BufferedInputStream(conn.getInputStream());
@@ -96,7 +96,7 @@ public class BackupSourceAdapterHttpServer implements BackupSourceAdapter {
       fout.close();
       conn.disconnect();
     } catch (IOException e) {
-      LOG.error("Failed to download descriptor file " + descriptor.getFilename() + ": " + e.getMessage());
+      LOG.error("Failed to download descriptor file {}: {}", descriptor.getFilename(), e.getMessage());
     }
   }
 
@@ -185,12 +185,12 @@ public class BackupSourceAdapterHttpServer implements BackupSourceAdapter {
       conn.addRequestProperty("Accept-Language", "en-US,en;q=0.8");
       return conn;
     } catch (IOException e) {
-      LOG.error("Failed to read HTTP URL \"" + location + "\":" + e.getMessage());
+      LOG.error("Failed to read HTTP URL \"{}\":{}", location, e.getMessage());
       try {
         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
         String str;
         while ((str = in.readLine()) != null) {
-          LOG.error("HTTP ERROR: " + str);
+          LOG.error("HTTP ERROR: {}", str);
         }
         throw e;
       } catch (IOException ex) {
@@ -236,13 +236,13 @@ public class BackupSourceAdapterHttpServer implements BackupSourceAdapter {
       // Install the all-trusting host verifier
       HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
     } catch (Exception e) {
-      LOG.error("Failed to disable SSL verification: " + e.getMessage(), e);
+      LOG.error("Failed to disable SSL verification: {}", e.getMessage(), e);
     }
   }
 
   @Override
   public void invalidate() {
     cache.clear();
-    LOG.info("Invalidated archive source \"" + this.getBackupSource() + "\"");
+    LOG.info("Invalidated archive source \"{}\"", this.getBackupSource());
   }
 }

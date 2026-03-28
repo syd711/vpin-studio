@@ -54,20 +54,20 @@ public class VPXCommandLineService implements ApplicationContextAware {
         strings.add(commandParam);
       }
       strings.add("\"" + gameFile.getAbsolutePath() + "\"");
-      LOG.info("Executing VPX command: " + String.join(" ", strings));
+      LOG.info("Executing VPX command: {}", String.join(" ", strings));
       SystemCommandExecutor executor = new SystemCommandExecutor(strings);
       executor.setDir(vpxExe.getParentFile());
       executor.executeCommandAsync();
 
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
       if (standardErrorFromCommand != null && !StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-        LOG.error("VPX command failed:\n" + standardErrorFromCommand);
+        LOG.error("VPX command failed:\n{}", standardErrorFromCommand);
         return false;
       }
       return true;
     }
     catch (Exception e) {
-      LOG.error("Error executing VPX command: " + e.getMessage(), e);
+      LOG.error("Error executing VPX command: {}", e.getMessage(), e);
     }
     return false;
   }
@@ -80,18 +80,18 @@ public class VPXCommandLineService implements ApplicationContextAware {
 
     try {
       List<String> strings = Arrays.asList(vpxExe.getName(), commandParam, "\"" + gameFile.getAbsolutePath() + "\"");
-      LOG.info("Executing VPX " + commandParam + "command: " + String.join(" ", strings));
+      LOG.info("Executing VPX {}command: {}", commandParam, String.join(" ", strings));
       SystemCommandExecutor executor = new SystemCommandExecutor(strings);
       executor.setDir(vpxExe.getParentFile());
       executor.executeCommandAsync();
 
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
       if (standardErrorFromCommand != null && !StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-        LOG.error("VPX command failed:\n" + standardErrorFromCommand);
+        LOG.error("VPX command failed:\n{}", standardErrorFromCommand);
       }
     }
     catch (Exception e) {
-      LOG.error("Error executing VPX command: " + e.getMessage(), e);
+      LOG.error("Error executing VPX command: {}", e.getMessage(), e);
     }
 
     int count = 0;
@@ -104,7 +104,7 @@ public class VPXCommandLineService implements ApplicationContextAware {
         //ignore
       }
       if (count > 20) {
-        LOG.error("Timeout waiting for the generation of " + target.getAbsolutePath());
+        LOG.error("Timeout waiting for the generation of {}", target.getAbsolutePath());
         systemService.killProcesses("VPinballX");
         break;
       }

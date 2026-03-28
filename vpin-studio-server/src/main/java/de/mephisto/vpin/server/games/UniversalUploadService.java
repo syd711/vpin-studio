@@ -20,11 +20,12 @@ import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.backups.adapters.vpa.VpaService;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.dmd.DMDService;
+import de.mephisto.vpin.server.doflinx.DOFLinxService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.fp.FuturePinballService;
 import de.mephisto.vpin.server.highscores.HighscoreBackupService;
-import de.mephisto.vpin.server.mame.MameRomAliasService;
-import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.vpinmame.VPinMameRomAliasService;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.music.MusicService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
@@ -61,7 +62,7 @@ public class UniversalUploadService {
   private DMDService dmdService;
 
   @Autowired
-  private MameService mameService;
+  private VPinMameService vPinMameService;
 
   @Autowired
   private FuturePinballService futurePinballService;
@@ -88,7 +89,7 @@ public class UniversalUploadService {
   private DiscordService discordService;
 
   @Autowired
-  private MameRomAliasService mameRomAliasService;
+  private VPinMameRomAliasService VPinMameRomAliasService;
 
   @Autowired
   private PreferencesService preferencesService;
@@ -103,12 +104,15 @@ public class UniversalUploadService {
   private HighscoreBackupService highscoreBackupService;
 
   @Autowired
+  private DOFLinxService dofLinxService;
+
+  @Autowired
   private VpaService vpaService;
 
   public UploadDescriptor process(@RequestBody UploadDescriptor uploadDescriptor) {
     Thread.currentThread().setName("Universal Upload Thread");
     long start = System.currentTimeMillis();
-    LOG.info("*********** Importing " + uploadDescriptor.getTempFilename() + " ************************");
+    LOG.info("*********** Importing {} ************************", uploadDescriptor.getTempFilename());
     try {
       // If the file is not a real file but a pointer to an external resource, it is time to get the real file...
       resolveLinks(uploadDescriptor);
@@ -132,12 +136,12 @@ public class UniversalUploadService {
       processGameAssets(uploadDescriptor, analysis);
     }
     catch (Exception e) {
-      LOG.error("Processing \"" + uploadDescriptor.getTempFilename() + "\" failed: " + e.getMessage(), e);
+      LOG.error("Processing \"{}\" failed: {}", uploadDescriptor.getTempFilename(), e.getMessage(), e);
       uploadDescriptor.setError("Processing failed: " + e.getMessage());
     }
     finally {
       uploadDescriptor.finalizeUpload();
-      LOG.info("Import finished, took " + (System.currentTimeMillis() - start) + " ms.");
+      LOG.info("Import finished, took {} ms.", (System.currentTimeMillis() - start));
     }
     LOG.info("****************************** /Import Finished *************************************");
     return uploadDescriptor;
@@ -172,7 +176,7 @@ public class UniversalUploadService {
       return;
     }
 
-    LOG.info("---> Executing table asset archive import for type \"" + assetType.name() + "\" <---");
+    LOG.info("---> Executing table asset archive import for type \"{}\" <---", assetType.name());
     File temporaryUploadDescriptorBundleFile = new File(uploadDescriptor.getTempFilename());
     Game game = gameService.getGame(uploadDescriptor.getGameId());
     if (game == null) {
@@ -197,7 +201,7 @@ public class UniversalUploadService {
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to import " + assetType.name() + " file:" + e.getMessage(), e);
+      LOG.error("Failed to import {} file:{}", assetType.name(), e.getMessage(), e);
       throw e;
     }
     finally {
@@ -218,7 +222,7 @@ public class UniversalUploadService {
   }
 
   public void importArchiveBasedAssets(@NonNull UploadDescriptor uploadDescriptor, @Nullable UploaderAnalysis analysis, @NonNull AssetType assetType, boolean validateAssetType) throws Exception {
-    LOG.info("---> Executing asset archive import for type \"" + assetType.name() + "\" <---");
+    LOG.info("---> Executing asset archive import for type \"{}\" <---", assetType.name());
     // For backup imports, check if the AssetType was enabled
     if (!isImportEnabled(uploadDescriptor, assetType)) {
       LOG.info("Skipped import of asset type \"{}\", disabled for backup imports.", assetType.name());
@@ -316,10 +320,8 @@ public class UniversalUploadService {
       }
       case MUSIC: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.MUSIC) == null) {
-          String rom = null;
+          musicService.installMusic(tempFile, game, gameEmulator, analysis);
           if (game != null) {
-            rom = game.getRom();
-            musicService.installMusic(tempFile, game, analysis, rom, uploadDescriptor.isAcceptAllAudioAsMusic());
             gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, updatedAssetName);
           }
         }
@@ -327,7 +329,7 @@ public class UniversalUploadService {
       }
       case ROM: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.ROM) == null) {
-          mameService.installRom(uploadDescriptor, game, gameEmulator, tempFile, analysis);
+          vPinMameService.installRom(uploadDescriptor, game, gameEmulator, tempFile, analysis);
           gameLifecycleService.notifyGameAssetsChanged(assetType, updatedAssetName);
         }
         break;
@@ -341,14 +343,14 @@ public class UniversalUploadService {
       }
       case NV: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.NV) == null) {
-          mameService.installNvRam(uploadDescriptor, game, gameEmulator, tempFile, analysis);
+          vPinMameService.installNvRam(uploadDescriptor, game, gameEmulator, tempFile, analysis);
           gameLifecycleService.notifyGameAssetsChanged(assetType, updatedAssetName);
         }
         break;
       }
       case CFG: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.CFG) == null) {
-          mameService.installCfg(uploadDescriptor, game, gameEmulator, tempFile, analysis);
+          vPinMameService.installCfg(uploadDescriptor, game, gameEmulator, tempFile, analysis);
           gameLifecycleService.notifyGameAssetsChanged(assetType, updatedAssetName);
         }
         break;
@@ -392,9 +394,16 @@ public class UniversalUploadService {
     }
   }
 
-  private static void copyGameFileAsset(File temporaryUploadDescriptorBundleFile, Game game, AssetType assetType, @Nullable UploadType uploadType) throws IOException {
+  private void copyGameFileAsset(File temporaryUploadDescriptorBundleFile, Game game, AssetType assetType, @Nullable UploadType uploadType) throws IOException {
     String fileName = FilenameUtils.getBaseName(game.getGameFileName()) + "." + assetType.getExtension();
     File gameAssetFile = new File(game.getGameFile().getParentFile(), fileName);
+
+    if (AssetType.DIRECTB2S.equals(assetType) && game.getEmulator().isZenEmulator()) {
+      gameAssetFile = dofLinxService.getBackglassFile(game);
+    }
+    else if (AssetType.DIRECTB2S.equals(assetType)) {
+      gameAssetFile = BackglassNamingHelper.getBackglassFile(game);
+    }
 
     if (UploadType.uploadAndAppend.equals(uploadType)) {
       gameAssetFile = FileUtils.uniqueFile(gameAssetFile);
@@ -402,20 +411,25 @@ public class UniversalUploadService {
     }
 
     boolean replaced = false;
-    if (gameAssetFile.exists()) {
-      if (!gameAssetFile.delete()) {
-        LOG.error("Failed to delete existing game asset file " + gameAssetFile.getAbsolutePath());
-        throw new UnsupportedOperationException("Failed to delete existing game asset file " + gameAssetFile.getAbsolutePath());
+    if(gameAssetFile != null) {
+      if (gameAssetFile.exists()) {
+        if (!gameAssetFile.delete()) {
+          LOG.error("Failed to delete existing game asset file {}", gameAssetFile.getAbsolutePath());
+          throw new UnsupportedOperationException("Failed to delete existing game asset file " + gameAssetFile.getAbsolutePath());
+        }
+        replaced = true;
       }
-      replaced = true;
-    }
 
-    org.apache.commons.io.FileUtils.copyFile(temporaryUploadDescriptorBundleFile, gameAssetFile);
-    if (replaced) {
-      LOG.info("Replaced \"" + gameAssetFile.getAbsolutePath() + "\" with \"" + temporaryUploadDescriptorBundleFile.getAbsolutePath() + "\"");
+      org.apache.commons.io.FileUtils.copyFile(temporaryUploadDescriptorBundleFile, gameAssetFile);
+      if (replaced) {
+        LOG.info("Replaced \"{}\" with \"{}\"", gameAssetFile.getAbsolutePath(), temporaryUploadDescriptorBundleFile.getAbsolutePath());
+      }
+      else {
+        LOG.info("Copied \"{}\" to \"{}\"", temporaryUploadDescriptorBundleFile.getAbsolutePath(), gameAssetFile.getAbsolutePath());
+      }
     }
     else {
-      LOG.info("Copied \"" + temporaryUploadDescriptorBundleFile.getAbsolutePath() + "\" to \"" + gameAssetFile.getAbsolutePath() + "\"");
+      LOG.warn("No matching game asset name found for game {} and asset type {}", game.getGameDisplayName(), assetType);
     }
   }
 
@@ -459,8 +473,8 @@ public class UniversalUploadService {
       GameEmulator gameEmulator = emulatorService.getGameEmulator(uploadDescriptor.getEmulatorId());
 
       if (mameData != null) {
-        mameService.saveRegistryData(mameData);
-        mameRomAliasService.writeAlias(gameEmulator, mameData.getRom(), mameData.getAlias());
+        vPinMameService.saveRegistryData(mameData);
+        VPinMameRomAliasService.writeAlias(gameEmulator, mameData.getRom(), mameData.getAlias());
       }
 
       String highscoreBackupZipEntry = analysis.getFileNameWithPathForExtension(HighscoreBackupService.FILE_SUFFIX);

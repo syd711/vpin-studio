@@ -1,8 +1,8 @@
-package de.mephisto.vpin.server.mame;
+package de.mephisto.vpin.server.vpinmame;
 
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
-import de.mephisto.vpin.restclient.mame.MameOptions;
+import de.mephisto.vpin.restclient.vpinmame.VPinMameOptions;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.GameCachingService;
 import de.mephisto.vpin.server.games.GameEmulator;
@@ -24,14 +24,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping(API_SEGMENT + "mame")
-public class MameResource {
+public class VPinMameResource {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @Autowired
   private GameService gameService;
 
   @Autowired
-  private MameService mameService;
+  private VPinMameService vPinMameService;
 
   @Autowired
   private EmulatorService emulatorService;
@@ -44,37 +44,37 @@ public class MameResource {
 
   @GetMapping("/dmddevice.ini") 
   public File getDmdDeviceIni() {
-    return mameService.getDmdDeviceIni();
+    return vPinMameService.getDmdDeviceIni();
   }
 
   @GetMapping("/setup")
   public Boolean runSetupFile() {
-    return mameService.runSetupExe();
+    return vPinMameService.runSetupExe();
   }
 
   @GetMapping("/flexsetup")
   public Boolean runFlexSetupFile() {
-    return mameService.runFlexSetupExe();
+    return vPinMameService.runFlexSetupExe();
   }
 
   @GetMapping("/options/{rom}")
-  public MameOptions getOptions(@PathVariable("rom") String rom) {
-    return mameService.getOptions(rom);
+  public VPinMameOptions getOptions(@PathVariable("rom") String rom) {
+    return vPinMameService.getOptions(rom);
   }
 
   @PostMapping("/options")
-  public MameOptions saveOptions(@RequestBody MameOptions options) {
-    MameOptions mameOptions = mameService.saveOptions(options);
+  public VPinMameOptions saveOptions(@RequestBody VPinMameOptions options) {
+    VPinMameOptions VPinMameOptions = vPinMameService.saveOptions(options);
     List<GameEmulator> vpxGameEmulators = emulatorService.getVpxGameEmulators();
     for (GameEmulator vpxGameEmulator : vpxGameEmulators) {
       gameCachingService.invalidateByRom(vpxGameEmulator.getId(), options.getRom());
     }
-    return mameOptions;
+    return VPinMameOptions;
   }
 
   @DeleteMapping("/options/{rom}")
   public Boolean deleteOptions(@PathVariable("rom") String rom) {
-    return mameService.deleteOptions(rom);
+    return vPinMameService.deleteOptions(rom);
   }
 
   @GetMapping("/clearcache")
@@ -99,7 +99,7 @@ public class MameResource {
       return descriptor;
     }
     catch (Exception e) {
-      LOG.error(AssetType.ROM.name() + " upload failed: " + e.getMessage(), e);
+      LOG.error("{} upload failed: {}", AssetType.ROM.name(), e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.ROM + " upload failed: " + e.getMessage());
     } finally {
       descriptor.finalizeUpload();
@@ -118,7 +118,7 @@ public class MameResource {
       return descriptor;
     }
     catch (Exception e) {
-      LOG.error(AssetType.CFG.name() + " upload failed: " + e.getMessage(), e);
+      LOG.error("{} upload failed: {}", AssetType.CFG.name(), e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.CFG + " upload failed: " + e.getMessage());
     } finally {
       descriptor.finalizeUpload();
@@ -137,7 +137,7 @@ public class MameResource {
       return descriptor;
     }
     catch (Exception e) {
-      LOG.error(AssetType.NV.name() + " upload failed: " + e.getMessage(), e);
+      LOG.error("{} upload failed: {}", AssetType.NV.name(), e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.NV + " upload failed: " + e.getMessage());
     } finally {
       descriptor.finalizeUpload();

@@ -75,10 +75,10 @@ public class PinballXConnector extends BaseConnector {
       super.setTableAssetAdapter(new de.mephisto.vpin.server.frontend.CacheTableAssetsAdapter(assetAdapter));
     }
     catch (Exception e) {
-      LOG.error("Unable to find PopperAssetAdapter: " + e.getMessage());
+      LOG.error("Unable to find PopperAssetAdapter: {}", e.getMessage());
     }
 */
-    LOG.info("Finished initialization of " + this);
+    LOG.info("Finished initialization of {}", this);
   }
 
   @NonNull
@@ -111,7 +111,7 @@ public class PinballXConnector extends BaseConnector {
       return preferencesService.getJsonPreference(PreferenceNames.PINBALLX_SETTINGS, PinballXSettings.class);
     }
     catch (Exception e) {
-      LOG.error("Getting pinballX settings failed: " + e.getMessage(), e);
+      LOG.error("Getting pinballX settings failed: {}", e.getMessage(), e);
       return null;
     }
   }
@@ -125,7 +125,7 @@ public class PinballXConnector extends BaseConnector {
       initializeConnector();
     }
     catch (Exception e) {
-      LOG.error("Saving pinballX settings failed: " + e.getMessage(), e);
+      LOG.error("Saving pinballX settings failed: {}", e.getMessage(), e);
     }
   }
 
@@ -281,7 +281,7 @@ public class PinballXConnector extends BaseConnector {
   private INIConfiguration loadPinballXIni() {
     File pinballXIni = getPinballXIni();
     if (!pinballXIni.exists()) {
-      LOG.warn("Ini file not found " + pinballXIni);
+      LOG.warn("Ini file not found {}", pinballXIni);
       return null;
     }
 
@@ -494,6 +494,10 @@ public class PinballXConnector extends BaseConnector {
   }
 
   private void createPlayfieldDisplay(INIConfiguration iniConfiguration, List<FrontendPlayerDisplay> players) {
+    if (GraphicsEnvironment.isHeadless()) {
+      return;
+    }
+
     SubnodeConfiguration display = iniConfiguration.getSection("Display");
     int monitor = Integer.parseInt(display.getString("Monitor", display.getString("monitor", "0")));
     GraphicsDevice[] gds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
@@ -764,7 +768,7 @@ public class PinballXConnector extends BaseConnector {
       iniConfiguration.write(fileWriter);
     }
     catch (Exception e) {
-      LOG.error("Failed to write PinballX.ini: " + e.getMessage(), e);
+      LOG.error("Failed to write PinballX.ini: {}", e.getMessage(), e);
     }
   }
 
@@ -795,7 +799,7 @@ public class PinballXConnector extends BaseConnector {
     for (ProcessHandle p : processes) {
       String cmd = p.info().command().get();
       boolean b = p.destroyForcibly();
-      LOG.info("Destroyed process '" + cmd + "', result: " + b);
+      LOG.info("Destroyed process '{}', result: {}", cmd, b);
     }
     return true;
   }

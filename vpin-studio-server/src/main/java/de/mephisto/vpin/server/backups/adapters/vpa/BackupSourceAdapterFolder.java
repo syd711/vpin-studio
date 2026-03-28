@@ -56,11 +56,11 @@ public class BackupSourceAdapterFolder implements BackupSourceAdapter {
             }
           }
           catch (Exception e) {
-            LOG.error("Failed to read " + archiveFile.getAbsolutePath() + ": " + e.getMessage(), e);
+            LOG.error("Failed to read {}: {}", archiveFile.getAbsolutePath(), e.getMessage(), e);
           }
         }
         if (!cache.isEmpty()) {
-          LOG.info("Loaded existing backups: {}, took " + (System.currentTimeMillis() - start) + "ms.", vpaFiles.length);
+          LOG.info("Loaded existing backups: {}, took {}ms.", vpaFiles.length, (System.currentTimeMillis() - start));
         }
       }
     }
@@ -76,9 +76,9 @@ public class BackupSourceAdapterFolder implements BackupSourceAdapter {
     File file = new File(archiveFolder, descriptor.getFilename());
     LOG.info("Deleting {}", file.getAbsolutePath());
     if (file.exists() && !Desktop.getDesktop().moveToTrash(file)) {
-      LOG.error("Failed moving file to trash: " + file.getAbsolutePath());
+      LOG.error("Failed moving file to trash: {}", file.getAbsolutePath());
       if (!file.delete()) {
-        LOG.error("Failed to delete " + file.getAbsolutePath());
+        LOG.error("Failed to delete {}", file.getAbsolutePath());
         return false;
       }
     }

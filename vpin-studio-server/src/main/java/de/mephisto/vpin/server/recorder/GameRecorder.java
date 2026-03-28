@@ -19,14 +19,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 public class GameRecorder {
   private final static Logger LOG = LoggerFactory.getLogger(GameRecorder.class);
+  private final static int TIMEOUT_MINUTES = 10;
 
   private final FrontendConnector frontend;
   private final Game game;
@@ -52,7 +50,7 @@ public class GameRecorder {
   }
 
   public RecordingResult startRecording() {
-    LOG.info("Launching recording of \"" + game.getGameDisplayName() + "\"");
+    LOG.info("Launching recording of \"{}\"", game.getGameDisplayName());
     RecordingResult status = new RecordingResult();
 
     List<Callable<RecordingResult>> callables = new ArrayList<>();
@@ -78,7 +76,7 @@ public class GameRecorder {
           Callable<RecordingResult> screenRecordable = new Callable<RecordingResult>() {
             @Override
             public RecordingResult call() {
-              LOG.info("Starting recording for \"" + game.getGameDisplayName() + "\", " + screen.name() + ": " + recordingTempFile.getAbsolutePath());
+              LOG.info("Starting recording for \"{}\", {}: {}", game.getGameDisplayName(), screen.name(), recordingTempFile.getAbsolutePath());
               recorderSettings.getRecordingScreenOption(screen);
               ScreenRecorder screenRecorder = new ScreenRecorder(recordingScreen, recordingTempFile);
               screenRecorders.add(screenRecorder);
@@ -91,8 +89,8 @@ public class GameRecorder {
 
 
               int count = 0;
-              if(jobDescriptor.getUserData() != null) {
-               count = (int) jobDescriptor.getUserData();
+              if (jobDescriptor.getUserData() != null) {
+                count = (int) jobDescriptor.getUserData();
               }
               jobDescriptor.setUserData((count + 1));
 
@@ -116,7 +114,7 @@ public class GameRecorder {
 
       try {
         for (Future<RecordingResult> future : futures) {
-          RecordingResult recordingResult = future.get();
+          RecordingResult recordingResult = future.get(TIMEOUT_MINUTES, TimeUnit.MINUTES);
           if (recordingResult != null) {
             recordingResults.add(recordingResult);
           }
@@ -124,11 +122,11 @@ public class GameRecorder {
         }
       }
       catch (Exception e) {
-        LOG.error("Error waiting for recording result: {}", e.getMessage(), e);
+        LOG.error("Error waiting for recording errorResult: {}", e.getMessage(), e);
       }
     }
     else {
-      LOG.info("Skipped recording of " + game.getGameDisplayName() + ", no screens to record.");
+      LOG.info("Skipped recording of {}, no screens to record.", game.getGameDisplayName());
     }
     return status;
   }
@@ -137,12 +135,12 @@ public class GameRecorder {
   protected RecordingScreenOptions validateScreen(VPinScreen screen) {
     RecordingScreenOptions option = recorderSettings.getRecordingScreenOption(screen);
     if (!option.isEnabled()) {
-      LOG.info("Skipped recording for " + screen + ", screen is not enabled.");
+      LOG.info("Skipped recording for {}, screen is not enabled.", screen);
       return null;
     }
 
     if (!isRecordingRequired(game, screen, option.getRecordMode())) {
-      LOG.info("Skipped recording for " + screen + ", asset not missing.");
+      LOG.info("Skipped recording for {}, asset not missing.", screen);
       return null;
     }
     return option;

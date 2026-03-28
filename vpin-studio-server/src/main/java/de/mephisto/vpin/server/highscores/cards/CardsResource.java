@@ -20,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
@@ -39,7 +40,7 @@ public class CardsResource {
 
 
   @GetMapping("/resolution/{templateType}")
-  public CardResolution getCardResolution(@PathVariable("templateType") CardTemplateType templateType) {
+  public int[] getCardResolution(@PathVariable("templateType") CardTemplateType templateType) {
     return cardService.getCardResolution(templateType);
   }
 

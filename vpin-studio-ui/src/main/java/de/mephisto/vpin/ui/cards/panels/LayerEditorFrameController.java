@@ -92,7 +92,7 @@ public class LayerEditorFrameController extends LayerEditorBaseController implem
     }
   }
 
-  public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
+  public void setTemplate(CardTemplate cardTemplate, int cardWidth, int cardHeight, Optional<GameRepresentation> game) {
     setIconVisibility(cardTemplate.isRenderFrame());
     setIconLock(cardTemplate.isLockFrame(), cardTemplate.isTemplate());
 

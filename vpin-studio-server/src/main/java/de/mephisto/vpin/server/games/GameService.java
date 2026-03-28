@@ -4,7 +4,6 @@ import de.mephisto.vpin.commons.utils.StringSimilarity;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
@@ -18,17 +17,19 @@ import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.listeners.EventOrigin;
-import de.mephisto.vpin.server.mame.MameRomAliasService;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.vpinmame.VPinMameRomAliasService;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.vps.VpsService;
 import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,7 +71,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   private PreferencesService preferencesService;
 
   @Autowired
-  private MameRomAliasService mameRomAliasService;
+  private VPinMameRomAliasService VPinMameRomAliasService;
 
   @Autowired
   private VpsService vpsService;
@@ -85,7 +86,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   private PlayerService playerService;
 
   @Autowired
-  private MameService mameService;
+  private VPinMameService vPinMameService;
 
   @Autowired
   private EmulatorService emulatorService;
@@ -95,6 +96,9 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
 
   @Autowired
   private GameLifecycleService gameLifecycleService;
+
+  @Autowired
+  private MameService mameService;
 
   private ServerSettings serverSettings;
 
@@ -106,7 +110,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   public List<Game> getGames() {
     long start = System.currentTimeMillis();
     List<Game> games = getKnownGames(-1);
-    LOG.info("Game details fetch took " + (System.currentTimeMillis() - start) + "ms.");
+    LOG.info("Game details fetch took {}ms.", (System.currentTimeMillis() - start));
     return games;
   }
 
@@ -162,9 +166,9 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   public boolean reload() {
     vpxService.clearCache();
     gameCachingService.clearCache();
-    emulatorService.loadEmulators();
+    emulatorService.reloadEmulators();
     List<GameEmulator> emulators = emulatorService.getValidGameEmulators();
-    mameRomAliasService.clearCache(emulators);
+    VPinMameRomAliasService.clearCache(emulators);
     gameCachingService.clearCache();
     getKnownGames(-1);
     return true;
@@ -176,11 +180,11 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   public boolean reloadEmulator(int emulatorId) {
     GameEmulator emulator = emulatorService.getGameEmulator(emulatorId);
     if (emulator != null) {
-      mameRomAliasService.clearCache(Arrays.asList(emulator));
+      VPinMameRomAliasService.clearCache(Arrays.asList(emulator));
       gameCachingService.clearCacheForEmulator(emulatorId);
     }
 
-    emulatorService.loadEmulators();
+    emulatorService.reloadEmulators();
     gameCachingService.clearCache();
     getKnownGames(emulatorId);
     return true;
@@ -305,7 +309,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     }
 
     long duration = System.currentTimeMillis() - start;
-    LOG.info("Recent score fetch took " + duration + "ms.");
+    LOG.info("Recent score fetch took {}ms.", duration);
     return summary;
   }
 
@@ -362,7 +366,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   public GameList getImportableTables(int emuId) {
     GameEmulator emulator = emulatorService.getGameEmulator(emuId);
     if (emulator == null) {
-      LOG.warn("No emulator found for id " + emuId);
+      LOG.warn("No emulator found for id {}", emuId);
       return new GameList();
     }
 
@@ -391,6 +395,12 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
         item.setFileName(file.getAbsolutePath());
         item.setFileSize(file.length());
         item.setEmuId(emulator.getId());
+
+        if (emulator.isMameEmulator()) {
+          String fullName = mameService.resolveMAMENameFor(FilenameUtils.getBaseName(file.getName()));
+          item.setName(fullName);
+        }
+
         list.getItems().add(item);
       }
     }
@@ -454,7 +464,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     }
 
 
-    LOG.info("Resource Game Event Handler resolved \"" + game + "\" for table name \"" + table + "\" from emulator {}", emuId);
+    LOG.info("Resource Game Event Handler resolved \"{}\" for table name \"{}\" from emulator {}", game, table, emuId);
     return game;
   }
 
@@ -502,7 +512,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     gameDetails.setExtTableId(extTableId);
     gameDetails.setExtTableVersionId(extTableVersionId);
     gameDetailsRepositoryService.saveAndFlush(gameDetails);
-    LOG.info("Linked game " + gameId + " to " + extTableId + "/" + extTableVersionId);
+    LOG.info("Linked game {} to {}/{}", gameId, extTableId, extTableVersionId);
     // update the table in the frontend
     frontendService.vpsLink(gameId, extTableId, extTableVersionId);
 
@@ -515,7 +525,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     if (overwrite || StringUtils.isEmpty(gameDetails.getTableVersion())) {
       gameDetails.setTableVersion(version);
       gameDetailsRepositoryService.saveAndFlush(gameDetails);
-      LOG.info("Version saved for " + gameId + " to " + version);
+      LOG.info("Version saved for {} to {}", gameId, version);
       gameLifecycleService.notifyGameUpdated(gameId);
       return true;
     }
@@ -537,7 +547,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to reset update flag for " + gameId + ": " + e.getMessage(), e);
+      LOG.error("Failed to reset update flag for {}: {}", gameId, e.getMessage(), e);
     }
   }
 
@@ -587,7 +597,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to read event log: " + e.getMessage(), e);
+      LOG.error("Failed to read event log: {}", e.getMessage(), e);
     }
     return null;
   }
@@ -617,14 +627,14 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     }
 
     if (tableMatch != null && match <= MATCHING_THRESHOLD) {
-      LOG.info("Found matching table '" + tableMatch.getGameDisplayName() + "' with matching value of '" + match + "' for term '" + term + "'");
+      LOG.info("Found matching table '{}' with matching value of '{}' for term '{}'", tableMatch.getGameDisplayName(), match, term);
       return tableMatch;
     }
     if (tableMatch != null) {
-      LOG.info("Closed table match '" + tableMatch.getGameDisplayName() + "' with value '" + match + "' not sufficient for term '" + term + "'");
+      LOG.info("Closed table match '{}' with value '{}' not sufficient for term '{}'", tableMatch.getGameDisplayName(), match, term);
     }
     else {
-      LOG.info("No match for term '" + term + "'");
+      LOG.info("No match for term '{}'", term);
     }
     return null;
   }
@@ -637,18 +647,18 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   }
 
   public boolean clearMameCaches() {
-    mameRomAliasService.clearCache(emulatorService.getVpxGameEmulators());
+    VPinMameRomAliasService.clearCache(emulatorService.getVpxGameEmulators());
     List<Game> games = getKnownGames(-1);
-    return mameService.clearGamesCache(games);
+    return vPinMameService.clearGamesCache(games);
   }
 
   public boolean clearMameCacheFor(String rom) {
-    return mameService.clearCacheFor(rom);
+    return vPinMameService.clearCacheFor(rom);
   }
 
   public boolean clearAliasCache() {
     List<GameEmulator> gameEmulators = emulatorService.getValidGameEmulators();
-    return mameRomAliasService.clearCache(gameEmulators);
+    return VPinMameRomAliasService.clearCache(gameEmulators);
   }
 
   @Override
@@ -663,7 +673,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
       highscoreService.setGameService(this);
     }
     catch (Exception e) {
-      LOG.error("Error initializing GameService: " + e.getMessage(), e);
+      LOG.error("Error initializing GameService: {}", e.getMessage(), e);
     }
     clearAliasCache();
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
@@ -678,7 +688,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
         clearMameCaches();
 
         List<GameEmulator> gameEmulators = emulatorService.getValidGameEmulators();
-        mameService.clearValidationsCache(gameEmulators);
+        vPinMameService.clearValidationsCache(gameEmulators);
       }).start();
     }
   }
