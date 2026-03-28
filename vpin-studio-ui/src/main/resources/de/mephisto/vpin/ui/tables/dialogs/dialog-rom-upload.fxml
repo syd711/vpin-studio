@@ -44,7 +44,7 @@
                   <Insets bottom="6.0" />
                </BorderPane.margin>
                <children>
-                  <Label styleClass="preference-description" text="The selected zip files will be uploaded into the &quot;roms&quot; folder of VPinMAME." />
+                  <Label fx:id="descriptionLabel" styleClass="preference-description" text="The selected zip files will be uploaded into the &quot;roms&quot; folder of VPinMAME." />
                </children>
             </VBox>
          </top>

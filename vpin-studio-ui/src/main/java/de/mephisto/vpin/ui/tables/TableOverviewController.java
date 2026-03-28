@@ -2104,6 +2104,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     boolean vpxOrFpEmulator = emulator == null || emulator.isVpxEmulator() || emulator.isFpEmulator();
     boolean vpxEmulator = emulator == null || emulator.isVpxEmulator();
     boolean fpEmulator = emulator == null || emulator.isFpEmulator();
+    boolean mame = emulator == null || emulator.isMameEmulator();
 
     this.exportBtn.setVisible(Features.BACKUPS_ENABLED);
     this.importBtn.setVisible(!frontendType.equals(FrontendType.Standalone));
@@ -2115,7 +2116,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     this.vpxzBtn.setVisible(vpxEmulator);
     this.scanBtn.setVisible(vpxEmulator);
 
-    this.uploadsButtonController.updateVisibility(vpxOrFpEmulator, vpxEmulator, fpEmulator);
+    this.uploadsButtonController.updateVisibility(emulator);
 
     deleteSeparator.setVisible(vpxOrFpEmulator);
 

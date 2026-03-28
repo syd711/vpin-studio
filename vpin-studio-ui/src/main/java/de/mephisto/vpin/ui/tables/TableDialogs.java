@@ -156,8 +156,13 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static void onRomUploads(File file, Runnable finalizer) {
-    TableDialogs.openRomUploadDialog(file, () -> {
+  public static void onRomUploads(int emulatorId, File file, Runnable finalizer) {
+    GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getGameEmulator(emulatorId);
+    onRomUploads(gameEmulator, file, finalizer);
+  }
+
+  public static void onRomUploads(GameEmulatorRepresentation emulator, File file, Runnable finalizer) {
+    TableDialogs.openRomUploadDialog(emulator, file, () -> {
       EventManager.getInstance().notifyTablesChanged();
       Platform.runLater(() -> {
         if (finalizer != null) {
@@ -655,10 +660,11 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static void openRomUploadDialog(File file, Runnable finalizer) {
+  public static void openRomUploadDialog(GameEmulatorRepresentation emulator, File file, Runnable finalizer) {
     Stage stage = Dialogs.createStudioDialogStage(ROMUploadController.class, "dialog-rom-upload.fxml", "Rom Upload");
     ROMUploadController controller = (ROMUploadController) stage.getUserData();
     controller.setFile(stage, file, null, finalizer);
+    controller.setSelectedEmulator(emulator);
     stage.showAndWait();
   }
 
@@ -718,7 +724,7 @@ public class TableDialogs {
   }
 
   public static void openMediaDialog(@NonNull Stage parent, @Nullable FrontendMediaItemRepresentation item) {
-    if(item == null) {
+    if (item == null) {
       return;
     }
 

@@ -64,7 +64,7 @@ public class UploadAnalysisDispatcher {
                                        @NonNull UploaderAnalysis analysis, @Nullable Runnable finalizer) {
     switch (assetType) {
       case ROM: {
-        TableDialogs.onRomUploads(file, finalizer);
+        TableDialogs.onRomUploads(game != null ? game.getEmulatorId() : -1, file, finalizer);
         return;
       }
       case NV: {

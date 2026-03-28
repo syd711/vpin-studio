@@ -87,6 +87,7 @@ public class AltColorService implements InitializingBean {
             }
           }
           gameLifecycleService.notifyGameAssetsChanged(AssetType.ALT_COLOR, altColor.getName());
+          gameLifecycleService.notifyGameUpdated(game.getId());
           return true;
         }
       }

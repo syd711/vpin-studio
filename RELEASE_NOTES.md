@@ -1,6 +1,11 @@
 ## Release Notes 4.8.1
 
-- **DOFLinx**: Fixed upload for Zen ALTColor files.
+- **ALTColor**: Fixed upload for Zen ALTColor files.
+- **ZEN Games**: Fixed upload and detection of backglass files for Zen Studio games. I did not do my homework here and the whole feature needs probably a few more releases to mature.
+- **VPX Launcher**: Added auto-focus of the **Visual Pinball Player** window after a VPX table has been launched.
+
+---
+
 
 ## Release Notes 4.8.0
 

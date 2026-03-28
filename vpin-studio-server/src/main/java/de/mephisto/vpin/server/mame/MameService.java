@@ -1,7 +1,10 @@
 package de.mephisto.vpin.server.mame;
 
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
+import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,6 +57,22 @@ public class MameService {
       LOG.error("Error executing MAME command: {}", e.getMessage(), e);
     }
     return false;
+  }
+
+  public File installRom(UploadDescriptor uploadDescriptor, Game game, GameEmulator gameEmulator, File tempFile, UploaderAnalysis analysis) throws IOException {
+    File emuFolder = gameEmulator.getInstallationFolder();
+    File romsFolder = new File(emuFolder, "roms");
+    if (romsFolder.exists()) {
+      File out = new File(romsFolder, uploadDescriptor.getOriginalUploadFileName());
+
+      if (out.exists() && !out.delete()) {
+        throw new IOException("Failed to delete existing MAME rom " + out.getAbsolutePath());
+      }
+      org.apache.commons.io.FileUtils.copyFile(tempFile, out);
+      LOG.info("Installed MAME asset {}", out.getAbsolutePath());
+      return out;
+    }
+    throw new IOException("Failed to install MAME rom, roms folder not found.");
   }
 
   public String resolveMAMENameFor(String baseName) {
