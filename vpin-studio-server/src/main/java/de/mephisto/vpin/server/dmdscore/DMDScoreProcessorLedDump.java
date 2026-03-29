@@ -53,13 +53,6 @@ public class DMDScoreProcessorLedDump implements DMDScoreProcessor {
   }
 
   public static BufferedImage frameToImage(Frame frame) {
-    // Create a ARGB palette
-    int[] palette = frame.getPalette();
-    int[] argbPalette = new int[palette.length];
-    for (int i = 0; i < palette.length; i++) {
-      argbPalette[i] = (255 << 24) | palette[i];
-    }
-
     int width = frame.getWidth();
     int height = frame.getHeight();
     BufferedImage img = new BufferedImage(width * dotsize, height * dotsize, BufferedImage.TYPE_INT_RGB);
@@ -68,8 +61,8 @@ public class DMDScoreProcessorLedDump implements DMDScoreProcessor {
       int p = 0;
       for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
-          byte b = frame.getPlane()[p++];
-          Color ledColor = new Color(argbPalette[b]);
+          int argbcolor = (255 << 24) | frame.getPlane()[p++];
+          Color ledColor = new Color(argbcolor);
           Color brightColor = ledColor.brighter();
           Color alphaColor = new Color(ledColor.getRed(), ledColor.getGreen(), ledColor.getBlue(), 0);
 
