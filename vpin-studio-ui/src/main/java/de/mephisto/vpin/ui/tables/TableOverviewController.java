@@ -2103,15 +2103,13 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     getTableFilterController().setEmulator(emulator);
     boolean vpxOrFpEmulator = emulator == null || emulator.isVpxEmulator() || emulator.isFpEmulator();
     boolean vpxEmulator = emulator == null || emulator.isVpxEmulator();
-    boolean fpEmulator = emulator == null || emulator.isFpEmulator();
-    boolean mame = emulator == null || emulator.isMameEmulator();
 
     this.exportBtn.setVisible(Features.BACKUPS_ENABLED);
     this.importBtn.setVisible(!frontendType.equals(FrontendType.Standalone));
     this.importSeparator.setVisible(!frontendType.equals(FrontendType.Standalone));
     this.emulatorBtn.setDisable(emulator == null || emulator.getId() == -1);
-    this.exportBtn.setDisable(!emulator.isVpxEmulator());
-    this.exportBtn.setVisible(emulator.isVpxEmulator());
+    this.exportBtn.setDisable(!vpxEmulator);
+    this.exportBtn.setVisible(vpxEmulator);
     this.deleteBtn.setVisible(vpxOrFpEmulator || emulator.isMameEmulator());
     this.vpxzBtn.setVisible(vpxEmulator);
     this.scanBtn.setVisible(vpxEmulator);

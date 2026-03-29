@@ -594,7 +594,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       case serum: {
         String name = game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX;
         if (game.isZenGame()) {
-          String gameNameForAltSound = dofLinxService.getGameNameForAltSound(game);
+          String gameNameForAltSound = dofLinxService.getGameNameForAltColor(game);
           name = gameNameForAltSound + "." + UploaderAnalysis.SERUM_SUFFIX;
         }
         if (isValidationEnabled(game, CODE_ALT_COLOR_FILES_MISSING) && !altColor.contains(name)) {
@@ -605,7 +605,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       case cROMc: {
         String name = game.getRom() + "." + UploaderAnalysis.CROMC_SUFFIX;
         if (game.isZenGame()) {
-          String gameNameForAltSound = dofLinxService.getGameNameForAltSound(game);
+          String gameNameForAltSound = dofLinxService.getGameNameForAltColor(game);
           name = gameNameForAltSound + "." + UploaderAnalysis.CROMC_SUFFIX;
         }
         if (isValidationEnabled(game, CODE_ALT_COLOR_FILES_MISSING) && !altColor.contains(name)) {

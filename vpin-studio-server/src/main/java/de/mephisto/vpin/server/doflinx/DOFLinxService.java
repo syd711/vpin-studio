@@ -92,7 +92,7 @@ public class DOFLinxService implements InitializingBean, PreferenceChangedListen
   }
 
   @NonNull
-  public String getGameNameForAltSound(@NonNull Game game) {
+  public String getGameNameForAltColor(@NonNull Game game) {
     if (game.getEmulator().getType().equals(EmulatorType.ZenFX) || game.getEmulator().getType().equals(EmulatorType.PinballM)) {
       return FilenameUtils.getBaseName(game.getGameName()).replaceAll("Table_", "");
     }
@@ -101,11 +101,15 @@ public class DOFLinxService implements InitializingBean, PreferenceChangedListen
       GameEmulator emulator = game.getEmulator();
       List<TableDetails> tableDetailList = PUPGameImporter.read(emulator.getType(), emulator.getId());
       Optional<TableDetails> td = tableDetailList.stream().filter(t -> t.getGameName().equals(game.getGameName())).findFirst();
-      String name = game.getGameDisplayName().replaceAll(" ", "_");
+      String baseName = game.getGameDisplayName();
+      if (baseName.contains("(")) {
+        baseName = baseName.substring(0, baseName.indexOf("(")).trim();
+      }
+      String name = baseName.replaceAll(" ", "_");
       if (td.isPresent()) {
         TableDetails tableDetails = td.get();
         if (tableDetails.getManufacturer() != null) {
-          name = tableDetails.getManufacturer().toUpperCase() + "_" + name;
+          name = tableDetails.getManufacturer().toUpperCase().replaceAll(" ", "_") + "_" + name;
         }
       }
       return name;

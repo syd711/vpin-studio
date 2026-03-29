@@ -6,11 +6,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,7 +62,8 @@ public class PUPGameImporter {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        PUPGameExport pupGameExport = mapper.readValue(file, PUPGameExport.class);
+        String s = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+        PUPGameExport pupGameExport = mapper.readValue(s, PUPGameExport.class);
         List<PUPGame> gameExport = pupGameExport.getGameExport();
         for (PUPGame pupGame : gameExport) {
           result.add(pupGame.toTableDetails());

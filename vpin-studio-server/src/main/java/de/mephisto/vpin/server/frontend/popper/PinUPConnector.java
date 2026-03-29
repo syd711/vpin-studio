@@ -1592,9 +1592,13 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       return EmulatorType.ZenFX;
     }
 
+    //do not mix up pinball m and pinball mania
+    if (emuName.toLowerCase().contains("mania")) {
+      return EmulatorType.OTHER;
+    }
+
     if (emuName.toLowerCase().contains("pinballm")
         || emuName.toLowerCase().contains("pinball m")
-        || !emuName.toLowerCase().contains("mania")
         || (launchScript != null && launchScript.toLowerCase().contains("pinballm"))) {
       return EmulatorType.PinballM;
     }

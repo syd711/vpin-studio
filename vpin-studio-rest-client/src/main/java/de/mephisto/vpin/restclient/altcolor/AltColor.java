@@ -14,6 +14,15 @@ public class AltColor {
   private List<String> files = new ArrayList<>();
   private List<String> backedUpFiles = new ArrayList<>();
   private boolean available = false;
+  private String folder;
+
+  public String getFolder() {
+    return folder;
+  }
+
+  public void setFolder(String folder) {
+    this.folder = folder;
+  }
 
   public boolean isAvailable() {
     return available;
