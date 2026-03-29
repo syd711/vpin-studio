@@ -27,7 +27,11 @@
                <content>
                   <VBox fx:id="popperPreferencesFields" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                      <children>
-                        <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Popper Settings" />
+                        <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="VPin Studio Popper Settings" />
+                              <CheckBox fx:id="autoStart" layoutX="10.0" layoutY="104.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Autostart PinUP Menu with VPin Studio Server" />
+                              <Label layoutX="10.0" layoutY="143.0" styleClass="checkbox-description" text="If enabled, the VPin Studio Server will start the Popper Menu on system boot. " textFill="WHITE" />
+                              <Label layoutX="10.0" layoutY="143.0" styleClass="checkbox-description" text="This means you do not need the auto-start for PinUP Popper anymore." textFill="WHITE" />
+                              <Label layoutX="10.0" layoutY="10.0" styleClass="preference-subtitle" text="Popper Settings" />
                         <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="These are settings that you can tweak behind the scenes of PinUP Popper." textFill="WHITE">
                            <VBox.margin>
                               <Insets top="12.0" />

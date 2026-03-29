@@ -2103,19 +2103,18 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     getTableFilterController().setEmulator(emulator);
     boolean vpxOrFpEmulator = emulator == null || emulator.isVpxEmulator() || emulator.isFpEmulator();
     boolean vpxEmulator = emulator == null || emulator.isVpxEmulator();
-    boolean fpEmulator = emulator == null || emulator.isFpEmulator();
 
     this.exportBtn.setVisible(Features.BACKUPS_ENABLED);
     this.importBtn.setVisible(!frontendType.equals(FrontendType.Standalone));
     this.importSeparator.setVisible(!frontendType.equals(FrontendType.Standalone));
     this.emulatorBtn.setDisable(emulator == null || emulator.getId() == -1);
-    this.exportBtn.setDisable(!emulator.isVpxEmulator());
-    this.exportBtn.setVisible(emulator.isVpxEmulator());
+    this.exportBtn.setDisable(!vpxEmulator);
+    this.exportBtn.setVisible(vpxEmulator);
     this.deleteBtn.setVisible(vpxOrFpEmulator || emulator.isMameEmulator());
     this.vpxzBtn.setVisible(vpxEmulator);
     this.scanBtn.setVisible(vpxEmulator);
 
-    this.uploadsButtonController.updateVisibility(vpxOrFpEmulator, vpxEmulator, fpEmulator);
+    this.uploadsButtonController.updateVisibility(emulator);
 
     deleteSeparator.setVisible(vpxOrFpEmulator);
 
@@ -2150,7 +2149,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     columnPUPPack.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPupPack() && Features.PUPPACKS_ENABLED);
     columnPinVol.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPinVol());
     columnAltSound.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnAltSound());
-    columnAltColor.setVisible((vpxMode || fx1Mode || fx3Mode || pinballMMode) && !assetManagerMode && uiSettings.isColumnAltColor());
+    columnAltColor.setVisible((vpxMode || fx1Mode || fx3Mode ) && !assetManagerMode && uiSettings.isColumnAltColor());
     columnPOV.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPov());
     columnTutorials.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnTutorial());
     columnINI.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnIni());

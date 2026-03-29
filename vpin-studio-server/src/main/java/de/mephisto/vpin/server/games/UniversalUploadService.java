@@ -23,7 +23,9 @@ import de.mephisto.vpin.server.dmd.DMDService;
 import de.mephisto.vpin.server.doflinx.DOFLinxService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.fp.FuturePinballService;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.highscores.HighscoreBackupService;
+import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.vpinmame.VPinMameRomAliasService;
 import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.music.MusicService;
@@ -63,6 +65,9 @@ public class UniversalUploadService {
 
   @Autowired
   private VPinMameService vPinMameService;
+
+  @Autowired
+  private MameService mameService;
 
   @Autowired
   private FuturePinballService futurePinballService;
@@ -108,6 +113,9 @@ public class UniversalUploadService {
 
   @Autowired
   private VpaService vpaService;
+
+  @Autowired
+  private FrontendService frontendService;
 
   public UploadDescriptor process(@RequestBody UploadDescriptor uploadDescriptor) {
     Thread.currentThread().setName("Universal Upload Thread");
@@ -329,7 +337,14 @@ public class UniversalUploadService {
       }
       case ROM: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.ROM) == null) {
-          vPinMameService.installRom(uploadDescriptor, game, gameEmulator, tempFile, analysis);
+          if (gameEmulator.isMameEmulator()) {
+            File file = mameService.installRom(uploadDescriptor, game, gameEmulator, tempFile, analysis);
+            int gameId = frontendService.importGame(file, gameEmulator.getId());
+            uploadDescriptor.setGameId(gameId);
+          }
+          else {
+            vPinMameService.installRom(uploadDescriptor, game, gameEmulator, tempFile, analysis);
+          }
           gameLifecycleService.notifyGameAssetsChanged(assetType, updatedAssetName);
         }
         break;
@@ -411,7 +426,7 @@ public class UniversalUploadService {
     }
 
     boolean replaced = false;
-    if(gameAssetFile != null) {
+    if (gameAssetFile != null) {
       if (gameAssetFile.exists()) {
         if (!gameAssetFile.delete()) {
           LOG.error("Failed to delete existing game asset file {}", gameAssetFile.getAbsolutePath());

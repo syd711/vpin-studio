@@ -55,7 +55,7 @@ public class WheelAugmenter {
     return backupWheelIcon;
   }
 
-  public void augment(File badgeFile) {
+  public void augment(File badgeFile, boolean rotate) {
     if (!wheelIcon.exists()) {
       LOG.error("Could not augment wheel icon {}, file does not exist.", wheelIcon.getAbsolutePath());
       return;
@@ -103,7 +103,9 @@ public class WheelAugmenter {
 
       //write large thumbnail
       BufferedImage thumbnail = ImageUtil.resizeImage(bufferedWheelImage, 225);
-      thumbnail = ImageUtil.rotateLeft(thumbnail);
+      if (rotate) {
+        thumbnail = ImageUtil.rotateLeft(thumbnail);
+      }
       ImageUtil.write(thumbnail, wheelIconThumbnail);
 
       //write small thumbnail
@@ -111,7 +113,8 @@ public class WheelAugmenter {
       ImageUtil.write(thumbnailSm, wheelIconThumbnailSm);
 
       LOG.info("Augmented {}", wheelIconThumbnail.getAbsolutePath());
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Wheel augmentation failed: {}", e.getMessage(), e);
     }
   }
@@ -121,7 +124,8 @@ public class WheelAugmenter {
       if (thumbsFolder.exists()) {
         FileUtils.deleteDirectory(thumbsFolder);
       }
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.info("Failed to reset thumbnails: {}", e.getMessage(), e);
     }
   }
@@ -130,7 +134,7 @@ public class WheelAugmenter {
     boolean b1 = deAugment(backupWheelIcon, wheelIcon);
     boolean b2 = deAugment(backupWheelIconThumbnail, wheelIconThumbnail);
     boolean b3 = deAugment(backupWheelIconThumbnailSm, wheelIconThumbnailSm);
-    if(b1 || b2 || b3) {
+    if (b1 || b2 || b3) {
       resetThumbs();
     }
   }
@@ -152,7 +156,8 @@ public class WheelAugmenter {
           LOG.error("Failed to delete backup file {}", backup.getAbsolutePath());
         }
         return true;
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.error("Failed to restore original wheel icon '{}': {}", target.getAbsolutePath(), e.getMessage(), e);
       }
     }

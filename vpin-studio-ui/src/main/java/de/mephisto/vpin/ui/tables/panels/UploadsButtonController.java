@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables.panels;
 
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
@@ -90,6 +91,7 @@ public class UploadsButtonController implements Initializable {
   private List<GameRepresentation> games = new ArrayList<>();
   private GameEmulatorRepresentation gameEmulator;
   private TablesController tablesController;
+  private GameEmulatorRepresentation emulator;
 
   @FXML
   public void onAltSoundUpload() {
@@ -113,7 +115,7 @@ public class UploadsButtonController implements Initializable {
 
   @FXML
   public void onRomsUpload() {
-    TableDialogs.onRomUploads(null, null);
+    TableDialogs.onRomUploads(emulator, null, null);
   }
 
   @FXML
@@ -272,13 +274,16 @@ public class UploadsButtonController implements Initializable {
     return this.games;
   }
 
-  public void setVisible(boolean b) {
-    this.root.setVisible(b);
-  }
+  public void updateVisibility(GameEmulatorRepresentation emulator) {
+    this.emulator = emulator;
+    boolean vpxEmulator = emulator.isVpxEmulator();
+    boolean vpxOrFpEmulator = emulator.isVpxEmulator() || emulator.isFpEmulator();
+    boolean fpEmulator = emulator.isFpEmulator();
+    boolean mameEmulator = emulator.isMameEmulator();
 
-  public void updateVisibility(boolean vpxOrFpEmulator, boolean vpxEmulator, boolean fpEmulator) {
-    this.uploadTableBtn.setVisible(vpxOrFpEmulator);
+    this.uploadTableBtn.setVisible(vpxOrFpEmulator || mameEmulator);
     altSoundUploadItem.setVisible(vpxEmulator);
+    backglassUploadItem.setVisible(vpxEmulator);
     altColorUploadItem.setVisible(vpxEmulator);
     dmdUploadItem.setVisible(vpxEmulator);
     fplItem.setVisible(fpEmulator);
@@ -290,7 +295,7 @@ public class UploadsButtonController implements Initializable {
     mediaUploadItem.setVisible(vpxOrFpEmulator);
     musicUploadItem.setVisible(vpxEmulator);
     cfgUploadItem.setVisible(vpxEmulator);
-    romsUploadItem.setVisible(vpxEmulator);
+    romsUploadItem.setVisible(vpxEmulator || mameEmulator);
     pupPackUploadItem.setVisible(vpxOrFpEmulator);
     bamCfgUploadItem.setVisible(fpEmulator);
   }

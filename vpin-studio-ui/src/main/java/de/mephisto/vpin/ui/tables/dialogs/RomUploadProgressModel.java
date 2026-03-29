@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.UploadProgressModel;
 import javafx.application.Platform;
@@ -33,6 +34,10 @@ public class RomUploadProgressModel extends UploadProgressModel {
       });
       progressResultModel.addProcessed();
       percentage++;
+
+      Platform.runLater(() -> {
+        EventManager.getInstance().notifyTableUploaded(descriptor);
+      });
 
       if (descriptor.getError() != null) {
         throw new Exception(descriptor.getError());

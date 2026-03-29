@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -386,6 +387,8 @@ public class ClientSettingsPreferencesController implements Initializable {
 
     List<GameEmulatorRepresentation> gameEmulators = Studio.client.getEmulatorService().getValidatedGameEmulators();
     List<GameEmulatorRepresentation> backglassGameEmulators = Studio.client.getEmulatorService().getBackglassGameEmulators();
+    gameEmulators.sort(Comparator.comparing(GameEmulatorRepresentation::getName));
+
     for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
       CheckBox checkBox = new CheckBox(gameEmulator.getName());
       checkBox.setUserData(gameEmulator);

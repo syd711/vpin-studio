@@ -1,6 +1,17 @@
 ## Release Notes 4.8.1
 
-- **DOFLinx**: Fixed upload for Zen ALTColor files.
+- **ZEN Games**:
+  - Fixed upload and detection of backglass files for Zen Studio games. I did not do my homework here and the whole feature needs probably a few more releases to mature.
+  - Fixed upload/correct naming for Zen ALTColor files.
+  - The ALTColor sidebar section and table column for PinballM is hidden now (Pinball M exclusively uses fullscreen scoreboards, not DMD, so there are no altcolor files there.).
+  - The ALTColor sidebar section shows also the ALTColor folder now. This should help to identify possible naming issue regaring Zen Studio games and ALT color files.
+- **MAME Games**: Added option not only to import existing ROMs, but also to upload new ones (which will also result in a game creation for the frontend).
+- **VPX Launcher**: Added auto-focus of the **Visual Pinball Player** window after a VPX table has been launched.
+- **Wheel Augmentation**: The augmented wheel rotation is skipped if the playfield is rotated already.
+- **Popper Settings**: Added auto-start option. If enabled the VPin Studio server will start the PinUPMenu.exe (for those who do no want to use the auto-start provided by Popper).
+
+---
+
 
 ## Release Notes 4.8.0
 

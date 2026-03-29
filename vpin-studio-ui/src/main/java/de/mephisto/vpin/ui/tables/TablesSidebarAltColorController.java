@@ -18,6 +18,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
@@ -77,6 +78,9 @@ public class TablesSidebarAltColorController implements Initializable {
 
   @FXML
   private Label errorText;
+
+  @FXML
+  private Label folderLabel;
 
   @FXML
   private Pane altColorRoot;
@@ -177,6 +181,8 @@ public class TablesSidebarAltColorController implements Initializable {
     nameLabel.setText("-");
     typeLabel.setText("-");
     filesLabel.setText("-");
+    folderLabel.setText("-");
+    folderLabel.setTooltip(null);
     restoreBtn.setText("Restore");
     errorBox.setVisible(false);
 
@@ -209,7 +215,8 @@ public class TablesSidebarAltColorController implements Initializable {
 
         List<String> files = altColor.getFiles();
         filesLabel.setText(String.join(", ", files));
-
+        folderLabel.setText(altColor.getFolder());
+        folderLabel.setTooltip(new Tooltip(altColor.getFolder()));
 
         List<ValidationState> validationStates = altColor.getValidationStates();
         errorBox.setVisible(!validationStates.isEmpty());

@@ -202,6 +202,7 @@ public class PUPGame {
     tableDetails.setLaunchCustomVar(this.LaunchCustomVar);
     tableDetails.setKeepDisplays(this.GKeepDisplays);
     tableDetails.setNumberOfPlayers(this.NumPlayers);
+    tableDetails.setManufacturer(this.getManufact());
     tableDetails.setCustom2(this.CUSTOM2);
     tableDetails.setCustom3(this.CUSTOM3);
     return tableDetails;

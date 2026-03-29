@@ -23,6 +23,7 @@ import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.validation.*;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
+import de.mephisto.vpin.server.doflinx.DOFLinxService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.highscores.HighscoreResolver;
 import de.mephisto.vpin.server.highscores.HighscoreService;
@@ -112,6 +113,9 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
   @Autowired
   private FolderLookupService folderLookupService;
+
+  @Autowired
+  private DOFLinxService dofLinxService;
 
   private ValidationSettings validationSettings;
   private IgnoredValidationSettings ignoredValidationSettings;
@@ -590,7 +594,8 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       case serum: {
         String name = game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX;
         if (game.isZenGame()) {
-          name = "pin2dmd." + UploaderAnalysis.SERUM_SUFFIX;
+          String gameNameForAltSound = dofLinxService.getGameNameForAltColor(game);
+          name = gameNameForAltSound + "." + UploaderAnalysis.SERUM_SUFFIX;
         }
         if (isValidationEnabled(game, CODE_ALT_COLOR_FILES_MISSING) && !altColor.contains(name)) {
           result.add(ValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, name));
@@ -600,7 +605,8 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       case cROMc: {
         String name = game.getRom() + "." + UploaderAnalysis.CROMC_SUFFIX;
         if (game.isZenGame()) {
-          name = "pin2dmd." + UploaderAnalysis.CROMC_SUFFIX;
+          String gameNameForAltSound = dofLinxService.getGameNameForAltColor(game);
+          name = gameNameForAltSound + "." + UploaderAnalysis.CROMC_SUFFIX;
         }
         if (isValidationEnabled(game, CODE_ALT_COLOR_FILES_MISSING) && !altColor.contains(name)) {
           result.add(ValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, name));

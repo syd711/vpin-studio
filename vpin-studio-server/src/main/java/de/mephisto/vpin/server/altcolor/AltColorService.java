@@ -87,6 +87,7 @@ public class AltColorService implements InitializingBean {
             }
           }
           gameLifecycleService.notifyGameAssetsChanged(AssetType.ALT_COLOR, altColor.getName());
+          gameLifecycleService.notifyGameUpdated(game.getId());
           return true;
         }
       }
@@ -105,7 +106,7 @@ public class AltColorService implements InitializingBean {
     File altColorFolder = null;
     if (game.isZenGame()) {
       File altColorFolderRoot = vPinMameService.getAltColorFolder();
-      altColorFolder = new File(altColorFolderRoot, dofLinxService.getGameNameForAltSound(game.getGameName()));
+      altColorFolder = new File(altColorFolderRoot, dofLinxService.getGameNameForAltColor(game));
     }
     else if (!StringUtils.isEmpty(game.getRomAlias()) && game.getEmulator() != null) {
       altColorFolder = getAltColorFolder(game, game.getRomAlias());
@@ -127,6 +128,7 @@ public class AltColorService implements InitializingBean {
       return altColor;
     }
 
+    altColor.setFolder(altColorFolder.getAbsolutePath());
     File[] altColorFiles = altColorFolder.listFiles((dir, name) -> new File(dir, name).isFile());
     if (altColorFiles != null && altColorFiles.length > 0) {
       altColor.setModificationDate(new Date(altColorFolder.lastModified()));
@@ -183,7 +185,7 @@ public class AltColorService implements InitializingBean {
     installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.VNI, "pin2dmd.vni");
 
     if (game.isZenGame()) {
-      String name = dofLinxService.getGameNameForAltSound(game.getGameName());
+      String name = dofLinxService.getGameNameForAltColor(game);
       installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.CRZ, name + "." + UploaderAnalysis.SERUM_SUFFIX);
       installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.CROMC, name + "." + UploaderAnalysis.CROMC_SUFFIX);
     }
@@ -215,13 +217,17 @@ public class AltColorService implements InitializingBean {
     if (folder != null) {
       String name = out.getName();
       try {
-        installAltColorFromFile(name, folder, out, "pin2dmd.pac");
-        installAltColorFromFile(name, folder, out, "pin2dmd.vni");
-        installAltColorFromFile(name, folder, out, "pin2dmd.pal");
+        String altColorName = "pin2dmd";
         if (game.isZenGame()) {
-          String targetName = dofLinxService.getGameNameForAltSound(game.getGameName());
-          installAltColorFromFile(name, folder, out, targetName + "." + UploaderAnalysis.SERUM_SUFFIX);
-          installAltColorFromFile(name, folder, out, targetName + "." + UploaderAnalysis.CROMC_SUFFIX);
+          altColorName = dofLinxService.getGameNameForAltColor(game);
+        }
+
+        installAltColorFromFile(name, folder, out, altColorName+ ".pac");
+        installAltColorFromFile(name, folder, out, altColorName+ ".vni");
+        installAltColorFromFile(name, folder, out, altColorName+ ".pal");
+        if (game.isZenGame()) {
+          installAltColorFromFile(name, folder, out, altColorName + "." + UploaderAnalysis.SERUM_SUFFIX);
+          installAltColorFromFile(name, folder, out, altColorName + "." + UploaderAnalysis.CROMC_SUFFIX);
         }
         else {
           installAltColorFromFile(name, folder, out, game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX);
