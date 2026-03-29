@@ -72,6 +72,9 @@ public class VPXZRepositoriesPreferencesController implements Initializable {
       else {
         WidgetFactory.showInformation(Studio.stage, "Ping Successful", "Version: " + ping.getVersion());
       }
+    }).onErrorLater(e -> {
+        testBtn.setDisable(false);
+        WidgetFactory.showAlert(Studio.stage, "Ping Failed", "An error occurred during the ping:", e.getMessage());
     });
   }
 
