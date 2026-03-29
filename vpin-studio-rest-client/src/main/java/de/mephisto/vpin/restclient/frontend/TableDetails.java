@@ -1,7 +1,5 @@
 package de.mephisto.vpin.restclient.frontend;
 
-import de.mephisto.vpin.restclient.tagging.TaggingUtil;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

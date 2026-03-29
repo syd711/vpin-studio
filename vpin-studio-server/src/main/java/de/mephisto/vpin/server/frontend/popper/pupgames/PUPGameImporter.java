@@ -12,14 +12,17 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PUPGameImporter {
   private final static Logger LOG = LoggerFactory.getLogger(PUPGameImporter.class);
 
+  private final static Map<String, List<TableDetails>> pupGames = new HashMap<>();
+
   public static List<TableDetails> read(EmulatorType emulatorType, int emulatorId) {
     List<TableDetails> result = new ArrayList<>();
-    LOG.info("Running pupgames importer for {}", emulatorType);
     switch (emulatorType) {
       case Zaccaria: {
         result.addAll(importPupGames("zaccaria.json"));
@@ -44,6 +47,11 @@ public class PUPGameImporter {
   }
 
   private static List<TableDetails> importPupGames(String filename) {
+    if (pupGames.containsKey(filename)) {
+      return pupGames.get(filename);
+    }
+
+    LOG.info("Running pupgames importer for {}", filename);
     List<TableDetails> result = new ArrayList<>();
     try {
       File file = new File(SystemInfo.RESOURCES, "pupgames/" + filename);
@@ -64,6 +72,7 @@ public class PUPGameImporter {
     catch (IOException e) {
       LOG.error("Failed to read pupgame file {}: {}", filename, e.getMessage(), e);
     }
+    pupGames.put(filename, result);
     return result;
   }
 }

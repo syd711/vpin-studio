@@ -216,13 +216,17 @@ public class AltColorService implements InitializingBean {
     if (folder != null) {
       String name = out.getName();
       try {
-        installAltColorFromFile(name, folder, out, "pin2dmd.pac");
-        installAltColorFromFile(name, folder, out, "pin2dmd.vni");
-        installAltColorFromFile(name, folder, out, "pin2dmd.pal");
+        String altColorName = "pin2dmd";
         if (game.isZenGame()) {
-          String targetName = dofLinxService.getGameNameForAltSound(game);
-          installAltColorFromFile(name, folder, out, targetName + "." + UploaderAnalysis.SERUM_SUFFIX);
-          installAltColorFromFile(name, folder, out, targetName + "." + UploaderAnalysis.CROMC_SUFFIX);
+          altColorName = dofLinxService.getGameNameForAltSound(game);
+        }
+
+        installAltColorFromFile(name, folder, out, altColorName+ ".pac");
+        installAltColorFromFile(name, folder, out, altColorName+ ".vni");
+        installAltColorFromFile(name, folder, out, altColorName+ ".pal");
+        if (game.isZenGame()) {
+          installAltColorFromFile(name, folder, out, altColorName + "." + UploaderAnalysis.SERUM_SUFFIX);
+          installAltColorFromFile(name, folder, out, altColorName + "." + UploaderAnalysis.CROMC_SUFFIX);
         }
         else {
           installAltColorFromFile(name, folder, out, game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX);

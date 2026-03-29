@@ -101,9 +101,14 @@ public class DOFLinxService implements InitializingBean, PreferenceChangedListen
       GameEmulator emulator = game.getEmulator();
       List<TableDetails> tableDetailList = PUPGameImporter.read(emulator.getType(), emulator.getId());
       Optional<TableDetails> td = tableDetailList.stream().filter(t -> t.getGameName().equals(game.getGameName())).findFirst();
+      String name = game.getGameDisplayName().replaceAll(" ", "_");
       if (td.isPresent()) {
-        return td.get().getManufacturer().toUpperCase() + "_" + game.getGameDisplayName().replaceAll(" ", "_");
+        TableDetails tableDetails = td.get();
+        if (tableDetails.getManufacturer() != null) {
+          name = tableDetails.getManufacturer().toUpperCase() + "_" + name;
+        }
       }
+      return name;
     }
     return game.getRom();
   }

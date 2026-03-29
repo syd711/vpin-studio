@@ -1594,6 +1594,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
     if (emuName.toLowerCase().contains("pinballm")
         || emuName.toLowerCase().contains("pinball m")
+        || !emuName.toLowerCase().contains("mania")
         || (launchScript != null && launchScript.toLowerCase().contains("pinballm"))) {
       return EmulatorType.PinballM;
     }

@@ -4,7 +4,6 @@ import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.server.frontend.GameEntry;
 import de.mephisto.vpin.server.games.GameEmulator;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;

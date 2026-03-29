@@ -786,7 +786,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
     titledPaneDMD.setVisible(vpxMode);
     titledPaneMame.setVisible(vpxMode);
     titledPaneVps.setVisible(vpxMode || mMode || fx1Mode || fx3Mode || fpMode);
-    titledPaneAltColor.setVisible(vpxMode || fx1Mode || fx3Mode || mMode);
+    titledPaneAltColor.setVisible(vpxMode || fx1Mode || fx3Mode);
     titledPaneScriptDetails.setVisible(vpxMode);
 
     if (!getTableOverviewController().isAssetManagerMode()) {
