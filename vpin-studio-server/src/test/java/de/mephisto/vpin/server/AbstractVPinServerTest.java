@@ -131,6 +131,7 @@ abstract public class AbstractVPinServerTest {
     systemService.setFrontendType(frontendType);
     // notify frontendService 
     frontendService.afterPropertiesSet();
+    System.setProperty("java.awt.headless", "true");
     setupSystem();
   }
 

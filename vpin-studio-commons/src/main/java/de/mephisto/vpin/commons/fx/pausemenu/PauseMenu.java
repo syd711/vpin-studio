@@ -107,6 +107,10 @@ public class PauseMenu extends Application {
 
   public void loadPauseMenu() {
     try {
+      if (GraphicsEnvironment.isHeadless()) {
+        return;
+      }
+
       Stage pauseMenuStage = new Stage();
       pauseMenuStage.setTitle("VPin UI");
       pauseMenuStage.initStyle(StageStyle.TRANSPARENT);
