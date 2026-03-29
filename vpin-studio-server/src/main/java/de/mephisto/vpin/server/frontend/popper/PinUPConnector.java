@@ -2700,7 +2700,8 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   @EventListener(ApplicationReadyEvent.class)
   public void onApplicationReady() {
     PopperSettings settings = getSettings();
-    if (settings.isAutoStart() && getFrontend().getFrontendType().equals(FrontendType.Popper)) {
+    //settings can be null for some t
+    if (settings != null && settings.isAutoStart() && getFrontend().getFrontendType().equals(FrontendType.Popper)) {
       File popperFolder = systemService.getPinupInstallationFolder();
       File popperMenu = new File(popperFolder, "PinUpMenu.exe");
       if (popperMenu.exists()) {
