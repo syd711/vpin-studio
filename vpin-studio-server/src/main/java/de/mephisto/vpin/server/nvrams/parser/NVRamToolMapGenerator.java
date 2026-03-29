@@ -62,7 +62,7 @@ public class NVRamToolMapGenerator {
       // generate the name of the score
       String label = sc.getLabel();
       String shortLabel;
-      if (label != null && !StringUtils.containsIgnoreCase(label, "Highest Score")) {
+      if (label != null && !StringUtils.equalsAnyIgnoreCase(label, "Highest Scores", "High Scores")) {
         long occurrence = occursMap.get(label);
         label = capitalize(label);
         shortLabel = abbreviate(label);
@@ -109,8 +109,12 @@ public class NVRamToolMapGenerator {
 
     for (Entry<String, SearchResult> sr : checksums.entrySet()) {
       String label = sr.getKey();
+      label = capitalize(label);
       SearchResult result = sr.getValue();
       checksums16.add(createMapping(label, result.scorePosition, result.scorePosition + result.scoreLength, useHexForPosition));
+    }
+    if (checksums16.size() > 0) {
+      map.add("checksum16", checksums16);
     }
 
     writeMap(rom, map);

@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,6 +31,8 @@ import de.mephisto.vpin.server.nvrams.parser.SimpleLogger.LEVEL;
 import de.mephisto.vpin.server.pinemhi.PINemHiService;
 
 /**
+ * A tool that "guess" a nvram map by taking a nvram file, the result of the pinemhi decoding 
+ * and guess the map by searching scores and initials in the nvram
  */
 public class NVRamToolDecoder {
   private final static SimpleCaptureLogger LOG = //LoggerFactory.getLogger(NVRamToolDecoder.class);
@@ -43,7 +44,7 @@ public class NVRamToolDecoder {
   private static ScoringDB scoringDB;
   private static VPS vps;
 
-  File _mainFolder = new File("./testsystem/vPinball/VisualPinball/VPinMAME/nvram/");
+  File mainFolder = new File("./testsystem/vPinball/VisualPinball/VPinMAME/nvram/");
 
   static {
     scoringDB = ScoringDB.load();
@@ -53,15 +54,15 @@ public class NVRamToolDecoder {
 
   public static void main(String[] args) throws Exception {
     NVRamToolDecoder decoder = new NVRamToolDecoder();
-    //decoder.decodeAll();  
+    decoder.decodeAll();  
     //decoder.decodeFully("gladiatr", null);
     //decoder.decodeFully("godzilla", "Godzilla (Sega 1998)"); 
-    decoder.decodeFully("afm_113b", "Attack from Mars (Bally 1995)"); 
+    //decoder.decodeFully("afm_113b", "Attack from Mars (Bally 1995)"); 
   }
 
   private void decodeAll() throws Exception {
 
-    Files.list(_mainFolder.toPath()).forEach(p -> {
+    Files.list(mainFolder.toPath()).forEach(p -> {
       String rom = FilenameUtils.getBaseName(p.getFileName().toString());
       try {
         if (!rom.endsWith(".nv")) {
@@ -76,7 +77,7 @@ public class NVRamToolDecoder {
   }
 
   private void decodeFully(String rom, String tablename) throws Exception {
-    File entry = new File(_mainFolder, rom + ".nv");
+    File entry = new File(mainFolder, rom + ".nv");
 
     decode(entry, rom, tablename);
 
@@ -200,11 +201,14 @@ public class NVRamToolDecoder {
     boolean[] used = new boolean[bytes.length];
     LinkedHashMap<Score, SearchResult> selectedScores = new LinkedHashMap<>();
 
+    Score previousScore = null;
+    SearchResult previousResult = null;
+
     for (int s = 0; s < scores.size(); s++) {
       final Score sc = scores.get(s);
       final int scPos = s;
 
-        LOG.warn("...checking score \"{}\", position {}", sc, scPos);
+      LOG.warn("...checking score \"{}\", position {}", sc, scPos);
 
       // search using INITIALS followed by SCORE pattern
       SearchResult result = search(bytes, sc.getPlayerInitials(), sc.getScore(), MAX_LENGTH);
@@ -233,68 +237,92 @@ public class NVRamToolDecoder {
           return true;
         });
 
+        final Score _previousScore = previousScore;
+        final SearchResult _previousResult = previousResult;
         result = findOrContinue(initials, positions, () -> {
-          LOG.warn("  Several positions, check with alternative nvrams..");
-          // check in alternative nvrams
-          for (File testFolder : testFolders) {
-            File altentry = new File(testFolder, rom + ".nv");
-            // check that the file exists
-            if (!altentry.exists()) {
-              continue;
-            }
-
-            LOG.warn("    check with nvram {}...", altentry.getAbsolutePath());
-
-            // parse and cache for alternative nvrams
-            List<Score> altscores = cacheScores.get(altentry);
-            if (altscores == null) {
-              altscores = getScoresFromPinemhi(altentry, rom, false);
-              cacheScores.put(altentry, altscores);
-            }
-            // check nvrams are compatible, else ignore
-            if (altscores.size() == scores.size()) {
-              // get the associated scores in this alternate nvram
-              Score altsc = altscores.get(scPos);
-              // Load alternate nvram file
-              try {
-                byte[] altbytes = Files.readAllBytes(altentry.toPath());
-
-                // eliminate in initials and positions the ones that are not common
-                for (Iterator<Integer> it = initials.iterator(); it.hasNext();) {
-                  Integer pos = it.next();
-                  if (!StringUtils.equals(decodeString(altbytes, pos, altsc.getPlayerInitials().length()), altsc.getPlayerInitials())) {
-                    it.remove();
-                  }
-                }
-                for (Iterator<SearchResult> it = positions.iterator(); it.hasNext();) {
-                  SearchResult pos = it.next();
-                  if (decodeBCD(altbytes, pos.scorePosition, pos.scoreLength) != altsc.getScore()) {
-                    it.remove();
-                  }
-                }
-              }
-              catch (IOException ioe) {
-                LOG.warn("error while reading nvram {}, ignored and continue...", altentry.getAbsolutePath());
+          // if there is a position contiguous to the previous one for same score label, use this one
+          List<Integer> filteredInitials = initials;
+          if (_previousResult != null) {
+            for (Integer pos : initials) {
+              if (_previousResult.initialPosition + 3 == pos) {
+                filteredInitials = List.of(pos);
+                break;
               }
             }
-            else {
-              LOG.warn("nvram {} has different number of pinhemi scores {} compared to {}, ignored and continue...", altentry.getAbsolutePath(), altscores.size(), scores.size());
-              getScoresFromPinemhi(altentry, rom, true);
+            for (SearchResult pos : positions) {
+              if (_previousResult.scorePosition + _previousResult.scoreLength + 1 == pos.scorePosition 
+                    && StringUtils.equals(sc.getLabel(), _previousScore.getLabel())) {
+                LOG.warn("  Find a contiguous score for same regions {}, use it..", sc.getLabel());
+                return findOrContinue(filteredInitials, List.of(pos), null);
+              }
             }
           }
-          //-------------------------------------------
-          return findOrContinue(initials, positions, () -> {
-            LOG.warn("  >>>>>>>> still different positions so return first one...");
-            SearchResult res = positions.get(0);
-            if (initials.size() > 0) {
-              res.initialPosition = initials.get(0);
+          // else continue in trying to eliminate scores that have another position in alternative nvram files
+          return findOrContinue(filteredInitials, positions, () -> {
+            LOG.warn("  Several positions, check with alternative nvrams..");
+            // check in alternative nvrams
+            for (File testFolder : testFolders) {
+              File altentry = new File(testFolder, rom + ".nv");
+              // check that the file exists
+              if (!altentry.exists()) {
+                continue;
+              }
+
+              LOG.warn("    check with nvram {}...", altentry.getAbsolutePath());
+
+              // parse and cache for alternative nvrams
+              List<Score> altscores = cacheScores.get(altentry);
+              if (altscores == null) {
+                altscores = getScoresFromPinemhi(altentry, rom, false);
+                cacheScores.put(altentry, altscores);
+              }
+              // check nvrams are compatible, else ignore
+              if (altscores.size() == scores.size()) {
+                // get the associated scores in this alternate nvram
+                Score altsc = altscores.get(scPos);
+                // Load alternate nvram file
+                try {
+                  byte[] altbytes = Files.readAllBytes(altentry.toPath());
+
+                  // eliminate in initials and positions the ones that are not common
+                  for (Iterator<Integer> it = initials.iterator(); it.hasNext();) {
+                    Integer pos = it.next();
+                    if (!StringUtils.equals(decodeString(altbytes, pos, altsc.getPlayerInitials().length()), altsc.getPlayerInitials())) {
+                      it.remove();
+                    }
+                  }
+                  for (Iterator<SearchResult> it = positions.iterator(); it.hasNext();) {
+                    SearchResult pos = it.next();
+                    if (decodeBCD(altbytes, pos.scorePosition, pos.scoreLength) != altsc.getScore()) {
+                      it.remove();
+                    }
+                  }
+                }
+                catch (IOException ioe) {
+                  LOG.warn("error while reading nvram {}, ignored and continue...", altentry.getAbsolutePath());
+                }
+              }
+              else {
+                LOG.warn("nvram {} has different number of pinhemi scores {} compared to {}, ignored and continue...", altentry.getAbsolutePath(), altscores.size(), scores.size());
+                getScoresFromPinemhi(altentry, rom, true);
+              }
             }
-            return res;
+            //-------------------------------------------
+            return findOrContinue(initials, positions, () -> {
+              LOG.warn("  >>>>>>>> still different positions so return first one...");
+              SearchResult res = positions.get(0);
+              if (initials.size() > 0) {
+                res.initialPosition = initials.get(0);
+              }
+              return res;
+            });
           });
         });
       }
       if (result != null) {
         selectedScores.put(sc, result);
+        previousScore = sc;
+        previousResult = result;
         // now flagged the bytes consumed by this result so that next scores don't use them
         if (result.initialPosition >= 0) {
           for (int i = 0; i < 3; i++) {
@@ -341,7 +369,10 @@ public class NVRamToolDecoder {
     }
     else if (positions.size() == 1) {
       SearchResult result = positions.get(0);
-      if (initials.size() == 0) {
+      if (initials == null) {
+        // nothing to do, do not even write message
+      }
+      else if (initials.size() == 0) {
         LOG.warn(">>>>>>> No position for initials ???");
       } 
       else if (initials.size() == 1) {
@@ -354,7 +385,7 @@ public class NVRamToolDecoder {
       return result;
     }
     else {
-      return continueChain.get();
+      return continueChain != null? continueChain.get() : null;
     }
   }
 
@@ -381,45 +412,51 @@ public class NVRamToolDecoder {
 
   //--------------------------------------------------
 
-  private LinkedHashMap<String, SearchResult> parseChecksum(byte[] bytes, LinkedHashMap<Score,SearchResult> selectedScores) {
-    LinkedHashMap<String, Integer> checksums = new LinkedHashMap<>();
-    
-    // first loop, calculate the checksums by label pf scores
-    for (Map.Entry<Score,SearchResult> e : selectedScores.entrySet()) {
-      Score score = e.getKey();
-      SearchResult positions = e.getValue();
-
-      String label = StringUtils.defaultString(score.getLabel(), "High Scores");
-      Integer sum = ObjectUtils.defaultIfNull(checksums.get(label), 0xFFFF);
-      for (int i = positions.initialPosition; i < positions.initialPosition + 3; i++) {
-        sum -= bytes[i] & 0XFF;
-      }
-      for (int i = positions.scorePosition; i < positions.scorePosition + positions.scoreLength; i++) {
-        sum -= bytes[i] & 0xFF;
-      }
-      checksums.put(label, sum);
-    }
-
+  private LinkedHashMap<String, SearchResult> parseChecksum(byte[] bytes, LinkedHashMap<Score, SearchResult> selectedScores) {
     LinkedHashMap<String, SearchResult> results = new LinkedHashMap<>();
-    for (Map.Entry<String, Integer> e : checksums.entrySet()) {
+
+    // group all scores by the label of the score
+    Map<String, List<Score>> groupByLabel = selectedScores.keySet().stream()
+              .collect(Collectors.groupingBy(sc -> StringUtils.defaultString(sc.getLabel(), "High Scores"), Collectors.toList()));
+
+    for (Map.Entry<String, List<Score>> e : groupByLabel.entrySet()) {
       String label = e.getKey();
-      Integer checksum = e.getValue();
+      List<Score> scores = e.getValue();
 
-      List<SearchResult> res = searchNumber(bytes, checksum, 2, 2, false);
-      SearchResult checksumPos = null;
-      if (res.size() == 0) {
-        LOG.warn("No checksum found for '{}'", label);
-      }
-      else if (res.size() == 1) {
-        checksumPos = res.get(0);
-      }
-      else if (res.size() > 1) {
-        LOG.warn(">>> Several position for checksum for '{}'', use first one", label);
-        checksumPos = res.get(0);
+      int startPosition = Integer.MAX_VALUE;
+      int endPosition = 0;
+      for (Score sc : scores) {
+        SearchResult res = selectedScores.get(sc);
+        startPosition = Math.min(startPosition, res.initialPosition);
+        startPosition = Math.min(startPosition, res.scorePosition);
+
+        endPosition = Math.max(endPosition, res.initialPosition + 3);
+        endPosition = Math.max(endPosition, res.scorePosition + res.scoreLength);
       }
 
-      if (checksumPos != null) {
+      // calculate checksum of the region
+      int sum = 0xFFFF;
+      for (int i = startPosition; i < endPosition; i++) {
+          sum -= bytes[i] & 0XFF;
+      }
+
+      // try to find the checksum at the end of the section, it could be some extra contiguous digits
+      while (sum != decodeInt(bytes, endPosition, 2) && endPosition < bytes.length) {
+        sum -= bytes[endPosition] & 0XFF;
+        endPosition++;
+      }
+      if (endPosition < bytes.length) {
+        // we found our checksum 
+        SearchResult checksumPos = new SearchResult(-1, startPosition, endPosition - startPosition + 1);
         results.put(label, checksumPos);
+      }
+      else {
+        // search our checksum within the file
+        List<SearchResult> res = searchNumber(bytes, sum, 2, 2, false);
+        SearchResult checksumPos = findOrContinue(null, res, null);
+        if (checksumPos != null) {
+          results.put(label, checksumPos);
+        }
       }
     }
     return results;
