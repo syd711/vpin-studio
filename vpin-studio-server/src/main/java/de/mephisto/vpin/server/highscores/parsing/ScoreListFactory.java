@@ -28,6 +28,13 @@ public class ScoreListFactory {
   }
 
   public static List<Score> create(@NonNull String raw, @NonNull Date createdAt, @Nullable Game game, @NonNull ScoringDB scoringDB) {
+    return create(raw, createdAt, game, scoringDB, false);
+  }
+
+  /**
+   * The parseAll flag, when false (by default), filters on high scores only
+   */
+  public static List<Score> create(@NonNull String raw, @NonNull Date createdAt, @Nullable Game game, @NonNull ScoringDB scoringDB, boolean parseAll) {
     List<Score> scores = new ArrayList<>();
 
     try {
@@ -42,13 +49,13 @@ public class ScoreListFactory {
         for (ScoreListAdapter adapter : adapters) {
           if (adapter.isApplicable(game)) {
 //            LOG.info("Using score list adapter {}", adapter.getClass().getSimpleName());
-            return adapter.getScores(game, createdAt, lines, titles);
+            return adapter.getScores(game, createdAt, lines, titles, parseAll);
           }
         }
       }
       // fall back adapter 
       DefaultAdapter adapter = new DefaultAdapter();
-      return adapter.getScores(game, createdAt, lines, titles);
+      return adapter.getScores(game, createdAt, lines, titles, parseAll);
     }
     catch (Exception e) {
       LOG.error("Failed to parse highscore: {}\nRaw Data:\n==================================\n{}", e.getMessage(), raw, e);

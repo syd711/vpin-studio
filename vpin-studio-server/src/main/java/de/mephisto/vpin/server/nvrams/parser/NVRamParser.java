@@ -4,15 +4,15 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.mephisto.vpin.server.nvrams.parser.NVRamParser;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 
 import org.apache.commons.lang3.ObjectUtils;
@@ -37,8 +37,10 @@ public class NVRamParser {
   private final static Logger LOG = LoggerFactory.getLogger(NVRamParser.class);
 
   public String mapRoot = "https://github.com/tomlogic/pinmame-nvram-maps/raw/refs/heads/main/";
+  public String platformRoot = "c:/temp/_NVRAMS/";
 
   private Map<String, String> cacheMapForRom;
+  private Map<String, String> cacheMapForPlatform;
   private Map<String, String> cacheRomNames;
 
   private Map<String, NVRamMap> cacheNVRamMap = new HashMap<>();
@@ -56,25 +58,8 @@ public class NVRamParser {
   public NVRamParser(String root) {
     this.mapRoot = root;
   }
-
-  public NVRamMap getMap(String nvPath, @Nullable String rom) throws IOException {
-    //nvPath being possibly a full path, extract just the filename
-    String nvramName = new File(nvPath).getName();
-    // calculate rom if not forced
-    if (rom == null) {
-      rom = nvramName;
-      int dotIndex = rom.lastIndexOf('.');
-      if (dotIndex > 0) rom = rom.substring(0, dotIndex);
-      int hyphenIndex = rom.indexOf('-');
-      if (hyphenIndex > 0) rom = rom.substring(0, hyphenIndex);
-    }
-
-    // load the map from JSON
-    NVRamMap mapJson = mapForRom(nvramName, rom);
-    return mapJson;
-  }
-
-  private void processMappings(NVRamMap mapJson) throws IOException {
+ 
+  private void initMap(NVRamMap mapJson) throws IOException {
     NVRamMetadata metadata = mapJson.getMetadata();
     if (metadata == null) {
       throw new IllegalArgumentException("Unsupported map file format -- update to v0.6 or later");
@@ -84,30 +69,9 @@ public class NVRamParser {
     mapJson.setNVRamPlatform(platform);
 
     // checksums
-    createChecksum(mapJson, "checksum8", false, mapJson.getChecksum8());
-    createChecksum(mapJson, "checksum16", true, mapJson.getChecksum16());
+    createChecksum(mapJson, mapJson.getChecksum8(), false);
+    createChecksum(mapJson, mapJson.getChecksum16(), true);
   }    
-   
-  private void createChecksum(NVRamMap mapJson, String checksumType, boolean is16, List<NVRamMapping> checksums) {
-    if (checksums != null) {
-      for (NVRamMapping c : checksums) {
-        int start = c.getStart();
-        int end;
-        if (c.getEnd() != null) {
-          end = c.getEnd();
-        } else {
-          end = start + c.getLength() - 1;
-        }
-        int grouping = ObjectUtils.defaultIfNull(c.getGroupings(), end - start + 1);
-        while (start <= end) {
-          int entryEnd = start + grouping - 1;
-          mapJson.addChecksumEntry(new ChecksumMapping(start, entryEnd, c.getChecksum(),
-              c.getLabel(), is16, mapJson.isBigEndian()));
-          start = entryEnd + 1;
-        }
-      }
-    }
-  }
 
   public NVRamPlatform loadPlatform(NVRamMetadata metadata) throws IOException {
     String platformName = metadata.getPlatform();
@@ -129,11 +93,35 @@ public class NVRamParser {
       platform.setCpu("unknown");
       platform.setEndian(metadata.getEndian());
 
-      int size = BcdUtils.toInt(StringUtils.defaultString(metadata.getRamSize(), "0xFFFF"));
+      Integer size = null;
+      if (StringUtils.isNotEmpty(metadata.getRamSize())) {
+        size = BcdUtils.toInt(metadata.getRamSize());
+      }
       NVRamRegion region = NVRamRegion.createDefault("undefined", size);
       platform.addLayout(region);
     }
     return platform;
+  }
+   
+  private void createChecksum(NVRamMap mapJson, List<NVRamMapping> checksums, boolean is16) {
+    if (checksums != null) {
+      for (NVRamMapping c : checksums) {
+        int start = c.getStart();
+        int end;
+        if (c.getEnd() != null) {
+          end = c.getEnd();
+        } else {
+          end = start + c.getLength() - 1;
+        }
+        int grouping = ObjectUtils.defaultIfNull(c.getGroupings(), end - start + 1);
+        while (start <= end) {
+          int entryEnd = start + grouping - 1;
+          mapJson.addChecksumEntry(new ChecksumMapping(start, entryEnd, c.getChecksum(),
+              c.getLabel(), is16, mapJson.isBigEndian()));
+          start = entryEnd + 1;
+        }
+      }
+    }
   }
 
   //----------------------------------------
@@ -220,25 +208,82 @@ public class NVRamParser {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(in, new TypeReference<Map<String, String>>() {});
       });
-      LOG.info("Cache loaded with {} roms", cacheMapForRom.size());
+      LOG.info("Rom Cache loaded with {} roms", cacheMapForRom.size());
     }
+  }
+
+  private void ensureCacheMapForPlatform() throws IOException {
+    if (cacheMapForPlatform == null) {
+      String indexUrl = platformRoot + "platforms.json";
+      LOG.info("Load cache of platform map from {}", indexUrl);
+
+      //TODO move to real donwload
+      //cacheMapForPlatform  = download(indexUrl, in -> {
+      cacheMapForPlatform  = process(new File(indexUrl), in -> {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(in, new TypeReference<Map<String, String>>() {});
+      });
+      LOG.info("Platform Cache loaded with {} platforms", cacheMapForPlatform.size());
+    }
+  }
+
+  public String romFromNv(File nvPath) throws IOException {
+    String rom = nvPath.getName();
+    int dotIndex = rom.lastIndexOf('.');
+    if (dotIndex > 0) rom = rom.substring(0, dotIndex);
+    int hyphenIndex = rom.indexOf('-');
+    if (hyphenIndex > 0) rom = rom.substring(0, hyphenIndex);
+    return rom;
+  }
+
+
+  public String mapPathForRom(String rom) throws IOException {
+    ensureCacheMapForRom();
+    return cacheMapForRom.get(rom);
+  }
+
+  public String mapPathForPlatform(String platformname) throws IOException {
+    ensureCacheMapForPlatform();
+    return cacheMapForPlatform.entrySet().stream()
+        .filter(e -> StringUtils.equalsIgnoreCase(e.getKey(), platformname))
+        .map(e -> e.getValue())
+        .findFirst().orElse(null);
+  }
+
+  public NVRamMap getLocalMap(String rom) throws IOException {
+    File map = new File(NVRamToolMapGenerator.DECODED_ROOT, rom + ".map.json");
+    if (map.exists()) {
+      ObjectMapper mapper = new ObjectMapper();
+      try (FileInputStream in = new FileInputStream(map)) {
+        NVRamMap mapJson = mapper.readValue(in, NVRamMap.class);
+
+        // initiate mappings
+        if (mapJson != null) {
+          initMap(mapJson);
+
+          String romname = romName(rom);
+          mapJson.setRom(rom, romname);
+          mapJson.setMapPath(map.getAbsolutePath());
+          return mapJson;
+        }
+      }
+    }
+    // else not found
+    return null;
   }
 
   /**
    * Download the map of the given rom
    */
-  private NVRamMap mapForRom(String nvramName, String rom) throws IOException {
+ public NVRamMap getMap(@NonNull String rom) throws IOException {
     NVRamMap mapJson = cacheNVRamMap.get(rom);
     if (mapJson != null) {
       return mapJson;
     }
-    ensureCacheMapForRom();
-    String mapPath = cacheMapForRom.get(rom);
+    String mapPath = mapPathForRom(rom);
     if (mapPath != null) {
-      ;
       mapJson= getMapFromPath(mapPath);
       String romname = romName(rom);
-      mapJson.setNvramName(nvramName);
       mapJson.setRom(rom, romname);
       mapJson.setMapPath(mapPath);
 
@@ -260,7 +305,7 @@ public class NVRamParser {
 
     // initiate mappings
     if (mapJson != null) {
-      processMappings(mapJson);
+      initMap(mapJson);
     }
 
     return mapJson;
@@ -283,6 +328,15 @@ public class NVRamParser {
       }
     }
     return cacheRomNames.getOrDefault(rom, "(Unknown ROM " + rom + ")");
+  }
+
+  public <T> T process(File f, ProcessStream<T> consumer) throws IOException {
+    if (f != null && f .exists()) {
+      try (FileInputStream in = new FileInputStream(f)) {
+        return consumer.process(in);
+      }
+    }
+    return null;
   }
 
   public <T> T download(String u, ProcessStream<T> consumer) throws IOException {
@@ -343,12 +397,22 @@ public class NVRamParser {
       return;
     }
 
-    byte[] nvram = Files.readAllBytes(Path.of(nvramPath));
+    File nvramFile = new File(nvramPath);
+    if (!nvramFile.exists()) {
+      System.out.println("nvram is not present: " + nvramFile.getAbsolutePath());
+      return;
+    }
+
+    byte[] nvram = Files.readAllBytes(nvramFile.toPath());
 
     Locale locale = Locale.getDefault();
 
-    NVRamParser p = new NVRamParser(); //nvram, nvramPath, rom);
-    NVRamMap mapJson = p.getMap(nvramPath, rom);
+    NVRamParser p = new NVRamParser();
+
+    if (rom == null) {
+      rom = p.romFromNv(nvramFile);
+    }
+    NVRamMap mapJson = p.getMap(rom);
     SparseMemory memory = p.setNvram(mapJson, nvram);
 
     NVRamToolDump tool = new NVRamToolDump();

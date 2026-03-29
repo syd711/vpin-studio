@@ -3,6 +3,8 @@ package de.mephisto.vpin.server.highscores;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.highscores.parsing.ScoreListFactory;
 import de.mephisto.vpin.server.games.Game;
+
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 import java.util.Date;
@@ -61,7 +63,7 @@ public class ScoreListFactoryTest {
       "16 AUG, 2022 7:16 PM\n";
 
     List<Score> parse = ScoreListFactory.create(rawScore, new Date(), game, scoringDB);
-    assertEquals(parse.size(), 5);
+    assertEquals(5, parse.size());
   }
 
   @Test
@@ -98,6 +100,182 @@ public class ScoreListFactoryTest {
       "LON   5-WAY\n";
 
     List<Score> parse = ScoreListFactory.create(rawScore, new Date(), game, scoringDB);
-    assertEquals(parse.size(), 10);
+    assertEquals(10, parse.size());
+  }
+
+  @Test
+  public void testScoreListFactoryDefaultAdapterAll() {
+    Game game = new Game();
+    game.setRom("afm_113b");
+
+    String rawScore = "GRAND CHAMPION\n" +
+      "MFA       282 764 610\n" +
+      "\n" +
+      "HIGHEST SCORES\n" +
+      "1) BBB       277 437 190\n" +
+      "2) AAA       271 668 560\n" +
+      "3) CCC       220 466 160\n" +
+      "4) SLL       100 000 000\n" +
+      "\n" +
+      "MARTIAN CHAMPION\n" +
+      "LFS - 20\n" +
+      "MARTIANS DESTROYED\n" +
+      "\n" +
+      "RULER OF THE UNIVERSE\n" +
+      "TEX\n" +
+      "INAUGURATED\n" +
+      "24 SEP, 2023 1:27 PM\n" +
+      "\n" +
+      "BUY-IN HIGHEST SCORES\n" +
+      "1) DWF     5 000 000 000\n" +
+      "2) ASR     4 500 000 000\n" +
+      "3) BCM     4 000 000 000\n" +
+      "4) MOO     3 500 000 000";
+
+    List<Score> parse = ScoreListFactory.create(rawScore, new Date(), game, scoringDB);
+    assertEquals(5, parse.size());
+    assertScore("HIGHEST SCORES", "BBB", 277437190, null, parse.get(1));
+
+    parse = ScoreListFactory.create(rawScore, new Date(), game, scoringDB, true);
+    assertEquals(10, parse.size());
+    assertScore("HIGHEST SCORES", "AAA", 271668560, null, parse.get(2));
+    assertScore("MARTIAN CHAMPION", "LFS", 20, " MARTIANS DESTROYED", parse.get(5));
+    assertScore("BUY-IN HIGHEST SCORES", "DWF", 5000000000L, null, parse.get(6));
+  }
+
+  @Test
+  public void testScoreListFactoryDefaultAdapterMultipleChampions() {
+    Game game = new Game();
+    game.setRom("bdk_294");
+
+    String rawScore = "GRAND CHAMPION\n"  +
+      "EDY       293 023 150\n"  +
+      "\n"  +
+      "HIGH SCORES\n"  +
+      "#1 GAG       240 000 000\n"  +
+      "#2 LFS       200 000 000\n"  +
+      "#3 AGE       163 785 490\n"  +
+      "#4 M G       160 000 000\n"  +
+      "\n"  +
+      "BATMOBILE HURRY-UP CHAMPION\n"  +
+      "AGE        10 287 880\n"  +
+      "\n"  +
+      "BAT SIGNAL CHALLENGE CHAMPION\n"  +
+      "M R        25 000 000\n"  +
+      "\n"  +
+      "GOTHAM CITY CHAMPION\n"  +
+      "JLS        75 000 000";
+
+    List<Score> parse = ScoreListFactory.create(rawScore, new Date(), game, scoringDB);
+    assertEquals(parse.size(), 5);
+    assertScore("HIGH SCORES", "GAG", 240000000, null, parse.get(1));
+
+    parse = ScoreListFactory.create(rawScore, new Date(), game, scoringDB, true);
+    assertEquals(parse.size(), 8);
+    assertScore("HIGH SCORES", "GAG", 240000000, null, parse.get(1));
+    assertScore("BATMOBILE HURRY-UP CHAMPION", "AGE", 10287880, null, parse.get(5));
+    assertScore("BAT SIGNAL CHALLENGE CHAMPION", "M R", 25000000, null, parse.get(6));
+    assertScore("GOTHAM CITY CHAMPION", "JLS", 75000000, null, parse.get(7));
+  }
+
+  @Test
+  public void testScoreListFactoryDefaultAdapterNoScores() {
+    Game game = new Game();
+    game.setRom("wd_12");
+
+    String rawScore = "GRAND CHAMPION\n" +
+      "DAD     3.762.579.380\n" +
+      "\n" +
+      "HIGHEST SCORES\n" +
+      "1) DAD     3.696.155.350\n" +
+      "2) DAD     3.536.278.110\n" +
+      "3) BBB     2.157.734.760\n" +
+      "4) BSO     1.750.000.000\n" +
+      "\n" +
+      "THE ROOF CHAMPION\n" +
+      "BBB\n" +
+      "\n" +
+      "MIDNIGHT CHAMP\n" +
+      "XAQ";
+
+    List<Score> parse = ScoreListFactory.create(rawScore, new Date(), game, scoringDB);
+    assertEquals(parse.size(), 5);
+    assertScore("HIGHEST SCORES", "DAD", 3696155350L, null, parse.get(1));
+
+    parse = ScoreListFactory.create(rawScore, new Date(), game, scoringDB, true);
+    assertEquals(parse.size(), 5);
+    assertScore("HIGHEST SCORES", "DAD", 3696155350L, null, parse.get(1));
+    //assertScore("THE ROOF CHAMPION", "BBB", 0, null, parse.get(5));  // a score value is needed in the regexp
+  }
+
+  @Test
+  public void testScoreListFactoryDefaultAdapterReplayScore() {
+    Game game = new Game();
+    game.setRom("surfnsaf");
+
+    String rawScore = "REPLAY SCORE\n" +
+      "19.500.000\n" +
+      "\n" +
+      "TOP WATER SLIDERS\n" +
+      "1) TIM   101.000.000\n" +
+      "2) RJW    81.000.000\n" +
+      "3) JON    61.000.000\n" +
+      "4) DAV    41.000.000\n" +
+      "5) S K    21.000.000\n" +
+      "\n" +
+      "RAPIDS RECORD\n" +
+      "CGB - 9";
+
+    List<Score> parse = ScoreListFactory.create(rawScore, new Date(), game, scoringDB);
+    assertEquals(5, parse.size());
+    assertScore("TOP WATER SLIDERS", "TIM", 101000000, null, parse.get(0));
+
+    parse = ScoreListFactory.create(rawScore, new Date(), game, scoringDB, true);
+    assertEquals(6, parse.size());
+    assertScore("TOP WATER SLIDERS", "TIM", 101000000, null, parse.get(0));
+    assertScore("RAPIDS RECORD", "CGB", 9, null, parse.get(5));
+  }
+
+    @Test
+  public void testScoreListFactoryDefaultAdapterWithUnits() {
+    Game game = new Game();
+    game.setRom("st_161h");
+
+    String rawScore = "GRAND CHAMPION\n" +
+      "SSR        75.000.000\n" +
+      "\n" +
+      "HIGH SCORES\n" +
+      "#1 EDY        58.248.630\n" +
+      "#2 LON        55.000.000\n" +
+      "#3 GGF        40.000.000\n" +
+      "#4 JMR        30.000.000\n" +
+      "\n" +
+      "COMBO CHAMPION\n" +
+      "W   12 COMBOS\n" +
+      "\n" +
+      "WARP CHAMPION\n" +
+      "MDK   6 WARPS\n" +
+      "\n" +
+      "MEDALS CHAMPION\n" +
+      "XAQ   5M";
+
+    List<Score> parse = ScoreListFactory.create(rawScore, new Date(), game, scoringDB);
+    assertEquals(5, parse.size());
+
+    parse = ScoreListFactory.create(rawScore, new Date(), game, scoringDB, true);
+    assertEquals(8, parse.size());
+    assertScore("GRAND CHAMPION", "SSR", 75000000, null, parse.get(0));
+    assertScore("HIGH SCORES", "LON", 55000000, null, parse.get(2));
+    assertScore("COMBO CHAMPION", "W  ", 12, " COMBOS", parse.get(5));
+    assertScore("MEDALS CHAMPION", "XAQ", 5, "M", parse.get(7));
+  }
+
+  private void assertScore(String title, String initials, long value, String unit, Score score) {
+    assertEquals(title, score.getLabel());
+    assertEquals(initials, score.getPlayerInitials());
+    assertEquals(value, score.getScore());
+    if (StringUtils.isNotEmpty(unit)) {
+      assertEquals(unit, score.getSuffix());
+    }
   }
 }

@@ -143,7 +143,7 @@ public class NVRamParserTest {
     String testnv = TEST_ROOT + "nvram/" + rom + ".nv";
     parser.download(testnv, in -> {
       byte[] bytes = IOUtils.toByteArray(in);
-      NVRamMap mapJson = parser.getMap(rom + ".nv", null);
+      NVRamMap mapJson = parser.getMap(rom);
       SparseMemory memory = parser.setNvram(mapJson, bytes);
       consumer.accept(mapJson, memory);
       return null;

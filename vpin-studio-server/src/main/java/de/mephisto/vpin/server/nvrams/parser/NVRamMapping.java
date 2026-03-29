@@ -324,12 +324,12 @@ public class NVRamMapping extends NVRamObject {
     // use memory region's nibble setting
     int address = offsets().get(0);
     NVRamPlatform platform = mapJson.getRamPlatform();
-    List<NVRamRegion> layout = platform.getMemoryLayout();
-    for (NVRamRegion region : layout) {
-      int regionStart = BcdUtils.toInt(region.getAddress());
-      int regionEnd = regionStart + BcdUtils.toInt(region.getSize()) - 1;
-      if (regionStart <= address && address <= regionEnd) {
-        return region.getNibble();
+    if (platform != null) {
+      List<NVRamRegion> layout = platform.getMemoryLayout();
+      for (NVRamRegion region : layout) {
+        if (region.contains(address)) {
+          return region.getNibble();
+        }
       }
     }
     return Nibble.BOTH;

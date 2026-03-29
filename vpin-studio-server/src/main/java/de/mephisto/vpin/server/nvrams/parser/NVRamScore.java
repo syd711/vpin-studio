@@ -94,4 +94,8 @@ public class NVRamScore extends NVRamObject {
     }
     return lbl;
   }
+
+  public void reset(long value) {
+    //TODO implement here
+  }
 }

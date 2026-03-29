@@ -1,3 +1,8 @@
+## Release Notes 4.8.2
+
+- **DMD Score submission**: changed processing of frames to support colorized rgb frames
+
+
 ## Release Notes 4.8.1
 
 - **ZEN Games**:

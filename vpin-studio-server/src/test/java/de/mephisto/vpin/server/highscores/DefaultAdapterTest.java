@@ -18,15 +18,15 @@ public class DefaultAdapterTest{
     doTest(adapter, "#3 I N        30.000.000", 3, "I N", 30000000);
     doTest(adapter, "#10 MT             110.000.000", 10, "MT ", 110000000);
 
-    doTest(adapter, "1) RA    6.500.000", 1, "RA ", 6500000);
-    doTest(adapter, "2) P G    3.500.000", 2, "P G", 3500000);
-    doTest(adapter, "3) XAQ    161.000.000", 3, "XAQ", 161000000);
-    doTest(adapter, "4) TEX    16.000.000", 4, "TEX", 16000000);
+    doTest(adapter, "1) RA        161.000", 1, "RA ", 161000);
+    doTest(adapter, "2) P G     1.610.000", 2, "P G", 1610000);
+    doTest(adapter, "3) X      16.100.000", 3, "X  ", 16100000);
+    doTest(adapter, "4) TEX   161.000.000", 4, "TEX", 161000000);
 
     doTest(adapter, "1) TEX 16", 1, "TEX", 16);
-    doTest(adapter, "#1 DAD   267", 1, "DAD", 267);
+    doTest(adapter, "1# DAD   267", 1, "DAD", 267);
 
-    doTest(adapter, "1)       4?000?000", 1, "???", 4000000);
+    doTest(adapter, "1)       4.000.000", 1, "???", 4000000);
 
     doTest(adapter, "#1 ???   1.000.000", 1, "???", 1000000);
   }
@@ -38,10 +38,11 @@ public class DefaultAdapterTest{
     for (String sep : seps) {
       String line = input.replace(".", sep);
 
-      assertTrue(adapter.isScoreLine(line, index));
-      Score s = adapter.createScore(d, line, "Test '" + sep + "'", -1);
+      assertTrue(adapter.isScoreLine(line));
+      Score s = adapter.createScore(d, "TEST", line, "Test '" + sep + "'", -1);
       assertEquals(initials, s.getPlayerInitials());
       assertEquals(score, s.getScore());
+      assertEquals(index, s.getPosition());
     }
   }
 }

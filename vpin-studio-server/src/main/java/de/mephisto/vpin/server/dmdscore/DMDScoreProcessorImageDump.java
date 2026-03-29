@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.dmdscore;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 
 import javax.imageio.ImageIO;
 
@@ -32,13 +32,7 @@ public class DMDScoreProcessorImageDump implements DMDScoreProcessor {
   @Override
   public void onFrameReceived(Frame frame) {
 
-    // Create a ARGB palette
-    int[] palette = frame.getPalette();
-    int[] argbPalette = new int[palette.length];
-    for (int i = 0; i < palette.length; i++) {
-      argbPalette[i] = (255 << 24) | palette[i];
-    }
-    PixelFormat<ByteBuffer> format = PixelFormat.createByteIndexedInstance(argbPalette);
+    PixelFormat<IntBuffer> format = PixelFormat.getIntArgbInstance();
 
     // generate our new image
     int width = frame.getWidth();

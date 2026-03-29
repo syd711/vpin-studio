@@ -8,6 +8,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import de.mephisto.vpin.server.nvrams.parser.NVRamToolDecoder;
+import de.mephisto.vpin.server.nvrams.parser.NVRamToolMapGenerator;
 import de.mephisto.vpin.server.nvrams.parser.NVRamToolDecoder.SearchResult;
 
 /**
@@ -41,7 +42,7 @@ public class NVRamToolDecoderTest {
     };
 
     NVRamToolDecoder decoder = new NVRamToolDecoder();
-    List<SearchResult> results = decoder.searchNumber(data, 12345, -1, 16);
+    List<SearchResult> results = decoder.searchNumber(data, 12345, -1, 16, true);
 
     assertEquals(2, results.size());
 
@@ -52,5 +53,8 @@ public class NVRamToolDecoderTest {
     assertEquals(3, results.get(1).scoreLength);
   }
 
-
+  @Test
+  public void testCapitalize() {
+    assertEquals(" Martians Destroyed", NVRamToolMapGenerator.capitalize(" MARTIANS DESTROYED"));
+  }
 }

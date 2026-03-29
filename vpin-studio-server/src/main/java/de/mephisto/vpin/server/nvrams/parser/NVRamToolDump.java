@@ -16,8 +16,8 @@ public class NVRamToolDump {
 
   public String dump(NVRamMap mapJson, SparseMemory memory, Locale locale, boolean verifyChecksums) throws IOException {
     Appendable bld = new StringBuilder(3000);
-    printLine(bld, "Using map ../maps/" + mapJson.getMapPath() + " for " + mapJson.getNvramName());
-    printLine(bld, "Dumping known entries for " + mapJson.getNvramName() + " [" + mapJson.getRomName() + "]...");
+    printLine(bld, "Using map ../maps/" + mapJson.getMapPath() + " for rom " + mapJson.getRom());
+    printLine(bld, "Dumping known entries, rom is " + mapJson.getRomName() + "...");
 
     // audits and adjustments
     dumpMapOfMappings(bld, "audits", mapJson.getAudits(), mapJson, memory, locale);
@@ -42,8 +42,8 @@ public class NVRamToolDump {
 
     if (verifyChecksums) {
       for (ChecksumMapping checksum : mapJson.getChecksumEntries()) {
-        String calc = String.format(locale, checksum.getFormatting(), checksum.calculate(memory));
-        String stored = String.format(locale, checksum.getFormatting(), checksum.getValue(memory));
+        String calc = checksum.formatValue(checksum.calculate(memory), locale);
+        String stored = checksum.formatValue(checksum.getValue(memory), locale);
         if (!calc.equals(stored)) {
           printLine(bld, "checksum at 0x%X: %s != %s %s", locale,
               checksum.getStart(), calc, stored, checksum.getLabel());

@@ -7,9 +7,9 @@ public class DmdImageUtils {
 
   private final static Logger LOG = LoggerFactory.getLogger(DmdImageUtils.class);
 
-  public static byte[] toPlane(final FrameType type, final byte[] planes, final int bitLength, final int width, final int height) {
+  public static int[] toPlane(final FrameType type, final byte[] planes, final int[] palette, final int bitLength, final int width, final int height) {
     if (planesAreValid(planes, bitLength, width, height)) {
-      return joinPlanes(planes, bitLength, width, height);
+      return joinPlanes(planes, palette, bitLength, width, height);
     }
     LOG.warn("Planes data was not valid for frame type {}, bitLength: {}, dim: {} x {}, planesLength: {}", type, bitLength, width, height, planes.length);
     return null;
@@ -23,7 +23,7 @@ public class DmdImageUtils {
       planes.length * 8 / bitLength == (width * height);
   }
 
-  private static byte[] joinPlanes(final byte[] planes, final int bitLength, final int width, int height) {
+  private static int[] joinPlanes(final byte[] planes, final int[] palette, final int bitLength, final int width, int height) {
     final byte[] plane = new byte[width * height];
     final int planeSize = planes.length / bitLength;
 
@@ -48,7 +48,19 @@ public class DmdImageUtils {
             }
         }
     }
-    return plane;
+
+    //now resolve palette
+    final int[] pixels = new int[width * height];
+    for (int j = 0; j < height; j++) {
+      for (int i = 0; i < width; i++) {
+        int idx = plane[j * width + i];
+        if (idx >= 0 && idx < palette.length) {
+          pixels[j * width + i] = palette[idx];
+        }
+      }
+    }
+
+    return pixels;
   }
 
   private static int theBit(final byte b, final int pos) {

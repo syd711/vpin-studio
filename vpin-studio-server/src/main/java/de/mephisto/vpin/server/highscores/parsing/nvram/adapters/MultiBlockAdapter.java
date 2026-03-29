@@ -35,7 +35,7 @@ public class MultiBlockAdapter extends DefaultAdapter implements ScoreNvRamAdapt
     int index = 1;
     for (int i = 0; i < lines.size(); i++) {
       String line = lines.get(i);
-      if (isScoreLine(line, index) || isScoreLine(line, index - totalScores / 2)) {
+      if (isScoreLine(line)) {
         line = line.substring(1);
         line = index + line;
         builder.add(line);

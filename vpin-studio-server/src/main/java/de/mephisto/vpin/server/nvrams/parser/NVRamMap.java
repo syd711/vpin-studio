@@ -12,8 +12,6 @@ public class NVRamMap extends NVRamObject {
   /** The associated rom of this map */
   private String rom;
   private String romName;
-  /** The associated nv file */
-  private String nvramName;
   /** The relative path from root to the JSON file defintion */
   private String mapPath;
 
@@ -89,14 +87,6 @@ public class NVRamMap extends NVRamObject {
     this.romName = romName;
   }
 
-  public String getNvramName() {
-    return nvramName;
-  }
-
-  public void setNvramName(String nvramName) {
-    this.nvramName = nvramName;
-  }
-
   public String getMapPath() {
     return mapPath;
   }
@@ -132,9 +122,7 @@ public class NVRamMap extends NVRamObject {
     List<NVRamRegion> layout = platform != null ? platform.getMemoryLayout() : new ArrayList<>();
     for (NVRamRegion region : layout) {
       if (address != null) {
-        int start = BcdUtils.toInt(region.getAddress());
-        int end = start + BcdUtils.toInt(region.getSize()) - 1;
-        if (!(start <= address && address <= end)) continue;
+        if (!region.contains(address)) continue;
       }
       if (memType != null && !memType.equals(region.getType())) continue;
       return region;
