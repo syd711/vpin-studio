@@ -56,7 +56,7 @@ public class NVRamParserTest {
   @Test
   public void testOneDump() throws IOException {
     NVRamParser parser = new NVRamParser(MAPS_ROOT);
-    checkRom(parser, " t2_l8", true);
+    checkRom(parser, "t2_l8", true);
   }
 
   private void checkRom(NVRamParser parser, String rom, boolean runAssert) throws IOException {
