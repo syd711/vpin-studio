@@ -65,6 +65,16 @@ public class TableOverviewColumnSorter implements BaseColumnSorter<GameRepresent
           }
         };
       }
+      else if (column.equals(tableOverviewController.columnBackupDate)) {
+        comp = (o1, o2) -> {
+          if (o1.backupDate == null || o2.backupDate == null) {
+            return -1;
+          }
+          else {
+            return TableOverviewController.dateTimeFormat.format(o1.backupDate).compareTo(TableOverviewController.dateTimeFormat.format(o2.backupDate));
+          }
+        };
+      }
       else if (column.equals(tableOverviewController.columnB2S)) {
         comp = Comparator.comparing(o -> o.getGame().getDirectB2SPath() != null);
       }

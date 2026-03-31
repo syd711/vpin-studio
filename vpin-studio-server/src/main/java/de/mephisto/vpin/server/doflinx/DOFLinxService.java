@@ -105,6 +105,13 @@ public class DOFLinxService implements InitializingBean, PreferenceChangedListen
       if (baseName.contains("(")) {
         baseName = baseName.substring(0, baseName.indexOf("(")).trim();
       }
+
+      baseName = baseName.replace("Black Rose", "BlackRose");
+      baseName = baseName.replace("Theatre Of Magic", "TheatreOfMagic");
+      baseName = baseName.replace("The Champion Pub", "Champion Pub");
+      baseName = baseName.replace("The Party Zone", "Party Zone");
+      baseName = baseName.replace("Save Cracker", "SAVE CRACKER");
+
       String name = baseName.replaceAll(" ", "_");
       if (td.isPresent()) {
         TableDetails tableDetails = td.get();

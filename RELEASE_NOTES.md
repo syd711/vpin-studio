@@ -1,7 +1,14 @@
 ## Release Notes 4.8.2
 
-- **DMD Score submission**: changed processing of frames to support colorized rgb frames
-
+- **Competition Wheels**: Reverted "rotation check" because it was causing issues for some users. 
+- **DMD Score submission**: Changed processing of frames to support colorized rgb frames.
+- **Table Overview**: Added "Backup Date" column. Note that the column is hidden by default and needs to be enabled in the settings.
+- **Client Settings**: You can now hide Zen Studio emulators in the **Client Settings** too (the checkboxes were disabled previously). 
+- **ZEN/Zaccaria Games**:
+  - Improved detection of **pupgames** database changes: additional tables are now automatically added for Zen and Zaccaria emulators when the database is updated with the latest additions.
+  - **Zaccaria**: Updated **pupgames** database and added missing tables.
+  - **Pinball M**: Updated **pupgames** database and added missing tables.
+  - **Pinball FX3**: Manually fixed some special names used for ALT color files.
 
 ## Release Notes 4.8.1
 

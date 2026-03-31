@@ -56,8 +56,8 @@ public class ServerUpdatePreProcessing {
     PUP_GAMES.put("pinball_fx_b2s_mapping.json", 18179L);
     PUP_GAMES.put("pinball_fx3.json", 152207L);
     PUP_GAMES.put("pinball_fx3_b2s_mapping.json", 15554L);
-    PUP_GAMES.put("zaccaria.json", 209785L);
-    PUP_GAMES.put("pinball_m.json", 11143L);
+    PUP_GAMES.put("zaccaria.json", 317156L);
+    PUP_GAMES.put("pinball_m.json", 19923L);
     PUP_GAMES.put("pinball_m_b2s_mapping.json", 937L);
   }
 

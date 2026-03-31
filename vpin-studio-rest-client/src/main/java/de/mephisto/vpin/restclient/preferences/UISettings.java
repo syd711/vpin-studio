@@ -98,6 +98,7 @@ public class UISettings extends JsonSettings {
   private boolean columnVersion = true;
   private boolean columnVpsStatus = true;
   private boolean columnComment = false;
+  private boolean columnBackupDate = false;
   private boolean columnPatchVersion = false;
   private boolean columnTutorial = false;
 
@@ -183,6 +184,14 @@ public class UISettings extends JsonSettings {
 
   public void setHideFrontendLaunchQuestion(boolean hideFrontendLaunchQuestion) {
     this.hideFrontendLaunchQuestion = hideFrontendLaunchQuestion;
+  }
+
+  public boolean isColumnBackupDate() {
+    return columnBackupDate;
+  }
+
+  public void setColumnBackupDate(boolean columnBackupDate) {
+    this.columnBackupDate = columnBackupDate;
   }
 
   public boolean isColumnComment() {

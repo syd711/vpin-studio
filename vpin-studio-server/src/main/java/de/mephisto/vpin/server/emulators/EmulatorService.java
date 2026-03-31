@@ -216,9 +216,9 @@ public class EmulatorService implements InitializingBean, PreferenceChangedListe
     int count = 0;
     if (emulator.isPupGameImportSupported()) {
       List<Game> gamesByEmulator = frontendService.getGamesByEmulator(emulator.getId());
+      List<TableDetails> fullGameList = PUPGameImporter.read(emulator.getType(), emulator.getId());
       if (gamesByEmulator.isEmpty()) {
-        List<TableDetails> tableDetailList = PUPGameImporter.read(emulator.getType(), emulator.getId());
-        for (TableDetails tableDetails : tableDetailList) {
+        for (TableDetails tableDetails : fullGameList) {
           int gameId = frontendService.importGame(tableDetails);
           if (gameId > 0) {
             gameMediaService.autoMatch(gameId, false);
@@ -227,7 +227,28 @@ public class EmulatorService implements InitializingBean, PreferenceChangedListe
         }
         LOG.info("\"{}\" emulator synchronization finished, added {} games.", emulator.getName(), count);
       }
+      else if (gamesByEmulator.size() != fullGameList.size()) {
+        for (TableDetails tableDetails : fullGameList) {
+          if (!containsGame(gamesByEmulator, tableDetails)) {
+            LOG.info("Importing missing game for {}: {}", emulator.getName(), tableDetails.getGameDisplayName());
+            int gameId = frontendService.importGame(tableDetails);
+            if (gameId > 0) {
+              gameMediaService.autoMatch(gameId, false);
+              count++;
+            }
+          }
+        }
+      }
     }
+  }
+
+  private boolean containsGame(List<Game> gamesByEmulator, TableDetails tableDetails) {
+    for (Game game : gamesByEmulator) {
+      if (game.getGameFileName().equals(tableDetails.getGameFileName())) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public boolean clearCache() {

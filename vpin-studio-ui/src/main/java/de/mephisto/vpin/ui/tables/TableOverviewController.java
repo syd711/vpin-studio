@@ -211,6 +211,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnComment;
 
   @FXML
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnBackupDate;
+
+  @FXML
   private ComboBox<GameEmulatorRepresentation> emulatorCombo;
 
   @FXML
@@ -291,6 +294,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private boolean showVersionUpdates = true;
   private boolean showVpsUpdates = true;
   public static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+  public static final DateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
   private UISettings uiSettings;
   private VpsSettings vpsSettings;
@@ -1419,6 +1423,21 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       return label;
     }, this, true);
 
+    columnBackupDate.setSortable(true);
+    BaseLoadingColumn.configureColumn(columnBackupDate, (value, model) -> {
+      List<BackupDescriptorRepresentation> backupsForGame = client.getBackupService().getBackupsForGame(value.getId());
+      Label label = new Label("-");
+      if (!backupsForGame.isEmpty()) {
+        Collections.sort(backupsForGame, Comparator.comparing(BackupDescriptorRepresentation::getCreatedAt));
+        BackupDescriptorRepresentation backup = backupsForGame.get(0);
+        model.backupDate = backup.getCreatedAt();
+        label.setText(dateTimeFormat.format(backup.getCreatedAt()));
+      }
+      label.getStyleClass().add("default-text");
+      label.setStyle(getLabelCss(value));
+      return label;
+    }, this, true);
+
     columnPlaylists.setSortable(false);
     BaseLoadingColumn.configureColumn(columnPlaylists, (value, model) -> {
       HBox box = new HBox(3);
@@ -2149,7 +2168,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     columnPUPPack.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPupPack() && Features.PUPPACKS_ENABLED);
     columnPinVol.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPinVol());
     columnAltSound.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnAltSound());
-    columnAltColor.setVisible((vpxMode || fx1Mode || fx3Mode ) && !assetManagerMode && uiSettings.isColumnAltColor());
+    columnAltColor.setVisible((vpxMode || fx1Mode || fx3Mode) && !assetManagerMode && uiSettings.isColumnAltColor());
     columnPOV.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPov());
     columnTutorials.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnTutorial());
     columnINI.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnIni());
@@ -2159,6 +2178,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     columnDateModified.setVisible((mameMode || vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnDateModified());
     columnLauncher.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnLauncher());
     columnComment.setVisible((vpxMode || fpMode || zenEmulator || zaccariaMode) && !assetManagerMode && uiSettings.isColumnComment());
+    columnBackupDate.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnBackupDate());
     columnPlaylists.setVisible((vpxMode || fpMode || zenEmulator || zaccariaMode || mameMode) && !assetManagerMode && Features.PLAYLIST_ENABLED && uiSettings.isColumnPlaylists());
   }
 

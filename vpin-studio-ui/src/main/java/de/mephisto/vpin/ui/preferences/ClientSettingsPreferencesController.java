@@ -127,6 +127,8 @@ public class ClientSettingsPreferencesController implements Initializable {
   @FXML
   private CheckBox columnComment;
   @FXML
+  private CheckBox columnBackupDate;
+  @FXML
   private CheckBox columnHighscore;
   @FXML
   private CheckBox columnEmulator;
@@ -386,13 +388,12 @@ public class ClientSettingsPreferencesController implements Initializable {
     refreshNetworkStatusLabel(uiSettings.getWinNetworkShare());
 
     List<GameEmulatorRepresentation> gameEmulators = Studio.client.getEmulatorService().getValidatedGameEmulators();
-    List<GameEmulatorRepresentation> backglassGameEmulators = Studio.client.getEmulatorService().getBackglassGameEmulators();
     gameEmulators.sort(Comparator.comparing(GameEmulatorRepresentation::getName));
 
     for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
       CheckBox checkBox = new CheckBox(gameEmulator.getName());
       checkBox.setUserData(gameEmulator);
-      checkBox.setDisable(gameEmulator.isVpxEmulator() || backglassGameEmulators.contains(gameEmulator));
+      checkBox.setDisable(gameEmulator.isVpxEmulator());
       if (checkBox.isDisabled()) {
         checkBox.setTooltip(new Tooltip("Emulators with backglasses can not be disabled here."));
       }
@@ -552,6 +553,13 @@ public class ClientSettingsPreferencesController implements Initializable {
     columnComment.setSelected(uiSettings.isColumnComment());
     columnComment.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setColumnComment(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
+    });
+
+    columnBackupDate.setSelected(uiSettings.isColumnBackupDate());
+    columnBackupDate.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setColumnBackupDate(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
       client.getPreferenceService().setJsonPreference(uiSettings);
     });

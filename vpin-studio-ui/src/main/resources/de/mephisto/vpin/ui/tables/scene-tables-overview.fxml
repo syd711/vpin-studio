@@ -120,6 +120,8 @@
                                  </TableColumn>
                                  <TableColumn fx:id="columnComment" minWidth="100.0" prefWidth="400" style="-fx-alignment: BASELINE_LEFT;" text="Comment">
                                  </TableColumn>
+                                 <TableColumn fx:id="columnBackupDate" minWidth="70.0" prefWidth="140" style="-fx-alignment: BASELINE_LEFT;" text="Backup Date">
+                                 </TableColumn>
                               </columns>
                            </TableView>
                         </children>
