@@ -652,12 +652,12 @@
   {
     "gameName": "Table_182",
     "gameDisplayName": "Tomb Raider Pinball: Adventures of Lara Croft",
-    "directb2s": null
+    "directb2s": "AdventuresOfLaraCroft.directb2s"
   },
   {
     "gameName": "Table_192",
     "gameDisplayName": "Tomb Raider Pinball: Secrets of Croft Manor",
-    "directb2s": null
+    "directb2s": "SecretsOfCroftManor.directb2s"
   },
   {
     "gameName": "Table_194",

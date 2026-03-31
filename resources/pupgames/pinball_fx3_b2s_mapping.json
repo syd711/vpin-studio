@@ -410,6 +410,11 @@
     "directb2s": "StarWarsPinballTheForceAwakens.directb2s"
   },
   {
+    "gameName": "WMS_Indiana_Jones",
+    "gameDisplayName": "Indiana Jones: The Pinball Adventure (Williams 1993)",
+    "directb2s": "WMSIndianaJones.directb2s"
+  },
+  {
     "gameName": "WMS_Tales_of_the_Arabian_Nights",
     "gameDisplayName": "Tales of the Arabian Nights (Williams 1996)",
     "directb2s": "WMSTalesoftheArabianNights.directb2s"

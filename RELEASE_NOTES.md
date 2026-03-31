@@ -11,6 +11,7 @@
   - **Zaccaria**: Updated **pupgames** database and added missing tables.
   - **Pinball M**: Updated **pupgames** database and added missing tables.
   - **Pinball FX3**: Manually fixed some special names used for ALT color files.
+  - **Pinball FX/3/M**: Fixed and extended the database which contains the required backglass filenames for the different emulators.
 
 ## Release Notes 4.8.1
 

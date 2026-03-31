@@ -1,5 +1,20 @@
 [
   {
+    "gameName": "Table_90",
+    "gameDisplayName": "Fallout Pinball",
+    "directb2s": "M_FalloutPinball.directb2s"
+  },
+  {
+    "gameName": "Table_91",
+    "gameDisplayName": "The Elder Scrolls V: Skyrim Pinball",
+    "directb2s": "M_TheElderScrollsVSkyrimPinball.directb2s"
+  },
+  {
+    "gameName": "Table_92",
+    "gameDisplayName": "DOOM Pinball",
+    "directb2s": "M_DOOMPinball.directb2s"
+  },
+  {
     "gameName": "Table_171",
     "gameDisplayName": "Chucky's Killer Pinball",
     "directb2s": "M_ChucksKiller.directb2s"
@@ -33,5 +48,10 @@
     "gameName": "Table_147",
     "gameDisplayName": "Wrath of The Elder Gods",
     "directb2s": "M_WrathElderGods.directb2s"
+  },
+  {
+    "gameName": "Table_191",
+    "gameDisplayName": "Camp Bloodbrook",
+    "directb2s": "M_CampBloodbrook.directb2s"
   }
 ]
