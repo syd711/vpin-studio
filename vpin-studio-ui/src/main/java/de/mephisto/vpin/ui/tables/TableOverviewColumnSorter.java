@@ -47,39 +47,33 @@ public class TableOverviewColumnSorter implements BaseColumnSorter<GameRepresent
       }
       else if (column.equals(tableOverviewController.columnDateAdded)) {
         comp = (o1, o2) -> {
-          if (o1.getGame().getDateAdded() == null) {
-            return o2.getGame().getDateAdded() == null ? 0 : 1;
-          }
-          else {
-            return o2.getGame().getDateAdded() == null ? 1 : TableOverviewController.dateFormat.format(o1.getGame().getDateAdded()).compareTo(TableOverviewController.dateFormat.format(o2.getGame().getDateAdded()));
-          }
+          if (o1.getGame().getDateAdded() == null && o2.getGame().getDateAdded() == null) return 0;
+          if (o1.getGame().getDateAdded() == null) return 1;
+          if (o2.getGame().getDateAdded() == null) return -1;
+          return o1.getGame().getDateAdded().compareTo(o2.getGame().getDateAdded());
         };
       }
       else if (column.equals(tableOverviewController.columnDateModified)) {
         comp = (o1, o2) -> {
-          if (o1.getGame().getDateUpdated() == null) {
-            return o2.getGame().getDateUpdated() == null ? 0 : -1;
-          }
-          else {
-            return o2.getGame().getDateUpdated() == null ? 1 : TableOverviewController.dateFormat.format(o1.getGame().getDateUpdated()).compareTo(TableOverviewController.dateFormat.format(o2.getGame().getDateUpdated()));
-          }
+          if (o1.getGame().getDateUpdated() == null && o2.getGame().getDateUpdated() == null) return 0;
+          if (o1.getGame().getDateUpdated() == null) return 1;
+          if (o2.getGame().getDateUpdated() == null) return -1;
+          return o1.getGame().getDateUpdated().compareTo(o2.getGame().getDateUpdated());
         };
       }
       else if (column.equals(tableOverviewController.columnBackupDate)) {
         comp = (o1, o2) -> {
-          if (o1.backupDate == null || o2.backupDate == null) {
-            return -1;
-          }
-          else {
-            return TableOverviewController.dateTimeFormat.format(o1.backupDate).compareTo(TableOverviewController.dateTimeFormat.format(o2.backupDate));
-          }
+          if (o1.backupDate == null && o2.backupDate == null) return 0;
+          if (o1.backupDate == null) return 1;
+          if (o2.backupDate == null) return -1;
+          return o1.backupDate.compareTo(o2.backupDate);
         };
       }
       else if (column.equals(tableOverviewController.columnB2S)) {
         comp = Comparator.comparing(o -> o.getGame().getDirectB2SPath() != null);
       }
       else if (column.equals(tableOverviewController.columnVPS)) {
-        comp = (o1, o2) -> (o1.getGame().getVpsUpdates().isEmpty()) ? -1 : 1;
+        comp = Comparator.comparing(o -> !o.getGame().getVpsUpdates().isEmpty());
       }
       else if (column.equals(tableOverviewController.columnPUPPack)) {
         comp = Comparator.comparing(o -> String.valueOf(o.getGame().getPupPackName()));

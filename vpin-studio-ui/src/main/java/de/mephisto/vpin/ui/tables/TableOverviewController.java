@@ -1425,13 +1425,14 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     columnBackupDate.setSortable(true);
     BaseLoadingColumn.configureColumn(columnBackupDate, (value, model) -> {
-      List<BackupDescriptorRepresentation> backupsForGame = client.getBackupService().getBackupsForGame(value.getId());
+      List<BackupDescriptorRepresentation> backupsForGame = client.getBackupService().getBackups();
       Label label = new Label("-");
-      if (!backupsForGame.isEmpty()) {
-        Collections.sort(backupsForGame, Comparator.comparing(BackupDescriptorRepresentation::getCreatedAt));
-        BackupDescriptorRepresentation backup = backupsForGame.get(0);
-        model.backupDate = backup.getCreatedAt();
-        label.setText(dateTimeFormat.format(backup.getCreatedAt()));
+      for (BackupDescriptorRepresentation backup : backupsForGame) {
+        if (backup.getTableDetails().getGameFileName().equals(value.getGameFileName())) {
+          model.backupDate = backup.getCreatedAt();
+          label.setText(dateTimeFormat.format(backup.getCreatedAt()));
+          break;
+        }
       }
       label.getStyleClass().add("default-text");
       label.setStyle(getLabelCss(value));
