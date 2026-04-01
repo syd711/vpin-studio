@@ -853,7 +853,7 @@ public class UploaderAnalysis {
 
       //analyze audio files only
       String suffix = FilenameUtils.getExtension(filenameWithPath);
-      if (suffix.equalsIgnoreCase("ogg") || suffix.equalsIgnoreCase("mp3")) {
+      if (suffix.equalsIgnoreCase("ogg") || suffix.equalsIgnoreCase("mp3") || suffix.equalsIgnoreCase("wav")) {
         //strip the actual file name first
         if (filenameWithPath.contains("/")) {
           filenameWithPath = filenameWithPath.substring(0, filenameWithPath.lastIndexOf("/") + 1);
@@ -869,6 +869,7 @@ public class UploaderAnalysis {
     return null;
   }
 
+  @Nullable
   public String getRelativeMusicPathWithoutMusicFolder() {
     String filenameWithPath = getRelativeMusicPath();
     if (filenameWithPath != null && filenameWithPath.toLowerCase().contains("music/")) {

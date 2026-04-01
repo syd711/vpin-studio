@@ -271,15 +271,15 @@
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                           </children>
-                        </VBox>
-                        <VBox spacing="6.0">
-                           <children>
                               <CheckBox fx:id="columnPupPack" mnemonicParsing="false" text="PUP Pack" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
+                           </children>
+                        </VBox>
+                        <VBox spacing="6.0">
+                           <children>
                               <CheckBox fx:id="columnRes" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text=".res File" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
@@ -296,6 +296,11 @@
                                  </font>
                               </CheckBox>
                               <CheckBox fx:id="columnTutorials" layoutX="10.0" layoutY="89.0" mnemonicParsing="false" text="Tutorials" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="columnVbs" mnemonicParsing="false" text=".vbs File (VBS Script)" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

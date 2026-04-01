@@ -42,6 +42,7 @@
                                  <TableColumn fx:id="columnB2S" minWidth="51.199951171875" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Backglass" />
                                  <TableColumn fx:id="columnINI" minWidth="57.5999755859375" prefWidth="30.0" style="-fx-alignment: CENTER;" text="INI" />
                                  <TableColumn fx:id="columnRES" minWidth="57.5999755859375" prefWidth="30.0" style="-fx-alignment: CENTER;" text="RES" />
+                                 <TableColumn fx:id="columnVBS" minWidth="57.5999755859375" prefWidth="30.0" style="-fx-alignment: CENTER;" text="VBS" />
                                  <TableColumn fx:id="columnPOV" minWidth="57.5999755859375" prefWidth="30.0" style="-fx-alignment: CENTER;" text="POV" />
                                  <TableColumn fx:id="columnAltSound" minWidth="10.4000244140625" prefWidth="85.0" style="-fx-alignment: CENTER;" text="ALT Sound" />
                                  <TableColumn fx:id="columnAltColor" minWidth="10.4000244140625" prefWidth="85.0" style="-fx-alignment: CENTER;" text="ALT Color" />

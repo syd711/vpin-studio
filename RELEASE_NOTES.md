@@ -7,6 +7,7 @@
   - Fixed sorting of date columns.
 - **Client Settings**: You can now hide Zen Studio emulators in the **Client Settings** too (the checkboxes were disabled previously). 
 - **ZEN/Zaccaria Games**:
+  - Fixed issue that for some users these emulators weren't detected anymore. 
   - Improved detection of **pupgames** database changes: additional tables are now automatically added for Zen and Zaccaria emulators when the database is updated with the latest additions.
   - **Zaccaria**: Updated **pupgames** database and added missing tables.
   - **Pinball M**: Updated **pupgames** database and added missing tables.

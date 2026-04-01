@@ -151,6 +151,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnRES;
 
   @FXML
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnVBS;
+
+  @FXML
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnHSType;
 
   @FXML
@@ -1148,6 +1151,33 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       return null;
     }, this, true);
 
+    BaseLoadingColumn.configureColumn(columnVBS, (value, model) -> {
+      if (value.getVbsPath() != null) {
+        Button compBtn = new Button();
+        compBtn.getStyleClass().add("table-media-button");
+        compBtn.setTooltip(new Tooltip("Edit " + value.getVbsPath()));
+        FontIcon cmpIcon = WidgetFactory.createEditIcon(null);
+        cmpIcon.setIconSize(22);
+        compBtn.setGraphic(cmpIcon);
+        compBtn.setOnAction(new EventHandler<ActionEvent>() {
+          @Override
+          public void handle(ActionEvent event) {
+            try {
+              GameRepresentation gameRepresentation = value;
+              String vbsPath = gameRepresentation.getVbsPath();
+              Studio.editGameFile(gameRepresentation, vbsPath);
+            }
+            catch (Exception e) {
+              LOG.error("Failed to open .vbs file: {}", e.getMessage(), e);
+              WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open .vbs file: " + e.getMessage());
+            }
+          }
+        });
+        return compBtn;
+      }
+      return null;
+    }, this, true);
+
     BaseLoadingColumn.configureColumn(columnAltSound, (value, model) -> {
       boolean hasUpdate = this.showVpsUpdates && vpsSettings.isVpsAltSound() && value.getVpsUpdates().contains(VpsDiffTypes.altSound);
       if (value.isAltSoundAvailable()) {
@@ -1905,6 +1935,10 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       tableView.getColumns().remove(columnTutorials);
       tableView.getColumns().add(tableView.getColumns().indexOf(columnHSType), columnTutorials);
     }
+    if (!getTableSettings().getColumnOrder().contains(columnVBS.getId())) {
+      tableView.getColumns().remove(columnVBS);
+      tableView.getColumns().add(tableView.getColumns().indexOf(columnRES), columnVBS);
+    }
 
     vpxzSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPXZ_SETTINGS, VPXZSettings.class);
     vpxzBtn.managedProperty().bindBidirectional(vpxzBtn.visibleProperty());
@@ -2174,6 +2208,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     columnTutorials.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnTutorial());
     columnINI.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnIni());
     columnRES.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnRes());
+    columnVBS.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnVbs());
     columnHSType.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnHighscore());
     columnDateAdded.setVisible((mameMode || vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnDateAdded());
     columnDateModified.setVisible((mameMode || vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnDateModified());

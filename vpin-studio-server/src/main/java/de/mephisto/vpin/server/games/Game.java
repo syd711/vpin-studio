@@ -545,6 +545,13 @@ public class Game {
     return null;
   }
 
+  public String getVbsPath() {
+    if (this.getVBSFile().exists()) {
+      return this.getVBSFile().getAbsolutePath();
+    }
+    return null;
+  }
+
   public String getResPath() {
     if (this.getResFile().exists()) {
       return this.getResFile().getAbsolutePath();

@@ -97,6 +97,7 @@ public class UISettings extends JsonSettings {
   private boolean columnRom = true;
   private boolean columnVersion = true;
   private boolean columnVpsStatus = true;
+  private boolean columnVbs = false;
   private boolean columnComment = false;
   private boolean columnBackupDate = false;
   private boolean columnPatchVersion = false;
@@ -118,6 +119,14 @@ public class UISettings extends JsonSettings {
 
   public void setLaunchConfiguration(LaunchConfiguration launchConfiguration) {
     this.launchConfiguration = launchConfiguration;
+  }
+
+  public boolean isColumnVbs() {
+    return columnVbs;
+  }
+
+  public void setColumnVbs(boolean columnVbs) {
+    this.columnVbs = columnVbs;
   }
 
   public boolean isUploadMediaPreview() {
