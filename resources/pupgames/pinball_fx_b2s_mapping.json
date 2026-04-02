@@ -683,5 +683,30 @@
     "gameName": "Table_197",
     "gameDisplayName": "Elvira and the Party Monsters",
     "directb2s": "ElviraPartyMonsters.directb2s"
+  },
+  {
+    "gameName": "Table_191",
+    "gameDisplayName": "Camp Bloodbrook",
+    "directb2s": "CampBloodbrook.directb2s"
+  },
+  {
+    "gameName": "Table_92",
+    "gameDisplayName": "Doom",
+    "directb2s": "DOOMPinball.directb2s"
+  },
+  {
+    "gameName": "Table_91",
+    "gameDisplayName": "Elder Scrolls V Skyrim, The",
+    "directb2s": "TheElderScrollsVSkyrimPinball.directb2s"
+  },
+  {
+    "gameName": "Table_90",
+    "gameDisplayName": "Fallout",
+    "directb2s": "FalloutPinball.directb2s"
+  },
+  {
+    "gameName": "Table_183",
+    "gameDisplayName": "System Shock Pinball",
+    "directb2s": "SystemShock.directb2s"
   }
 ]
