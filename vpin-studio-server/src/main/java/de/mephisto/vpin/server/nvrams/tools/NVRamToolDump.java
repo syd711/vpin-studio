@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.nvrams.parser;
+package de.mephisto.vpin.server.nvrams.tools;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,13 +11,22 @@ import java.util.UnknownFormatConversionException;
 
 import org.apache.commons.lang3.StringUtils;
 
+import de.mephisto.vpin.server.nvrams.map.ChecksumMapping;
+import de.mephisto.vpin.server.nvrams.map.NVRamMap;
+import de.mephisto.vpin.server.nvrams.map.NVRamMapping;
+import de.mephisto.vpin.server.nvrams.map.NVRamMappings;
+import de.mephisto.vpin.server.nvrams.map.NVRamScore;
+import de.mephisto.vpin.server.nvrams.map.SparseMemory;
+
 public class NVRamToolDump {
 
-
+  /**
+   * A method to dump the totality of the nvram
+   */
   public String dump(NVRamMap mapJson, SparseMemory memory, Locale locale, boolean verifyChecksums) throws IOException {
     Appendable bld = new StringBuilder(3000);
-    printLine(bld, "Using map ../maps/" + mapJson.getMapPath() + " for rom " + mapJson.getRom());
-    printLine(bld, "Dumping known entries, rom is " + mapJson.getRomName() + "...");
+    printLine(bld, "Using map ../maps/" + mapJson.getMapPath() + " for " + mapJson.getRom() + ".nv");
+    printLine(bld, "Dumping known entries for " + mapJson.getRom() + ".nv [" + mapJson.getRomName() + "]...");
 
     // audits and adjustments
     dumpMapOfMappings(bld, "audits", mapJson.getAudits(), mapJson, memory, locale);
@@ -52,6 +61,37 @@ public class NVRamToolDump {
     }
     return bld.toString();
   }
+
+  //-----------------------------------------------
+
+  /**
+   * A method that dump scores, same model as pinhemi
+   * 
+   */
+  public String dumpScores(NVRamMap mapJson, SparseMemory memory, Locale locale, boolean displayLabel) {
+    StringBuilder bld = new StringBuilder(3000);
+
+    List<NVRamScore> scores  = mapJson.getHighScores();
+    int pos = 1;
+    String currentLabel = null;
+    for (NVRamScore score : scores) {
+      String lbl = score.formatLabel(false);
+      if (displayLabel && lbl != null && !StringUtils.equals(currentLabel, lbl)) {
+        if (pos > 1) {
+          bld.append(System.lineSeparator());  
+        }
+        bld.append(lbl).append(System.lineSeparator());
+        currentLabel = lbl;
+      }
+      String value = score.formatScoreLine(mapJson, memory, locale, pos++);
+      bld.append(value).append(System.lineSeparator());
+    }
+
+    //mapJson.getModeChampions()
+
+    return bld.toString();
+  }
+
 
   //============================================================
 

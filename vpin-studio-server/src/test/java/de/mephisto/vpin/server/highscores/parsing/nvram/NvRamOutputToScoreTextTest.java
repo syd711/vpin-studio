@@ -1,27 +1,32 @@
 package de.mephisto.vpin.server.highscores.parsing.nvram;
 
-import de.mephisto.vpin.restclient.system.ScoringDB;
-import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.highscores.Score;
-import de.mephisto.vpin.server.highscores.parsing.ScoreListFactory;
-import de.mephisto.vpin.server.nvrams.parser.NVRamMap;
-import de.mephisto.vpin.server.nvrams.parser.NVRamParser;
-import de.mephisto.vpin.server.nvrams.parser.NVRamScore;
-import de.mephisto.vpin.server.nvrams.parser.SparseMemory;
-import de.mephisto.vpin.server.pinemhi.PINemHiService;
+import java.io.File;
+import java.io.FileWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
 import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.*;
+import de.mephisto.vpin.restclient.system.ScoringDB;
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.highscores.Score;
+import de.mephisto.vpin.server.highscores.parsing.ScoreListFactory;
+import de.mephisto.vpin.server.nvrams.NVRamMapService;
+import de.mephisto.vpin.server.nvrams.map.NVRamMap;
+import de.mephisto.vpin.server.nvrams.map.NVRamScore;
+import de.mephisto.vpin.server.nvrams.map.SparseMemory;
+import de.mephisto.vpin.server.pinemhi.PINemHiService;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -65,7 +70,7 @@ public class NvRamOutputToScoreTextTest {
       System.out.println("  '" + item + "' failed.");
     }
 
-    assertEquals("NVRam failed: " + failedList, 0, failedList.size());
+    assertEquals(0, failedList.size(), "NVRam failed: " + failedList);
   }
 
   @Test
@@ -275,11 +280,11 @@ public class NvRamOutputToScoreTextTest {
  
     System.out.println("---------------------");
 
-    NVRamParser parser = new NVRamParser();
+    NVRamMapService parser = new NVRamMapService();
     NVRamMap map = parser.getMap(rom);
     
     byte[] data = Files.readAllBytes(entry.toPath());
-    SparseMemory memory = parser.setNvram(map, data);
+    SparseMemory memory = parser.getMemory(map, data);
     for (NVRamScore m : map.getHighScores()) {
       System.out.println( m.formatHighScore(map, memory, loc) );
     }

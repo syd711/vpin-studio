@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.nvrams.parser;
+package de.mephisto.vpin.server.nvrams.decoder;
 
 import java.io.Closeable;
 import java.io.File;

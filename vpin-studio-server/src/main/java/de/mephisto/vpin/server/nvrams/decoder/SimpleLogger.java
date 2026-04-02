@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.nvrams.parser;
+package de.mephisto.vpin.server.nvrams.decoder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

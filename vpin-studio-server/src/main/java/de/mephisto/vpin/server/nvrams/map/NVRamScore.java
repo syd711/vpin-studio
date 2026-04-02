@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.nvrams.parser;
+package de.mephisto.vpin.server.nvrams.map;
 
 import java.util.*;
 
@@ -84,6 +84,12 @@ public class NVRamScore extends NVRamObject {
       if (formatted != null) elements.add(formatted);
     }
     return elements.isEmpty() ? null : String.join(" ", elements);
+  }
+
+  public String formatScoreLine(NVRamMap mapJson, SparseMemory memory, Locale locale, int position) {
+    String player = initials != null? initials.formatEntry(mapJson, memory, locale) : "???";
+    String formatted = score.formatEntry(mapJson, memory, locale);
+    return "#" + position + " " + player + "   " + formatted;
   }
 
   public String formatLabel(boolean useShortLabel) {

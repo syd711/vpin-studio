@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.nvrams.parser;
+package de.mephisto.vpin.server.nvrams.decoder;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,8 +9,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -24,7 +24,8 @@ import com.google.gson.stream.JsonWriter;
 
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.server.highscores.Score;
-import de.mephisto.vpin.server.nvrams.parser.NVRamToolDecoder.SearchResult;
+import de.mephisto.vpin.server.nvrams.NVRamMapService;
+import de.mephisto.vpin.server.nvrams.decoder.NVRamToolDecoder.SearchResult;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class NVRamToolMapGenerator {
@@ -137,7 +138,7 @@ public class NVRamToolMapGenerator {
 
     if (!map.has("_notes")) {
       JsonArray notes = new JsonArray();
-      notes.add("Compiled by Olivier Leprince");
+      notes.add("Compiled by Leprinco");
       if (table != null) {
         notes.add(table.getDisplayName());
         if (table.getIpdbUrl() != null) {
@@ -157,17 +158,16 @@ public class NVRamToolMapGenerator {
       JsonObject _metadata = new JsonObject();
       _metadata.addProperty("version", 1);
       JsonArray copyright = new JsonArray();
-      copyright.add("Copyright (C) 2026 by Olivier Leprince <leprinco@yahoo.com>");
+      copyright.add("Copyright (C) 2026 by Leprinco <leprinco@yahoo.fr>");
       copyright.add("Copyright (C) 2026 by Tom Collins <tom@scorbit.io>");
       _metadata.add("copyright", copyright);
 
       _metadata.addProperty("license", "GNU Lesser General Public License v3.0");
       if (table != null && table.getMPU() != null) {
         String platformName = table.getMPU();
-        NVRamParser p = new NVRamParser();
-        String platform = p.mapPathForPlatform(platformName);
-        if (platform != null) {
-          _metadata.addProperty("platform", platform);
+        NVRamMapService p = new NVRamMapService();
+        if (platformName != null) {
+          _metadata.addProperty("platform", platformName);
         }
       }
 

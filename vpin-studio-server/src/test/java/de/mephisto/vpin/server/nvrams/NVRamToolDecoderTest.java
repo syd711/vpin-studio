@@ -7,9 +7,9 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import de.mephisto.vpin.server.nvrams.parser.NVRamToolDecoder;
-import de.mephisto.vpin.server.nvrams.parser.NVRamToolMapGenerator;
-import de.mephisto.vpin.server.nvrams.parser.NVRamToolDecoder.SearchResult;
+import de.mephisto.vpin.server.nvrams.decoder.NVRamToolDecoder;
+import de.mephisto.vpin.server.nvrams.decoder.NVRamToolMapGenerator;
+import de.mephisto.vpin.server.nvrams.decoder.NVRamToolDecoder.SearchResult;
 
 /**
  */
