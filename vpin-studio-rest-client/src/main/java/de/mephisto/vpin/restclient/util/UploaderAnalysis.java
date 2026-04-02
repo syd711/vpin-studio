@@ -844,10 +844,15 @@ public class UploaderAnalysis {
 
   public String getRelativeMusicPath() {
     String pupPackRootDirectory = getPupPackRootDirectory();
+    String dmdDirectory = getDMDPath();
 
     for (String filenameWithPath : getFilteredFilenamesWithPath()) {
       //ignore pup pack audio files
       if (pupPackRootDirectory != null && isFileBelowFolder(pupPackRootDirectory, filenameWithPath)) {
+        continue;
+      }
+      //ignore DMD audio files
+      if (dmdDirectory != null && isFileBelowFolder(dmdDirectory, filenameWithPath)) {
         continue;
       }
 

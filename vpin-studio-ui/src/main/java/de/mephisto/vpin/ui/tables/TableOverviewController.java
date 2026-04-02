@@ -1939,6 +1939,10 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       tableView.getColumns().remove(columnVBS);
       tableView.getColumns().add(tableView.getColumns().indexOf(columnRES), columnVBS);
     }
+    if (!getTableSettings().getColumnOrder().contains(columnBackupDate.getId())) {
+      tableView.getColumns().remove(columnBackupDate);
+      tableView.getColumns().add(tableView.getColumns().indexOf(columnTutorials), columnBackupDate);
+    }
 
     vpxzSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPXZ_SETTINGS, VPXZSettings.class);
     vpxzBtn.managedProperty().bindBidirectional(vpxzBtn.visibleProperty());

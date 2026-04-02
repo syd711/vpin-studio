@@ -93,6 +93,9 @@ public class TableOverviewColumnSorter implements BaseColumnSorter<GameRepresent
       else if (column.equals(tableOverviewController.columnRES)) {
         comp = Comparator.comparing(o -> o.getGame().getResPath() != null);
       }
+      else if (column.equals(tableOverviewController.columnVBS)) {
+        comp = Comparator.comparing(o -> o.getGame().getVbsPath() != null);
+      }
       else if (column.equals(tableOverviewController.columnPinVol)) {
         comp = Comparator.comparing(o -> {
           String key = PinVolPreferences.getKey(o.getGame().getGameFileName(), client.getEmulatorService().isVpxGame(o.getGame()), client.getEmulatorService().isFpGame(o.getGame()));

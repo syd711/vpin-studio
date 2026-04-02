@@ -4,7 +4,10 @@
 - **DMD Score submission**: Changed processing of frames to support colorized rgb frames.
 - **Table Overview**: 
   - Added "Backup Date" column. Note that the column is hidden by default and needs to be enabled in the settings.
+  - Added "VBS" column. Note that the column is hidden by default and needs to be enabled in the settings.
   - Fixed sorting of date columns.
+- **Table Installer**:
+  - Fixed music bundle detection: Added missing .wav file detection and target folder resolving.
 - **Client Settings**: You can now hide Zen Studio emulators in the **Client Settings** too (the checkboxes were disabled previously). 
 - **ZEN/Zaccaria Games**:
   - Fixed issue that for some users these emulators weren't detected anymore. 
