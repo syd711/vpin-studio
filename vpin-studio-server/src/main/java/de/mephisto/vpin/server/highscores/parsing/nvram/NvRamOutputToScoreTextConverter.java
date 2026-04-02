@@ -1,13 +1,13 @@
 package de.mephisto.vpin.server.highscores.parsing.nvram;
 
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
-import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.highscores.parsing.nvram.adapters.*;
+import de.mephisto.vpin.server.pinemhi.PINemHiService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.htmlunit.jetty.io.RuntimeIOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,21 +41,21 @@ public class NvRamOutputToScoreTextConverter {
   }
 
   @Nullable
-  public static String convertNvRamTextToMachineReadable(@NonNull File commandFile, @NonNull File nvRam) throws Exception {
+  public static String convertNvRamTextToMachineReadable(@NonNull File nvRam) throws Exception {
     boolean nvOffset = false;
     File originalNVRamFile = nvRam;
     File backedUpRamFile = nvRam;
 
     try {
       String nvRamFileName = nvRam.getCanonicalFile().getName().toLowerCase();
-      String pinemHiSupportedNVRamName = FilenameUtils.getBaseName(nvRamFileName).toLowerCase();
+      String nvRamName = FilenameUtils.getBaseName(nvRamFileName).toLowerCase();
       if (nvRamFileName.contains(" ")) {
         LOG.info("Stripping NV offset from nvram file \"{}\" to check if supported.", nvRamFileName);
         SLOG.info("Stripping NV offset from nvram file \"" + nvRamFileName + "\" to check if supported.");
-        pinemHiSupportedNVRamName = nvRamFileName.substring(0, nvRamFileName.indexOf(" "));
+        nvRamName = nvRamFileName.substring(0, nvRamFileName.indexOf(" "));
 
         //rename the original nvram file so that we can parse with the original name
-        originalNVRamFile = new File(nvRam.getParentFile(), pinemHiSupportedNVRamName + ".nv");
+        originalNVRamFile = new File(nvRam.getParentFile(), nvRamName + ".nv");
         if (originalNVRamFile.exists()) {
           backedUpRamFile = new File(nvRam.getParentFile(), originalNVRamFile.getName() + ".bak");
           if (backedUpRamFile.exists()) {
@@ -71,26 +71,14 @@ public class NvRamOutputToScoreTextConverter {
         nvOffset = true;
       }
 
-      List<String> commands = Arrays.asList(commandFile.getName(), originalNVRamFile.getName().toLowerCase());
-//      LOG.info("PinemHI: " + String.join(" ", commands));
-      SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-//      executor.setEnv("LANG", "en_US.UTF-8");
-//      executor.setEnv("LC_ALL", "en_US.UTF-8");
-//      executor.setEnv("LC_CTYPE", "en_US.UTF-8");
-//      executor.setCodePage("65001");
-      executor.setDir(commandFile.getParentFile());
-      executor.executeCommand();
-      StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
-      StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
-      if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-        String error = "Pinemhi command (" + commandFile.getCanonicalPath() + " " + pinemHiSupportedNVRamName + ") failed. Error output:\n" + standardErrorFromCommand + "\nStandard output:\n" + standardOutputFromCommand;
-//        String error = "Pinemhi command (" + commandFile.getCanonicalPath() + " " + pinemHiSupportedNVRamName + ") failed (details skipped).";
-        SLOG.error(error);
-        LOG.error(error);
-        return null;
-      }
-      String stdOut = standardOutputFromCommand.toString();
-      return convertOutputToRaw(nvRamFileName, stdOut);
+      String stdOut = PINemHiService.executePINemHi(originalNVRamFile);
+      return stdOut != null ? convertOutputToRaw(nvRamFileName, stdOut) : null;
+    }
+    catch (RuntimeIOException ioe) {
+      String error = ioe.getMessage();
+      SLOG.error(error);
+      LOG.error(error);
+      return null;
     }
     catch (Exception e) {
       LOG.error(e.getMessage());

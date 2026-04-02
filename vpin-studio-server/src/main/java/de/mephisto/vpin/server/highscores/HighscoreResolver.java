@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.highscores;
 
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
-import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.system.ScoringDBMapping;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.parsing.ScoreParsingSummary;
@@ -307,7 +306,7 @@ public class HighscoreResolver implements InitializingBean {
       }
       metadata.setType(HighscoreType.NVRam);
 
-      return executePINemHi(nvRam);
+      return NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(nvRam);
     }
     catch (Exception e) {
       String msg = "Failed to parse highscore: " + e.getMessage();
@@ -316,17 +315,6 @@ public class HighscoreResolver implements InitializingBean {
       LOG.error(msg, e);
     }
     return null;
-  }
-
-  @Nullable
-  private String executePINemHi(@NonNull File nvRam) throws Exception {
-    File commandFile = systemService.getPinemhiCommandFile();
-    try {
-      return NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(commandFile, nvRam);
-    }
-    catch (Exception e) {
-      throw e;
-    }
   }
 
   @Override

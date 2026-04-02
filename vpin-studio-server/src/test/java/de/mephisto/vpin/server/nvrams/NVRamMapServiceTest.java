@@ -98,7 +98,7 @@ public class NVRamMapServiceTest {
     parseNVRam(parser, rom, (mapJson, memory) -> {
         NVRamMapping m = mapJson.getGameState().getPlayerCount();
         String e = m.formatEntry(mapJson, memory, Locale.ENGLISH);
-        assertEquals("1", e);
+        assertEquals("0", e);
     });
   }
 

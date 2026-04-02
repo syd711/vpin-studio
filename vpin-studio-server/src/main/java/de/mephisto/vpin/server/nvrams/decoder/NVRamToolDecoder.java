@@ -429,9 +429,8 @@ public class NVRamToolDecoder {
     }
 
     // load pinhemi and parse scores
-    PINemHiService.adjustVPPathForEmulator(nvramFile.getParentFile(), PINemHiService.getPinemhiIni(), true);
     try {
-      String raw = NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(PINemHiService.getPinemhiExe(), nvramFile);
+      String raw = NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(nvramFile);
       if (displayResult) {
         LOG.warn("\n" + raw);
       }

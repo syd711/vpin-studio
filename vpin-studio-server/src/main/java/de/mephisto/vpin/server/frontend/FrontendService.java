@@ -608,7 +608,10 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     if (mediaStrategy != null) {
       File mediaFolder = mediaStrategy.getPlaylistMediaFolder(playList, screen, false);
       mediaStrategy.stopMonitoring(mediaFolder);
-      return mediaStrategy.deleteMedia(playList, screen);
+      if (mediaStrategy.deleteMedia(playList, screen)) {
+        return mediaFolder.delete();
+      }
+      return false;
     }
     return false;
   }
@@ -618,7 +621,10 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     if (mediaStrategy != null) {
       File mediaFolder = mediaStrategy.getGameMediaFolder(game, screen, extension, false);
       mediaStrategy.stopMonitoring(mediaFolder);
-      return mediaStrategy.deleteMedia(game, screen);
+      if (mediaStrategy.deleteMedia(game, screen)) {
+        return mediaFolder.delete();
+      }
+      return false;
     }
     return false;
   }
