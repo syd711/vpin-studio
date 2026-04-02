@@ -52,13 +52,13 @@ public class ServerUpdatePreProcessing {
   private final static Map<String, Long> PUP_GAMES = new HashMap<>();
 
   static {
-    PUP_GAMES.put("pinball_fx.json", 229247L);
-    PUP_GAMES.put("pinball_fx_b2s_mapping.json", 18179L);
-    PUP_GAMES.put("pinball_fx3.json", 152207L);
-    PUP_GAMES.put("pinball_fx3_b2s_mapping.json", 15554L);
+    PUP_GAMES.put("pinball_fx.json", 211352L);
+    PUP_GAMES.put("pinball_fx_b2s_mapping.json", 18173L);
+    PUP_GAMES.put("pinball_fx3.json", 157634L);
+    PUP_GAMES.put("pinball_fx3_b2s_mapping.json", 15228L);
     PUP_GAMES.put("zaccaria.json", 317156L);
     PUP_GAMES.put("pinball_m.json", 19923L);
-    PUP_GAMES.put("pinball_m_b2s_mapping.json", 937L);
+    PUP_GAMES.put("pinball_m_b2s_mapping.json", 1467L);
   }
 
   public static void execute() {
@@ -194,7 +194,8 @@ public class ServerUpdatePreProcessing {
       File check = new File(RESOURCES, "pupgames/" + entry.getKey());
       long expectedSize = entry.getValue();
       if (!check.exists() || check.length() != expectedSize) {
-        LOG.info("Outdated pupgames file {}/({}) found, updating...", entry.getKey(), check.length() + "/" + expectedSize);
+        long checkedLength = check.length();
+        LOG.info("Outdated pupgames file {}/({}) found, updating...", entry.getKey(), checkedLength + "/" + expectedSize);
         check.getParentFile().mkdirs();
         Updater.downloadAndOverwrite("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/pupgames/" + entry.getKey(), check, true);
       }
