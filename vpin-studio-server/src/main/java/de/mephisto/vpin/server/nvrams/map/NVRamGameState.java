@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.nvrams.parser;
+package de.mephisto.vpin.server.nvrams.map;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
  */
 public class NVRamGameState extends NVRamObject {
 
+  // A Map with Object as it can contains NVRamMapping or a List<NVRamMapping>
   private Map<String, Object> mappings = new LinkedHashMap<>();
 
   @JsonAnySetter

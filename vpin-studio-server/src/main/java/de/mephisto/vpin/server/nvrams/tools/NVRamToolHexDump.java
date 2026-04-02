@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.nvrams.parser;
+package de.mephisto.vpin.server.nvrams.tools;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,6 +12,16 @@ import java.util.Map;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+
+import de.mephisto.vpin.server.nvrams.map.BcdUtils;
+import de.mephisto.vpin.server.nvrams.map.ChecksumMapping;
+import de.mephisto.vpin.server.nvrams.map.NVRamMap;
+import de.mephisto.vpin.server.nvrams.map.NVRamMapping;
+import de.mephisto.vpin.server.nvrams.map.NVRamMappings;
+import de.mephisto.vpin.server.nvrams.map.NVRamRegion;
+import de.mephisto.vpin.server.nvrams.map.NVRamScore;
+import de.mephisto.vpin.server.nvrams.map.Nibble;
+import de.mephisto.vpin.server.nvrams.map.SparseMemory;
 
 public class NVRamToolHexDump {
 
@@ -84,7 +94,7 @@ public class NVRamToolHexDump {
       if (offset + count > size) count = size - offset;
 
       byte[] lineData = Arrays.copyOfRange(data, offset, offset + count);
-      printLine(bld, "%04X: %s%n", locale, startAddr + offset, hexLine(lineData, nibble, text, locale));
+      printLine(bld, "%06d: %s%n", locale, startAddr + offset, hexLine(lineData, nibble, text, locale));
       offset += count;
     }
   }

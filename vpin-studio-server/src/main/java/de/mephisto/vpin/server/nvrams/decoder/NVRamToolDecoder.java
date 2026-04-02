@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.nvrams.parser;
+package de.mephisto.vpin.server.nvrams.decoder;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +27,14 @@ import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.ScoreListFactory;
 import de.mephisto.vpin.server.highscores.parsing.nvram.NvRamOutputToScoreTextConverter;
-import de.mephisto.vpin.server.nvrams.parser.SimpleLogger.LEVEL;
+import de.mephisto.vpin.server.nvrams.NVRamMapService;
+import de.mephisto.vpin.server.nvrams.decoder.SimpleLogger.LEVEL;
+import de.mephisto.vpin.server.nvrams.map.ChecksumMapping;
+import de.mephisto.vpin.server.nvrams.map.NVRamMap;
+import de.mephisto.vpin.server.nvrams.map.NVRamScore;
+import de.mephisto.vpin.server.nvrams.map.SparseMemory;
+import de.mephisto.vpin.server.nvrams.tools.NVRamToolDump;
+import de.mephisto.vpin.server.nvrams.tools.NVRamToolHexDump;
 import de.mephisto.vpin.server.pinemhi.PINemHiService;
 
 /**
@@ -36,7 +43,7 @@ import de.mephisto.vpin.server.pinemhi.PINemHiService;
  */
 public class NVRamToolDecoder {
   private final static SimpleCaptureLogger LOG = //LoggerFactory.getLogger(NVRamToolDecoder.class);
-    new SimpleCaptureLogger(NVRamToolDecoder.class, LEVEL.WARN);
+    new SimpleCaptureLogger(NVRamToolDecoder.class, LEVEL.INFO);
 
   // The max number of bytes used for BCD encoding, 8 means 16 digits..., generally it is 5
   private static final int MAX_LENGTH = 8;
@@ -44,7 +51,10 @@ public class NVRamToolDecoder {
   private static ScoringDB scoringDB;
   private static VPS vps;
 
-  File mainFolder = new File("./testsystem/vPinball/VisualPinball/VPinMAME/nvram/");
+  private NVRamMapService parser = new NVRamMapService();
+
+
+  File mainFolder = new File("C:/Visual Pinball/VPinMAME/nvram");
 
   static {
     scoringDB = ScoringDB.load();
@@ -54,10 +64,12 @@ public class NVRamToolDecoder {
 
   public static void main(String[] args) throws Exception {
     NVRamToolDecoder decoder = new NVRamToolDecoder();
-    decoder.decodeAll();  
-    //decoder.decodeFully("gladiatr", null);
-    //decoder.decodeFully("godzilla", "Godzilla (Sega 1998)"); 
-    //decoder.decodeFully("afm_113b", "Attack from Mars (Bally 1995)"); 
+    //decoder.decodeAll(); 
+    
+    decoder.decodeTest("agent777", null);
+    //decoder.decodeTest("godzilla", "Godzilla (Sega 1998)"); 
+    //decoder.decodeTest("afm_113b", "Attack from Mars (Bally 1995)"); 
+    //decoder.decodeTest("bdk_294", null);
   }
 
   private void decodeAll() throws Exception {
@@ -67,7 +79,7 @@ public class NVRamToolDecoder {
       try {
         if (!rom.endsWith(".nv")) {
           decode(p.toFile(), rom, null);
-            LOG.warn("----------------------");
+          LOG.warn("----------------------");
         }
       }
       catch (Exception e) {
@@ -76,17 +88,28 @@ public class NVRamToolDecoder {
     });
   }
 
-  private void decodeFully(String rom, String tablename) throws Exception {
+  private void decodeTest(String rom, String tablename) throws Exception {
+    File entry = new File(mainFolder, rom + ".nv");
+    decode(entry, rom, tablename);
+    test(entry, rom);
+  }
+
+  private void test(String rom, String tablename) throws Exception {
     File entry = new File(mainFolder, rom + ".nv");
 
-    decode(entry, rom, tablename);
+    getScoresFromPinemhi(entry, rom, true);
+    test(entry, rom);
+  }
 
+
+  private void test(File entry, String rom) throws IOException {
     // now do some tests
-    NVRamParser parser = new NVRamParser();
-    NVRamMap map = parser.getLocalMap(rom);
+    File mapfile = new File(NVRamToolMapGenerator.DECODED_ROOT, rom + ".map.json");
+    NVRamMap map = parser.getLocalMap(mapfile, rom);
+
     if (map != null) {
       byte[] bytes = Files.readAllBytes(entry.toPath());
-      SparseMemory memory = parser.setNvram(map, bytes);
+      SparseMemory memory = parser.getMemory(map, bytes);
       
       NVRamToolHexDump hexdump = new NVRamToolHexDump();
       String hex = hexdump.hexDump(map, memory, Locale.ENGLISH);
@@ -117,6 +140,12 @@ public class NVRamToolDecoder {
     LOG.reset();
 
     LOG.warn("Decoding {}...", rom);
+
+    String mapPath = parser.mapPathForRom(rom);
+    if (mapPath != null) {
+      LOG.warn("\nNVRam Map already exists: {} !", mapPath);
+      return;
+    }
 
     // First try to determine associated VpsTable
     VpsTable table = null;
@@ -152,10 +181,18 @@ public class NVRamToolDecoder {
 
     // other nvram folders for validation of scores
     File[] testFolders = new File[] { 
+      new File("./testsystem/vPinball/VisualPinball/VPinMAME/nvram/"),
       new File("C:/Github/py-pinmame-nvmaps/test/nvram"),
       new File("C:/temp/_NVRAMS/Matt"),
       new File("C:/temp/_NVRAMS/ed209"),
-      new File("C:/Visual Pinball/VPinMAME/nvram"),
+      new File("C:/temp/_NVRAMS/YabbaDabbaDoo"),
+      new File("C:/temp/_NVRAMS/gonzonia"),
+      new File("C:/temp/_NVRAMS/GerhardK"),
+      new File("C:/temp/_NVRAMS/Buffdriver"),
+      new File("C:/temp/_NVRAMS/BostonBuckeye"),
+      new File("C:/temp/_NVRAMS/FuFu"),
+      new File("C:/temp/_NVRAMS/Blap"),
+      //new File("C:/Visual Pinball/VPinMAME/nvram"),         // OLE
       new File("C:/Github/vpin-studio/resources/nvrams")    // resetted nvrams
     };
 
@@ -178,19 +215,16 @@ public class NVRamToolDecoder {
     // calculate score mappings, not presuming any score encoding length
     LinkedHashMap<Score, SearchResult> selectedScores = parseScores(bytes, rom, testFolders, scores, cacheScores, -1);
 
+    NVRamToolMapGenerator generator = new NVRamToolMapGenerator();
     if (selectedScores.size() > 0) {
 
       LinkedHashMap<String, SearchResult> checksums = parseChecksum(bytes, selectedScores);
 
       // generate the map
-      NVRamToolMapGenerator generator = new NVRamToolMapGenerator();
-
       boolean useHexForPosition = false;
-      generator.generateHighscores(rom, table, useHexForPosition, 
-        selectedScores, checksums);
-
-      generator.appendText(rom, "\n/*\n" + LOG.getText() + "\n*/\n");
+      generator.generateHighscores(rom, table, useHexForPosition, selectedScores, checksums);
     }
+    generator.appendText(rom, "\n/*\n" + LOG.getText() + "\n*/\n");
   }
 
   //---------------------------------------------
@@ -399,8 +433,7 @@ public class NVRamToolDecoder {
     try {
       String raw = NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(PINemHiService.getPinemhiExe(), nvramFile);
       if (displayResult) {
-        LOG.warn("\n");
-        LOG.warn(raw);
+        LOG.warn("\n" + raw);
       }
       return ScoreListFactory.create(raw, new Date(), null, scoringDB, true);
     } 
@@ -427,11 +460,14 @@ public class NVRamToolDecoder {
       int endPosition = 0;
       for (Score sc : scores) {
         SearchResult res = selectedScores.get(sc);
-        startPosition = Math.min(startPosition, res.initialPosition);
-        startPosition = Math.min(startPosition, res.scorePosition);
-
-        endPosition = Math.max(endPosition, res.initialPosition + 3);
-        endPosition = Math.max(endPosition, res.scorePosition + res.scoreLength);
+        if (res.initialPosition >= 0) {
+          startPosition = Math.min(startPosition, res.initialPosition);
+          endPosition = Math.max(endPosition, res.initialPosition + 3);
+        }
+        if (res.scorePosition >= 0) {
+          startPosition = Math.min(startPosition, res.scorePosition);
+          endPosition = Math.max(endPosition, res.scorePosition + res.scoreLength);
+        }
       }
 
       // calculate checksum of the region

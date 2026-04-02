@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.nvrams.parser;
+package de.mephisto.vpin.server.nvrams.decoder;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -14,7 +14,9 @@ public class SimpleCaptureLogger extends SimpleLogger {
   public void log(LEVEL level, String msg, Object[] args, Throwable t) {
     if (writer != null) {
       String txt = msg.replace("{}", "%s");
-      txt = String.format(txt, args);
+      if (args != null) {
+        txt = String.format(txt, args);
+      }
       writer.append(txt);
       writer.append("\n");
       if (t != null) {

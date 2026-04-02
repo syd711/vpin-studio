@@ -15,31 +15,30 @@ import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.mephisto.vpin.server.nvrams.parser.NVRamMap;
-import de.mephisto.vpin.server.nvrams.parser.NVRamMapping;
-import de.mephisto.vpin.server.nvrams.parser.NVRamParser;
-import de.mephisto.vpin.server.nvrams.parser.NVRamToolDump;
-import de.mephisto.vpin.server.nvrams.parser.NVRamToolHexDump;
-import de.mephisto.vpin.server.nvrams.parser.SparseMemory;
+import de.mephisto.vpin.server.nvrams.map.NVRamMap;
+import de.mephisto.vpin.server.nvrams.map.NVRamMapping;
+import de.mephisto.vpin.server.nvrams.map.SparseMemory;
+import de.mephisto.vpin.server.nvrams.tools.NVRamToolDump;
 
 /**
  * Uses test data from https://github.com/tomlogic/py-pinmame-nvmaps
  * This project uses a snapshot version of https://github.com/tomlogic/pinmame-nvram-maps/
  */
-public class NVRamParserTest {
+public class NVRamMapServiceTest {
 
   /** Root url for test, see above comment  */
   public static final String MAPS_ROOT = "https://raw.githubusercontent.com/tomlogic/pinmame-nvram-maps/d7b9d881753def5f92e7858bea8bec84a52bc77e/";
 
   public static final String TEST_ROOT = "https://github.com/tomlogic/py-pinmame-nvmaps/raw/refs/heads/main/test/";
 
+  /** @fixme commented as a bit long... */
   //@Test
   public void testAllDump() throws IOException {
-    NVRamParser parser = new NVRamParser(MAPS_ROOT);
+    NVRamMapService parser = new NVRamMapService(MAPS_ROOT);
     String indexJsonUrl = MAPS_ROOT + "index.json";
 
     // optional ROM, to start with, leave null for all
-    String romStart = "t2_l8";
+    String romStart = null; //"t2_l8";
 
     parser.download(indexJsonUrl, in -> {
       ObjectMapper mapper = new ObjectMapper();
@@ -55,11 +54,11 @@ public class NVRamParserTest {
 
   @Test
   public void testOneDump() throws IOException {
-    NVRamParser parser = new NVRamParser(MAPS_ROOT);
-//    checkRom(parser, "t2_l8", true);
+    NVRamMapService parser = new NVRamMapService(MAPS_ROOT);
+    checkRom(parser, "t2_l8", true);
   }
 
-  private void checkRom(NVRamParser parser, String rom, boolean runAssert) throws IOException {
+  private void checkRom(NVRamMapService parser, String rom, boolean runAssert) throws IOException {
     System.out.println("checking " + rom + "...");
     parseNVRam(parser, rom, (mapJson, memory) -> {
       String result = TEST_ROOT + "expected/" + rom + ".nv.txt";
@@ -91,11 +90,11 @@ public class NVRamParserTest {
 
   //-------------------------------------------
 
-//  @Test
+  @Test
   public void testDumpPlayerCount() throws IOException {
     String rom = "bcats_l5";
 
-    NVRamParser parser = new NVRamParser(MAPS_ROOT);
+    NVRamMapService parser = new NVRamMapService(MAPS_ROOT);
     parseNVRam(parser, rom, (mapJson, memory) -> {
         NVRamMapping m = mapJson.getGameState().getPlayerCount();
         String e = m.formatEntry(mapJson, memory, Locale.ENGLISH);
@@ -103,48 +102,14 @@ public class NVRamParserTest {
     });
   }
 
-  @Test
-  public void testExeDump() throws IOException {
-    String rom = "freddy";
-
-    NVRamParser parser = new NVRamParser(MAPS_ROOT);
-    parseNVRam(parser, rom, (mapJson, memory) -> {
-        try {
-          NVRamToolHexDump dump = new NVRamToolHexDump();
-          String d = dump.hexDump(mapJson, memory, Locale.ENGLISH);
-          System.out.println(d);
-        }
-        catch (IOException ioe) {
-          ioe.printStackTrace();
-        }
-    });
-  }
-
-  @Test
-  public void testBruteExeDump() throws IOException {
-    String rom = "freddy";
-    String testnv = TEST_ROOT + "nvram/" + rom + ".nv";
-
-    NVRamParser parser = new NVRamParser(MAPS_ROOT);
-    String d = parser.download(testnv, in -> {
-      byte[] bytes = IOUtils.toByteArray(in);
-      NVRamMap mapJson = new NVRamMap();
-      SparseMemory memory = parser.setNvram(mapJson, bytes);
-      NVRamToolHexDump dump = new NVRamToolHexDump();
-      return dump.hexDump(mapJson, memory, Locale.ENGLISH);
-    });
-    System.out.println(d);            
-  }
-
-
   //-------------------------------------------
 
-  private void parseNVRam(NVRamParser parser, String rom, BiConsumer<NVRamMap, SparseMemory> consumer) throws IOException {
+  private void parseNVRam(NVRamMapService parser, String rom, BiConsumer<NVRamMap, SparseMemory> consumer) throws IOException {
     String testnv = TEST_ROOT + "nvram/" + rom + ".nv";
     parser.download(testnv, in -> {
       byte[] bytes = IOUtils.toByteArray(in);
       NVRamMap mapJson = parser.getMap(rom);
-      SparseMemory memory = parser.setNvram(mapJson, bytes);
+      SparseMemory memory = parser.getMemory(mapJson, bytes);
       consumer.accept(mapJson, memory);
       return null;
     });

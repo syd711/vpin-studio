@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.nvrams.parser;
+package de.mephisto.vpin.server.nvrams.map;
 
 import java.util.ArrayList;
 import java.util.List;
