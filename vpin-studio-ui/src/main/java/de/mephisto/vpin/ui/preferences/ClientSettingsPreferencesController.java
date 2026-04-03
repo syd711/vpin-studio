@@ -113,6 +113,8 @@ public class ClientSettingsPreferencesController implements Initializable {
   private CheckBox sectionVps;
 
   @FXML
+  private CheckBox columnMusic;
+  @FXML
   private CheckBox columnAltColor;
   @FXML
   private CheckBox columnAltSound;
@@ -520,6 +522,13 @@ public class ClientSettingsPreferencesController implements Initializable {
     columnAltColor.setSelected(uiSettings.isColumnAltColor());
     columnAltColor.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setColumnAltColor(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
+    });
+
+    columnMusic.setSelected(uiSettings.isColumnMusic());
+    columnMusic.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setColumnMusic(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
       client.getPreferenceService().setJsonPreference(uiSettings);
     });

@@ -6,6 +6,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -195,6 +196,30 @@
                      </VBox.margin>
                   </Label>
                   <Label layoutX="34.0" layoutY="248.0" styleClass="preference-description" text="Miscellaneous options for the VPin Server can be configured here." textFill="WHITE" />
+                  <HBox alignment="CENTER_LEFT" spacing="6.0">
+                     <children>
+                        <Label prefHeight="20.0" styleClass="preference-label" text="Startup Delay: " textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Spinner fx:id="startupDelaySpinner" prefWidth="80.0" />
+                        <Label layoutX="10.0" layoutY="13.0" prefHeight="20.0" styleClass="preference-label" text="seconds" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <Label layoutX="34.0" layoutY="884.0" styleClass="preference-description" text="You can delay the start of the server to give the processor resources to start the frontend first." textFill="WHITE">
+                     <VBox.margin>
+                        <Insets top="3.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label layoutX="34.0" layoutY="947.0" styleClass="preference-description" text="This might result in a faster launch of your frontend, depending on the power of your CPU." textFill="WHITE" />
                   <VBox fx:id="launchOnExitOption">
                      <children>
                         <CheckBox fx:id="launchFrontendCheckbox" mnemonicParsing="false" text="Launch VPin frontend on maintenance exit." textFill="WHITE">

@@ -84,6 +84,9 @@ public class TableOverviewColumnSorter implements BaseColumnSorter<GameRepresent
       else if (column.equals(tableOverviewController.columnAltSound)) {
         comp = Comparator.comparing(o -> o.getGame().isAltSoundAvailable());
       }
+      else if (column.equals(tableOverviewController.columnMusic)) {
+        comp = Comparator.comparing(o -> o.getGame().isMusicScripted());
+      }
       else if (column.equals(tableOverviewController.columnRom)) {
         comp = Comparator.comparing(o -> String.valueOf(o.getGame().getRom()));
       }

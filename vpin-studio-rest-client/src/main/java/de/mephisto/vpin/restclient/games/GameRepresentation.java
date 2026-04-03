@@ -90,6 +90,7 @@ public class GameRepresentation {
   private String resPath;
   private String vbsPath;
   private boolean altSoundAvailable;
+  private boolean musicScripted;
 
   private List<String> tags = new ArrayList<>();
 
@@ -392,6 +393,14 @@ public class GameRepresentation {
 
   public void setAltSoundAvailable(boolean altSoundAvailable) {
     this.altSoundAvailable = altSoundAvailable;
+  }
+
+  public boolean isMusicScripted() {
+    return musicScripted;
+  }
+
+  public void setMusicScripted(boolean musicScripted) {
+    this.musicScripted = musicScripted;
   }
 
   public String getAssets() {

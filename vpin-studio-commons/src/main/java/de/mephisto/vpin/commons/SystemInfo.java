@@ -20,6 +20,7 @@ public class SystemInfo {
   public final static String PINUP_SYSTEM_INSTALLATION_DIR = "pinupSystem.installationDir";
   public final static String PINBALLX_INSTALLATION_DIR = "pinballX.installationDir";
   public final static String PINBALLY_INSTALLATION_DIR = "pinballY.installationDir";
+  public final static String VPX_INSTALLATION_DIR = "vpx.installationDir";
 
   public final static String STANDALONE_INSTALLATION_DIR = "visualPinball.installationDir";
   public final static String STANDALONE_CONFIG_FILE = "visualPinball.configFile";

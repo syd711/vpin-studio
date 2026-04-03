@@ -221,18 +221,22 @@ public class VPXFileScanner {
   }
 
   private static void lineSearchMp3FileName(ScanResult result, String line) {
-    if (!line.contains(".mp3") && !line.contains(".MP3")) {
+    if (!line.toLowerCase().contains(".mp3") && !line.toLowerCase().contains(".wav") ) {
       return;
     }
     Matcher matcher = MP3_EXPRESSION_PATTERN.matcher(line);
     while (matcher.find()) {
       String expr = matcher.group();
-      if (!StringUtils.containsIgnoreCase(expr, ".mp3")) {
+      if (!StringUtils.containsIgnoreCase(expr, ".mp3") && !StringUtils.containsIgnoreCase(expr, ".wav")) {
         continue;
       }
-      String filename = buildMp3Wildcard(expr);
+      String filename = buildMusicWildcard(expr);
       if (filename != null) {
-        if (filename.equalsIgnoreCase(".mp3") || filename.equalsIgnoreCase("*.mp3")) {
+        if (filename.equalsIgnoreCase(".mp3")
+            || filename.equalsIgnoreCase("*.mp3")
+            || filename.equalsIgnoreCase(".wav")
+            || filename.equalsIgnoreCase("*.wav")
+        ) {
           continue;
         }
         addAsset(result, filename.replaceAll("\\\\", "/"));
@@ -268,7 +272,7 @@ public class VPXFileScanner {
    * Quoted parts contribute their literal content; variable tokens become *.
    * e.g. "MFDOOM\Attract" & i & ".mp3"  ->  MFDOOM\Attract*.mp3
    */
-  private static String buildMp3Wildcard(String expr) {
+  private static String buildMusicWildcard(String expr) {
     StringBuilder sb = new StringBuilder();
     for (String part : splitOnAmpersandOutsideQuotes(expr)) {
       if (part.startsWith("\"") && part.endsWith("\"") && part.length() >= 2) {
@@ -282,7 +286,7 @@ public class VPXFileScanner {
       }
     }
     String result = sb.toString();
-    return StringUtils.containsIgnoreCase(result, ".mp3") ? result : null;
+    return (StringUtils.containsIgnoreCase(result, ".mp3") || StringUtils.containsIgnoreCase(result, ".wav")) ? result : null;
   }
 
   /**

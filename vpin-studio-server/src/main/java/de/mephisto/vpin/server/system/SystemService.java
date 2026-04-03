@@ -5,6 +5,7 @@ import com.sun.jna.platform.WindowUtils;
 import com.zaxxer.hikari.HikariDataSource;
 import de.mephisto.vpin.commons.MonitorInfoUtil;
 import de.mephisto.vpin.commons.SystemInfo;
+import de.mephisto.vpin.commons.SystemInfoWindows;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.commons.utils.controller.GameController;
@@ -14,6 +15,7 @@ import de.mephisto.vpin.restclient.system.FeaturesInfo;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.restclient.system.NVRamsInfo;
 import de.mephisto.vpin.restclient.system.ScoringDB;
+import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.server.ServerUpdatePreProcessing;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.VPinStudioServer;
@@ -93,6 +95,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   private File standaloneTablesFolder;
 
   private File backglassServerFolder;
+  private File vpxInstallationFolder;
 
   private File backupFolder;
 
@@ -107,6 +110,15 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   private ScoringDB db;
 
   private ApplicationContext context;
+
+  @Override
+  public File resolveVpxExe() {
+    File vpxExe = super.resolveVpxExe();
+    if (vpxExe == null || !vpxExe.exists()) {
+      vpxExe = new File(getVpxFolder(), "VPinballX.exe");
+    }
+    return vpxExe;
+  }
 
   private void initBaseFolders() throws VPinStudioException {
     try {
@@ -144,6 +156,11 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       else {
         // for non PinupPopper users, initialize pinupInstallationFolder from player
         this.pinupInstallationFolder = resolvePinupPlayerFolder();
+      }
+
+      //VPinMAME Folder
+      if (store.containsNonEmptyKey(VPX_INSTALLATION_DIR)) {
+        this.vpxInstallationFolder = new File(store.get(VPX_INSTALLATION_DIR));
       }
 
       // now that frontend is determined, activate or deactivate features
@@ -238,6 +255,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public File getBackglassServerFolder() {
     return backglassServerFolder;
+  }
+
+  public File getVpxFolder() {
+    return vpxInstallationFolder;
   }
 
   private static String formatPathLog(String label, String value, Boolean exists, Boolean readable) {

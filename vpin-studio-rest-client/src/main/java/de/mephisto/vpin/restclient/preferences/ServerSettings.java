@@ -19,6 +19,7 @@ public class ServerSettings extends JsonSettings {
   private String mappingHsFileName = "CUSTOM4";
   private String mappingPatchVersion = "CUSTOM5";
   private boolean stickyKeysEnabled = true;
+  private int startupDelay = 0;
 
   /** When virtual DMD is disabled, disable DMD in DmdDevice.ini */
   private boolean disableDmdViaIni = false;
@@ -26,6 +27,14 @@ public class ServerSettings extends JsonSettings {
   private boolean disableDmdInMame = true;
   /** For alphanumeric DMD, turn off backglass scores rendering */
   private boolean disableBackglassScore = true;
+
+  public int getStartupDelay() {
+    return startupDelay;
+  }
+
+  public void setStartupDelay(int startupDelay) {
+    this.startupDelay = startupDelay;
+  }
 
   public boolean isInitialMute() {
     return initialMute;
