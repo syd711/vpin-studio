@@ -24,7 +24,7 @@ import de.mephisto.vpin.server.nvrams.NVRamMapService;
 import de.mephisto.vpin.server.nvrams.map.NVRamMap;
 import de.mephisto.vpin.server.nvrams.map.NVRamScore;
 import de.mephisto.vpin.server.nvrams.map.SparseMemory;
-import de.mephisto.vpin.server.pinemhi.PINemHiService;
+import de.mephisto.vpin.server.system.SystemService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -37,10 +37,13 @@ public class NvRamOutputToScoreTextTest {
 
   private final static List<String> ignoreList = Arrays.asList("kiko_a10.nv", "dh_lx2.nv", "tmac_a24.nv");
 
+  static {
+    SystemService.RESOURCES = "../resources/";
+  }
+
   @Test
   public void testAllFiles() throws Exception {
     File testFolder = new File("../testsystem/vPinball/VisualPinball/VPinMAME/nvram/");
-    PINemHiService.adjustVPPathForEmulator(testFolder, getPinemhiIni(), true);
 
     File[] files = testFolder.listFiles((dir, name) -> name.endsWith(".nv"));
     int count = 0;
@@ -81,7 +84,6 @@ public class NvRamOutputToScoreTextTest {
     filename = "nbaf_31.nv";
 
     File testFolder = new File("../testsystem/vPinball/VisualPinball/VPinMAME/nvram/");
-    PINemHiService.adjustVPPathForEmulator(testFolder, getPinemhiIni(), true);
 
     File entry = new File(testFolder, filename);
     int status = doTestOneFile(entry);
@@ -103,7 +105,7 @@ public class NvRamOutputToScoreTextTest {
     }
 
     LOG.info("Reading '" + entry.getName() + "'");
-    String raw = NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(getPinemhiExe(), entry);
+    String raw = NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(entry);
 
     assertNotNull(raw);
     List<Score> parse = ScoreListFactory.create(raw, new Date(entry.length()), null, scoringDB);
@@ -229,11 +231,8 @@ public class NvRamOutputToScoreTextTest {
     game.setRom(nv.replace(".nv", ""));
 
     File testFolder = new File("../testsystem/vPinball/VisualPinball/VPinMAME/nvram/");
-    // Set the path to this GameEmulator so that nv files can be found
-    PINemHiService.adjustVPPathForEmulator(testFolder, getPinemhiIni(), true);
-
     File entry = new File(testFolder, nv);
-    String raw = NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(getPinemhiExe(), entry);
+    String raw = NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(entry);
     assertNotNull(raw);
 
     LOG.info("raw : " + raw);
@@ -266,13 +265,11 @@ public class NvRamOutputToScoreTextTest {
     game.setRom(rom);
 
     File testFolder = new File("../testsystem/vPinball/VisualPinball/VPinMAME/nvram/");
-    // Set the path to this GameEmulator so that nv files can be found
-    PINemHiService.adjustVPPathForEmulator(testFolder, getPinemhiIni(), true);
 
     Locale loc = Locale.ENGLISH;
 
     File entry = new File(testFolder, rom + ".nv");
-    String raw = NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(getPinemhiExe(), entry);
+    String raw = NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(entry);
     List<Score> scores = ScoreListFactory.create(raw, new Date(entry.length()), game, scoringDB);
     for (Score score : scores) {
       System.out.println(score.getFormattedScore(loc));
@@ -290,13 +287,5 @@ public class NvRamOutputToScoreTextTest {
     }
   }
 
-  // -----------------
 
-  private File getPinemhiIni() {
-    return new File("../resources/pinemhi", PINemHiService.PINEMHI_INI);
-  }
-
-  private File getPinemhiExe() {
-    return new File("../resources/pinemhi", PINemHiService.PINEMHI_COMMAND);
-  }
 }

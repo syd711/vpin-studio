@@ -503,10 +503,14 @@ public class NVRamMapping extends NVRamObject {
 
   @SuppressWarnings("unchecked")
   public String formatEntry(NVRamMap mapJson, SparseMemory memory, Locale locale) {
-    if (encoding == null) return null;
+    if (encoding == null) {
+      return null;
+    }
 
     byte[] ba = getBytes(mapJson, memory);
-    if (ba == null) return null;
+    if (ba == null) {
+      return null;
+    }
 
     Object value = getValue(mapJson, memory);
 
@@ -524,7 +528,9 @@ public class NVRamMapping extends NVRamObject {
         int mask = 1;
         long bitsValue = 0;
         for (Object b : lvalues) {
-          if ((intValue & mask) != 0) bitsValue += ((Number) b).longValue();
+          if ((intValue & mask) != 0) {
+            bitsValue += ((Number) b).longValue();
+          }
           mask <<= 1;
         }
         return formatValue(bitsValue, locale);
@@ -533,7 +539,9 @@ public class NVRamMapping extends NVRamObject {
         int mask = 1;
         List<String> setValues = new ArrayList<>();
         for (Object b : lvalues) {
-          if ((intValue & mask) != 0) setValues.add((String) b);
+          if ((intValue & mask) != 0) {
+            setValues.add((String) b);
+          }
           mask <<= 1;
         }
         return String.join(", ", setValues);
@@ -542,7 +550,9 @@ public class NVRamMapping extends NVRamObject {
     else if ("enum".equals(encoding) || "dipsw".equals(encoding)) {
       List<Object> values = entryValues(mapJson);
       int idx = ((Number) value).intValue();
-      if (idx >= values.size()) return "?" + idx;
+      if (idx >= values.size()) {
+        return "?" + idx;
+      }
       Object v = values.get(idx);
       return Objects.toString(v);
     } 
@@ -566,7 +576,9 @@ public class NVRamMapping extends NVRamObject {
     else if ("raw".equals(encoding)) {
       StringBuilder sb = new StringBuilder();
       for (byte b : ba) {
-        if (sb.length() > 0) sb.append(" ");
+        if (sb.length() > 0) {
+          sb.append(" ");
+        }
         sb.append(String.format("%02x", b & 0xFF));
       }
       return sb.toString();
@@ -583,9 +595,13 @@ public class NVRamMapping extends NVRamObject {
     String lbl = StringUtils.defaultString(label, "?");
     if (lbl.startsWith("_")) lbl = null;
     if (useShortLabel) {
-      if (shortLabel != null) lbl = shortLabel;
+      if (shortLabel != null) {
+        lbl = shortLabel;
+      }
     }
-    if (key != null && lbl != null) lbl = key + " " + lbl;
+    if (key != null && lbl != null) {
+      lbl = key + " " + lbl;
+    }
     return lbl;
   }
 

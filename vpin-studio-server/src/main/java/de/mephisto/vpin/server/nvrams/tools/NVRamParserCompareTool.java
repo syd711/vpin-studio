@@ -5,6 +5,7 @@ import de.mephisto.vpin.server.pinemhi.PINemHiService;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,42 +35,44 @@ public class NVRamParserCompareTool {
       new File("./resources/nvrams")    // resetted nvrams
     };
 
-    PINemHiService piNemHiService = new PINemHiService();
-    String[] split = piNemHiService.getPinemhiSupportedNVRams();
+    String[] split = PINemHiService.getPinemhiSupportedNVRams();
     List<String> pinemhiNVRams = Arrays.asList(split);
 
-   
-    System.out.println("-------------------------------------");
-    System.out.println("Missing roms in NVRamMap vs in Pinemhi:");
-    for (String s : pinemhiNVRams) {
-      if(!supportedNVRams.contains(s)) {
-        // load pinhemi and parse scores
-        String paths = null;
-        for (File folder : testFolders) {
-          File entry = new File(folder, s + ".nv");
-          if (entry.exists()) {
-            paths = (paths != null? paths + ", ": "") + entry.getAbsolutePath();
+    try (PrintWriter w = new PrintWriter("nvam_vs_pinemhi.txt")) {
+      w.println("-------------------------------------");
+      w.println("Missing roms in NVRamMap vs in Pinemhi:");
+      for (String s : pinemhiNVRams) {
+        if(!supportedNVRams.contains(s)) {
+          // load pinhemi and parse scores
+          String paths = null;
+          for (File folder : testFolders) {
+            File entry = new File(folder, s + ".nv");
+            if (entry.exists()) {
+              paths = (paths != null? paths + ", ": "") + entry.getAbsolutePath();
+            }
           }
+          w.println(s + (paths != null ? " <<< .nv exists : " + paths : ""));
         }
-        System.out.println(s + (paths != null ? " <<< .nv exists : " + paths : ""));
+        else {
+          w.println(s + " OK");
+        }
       }
+
+      // w.println("-------------------------------------");
+      // w.println("Missing roms in Pinemhi:");
+      // for (String s : supportedNVRams) {
+      //   if(!pinemhiNVRams.contains(s)) {
+      //     w.println(s);
+      //   }
+      // }
+
+      // w.println("-------------------------------------");
+      // w.println("Common roms:");
+      // for (String s : pinemhiNVRams) {
+      //   if(supportedNVRams.contains(s)) {
+      //     w.println(s);
+      //   }
+      // }
     }
-
-    // System.out.println("-------------------------------------");
-    // System.out.println("Missing roms in Pinemhi:");
-    // for (String s : supportedNVRams) {
-    //   if(!pinemhiNVRams.contains(s)) {
-    //     System.out.println(s);
-    //   }
-    // }
-
-    // System.out.println("-------------------------------------");
-    // System.out.println("Common roms:");
-    // for (String s : pinemhiNVRams) {
-    //   if(supportedNVRams.contains(s)) {
-    //     System.out.println(s);
-    //   }
-    // }
   }
- 
 }

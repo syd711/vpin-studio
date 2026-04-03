@@ -4,11 +4,15 @@ import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.vpinmame.VPinMameService;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.lang3.StringUtils;
+import org.htmlunit.jetty.io.RuntimeIOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -27,9 +31,11 @@ public class PINemHiService implements InitializingBean {
 
   private final static String PROCESS_NAME = "pinemhi_rom_monitor";
 
-  public final static String PINEMHI_FOLDER = SystemService.RESOURCES + "pinemhi";
-  public final static String PINEMHI_COMMAND = "PINemHi.exe";
-  public final static String PINEMHI_INI = "pinemhi.ini";
+  private final static String PINEMHI_COMMAND = "PINemHi.exe";
+  private final static String PINEMHI_INI = "pinemhi.ini";
+
+  // The cache File folder that has been adjusted in pinemHi ini file
+  private static File vpPathAdjusted = null;
 
   @Autowired
   private PreferencesService preferencesService;
@@ -73,14 +79,14 @@ public class PINemHiService implements InitializingBean {
   }
 
   private static void startMonitor() {
-    File exe = new File(PINEMHI_FOLDER, PROCESS_NAME + ".exe");
+    File exe = new File(SystemService.RESOURCES + "pinemhi", PROCESS_NAME + ".exe");
     List<String> commands = Arrays.asList("start", "/min", exe.getAbsolutePath());
     SystemCommandExecutor executor = new SystemCommandExecutor(commands);
 //    executor.setEnv("LANG", "en_US.UTF-8");
 //    executor.setEnv("LC_ALL", "en_US.UTF-8");
 //    executor.setEnv("LC_CTYPE", "en_US.UTF-8");
 //    executor.setCodePage("65001");
-    executor.setDir(new File(PINEMHI_FOLDER));
+    executor.setDir(new File(SystemService.RESOURCES + "pinemhi"));
     executor.executeCommandAsync();
     LOG.info("Executed {} command: {}", PROCESS_NAME, String.join(" ", commands));
   }
@@ -91,11 +97,11 @@ public class PINemHiService implements InitializingBean {
     return true;
   }
   
-  public String[] getPinemhiSupportedNVRams() {
+  public static String[] getPinemhiSupportedNVRams() {
     try {
       List<String> commands = Arrays.asList(PINEMHI_COMMAND, "-lr");
       SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-      executor.setDir(new File(PINEMHI_FOLDER));
+      executor.setDir(new File(SystemService.RESOURCES + "pinemhi"));
       executor.executeCommand();
       StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
       String stdOut = standardOutputFromCommand.toString();
@@ -181,16 +187,43 @@ public class PINemHiService implements InitializingBean {
   }
 
   public static final File getPinemhiIni() {
-    return new File(PINEMHI_FOLDER, PINEMHI_INI);
+    return new File(SystemService.RESOURCES + "pinemhi", PINEMHI_INI);
   }
 
-  public static File getPinemhiExe() {
-    return new File(PINEMHI_FOLDER, PINEMHI_COMMAND);
+  public static final File getPinemhiExe() {
+    return new File(SystemService.RESOURCES + "pinemhi", PINEMHI_COMMAND);
   }
 
 
   //----------------------
 
+  @Nullable
+  public static String executePINemHi(@NonNull File originalNVRamFile) throws Exception {
+      File commandFile = getPinemhiExe();
+
+      // make sure nvram can be found
+      adjustVPPathForEmulator(originalNVRamFile.getParentFile(), true);
+
+      String nvRamName = originalNVRamFile.getName().toLowerCase();
+      List<String> commands = Arrays.asList(commandFile.getName(), nvRamName);
+//      LOG.info("PinemHI: " + String.join(" ", commands));
+      SystemCommandExecutor executor = new SystemCommandExecutor(commands);
+//      executor.setEnv("LANG", "en_US.UTF-8");
+//      executor.setEnv("LC_ALL", "en_US.UTF-8");
+//      executor.setEnv("LC_CTYPE", "en_US.UTF-8");
+//      executor.setCodePage("65001");
+      executor.setDir(commandFile.getParentFile());
+      executor.executeCommand();
+      StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
+      StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
+      if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
+        String error = "Pinemhi command (" + commandFile.getCanonicalPath() + " " + nvRamName + ") failed. Error output:\n" + standardErrorFromCommand + "\nStandard output:\n" + standardOutputFromCommand;
+        throw new RuntimeIOException(error);
+      }
+      return standardOutputFromCommand.toString();
+  }
+
+  //----------------------
   private void checkForUpdates() {
     try {
       if (!new File("resources/pinemhi").exists()) {
@@ -200,7 +233,7 @@ public class PINemHiService implements InitializingBean {
 
       List<String> commands = Arrays.asList(PINEMHI_COMMAND, "-v");
       SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-      executor.setDir(new File(PINEMHI_FOLDER));
+      executor.setDir(new File(SystemService.RESOURCES + "pinemhi"));
       executor.executeCommand();
 
       StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
@@ -217,14 +250,14 @@ public class PINemHiService implements InitializingBean {
             LOG.info("PINemHi is outdated ({} vs. {}), checking for updates.", version, pinemhiVersion);
             List<String> resources = Arrays.asList("PINemHi.exe", "pinemhi_rom_monitor.exe", "PINemHi_Leaderboard.exe", "romfind.ini", "showboard.exe");
             for (String resource : resources) {
-              File check = new File(PINEMHI_FOLDER, resource);
+              File check = new File(SystemService.RESOURCES + "pinemhi", resource);
               LOG.info("Downloading PINemHi file {}", check.getAbsolutePath());
               Updater.downloadAndOverwrite("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/pinemhi/" + resource, check, true);
             }
 
             File nvramFolder = vPinMameService.getNvRamFolder();
             if (nvramFolder != null && nvramFolder.exists()) {
-              adjustVPPathForEmulator(nvramFolder, getPinemhiIni(), true);
+              adjustVPPathForEmulator(nvramFolder, true);
             }
           }
         }
@@ -237,13 +270,17 @@ public class PINemHiService implements InitializingBean {
   }
 
   /**
-   * Load pinhemi.ini, update the VP path with the nvRam foldr of the emulator
-   * and save
+   * Set the path to the nvRamFolder so that nv files can be found
+   * Load pinhemi.ini, update the VP path with the provided folder
+   * For optimization, do it only if the cached folder is different
    */
-  public static void adjustVPPathForEmulator(File nvRamFolder, File ini, boolean forcePath) {
+  private static void adjustVPPathForEmulator(File nvRamFolder, boolean forcePath) {
+    if (vpPathAdjusted != null && vpPathAdjusted.equals(nvRamFolder)) {
+      return;
+    }
     if (nvRamFolder.exists()) {
       try {
-        INIConfiguration iniConfiguration = loadIni(ini);
+        INIConfiguration iniConfiguration = loadIni(getPinemhiIni());
         String vpPath = (String) iniConfiguration.getSection("paths").getProperty("VP");
         File vp = new File(vpPath);
 
@@ -251,9 +288,12 @@ public class PINemHiService implements InitializingBean {
           vp = new File(nvRamFolder.getAbsolutePath());
           iniConfiguration.getSection("paths").setProperty("VP", vp.getAbsolutePath().replaceAll("\\\\", "/") + "/");
 
-          saveIni(ini, iniConfiguration);
+          saveIni(getPinemhiIni(), iniConfiguration);
           LOG.info("Changed VP path to {}", vp.getAbsolutePath());
         }
+
+        // cache latest adjusted path for optimisation
+        vpPathAdjusted = nvRamFolder;
       }
       catch (Exception e) {
         LOG.error("Failed to update VP path in pinemhi.ini: {}", e.getMessage(), e);
@@ -276,7 +316,7 @@ public class PINemHiService implements InitializingBean {
 
     File nvramFolder = vPinMameService.getNvRamFolder();
     if (nvramFolder != null && nvramFolder.exists()) {
-      adjustVPPathForEmulator(nvramFolder, getPinemhiIni(), true);
+      adjustVPPathForEmulator(nvramFolder, true);
     }
 
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());

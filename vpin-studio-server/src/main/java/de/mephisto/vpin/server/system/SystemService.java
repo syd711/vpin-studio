@@ -288,7 +288,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   @NonNull
   public File getPinemhiCommandFile() {
-    return new File(PINemHiService.PINEMHI_FOLDER, PINemHiService.PINEMHI_COMMAND);
+    return PINemHiService.getPinemhiExe();
   }
 
   public File getResettedNVRamsFolder() {
