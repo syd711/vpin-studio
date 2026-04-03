@@ -1,23 +1,36 @@
 package de.mephisto.vpin.server.nvrams.tools;
 
 import de.mephisto.vpin.server.nvrams.NVRamMapService;
+import de.mephisto.vpin.server.nvrams.NVRamMapSuperhacService;
 import de.mephisto.vpin.server.pinemhi.PINemHiService;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A Tool that compares NVRAm support between pinemHi and the Nvram-Map project
  */
 public class NVRamParserCompareTool {
 
-  public static void main(String[] args) throws IOException, InterruptedException {
+  public static void main(String[] args) throws IOException {
+
+    VPinMameService vpinmameService = new VPinMameService();
+    Map<String, String> roms = vpinmameService.getRomnames(new File("C:/Visual Pinball/VPinMAME"));
+    Map<String, String> clones = vpinmameService.getClones(new File("C:/Visual Pinball/VPinMAME"));
 
     NVRamMapService parser = new NVRamMapService();
     List<String> supportedNVRams = parser.getSupportedNVRams();
+
+    String[] split = PINemHiService.getPinemhiSupportedNVRams();
+    List<String> pinemhiNVRams = Arrays.asList(split);
+    
+    NVRamMapSuperhacService superhac = new NVRamMapSuperhacService();
+    List<String> supportedbySuperhac = superhac.getSupportedNVRams();
 
     File[] testFolders = new File[] { 
       new File("./testsystem/vPinball/VisualPinball/VPinMAME/nvram/"),
@@ -35,44 +48,30 @@ public class NVRamParserCompareTool {
       new File("./resources/nvrams")    // resetted nvrams
     };
 
-    String[] split = PINemHiService.getPinemhiSupportedNVRams();
-    List<String> pinemhiNVRams = Arrays.asList(split);
-
-    try (PrintWriter w = new PrintWriter("nvam_vs_pinemhi.txt")) {
+    try (PrintWriter w = new PrintWriter("allroms.csv")) {
+      w.println("\"rom\",\"Name\",\"clone of\",\"pinemHi\",\"tomslogic\",\"superhac\",\"nvs\"");
       w.println("-------------------------------------");
-      w.println("Missing roms in NVRamMap vs in Pinemhi:");
-      for (String s : pinemhiNVRams) {
-        if(!supportedNVRams.contains(s)) {
-          // load pinhemi and parse scores
-          String paths = null;
-          for (File folder : testFolders) {
-            File entry = new File(folder, s + ".nv");
-            if (entry.exists()) {
-              paths = (paths != null? paths + ", ": "") + entry.getAbsolutePath();
-            }
+      for (String s : roms.keySet()) {
+
+        w.print(s + ",");
+        w.print(roms.get(s) + ",");
+
+        String cloneOf = clones.get(s);
+        w.print((cloneOf != null? cloneOf: "") + ",");
+
+        w.print((pinemhiNVRams.contains(s) ? "x": "") + ",");
+        w.print((supportedNVRams.contains(s) ? "x": "") + ",");
+        w.print((supportedbySuperhac.contains(s) ? "x": "") + ",");
+
+        String paths = null;
+        for (File folder : testFolders) {
+          File entry = new File(folder, s + ".nv");
+          if (entry.exists()) {
+            paths = (paths != null? paths + ", ": "") + entry.getAbsolutePath();
           }
-          w.println(s + (paths != null ? " <<< .nv exists : " + paths : ""));
         }
-        else {
-          w.println(s + " OK");
-        }
+        w.println(paths != null ? paths: "");
       }
-
-      // w.println("-------------------------------------");
-      // w.println("Missing roms in Pinemhi:");
-      // for (String s : supportedNVRams) {
-      //   if(!pinemhiNVRams.contains(s)) {
-      //     w.println(s);
-      //   }
-      // }
-
-      // w.println("-------------------------------------");
-      // w.println("Common roms:");
-      // for (String s : pinemhiNVRams) {
-      //   if(supportedNVRams.contains(s)) {
-      //     w.println(s);
-      //   }
-      // }
     }
   }
 }
