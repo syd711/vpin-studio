@@ -1,20 +1,19 @@
 ## Release Notes 4.8.2
 
-- **Competition Wheels**: Reverted "rotation check" because it was causing issues for some users. 
-- **DMD Score submission**: Changed processing of frames to support colorized rgb frames.
-- **Table Overview**: 
+- **DMD Score submission**: Changed processing of frames to support colorized RGB frames.
+- **Table Overview**:
   - Added **Backup Date column**. Note that the column is hidden by default and needs to be enabled in the settings.
   - Added **VBS column**. Note that the column is hidden by default and needs to be enabled in the settings.
-  - Added **Music column**. The columns status icon only indicates if music file references have been found in the script, not if actual files have been found.
+  - Added **Music column**. The column's status icon only indicates if music file references have been found in the script, not if actual files have been found.
   - Fixed sorting of several date columns.
 - **Table Installer**:
   - Fixed music bundle detection: Added missing **.wav file detection** and target folder resolving (instead of .mp3 only). You need to re-scan tables that use .wav files as audio files.
-- **Client Settings**: You can now hide Zen Studio emulators in the **Client Settings** too (the checkboxes were disabled previously). 
-- **Server Settings**: 
-  - Added "Startup Delay" option. Because the Studio is started with the frontend, this can result into a longer loading/waiting for the frontend. The startup can now be delayed to give more CPU resources to the frontend loading.  
-  - Added option to configure fallback folder for the VPX detection if the folder is not detected properly.
+- **Client Settings**: You can now hide Zen Studio emulators in the **Client Settings** too (the checkboxes were disabled previously).
+- **Server Settings**:
+  - Added **Startup Delay** option. Because the Studio is started with the frontend, this can result in longer loading/waiting times for the frontend. The startup can now be delayed to give more CPU resources to the frontend during loading.
+  - Added option to configure a **fallback folder for VPX** detection if the folder is not detected properly.
 - **ZEN/Zaccaria Games**:
-  - Fixed issue that for some users these emulators weren't detected anymore. 
+  - Fixed an issue where these emulators weren't detected anymore for some users.
   - Improved detection of **pupgames** database changes: additional tables are now automatically added for Zen and Zaccaria emulators when the database is updated with the latest additions.
   - **Zaccaria**: Updated **pupgames** database and added missing tables.
   - **Pinball M**: Updated **pupgames** database and added missing tables.
