@@ -3,7 +3,7 @@
 - **DMD Score submission**: Changed processing of frames to support colorized RGB frames.
 - **Table Overview**:
   - Added **Backup Date column**. Note that the column is hidden by default and needs to be enabled in the settings.
-  - Added **VBS column**. Note that the column is hidden by default and needs to be enabled in the settings.
+  - Added **VBS Script column**. Note that the column is hidden by default and needs to be enabled in the settings.
   - Added **Music column**. The column's status icon only indicates if music file references have been found in the script, not if actual files have been found.
   - Fixed sorting of several date columns.
 - **Table Installer**:
@@ -19,6 +19,9 @@
   - **Pinball M**: Updated **pupgames** database and added missing tables.
   - **Pinball FX3**: Manually fixed some special names used for ALT color files.
   - **Pinball FX/3/M**: Fixed and extended the database which contains the required backglass filenames for the different emulators.
+  - **Media Recording** Fixed issue for non VPX games when recording was launch via frontend.
+
+---
 
 ## Release Notes 4.8.1
 
