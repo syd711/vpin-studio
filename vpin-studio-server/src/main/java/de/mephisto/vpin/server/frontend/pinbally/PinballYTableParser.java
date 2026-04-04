@@ -102,7 +102,8 @@ public class PinballYTableParser extends PinballXTableParser {
 
   protected void appendDescription(BufferedWriter writer, TableDetails detail) throws IOException {
     if (StringUtils.equals(detail.getGameName(), cleanGameName(detail.getGameDisplayName()))) {
-      appendValue(writer, "description", detail.getGameDisplayName());
+      String gameDisplayName = detail.getGameDisplayName();
+      appendValue(writer, "description", gameDisplayName);
     }
     else {
       appendValue(writer, "description", detail.getGameName());
