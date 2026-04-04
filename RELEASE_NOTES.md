@@ -11,7 +11,7 @@
 - **Client Settings**: You can now hide Zen Studio emulators in the **Client Settings** too (the checkboxes were disabled previously).
 - **Server Settings**:
   - Added **Startup Delay** option. Because the Studio is started with the frontend, this can result in longer loading/waiting times for the frontend. The startup can now be delayed to give more CPU resources to the frontend during loading.
-  - Added option to configure a **fallback folder for VPX** detection if the folder is not detected properly.
+  - Added option to configure a **fallback folder for VPX** detection if the folder is not detected properly. More details can be found in the troubleshooting section of the Wiki.
 - **ZEN/Zaccaria Games**:
   - Fixed an issue where these emulators weren't detected anymore for some users.
   - Improved detection of **pupgames** database changes: additional tables are now automatically added for Zen and Zaccaria emulators when the database is updated with the latest additions.
