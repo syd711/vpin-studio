@@ -284,7 +284,8 @@ public class PinballXTableParser extends DefaultHandler {
   }
 
   protected void appendDescription(BufferedWriter writer, TableDetails detail) throws IOException {
-    appendValue(writer, "description", detail.getGameDisplayName());
+    String gameDisplayName = detail.getGameDisplayName();
+    appendValue(writer, "description", gameDisplayName);
   }
 
   protected void appendKeepDisplays(BufferedWriter writer, String tag, String keepDisplays, VPinScreen screen) throws IOException {
@@ -314,6 +315,7 @@ public class PinballXTableParser extends DefaultHandler {
   }
 
   protected void appendValueNoEscape(BufferedWriter writer, String tag, String value) throws IOException {
+    System.out.println(tag + "/" + value);
     writer.append("    <" + tag + ">").append(value).append("</" + tag + ">\n");
   }
 
