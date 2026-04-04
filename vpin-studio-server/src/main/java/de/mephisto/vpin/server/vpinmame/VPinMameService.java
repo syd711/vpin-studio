@@ -288,6 +288,45 @@ public class VPinMameService implements InitializingBean {
     return !romValidationCache.containsKey(name);
   }
 
+  public Map<String, String> getRomnames(@NonNull File mameFolder) {
+    return listroms(mameFolder, "-listfull");
+  }
+
+  public Map<String, String> getClones(@NonNull File mameFolder) {
+    return listroms(mameFolder, "-listclones");
+  }
+
+  private Map<String, String> listroms(@NonNull File mameFolder, String option) {
+    TreeMap<String, String> roms = new TreeMap<>();
+    try {
+      File mameExe = getMameExe(mameFolder);
+      if (mameExe != null) {
+        List<String> cmds = Arrays.asList(mameExe.getName(), option);
+        LOG.info("Executing ROM validation: {}", String.join(" ", cmds));
+        SystemCommandExecutor executor = new SystemCommandExecutor(cmds);
+        executor.setDir(mameExe.getParentFile());
+        executor.executeCommand();
+        StringBuilder out = executor.getStandardOutputFromCommand();
+        if (out != null) {
+          String result = out.toString();
+          String[] split = result.split("\n");
+          for (String s : split) {
+            int pos1 = s.indexOf('"');
+            int pos2 = s.indexOf(' ');
+            int pos = pos1 < 0 ? pos2 : pos2 < 0 ? pos1 : Math.min(pos1, pos2);
+            if (pos > 0) {
+              roms.put(s.substring(0, pos).trim(), s.substring(pos).trim());
+            }
+          }
+        }
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Cannot list roms: {}", e.getMessage(), e);
+    }
+    return roms;
+  }
+
   public void validateRoms(@NonNull File mameFolder) {
     try {
       File mameExe = getMameExe(mameFolder);
@@ -404,10 +443,7 @@ public class VPinMameService implements InitializingBean {
 
   @Nullable
   private File getMameExe(@NonNull File mameFolder) {
-    File exe = new File(mameFolder, "PinMAME64.exe");
-    if (!exe.exists()) {
-      exe = new File(mameFolder, "PinMAME32.exe");
-    }
+    File exe = new File(mameFolder, "PinMAME.exe");
     return exe.exists() ? exe : null;
   }
 
