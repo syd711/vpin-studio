@@ -315,7 +315,6 @@ public class PinballXTableParser extends DefaultHandler {
   }
 
   protected void appendValueNoEscape(BufferedWriter writer, String tag, String value) throws IOException {
-    System.out.println(tag + "/" + value);
     writer.append("    <" + tag + ">").append(value).append("</" + tag + ">\n");
   }
 
