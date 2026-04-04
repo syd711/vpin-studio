@@ -114,7 +114,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   @Override
   public File resolveVpxExe() {
     File vpxExe = super.resolveVpxExe();
-    if (vpxExe == null || !vpxExe.exists()) {
+    if ((vpxExe == null || !vpxExe.exists()) && getVpxFolder() != null) {
       vpxExe = new File(getVpxFolder(), "VPinballX.exe");
     }
     return vpxExe;
