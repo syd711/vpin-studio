@@ -43,6 +43,7 @@ import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.tables.panels.PlayButtonController;
 import de.mephisto.vpin.ui.tables.panels.UploadsButtonController;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
+import de.mephisto.vpin.ui.tables.vbsedit.VBSManager;
 import de.mephisto.vpin.ui.tables.vps.VpsTableColumn;
 import de.mephisto.vpin.ui.tables.vps.VpsTutorialColumn;
 import de.mephisto.vpin.ui.util.*;
@@ -1152,9 +1153,15 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
           @Override
           public void handle(ActionEvent event) {
             try {
+              ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+              if (!serverSettings.isKeepVbsFiles()) {
+                WidgetFactory.showAlert(stage, ".vbs File Deletion Enabled", "The given .vbs file is deleted after being edited and imported into the .vpx file again.",
+                    "Enable \"Keep .vbs files\" flag in the preferences \"Server Settings\" -> \"Options\".");
+                return;
+              }
+
               GameRepresentation gameRepresentation = value;
-              String vbsPath = gameRepresentation.getVbsPath();
-              Studio.editGameFile(gameRepresentation, vbsPath);
+              VBSManager.getInstance().edit(Optional.of(gameRepresentation));
             }
             catch (Exception e) {
               LOG.error("Failed to open .vbs file: {}", e.getMessage(), e);
