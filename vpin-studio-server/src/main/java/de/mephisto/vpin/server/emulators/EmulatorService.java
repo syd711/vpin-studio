@@ -241,11 +241,11 @@ public class EmulatorService implements InitializingBean, PreferenceChangedListe
         }
       }
 
-      filterNonVPXDuplicates(emulator, gamesByEmulator);
+      cleanUpNonVPXDuplicates(emulator, gamesByEmulator);
     }
   }
 
-  private void filterNonVPXDuplicates(GameEmulator emulator, List<Game> gamesByEmulator) {
+  private void cleanUpNonVPXDuplicates(GameEmulator emulator, List<Game> gamesByEmulator) {
     Map<String, List<Game>> byBaseName = gamesByEmulator.stream()
         .collect(Collectors.groupingBy(g -> FilenameUtils.getBaseName(g.getGameFileName()).toLowerCase()));
 
@@ -260,8 +260,10 @@ public class EmulatorService implements InitializingBean, PreferenceChangedListe
             .orElse(duplicates.get(0));
         for (Game duplicate : duplicates) {
           if (duplicate != vpxGame) {
-            LOG.warn("Removing non-VPX duplicate: [{}] {}", duplicate.getId(), duplicate.getGameFileName());
+            LOG.info("Removing non-VPX duplicate: [{}] {}", duplicate.getId(), duplicate.getGameFileName());
             gamesByEmulator.remove(duplicate);
+            frontendService.deleteGame(duplicate.getId());
+            LOG.info("Removed non-VPX from frontend database: [{}] {}", duplicate.getId(), duplicate.getGameFileName());
           }
         }
       }

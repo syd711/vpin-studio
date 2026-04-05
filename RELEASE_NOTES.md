@@ -1,3 +1,10 @@
+## Release Notes 4.8.3
+
+- **VPS Auto-Matcher**: Fixed VPS table matching so that only matches are applied that match with the game's emulator type.
+- **Emulator Table Detection**: Fixed the bug that tables have been added multiple times for the Zen Studios tables and Zaccaria. The duplicates should be cleaned up after the update too. 
+
+---
+
 ## Release Notes 4.8.2
 
 - **DMD Score submission**: Changed processing of frames to support colorized RGB frames.
