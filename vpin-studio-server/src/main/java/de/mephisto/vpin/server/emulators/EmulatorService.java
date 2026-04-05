@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.lang.invoke.MethodHandles;
+import org.apache.commons.io.FilenameUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -239,12 +240,43 @@ public class EmulatorService implements InitializingBean, PreferenceChangedListe
           }
         }
       }
+
+      filterNonVPXDuplicates(emulator, gamesByEmulator);
+    }
+  }
+
+  private void filterNonVPXDuplicates(GameEmulator emulator, List<Game> gamesByEmulator) {
+    Map<String, List<Game>> byBaseName = gamesByEmulator.stream()
+        .collect(Collectors.groupingBy(g -> FilenameUtils.getBaseName(g.getGameFileName()).toLowerCase()));
+
+    for (Map.Entry<String, List<Game>> entry : byBaseName.entrySet()) {
+      List<Game> duplicates = entry.getValue();
+      if (duplicates.size() > 1) {
+        LOG.warn("Found {} duplicate entries for base name \"{}\" in emulator {}", duplicates.size(), entry.getKey(), emulator.getName());
+        // Keep the VPX entry (if present), remove the rest
+        Game vpxGame = duplicates.stream()
+            .filter(g -> "vpx".equalsIgnoreCase(FilenameUtils.getExtension(g.getGameFileName())))
+            .findFirst()
+            .orElse(duplicates.get(0));
+        for (Game duplicate : duplicates) {
+          if (duplicate != vpxGame) {
+            LOG.warn("Removing non-VPX duplicate: [{}] {}", duplicate.getId(), duplicate.getGameFileName());
+            gamesByEmulator.remove(duplicate);
+          }
+        }
+      }
     }
   }
 
   private boolean containsGame(List<Game> gamesByEmulator, TableDetails tableDetails) {
     for (Game game : gamesByEmulator) {
       if (game.getGameFileName().equals(tableDetails.getGameFileName())) {
+        return true;
+      }
+      if (game.getGameName().equals(tableDetails.getGameName())) {
+        return true;
+      }
+      if (game.getGameDisplayName().equals(tableDetails.getGameDisplayName())) {
         return true;
       }
     }

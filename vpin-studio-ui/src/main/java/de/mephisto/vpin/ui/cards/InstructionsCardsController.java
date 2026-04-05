@@ -177,7 +177,7 @@ public class InstructionsCardsController  implements Initializable {
       if (debug != null) {
         debug.clear();
       }
-      List<VpsTable> matches = automatcher.autoMatchTables(vps, input);
+      List<VpsTable> matches = automatcher.autoMatchTables(vps, null, input);
       if (debug != null) {
         LOG.info(debug.toString());
       }

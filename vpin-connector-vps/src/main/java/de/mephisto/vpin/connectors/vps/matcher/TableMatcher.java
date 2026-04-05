@@ -1,8 +1,10 @@
 package de.mephisto.vpin.connectors.vps.matcher;
 
 import de.mephisto.vpin.connectors.vps.matcher.TableNameSplitter.TableNameParts;
+import de.mephisto.vpin.connectors.vps.model.VpsEmulatorType;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 
+import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.similarity.CosineDistance;
 import org.apache.commons.text.similarity.EditDistance;
@@ -10,9 +12,14 @@ import org.apache.commons.text.similarity.JaccardDistance;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class TableMatcher {
-  /** for debugging */
+  /**
+   * for debugging
+   */
   private VpsDebug debug;
 
   private EditDistance<Double> cd = new CosineDistance();
@@ -28,26 +35,29 @@ public class TableMatcher {
     this.debug = debug;
   }
 
-  public VpsTable findClosest(String fileName, String rom, String tableName, String manuf, int year, List<VpsTable> tables) {
-    List<VpsTable> matches = findAllClosest(fileName, rom, tableName, manuf, year, tables);
+  public VpsTable findClosest(VpsEmulatorType emulatorType, String fileName, String rom, String tableName, String manuf, int year, List<VpsTable> tables) {
+    List<VpsTable> matches = findAllClosest(emulatorType, fileName, rom, tableName, manuf, year, tables);
     return matches.size() > 0 ? matches.get(0) : null;
   }
 
-  public List<VpsTable> findAllClosest(String fileName, String rom, String tableName, String manuf, int year, List<VpsTable> tables) {
+  public List<VpsTable> findAllClosest(VpsEmulatorType emulatorType, String fileName, String rom, String tableName, String manuf, int year, List<VpsTable> tables) {
     // clean table name
     String cleanTableName = StringUtils.isEmpty(tableName) ? null : cleanTable(tableName);
 
     final List<Double> distances = new ArrayList<>();
     final List<VpsTable> found = new ArrayList<>();
-    final double[] minDist = new double[] { 10000 };
+    final double[] minDist = new double[]{10000};
 
     tables.stream()
-        .forEach(table -> { 
+        .forEach(table -> {
 
           // for debugging purpose and check the matching of a particular table, change id here and add breakpoint
           //if ("uP4_P2lE".equals(table.getId())) {
           //  boolean stop = true;
           //}
+          if (!isEmulatorApplicable(emulatorType, table)) {
+            return;
+          }
 
           double dist = getTableDistance(table, fileName, cleanTableName, manuf, year, rom, minDist[0]);
           // new min detected
@@ -66,7 +76,7 @@ public class TableMatcher {
                 minDist[0] = THRESHOLD_NOTFOUND;
               }
             }
-            else  {
+            else {
               distances.clear();
               found.clear();
               minDist[0] = dist;
@@ -92,6 +102,28 @@ public class TableMatcher {
     return found;
   }
 
+  public static boolean isEmulatorApplicable(VpsEmulatorType emulatorType, VpsTable table) {
+    if (emulatorType != null) {
+      String manufacturer = table.getManufacturer();
+      if (manufacturer.equalsIgnoreCase("Zen Studios") &&
+          !emulatorType.equals(VpsEmulatorType.FX) &&
+          !emulatorType.equals(VpsEmulatorType.FX3)) {
+        return false;
+      }
+
+      List<VpsTableVersion> tableFiles = table.getTableFiles();
+      List<String> formats = tableFiles.stream()
+          .map(VpsTableVersion::getTableFormat)
+          .map(format -> format.equalsIgnoreCase("VP9") ? "VPX" : format)
+          .map(format -> format.equalsIgnoreCase("FX2") ? "FX" : format)
+          .filter(Objects::nonNull).collect(Collectors.toList());
+      if (!formats.contains(emulatorType.name())) {
+        return false;
+      }
+    }
+    return true;
+  }
+
 
   /**
    * Take a table display name and a rom and compare it to the given VpsTable
@@ -113,8 +145,8 @@ public class TableMatcher {
     String cleanTableName2 = StringUtils.isEmpty(parts2.tableName) ? null : cleanTable(parts2.tableName);
 
     double dist = tableDistance(cleanTableName1, parts1.manufacturer, parts1.year,
-                                cleanTableName2, parts2.manufacturer, parts2.year,
-                                debug, null, 10000);
+        cleanTableName2, parts2.manufacturer, parts2.year,
+        debug, null, 10000);
     return dist <= THRESHOLD_CONFIRM;
   }
 
@@ -140,9 +172,9 @@ public class TableMatcher {
     return 10000;
   }
 
-  private double tableDistance(String _displayName, 
-                              String tableName, String manuf, int year,
-                              VpsDebug debug, String tableId, double minDist) {
+  private double tableDistance(String _displayName,
+                               String tableName, String manuf, int year,
+                               VpsDebug debug, String tableId, double minDist) {
     String clean = _displayName;
 
     double dManuf = 0.2;
@@ -167,16 +199,16 @@ public class TableMatcher {
     double dTable = distance(clean, tableName);
 
     double dist = calculateDistance(dTable, dManuf, dYear);
-   
+
     if ((dist < minDist || dist < THRESHOLD_NOTFOUND) && debug != null) {
       appendDebugScores(tableId, dist, tableName, dTable, manuf, dManuf, year, dYear);
     }
-    
+
     return dist;
   }
 
   private double tableDistance(String _tableName, String _manuf, int _year,
-                               String tableName, String manuf, int year, 
+                               String tableName, String manuf, int year,
                                VpsDebug debug, String tableId, double minDist) {
     double dTable = distance(tableName, _tableName) * 1;
 
@@ -197,7 +229,7 @@ public class TableMatcher {
       }
     }
 
-    double dYear = _year > 1900 ? Math.min(Math.abs(_year - year), 5.0) / 5.0: 0.2;
+    double dYear = _year > 1900 ? Math.min(Math.abs(_year - year), 5.0) / 5.0 : 0.2;
 
     double dist = calculateDistance(dTable, dManuf, dYear);
 
@@ -253,7 +285,7 @@ public class TableMatcher {
     double ratioJD = jd.apply(str1, str2);
     distance = Math.min(distance, ratioCD * ratioJD);
 
-    return distance; 
+    return distance;
   }
 
   // ------------------------------------------------------
@@ -273,6 +305,7 @@ public class TableMatcher {
   /**
    * Take a rom and compare it with the one of the table
    * If rom is empty, verify the table does not use a rom
+   *
    * @return true if this is same rom
    */
   public boolean checkRom(String rom, VpsTable table) {
@@ -301,19 +334,19 @@ public class TableMatcher {
 
   private String[] getAlternateManuf(String manuf) {
     if (manuf.equalsIgnoreCase("Bally") || manuf.equalsIgnoreCase("Midway")) {
-      return new String[] {"Bally", "Midway"};
+      return new String[]{"Bally", "Midway"};
     }
     else if (manuf.equalsIgnoreCase("Original") || manuf.equalsIgnoreCase("TBA")) {
-      return new String[] {"Original", "TBA"};
+      return new String[]{"Original", "TBA"};
     }
     else if (manuf.equalsIgnoreCase("Mylstar") || manuf.equalsIgnoreCase("Gottlieb")) {
-      return new String[] {"Gottlieb", "Mylstar"};
+      return new String[]{"Gottlieb", "Mylstar"};
     }
     else if (manuf.toLowerCase().startsWith("taito")) {
-      return new String[] {"Taito do Brasil", "Taito"};
+      return new String[]{"Taito do Brasil", "Taito"};
     }
     else if (manuf.toLowerCase().startsWith("spooky")) {
-      return new String[] {"Spooky Pinball", "Spooky"};
+      return new String[]{"Spooky Pinball", "Spooky"};
     }
 
     return new String[]{manuf};

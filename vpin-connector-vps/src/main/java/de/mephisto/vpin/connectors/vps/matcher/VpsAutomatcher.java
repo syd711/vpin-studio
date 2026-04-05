@@ -2,6 +2,8 @@ package de.mephisto.vpin.connectors.vps.matcher;
 
 import java.lang.invoke.MethodHandles;
 import java.util.List;
+
+import de.mephisto.vpin.connectors.vps.model.VpsEmulatorType;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,52 +33,53 @@ public class VpsAutomatcher {
   private TableVersionMatcher tableVersionMatcher;
 
   //------------------------------------
+
   /**
    * Match filename against VPS Database mapping and return the VpsTable
    */
-  public VpsTable autoMatchTable(VPS vpsDatabase, String filename) {
-    return autoMatchTable(vpsDatabase, filename, null);
+  public VpsTable autoMatchTable(VPS vpsDatabase, VpsEmulatorType emulatorType, String filename) {
+    return autoMatchTable(vpsDatabase, emulatorType, filename, null);
   }
 
-  public VpsTable autoMatchTable(VPS vpsDatabase, String filename, String rom) {
+  public VpsTable autoMatchTable(VPS vpsDatabase, VpsEmulatorType emulatorType, String filename, String rom) {
     TableNameParts parts = tableNameSplitter.parseFilename(filename);
-    return autoMatch(vpsDatabase, parts);
+    return autoMatch(vpsDatabase, emulatorType, parts);
   }
 
   public TableNameParts parseFilename(String filename) {
     return tableNameSplitter.parseFilename(filename);
   }
 
-  public VpsTable autoMatch(VPS vpsDatabase, TableNameParts parts) {
-    return tableMatcher.findClosest(parts.displayName, null, parts.tableName, parts.manufacturer, parts.year, vpsDatabase.getTables());
+  public VpsTable autoMatch(VPS vpsDatabase, VpsEmulatorType emulatorType, TableNameParts parts) {
+    return tableMatcher.findClosest(emulatorType, parts.displayName, null, parts.tableName, parts.manufacturer, parts.year, vpsDatabase.getTables());
   }
 
   /**
    * Match filename against VPS Database mapping and return the VpsTable
    */
-  public List<VpsTable> autoMatchTables(VPS vpsDatabase, String filename) {
+  public List<VpsTable> autoMatchTables(VPS vpsDatabase, VpsEmulatorType emulatorType, String filename) {
     TableNameParts parts = tableNameSplitter.parseFilename(filename);
-    return tableMatcher.findAllClosest(parts.displayName, null, parts.tableName, parts.manufacturer, parts.year, vpsDatabase.getTables());
+    return tableMatcher.findAllClosest(emulatorType, parts.displayName, null, parts.tableName, parts.manufacturer, parts.year, vpsDatabase.getTables());
   }
 
   //------------------------------------
-  public VpsMatch autoMatch(VPS vpsDatabase, String[] tableFormats, String gameFileName) {
-    return autoMatch(vpsDatabase, tableFormats, gameFileName, null, null, null);
+  public VpsMatch autoMatch(VPS vpsDatabase, VpsEmulatorType emulatorType, String[] tableFormats, String gameFileName) {
+    return autoMatch(vpsDatabase, emulatorType, tableFormats, gameFileName, null, null, null);
   }
 
-  public VpsMatch autoMatch(VPS vpsDatabase, String[] tableFormats, String gameFileName, @Nullable String rom, @Nullable String author, @Nullable String version) {
+  public VpsMatch autoMatch(VPS vpsDatabase, VpsEmulatorType emulatorType, String[] tableFormats, String gameFileName, @Nullable String rom, @Nullable String author, @Nullable String version) {
     // first run a match with findClosest
     VpsMatch vpsMatch = new VpsMatch();
     // overwrite is forcibly true as GameVpsMatch is empty
-    autoMatch(vpsMatch, vpsDatabase, tableFormats, gameFileName, rom, null, author, version, null, true);
+    autoMatch(vpsMatch, vpsDatabase, emulatorType, tableFormats, gameFileName, rom, null, author, version, null, true);
     return vpsMatch;
   }
 
   /**
    * Match filename and fill the GameVpsMatch with VPS Database mapping
    */
-  public void autoMatch(VpsMatch vpsMatch, VPS vpsDatabase, String[] tableFormats, String gameFileName, String rom, 
-      String tableInfoName, String tableInfoAuthor, String tableInfoVersion, Long lastUpdate, boolean overwrite) {
+  public void autoMatch(VpsMatch vpsMatch, VPS vpsDatabase, VpsEmulatorType emulatorType, String[] tableFormats, String gameFileName, String rom,
+                        String tableInfoName, String tableInfoAuthor, String tableInfoVersion, Long lastUpdate, boolean overwrite) {
     try {
       LOG.info("Find closest table for " + gameFileName);
 
@@ -93,13 +96,13 @@ public class VpsAutomatcher {
         // first check already mapped table and confirm mapping
         if (StringUtils.isNotEmpty(vpsMatch.getExtTableId())) {
           VpsTable vpsTableById = vpsDatabase.getTableById(vpsMatch.getExtTableId());
-          if (tableMatcher.isClose(parts.displayName, rom, parts.tableName, parts.manufacturer, parts.year, vpsTableById)) {
+          if (TableMatcher.isEmulatorApplicable(emulatorType, vpsTableById) && tableMatcher.isClose(parts.displayName, rom, parts.tableName, parts.manufacturer, parts.year, vpsTableById)) {
             vpsTable = vpsTableById;
           }
         }
         // if not found, find closest
         if (vpsTable == null) {
-          vpsTable = tableMatcher.findClosest(parts.displayName, rom, parts.tableName, parts.manufacturer, parts.year, vpsDatabase.getTables());
+          vpsTable = tableMatcher.findClosest(emulatorType, parts.displayName, rom, parts.tableName, parts.manufacturer, parts.year, vpsDatabase.getTables());
         }
 
         if (vpsTable == null) {
@@ -163,7 +166,7 @@ public class VpsAutomatcher {
           version = StringUtils.removeStart(version, "r");
           version = StringUtils.removeStart(version, ".");
         }
-      
+
         // Parse and clean the authors
         // flag to tell this is not forcibly author as it is taken from extra so if author is not matched, 
         // bad score should be lowered as this may be caused by the fact it is not author
@@ -219,12 +222,12 @@ public class VpsAutomatcher {
 
   // all lower case !
   private static String[] exludedWords = {
-    "mod", "vpx", "vr", "dt", "fss", "fs", "4k", "alt", "alt2", "(1)", "(2)", "edition", "version", "vrroom"
+      "mod", "vpx", "vr", "dt", "fss", "fs", "4k", "alt", "alt2", "(1)", "(2)", "edition", "version", "vrroom"
   };
 
   private String cleanWords(String filename) {
-    if (filename==null) {
-        return null;
+    if (filename == null) {
+      return null;
     }
     // remove exluded words
     for (String w : exludedWords) {
