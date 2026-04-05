@@ -3,6 +3,7 @@
 - **VPS Auto-Matcher**: Fixed VPS table matching so that only matches are applied that match with the game's emulator type.
 - **Emulator Table Detection**: Fixed the bug that tables have been added multiple times for the Zen Studios tables and Zaccaria. The duplicates should be cleaned up after the update too. 
 - **Emulator Management**: Fixed error during saving emulators that have no VR support.
+- **Emulator Detection**: Improved emulator detection for Pinball M. 
 - **Zaccaria Emulator**: The VPS mapping has been hidden from the Table Data Manager dialog and the table overview.
 
 ---

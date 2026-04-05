@@ -1,13 +1,16 @@
 package de.mephisto.vpin.restclient.frontend;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 public enum EmulatorType {
 
-  VisualPinball("vpx"), VisualPinball9("vpt"),
+  VisualPinball("vpx"),
+  VisualPinball9("vpt"),
   FuturePinball("fpt"),
-  ZenFX(null), ZenFX2("pxp"), ZenFX3("pxp"), PinballM(null),
+  ZenFX(null),
+  ZenFX2("pxp"),
+  ZenFX3("pxp"),
+  PinballM(null),
   Zaccaria(null),
   PinballArcade(null),
   MAME(null),
