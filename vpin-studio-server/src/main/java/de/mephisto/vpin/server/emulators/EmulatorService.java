@@ -1,10 +1,13 @@
 package de.mephisto.vpin.server.emulators;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.alx.AlxSummary;
+import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.emulators.EmulatorValidation;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.validation.ValidationState;
+import de.mephisto.vpin.server.alx.AlxService;
 import de.mephisto.vpin.server.doflinx.DOFLinxService;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.FrontendService;
@@ -54,6 +57,9 @@ public class EmulatorService implements InitializingBean, PreferenceChangedListe
 
   @Autowired
   private PreferencesService preferencesService;
+
+  @Autowired
+  private AlxService alxService;
 
   private final List<EmulatorChangeListener> listeners = new ArrayList<>();
 
@@ -253,14 +259,14 @@ public class EmulatorService implements InitializingBean, PreferenceChangedListe
       List<Game> duplicates = entry.getValue();
       if (duplicates.size() > 1) {
         LOG.warn("Found {} duplicate entries for base name \"{}\" in emulator {}", duplicates.size(), entry.getKey(), emulator.getName());
-        // Keep the VPX entry (if present), remove the rest
-        Game vpxGame = duplicates.stream()
-            .filter(g -> "vpx".equalsIgnoreCase(FilenameUtils.getExtension(g.getGameFileName())))
-            .findFirst()
+        // Keep the game with the most playtime; fall back to first entry if all are zero
+        Game keepGame = duplicates.stream()
+            .max(Comparator.comparingInt(g -> alxService.getAlxSummary(g.getId()).getEntries().stream()
+                .mapToInt(TableAlxEntry::getTimePlayedSecs).sum()))
             .orElse(duplicates.get(0));
         for (Game duplicate : duplicates) {
-          if (duplicate != vpxGame) {
-            LOG.info("Removing non-VPX duplicate: [{}] {}", duplicate.getId(), duplicate.getGameFileName());
+          if (duplicate != keepGame) {
+            LOG.info("Removing duplicate with less playtime: [{}] {}", duplicate.getId(), duplicate.getGameFileName());
             gamesByEmulator.remove(duplicate);
             frontendService.deleteGame(duplicate.getId());
             LOG.info("Removed non-VPX from frontend database: [{}] {}", duplicate.getId(), duplicate.getGameFileName());

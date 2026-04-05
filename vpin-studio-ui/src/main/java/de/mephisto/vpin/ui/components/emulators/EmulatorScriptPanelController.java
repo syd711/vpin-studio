@@ -35,7 +35,7 @@ public class EmulatorScriptPanelController implements Initializable, IEmulatorSc
 
   @FXML
   private TextArea scriptText;
-  private Optional<GameEmulatorScript> script;
+  private Optional<GameEmulatorScript> script = Optional.empty();
 
   @FXML
   private void onInsert() {

@@ -2204,7 +2204,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     columnVersion.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnVersion());
     columnEmulator.setVisible((vpxMode || fpMode) && !assetManagerMode && !Features.IS_STANDALONE && uiSettings.isColumnEmulator());
-    columnVPS.setVisible((vpxMode || fpMode || zenEmulator || zaccariaMode) && !assetManagerMode && uiSettings.isColumnVpsStatus());
+    columnVPS.setVisible((vpxMode || fpMode || zenEmulator) && !assetManagerMode && uiSettings.isColumnVpsStatus());
     columnPatchVersion.setVisible((vpxMode || fpMode || zenEmulator) && !assetManagerMode && uiSettings.isColumnPatchVersion());
     columnRom.setVisible(mameMode || pinballMMode || fx1Mode || (vpxMode && !assetManagerMode && uiSettings.isColumnRom()));
     columnB2S.setVisible((vpxMode || fpMode || zenEmulator) && !assetManagerMode && uiSettings.isColumnBackglass());

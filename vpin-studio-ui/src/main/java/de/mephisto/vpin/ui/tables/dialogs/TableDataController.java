@@ -627,6 +627,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
     openAssetMgrBtn.managedProperty().bindBidirectional(openAssetMgrBtn.visibleProperty());
     patchVersionPanel.managedProperty().bindBidirectional(patchVersionPanel.visibleProperty());
     customizationPane.managedProperty().bindBidirectional(customizationPane.visibleProperty());
+    vpsPanel.managedProperty().bindBidirectional(vpsPanel.visibleProperty());
 
     try {
       if (!Features.FIELDS_STANDARD) {
@@ -1056,6 +1057,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
       extrasTab.setDisable(!isPopper15);
 
+      vpsPanel.setVisible(client.getEmulatorService().isVpxGame(game) || client.getEmulatorService().isFpGame(game) || client.getEmulatorService().isZenGame(game));
       if (tableDetails != null) {
         gameFileName.setDisable(!client.getEmulatorService().isVpxGame(game) && !client.getEmulatorService().isFpGame(game));
       }
