@@ -57,6 +57,7 @@ public class EmulatorService implements InitializingBean, PreferenceChangedListe
   @Autowired
   private PreferencesService preferencesService;
 
+  @Lazy
   @Autowired
   private AlxService alxService;
 
