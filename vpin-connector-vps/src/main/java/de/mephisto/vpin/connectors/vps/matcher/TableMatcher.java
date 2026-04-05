@@ -1,7 +1,6 @@
 package de.mephisto.vpin.connectors.vps.matcher;
 
 import de.mephisto.vpin.connectors.vps.matcher.TableNameSplitter.TableNameParts;
-import de.mephisto.vpin.connectors.vps.model.VpsEmulatorType;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
@@ -13,7 +12,6 @@ import org.apache.commons.text.similarity.JaccardDistance;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class TableMatcher {
@@ -35,12 +33,12 @@ public class TableMatcher {
     this.debug = debug;
   }
 
-  public VpsTable findClosest(VpsEmulatorType emulatorType, String fileName, String rom, String tableName, String manuf, int year, List<VpsTable> tables) {
-    List<VpsTable> matches = findAllClosest(emulatorType, fileName, rom, tableName, manuf, year, tables);
+  public VpsTable findClosest(String[] tableFormats, String fileName, String rom, String tableName, String manuf, int year, List<VpsTable> tables) {
+    List<VpsTable> matches = findAllClosest(tableFormats, fileName, rom, tableName, manuf, year, tables);
     return matches.size() > 0 ? matches.get(0) : null;
   }
 
-  public List<VpsTable> findAllClosest(VpsEmulatorType emulatorType, String fileName, String rom, String tableName, String manuf, int year, List<VpsTable> tables) {
+  public List<VpsTable> findAllClosest(String[] tableFormats, String fileName, String rom, String tableName, String manuf, int year, List<VpsTable> tables) {
     // clean table name
     String cleanTableName = StringUtils.isEmpty(tableName) ? null : cleanTable(tableName);
 
@@ -55,7 +53,7 @@ public class TableMatcher {
           //if ("uP4_P2lE".equals(table.getId())) {
           //  boolean stop = true;
           //}
-          if (!isEmulatorApplicable(emulatorType, table)) {
+          if (!isEmulatorApplicable(tableFormats, table)) {
             return;
           }
 
@@ -102,24 +100,30 @@ public class TableMatcher {
     return found;
   }
 
-  public static boolean isEmulatorApplicable(VpsEmulatorType emulatorType, VpsTable table) {
-    if (emulatorType != null) {
+  public static boolean isEmulatorApplicable(String[] gameEmulatorFormats, VpsTable table) {
+    if (gameEmulatorFormats != null && gameEmulatorFormats.length > 0) {
+      List<String> formats = List.of(gameEmulatorFormats);
+
       String manufacturer = table.getManufacturer();
       if (manufacturer.equalsIgnoreCase("Zen Studios") &&
-          !emulatorType.equals(VpsEmulatorType.FX) &&
-          !emulatorType.equals(VpsEmulatorType.FX3)) {
+          !formats.contains("FX") &&
+          !formats.contains("FX2") &&
+          !formats.contains("FX3")) {
         return false;
       }
 
       List<VpsTableVersion> tableFiles = table.getTableFiles();
-      List<String> formats = tableFiles.stream()
+      List<String> supportedTableFormats = tableFiles.stream()
           .map(VpsTableVersion::getTableFormat)
-          .map(format -> format.equalsIgnoreCase("VP9") ? "VPX" : format)
-          .map(format -> format.equalsIgnoreCase("FX2") ? "FX" : format)
           .filter(Objects::nonNull).collect(Collectors.toList());
-      if (!formats.contains(emulatorType.name())) {
-        return false;
+
+      for (String supportedTableFormat : supportedTableFormats) {
+        if (formats.contains(supportedTableFormat)) {
+          return true;
+        }
       }
+
+      return false;
     }
     return true;
   }

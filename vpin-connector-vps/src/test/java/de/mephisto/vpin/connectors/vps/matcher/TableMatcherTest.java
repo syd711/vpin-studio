@@ -1,6 +1,5 @@
 package de.mephisto.vpin.connectors.vps.matcher;
 
-import de.mephisto.vpin.connectors.vps.model.VpsEmulatorType;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,7 +84,7 @@ public class TableMatcherTest {
   }
 
   private void doMatch(TableMatcher matcher, VPS vpsDatabase, int nbExpectedTables, String tableId, String fileName, String tableName, String manuf, int year, VpsDebug debug) {
-    List<VpsTable> tables = matcher.findAllClosest(VpsEmulatorType.VPX, fileName, null, tableName, manuf, year, vpsDatabase.getTables());
+    List<VpsTable> tables = matcher.findAllClosest(new String[]{"VPX"}, fileName, null, tableName, manuf, year, vpsDatabase.getTables());
     LOG.error(debug.toString());
     assertEquals(nbExpectedTables, tables.size());
     // ensure first table returned is the expected one
@@ -93,7 +92,7 @@ public class TableMatcherTest {
 
     debug.clear();
     // do same test but without the parsed parts
-    tables = matcher.findAllClosest(VpsEmulatorType.VPX, fileName, null, null, null, -1, vpsDatabase.getTables());
+    tables = matcher.findAllClosest(new String[]{"VPX"}, fileName, null, null, null, -1, vpsDatabase.getTables());
     LOG.error(debug.toString());
     assertEquals(nbExpectedTables, tables.size());
     assertEquals(tableId, tables.get(0).getId());

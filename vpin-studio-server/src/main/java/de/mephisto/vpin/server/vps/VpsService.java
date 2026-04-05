@@ -5,11 +5,9 @@ import de.mephisto.vpin.connectors.vps.VpsDiffer;
 import de.mephisto.vpin.connectors.vps.matcher.VpsAutomatcher;
 import de.mephisto.vpin.connectors.vps.matcher.VpsMatch;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
-import de.mephisto.vpin.connectors.vps.model.VpsEmulatorType;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.vpf.VPFSettings;
 import de.mephisto.vpin.restclient.vps.VpsInstallLink;
 import de.mephisto.vpin.restclient.vps.VpsSettings;
@@ -103,12 +101,11 @@ public class VpsService implements InitializingBean {
       LOG.warn("Failed to determine base name: {}", e.getMessage());
     }
 
-    VpsEmulatorType emulatorType = game.getEmulator().getType().toVpsEmulatorType();
     String[] tableFormats = game.getEmulator().getVpsEmulatorFeatures();
     File gamefile = game.getGameFile();
     long lastmodified = gamefile != null && gamefile.exists() ? gamefile.lastModified() : -1;
 
-    automatcher.autoMatch(vpsMatch, vpsDatabase, emulatorType, tableFormats, gameFileName, game.getRom(),
+    automatcher.autoMatch(vpsMatch, vpsDatabase, tableFormats, gameFileName, game.getRom(),
         tableInfo != null ? tableInfo.getTableName() : null,
         tableInfo != null ? tableInfo.getAuthorName() : null,
         tableInfo != null ? tableInfo.getTableVersion() : null,

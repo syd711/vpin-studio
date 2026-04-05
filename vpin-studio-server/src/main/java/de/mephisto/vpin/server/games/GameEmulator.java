@@ -308,6 +308,9 @@ public class GameEmulator {
   public String[] getVpsEmulatorFeatures() {
     if (this.type != null) {
       switch (this.type) {
+        case VisualPinball9: {
+          return new String[]{VpsFeatures.VP9};
+        }
         case VisualPinball: {
           return new String[]{VpsFeatures.VPX};
         }
@@ -322,6 +325,12 @@ public class GameEmulator {
         }
         case ZenFX3: {
           return new String[]{VpsFeatures.FX, VpsFeatures.FX2, VpsFeatures.FX3};
+        }
+        case PinballM: {
+          return new String[]{VpsFeatures.FX, VpsFeatures.FX2, VpsFeatures.FX3};
+        }
+        case Zaccaria: {
+          return new String[]{VpsFeatures.Zaccaria};
         }
       }
     }

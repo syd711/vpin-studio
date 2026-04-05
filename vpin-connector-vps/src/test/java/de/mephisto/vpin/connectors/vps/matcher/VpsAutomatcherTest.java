@@ -1,6 +1,5 @@
 package de.mephisto.vpin.connectors.vps.matcher;
 
-import de.mephisto.vpin.connectors.vps.model.VpsEmulatorType;
 import org.apache.commons.lang3.StringUtils;
 
 import org.junit.jupiter.api.Test;
@@ -27,7 +26,7 @@ public class VpsAutomatcherTest {
     String[] tableFormats = null;
 
     // first run a match with findClosest
-    VpsMatch vpsMatch = matcher.autoMatch(vpsDatabase, VpsEmulatorType.VPX, tableFormats, gameFileName, rom, author, version);
+    VpsMatch vpsMatch = matcher.autoMatch(vpsDatabase, tableFormats, gameFileName, rom, author, version);
 //    LOG.error(debug.toString());
 
     assertEquals(expectedTableId, vpsMatch.getExtTableId());
@@ -39,21 +38,21 @@ public class VpsAutomatcherTest {
     }
 
     // redo a quick check with vpsMatch filled to confirm the match, match should not change 
-    matcher.autoMatch(vpsMatch, vpsDatabase, VpsEmulatorType.VPX, tableFormats, gameFileName, rom, null, author, version, null, true);
+    matcher.autoMatch(vpsMatch, vpsDatabase, tableFormats, gameFileName, rom, null, author, version, null, true);
     assertEquals(expectedTableId, vpsMatch.getExtTableId());
     if (StringUtils.isNotEmpty(expectedVersionId)) {
       assertEquals(expectedVersionId, vpsMatch.getExtTableVersionId());
     }
 
     // redo a full check with vpsMatch filled to confirm the match, match should not change 
-    matcher.autoMatch(vpsMatch, vpsDatabase, VpsEmulatorType.VPX, tableFormats, gameFileName, rom, null, author, version, null, true);
+    matcher.autoMatch(vpsMatch, vpsDatabase, tableFormats, gameFileName, rom, null, author, version, null, true);
     assertEquals(expectedTableId, vpsMatch.getExtTableId());
     if (StringUtils.isNotEmpty(expectedVersionId)) {
       assertEquals(expectedVersionId, vpsMatch.getExtTableVersionId());
     }
 
     // Do the check via autoMatchTable method
-    VpsTable vpsTable = matcher.autoMatchTable(vpsDatabase, VpsEmulatorType.VPX, gameFileName, rom);
+    VpsTable vpsTable = matcher.autoMatchTable(vpsDatabase, new String[]{"VPX"}, gameFileName, rom);
     assertEquals(expectedTableId, vpsTable != null ? vpsTable.getId() : null);
   }
 

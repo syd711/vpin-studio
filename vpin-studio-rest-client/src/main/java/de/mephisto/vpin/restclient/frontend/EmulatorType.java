@@ -1,6 +1,5 @@
 package de.mephisto.vpin.restclient.frontend;
 
-import de.mephisto.vpin.connectors.vps.model.VpsEmulatorType;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -90,30 +89,6 @@ public enum EmulatorType {
         return "Other";
       default:
         throw new UnsupportedOperationException("No matching emulator type found for " + this);
-    }
-  }
-
-  @Nullable
-  public VpsEmulatorType toVpsEmulatorType() {
-    switch (this) {
-      case ZenFX:
-        return VpsEmulatorType.FX;
-      case ZenFX2:
-        return VpsEmulatorType.FX;
-      case ZenFX3:
-        return VpsEmulatorType.FX3;
-      case PinballM:
-        return VpsEmulatorType.FX3;
-      case Zaccaria:
-        return VpsEmulatorType.Zaccaria;
-      case FuturePinball:
-        return VpsEmulatorType.FP;
-      case VisualPinball:
-        return VpsEmulatorType.VPX;
-      case VisualPinball9:
-        return VpsEmulatorType.VPX;
-      default:
-        return null;
     }
   }
 

@@ -1,10 +1,12 @@
 package de.mephisto.vpin.connectors.vps.model;
 public interface VpsFeatures {
   String VPX = "VPX";
+  String VP9 = "VP9";
   String FP = "FP";
   String FX = "FX";
   String FX2 = "FX2";
   String FX3 = "FX3";
+  String Zaccaria = "Zaccaria";
 
   String INCL_PUP = "incl. PuP";
   String INCL_B2S = "incl. B2S";
