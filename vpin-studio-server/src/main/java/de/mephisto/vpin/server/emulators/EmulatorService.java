@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.emulators;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.alx.AlxSummary;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.emulators.EmulatorValidation;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
@@ -19,6 +18,7 @@ import de.mephisto.vpin.server.games.GameMediaService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.vpinmame.VPinMameService;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.lang.invoke.MethodHandles;
-import org.apache.commons.io.FilenameUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -102,12 +101,12 @@ public class EmulatorService implements InitializingBean, PreferenceChangedListe
       List<ValidationState> validate = gameEmulatorValidationService.validate(frontendService.getFrontendType(), gameEmulator, true);
       gameEmulator.setValidationStates(validate);
     }
-    Collections.sort(gameEmulators, (o1, o2) -> o2.getName().compareTo(o1.getName()));
+    gameEmulators.sort((o1, o2) -> o2.getName().compareTo(o1.getName()));
     return gameEmulators;
   }
 
   public List<GameEmulator> getValidGameEmulators() {
-    List<GameEmulator> gameEmulators = getGameEmulators().stream().filter(e -> e.isValid()).collect(Collectors.toList());
+    List<GameEmulator> gameEmulators = getGameEmulators().stream().filter(GameEmulator::isValid).collect(Collectors.toList());
     Collections.sort(gameEmulators, (o1, o2) -> o2.getName().compareTo(o1.getName()));
     return gameEmulators;
   }
@@ -212,8 +211,6 @@ public class EmulatorService implements InitializingBean, PreferenceChangedListe
 
   /**
    * Used to synchronize emulators with .pupgames files to the latest lists.
-   *
-   * @param emulator
    */
   private void synchronizeEmulator(GameEmulator emulator) {
     if (!emulator.isEnabled()) {

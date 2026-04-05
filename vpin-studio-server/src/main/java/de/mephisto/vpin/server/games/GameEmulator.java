@@ -277,7 +277,7 @@ public class GameEmulator {
     return new File("./");
   }
 
-  @Nullable
+  @NonNull
   @JsonIgnore
   public File getInstallationFolder() {
     if (!StringUtils.isEmpty(installationDirectory)) {
