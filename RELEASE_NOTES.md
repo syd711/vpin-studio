@@ -5,6 +5,7 @@
 - **Emulator Management**: Fixed error during saving emulators that have no VR support.
 - **Emulator Detection**: Improved emulator detection for Pinball M. 
 - **Zaccaria Emulator**: The VPS mapping has been hidden from the Table Data Manager dialog and the table overview.
+- **Media Recorder**: Removed VPX GL from the list of selectable emulators for the media recorder, because it might result static image videos.
 
 ---
 
