@@ -16,6 +16,7 @@ import de.mephisto.vpin.server.notifications.NotificationService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -44,7 +45,14 @@ public class IScoredService implements PreferenceChangedListener, InitializingBe
   public void submitScore(@NonNull IScoredGame iScoredGame, Score newScore) {
     GameRoom gameRoom = IScored.getGameRoom(iScoredGame.getGameRoomUrl(), true);
     if (gameRoom != null) {
-      String playerName = newScore.getPlayer() != null ? newScore.getPlayer().getName() : newScore.getPlayerInitials();
+      String playerName = newScore.getPlayerInitials();
+      if (newScore.getPlayer() != null) {
+        playerName = newScore.getPlayer().getName();
+
+        if (!StringUtils.isEmpty(newScore.getPlayer().getiScoredName())) {
+          playerName = newScore.getPlayer().getiScoredName();
+        }
+      }
       IScoredResult result = IScored.submitScore(gameRoom, iScoredGame, playerName, newScore.getPlayerInitials(), newScore.getScore());
       SLOG.info(result.toString());
 

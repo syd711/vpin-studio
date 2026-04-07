@@ -22,6 +22,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
@@ -87,7 +88,7 @@ public class PlayerDialogController implements Initializable, DialogController {
   private VBox tournamentGroup;
 
   @FXML
-  private VBox iScoredBox;
+  private Node iScoredBox;
 
   private PlayerRepresentation player;
 
@@ -232,6 +233,7 @@ public class PlayerDialogController implements Initializable, DialogController {
       this.player = p;
       nameField.setText(this.player.getName());
       initialsField.setText(this.player.getInitials());
+      iScoredNameField.setText(this.player.getiScoredName());
       adminRoleCheckbox.setSelected(player.isAdministrative());
 
       vpinManiaPlayerCheckbox.setSelected(false);
