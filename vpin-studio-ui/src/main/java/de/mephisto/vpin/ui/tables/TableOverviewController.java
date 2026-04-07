@@ -1426,7 +1426,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     BaseLoadingColumn.configureColumn(columnDateModified, (value, model) -> {
       Label label = null;
       if (value.getDateAdded() != null) {
-        label = new Label(dateFormat.format(value.getDateUpdated()));
+        label = new Label(dateTimeFormat.format(value.getDateUpdated()));
       }
       else {
         label = new Label("-");

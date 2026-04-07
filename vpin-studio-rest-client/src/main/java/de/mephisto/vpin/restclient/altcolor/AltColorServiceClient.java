@@ -50,7 +50,7 @@ public class AltColorServiceClient extends VPinStudioClientService {
   public UploadDescriptor uploadAltColor(File file, int gameId, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "altcolor/upload";
-      HttpEntity upload = createUpload(file, gameId, null, AssetType.ALT_SOUND, listener);
+      HttpEntity upload = createUpload(file, gameId, null, AssetType.ALT_COLOR, listener);
       ResponseEntity<UploadDescriptor> exchange = new RestTemplate().exchange(url, HttpMethod.POST, upload , UploadDescriptor.class);
       finalizeUpload(upload);
       return exchange.getBody();

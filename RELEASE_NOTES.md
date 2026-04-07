@@ -1,3 +1,10 @@
+## Release Notes 4.8.4
+
+***Future Pinball**: Fixed detection if emulator is running (important for recordings - thanks to @shlomithemoney).
+
+---
+
+
 ## Release Notes 4.8.3
 
 - **VPS Auto-Matcher**: Fixed VPS table matching so that only matches are applied that match with the game's emulator type.

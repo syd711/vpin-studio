@@ -66,7 +66,10 @@ public class AltSoundResource {
   @DeleteMapping("{id}")
   public boolean delete(@PathVariable("id") int id) {
     Game game = gameService.getGame(id);
-    return altSoundService.delete(game);
+    if (game != null) {
+      return altSoundService.delete(game);
+    }
+    return false;
   }
 
   @GetMapping("/clearcache")

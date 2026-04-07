@@ -64,7 +64,7 @@ public class AltSoundLoaderFactory {
         SubnodeConfiguration formatNode = iniConfiguration.getSection("format");
         if (formatNode != null) {
           String format = formatNode.getString("format");
-          if (format.equals(AltSoundFormats.gsound) && gSoundCsv.exists()) {
+          if (format != null && format.equals(AltSoundFormats.gsound) && gSoundCsv.exists()) {
             AltSound altSound = new AltSound2Loader(iniConfiguration, gSoundCsv).load();
             altSound.setFolder(altSoundFolder.getAbsolutePath());
             return altSound;

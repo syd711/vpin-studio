@@ -503,7 +503,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       if (p.info().command().isPresent()) {
         String cmdName = p.info().command().get();
         String fileName = cmdName.substring(cmdName.lastIndexOf("\\") + 1);
-        if (fileName.toLowerCase().contains("Future Pinball")) {
+        if (fileName.toLowerCase().contains("future pinball")) {
           LOG.info("Found active FP process: {}", fileName);
           return true;
         }

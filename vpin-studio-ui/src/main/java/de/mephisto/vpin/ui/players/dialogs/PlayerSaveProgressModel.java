@@ -102,7 +102,7 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
       progressResultModel.getResults().add(player);
 
       if (Features.MANIA_ENABLED) {
-        updateTournamentPlayer(player, avatarFile);
+        updateManiaPlayer(player, avatarFile);
       }
     }
     catch (Exception ex) {
@@ -124,8 +124,7 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
     futureTask.get();
   }
 
-  private void updateTournamentPlayer(PlayerRepresentation player, File avatarFile) throws Exception {
-    //post process tournament player creation
+  private void updateManiaPlayer(PlayerRepresentation player, File avatarFile) throws Exception {
     if (maniaPlayer) {
       Account maniaAccount = null;
       Cabinet cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();

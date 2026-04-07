@@ -22,6 +22,8 @@ public class PlayerRepresentation {
 
   private String name;
 
+  private String iScoredName;
+
   private String domain;
 
   private String duplicatePlayerName;
@@ -40,6 +42,14 @@ public class PlayerRepresentation {
     account.setDisplayName(this.getName());
     account.setUuid(this.getManiaAccountUuid());
     return account;
+  }
+
+  public String getiScoredName() {
+    return iScoredName;
+  }
+
+  public void setiScoredName(String iScoredName) {
+    this.iScoredName = iScoredName;
   }
 
   public String getManiaAccountUuid() {
