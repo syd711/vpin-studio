@@ -353,6 +353,10 @@ public class DefaultPictureService implements ApplicationListener<ApplicationRea
     String manufacturerFilter = cleanName(manufacturer);
     File folder = new File(SystemService.RESOURCES, "manufacturers");
     File[] files = folder.listFiles((dir, name) -> cleanName(name).startsWith(manufacturerFilter));
+    if (files == null) {
+      return null;
+    }
+
     File preferred = null;
     int prefscore = -1;
     for (File f : files) {
