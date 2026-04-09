@@ -1002,6 +1002,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       }
       if (!value.isRomExists() && value.isRomRequired() && !ignoredValidations.contains(GameValidationCode.CODE_ROM_NOT_EXISTS)) {
         String color = WidgetFactory.ERROR_COLOR;
+        label.setTooltip(new Tooltip("No ROM file was found for this table, but it was detected as required."));
         label.setStyle("-fx-font-color: " + color + ";-fx-text-fill: " + color + ";-fx-font-weight: bold;");
       }
       else {
