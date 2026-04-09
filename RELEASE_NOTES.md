@@ -2,6 +2,7 @@
 
 - **Future Pinball**: Fixed detection if emulator is running (important for recordings - thanks to @shlomithemoney).
 - **iScored / Player Management**: Added additional **iScored Name** field for the player dialogs. This allows you to use a different public name than the one used for other competition. Make sure to delete your existing scores in the game room after you changed the name as this change is not detected for highscore updates.
+- **WOVP Synchronization**: Fixed possible issue during the synchronization with WOVP.
 
 ---
 

@@ -231,7 +231,7 @@ public class FrontendStatusService implements InitializingBean {
       File badgeFile = systemService.getBadgeFile(badge);
       if (badgeFile.exists()) {
         boolean rotate = false;
-        Optional<FrontendPlayerDisplay> first = frontendService.getFrontendConnector().getFrontendPlayerDisplays().stream().filter(d -> d.getScreen().equals(VPinScreen.PlayField)).findFirst();
+        Optional<FrontendPlayerDisplay> first = frontendService.getFrontendConnector().getFrontendPlayerDisplays().stream().filter(d -> d.getScreen() != null && d.getScreen().equals(VPinScreen.PlayField)).findFirst();
         if (first.isPresent()) {
           rotate = first.get().getRotation() != 0;
         }
