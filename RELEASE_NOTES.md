@@ -4,6 +4,7 @@
 - **iScored / Player Management**: Added additional **iScored Name** field for the player dialogs. This allows you to use a different public name than the one used for other competition. Make sure to delete your existing scores in the game room after you changed the name as this change is not detected for highscore updates.
 - **WOVP Synchronization**: Fixed possible issue during the synchronization with WOVP.
 - **Table Overview**: Added tooltip message for missing ROM file names.
+- **Competition Wheel Images**: Disabled the rotation check for now and restored the old version, where wheels were always rotated 90 degree to the left.
 
 ---
 
