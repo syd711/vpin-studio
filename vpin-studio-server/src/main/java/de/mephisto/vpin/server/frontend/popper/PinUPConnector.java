@@ -1599,7 +1599,9 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
     if (emuName.toLowerCase().contains("pinballm")
         || emuName.toLowerCase().contains("pinball m")
-        || (launchScript != null && launchScript.toLowerCase().contains("pinballm"))) {
+        || (launchScript != null && launchScript.toLowerCase().contains("pinballm"))
+        || (launchScript != null && launchScript.toLowerCase().contains("2337640"))
+    ) {
       return EmulatorType.PinballM;
     }
 
@@ -2644,7 +2646,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       Future<Boolean> submit = executor.submit(new Callable<Boolean>() {
         @Override
         public Boolean call() throws Exception {
-          while (!WindowsUtil.isProcessRunning("Future Pinball", "Visual Pinball Player")) {
+          while (!SystemService.isPinballEmulatorRunning()) {
             Thread.sleep(1000);
           }
           return true;

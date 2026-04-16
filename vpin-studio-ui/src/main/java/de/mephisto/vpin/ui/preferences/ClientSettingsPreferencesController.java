@@ -113,6 +113,8 @@ public class ClientSettingsPreferencesController implements Initializable {
   private CheckBox sectionVps;
 
   @FXML
+  private CheckBox columnMusic;
+  @FXML
   private CheckBox columnAltColor;
   @FXML
   private CheckBox columnAltSound;
@@ -136,6 +138,8 @@ public class ClientSettingsPreferencesController implements Initializable {
   private CheckBox columnPinVol;
   @FXML
   private CheckBox columnIni;
+  @FXML
+  private CheckBox columnVbs;
   @FXML
   private CheckBox columnTutorials;
   @FXML
@@ -522,6 +526,13 @@ public class ClientSettingsPreferencesController implements Initializable {
       client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
+    columnMusic.setSelected(uiSettings.isColumnMusic());
+    columnMusic.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setColumnMusic(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
+    });
+
     columnAltSound.setSelected(uiSettings.isColumnAltSound());
     columnAltSound.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setColumnAltSound(t1);
@@ -588,6 +599,13 @@ public class ClientSettingsPreferencesController implements Initializable {
     columnIni.setSelected(uiSettings.isColumnIni());
     columnIni.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setColumnIni(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
+    });
+
+    columnVbs.setSelected(uiSettings.isColumnVbs());
+    columnVbs.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setColumnVbs(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
       client.getPreferenceService().setJsonPreference(uiSettings);
     });

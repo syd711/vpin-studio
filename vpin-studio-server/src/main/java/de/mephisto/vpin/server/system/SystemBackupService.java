@@ -220,6 +220,8 @@ public class SystemBackupService {
           LOG.info("Restored {}", pinVolTablesIni.getAbsolutePath());
         }
       }
+
+      return true;
     }
     catch (Exception e) {
       LOG.error("Failed to restore backup: {}", e.getMessage(), e);

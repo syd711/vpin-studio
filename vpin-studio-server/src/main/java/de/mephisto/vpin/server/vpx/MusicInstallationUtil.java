@@ -25,18 +25,17 @@ public class MusicInstallationUtil {
     }
 
     // Determine which archive-root folder to strip.
-    // If the archive wraps files under a generic "Music/" folder (e.g. "Music/cyberrace/file.mp3"),
-    // strip only that top-level component so the game-specific subfolder is preserved in the target.
-    // If the first component is already game-specific (e.g. "cyberrace/file.mp3") or there is no
-    // subfolder at all, pass null so all entries are extracted with their full relative paths intact.
+    // Find the "Music/" segment anywhere in the path (as a proper segment, not a substring of another
+    // folder name) and strip everything up to and including it, so the game-specific subfolder is
+    // preserved in the target.  This handles both "Music/primus/file.mp3" and wrapper-folder layouts
+    // like "Primus(Stern 2018) 1.1/Music/primus/file.mp3".
+    // If no "Music/" segment is found, pass null so entries are extracted with their relative paths intact.
     String archiveFolderName = null;
     if (relativePath != null) {
-      int firstSlash = relativePath.indexOf('/');
-      if (firstSlash >= 0) {
-        String firstFolder = relativePath.substring(0, firstSlash);
-        if (firstFolder.equalsIgnoreCase("music")) {
-          archiveFolderName = relativePath.substring(0, firstSlash + 1); // e.g. "Music/"
-        }
+      String lower = relativePath.toLowerCase();
+      int musicIdx = lower.indexOf("music/");
+      if (musicIdx >= 0 && (musicIdx == 0 || lower.charAt(musicIdx - 1) == '/')) {
+        archiveFolderName = relativePath.substring(0, musicIdx + "music/".length());
       }
     }
 

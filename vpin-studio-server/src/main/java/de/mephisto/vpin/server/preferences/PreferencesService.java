@@ -1,5 +1,7 @@
 package de.mephisto.vpin.server.preferences;
 
+import de.mephisto.vpin.commons.SystemInfo;
+import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.*;
 
 @Service
@@ -216,6 +219,11 @@ public class PreferencesService implements InitializingBean, PreferenceChangedLi
         ServerSettings serverSettings = getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
         systemService.setStickyKeysEnabled(serverSettings.isStickyKeysEnabled());
         LOG.info("Sticky keys enabled: {}", serverSettings.isStickyKeysEnabled());
+
+
+        File propertiesFile = new File(SystemInfo.RESOURCES + "system.properties");
+        PropertiesStore store = PropertiesStore.create(propertiesFile);
+        store.set("startup.delay", serverSettings.getStartupDelay());
       }
     }
     catch (Exception e) {

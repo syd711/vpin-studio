@@ -157,18 +157,20 @@ public class DOFLinxService implements InitializingBean, PreferenceChangedListen
     if (isValid()) {
       INIConfiguration configuration = getConfiguration();
       String path = null;
-      switch (gameEmulator.getType()) {
-        case ZenFX3: {
-          path = configuration.getString("PATH_FX3_B2S");
-          break;
-        }
-        case ZenFX: {
-          path = configuration.getString("PATH_FX_B2S");
-          break;
-        }
-        case PinballM: {
-          path = configuration.getString("PATH_LINX_B2S");
-          break;
+      if (configuration != null) {
+        switch (gameEmulator.getType()) {
+          case ZenFX3: {
+            path = configuration.getString("PATH_FX3_B2S");
+            break;
+          }
+          case ZenFX: {
+            path = configuration.getString("PATH_FX_B2S");
+            break;
+          }
+          case PinballM: {
+            path = configuration.getString("PATH_LINX_B2S");
+            break;
+          }
         }
       }
 

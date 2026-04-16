@@ -88,7 +88,9 @@ public class GameRepresentation {
   private String povPath;
   private String iniPath;
   private String resPath;
+  private String vbsPath;
   private boolean altSoundAvailable;
+  private boolean musicScripted;
 
   private List<String> tags = new ArrayList<>();
 
@@ -234,6 +236,14 @@ public class GameRepresentation {
 
   public void setResPath(String resPath) {
     this.resPath = resPath;
+  }
+
+  public String getVbsPath() {
+    return vbsPath;
+  }
+
+  public void setVbsPath(String vbsPath) {
+    this.vbsPath = vbsPath;
   }
 
   public String getComment() {
@@ -383,6 +393,14 @@ public class GameRepresentation {
 
   public void setAltSoundAvailable(boolean altSoundAvailable) {
     this.altSoundAvailable = altSoundAvailable;
+  }
+
+  public boolean isMusicScripted() {
+    return musicScripted;
+  }
+
+  public void setMusicScripted(boolean musicScripted) {
+    this.musicScripted = musicScripted;
   }
 
   public String getAssets() {

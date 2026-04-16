@@ -84,7 +84,7 @@ public class TableMatcherTest {
   }
 
   private void doMatch(TableMatcher matcher, VPS vpsDatabase, int nbExpectedTables, String tableId, String fileName, String tableName, String manuf, int year, VpsDebug debug) {
-    List<VpsTable> tables = matcher.findAllClosest(fileName, null, tableName, manuf, year, vpsDatabase.getTables());
+    List<VpsTable> tables = matcher.findAllClosest(new String[]{"VPX"}, fileName, null, tableName, manuf, year, vpsDatabase.getTables());
     LOG.error(debug.toString());
     assertEquals(nbExpectedTables, tables.size());
     // ensure first table returned is the expected one
@@ -92,7 +92,7 @@ public class TableMatcherTest {
 
     debug.clear();
     // do same test but without the parsed parts
-    tables = matcher.findAllClosest(fileName, null, null, null, -1, vpsDatabase.getTables());
+    tables = matcher.findAllClosest(new String[]{"VPX"}, fileName, null, null, null, -1, vpsDatabase.getTables());
     LOG.error(debug.toString());
     assertEquals(nbExpectedTables, tables.size());
     assertEquals(tableId, tables.get(0).getId());

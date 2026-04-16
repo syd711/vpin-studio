@@ -16,10 +16,10 @@ import java.lang.invoke.MethodHandles;
 public class VpsAutomatcherTest {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  private void doMatch(VpsAutomatcher matcher, VPS vpsDatabase, String gameFileName, 
-            String rom, String author, String version, 
-            String expectedTableId, String expectedVersionId, String parsedVersion,
-            VpsDebug debug) {
+  private void doMatch(VpsAutomatcher matcher, VPS vpsDatabase, String gameFileName,
+                       String rom, String author, String version,
+                       String expectedTableId, String expectedVersionId, String parsedVersion,
+                       VpsDebug debug) {
 
     debug.clear();
 
@@ -34,27 +34,27 @@ public class VpsAutomatcherTest {
 
     // optional test on parsed version
     if (StringUtils.isNotEmpty(parsedVersion)) {
-        assertEquals(parsedVersion, vpsMatch.getVersion());
+      assertEquals(parsedVersion, vpsMatch.getVersion());
     }
 
     // redo a quick check with vpsMatch filled to confirm the match, match should not change 
     matcher.autoMatch(vpsMatch, vpsDatabase, tableFormats, gameFileName, rom, null, author, version, null, true);
     assertEquals(expectedTableId, vpsMatch.getExtTableId());
     if (StringUtils.isNotEmpty(expectedVersionId)) {
-        assertEquals(expectedVersionId, vpsMatch.getExtTableVersionId());
+      assertEquals(expectedVersionId, vpsMatch.getExtTableVersionId());
     }
 
     // redo a full check with vpsMatch filled to confirm the match, match should not change 
     matcher.autoMatch(vpsMatch, vpsDatabase, tableFormats, gameFileName, rom, null, author, version, null, true);
     assertEquals(expectedTableId, vpsMatch.getExtTableId());
     if (StringUtils.isNotEmpty(expectedVersionId)) {
-        assertEquals(expectedVersionId, vpsMatch.getExtTableVersionId());
+      assertEquals(expectedVersionId, vpsMatch.getExtTableVersionId());
     }
 
     // Do the check via autoMatchTable method
-    VpsTable vpsTable = matcher.autoMatchTable(vpsDatabase, gameFileName, rom);
+    VpsTable vpsTable = matcher.autoMatchTable(vpsDatabase, new String[]{"VPX"}, gameFileName, rom);
     assertEquals(expectedTableId, vpsTable != null ? vpsTable.getId() : null);
-  }  
+  }
 
   @Test
   public void testMatch() {
@@ -143,7 +143,7 @@ public class VpsAutomatcherTest {
     doMatch(matcher, vpsDatabase, "Kingpin (Capcom 1996) Bigus(MOD) 1.1", "", null, null, "hM7A-E0Z", "ASgpE6Yx", "1.1", debug);
 
     doMatch(matcher, vpsDatabase, "Laser Ball (Williams 1979)", "", null, null, "mcfh2SWU", null, "", debug);
-    doMatch(matcher, vpsDatabase, "Laser Ball (Williams 1979)1.0b", "", null, null, "mcfh2SWU", "J0H5WwfJ", "1.0b", debug); 
+    doMatch(matcher, vpsDatabase, "Laser Ball (Williams 1979)1.0b", "", null, null, "mcfh2SWU", "J0H5WwfJ", "1.0b", debug);
     doMatch(matcher, vpsDatabase, "LaserBall_VP9.2_1.03_FS", "", null, null, "mcfh2SWU", null, "1.03", debug);
     doMatch(matcher, vpsDatabase, "Laser Ball (Williams)(1979)(Allknowing2012)(1.0)[VPX05][DT+FS]", "", null, null, "mcfh2SWU", "J0H5WwfJ", "1.0", debug);
 
@@ -182,9 +182,9 @@ public class VpsAutomatcherTest {
     doMatch(matcher, vpsDatabase, "Vegas (1990)", "", null, null, "VJRn9QME", "f90d5qRk", "", debug);
 
     // grrr, some author naming their table v.1 really wanted to make matching of table complicated :)
-    doMatch(matcher, vpsDatabase, "v.1 (IDSA 1986)", "", null, null, "32OBVwzC", null, "", debug);  
-    doMatch(matcher, vpsDatabase, "v.1 (IDSA 1986)_2.0a", "", null, null, "32OBVwzC", "s8NeWzRw", "2.0a", debug);  
-    doMatch(matcher, vpsDatabase, "v.1 (1986) v2.0", "", null, null, "32OBVwzC", "s8NeWzRw", "2.0", debug);  
+    doMatch(matcher, vpsDatabase, "v.1 (IDSA 1986)", "", null, null, "32OBVwzC", null, "", debug);
+    doMatch(matcher, vpsDatabase, "v.1 (IDSA 1986)_2.0a", "", null, null, "32OBVwzC", "s8NeWzRw", "2.0a", debug);
+    doMatch(matcher, vpsDatabase, "v.1 (1986) v2.0", "", null, null, "32OBVwzC", "s8NeWzRw", "2.0", debug);
   }
 
 }

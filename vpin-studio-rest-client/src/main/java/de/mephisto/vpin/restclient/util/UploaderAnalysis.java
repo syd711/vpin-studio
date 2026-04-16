@@ -844,16 +844,21 @@ public class UploaderAnalysis {
 
   public String getRelativeMusicPath() {
     String pupPackRootDirectory = getPupPackRootDirectory();
+    String dmdDirectory = getDMDPath();
 
     for (String filenameWithPath : getFilteredFilenamesWithPath()) {
       //ignore pup pack audio files
       if (pupPackRootDirectory != null && isFileBelowFolder(pupPackRootDirectory, filenameWithPath)) {
         continue;
       }
+      //ignore DMD audio files
+      if (dmdDirectory != null && isFileBelowFolder(dmdDirectory, filenameWithPath)) {
+        continue;
+      }
 
       //analyze audio files only
       String suffix = FilenameUtils.getExtension(filenameWithPath);
-      if (suffix.equalsIgnoreCase("ogg") || suffix.equalsIgnoreCase("mp3")) {
+      if (suffix.equalsIgnoreCase("ogg") || suffix.equalsIgnoreCase("mp3") || suffix.equalsIgnoreCase("wav")) {
         //strip the actual file name first
         if (filenameWithPath.contains("/")) {
           filenameWithPath = filenameWithPath.substring(0, filenameWithPath.lastIndexOf("/") + 1);
@@ -869,6 +874,7 @@ public class UploaderAnalysis {
     return null;
   }
 
+  @Nullable
   public String getRelativeMusicPathWithoutMusicFolder() {
     String filenameWithPath = getRelativeMusicPath();
     if (filenameWithPath != null && filenameWithPath.toLowerCase().contains("music/")) {

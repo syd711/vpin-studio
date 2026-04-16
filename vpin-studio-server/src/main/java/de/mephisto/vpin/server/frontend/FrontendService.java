@@ -776,11 +776,10 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
       emulatorService.reloadEmulators();
       LOG.info("Initial emulator load took {}ms", (System.currentTimeMillis() - start));
 
-      getFrontendConnector().getFrontendPlayerDisplays();
-      preferencesService.addChangeListener(this);
-
       boolean isHeadless = GraphicsEnvironment.isHeadless();
       if (!isHeadless) {
+        getFrontendConnector().getFrontendPlayerDisplays();
+
         List<FrontendPlayerDisplay> displays = getFrontendPlayerDisplays(false);
         LOG.info("########################## Frontend Screen Summary #####################################");
         for (FrontendPlayerDisplay frontendPlayerDisplay : displays) {
@@ -788,6 +787,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
         }
         LOG.info("######################### /Frontend Screen Summary #####################################");
       }
+      preferencesService.addChangeListener(this);
     }
     catch (Exception e) {
       LOG.info("FrontendService initialization failed: {}", e.getMessage(), e);

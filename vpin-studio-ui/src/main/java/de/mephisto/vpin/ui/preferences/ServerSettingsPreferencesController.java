@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.Frontend;
@@ -14,10 +15,7 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -36,6 +34,8 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class ServerSettingsPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(ServerSettingsPreferencesController.class);
+
+  private final Debouncer debouncer = new Debouncer();
 
   @FXML
   private Label startupTimeLabel;
@@ -75,6 +75,9 @@ public class ServerSettingsPreferencesController implements Initializable {
 
   @FXML
   private ComboBox<String> patchVersionCombo;
+
+  @FXML
+  private Spinner<Integer> startupDelaySpinner;
 
   @FXML
   private VBox popperDataMappingFields;
@@ -211,6 +214,16 @@ public class ServerSettingsPreferencesController implements Initializable {
     uploadTableBackups.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       serverSettings.setBackupTableOnOverwrite(t1);
       client.getPreferenceService().setJsonPreference(serverSettings);
+    });
+
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 120, 0);
+    factory.setValue(serverSettings.getStartupDelay());
+    startupDelaySpinner.setValueFactory(factory);
+    factory.valueProperty().addListener((observableValue, integer, t1) -> {
+      debouncer.debounce("startupDelaySpinner", () -> {
+        serverSettings.setStartupDelay(t1);
+        client.getPreferenceService().setJsonPreference(serverSettings);
+      }, 100);
     });
   }
 }

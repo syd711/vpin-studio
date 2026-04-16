@@ -43,6 +43,8 @@ public class Player {
 
   private String name;
 
+  private String iScoredName;
+
   private String domain;
 
   private String email;
@@ -52,6 +54,14 @@ public class Player {
 
   @Column(name = "administrative", nullable = false, columnDefinition = "boolean default false")
   private boolean administrative;
+
+  public String getiScoredName() {
+    return iScoredName;
+  }
+
+  public void setiScoredName(String iScoredName) {
+    this.iScoredName = iScoredName;
+  }
 
   public String getManiaAccountUuid() {
     return maniaAccountUuid;

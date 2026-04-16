@@ -1,17 +1,48 @@
+## Release Notes 4.8.4
+
+- **Future Pinball**: Fixed detection if emulator is running (important for recordings - thanks to @shlomithemoney).
+- **iScored / Player Management**: Added additional **iScored Name** field for the player dialogs. This allows you to use a different public name than the one used for other competition. Make sure to delete your existing scores in the game room after you changed the name as this change is not detected for highscore updates.
+- **WOVP Synchronization**: Fixed possible issue during the synchronization with WOVP.
+- **Table Overview**: Added tooltip message for missing ROM file names.
+- **Competition Wheel Images**: Disabled the rotation check for now and restored the old version, where wheels were always rotated 90 degree to the left.
+
+---
+
+## Release Notes 4.8.3
+
+- **VPS Auto-Matcher**: Fixed VPS table matching so that only matches are applied that match with the game's emulator type.
+- **Emulator Table Detection**: Fixed the bug that tables have been added multiple times for the Zen Studios tables and Zaccaria. The duplicates should be cleaned up after the update too. 
+- **Emulator Management**: Fixed error during saving emulators that have no VR support.
+- **Emulator Detection**: Improved emulator detection for Pinball M. 
+- **Zaccaria Emulator**: The VPS mapping has been hidden from the Table Data Manager dialog and the table overview.
+- **Media Recorder**: Removed VPX GL from the list of selectable emulators for the media recorder, because it might result static image videos.
+
+---
+
 ## Release Notes 4.8.2
 
-- **Competition Wheels**: Reverted "rotation check" because it was causing issues for some users. 
-- **DMD Score submission**: Changed processing of frames to support colorized rgb frames.
-- **Table Overview**: 
-  - Added "Backup Date" column. Note that the column is hidden by default and needs to be enabled in the settings.
-  - Fixed sorting of date columns.
-- **Client Settings**: You can now hide Zen Studio emulators in the **Client Settings** too (the checkboxes were disabled previously). 
+- **DMD Score submission**: Changed processing of frames to support colorized RGB frames.
+- **Table Overview**:
+  - Added **Backup Date column**. Note that the column is hidden by default and needs to be enabled in the settings.
+  - Added **VBS Script column**. Note that the column is hidden by default and needs to be enabled in the settings.
+  - Added **Music column**. The column's status icon only indicates if music file references have been found in the script, not if actual files have been found.
+  - Fixed sorting of several date columns.
+- **Table Installer**:
+  - Fixed music bundle detection: Added missing **.wav file detection** and target folder resolving (instead of .mp3 only). You need to re-scan tables that use .wav files as audio files.
+- **Client Settings**: You can now hide Zen Studio emulators in the **Client Settings** too (the checkboxes were disabled previously).
+- **Server Settings**:
+  - Added **Startup Delay** option. Because the Studio is started with the frontend, this can result in longer loading/waiting times for the frontend. The startup can now be delayed to give more CPU resources to the frontend during loading.
+  - Added option to configure a **fallback folder for VPX** detection if the folder is not detected properly. More details can be found in the troubleshooting section of the Wiki.
 - **ZEN/Zaccaria Games**:
+  - Fixed an issue where these emulators weren't detected anymore for some users.
   - Improved detection of **pupgames** database changes: additional tables are now automatically added for Zen and Zaccaria emulators when the database is updated with the latest additions.
   - **Zaccaria**: Updated **pupgames** database and added missing tables.
   - **Pinball M**: Updated **pupgames** database and added missing tables.
   - **Pinball FX3**: Manually fixed some special names used for ALT color files.
   - **Pinball FX/3/M**: Fixed and extended the database which contains the required backglass filenames for the different emulators.
+  - **Media Recording** Fixed issue for non VPX games when recording was launch via frontend.
+
+---
 
 ## Release Notes 4.8.1
 

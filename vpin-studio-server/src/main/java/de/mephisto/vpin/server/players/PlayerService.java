@@ -133,6 +133,7 @@ public class PlayerService {
 
     model.setDomain(player.getDomain());
     model.setName(player.getName());
+    model.setiScoredName(player.getiScoredName());
     model.setInitials(player.getInitials());
     model.setAdministrative(player.isAdministrative());
     model.setManiaAccountUuid(player.getManiaAccountUuid());

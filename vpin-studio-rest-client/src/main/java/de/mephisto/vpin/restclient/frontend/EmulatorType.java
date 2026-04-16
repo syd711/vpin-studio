@@ -4,9 +4,13 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public enum EmulatorType {
 
-  VisualPinball("vpx"), VisualPinball9("vpt"),
+  VisualPinball("vpx"),
+  VisualPinball9("vpt"),
   FuturePinball("fpt"),
-  ZenFX(null), ZenFX2("pxp"), ZenFX3("pxp"), PinballM(null),
+  ZenFX(null),
+  ZenFX2("pxp"),
+  ZenFX3("pxp"),
+  PinballM(null),
   Zaccaria(null),
   PinballArcade(null),
   MAME(null),

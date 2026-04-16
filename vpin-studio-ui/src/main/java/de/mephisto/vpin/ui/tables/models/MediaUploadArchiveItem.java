@@ -58,10 +58,10 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
 
   public void setSelected(boolean selected) {
     //you can't de-select on selection mode
-    if(filterMode != null && filterMode.equals(AssetType.TABLE) && isTableAsset()) {
+    if (filterMode != null && filterMode.equals(AssetType.TABLE) && isTableAsset()) {
       return;
     }
-    else if(filterMode != null && filterMode.equals(AssetType.DIF) && isPatch()) {
+    else if (filterMode != null && filterMode.equals(AssetType.DIF) && isPatch()) {
       return;
     }
     this.selected = selected;
@@ -125,7 +125,12 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
       //check if we have the musicFolder bundle here
       if (musicFolder.equals(this.getName()) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.MUSIC) == null) {
         assetType = AssetType.MUSIC_BUNDLE;
-        targetDisplayName = emulator.getInstallationDirectory() + "\\Music\\" + uploaderAnalysis.getRelativeMusicPathWithoutMusicFolder().replaceAll("/", "\\\\");
+
+        targetDisplayName = emulator.getInstallationDirectory() + "\\Music\\";
+        String relativeMusicPathWithoutMusicFolder = uploaderAnalysis.getRelativeMusicPathWithoutMusicFolder();
+        if (relativeMusicPathWithoutMusicFolder != null) {
+          targetDisplayName = targetDisplayName + relativeMusicPathWithoutMusicFolder.replaceAll("/", "\\\\");
+        }
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
 

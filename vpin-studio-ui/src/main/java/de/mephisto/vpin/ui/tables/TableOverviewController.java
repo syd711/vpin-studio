@@ -43,6 +43,7 @@ import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.tables.panels.PlayButtonController;
 import de.mephisto.vpin.ui.tables.panels.UploadsButtonController;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
+import de.mephisto.vpin.ui.tables.vbsedit.VBSManager;
 import de.mephisto.vpin.ui.tables.vps.VpsTableColumn;
 import de.mephisto.vpin.ui.tables.vps.VpsTutorialColumn;
 import de.mephisto.vpin.ui.util.*;
@@ -92,8 +93,7 @@ import java.util.stream.Collectors;
 import static de.mephisto.vpin.commons.utils.WidgetFactory.DISABLED_COLOR;
 import static de.mephisto.vpin.ui.Studio.*;
 
-public class TableOverviewController extends BaseTableController<GameRepresentation, GameRepresentationModel>
-    implements Initializable, StudioFXController, ListChangeListener<GameRepresentationModel>, PreferenceChangeListener, StudioEventListener {
+public class TableOverviewController extends BaseTableController<GameRepresentation, GameRepresentationModel> implements Initializable, StudioFXController, ListChangeListener<GameRepresentationModel>, PreferenceChangeListener, StudioEventListener {
 
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -136,6 +136,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnAltSound;
 
   @FXML
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnMusic;
+
+  @FXML
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnAltColor;
 
   @FXML
@@ -149,6 +152,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   @FXML
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnRES;
+
+  @FXML
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnVBS;
 
   @FXML
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnHSType;
@@ -481,8 +487,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       }
       catch (Exception e) {
         LOG.error("Cannot " + (isDisable ? "enable" : "disable") + " the game " + game.getGameFileName(), e);
-        WidgetFactory.showAlert(Studio.stage, "The table \"" + game.getGameDisplayName()
-            + "\" couldn't be " + (isDisable ? "enabled" : "disabled") + ".", "Please try again.");
+        WidgetFactory.showAlert(Studio.stage, "The table \"" + game.getGameDisplayName() + "\" couldn't be " + (isDisable ? "enabled" : "disabled") + ".", "Please try again.");
       }
     }
   }
@@ -515,8 +520,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   @FXML
   public void onStop() {
     Frontend frontend = client.getFrontendService().getFrontendCached();
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage,
-        FrontendUtil.replaceNames("Stop all emulators and [Frontend] processes?", frontend, null));
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, FrontendUtil.replaceNames("Stop all emulators and [Frontend] processes?", frontend, null));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       JFXFuture.supplyAsync(() -> {
         return client.getFrontendService().terminateFrontend();
@@ -584,10 +588,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       for (GameRepresentation game : selectedGames) {
         List<CompetitionRepresentation> gameCompetitions = client.getCompetitionService().getGameCompetitions(game.getId());
         for (CompetitionRepresentation gameCompetition : gameCompetitions) {
-          Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "The table \"" + game.getGameDisplayName()
-                  + "\" is used by for competition \"" + gameCompetition.toString() + "\" (type: " + gameCompetition.getType() + ").",
-              "Delete this competition?",
-              "You need to delete all competition references before deleting a table.", "Delete Competition");
+          Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "The table \"" + game.getGameDisplayName() + "\" is used by for competition \"" + gameCompetition.toString() + "\" (type: " + gameCompetition.getType() + ").", "Delete this competition?", "You need to delete all competition references before deleting a table.", "Delete Competition");
           if (result.isPresent() && result.get().equals(ButtonType.OK)) {
             client.getCompetitionService().deleteCompetition(gameCompetition);
             EventManager.getInstance().notifyTableChange(game.getId(), null);
@@ -809,90 +810,85 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     boolean isAllVpxSelected = client.getEmulatorService().isAllVpx(value);
 
     JFXFuture.supplyAsync(() -> {
-          if (clearCache) {
-            if (isAllVpxSelected) {
-              client.getGameService().clearCache();
-            }
-            else {
-              client.getGameService().clearCache(value.getId());
-            }
-          }
+      if (clearCache) {
+        if (isAllVpxSelected) {
+          client.getGameService().clearCache();
+        }
+        else {
+          client.getGameService().clearCache(value.getId());
+        }
+      }
 
-          return isAllVpxSelected
-              ? client.getGameService().getVpxGamesCached()
-              : client.getGameService().getGamesByEmulator(value.getId());
-        })
-        .onErrorSupply(e -> {
-          LOG.error("Loading tables failed", e);
-          Platform.runLater(() -> WidgetFactory.showAlert(stage, "Error", "Loading tables failed: " + e.getMessage()));
-          return Collections.emptyList();
-        })
-        .thenAcceptLater(data -> {
-          this.emulatorCombo.setDisable(false);
-          this.playlistCombo.setDisable(false);
+      return isAllVpxSelected ? client.getGameService().getVpxGamesCached() : client.getGameService().getGamesByEmulator(value.getId());
+    }).onErrorSupply(e -> {
+      LOG.error("Loading tables failed", e);
+      Platform.runLater(() -> WidgetFactory.showAlert(stage, "Error", "Loading tables failed: " + e.getMessage()));
+      return Collections.emptyList();
+    }).thenAcceptLater(data -> {
+      this.emulatorCombo.setDisable(false);
+      this.playlistCombo.setDisable(false);
 
-          tableView.getSelectionModel().getSelectedItems().removeListener(this);
-          setItems(data);
-          refreshFilters();
+      tableView.getSelectionModel().getSelectedItems().removeListener(this);
+      setItems(data);
+      refreshFilters();
 
-          if (selection != null) {
-            final Optional<GameRepresentationModel> updatedGame = this.models.stream().filter(g -> g.getGameId() == selection.getId()).findFirst();
-            if (updatedGame.isPresent()) {
-              GameRepresentation gameRepresentation = updatedGame.get().getBean();
-              this.playButtonController.setDisable(gameRepresentation.getGameFilePath() == null);
-            }
-          }
+      if (selection != null) {
+        final Optional<GameRepresentationModel> updatedGame = this.models.stream().filter(g -> g.getGameId() == selection.getId()).findFirst();
+        if (updatedGame.isPresent()) {
+          GameRepresentation gameRepresentation = updatedGame.get().getBean();
+          this.playButtonController.setDisable(gameRepresentation.getGameFilePath() == null);
+        }
+      }
 
-          if (!data.isEmpty()) {
-            this.validateBtn.setDisable(false);
-            this.deleteBtn.setDisable(false);
-            this.tableEditBtn.setDisable(false);
-          }
-          else {
-            Frontend frontend = client.getFrontendService().getFrontendCached();
-            this.validationErrorLabel.setText("No tables found");
-            this.validationErrorText.setText(FrontendUtil.replaceName("Check the emulator setup in [Frontend]"
-                + ". Make sure that all(!) directories are set and reload after fixing these.", frontend));
-          }
+      if (!data.isEmpty()) {
+        this.validateBtn.setDisable(false);
+        this.deleteBtn.setDisable(false);
+        this.tableEditBtn.setDisable(false);
+      }
+      else {
+        Frontend frontend = client.getFrontendService().getFrontendCached();
+        this.validationErrorLabel.setText("No tables found");
+        this.validationErrorText.setText(FrontendUtil.replaceName("Check the emulator setup in [Frontend]" + ". Make sure that all(!) directories are set and reload after fixing these.", frontend));
+      }
 
-          List<GameEmulatorRepresentation> vpxEmus = emulatorCombo.getItems().stream().filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
+      List<GameEmulatorRepresentation> vpxEmus = emulatorCombo.getItems().stream().filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
 
-          GameEmulatorRepresentation emulatorRepresentation = emulatorCombo.getValue();
-          this.importBtn.setDisable(!emulatorRepresentation.isVpxEmulator() && !emulatorRepresentation.isMameEmulator());
-          this.exportBtn.setVisible(emulatorRepresentation.isVpxEmulator());
-          this.exportBtn.setDisable(!emulatorRepresentation.isVpxEmulator());
-          this.stopBtn.setDisable(false);
-          this.searchTextField.setDisable(false);
-          this.reloadBtn.setDisable(false);
-          this.scanBtn.setDisable(false);
-          this.scanAllBtn.setDisable(false);
-          this.uploadsButtonController.setDisable(false);
+      GameEmulatorRepresentation emulatorRepresentation = emulatorCombo.getValue();
+      this.importBtn.setDisable(!emulatorRepresentation.isVpxEmulator() && !emulatorRepresentation.isMameEmulator());
+      this.exportBtn.setVisible(emulatorRepresentation.isVpxEmulator());
+      this.exportBtn.setDisable(!emulatorRepresentation.isVpxEmulator());
+      this.stopBtn.setDisable(false);
+      this.searchTextField.setDisable(false);
+      this.reloadBtn.setDisable(false);
+      this.scanBtn.setDisable(false);
+      this.scanAllBtn.setDisable(false);
+      this.uploadsButtonController.setDisable(false);
 
-          tableView.requestFocus();
+      tableView.requestFocus();
 
-          tableView.getSelectionModel().getSelectedItems().addListener(this);
-          if (selectedItem == null) {
-            //TODO this will result in a duplicate initial selection which may lead to a deadlock
+      tableView.getSelectionModel().getSelectedItems().addListener(this);
+      if (selectedItem == null) {
+        //TODO this will result in a duplicate initial selection which may lead to a deadlock
 //        tableView.getSelectionModel().select(0);
-          }
-          else {
-            tableView.getSelectionModel().select(selectedItem);
-          }
+      }
+      else {
+        tableView.getSelectionModel().select(selectedItem);
+      }
 
-          for (Consumer<GameRepresentation> reloadConsumer : reloadConsumers) {
-            reloadConsumer.accept(selection);
-          }
-          reloadConsumers.clear();
+      for (Consumer<GameRepresentation> reloadConsumer : reloadConsumers) {
+        reloadConsumer.accept(selection);
+      }
+      reloadConsumers.clear();
 
-          endReload();
+      endReload();
 
-          //TODO fixed above TODO by postphone the selection, no idea if this is feasable
-          Platform.runLater(() -> {
-            if (tableView.getSelectionModel().getSelectedItems().isEmpty()) {
-              tableView.getSelectionModel().select(0);
-            }
-          });
-        });
+      //TODO fixed above TODO by postphone the selection, no idea if this is feasable
+      Platform.runLater(() -> {
+        if (tableView.getSelectionModel().getSelectedItems().isEmpty()) {
+          tableView.getSelectionModel().select(0);
+        }
+      });
+    });
   }
 
   private void refreshEmulators() {
@@ -900,24 +896,23 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     final GameEmulatorRepresentation selectedEmu = this.emulatorCombo.getSelectionModel().getSelectedItem();
 
     this.emulatorCombo.setDisable(true);
-    JFXFuture.supplyAsync(() -> client.getEmulatorService().getFilteredEmulatorsWithAllVpx(uiSettings))
-        .thenAcceptLater(filtered -> {
-          this.emulatorCombo.valueProperty().removeListener(gameEmulatorChangeListener);
-          this.emulatorCombo.setItems(FXCollections.observableList(filtered));
-          this.emulatorCombo.setDisable(false);
+    JFXFuture.supplyAsync(() -> client.getEmulatorService().getFilteredEmulatorsWithAllVpx(uiSettings)).thenAcceptLater(filtered -> {
+      this.emulatorCombo.valueProperty().removeListener(gameEmulatorChangeListener);
+      this.emulatorCombo.setItems(FXCollections.observableList(filtered));
+      this.emulatorCombo.setDisable(false);
 
-          if (selectedEmu != null) {
-            this.emulatorCombo.getSelectionModel().select(selectedEmu);
-          }
-          GameEmulatorRepresentation newSelection = this.emulatorCombo.getSelectionModel().getSelectedItem();
-          if (newSelection == null) {
-            this.emulatorCombo.getSelectionModel().selectFirst();
-            newSelection = this.emulatorCombo.getSelectionModel().getSelectedItem();
-          }
+      if (selectedEmu != null) {
+        this.emulatorCombo.getSelectionModel().select(selectedEmu);
+      }
+      GameEmulatorRepresentation newSelection = this.emulatorCombo.getSelectionModel().getSelectedItem();
+      if (newSelection == null) {
+        this.emulatorCombo.getSelectionModel().selectFirst();
+        newSelection = this.emulatorCombo.getSelectionModel().getSelectedItem();
+      }
 
-          emulatorBtn.setDisable(newSelection == null || newSelection.getId() == -1);
-          this.emulatorCombo.valueProperty().addListener(gameEmulatorChangeListener);
-        });
+      emulatorBtn.setDisable(newSelection == null || newSelection.getId() == -1);
+      this.emulatorCombo.valueProperty().addListener(gameEmulatorChangeListener);
+    });
   }
 
   private void bindTable() {
@@ -960,9 +955,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         Frontend frontend = client.getFrontendService().getFrontendCached();
 
         FontIcon updateIcon = WidgetFactory.createUpdateIcon();
-        String ttText = "The table version in [Frontend] is \"" + value.getVersion()
-            + "\", while the linked VPS table has version \"" + value.getExtVersion() + "\".\n\n"
-            + "Update the table, correct the selected VPS table or fix the version in the \"Table Data\" section.";
+        String ttText = "The table version in [Frontend] is \"" + value.getVersion() + "\", while the linked VPS table has version \"" + value.getExtVersion() + "\".\n\n" + "Update the table, correct the selected VPS table or fix the version in the \"Table Data\" section.";
         ttText = FrontendUtil.replaceName(ttText, frontend);
         Tooltip tt = new Tooltip(ttText);
         tt.setWrapText(true);
@@ -1009,6 +1002,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       }
       if (!value.isRomExists() && value.isRomRequired() && !ignoredValidations.contains(GameValidationCode.CODE_ROM_NOT_EXISTS)) {
         String color = WidgetFactory.ERROR_COLOR;
+        label.setTooltip(new Tooltip("No ROM file was found for this table, but it was detected as required."));
         label.setStyle("-fx-font-color: " + color + ";-fx-text-fill: " + color + ";-fx-font-weight: bold;");
       }
       else {
@@ -1148,6 +1142,39 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       return null;
     }, this, true);
 
+    BaseLoadingColumn.configureColumn(columnVBS, (value, model) -> {
+      if (value.getVbsPath() != null) {
+        Button compBtn = new Button();
+        compBtn.getStyleClass().add("table-media-button");
+        compBtn.setTooltip(new Tooltip("Edit " + value.getVbsPath()));
+        FontIcon cmpIcon = WidgetFactory.createEditIcon(null);
+        cmpIcon.setIconSize(22);
+        compBtn.setGraphic(cmpIcon);
+        compBtn.setOnAction(new EventHandler<ActionEvent>() {
+          @Override
+          public void handle(ActionEvent event) {
+            try {
+              ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+              if (!serverSettings.isKeepVbsFiles()) {
+                WidgetFactory.showAlert(stage, ".vbs File Deletion Enabled", "The given .vbs file is deleted after being edited and imported into the .vpx file again.",
+                    "Enable \"Keep .vbs files\" flag in the preferences \"Server Settings\" -> \"Options\".");
+                return;
+              }
+
+              GameRepresentation gameRepresentation = value;
+              VBSManager.getInstance().edit(Optional.of(gameRepresentation));
+            }
+            catch (Exception e) {
+              LOG.error("Failed to open .vbs file: {}", e.getMessage(), e);
+              WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open .vbs file: " + e.getMessage());
+            }
+          }
+        });
+        return compBtn;
+      }
+      return null;
+    }, this, true);
+
     BaseLoadingColumn.configureColumn(columnAltSound, (value, model) -> {
       boolean hasUpdate = this.showVpsUpdates && vpsSettings.isVpsAltSound() && value.getVpsUpdates().contains(VpsDiffTypes.altSound);
       if (value.isAltSoundAvailable()) {
@@ -1163,6 +1190,13 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       }
       else if (hasUpdate) {
         return WidgetFactory.createUpdateIcon("A new ALT sound bundle or an update for the existing one is available");
+      }
+      return null;
+    }, this, true);
+
+    BaseLoadingColumn.configureColumn(columnMusic, (value, model) -> {
+      if (value.isMusicScripted()) {
+        return WidgetFactory.createCheckboxIcon(getIconColor(value));
       }
       return null;
     }, this, true);
@@ -1393,7 +1427,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     BaseLoadingColumn.configureColumn(columnDateModified, (value, model) -> {
       Label label = null;
       if (value.getDateAdded() != null) {
-        label = new Label(dateFormat.format(value.getDateUpdated()));
+        label = new Label(dateTimeFormat.format(value.getDateUpdated()));
       }
       else {
         label = new Label("-");
@@ -1539,36 +1573,34 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }), this, supportedScreens.contains(VPinScreen.Other2));
 
     tableView.setEditable(true);
-    tableView.setRowFactory(
-        tableView -> {
-          final TableRow<GameRepresentationModel> row = new TableRow<>();
-          final ContextMenu menu = new ContextMenu();
+    tableView.setRowFactory(tableView -> {
+      final TableRow<GameRepresentationModel> row = new TableRow<>();
+      final ContextMenu menu = new ContextMenu();
 
 
-          row.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-              if (tableView.getSelectionModel().getSelectedItems().isEmpty()) {
-                return;
-              }
-              contextMenuController.refreshContextMenu(tableView, menu, tableView.getSelectionModel().getSelectedItems());
-            }
-          });
+      row.selectedProperty().addListener(new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+          if (tableView.getSelectionModel().getSelectedItems().isEmpty()) {
+            return;
+          }
+          contextMenuController.refreshContextMenu(tableView, menu, tableView.getSelectionModel().getSelectedItems());
+        }
+      });
 
-          row.itemProperty().addListener((obs, oldItem, newItem) -> {
-            if (newItem == null) {
+      row.itemProperty().addListener((obs, oldItem, newItem) -> {
+        if (newItem == null) {
 //              menu.getItems().clear();
-            }
-            else {
+        }
+        else {
 //              contextMenuController.refreshContextMenu(tableView, menu, newItem.getGame());
-            }
-          });
+        }
+      });
 
-          row.emptyProperty().addListener((obs, wasEmpty, isNowEmpty) ->
-              row.setContextMenu(isNowEmpty ? null : menu));
+      row.emptyProperty().addListener((obs, wasEmpty, isNowEmpty) -> row.setContextMenu(isNowEmpty ? null : menu));
 
-          return row;
-        });
+      return row;
+    });
 
   }
 
@@ -1905,6 +1937,18 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       tableView.getColumns().remove(columnTutorials);
       tableView.getColumns().add(tableView.getColumns().indexOf(columnHSType), columnTutorials);
     }
+    if (!getTableSettings().getColumnOrder().contains(columnVBS.getId())) {
+      tableView.getColumns().remove(columnVBS);
+      tableView.getColumns().add(tableView.getColumns().indexOf(columnRES), columnVBS);
+    }
+    if (!getTableSettings().getColumnOrder().contains(columnBackupDate.getId())) {
+      tableView.getColumns().remove(columnBackupDate);
+      tableView.getColumns().add(tableView.getColumns().indexOf(columnTutorials), columnBackupDate);
+    }
+    if (!getTableSettings().getColumnOrder().contains(columnMusic.getId())) {
+      tableView.getColumns().remove(columnMusic);
+      tableView.getColumns().add(tableView.getColumns().indexOf(columnAltSound), columnMusic);
+    }
 
     vpxzSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPXZ_SETTINGS, VPXZSettings.class);
     vpxzBtn.managedProperty().bindBidirectional(vpxzBtn.visibleProperty());
@@ -2161,7 +2205,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     columnVersion.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnVersion());
     columnEmulator.setVisible((vpxMode || fpMode) && !assetManagerMode && !Features.IS_STANDALONE && uiSettings.isColumnEmulator());
-    columnVPS.setVisible((vpxMode || fpMode || zenEmulator || zaccariaMode) && !assetManagerMode && uiSettings.isColumnVpsStatus());
+    columnVPS.setVisible((vpxMode || fpMode || zenEmulator) && !assetManagerMode && uiSettings.isColumnVpsStatus());
     columnPatchVersion.setVisible((vpxMode || fpMode || zenEmulator) && !assetManagerMode && uiSettings.isColumnPatchVersion());
     columnRom.setVisible(mameMode || pinballMMode || fx1Mode || (vpxMode && !assetManagerMode && uiSettings.isColumnRom()));
     columnB2S.setVisible((vpxMode || fpMode || zenEmulator) && !assetManagerMode && uiSettings.isColumnBackglass());
@@ -2169,11 +2213,13 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     columnPUPPack.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPupPack() && Features.PUPPACKS_ENABLED);
     columnPinVol.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPinVol());
     columnAltSound.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnAltSound());
+    columnMusic.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnMusic());
     columnAltColor.setVisible((vpxMode || fx1Mode || fx3Mode) && !assetManagerMode && uiSettings.isColumnAltColor());
     columnPOV.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPov());
     columnTutorials.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnTutorial());
     columnINI.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnIni());
     columnRES.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnRes());
+    columnVBS.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnVbs());
     columnHSType.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnHighscore());
     columnDateAdded.setVisible((mameMode || vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnDateAdded());
     columnDateModified.setVisible((mameMode || vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnDateModified());

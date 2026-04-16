@@ -94,6 +94,7 @@ public class Game {
   private String dmdProjectFolder;
 
   private String assets;
+  private boolean musicScripted;
 
   private String[] scripts;
 
@@ -176,6 +177,14 @@ public class Game {
 
   public void setAssets(String assets) {
     this.assets = assets;
+  }
+
+  public boolean isMusicScripted() {
+    return musicScripted;
+  }
+
+  public void setMusicScripted(boolean musicScripted) {
+    this.musicScripted = musicScripted;
   }
 
   @JsonIgnore
@@ -541,6 +550,13 @@ public class Game {
   public String getIniPath() {
     if (this.getIniFile().exists()) {
       return this.getIniFile().getAbsolutePath();
+    }
+    return null;
+  }
+
+  public String getVbsPath() {
+    if (this.getVBSFile().exists()) {
+      return this.getVBSFile().getAbsolutePath();
     }
     return null;
   }

@@ -222,6 +222,11 @@ public class AltSound2Loader {
       return 0;
     }
 
-    return Integer.parseInt(value.trim());
+    try {
+      return Integer.parseInt(value.trim());
+    }
+    catch (NumberFormatException e) {
+      return 0;
+    }
   }
 }

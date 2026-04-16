@@ -5,7 +5,9 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.AccountVisibility;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.ui.DashboardController;
 import de.mephisto.vpin.ui.tables.ClearCacheProgressModel;
@@ -20,6 +22,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
@@ -61,6 +64,9 @@ public class PlayerDialogController implements Initializable, DialogController {
   private TextField maniaNameField;
 
   @FXML
+  private TextField iScoredNameField;
+
+  @FXML
   private CheckBox adminRoleCheckbox;
 
   @FXML
@@ -80,6 +86,9 @@ public class PlayerDialogController implements Initializable, DialogController {
 
   @FXML
   private VBox tournamentGroup;
+
+  @FXML
+  private Node iScoredBox;
 
   private PlayerRepresentation player;
 
@@ -114,6 +123,7 @@ public class PlayerDialogController implements Initializable, DialogController {
 
       boolean maniaAccount = this.vpinManiaPlayerCheckbox.isSelected();
       String maniaName = this.maniaNameField.getText();
+      String iScoredName = this.iScoredNameField.getText();
       AccountVisibility visibility = visibilityCheckbox.isSelected() ? AccountVisibility.searchable : AccountVisibility.hidden;
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(stage, new PlayerSaveProgressModel(stage, this.player, maniaAccount, maniaName, visibility, this.avatarFile, this.avatarStack));
       if (!progressDialog.getResults().isEmpty()) {
@@ -223,6 +233,7 @@ public class PlayerDialogController implements Initializable, DialogController {
       this.player = p;
       nameField.setText(this.player.getName());
       initialsField.setText(this.player.getInitials());
+      iScoredNameField.setText(this.player.getiScoredName());
       adminRoleCheckbox.setSelected(player.isAdministrative());
 
       vpinManiaPlayerCheckbox.setSelected(false);
@@ -233,7 +244,7 @@ public class PlayerDialogController implements Initializable, DialogController {
       if (!StringUtils.isEmpty(tournamentUserUuid)) {
         Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(tournamentUserUuid);
         this.vpinManiaPlayerCheckbox.setSelected(accountByUuid != null);
-        if(accountByUuid != null) {
+        if (accountByUuid != null) {
           this.visibilityCheckbox.setSelected(AccountVisibility.searchable.equals(accountByUuid.getVisibility()));
           this.maniaNameField.setText(accountByUuid.getDisplayName());
         }
@@ -260,6 +271,10 @@ public class PlayerDialogController implements Initializable, DialogController {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     tournamentGroup.managedProperty().bindBidirectional(tournamentGroup.visibleProperty());
     tournamentGroup.setVisible(Features.MANIA_ENABLED);
+    iScoredBox.managedProperty().bindBidirectional(iScoredBox.visibleProperty());
+
+    IScoredSettings iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
+    iScoredBox.setVisible(iScoredSettings.isEnabled() && Features.ISCORED_ENABLED);
 
     if (Features.MANIA_ENABLED) {
       cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
@@ -286,6 +301,11 @@ public class PlayerDialogController implements Initializable, DialogController {
       validateInput();
     });
 
+    iScoredNameField.setText(player.getiScoredName());
+    iScoredNameField.textProperty().addListener((observableValue, s, t1) -> {
+      player.setiScoredName(t1);
+    });
+
     Font font = Font.font("Impact", FontPosture.findByName("regular"), 60);
     this.initialsOverlayLabel.setFont(font);
 
@@ -302,7 +322,7 @@ public class PlayerDialogController implements Initializable, DialogController {
         maniaNameField.setDisable(!newValue);
         visibilityCheckbox.setDisable(!newValue);
 
-        if(!newValue) {
+        if (!newValue) {
           visibilityCheckbox.setSelected(false);
         }
       }

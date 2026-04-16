@@ -81,6 +81,7 @@ public class UISettings extends JsonSettings {
   //columns
   private boolean columnAltColor = true;
   private boolean columnAltSound = true;
+  private boolean columnMusic = true;
   private boolean columnBackglass = true;
   private boolean columnRating = true;
   private boolean columnDateAdded = true;
@@ -97,6 +98,7 @@ public class UISettings extends JsonSettings {
   private boolean columnRom = true;
   private boolean columnVersion = true;
   private boolean columnVpsStatus = true;
+  private boolean columnVbs = false;
   private boolean columnComment = false;
   private boolean columnBackupDate = false;
   private boolean columnPatchVersion = false;
@@ -118,6 +120,14 @@ public class UISettings extends JsonSettings {
 
   public void setLaunchConfiguration(LaunchConfiguration launchConfiguration) {
     this.launchConfiguration = launchConfiguration;
+  }
+
+  public boolean isColumnVbs() {
+    return columnVbs;
+  }
+
+  public void setColumnVbs(boolean columnVbs) {
+    this.columnVbs = columnVbs;
   }
 
   public boolean isUploadMediaPreview() {
@@ -360,6 +370,14 @@ public class UISettings extends JsonSettings {
 
   public void setColumnAltColor(boolean columnAltColor) {
     this.columnAltColor = columnAltColor;
+  }
+
+  public boolean isColumnMusic() {
+    return columnMusic;
+  }
+
+  public void setColumnMusic(boolean columnMusic) {
+    this.columnMusic = columnMusic;
   }
 
   public boolean isColumnAltSound() {
