@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface EmulatorDetailsRepository extends JpaRepository<EmulatorDetails, Long> {
+public interface EmulatorDetailsRepository extends JpaRepository<EmulatorDetails, Integer> {
 
   Optional<EmulatorDetails> findByEmulatorId(int emulatorId);
 

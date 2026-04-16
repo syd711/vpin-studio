@@ -20,10 +20,6 @@ import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.ScoreListFactory;
-import de.mephisto.vpin.server.nvrams.NVRamMapService;
-import de.mephisto.vpin.server.nvrams.map.NVRamMap;
-import de.mephisto.vpin.server.nvrams.map.NVRamScore;
-import de.mephisto.vpin.server.nvrams.map.SparseMemory;
 import de.mephisto.vpin.server.system.SystemService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -254,38 +250,4 @@ public class NvRamOutputToScoreTextTest {
       assertEquals(expected.trim(), scores.toString().trim());
     }
   }
-
-  @Test
-  public void compareNV() throws Exception {
-
-    String rom = "afm_113b";
-
-    Game game = new Game();
-    game.setGameDisplayName("Dummy test game for " + rom);
-    game.setRom(rom);
-
-    File testFolder = new File("../testsystem/vPinball/VisualPinball/VPinMAME/nvram/");
-
-    Locale loc = Locale.ENGLISH;
-
-    File entry = new File(testFolder, rom + ".nv");
-    String raw = NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(entry);
-    List<Score> scores = ScoreListFactory.create(raw, new Date(entry.length()), game, scoringDB);
-    for (Score score : scores) {
-      System.out.println(score.getFormattedScore(loc));
-    }
- 
-    System.out.println("---------------------");
-
-    NVRamMapService parser = new NVRamMapService();
-    NVRamMap map = parser.getMap(rom);
-    
-    byte[] data = Files.readAllBytes(entry.toPath());
-    SparseMemory memory = parser.getMemory(map, data);
-    for (NVRamScore m : map.getHighScores()) {
-      System.out.println( m.formatHighScore(map, memory, loc) );
-    }
-  }
-
-
 }

@@ -19,7 +19,6 @@ public class SinglePlayerScoreAdapter implements ScoreNvRamAdapter {
   }
 
   public SinglePlayerScoreAdapter() {
-
   }
 
   @Override

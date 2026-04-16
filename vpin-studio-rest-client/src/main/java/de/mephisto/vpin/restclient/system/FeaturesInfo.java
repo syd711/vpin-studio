@@ -66,9 +66,14 @@ public class FeaturesInfo {
   /** Whether frontend support statuses active / inactive */
   public boolean STATUSES = true;
   /** Whether frontend support STATUSES + additional popper status (MATURE + WIP) */
-  public boolean STATUS_EXTENDED= true;
+  public boolean STATUS_EXTENDED = true;
 
-    /** Specific flag for standalone mode */
+  /** Specific flag for standalone mode */
+  public boolean NVRAM_PARSING_USE_PINEMHI = true;
+  public boolean NVRAM_PARSING_USE_JAVAMAPS = false;
+  public boolean NVRAM_PARSING_USE_SUPERHAC = false;
+
+  /** Specific flag for standalone mode */
   public boolean IS_STANDALONE = false;
 
   public boolean VPXZ_ENABLED  = true;

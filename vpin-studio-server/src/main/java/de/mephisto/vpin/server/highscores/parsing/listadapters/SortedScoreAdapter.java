@@ -35,7 +35,7 @@ public class SortedScoreAdapter extends ScoreListAdapterBase implements ScoreLis
   }
 
   @NonNull
-  public List<Score> getScores(@NonNull Game game, @NonNull Date createdAt, @NonNull List<String> lines, @NonNull List<String> titles, boolean parseAll) {
+  public List<Score> getScores(@NonNull Game game, @NonNull Date createdAt, @NonNull List<String> lines, boolean parseAll) {
     List<Score> scores = new ArrayList<>();
 
     String source = game.getGameDisplayName() + "/" + game.getRom() + "/" + game.getHsFileName();

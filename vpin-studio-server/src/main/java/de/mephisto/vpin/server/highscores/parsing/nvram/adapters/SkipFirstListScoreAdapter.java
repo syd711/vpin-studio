@@ -13,10 +13,6 @@ public class SkipFirstListScoreAdapter implements ScoreNvRamAdapter {
     this.name = name;
   }
 
-  public SkipFirstListScoreAdapter() {
-
-  }
-
   @Override
   public boolean isApplicable(@NonNull String nvRam, @NonNull List<String> lines) {
     return nvRam.equals(name);

@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.highscores.parsing.ini.adapters;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.*;

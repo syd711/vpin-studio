@@ -26,6 +26,16 @@ public class ScoreListFactory {
   static {
     adapters.add(new SortedScoreAdapter("tf_180"));
   }
+ 
+  public static void registerScoreListAdapter(ScoreListAdapter adapter) {
+    adapters.add(adapter);
+  }
+
+  public static void unregisterScoreListAdapter(ScoreListAdapter adapter) {
+    adapters.remove(adapter);
+  }
+
+  //-------------------------------------------------------
 
   public static List<Score> create(@NonNull String raw, @NonNull Date createdAt, @Nullable Game game, @NonNull ScoringDB scoringDB) {
     return create(raw, createdAt, game, scoringDB, false);
@@ -44,18 +54,17 @@ public class ScoreListFactory {
         return scores;
       }
 
-      List<String> titles = scoringDB.getHighscoreTitles();
       if (game != null) {
         for (ScoreListAdapter adapter : adapters) {
           if (adapter.isApplicable(game)) {
 //            LOG.info("Using score list adapter {}", adapter.getClass().getSimpleName());
-            return adapter.getScores(game, createdAt, lines, titles, parseAll);
+            return adapter.getScores(game, createdAt, lines, parseAll);
           }
         }
       }
       // fall back adapter 
-      DefaultAdapter adapter = new DefaultAdapter();
-      return adapter.getScores(game, createdAt, lines, titles, parseAll);
+      DefaultAdapter adapter = new DefaultAdapter(scoringDB);
+      return adapter.getScores(game, createdAt, lines, parseAll);
     }
     catch (Exception e) {
       LOG.error("Failed to parse highscore: {}\nRaw Data:\n==================================\n{}", e.getMessage(), raw, e);
