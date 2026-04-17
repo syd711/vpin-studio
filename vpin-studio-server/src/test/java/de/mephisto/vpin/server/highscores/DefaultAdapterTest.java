@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.highscores;
 
+import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.highscores.parsing.listadapters.DefaultAdapter;
 
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,7 @@ public class DefaultAdapterTest{
 
   @Test
   public void testParsing() {
-    DefaultAdapter adapter = new DefaultAdapter();
+    DefaultAdapter adapter = new DefaultAdapter(new ScoringDB());
     doTest(adapter, "#1  JOE            250.000.000", 1, "JOE", 250000000);
     doTest(adapter, "#3 IND        30.000.000", 3, "IND", 30000000);
     doTest(adapter, "#3 I N        30.000.000", 3, "I N", 30000000);
@@ -38,7 +39,7 @@ public class DefaultAdapterTest{
     for (String sep : seps) {
       String line = input.replace(".", sep);
 
-      assertTrue(adapter.isScoreLine(line));
+      assertTrue(DefaultAdapter.isScoreLine(line));
       Score s = adapter.createScore(d, "TEST", line, "Test '" + sep + "'", -1);
       assertEquals(initials, s.getPlayerInitials());
       assertEquals(score, s.getScore());

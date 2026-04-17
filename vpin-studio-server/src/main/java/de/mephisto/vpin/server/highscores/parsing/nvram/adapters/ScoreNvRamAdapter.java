@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.highscores.parsing.nvram.adapters;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.util.List;
 

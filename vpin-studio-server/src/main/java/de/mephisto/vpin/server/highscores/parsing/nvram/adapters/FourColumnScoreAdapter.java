@@ -14,10 +14,6 @@ public class FourColumnScoreAdapter implements ScoreNvRamAdapter {
     this.name = name;
   }
 
-  public FourColumnScoreAdapter() {
-
-  }
-
   @Override
   public boolean isApplicable(@NonNull String nvRam, @NonNull List<String> lines) {
     return nvRam.equals(name);

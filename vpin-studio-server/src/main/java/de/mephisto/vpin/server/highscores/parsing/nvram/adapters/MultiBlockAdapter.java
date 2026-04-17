@@ -2,14 +2,11 @@ package de.mephisto.vpin.server.highscores.parsing.nvram.adapters;
 
 import de.mephisto.vpin.server.highscores.parsing.listadapters.DefaultAdapter;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MultiBlockAdapter extends DefaultAdapter implements ScoreNvRamAdapter {
-  private final static Logger LOG = LoggerFactory.getLogger(MultiBlockAdapter.class);
+public class MultiBlockAdapter implements ScoreNvRamAdapter {
 
   private String name;
   private int totalScores;
@@ -17,10 +14,6 @@ public class MultiBlockAdapter extends DefaultAdapter implements ScoreNvRamAdapt
   public MultiBlockAdapter(String name, int totalScores) {
     this.name = name;
     this.totalScores = totalScores;
-  }
-
-  public MultiBlockAdapter() {
-
   }
 
   @Override
@@ -35,7 +28,7 @@ public class MultiBlockAdapter extends DefaultAdapter implements ScoreNvRamAdapt
     int index = 1;
     for (int i = 0; i < lines.size(); i++) {
       String line = lines.get(i);
-      if (isScoreLine(line)) {
+      if (DefaultAdapter.isScoreLine(line)) {
         line = line.substring(1);
         line = index + line;
         builder.add(line);

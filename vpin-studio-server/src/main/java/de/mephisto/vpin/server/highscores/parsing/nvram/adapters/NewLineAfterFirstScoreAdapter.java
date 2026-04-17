@@ -14,13 +14,9 @@ public class NewLineAfterFirstScoreAdapter implements ScoreNvRamAdapter {
     this.name = name;
   }
 
-  public NewLineAfterFirstScoreAdapter() {
-
-  }
-
   @Override
   public boolean isApplicable(@NonNull String nvRam, @NonNull List<String> lines) {
-    return nvRam.equals("kiko_a10.nv");
+    return nvRam.equals(name);
   }
 
   @Override

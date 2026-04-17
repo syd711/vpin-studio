@@ -1,10 +1,9 @@
 package de.mephisto.vpin.server.highscores.parsing.nvram;
 
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
-import de.mephisto.vpin.server.highscores.parsing.nvram.adapters.*;
-import de.mephisto.vpin.server.pinemhi.PINemHiService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.htmlunit.jetty.io.RuntimeIOException;
@@ -13,31 +12,24 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
 /**
- * This converter does not ensure a unified output for all text documents that are outputted through pinemhi.
- * Instead, it just converts the output from pinemhi so that unexpected empty lines for missing positions are applied already.
+ * This converter does not ensure a unified output for all text documents that are outputted.
+ * Instead, it just converts the output so that unexpected empty lines for missing positions are applied already.
  */
 public class NvRamOutputToScoreTextConverter {
   private final static Logger LOG = LoggerFactory.getLogger(NvRamOutputToScoreTextConverter.class);
 
-  private final static List<ScoreNvRamAdapter> adapters = new ArrayList<>();
+  private static List<NvRamOutputToRaw> svcs = new ArrayList<>();
 
-  static {
-    adapters.add(new SinglePlayerScoreAdapter("algar_l1.nv", 1));
-    adapters.add(new SinglePlayerScoreAdapter("alienstr.nv", 1));
-    adapters.add(new SinglePlayerScoreAdapter("alpok_b6.nv", 1));
-    adapters.add(new FourColumnScoreAdapter("monopoly.nv"));
-    adapters.add(new SkipFirstListScoreAdapter("godzilla.nv"));
-    adapters.add(new NewLineAfterFirstScoreAdapter("kiko_a10.nv"));
-    adapters.add(new Anonymous5PlayerScoreAdapter("punchy.nv"));
-    adapters.add(new FixTitleScoreAdapter("rs_l6.nv", "TODAY'S HIGHEST SCORES", "ALL TIME HIGHEST SCORES"));
-    adapters.add(new SinglePlayerScoreAdapter());
-    adapters.add(new MultiBlockAdapter("pool_l7.nv", 8));
-    adapters.add(new AlteringLinesWithoutPosAdapter("wrldtou2.nv", 5));
+  public static void registerConverterService(NvRamOutputToRaw converter) {
+    svcs.add(converter);
+  }
+
+  public static void unregisterConverterService(NvRamOutputToRaw converter) {
+    svcs.remove(converter);
   }
 
   @Nullable
@@ -71,8 +63,15 @@ public class NvRamOutputToScoreTextConverter {
         nvOffset = true;
       }
 
-      String stdOut = PINemHiService.executePINemHi(originalNVRamFile);
-      return stdOut != null ? convertOutputToRaw(nvRamFileName, stdOut) : null;
+      // try with registered service
+      for (NvRamOutputToRaw svc : svcs) {
+        String raw = svc.convertOutputToRaw(nvRamFileName, originalNVRamFile);
+        if (raw != null) {
+          return raw;
+        }
+      }
+      LOG.warn("No registered converted to process nv file {}", originalNVRamFile.getName());
+      return null;
     }
     catch (RuntimeIOException ioe) {
       String error = ioe.getMessage();
@@ -90,38 +89,5 @@ public class NvRamOutputToScoreTextConverter {
         LOG.info("Restored original nvram {}", originalNVRamFile.getAbsolutePath());
       }
     }
-  }
-
-  @NonNull
-  private static String convertOutputToRaw(@NonNull String nvRamFileName, String stdOut) throws Exception {
-    // replace french space character, displayed ÿ with "."
-    /*stdOut = stdOut
-        .replaceAll("\u00ff", ".")
-        .replaceAll("\u00a0", ".")
-        .replaceAll("\u202f", ".")
-        .replaceAll("\ufffd", ".");*/
-
-    //check for pre-formatting
-    List<String> lines = Arrays.asList(stdOut.trim().split("\n"));
-//    if (!lines.isEmpty()) {
-//      //remove active codepage line
-//      lines = lines.subList(1, lines.size());
-//    }
-//
-//    //remove empty lines since we expect the highscore title first
-//    while (!lines.isEmpty() && StringUtils.isEmpty(lines.get(0).trim())) {
-//      lines = lines.subList(1, lines.size());
-//    }
-//
-//    //restore the original formatted string in case no custom adapter is needed
-//    stdOut = String.join("\n", lines);
-
-    for (ScoreNvRamAdapter adapter : adapters) {
-      if (adapter.isApplicable(nvRamFileName, lines)) {
-        LOG.info("Converted score using {}", adapter.getClass().getSimpleName());
-        return adapter.convert(nvRamFileName, lines);
-      }
-    }
-    return stdOut;
   }
 }

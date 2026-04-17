@@ -1,15 +1,11 @@
 package de.mephisto.vpin.server.highscores.parsing.nvram.adapters;
 
-import de.mephisto.vpin.server.highscores.parsing.listadapters.DefaultAdapter;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AlteringLinesWithoutPosAdapter extends DefaultAdapter implements ScoreNvRamAdapter {
-  private final static Logger LOG = LoggerFactory.getLogger(AlteringLinesWithoutPosAdapter.class);
+public class AlteringLinesWithoutPosAdapter implements ScoreNvRamAdapter {
 
   private String name;
   private int totalScores;
@@ -17,10 +13,6 @@ public class AlteringLinesWithoutPosAdapter extends DefaultAdapter implements Sc
   public AlteringLinesWithoutPosAdapter(String name, int totalScores) {
     this.name = name;
     this.totalScores = totalScores;
-  }
-
-  public AlteringLinesWithoutPosAdapter() {
-
   }
 
   @Override

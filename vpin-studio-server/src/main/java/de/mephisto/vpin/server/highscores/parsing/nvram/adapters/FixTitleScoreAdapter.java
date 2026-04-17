@@ -17,9 +17,6 @@ public class FixTitleScoreAdapter implements ScoreNvRamAdapter {
     this.deny = deny;
   }
 
-  public FixTitleScoreAdapter() {
-  }
-
   @Override
   public boolean isApplicable(@NonNull String nvRam, @NonNull List<String> lines) {
     return nvRam.equals(name);
