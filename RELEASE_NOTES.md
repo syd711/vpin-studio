@@ -4,7 +4,9 @@
 - **ALT Sounds**: Fixed upload button from the sidebar.
 - **VPin MAME**: Fixed saving VPin MAME default preferences for values **Compact Display** and **Double DisplaySize**.
 - **Pause Menu**: Fixed orientation for "Desktop Mode" playfield screenshots. 
-- **Media Recorder**: Fixed error during writing the media file depending on the overwrite/append selection.
+- **Media Recorder**:
+  - Fixed error during writing the media file depending on the overwrite/append selection.
+  - Updated ffmpeg.exe to version 8.0.1 to have OpenGL recording support.
 - **Competition Wheels**: Added deletion of the **pthumbs** folder in the wheel icons folder after competition wheel created, to force Popper to re-create the matching thumbnails variants.
 - **Competition Duplications**: Change the **Duplicate** actions for competitions so that the start and end date are also duplicated, but only if the competition has not ended yet.
 - **Sidebar Media Preview**: For the loading screen, the correct video is shown again if the screen contains a blank.
