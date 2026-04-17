@@ -114,6 +114,8 @@ public class WheelAugmenter {
       ImageUtil.write(thumbnailSm, wheelIconThumbnailSm);
 
       LOG.info("Augmented {}", wheelIconThumbnail.getAbsolutePath());
+
+      resetThumbs();
     }
     catch (Exception e) {
       LOG.error("Wheel augmentation failed: {}", e.getMessage(), e);

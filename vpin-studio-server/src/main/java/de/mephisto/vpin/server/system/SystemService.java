@@ -535,6 +535,16 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return monitors;
   }
 
+  public boolean isPrimaryMonitorRotated() {
+    List<MonitorInfo> monitorInfos = getMonitorInfos();
+    boolean rotate = false;
+    Optional<MonitorInfo> first = monitorInfos.stream().filter(m -> m.isPrimary() && !m.isPortraitMode()).findFirst();
+    if (first.isPresent()) {
+      rotate = true;
+    }
+    return rotate;
+  }
+
   public MonitorInfo getMonitor(int monitor) {
     List<MonitorInfo> monitors = MonitorInfoUtil.getMonitors();
     if (monitor < monitors.size()) {

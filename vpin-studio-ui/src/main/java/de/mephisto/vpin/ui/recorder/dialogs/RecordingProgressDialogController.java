@@ -293,7 +293,9 @@ public class RecordingProgressDialogController implements Initializable, DialogC
       else {
         GameEmulatorRepresentation gameEmulator= client.getEmulatorService().getGameEmulator(game.getEmulatorId());
         List<String> altExeNames = client.getEmulatorService().getAltExeNames(gameEmulator.getId());
-        List<String> filteredAltExeNames = altExeNames.stream().filter(exe -> !exe.toLowerCase().contains("gl")).collect(Collectors.toList());
+        List<String> filteredAltExeNames = altExeNames.stream()
+//            .filter(exe -> !exe.toLowerCase().contains("gl"))
+            .collect(Collectors.toList());
         launcherCombo.setItems(FXCollections.observableList(filteredAltExeNames));
         break;
       }

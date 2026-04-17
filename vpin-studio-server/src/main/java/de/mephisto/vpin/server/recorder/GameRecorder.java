@@ -257,7 +257,7 @@ public class GameRecorder {
 
   private void copyRecordingToTarget(Game game, VPinScreen screen, File recordingTempFile, File target) throws IOException {
     try {
-      if (!target.canWrite()) {
+      if (target.exists() && !target.delete()) {
         target = frontend.getMediaAccessStrategy().createMedia(game, screen, "mp4", true);
         FileUtils.copyFile(recordingTempFile, target);
         LOG.info("Appending instead of overwriting existing media file \"{}\" of screen {} with \"{}\" (original file was locked).", target.getAbsolutePath(), recordingTempFile.getAbsolutePath(), screen.name());

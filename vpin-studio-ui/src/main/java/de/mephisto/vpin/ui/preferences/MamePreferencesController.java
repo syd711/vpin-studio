@@ -96,9 +96,9 @@ public class MamePreferencesController implements Initializable {
     useSound.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
     useSamples.setSelected(options.isUseSamples());
     useSamples.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
-    compactDisplay.setSelected(options.isUseSamples());
+    compactDisplay.setSelected(options.isCompactDisplay());
     compactDisplay.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
-    doubleDisplaySize.setSelected(options.isUseSamples());
+    doubleDisplaySize.setSelected(options.isDoubleDisplaySize());
     doubleDisplaySize.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
     ignoreRomCrcError.setSelected(options.isIgnoreRomCrcError());
     ignoreRomCrcError.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());

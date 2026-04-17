@@ -169,7 +169,8 @@ public class TablesSidebarMameController implements Initializable {
 
 
   private void onDelete() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete VPin MAME settings for table '" + this.game.get().getGameDisplayName() + "'?");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete VPin MAME settings for table '" + this.game.get().getGameDisplayName() + "'?",
+        "The default settings will be restored on table launch.");
     String rom = game.get().getRom();
     if (StringUtils.isEmpty(rom)) {
       return;

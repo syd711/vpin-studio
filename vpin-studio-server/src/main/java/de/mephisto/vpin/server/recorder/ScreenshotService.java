@@ -75,9 +75,9 @@ public class ScreenshotService {
 
   private String lastScreenShotId = null;
 
-  public InputStream takeScreenshot() {
+  public InputStream takeScreenshot(boolean rotateMain) {
     try {
-      BufferedImage bufferedImage = takeMonitorsScreenshots();
+      BufferedImage bufferedImage = takeMonitorsScreenshots(rotateMain);
       byte[] bytes = toBytes(bufferedImage);
       return new ByteArrayInputStream(bytes);
     }
@@ -87,10 +87,10 @@ public class ScreenshotService {
     return new ByteArrayInputStream(new byte[]{});
   }
 
-  public String screenshot() {
+  public String screenshot(boolean rotateMain) {
     lastScreenShotId = UUID.randomUUID().toString();
 
-    BufferedImage bufferedImage = takeMonitorsScreenshots();
+    BufferedImage bufferedImage = takeMonitorsScreenshots(rotateMain);
     //return as fast as possible to speed up pause menu show
     new Thread(() -> {
       try {
@@ -245,7 +245,7 @@ public class ScreenshotService {
     return screenshotFiles;
   }
 
-  private BufferedImage takeMonitorsScreenshots() {
+  private BufferedImage takeMonitorsScreenshots(boolean rotateMain) {
     long start = System.currentTimeMillis();
     PauseMenuSettings pauseMenuSettings = preferencesService.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
 
@@ -280,7 +280,7 @@ public class ScreenshotService {
     for (MonitorInfo monitorInfo : screenshotMonitors) {
       try {
         BufferedImage bufferedImage = screenPreviewService.capture(monitorInfo);
-        if (monitorInfo.isPrimary() && !monitorInfo.isPortraitMode()) {
+        if (rotateMain) {
           bufferedImage = ImageUtil.rotateRight(bufferedImage);
         }
         images.add(bufferedImage);
@@ -309,15 +309,14 @@ public class ScreenshotService {
     try {
       int totalHeight = 0;
       int totalWidth = images.get(0).getWidth();
-      int additionalWidth = totalWidth;
+      int additionalWidth = 0;
 
       int index = 0;
       for (BufferedImage image : images) {
-        if (image.getWidth() > additionalWidth) {
-          additionalWidth = image.getWidth();
-        }
-
         if (index > 0) {
+          if (image.getWidth() > additionalWidth) {
+            additionalWidth = image.getWidth();
+          }
           totalHeight = totalHeight + image.getHeight();
         }
         index++;

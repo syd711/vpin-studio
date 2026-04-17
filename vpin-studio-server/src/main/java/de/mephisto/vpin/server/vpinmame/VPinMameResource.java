@@ -40,7 +40,7 @@ public class VPinMameResource {
   private UniversalUploadService universalUploadService;
 
   @Autowired
-  private GameCachingService gameCachingService;//TODO cyclic wise workaround
+  private GameCachingService gameCachingService;
 
   @GetMapping("/dmddevice.ini") 
   public File getDmdDeviceIni() {
@@ -64,12 +64,12 @@ public class VPinMameResource {
 
   @PostMapping("/options")
   public VPinMameOptions saveOptions(@RequestBody VPinMameOptions options) {
-    VPinMameOptions VPinMameOptions = vPinMameService.saveOptions(options);
+    VPinMameOptions updatedOptions = vPinMameService.saveOptions(options);
     List<GameEmulator> vpxGameEmulators = emulatorService.getVpxGameEmulators();
     for (GameEmulator vpxGameEmulator : vpxGameEmulators) {
       gameCachingService.invalidateByRom(vpxGameEmulator.getId(), options.getRom());
     }
-    return VPinMameOptions;
+    return updatedOptions;
   }
 
   @DeleteMapping("/options/{rom}")

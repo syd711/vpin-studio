@@ -44,7 +44,7 @@ public class FrontendMediaRepresentation {
         // use first media as default
         fallback = gameMediaItem;
       }
-      if (gameMediaItem.getName().contains("[SCREEN")) {
+      if (gameMediaItem.getName().contains("[SCREEN") || gameMediaItem.getName().contains("(SCREEN")) {
         return gameMediaItem;
       }
     }

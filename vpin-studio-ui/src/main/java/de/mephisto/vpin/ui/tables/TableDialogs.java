@@ -360,6 +360,10 @@ public class TableDialogs {
     controller.setPlaylistMode();
     controller.setPlaylist(stage, overviewController, playlist, screen);
 
+    FXResizeHelper.install(stage, 30, 6);
+    stage.setMinWidth(860);
+    stage.setMinHeight(600);
+
     stage.showAndWait();
     return true;
   }
