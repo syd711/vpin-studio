@@ -1,24 +1,15 @@
 package de.mephisto.vpin.server.highscores.parsing.nvram;
 
+import de.mephisto.vpin.server.highscores.parsing.nvram.adapters.*;
+import de.mephisto.vpin.server.pinemhi.PINemHiService;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import de.mephisto.vpin.server.highscores.parsing.nvram.adapters.AlteringLinesWithoutPosAdapter;
-import de.mephisto.vpin.server.highscores.parsing.nvram.adapters.Anonymous5PlayerScoreAdapter;
-import de.mephisto.vpin.server.highscores.parsing.nvram.adapters.FixTitleScoreAdapter;
-import de.mephisto.vpin.server.highscores.parsing.nvram.adapters.FourColumnScoreAdapter;
-import de.mephisto.vpin.server.highscores.parsing.nvram.adapters.MultiBlockAdapter;
-import de.mephisto.vpin.server.highscores.parsing.nvram.adapters.NewLineAfterFirstScoreAdapter;
-import de.mephisto.vpin.server.highscores.parsing.nvram.adapters.ScoreNvRamAdapter;
-import de.mephisto.vpin.server.highscores.parsing.nvram.adapters.SinglePlayerScoreAdapter;
-import de.mephisto.vpin.server.highscores.parsing.nvram.adapters.SkipFirstListScoreAdapter;
-import de.mephisto.vpin.server.pinemhi.PINemHiService;
-import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class NvRamOutputToRawWithPinemhi implements NvRamOutputToRaw {
   private final static Logger LOG = LoggerFactory.getLogger(NvRamOutputToRawWithPinemhi.class);

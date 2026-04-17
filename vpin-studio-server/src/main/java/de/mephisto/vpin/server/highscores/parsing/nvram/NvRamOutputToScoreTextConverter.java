@@ -63,6 +63,7 @@ public class NvRamOutputToScoreTextConverter {
       for (NvRamOutputToRaw svc : svcs) {
         String raw = svc.convertOutputToRaw(nvRamFileName, originalNVRamFile);
         if (raw != null) {
+          LOG.info("Used NvRam converter {} for {}", svc.getClass().getSimpleName(), nvRamName);
           return raw;
         }
       }
