@@ -3,10 +3,12 @@ package de.mephisto.vpin.server.recorder;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
-import de.mephisto.vpin.restclient.recorder.*;
+import de.mephisto.vpin.restclient.recorder.RecorderSettings;
+import de.mephisto.vpin.restclient.recorder.RecordingData;
+import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
+import de.mephisto.vpin.restclient.recorder.RecordingWriteMode;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameMediaService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
@@ -119,6 +121,7 @@ public class GameRecorder {
             recordingResults.add(recordingResult);
           }
           LOG.info("Recording finished: {}", recordingResult.toString());
+          LOG.info("Recording error log: {}", recordingResult.getErrorLog());
         }
       }
       catch (Exception e) {
