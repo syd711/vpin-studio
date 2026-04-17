@@ -78,7 +78,9 @@ public class GameRecorder {
           Callable<RecordingResult> screenRecordable = new Callable<RecordingResult>() {
             @Override
             public RecordingResult call() {
-              LOG.info("Starting recording for \"{}\", {}: {}", game.getGameDisplayName(), screen.name(), recordingTempFile.getAbsolutePath());
+              option.setOpenGlCommand(recorderSettings.isCustomLauncherEnabled() && recorderSettings.getCustomLauncher() != null && recorderSettings.getCustomLauncher().toLowerCase().contains("gl"));
+              LOG.info("Starting [glmode={}] recording for \"{}\", {}: {}", option.isOpenGlCommand(), game.getGameDisplayName(), screen.name(), recordingTempFile.getAbsolutePath());
+
               recorderSettings.getRecordingScreenOption(screen);
               ScreenRecorder screenRecorder = new ScreenRecorder(recordingScreen, recordingTempFile);
               screenRecorders.add(screenRecorder);

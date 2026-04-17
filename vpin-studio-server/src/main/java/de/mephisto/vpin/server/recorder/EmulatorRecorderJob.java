@@ -20,8 +20,10 @@ public class EmulatorRecorderJob extends FrontendRecorderJob {
 
   public static final int EMULATOR_WAITING_TIMEOUT_SECONDS = 60;
 
-  public EmulatorRecorderJob(RecorderService recorderService, RecorderSettings settings, 
-                             RecordingDataSummary recordingDataSummary, List<FrontendPlayerDisplay> recordingScreens) {
+  public EmulatorRecorderJob(RecorderService recorderService,
+                             RecorderSettings settings,
+                             RecordingDataSummary recordingDataSummary,
+                             List<FrontendPlayerDisplay> recordingScreens) {
     super(recorderService, settings, recordingDataSummary, recordingScreens);
   }
 
