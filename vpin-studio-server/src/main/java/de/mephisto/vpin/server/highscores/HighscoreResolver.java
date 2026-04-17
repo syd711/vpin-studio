@@ -102,14 +102,6 @@ public class HighscoreResolver implements InitializingBean {
     return iniFile;
   }
 
-  private String getHighscoreIniFilename(Game game) {
-    File iniFile = getHighscoreIniFile(game);
-    if (iniFile != null && iniFile.exists()) {
-      return iniFile.getAbsolutePath();
-    }
-    return null;
-  }
-
   @Nullable
   public File getNvRamFile(@NonNull Game game) {
     return folderLookupService.getNvRamFile(game);

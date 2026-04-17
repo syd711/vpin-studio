@@ -18,10 +18,14 @@ public class NvRamParsingConfiguration implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
-
     // Order defines how they should be chosen
-/*
-    //----
+    if (Features.NVRAM_PARSING_USE_PINEMHI) {
+      NvRamOutputToRawWithPinemhi svc = new NvRamOutputToRawWithPinemhi();
+
+      // register this service as a converter to convert nvFile to Raw
+      NvRamOutputToScoreTextConverter.registerConverterService(svc);
+    }
+
     if (Features.NVRAM_PARSING_USE_SUPERHAC) {
       NvRamParsingWithParser svc = NvRamParsingWithParser.createSuperhacParser();
 
@@ -31,7 +35,6 @@ public class NvRamParsingConfiguration implements InitializingBean {
       ScoreListFactory.registerScoreListAdapter(svc);
     }
 
-    //----
     if (Features.NVRAM_PARSING_USE_JAVAMAPS) {
       NvRamParsingWithParser svc = NvRamParsingWithParser.createNvramMapParser();
 
@@ -39,14 +42,6 @@ public class NvRamParsingConfiguration implements InitializingBean {
       NvRamOutputToScoreTextConverter.registerConverterService(svc);
       // register this service as an adapter to parse Raw
       ScoreListFactory.registerScoreListAdapter(svc);
-    }
-*/
-    //----
-    if (Features.NVRAM_PARSING_USE_PINEMHI) {
-      NvRamOutputToRawWithPinemhi svc = new NvRamOutputToRawWithPinemhi();
-
-      // register this service as a converter to convert nvFile to Raw
-      NvRamOutputToScoreTextConverter.registerConverterService(svc);
     }
   }
 }

@@ -22,14 +22,10 @@ import java.util.List;
 public class NvRamOutputToScoreTextConverter {
   private final static Logger LOG = LoggerFactory.getLogger(NvRamOutputToScoreTextConverter.class);
 
-  private static List<NvRamOutputToRaw> svcs = new ArrayList<>();
+  private static final List<NvRamOutputToRaw> svcs = new ArrayList<>();
 
   public static void registerConverterService(NvRamOutputToRaw converter) {
     svcs.add(converter);
-  }
-
-  public static void unregisterConverterService(NvRamOutputToRaw converter) {
-    svcs.remove(converter);
   }
 
   @Nullable
