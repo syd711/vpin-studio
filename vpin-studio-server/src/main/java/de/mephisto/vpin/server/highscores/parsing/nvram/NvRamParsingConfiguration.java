@@ -20,7 +20,7 @@ public class NvRamParsingConfiguration implements InitializingBean {
   public void afterPropertiesSet() throws Exception {
 
     // Order defines how they should be chosen
-
+/*
     //----
     if (Features.NVRAM_PARSING_USE_SUPERHAC) {
       NvRamParsingWithParser svc = NvRamParsingWithParser.createSuperhacParser();
@@ -40,7 +40,7 @@ public class NvRamParsingConfiguration implements InitializingBean {
       // register this service as an adapter to parse Raw
       ScoreListFactory.registerScoreListAdapter(svc);
     }
-
+*/
     //----
     if (Features.NVRAM_PARSING_USE_PINEMHI) {
       NvRamOutputToRawWithPinemhi svc = new NvRamOutputToRawWithPinemhi();
