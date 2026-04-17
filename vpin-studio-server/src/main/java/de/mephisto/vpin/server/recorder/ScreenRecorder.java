@@ -63,6 +63,9 @@ public class ScreenRecorder {
           }
         }
       }
+      else {
+        LOG.info("Recording delay for {} has been skipped because it is set to {} seconds.", this, options.getInitialDelay());
+      }
 
       int width = recordingScreen.getWidth();
       if (width % 2 == 1) {
