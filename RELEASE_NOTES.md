@@ -3,9 +3,9 @@
 - **Media Recorder**:
   - Updated ffmpeg.exe to version 8.0.1 to have OpenGL recording support.
   - Added error logging in case the custom ffmpeg.exe command fails.
-  - Added custom GL mode which is **only used when you select "Use Custom Launcher" and VPX GL.** This mode will work with different parameters to allow smooth recordings with OpenGL. Note that this is still in an experimental mode, because the correct recording location for screens needs to verified. But you can still use the regular/non-GL recording.
+  - Added custom GL mode which is **only used when you select "Use Custom Launcher" and VPX GL.** This mode will work with different parameters to allow smooth recordings with OpenGL. Note that **this mode still in experimental**, because the correct recording locations for screens needs verification. But you can still use the regular/non-GL recording.
 
-  <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/recorder/recorder-custom.png?raw=true" width="700" />
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/recorder/recorder-custom.png?raw=true" width="500" />
 
 ### Bugfixes
 
