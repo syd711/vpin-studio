@@ -2,12 +2,7 @@ package de.mephisto.vpin.server.highscores.parsing.nvram;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +19,7 @@ import net.nvrams.mapping.superhac.NVRamSuperhacParser;
 
 /**
  * A bridge to NVRam map sub projects
- * The class is used 
+ * The class is used
  * - as a NvRamOutputToRaw, to convert nvram to raw
  * - as a ScoreListAdapter, to parse raw to Scores
  */
@@ -53,6 +48,15 @@ public class NvRamParsingWithParser implements NvRamOutputToRaw, ScoreListAdapte
     for (String rom : parser.getSupportedNVRams()) {
       supportedRoms.add(rom.toLowerCase());
     }
+  }
+
+  public Set<String> getSupportedRoms() {
+    return supportedRoms;
+  }
+
+  @Override
+  public String toString() {
+    return this.getClass().getSimpleName() + " [" + this.parser.getClass().getSimpleName() + "]";
   }
 
   public boolean isSupportedRom(String rom) {
@@ -92,7 +96,7 @@ public class NvRamParsingWithParser implements NvRamOutputToRaw, ScoreListAdapte
   }
 
   @Override
-  public List<Score> getScores(Game game, Date createdAt, List<String> lines, boolean parseAll)  {
+  public List<Score> getScores(Game game, Date createdAt, List<String> lines, boolean parseAll) {
     Locale locale = Locale.getDefault();
     String rom = game != null ? game.getRom().toLowerCase() : "<no rom>";
     if (isSupportedRom(rom)) {
@@ -100,21 +104,21 @@ public class NvRamParsingWithParser implements NvRamOutputToRaw, ScoreListAdapte
         List<NVRamScore> nvRamScores = parser.parseRaw(rom, lines, locale, parseAll);
         List<Score> scores = new ArrayList<>();
         for (NVRamScore nvramScore : nvRamScores) {
-          Score sc = new Score(createdAt, game.getId(), 
-              nvramScore.getPlayerInitials(), null, 
-              nvramScore.getRawScore(), 
-              nvramScore.getScore(), 
+          Score sc = new Score(createdAt, game.getId(),
+              nvramScore.getPlayerInitials(), null,
+              nvramScore.getRawScore(),
+              nvramScore.getScore(),
               nvramScore.getPosition());
-              sc.setSuffix(nvramScore.getSuffix());
-              sc.setLabel(nvramScore.getLabel());
+          sc.setSuffix(nvramScore.getSuffix());
+          sc.setLabel(nvramScore.getLabel());
           scores.add(sc);
         }
         return scores;
       }
-      catch (IOException ioe) {
-        LOG.error("Error while getting scores for game {}", game, ioe);
+      catch (Exception ioe) {
+        LOG.error("Error while getting scores for game {}: {}", game, ioe.getMessage());
       }
     }
-    return null;
+    return Collections.emptyList();
   }
 }

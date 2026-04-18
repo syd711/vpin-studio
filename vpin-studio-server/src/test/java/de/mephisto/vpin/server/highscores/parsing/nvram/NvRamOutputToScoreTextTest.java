@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import net.nvrams.mapping.pinemhi.NVRamPinemhiParser;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -96,7 +97,9 @@ public class NvRamOutputToScoreTextTest {
   private int doTestOneFile(File entry) throws Exception {
     int status = STATUS_NOT_RUN;
     String baseName = FilenameUtils.getBaseName(entry.getName());
-    if (!scoringDB.getSupportedNvRams().contains(baseName) || scoringDB.getNotSupported().contains(baseName)) {
+
+    NVRamPinemhiParser parser = new NVRamPinemhiParser();
+    if (!parser.getSupportedNVRams().contains(baseName) || parser.getSupportedNVRams().contains(baseName)) {
       return status;
     }
 

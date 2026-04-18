@@ -13,6 +13,7 @@ import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
+import de.mephisto.vpin.server.highscores.parsing.nvram.NvRamOutputToScoreTextConverter;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegFile;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegService;
 import de.mephisto.vpin.server.listeners.EventOrigin;
@@ -80,6 +81,11 @@ public class HighscoreService implements InitializingBean {
 
   public File getHighscoreFile(@NonNull Game game) {
     return highscoreResolver.getHighscoreFile(game);
+  }
+
+
+  public Set<String> getSupportedRoms() {
+    return NvRamOutputToScoreTextConverter.getSupportedRoms();
   }
 
   public HighscoreFiles getHighscoreFiles(@NonNull Game game) {
@@ -180,7 +186,7 @@ public class HighscoreService implements InitializingBean {
 
     File highscoreIniFile = highscoreResolver.getHighscoreIniFile(game);
     if (highscoreIniFile != null && highscoreIniFile.exists()) {
-      if(!highscoreIniFile.delete()) {
+      if (!highscoreIniFile.delete()) {
         LOG.error("Failed to delete ini file {}", highscoreIniFile.getAbsolutePath());
       }
     }

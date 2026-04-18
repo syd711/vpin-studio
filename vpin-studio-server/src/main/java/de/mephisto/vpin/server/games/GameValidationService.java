@@ -758,7 +758,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     //aliased ROM was found as nvram file
-    if (aliasedRom && (scoringDB.getSupportedNvRams().contains(rom) || scoringDB.getSupportedNvRams().contains(rom.toLowerCase()) || scoringDB.getSupportedNvRams().contains(tableName))) {
+    if (aliasedRom && (highscoreService.getSupportedRoms().contains(rom) || highscoreService.getSupportedRoms().contains(rom.toLowerCase()) || highscoreService.getSupportedRoms().contains(tableName))) {
       validation.setRomIcon(GameScoreValidation.OK_ICON);
       validation.setRomIconColor(GameScoreValidation.OK_COLOR);
       validation.setRomStatus(GameScoreValidation.STATUS_ROM_ALIASED_MATCH_FOUND);
@@ -766,7 +766,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     //the ROM was found as nvram file
-    if (scoringDB.getSupportedNvRams().contains(String.valueOf(rom)) || scoringDB.getSupportedNvRams().contains(String.valueOf(rom).toLowerCase()) || scoringDB.getSupportedNvRams().contains(tableName)) {
+    if (highscoreService.getSupportedRoms().contains(String.valueOf(rom)) || highscoreService.getSupportedRoms().contains(String.valueOf(rom).toLowerCase()) || highscoreService.getSupportedRoms().contains(tableName)) {
       validation.setRomIcon(GameScoreValidation.OK_ICON);
       validation.setRomIconColor(GameScoreValidation.OK_COLOR);
       validation.setRomStatus(GameScoreValidation.STATUS_ROM_MATCH_FOUND);
@@ -809,20 +809,11 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     //ROM is not supported
-    if (!StringUtils.isEmpty(rom) && HighscoreType.NVRam.equals(game.getHighscoreType()) && (scoringDB.getNotSupported().contains(rom) || (!scoringDB.getSupportedNvRams().contains(rom)) && !scoringDB.getSupportedNvRams().contains(rom.toLowerCase()))) {
+    if (!StringUtils.isEmpty(rom) && HighscoreType.NVRam.equals(game.getHighscoreType()) && (highscoreService.getSupportedRoms().contains(rom) || highscoreService.getSupportedRoms().contains(rom.toLowerCase()))) {
       validation.setValidScoreConfiguration(false);
       validation.setRomIcon(GameScoreValidation.ERROR_ICON);
       validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);
       validation.setRomStatus(GameScoreValidation.STATUS_ROM_NOT_SUPPORTED);
-      return validation;
-    }
-
-    //Highscore file is not supported
-    if (!StringUtils.isEmpty(hsName) && scoringDB.getNotSupported().contains(hsName)) {
-      validation.setValidScoreConfiguration(false);
-      validation.setRomIcon(GameScoreValidation.ERROR_ICON);
-      validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);
-      validation.setRomStatus(GameScoreValidation.STATUS_HSFILE_NOT_SUPPORTED);
       return validation;
     }
 

@@ -12,8 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 
 /**
@@ -24,9 +23,21 @@ public class NvRamOutputToScoreTextConverter {
   private final static Logger LOG = LoggerFactory.getLogger(NvRamOutputToScoreTextConverter.class);
 
   private static final List<NvRamOutputToRaw> svcs = new ArrayList<>();
+  private static final Set<String> supportedNvRams = new HashSet<>();
 
   public static void registerConverterService(NvRamOutputToRaw converter) {
     svcs.add(converter);
+  }
+
+  public static Set<String> getSupportedRoms() {
+    if (supportedNvRams.isEmpty()) {
+      for (NvRamOutputToRaw svc : new ArrayList<>(svcs)) {
+        Set<String> supportedRoms = svc.getSupportedRoms();
+        LOG.info("Fetched supported ROMs for {}: {} ROMs", svc.getClass().getSimpleName(), supportedRoms.size());
+        supportedNvRams.addAll(supportedRoms);
+      }
+    }
+    return supportedNvRams;
   }
 
   @Nullable
@@ -64,7 +75,7 @@ public class NvRamOutputToScoreTextConverter {
       for (NvRamOutputToRaw svc : svcs) {
         String raw = svc.convertOutputToRaw(nvRamFileName, originalNVRamFile);
         if (!StringUtils.isEmpty(raw)) {
-          LOG.info("Used NvRam converter {} for {}", svc.getClass().getSimpleName(), nvRamName);
+          LOG.info("Used NvRam converter {} for {}", svc, nvRamName);
           return raw;
         }
       }
