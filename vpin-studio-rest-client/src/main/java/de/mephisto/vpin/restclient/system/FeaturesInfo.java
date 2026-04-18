@@ -70,8 +70,8 @@ public class FeaturesInfo {
 
   /** Specific flag for standalone mode */
   public boolean NVRAM_PARSING_USE_PINEMHI = true;
-  public boolean NVRAM_PARSING_USE_JAVAMAPS = false;
-  public boolean NVRAM_PARSING_USE_SUPERHAC = false;
+  public boolean NVRAM_PARSING_USE_JAVAMAPS = true;
+  public boolean NVRAM_PARSING_USE_SUPERHAC = true;
 
   /** Specific flag for standalone mode */
   public boolean IS_STANDALONE = false;

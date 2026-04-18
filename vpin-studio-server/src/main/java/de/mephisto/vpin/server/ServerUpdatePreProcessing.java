@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.system.NVRamsInfo;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import net.sf.sevenzipjbinding.SevenZip;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -78,6 +79,7 @@ public class ServerUpdatePreProcessing {
         runLogosUpdateCheck();
         runDOFTesterCheck();
         runPupGamesUpdateCheck();
+        runTomsLogicUpdateCheck();
         runDownloadableInstallationsCheck();
         runDeletions();
 
@@ -93,6 +95,40 @@ public class ServerUpdatePreProcessing {
         LOG.error("Server update failed: {}", e.getMessage(), e);
       }
     }).start();
+  }
+
+  private static void runTomsLogicUpdateCheck() {
+    File mapsFolder = new File(RESOURCES, "maps/");
+    if (!mapsFolder.exists()) {
+      mapsFolder.mkdirs();
+    }
+
+    File check = new File(mapsFolder, "main.zip");
+    if (!check.exists() || check.length() != 597680L) {
+      ServerUpdatePreProcessorUI.downloadWithProgressDialog("https://github.com/tomlogic/pinmame-nvram-maps/archive/refs/heads/main.zip", check, mapsFolder);
+
+      File extractedSubFolder = new File(mapsFolder, "pinmame-nvram-maps-main");
+      if (extractedSubFolder.exists() && extractedSubFolder.isDirectory()) {
+        try {
+          File[] entries = extractedSubFolder.listFiles();
+          if (entries != null) {
+            for (File entry : entries) {
+              File target = new File(mapsFolder, entry.getName());
+              if (entry.isDirectory()) {
+                FileUtils.moveDirectoryToDirectory(entry, mapsFolder, true);
+              }
+              else {
+                FileUtils.moveFile(entry, target);
+              }
+            }
+          }
+          FileUtils.deleteDirectory(extractedSubFolder);
+        }
+        catch (IOException e) {
+          LOG.error("Failed to flatten pinmame-nvram-maps folder: {}", e.getMessage(), e);
+        }
+      }
+    }
   }
 
   private static void runDownloadableInstallationsCheck() {

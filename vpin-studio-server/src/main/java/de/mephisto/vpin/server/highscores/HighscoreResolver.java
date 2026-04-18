@@ -289,12 +289,12 @@ public class HighscoreResolver implements InitializingBean {
       metadata.setFilename(nvRam.getCanonicalPath());
       metadata.setModified(new Date(nvRam.lastModified()));
 
+      //no more cancel after checking of unsupported nvrams, just show a plain result that no matching parser was found.
       List<String> supportedNvRams = systemService.getScoringDatabase().getSupportedNvRams();
       if (!supportedNvRams.contains(nvRamName) || systemService.getScoringDatabase().getNotSupported().contains(FilenameUtils.getBaseName(nvRamName))) {
         String msg = "The NV ram file \"" + nvRamName + ".nv\" is not supported by PINemHi.";
         SLOG.info(msg);
-        metadata.setStatus(msg);
-        return null;
+        LOG.info(msg);
       }
       metadata.setType(HighscoreType.NVRam);
 

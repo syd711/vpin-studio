@@ -93,6 +93,7 @@ public class FrontendRecorderJob implements Job {
 
           int secondToWait = EMULATOR_WAITING_TIMEOUT_SECONDS;
           while (!SystemService.isPinballEmulatorRunning() && secondToWait > 0) {
+            LOG.info("Waiting for emulator game to launch...");
             Thread.sleep(1000);
             secondToWait--;
           }

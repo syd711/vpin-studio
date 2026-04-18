@@ -66,6 +66,10 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
   public void competitionCreated(@NonNull Competition competition) {
     if (competition.getType().equals(CompetitionType.ISCORED.name())) {
       Game game = gameService.getGame(competition.getGameId());
+      if (game == null) {
+        game = gameService.getGameByVpsTable(competition.getVpsTableId(), competition.getVpsTableVersionId());
+      }
+
       if (game != null) {
         if (competition.isHighscoreReset()) {
           if (highscoreBackupService.backup(game) != null) {

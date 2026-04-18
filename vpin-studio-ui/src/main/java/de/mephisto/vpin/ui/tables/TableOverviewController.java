@@ -75,6 +75,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -974,12 +975,25 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }, this, true);
 
     BaseLoadingColumn.configureColumn(columnRom, (value, model) -> {
-      final String rom = value.getRom();
-      if (StringUtils.isEmpty(rom)) {
+      String rom = value.getRom();
+
+      if (model == null || model.getGameEmulator() == null) {
+        return new Label();
+      }
+
+      if (!model.getGameEmulator().isFxEmulator() && StringUtils.isEmpty(rom)) {
         return new Label();
       }
 
       String labelValue = rom;
+      if (model.getGameEmulator().isFxEmulator()) {
+        labelValue = FilenameUtils.getBaseName(value.getGameFileName());
+        Label label = new Label(labelValue);
+        label.getStyleClass().add("default-text");
+        label.setStyle(getLabelCss(value));
+        return label;
+      }
+
       List<Integer> ignoredValidations = Collections.emptyList();
       if (value.getIgnoredValidations() != null) {
         ignoredValidations = value.getIgnoredValidations();

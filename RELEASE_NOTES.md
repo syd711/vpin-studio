@@ -9,13 +9,17 @@
     
 - **NVRam Highscores Parsing**:
   - ...
+- **Preferences Menu**: Added natural order for hooks.
 
 ### Bugfixes
 
 - **Media Recorder**: 
   - Fixed error during writing the media file depending on the overwrite/append selection.
   - Added missing "emulator running" check for the frontend recording which should run before the actual configured initial delay. 
-- **Zen Studio Tables**: Disabled auto update of missing tables. For some reason I did not figure out yet, duplicates are created for some Pinball FX users.
+  - Fixed broken "emulator running" check which only did check if the VPX.exe is running, but not if an actual game is emulated. This resulted in an early start of recordings before the game was actually running.
+- **Zen Studio Tables**: 
+  - Disabled auto update of missing tables. For some reason I did not figure out yet, duplicates are created for some Pinball FX users.
+  - The table overview shows the file name (e.g. "Table_123") as ROM name now.
 - **ALT Sounds**: Fixed upload button from the sidebar.
 - **VPin MAME**: Fixed saving VPin MAME default preferences for values **Compact Display** and **Double DisplaySize**.
 - **Pause Menu**: Fixed orientation for "Desktop Mode" playfield screenshots.
@@ -23,3 +27,5 @@
 - **Competition Duplications**: Change the **Duplicate** actions for competitions so that the start and end date are also duplicated, but only if the competition has not ended yet.
 - **Sidebar Media Preview**: For the loading screen, the correct video is shown again if the screen contains a blank.
 - **FX ALT Color Support**: Additional naming fixes when the folder name for the ALT color is determined.
+- **Competitions / iScored**: Fixed broken/missing highscore reset for iScored competed tables.
+- **Table Overview**: Fixed time formatting for the modification date and added info tooltip to the column header.
