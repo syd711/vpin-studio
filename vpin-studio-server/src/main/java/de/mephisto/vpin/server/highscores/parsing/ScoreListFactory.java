@@ -26,7 +26,7 @@ public class ScoreListFactory {
   static {
     adapters.add(new SortedScoreAdapter("tf_180"));
   }
- 
+
   public static void registerScoreListAdapter(ScoreListAdapter adapter) {
     adapters.add(adapter);
   }
@@ -57,8 +57,10 @@ public class ScoreListFactory {
       if (game != null) {
         for (ScoreListAdapter adapter : adapters) {
           if (adapter.isApplicable(game)) {
-//            LOG.info("Using score list adapter {}", adapter.getClass().getSimpleName());
-            return adapter.getScores(game, createdAt, lines, parseAll);
+            List<Score> scoreList = adapter.getScores(game, createdAt, lines, parseAll);
+            if (!scoreList.isEmpty()) {
+              return scoreList;
+            }
           }
         }
       }
