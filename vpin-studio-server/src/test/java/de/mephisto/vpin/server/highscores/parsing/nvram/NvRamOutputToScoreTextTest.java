@@ -99,6 +99,7 @@ public class NvRamOutputToScoreTextTest {
     String baseName = FilenameUtils.getBaseName(entry.getName());
 
     NVRamPinemhiParser parser = new NVRamPinemhiParser();
+    parser.setPinemhiFolder(new File("../resources/pinemhi/"));
     if (!parser.getSupportedNVRams().contains(baseName) || parser.getSupportedNVRams().contains(baseName)) {
       return status;
     }
