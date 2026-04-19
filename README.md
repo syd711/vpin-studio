@@ -86,7 +86,11 @@ Download: http://mjrnet.org/pinscape/PinVol.html
 
 Documentation: http://mjrnet.org/pinscape/PinVol.html
 
+### Tomlogic's Pinball Memory Maps
 
+https://github.com/tomlogic/pinmame-nvram-maps
+
+This program makes use of content from the Pinball Memory Maps project.
 
 ## Third Party Licenses and Resources
 
