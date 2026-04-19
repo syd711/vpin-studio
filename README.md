@@ -92,6 +92,10 @@ https://github.com/tomlogic/pinmame-nvram-maps
 
 This program makes use of content from the Pinball Memory Maps project.
 
+### Superhac's Score Parser
+
+https://github.com/superhac/pinmame-score-parser
+
 ## Third Party Licenses and Resources
 
 For license texts have a look at [Third-Party Libraries](./documentation/third-party-licenses/)
