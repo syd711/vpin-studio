@@ -32,3 +32,4 @@
 - **Competitions / iScored**: Fixed broken/missing highscore reset for iScored competed tables.
 - **Table Overview**: Fixed time formatting for the modification date and added info tooltip to the column header.
 - **Wheel Badges**: Fixed orientation of augmented wheels (again).
+- **VPX File Scanner**: Added .ogg audio format to the music scan detection.
