@@ -9,8 +9,9 @@ import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.tables.TableDialogs;
+import de.mephisto.vpin.ui.preferences.dialogs.IScoredGameRoomDeletionProgressModel;
 import de.mephisto.vpin.ui.preferences.dialogs.IScoredGameRoomLoadingProgressModel;
+import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
@@ -90,10 +91,8 @@ public class IScoredPreferencesController implements Initializable {
       PreferencesController.markDirty(PreferenceType.competitionSettings);
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete iScored game room \"" + selectedItem.iScoredGameRoom.getUrl() + "\"?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        IScoredSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
-        settings.remove(selectedItem.iScoredGameRoom);
         Platform.runLater(() -> {
-          ProgressDialog.createProgressDialog(new PreferencesSavingModel("Synchronizing iScored", settings));
+          ProgressDialog.createProgressDialog(new IScoredGameRoomDeletionProgressModel(selectedItem.iScoredGameRoom));
           reload(true);
           EventManager.getInstance().notifyPreferenceChanged(PreferenceType.competitionSettings);
         });

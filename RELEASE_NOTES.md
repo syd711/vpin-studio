@@ -36,3 +36,4 @@
 - **Backglass Preview**: Fixed backglass preview when the .directb2 file is located in a table subfolder.
 - **Future Pinball** Fixed import of FP tables which was disabled by accident.
 - **DOFLinx**: Fixed auto-installer which also checks the .exe files now if the latest version on github is newer than the installed one.
+- **iScored**: Fixed game rooms deletions. When a game room deleted, all competitions are properly resetted and wheels resetted.
