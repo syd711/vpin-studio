@@ -784,7 +784,7 @@ public class BackglassService implements InitializingBean {
         throw new RuntimeException("Cannot rename " + b2sFile + ", operation ignored");
       }
     }
-    return reloadDirectB2SAndVersions(emulator, fileName);
+    return reloadDirectB2SAndVersions(emulator, mainFileName);
   }
 
   public DirectB2S disable(int emulatorId, String fileName) {
