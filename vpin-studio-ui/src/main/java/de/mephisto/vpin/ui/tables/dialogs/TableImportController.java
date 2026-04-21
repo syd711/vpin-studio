@@ -111,7 +111,7 @@ public class TableImportController implements Initializable, DialogController {
       FrontendUtil.replaceNames(text2Description, frontend, frontend.getName());
 
       List<GameEmulatorRepresentation> filtered = new ArrayList<>(client.getEmulatorService().getFilteredEmulatorsWithAllVpx(uiSettings));
-      filtered = filtered.stream().filter(e -> !e.isZaccariaEmulator() && !e.isFxEmulator()).collect(Collectors.toList());
+      filtered = filtered.stream().filter(e -> !e.isZaccariaEmulator() && !e.isFxEmulator() && !e.isFpEmulator()).collect(Collectors.toList());
       this.emulatorCombo.setItems(FXCollections.observableList(filtered));
 
       this.emulatorCombo.valueProperty().addListener(new ChangeListener<GameEmulatorRepresentation>() {
