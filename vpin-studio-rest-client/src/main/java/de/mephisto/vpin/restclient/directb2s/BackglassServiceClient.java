@@ -126,11 +126,6 @@ public class BackglassServiceClient extends VPinStudioClientService {
     return new URL(url).openStream();
   }
 
-  public String getDirectB2sPreviewBackgroundUrl(int gameId, boolean includeFrame) {
-    return getRestClient().getBaseUrl() + API + "directb2s/previewBackground/" + gameId + ".png"
-        + (includeFrame ? "?includeFrame=true" : "");
-  }
-
   public String getDirectB2sPreviewBackgroundUrl(int emulatorId, String filename, boolean includeFrame) {
     String url = getRestClient().getBaseUrl() + API + "directb2s/previewBackground/" + emulatorId + "/"
         + URLEncoder.encode(URLEncoder.encode(filename, StandardCharsets.UTF_8), StandardCharsets.UTF_8) + ".png"
