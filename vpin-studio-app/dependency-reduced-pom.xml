@@ -46,7 +46,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.5.3</version>
+        <version>3.6.0</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -98,6 +98,9 @@
               <noManPages>true</noManPages>
               <stripDebug>true</stripDebug>
               <noHeaderFiles>true</noHeaderFiles>
+              <options>
+                <option>--enable-native-access=javafx.graphics</option>
+              </options>
             </configuration>
           </execution>
         </executions>
@@ -105,7 +108,7 @@
       <plugin>
         <groupId>com.akathist.maven.plugins.launch4j</groupId>
         <artifactId>launch4j-maven-plugin</artifactId>
-        <version>2.2.0</version>
+        <version>2.5.1</version>
         <executions>
           <execution>
             <id>l4j-clui</id>
@@ -115,7 +118,7 @@
             </goals>
             <configuration>
               <headerType>gui</headerType>
-              <icon>${basedir}/src/main/resources/de/mephisto/vpin/app/logo.ico</icon>
+              <icon>${project.basedir}/src/main/resources/de/mephisto/vpin/app/logo.ico</icon>
               <outfile>target/VPin-Studio-App.exe</outfile>
               <jar>target/vpin-studio-app.jar</jar>
               <errTitle>VPin-Studio-App</errTitle>
@@ -126,6 +129,9 @@
               </classPath>
               <jre>
                 <path>./win32/java</path>
+                <opts>
+                  <opt>--enable-native-access=javafx.graphics</opt>
+                </opts>
               </jre>
               <versionInfo>
                 <fileVersion>1.0.0.0</fileVersion>
@@ -174,7 +180,7 @@
     <maven.compiler.source>25</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <javafx.version>25-ea+11</javafx.version>
-    <junit.version>5.10.2</junit.version>
+    <junit.version>5.11.4</junit.version>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
 </project>

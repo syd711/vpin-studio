@@ -32,7 +32,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.2.1</version>
+        <version>3.6.0</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -98,6 +98,7 @@
                 <option>javafx.graphics/com.sun.javafx.iio=ALL-UNNAMED</option>
                 <option>--add-exports</option>
                 <option>javafx.graphics/com.sun.javafx.iio.common=ALL-UNNAMED</option>
+                <option>--enable-native-access=javafx.graphics</option>
               </options>
             </configuration>
           </execution>
@@ -106,7 +107,7 @@
       <plugin>
         <groupId>com.akathist.maven.plugins.launch4j</groupId>
         <artifactId>launch4j-maven-plugin</artifactId>
-        <version>2.2.0</version>
+        <version>2.5.1</version>
         <executions>
           <execution>
             <id>l4j-clui</id>
@@ -130,6 +131,7 @@
                 <opts>
                   <opt>--add-exports=javafx.graphics/com.sun.javafx.iio=ALL-UNNAMED</opt>
                   <opt>--add-exports=javafx.graphics/com.sun.javafx.iio.common=ALL-UNNAMED</opt>
+                  <opt>--enable-native-access=javafx.graphics</opt>
                 </opts>
               </jre>
               <versionInfo>
@@ -483,26 +485,50 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
-      <version>5.10.0</version>
+      <version>5.11.4</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>opentest4j</artifactId>
+          <groupId>org.opentest4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>junit-platform-commons</artifactId>
+          <groupId>org.junit.platform</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>apiguardian-api</artifactId>
+          <groupId>org.apiguardian</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
-      <version>5.10.0</version>
+      <version>5.11.4</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>junit-platform-engine</artifactId>
+          <groupId>org.junit.platform</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>apiguardian-api</artifactId>
+          <groupId>org.apiguardian</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
   <properties>
-    <slf4j.version>2.0.9</slf4j.version>
+    <slf4j.version>2.0.16</slf4j.version>
     <macOSBuild>true</macOSBuild>
     <ikonli.version>12.4.0</ikonli.version>
-    <commons-lang3.version>3.14.0</commons-lang3.version>
+    <commons-lang3.version>3.17.0</commons-lang3.version>
     <javafx.version>25-ea+11</javafx.version>
-    <junit.version>5.10.0</junit.version>
-    <jackson.version>2.16.1</jackson.version>
+    <junit.version>5.11.4</junit.version>
+    <jackson.version>2.18.2</jackson.version>
     <skipMacOSBuild>true</skipMacOSBuild>
-    <logback.version>1.4.11</logback.version>
-    <commons-io.version>2.15.1</commons-io.version>
+    <logback.version>1.5.16</logback.version>
+    <commons-io.version>2.18.0</commons-io.version>
   </properties>
 </project>

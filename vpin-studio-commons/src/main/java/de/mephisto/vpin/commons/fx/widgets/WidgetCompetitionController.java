@@ -14,7 +14,7 @@ import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
-import eu.hansolo.tilesfx.events.TileEvent;
+import eu.hansolo.tilesfx.events.TileEvt;
 import eu.hansolo.tilesfx.tools.Rank;
 import eu.hansolo.tilesfx.tools.Ranking;
 import javafx.application.Platform;
@@ -106,12 +106,12 @@ public class WidgetCompetitionController extends WidgetController implements Ini
         .animated(true)
         .checkThreshold(true)
         .onTileEvent(e -> {
-          if (TileEvent.EventType.THRESHOLD_EXCEEDED == e.getEventType()) {
+          if (TileEvt.THRESHOLD_EXCEEDED == e.getEvtType()) {
             turnoverTile.setRank(firstRank);
             turnoverTile.setValueColor(firstRank.getColor());
             turnoverTile.setUnitColor(firstRank.getColor());
           }
-          else if (TileEvent.EventType.THRESHOLD_UNDERRUN == e.getEventType()) {
+          else if (TileEvt.THRESHOLD_UNDERRUN == e.getEvtType()) {
             turnoverTile.setRank(Rank.DEFAULT);
             turnoverTile.setValueColor(Tile.FOREGROUND);
             turnoverTile.setUnitColor(Tile.FOREGROUND);
