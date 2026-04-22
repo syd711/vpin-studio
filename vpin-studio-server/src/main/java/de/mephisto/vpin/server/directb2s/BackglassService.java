@@ -35,7 +35,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 
 import javax.imageio.ImageIO;
-import javax.xml.bind.DatatypeConverter;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -156,7 +155,7 @@ public class BackglassService implements InitializingBean {
 
   private void extractBackgroundData(DirectB2SData data, String backgroundBase64) throws IOException {
     if (backgroundBase64 != null) {
-      byte[] imageData = DatatypeConverter.parseBase64Binary(backgroundBase64);
+      byte[] imageData = Base64.getDecoder().decode(backgroundBase64);
       BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageData));
       int backgroundWidth = (int) image.getWidth();
       int backgroundHeight = (int) image.getHeight();
@@ -172,7 +171,7 @@ public class BackglassService implements InitializingBean {
   private void exportDMDData(DirectB2SData data, String dmdBase64) throws IOException {
     if (data.isDmdImageAvailable()) {
       if (dmdBase64 != null) {
-        byte[] dmdData = DatatypeConverter.parseBase64Binary(dmdBase64);
+        byte[] dmdData = Base64.getDecoder().decode(dmdBase64);
         BufferedImage dmdImage = ImageIO.read(new ByteArrayInputStream(dmdData));
         int dmdWidth = (int) dmdImage.getWidth();
         int dmdHeight = (int) dmdImage.getHeight();
@@ -1248,7 +1247,7 @@ public class BackglassService implements InitializingBean {
     try {
       byte[] img = grabFromFrontendMedia(item);
       if (img != null) {
-        String base64 = DatatypeConverter.printBase64Binary(img);
+        String base64 = Base64.getEncoder().encodeToString(img);
         setDmdImage(game.getEmulatorId(), BackglassNamingHelper.getBackglassFileName(game), item.getFile().getName(), base64);
       }
     }
@@ -1312,7 +1311,7 @@ public class BackglassService implements InitializingBean {
     if (tableData != null && tableData.isBackgroundAvailable()) {
       String base64 = getBackgroundBase64(tableData.getEmulatorId(), tableData.getFilename());
       if (base64 != null) {
-        byte[] bytes = DatatypeConverter.parseBase64Binary(base64);
+        byte[] bytes = Base64.getDecoder().decode(base64);
         try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes)) {
           BufferedImage preview = ImageIO.read(bais);
           if (tableData.getGrillHeight() > 0) {
@@ -1374,7 +1373,7 @@ public class BackglassService implements InitializingBean {
     if (tableData != null && tableData.isBackgroundAvailable()) {
       String base64 = getDmdBase64(tableData.getEmulatorId(), tableData.getFilename());
       if (base64 != null) {
-        return DatatypeConverter.parseBase64Binary(base64);
+        return Base64.getDecoder().decode(base64);
       }
     }
     // not found or error

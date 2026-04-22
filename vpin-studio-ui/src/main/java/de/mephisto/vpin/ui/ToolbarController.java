@@ -43,6 +43,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -426,6 +427,10 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
         preferencesBtn.getItems().add(new SeparatorMenuItem());
 
         List<String> hooks = hookList.getHooks();
+        hooks.sort(Comparator.comparingInt((String s) -> {
+          java.util.regex.Matcher m = java.util.regex.Pattern.compile("^(\\d+)").matcher(s);
+          return m.find() ? Integer.parseInt(m.group(1)) : Integer.MAX_VALUE;
+        }).thenComparing(Comparator.naturalOrder()));
         for (String hook : hooks) {
           MenuItem item = new MenuItem(hook);
           item.setOnAction(actionEvent -> {

@@ -663,33 +663,43 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
 
   @Override
   public void onApplicationEvent(ApplicationReadyEvent event) {
+    initService();
   }
 
   @Override
-  public void afterPropertiesSet() throws Exception {
-    preferencesService.addChangeListener(this);
-    preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
+  public void afterPropertiesSet() {
     try {
-      highscoreService.setGameService(this);
+      preferencesService.addChangeListener(this);
+      preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
+      try {
+        highscoreService.setGameService(this);
+      }
+      catch (Exception e) {
+        LOG.error("Error initializing GameService: {}", e.getMessage(), e);
+      }
+      clearAliasCache();
+      LOG.info("{} initialization finished.", this.getClass().getSimpleName());
     }
     catch (Exception e) {
-      LOG.error("Error initializing GameService: {}", e.getMessage(), e);
+      LOG.error("Failed to initialize GameService: {}", e.getMessage(), e);
     }
-    clearAliasCache();
-    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
+  }
 
-    //ALWAYS AVOID CALLING GETKNOWNGAMES DURING THE INITILIZATION PHASE OF THE SERVER
-    List<Integer> unknownGames = getUnknownGames();
-    if (unknownGames.isEmpty()) {
-      new Thread(() -> {
-        Thread.currentThread().setName("Game Service Initializer");
+  private void initService() {
+    try {
+      //ALWAYS AVOID CALLING GETKNOWNGAMES DURING THE INITILIZATION PHASE OF THE SERVER
+      List<Integer> unknownGames = getUnknownGames();
+      if (unknownGames.isEmpty()) {
         List<Game> games = getKnownGames(-1);
         vpsService.update(games);
         clearMameCaches();
 
         List<GameEmulator> gameEmulators = emulatorService.getValidGameEmulators();
         vPinMameService.clearValidationsCache(gameEmulators);
-      }).start();
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to initialize GameService: {}", e.getMessage(), e);
     }
   }
 }

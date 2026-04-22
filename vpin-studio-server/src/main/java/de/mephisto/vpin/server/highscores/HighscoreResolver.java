@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class HighscoreResolver implements InitializingBean {
@@ -100,14 +101,6 @@ public class HighscoreResolver implements InitializingBean {
       }
     }
     return iniFile;
-  }
-
-  private String getHighscoreIniFilename(Game game) {
-    File iniFile = getHighscoreIniFile(game);
-    if (iniFile != null && iniFile.exists()) {
-      return iniFile.getAbsolutePath();
-    }
-    return null;
   }
 
   @Nullable
@@ -297,9 +290,9 @@ public class HighscoreResolver implements InitializingBean {
       metadata.setFilename(nvRam.getCanonicalPath());
       metadata.setModified(new Date(nvRam.lastModified()));
 
-      List<String> supportedNvRams = systemService.getScoringDatabase().getSupportedNvRams();
-      if (!supportedNvRams.contains(nvRamName) || systemService.getScoringDatabase().getNotSupported().contains(FilenameUtils.getBaseName(nvRamName))) {
-        String msg = "The NV ram file \"" + nvRamName + ".nv\" is not supported by PINemHi.";
+      Set<String> supportedNvRams = NvRamOutputToScoreTextConverter.getSupportedRoms();
+      if (!supportedNvRams.contains(nvRamName)) {
+        String msg = "The NV ram file \"" + nvRamName + ".nv\" is currently not supported.";
         SLOG.info(msg);
         metadata.setStatus(msg);
         return null;

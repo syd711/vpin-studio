@@ -273,7 +273,7 @@ public class PauseMenu extends Application {
         boolean scoreSubmitterEnabled = client.getCompetitionService().isScoreSubmitterEnabled();
         boolean alwaysTakeScreenshot = pauseMenuSettings.isAlwaysTakeScreenshot();
         if (!test && (scoreSubmitterEnabled || alwaysTakeScreenshot)) {
-          client.takeScreenshot();
+          client.takeScoreScreenshot();
         }
 
         visible = true;

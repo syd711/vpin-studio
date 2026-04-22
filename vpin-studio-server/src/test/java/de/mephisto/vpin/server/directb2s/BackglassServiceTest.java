@@ -10,9 +10,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Base64;
 import java.util.List;
-
-import javax.xml.bind.DatatypeConverter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -124,7 +123,7 @@ public class BackglassServiceTest extends AbstractVPinServerTest {
     try (InputStream is = getClass().getResourceAsStream("fond fulldmd vert.jpg")) {
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       StreamUtils.copy(is, baos);
-      String base64 = DatatypeConverter.printBase64Binary(baos.toByteArray());
+      String base64 = Base64.getEncoder().encodeToString(baos.toByteArray());
       backglassService.setDmdImage(emu.getId(), newF, "fond fulldmd vert.jpg", base64);
     }
     long newSize = Files.size(Path.of(emu.getGamesDirectory(), newF));

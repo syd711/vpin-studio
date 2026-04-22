@@ -106,17 +106,25 @@ public class DOFLinxService implements InitializingBean, PreferenceChangedListen
         baseName = baseName.substring(0, baseName.indexOf("(")).trim();
       }
 
+      // see https://github.com/freezy/dmd-extensions?tab=readme-ov-file#game-names
       baseName = baseName.replace("Black Rose", "BlackRose");
       baseName = baseName.replace("Theatre Of Magic", "TheatreOfMagic");
       baseName = baseName.replace("The Champion Pub", "Champion Pub");
       baseName = baseName.replace("The Party Zone", "Party Zone");
-      baseName = baseName.replace("Save Cracker", "SAVE CRACKER");
+      baseName = baseName.replace("Attack From Mars", "Attack from Mars");
+      baseName = baseName.replace("Junk Yard", "Junkyard");
+      baseName = baseName.replace("Dr. Dude and his Excellent Ray", "Dr Dude");
+      baseName = baseName.replace("The Getaway: High Speed 2", "Getaway");
+      baseName = baseName.replace("Red and Ted's Road Show", "Roadshow");
+      baseName = baseName.replace("''", "");
 
       String name = baseName.replaceAll(" ", "_");
       if (td.isPresent()) {
         TableDetails tableDetails = td.get();
-        if (tableDetails.getManufacturer() != null) {
-          name = tableDetails.getManufacturer().toUpperCase().replaceAll(" ", "_") + "_" + name;
+        if (!StringUtils.isEmpty(tableDetails.getManufacturer())) {
+          String manufacturer = tableDetails.getManufacturer();
+          manufacturer = manufacturer.toLowerCase().replace("williams", "WMS");
+          name = manufacturer.toUpperCase().replaceAll(" ", "_") + "_" + name;
         }
       }
       return name;

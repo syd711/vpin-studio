@@ -509,6 +509,16 @@ public class VPinStudioClient {
     }
   }
 
+  public void takeScoreScreenshot() {
+    try {
+      final RestTemplate restTemplate = RestClient.createTimeoutBasedTemplate(2000);
+      latestScreenshot = restTemplate.getForObject(getRestClient().getBaseUrl() + API + "recorder/scorescreenshot", String.class);
+    }
+    catch (Exception e) {
+      LOG.info("Take score screenshot failed for {} ({})", getRestClient().getBaseUrl(), e.getMessage());
+    }
+  }
+
   public void download(@NonNull String url, @NonNull File target) throws Exception {
     RestTemplate template = new RestTemplate();
     LOG.info("HTTP Download " + restClient.getBaseUrl() + VPinStudioClientService.API + url);

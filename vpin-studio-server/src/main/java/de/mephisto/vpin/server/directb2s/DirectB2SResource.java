@@ -39,13 +39,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import javax.xml.bind.DatatypeConverter;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
@@ -188,7 +187,7 @@ public class DirectB2SResource {
   // download utilities
 
   private ResponseEntity<Resource> download(String base64, String filename) {
-    byte[] image = base64 != null ? DatatypeConverter.parseBase64Binary(base64) : null;
+    byte[] image = base64 != null ? Base64.getDecoder().decode(base64) : null;
     //TODO check impact if we turn to false
     return download(image, filename, true);
   }
@@ -381,7 +380,7 @@ public class DirectB2SResource {
     }
 
     try {
-      String base64 = DatatypeConverter.printBase64Binary(file.getBytes());
+      String base64 = Base64.getEncoder().encodeToString(file.getBytes());
       return updateDmdImage(emulatorId, fileName, file.getOriginalFilename(), base64);
     }
     catch (IOException ioe) {

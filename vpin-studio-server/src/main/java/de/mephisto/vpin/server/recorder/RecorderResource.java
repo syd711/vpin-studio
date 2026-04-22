@@ -1,12 +1,15 @@
 package de.mephisto.vpin.server.recorder;
 
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.recorder.RecordingDataSummary;
+import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.RequestUtil;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.List;
 
@@ -34,6 +37,12 @@ public class RecorderResource {
 
   @Autowired
   private ScreenshotService screenshotService;
+
+  @Autowired
+  private SystemService systemService;
+
+  @Autowired
+  private PreferencesService preferencesService;
 
   @GetMapping("/screens")
   public List<FrontendPlayerDisplay> getRecordingScreens() {
@@ -110,7 +119,15 @@ public class RecorderResource {
 
   @GetMapping("/screenshot")
   public String takeScreenshot() {
-    return screenshotService.screenshot();
+    boolean rotate = systemService.isPrimaryMonitorRotated();
+    return screenshotService.screenshot(rotate);
+  }
+
+  @GetMapping("/scorescreenshot")
+  public String takeScoreScreenshot() {
+    PauseMenuSettings pauseMenuSettings = preferencesService.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
+    boolean rotate = pauseMenuSettings.getRotation() != 0;
+    return screenshotService.screenshot(rotate);
   }
 
   @GetMapping("/screenshot/{uuid}")
@@ -129,7 +146,8 @@ public class RecorderResource {
         in = new FileInputStream(screenshotFile);
       }
       else {
-        in = screenshotService.takeScreenshot();
+        boolean rotate = systemService.isPrimaryMonitorRotated();
+        in = screenshotService.takeScreenshot(rotate);
       }
 
       IOUtils.copy(in, out);

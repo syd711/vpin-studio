@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientErrorHandler;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
@@ -62,10 +62,6 @@ public class RestClient implements ClientHttpRequestInterceptor {
     List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
     interceptors.add(this);
 
-//    SimpleClientHttpRequestFactory httpRequestFactory = new SimpleClientHttpRequestFactory();
-//    httpRequestFactory.setConnectTimeout(TIMEOUT);
-//    httpRequestFactory.setReadTimeout(TIMEOUT);
-//    restTemplate = new RestTemplate(httpRequestFactory);
     HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(
         HttpClientBuilder.create().build());
     restTemplate = new RestTemplate(clientHttpRequestFactory);
@@ -76,6 +72,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
     converter.setPrettyPrint(true);
     converter.getObjectMapper()
         .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES) // Be lenient with older servers
         .setTimeZone(TimeZone.getDefault())
         .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
@@ -101,6 +98,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
     converter.setPrettyPrint(true);
     converter.getObjectMapper()
         .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES) // Be lenient with older servers
         .setTimeZone(TimeZone.getDefault())
         .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
@@ -238,30 +236,8 @@ public class RestClient implements ClientHttpRequestInterceptor {
   @Override
   public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
     request.getHeaders().add(HttpHeaders.ACCEPT_ENCODING, "gzip, deflate, br");
-
-//    if (request.getURI().toString().contains("knowns")) {
-//      logRequest(request);
-//    }
     ClientHttpResponse response = execution.execute(request, body);
-//    if (request.getURI().toString().contains("knowns")) {
-//      logResponse(response);
-//    }
     return response;
-  }
-
-  private static void logResponse(ClientHttpResponse response) {
-    System.out.println("--------- Response ---------------");
-    Set<Map.Entry<String, List<String>>> entries = response.getHeaders().entrySet();
-    for (Map.Entry<String, List<String>> entry : entries) {
-      System.out.println(entry.getKey() + " => " + entry.getValue());
-    }
-  }
-
-  private static void logRequest(HttpRequest request) {
-    System.out.println("--------- Request ---------------");
-    for (Map.Entry<String, List<String>> entry : request.getHeaders().entrySet()) {
-      System.out.println(entry.getKey() + " => " + entry.getValue());
-    }
   }
 
   public byte[] readBinary(String resource) {

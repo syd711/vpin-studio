@@ -63,8 +63,11 @@ public enum VpsDiffTypes {
       case topper: {
         return "Topper";
       }
+      case feature: {
+        return "Feature";
+      }
       default: {
-        throw new UnsupportedOperationException("Invalid component type " + this);
+        return "Invalid component type: " + this.name();
       }
     }
   }

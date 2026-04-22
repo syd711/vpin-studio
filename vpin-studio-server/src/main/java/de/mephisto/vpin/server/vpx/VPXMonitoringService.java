@@ -17,7 +17,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PreDestroy;
+import jakarta.annotation.PreDestroy;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -152,6 +152,7 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 
+  @PreDestroy
   public void shutdown() {
     scheduler.shutdownNow();
     LOG.info("Folder monitoring scheduler has been shut down.");

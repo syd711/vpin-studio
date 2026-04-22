@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.restclient.recorder.*;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.system.SystemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +18,7 @@ import java.util.List;
 
 public class FrontendRecorderJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(FrontendRecorderJob.class);
+  public static final int EMULATOR_WAITING_TIMEOUT_SECONDS = 60;
 
   final RecorderService recorderService;
   final RecorderSettings recorderSettings;
@@ -88,6 +90,13 @@ public class FrontendRecorderJob implements Job {
             break;
           }
           updateSingleProgress(jobDescriptor, recordingDataSummary, 35);
+
+          int secondToWait = EMULATOR_WAITING_TIMEOUT_SECONDS;
+          while (!SystemService.isPinballEmulatorRunning() && secondToWait > 0) {
+            LOG.info("Waiting for emulator game to launch...");
+            Thread.sleep(1000);
+            secondToWait--;
+          }
 
           jobDescriptor.setStatus("Recording \"" + game.getGameDisplayName() + "\"");
 

@@ -25,6 +25,7 @@ import de.mephisto.vpin.server.inputs.ShutdownThread;
 import de.mephisto.vpin.server.mania.ManiaService;
 import de.mephisto.vpin.server.pinemhi.PINemHiService;
 import de.mephisto.vpin.server.util.VersionUtil;
+import de.mephisto.vpin.server.util.WindowsUtil;
 import de.mephisto.vpin.server.vpx.VPXMonitoringService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -433,7 +434,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   }
 
   public static void main(String[] args) {
-    System.out.println(new SystemService().isProcessRunning("Visual Pinball Player"));
+    System.out.println(SystemService.isPinballEmulatorRunning());
   }
 
 
@@ -485,16 +486,21 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   }
 
   public static boolean isVPXRunning(List<ProcessHandle> allProcesses) {
-    for (ProcessHandle p : allProcesses) {
-      if (p.info().command().isPresent()) {
-        String cmdName = p.info().command().get();
-        String fileName = cmdName.substring(cmdName.lastIndexOf("\\") + 1);
-        if (fileName.toLowerCase().contains("Visual Pinball".toLowerCase()) || fileName.toLowerCase().contains("VisualPinball".toLowerCase()) || fileName.toLowerCase().contains("VPinball".toLowerCase())) {
-          LOG.info("Found active VPX process: {}", fileName);
-          return true;
-        }
-      }
+//    for (ProcessHandle p : allProcesses) {
+//      if (p.info().command().isPresent()) {
+//        String cmdName = p.info().command().get();
+//        String fileName = cmdName.substring(cmdName.lastIndexOf("\\") + 1);
+//        if (fileName.toLowerCase().contains("Visual Pinball".toLowerCase()) || fileName.toLowerCase().contains("VisualPinball".toLowerCase()) || fileName.toLowerCase().contains("VPinball".toLowerCase())) {
+//          LOG.info("Found active VPX process: {}", fileName);
+//          return true;
+//        }
+//      }
+//    }
+
+    if (WindowsUtil.isProcessRunning("Visual Pinball Player")) {
+      return true;
     }
+
     return false;
   }
 
@@ -508,6 +514,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
           return true;
         }
       }
+    }
+
+    if (WindowsUtil.isProcessRunning("Future Pinball")) {
+      return true;
     }
     return false;
   }
@@ -533,6 +543,16 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 //      monitors = filtered;
 //    }
     return monitors;
+  }
+
+  public boolean isPrimaryMonitorRotated() {
+    List<MonitorInfo> monitorInfos = getMonitorInfos();
+    boolean rotate = false;
+    Optional<MonitorInfo> first = monitorInfos.stream().filter(m -> m.isPrimary() && !m.isPortraitMode()).findFirst();
+    if (first.isPresent()) {
+      rotate = true;
+    }
+    return rotate;
   }
 
   public MonitorInfo getMonitor(int monitor) {

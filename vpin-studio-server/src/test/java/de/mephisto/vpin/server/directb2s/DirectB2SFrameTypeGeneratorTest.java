@@ -4,9 +4,9 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.Base64;
 
 import javax.imageio.ImageIO;
-import javax.xml.bind.DatatypeConverter;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -103,7 +103,7 @@ public class DirectB2SFrameTypeGeneratorTest {
     DirectB2SDataExtractor extractor = new DirectB2SDataExtractor();
     DirectB2SData data = extractor.extractData(directB2SFile, 1, directB2SFile.getName());
     if (data.isBackgroundAvailable()) {
-      byte[] imageData = DatatypeConverter.parseBase64Binary(extractor.getBackgroundBase64());
+      byte[] imageData = Base64.getDecoder().decode(extractor.getBackgroundBase64());
       return ImageIO.read(new ByteArrayInputStream(imageData));
     }
     return null;

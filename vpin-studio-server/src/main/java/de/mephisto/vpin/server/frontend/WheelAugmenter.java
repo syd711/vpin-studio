@@ -103,7 +103,6 @@ public class WheelAugmenter {
 
       //write large thumbnail
       BufferedImage thumbnail = ImageUtil.resizeImage(bufferedWheelImage, 225);
-      rotate = true;//TODO
       if (rotate) {
         thumbnail = ImageUtil.rotateLeft(thumbnail);
       }
@@ -114,6 +113,8 @@ public class WheelAugmenter {
       ImageUtil.write(thumbnailSm, wheelIconThumbnailSm);
 
       LOG.info("Augmented {}", wheelIconThumbnail.getAbsolutePath());
+
+      resetThumbs();
     }
     catch (Exception e) {
       LOG.error("Wheel augmentation failed: {}", e.getMessage(), e);

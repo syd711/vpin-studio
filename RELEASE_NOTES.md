@@ -1,116 +1,35 @@
-## Release Notes 4.8.4
+## Release Notes 4.9.0
 
-- **Future Pinball**: Fixed detection if emulator is running (important for recordings - thanks to @shlomithemoney).
-- **iScored / Player Management**: Added additional **iScored Name** field for the player dialogs. This allows you to use a different public name than the one used for other competition. Make sure to delete your existing scores in the game room after you changed the name as this change is not detected for highscore updates.
-- **WOVP Synchronization**: Fixed possible issue during the synchronization with WOVP.
-- **Table Overview**: Added tooltip message for missing ROM file names.
-- **Competition Wheel Images**: Disabled the rotation check for now and restored the old version, where wheels were always rotated 90 degree to the left.
+- **Media Recorder**:
+  - Updated ffmpeg.exe to version 8.0.1 to have OpenGL recording support.
+  - Added error logging in case the custom ffmpeg.exe command fails.
+  - Added custom GL mode which is **only used when you select "Use Custom Launcher" and VPX GL.** This mode will work with different parameters to allow smooth recordings with OpenGL. Note that **this mode still in experimental**, because the correct recording locations for screens needs verification. But you can still use the regular/non-GL recording.
 
----
-
-## Release Notes 4.8.3
-
-- **VPS Auto-Matcher**: Fixed VPS table matching so that only matches are applied that match with the game's emulator type.
-- **Emulator Table Detection**: Fixed the bug that tables have been added multiple times for the Zen Studios tables and Zaccaria. The duplicates should be cleaned up after the update too. 
-- **Emulator Management**: Fixed error during saving emulators that have no VR support.
-- **Emulator Detection**: Improved emulator detection for Pinball M. 
-- **Zaccaria Emulator**: The VPS mapping has been hidden from the Table Data Manager dialog and the table overview.
-- **Media Recorder**: Removed VPX GL from the list of selectable emulators for the media recorder, because it might result static image videos.
-
----
-
-## Release Notes 4.8.2
-
-- **DMD Score submission**: Changed processing of frames to support colorized RGB frames.
-- **Table Overview**:
-  - Added **Backup Date column**. Note that the column is hidden by default and needs to be enabled in the settings.
-  - Added **VBS Script column**. Note that the column is hidden by default and needs to be enabled in the settings.
-  - Added **Music column**. The column's status icon only indicates if music file references have been found in the script, not if actual files have been found.
-  - Fixed sorting of several date columns.
-- **Table Installer**:
-  - Fixed music bundle detection: Added missing **.wav file detection** and target folder resolving (instead of .mp3 only). You need to re-scan tables that use .wav files as audio files.
-- **Client Settings**: You can now hide Zen Studio emulators in the **Client Settings** too (the checkboxes were disabled previously).
-- **Server Settings**:
-  - Added **Startup Delay** option. Because the Studio is started with the frontend, this can result in longer loading/waiting times for the frontend. The startup can now be delayed to give more CPU resources to the frontend during loading.
-  - Added option to configure a **fallback folder for VPX** detection if the folder is not detected properly. More details can be found in the troubleshooting section of the Wiki.
-- **ZEN/Zaccaria Games**:
-  - Fixed an issue where these emulators weren't detected anymore for some users.
-  - Improved detection of **pupgames** database changes: additional tables are now automatically added for Zen and Zaccaria emulators when the database is updated with the latest additions.
-  - **Zaccaria**: Updated **pupgames** database and added missing tables.
-  - **Pinball M**: Updated **pupgames** database and added missing tables.
-  - **Pinball FX3**: Manually fixed some special names used for ALT color files.
-  - **Pinball FX/3/M**: Fixed and extended the database which contains the required backglass filenames for the different emulators.
-  - **Media Recording** Fixed issue for non VPX games when recording was launch via frontend.
-
----
-
-## Release Notes 4.8.1
-
-- **ZEN Games**:
-  - Fixed upload and detection of backglass files for Zen Studio games. I did not do my homework here and the whole feature needs probably a few more releases to mature.
-  - Fixed upload/correct naming for Zen ALTColor files.
-  - The ALTColor sidebar section and table column for PinballM is hidden now (Pinball M exclusively uses fullscreen scoreboards, not DMD, so there are no altcolor files there.).
-  - The ALTColor sidebar section shows also the ALTColor folder now. This should help to identify possible naming issue regaring Zen Studio games and ALT color files.
-- **MAME Games**: Added option not only to import existing ROMs, but also to upload new ones (which will also result in a game creation for the frontend).
-- **VPX Launcher**: Added auto-focus of the **Visual Pinball Player** window after a VPX table has been launched.
-- **Wheel Augmentation**: The augmented wheel rotation is skipped if the playfield is rotated already.
-- **Popper Settings**: Added auto-start option. If enabled the VPin Studio server will start the PinUPMenu.exe (for those who do no want to use the auto-start provided by Popper).
-
----
-
-
-## Release Notes 4.8.0
-
-- **VR Support (Experimental - feedback needed!)**: Added support to toggle your installation into VR mode. More details about this can be found here:
-   https://github.com/syd711/vpin-studio/wiki/VR-Support
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/recorder/recorder-custom.png?raw=true" width="500" />
     
-  <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/vr-mode.png?raw=true" width="500" />
-
-- **Filter Settings**: The table filter panel allows you to filter by issue type now.
- 
-    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/issue-filter.png?raw=true" width="400" />
-
-- **Backglass Manager**:
-  - Added support for **Zen Studio** tables (you must configure DOFLinx first!).
-  - Added combobox to filter backglasses by emulator.
-  - Added emulator name column (which also better explains why for duplicated emulators, backglasses are shown multiple times).
-  - Enabled "Backglass" section for the table overview and Zen Studio tables.
-- **MAME Game Support (not VPinMAME!)** :
-  - Added import support for MAME games/roms. 
-  - Added deletion support for MAME games.
-  - Added option to the **Play** button to launch MAME games.
-  - Fixed several issues for the overview when MAME emulator was selected.
-  - Added ROM, Playlist and date columns for the overview and MAME emulators.
-- **Emulator Management**
-  - The **curl** calls to tell the Studio server that a game has been launched or exited have been added to the emulator types **Zaccaria, Pinball FX/3/M and MAME**. This allows the **in-game recording and pause menu** for these emulators.
-- **Media Recorder**
-  - Added emulator recording support for **Zaccaria, Pinball FX/3/M and MAME games**.
-- **Designer**: Added support for custom highscore card sizes. You can change the size in the "Highscore Cards Settings".
-    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/custom-cards.png?raw=true" width="700" />
-- **Pause Menu for non-VPX Games (first draft)**
-  - Added pause menu support for **Zaccaria, Pinball FX/3/M and MAME** games. Note that you need to have the graphics settings set to "borderless window". Otherwise you will run into focus issues.
-- **Music Management**: The music management for VPX games has been reimplemented. Audio files from the "Music" folder are detected through the table script including those that are computed from variables. Note that there are still some tables (e.g. Iron Maiden) where the .mp3 filename computation prohibits the detection of the actual filenames. As a result from this...
-  - **You need to perform a re-scan of all tables to detect the table's audio files**.
-  - Backups include the table's audio files now. Previous implementations took only the subfolder from **Music/<ROM NAME>** for the backup - if available.
-  - A new **Missing Audio Files** validator shows if the resolved .mp3 files have been found.
-- **Drop-In Manager**: Added search field to filter assets.
-- **Studio System Backup**: Added the pinvol and pinemhi .ini files to the VPin Studio backup file.
+- **NVRam Highscores Parsing**: The nvram parsing has been extracted into a separate project: https://github.com/syd711/java-pinmame-nvmaps. The goal here is to provide a facade for the different nvram parsing approaches and support parsing with
+  - the Pinball Memory Maps project (https://github.com/tomlogic/pinmame-nvram-maps)
+  - Superhac's Score Parser (https://github.com/superhac/pinmame-score-parser)
+  - and https://www.pinemhi.com/ from DNA Disturber.
+- **Preferences Menu**: Added natural order for hooks.
 
 ### Bugfixes
 
-- **WOVP Pause Menu Item**: Screenshots for portrait mode screens are not rotated anymore.
-- **WOVP Synchronization**: Fixed issue that discontinued competition types have not been removed automatically.
-- **iScored Synchronization**: On table exit, only the active game is synchronized.
-- **Notification Delay**: Fixed issue that notifications are shown late because of long iScored synchronizations.
-- **Table Overview**: Fixed backup button being visible for all emulator types.
-- **Media Recorder**: Added filtering of disabled emulators.
-- **Table Data Manager**: Fixed tab focus order for all tabs.
-- **Wheel Augmentation**: Fixed various issues and superfluous calls when applying badges to wheels.
-- **Media Recorder**: Added timeout of 10 minutes for recordings in case the in-game recorder is never turned off.
-- **Table Backups**: Fixed issue that the VPS mapping was not detected on restore.
-- **VPS Tables**: Fixed sorting of the sound column.
-- **Table Tagging**: Fixed removing of tags.
-- **Dashboard**: Fixed possible error in the ranking view.
-- **Media Manager**: 
-  - Fixed blank video: The existing file was corrupted and caused issues with the new PinUP Popper version. You can fix all broken blank videos by downloading this script (https://raw.githubusercontent.com/syd711/vpin-studio/refs/heads/main/resources/blank_fix.bat), copy and execute it in your PinUP installation directory (e.g. C:\vPinball\PinUPSystem).   
-  - Fixed blank video naming which was missing the file number before the screen info.
+- **Media Recorder**: 
+  - Fixed error during writing the media file depending on the overwrite/append selection.
+  - Added missing "emulator running" check for the frontend recording which should run before the actual configured initial delay. 
+  - Fixed broken "emulator running" check which only did check if the VPX.exe is running, but not if an actual game is emulated. This resulted in an early start of recordings before the game was actually running.
+- **Zen Studio Tables**: 
+  - Disabled auto update of missing tables. For some reason I did not figure out yet, duplicates are created for some Pinball FX users.
+  - The table overview shows the file name (e.g. "Table_123") as ROM name now.
+- **ALT Sounds**: Fixed upload button from the sidebar.
+- **VPin MAME**: Fixed saving VPin MAME default preferences for values **Compact Display** and **Double DisplaySize**.
+- **Pause Menu**: Fixed orientation for "Desktop Mode" playfield screenshots.
+- **Competition Wheels**: Added deletion of the **pthumbs** folder in the wheel icons folder after competition wheel created, to force Popper to re-create the matching thumbnails variants.
+- **Competition Duplications**: Change the **Duplicate** actions for competitions so that the start and end date are also duplicated, but only if the competition has not ended yet.
+- **Sidebar Media Preview**: For the loading screen, the correct video is shown again if the screen contains a blank.
+- **FX ALT Color Support**: Additional naming fixes when the folder name for the ALT color is determined.
+- **Competitions / iScored**: Fixed broken/missing highscore reset for iScored competed tables.
+- **Table Overview**: Fixed time formatting for the modification date and added info tooltip to the column header.
+- **Wheel Badges**: Fixed orientation of augmented wheels (again).
+- **VPX File Scanner**: Added .ogg audio format to the music scan detection.

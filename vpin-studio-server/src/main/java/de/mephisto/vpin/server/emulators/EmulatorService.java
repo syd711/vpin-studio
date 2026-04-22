@@ -235,12 +235,13 @@ public class EmulatorService implements InitializingBean, PreferenceChangedListe
       else if (gamesByEmulator.size() != fullGameList.size()) {
         for (TableDetails tableDetails : fullGameList) {
           if (!containsGame(gamesByEmulator, tableDetails)) {
-            LOG.info("Importing missing game for {}: {}", emulator.getName(), tableDetails.getGameDisplayName());
-            int gameId = frontendService.importGame(tableDetails);
-            if (gameId > 0) {
-              gameMediaService.autoMatch(gameId, false);
-              count++;
-            }
+            LOG.info("Found missing game for {}: {}", emulator.getName(), tableDetails.getGameDisplayName());
+//            LOG.info("Importing missing game for {}: {}", emulator.getName(), tableDetails.getGameDisplayName());
+//            int gameId = frontendService.importGame(tableDetails);
+//            if (gameId > 0) {
+//              gameMediaService.autoMatch(gameId, false);
+//              count++;
+//            }
           }
         }
       }

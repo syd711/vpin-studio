@@ -395,7 +395,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
 
     // fill scanned values
     game.setAssets(gameDetails.getAssets());
-    game.setMusicScripted(gameDetails.getAssets() != null && (gameDetails.getAssets().contains(".mp3") || game.getAssets().contains(".wav")));
+    game.setMusicScripted(gameDetails.getAssets() != null && (gameDetails.getAssets().contains(".mp3") || game.getAssets().contains(".wav") || game.getAssets().contains(".ogg")));
     game.setScannedRom(gameDetails.getRomName());
     game.setScannedHsFileName(gameDetails.getHsFileName());
     game.setScannedAltRom(gameDetails.getTableName());

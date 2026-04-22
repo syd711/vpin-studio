@@ -71,6 +71,8 @@ hs_err_pid*
 /resources/b2s-raw/
 /resources/b2s-cropped/
 /resources/flags/
+/resources/maps/
+/resources/maps/**
 resources/media-raw/
 resources/media-cropped/
 /resources/overlay.png

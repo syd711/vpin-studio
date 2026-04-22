@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.highscores.parsing.listadapters;
 
+import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.ScoreListAdapter;
@@ -19,6 +20,12 @@ import org.slf4j.LoggerFactory;
 public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAdapter {
   private final static Logger LOG = LoggerFactory.getLogger(DefaultAdapter.class);
 
+  private List<String> titles;
+
+  public DefaultAdapter(ScoringDB scoringDB) {
+    this.titles = scoringDB.getHighscoreTitles();
+  }
+
   @Override
   public boolean isApplicable(@NonNull Game game) {
     return true;
@@ -26,7 +33,7 @@ public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAda
 
   @Override
   @NonNull
-  public List<Score> getScores(@Nullable Game game, @NonNull Date createdAt, @NonNull List<String> lines, List<String> titles, boolean parseAll) {
+  public List<Score> getScores(@Nullable Game game, @NonNull Date createdAt, @NonNull List<String> lines, boolean parseAll) {
     try {
       List<Score> scores = new ArrayList<>();
 
@@ -103,12 +110,12 @@ public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAda
   private static final Pattern patternScoreTitle = Pattern.compile(_patternScore);
 
 
-  public boolean isTitleScoreLine(String line) {
+  public static boolean isTitleScoreLine(String line) {
     Matcher m = patternScoreTitle.matcher(line);
     return m.find();
   }
 
-  public boolean isScoreLine(String line) {
+  public static boolean isScoreLine(String line) {
     Matcher m = patternScoreLine.matcher(line);
     return m.find();
   }

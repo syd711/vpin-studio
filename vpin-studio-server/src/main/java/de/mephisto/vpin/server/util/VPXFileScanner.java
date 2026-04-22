@@ -221,13 +221,13 @@ public class VPXFileScanner {
   }
 
   private static void lineSearchMp3FileName(ScanResult result, String line) {
-    if (!line.toLowerCase().contains(".mp3") && !line.toLowerCase().contains(".wav") ) {
+    if (!line.toLowerCase().contains(".mp3") && !line.toLowerCase().contains(".wav") && !line.toLowerCase().contains(".ogg")) {
       return;
     }
     Matcher matcher = MP3_EXPRESSION_PATTERN.matcher(line);
     while (matcher.find()) {
       String expr = matcher.group();
-      if (!StringUtils.containsIgnoreCase(expr, ".mp3") && !StringUtils.containsIgnoreCase(expr, ".wav")) {
+      if (!StringUtils.containsIgnoreCase(expr, ".mp3") && !StringUtils.containsIgnoreCase(expr, ".wav") && !StringUtils.containsIgnoreCase(expr, ".ogg")) {
         continue;
       }
       String filename = buildMusicWildcard(expr);
@@ -236,6 +236,8 @@ public class VPXFileScanner {
             || filename.equalsIgnoreCase("*.mp3")
             || filename.equalsIgnoreCase(".wav")
             || filename.equalsIgnoreCase("*.wav")
+            || filename.equalsIgnoreCase(".ogg")
+            || filename.equalsIgnoreCase("*.ogg")
         ) {
           continue;
         }
@@ -286,7 +288,7 @@ public class VPXFileScanner {
       }
     }
     String result = sb.toString();
-    return (StringUtils.containsIgnoreCase(result, ".mp3") || StringUtils.containsIgnoreCase(result, ".wav")) ? result : null;
+    return (StringUtils.containsIgnoreCase(result, ".mp3") || StringUtils.containsIgnoreCase(result, ".wav") || StringUtils.containsIgnoreCase(result, ".ogg")) ? result : null;
   }
 
   /**

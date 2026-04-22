@@ -29,29 +29,29 @@ public class ApngImageLoader extends ImageLoaderImpl {
   }
 
   @Override
-  public ImageFrame load(int imageIndex, int rWidth, int rHeight,
-          boolean preserveAspectRatio, boolean smooth) throws IOException {
+  public ImageFrame load(int imageIndex, double rWidth, double rHeight,
+          boolean preserveAspectRatio, boolean smooth, float pixelScaleX, float pixelScaleY) throws IOException {
 
     ApngFrame frame = apngFrameDecoder.nextFrame();
     if (frame == null) {
       return null;
     }
 
-    int[] outWH = ImageTools.computeDimensions(frame.getWidth(), frame.getHeight(), rWidth, rHeight, preserveAspectRatio);
-    rWidth = outWH[0];
-    rHeight = outWH[1];
+    int[] outWH = ImageTools.computeDimensions(frame.getWidth(), frame.getHeight(), (int)rWidth, (int)rHeight, preserveAspectRatio);
+    int targetWidth = outWH[0];
+    int targetHeight = outWH[1];
 
     int delay = frame.getDelayMillis();
     int loop = apngFrameDecoder.getAnimationNumPlays();
 
-    ImageMetadata metaData = new ImageMetadata(null, true, null, null, null, delay, loop, rWidth, rHeight, null, null, null);
+    ImageMetadata metaData = new ImageMetadata(null, true, null, null, null, delay, loop, targetWidth, targetHeight, null, null, null);
     updateImageMetadata(metaData);
 
     ImageType imageType = colorTypeToImageType(apngFrameDecoder.getColorType());
-    ImageFrame imgPNG = new ImageFrame(imageType, ByteBuffer.wrap(frame.getBytes()), frame.getWidth(), frame.getHeight(), frame.getStride(), null, metaData);
+    ImageFrame imgPNG = new ImageFrame(imageType, ByteBuffer.wrap(frame.getBytes()), frame.getWidth(), frame.getHeight(), frame.getStride(), pixelScaleX, metaData);
 
-    if (frame.getWidth() != rWidth || frame.getHeight() != rHeight) {
-      imgPNG = ImageTools.scaleImageFrame(imgPNG, rWidth, rHeight, smooth);
+    if (frame.getWidth() != targetWidth || frame.getHeight() != targetHeight) {
+      imgPNG = ImageTools.scaleImageFrame(imgPNG, targetWidth, targetHeight, smooth);
     }
     return imgPNG;
   }

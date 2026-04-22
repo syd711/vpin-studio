@@ -13,10 +13,6 @@ public class Anonymous5PlayerScoreAdapter implements ScoreNvRamAdapter {
     this.name = name;
   }
 
-  public Anonymous5PlayerScoreAdapter() {
-
-  }
-
   @Override
   public boolean isApplicable(@NonNull String nvRam, @NonNull List<String> lines) {
     return nvRam.equals(name);

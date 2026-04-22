@@ -3,10 +3,12 @@ package de.mephisto.vpin.server.recorder;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
-import de.mephisto.vpin.restclient.recorder.*;
+import de.mephisto.vpin.restclient.recorder.RecorderSettings;
+import de.mephisto.vpin.restclient.recorder.RecordingData;
+import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
+import de.mephisto.vpin.restclient.recorder.RecordingWriteMode;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameMediaService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
@@ -76,7 +78,9 @@ public class GameRecorder {
           Callable<RecordingResult> screenRecordable = new Callable<RecordingResult>() {
             @Override
             public RecordingResult call() {
-              LOG.info("Starting recording for \"{}\", {}: {}", game.getGameDisplayName(), screen.name(), recordingTempFile.getAbsolutePath());
+              option.setOpenGlCommand(recorderSettings.isCustomLauncherEnabled() && recorderSettings.getCustomLauncher() != null && recorderSettings.getCustomLauncher().toLowerCase().contains("gl"));
+              LOG.info("Starting [glmode={}] recording for \"{}\", {}: {}", option.isOpenGlCommand(), game.getGameDisplayName(), screen.name(), recordingTempFile.getAbsolutePath());
+
               recorderSettings.getRecordingScreenOption(screen);
               ScreenRecorder screenRecorder = new ScreenRecorder(recordingScreen, recordingTempFile);
               screenRecorders.add(screenRecorder);
@@ -119,6 +123,7 @@ public class GameRecorder {
             recordingResults.add(recordingResult);
           }
           LOG.info("Recording finished: {}", recordingResult.toString());
+          LOG.info("Recording error log: {}", recordingResult.getErrorLog());
         }
       }
       catch (Exception e) {
@@ -257,7 +262,7 @@ public class GameRecorder {
 
   private void copyRecordingToTarget(Game game, VPinScreen screen, File recordingTempFile, File target) throws IOException {
     try {
-      if (!target.canWrite()) {
+      if (target.exists() && !target.delete()) {
         target = frontend.getMediaAccessStrategy().createMedia(game, screen, "mp4", true);
         FileUtils.copyFile(recordingTempFile, target);
         LOG.info("Appending instead of overwriting existing media file \"{}\" of screen {} with \"{}\" (original file was locked).", target.getAbsolutePath(), recordingTempFile.getAbsolutePath(), screen.name());

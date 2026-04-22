@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "TemplateMappings")

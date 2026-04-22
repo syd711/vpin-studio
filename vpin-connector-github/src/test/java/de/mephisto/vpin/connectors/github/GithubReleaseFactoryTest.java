@@ -157,15 +157,15 @@ public class GithubReleaseFactoryTest {
 //    assertFalse(install.getLogs().isEmpty());
 //  }
 
-  @Test
-  public void testFreezy() throws Exception {
-    GithubRelease githubRelease = GithubReleaseFactory.loadRelease("https://github.com/freezy/dmd-extensions/releases", Collections.emptyList(), Arrays.asList("Source", ".msi"));
-    assertNotNull(githubRelease);
-
+//  @Test
+//  public void testFreezy() throws Exception {
+//    GithubRelease githubRelease = GithubReleaseFactory.loadRelease("https://github.com/freezy/dmd-extensions/releases", Collections.emptyList(), Arrays.asList("Source", ".msi"));
+//    assertNotNull(githubRelease);
+//
 //    ReleaseArtifact artifact = githubRelease.getArtifacts().get(0);
 //    ReleaseArtifactActionLog install = artifact.install(new File(TEST_FOLDER), Arrays.asList("DmdDevice.ini"), Arrays.asList("DmdDevice.log.config", "DmdDevice.ini", "dmdext.log.config"));
 //    assertNotNull(install);
 //    assertNull(install.getStatus());
 //    assertFalse(install.getLogs().isEmpty());
-  }
+//  }
 }

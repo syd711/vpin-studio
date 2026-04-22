@@ -6,9 +6,9 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.bind.DatatypeConverter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Base64;
 
 public class DirectB2SImageExporter {
   private final static Logger LOG = LoggerFactory.getLogger(DirectB2SImageExporter.class);
@@ -29,7 +29,7 @@ public class DirectB2SImageExporter {
 
   public static void export(@NonNull File target, String base64) throws VPinStudioException {
     if (base64 != null) {
-      byte[] bytes = DatatypeConverter.parseBase64Binary(base64);
+      byte[] bytes = Base64.getDecoder().decode(base64);
       write(bytes, target);
     }
   }

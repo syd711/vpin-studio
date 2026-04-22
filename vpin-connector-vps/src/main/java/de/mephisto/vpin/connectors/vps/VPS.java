@@ -26,10 +26,20 @@ public class VPS {
 
   private final static boolean skipUpdates = false;
 
+  private static VPS instance;
+
   static {
     objectMapper = new ObjectMapper();
     objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+  }
+
+  public static synchronized VPS getInstance() {
+    if (instance == null) {
+      instance = new VPS();
+      instance.reload();
+    }
+    return instance;
   }
 
   private final List<VpsSheetChangedListener> listeners = new ArrayList<>();
@@ -74,6 +84,20 @@ public class VPS {
   public VpsTable getTableById(String id) {
     if (this.tables != null) {
       return this.tables.stream().filter(t -> t.getId() != null && t.getId().equals(id)).findFirst().orElse(null);
+    }
+    return null;
+  }
+
+  public VpsTable getTableByDisplayName(String name) {
+    if (this.tables != null) {
+      return this.tables.stream().filter(t -> t.getDisplayName() != null && t.getDisplayName().equalsIgnoreCase(name)).findFirst().orElse(null);
+    }
+    return null;
+  }
+
+  public VpsTable findTableByFilename(String name) {
+    if (this.tables != null) {
+      return this.tables.stream().filter(t -> t.getName() != null && name.toLowerCase().contains(t.getName().toLowerCase())).findFirst().orElse(null);
     }
     return null;
   }

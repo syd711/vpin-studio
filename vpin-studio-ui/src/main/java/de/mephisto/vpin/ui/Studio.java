@@ -343,7 +343,7 @@ public class Studio extends Application {
     SplashScreenController controller = loader.getController();
 
     double imgWidth = 800, imgHeight = 534;
-    try (InputStream imgStream = Studio.class.getResourceAsStream("splash4.0.png")) {
+    try (InputStream imgStream = Studio.class.getResourceAsStream("splash.png")) {
       Image image = new Image(imgStream);
       controller.setImage(image);
       imgWidth = image.getWidth();

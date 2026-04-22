@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.backups;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity

@@ -17,7 +17,6 @@ public class GameScoreValidation {
 
   public final static String STATUS_FIELDS_NOT_SET = "Neither ROM name nor highscore filename is set.";
   public final static String STATUS_ROM_NOT_SUPPORTED = "This ROM is currently not supported by the highscore parser.";
-  public final static String STATUS_HSFILE_NOT_SUPPORTED = "This highscore text file not supported by the highscore parser.";
 
   public final static String STATUS_NOT_PLAYED_HSFILE_NOT_FOUND = "No highscore text file has been found for this name, but the table has not been played yet.";
   public final static String STATUS_NOT_PLAYED_NO_MATCH_FOUND = "No .nvram file or entry in VPReg.stg has been found, but the table has not been played yet.";

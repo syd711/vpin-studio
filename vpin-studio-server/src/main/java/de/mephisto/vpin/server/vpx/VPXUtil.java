@@ -3,7 +3,6 @@ package de.mephisto.vpin.server.vpx;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.util.MD5ChecksumUtil;
-import de.mephisto.vpin.server.util.VPXFileScanner;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -18,7 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class VPXUtil {
-  private final static Logger LOG = LoggerFactory.getLogger(VPXFileScanner.class);
+  private final static Logger LOG = LoggerFactory.getLogger(VPXUtil.class);
   private final static String VPX_TOOL_EXE = "vpxtool.exe";
 
   public static String readScript(@NonNull File file) {

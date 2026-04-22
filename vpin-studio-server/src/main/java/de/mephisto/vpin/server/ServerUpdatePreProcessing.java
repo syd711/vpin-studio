@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.system.NVRamsInfo;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import net.sf.sevenzipjbinding.SevenZip;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -32,7 +33,6 @@ public class ServerUpdatePreProcessing {
 
   static {
     DOWNLOADS.put("PinVol.exe", GITHUB_RESOURCES_URL + "PinVol.exe");
-    DOWNLOADS.put("ffmpeg.exe", GITHUB_RESOURCES_URL + "ffmpeg.exe");
     DOWNLOADS.put("jptch.exe", GITHUB_RESOURCES_URL + "jptch.exe");
     DOWNLOADS.put("nircmd.exe", GITHUB_RESOURCES_URL + "nircmd.exe");
     DOWNLOADS.put("downloader.vbs", GITHUB_RESOURCES_URL + "downloader.vbs");
@@ -73,11 +73,13 @@ public class ServerUpdatePreProcessing {
         runJvmCheck();
         runScriptCheck();
         runDeletionChecks();
+        runFfmpegUpdateCheck();
         runPinVolUpdateCheck();
         runVpxToolsUpdateCheck();
         runLogosUpdateCheck();
         runDOFTesterCheck();
         runPupGamesUpdateCheck();
+        runTomsLogicUpdateCheck();
         runDownloadableInstallationsCheck();
         runDeletions();
 
@@ -93,6 +95,40 @@ public class ServerUpdatePreProcessing {
         LOG.error("Server update failed: {}", e.getMessage(), e);
       }
     }).start();
+  }
+
+  private static void runTomsLogicUpdateCheck() {
+    File mapsFolder = new File(RESOURCES, "maps/");
+    if (!mapsFolder.exists()) {
+      mapsFolder.mkdirs();
+    }
+
+    File check = new File(mapsFolder, "main.zip");
+    if (!check.exists() || check.length() != 597680L) {
+      ServerUpdatePreProcessorUI.downloadWithProgressDialog("https://github.com/tomlogic/pinmame-nvram-maps/archive/refs/heads/main.zip", check, mapsFolder);
+
+      File extractedSubFolder = new File(mapsFolder, "pinmame-nvram-maps-main");
+      if (extractedSubFolder.exists() && extractedSubFolder.isDirectory()) {
+        try {
+          File[] entries = extractedSubFolder.listFiles();
+          if (entries != null) {
+            for (File entry : entries) {
+              File target = new File(mapsFolder, entry.getName());
+              if (entry.isDirectory()) {
+                FileUtils.moveDirectoryToDirectory(entry, mapsFolder, true);
+              }
+              else {
+                FileUtils.moveFile(entry, target);
+              }
+            }
+          }
+          FileUtils.deleteDirectory(extractedSubFolder);
+        }
+        catch (IOException e) {
+          LOG.error("Failed to flatten pinmame-nvram-maps folder: {}", e.getMessage(), e);
+        }
+      }
+    }
   }
 
   private static void runDownloadableInstallationsCheck() {
@@ -150,6 +186,15 @@ public class ServerUpdatePreProcessing {
         LOG.info("Outdated PinVol.exe found, updating...");
         Updater.downloadAndOverwrite("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/PinVol.exe", check, true);
       }
+    }
+  }
+
+  private static void runFfmpegUpdateCheck() {
+    long expectedSize = 99264000;
+    File check = new File(RESOURCES, "ffmpeg.exe");
+    if (!check.exists() || check.length() != expectedSize) {
+      LOG.info("Outdated ffmpeg.exe found, updating...");
+      Updater.downloadAndOverwrite("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/ffmpeg.exe", check, true);
     }
   }
 

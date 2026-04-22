@@ -54,7 +54,21 @@
                                  <TableColumn fx:id="columnLauncher" minWidth="10.4000244140625" prefWidth="160.0" style="-fx-alignment: BASELINE_LEFT;" text="Launcher" />
                                  <TableColumn fx:id="columnTutorials" minWidth="2.39996337890625" prefWidth="120.0" style="-fx-alignment: BASELINE_LEFT;" text="Tutorials" />
                                  <TableColumn fx:id="columnDateAdded" minWidth="10.4000244140625" prefWidth="140.2000732421875" style="-fx-alignment: CENTER;" text="Date Added" />
-                                 <TableColumn fx:id="columnDateModified" minWidth="10.4000244140625" prefWidth="140.2000732421875" style="-fx-alignment: CENTER;" text="Last Update" />
+                                 <TableColumn fx:id="columnDateModified" minWidth="10.4000244140625" prefWidth="140.2000732421875" style="-fx-alignment: CENTER;">
+                           <graphic>
+                              <HBox alignment="CENTER">
+                                 <children>
+                                    <Label contentDisplay="RIGHT" text="Date Updated">
+                                       <tooltip>
+                                          <Tooltip text="The modification date for this game’s entry in the frontend database." />
+                                       </tooltip>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                       </graphic>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                           </graphic></TableColumn>
                                  <TableColumn fx:id="columnWheel" minWidth="10.4000244140625" prefWidth="75.199951171875" style="-fx-alignment: CENTER;" text="Wheel">
                                     <graphic>
                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />

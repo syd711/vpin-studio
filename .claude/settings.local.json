@@ -29,7 +29,10 @@
       "Bash(python3:*)",
       "Bash(powershell -Command \"Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::OpenRead\\('C:\\\\Users\\\\matth\\\\Downloads\\\\FX.B2S.V7.zip'\\).Entries | Where-Object { $_.Name -like '*.directb2s' -or $_.Name -like '*.directB2S' } | Select-Object -ExpandProperty Name\" 2>&1)",
       "Bash(powershell -Command \"Get-Content 'C:\\\\workspace\\\\vpin-studio\\\\resources\\\\pupgames\\\\pinball_fx.json' | ConvertFrom-Json | Select-Object -First 3 | ConvertTo-Json -Depth 5\" 2>&1)",
-      "Bash(powershell.exe -File - << 'PWSH'\nGet-Content 'C:\\\\workspace\\\\vpin-studio\\\\resources\\\\pupgames\\\\pinball_fx3.json' | ConvertFrom-Json | Select-Object -ExpandProperty GameExport | Select-Object GameName, GameDisplay | ConvertTo-Json\nPWSH)"
+      "Bash(powershell.exe -File - << 'PWSH'\nGet-Content 'C:\\\\workspace\\\\vpin-studio\\\\resources\\\\pupgames\\\\pinball_fx3.json' | ConvertFrom-Json | Select-Object -ExpandProperty GameExport | Select-Object GameName, GameDisplay | ConvertTo-Json\nPWSH)",
+      "Bash(gh api:*)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:www.ipdb.org)"
     ]
   }
 }
