@@ -4,7 +4,7 @@
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
     <option name="MAIN_CLASS_NAME" value="de.mephisto.vpin.server.VPinStudioServer" />
     <module name="vpin-studio-server" />
-    <option name="VM_PARAMETERS" value="-Dfile.encoding=utf8" />
+    <option name="VM_PARAMETERS" value="--enable-native-access=javafx.graphics,javafx.media,ALL-UNNAMED --add-exports javafx.graphics/com.sun.javafx.iio=ALL-UNNAMED --add-exports javafx.graphics/com.sun.javafx.iio.common=ALL-UNNAMED -Dfile.encoding=utf8 -Djava.awt.headless=false" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="de.mephisto.vpin.server.ini.*" />

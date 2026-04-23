@@ -115,9 +115,15 @@ public class ServerUpdatePreProcessing {
             for (File entry : entries) {
               File target = new File(mapsFolder, entry.getName());
               if (entry.isDirectory()) {
+                if (target.exists()) {
+                  FileUtils.deleteDirectory(target);
+                }
                 FileUtils.moveDirectoryToDirectory(entry, mapsFolder, true);
               }
               else {
+                if (target.exists()) {
+                  target.delete();
+                }
                 FileUtils.moveFile(entry, target);
               }
             }
