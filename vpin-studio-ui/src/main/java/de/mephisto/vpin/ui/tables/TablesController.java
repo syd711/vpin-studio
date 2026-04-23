@@ -36,6 +36,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -338,13 +339,15 @@ public class TablesController implements Initializable, StudioFXController, Stud
     vpsTablesSidebarController.setVisible(false);
 
     Platform.runLater(() -> {
-      Studio.stage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-        public void handle(KeyEvent ke) {
-          if (ke.getCode() == KeyCode.F3) {
-            toggleSidebar();
+      if (Studio.stage != null && Studio.stage.getScene() != null) {
+        Studio.stage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+          public void handle(KeyEvent ke) {
+            if (ke.getCode() == KeyCode.F3) {
+              toggleSidebar();
+            }
           }
-        }
-      });
+        });
+      }
     });
 
     sidePanelRoot.managedProperty().bindBidirectional(sidePanelRoot.visibleProperty());

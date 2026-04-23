@@ -336,6 +336,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    LOG.info("Initializing ToolbarController..."); // ADDED LOG
     INSTANCE = this;
 
     monitorBtn.managedProperty().bindBidirectional(monitorBtn.visibleProperty());
@@ -493,6 +494,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
     vrModeButton.setVisible(vrSettings.isEnabled());
 
     refreshVrState();
+    LOG.info("Finished Initializing ToolbarController."); // ADDED LOG
   }
 
   private void onCabSwitch(ConnectionEntry connection) {

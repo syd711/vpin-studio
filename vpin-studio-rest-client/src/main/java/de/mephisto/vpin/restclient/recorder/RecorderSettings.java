@@ -75,8 +75,11 @@ public class RecorderSettings extends JsonSettings {
   }
 
   public RecordingScreenOptions getRecordingScreenOption(FrontendPlayerDisplay recordingScreen) {
+    if (recordingScreen == null || recordingScreen.getScreen() == null) {
+      return null;
+    }
     for (RecordingScreenOptions recordingScreenOption : recordingScreenOptions) {
-      if (recordingScreenOption.getDisplayName().equalsIgnoreCase(recordingScreen.getScreen().name())) {
+      if (recordingScreenOption != null && recordingScreenOption.getDisplayName() != null && recordingScreenOption.getDisplayName().equalsIgnoreCase(recordingScreen.getScreen().name())) {
         return recordingScreenOption;
       }
     }
@@ -84,8 +87,11 @@ public class RecorderSettings extends JsonSettings {
   }
 
   public RecordingScreenOptions getRecordingScreenOption(VPinScreen screen) {
+    if (screen == null) {
+      return null;
+    }
     for (RecordingScreenOptions recordingScreenOption : recordingScreenOptions) {
-      if (recordingScreenOption.getDisplayName().equalsIgnoreCase(screen.name())) {
+      if (recordingScreenOption != null && recordingScreenOption.getDisplayName() != null && recordingScreenOption.getDisplayName().equalsIgnoreCase(screen.name())) {
         return recordingScreenOption;
       }
     }
@@ -94,12 +100,15 @@ public class RecorderSettings extends JsonSettings {
 
   public boolean isEnabled(VPinScreen screen) {
     RecordingScreenOptions option = getRecordingScreenOption(screen);
-    return option != null ? option.isEnabled() : true;
+    return option != null && option.isEnabled();
   }
 
   public boolean isEnabled() {
+    if (recordingScreenOptions == null) {
+      return false;
+    }
     for (RecordingScreenOptions recordingScreenOption : recordingScreenOptions) {
-      if(recordingScreenOption.isEnabled()) {
+      if (recordingScreenOption != null && recordingScreenOption.isEnabled()) {
         return true;
       }
     }

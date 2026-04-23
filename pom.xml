@@ -16,6 +16,11 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <docs.directory>${project.basedir}/documentation</docs.directory>
         <javafx.version>25-ea+11</javafx.version>
+        <sqlite.version>3.48.0.0</sqlite.version>
+        <commons-io.version>2.18.0</commons-io.version>
+        <commons-lang3.version>3.17.0</commons-lang3.version>
+        <spotbugs.version>4.8.6</spotbugs.version>
+        <launch4j.version>2.5.1</launch4j.version>
     </properties>
 
     <scm>
@@ -52,7 +57,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>license-maven-plugin</artifactId>
-                    <version>4.3</version>
+                    <version>4.5</version>
                     <executions>
                         <execution>
                             <id>download-licenses</id>
@@ -75,7 +80,7 @@
                 <plugin>
                     <groupId>org.openrewrite.maven</groupId>
                     <artifactId>rewrite-maven-plugin</artifactId>
-                    <version>5.39.0</version>
+                    <version>5.45.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>

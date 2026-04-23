@@ -1,5 +1,7 @@
 package de.mephisto.vpin.connectors.vps.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 public enum VpsDiffTypes {
   altColor,
   altSound,
@@ -17,6 +19,16 @@ public enum VpsDiffTypes {
   tutorial,
   feature,
   ;
+
+  @JsonCreator
+  public static VpsDiffTypes fromString(String key) {
+    for (VpsDiffTypes type : values()) {
+      if (type.name().equalsIgnoreCase(key)) {
+        return type;
+      }
+    }
+    return null;
+  }
 
   @Override
   public String toString() {

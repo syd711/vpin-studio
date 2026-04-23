@@ -20,8 +20,6 @@
         <jackson.version>2.18.2</jackson.version>
         <slf4j.version>2.0.16</slf4j.version>
         <logback.version>1.5.16</logback.version>
-        <commons-io.version>2.18.0</commons-io.version>
-        <commons-lang3.version>3.17.0</commons-lang3.version>
         <skipMacOSBuild>true</skipMacOSBuild>
         <macOSBuild>false</macOSBuild>
     </properties>
@@ -145,13 +143,13 @@
         <dependency>
             <groupId>com.github.spotbugs</groupId>
             <artifactId>spotbugs-annotations</artifactId>
-            <version>4.8.6</version>
+            <version>${spotbugs.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
-            <version>3.48.0.0</version>
+            <version>${sqlite.version}</version>
         </dependency>
 
         <dependency>
@@ -228,7 +226,7 @@
         <dependency>
             <groupId>com.akathist.maven.plugins.launch4j</groupId>
             <artifactId>launch4j-maven-plugin</artifactId>
-            <version>2.5.1</version>
+            <version>${launch4j.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-beanutils</groupId>
@@ -256,7 +254,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
+                <version>3.14.0</version>
                 <configuration>
                     <source>25</source>
                     <target>25</target>
