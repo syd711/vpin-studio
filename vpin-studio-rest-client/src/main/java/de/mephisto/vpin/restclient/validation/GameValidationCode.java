@@ -11,6 +11,7 @@ public interface GameValidationCode {
   int CODE_NVOFFSET_MISMATCH = 5;
   int CODE_ROM_INVALID = 6;
   int CODE_VR_DISABLED = 7;
+  int CODE_DUPLICATED_ROM = 8;
 
   int CODE_SCREEN_SIZE_ISSUE = 10;
 

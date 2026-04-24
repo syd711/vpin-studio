@@ -57,17 +57,6 @@ class GameEmulatorCache {
     return Objects.hashCode(emulatorId);
   }
 
-  public boolean isRomShared(Game game) {
-    String rom = game.getRom();
-    if (rom == null || rom.isBlank()) {
-      return false;
-    }
-    return games.stream()
-        .filter(g -> g.getId() != game.getId())
-        .filter(g -> !String.valueOf(g.getExtTableId()).equals(game.getExtTableId()))
-        .anyMatch(g -> rom.trim().equals(g.getRom()) || rom.trim().equals(g.getRomAlias()));
-  }
-
   public List<Game> invalidateByRom(String rom) {
     List<Game> invalidated = new ArrayList<>();
     for (Game game : new ArrayList<>(games)) {
