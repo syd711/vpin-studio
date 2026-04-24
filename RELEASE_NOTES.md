@@ -21,7 +21,7 @@
 - **Zen Studio Tables**:
     - Disabled auto-update of missing tables. For a reason not yet identified, duplicates were being created for some Pinball FX users.
     - The table overview now shows the file name (e.g. "Table_123") as the ROM name.
-- **NVOffset Validation**: The NVOffset validator has been updated to trigger for every table that shares its ROM with another table **and has a different VPS table ID (NOT VPS table version)**. For example, the validator is not triggered if you have 5 different versions of "Attack From Mars" all using the same ROM ÔÇö only if a different table is also using that ROM.
+- **NVOffset Validation**: The NVOffset validator has been updated to trigger for every table that shares its ROM with another table **and has a different VPS table ID (NOT VPS table version)**. For example, the validator is not triggered if you have 5 different versions of "Attack From Mars" all using the same ROM, only if a different table is also using that ROM.
 - **ALT Sounds**: Fixed the upload button in the sidebar.
 - **VPin MAME**: Fixed saving of VPin MAME default preferences for the **Compact Display** and **Double DisplaySize** values.
 - **Pause Menu**: Fixed the orientation of "Desktop Mode" playfield screenshots.
