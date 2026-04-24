@@ -29,7 +29,7 @@ public class NvRamOutputToScoreTextConverter {
     svcs.add(converter);
   }
 
-  public static Set<String> getSupportedRoms() {
+  public synchronized static Set<String> getSupportedRoms() {
     if (supportedNvRams.isEmpty()) {
       for (NvRamOutputToRaw svc : new ArrayList<>(svcs)) {
         Set<String> supportedRoms = svc.getSupportedRoms();
