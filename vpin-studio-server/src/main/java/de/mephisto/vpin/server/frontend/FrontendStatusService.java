@@ -2,16 +2,19 @@ package de.mephisto.vpin.server.frontend;
 
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.frontend.*;
+import de.mephisto.vpin.restclient.frontend.FrontendControl;
+import de.mephisto.vpin.restclient.frontend.FrontendControls;
+import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
+import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.*;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -230,10 +233,10 @@ public class FrontendStatusService implements InitializingBean {
 
       File badgeFile = systemService.getBadgeFile(badge);
       if (badgeFile.exists()) {
-        boolean rotate = false;
-        Optional<FrontendPlayerDisplay> first = frontendService.getFrontendConnector().getFrontendPlayerDisplays().stream().filter(d -> d.getScreen() != null && d.getScreen().equals(VPinScreen.PlayField)).findFirst();
+        boolean rotate = true;
+        Optional<MonitorInfo> first = systemService.getMonitorInfos().stream().filter(MonitorInfo::isPrimary).findFirst();
         if (first.isPresent()) {
-          rotate = first.get().getRotation() != 0;
+          rotate = !first.get().isPortraitMode();
         }
         augmenter.augment(badgeFile, rotate);
         gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.FRONTEND_MEDIA, null);

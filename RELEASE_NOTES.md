@@ -7,9 +7,10 @@
 
     <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/recorder/recorder-custom.png?raw=true" width="500" />
     
-- **NVRam Highscores Parsing**:
-  - ...
-- **Preferences Menu**: Added natural order for hooks.
+- **NVRam Highscores Parsing**: The nvram parsing has been extracted into a separate project: https://github.com/syd711/java-pinmame-nvmaps. The goal here is to provide a facade for the different nvram parsing approaches and support parsing with
+  - the Pinball Memory Maps project (https://github.com/tomlogic/pinmame-nvram-maps)
+  - Superhac's Score Parser (https://github.com/superhac/pinmame-score-parser)
+  - and https://www.pinemhi.com/ from DNA Disturber.
 
 ### Bugfixes
 
@@ -29,3 +30,11 @@
 - **FX ALT Color Support**: Additional naming fixes when the folder name for the ALT color is determined.
 - **Competitions / iScored**: Fixed broken/missing highscore reset for iScored competed tables.
 - **Table Overview**: Fixed time formatting for the modification date and added info tooltip to the column header.
+- **Wheel Badges**: Fixed orientation of augmented wheels (again).
+- **VPX File Scanner**: Added .ogg audio format to the music scan detection.
+- **Backglass Preview**: Fixed backglass preview when the .directb2 file is located in a table subfolder.
+- **Future Pinball** Fixed import of FP tables which was disabled by accident.
+- **DOFLinx**: Fixed auto-installer which also checks the .exe files now if the latest version on github is newer than the installed one.
+- **iScored**: Fixed game rooms deletions. When a game room deleted, all competitions and their wheels and TourneyIds are resetted.
+- **Preferences Menu**: Added natural order for hooks.
+- **Table Statistics**: Fixed "Last Played" timestamps.

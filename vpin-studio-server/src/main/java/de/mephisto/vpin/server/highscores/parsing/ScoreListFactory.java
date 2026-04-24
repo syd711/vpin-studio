@@ -19,13 +19,9 @@ public class ScoreListFactory {
   private final static Logger LOG = LoggerFactory.getLogger(ScoreListFactory.class);
 
   private final static List<ScoreListAdapter> adapters = new ArrayList<>();
- 
+
   public static void registerScoreListAdapter(ScoreListAdapter adapter) {
     adapters.add(adapter);
-  }
-
-  public static void unregisterScoreListAdapter(ScoreListAdapter adapter) {
-    adapters.remove(adapter);
   }
 
   //-------------------------------------------------------
@@ -50,8 +46,10 @@ public class ScoreListFactory {
       if (game != null) {
         for (ScoreListAdapter adapter : adapters) {
           if (adapter.isApplicable(game)) {
-//            LOG.info("Using score list adapter {}", adapter.getClass().getSimpleName());
-            return adapter.getScores(game, createdAt, lines, parseAll);
+            List<Score> scoreList = adapter.getScores(game, createdAt, lines, parseAll);
+            if (!scoreList.isEmpty()) {
+              return scoreList;
+            }
           }
         }
       }

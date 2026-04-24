@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.alx.AlxServiceClient;
 import de.mephisto.vpin.restclient.assets.AssetServiceClient;
 import de.mephisto.vpin.restclient.assets.TableAssetSourcesServiceClient;
 import de.mephisto.vpin.restclient.backups.BackupServiceClient;
+import de.mephisto.vpin.restclient.iscored.IScoredServiceClient;
 import de.mephisto.vpin.restclient.vpxz.VPXZServiceClient;
 import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
@@ -95,6 +96,7 @@ public class VPinStudioClient {
   private final HigscoreBackupServiceClient higscoreBackupServiceClient;
   private final HooksServiceClient hooksServiceClient;
   private final IniServiceClient iniServiceClient;
+  private final IScoredServiceClient iScoredServiceClient;
   private final ImageCache imageCache;
   private final JobsServiceClient jobsServiceClient;
   private final VPinMameServiceClient vPinMameServiceClient;
@@ -152,6 +154,7 @@ public class VPinStudioClient {
     this.hooksServiceClient = new HooksServiceClient(this);
     this.imageCache = new ImageCache(this);
     this.iniServiceClient = new IniServiceClient(this);
+    this.iScoredServiceClient = new IScoredServiceClient(this);
     this.jobsServiceClient = new JobsServiceClient(this);
     this.vPinMameServiceClient = new VPinMameServiceClient(this);
     this.maniaServiceClient = new ManiaServiceClient(this);
@@ -181,6 +184,10 @@ public class VPinStudioClient {
 
   public String getHost() {
     return restClient.getHost();
+  }
+
+  public IScoredServiceClient getiScoredService() {
+    return iScoredServiceClient;
   }
 
   public VRServiceClient getVRService() {

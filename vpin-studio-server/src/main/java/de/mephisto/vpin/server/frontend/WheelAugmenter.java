@@ -103,7 +103,6 @@ public class WheelAugmenter {
 
       //write large thumbnail
       BufferedImage thumbnail = ImageUtil.resizeImage(bufferedWheelImage, 225);
-      rotate = true;//TODO
       if (rotate) {
         thumbnail = ImageUtil.rotateLeft(thumbnail);
       }
