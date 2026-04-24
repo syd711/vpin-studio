@@ -17,7 +17,7 @@
         <junit.version>5.11.4</junit.version>
         <ikonli.version>12.4.0</ikonli.version>
         <skipMacOSBuild>true</skipMacOSBuild>
-        <macOSBuild>true</macOSBuild>
+        <macOSBuild>false</macOSBuild>
     </properties>
 
     <repositories>
