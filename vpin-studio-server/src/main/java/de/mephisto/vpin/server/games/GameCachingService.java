@@ -275,20 +275,23 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     boolean findFirstIssueOnly = filterSettings.getIssueType() == -1;
     boolean killFrontend = false;
 
+    List<GameDetailsInfo> infos = new ArrayList<>();
     for (Game game : gamesByEmulator) {
       GameDetails gameDetails = mappedGameDetails.get(game.getId());
       GameDetailsInfo gameDetailsInfo = applyGameDetails(game, false, false, gameDetails);
-      applyGameValidation(gameDetailsInfo, findFirstIssueOnly);
+      infos.add(gameDetailsInfo);
       if (gameDetailsInfo.newGame) {
         gameLifecycleService.notifyGameCreated(game.getId());
         highscoreService.scanScore(game, EventOrigin.INITIAL_SCAN);
+        if (!killFrontend) {
+          LOG.info("New games have been found, automatically killing frontend to release locks.");
+          frontendService.killFrontend();
+          killFrontend = true;
+        }
       }
-
-      if (gameDetailsInfo.newGame && !killFrontend) {
-        LOG.info("New games have been found, automatically killing frontend to release locks.");
-        frontendService.killFrontend();
-        killFrontend = true;
-      }
+    }
+    for (GameDetailsInfo info : infos) {
+      applyGameValidation(info, findFirstIssueOnly);
     }
     GameEmulatorCache cache = new GameEmulatorCache(emulator.getType(), emulator.getId(), gamesByEmulator);
     long duration = System.currentTimeMillis() - start;
