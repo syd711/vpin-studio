@@ -109,7 +109,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
 
   private ServerSettings serverSettings;
 
-  private final Map<Integer, List<Game>> allGamesByEmulatorId = new ConcurrentHashMap<>();
+  private final Map<Integer, GameEmulatorCache> allGamesByEmulatorId = new ConcurrentHashMap<>();
 
   public void clearCache() {
     allGamesByEmulatorId.clear();
@@ -122,21 +122,18 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
   public Game invalidate(int gameId) {
     Game game = getGame(gameId);
     if (game != null) {
-      List<Game> games = allGamesByEmulatorId.computeIfAbsent(game.getEmulatorId(), k -> new ArrayList<>());
-      games.remove(game);
+      GameEmulatorCache emulatorCache = allGamesByEmulatorId.computeIfAbsent(game.getEmulatorId(), GameEmulatorCache::new);
+      emulatorCache.removeGame(game);
 //      LOG.info("-------------------> Evicted {}", game.getGameDisplayName());
     }
     return getGame(gameId);
   }
 
   public void invalidateByRom(int emulatorId, @NonNull String rom) {
-    List<Game> games = allGamesByEmulatorId.computeIfAbsent(emulatorId, k -> new ArrayList<>());
-    for (Game game : new ArrayList<>(games)) {
-      if (rom.trim().equals(game.getRom()) || rom.trim().equals(game.getRomAlias())) {
-        games.remove(game);
-        getGame(game.getId());
-//        LOG.info("-------------------> Evicted {}", game.getGameDisplayName());
-      }
+    GameEmulatorCache emulatorCache = allGamesByEmulatorId.computeIfAbsent(emulatorId, GameEmulatorCache::new);
+    List<Game> games = emulatorCache.invalidateByRom(rom);
+    for (Game game : games) {
+      getGame(game.getId());
     }
   }
 
@@ -180,16 +177,16 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
       }
 
       applyGameDetails(game, false, true, null, true);
-      List<Game> games = allGamesByEmulatorId.computeIfAbsent(game.getEmulatorId(), k -> new ArrayList<>());
-      games.add(game);
+      GameEmulatorCache cache = allGamesByEmulatorId.computeIfAbsent(game.getEmulatorId(), GameEmulatorCache::new);
+      cache.addGame(game);
     }
     return game;
   }
 
   private Game getGameCached(int id) {
-    Collection<List<Game>> values = allGamesByEmulatorId.values();
-    for (List<Game> value : values) {
-      for (Game game : value) {
+    Collection<GameEmulatorCache> caches = allGamesByEmulatorId.values();
+    for (GameEmulatorCache cache : caches) {
+      for (Game game : cache.getGames()) {
         if (game.getId() == id) {
           return game;
         }
@@ -222,7 +219,8 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
         if (!allGamesByEmulatorId.containsKey(emulator.getId())) {
           fetchEmulatorGames(emulator, Collections.emptyMap());
         }
-        games.addAll(allGamesByEmulatorId.get(emulator.getId()));
+        GameEmulatorCache emulatorCache = allGamesByEmulatorId.get(emulator.getId());
+        games.addAll(emulatorCache.getGames());
       }
     }
 
@@ -244,7 +242,8 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
         if (!allGamesByEmulatorId.containsKey(gameEmulator.getId())) {
           fetchEmulatorGames(gameEmulator, mappedGameDetails);
         }
-        games.addAll(allGamesByEmulatorId.get(gameEmulator.getId()));
+        GameEmulatorCache emulatorCache = allGamesByEmulatorId.get(gameEmulator.getId());
+        games.addAll(emulatorCache.getGames());
       }
     }
     return games;
@@ -259,7 +258,8 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
         if (!allGamesByEmulatorId.containsKey(gameEmulator.getId())) {
           fetchEmulatorGames(gameEmulator, Collections.emptyMap());
         }
-        games.addAll(allGamesByEmulatorId.get(gameEmulator.getId()));
+        GameEmulatorCache emulatorCache = allGamesByEmulatorId.get(gameEmulator.getId());
+        games.addAll(emulatorCache.getGames());
       }
     }
     return games;
@@ -285,7 +285,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
         killFrontend = true;
       }
     }
-    allGamesByEmulatorId.put(emulator.getId(), gamesByEmulator);
+    allGamesByEmulatorId.put(emulator.getId(), new GameEmulatorCache(emulator.getId(), gamesByEmulator));
     long duration = System.currentTimeMillis() - start;
     long avg = 0;
     if (!gamesByEmulator.isEmpty()) {
@@ -395,7 +395,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
 
     // fill scanned values
     game.setAssets(gameDetails.getAssets());
-    game.setMusicScripted(gameDetails.getAssets() != null && (gameDetails.getAssets().contains(".mp3") || game.getAssets().contains(".wav") || game.getAssets().contains(".ogg")));
+    game.setMusicScripted(gameDetails.getAssets() != null && (gameDetails.getAssets().contains(".mp3") || gameDetails.getAssets().contains(".wav") || gameDetails.getAssets().contains(".ogg")));
     game.setScannedRom(gameDetails.getRomName());
     game.setScannedHsFileName(gameDetails.getHsFileName());
     game.setScannedAltRom(gameDetails.getTableName());
@@ -514,13 +514,9 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
 
   @Override
   public void gameDeleted(int gameId) {
-    Collection<List<Game>> values = allGamesByEmulatorId.values();
-    for (List<Game> value : values) {
-      Optional<Game> first = value.stream().filter(g -> g.getId() == gameId).findFirst();
-      if (first.isPresent()) {
-        value.remove(first.get());
-        return;
-      }
+    Collection<GameEmulatorCache> caches = allGamesByEmulatorId.values();
+    for (GameEmulatorCache cache : caches) {
+      cache.delete(gameId);
     }
   }
 
@@ -579,6 +575,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
             }
           }
         }
+        break;
       }
       default: {
 //        LOG.warn("Unhandled asset change event found: {}", changedEvent.getAsset());

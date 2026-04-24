@@ -192,7 +192,9 @@ public class SystemUtil {
       else if (isMac() && base.startsWith("smb://")) {
         // Convert Windows backslashes to forward slashes for SMB paths
         path = path.replace("\\", "/");
-        return resolveNetworkPath(base, path, "/", "/");
+        String networkPath = resolveNetworkPath(base, path, "/", "/");
+        LOG.info("Resolved network path: {}", networkPath);
+        return networkPath;
       }
 
       // Return null if no matching OS condition was met

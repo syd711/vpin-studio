@@ -1661,7 +1661,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
         e.setDisplayName(rs.getString("GameDisplay"));
         e.setGameId(rs.getInt("GameId"));
         e.setUniqueId(rs.getInt("UniqueId"));
-        e.setLastPlayed(rs.getDate("LastPlayed"));
+        e.setLastPlayed(getDateAsTimestamp(rs, "LastPlayed"));
         e.setTimePlayedSecs(rs.getInt("TimePlayedSecs"));
         e.setNumberOfPlays(rs.getInt("NumberPlays"));
         result.add(e);

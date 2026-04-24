@@ -11,7 +11,6 @@
   - the Pinball Memory Maps project (https://github.com/tomlogic/pinmame-nvram-maps)
   - Superhac's Score Parser (https://github.com/superhac/pinmame-score-parser)
   - and https://www.pinemhi.com/ from DNA Disturber.
-- **Preferences Menu**: Added natural order for hooks.
 
 ### Bugfixes
 
@@ -36,4 +35,6 @@
 - **Backglass Preview**: Fixed backglass preview when the .directb2 file is located in a table subfolder.
 - **Future Pinball** Fixed import of FP tables which was disabled by accident.
 - **DOFLinx**: Fixed auto-installer which also checks the .exe files now if the latest version on github is newer than the installed one.
-- **iScored**: Fixed game rooms deletions. When a game room deleted, all competitions are properly resetted and wheels resetted.
+- **iScored**: Fixed game rooms deletions. When a game room deleted, all competitions and their wheels and TourneyIds are resetted.
+- **Preferences Menu**: Added natural order for hooks.
+- **Table Statistics**: Fixed "Last Played" timestamps.
