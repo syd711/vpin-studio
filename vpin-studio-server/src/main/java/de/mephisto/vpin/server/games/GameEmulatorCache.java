@@ -1,29 +1,29 @@
 package de.mephisto.vpin.server.games;
 
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 class GameEmulatorCache {
-  private int emulatorId;
   private final List<Game> games = new ArrayList<>();
+  private EmulatorType emulatorType;
+  private int emulatorId;
 
-  public GameEmulatorCache(int emulatorId) {
+  public GameEmulatorCache(EmulatorType emulatorType, int emulatorId) {
+    this.emulatorType = emulatorType;
     this.emulatorId = emulatorId;
   }
 
-  public GameEmulatorCache(int id, List<Game> gamesByEmulator) {
-    this(id);
+  public GameEmulatorCache(EmulatorType emulatorType, int emulatorId, List<Game> gamesByEmulator) {
+    this(emulatorType, emulatorId);
     this.games.addAll(gamesByEmulator);
   }
 
-  public int getEmulatorId() {
-    return emulatorId;
-  }
-
-  public void setEmulatorId(int emulatorId) {
-    this.emulatorId = emulatorId;
+  public EmulatorType getEmulatorType() {
+    return emulatorType;
   }
 
   public void addGame(Game game) {
@@ -55,6 +55,17 @@ class GameEmulatorCache {
   @Override
   public int hashCode() {
     return Objects.hashCode(emulatorId);
+  }
+
+  public boolean isRomShared(Game game) {
+    String rom = game.getRom();
+    if (rom == null || rom.isBlank()) {
+      return false;
+    }
+    return games.stream()
+        .filter(g -> g.getId() != game.getId())
+        .filter(g -> !String.valueOf(g.getExtTableId()).equals(game.getExtTableId()))
+        .anyMatch(g -> rom.trim().equals(g.getRom()) || rom.trim().equals(g.getRomAlias()));
   }
 
   public List<Game> invalidateByRom(String rom) {
