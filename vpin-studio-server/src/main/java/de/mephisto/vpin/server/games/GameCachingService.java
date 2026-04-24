@@ -469,6 +469,11 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
       }
     }
 
+    applyGameValidation(game, gameDetails, findFirstIssueOnly, tableDetails);
+    return newGame;
+  }
+
+  private void applyGameValidation(@NotNull Game game, @NotNull GameDetails gameDetails, boolean findFirstIssueOnly, TableDetails tableDetails) {
     //run validations at the end!!!
     List<ValidationState> validationStates = gameValidationService.validate(game, findFirstIssueOnly);
     game.setHasMissingAssets(gameValidationService.hasMissingAssets(validationStates));
@@ -481,8 +486,6 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
 
     GameScoreValidation scoreValidation = gameValidationService.validateHighscoreStatus(game, gameDetails, tableDetails, frontendService.getFrontendType(), serverSettings);
     game.setValidScoreConfiguration(scoreValidation.isValidScoreConfiguration());
-
-    return newGame;
   }
 
   @Override

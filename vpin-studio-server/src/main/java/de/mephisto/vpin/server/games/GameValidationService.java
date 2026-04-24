@@ -727,11 +727,12 @@ public class GameValidationService implements InitializingBean, PreferenceChange
   public GameScoreValidation validateHighscoreStatus(Game game, GameDetails gameDetails, TableDetails tableDetails, FrontendType frontendType, ServerSettings serverSettings) {
     GameScoreValidation validation = new GameScoreValidation();
     validation.setValidScoreConfiguration(true);
-
-    ScoringDB scoringDB = systemService.getScoringDatabase();
     HighscoreFiles highscoreFiles = highscoreService.getHighscoreFiles(game);
 
-    String rom = TableDataUtil.getEffectiveRom(tableDetails, gameDetails);
+    String rom = tableDetails != null ? tableDetails.getRomName() : null;
+    if (StringUtils.isEmpty(rom)) {
+      rom = gameDetails.getRomName();
+    }
     if (game.isRomRequired() && !vPinMameService.isRomExists(rom)) {
       validation.setRomIcon(GameScoreValidation.ERROR_ICON);
       validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);
