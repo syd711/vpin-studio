@@ -290,8 +290,7 @@ public class HighscoreResolver implements InitializingBean {
       metadata.setFilename(nvRam.getCanonicalPath());
       metadata.setModified(new Date(nvRam.lastModified()));
 
-      Set<String> supportedNvRams = NvRamOutputToScoreTextConverter.getSupportedRoms();
-      if (!supportedNvRams.contains(nvRamName)) {
+      if (!NvRamOutputToScoreTextConverter.isSupportedRom(nvRamName)) {
         String msg = "The NV ram file \"" + nvRamName + ".nv\" is currently not supported.";
         SLOG.info(msg);
         metadata.setStatus(msg);

@@ -99,7 +99,7 @@ public class NvRamOutputToScoreTextTest {
     String baseName = FilenameUtils.getBaseName(entry.getName());
 
     NVRamPinemhiParser parser = new NVRamPinemhiParser();
-    if (!parser.getSupportedNVRams().contains(baseName) || parser.getSupportedNVRams().contains(baseName)) {
+    if (!parser.isSupportedRom(baseName) || parser.isSupportedRom(baseName)) {
       return status;
     }
 

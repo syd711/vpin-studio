@@ -6,12 +6,12 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.htmlunit.jetty.io.RuntimeIOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 
@@ -23,21 +23,18 @@ public class NvRamOutputToScoreTextConverter {
   private final static Logger LOG = LoggerFactory.getLogger(NvRamOutputToScoreTextConverter.class);
 
   private static final List<NvRamOutputToRaw> svcs = new ArrayList<>();
-  private static final Set<String> supportedNvRams = new HashSet<>();
 
-  public static void registerConverterService(NvRamOutputToRaw converter) {
+  public static void registerParser(NvRamOutputToRaw converter) {
     svcs.add(converter);
   }
 
-  public static Set<String> getSupportedRoms() {
-    if (supportedNvRams.isEmpty()) {
-      for (NvRamOutputToRaw svc : new ArrayList<>(svcs)) {
-        Set<String> supportedRoms = svc.getSupportedRoms();
-        LOG.info("Fetched supported ROMs for {}: {} ROMs", svc.getClass().getSimpleName(), supportedRoms.size());
-        supportedNvRams.addAll(supportedRoms);
+  public static boolean isSupportedRom(String rom) {
+    for (NvRamOutputToRaw svc : svcs) {
+      if (svc.isSupportedRom(rom)) {
+        return true;
       }
     }
-    return supportedNvRams;
+    return false;
   }
 
   @Nullable
@@ -72,14 +69,15 @@ public class NvRamOutputToScoreTextConverter {
       }
 
       // try with registered service
+      Locale locale = Locale.getDefault();
+      String rom = romFromNv(originalNVRamFile);
       for (NvRamOutputToRaw svc : svcs) {
-        String raw = svc.convertOutputToRaw(nvRamFileName, originalNVRamFile);
-        if (!StringUtils.isEmpty(raw)) {
-          LOG.info("Used NvRam converter {} for {}", svc, nvRamName);
-          return raw;
+        if (svc.isSupportedRom(rom)) {
+          LOG.info("Used NvRam converter {} for {}", svc.getClass().getSimpleName(), nvRamName);
+          return String.join("\n", svc.getRaw(rom, originalNVRamFile, locale));
         }
       }
-      LOG.warn("No registered converted to process nv file {}", originalNVRamFile.getName());
+      LOG.warn("No registered converted to process nv file {}, rom {}", originalNVRamFile.getName(), rom);
       return null;
     }
     catch (RuntimeIOException ioe) {
@@ -98,5 +96,14 @@ public class NvRamOutputToScoreTextConverter {
         LOG.info("Restored original nvram {}", originalNVRamFile.getAbsolutePath());
       }
     }
+  }
+
+  private static String romFromNv(File nvFile) throws IOException {
+    String rom = nvFile.getName();
+    int dotIndex = rom.lastIndexOf('.');
+    if (dotIndex > 0) rom = rom.substring(0, dotIndex);
+    int hyphenIndex = rom.indexOf('-');
+    if (hyphenIndex > 0) rom = rom.substring(0, hyphenIndex);
+    return rom;
   }
 }

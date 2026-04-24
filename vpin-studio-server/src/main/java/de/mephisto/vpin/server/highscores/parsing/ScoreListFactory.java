@@ -4,9 +4,9 @@ import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.listadapters.DefaultAdapter;
-import de.mephisto.vpin.server.highscores.parsing.listadapters.SortedScoreAdapter;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,13 +19,6 @@ public class ScoreListFactory {
   private final static Logger LOG = LoggerFactory.getLogger(ScoreListFactory.class);
 
   private final static List<ScoreListAdapter> adapters = new ArrayList<>();
-
-  // Adapters are used to return a list of scores from the raw highscore
-  // If an adapter is applicable, this is the only adapter used to return scores
-  // (adapters don't "stack")
-  static {
-    adapters.add(new SortedScoreAdapter("tf_180"));
-  }
  
   public static void registerScoreListAdapter(ScoreListAdapter adapter) {
     adapters.add(adapter);

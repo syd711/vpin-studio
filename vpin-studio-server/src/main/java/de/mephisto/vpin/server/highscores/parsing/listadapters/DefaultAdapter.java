@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.highscores.parsing.listadapters;
 
 import de.mephisto.vpin.restclient.system.ScoringDB;
+import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.ScoreListAdapter;
@@ -10,6 +11,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,7 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAdapter {
+public class DefaultAdapter implements ScoreListAdapter {
   private final static Logger LOG = LoggerFactory.getLogger(DefaultAdapter.class);
 
   private List<String> titles;
@@ -162,5 +164,40 @@ public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAda
     Score sc = createTitledScore(createdAt, title, line, source, gameId);
     sc.setPosition(index);
     return sc;
+  }
+
+  protected long toNumericScore(@Nullable String score, @Nullable String source, boolean log) {
+    if (StringUtils.isEmpty(score)) {
+      if (log) {
+        LOG.warn("Cannot parse empty numeric highscore, ignoring this segment, source: {}", source);
+      }
+      return -1;
+    }
+    try {
+      String cleanScore = ScoreFormatUtil.cleanScore(score);
+      return Long.parseLong(cleanScore);
+    }
+    catch (NumberFormatException e) {
+      if(log) {
+        LOG.warn("Failed to parse numeric highscore string '{}', ignoring this segment, source: {}", score, source);
+      }
+
+      return -1;
+    }
+  }
+
+  protected List<Score> filterDuplicates(List<Score> scores) {
+    List<Score> scoreList = new ArrayList<>();
+    int pos = 1;
+    for (Score s : scores) {
+      Optional<Score> match = scoreList.stream().filter(score -> score.getFormattedScore().equals(s.getFormattedScore()) && String.valueOf(score.getPlayerInitials()).equals(s.getPlayerInitials())).findFirst();
+      if (match.isPresent()) {
+        continue;
+      }
+      s.setPosition(pos);
+      scoreList.add(s);
+      pos++;
+    }
+    return scoreList;
   }
 }
