@@ -341,14 +341,14 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (isVPX && isValidationEnabled(game, CODE_NVOFFSET_MISMATCH)) {
-      if (game.getNvOffset() > 0 && !StringUtils.isEmpty(game.getRom())) {
+      if (!StringUtils.isEmpty(game.getRom()) && game.isRomRequired()) {
         List<GameDetails> otherGameDetailsWithSameRom = new ArrayList<>(gameDetailsRepositoryService.findByRomName(game.getRom())).stream().filter(g -> g.getRomName() != null && g.getPupId() != game.getId() && g.getRomName().equalsIgnoreCase(game.getRom())).collect(Collectors.toList());
         for (GameDetails otherGameDetails : otherGameDetailsWithSameRom) {
           if (otherGameDetails.getNvOffset() == 0 || otherGameDetails.getNvOffset() == game.getNvOffset()) {
             Game otherGame = frontendService.getOriginalGame(otherGameDetails.getPupId());
             if (otherGame != null) {
               //only complain if it is another table or has no VPS mapping!!!!!!!!!!!!!!
-              if (otherGame.getExtTableId() == null || !otherGame.getExtTableId().equals(game.getExtTableId())) {
+              if (otherGame.getExtTableId() != null && !otherGame.getExtTableId().equals(game.getExtTableId())) {
                 result.add(ValidationStateFactory.create(GameValidationCode.CODE_NVOFFSET_MISMATCH, otherGame.getGameDisplayName(), String.valueOf(game.getNvOffset()), String.valueOf(otherGameDetails.getNvOffset())));
                 if (findFirst) {
                   return result;
@@ -727,11 +727,12 @@ public class GameValidationService implements InitializingBean, PreferenceChange
   public GameScoreValidation validateHighscoreStatus(Game game, GameDetails gameDetails, TableDetails tableDetails, FrontendType frontendType, ServerSettings serverSettings) {
     GameScoreValidation validation = new GameScoreValidation();
     validation.setValidScoreConfiguration(true);
-
-    ScoringDB scoringDB = systemService.getScoringDatabase();
     HighscoreFiles highscoreFiles = highscoreService.getHighscoreFiles(game);
 
-    String rom = TableDataUtil.getEffectiveRom(tableDetails, gameDetails);
+    String rom = tableDetails != null ? tableDetails.getRomName() : null;
+    if (StringUtils.isEmpty(rom)) {
+      rom = gameDetails.getRomName();
+    }
     if (game.isRomRequired() && !vPinMameService.isRomExists(rom)) {
       validation.setRomIcon(GameScoreValidation.ERROR_ICON);
       validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);

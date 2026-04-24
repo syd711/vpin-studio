@@ -1,29 +1,29 @@
 package de.mephisto.vpin.server.games;
 
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 class GameEmulatorCache {
-  private int emulatorId;
   private final List<Game> games = new ArrayList<>();
+  private EmulatorType emulatorType;
+  private int emulatorId;
 
-  public GameEmulatorCache(int emulatorId) {
+  public GameEmulatorCache(EmulatorType emulatorType, int emulatorId) {
+    this.emulatorType = emulatorType;
     this.emulatorId = emulatorId;
   }
 
-  public GameEmulatorCache(int id, List<Game> gamesByEmulator) {
-    this(id);
+  public GameEmulatorCache(EmulatorType emulatorType, int emulatorId, List<Game> gamesByEmulator) {
+    this(emulatorType, emulatorId);
     this.games.addAll(gamesByEmulator);
   }
 
-  public int getEmulatorId() {
-    return emulatorId;
-  }
-
-  public void setEmulatorId(int emulatorId) {
-    this.emulatorId = emulatorId;
+  public EmulatorType getEmulatorType() {
+    return emulatorType;
   }
 
   public void addGame(Game game) {
