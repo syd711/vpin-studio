@@ -111,6 +111,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
   private ServerSettings serverSettings;
 
   private final Map<Integer, GameEmulatorCache> allGamesByEmulatorId = new ConcurrentHashMap<>();
+  private final Object saveLock = new Object();
 
   public void clearCache() {
     allGamesByEmulatorId.clear();
@@ -273,16 +274,23 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     List<Game> gamesByEmulator = frontendService.getGamesByEmulator(emulator.getId());
     FilterSettings filterSettings = preferencesService.getJsonPreference(PreferenceNames.FILTER_SETTINGS, FilterSettings.class);
     boolean findFirstIssueOnly = filterSettings.getIssueType() == -1;
-    boolean killFrontend = false;
 
-    List<GameDetailsInfo> infos = new ArrayList<>();
-    for (Game game : gamesByEmulator) {
-      GameDetails gameDetails = mappedGameDetails.get(game.getId());
-      GameDetailsInfo gameDetailsInfo = applyGameDetails(game, false, false, gameDetails);
-      infos.add(gameDetailsInfo);
-      if (gameDetailsInfo.newGame) {
-        gameLifecycleService.notifyGameCreated(game.getId());
-        highscoreService.scanScore(game, EventOrigin.INITIAL_SCAN);
+    Map<Integer, GameDetails> gameDetailsMap = mappedGameDetails;
+    if (mappedGameDetails.isEmpty() && !gamesByEmulator.isEmpty()) {
+      gameDetailsMap = gameDetailsRepositoryService.findAll().stream()
+          .collect(Collectors.toMap(GameDetails::getPupId, gd -> gd, (a, b) -> a));
+    }
+
+    final Map<Integer, GameDetails> resolvedMap = gameDetailsMap;
+    List<GameDetailsInfo> infos = gamesByEmulator.parallelStream()
+        .map(game -> applyGameDetails(game, false, false, resolvedMap.get(game.getId())))
+        .collect(Collectors.toList());
+
+    boolean killFrontend = false;
+    for (GameDetailsInfo info : infos) {
+      if (info.newGame) {
+        gameLifecycleService.notifyGameCreated(info.game.getId());
+        highscoreService.scanScore(info.game, EventOrigin.INITIAL_SCAN);
         if (!killFrontend) {
           LOG.info("New games have been found, automatically killing frontend to release locks.");
           frontendService.killFrontend();
@@ -359,7 +367,9 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
       gameDetails.setPupId(game.getId());
       gameDetails.setUpdatedAt(new java.util.Date());
 
-      gameDetailsRepositoryService.saveAndFlush(gameDetails);
+      synchronized (saveLock) {
+        gameDetailsRepositoryService.saveAndFlush(gameDetails);
+      }
       LOG.info("Created GameDetails for {}, was forced: {}", game.getGameDisplayName(), forceScan);
     }
 
