@@ -231,8 +231,8 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
       Map<String, Object> data = JsonSettings.objectMapper.readValue(serialize, HashMap.class);
       saveSettings(data);
     }
-    catch (IOException ioe) {
-      LOG.error("Cannot save settings", ioe);
+    catch (Exception e) {
+      LOG.error("Cannot save settings: " + e.getMessage(), e);
     }
   }
 

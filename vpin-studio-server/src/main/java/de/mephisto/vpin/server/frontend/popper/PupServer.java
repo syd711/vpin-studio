@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.frontend.popper;
 
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.system.SystemService;
 import org.apache.commons.lang3.StringUtils;
@@ -8,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
@@ -36,9 +37,12 @@ public class PupServer {
     baseUrl = "http://localhost:" + PORT + "/";
     restTemplate = new RestTemplate();
     List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
-    MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-    converter.setPrettyPrint(true);
-    converter.getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+    
+    JsonMapper mapper = JsonMapper.builder()
+        .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+        .build();
+    
+    JacksonJsonHttpMessageConverter converter = new JacksonJsonHttpMessageConverter(mapper);
     converter.setSupportedMediaTypes(Collections.singletonList(MediaType.ALL));
     messageConverters.add(converter);
     restTemplate.setMessageConverters(messageConverters);

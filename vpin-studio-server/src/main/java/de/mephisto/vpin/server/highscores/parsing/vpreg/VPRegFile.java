@@ -1,8 +1,9 @@
 package de.mephisto.vpin.server.highscores.parsing.vpreg;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 import com.thoughtworks.xstream.core.util.Base64Encoder;
 import de.mephisto.vpin.server.highscores.parsing.ScoreParsingSummary;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.adapters.*;
@@ -186,11 +187,12 @@ public class VPRegFile {
         }
       }
 
-      ObjectMapper objectMapper = new ObjectMapper();
-      objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+      ObjectMapper objectMapper = JsonMapper.builder()
+          .enable(SerializationFeature.INDENT_OUTPUT)
+          .build();
       return objectMapper.writeValueAsString(target);
     }
-    catch (IOException e) {
+    catch (Exception e) {
       LOG.error("Failed to read VPReg.stg: {}", e.getMessage(), e);
     }
     finally {
@@ -209,8 +211,9 @@ public class VPRegFile {
   public void restore(String data) {
     POIFSFileSystem fs = null;
     try {
-      ObjectMapper objectMapper = new ObjectMapper();
-      objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+      ObjectMapper objectMapper = JsonMapper.builder()
+          .enable(SerializationFeature.INDENT_OUTPUT)
+          .build();
       TypeReference<HashMap<String, String>> typeRef = new TypeReference<HashMap<String, String>>() {
       };
       HashMap<String, String> values = objectMapper.readValue(data, typeRef);
@@ -236,7 +239,7 @@ public class VPRegFile {
 
       fs.writeFilesystem();
     }
-    catch (IOException e) {
+    catch (Exception e) {
       LOG.error("Failed to read VPReg.stg: {}", e.getMessage(), e);
     }
     finally {
@@ -270,7 +273,7 @@ public class VPRegFile {
         }
       }
     }
-    catch (IOException e) {
+    catch (Exception e) {
       LOG.error("Failed to read VPReg.stg: {}", e.getMessage(), e);
     }
     finally {
@@ -304,7 +307,7 @@ public class VPRegFile {
 
       fs.writeFilesystem();
     }
-    catch (IOException e) {
+    catch (Exception e) {
       LOG.error("Failed to deleting entry from VPReg.stg: {}", e.getMessage(), e);
     }
     finally {

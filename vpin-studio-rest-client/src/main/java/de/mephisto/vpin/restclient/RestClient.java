@@ -1,7 +1,8 @@
 package de.mephisto.vpin.restclient;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper; // Using JsonMapper for Jackson 3
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientErrorHandler;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
@@ -10,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 import org.springframework.http.client.*;
 import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
@@ -19,7 +20,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
+import java.time.Duration;
 import java.util.*;
 
 /**
@@ -67,14 +70,14 @@ public class RestClient implements ClientHttpRequestInterceptor {
     restTemplate = new RestTemplate(clientHttpRequestFactory);
     restTemplate.setInterceptors(interceptors);
 
-    List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
-    MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-    converter.setPrettyPrint(true);
-    converter.getObjectMapper()
-        .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+    JsonMapper mapper = JsonMapper.builder()
         .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES) // Be lenient with older servers
-        .setTimeZone(TimeZone.getDefault())
-        .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        .defaultTimeZone(TimeZone.getDefault())
+        .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+        .build();
+
+    List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
+    JacksonJsonHttpMessageConverter converter = new JacksonJsonHttpMessageConverter(mapper);
 
     // Note: here we are making this converter to process any kind of response,
     // not only application/*json, which is the default behaviour
@@ -88,19 +91,19 @@ public class RestClient implements ClientHttpRequestInterceptor {
     interceptors.add(this);
 
     SimpleClientHttpRequestFactory httpRequestFactory = new SimpleClientHttpRequestFactory();
-    httpRequestFactory.setConnectTimeout(ms);
-    httpRequestFactory.setReadTimeout(ms);
+    httpRequestFactory.setConnectTimeout(Duration.ofMillis(ms));
+    httpRequestFactory.setReadTimeout(Duration.ofMillis(ms));
     restTemplate = new RestTemplate(httpRequestFactory);
     restTemplate.setInterceptors(interceptors);
 
-    List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
-    MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-    converter.setPrettyPrint(true);
-    converter.getObjectMapper()
-        .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+    JsonMapper mapper = JsonMapper.builder()
         .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES) // Be lenient with older servers
-        .setTimeZone(TimeZone.getDefault())
-        .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        .defaultTimeZone(TimeZone.getDefault())
+        .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+        .build();
+
+    List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
+    JacksonJsonHttpMessageConverter converter = new JacksonJsonHttpMessageConverter(mapper);
 
     // Note: here we are making this converter to process any kind of response,
     // not only application/*json, which is the default behaviour
@@ -115,8 +118,8 @@ public class RestClient implements ClientHttpRequestInterceptor {
 
   public static RestTemplate createTimeoutBasedTemplate(int timeoutMs) {
     SimpleClientHttpRequestFactory httpRequestFactory = new SimpleClientHttpRequestFactory();
-    httpRequestFactory.setConnectTimeout(timeoutMs);
-    httpRequestFactory.setReadTimeout(timeoutMs);
+    httpRequestFactory.setConnectTimeout(Duration.ofMillis(timeoutMs));
+    httpRequestFactory.setReadTimeout(Duration.ofMillis(timeoutMs));
     return new RestTemplate(httpRequestFactory);
   }
 
@@ -253,7 +256,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
     InputStream is = null;
     try {
       long start = System.currentTimeMillis();
-      URL url = new URL(resource);
+      URL url = URI.create(resource).toURL();
 
       HttpURLConnection con = (HttpURLConnection) url.openConnection();
       int responseCode = con.getResponseCode();

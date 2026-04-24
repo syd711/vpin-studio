@@ -1,8 +1,9 @@
 package de.mephisto.vpin.connectors.vps;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsAuthoredUrls;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
@@ -29,9 +30,10 @@ public class VPS {
   private static VPS instance;
 
   static {
-    objectMapper = new ObjectMapper();
-    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    objectMapper = JsonMapper.builder()
+        .enable(SerializationFeature.INDENT_OUTPUT)
+        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        .build();
   }
 
   public static synchronized VPS getInstance() {
@@ -176,12 +178,17 @@ public class VPS {
 
   //----------------- LOADERS
 
+  private File vpsDbFile;
   private File getVpsDbFile() {
+    if (vpsDbFile != null) {
+      return vpsDbFile;
+    }
     File folder = new File("./resources");
     if (!folder.exists()) {
       folder = new File("../resources");
     }
-    return new File(folder, "vpsdb.json");
+    vpsDbFile = new File(folder, "vpsdb.json");
+    return vpsDbFile;
   }
 
   public void loadTables(InputStream in) {

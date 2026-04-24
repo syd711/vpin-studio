@@ -87,7 +87,7 @@ public class BackglassNamingHelper {
       LOG.info("Loaded .directb2s mapping {}", s);
       return list;
     }
-    catch (IOException e) {
+    catch (Exception e) {
       LOG.error("Failed to load b2s mapping: {}", e.getMessage(), e);
     }
     return Collections.emptyList();
