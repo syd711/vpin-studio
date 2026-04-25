@@ -25,7 +25,7 @@
         <launch4j.version>2.7.0</launch4j.version>
         <jackson.version>3.1.0</jackson.version>
         <jackson.annotations.version>2.21</jackson.annotations.version>
-        <spring.boot.version>4.0.5</spring.boot.version>
+        <spring.boot.version>4.0.4</spring.boot.version>
         <logback.version>1.5.32</logback.version>
         <slf4j.version>2.0.16</slf4j.version>
         <jspecify.version>1.0.0</jspecify.version>
@@ -61,6 +61,11 @@
                 <version>${spring.boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-properties-migrator</artifactId>
+                <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>tools.jackson.core</groupId>
