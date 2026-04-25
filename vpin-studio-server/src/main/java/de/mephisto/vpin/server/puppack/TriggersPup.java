@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.puppack;
 
-import org.jspecify.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.slf4j.Logger;
@@ -20,27 +20,34 @@ public class TriggersPup {
   private final List<TriggerEntry> entries = new ArrayList<>();
   private final File triggersPupFile;
 
-  public TriggersPup(@NonNull File triggersPupFile) {
+public TriggersPup(@NonNull File triggersPupFile) {
     this.triggersPupFile = triggersPupFile;
-    try (Reader in = new FileReader(triggersPupFile)) {
-      if (triggersPupFile.exists()) {
-        CSVFormat format = CSVFormat.RFC4180.builder().build(); // Use builder for modern API
-        Iterable<CSVRecord> records = format.parse(in);
-        Iterator<CSVRecord> iterator = records.iterator();
-        if (iterator.hasNext()) { // Skip header
-          iterator.next();
-        }
+    Reader in = null;
+    try {
+        if (triggersPupFile.exists()) {
+            in = new FileReader(triggersPupFile);
+            Iterable<CSVRecord> records = CSVFormat.RFC4180.parse(in);
+            Iterator<CSVRecord> iterator = records.iterator();
+            iterator.next();
 
-        while (iterator.hasNext()) {
-          CSVRecord record = iterator.next();
-          TriggerEntry entry = new TriggerEntry(record);
-          this.entries.add(entry);
+            while (iterator.hasNext()) {
+                CSVRecord record = iterator.next();
+                TriggerEntry entry = new TriggerEntry(record);
+                this.entries.add(entry);
+            }
         }
-      }
     } catch (Exception e) {
-      LOG.error("Failed to load for {}: {}", triggersPupFile.getAbsolutePath(), e.getMessage());
+        LOG.error("Failed to load for {}: {}", triggersPupFile.getAbsolutePath(), e.getMessage());
+    } finally {
+        if (in != null) {
+            try {
+                in.close();
+            } catch (IOException e) {
+                //ignore
+            }
+        }
     }
-  }
+}
 
   public long length() {
     return triggersPupFile.length();

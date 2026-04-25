@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.lang.invoke.MethodHandles;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -74,7 +75,7 @@ public class IADownloader {
       }
 
       LOG.info("Downloading " + downloadUrl);
-      URL url = new URL(downloadUrl);
+      URL url = URI.create(downloadUrl).toURL();
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.setReadTimeout(5000);
       connection.setDoOutput(true);

@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.lang.invoke.MethodHandles;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -103,7 +104,7 @@ public class VPXMobileClient {
             + "&file=" + encodedFile
             + "&length=" + fileSize;
 
-        URL url = new URL(restClient.getBaseUrl() + path);
+        URL url = URI.create(restClient.getBaseUrl() + path).toURL();
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("POST");
         conn.setDoOutput(true);

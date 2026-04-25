@@ -39,9 +39,9 @@ public class NetworkUtil {
       return false;
     }
     try {
-      new URL(url);
+      new URI(url).toURL();
     }
-    catch (MalformedURLException e) {
+    catch (Exception e) {
       return false;
     }
     return true;

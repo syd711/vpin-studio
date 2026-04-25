@@ -31,7 +31,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.lang.invoke.MethodHandles;
-import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -198,8 +198,8 @@ public class WidgetWeeklyCompetitionScoreItemController extends WidgetController
   }
 
   @Nullable
-  private static BufferedImage getFlagBackground(CompetitionScore score) throws MalformedURLException, FileNotFoundException {
-    URL url = new URL(score.getFlagUrl());
+  private static BufferedImage getFlagBackground(CompetitionScore score) throws Exception {
+    URL url = URI.create(score.getFlagUrl()).toURL();
     String flagFileName = FilenameUtils.getName(url.getFile());
     File flagsFolder = new File(RESOURCES, "flags/");
     if (!flagsFolder.exists() && !flagsFolder.mkdirs()) {

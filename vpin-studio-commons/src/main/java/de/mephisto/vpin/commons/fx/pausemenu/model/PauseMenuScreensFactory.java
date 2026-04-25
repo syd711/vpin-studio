@@ -12,8 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 
 /**
  * Factory class to create frontend screens for the assets found in the Popper resource folders.
@@ -22,7 +21,7 @@ public class PauseMenuScreensFactory {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @NonNull
-  public static FrontendScreenAsset createScreenStage(VPinStudioClient client, GameRepresentation game, FrontendPlayerDisplay display, VPinScreen screen, FrontendMediaItemRepresentation defaultMediaItem, PauseMenuSettings pauseMenuSettings) throws MalformedURLException {
+  public static FrontendScreenAsset createScreenStage(VPinStudioClient client, GameRepresentation game, FrontendPlayerDisplay display, VPinScreen screen, FrontendMediaItemRepresentation defaultMediaItem, PauseMenuSettings pauseMenuSettings) throws Exception {
     FrontendScreenAsset asset = new FrontendScreenAsset();
     asset.setDisplay(display);
     asset.setRotation(pauseMenuSettings.getTutorialsRotation());
@@ -31,7 +30,7 @@ public class PauseMenuScreensFactory {
     asset.setDuration(0);
     asset.setMimeType(defaultMediaItem.getMimeType());
     asset.setName(defaultMediaItem.getName());
-    asset.setUrl(new URL(client.getURL(defaultMediaItem.getUri())));
+    asset.setUrl(URI.create(client.getURL(defaultMediaItem.getUri())).toURL());
 
     FrontendScreensManager.getInstance().showScreen(asset);
     LOG.info("Created stage for screen " + screen + ", asset \"" + defaultMediaItem.getName() + "\"");

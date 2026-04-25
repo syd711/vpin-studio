@@ -209,7 +209,7 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
     BaseLoadingColumn.configureColumn(columnDateAdded, (value, model) -> {
       Label label = null;
       if (value.getDateAdded() != null) {
-        label = new Label(TableOverviewController.dateFormat.format(value.getDateAdded()));
+        label = new Label(TableOverviewController.dateFormat.format(Date.from(value.getDateAdded().toInstant())));
       }
       else {
         label = new Label("-");
@@ -220,8 +220,8 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
 
     BaseLoadingColumn.configureColumn(columnDateModified, (value, model) -> {
       Label label = null;
-      if (value.getDateAdded() != null) {
-        label = new Label(TableOverviewController.dateFormat.format(value.getDateUpdated()));
+      if (value.getDateUpdated() != null) {
+        label = new Label(TableOverviewController.dateFormat.format(Date.from(value.getDateUpdated().toInstant())));
       }
       else {
         label = new Label("-");

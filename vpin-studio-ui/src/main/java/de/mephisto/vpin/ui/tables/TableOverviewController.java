@@ -87,6 +87,7 @@ import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -1392,7 +1393,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     BaseLoadingColumn.configureColumn(columnDateAdded, (value, model) -> {
       Label label = null;
       if (value.getDateAdded() != null) {
-        label = new Label(dateFormat.format(value.getDateAdded()));
+        label = new Label(dateFormat.format(Date.from(value.getDateAdded().toInstant())));
       }
       else {
         label = new Label("-");
@@ -1440,8 +1441,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     BaseLoadingColumn.configureColumn(columnDateModified, (value, model) -> {
       Label label = null;
-      if (value.getDateAdded() != null) {
-        label = new Label(dateTimeFormat.format(value.getDateUpdated()));
+      if (value.getDateUpdated() != null) {
+        label = new Label(dateTimeFormat.format(Date.from(value.getDateUpdated().toInstant())));
       }
       else {
         label = new Label("-");
@@ -1478,7 +1479,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       for (BackupDescriptorRepresentation backup : backupsForGame) {
         if (backup.getTableDetails().getGameFileName().equals(value.getGameFileName())) {
           model.backupDate = backup.getCreatedAt();
-          label.setText(dateTimeFormat.format(backup.getCreatedAt()));
+          label.setText(dateTimeFormat.format(Date.from(backup.getCreatedAt().toInstant())));
           break;
         }
       }

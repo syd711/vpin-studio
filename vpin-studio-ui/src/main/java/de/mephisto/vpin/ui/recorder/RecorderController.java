@@ -492,8 +492,8 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
     BaseLoadingColumn.configureColumn(columnDateModified, (value, model) -> {
       Label label = null;
-      if (value.getDateAdded() != null) {
-        label = new Label(TableOverviewController.dateFormat.format(value.getDateUpdated()));
+      if (value.getDateUpdated() != null) {
+        label = new Label(TableOverviewController.dateFormat.format(Date.from(value.getDateUpdated().toInstant())));
       }
       else {
         label = new Label("-");

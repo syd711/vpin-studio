@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.lang.invoke.MethodHandles;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.Map;
 
@@ -185,12 +186,12 @@ public class SystemInfoWindows {
       String serverDllPath = extractRegistryValue(readRegistry(regkey, "CodeBase"));
       File serverDllFile = null;
       try {
-        serverDllFile = new File(new URL(serverDllPath).getFile());
+        serverDllFile = new File(URI.create(serverDllPath).toURL().getFile());
         if (serverDllFile.exists()) {
           return serverDllFile.getParentFile();
         }
       }
-      catch (MalformedURLException ue) {
+      catch (Exception ue) {
       }
 
       // alternative way copied from FrontendService

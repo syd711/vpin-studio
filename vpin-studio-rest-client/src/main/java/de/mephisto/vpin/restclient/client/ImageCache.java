@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
+import java.net.URI;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,7 +25,7 @@ public class ImageCache extends VPinStudioClientService {
     try {
       if (!imageCache.containsKey(imageUrl)) {
         LOG.info("Loading cached image " + imageUrl);
-        URL url = new URL(imageUrl);
+        URL url = URI.create(imageUrl).toURL();
         ByteArrayOutputStream bis = new ByteArrayOutputStream();
         InputStream is = null;
         is = url.openStream();

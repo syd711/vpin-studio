@@ -61,6 +61,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.*;
 import java.lang.invoke.MethodHandles;
+import java.net.URI;
 import java.net.URL;
 
 public class VPinStudioClient {
@@ -486,10 +487,10 @@ public class VPinStudioClient {
   public InputStream getScreenshot() {
     try {
       if (latestScreenshot != null) {
-        return new URL(getURL("recorder/screenshot/" + latestScreenshot)).openStream();
+        return URI.create(getURL("recorder/screenshot/" + latestScreenshot)).toURL().openStream();
       }
     }
-    catch (IOException e) {
+    catch (Exception e) {
       LOG.error("Failed to load screenshot: {}", e.getMessage(), e);
     }
     return null;

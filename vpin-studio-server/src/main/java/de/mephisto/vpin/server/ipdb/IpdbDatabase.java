@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import de.mephisto.vpin.commons.SystemInfo;
 
 import java.io.*;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.*;
@@ -143,7 +144,7 @@ public class IpdbDatabase {
     }
 
     try (FileOutputStream fos = new FileOutputStream(tmp)) {
-      WebRequest req = new WebRequest(new URL(BASE_URL + listUrl));
+      WebRequest req = new WebRequest(URI.create(BASE_URL + listUrl).toURL());
       WebResponse res = webClient.getWebConnection().getResponse(req);
       IOUtils.copy(res.getContentAsStream(), fos);
     }

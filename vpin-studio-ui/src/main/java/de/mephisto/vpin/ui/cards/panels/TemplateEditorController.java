@@ -53,6 +53,7 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.*;
 import java.util.function.Consumer;
@@ -350,10 +351,10 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     CardTemplate cardTemplate = getSelectedCardTemplate();
 
     String url = client.getHighscoreCardTemplatesClient().getCardTemplateUrl(cardTemplate);
-    try (BufferedInputStream in = new BufferedInputStream(new URL(url).openStream())) {
+    try (BufferedInputStream in = new BufferedInputStream(URI.create(url).toURL().openStream())) {
       TableDialogs.download(stage, "template_" + cardTemplate.getName() + ".json", in);
     }
-    catch (IOException ioe) {
+    catch (Exception ioe) {
       LOG.error("Cannot download template {}", cardTemplate.getName(), ioe);
       WidgetFactory.showAlert(stage, "Error", "Cannot download template " + cardTemplate.getName() + ": " + ioe.getMessage());
     }

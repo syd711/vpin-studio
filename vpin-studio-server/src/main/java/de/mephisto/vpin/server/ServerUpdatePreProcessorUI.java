@@ -22,6 +22,7 @@ import java.awt.*;
 import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.util.concurrent.CountDownLatch;
 
@@ -41,7 +42,7 @@ public class ServerUpdatePreProcessorUI {
 
   private static long getContentLength(String downloadUrl) {
     try {
-      URL url = new URL(downloadUrl);
+      URL url = URI.create(downloadUrl).toURL();
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.setRequestMethod("HEAD");
       connection.setInstanceFollowRedirects(true);

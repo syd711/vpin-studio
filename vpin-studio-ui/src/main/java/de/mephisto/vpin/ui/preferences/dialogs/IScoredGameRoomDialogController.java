@@ -30,6 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URI;
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -163,7 +164,7 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
         if (first.isPresent()) {
           try {
             String vpsUrlString = first.get();
-            URL urlUrl = new URL(vpsUrlString);
+            URL urlUrl = URI.create(vpsUrlString).toURL();
             String idSegment = urlUrl.getQuery();
 
             String tableId = idSegment.substring(idSegment.indexOf("=") + 1);
