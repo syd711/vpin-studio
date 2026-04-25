@@ -9,7 +9,7 @@ import de.mephisto.vpin.restclient.backups.StudioBackupDescriptor;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -19,7 +19,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.lang.invoke.MethodHandles;
-import java.util.Date;
+import java.time.OffsetDateTime;
 import java.util.HashMap;
 
 /*********************************************************************************************************************
@@ -64,8 +64,8 @@ public class SystemServiceClient extends VPinStudioClientService {
     }
   }
 
-  public Date getStartupTime() {
-    return getRestClient().get(API + "system/startupTime", Date.class);
+  public OffsetDateTime getStartupTime() {
+    return getRestClient().get(API + "system/startupTime", OffsetDateTime.class);
   }
 
   public String logs() {

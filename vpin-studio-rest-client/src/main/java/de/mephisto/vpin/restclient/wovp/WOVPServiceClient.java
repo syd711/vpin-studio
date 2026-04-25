@@ -4,7 +4,7 @@ import de.mephisto.vpin.connectors.wovp.models.ApiKeyValidationResponse;
 import de.mephisto.vpin.connectors.wovp.models.WovpPlayer;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

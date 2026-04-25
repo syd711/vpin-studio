@@ -140,7 +140,7 @@ public class AssetsResource {
 
   public ResponseEntity<byte[]> serializeAsset(Asset asset) {
     return ResponseEntity.ok()
-        .lastModified(asset.getUpdatedAt().getTime())
+        .lastModified(asset.getUpdatedAt().toInstant().toEpochMilli())
         .contentType(MediaType.parseMediaType(asset.getMimeType()))
         .contentLength(asset.getData().length)
         .cacheControl(CacheControl.maxAge(3600 * 24 * 7, TimeUnit.SECONDS).cachePublic())

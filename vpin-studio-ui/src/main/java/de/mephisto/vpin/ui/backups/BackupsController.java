@@ -18,7 +18,7 @@ import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.SystemUtil;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;

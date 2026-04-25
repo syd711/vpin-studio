@@ -22,6 +22,7 @@ import java.lang.invoke.MethodHandles;
 import java.text.DateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -103,35 +104,29 @@ public class AlxFactory {
     }
   }
 
-  public static void createAvgWeekTimeTile(Stage stage, Pane root, List<TableAlxEntry> entries, Date start) {
+  public static void createAvgWeekTimeTile(Stage stage, Pane root, List<TableAlxEntry> entries, OffsetDateTime start) {
     long total = 0;
     for (TableAlxEntry entry : entries) {
       total += entry.getTimePlayedSecs();
     }
 
-
-    Instant d1i = Instant.ofEpochMilli(start.getTime());
-    Instant d2i = Instant.ofEpochMilli(new Date().getTime());
-
-    LocalDateTime startDate = LocalDateTime.ofInstant(d1i, ZoneId.systemDefault());
-    LocalDateTime endDate = LocalDateTime.ofInstant(d2i, ZoneId.systemDefault());
-
-    long weeks = ChronoUnit.WEEKS.between(startDate, endDate);
-    if (weeks == 0) {
+    long weeks = ChronoUnit.WEEKS.between(start, OffsetDateTime.now());
+    if (weeks <= 0) {
       weeks = 1;
     }
 
-    long avgSeksPerWeek = total / weeks;
-    String time = (avgSeksPerWeek / 60) + " min";
-    if (avgSeksPerWeek / 60 / 60 > 0) {
-      time = (avgSeksPerWeek / 60 / 60) + " hrs";
+    long avgSecsPerWeek = total / weeks;
+    String time = (avgSecsPerWeek / 60) + " min";
+    if (avgSecsPerWeek >= 3600) {
+      time = (avgSecsPerWeek / 3600) + " hrs";
     }
 
     try {
       FXMLLoader loader = new FXMLLoader(AlxTileEntryController.class.getResource("alx-tile-entry.fxml"));
       Parent builtInRoot = loader.load();
       AlxTileEntryController controller = loader.getController();
-      controller.refresh(stage, new AlxTileEntry("Avg. Playtime / Week", "(The average time played every week, starting " + DateFormat.getDateInstance().format(start) + ")", time));
+      String dateString = DateFormat.getDateInstance().format(Date.from(start.toInstant()));
+      controller.refresh(stage, new AlxTileEntry("Avg. Playtime / Week", "(The average time played every week, starting " + dateString + ")", time));
       root.getChildren().add(builtInRoot);
     } catch (IOException e) {
       LOG.error("Failed to load tile: " + e.getMessage(), e);

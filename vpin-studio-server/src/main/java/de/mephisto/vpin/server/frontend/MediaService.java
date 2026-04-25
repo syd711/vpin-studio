@@ -5,7 +5,7 @@ import de.mephisto.vpin.restclient.assets.AssetMetaData;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.server.assets.AssetService;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;

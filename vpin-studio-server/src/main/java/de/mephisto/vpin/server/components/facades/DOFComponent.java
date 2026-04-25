@@ -7,16 +7,18 @@ import de.mephisto.vpin.connectors.github.ReleaseArtifactActionLog;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.server.dof.DOFService;
 import de.mephisto.vpin.server.frontend.FrontendService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -53,11 +55,11 @@ public class DOFComponent implements ComponentFacade {
 
   @Nullable
   @Override
-  public Date getModificationDate() {
+  public OffsetDateTime getModificationDate() {
     if (dofService.getInstallationFolder() != null) {
       File testExe = new File(dofService.getInstallationFolder(), "config/tablemappings.xml");
       if (testExe.exists()) {
-        return new Date(testExe.lastModified());
+        return OffsetDateTime.ofInstant(Instant.ofEpochMilli(testExe.lastModified()), ZoneId.systemDefault());
       }
     }
     return null;

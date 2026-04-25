@@ -5,12 +5,11 @@ import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.server.frontend.GameEntry;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +18,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.nio.charset.Charset;
 import java.text.ParseException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -27,8 +29,8 @@ import java.util.function.Consumer;
 public class PinballXStatisticsParser {
   private final static Logger LOG = LoggerFactory.getLogger(PinballXStatisticsParser.class);
 
-  private final FastDateFormat statisticsSdf = FastDateFormat.getInstance("dd/MM/yyyy HH:mm:ss");
-  private final FastDateFormat statisticsSdfAlt = FastDateFormat.getInstance("dd.MM.yyyy HH:mm:ss");
+  private final DateTimeFormatter statisticsFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+  private final DateTimeFormatter statisticsFormatterAlt = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
 
   private PinballXConnector connector;
 
@@ -87,10 +89,16 @@ public class PinballXStatisticsParser {
       e.setUniqueId(gameId);
 
       try {
-        e.setLastPlayed(statisticsSdf.parse(s.getString("lastplayed")));
+        LocalDateTime lastPlayed = LocalDateTime.parse(s.getString("lastplayed"), statisticsFormatter);
+        e.setLastPlayed(lastPlayed.atZone(ZoneId.systemDefault()).toOffsetDateTime());
       }
-      catch (ParseException ex) {
-        e.setLastPlayed(statisticsSdfAlt.parse(s.getString("lastplayed")));
+      catch (Exception ex) {
+        try {
+          LocalDateTime lastPlayed = LocalDateTime.parse(s.getString("lastplayed"), statisticsFormatterAlt);
+          e.setLastPlayed(lastPlayed.atZone(ZoneId.systemDefault()).toOffsetDateTime());
+        } catch (Exception ex2) {
+          LOG.error("Failed to parse last played date for table " + game.getGameName() + ": " + s.getString("lastplayed"));
+        }
       }
 
       if (s.containsKey("secondsplayed")) {

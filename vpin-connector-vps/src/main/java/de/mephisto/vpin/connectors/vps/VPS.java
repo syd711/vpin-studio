@@ -13,7 +13,11 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.lang.invoke.MethodHandles;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -219,7 +223,7 @@ public class VPS {
 
     try {
       LOG.info("Downloading " + VPS.URL);
-      java.net.URL url = new URL(VPS.URL);
+      java.net.URL url = URI.create(VPS.URL).toURL();
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.setDoOutput(true);
       BufferedInputStream in = new BufferedInputStream(url.openStream());
@@ -276,8 +280,8 @@ public class VPS {
     return Collections.emptyList();
   }
 
-  public Date getChangeDate() {
-    return new Date(getVpsDbFile().lastModified());
+  public OffsetDateTime getChangeDate() {
+    return OffsetDateTime.ofInstant(Instant.ofEpochMilli(getVpsDbFile().lastModified()), ZoneId.systemDefault());
   }
 
   public boolean reload() {

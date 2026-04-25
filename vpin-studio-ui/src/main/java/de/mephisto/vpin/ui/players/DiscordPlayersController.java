@@ -8,7 +8,7 @@ import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;

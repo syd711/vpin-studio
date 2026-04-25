@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.Date;
+import java.time.OffsetDateTime;
 
 public class ExportEntityConverter {
   private final static Logger LOG = LoggerFactory.getLogger(ExportEntityConverter.class);
@@ -35,8 +35,8 @@ public class ExportEntityConverter {
       ValidationState s = (ValidationState) property;
       property = s.getCode();
     }
-    else if (property instanceof Date) {
-      Date s = (Date) property;
+    else if (property instanceof OffsetDateTime) {
+      OffsetDateTime s = (OffsetDateTime) property;
       property = DateUtil.formatDateTime(s);
     }
     else if (property instanceof HighscoreType) {

@@ -10,7 +10,7 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.SystemUtil;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

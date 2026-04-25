@@ -24,8 +24,8 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.recorder.EmulatorRecorderJob;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.WindowsUtil;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.lang3.StringUtils;
@@ -45,8 +45,9 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.*;
-import java.sql.Date;
-import java.text.SimpleDateFormat;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.regex.Matcher;
@@ -195,8 +196,8 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
         manifest.setGameFileName(rs.getString("GameFileName"));
         manifest.setGameDisplayName(rs.getString("GameDisplay"));
         manifest.setGameVersion(rs.getString("GAMEVER"));
-        manifest.setDateAdded(getDateAsTimestamp(rs, "DateAdded"));
-        manifest.setDateModified(getDateAsTimestamp(rs, "DateUpdated"));
+        manifest.setDateAdded(getOffsetDateTime(rs, "DateAdded"));
+        manifest.setDateModified(getOffsetDateTime(rs, "DateUpdated"));
         manifest.setNotes(rs.getString("Notes"));
         manifest.setGameYear(rs.getInt("GameYear"));
         if (rs.wasNull()) {
@@ -280,9 +281,8 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       String stmt = "UPDATE Games SET DateFileUpdated=? WHERE GameID=?";
       PreparedStatement preparedStatement = Objects.requireNonNull(connect).prepareStatement(stmt);
 
-      SimpleDateFormat sdf = new SimpleDateFormat(POPPER_DATE_FORMAT);
-      Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-      String ts = sdf.format(timestamp);
+      DateTimeFormatter dtf = DateTimeFormatter.ofPattern(POPPER_DATE_FORMAT);
+      String ts = dtf.format(OffsetDateTime.now());
       preparedStatement.setObject(1, ts);
       preparedStatement.setInt(2, id);
 
@@ -394,9 +394,8 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
         index++;
       }
 
-      SimpleDateFormat sdf = new SimpleDateFormat(POPPER_DATE_FORMAT);
-      Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-      String ts = sdf.format(timestamp);
+      DateTimeFormatter dtf = DateTimeFormatter.ofPattern(POPPER_DATE_FORMAT);
+      String ts = dtf.format(OffsetDateTime.now());
 
       preparedStatement.setObject(index, ts);
       index++;
@@ -429,9 +428,8 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.setString(index++, extTableId);
       preparedStatement.setString(index++, extTableVersionId);
 
-      SimpleDateFormat sdf = new SimpleDateFormat(POPPER_DATE_FORMAT);
-      Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-      String ts = sdf.format(timestamp);
+      DateTimeFormatter dtf = DateTimeFormatter.ofPattern(POPPER_DATE_FORMAT);
+      String ts = dtf.format(OffsetDateTime.now());
       preparedStatement.setObject(index++, ts);
 
       preparedStatement.setInt(index++, gameId);
@@ -892,11 +890,10 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.setInt(5, 1);
       preparedStatement.setString(6, tableDetails.getLaunchCustomVar() != null ? tableDetails.getLaunchCustomVar() : "");
 
-      SimpleDateFormat sdf = new SimpleDateFormat(POPPER_DATE_FORMAT);
-      Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-      String ts = sdf.format(timestamp);
+      DateTimeFormatter dtf = DateTimeFormatter.ofPattern(POPPER_DATE_FORMAT);
+      String ts = dtf.format(OffsetDateTime.now());
       preparedStatement.setString(7, ts);
-      preparedStatement.setString(8, tableDetails.getDateModified() != null ? sdf.format(tableDetails.getDateModified()) : sdf.format(new java.util.Date()));
+      preparedStatement.setString(8, tableDetails.getDateModified() != null ? dtf.format(tableDetails.getDateModified()) : dtf.format(OffsetDateTime.now()));
 
       preparedStatement.setString(9, tableDetails.getAuthor());
       preparedStatement.setString(10, tableDetails.getTags());
@@ -1661,7 +1658,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
         e.setDisplayName(rs.getString("GameDisplay"));
         e.setGameId(rs.getInt("GameId"));
         e.setUniqueId(rs.getInt("UniqueId"));
-        e.setLastPlayed(rs.getDate("LastPlayed"));
+        e.setLastPlayed(getOffsetDateTime(rs, "LastPlayed"));
         e.setTimePlayedSecs(rs.getInt("TimePlayedSecs"));
         e.setNumberOfPlays(rs.getInt("NumberPlays"));
         result.add(e);
@@ -1690,7 +1687,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
         e.setDisplayName(rs.getString("GameDisplay"));
         e.setGameId(rs.getInt("GameId"));
         e.setUniqueId(rs.getInt("UniqueId"));
-        e.setLastPlayed(rs.getDate("LastPlayed"));
+        e.setLastPlayed(getOffsetDateTime(rs, "LastPlayed"));
         e.setTimePlayedSecs(rs.getInt("TimePlayedSecs"));
         e.setNumberOfPlays(rs.getInt("NumberPlays"));
         result.add(e);
@@ -1920,16 +1917,16 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     return results;
   }
 
-  @NonNull
   @Override
-  public java.util.Date getStartDate() {
+  @NonNull
+  public OffsetDateTime getStartDate() {
     Connection connect = this.connect();
-    Date date = null;
+    OffsetDateTime date = null;
     try {
       Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery("SELECT DateAdded from Games asc limit 1;");
       while (rs.next()) {
-        date = getDate(rs, "DateAdded");
+        date = getOffsetDateTime(rs, "DateAdded");
       }
       rs.close();
       statement.close();
@@ -1941,7 +1938,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       this.disconnect(connect);
     }
 
-    return date;
+    return date != null ? date : OffsetDateTime.now();
   }
 
   @Override
@@ -2212,8 +2209,8 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
     String gameName = rs.getString("GameName");
     game.setGameName(gameName);
-    game.setDateAdded(getDateAsTimestamp(rs, "DateAdded"));
-    game.setDateUpdated(getDateAsTimestamp(rs, "DateUpdated"));
+    game.setDateAdded(getOffsetDateTime(rs, "DateAdded"));
+    game.setDateUpdated(getOffsetDateTime(rs, "DateUpdated"));
     game.setTags(TaggingUtil.getTags(rs.getString("TAGS")));
     game.setMediaSearch(rs.getString("MediaSearch"));
 
@@ -2262,7 +2259,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       ResultSet rs = statement.executeQuery("SELECT * FROM GamesStats where GameID = " + gameId + ";");
       while (rs.next()) {
         int numberPlays = rs.getInt("NumberPlays");
-        Date lastPlayed = rs.getDate("LastPlayed");
+        OffsetDateTime lastPlayed = getOffsetDateTime(rs, "LastPlayed");
 
         manifest.setLastPlayed(lastPlayed);
         manifest.setNumberPlays(numberPlays);
@@ -2661,30 +2658,12 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     return false;
   }
 
-  private Date getDate(ResultSet set, String field) {
-    try {
-      return set.getDate(field);
+  private OffsetDateTime getOffsetDateTime(ResultSet rs, String column) throws SQLException {
+    Timestamp timestamp = rs.getTimestamp(column);
+    if (timestamp != null) {
+      return OffsetDateTime.ofInstant(timestamp.toInstant(), ZoneId.systemDefault());
     }
-    catch (Exception e) {
-      LOG.warn("Failed to parse date from database: {}", e.getMessage());
-    }
-    return new Date(new java.util.Date().getTime());
-  }
-
-  private java.util.Date getDateAsTimestamp(ResultSet set, String field) {
-    try {
-      return set.getTimestamp(field);
-    }
-    catch (Exception e) {
-      LOG.warn("Failed to parse timestapm from database: {}", e.getMessage());
-      try {
-        return set.getDate(field);
-      }
-      catch (Exception ex) {
-        LOG.warn("Failed to parse date from database: {}", e.getMessage());
-      }
-    }
-    return new Date(new java.util.Date().getTime());
+    return null;
   }
 
   @Override

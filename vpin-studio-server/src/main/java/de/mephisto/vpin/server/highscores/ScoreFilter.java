@@ -6,7 +6,7 @@ import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

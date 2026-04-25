@@ -2,7 +2,7 @@ package de.mephisto.vpin.server;
 
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.util.ZipUtil;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;

@@ -8,7 +8,7 @@ import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import de.mephisto.vpin.restclient.util.ReturnMessage;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -19,6 +19,7 @@ import org.springframework.util.MultiValueMap;
 
 import java.io.*;
 import java.lang.invoke.MethodHandles;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -109,7 +110,7 @@ public class BackglassServiceClient extends VPinStudioClientService {
 
   public InputStream getDirectB2sBackground(DirectB2SData directB2S) throws IOException {
     String url = getDirectB2sBackgroundUrl(directB2S.getEmulatorId(), directB2S.getFilename());
-    return new URL(url).openStream();
+    return URI.create(url).toURL().openStream();
   }
 
   public String getDirectB2sDmdUrl(int gameId) {
@@ -123,7 +124,7 @@ public class BackglassServiceClient extends VPinStudioClientService {
 
   public InputStream getDirectB2sDmd(DirectB2SData directB2S) throws IOException {
     String url = getDirectB2sDmdUrl(directB2S.getEmulatorId(), directB2S.getFilename());
-    return new URL(url).openStream();
+    return URI.create(url).toURL().openStream();
   }
 
   public String getDirectB2sPreviewBackgroundUrl(int gameId, boolean includeFrame) {
@@ -141,7 +142,7 @@ public class BackglassServiceClient extends VPinStudioClientService {
 
   public InputStream getDirectB2sPreviewBackground(DirectB2SData directB2S, boolean includeFrame) throws IOException {
     String url = getDirectB2sPreviewBackgroundUrl(directB2S.getEmulatorId(), directB2S.getFilename(), includeFrame);
-    return new URL(url).openStream();
+    return URI.create(url).toURL().openStream();
   }
 
 
@@ -207,7 +208,7 @@ public class BackglassServiceClient extends VPinStudioClientService {
       return getRestClient().post(API + "games/save", game, GameRepresentation.class);
     }
     catch (Exception e) {
-      LOG.error("Failed to save game: " + e.getMessage(), e);
+      LOG.error("Failed to save game: {}", e.getMessage(), e);
       throw e;
     }
   }
@@ -234,7 +235,7 @@ public class BackglassServiceClient extends VPinStudioClientService {
       return getRestClient().post(API + "directb2s/serversettings", settings, DirectB2ServerSettings.class);
     }
     catch (Exception e) {
-      LOG.error("Failed to save b2s server settings: " + e.getMessage(), e);
+      LOG.error("Failed to save b2s server settings: {}", e.getMessage(), e);
       throw e;
     }
   }
@@ -244,7 +245,7 @@ public class BackglassServiceClient extends VPinStudioClientService {
       return getRestClient().post(API + "directb2s/tablesettings/" + gameId, settings, DirectB2STableSettings.class);
     }
     catch (Exception e) {
-      LOG.error("Failed to save b2s table settings: " + e.getMessage(), e);
+      LOG.error("Failed to save b2s table settings: {}", e.getMessage(), e);
       throw e;
     }
   }
@@ -261,7 +262,7 @@ public class BackglassServiceClient extends VPinStudioClientService {
       return exchange.getBody();
     }
     catch (Exception e) {
-      LOG.error("Directb2s upload failed: " + e.getMessage(), e);
+      LOG.error("Directb2s upload failed: {}", e.getMessage(), e);
       throw e;
     }
   }
@@ -299,10 +300,10 @@ public class BackglassServiceClient extends VPinStudioClientService {
     String url = getRestClient().getBaseUrl() + API + "directb2s/frame/" + screenres.getEmulatorId() + "/"
         + URLEncoder.encode(URLEncoder.encode(screenres.getBackgroundFilePath(), StandardCharsets.UTF_8), StandardCharsets.UTF_8);
     try {
-      return new URL(url).openStream();
+      return URI.create(url).toURL().openStream();
     }
     catch (FileNotFoundException e) {
-      LOG.info("No .res file found for " + screenres.getB2SFileName());
+      LOG.info("No .res file found for {}", screenres.getB2SFileName());
     }
     return null;
   }
@@ -312,7 +313,7 @@ public class BackglassServiceClient extends VPinStudioClientService {
         + "/" + URLEncoder.encode(URLEncoder.encode(b2sFileName, StandardCharsets.UTF_8), StandardCharsets.UTF_8)
         + "/" + frameType.name();
     try {
-      return new URL(url).openStream();
+      return URI.create(url).toURL().openStream();
     }
     catch (Exception e) {
       LOG.info("cannot get generated frame file for {}, emulator {}", b2sFileName, emulatorId);
@@ -354,7 +355,7 @@ public class BackglassServiceClient extends VPinStudioClientService {
       return ret.getBody();
     }
     catch (Exception e) {
-      LOG.error("Upload failed: " + e.getMessage(), e);
+      LOG.error("Upload failed: {}", e.getMessage(), e);
       throw e;
     }
   }

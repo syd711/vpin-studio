@@ -16,7 +16,7 @@ import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
 import de.mephisto.vpin.ui.tables.models.TableStatus;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
 import de.mephisto.vpin.ui.util.tags.TagField;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;

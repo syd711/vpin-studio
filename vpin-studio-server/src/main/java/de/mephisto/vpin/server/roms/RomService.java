@@ -6,7 +6,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.VPXFileScanner;
 import de.mephisto.vpin.server.vpx.FolderLookupService;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

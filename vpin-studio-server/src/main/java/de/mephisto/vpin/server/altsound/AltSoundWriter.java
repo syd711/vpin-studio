@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.altsound;
 
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.server.games.Game;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

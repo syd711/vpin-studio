@@ -14,7 +14,7 @@ import de.mephisto.vpin.server.frontend.pinbally.PinballYTableParser;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.system.SystemService;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.io.ByteOrderMark;

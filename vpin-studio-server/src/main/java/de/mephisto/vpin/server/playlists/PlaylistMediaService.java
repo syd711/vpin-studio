@@ -7,7 +7,7 @@ import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.server.frontend.MediaService;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.frontend.WheelIconDelete;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;

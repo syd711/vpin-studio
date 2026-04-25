@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -108,7 +110,8 @@ public class NvRamOutputToScoreTextTest {
     String raw = NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(entry);
 
     assertNotNull(raw);
-    List<Score> parse = ScoreListFactory.create(raw, new Date(entry.length()), null, scoringDB);
+    OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochMilli(entry.length()), ZoneId.systemDefault());
+    List<Score> parse = ScoreListFactory.create(raw, date, null, scoringDB);
     assertFalse(parse.isEmpty(), "Found empty highscore for nvram " + entry.getAbsolutePath());
 
     File listFile = new File(entry.getAbsolutePath().concat(".list"));
@@ -237,7 +240,8 @@ public class NvRamOutputToScoreTextTest {
 
     LOG.info("raw : " + raw);
 
-    List<Score> parse = ScoreListFactory.create(raw, new Date(entry.length()), game, scoringDB);
+    OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochMilli(entry.lastModified()), ZoneId.systemDefault());
+    List<Score> parse = ScoreListFactory.create(raw, date, game, scoringDB);
     LOG.info("Parsed " + parse.size() + " score entries.");
 
     StringBuilder scores = new StringBuilder();

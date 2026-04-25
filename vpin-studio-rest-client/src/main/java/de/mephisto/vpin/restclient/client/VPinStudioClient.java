@@ -51,7 +51,7 @@ import de.mephisto.vpin.restclient.vpx.VpxServiceClient;
 import de.mephisto.vpin.restclient.vpx.VpxScriptOptionsServiceClient;
 import de.mephisto.vpin.restclient.vr.VRServiceClient;
 import de.mephisto.vpin.restclient.wovp.WOVPServiceClient;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

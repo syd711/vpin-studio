@@ -6,7 +6,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

@@ -11,7 +11,7 @@ import de.mephisto.vpin.server.frontend.popper.pupgames.PUPGameImporter;
 import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.steam.SteamService;
 import de.mephisto.vpin.server.system.SystemService;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

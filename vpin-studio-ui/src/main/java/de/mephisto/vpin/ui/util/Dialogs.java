@@ -16,7 +16,7 @@ import de.mephisto.vpin.ui.launcher.InstallationDialogController;
 import de.mephisto.vpin.ui.mania.dialogs.ManiaDialogs;
 import de.mephisto.vpin.ui.mania.util.ManiaHelper;
 import de.mephisto.vpin.ui.players.dialogs.PlayerDialogController;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;

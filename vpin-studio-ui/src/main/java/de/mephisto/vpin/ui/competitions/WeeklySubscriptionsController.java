@@ -43,6 +43,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.OffsetDateTime;
 import java.util.*;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.ERROR_STYLE;
@@ -345,7 +346,7 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
       Label timeRemainingValueLabel = new Label();
       timeRemainingValueLabel.getStyleClass().add("default-text");
       timeRemainingValueLabel.setStyle(getLabelCss(value));
-      timeRemainingValueLabel.setText(DateUtil.formatDuration(new Date(), value.competition.getEndDate()));
+      timeRemainingValueLabel.setText(DateUtil.formatDuration(OffsetDateTime.now(), value.competition.getEndDate()));
       remainingBox.getChildren().addAll(timeRemainingLabel, timeRemainingValueLabel);
 
       vBox.getChildren().addAll(endDateLabel, durationBox, remainingBox);

@@ -18,7 +18,7 @@ import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.competitions.CompetitionsDialogHelper;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -36,6 +36,9 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.net.URL;
 import java.text.DateFormat;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -274,9 +277,10 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     }
 
 
+    DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM);
     this.tableLabel.setText(this.discordCompetitionData.getTname());
-    this.startDateLabel.setText(DateFormat.getDateInstance().format(this.discordCompetitionData.getSdt()));
-    this.endDateLabel.setText(DateFormat.getDateInstance().format(this.discordCompetitionData.getEdt()));
+    this.startDateLabel.setText(formatter.format(this.discordCompetitionData.getSdt()));
+    this.endDateLabel.setText(formatter.format(this.discordCompetitionData.getEdt()));
     this.remainingTimeLabel.setText(DateUtil.formatDuration(this.discordCompetitionData.getSdt(), this.discordCompetitionData.getEdt()));
     this.nameLabel.setText(this.discordCompetitionData.getName());
 
@@ -319,7 +323,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
       return;
     }
 
-    if (this.discordCompetitionData.getEdt().before(DateUtil.today())) {
+    if (this.discordCompetitionData.getEdt().isBefore(OffsetDateTime.now())) {
       validationTitle.setText("Invalid competition data");
       validationDescription.setText("Ups, looks like the selected competition wasn't reset. It's already finished.");
       return;

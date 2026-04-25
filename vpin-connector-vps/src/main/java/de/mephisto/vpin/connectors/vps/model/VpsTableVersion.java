@@ -1,7 +1,9 @@
 package de.mephisto.vpin.connectors.vps.model;
 
-import java.text.DateFormat;
-import java.util.Date;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 
@@ -54,8 +56,11 @@ public class VpsTableVersion extends VpsAuthoredUrls {
       builder.append("(");
       builder.append("Version ");
       builder.append(getVersion());
-      builder.append(", ");
-      builder.append(DateFormat.getDateInstance().format(new Date(getCreatedAt())));
+      if (getCreatedAt() != null) {
+        builder.append(", ");
+        OffsetDateTime dateTime = OffsetDateTime.ofInstant(Instant.ofEpochMilli(getCreatedAt()), ZoneId.systemDefault());
+        builder.append(DateTimeFormatter.ofLocalizedDate(java.time.format.FormatStyle.MEDIUM).format(dateTime));
+      }
       builder.append(")");
     }
 

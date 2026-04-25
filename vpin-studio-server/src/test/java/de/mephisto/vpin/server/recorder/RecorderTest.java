@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.recorder;
 
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.server.frontend.popper.PinUPConnector;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;

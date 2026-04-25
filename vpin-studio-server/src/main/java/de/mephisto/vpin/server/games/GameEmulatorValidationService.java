@@ -5,7 +5,7 @@ import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.ValidationStateFactory;
 import de.mephisto.vpin.restclient.validation.GameEmulatorValidationCode;
 import de.mephisto.vpin.restclient.validation.ValidationState;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

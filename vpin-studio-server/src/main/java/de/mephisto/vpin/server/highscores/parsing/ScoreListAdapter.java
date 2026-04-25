@@ -2,9 +2,9 @@ package de.mephisto.vpin.server.highscores.parsing;
 
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 
-import java.util.Date;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 public interface ScoreListAdapter {
@@ -12,5 +12,5 @@ public interface ScoreListAdapter {
   boolean isApplicable(@NonNull Game game);
 
   @NonNull
-  List<Score> getScores(@NonNull Game game, @NonNull Date createdAt, @NonNull List<String> lines, boolean parseAll);
+  List<Score> getScores(@NonNull Game game, @NonNull OffsetDateTime createdAt, @NonNull List<String> lines, boolean parseAll);
 }

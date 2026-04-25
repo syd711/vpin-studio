@@ -10,7 +10,7 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.fx.DialogHeaderController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.ui.Studio;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

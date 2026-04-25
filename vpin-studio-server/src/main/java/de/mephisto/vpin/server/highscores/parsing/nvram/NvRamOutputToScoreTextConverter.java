@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.highscores.parsing.nvram;
 
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;

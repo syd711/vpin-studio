@@ -7,6 +7,10 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.text.ParseException;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -19,7 +23,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import de.mephisto.vpin.server.games.GameEmulator;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -28,7 +32,6 @@ import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.csv.QuoteMode;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +44,7 @@ import de.mephisto.vpin.server.playlists.Playlist;
 public class PinballYStatisticsParser {
   private final static Logger LOG = LoggerFactory.getLogger(PinballYStatisticsParser.class);
 
-  private final FastDateFormat statisticsSdf = FastDateFormat.getInstance("yyyyMMddHHmmss");
+  private final DateTimeFormatter statisticsFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
   private FrontendConnector connector;
 
@@ -83,10 +86,11 @@ public class PinballYStatisticsParser {
       e.setUniqueId(game.getId());
 
       try {
-        e.setLastPlayed(statisticsSdf.parse(lastPlayed));
+        LocalDateTime localDateTime = LocalDateTime.parse(lastPlayed, statisticsFormatter);
+        e.setLastPlayed(localDateTime.atZone(ZoneId.systemDefault()).toOffsetDateTime());
       }
-      catch (ParseException pe) {
-        LOG.error("Cannot parse date {},{}", lastPlayed, pe.getMessage());
+      catch (Exception ex) {
+        LOG.error("Cannot parse date {}, {}", lastPlayed, ex.getMessage());
       }
 
       String playTime = safeGet(record, "Play Time");
@@ -152,7 +156,7 @@ public class PinballYStatisticsParser {
         .setQuoteMode(QuoteMode.NON_NUMERIC)
         .setQuote('"')
         .setTrim(true)
-        .build();
+        .get();
 
       CSVParser parser = format.parse(fileReader);
 
@@ -237,7 +241,7 @@ public class PinballYStatisticsParser {
     writeGameData(game, (values, g) -> {
       values.put("Play Time", Long.toString(stat.getTimePlayedSecs()));
       values.put("Play Count", Long.toString(stat.getNumberOfPlays()));
-      values.put("Last Played", statisticsSdf.format(stat.getLastPlayed()));
+      values.put("Last Played", stat.getLastPlayed().format(statisticsFormatter));
     });
   }
 
@@ -252,7 +256,7 @@ public class PinballYStatisticsParser {
       .setQuoteMode(QuoteMode.MINIMAL)
       .setQuote('"')
       .setTrim(true)
-      .build();
+      .get();
 
     GameEmulator emu = connector.getEmulator(g.getEmulatorId());
 

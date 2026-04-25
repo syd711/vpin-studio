@@ -1,6 +1,6 @@
 package de.mephisto.vpin.connectors.github;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.safety.Safelist;

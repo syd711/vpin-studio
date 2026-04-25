@@ -5,7 +5,7 @@ import de.mephisto.vpin.connectors.vps.model.*;
 import de.mephisto.vpin.restclient.util.HttpUtils;
 import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.ui.Studio;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;

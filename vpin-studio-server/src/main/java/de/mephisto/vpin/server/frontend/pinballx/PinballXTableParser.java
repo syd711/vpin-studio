@@ -7,7 +7,6 @@ import de.mephisto.vpin.server.games.GameEmulator;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -23,7 +22,11 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.text.ParseException;
-import java.util.Date;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +34,7 @@ public class PinballXTableParser extends DefaultHandler {
   private final static Logger LOG = LoggerFactory.getLogger(PinballXTableParser.class);
 
   /** Parser for dates */
-  protected final FastDateFormat sdf = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss");
+  protected final DateTimeFormatter sdf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
   private final Charset charset;
 
@@ -196,12 +199,12 @@ public class PinballXTableParser extends DefaultHandler {
         break;
       }
       case "dateadded": {
-        Date dateAdded = content.equals("1900-01-01 00:00:00") ? null : sdf.parse(content);
+        OffsetDateTime dateAdded = content.equals("1900-01-01 00:00:00") ? null : OffsetDateTime.of(LocalDateTime.parse(content, sdf), ZoneId.systemDefault().getRules().getOffset(Instant.now()));
         detail.setDateAdded(dateAdded);
         break;
       }
       case "datemodified": {
-        Date dateModified = content.equals("1900-01-01 00:00:00") ? null : sdf.parse(content);
+        OffsetDateTime dateModified = content.equals("1900-01-01 00:00:00") ? null : OffsetDateTime.of(LocalDateTime.parse(content, sdf), ZoneId.systemDefault().getRules().getOffset(Instant.now()));
         detail.setDateModified(dateModified);
         break;
       }
@@ -308,7 +311,7 @@ public class PinballXTableParser extends DefaultHandler {
       appendValueNoEscape(writer, tag, value? "True": "False");
     }
   }
-  protected void appendValue(BufferedWriter writer, String tag, Date value) throws IOException {
+  protected void appendValue(BufferedWriter writer, String tag, OffsetDateTime value) throws IOException {
     if (value != null) {
       appendValueNoEscape(writer, tag, sdf.format(value));
     }

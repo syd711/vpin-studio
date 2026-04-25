@@ -6,7 +6,7 @@ import de.mephisto.vpin.restclient.vpauthenticators.AuthenticationSettings;
 import de.mephisto.vpin.restclient.vpf.VPFSettings;
 import de.mephisto.vpin.restclient.vpu.VPUSettings;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

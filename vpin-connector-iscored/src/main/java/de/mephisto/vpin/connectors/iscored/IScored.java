@@ -8,8 +8,8 @@ import tools.jackson.databind.json.JsonMapper;
 import de.mephisto.vpin.connectors.iscored.models.GameModel;
 import de.mephisto.vpin.connectors.iscored.models.GameRoomModel;
 import de.mephisto.vpin.connectors.iscored.models.GameScoreModel;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +68,7 @@ public class IScored {
       long start = System.currentTimeMillis();
 
       // parse and align room URL 
-      URL roomurl = new URL(url);
+      URL roomurl = URI.create(url).toURL();
       String baseUrl = getBaseURL(roomurl);
       Map<String, Object> params = getBaseParams(roomurl);
 
@@ -167,7 +167,7 @@ public class IScored {
         newUrl += "=" + entry.getValue();
       }
     }
-    return new URL(newUrl);
+    return URI.create(newUrl).toURL();
   }
 
   private static String loadJson(URL url) {
@@ -349,7 +349,7 @@ public class IScored {
     try {
       ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-      URL roomurl = new URL(gameRoom.getUrl());
+      URL roomurl = URI.create(gameRoom.getUrl()).toURL();
       String baseUrl = getBaseURL(roomurl);
       Map<String, Object> params = getBaseParams(roomurl);
 

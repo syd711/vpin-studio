@@ -21,7 +21,7 @@ import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -92,7 +92,7 @@ public class PauseMenu extends Application {
 
     //gameStatus = new GameStatus();
     //gameStatus.setGameId(1786095766);
-    //gameStatus.setStarted(new java.util.Date());
+    //gameStatus.setStarted(OffsetDateTime.now());
 
     INSTANCE.togglePauseMenu(gameStatus, true);
   }

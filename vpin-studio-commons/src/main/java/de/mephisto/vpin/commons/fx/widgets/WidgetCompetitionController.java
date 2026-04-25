@@ -38,12 +38,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
-import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.time.Duration;
 import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -161,8 +162,8 @@ public class WidgetCompetitionController extends WidgetController implements Ini
     root.setVisible(competition != null);
 
     if (competition != null) {
-      LocalDate end = competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-      LocalDate now = DateUtil.today().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+      LocalDate end = competition.getEndDate().toLocalDate();
+      LocalDate now = OffsetDateTime.now().toLocalDate();
 
       long remainingDays = ChronoUnit.DAYS.between(now, end);
       if (remainingDays < 0) {
@@ -170,22 +171,22 @@ public class WidgetCompetitionController extends WidgetController implements Ini
       }
 
       if (remainingDays == 0) {
-        long ms = competition.getEndDate().getTime() - new Date().getTime();
+        long ms = Duration.between(OffsetDateTime.now(), competition.getEndDate()).toMillis();
         if ((ms / 1000) < 3600) {
           countdownTile.setTitle("Remaining Minutes");
           countdownTile.setDescription(DurationFormatUtils.formatDuration(ms, "mm", false));
-          countdownTile.setText("Competition End: " + DateFormat.getDateTimeInstance().format(competition.getEndDate()));
+          countdownTile.setText("Competition End: " + DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(competition.getEndDate()));
         }
         else {
           countdownTile.setTitle("Remaining Hours");
           countdownTile.setDescription(DurationFormatUtils.formatDuration(ms, "HH", false));
-          countdownTile.setText("Competition End: " + DateFormat.getDateTimeInstance().format(competition.getEndDate()));
+          countdownTile.setText("Competition End: " + DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(competition.getEndDate()));
         }
       }
       else {
         countdownTile.setTitle("Remaining Days");
         countdownTile.setDescription(String.valueOf(remainingDays));
-        countdownTile.setText("Competition End: " + DateFormat.getDateInstance().format(competition.getEndDate()));
+        countdownTile.setText("Competition End: " + DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(competition.getEndDate()));
       }
 
       if (competition.isActive()) {

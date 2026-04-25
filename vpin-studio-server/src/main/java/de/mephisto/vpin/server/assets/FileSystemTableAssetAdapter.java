@@ -6,8 +6,8 @@ import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.util.MimeTypeUtil;
 import de.mephisto.vpin.server.games.Game;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;

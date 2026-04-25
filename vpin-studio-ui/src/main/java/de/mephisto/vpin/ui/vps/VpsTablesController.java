@@ -22,7 +22,7 @@ import de.mephisto.vpin.ui.tables.vps.VpsTableColumn;
 import de.mephisto.vpin.ui.tables.vps.VpsTutorialColumn;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;

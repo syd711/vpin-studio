@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.time.OffsetDateTime;
 
 @Service
 public class GameStatusService implements TableStatusChangeListener, FrontendStatusChangeListener {
@@ -50,14 +50,14 @@ public class GameStatusService implements TableStatusChangeListener, FrontendSta
 
   @Override
   public void tableLaunched(TableStatusChangedEvent event) {
-    status.setStarted(new Date());
+    status.setStarted(OffsetDateTime.now());
     status.setGameId(event.getGame().getId());
     LOG.info("GameStatusService saved \"{}\" as active game.", event.getGame().getGameDisplayName());
   }
 
   public void setActiveStatus(int gameId) {
     status.setGameId(gameId);
-    status.setStarted(new Date());
+    status.setStarted(OffsetDateTime.now());
     LOG.info("GameStatusService saved gameId \"{}\" as active game.", gameId);
   }
 

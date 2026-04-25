@@ -53,12 +53,11 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>${commons-io.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.spotbugs</groupId>
             <artifactId>spotbugs-annotations</artifactId>
-            <version>${spotbugs.version}</version>
+            <version>4.8.6</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
@@ -127,7 +126,10 @@
             <artifactId>ikonli-materialdesign2-pack</artifactId>
             <version>12.4.0</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.jspecify</groupId>
+            <artifactId>jspecify</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -243,7 +245,7 @@
                 <!-- This calls launch4j to create the program EXE -->
                 <groupId>com.akathist.maven.plugins.launch4j</groupId>
                 <artifactId>launch4j-maven-plugin</artifactId>
-                <version>${launch4j.version}</version>
+                <version>2.5.1</version>
                 <executions>
                     <execution>
                         <id>l4j-clui</id>

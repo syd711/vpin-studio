@@ -3,7 +3,7 @@ package de.mephisto.vpin.commons.utils;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import javafx.scene.chart.XYChart;

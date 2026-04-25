@@ -2,15 +2,15 @@ package de.mephisto.vpin.restclient.discord;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import java.util.Date;
+import java.time.OffsetDateTime;
 
 public class DiscordCompetitionData {
   private String uuid;
   private String owner;
   private String rom;
   private long fs;
-  private Date sdt;
-  private Date edt;
+  private OffsetDateTime sdt;
+  private OffsetDateTime edt;
   private String name;
   private String tname;
   private String mode;
@@ -50,19 +50,19 @@ public class DiscordCompetitionData {
     this.tname = tname;
   }
 
-  public Date getSdt() {
+  public OffsetDateTime getSdt() {
     return sdt;
   }
 
-  public void setSdt(Date sdt) {
+  public void setSdt(OffsetDateTime sdt) {
     this.sdt = sdt;
   }
 
-  public Date getEdt() {
+  public OffsetDateTime getEdt() {
     return edt;
   }
 
-  public void setEdt(Date edt) {
+  public void setEdt(OffsetDateTime edt) {
     this.edt = edt;
   }
 
@@ -114,14 +114,14 @@ public class DiscordCompetitionData {
     this.fs = fs;
   }
 
-  public boolean isOverlappingWith(Date startSelection, Date endSelection) {
-    boolean startOverlap = getSdt().before(endSelection);
-    boolean endOverlap = startSelection.before(this.getEdt());
+  public boolean isOverlappingWith(OffsetDateTime startSelection, OffsetDateTime endSelection) {
+    boolean startOverlap = getSdt().isBefore(endSelection);
+    boolean endOverlap = startSelection.isBefore(this.getEdt());
     return startOverlap && endOverlap;
   }
 
   @JsonIgnore
   public boolean isFinished() {
-    return new Date().before(this.getEdt());
+    return OffsetDateTime.now().isBefore(this.getEdt());
   }
 }

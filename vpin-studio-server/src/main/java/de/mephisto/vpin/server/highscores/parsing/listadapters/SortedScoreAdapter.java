@@ -3,10 +3,10 @@ package de.mephisto.vpin.server.highscores.parsing.listadapters;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.ScoreListAdapter;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,7 +35,7 @@ public class SortedScoreAdapter extends ScoreListAdapterBase implements ScoreLis
   }
 
   @NonNull
-  public List<Score> getScores(@NonNull Game game, @NonNull Date createdAt, @NonNull List<String> lines, boolean parseAll) {
+  public List<Score> getScores(@NonNull Game game, @NonNull OffsetDateTime createdAt, @NonNull List<String> lines, boolean parseAll) {
     List<Score> scores = new ArrayList<>();
 
     String source = game.getGameDisplayName() + "/" + game.getRom() + "/" + game.getHsFileName();

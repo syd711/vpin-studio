@@ -4,7 +4,7 @@ import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.json.JsonMapper;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +14,12 @@ import java.lang.invoke.MethodHandles;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -52,7 +55,7 @@ public class ScoringDB {
       File dbFile = getScoringDBFile();
       in = new FileInputStream(dbFile);
       db = objectMapper.readValue(in, ScoringDB.class);
-      LOG.info("Loaded " + dbFile.getName() + ", last updated: " + SimpleDateFormat.getDateTimeInstance().format(new Date(dbFile.lastModified())));
+      LOG.info("Loaded " + dbFile.getName() + ", last updated: " + DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(OffsetDateTime.ofInstant(Instant.ofEpochMilli(dbFile.lastModified()), ZoneId.systemDefault())));
     }
     catch (Exception e) {
       db = new ScoringDB();
@@ -163,6 +166,10 @@ public class ScoringDB {
     return ignoredVPRegEntries;
   }
 
+  public void setIgnoredVPRegEntries(List<String> ignoredVPRegEntries) {
+    this.ignoredVPRegEntries = ignoredVPRegEntries;
+  }
+
   public List<String> getHighscoreTitles() {
     return highscoreTitles;
   }
@@ -186,10 +193,6 @@ public class ScoringDB {
 
   public void setHighscoreTextParsers(List<Map<String, Object>> highscoreTextParsers) {
     this.highscoreTextParsers = highscoreTextParsers;
-  }
-
-  public void setIgnoredVPRegEntries(List<String> ignoredVPRegEntries) {
-    this.ignoredVPRegEntries = ignoredVPRegEntries;
   }
 
   public List<ScoringDBMapping> getHighscoreMappings() {

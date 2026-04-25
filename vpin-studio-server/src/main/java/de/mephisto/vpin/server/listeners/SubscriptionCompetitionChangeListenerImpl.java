@@ -17,7 +17,7 @@ import de.mephisto.vpin.server.highscores.HighscoreBackupService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

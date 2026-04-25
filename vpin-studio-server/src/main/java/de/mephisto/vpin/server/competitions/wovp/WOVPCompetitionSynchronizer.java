@@ -20,8 +20,8 @@ import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.vpx.VPXUtil;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -134,7 +134,7 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
         //When the challenge id has changed, it means that the existing competition is outdated.
         if (!challengeId.equals(competition.getUuid()) || game == null || forceReload) {
           //run de-augmentation for finished competitions
-          competition.setEndDate(new Date());
+          competition.setEndDate(OffsetDateTime.now());
 //          competitionService.save(competition);//TOOD required?
           competitionLifecycleService.notifyCompetitionDeleted(competition);
           refreshTags(game, wovpSettings, false);

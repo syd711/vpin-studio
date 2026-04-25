@@ -14,8 +14,8 @@ import de.mephisto.vpin.ui.competitions.dialogs.CompetitionOfflineDialogControll
 import de.mephisto.vpin.ui.preferences.PreferencesSavingModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;

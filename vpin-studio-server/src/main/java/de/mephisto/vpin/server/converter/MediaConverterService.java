@@ -13,7 +13,7 @@ import de.mephisto.vpin.server.games.GameMediaService;
 import de.mephisto.vpin.server.playlists.PlaylistMediaService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.commons.fx.ImageUtil;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

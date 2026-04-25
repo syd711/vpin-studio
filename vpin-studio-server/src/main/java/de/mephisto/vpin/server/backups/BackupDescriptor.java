@@ -4,14 +4,14 @@ package de.mephisto.vpin.server.backups;
 import de.mephisto.vpin.restclient.backups.BackupPackageInfo;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 
-import java.util.Date;
+import java.time.OffsetDateTime;
 import java.util.Objects;
 
 public class BackupDescriptor {
   private TableDetails tableDetails;
   private BackupPackageInfo packageInfo;
   private BackupSource source;
-  private Date createdAt;
+  private OffsetDateTime createdAt;
   private String filename;
   private String absoluteFileName;
   private long size;
@@ -20,7 +20,7 @@ public class BackupDescriptor {
     //used for JSON serialization
   }
 
-  public BackupDescriptor(BackupSource source, TableDetails tableDetails, BackupPackageInfo packageInfo, Date createdAt, String filename, String absoluteFileName, long size) {
+  public BackupDescriptor(BackupSource source, TableDetails tableDetails, BackupPackageInfo packageInfo, OffsetDateTime createdAt, String filename, String absoluteFileName, long size) {
     this.source = source;
     this.tableDetails = tableDetails;
     this.packageInfo = packageInfo;
@@ -62,11 +62,11 @@ public class BackupDescriptor {
     this.filename = filename;
   }
 
-  public Date getCreatedAt() {
+  public OffsetDateTime getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(Date createdAt) {
+  public void setCreatedAt(OffsetDateTime createdAt) {
     this.createdAt = createdAt;
   }
 

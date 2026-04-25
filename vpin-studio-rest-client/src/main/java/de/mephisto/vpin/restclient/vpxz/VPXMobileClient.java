@@ -3,7 +3,7 @@ package de.mephisto.vpin.restclient.vpxz;
 import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.vpxz.models.Tables;
 import de.mephisto.vpin.restclient.vpxz.models.Version;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

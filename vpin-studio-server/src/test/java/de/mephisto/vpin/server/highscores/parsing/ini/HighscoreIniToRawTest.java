@@ -17,7 +17,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 import static de.mephisto.vpin.server.highscores.parsing.ini.IniHighscoreAdapters.adapters;
@@ -46,7 +48,8 @@ public class HighscoreIniToRawTest {
       assertNotNull(raw);
       assertTrue(raw.contains(ScoreTextFileAdapterImpl.HIGHEST_SCORES));
 
-      List<Score> parse = ScoreListFactory.create(raw, new Date(entry.length()), null, scoringDB);
+      OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochMilli(entry.length()), ZoneId.systemDefault());
+      List<Score> parse = ScoreListFactory.create(raw, date, null, scoringDB);
       assertFalse(parse.isEmpty());
     }
     System.out.println("Tested " + count + " entries");

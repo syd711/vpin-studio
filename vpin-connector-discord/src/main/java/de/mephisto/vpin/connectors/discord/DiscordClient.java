@@ -1,7 +1,7 @@
 package de.mephisto.vpin.connectors.discord;
 
 
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import net.dv8tion.jda.api.*;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.invoke.MethodHandles;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -151,8 +152,7 @@ public class DiscordClient {
         t.setId(channel.getIdLong());
         t.setName(channel.getName());
 
-        long epochMilli = channel.getTimeCreated().toInstant().toEpochMilli();
-        t.setCreationDate(new Date(epochMilli));
+        t.setCreationDate(channel.getTimeCreated());
 
         return t;
       }
@@ -428,8 +428,7 @@ public class DiscordClient {
           t.setId(channel.getIdLong());
           t.setName(channel.getName());
 
-          long epochMilli = channel.getTimeCreated().toInstant().toEpochMilli();
-          t.setCreationDate(new Date(epochMilli));
+          t.setCreationDate(channel.getTimeCreated());
 
           channelList.add(t);
         }
@@ -553,11 +552,9 @@ public class DiscordClient {
 
   private DiscordMessage toMessage(Message msg) {
     DiscordMessage message = new DiscordMessage();
-    long epochMilli = msg.getTimeCreated().toInstant().toEpochMilli();
-    Date createdAt = new Date(epochMilli);
 
     message.setId(msg.getIdLong());
-    message.setCreatedAt(createdAt);
+    message.setCreatedAt(msg.getTimeCreated());
     message.setRaw(msg.getContentRaw());
     message.setServerId(msg.getGuild().getIdLong());
 
@@ -699,5 +696,4 @@ public class DiscordClient {
     this.pinnedMessagesCache.clear();
     this.guilds.clear();
     LOG.info("Cleared Discord client cache.");
-  }
-}
+  }}

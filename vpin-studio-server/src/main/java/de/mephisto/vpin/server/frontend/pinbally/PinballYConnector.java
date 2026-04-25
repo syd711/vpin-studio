@@ -11,7 +11,7 @@ import de.mephisto.vpin.server.frontend.pinballx.PinballXMediaAccessStrategy;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.system.SystemService;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -14,8 +14,8 @@ import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegService;
 import de.mephisto.vpin.server.listeners.EventOrigin;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpx.FolderLookupService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +31,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
+import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.zip.ZipOutputStream;
 
@@ -145,7 +146,7 @@ public class HighscoreBackupService implements InitializingBean {
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     HighscoreBackup backup = new HighscoreBackup();
-    backup.setCreationDate(new Date());
+    backup.setCreationDate(OffsetDateTime.now());
     backup.setHighscoreType(game.getHighscoreType());
     backup.setRaw(highscore.getRaw());
     backup.setFilename(filename);

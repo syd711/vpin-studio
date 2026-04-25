@@ -7,7 +7,6 @@ import tools.jackson.databind.json.JsonMapper;
 import com.thoughtworks.xstream.core.util.Base64Encoder;
 import de.mephisto.vpin.server.highscores.parsing.ScoreParsingSummary;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.adapters.*;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.poi.poifs.filesystem.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +15,9 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 public class VPRegFile {
@@ -379,8 +381,8 @@ public class VPRegFile {
     return vpregFile.getCanonicalPath();
   }
 
-  public Date getLastModified() {
-    return new Date(vpregFile.lastModified());
+  public OffsetDateTime getLastModified() {
+    return OffsetDateTime.ofInstant(Instant.ofEpochMilli(vpregFile.lastModified()), ZoneId.systemDefault());
   }
 
   public boolean isValid() {

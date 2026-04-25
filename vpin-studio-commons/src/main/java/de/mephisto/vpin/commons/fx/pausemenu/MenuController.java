@@ -18,7 +18,7 @@ import de.mephisto.vpin.restclient.cards.CardTemplateType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import javafx.animation.ParallelTransition;
 import javafx.animation.Transition;
 import javafx.application.Platform;

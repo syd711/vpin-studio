@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,12 +20,12 @@ public interface HighscoreVersionRepository extends JpaRepository<HighscoreVersi
 
   List<HighscoreVersion> findAllByOrderByCreatedAtDesc();
 
-  List<HighscoreVersion> findByGameIdAndCreatedAtBetween(int gameId, Date startDate, Date endDate);
+  List<HighscoreVersion> findByGameIdAndCreatedAtBetween(int gameId, OffsetDateTime startDate, OffsetDateTime endDate);
 
   //List<HighscoreVersion> findByGameId(int gameId);
 
   List<HighscoreVersion> findByGameIdOrderByCreatedAtDesc(int gameId);
 
-  Optional<HighscoreVersion> findByCreatedAt(Date createdAt);
+  Optional<HighscoreVersion> findByCreatedAt(OffsetDateTime createdAt);
 
 }

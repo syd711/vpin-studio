@@ -26,7 +26,7 @@ import de.mephisto.vpin.ui.recorder.RecorderController;
 import de.mephisto.vpin.ui.tables.alx.AlxController;
 import de.mephisto.vpin.ui.vps.VpsTablesController;
 import de.mephisto.vpin.ui.vps.VpsTablesSidebarController;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;

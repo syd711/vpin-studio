@@ -10,8 +10,8 @@ import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.restclient.puppacks.PupPackRepresentation;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.games.*;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +21,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
@@ -151,7 +154,7 @@ public class PupPacksResource {
     representation.setSize(pupPack.getSize());
     representation.setScriptOnly(pupPack.isScriptOnly());
     representation.setPath(pupPack.getPupPackFolder().getPath().replaceAll("\\\\", "/"));
-    representation.setModificationDate(new Date(pupPack.getPupPackFolder().lastModified()));
+    representation.setModificationDate(OffsetDateTime.ofInstant(Instant.ofEpochMilli(pupPack.getPupPackFolder().lastModified()), ZoneId.systemDefault()));
     representation.setOptions(pupPack.getOptions());
     representation.setScreenDMDMode(pupPack.getScreenMode(VPinScreen.DMD));
     representation.setScreenBackglassMode(pupPack.getScreenMode(VPinScreen.BackGlass));

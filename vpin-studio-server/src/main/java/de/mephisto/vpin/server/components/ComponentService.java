@@ -7,8 +7,8 @@ import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.server.components.facades.*;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -146,7 +147,7 @@ public class ComponentService implements InitializingBean {
             LOG.info("Applied current version \"{} for {}", githubRelease.getTag(), component.getType());
           }
 
-          component.setLastCheck(new Date());
+          component.setLastCheck(OffsetDateTime.now());
           componentRepository.saveAndFlush(component);
         }
         else {

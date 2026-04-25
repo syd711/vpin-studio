@@ -27,6 +27,7 @@ import java.nio.charset.StandardCharsets;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.OffsetDateTime;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.Features;
@@ -144,7 +145,7 @@ public class ServerSettingsPreferencesController implements Initializable {
     launchOnExitOption.setVisible(Features.MEDIA_ENABLED);
     launchFrontendCheckbox.setText("Launch " + frontend.getName() + " on maintenance exit.");
 
-    Date startupTime = client.getSystemService().getStartupTime();
+    OffsetDateTime startupTime = client.getSystemService().getStartupTime();
     startupTimeLabel.setText(DateFormat.getDateTimeInstance().format(startupTime));
     versionLabel.setText(client.getSystemService().getVersion());
 

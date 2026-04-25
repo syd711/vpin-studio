@@ -3,8 +3,8 @@ package de.mephisto.vpin.server.directb2s;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2sConstants;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.INIConfiguration;

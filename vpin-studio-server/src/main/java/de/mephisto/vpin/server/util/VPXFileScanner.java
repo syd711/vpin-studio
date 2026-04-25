@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.util;
 import de.mephisto.vpin.server.roms.ScanResult;
 import de.mephisto.vpin.server.scripteval.EvaluationContext;
 import de.mephisto.vpin.server.vpx.VPXUtil;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;

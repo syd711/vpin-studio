@@ -11,7 +11,7 @@ import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.matcher.TableNameSplitter.TableNameParts;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class VpsAutomatcher {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());

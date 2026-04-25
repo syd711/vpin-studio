@@ -23,8 +23,8 @@ import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.vps.VpsService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +38,8 @@ import org.springframework.stereotype.Service;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -151,9 +153,8 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
           tableScore.setVpsVersionId(game.getExtTableVersionId());
           tableScore.setTableName(game.getGameDisplayName());
           tableScore.setAccountId(account.getId());
-          tableScore.setCreationDate(score.getCreatedAt());
+          tableScore.setCreationDate(Date.from(score.getCreatedAt().toInstant()));
           tableScore.setScoreSource(game.getRom());
-          tableScore.setCreationDate(score.getCreatedAt());
 
           if (isOnDenyList(deniedScoresByTableId, score, game)) {
             result.setTableScore(tableScore);
@@ -282,7 +283,8 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   }
 
   private Score toScores(Game game, Account account, TableScore accountScore) {
-    Score score = new Score(accountScore.getCreationDate(), game.getId(), account.getInitials(), null, accountScore.getScoreText(), accountScore.getScore(), -1);
+    OffsetDateTime createdAt = accountScore.getCreationDate().toInstant().atZone(ZoneId.systemDefault()).toOffsetDateTime();
+    Score score = new Score(createdAt, game.getId(), account.getInitials(), null, accountScore.getScoreText(), accountScore.getScore(), -1);
     score.setExternal(true);
     return score;
   }
@@ -457,7 +459,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
         List<Game> knownGames = gameService.getKnownGames(-1);
         List<InstalledTable> installedTables = new ArrayList<>();
         for (Game game : knownGames) {
-          if (!StringUtils.isEmpty(game.getExtTableVersionId()) && !StringUtils.isEmpty(game.getExtTableVersionId())) {
+          if (!StringUtils.isEmpty(game.getExtTableId()) && !StringUtils.isEmpty(game.getExtTableVersionId())) {
             InstalledTable installedTable = new InstalledTable();
             installedTable.setVpsTableId(game.getExtTableId());
             installedTable.setVpsVersionId(game.getExtTableVersionId());

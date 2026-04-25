@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.server.highscores.Score;

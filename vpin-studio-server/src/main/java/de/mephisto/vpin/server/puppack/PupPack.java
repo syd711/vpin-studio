@@ -6,7 +6,7 @@ import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

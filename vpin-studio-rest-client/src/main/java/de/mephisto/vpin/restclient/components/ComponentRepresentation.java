@@ -1,7 +1,7 @@
 package de.mephisto.vpin.restclient.components;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class ComponentRepresentation {
@@ -11,9 +11,9 @@ public class ComponentRepresentation {
 
   private boolean installed;
 
-  private Date lastCheck;
+  private OffsetDateTime lastCheck;
 
-  private Date lastModified;
+  private OffsetDateTime lastModified;
 
   private String installedVersion;
 
@@ -73,19 +73,19 @@ public class ComponentRepresentation {
     this.installedVersion = installedVersion;
   }
 
-  public Date getLastCheck() {
+  public OffsetDateTime getLastCheck() {
     return lastCheck;
   }
 
-  public void setLastCheck(Date lastCheck) {
+  public void setLastCheck(OffsetDateTime lastCheck) {
     this.lastCheck = lastCheck;
   }
 
-  public Date getLastModified() {
+  public OffsetDateTime getLastModified() {
     return lastModified;
   }
 
-  public void setLastModified(Date lastModified) {
+  public void setLastModified(OffsetDateTime lastModified) {
     this.lastModified = lastModified;
   }
 

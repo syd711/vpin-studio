@@ -26,8 +26,8 @@ import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpauthenticators.VPAuthenticationService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +35,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -185,7 +186,7 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
     }
     else {
       backupSource = new BackupSource();
-      backupSource.setCreatedAt(new Date());
+      backupSource.setCreatedAt(OffsetDateTime.now());
       backupSource.setType(representation.getType());
     }
 
@@ -281,7 +282,7 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
     if (all.isEmpty()) {
       BackupSource backupSource = new BackupSource();
       backupSource = new BackupSource();
-      backupSource.setCreatedAt(new Date());
+      backupSource.setCreatedAt(OffsetDateTime.now());
       backupSource.setName("Default Backups Folder");
       backupSource.setType(BackupSourceType.Folder.name());
       backupSource.setLocation(VpaBackupSource.FOLDER.getAbsolutePath());

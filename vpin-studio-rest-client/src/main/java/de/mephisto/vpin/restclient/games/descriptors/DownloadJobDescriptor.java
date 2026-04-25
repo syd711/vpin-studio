@@ -3,7 +3,7 @@ package de.mephisto.vpin.restclient.games.descriptors;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 
 import java.io.File;
 import java.lang.invoke.MethodHandles;

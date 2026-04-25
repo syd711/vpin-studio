@@ -20,8 +20,8 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vps.VpsService;
 import de.mephisto.vpin.server.vpx.VPXService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -32,15 +32,15 @@ import org.springframework.stereotype.Service;
 
 import java.awt.*;
 import java.io.File;
-import java.io.IOException;
-import java.lang.invoke.MethodHandles;
-import java.sql.Date;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.List;
 
 @Service
 public class FrontendService implements InitializingBean, PreferenceChangedListener {
-  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+  private final static Logger LOG = LoggerFactory.getLogger(FrontendService.class);
 
   @Autowired
   private SystemService systemService;
@@ -436,7 +436,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     tableDetails.setGameName(formattedBaseName);
     tableDetails.setGameFileName(gameFileName);
     tableDetails.setGameDisplayName(gameDisplayName);
-    tableDetails.setDateModified(new Date(file.lastModified()));
+    tableDetails.setDateModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(file.lastModified()), ZoneId.systemDefault()));
 
     if (gameEmulator.isMameEmulator()) {
       String fullName = mameService.resolveMAMENameFor(baseName);
@@ -522,7 +522,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   //--------------------------
 
-  public java.util.Date getStartDate() {
+  public OffsetDateTime getStartDate() {
     return getFrontendConnector().getStartDate();
   }
 

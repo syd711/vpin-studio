@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui.competitions.validation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 
 import static de.mephisto.vpin.restclient.competitions.CompetitionValidationCode.*;
 

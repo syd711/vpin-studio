@@ -19,7 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.tools.ant.taskdefs.optional.Cab;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 

@@ -6,8 +6,8 @@ import de.mephisto.vpin.connectors.vps.model.VpsFeatures;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorScript;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.validation.ValidationState;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;

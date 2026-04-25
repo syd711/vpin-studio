@@ -48,7 +48,7 @@ import de.mephisto.vpin.ui.tables.vps.VpsTableColumn;
 import de.mephisto.vpin.ui.tables.vps.VpsTutorialColumn;
 import de.mephisto.vpin.ui.util.*;
 import de.mephisto.vpin.ui.vpxz.VPXZDialogs;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;

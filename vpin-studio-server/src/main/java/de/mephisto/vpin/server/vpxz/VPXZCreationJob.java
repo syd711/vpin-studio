@@ -11,8 +11,8 @@ import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.server.games.Game;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import net.lingala.zip4j.ZipFile;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Date;
+import java.time.OffsetDateTime;
 
 public class VPXZCreationJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(VPXZCreationJob.class);
@@ -58,7 +58,7 @@ public class VPXZCreationJob implements Job {
     VPXZDescriptor descriptor = new VPXZDescriptor();
     VPXZPackageInfo packageInfo = new VPXZPackageInfo();
 
-    descriptor.setCreatedAt(new Date());
+    descriptor.setCreatedAt(OffsetDateTime.now());
     descriptor.setTableDetails(tableDetails);
     descriptor.setPackageInfo(packageInfo);
 

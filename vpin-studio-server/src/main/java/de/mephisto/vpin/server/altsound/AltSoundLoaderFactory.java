@@ -2,8 +2,8 @@ package de.mephisto.vpin.server.altsound;
 
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.altsound.AltSoundFormats;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.slf4j.Logger;

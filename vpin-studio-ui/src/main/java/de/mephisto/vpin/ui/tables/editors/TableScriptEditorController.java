@@ -4,7 +4,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.util.RichText;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;

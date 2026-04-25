@@ -75,6 +75,10 @@
             <version>3.27.0</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jspecify</groupId>
+            <artifactId>jspecify</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

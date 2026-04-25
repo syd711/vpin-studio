@@ -1,6 +1,6 @@
 package de.mephisto.vpin.commons.utils.localsettings;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;

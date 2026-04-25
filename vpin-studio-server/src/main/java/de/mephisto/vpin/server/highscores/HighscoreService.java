@@ -21,8 +21,8 @@ import de.mephisto.vpin.server.nvrams.NVRamService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.vpx.FolderLookupService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -32,6 +32,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -193,7 +195,7 @@ public class HighscoreService implements InitializingBean {
   }
 
   @NonNull
-  public List<Score> parseScores(Date createdAt, String raw, @NonNull Game game, long serverId) {
+  public List<Score> parseScores(OffsetDateTime createdAt, String raw, @NonNull Game game, long serverId) {
     return highscoreParser.parseScores(createdAt, raw, game, serverId);
   }
 
@@ -264,13 +266,13 @@ public class HighscoreService implements InitializingBean {
 
   public ScoreList getScoreHistory(@NonNull Game game) {
     long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
-    return getScoresBetween(game, new Date(0), new Date(), serverId);
+    return getScoresBetween(game, OffsetDateTime.ofInstant(java.time.Instant.ofEpochMilli(0), ZoneOffset.UTC), OffsetDateTime.now(), serverId);
   }
 
   /**
    * Returns all available scores for the game with the given id and time frame
    */
-  public ScoreList getScoresBetween(@NonNull Game game, Date start, Date end, long serverId) {
+  public ScoreList getScoresBetween(@NonNull Game game, OffsetDateTime start, OffsetDateTime end, long serverId) {
     ScoreList scoreList = new ScoreList();
     List<HighscoreVersion> byGameIdAndCreatedAtBetween = highscoreVersionRepository.findByGameIdAndCreatedAtBetween(game.getId(), start, end);
     for (HighscoreVersion version : byGameIdAndCreatedAtBetween) {
@@ -517,7 +519,7 @@ public class HighscoreService implements InitializingBean {
       Highscore newHighscore = Highscore.forGame(game, metadata);
 
       //create artificial empty init version
-      List<Score> newScores = highscoreParser.parseScores(newHighscore.getLastModified(), newHighscore.getRaw(), game, -1);
+      List<Score> newScores = highscoreParser.parseScores(newHighscore.getLastModified() != null ? newHighscore.getLastModified() : newHighscore.getCreatedAt(), newHighscore.getRaw(), game, -1);
       StringBuilder emptyRaw = new StringBuilder("HIGHEST SCORES\n");
       for (Score newScore : newScores) {
         emptyRaw.append("#");
@@ -564,7 +566,7 @@ public class HighscoreService implements InitializingBean {
      * Note that this only determines if the highscore has changed locally and a change event should be fired.
      */
     long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
-    List<Score> newScores = highscoreParser.parseScores(newHighscore.getLastModified(), newHighscore.getRaw(), game, serverId);
+    List<Score> newScores = highscoreParser.parseScores(newHighscore.getLastModified() != null ? newHighscore.getLastModified() : newHighscore.getCreatedAt(), newHighscore.getRaw(), game, serverId);
     List<Score> oldScores = getOrCloneOldHighscores(oldHighscore, game, oldRaw, serverId, newScores);
     List<HighscoreChangeEvent> highscoreChangeEvents = new ArrayList<>();
     if (!oldScores.isEmpty()) {
@@ -629,7 +631,7 @@ public class HighscoreService implements InitializingBean {
   private List<Score> getOrCloneOldHighscores(Highscore oldHighscore, Game game, String oldRaw, long serverId, List<Score> newScores) {
     List<Score> oldScores = new ArrayList<>();
     if (oldRaw != null) {
-      oldScores = highscoreParser.parseScores(oldHighscore.getLastModified(), oldHighscore.getRaw(), game, serverId);
+      oldScores = highscoreParser.parseScores(oldHighscore.getLastModified() != null ? oldHighscore.getLastModified() : oldHighscore.getCreatedAt(), oldHighscore.getRaw(), game, serverId);
     }
     else {
       for (Score newScore : newScores) {

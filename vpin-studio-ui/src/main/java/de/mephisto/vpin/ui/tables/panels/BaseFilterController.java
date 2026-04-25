@@ -6,7 +6,7 @@ import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import javafx.animation.Animation;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;

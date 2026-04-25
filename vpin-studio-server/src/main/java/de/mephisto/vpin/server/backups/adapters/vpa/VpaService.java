@@ -33,7 +33,7 @@ import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.util.PngFrameCapture;
 import de.mephisto.vpin.server.vpx.FolderLookupService;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import net.lingala.zip4j.ZipFile;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -50,6 +50,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.function.BiConsumer;
 
@@ -232,7 +235,7 @@ public class VpaService implements InitializingBean {
         File dmdFolder = dmdService.getDmdFolder(game);
         if (dmdFolder.exists()) {
           List<File> archiveFiles = new ArrayList<>();
-          dmdPackage.setModificationDate(new Date(dmdFolder.lastModified()));
+          dmdPackage.setModificationDate(OffsetDateTime.ofInstant(Instant.ofEpochMilli(dmdFolder.lastModified()), ZoneId.systemDefault()));
           if (!zipFile(jobDescriptor, dmdFolder, "DMD/" + dmdPackage.getName() + "/", zipOut)) {
             return;
           }

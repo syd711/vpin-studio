@@ -22,7 +22,7 @@ import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpx.VPXService;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -35,6 +35,8 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -576,9 +578,9 @@ public abstract class BaseConnector implements FrontendConnector {
     int intValue = toColorCode(uiSettings.getJustAddedColor());
     pl.setMenuColor(intValue);
     pl.setSqlPlayList(true);
-    long dayMinus7 = System.currentTimeMillis() - 7 * 24 * 60 * 60 * 1000;
+    OffsetDateTime dayMinus7 = OffsetDateTime.now().minus(7, ChronoUnit.DAYS);
     List<PlaylistGame> games = getGames().stream().filter(g -> {
-      return g.getDateAdded() != null ? g.getDateAdded().getTime() > dayMinus7 : false;
+      return g.getDateAdded() != null ? g.getDateAdded().isAfter(dayMinus7) : false;
     }).map(g -> toPlaylistGame(g.getId())).collect(Collectors.toList());
     pl.setGames(games);
     return pl;
@@ -792,7 +794,7 @@ public abstract class BaseConnector implements FrontendConnector {
   }
 
   @Override
-  public java.util.Date getStartDate() {
+  public OffsetDateTime getStartDate() {
     return null;
   }
 

@@ -1,7 +1,7 @@
 package de.mephisto.vpin.connectors.wovp.models;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class Challenge {
@@ -12,8 +12,8 @@ public class Challenge {
   private String description;
   private List<String> scriptMatchKeywords = new ArrayList<>();
   private ChallengeTypeCode challengeTypeCode;
-  private Date endDateUTC;
-  private Date startDateUTC;
+  private OffsetDateTime endDateUTC;
+  private OffsetDateTime startDateUTC;
   private PinballTable pinballTable;
   private PinballTableVersion pinballTableVersion;
   private ScoreBoard scoreBoard;
@@ -74,19 +74,19 @@ public class Challenge {
     this.challengeTypeCode = challengeTypeCode;
   }
 
-  public Date getEndDateUTC() {
+  public OffsetDateTime getEndDateUTC() {
     return endDateUTC;
   }
 
-  public void setEndDateUTC(Date endDateUTC) {
+  public void setEndDateUTC(OffsetDateTime endDateUTC) {
     this.endDateUTC = endDateUTC;
   }
 
-  public Date getStartDateUTC() {
+  public OffsetDateTime getStartDateUTC() {
     return startDateUTC;
   }
 
-  public void setStartDateUTC(Date startDateUTC) {
+  public void setStartDateUTC(OffsetDateTime startDateUTC) {
     this.startDateUTC = startDateUTC;
   }
 

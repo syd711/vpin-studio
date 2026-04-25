@@ -1,6 +1,6 @@
 package de.mephisto.vpin.restclient.frontend;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 
 public enum EmulatorType {
 

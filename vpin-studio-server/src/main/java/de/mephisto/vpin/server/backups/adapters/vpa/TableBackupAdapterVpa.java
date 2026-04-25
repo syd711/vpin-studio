@@ -12,7 +12,7 @@ import de.mephisto.vpin.server.backups.BackupDescriptor;
 import de.mephisto.vpin.server.backups.BackupSource;
 import de.mephisto.vpin.server.backups.adapters.TableBackupAdapter;
 import de.mephisto.vpin.server.games.Game;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import net.lingala.zip4j.ZipFile;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Date;
+import java.time.OffsetDateTime;
 
 public class TableBackupAdapterVpa implements TableBackupAdapter {
   private final static Logger LOG = LoggerFactory.getLogger(TableBackupAdapterVpa.class);
@@ -51,7 +51,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
     BackupDescriptor backupDescriptor = new BackupDescriptor();
     BackupPackageInfo packageInfo = new BackupPackageInfo();
 
-    backupDescriptor.setCreatedAt(new Date());
+    backupDescriptor.setCreatedAt(OffsetDateTime.now());
     backupDescriptor.setTableDetails(tableDetails);
     backupDescriptor.setPackageInfo(packageInfo);
 

@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.directb2s;
 
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SDataScore;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +14,9 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.Date;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 
 public class DirectB2SDataExtractor extends DefaultHandler {
   private final static Logger LOG = LoggerFactory.getLogger(DirectB2SDataExtractor.class);
@@ -32,7 +34,7 @@ public class DirectB2SDataExtractor extends DefaultHandler {
     this.data.setFilename(filename);
     this.data.setFilesize(directB2S.length());
     this.data.setEmulatorId(emulatorId);
-    this.data.setModificationDate(new Date(directB2S.lastModified()));
+    this.data.setModificationDate(OffsetDateTime.ofInstant(Instant.ofEpochMilli(directB2S.lastModified()), ZoneId.systemDefault()));
     if (directB2S.exists()) {
       try (InputStream in = new FileInputStream(directB2S)) {
         SAXParserFactory factory = SAXParserFactory.newInstance();

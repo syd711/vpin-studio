@@ -1,6 +1,6 @@
 package de.mephisto.vpin.connectors.github;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 
 public class FileExclusion {
   private final String name;

@@ -4,11 +4,11 @@ import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.ScoreListAdapter;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,7 +33,7 @@ public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAda
 
   @Override
   @NonNull
-  public List<Score> getScores(@Nullable Game game, @NonNull Date createdAt, @NonNull List<String> lines, boolean parseAll) {
+  public List<Score> getScores(@Nullable Game game, @NonNull OffsetDateTime createdAt, @NonNull List<String> lines, boolean parseAll) {
     try {
       List<Score> scores = new ArrayList<>();
 
@@ -125,7 +125,7 @@ public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAda
    * These scores do not have a leading position number.
    */
   @Nullable
-  protected Score createTitledScore(@NonNull Date createdAt, @Nullable String title, @NonNull String line, @Nullable String source, int gameId) {
+  protected Score createTitledScore(@NonNull OffsetDateTime createdAt, @Nullable String title, @NonNull String line, @Nullable String source, int gameId) {
     Matcher m = patternScoreTitle.matcher(line);
     if (m.find()) {
       String initials = m.group(1);
@@ -151,7 +151,7 @@ public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAda
   }
 
   @Nullable
-  public Score createScore(@NonNull Date createdAt, @Nullable String title, @NonNull String line, @Nullable String source, int gameId) {
+  public Score createScore(@NonNull OffsetDateTime createdAt, @Nullable String title, @NonNull String line, @Nullable String source, int gameId) {
     String idx = StringUtils.substringBefore(line, " ");
     idx = idx.replace(")", "");
     idx = idx.replace("#", "");

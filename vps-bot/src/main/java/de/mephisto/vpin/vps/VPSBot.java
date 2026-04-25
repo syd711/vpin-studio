@@ -26,6 +26,7 @@ import java.text.DateFormat;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.time.OffsetDateTime;
 
 public class VPSBot {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -150,7 +151,7 @@ public class VPSBot {
     }).start();
   }
 
-  private void sendVpsUpdateFull(String title, Date updated, String imgUrl, String gameLink, Map<String, String> fields) {
+  private void sendVpsUpdateFull(String title, OffsetDateTime updated, String imgUrl, String gameLink, Map<String, String> fields) {
     if (jda == null) {
       return;
     }

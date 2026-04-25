@@ -14,7 +14,7 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.util.AvatarFactory;
 import de.mephisto.vpin.ui.util.Dialogs;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;

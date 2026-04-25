@@ -6,7 +6,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.vpxz.dialogs.*;
 import de.mephisto.vpin.ui.vpxz.dialogs.TablesVPXZDialogController;
 import de.mephisto.vpin.ui.util.Dialogs;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import javafx.stage.Stage;
 
 import java.io.File;

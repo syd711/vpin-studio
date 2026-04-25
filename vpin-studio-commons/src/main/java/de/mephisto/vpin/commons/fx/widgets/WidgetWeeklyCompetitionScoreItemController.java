@@ -6,7 +6,7 @@ import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.competitions.CompetitionScore;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

@@ -6,8 +6,8 @@ import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.GameCachingService;
 import de.mephisto.vpin.server.games.GameEmulator;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +21,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 @Service
@@ -82,7 +85,7 @@ public class VPinMameRomAliasService implements InitializingBean {
       if (vpmAliasFile.exists()) {
         monitoredTextFile.setSize(vpmAliasFile.length());
         monitoredTextFile.setPath(vpmAliasFile.getAbsolutePath());
-        monitoredTextFile.setLastModified(new Date(vpmAliasFile.lastModified()));
+        monitoredTextFile.setLastModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(vpmAliasFile.lastModified()), ZoneId.systemDefault()));
         monitoredTextFile.setContent(FileUtils.readFileToString(vpmAliasFile, Charset.defaultCharset()));
       }
     }

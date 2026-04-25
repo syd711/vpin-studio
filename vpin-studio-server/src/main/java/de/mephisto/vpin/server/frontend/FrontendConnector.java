@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.frontend;
 
 import java.io.File;
-import java.util.Date;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -13,8 +13,8 @@ import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.playlists.Playlist;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 public interface FrontendConnector {
   /**
@@ -146,7 +146,7 @@ public interface FrontendConnector {
   // Statistics management
 
   @NonNull
-  java.util.Date getStartDate();
+  OffsetDateTime getStartDate();
 
   List<TableAlxEntry> getAlxData();
 

@@ -2,11 +2,12 @@ package de.mephisto.vpin.server.highscores;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.mephisto.vpin.server.games.Game;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import jakarta.persistence.*;
-import java.util.Date;
+import java.time.OffsetDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "Highscores")
@@ -14,12 +15,11 @@ import java.util.Date;
 public class Highscore {
 
   @Column(nullable = false)
-  @Temporal(TemporalType.TIMESTAMP)
-  private Date createdAt;
+  private OffsetDateTime createdAt;
 
-  private Date lastModified;
+  private OffsetDateTime lastModified;
 
-  private Date lastScanned;
+  private OffsetDateTime lastScanned;
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -66,19 +66,19 @@ public class Highscore {
     this.options = options;
   }
 
-  public Date getLastScanned() {
+  public OffsetDateTime getLastScanned() {
     return lastScanned;
   }
 
-  public void setLastScanned(Date lastScanned) {
+  public void setLastScanned(OffsetDateTime lastScanned) {
     this.lastScanned = lastScanned;
   }
 
-  public Date getLastModified() {
+  public OffsetDateTime getLastModified() {
     return lastModified;
   }
 
-  public void setLastModified(Date lastModified) {
+  public void setLastModified(OffsetDateTime lastModified) {
     this.lastModified = lastModified;
   }
 
@@ -114,11 +114,11 @@ public class Highscore {
     this.displayName = displayName;
   }
 
-  public Date getCreatedAt() {
+  public OffsetDateTime getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(Date createdAt) {
+  public void setCreatedAt(OffsetDateTime createdAt) {
     this.createdAt = createdAt;
   }
 
@@ -133,7 +133,7 @@ public class Highscore {
   public static Highscore forGame(@NonNull Game game, @Nullable HighscoreMetadata metadata) {
     Highscore highscore = new Highscore();
     highscore.setGameId(game.getId());
-    highscore.setCreatedAt(new Date());
+    highscore.setCreatedAt(OffsetDateTime.now());
     highscore.setDisplayName(game.getGameDisplayName());
 
     if (metadata != null) {
@@ -150,7 +150,7 @@ public class Highscore {
   public HighscoreVersion toVersion(int changedPosition, String newRaw) {
     HighscoreVersion version = new HighscoreVersion();
     version.setChangedPosition(changedPosition);
-    version.setCreatedAt(new Date());
+    version.setCreatedAt(OffsetDateTime.now());
     version.setOldRaw(this.getRaw());
     version.setDisplayName(this.getDisplayName());
     version.setGameId(this.getGameId());
@@ -162,15 +162,13 @@ public class Highscore {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-
     Highscore highscore = (Highscore) o;
-
-    return id.equals(highscore.id) && this.gameId == ((Highscore) o).gameId;
+    return gameId == highscore.gameId && Objects.equals(id, highscore.id);
   }
 
   @Override
   public int hashCode() {
-    return id.hashCode();
+    return Objects.hash(id, gameId);
   }
 
   @Override

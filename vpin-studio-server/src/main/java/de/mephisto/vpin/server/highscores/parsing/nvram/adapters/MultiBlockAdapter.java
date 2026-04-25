@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.highscores.parsing.nvram.adapters;
 
 import de.mephisto.vpin.server.highscores.parsing.listadapters.DefaultAdapter;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;

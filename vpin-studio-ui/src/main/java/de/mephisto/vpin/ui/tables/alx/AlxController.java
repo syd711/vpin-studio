@@ -14,7 +14,7 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.commons.utils.JFXFuture;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
+import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -39,7 +40,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
 public class AlxController implements Initializable, StudioFXController, StudioEventListener, PreferenceChangeListener {
-  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+  private final static Logger LOG = LoggerFactory.getLogger(AlxController.class);
   private final Debouncer debouncer = new Debouncer();
   public static final int DEBOUNCE_MS = 200;
 
@@ -232,8 +233,8 @@ public class AlxController implements Initializable, StudioFXController, StudioE
       AlxFactory.createTotalGamesPlayedTile(Studio.stage, tileList, entries);
       AlxFactory.createTotalScoresTile(Studio.stage, tileList, entries);
       AlxFactory.createTotalHighScoresTile(Studio.stage, tileList, entries);
-      Date alxStartDate = alxSummary.getStartDate() != null ? alxSummary.getStartDate() :
-          new Date(System.currentTimeMillis() - 1 * 365 * 24 * 3600 * 1000);
+      OffsetDateTime alxStartDate = alxSummary.getStartDate() != null ? alxSummary.getStartDate() :
+              OffsetDateTime.now().minusYears(1);
       AlxFactory.createAvgWeekTimeTile(Studio.stage, tileList, entries, alxStartDate);
     }
     catch (Exception e) {

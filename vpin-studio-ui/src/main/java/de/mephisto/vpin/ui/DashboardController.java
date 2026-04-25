@@ -6,7 +6,7 @@ import de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoresController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetPlayerRankController;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;

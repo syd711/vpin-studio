@@ -6,7 +6,7 @@ import de.mephisto.vpin.restclient.ini.IniSectionRepresentation;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.games.GameService;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.slf4j.Logger;

@@ -6,18 +6,18 @@ import de.mephisto.vpin.connectors.iscored.Score;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 
 import java.lang.invoke.MethodHandles;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
 public class ScoreSummaryRepresentation {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  private Date createdAt;
+  private OffsetDateTime createdAt;
 
   private String raw;
 
@@ -58,11 +58,11 @@ public class ScoreSummaryRepresentation {
     this.raw = raw;
   }
 
-  public Date getCreatedAt() {
+  public OffsetDateTime getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(Date createdAt) {
+  public void setCreatedAt(OffsetDateTime createdAt) {
     this.createdAt = createdAt;
   }
 

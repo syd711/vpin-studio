@@ -4,7 +4,7 @@ import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.server.games.Game;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 
 import java.io.BufferedInputStream;
 import java.io.OutputStream;

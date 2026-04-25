@@ -19,8 +19,8 @@ import de.mephisto.vpin.server.util.Version;
 import de.mephisto.vpin.server.vpsdb.VpsDbEntry;
 import de.mephisto.vpin.server.vpsdb.VpsEntryService;
 import de.mephisto.vpin.server.vpx.VPXService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -34,7 +34,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
-import java.util.Date;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -231,7 +231,7 @@ public class VpsService implements InitializingBean {
     return vpsDatabase.reload();
   }
 
-  public Date getChangeDate() {
+  public OffsetDateTime getChangeDate() {
     return vpsDatabase.getChangeDate();
   }
 

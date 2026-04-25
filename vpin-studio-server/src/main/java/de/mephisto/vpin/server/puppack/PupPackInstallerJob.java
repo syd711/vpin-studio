@@ -4,7 +4,7 @@ import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UnzipChangeListener;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.highscores;
 
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.games.Game;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 
 public class DiscordHighscoreChangeEvent {
 

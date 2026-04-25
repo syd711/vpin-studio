@@ -5,14 +5,14 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.listadapters.DefaultAdapter;
 import de.mephisto.vpin.server.highscores.parsing.listadapters.SortedScoreAdapter;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 public class ScoreListFactory {
@@ -37,14 +37,14 @@ public class ScoreListFactory {
 
   //-------------------------------------------------------
 
-  public static List<Score> create(@NonNull String raw, @NonNull Date createdAt, @Nullable Game game, @NonNull ScoringDB scoringDB) {
+  public static List<Score> create(@NonNull String raw, @NonNull OffsetDateTime createdAt, @Nullable Game game, @NonNull ScoringDB scoringDB) {
     return create(raw, createdAt, game, scoringDB, false);
   }
 
   /**
    * The parseAll flag, when false (by default), filters on high scores only
    */
-  public static List<Score> create(@NonNull String raw, @NonNull Date createdAt, @Nullable Game game, @NonNull ScoringDB scoringDB, boolean parseAll) {
+  public static List<Score> create(@NonNull String raw, @NonNull OffsetDateTime createdAt, @Nullable Game game, @NonNull ScoringDB scoringDB, boolean parseAll) {
     List<Score> scores = new ArrayList<>();
 
     try {

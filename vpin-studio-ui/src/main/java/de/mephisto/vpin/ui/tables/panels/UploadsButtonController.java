@@ -11,7 +11,7 @@ import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FrontendUtil;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

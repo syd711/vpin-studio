@@ -1,14 +1,15 @@
 package de.mephisto.vpin.restclient.highscores;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 
 public class HighscoreBackup {
   private String filename;
   private String highscoreFilename;
-  private Date creationDate;
+  private OffsetDateTime creationDate;
   private String raw;
   private String rom;
   private HighscoreType highscoreType;
@@ -45,11 +46,11 @@ public class HighscoreBackup {
     this.filename = filename;
   }
 
-  public Date getCreationDate() {
+  public OffsetDateTime getCreationDate() {
     return creationDate;
   }
 
-  public void setCreationDate(Date creationDate) {
+  public void setCreationDate(OffsetDateTime creationDate) {
     this.creationDate = creationDate;
   }
 
@@ -65,9 +66,10 @@ public class HighscoreBackup {
   public String toString() {
     try {
       String name = this.filename.substring(0, filename.indexOf("."));
-      Date date = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").parse(name);
-      return DateFormat.getDateTimeInstance().format(date);
-    } catch (ParseException e) {
+      DateTimeFormatter parser = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
+      LocalDateTime localDateTime = LocalDateTime.parse(name, parser);
+      return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(localDateTime);
+    } catch (Exception e) {
       return this.getFilename();
     }
   }

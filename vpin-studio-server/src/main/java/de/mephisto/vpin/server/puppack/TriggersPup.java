@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.puppack;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.slf4j.Logger;
@@ -22,13 +22,14 @@ public class TriggersPup {
 
   public TriggersPup(@NonNull File triggersPupFile) {
     this.triggersPupFile = triggersPupFile;
-    Reader in = null;
-    try {
+    try (Reader in = new FileReader(triggersPupFile)) {
       if (triggersPupFile.exists()) {
-        in = new FileReader(triggersPupFile);
-        Iterable<CSVRecord> records = CSVFormat.RFC4180.parse(in);
+        CSVFormat format = CSVFormat.RFC4180.builder().build(); // Use builder for modern API
+        Iterable<CSVRecord> records = format.parse(in);
         Iterator<CSVRecord> iterator = records.iterator();
-        iterator.next();
+        if (iterator.hasNext()) { // Skip header
+          iterator.next();
+        }
 
         while (iterator.hasNext()) {
           CSVRecord record = iterator.next();
@@ -38,14 +39,6 @@ public class TriggersPup {
       }
     } catch (Exception e) {
       LOG.error("Failed to load for {}: {}", triggersPupFile.getAbsolutePath(), e.getMessage());
-    } finally {
-      if (in != null) {
-        try {
-          in.close();
-        } catch (IOException e) {
-          //ignore
-        }
-      }
     }
   }
 

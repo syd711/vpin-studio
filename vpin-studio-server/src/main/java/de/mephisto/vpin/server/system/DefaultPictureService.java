@@ -23,8 +23,8 @@ import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.commons.fx.ImageUtil;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;

@@ -1,7 +1,7 @@
 package de.mephisto.vpin.restclient.assets;
 
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.lang3.ArrayUtils;
 
 public enum AssetType {

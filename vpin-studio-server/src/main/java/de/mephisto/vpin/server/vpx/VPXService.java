@@ -8,7 +8,7 @@ import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.slf4j.Logger;

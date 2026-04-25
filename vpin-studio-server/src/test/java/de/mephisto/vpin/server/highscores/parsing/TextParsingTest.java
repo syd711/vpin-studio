@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
-import java.util.Date;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,7 +36,8 @@ public class TextParsingTest extends AbstractVPinServerTest {
       String raw = new TextHighscoreAdapters().convertTextFileTextToMachineReadable(highscoreMetadata, scoringDB, entry);
       assertNull(highscoreMetadata.getStatus());
       if (raw != null) {
-        List<Score> scores = highscoreParsingService.parseScores(new Date(entry.lastModified()), raw, null, -1);
+        OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochMilli(entry.length()), ZoneId.systemDefault());
+        List<Score> scores = highscoreParsingService.parseScores(date, raw, null, -1);
         assertNotNull(scores, "Reading failed for " + entry);
         assertFalse(scores.isEmpty(), "No score entry found for " + entry);
         assertNotNull(scores.get(0).getPlayerInitials(), "No score initials found for " + entry);
@@ -57,7 +60,8 @@ public class TextParsingTest extends AbstractVPinServerTest {
         String raw = new TextHighscoreAdapters().convertTextFileTextToMachineReadable(highscoreMetadata, scoringDB, entry);
         assertNull(highscoreMetadata.getStatus());
         if (raw != null) {
-          List<Score> scores = highscoreParsingService.parseScores(new Date(entry.lastModified()), raw, null, -1);
+          OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochMilli(entry.lastModified()), ZoneId.systemDefault());
+          List<Score> scores = highscoreParsingService.parseScores(date, raw, null, -1);
           assertNotNull(scores, "Reading failed for " + entry);
           assertFalse(scores.isEmpty(), "No score entry found for " + entry);
           assertNotNull(scores.get(0).getPlayerInitials(), "No score initials found for " + entry);

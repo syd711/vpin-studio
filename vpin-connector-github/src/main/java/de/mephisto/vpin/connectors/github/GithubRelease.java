@@ -1,6 +1,6 @@
 package de.mephisto.vpin.connectors.github;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;

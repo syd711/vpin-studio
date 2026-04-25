@@ -10,4 +10,5 @@ open module de.mephisto.vpin.connectors.iscored {
   requires tools.jackson.databind;
   requires com.fasterxml.jackson.annotation;
   requires org.apache.commons.codec;
+  requires org.jspecify;
 }

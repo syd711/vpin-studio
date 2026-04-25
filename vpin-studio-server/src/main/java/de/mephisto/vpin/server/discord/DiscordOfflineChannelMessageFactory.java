@@ -8,11 +8,11 @@ import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.players.Player;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Date;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 public class DiscordOfflineChannelMessageFactory {
@@ -51,7 +51,7 @@ public class DiscordOfflineChannelMessageFactory {
     msg = msg + getBeatenMessage(oldScore, newScore);
 
     if (!StringUtils.isEmpty(raw)) {
-      List<Score> scores = highscoreParsingService.parseScores(new Date(), raw, game, -1);
+      List<Score> scores = highscoreParsingService.parseScores(OffsetDateTime.now(), raw, game, -1);
       String highscoreList = DiscordChannelMessageFactory.createHighscoreList(scores, -1);
       msg = msg + "\nHere is the current highscore:\n" + highscoreList;
     }
@@ -78,7 +78,7 @@ public class DiscordOfflineChannelMessageFactory {
     msg = msg + getBeatenMessage(oldScore, newScore);
 
     if (!StringUtils.isEmpty(raw)) {
-      List<Score> scores = highscoreParsingService.parseScores(new Date(), raw, game, -1);
+      List<Score> scores = highscoreParsingService.parseScores(OffsetDateTime.now(), raw, game, -1);
       String highscoreList = DiscordChannelMessageFactory.createHighscoreList(scores, -1);
       msg = msg + "\nHere is the current highscore:\n" + highscoreList;
     }

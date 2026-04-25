@@ -2,13 +2,13 @@ package de.mephisto.vpin.restclient.backups;
 
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 
-import java.util.Date;
+import java.time.OffsetDateTime;
 import java.util.Objects;
 
 public class BackupDescriptorRepresentation {
   private TableDetails tableDetails;
   private BackupSourceRepresentation source;
-  private Date createdAt;
+  private OffsetDateTime createdAt;
   private String filename;
   private long size;
   private String archiveType;
@@ -46,11 +46,11 @@ public class BackupDescriptorRepresentation {
     this.filename = filename;
   }
 
-  public Date getCreatedAt() {
+  public OffsetDateTime getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(Date createdAt) {
+  public void setCreatedAt(OffsetDateTime createdAt) {
     this.createdAt = createdAt;
   }
 

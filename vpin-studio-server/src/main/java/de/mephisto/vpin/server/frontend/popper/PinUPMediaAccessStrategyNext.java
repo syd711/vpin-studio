@@ -4,8 +4,8 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.playlists.Playlist;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;

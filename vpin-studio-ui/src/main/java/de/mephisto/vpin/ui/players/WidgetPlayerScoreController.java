@@ -11,7 +11,7 @@ import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 import de.mephisto.vpin.ui.Studio;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;

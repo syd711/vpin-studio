@@ -20,7 +20,7 @@ import de.mephisto.vpin.server.listeners.EventOrigin;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 
 import static de.mephisto.vpin.server.VPinStudioServer.Features;
 

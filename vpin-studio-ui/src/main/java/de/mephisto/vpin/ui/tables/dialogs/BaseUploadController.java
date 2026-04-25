@@ -13,7 +13,7 @@ import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import de.mephisto.vpin.ui.util.UploadProgressModel;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

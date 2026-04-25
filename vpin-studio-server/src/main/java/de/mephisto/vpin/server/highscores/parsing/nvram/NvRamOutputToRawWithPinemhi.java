@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.highscores.parsing.nvram;
 
 import de.mephisto.vpin.server.highscores.parsing.nvram.adapters.*;
 import de.mephisto.vpin.server.pinemhi.PINemHiService;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import net.nvrams.mapping.pinemhi.NVRamPinemhiParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

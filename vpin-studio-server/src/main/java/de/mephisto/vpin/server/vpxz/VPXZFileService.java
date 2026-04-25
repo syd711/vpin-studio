@@ -25,7 +25,7 @@ import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.util.PngFrameCapture;
 import de.mephisto.vpin.server.vpx.FolderLookupService;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import net.lingala.zip4j.ZipFile;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;

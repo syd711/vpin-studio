@@ -6,7 +6,7 @@ import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 

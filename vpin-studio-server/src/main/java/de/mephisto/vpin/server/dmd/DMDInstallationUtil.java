@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.dmd;
 
 import de.mephisto.vpin.restclient.util.ZipUtil;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZip;

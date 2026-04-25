@@ -37,8 +37,8 @@ import de.mephisto.vpin.server.roms.RomService;
 import de.mephisto.vpin.server.roms.ScanResult;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vps.VpsService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -48,6 +48,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -304,7 +305,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     if (gameDetails == null || forceScan) {
       if (gameDetails == null) {
         gameDetails = new GameDetails();
-        gameDetails.setCreatedAt(new java.util.Date());
+        gameDetails.setCreatedAt(OffsetDateTime.now());
       }
 
       tableDetails = frontendService.getTableDetails(game.getId());
@@ -347,7 +348,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
       }
 
       gameDetails.setPupId(game.getId());
-      gameDetails.setUpdatedAt(new java.util.Date());
+      gameDetails.setUpdatedAt(OffsetDateTime.now());
 
       gameDetailsRepositoryService.saveAndFlush(gameDetails);
       LOG.info("Created GameDetails for {}, was forced: {}", game.getGameDisplayName(), forceScan);

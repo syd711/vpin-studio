@@ -4,7 +4,7 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.model.FileHeader;
 import net.sf.sevenzipjbinding.IInArchive;

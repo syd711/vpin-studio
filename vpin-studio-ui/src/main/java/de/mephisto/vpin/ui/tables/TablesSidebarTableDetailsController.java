@@ -17,7 +17,7 @@ import de.mephisto.vpin.ui.tables.panels.UploadsButtonController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.util.tags.TagButton;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

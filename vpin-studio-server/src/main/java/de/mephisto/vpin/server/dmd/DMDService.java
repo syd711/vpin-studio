@@ -9,8 +9,8 @@ import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.vpinmame.VPinMameService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -68,7 +71,7 @@ public class DMDService implements InitializingBean {
 
         File dmdFolder = getDmdFolder(game);
         if (dmdFolder.exists()) {
-          dmdPackage.setModificationDate(new Date(dmdFolder.lastModified()));
+          dmdPackage.setModificationDate(OffsetDateTime.ofInstant(Instant.ofEpochMilli(dmdFolder.lastModified()), ZoneId.systemDefault()));
           File[] dmdFiles = dmdFolder.listFiles((dir, name) -> new File(dir, name).isFile());
           if (dmdFiles != null && dmdFiles.length > 0) {
             dmdPackage.setFiles(Arrays.stream(dmdFiles).map(File::getName).collect(Collectors.toList()));

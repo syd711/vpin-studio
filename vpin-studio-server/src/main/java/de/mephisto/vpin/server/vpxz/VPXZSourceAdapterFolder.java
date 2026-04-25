@@ -11,6 +11,9 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.*;
 
@@ -49,7 +52,7 @@ public class VPXZSourceAdapterFolder implements VPXZSourceAdapter {
             TableDetails manifest = VpxzArchiveUtil.readTableDetails(vpxzFile);
             if(manifest != null) {
               VPXZPackageInfo packageInfo = VpxzArchiveUtil.readPackageInfo(vpxzFile);
-              VPXZDescriptor descriptor = new VPXZDescriptor(source, manifest, packageInfo, new Date(vpxzFile.lastModified()), vpxzFile.getName(), vpxzFile.getAbsolutePath(), vpxzFile.length());
+              VPXZDescriptor descriptor = new VPXZDescriptor(source, manifest, packageInfo, OffsetDateTime.ofInstant(Instant.ofEpochMilli(vpxzFile.lastModified()), ZoneId.systemDefault()), vpxzFile.getName(), vpxzFile.getAbsolutePath(), vpxzFile.length());
               cache.add(descriptor);
             }
           }

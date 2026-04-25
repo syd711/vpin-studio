@@ -9,7 +9,10 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -41,6 +44,13 @@ public class DateUtil {
 
   public static String formatDateTime(Date date) {
     return DateFormat.getDateTimeInstance().format(date);
+  }
+
+  public static String formatDateTime(OffsetDateTime date) {
+    if (date == null) {
+      return "-";
+    }
+    return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(date);
   }
 
   public static Date formatDate(LocalDate value, String time) {
@@ -77,6 +87,26 @@ public class DateUtil {
       LocalDate e = end.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
       long diff = ChronoUnit.DAYS.between(s, e);
+      if (diff == 1) {
+        return diff + " day";
+      }
+
+      if (diff > 0) {
+        return diff + " days";
+      }
+      return DurationFormatUtils.formatDuration(ms, "HH 'hours', mm 'minutes'", false);
+    }
+    return "-";
+  }
+
+  public static String formatDuration(OffsetDateTime start, OffsetDateTime end) {
+    if (start != null && end != null) {
+      long ms = ChronoUnit.MILLIS.between(start, end);
+      if (ms < 0) {
+        return "-";
+      }
+
+      long diff = ChronoUnit.DAYS.between(start.toLocalDate(), end.toLocalDate());
       if (diff == 1) {
         return diff + " day";
       }
