@@ -92,7 +92,7 @@
                      <left>
                         <StackPane maxWidth="740.0" minWidth="740.0" prefWidth="740.0" styleClass="scores-container" BorderPane.alignment="CENTER">
                            <children>
-                              <ImageView fx:id="screenshotView" fitHeight="370.0" fitWidth="730.0" pickOnBounds="true" preserveRatio="true" />
+                              <ImageView fx:id="screenshotView" fitHeight="370.0" fitWidth="740.0" pickOnBounds="true" preserveRatio="true" />
                               <VBox fx:id="loadingIndicator" alignment="CENTER" spacing="6.0">
                                  <children>
                                     <ProgressIndicator />

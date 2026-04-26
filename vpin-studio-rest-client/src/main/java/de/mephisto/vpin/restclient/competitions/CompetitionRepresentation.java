@@ -273,23 +273,15 @@ public class CompetitionRepresentation {
   public CompetitionRepresentation cloneCompetition() {
     CompetitionRepresentation clone = new CompetitionRepresentation();
 
+    LocalDate start = getStartDate().toLocalDate();
     LocalDate end = getEndDate().toLocalDate();
-    boolean hasEnded = end.isBefore(LocalDate.now());
+    long diff = Math.abs(ChronoUnit.DAYS.between(end, start));
 
-    if (hasEnded) {
-      LocalDate start = getStartDate().toLocalDate();
-      long diff = Math.abs(ChronoUnit.DAYS.between(end, start));
+    OffsetDateTime newStartDate = OffsetDateTime.now().truncatedTo(ChronoUnit.DAYS);
+    OffsetDateTime newEndDate = newStartDate.plusDays(diff);
 
-      OffsetDateTime newStartDate = OffsetDateTime.now().truncatedTo(ChronoUnit.DAYS);
-      OffsetDateTime newEndDate = newStartDate.plusDays(diff);
-
-      clone.setStartDate(newStartDate);
-      clone.setEndDate(newEndDate);
-    }
-    else {
-      clone.setStartDate(this.getStartDate());
-      clone.setEndDate(this.getEndDate());
-    }
+    clone.setStartDate(newStartDate);
+    clone.setEndDate(newEndDate);
 
     clone.setName(this.getName() + " (1)");
     clone.setBadge(this.getBadge());

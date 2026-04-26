@@ -129,6 +129,16 @@ public class ScoringDB {
 
   private List<Map<String, Object>> highscoreIniParsers = new ArrayList<>();
 
+  private List<Map<String, Object>> highscoreVPRegParsers = new ArrayList<>();
+
+  public List<Map<String, Object>> getHighscoreVPRegParsers() {
+    return highscoreVPRegParsers;
+  }
+
+  public void setHighscoreVPRegParsers(List<Map<String, Object>> highscoreVPRegParsers) {
+    this.highscoreVPRegParsers = highscoreVPRegParsers;
+  }
+
   public List<Map<String, Object>> getHighscoreIniParsers() {
     return highscoreIniParsers;
   }
@@ -138,6 +148,10 @@ public class ScoringDB {
   }
 
   private List<ScoringDBMapping> highscoreMappings = new ArrayList<>();
+
+  private List<String> supportedNvRams = new ArrayList<>();
+
+  private List<String> notSupported = new ArrayList<>();
 
   private List<String> allRoms = new ArrayList<>();
 
@@ -160,6 +174,14 @@ public class ScoringDB {
 
   public void setIgnoredTextFiles(List<String> ignoredTextFiles) {
     this.ignoredTextFiles = ignoredTextFiles;
+  }
+
+  public List<String> getNotSupported() {
+    return notSupported;
+  }
+
+  public void setNotSupported(List<String> notSupported) {
+    this.notSupported = notSupported;
   }
 
   public List<String> getIgnoredVPRegEntries() {
@@ -203,6 +225,14 @@ public class ScoringDB {
     this.highscoreMappings = highscoreMappings;
   }
 
+  public List<String> getSupportedNvRams() {
+    return supportedNvRams;
+  }
+
+  public void setSupportedNvRams(List<String> supportedNvRams) {
+    this.supportedNvRams = supportedNvRams;
+  }
+
   public boolean isNvRam(@Nullable String rom) {
     if (StringUtils.isEmpty(rom)) {
       return false;
@@ -221,5 +251,10 @@ public class ScoringDB {
       }
     }
     return null;
+  }
+
+  @Override
+  public String toString() {
+    return "Scoring Database (" + supportedNvRams.size() + " supported nvrams, " + highscoreMappings.size() + " mappings)";
   }
 }

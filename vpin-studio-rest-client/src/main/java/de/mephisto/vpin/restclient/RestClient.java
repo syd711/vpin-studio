@@ -239,8 +239,20 @@ public class RestClient implements ClientHttpRequestInterceptor {
   @Override
   public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
     request.getHeaders().add(HttpHeaders.ACCEPT_ENCODING, "gzip, deflate, br");
+//    logRequest(request);
     ClientHttpResponse response = execution.execute(request, body);
+//    logResponse(response);
     return response;
+  }
+
+  private void logResponse(ClientHttpResponse response) {
+    LOG.info("--------- Response ---------------");
+    response.getHeaders().forEach((key, value) -> LOG.info(key + " => " + value));
+  }
+
+  private void logRequest(HttpRequest request) {
+    LOG.info("--------- Request ---------------");
+    request.getHeaders().forEach((key, value) -> LOG.info(key + " => " + value));
   }
 
   public byte[] readBinary(String resource) {
