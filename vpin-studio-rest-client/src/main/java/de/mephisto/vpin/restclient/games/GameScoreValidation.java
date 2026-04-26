@@ -13,7 +13,6 @@ public class GameScoreValidation {
   public final static String STATUS_ROM_MATCH_FOUND = "A matching highscore entry has been found for this ROM name.";
   public final static String STATUS_ROM_ALIASED_MATCH_FOUND = "A matching highscore entry has been found for this aliased ROM name.";
   public final static String STATUS_VPREG_STG_MATCH_FOUND = "A matching highscore entry has been found for this ROM name.";
-  public final static String STATUS_HSFILE_MATCH_FOUND = "A matching highscore file has been found.";
 
   public final static String STATUS_FIELDS_NOT_SET = "Neither ROM name nor highscore filename is set.";
   public final static String STATUS_ROM_NOT_SUPPORTED = "This ROM is currently not supported by the highscore parser.";
