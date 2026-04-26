@@ -14,7 +14,6 @@ import java.io.*;
 import java.lang.invoke.MethodHandles;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URL;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -31,22 +30,12 @@ public class VPS {
 
   private final static boolean skipUpdates = false;
 
-  private static VPS instance;
-
-  static {
-    objectMapper = JsonMapper.builder()
-        .enable(SerializationFeature.INDENT_OUTPUT)
-        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-        .build();
-  }
-
-  public static synchronized VPS getInstance() {
-    if (instance == null) {
-      instance = new VPS();
-      instance.reload();
+    static {
+        objectMapper = JsonMapper.builder()
+                .enable(SerializationFeature.INDENT_OUTPUT)
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .build();
     }
-    return instance;
-  }
 
   private final List<VpsSheetChangedListener> listeners = new ArrayList<>();
 
@@ -90,20 +79,6 @@ public class VPS {
   public VpsTable getTableById(String id) {
     if (this.tables != null) {
       return this.tables.stream().filter(t -> t.getId() != null && t.getId().equals(id)).findFirst().orElse(null);
-    }
-    return null;
-  }
-
-  public VpsTable getTableByDisplayName(String name) {
-    if (this.tables != null) {
-      return this.tables.stream().filter(t -> t.getDisplayName() != null && t.getDisplayName().equalsIgnoreCase(name)).findFirst().orElse(null);
-    }
-    return null;
-  }
-
-  public VpsTable findTableByFilename(String name) {
-    if (this.tables != null) {
-      return this.tables.stream().filter(t -> t.getName() != null && name.toLowerCase().contains(t.getName().toLowerCase())).findFirst().orElse(null);
     }
     return null;
   }
@@ -182,18 +157,18 @@ public class VPS {
 
   //----------------- LOADERS
 
-  private File vpsDbFile;
-  private File getVpsDbFile() {
-    if (vpsDbFile != null) {
-      return vpsDbFile;
+    private File vpsDbFile;
+    private File getVpsDbFile() {
+        if (vpsDbFile != null) {
+            return vpsDbFile;
+        }
+        File folder = new File("./resources");
+        if (!folder.exists()) {
+            folder = new File("../resources");
+        }
+        vpsDbFile = new File(folder, "vpsdb.json");
+        return vpsDbFile;
     }
-    File folder = new File("./resources");
-    if (!folder.exists()) {
-      folder = new File("../resources");
-    }
-    vpsDbFile = new File(folder, "vpsdb.json");
-    return vpsDbFile;
-  }
 
   public void loadTables(InputStream in) {
     try {
@@ -280,9 +255,9 @@ public class VPS {
     return Collections.emptyList();
   }
 
-  public OffsetDateTime getChangeDate() {
-    return OffsetDateTime.ofInstant(Instant.ofEpochMilli(getVpsDbFile().lastModified()), ZoneId.systemDefault());
-  }
+    public OffsetDateTime getChangeDate() {
+        return OffsetDateTime.ofInstant(Instant.ofEpochMilli(getVpsDbFile().lastModified()), ZoneId.systemDefault());
+    }
 
   public boolean reload() {
     File vpsDbFile = getVpsDbFile();
