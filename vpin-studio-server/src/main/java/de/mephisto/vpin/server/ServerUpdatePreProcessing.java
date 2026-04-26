@@ -33,7 +33,6 @@ public class ServerUpdatePreProcessing {
 
   static {
     DOWNLOADS.put("PinVol.exe", GITHUB_RESOURCES_URL + "PinVol.exe");
-    DOWNLOADS.put("ffmpeg.exe", GITHUB_RESOURCES_URL + "ffmpeg.exe");
     DOWNLOADS.put("jptch.exe", GITHUB_RESOURCES_URL + "jptch.exe");
     DOWNLOADS.put("nircmd.exe", GITHUB_RESOURCES_URL + "nircmd.exe");
     DOWNLOADS.put("downloader.vbs", GITHUB_RESOURCES_URL + "downloader.vbs");
@@ -74,13 +73,13 @@ public class ServerUpdatePreProcessing {
         runJvmCheck();
         runScriptCheck();
         runDeletionChecks();
-        //runFfmpegUpdateCheck();
+        runFfmpegUpdateCheck();
         runPinVolUpdateCheck();
         runVpxToolsUpdateCheck();
         runLogosUpdateCheck();
         runDOFTesterCheck();
         runPupGamesUpdateCheck();
-        //runNVMapsUpdateCheck();
+        runTomsLogicUpdateCheck();
         runDownloadableInstallationsCheck();
         runDeletions();
 
@@ -98,7 +97,7 @@ public class ServerUpdatePreProcessing {
     }).start();
   }
 
-  private static void runNVMapsUpdateCheck() {
+  private static void runTomsLogicUpdateCheck() {
     File mapsFolder = new File(RESOURCES, "maps/");
     if (!mapsFolder.exists()) {
       mapsFolder.mkdirs();
