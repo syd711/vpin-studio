@@ -325,10 +325,6 @@
                         <goals>
                             <goal>repackage</goal>
                         </goals>
-                        <configuration>
-                            <!-- We disable repackaging for the default JAR so Launch4j can use it -->
-                            <classifier>exec</classifier>
-                        </configuration>
                     </execution>
                 </executions>
                 <configuration>
@@ -389,14 +385,9 @@
                             <headerType>console</headerType>
                             <icon>${project.basedir}/src/main/resources/logo.ico</icon>
                             <outfile>target/VPin-Studio-Server.exe</outfile>
-                            <!-- Use the original (non-repackaged) JAR -->
+                            <!-- Use the repackaged JAR -->
                             <jar>target/vpin-studio-server.jar</jar>
                             <errTitle>VPin Studio Server</errTitle>
-                            <classPath>
-                                <mainClass>de.mephisto.vpin.server.VPinStudioServer</mainClass>
-                                <addDependencies>true</addDependencies>
-                                <preCp>anything</preCp>
-                            </classPath>
                             <jre>
                                 <path>./win32/java</path>
                             </jre>

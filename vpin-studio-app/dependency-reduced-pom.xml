@@ -176,11 +176,9 @@
     </plugins>
   </build>
   <properties>
-    <maven.compiler.target>25</maven.compiler.target>
-    <maven.compiler.source>25</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <javafx.version>25-ea+11</javafx.version>
-    <junit.version>5.11.4</junit.version>
+    <maven.compiler.target>25</maven.compiler.target>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <maven.compiler.source>25</maven.compiler.source>
   </properties>
 </project>
