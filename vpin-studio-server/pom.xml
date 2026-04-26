@@ -388,8 +388,8 @@
                             <jar>target/vpin-studio-server.jar</jar>
                             <errTitle>encc</errTitle>
                             <classPath>
-                                <mainClass>org.springframework.boot.loader.JarLauncher</mainClass>
-                                <addDependencies>false</addDependencies>
+                                <mainClass>de.mephisto.vpin.server.VPinStudioServer</mainClass>
+                                <addDependencies>true</addDependencies>
                                 <preCp>anything</preCp>
                             </classPath>
                             <jre>
@@ -434,6 +434,7 @@
                                         <include>nvrams/**</include>
                                         <include>scripts/**</include>
                                         <include>competition-badges/*</include>
+                                        <include>pubgames/*</include>
                                         <include>pubgames/*</include>
                                         <include>puppacktweaker/*</include>
                                         <include>*.exe</include>
