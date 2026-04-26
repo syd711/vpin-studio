@@ -320,16 +320,20 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>de.mephisto.vpin.server.VPinStudioServer</mainClass>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>
                             <goal>repackage</goal>
                         </goals>
+                        <configuration>
+                            <!-- We disable repackaging for the default JAR so Launch4j can use it -->
+                            <classifier>exec</classifier>
+                        </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <mainClass>de.mephisto.vpin.server.VPinStudioServer</mainClass>
+                </configuration>
             </plugin>
 
             <plugin>
@@ -385,8 +389,9 @@
                             <headerType>console</headerType>
                             <icon>${project.basedir}/src/main/resources/logo.ico</icon>
                             <outfile>target/VPin-Studio-Server.exe</outfile>
+                            <!-- Use the original (non-repackaged) JAR -->
                             <jar>target/vpin-studio-server.jar</jar>
-                            <errTitle>encc</errTitle>
+                            <errTitle>VPin Studio Server</errTitle>
                             <classPath>
                                 <mainClass>de.mephisto.vpin.server.VPinStudioServer</mainClass>
                                 <addDependencies>true</addDependencies>
@@ -434,7 +439,6 @@
                                         <include>nvrams/**</include>
                                         <include>scripts/**</include>
                                         <include>competition-badges/*</include>
-                                        <include>pubgames/*</include>
                                         <include>pubgames/*</include>
                                         <include>puppacktweaker/*</include>
                                         <include>*.exe</include>
