@@ -30,6 +30,10 @@ public class VPSChange {
       return "Table null";
     }
 
+    if (diffType == null) {
+      return "DiffType null for table " + tableById.getName();
+    }
+
     if (diffType.equals(VpsDiffTypes.tableNewVPX)) {
       return diffType.toString();
     }

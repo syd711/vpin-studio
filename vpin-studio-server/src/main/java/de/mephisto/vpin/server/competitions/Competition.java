@@ -9,6 +9,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 import java.util.UUID;
@@ -21,11 +23,11 @@ public class Competition {
 
   @Column(nullable = false, updatable = false)
   @CreatedDate
-  private OffsetDateTime createdAt;
+  private LocalDateTime createdAt;
 
   @Column(nullable = false)
   @LastModifiedDate
-  private OffsetDateTime updatedAt;
+  private LocalDateTime updatedAt;
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -276,19 +278,19 @@ public class Competition {
     this.name = name;
   }
 
-  public OffsetDateTime getCreatedAt() {
+  public LocalDateTime getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(OffsetDateTime createdAt) {
+  public void setCreatedAt(LocalDateTime createdAt) {
     this.createdAt = createdAt;
   }
 
-  public OffsetDateTime getUpdatedAt() {
+  public LocalDateTime getUpdatedAt() {
     return updatedAt;
   }
 
-  public void setUpdatedAt(OffsetDateTime updatedAt) {
+  public void setUpdatedAt(LocalDateTime updatedAt) {
     this.updatedAt = updatedAt;
   }
 
