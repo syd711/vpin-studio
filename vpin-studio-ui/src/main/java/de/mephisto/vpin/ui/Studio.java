@@ -88,6 +88,7 @@ public class Studio extends Application {
 
   private ServerSocket ss;
   private static Stage splash;
+  private static SplashScreenController splashController;
 
   public static void main(String[] args) {
     launch(args);
@@ -145,6 +146,10 @@ public class Studio extends Application {
 
     // offload connection logic so the splash screen can actually render
     new Thread(() -> {
+      if (splashController != null) {
+        splashController.setStatus("Connecting to last server...");
+      }
+
       //replace the OverlayFX client with the Studio one
       Studio.client = new VPinStudioClient("localhost");
       Studio.Features = client.getSystemService().getFeatures();
@@ -155,6 +160,10 @@ public class Studio extends Application {
         Platform.runLater(() -> loadStudio(stage, Studio.client));
       }
       else {
+        if (splashController != null) {
+          splashController.setStatus("Checking connections...");
+        }
+
         ConnectionProperties connectionProperties = new ConnectionProperties();
         List<ConnectionEntry> connections = connectionProperties.getConnections();
         if (!connections.isEmpty()) {
@@ -235,7 +244,14 @@ public class Studio extends Application {
   public static void loadStudio(Stage stage, VPinStudioClient client) {
     LOG.info("Launching Studio...");
     try {
+      if (splashController != null) {
+        splashController.setStatus("Initializing application...");
+      }
+
       try {
+        if (splashController != null) {
+            splashController.setStatus("Checking SevenZip binaries...");
+        }
         File sevenZipTempFolder = new File(System.getProperty("java.io.tmpdir"), "sevenZip/");
         if (!sevenZipTempFolder.exists()) {
           sevenZipTempFolder.mkdirs();
@@ -268,6 +284,9 @@ public class Studio extends Application {
 
       // run later to let the splash render properly
       JFXFuture.runAsync(() -> {
+            if (splashController != null) {
+                splashController.setStatus("Fetching data from server...");
+            }
             //force pre-caching, this way, the table overview does not need to execute single GET requests
             new Thread(() -> {
               Studio.client.getVpsService().invalidateAll();
@@ -284,11 +303,17 @@ public class Studio extends Application {
 
             List<Integer> unknownGameIds = client.getGameService().getUnknownGameIds();
             if (unknownGameIds != null && !unknownGameIds.isEmpty()) {
+              if (splashController != null) {
+                splashController.setStatus("Scanning for table changes...");
+              }
               LOG.info("Initial scan of " + unknownGameIds.size() + " unknown tables.");
               ProgressDialog.createProgressDialog(new TableReloadProgressModel(unknownGameIds));
               ProgressDialog.createProgressDialog(ClearCacheProgressModel.getReloadGamesClearCacheModel(false));
             }
 
+            if (splashController != null) {
+              splashController.setStatus("Loading preferences...");
+            }
             UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
             client.getGameService().setIgnoredEmulatorIds(uiSettings.getIgnoredEmulatorIds());
 
@@ -301,6 +326,9 @@ public class Studio extends Application {
               LOG.info("Window Mode: Portrait");
             }
 
+            if (splashController != null) {
+              splashController.setStatus("Building user interface...");
+            }
             FXMLLoader loader = new FXMLLoader(Studio.class.getResource("scene-root.fxml"));
             Parent root = null;
             try {
@@ -350,6 +378,9 @@ public class Studio extends Application {
             }
 
             //launch VPSMonitor
+            if (splashController != null) {
+              splashController.setStatus("Finalizing startup...");
+            }
             VBSManager.getInstance();
           });
     }
@@ -362,12 +393,12 @@ public class Studio extends Application {
     LOG.info("Load FXML for splash screen...");
     FXMLLoader loader = new FXMLLoader(SplashScreenController.class.getResource("scene-splash.fxml"));
     StackPane root = loader.load();
-    SplashScreenController controller = loader.getController();
+    splashController = loader.getController();
 
     double imgWidth = 800, imgHeight = 534;
     try (InputStream imgStream = Studio.class.getResourceAsStream("splash.png")) {
       Image image = new Image(imgStream);
-      controller.setImage(image);
+      splashController.setImage(image);
       if (image.getWidth() > 0) { // Ensure image loaded successfully before using its dimensions
         imgWidth = image.getWidth();
         imgHeight = image.getHeight();
