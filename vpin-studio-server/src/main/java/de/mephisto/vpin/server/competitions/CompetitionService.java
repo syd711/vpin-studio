@@ -23,6 +23,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -125,7 +126,7 @@ public class CompetitionService implements InitializingBean {
 
   public List<Competition> getCompetitionToBeFinished() {
     try {
-      return competitionsRepository.findByWinnerInitialsIsNullAndEndDateLessThanEqualOrderByEndDate(OffsetDateTime.now());
+      return competitionsRepository.findByWinnerInitialsIsNullAndEndDateLessThanEqualOrderByEndDate(LocalDateTime.now());
     }
     catch (Exception e) {
       LOG.error("Failed to read competitions: {}", e.getMessage());
@@ -138,12 +139,12 @@ public class CompetitionService implements InitializingBean {
     competition.getGameId();
 
     if (competition.getType().equals(CompetitionType.OFFLINE.name())) {
-      OffsetDateTime start = competition.getStartDate();
-      OffsetDateTime end = competition.getEndDate();
+      LocalDateTime start = competition.getStartDate();
+      LocalDateTime end = competition.getEndDate();
       int gameId = competition.getGameId();
       Game game = gameService.getGame(gameId);
       long serverId = competition.getDiscordServerId();
-      return highscoreService.getScoresBetween(game, start, end, serverId);
+      return highscoreService.getScoresBetween(game, start.atOffset(OffsetDateTime.now().getOffset()), end.atOffset(OffsetDateTime.now().getOffset()), serverId);
     }
     else if (competition.getType().equals(CompetitionType.DISCORD.name())) {
       long serverId = competition.getDiscordServerId();
@@ -273,7 +274,7 @@ public class CompetitionService implements InitializingBean {
 
   public List<Competition> getActiveCompetitions() {
     try {
-      return competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(OffsetDateTime.now(), OffsetDateTime.now());
+      return competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(LocalDateTime.now(), LocalDateTime.now());
     }
     catch (Exception e) {
       LOG.error("Failed to read active competitions: {}", e.getMessage());
@@ -283,7 +284,7 @@ public class CompetitionService implements InitializingBean {
 
   public List<Competition> getFinishedByDateCompetitions() {
     try {
-      return competitionsRepository.findByEndDateLessThanEqual(OffsetDateTime.now());
+      return competitionsRepository.findByEndDateLessThanEqual(LocalDateTime.now());
     }
     catch (Exception e) {
       LOG.error("Failed to read active competitions: {}", e.getMessage());
@@ -292,7 +293,7 @@ public class CompetitionService implements InitializingBean {
   }
 
   public Competition getActiveCompetition(CompetitionType competitionType) {
-    List<Competition> result = competitionsRepository.findByAndWinnerInitialsIsNullAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndType(OffsetDateTime.now(), OffsetDateTime.now(), competitionType.name());
+    List<Competition> result = competitionsRepository.findByAndWinnerInitialsIsNullAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndType(LocalDateTime.now(), LocalDateTime.now(), competitionType.name());
     if (!result.isEmpty()) {
       return result.get(0);
     }

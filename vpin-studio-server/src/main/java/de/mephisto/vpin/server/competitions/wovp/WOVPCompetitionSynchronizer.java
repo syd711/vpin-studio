@@ -31,6 +31,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -134,7 +135,7 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
         //When the challenge id has changed, it means that the existing competition is outdated.
         if (!challengeId.equals(competition.getUuid()) || game == null || forceReload) {
           //run de-augmentation for finished competitions
-          competition.setEndDate(OffsetDateTime.now());
+          competition.setEndDate(LocalDateTime.now());
 //          competitionService.save(competition);//TOOD required?
           competitionLifecycleService.notifyCompetitionDeleted(competition);
           refreshTags(game, wovpSettings, false);
@@ -172,8 +173,11 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
       addIssue(competition, "WOVP did not set a VPS version id for this challenge.");
     }
     competition.setType(CompetitionType.WEEKLY.name());
-    competition.setStartDate(challenge.getStartDateUTC());
-    competition.setEndDate(challenge.getEndDateUTC());
+    
+    // challenge.getStartDateUTC() returns OffsetDateTime, convert it to LocalDateTime
+    competition.setStartDate(challenge.getStartDateUTC().toLocalDateTime());
+    competition.setEndDate(challenge.getEndDateUTC().toLocalDateTime());
+
     competition.setMode(challenge.getChallengeTypeCode().name());
     competition.setHighscoreReset(wovpSettings.isResetHighscores());
 
