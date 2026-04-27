@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.*;
 
@@ -69,8 +70,8 @@ public class DiscordCompetitionService {
       highscoreService.scanScore(game, EventOrigin.COMPETITION_UPDATE);
 
       LOG.info("Synchronizing {}", competition);
-      OffsetDateTime startDate = competition.getCreatedAt();
-      ScoreList scoreHistory = highscoreService.getScoresBetween(game, startDate, OffsetDateTime.now(), competition.getDiscordServerId());
+      LocalDateTime startDate = competition.getCreatedAt();
+      ScoreList scoreHistory = highscoreService.getScoresBetween(game, startDate.atOffset(OffsetDateTime.now().getOffset()), OffsetDateTime.now(), competition.getDiscordServerId());
       List<ScoreSummary> versionedScores = new ArrayList<>(scoreHistory.getScores());
 
       ScoreSummary latestScore = highscoreService.getScoreSummary(competition.getDiscordServerId(), game);

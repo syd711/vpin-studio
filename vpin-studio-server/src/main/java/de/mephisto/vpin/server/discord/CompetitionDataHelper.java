@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 public class CompetitionDataHelper {
@@ -35,11 +36,15 @@ public class CompetitionDataHelper {
       DiscordCompetitionData data = new DiscordCompetitionData();
       data.setName(competition.getName());
       data.setTname(game.getGameDisplayName());
-      data.setSdt(competition.getStartDate());
+      if (competition.getStartDate() != null) {
+        data.setSdt(competition.getStartDate().atOffset(OffsetDateTime.now().getOffset()));
+      }
       data.setMode(competition.getJoinMode());
       data.setChksm(VPXUtil.getChecksum(game.getGameFile()));
       data.setScrL(competition.getScoreLimit());
-      data.setEdt(competition.getEndDate());
+      if (competition.getEndDate() != null) {
+        data.setEdt(competition.getEndDate().atOffset(OffsetDateTime.now().getOffset()));
+      }
       data.setFs(game.getGameFileSize());
       data.setUuid(competition.getUuid());
       data.setRom(game.getRom());

@@ -9,9 +9,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -61,9 +59,9 @@ public class Competition {
 
   private String vpsTableVersionId;
 
-  private OffsetDateTime startDate;
+  private LocalDateTime startDate;
 
-  private OffsetDateTime endDate;
+  private LocalDateTime endDate;
 
   private boolean started;
 
@@ -246,19 +244,19 @@ public class Competition {
     this.gameId = gameId;
   }
 
-  public OffsetDateTime getStartDate() {
+  public LocalDateTime getStartDate() {
     return startDate;
   }
 
-  public void setStartDate(OffsetDateTime startDate) {
+  public void setStartDate(LocalDateTime startDate) {
     this.startDate = startDate;
   }
 
-  public OffsetDateTime getEndDate() {
+  public LocalDateTime getEndDate() {
     return endDate;
   }
 
-  public void setEndDate(OffsetDateTime endDate) {
+  public void setEndDate(LocalDateTime endDate) {
     this.endDate = endDate;
   }
 
@@ -311,7 +309,7 @@ public class Competition {
       return true;
     }
 
-    OffsetDateTime now = OffsetDateTime.now();
+    LocalDateTime now = LocalDateTime.now();
     return (startDate != null && !now.isBefore(startDate)) && (endDate != null && !now.isAfter(endDate));
   }
 

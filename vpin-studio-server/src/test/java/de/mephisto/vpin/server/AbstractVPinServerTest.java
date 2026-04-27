@@ -26,6 +26,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -172,8 +173,8 @@ abstract public class AbstractVPinServerTest {
     competition.setGameId(game.getId());
     competition.setType(CompetitionType.OFFLINE.name());
     competition.setName(String.valueOf(OffsetDateTime.now().toInstant().toEpochMilli()));
-    competition.setStartDate(OffsetDateTime.now());
-    competition.setEndDate(OffsetDateTime.now());
+    competition.setStartDate(LocalDateTime.now());
+    competition.setEndDate(LocalDateTime.now());
 
     return competitionService.save(competition);
   }
