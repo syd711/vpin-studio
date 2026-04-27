@@ -87,6 +87,7 @@ public class Studio extends Application {
   public static HostServices hostServices;
 
   private ServerSocket ss;
+  private static Stage splash;
 
   public static void main(String[] args) {
     launch(args);
@@ -117,6 +118,14 @@ public class Studio extends Application {
       System.exit(-1);
     }
 
+    try {
+      LOG.info("Creating splash screen...");
+      splash = createSplash();
+    }
+    catch (Exception e) {
+      LOG.error("Failed to create splash: " + e.getMessage(), e);
+    }
+
     Studio.stage = stage;
     Studio.hostServices = getHostServices();
 
@@ -134,31 +143,35 @@ public class Studio extends Application {
       });
     };
 
-    //replace the OverlayFX client with the Studio one
-    Studio.client = new VPinStudioClient("localhost");
-    Studio.Features = client.getSystemService().getFeatures();
-    ServerFX.client = Studio.client;
+    // offload connection logic so the splash screen can actually render
+    new Thread(() -> {
+      //replace the OverlayFX client with the Studio one
+      Studio.client = new VPinStudioClient("localhost");
+      Studio.Features = client.getSystemService().getFeatures();
+      ServerFX.client = Studio.client;
 
-    String version = client.getSystemService().getVersion();
-    if (!StringUtils.isEmpty(version)) {
-      loadStudio(stage, Studio.client);
-    }
-    else {
-      ConnectionProperties connectionProperties = new ConnectionProperties();
-      List<ConnectionEntry> connections = connectionProperties.getConnections();
-      if (!connections.isEmpty()) {
-        for (ConnectionEntry connection : connections) {
-          Studio.client = new VPinStudioClient(connection.getIp());
-          Studio.Features = client.getSystemService().getFeatures();
-          version = client.getSystemService().getVersion();
-          if (!StringUtils.isEmpty(version)) {
-            loadStudio(stage, Studio.client);
-            return;
+      String version = client.getSystemService().getVersion();
+      if (!StringUtils.isEmpty(version)) {
+        Platform.runLater(() -> loadStudio(stage, Studio.client));
+      }
+      else {
+        ConnectionProperties connectionProperties = new ConnectionProperties();
+        List<ConnectionEntry> connections = connectionProperties.getConnections();
+        if (!connections.isEmpty()) {
+          for (ConnectionEntry connection : connections) {
+            Studio.client = new VPinStudioClient(connection.getIp());
+            Studio.Features = client.getSystemService().getFeatures();
+            version = client.getSystemService().getVersion();
+            if (!StringUtils.isEmpty(version)) {
+              final VPinStudioClient foundClient = Studio.client;
+              Platform.runLater(() -> loadStudio(stage, foundClient));
+              return;
+            }
           }
         }
+        Platform.runLater(() -> loadLauncher(stage));
       }
-      loadLauncher(stage);
-    }
+    }, "Studio Connection Initializer").start();
   }
 
   private void runOperatingSystemChecks() {
@@ -191,6 +204,10 @@ public class Studio extends Application {
   public static void loadLauncher(Stage stage) {
     LOG.info("load launcher...");
     try {
+      if (splash != null) {
+        splash.hide();
+      }
+
       Studio.stage = stage;
       Rectangle2D screenBounds = Screen.getPrimary().getBounds();
       FXMLLoader loader = new FXMLLoader(LauncherController.class.getResource("scene-launcher.fxml"));
@@ -202,7 +219,7 @@ public class Studio extends Application {
       stage.setTitle("VPin Studio Launcher");
       stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-64.png")));
       stage.setScene(scene);
-      stage.initStyle(StageStyle.UNDECORATED);
+      stage.initStyle(StageStyle.TRANSPARENT);
       stage.setX((screenBounds.getWidth() / 2) - (800 / 2));
       stage.setY((screenBounds.getHeight() / 2) - (400 / 2));
 
@@ -230,7 +247,9 @@ public class Studio extends Application {
         LOG.error("Failed to initialize SevenZip (.rar support): " + e.getMessage(), e);
       }
 
-      Stage splash = createSplash();
+      if (splash == null) {
+        splash = createSplash();
+      }
 
       //replace the OverlayFX client with the Studio one
       Studio.client = client;
@@ -326,7 +345,9 @@ public class Studio extends Application {
 
             client.setErrorHandler(errorHandler);
             stage.show();
-            splash.hide();
+            if (splash != null) {
+              splash.hide();
+            }
 
             //launch VPSMonitor
             VBSManager.getInstance();
@@ -338,6 +359,7 @@ public class Studio extends Application {
   }
 
   private static Stage createSplash() throws Exception {
+    LOG.info("Load FXML for splash screen...");
     FXMLLoader loader = new FXMLLoader(SplashScreenController.class.getResource("scene-splash.fxml"));
     StackPane root = loader.load();
     SplashScreenController controller = loader.getController();
@@ -346,19 +368,23 @@ public class Studio extends Application {
     try (InputStream imgStream = Studio.class.getResourceAsStream("splash.png")) {
       Image image = new Image(imgStream);
       controller.setImage(image);
-      imgWidth = image.getWidth();
-      imgHeight = image.getHeight();
+      if (image.getWidth() > 0) { // Ensure image loaded successfully before using its dimensions
+        imgWidth = image.getWidth();
+        imgHeight = image.getHeight();
+      }
     }
 
-    Scene scene = new Scene(root, imgWidth, imgHeight, Color.TRANSPARENT);
+    Scene scene = new Scene(root, imgWidth, imgHeight, Paint.valueOf("#212529")); // Set solid background color
     Rectangle2D screenBounds = Screen.getPrimary().getBounds();
 
-    Stage stage = new Stage(StageStyle.UNDECORATED);
+    Stage stage = new Stage(StageStyle.TRANSPARENT);
+    stage.setAlwaysOnTop(true); // Ensure splash screen is always on top
     stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-64.png")));
     stage.setScene(scene);
     stage.setX((screenBounds.getWidth() / 2) - (imgWidth / 2));
     stage.setY((screenBounds.getHeight() / 2) - (imgHeight / 2));
     stage.setResizable(false);
+    LOG.info("stage.show for splash screen...");
     stage.show();
     return stage;
   }

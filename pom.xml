@@ -23,7 +23,7 @@
         <httpclient5.version>5.2.3</httpclient5.version>
         <spotbugs.version>4.8.6</spotbugs.version>
         <launch4j.version>2.7.0</launch4j.version>
-        <jackson.version>3.1.0</jackson.version>
+        <jackson.version>3.1.1</jackson.version>
         <jackson.annotations.version>2.21</jackson.annotations.version>
         <spring.boot.version>4.0.4</spring.boot.version>
         <logback.version>1.5.32</logback.version>
