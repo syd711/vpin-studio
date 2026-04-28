@@ -173,8 +173,8 @@ abstract public class AbstractVPinServerTest {
     competition.setGameId(game.getId());
     competition.setType(CompetitionType.OFFLINE.name());
     competition.setName(String.valueOf(OffsetDateTime.now().toInstant().toEpochMilli()));
-    competition.setStartDate(LocalDateTime.now());
-    competition.setEndDate(LocalDateTime.now());
+    competition.setStartDate(OffsetDateTime.now());
+    competition.setEndDate(OffsetDateTime.now());
 
     return competitionService.save(competition);
   }

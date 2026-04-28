@@ -15,17 +15,20 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.auditing.DateTimeProvider;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.awt.*;
 import java.io.File;
+import java.time.OffsetDateTime;
+import java.util.Optional;
 
 @SpringBootApplication
 @EnableTransactionManagement
 @EnableJpaRepositories
-@EnableJpaAuditing
+@EnableJpaAuditing(dateTimeProviderRef = "dateTimeProvider")
 @EnableCaching
 public class VPinStudioServer extends SpringBootServletInitializer {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioServer.class);
@@ -52,6 +55,11 @@ public class VPinStudioServer extends SpringBootServletInitializer {
   @Bean
   public CacheManager cacheManager() {
     return new ConcurrentMapCacheManager("preferences"); // You can add more cache names as needed
+  }
+
+  @Bean
+  public DateTimeProvider dateTimeProvider() {
+      return () -> Optional.of(OffsetDateTime.now());
   }
 
   private static void runDelayCheck() {

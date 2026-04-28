@@ -37,13 +37,13 @@ public class CompetitionDataHelper {
       data.setName(competition.getName());
       data.setTname(game.getGameDisplayName());
       if (competition.getStartDate() != null) {
-        data.setSdt(competition.getStartDate().atOffset(OffsetDateTime.now().getOffset()));
+          data.setSdt(competition.getStartDate());
       }
       data.setMode(competition.getJoinMode());
       data.setChksm(VPXUtil.getChecksum(game.getGameFile()));
       data.setScrL(competition.getScoreLimit());
       if (competition.getEndDate() != null) {
-        data.setEdt(competition.getEndDate().atOffset(OffsetDateTime.now().getOffset()));
+          data.setEdt(competition.getEndDate());
       }
       data.setFs(game.getGameFileSize());
       data.setUuid(competition.getUuid());

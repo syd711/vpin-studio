@@ -4,21 +4,22 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface CompetitionsRepository extends JpaRepository<Competition, Long> {
 
-  List<Competition> findByStartDateLessThanEqualAndEndDateGreaterThanEqual(LocalDateTime now1, LocalDateTime now2);
+  List<Competition> findByStartDateLessThanEqualAndEndDateGreaterThanEqual(OffsetDateTime now1, OffsetDateTime now2);
 
-  List<Competition> findByEndDateLessThanEqual(LocalDateTime now);
+  List<Competition> findByEndDateLessThanEqual(OffsetDateTime now);
 
-  List<Competition> findByAndWinnerInitialsIsNullAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndType(LocalDateTime now1, LocalDateTime now2, String type);
+  List<Competition> findByAndWinnerInitialsIsNullAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndType(OffsetDateTime now1, OffsetDateTime now2, String type);
 
   List<Competition> findByWinnerInitialsIsNotNull();
 
-  List<Competition> findByWinnerInitialsIsNullAndEndDateLessThanEqualOrderByEndDate(LocalDateTime now);
+  List<Competition> findByWinnerInitialsIsNullAndEndDateLessThanEqualOrderByEndDate(OffsetDateTime now);
 
   List<Competition> findByWinnerInitials(String initials);
 

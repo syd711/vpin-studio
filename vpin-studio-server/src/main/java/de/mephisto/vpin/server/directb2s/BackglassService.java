@@ -155,7 +155,7 @@ public class BackglassService implements InitializingBean {
 
   private void extractBackgroundData(DirectB2SData data, String backgroundBase64) throws IOException {
     if (backgroundBase64 != null) {
-      byte[] imageData = Base64.getDecoder().decode(sanitizeBase64(backgroundBase64));
+      byte[] imageData = Base64.getMimeDecoder().decode(sanitizeBase64(backgroundBase64));
       BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageData));
       int backgroundWidth = (int) image.getWidth();
       int backgroundHeight = (int) image.getHeight();
@@ -171,7 +171,7 @@ public class BackglassService implements InitializingBean {
   private void exportDMDData(DirectB2SData data, String dmdBase64) throws IOException {
     if (data.isDmdImageAvailable()) {
       if (dmdBase64 != null) {
-        byte[] dmdData = Base64.getDecoder().decode(sanitizeBase64(dmdBase64));
+        byte[] dmdData = Base64.getMimeDecoder().decode(sanitizeBase64(dmdBase64));
         BufferedImage dmdImage = ImageIO.read(new ByteArrayInputStream(dmdData));
         int dmdWidth = (int) dmdImage.getWidth();
         int dmdHeight = (int) dmdImage.getHeight();
@@ -1318,7 +1318,7 @@ public class BackglassService implements InitializingBean {
     if (tableData != null && tableData.isBackgroundAvailable()) {
       String base64 = getBackgroundBase64(tableData.getEmulatorId(), tableData.getFilename());
       if (base64 != null) {
-        byte[] bytes = Base64.getDecoder().decode(sanitizeBase64(base64));
+        byte[] bytes = Base64.getMimeDecoder().decode(sanitizeBase64(base64));
         try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes)) {
           BufferedImage preview = ImageIO.read(bais);
           if (tableData.getGrillHeight() > 0) {
@@ -1380,7 +1380,7 @@ public class BackglassService implements InitializingBean {
     if (tableData != null && tableData.isBackgroundAvailable()) {
       String base64 = getDmdBase64(tableData.getEmulatorId(), tableData.getFilename());
       if (base64 != null) {
-        return Base64.getDecoder().decode(sanitizeBase64(base64));
+        return Base64.getMimeDecoder().decode(sanitizeBase64(base64));
       }
     }
     // not found or error

@@ -9,7 +9,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -21,11 +21,11 @@ public class Competition {
 
   @Column(nullable = false, updatable = false)
   @CreatedDate
-  private LocalDateTime createdAt;
+  private OffsetDateTime createdAt;
 
   @Column(nullable = false)
   @LastModifiedDate
-  private LocalDateTime updatedAt;
+  private OffsetDateTime updatedAt;
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -59,9 +59,9 @@ public class Competition {
 
   private String vpsTableVersionId;
 
-  private LocalDateTime startDate;
+  private OffsetDateTime startDate;
 
-  private LocalDateTime endDate;
+  private OffsetDateTime endDate;
 
   private boolean started;
 
@@ -244,19 +244,19 @@ public class Competition {
     this.gameId = gameId;
   }
 
-  public LocalDateTime getStartDate() {
+  public OffsetDateTime getStartDate() {
     return startDate;
   }
 
-  public void setStartDate(LocalDateTime startDate) {
+  public void setStartDate(OffsetDateTime startDate) {
     this.startDate = startDate;
   }
 
-  public LocalDateTime getEndDate() {
+  public OffsetDateTime getEndDate() {
     return endDate;
   }
 
-  public void setEndDate(LocalDateTime endDate) {
+  public void setEndDate(OffsetDateTime endDate) {
     this.endDate = endDate;
   }
 
@@ -276,19 +276,19 @@ public class Competition {
     this.name = name;
   }
 
-  public LocalDateTime getCreatedAt() {
+  public OffsetDateTime getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(LocalDateTime createdAt) {
+  public void setCreatedAt(OffsetDateTime createdAt) {
     this.createdAt = createdAt;
   }
 
-  public LocalDateTime getUpdatedAt() {
+  public OffsetDateTime getUpdatedAt() {
     return updatedAt;
   }
 
-  public void setUpdatedAt(LocalDateTime updatedAt) {
+  public void setUpdatedAt(OffsetDateTime updatedAt) {
     this.updatedAt = updatedAt;
   }
 
@@ -309,7 +309,7 @@ public class Competition {
       return true;
     }
 
-    LocalDateTime now = LocalDateTime.now();
+    OffsetDateTime now = OffsetDateTime.now();
     return (startDate != null && !now.isBefore(startDate)) && (endDate != null && !now.isAfter(endDate));
   }
 

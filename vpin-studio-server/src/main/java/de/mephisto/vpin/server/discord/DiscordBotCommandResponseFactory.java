@@ -72,7 +72,7 @@ public class DiscordBotCommandResponseFactory {
         formatter.format(competition.getStartDate()),
         formatter.format(competition.getEndDate()),
         DateUtil.formatDuration(competition.getStartDate(), competition.getEndDate()),
-        DateUtil.formatDuration(LocalDateTime.now(), competition.getEndDate()));
+        DateUtil.formatDuration(OffsetDateTime.now(), competition.getEndDate()));
 
 
     StringBuilder msgBuilder = new StringBuilder(format);

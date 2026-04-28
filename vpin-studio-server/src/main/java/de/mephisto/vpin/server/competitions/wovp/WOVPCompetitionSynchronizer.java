@@ -135,7 +135,7 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
         //When the challenge id has changed, it means that the existing competition is outdated.
         if (!challengeId.equals(competition.getUuid()) || game == null || forceReload) {
           //run de-augmentation for finished competitions
-          competition.setEndDate(LocalDateTime.now());
+          competition.setEndDate(OffsetDateTime.now());
 //          competitionService.save(competition);//TOOD required?
           competitionLifecycleService.notifyCompetitionDeleted(competition);
           refreshTags(game, wovpSettings, false);
@@ -175,8 +175,8 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
     competition.setType(CompetitionType.WEEKLY.name());
     
     // challenge.getStartDateUTC() returns OffsetDateTime, convert it to LocalDateTime
-    competition.setStartDate(challenge.getStartDateUTC().toLocalDateTime());
-    competition.setEndDate(challenge.getEndDateUTC().toLocalDateTime());
+    competition.setStartDate(challenge.getStartDateUTC());
+    competition.setEndDate(challenge.getEndDateUTC());
 
     competition.setMode(challenge.getChallengeTypeCode().name());
     competition.setHighscoreReset(wovpSettings.isResetHighscores());

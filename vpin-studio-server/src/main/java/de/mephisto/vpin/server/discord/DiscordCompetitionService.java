@@ -70,8 +70,8 @@ public class DiscordCompetitionService {
       highscoreService.scanScore(game, EventOrigin.COMPETITION_UPDATE);
 
       LOG.info("Synchronizing {}", competition);
-      LocalDateTime startDate = competition.getCreatedAt();
-      ScoreList scoreHistory = highscoreService.getScoresBetween(game, startDate.atOffset(OffsetDateTime.now().getOffset()), OffsetDateTime.now(), competition.getDiscordServerId());
+        OffsetDateTime startDate = competition.getCreatedAt();
+        ScoreList scoreHistory = highscoreService.getScoresBetween(game, startDate, OffsetDateTime.now(), competition.getDiscordServerId());
       List<ScoreSummary> versionedScores = new ArrayList<>(scoreHistory.getScores());
 
       ScoreSummary latestScore = highscoreService.getScoreSummary(competition.getDiscordServerId(), game);
