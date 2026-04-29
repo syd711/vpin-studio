@@ -186,11 +186,19 @@ public class DirectB2SResource {
   //-------
   // download utilities
 
-  private ResponseEntity<Resource> download(String base64, String filename) {
-    byte[] image = base64 != null ? Base64.getDecoder().decode(base64) : null;
-    //TODO check impact if we turn to false
-    return download(image, filename, true);
-  }
+    private ResponseEntity<Resource> download(String base64, String filename) {
+        byte[] image = null;
+        if (base64 != null) {
+            try {
+                image = Base64.getMimeDecoder().decode(base64);
+            } catch (IllegalArgumentException e) {
+                LOG.error("Failed to decode base64 string for file '{}': {}", filename, e.getMessage());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        //TODO check impact if we turn to false
+        return download(image, filename, true);
+    }
 
   private ResponseEntity<Resource> download(byte[] image, String name, boolean forceDownload) {
     if (image == null) {

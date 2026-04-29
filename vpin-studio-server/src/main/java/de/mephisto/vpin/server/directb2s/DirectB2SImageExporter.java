@@ -29,7 +29,7 @@ public class DirectB2SImageExporter {
 
   public static void export(@NonNull File target, String base64) throws VPinStudioException {
     if (base64 != null) {
-      byte[] bytes = Base64.getDecoder().decode(base64);
+      byte[] bytes = Base64.getMimeDecoder().decode(base64);
       write(bytes, target);
     }
   }

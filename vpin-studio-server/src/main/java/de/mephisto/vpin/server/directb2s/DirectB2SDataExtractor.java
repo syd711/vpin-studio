@@ -17,6 +17,8 @@ import java.io.InputStream;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.util.Base64;
+
 
 public class DirectB2SDataExtractor extends DefaultHandler {
   private final static Logger LOG = LoggerFactory.getLogger(DirectB2SDataExtractor.class);
@@ -97,6 +99,8 @@ public class DirectB2SDataExtractor extends DefaultHandler {
         break;
       }
       case "Author": {
+
+          //IDE suggests removing String.valueof- Impact?
         data.setAuthor(String.valueOf(attr.getValue("Value").trim()));
         break;
       }
@@ -132,18 +136,32 @@ public class DirectB2SDataExtractor extends DefaultHandler {
         data.setIlluminations(data.getIlluminations() + 1);
         break;
       }
-      case "BackglassImage": {
-        //data.setBackgroundBase64(attr.getValue("Value"));
-        backgroundBase64 = attr.getValue("Value");
-        data.setBackgroundAvailable(true);
-        break;
-      }
-      case "DMDImage": {
-        //data.setDmdBase64(attr.getValue("Value"));
-        dmdBase64 = attr.getValue("Value");
-        data.setDmdImageAvailable(true);
-        break;
-      }
+        case "BackglassImage": {
+            String value = attr.getValue("Value");
+            try {
+                Base64.getMimeDecoder().decode(value); // Validate Base64 string
+                backgroundBase64 = value;
+                data.setBackgroundAvailable(true);
+            } catch (IllegalArgumentException e) {
+                LOG.warn("Invalid Base64 string for BackglassImage in file '{}': {}", data.getFilename(), e.getMessage());
+                backgroundBase64 = null;
+                data.setBackgroundAvailable(false);
+            }
+            break;
+        }
+        case "DMDImage": {
+            String value = attr.getValue("Value");
+            try {
+                Base64.getMimeDecoder().decode(value); // Validate Base64 string
+                dmdBase64 = value;
+                data.setDmdImageAvailable(true);
+            } catch (IllegalArgumentException e) {
+                LOG.warn("Invalid Base64 string for DMDImage in file '{}': {}", data.getFilename(), e.getMessage());
+                dmdBase64 = null;
+                data.setDmdImageAvailable(false);
+            }
+            break;
+        }
 
 /*
 Other elements in XML :  path / from / top (interesting attributes)

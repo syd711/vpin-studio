@@ -1,6 +1,10 @@
 package de.mephisto.vpin.connectors.vps.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.invoke.MethodHandles;
 
 public enum VpsDiffTypes {
   altColor,
@@ -20,67 +24,38 @@ public enum VpsDiffTypes {
   feature,
   ;
 
-  @JsonCreator
-  public static VpsDiffTypes fromString(String key) {
-    for (VpsDiffTypes type : values()) {
-      if (type.name().equalsIgnoreCase(key)) {
-        return type;
-      }
+    private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
+    @JsonCreator
+    public static VpsDiffTypes fromString(String key) {
+        for (VpsDiffTypes type : values()) {
+            if (type.name().equalsIgnoreCase(key) || type.toString().equalsIgnoreCase(key)) {
+                return type;
+            }
+        }
+        LOG.warn("Unknown VpsDiffTypes key found: '" + key + "'");
+        return null;
     }
-    return null;
-  }
 
   @Override
   public String toString() {
-    switch (this) {
-      case altColor: {
-        return "ALT Color";
-      }
-      case altSound: {
-        return "ALT Sound";
-      }
-      case b2s: {
-        return "Backglass";
-      }
-      case pov: {
-        return "POV";
-      }
-      case rom: {
-        return "ROM";
-      }
-      case sound: {
-        return "Sound";
-      }
-      case pupPack: {
-        return "PUP pack";
-      }
-      case wheel: {
-        return "Wheel Icon";
-      }
-      case tutorial: {
-        return "Tutorial Added";
-      }
-      case tableNewVPX: {
-        return "New Table Added";
-      }
-      case tableNewVersionVPX: {
-        return "New Table Added";
-      }
-      case tableVersionUpdate: {
-        return "Table Version Updated";
-      }
-      case tableNewVersion: {
-        return "New Table Version Added";
-      }
-      case topper: {
-        return "Topper";
-      }
-      case feature: {
-        return "Feature";
-      }
-      default: {
-        return "Invalid component type: " + this.name();
-      }
-    }
+      return switch (this) {
+          case altColor -> "ALT Color";
+          case altSound -> "ALT Sound";
+          case b2s -> "Backglass";
+          case pov -> "POV";
+          case rom -> "ROM";
+          case sound -> "Sound";
+          case pupPack -> "PUP pack";
+          case wheel -> "Wheel Icon";
+          case tutorial -> "Tutorial Added";
+          case tableNewVPX -> "New Table Added";
+          case tableNewVersionVPX -> "New Table Added";
+          case tableVersionUpdate -> "Table Version Updated";
+          case tableNewVersion -> "New Table Version Added";
+          case topper -> "Topper";
+          case feature -> "Feature";
+          default -> "Invalid component type: " + this.name();
+      };
   }
 }
