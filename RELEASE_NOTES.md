@@ -41,4 +41,5 @@
 - **iScored**: Fixed game room deletion. When a game room is deleted, all associated competitions, their wheels, and TourneyIds are now reset.
 - **Preferences Menu**: Added natural order for hooks.
 - **Table Statistics**: Fixed "Last Played" timestamps.
+- **.res Editor**: Fixed dialog sizing issues caused by long filenames.
 - **Misc**: Added a cleanup check to the server that removes orphaned game entries which exist only in the Studio and not in the frontend (if available). This handles the case where a game was removed using the original frontend admin tool.

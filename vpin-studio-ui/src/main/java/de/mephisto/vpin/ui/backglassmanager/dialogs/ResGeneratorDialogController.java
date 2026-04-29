@@ -438,13 +438,14 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
   }
 
   private void setScreenRes(DirectB2sScreenRes screenres) {
-
+    screenResLabel.setTooltip(null);
     if (screenres != null) {
       this.emulatorId = screenres.getEmulatorId();
       this.b2sFileName = screenres.getB2SFileName();
       this.gameId = screenres.getGameId();
 
       screenResLabel.setText(screenres.getScreenresFilePath());
+      screenResLabel.setTooltip(new Tooltip(screenres.getScreenresFilePath()));
       backglassPositionLabel.setText(formatLocation(screenres.getBackglassX(), screenres.getBackglassY()));
       backglassDimensionLabel.setText(formatDimension(screenres.getBackglassWidth(), screenres.getBackglassHeight()));
 

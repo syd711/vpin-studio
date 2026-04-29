@@ -911,7 +911,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         newSelection = this.emulatorCombo.getSelectionModel().getSelectedItem();
       }
 
-      emulatorBtn.setDisable(newSelection == null || newSelection.getId() == -1);
+      emulatorBtn.setDisable(newSelection == null || newSelection.getId() <= -1);
       this.emulatorCombo.valueProperty().addListener(gameEmulatorChangeListener);
     });
   }

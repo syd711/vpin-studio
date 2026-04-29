@@ -79,6 +79,10 @@ public class VRService implements InitializingBean, PreferenceChangedListener, E
   public GameEmulatorScript getEmulatorVRLaunchScript(int emulatorId) {
     GameEmulatorScript vrLaunchScript = emulatorDetailsService.getGameEmulatorVRLaunchScript(emulatorId);
     GameEmulator gameEmulator = emulatorService.getGameEmulator(emulatorId);
+    if (gameEmulator == null) {
+      return null;
+    }
+
     GameEmulatorScript launchScript = gameEmulator.getLaunchScript();
 
     if (vrLaunchScript == null && launchScript != null) {
