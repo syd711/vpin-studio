@@ -460,6 +460,9 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     game.setNbDirectB2S(b2s != null ? b2s.getNbVersions() : -1);
 
     String updates = gameDetails.getUpdates();
+    if (updates != null && updates.contains("null")) {
+      LOG.warn("VPS updates JSON contains 'null' for game {}: {}", game.getGameDisplayName(), updates);
+    }
     game.setVpsUpdates(VPSChanges.fromJson(updates));
     vpsService.applyVersionInfo(game);
 

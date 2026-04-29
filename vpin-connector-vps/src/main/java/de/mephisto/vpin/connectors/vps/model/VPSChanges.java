@@ -1,6 +1,6 @@
 package de.mephisto.vpin.connectors.vps.model;
 
-import tools.jackson.core.JacksonException; // Using the new base exception for Jackson 3
+import tools.jackson.core.JacksonException;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationFeature;
@@ -37,16 +37,16 @@ public class VPSChanges {
     return new VPSChanges();
   }
 
-  public String toJson() throws JacksonException { // Updated throws clause
+  public String toJson() throws JacksonException {
     return objectMapper.writeValueAsString(this);
   }
 
   public boolean contains(VpsDiffTypes diffType) {
-    for (VPSChange change : this.changes) {
-      if (change.getDiffType().equals(diffType)) {
-        return true;
+      for (VPSChange change : this.changes) {
+          if (change != null && change.getDiffType() != null && change.getDiffType().equals(diffType)) {
+              return true;
+          }
       }
-    }
     return false;
   }
 

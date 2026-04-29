@@ -240,8 +240,8 @@ public class Updater {
       return false;
     }
 
-    List<Integer> versionASegments = Arrays.asList(versionA.split("\\.")).stream().map(Integer::parseInt).collect(Collectors.toList());
-    List<Integer> versionBSegments = Arrays.asList(versionB.split("\\.")).stream().map(Integer::parseInt).collect(Collectors.toList());
+    List<Integer> versionASegments = Arrays.stream(versionA.split("\\.")).map(Integer::parseInt).toList();
+    List<Integer> versionBSegments = Arrays.stream(versionB.split("\\.")).map(Integer::parseInt).toList();
 
     for (int i = 0; i < versionBSegments.size(); i++) {
       if (versionASegments.get(i).intValue() == versionBSegments.get(i).intValue()) {
