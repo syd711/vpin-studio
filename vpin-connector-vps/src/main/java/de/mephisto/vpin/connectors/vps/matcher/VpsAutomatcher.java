@@ -2,6 +2,7 @@ package de.mephisto.vpin.connectors.vps.matcher;
 
 import java.lang.invoke.MethodHandles;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -150,7 +151,7 @@ public class VpsAutomatcher {
           parts.extra = cleanChars(parts.extra);
         }
         // the name in VPX File takes precedence over the extra information form filename
-        String name = StringUtils.defaultString(tableInfoName, parts.extra);
+        String name = Objects.toString(tableInfoName, parts.extra);
 
         // still no version found, try from tableInfo
         if (version == null && StringUtils.isNotEmpty(tableInfoVersion)) {

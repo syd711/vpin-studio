@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -27,7 +26,7 @@ public class ScreensPub {
     this.screensPupFile = screensPupFile;
     try (Reader in = new FileReader(screensPupFile)) {
       if (screensPupFile.exists()) {
-        CSVFormat format = CSVFormat.RFC4180.builder().build(); // Use builder for modern API
+        CSVFormat format = CSVFormat.RFC4180.builder().get(); // Use builder for modern API
         Iterable<CSVRecord> records = format.parse(in);
         Iterator<CSVRecord> iterator = records.iterator();
         if (iterator.hasNext()) { // Skip header

@@ -21,7 +21,6 @@ import de.mephisto.vpin.server.system.DefaultPictureService;
 
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +33,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static de.mephisto.vpin.server.ini.IniUtil.safeGet;
 import static de.mephisto.vpin.server.ini.IniUtil.safeGetBoolean;
@@ -62,7 +62,7 @@ public class DMDPositionService {
 
   public DMDInfo getDMDInfo(int gameId) {
     Game game = gameService.getGame(gameId);
-    String rom = StringUtils.defaultString(game.getRomAlias(), game.getRom());
+    String rom = Objects.toString(game.getRomAlias(), game.getRom());
     String storeName = dmdDeviceIniService.getStoreName(game);
 
     DMDInfo dmdinfo = new DMDInfo();
@@ -402,7 +402,7 @@ public class DMDPositionService {
 
   public boolean saveDMDInfo(DMDInfo dmdinfo) {
     Game game = gameService.getGame(dmdinfo.getGameId());
-    String rom = StringUtils.defaultString(game.getRomAlias(), game.getRom());
+    String rom = Objects.toString(game.getRomAlias(), game.getRom());
     String storeName = dmdDeviceIniService.getStoreName(game);
 
     dmdinfo.setDmdStoreName(storeName);

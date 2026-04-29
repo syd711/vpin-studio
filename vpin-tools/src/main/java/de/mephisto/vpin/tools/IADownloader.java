@@ -1,7 +1,6 @@
 package de.mephisto.vpin.tools;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +11,7 @@ import java.lang.invoke.MethodHandles;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,7 +23,7 @@ public class IADownloader {
   public static void main(String args[]) throws Exception {
 //    String html = Jsoup.connect("https://archive.org/download/mame-chds-roms-extras-complete/MAME%200.256%20ROMs%20%28merged%29/").get().html();
 
-    String html = FileUtils.readFileToString(new File("C:\\workspace\\vpin-studio-dev\\vpin-tools\\src\\main\\resources\\de.mephisto.vpin.tools\\test.txt"));
+    String html = FileUtils.readFileToString(new File("C:\\workspace\\vpin-studio-dev\\vpin-tools\\src\\main\\resources\\de.mephisto.vpin.tools\\test.txt"), StandardCharsets.UTF_8);
     Pattern p = Pattern.compile("href=\"(.*?)\"");
     Matcher m = p.matcher(html);
     String url = null;

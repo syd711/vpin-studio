@@ -55,10 +55,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.function.Function;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -659,7 +656,7 @@ public class DMDPositionController extends BasePrevNextController {
     // re-enable buttons
     enableDmd();
 
-    String storename = StringUtils.defaultString(dmdinfo.getDmdStoreName(), dmdinfo.getGameRom());
+    String storename = Objects.toString(dmdinfo.getDmdStoreName(), dmdinfo.getGameRom());
 
     romLabel.setText(StringUtils.defaultIfEmpty(storename, "--"));
 

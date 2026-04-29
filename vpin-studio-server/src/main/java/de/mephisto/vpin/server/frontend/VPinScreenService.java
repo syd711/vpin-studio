@@ -15,7 +15,6 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -26,6 +25,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static de.mephisto.vpin.server.directb2s.BackglassService.parseIntSafe;
 
@@ -165,11 +165,11 @@ public class VPinScreenService implements InitializingBean {
     FrontendPlayerDisplay display2 = FrontendPlayerDisplay.valueOfScreen(displays2, screen);
     if (display1 != null && display2 != null) {
       if (display1.getX() != display2.getX()) {
-        errors.add(StringUtils.defaultString(name, screen.name()) + " x position in " + name1 + " mismatch with x position defined in " + name2 + ": " +
+        errors.add(Objects.toString(name, screen.name()) + " x position in " + name1 + " mismatch with x position defined in " + name2 + ": " +
             display1.getX() + " vs " + display2.getX());
       }
       if (display1.getY() != display2.getY()) {
-        errors.add(StringUtils.defaultString(name, screen.name()) + " y position in " + name1 + " mismatch with y position defined in " + name2 + ": " +
+        errors.add(Objects.toString(name, screen.name()) + " y position in " + name1 + " mismatch with y position defined in " + name2 + ": " +
             display1.getY() + " vs " + display2.getY());
       }
     }
@@ -183,11 +183,11 @@ public class VPinScreenService implements InitializingBean {
     FrontendPlayerDisplay display2 = FrontendPlayerDisplay.valueOfScreen(displays2, screen);
     if (display1 != null && display2 != null) {
       if (display1.getWidth() != display2.getWidth()) {
-        errors.add(StringUtils.defaultString(name, screen.name()) + " width in " + name1 + " mismatch with width defined in " + name2 + ": " +
+        errors.add(Objects.toString(name, screen.name()) + " width in " + name1 + " mismatch with width defined in " + name2 + ": " +
             display1.getWidth() + " vs " + display2.getWidth());
       }
       if (display1.getHeight() != display2.getHeight()) {
-        errors.add(StringUtils.defaultString(name, screen.name()) + " height in " + name1 + " mismatch with height defined in " + name2 + ": " +
+        errors.add(Objects.toString(name, screen.name()) + " height in " + name1 + " mismatch with height defined in " + name2 + ": " +
             display1.getHeight() + " vs " + display2.getHeight());
       }
     }

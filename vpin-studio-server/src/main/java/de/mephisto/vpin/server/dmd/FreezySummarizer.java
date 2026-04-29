@@ -29,7 +29,11 @@ public class FreezySummarizer {
 
       String defaultEncoding = "UTF-8";
       FileInputStream in = new FileInputStream(iniFile);
-      BOMInputStream bOMInputStream = new BOMInputStream(in);
+      BOMInputStream bOMInputStream = BOMInputStream.builder()
+                .setInputStream(in)
+                .get();
+      //deprecated use
+      // BOMInputStream bOMInputStream = new BOMInputStream(in);
       ByteOrderMark bom = bOMInputStream.getBOM();
       String charsetName = bom == null ? defaultEncoding : bom.getCharsetName();
       InputStreamReader reader = new InputStreamReader(new BufferedInputStream(bOMInputStream), charsetName);

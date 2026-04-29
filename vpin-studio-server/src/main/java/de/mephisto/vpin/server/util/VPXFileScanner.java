@@ -19,11 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -390,12 +386,12 @@ public class VPXFileScanner {
     //-------------------
     // Copy discovered variables into Scanresult
 
-    String cGameName = StringUtils.defaultString(evalctxt.getVarValue("cGameName"), evalctxt.getVarValue("GameName"));
+    String cGameName = Objects.toString(evalctxt.getVarValue("cGameName"), evalctxt.getVarValue("GameName"));
     if (StringUtils.isNotEmpty(cGameName)) {
       result.setRom(cGameName);
     }
 
-    String tableName = StringUtils.defaultString(evalctxt.getVarValue("TableName"), evalctxt.getVarValue("B2STableName"));
+    String tableName = Objects.toString(evalctxt.getVarValue("TableName"), evalctxt.getVarValue("B2STableName"));
     if (StringUtils.isNotEmpty(tableName)) {
       result.setTableName(tableName);
     }

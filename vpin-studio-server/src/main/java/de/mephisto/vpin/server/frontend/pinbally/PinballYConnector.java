@@ -373,7 +373,7 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
 
       String position = display.getProperty(sectionName + ".Position");
       String[] positions = StringUtils.split(position, ",");
-      String rotation = StringUtils.defaultString(display.getProperty(sectionName + ".Rotation"), "0");
+      String rotation = Objects.toString(display.getProperty(sectionName + ".Rotation"), "0");
       if (VPinScreen.PlayField.equals(screen)) {
         player.setInverted(true);
       }

@@ -25,6 +25,7 @@ import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static de.mephisto.vpin.server.ini.IniUtil.safeGet;
 import static de.mephisto.vpin.server.ini.IniUtil.safeGetBoolean;
@@ -171,7 +172,7 @@ public class DMDDeviceIniService {
       return false;
     }
 
-    String rom = StringUtils.defaultString(game.getRomAlias(), game.getRom());
+    String rom = Objects.toString(game.getRomAlias(), game.getRom());
 
     SubnodeConfiguration virtualdmdConf = iniConfiguration.getSection("virtualdmd");
     SubnodeConfiguration alphaNumericConf = iniConfiguration.getSection("alphanumeric");
@@ -239,7 +240,7 @@ public class DMDDeviceIniService {
 
   public boolean saveDMDInfoInRegistry(Game game, DMDInfoZone dmdinfo) {
     // clear any values in dmddevice that could overwrite registry values
-    String rom = StringUtils.defaultString(game.getRomAlias(), game.getRom());
+    String rom = Objects.toString(game.getRomAlias(), game.getRom());
 
     // mind that iniConfiguration can be null if externalDMD is not used
     INIConfiguration iniConfiguration = getIniConfiguration(game);
@@ -280,7 +281,7 @@ public class DMDDeviceIniService {
 
 
   public String getStoreName(Game game) {
-    String storeName = StringUtils.defaultString(game.getRomAlias(), game.getRom());
+    String storeName = Objects.toString(game.getRomAlias(), game.getRom());
     if (DMDPackageTypes.UltraDMD.equals(game.getDMDType())) {
       storeName = FilenameUtils.getBaseName(game.getGameFileName());
       // cf https://github.com/vbousquet/flexdmd/blob/6357c1874e896777a53348094eafa86f386dd8fe/FlexDMD/FlexDMD.cs#L188

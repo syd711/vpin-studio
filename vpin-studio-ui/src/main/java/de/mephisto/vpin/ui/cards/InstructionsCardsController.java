@@ -10,11 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -544,7 +540,7 @@ public class InstructionsCardsController  implements Initializable {
         String imageBase64 = getImageBase64(imageFile.get());
         VpsTableInstructions instructionSet = data.getInstructionSetFor(imageBase64);
 
-        languagesCombo.setValue(StringUtils.defaultString(instructionSet.getLanguage(), "EN"));
+        languagesCombo.setValue(Objects.toString(instructionSet.getLanguage(), "EN"));
         String[] instructions = instructionSet.getInstructions();
         if (instructions != null && instructions.length > 0) {
           String instructionsText = StringUtils.join(instructions, System.lineSeparator()+System.lineSeparator());
@@ -587,7 +583,7 @@ public class InstructionsCardsController  implements Initializable {
         String base64 = getImageBase64(imageFile.get());
         VpsTableInstructions instructionSet = data.getInstructionSetFor(base64);
 
-        String language = StringUtils.defaultString(languagesCombo.getValue(), "EN");
+        String language = Objects.toString(languagesCombo.getValue(), "EN");
         instructionSet.setLanguage(language);
         String[] instructions = instructionsTextArea.getText().split("\\R\\s*\\R");
         for (int i = 0; i < instructions.length; i++) {
