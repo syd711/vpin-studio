@@ -119,6 +119,8 @@ public class ScoringDB {
 
   private List<String> highscoreTitles = new ArrayList<>();
 
+  private List<String> highscoreSkipTitlesCheck = new ArrayList<>();
+
   private List<Map<String, Object>> highscoreTextParsers = new ArrayList<>();
 
   private List<Map<String, Object>> highscoreIniParsers = new ArrayList<>();
@@ -166,6 +168,14 @@ public class ScoringDB {
 
   public void setHighscoreTitles(List<String> highscoreTitles) {
     this.highscoreTitles = highscoreTitles;
+  }
+
+  public List<String> getHighscoreSkipTitlesCheck() {
+    return highscoreSkipTitlesCheck;
+  }
+
+  public void setHighscoreSkipTitlesCheck(List<String> highscoreSkipTitlesCheck) {
+    this.highscoreSkipTitlesCheck = highscoreSkipTitlesCheck;
   }
 
   public String getPinemhiVersion() {

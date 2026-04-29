@@ -7,6 +7,8 @@ import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.mephisto.vpin.commons.SystemInfo;
+import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.ScoreListAdapter;
@@ -14,6 +16,7 @@ import de.mephisto.vpin.server.highscores.parsing.ScoreListAdapter;
 import net.nvrams.mapping.NVRamParser;
 import net.nvrams.mapping.NVRamScore;
 import net.nvrams.mapping.map.NVRamMapParser;
+import net.nvrams.mapping.pinemhi.NVRamPinemhiParser;
 import net.nvrams.mapping.superhac.NVRamSuperhacParser;
 
 /**
@@ -29,13 +32,19 @@ public class NvRamParsingWithParser implements NvRamOutputToRaw, ScoreListAdapte
   private NVRamParser parser;
 
 
-  public static NvRamParsingWithParser createSuperhacParser() throws IOException {
-    NVRamParser superhacParser = new NVRamSuperhacParser();
+  public static NvRamParsingWithParser createPinemhiParser(ScoringDB scoringDB) throws IOException {
+    NVRamParser pinemhiParser = new NVRamPinemhiParser(SystemInfo.RESOURCES + "pinemhi/", 
+        scoringDB.getHighscoreTitles(), scoringDB.getHighscoreSkipTitlesCheck());
+    return new NvRamParsingWithParser(pinemhiParser);
+  }
+
+  public static NvRamParsingWithParser createSuperhacParser(ScoringDB scoringDB) throws IOException {
+    NVRamParser superhacParser = new NVRamSuperhacParser(SystemInfo.RESOURCES + "superhac/roms.json");
     return new NvRamParsingWithParser(superhacParser);
   }
 
-  public static NvRamParsingWithParser createNvramMapParser() throws IOException {
-    NVRamParser mapParser = new NVRamMapParser();
+  public static NvRamParsingWithParser createNvramMapParser(ScoringDB scoringDB) throws IOException {
+    NVRamParser mapParser = new NVRamMapParser(SystemInfo.RESOURCES + "maps/");
     return new NvRamParsingWithParser(mapParser);
   }
 
@@ -79,7 +88,7 @@ public class NvRamParsingWithParser implements NvRamOutputToRaw, ScoreListAdapte
       List<Score> scores = new ArrayList<>();
       for (NVRamScore nvramScore : nvRamScores) {
         Score sc = new Score(createdAt, game.getId(),
-            nvramScore.getPlayerInitials(), null,
+            nvramScore.getInitials(), null,
             nvramScore.getRawScore(),
             nvramScore.getScore(),
             nvramScore.getPosition());

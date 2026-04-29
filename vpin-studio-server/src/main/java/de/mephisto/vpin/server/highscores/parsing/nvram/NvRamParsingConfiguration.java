@@ -5,11 +5,8 @@ import static de.mephisto.vpin.server.VPinStudioServer.Features;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Configuration;
 
+import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.highscores.parsing.ScoreListFactory;
-import net.nvrams.mapping.NVRamParser;
-import net.nvrams.mapping.map.NVRamMapParser;
-import net.nvrams.mapping.pinemhi.NVRamPinemhiParser;
-import net.nvrams.mapping.superhac.NVRamSuperhacParser;
 
 /**
  * A bridge to NVRam map sub projects
@@ -22,19 +19,20 @@ public class NvRamParsingConfiguration implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
+    ScoringDB scoringDB = ScoringDB.load();
+
     // Order defines how they should be chosen
     if (Features.NVRAM_PARSING_USE_PINEMHI) {
-      NVRamParser pinemhiParser = new NVRamPinemhiParser();
-      NvRamParsingWithParser svc = new NvRamParsingWithParser(pinemhiParser);
+      NvRamParsingWithParser svc = NvRamParsingWithParser.createPinemhiParser(scoringDB);
 
       // register this service as a converter to convert nvFile to Raw
       NvRamOutputToScoreTextConverter.registerParser(svc);
-      // Use DefaultAdapter for pinhemi
+      // register this service as an adapter to parse Raw
+      ScoreListFactory.registerScoreListAdapter(svc);
     }
 
     if (Features.NVRAM_PARSING_USE_JAVAMAPS) {
-      NVRamParser mapParser = new NVRamMapParser();
-      NvRamParsingWithParser svc = new NvRamParsingWithParser(mapParser);
+      NvRamParsingWithParser svc = NvRamParsingWithParser.createNvramMapParser(scoringDB);
 
       // register this service as a converter to convert nvFile to Raw
       NvRamOutputToScoreTextConverter.registerParser(svc);
@@ -43,8 +41,7 @@ public class NvRamParsingConfiguration implements InitializingBean {
     }
 
     if (Features.NVRAM_PARSING_USE_SUPERHAC) {
-      NVRamParser superhacParser = new NVRamSuperhacParser();
-      NvRamParsingWithParser svc = new NvRamParsingWithParser(superhacParser);
+      NvRamParsingWithParser svc = NvRamParsingWithParser.createSuperhacParser(scoringDB);
 
       // register this service as a converter to convert nvFile to Raw
       NvRamOutputToScoreTextConverter.registerParser(svc);

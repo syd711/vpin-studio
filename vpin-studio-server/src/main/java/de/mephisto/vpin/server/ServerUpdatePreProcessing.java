@@ -19,7 +19,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.*;
 
-import static de.mephisto.vpin.server.system.SystemService.RESOURCES;
+import static de.mephisto.vpin.commons.SystemInfo.RESOURCES;
 
 public class ServerUpdatePreProcessing {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -80,6 +80,7 @@ public class ServerUpdatePreProcessing {
         runDOFTesterCheck();
         runPupGamesUpdateCheck();
         runTomsLogicUpdateCheck();
+        runSuperhacMapsUpdateCheck();
         runDownloadableInstallationsCheck();
         runDeletions();
 
@@ -128,6 +129,18 @@ public class ServerUpdatePreProcessing {
           LOG.error("Failed to flatten pinmame-nvram-maps folder: {}", e.getMessage(), e);
         }
       }
+    }
+  }
+
+  private static void runSuperhacMapsUpdateCheck() {
+    File mapsFolder = new File(RESOURCES, "superhac/");
+    if (!mapsFolder.exists()) {
+      mapsFolder.mkdirs();
+    }
+
+    File check = new File(mapsFolder, "roms.json");
+    if (!check.exists()) {
+      ServerUpdatePreProcessorUI.downloadWithProgressDialog("https://github.com/superhac/pinmame-score-parser/releases/download/v1.0.7/roms.json", check, null);
     }
   }
 
