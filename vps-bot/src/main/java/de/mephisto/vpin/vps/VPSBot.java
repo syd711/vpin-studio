@@ -22,11 +22,14 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.lang.invoke.MethodHandles;
-import java.text.DateFormat;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.time.OffsetDateTime;
 
 public class VPSBot {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -34,7 +37,7 @@ public class VPSBot {
 
   private final JDA jda;
   private final VPSDiscordListenerAdapter listenerAdapter;
-  private Date lastUpdate = new Date();
+  private LocalDateTime lastUpdate = LocalDateTime.now();
   private int totalDiffCount = 0;
   private boolean postSummary = false;
 
@@ -86,7 +89,7 @@ public class VPSBot {
       Thread.currentThread().setName("VPS Discord Notifier");
       try {
         if (!tableDiffs.isEmpty()) {
-          lastUpdate = new Date();
+          lastUpdate = LocalDateTime.now();
 
           Map<String, String> entries = new HashMap<>();
           int counter = 0;
@@ -262,7 +265,8 @@ public class VPSBot {
   }
 
   public String getStatus() {
-    return "Last Update: " + DateFormat.getDateTimeInstance().format(lastUpdate) + "\nTotal Changes: " + totalDiffCount;
+    DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withZone(ZoneId.systemDefault());
+    return "Last Update: " + formatter.format(lastUpdate.atZone(ZoneId.systemDefault())) + "\nTotal Changes: " + totalDiffCount;
   }
 
 
