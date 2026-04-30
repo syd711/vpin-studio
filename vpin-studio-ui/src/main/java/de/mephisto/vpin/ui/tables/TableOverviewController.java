@@ -85,9 +85,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -301,8 +299,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   private boolean showVersionUpdates = true;
   private boolean showVpsUpdates = true;
-  public static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-  public static final DateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+  public static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+  public static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
   private UISettings uiSettings;
   private VpsSettings vpsSettings;
@@ -1393,7 +1391,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     BaseLoadingColumn.configureColumn(columnDateAdded, (value, model) -> {
       Label label = null;
       if (value.getDateAdded() != null) {
-        label = new Label(dateFormat.format(Date.from(value.getDateAdded().toInstant())));
+        label = new Label(dateFormat.format(value.getDateAdded()));
       }
       else {
         label = new Label("-");
@@ -1442,7 +1440,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     BaseLoadingColumn.configureColumn(columnDateModified, (value, model) -> {
       Label label = null;
       if (value.getDateUpdated() != null) {
-        label = new Label(dateTimeFormat.format(Date.from(value.getDateUpdated().toInstant())));
+        label = new Label(dateTimeFormat.format(value.getDateUpdated()));
       }
       else {
         label = new Label("-");
@@ -1479,7 +1477,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       for (BackupDescriptorRepresentation backup : backupsForGame) {
         if (backup.getTableDetails().getGameFileName().equals(value.getGameFileName())) {
           model.backupDate = backup.getCreatedAt();
-          label.setText(dateTimeFormat.format(Date.from(backup.getCreatedAt().toInstant())));
+          label.setText(dateTimeFormat.format(backup.getCreatedAt()));
           break;
         }
       }

@@ -44,8 +44,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.Features;
@@ -539,7 +539,7 @@ public class CompetitionsController implements Initializable, StudioFXController
           }
 
 
-          createdAtLabel.setText(SimpleDateFormat.getDateTimeInstance().format(competition.getCreatedAt()));
+          createdAtLabel.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(competition.getCreatedAt()));
 
           //TODO mpf
           if (type.equals(CompetitionType.DISCORD.name()) || type.equals(CompetitionType.SUBSCRIPTION.name())) {
@@ -593,8 +593,8 @@ public class CompetitionsController implements Initializable, StudioFXController
 
 
           if (competition.getStartDate() != null) {
-            startLabel.setText(DateFormat.getDateInstance().format(competition.getStartDate()));
-            endLabel.setText(DateFormat.getDateInstance().format(competition.getEndDate()));
+            startLabel.setText(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(competition.getStartDate()));
+            endLabel.setText(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(competition.getEndDate()));
           }
         }
       }

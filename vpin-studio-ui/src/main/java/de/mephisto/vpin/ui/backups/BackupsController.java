@@ -39,8 +39,8 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -347,7 +347,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
       size.setStyle("-fx-font-size: 12px;");
       vBox.getChildren().add(size);
 
-      Label created = new Label(new SimpleDateFormat().format(value.getCreatedAt()));
+      Label created = new Label(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(value.getCreatedAt()));
       created.getStyleClass().add("default-text");
       created.setStyle("-fx-font-size: 12px;");
       vBox.getChildren().add(created);
@@ -515,7 +515,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
     }, this, true);
 
     BaseLoadingColumn.configureColumn(createdAtColumn, (value, model) -> {
-      return new Label(DateFormat.getInstance().format(value.getCreatedAt()));
+      return new Label(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(value.getCreatedAt()));
     }, this, true);
 
 

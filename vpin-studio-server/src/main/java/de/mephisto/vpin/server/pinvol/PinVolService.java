@@ -32,7 +32,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -291,7 +292,8 @@ public class PinVolService implements InitializingBean, FileChangeListener {
     StringBuilder builder = new StringBuilder();
     builder.append("# PinVol volume levels list\n");
     builder.append("# Saved ");
-    builder.append(new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date()));
+    DateTimeFormatter df = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
+    builder.append(df.format(LocalDateTime.now()));
     builder.append("\n");
     builder.append("\n");
 

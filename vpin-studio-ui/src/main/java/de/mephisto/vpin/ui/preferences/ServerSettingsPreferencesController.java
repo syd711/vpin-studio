@@ -25,9 +25,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.Features;
@@ -111,7 +111,7 @@ public class ServerSettingsPreferencesController implements Initializable {
       try {
         String backup = client.getSystemService().backupSystem();
         if (backup != null) {
-          String name = "VPin-Studio-Backup[" + new SimpleDateFormat("yyyy-MM-dd--HH-mm").format(new Date()) + "].json";
+          String name = "VPin-Studio-Backup[" + DateTimeFormatter.ofPattern("yyyy-MM-dd--HH-mm").format(OffsetDateTime.now()) + "].json";
           File file = new File(selection, name);
           FileOutputStream fileOutputStream = new FileOutputStream(file);
           IOUtils.write(backup, fileOutputStream, StandardCharsets.UTF_8);
@@ -146,7 +146,7 @@ public class ServerSettingsPreferencesController implements Initializable {
     launchFrontendCheckbox.setText("Launch " + frontend.getName() + " on maintenance exit.");
 
     OffsetDateTime startupTime = client.getSystemService().getStartupTime();
-    startupTimeLabel.setText(DateFormat.getDateTimeInstance().format(startupTime));
+    startupTimeLabel.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(startupTime));
     versionLabel.setText(client.getSystemService().getVersion());
 
     ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
@@ -160,7 +160,7 @@ public class ServerSettingsPreferencesController implements Initializable {
       client.getPreferenceService().setJsonPreference(serverSettings);
     });
 
-    List<String> tableIdFields = Arrays.asList("WEBGameID", "CUSTOM2", "CUSTOM3", "CUSTOM4", "CUSTOM5");
+    List<String> tableIdFields = Arrays.asList("WEBGameID", "CUSTOM2", "CUSTOM3", "CUSTOM3", "CUSTOM4", "CUSTOM5");
     mappingVpsTableIdCombo.setItems(FXCollections.observableList(tableIdFields));
     mappingVpsTableIdCombo.setValue(serverSettings.getMappingVpsTableId());
     mappingVpsTableIdCombo.valueProperty().addListener((observable, oldValue, newValue) -> {

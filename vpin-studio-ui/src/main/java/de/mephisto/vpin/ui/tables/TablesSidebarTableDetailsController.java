@@ -35,7 +35,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
-import java.text.DateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.Features;
@@ -425,7 +426,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
 
       autoFillBtn.setVisible(client.getEmulatorService().isVpxGame(game) && Features.FIELDS_STANDARD);
 
-      dateAdded.setText(game.getDateAdded() == null ? "-" : DateFormat.getDateTimeInstance().format(game.getDateAdded()));
+      dateAdded.setText(game.getDateAdded() == null ? "-" : DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(game.getDateAdded()));
       emulatorLabel.setText(client.getEmulatorService().getGameEmulator(game.getEmulatorId()).getName());
       gameVersion.setText(StringUtils.defaultIfEmpty(game.getVersion(), "-"));
       gameName.setText(StringUtils.defaultIfEmpty(game.getGameName(), "-"));
@@ -532,7 +533,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
       custom3.setText(StringUtils.isEmpty(tableDetails.getCustom3()) ? "-" : tableDetails.getCustom3());
       volume.setText(StringUtils.isEmpty(tableDetails.getVolume()) ? "-" : tableDetails.getVolume());
 
-      labelLastPlayed.setText(tableDetails.getLastPlayed() != null ? DateFormat.getDateInstance().format(tableDetails.getLastPlayed()) : "-");
+      labelLastPlayed.setText(tableDetails.getLastPlayed() != null ? DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(tableDetails.getLastPlayed()) : "-");
       if (tableDetails.getNumberPlays() != null) {
         labelTimesPlayed.setText(String.valueOf(tableDetails.getNumberPlays()));
       }

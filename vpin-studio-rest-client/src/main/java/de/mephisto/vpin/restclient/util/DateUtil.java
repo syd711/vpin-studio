@@ -5,9 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -34,17 +32,17 @@ public class DateUtil {
   }
 
   public static String formatTimeString(Date date) {
-    SimpleDateFormat df = new SimpleDateFormat("HH-mm");
-    return df.format(date);
+    DateTimeFormatter df = DateTimeFormatter.ofPattern("HH-mm");
+    return df.format(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
   }
 
   public static String formatDateTimeFileString(Date date) {
-    SimpleDateFormat df = new SimpleDateFormat("HH:mm");
-    return df.format(date);
+    DateTimeFormatter df = DateTimeFormatter.ofPattern("HH:mm");
+    return df.format(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
   }
 
   public static String formatDateTime(Date date) {
-    return DateFormat.getDateTimeInstance().format(date);
+    return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
   }
 
   public static String formatDateTime(OffsetDateTime date) {
@@ -68,8 +66,9 @@ public class DateUtil {
       }
 
       if (time.contains("--")) {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd--HH-mm-ss");
-        return df.parse(time);
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd--HH-mm-ss");
+        LocalDateTime localDateTime = LocalDateTime.parse(time, df);
+        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
       }
 
       String[] split = time.replaceAll("-", ":").split(":");
@@ -78,7 +77,7 @@ public class DateUtil {
       Date date = Date.from(value.atStartOfDay(ZoneId.systemDefault()).toInstant());
       return DateUtil.toDate(date, hours, minutes);
     }
-    catch (ParseException e) {
+    catch (Exception e) {
       LOG.error("Date format failed: {}", e.getMessage(), e);
     }
     return new Date();
@@ -155,13 +154,7 @@ public class DateUtil {
   }
 
   public static Date today() {
-    Calendar calendar = Calendar.getInstance();
-    calendar.set(Calendar.HOUR_OF_DAY, 0);
-    calendar.set(Calendar.MINUTE, 0);
-    calendar.set(Calendar.SECOND, 0);
-    calendar.set(Calendar.MILLISECOND, 0);
-
-    return calendar.getTime();
+    return Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
   }
 //
 //  public static Date endOfToday() {
@@ -186,13 +179,8 @@ public class DateUtil {
 //  }
 
   public static Date toDate(Date date, int hours, int minutes) {
-    Calendar calendar = Calendar.getInstance();
-    calendar.setTime(date);
-    calendar.set(Calendar.HOUR_OF_DAY, hours);
-    calendar.set(Calendar.MINUTE, minutes);
-    calendar.set(Calendar.SECOND, 0);
-    calendar.set(Calendar.MILLISECOND, 0);
-
-    return calendar.getTime();
+    LocalDateTime localDateTime = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+    localDateTime = localDateTime.withHour(hours).withMinute(minutes).withSecond(0).withNano(0);
+    return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
   }
 }

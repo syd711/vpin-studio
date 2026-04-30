@@ -12,13 +12,13 @@ import javafx.scene.layout.*;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.getScoreFont;
 
 public class WidgetCompetitionScoreItemController extends WidgetController implements Initializable {
-  private final static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy / hh:mm");
+  private final static DateTimeFormatter simpleDateFormat = DateTimeFormatter.ofPattern("MM-dd-yyyy / hh:mm");
 
   @FXML
   private BorderPane root;

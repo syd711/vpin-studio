@@ -7,7 +7,6 @@ import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.competitions.validation.CompetitionValidationTexts;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -38,6 +37,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.text.DateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -329,7 +330,7 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
 
     columnStartDate.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
-      Label label = new Label(DateFormat.getDateTimeInstance().format(value.getStartDate()));
+      Label label = new Label(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(value.getEndDate()));
       if (value.isActive()) {
         label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00;");
       }
@@ -338,7 +339,7 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
 
     columnEndDate.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
-      Label label = new Label(DateFormat.getDateTimeInstance().format(value.getEndDate()));
+      Label label = new Label(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(value.getEndDate()));
       if (value.isActive()) {
         label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00;");
       }

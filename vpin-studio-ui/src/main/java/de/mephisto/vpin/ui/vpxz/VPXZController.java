@@ -41,8 +41,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -353,7 +353,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
       size.setStyle("-fx-font-size: 12px;");
       vBox.getChildren().add(size);
 
-      Label created = new Label(new SimpleDateFormat().format(value.getCreatedAt()));
+      Label created = new Label(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(value.getCreatedAt()));
       created.getStyleClass().add("default-text");
       created.setStyle("-fx-font-size: 12px;");
       vBox.getChildren().add(created);
@@ -428,7 +428,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
     }, this, true);
 
     BaseLoadingColumn.configureColumn(createdAtColumn, (value, model) -> {
-      Label label = new Label(DateFormat.getInstance().format(value.getCreatedAt()));
+      Label label = new Label(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(value.getCreatedAt()));
       label.getStyleClass().add("default-text");
       return label;
     }, this, true);

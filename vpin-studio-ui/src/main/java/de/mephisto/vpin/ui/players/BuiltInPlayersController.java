@@ -31,7 +31,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
-import java.text.DateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.Features;
@@ -289,7 +290,7 @@ public class BuiltInPlayersController extends BasePlayersController implements I
 
     columnCreatedAt.setCellValueFactory(cellData -> {
       PlayerRepresentation value = cellData.getValue();
-      return new SimpleObjectProperty(DateFormat.getInstance().format(value.getCreatedAt()));
+      return new SimpleObjectProperty(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(value.getCreatedAt()));
     });
 
     editBtn.setDisable(true);

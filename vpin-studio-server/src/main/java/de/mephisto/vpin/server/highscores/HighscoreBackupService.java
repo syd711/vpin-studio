@@ -27,11 +27,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.zip.ZipOutputStream;
 
@@ -43,7 +41,7 @@ public class HighscoreBackupService implements InitializingBean {
   public static final String DESCRIPTOR_JSON = "descriptor.json";
   public static final String VPREG_STG_JSON = "vpreg-stg.json";
 
-  private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+  private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
 
   @Autowired
   private HighscoreService highscoreService;
@@ -228,7 +226,7 @@ public class HighscoreBackupService implements InitializingBean {
     Optional<Highscore> hs = highscoreService.getHighscore(game, true, EventOrigin.USER_INITIATED);
     if (hs.isPresent()) {
 
-      String filename = dateFormatter.format(new Date());
+      String filename = dateFormatter.format(OffsetDateTime.now());
       filename = filename + "." + FILE_SUFFIX;
 
       if (!romBasedBackupFolder.exists() && !romBasedBackupFolder.mkdirs()) {

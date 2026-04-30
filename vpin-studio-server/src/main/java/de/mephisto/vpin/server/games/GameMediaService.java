@@ -54,9 +54,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -292,7 +292,8 @@ public class GameMediaService extends MediaService {
       if (keepCopy) {
         File tableBackupsFolder = gameEmulator.getTableBackupsFolder();
         tableBackupsFolder.mkdirs();
-        String format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(OffsetDateTime.now());
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
+        String format = df.format(OffsetDateTime.now());
         String suffix = FilenameUtils.getExtension(existingVPXFile.getName());
         File backup = new File(tableBackupsFolder, FilenameUtils.getBaseName(existingVPXFile.getName()) + "[" + format + "]." + suffix);
         org.apache.commons.io.FileUtils.copyFile(existingVPXFile, backup);
