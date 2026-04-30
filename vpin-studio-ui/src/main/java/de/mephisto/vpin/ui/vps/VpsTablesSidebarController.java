@@ -28,8 +28,10 @@ import java.awt.*;
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
 import java.net.URL;
-import java.text.DateFormat;
-import java.util.Date;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.Predicate;
@@ -170,7 +172,8 @@ public class VpsTablesSidebarController extends BaseSideBarController<VpsTable> 
 
     if (selection.isPresent()) {
       VpsTable table = selection.get();
-      updated.setText(DateFormat.getDateInstance().format(new Date(table.getUpdatedAt())));
+      DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withZone(ZoneId.systemDefault());
+      updated.setText(formatter.format(Instant.ofEpochMilli(table.getUpdatedAt())));
       this.commentsArea.setText(table.getComment());
       this.commentsArea.textProperty().addListener(commentChangeListener);
 

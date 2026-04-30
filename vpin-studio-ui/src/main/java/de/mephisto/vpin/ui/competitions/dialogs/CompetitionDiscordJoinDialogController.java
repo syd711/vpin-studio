@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.net.URL;
-import java.text.DateFormat;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -169,7 +168,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     });
 
     ArrayList<String> badges = new ArrayList<>(client.getCompetitionService().getCompetitionBadges());
-    badges.add(0, null);
+    badges.addFirst(null);
     ObservableList<String> imageList = FXCollections.observableList(badges);
     competitionIconCombo.setItems(imageList);
     competitionIconCombo.setCellFactory(c -> new CompetitionImageListCell(client));
