@@ -1,8 +1,7 @@
 package de.mephisto.vpin.ui.cards.panels;
 
-import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.cards.CardResolution;
+import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.PositionResizer;
@@ -16,8 +15,8 @@ import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
-
-import static de.mephisto.vpin.ui.Studio.client;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.net.URL;
@@ -26,8 +25,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.Function;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class LayerEditorFrameController extends LayerEditorBaseController implements Initializable {
 
@@ -118,7 +116,7 @@ public class LayerEditorFrameController extends LayerEditorBaseController implem
 
     String frameName = cardTemplate.getFrame();
     if (StringUtils.isEmpty(frameName)) {
-      frameImageCombo.setValue(imageList.get(0));
+      frameImageCombo.setValue(imageList.getFirst());
     }
     else {
       frameImageCombo.setValue(frameName);
@@ -180,7 +178,7 @@ public class LayerEditorFrameController extends LayerEditorBaseController implem
 
     // frame image
     imageList = FXCollections.observableList(new ArrayList<>(client.getHighscoreCardsService().getCardsFrameImages()));
-    imageList.add(0, null);
+    imageList.addFirst(null);
     frameImageCombo.setItems(imageList);
 
     Function<String, byte[]> frameProvider = item -> client.getHighscoreCardsService().getCardsFrameImage(item);

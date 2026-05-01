@@ -63,6 +63,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -513,7 +514,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       String name = selectedItem.getName();
       String baseName = FilenameUtils.getBaseName(name);
       String uniqueAssetName = null; //FileUtils.baseUniqueAsset(name);
-      if (StringUtils.equals(baseName, uniqueAssetName)) {
+      if (Strings.CI.equals(baseName, uniqueAssetName)) {
       }
 
       Optional<ButtonType> buttonType = WidgetFactory.showConfirmation(localStage, "Set As Default Asset",
@@ -936,7 +937,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           return;
         }
         // else
-        FrontendMediaItemRepresentation mediaItem = list.get(0);
+        FrontendMediaItemRepresentation mediaItem = list.getFirst();
         String mimeType = mediaItem.getMimeType();
         String baseType = MimeTypeUtil.mimeTypeToBaseType(mimeType);
 
@@ -996,7 +997,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
             String name = "Video Conversion of " + selectedItems.size() + " media items";
             if (selectedItems.size() == 1) {
-              name = "Video Conversion " + "\"" + selectedItems.get(0).getName() + "\"";
+              name = "Video Conversion " + "\"" + selectedItems.getFirst().getName() + "\"";
             }
 
             int objectId = isPlaylistMode() ? playlist.getId(): game.getId();
@@ -1006,7 +1007,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
             Platform.runLater(() -> {
               if (!results.isEmpty()) {
-                WidgetFactory.showAlert(stage, "Error", "Error converting video: " + results.get(0));
+                WidgetFactory.showAlert(stage, "Error", "Error converting video: " + results.getFirst());
               }
               else {
                 refreshTableMediaView();
@@ -1341,7 +1342,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       }
       else {
         if (this.game == null) {
-          this.game = tablesCombo.getItems().get(0);
+          this.game = tablesCombo.getItems().getFirst();
         }
         return client.getGameMediaService().getGameMedia(this.game.getId());
       }
@@ -1375,7 +1376,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           deleteBtn.setDisable(false);
         }
 
-        boolean convertable = items.size() == 1 && !items.get(0).getName().contains("(SCREEN");
+        boolean convertable = items.size() == 1 && !items.getFirst().getName().contains("(SCREEN");
         this.addToPlaylistBtn.setDisable(!convertable);
       }
       else {
@@ -1449,7 +1450,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       boolean modal = LocalUISettings.isModal(MODAL_STATE_ID);
       if (!modal) {
         Platform.runLater(() -> {
-          GameRepresentation gameRepresentation = games.get(0);
+          GameRepresentation gameRepresentation = games.getFirst();
           if (this.game == null || this.game.getId() != gameRepresentation.getId()) {
             tablesRadio.setSelected(true);
             setGame(gameRepresentation, screen);

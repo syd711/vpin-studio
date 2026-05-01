@@ -14,8 +14,6 @@ import de.mephisto.vpin.ui.competitions.dialogs.CompetitionOfflineDialogControll
 import de.mephisto.vpin.ui.preferences.PreferencesSavingModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -27,6 +25,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -127,7 +127,7 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
 
     ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new IScoredGameRoomLoadingProgressModel(url, force));
     if (!progressDialog.getResults().isEmpty()) {
-      GameRoom gr = (GameRoom) progressDialog.getResults().get(0);
+      GameRoom gr = (GameRoom) progressDialog.getResults().getFirst();
       nameLabel.setText(gr.getName());
 
       urlField.setDisable(false);
@@ -281,7 +281,7 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
     setDisabled(true);
 
     List<String> badges = new ArrayList<>(client.getCompetitionService().getCompetitionBadges());
-    badges.add(0, null);
+    badges.addFirst(null);
     ObservableList<String> imageList = FXCollections.observableList(badges);
     badgeCombo.setItems(imageList);
     badgeCombo.setCellFactory(c -> new CompetitionOfflineDialogController.CompetitionImageListCell(client));

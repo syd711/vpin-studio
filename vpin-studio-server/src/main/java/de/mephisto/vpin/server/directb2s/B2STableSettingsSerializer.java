@@ -5,11 +5,10 @@ import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.util.FileUpdateWriter;
 import de.mephisto.vpin.server.util.XMLUtil;
-import org.jspecify.annotations.NonNull;
-
-import org.jspecify.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -20,7 +19,6 @@ import org.w3c.dom.NodeList;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -38,7 +36,7 @@ public class B2STableSettingsSerializer {
       "ArePluginsOn", "DefaultStartMode", "ShowStartupError", "DisableFuzzyMatching",
       "HideGrill", "HideB2SDMD", "HideDMD", "FormToFront", "FormToBack", "FormNoFocus", "UsedLEDType");
 
-  private final static List<String> skippedWhenMinusOne = Arrays.asList("UsedLEDType");
+  private final static List<String> skippedWhenMinusOne = List.of("UsedLEDType");
 
   public B2STableSettingsSerializer() {
   }

@@ -4,9 +4,6 @@ import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoresController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetPlayerRankController;
-import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
-import de.mephisto.vpin.restclient.competitions.CompetitionType;
-import org.jspecify.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -15,15 +12,15 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
-
-import static de.mephisto.vpin.ui.Studio.client;
 
 public class DashboardController implements Initializable, StudioFXController, ChangeListener<Number> {
   private final static Logger LOG = LoggerFactory.getLogger(DashboardController.class);
@@ -52,7 +49,7 @@ public class DashboardController implements Initializable, StudioFXController, C
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    NavigationController.setBreadCrumb(Arrays.asList("Dashboard"));
+    NavigationController.setBreadCrumb(List.of("Dashboard"));
 
     try {
       FXMLLoader loader = new FXMLLoader(WidgetLatestScoresController.class.getResource("widget-latest-scores.fxml"));
@@ -119,7 +116,7 @@ public class DashboardController implements Initializable, StudioFXController, C
 //        c = client.getActiveCompetition(CompetitionType.DISCORD);
 //        discordCompetitionWidgetController.refresh(c);
 //      }
-      NavigationController.setBreadCrumb(Arrays.asList("Dashboard"));
+      NavigationController.setBreadCrumb(List.of("Dashboard"));
     });
   }
 

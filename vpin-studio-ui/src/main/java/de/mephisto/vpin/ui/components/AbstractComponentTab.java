@@ -10,7 +10,6 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.SystemUtil;
-import org.jspecify.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -23,8 +22,8 @@ import javafx.scene.control.Separator;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +73,7 @@ abstract public class AbstractComponentTab implements StudioEventListener {
   /**
    * Called when a component is updated, gives opportunity to the tab to refresh itself
    *
-   * @param component The updated component
+   * @param - component The updated component
    */
   protected void refreshTab(ComponentRepresentation component2) {
   }

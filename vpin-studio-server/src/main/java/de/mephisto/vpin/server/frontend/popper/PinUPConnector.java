@@ -23,13 +23,13 @@ import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.recorder.EmulatorRecorderJob;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.util.WindowsUtil;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -1027,7 +1027,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   @NonNull
   public Playlist getPlaylistTree() {
     List<Playlist> result = new ArrayList<>();
-    List<Playlist> playLists = getPlaylists().stream().filter(p -> p.getId() >= 0).collect(Collectors.toList());
+    List<Playlist> playLists = getPlaylists().stream().filter(p -> p.getId() >= 0).toList();
     Playlist root = playLists.stream().filter(p -> p.getParentId() == -1).findFirst().get();
     result.add(root);
     buildPlaylistTree(root);
@@ -1621,7 +1621,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
             @NotNull
             @Override
             public FileVisitResult visitFile(@NotNull Path file, @NotNull BasicFileAttributes attributes) {
-              if (StringUtils.endsWithIgnoreCase(file.toString(), ext)) {
+              if (Strings.CI.endsWith(file.toString(), ext)) {
                 fileFound[0] = file;
                 return FileVisitResult.TERMINATE;
               }
@@ -1797,22 +1797,13 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
 
   public FrontendControl getFrontendControlFor(VPinScreen screen) {
-    switch (screen) {
-      case Other2: {
-        return getFrontendControl(FrontendControl.FUNCTION_SHOW_OTHER);
-      }
-      case GameHelp: {
-        return getFrontendControl(FrontendControl.FUNCTION_SHOW_HELP);
-      }
-      case GameInfo: {
-        return getFrontendControl(FrontendControl.FUNCTION_SHOW_FLYER);
-      }
-      default: {
+      return switch (screen) {
+          case Other2 -> getFrontendControl(FrontendControl.FUNCTION_SHOW_OTHER);
+          case GameHelp -> getFrontendControl(FrontendControl.FUNCTION_SHOW_HELP);
+          case GameInfo -> getFrontendControl(FrontendControl.FUNCTION_SHOW_FLYER);
+          default -> new FrontendControl();
+      };
 
-      }
-    }
-
-    return new FrontendControl();
   }
 
   @NonNull
@@ -2514,7 +2505,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
                     p.info().command().get().contains("Zaccaria") ||
                     p.info().command().get().contains("MAME") ||
                     p.info().command().get().contains("Future Pinball") ||
-                    p.info().command().get().contains("B2SBackglassServerEXE"))).collect(Collectors.toList());
+                    p.info().command().get().contains("B2SBackglassServerEXE"))).toList();
 
     if (pinUpProcesses.isEmpty()) {
       LOG.info("No remaining PinUP processes found, termination finished.");
@@ -2530,7 +2521,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     //actually redundant, but who knows what else is in there
     File showTaskbarExe = new File(getInstallationFolder(), "showtaskbar.exe");
     if (showTaskbarExe.exists()) {
-      SystemCommandExecutor exec = new SystemCommandExecutor(Arrays.asList("showtaskbar.exe"));
+      SystemCommandExecutor exec = new SystemCommandExecutor(List.of("showtaskbar.exe"));
       exec.setDir(getInstallationFolder());
       exec.executeCommandAsync();
     }
@@ -2686,7 +2677,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       File popperFolder = systemService.getPinupInstallationFolder();
       File popperMenu = new File(popperFolder, "PinUpMenu.exe");
       if (popperMenu.exists()) {
-        SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList(popperMenu.getName()));
+        SystemCommandExecutor executor = new SystemCommandExecutor(List.of(popperMenu.getName()));
         executor.setDir(popperFolder);
         executor.executeCommandAsync();
       }

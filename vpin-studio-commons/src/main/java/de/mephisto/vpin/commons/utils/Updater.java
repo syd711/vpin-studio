@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class Updater {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -166,7 +165,7 @@ public class Updater {
         Files.setPosixFilePermissions(file.toPath(), perms);
         LOG.info("Applied execute permissions to : {}", file.getAbsolutePath());
 
-        List<String> commands = Arrays.asList("./update-client.sh");
+        List<String> commands = List.of("./update-client.sh");
         SystemCommandExecutor executor = new SystemCommandExecutor(commands, false);
         executor.setDir(getWriteableBaseFolder());
         executor.enableLogging(true);
@@ -206,7 +205,7 @@ public class Updater {
   }
 
   public static void restartServer() {
-    List<String> commands = Arrays.asList("VPin-Studio-Server.exe");
+    List<String> commands = List.of("VPin-Studio-Server.exe");
     SystemCommandExecutor executor = new SystemCommandExecutor(commands);
     executor.setDir(getWriteableBaseFolder());
     executor.executeCommandAsync();

@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.backups.adapters;
 
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.Job;
-import de.mephisto.vpin.server.backups.BackupSource;
 import org.jspecify.annotations.NonNull;
 
 /**

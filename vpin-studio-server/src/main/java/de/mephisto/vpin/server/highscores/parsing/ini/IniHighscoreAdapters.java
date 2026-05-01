@@ -2,17 +2,13 @@ package de.mephisto.vpin.server.highscores.parsing.ini;
 
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.system.ScoringDB;
-import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.parsing.ini.adapters.DefaultIniHighscoreFileAdapter;
 import de.mephisto.vpin.server.highscores.parsing.ini.adapters.IniScoreFileAdapter;
-import de.mephisto.vpin.server.highscores.parsing.text.adapters.ScoreTextFileAdapter;
-import de.mephisto.vpin.server.highscores.parsing.text.adapters.customized.Route66Adapter;
-import de.mephisto.vpin.server.highscores.parsing.text.adapters.customized.SpongebobAdapter;
 import de.mephisto.vpin.server.system.SystemService;
-import org.jspecify.annotations.NonNull;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;

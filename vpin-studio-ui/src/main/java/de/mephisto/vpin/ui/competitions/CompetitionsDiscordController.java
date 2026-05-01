@@ -5,15 +5,18 @@ import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
+import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
-import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
-import de.mephisto.vpin.ui.*;
+import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.NavigationOptions;
+import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSavingProgressModel;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSyncProgressModel;
 import de.mephisto.vpin.ui.competitions.validation.CompetitionValidationTexts;
@@ -176,11 +179,11 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
     CompetitionRepresentation c = CompetitionDialogs.openDiscordCompetitionDialog(this.competitions, null);
     if (c != null) {
       try {
-        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Creating Competition", Arrays.asList(c)));
+        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Creating Competition", List.of(c)));
         Platform.runLater(() -> {
           Platform.runLater(() -> {
             onReload();
-            tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
+            tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.getFirst());
           });
         });
       }
@@ -199,10 +202,10 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
       CompetitionRepresentation c = CompetitionDialogs.openDiscordCompetitionDialog(this.competitions, clone);
       if (c != null) {
         try {
-          ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Creating Competition", Arrays.asList(c)));
+          ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Creating Competition", List.of(c)));
           Platform.runLater(() -> {
             onReload();
-            tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
+            tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.getFirst());
           });
         }
         catch (Exception e) {
@@ -227,9 +230,9 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
     CompetitionRepresentation c = CompetitionDialogs.openDiscordJoinCompetitionDialog();
     if (c != null) {
       try {
-        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Joining Competition", Arrays.asList(c)));
+        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Joining Competition", List.of(c)));
         onReload();
-        tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
+        tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.getFirst());
       }
       catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
@@ -386,7 +389,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize();
-    NavigationController.setBreadCrumb(Arrays.asList("Competitions"));
+    NavigationController.setBreadCrumb(List.of("Competitions"));
     tableView.setPlaceholder(new Label("            No competitions found.\nClick the '+' button to create a new one."));
 
     try {

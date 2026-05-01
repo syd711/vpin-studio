@@ -13,11 +13,9 @@ import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.preferences.VPXZSettings;
 import de.mephisto.vpin.ui.*;
+import de.mephisto.vpin.ui.backglassmanager.BackglassManagerController;
 import de.mephisto.vpin.ui.backups.BackupsController;
 import de.mephisto.vpin.ui.backups.BackupsSidebarController;
-import de.mephisto.vpin.ui.vpxz.VPXZController;
-import de.mephisto.vpin.ui.vpxz.VPXZSidebarController;
-import de.mephisto.vpin.ui.backglassmanager.BackglassManagerController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
@@ -26,7 +24,8 @@ import de.mephisto.vpin.ui.recorder.RecorderController;
 import de.mephisto.vpin.ui.tables.alx.AlxController;
 import de.mephisto.vpin.ui.vps.VpsTablesController;
 import de.mephisto.vpin.ui.vps.VpsTablesSidebarController;
-import org.jspecify.annotations.NonNull;
+import de.mephisto.vpin.ui.vpxz.VPXZController;
+import de.mephisto.vpin.ui.vpxz.VPXZSidebarController;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -36,7 +35,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -47,6 +45,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -701,30 +700,16 @@ public class TablesController implements Initializable, StudioFXController, Stud
   }
 
   private StudioFXController getController(int tab) {
-    switch (tab) {
-      case TAB_TABLE: {
-        return tableOverviewController;
-      }
-      case TAB_BACKGLASS: {
-        return backglassManagerController;
-      }
-      case TAB_VPS: {
-        return vpsTablesController;
-      }
-      case TAB_STATISTICS: {
-        return alxController;
-      }
-      case TAB_BACKUPS: {
-        return backupsController;
-      }
-      case TAB_VPXZ: {
-        return vpxzController;
-      }
-      case TAB_RECORDER: {
-        return recorderController;
-      }
-    }
-    return null;
+      return switch (tab) {
+          case TAB_TABLE -> tableOverviewController;
+          case TAB_BACKGLASS -> backglassManagerController;
+          case TAB_VPS -> vpsTablesController;
+          case TAB_STATISTICS -> alxController;
+          case TAB_BACKUPS -> backupsController;
+          case TAB_VPXZ -> vpxzController;
+          case TAB_RECORDER -> recorderController;
+          default -> null;
+      };
   }
 
   @Override

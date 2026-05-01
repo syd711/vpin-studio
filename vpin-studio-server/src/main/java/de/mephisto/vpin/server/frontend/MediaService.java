@@ -5,12 +5,11 @@ import de.mephisto.vpin.restclient.assets.AssetMetaData;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.server.assets.AssetService;
-import org.jspecify.annotations.NonNull;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.aspectj.util.FileUtil;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +46,7 @@ public abstract class MediaService  {
       for (File file : mediaFiles) {
         // find existing default files, mind there could be several with different extensions
         String fileext = FilenameUtils.getExtension(file.getName());
-        if (FileUtils.isDefaultAsset(file.getName()) && StringUtils.equalsIgnoreCase(fileext, extension)) {
+        if (FileUtils.isDefaultAsset(file.getName()) && Strings.CI.equals(fileext, extension)) {
           File defaultFile = FileUtils.uniqueAsset(file);
           if (file.renameTo(defaultFile)) {
             LOG.info("Renamed \"{}\" to \"{}\"", file.getAbsolutePath(), defaultFile.getName());
@@ -108,7 +107,7 @@ public abstract class MediaService  {
   public boolean toFullscreenMedia(int objectId, VPinScreen screen) throws IOException {
     List<File> mediaFiles = getMediaFiles(objectId, screen);
     if (mediaFiles.size() == 1) {
-      File mediaFile = mediaFiles.get(0);
+      File mediaFile = mediaFiles.getFirst();
       String name = mediaFile.getName();
       String baseName = FilenameUtils.getBaseName(name);
       String suffix = FilenameUtils.getExtension(name);

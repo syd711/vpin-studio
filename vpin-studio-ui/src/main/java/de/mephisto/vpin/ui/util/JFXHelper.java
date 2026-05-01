@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.util;
 
 import javafx.scene.Parent;
-import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.ImageView;
 import javafx.scene.media.MediaView;
 

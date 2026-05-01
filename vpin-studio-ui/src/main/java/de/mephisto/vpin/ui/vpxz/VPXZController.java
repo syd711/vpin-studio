@@ -21,8 +21,6 @@ import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.SystemUtil;
 import de.mephisto.vpin.ui.vpxz.dialogs.VPXZInstallationProgressModel;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -36,6 +34,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -138,7 +138,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
   public final void onFolder() {
     ObservableList<VPXZModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
-      VPXZDescriptorRepresentation descriptor = selectedItems.get(0).getBean();
+      VPXZDescriptorRepresentation descriptor = selectedItems.getFirst().getBean();
       VPXZSourceRepresentation source = sourceCombo.getValue();
 
       File file = new File(source.getLocation(), descriptor.getFilename());
@@ -281,7 +281,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
     if (!selectedItems.isEmpty()) {
       String title = "Delete the " + selectedItems.size() + " selected files?";
       if (selectedItems.size() == 1) {
-        title = "Delete File \"" + selectedItems.get(0).getName() + "\"?";
+        title = "Delete File \"" + selectedItems.getFirst().getName() + "\"?";
       }
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title, null, null, "Delete");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
@@ -522,7 +522,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
 
   @Override
   public void onViewActivated(NavigationOptions options) {
-    NavigationController.setBreadCrumb(Arrays.asList(TAB_NAME));
+    NavigationController.setBreadCrumb(List.of(TAB_NAME));
     if (options == null) {
       refreshView(Optional.empty());
     }
@@ -551,7 +551,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
   }
 
   private void updateSelection(Optional<VPXZDescriptorRepresentation> newSelection) {
-    NavigationController.setBreadCrumb(Arrays.asList(TAB_NAME));
+    NavigationController.setBreadCrumb(List.of(TAB_NAME));
     if (newSelection.isPresent()) {
       VPXZDescriptorRepresentation descriptorRepresentation = newSelection.get();
       NavigationController.setBreadCrumb(Arrays.asList(TAB_NAME, descriptorRepresentation.getFilename()));

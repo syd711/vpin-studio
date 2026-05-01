@@ -34,20 +34,15 @@ import de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2ProfileDialogControll
 import de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2SampleTypeDialogController;
 import de.mephisto.vpin.ui.tables.panels.BaseGameModel;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
-import de.mephisto.vpin.ui.util.Dialogs;
-import de.mephisto.vpin.ui.util.ProgressDialog;
-import de.mephisto.vpin.ui.util.ProgressResultModel;
-import de.mephisto.vpin.ui.util.StudioFileChooser;
-import de.mephisto.vpin.ui.util.StudioFolderChooser;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
+import de.mephisto.vpin.ui.util.*;
 import javafx.application.Platform;
 import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -588,7 +583,7 @@ public class TableDialogs {
   private static boolean onOpenAutoMatch(List<GameRepresentation> games) {
     String title = "Auto-Match table and version for " + games.size() + " tables?";
     if (games.size() == 1) {
-      title = "Auto-Match table and version for \"" + games.get(0).getGameDisplayName() + "\"?";
+      title = "Auto-Match table and version for \"" + games.getFirst().getGameDisplayName() + "\"?";
     }
 
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title,
@@ -694,7 +689,7 @@ public class TableDialogs {
     }
     String title = "Re-validate " + selectedItems.size() + " tables?";
     if (selectedItems.size() == 1) {
-      title = "Re-validate table \"" + selectedItems.get(0).getGameDisplayName() + "\"?";
+      title = "Re-validate table \"" + selectedItems.getFirst().getGameDisplayName() + "\"?";
     }
 
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title,
@@ -702,7 +697,7 @@ public class TableDialogs {
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       title = "Re-validating " + selectedItems.size() + " tables";
       if (selectedItems.size() == 1) {
-        title = "Re-validating table \"" + selectedItems.get(0).getGameDisplayName() + "\"";
+        title = "Re-validating table \"" + selectedItems.getFirst().getGameDisplayName() + "\"";
       }
 
       ProgressDialog.createProgressDialog(new TableValidateProgressModel(title, selectedItems, reload));

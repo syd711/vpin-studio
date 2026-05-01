@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.frontend.popper;
 
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.system.SystemService;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

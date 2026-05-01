@@ -1,21 +1,18 @@
 package de.mephisto.vpin.commons.utils.scripts;
 
+import de.mephisto.vpin.restclient.util.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.HashSet;
 import java.util.Set;
-import java.nio.charset.StandardCharsets;
-
-import de.mephisto.vpin.restclient.util.OSUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-
-import de.mephisto.vpin.restclient.util.FileUtils;
 
 
 public class MacOS {
@@ -139,9 +136,9 @@ private static final String LOG_PATH = System.getProperty("MAC_WRITE_PATH") + "L
 
   public static void ReplaceTextinFile(String PATH, String oldText, String newText) throws IOException  {
     try {
-      String fileContent = new String(Files.readAllBytes(Paths.get(PATH)), StandardCharsets.UTF_8);
+      String fileContent = Files.readString(Paths.get(PATH));
       fileContent = fileContent.replaceAll(oldText, newText);
-      Files.write(Paths.get(PATH), fileContent.getBytes(StandardCharsets.UTF_8));
+      Files.writeString(Paths.get(PATH), fileContent);
       LOG.info("Replaced Text in File: " + oldText  + " to " + newText + " in " + PATH);
     } catch (IOException e) {
       LOG.error("Error replacing Text in File: {}", e.getMessage(), e);

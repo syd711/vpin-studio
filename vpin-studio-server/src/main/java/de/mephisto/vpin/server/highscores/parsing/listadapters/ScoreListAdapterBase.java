@@ -1,17 +1,15 @@
 package de.mephisto.vpin.server.highscores.parsing.listadapters;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
+import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
+import de.mephisto.vpin.server.highscores.Score;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.jspecify.annotations.Nullable;
-
-import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
-import de.mephisto.vpin.server.highscores.Score;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class ScoreListAdapterBase {
 

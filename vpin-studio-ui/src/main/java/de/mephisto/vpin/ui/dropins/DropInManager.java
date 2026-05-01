@@ -13,8 +13,6 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
 import de.mephisto.vpin.ui.util.StudioFolderChooser;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -33,6 +31,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Paint;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -164,7 +164,7 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
     CustomMenuItem item = new CustomMenuItem();
     item.setUserData("menu");
     item.setContent(box);
-    this.dropInsBtn.getItems().add(0, item);
+    this.dropInsBtn.getItems().addFirst(item);
 
     this.reload();
     localSettingsChanged(LocalUISettings.DROP_IN_FOLDER_ENABLED, LocalUISettings.getString(LocalUISettings.DROP_IN_FOLDER_ENABLED));
@@ -287,7 +287,7 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
   public void tablesSelected(List<GameRepresentation> games) {
     this.gameSelection = null;
     if (!games.isEmpty()) {
-      this.gameSelection = games.get(0);
+      this.gameSelection = games.getFirst();
     }
   }
 

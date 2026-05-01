@@ -1,7 +1,7 @@
 package de.mephisto.vpin.commons.utils;
 
-import org.jspecify.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

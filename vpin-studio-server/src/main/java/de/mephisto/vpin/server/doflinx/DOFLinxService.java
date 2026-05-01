@@ -15,11 +15,11 @@ import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -29,7 +29,10 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileReader;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DOFLinxService implements InitializingBean, PreferenceChangedListener {
@@ -137,7 +140,7 @@ public class DOFLinxService implements InitializingBean, PreferenceChangedListen
       if (isValid()) {
         LOG.info("DOFLinx service launches DOFLink.exe");
         File folder = new File(dofLinxSettings.getInstallationFolder());
-        SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("DOFLinx.exe"));
+        SystemCommandExecutor executor = new SystemCommandExecutor(List.of("DOFLinx.exe"));
         executor.setDir(folder);
         executor.executeCommandAsync();
       }

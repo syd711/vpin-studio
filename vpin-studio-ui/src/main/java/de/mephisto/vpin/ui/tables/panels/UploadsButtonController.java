@@ -2,7 +2,6 @@ package de.mephisto.vpin.ui.tables.panels;
 
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
@@ -11,13 +10,13 @@ import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FrontendUtil;
-import org.jspecify.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitMenuButton;
 import javafx.scene.layout.HBox;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,9 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import static de.mephisto.vpin.ui.Studio.Features;
-import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.stage;
+import static de.mephisto.vpin.ui.Studio.*;
 
 public class UploadsButtonController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -98,7 +95,7 @@ public class UploadsButtonController implements Initializable {
     List<GameRepresentation> selectedItems = getSelections();
     GameRepresentation game = null;
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      game = selectedItems.get(0);
+      game = selectedItems.getFirst();
     }
     TableDialogs.openAltSoundUploadDialog(game, null, null, null);
   }
@@ -107,7 +104,7 @@ public class UploadsButtonController implements Initializable {
   public void onAltColorUpload() {
     List<GameRepresentation> selectedItems = getSelections();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      TableDialogs.openAltColorUploadDialog(selectedItems.get(0), null, null, () -> Platform.runLater(() -> {
+      TableDialogs.openAltColorUploadDialog(selectedItems.getFirst(), null, null, () -> Platform.runLater(() -> {
         tablesController.getTablesSideBarController().getTitledPaneAltColor().setExpanded(true);
       }));
     }
@@ -127,7 +124,7 @@ public class UploadsButtonController implements Initializable {
   public void onPatchUpload() {
     List<GameRepresentation> selectedItems = getSelections();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      TableDialogs.openPatchUpload(selectedItems.get(0), null, null, null);
+      TableDialogs.openPatchUpload(selectedItems.getFirst(), null, null, null);
     }
   }
 
@@ -150,7 +147,7 @@ public class UploadsButtonController implements Initializable {
   public void onPupPackUpload() {
     List<GameRepresentation> selectedItems = getSelections();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      TableDialogs.openPupPackUploadDialog(selectedItems.get(0), null, null, () -> Platform.runLater(() -> {
+      TableDialogs.openPupPackUploadDialog(selectedItems.getFirst(), null, null, () -> Platform.runLater(() -> {
         tablesController.getTablesSideBarController().getTitledPaneDirectB2s().setExpanded(true);
       }));
     }
@@ -160,7 +157,7 @@ public class UploadsButtonController implements Initializable {
   public void onBackglassUpload() {
     List<GameRepresentation> selectedItems = getSelections();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      GameRepresentation gameRepresentation = selectedItems.get(0);
+      GameRepresentation gameRepresentation = selectedItems.getFirst();
       TableDialogs.openBackglassUpload(tablesController, stage, gameRepresentation, null, null);
     }
   }
@@ -169,7 +166,7 @@ public class UploadsButtonController implements Initializable {
   public void onIniUpload() {
     List<GameRepresentation> selectedItems = getSelections();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      boolean b = TableDialogs.directUpload(stage, AssetType.INI, selectedItems.get(0), null);
+      boolean b = TableDialogs.directUpload(stage, AssetType.INI, selectedItems.getFirst(), null);
       if (b) {
         tablesController.getTablesSideBarController().getTitledPaneTableData().setExpanded(true);
       }
@@ -180,7 +177,7 @@ public class UploadsButtonController implements Initializable {
   public void onMediaUpload() {
     List<GameRepresentation> selectedItems = getSelections();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      TableDialogs.openMediaUploadDialog(Studio.stage, selectedItems.get(0), null, null, null, -1);
+      TableDialogs.openMediaUploadDialog(Studio.stage, selectedItems.getFirst(), null, null, null, -1);
     }
   }
 
@@ -188,7 +185,7 @@ public class UploadsButtonController implements Initializable {
   public void onDMDUpload() {
     List<GameRepresentation> selectedItems = getSelections();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      TableDialogs.openDMDUploadDialog(selectedItems.get(0), null, null, null);
+      TableDialogs.openDMDUploadDialog(selectedItems.getFirst(), null, null, null);
     }
   }
 
@@ -196,7 +193,7 @@ public class UploadsButtonController implements Initializable {
   public void onPOVUpload() {
     List<GameRepresentation> selectedItems = getSelections();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      boolean b = TableDialogs.directUpload(stage, AssetType.POV, selectedItems.get(0), null);
+      boolean b = TableDialogs.directUpload(stage, AssetType.POV, selectedItems.getFirst(), null);
       if (b) {
         tablesController.getTablesSideBarController().getTitledPanePov().setExpanded(true);
       }
@@ -212,7 +209,7 @@ public class UploadsButtonController implements Initializable {
   public void onBamCfgUpload() {
     List<GameRepresentation> selectedItems = getSelections();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      boolean b = TableDialogs.directUpload(stage, AssetType.BAM_CFG, selectedItems.get(0), null);
+      boolean b = TableDialogs.directUpload(stage, AssetType.BAM_CFG, selectedItems.getFirst(), null);
       if (b) {
         tablesController.getTablesSideBarController().getTitledPanePov().setExpanded(true);
       }
@@ -223,7 +220,7 @@ public class UploadsButtonController implements Initializable {
   public void onResUpload() {
     List<GameRepresentation> selectedItems = getSelections();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      TableDialogs.directUpload(stage, AssetType.RES, selectedItems.get(0), null);
+      TableDialogs.directUpload(stage, AssetType.RES, selectedItems.getFirst(), null);
     }
   }
 
@@ -265,7 +262,7 @@ public class UploadsButtonController implements Initializable {
 
   private GameRepresentation getSelection() {
     if (this.games != null && !this.games.isEmpty()) {
-      return this.games.get(0);
+      return this.games.getFirst();
     }
     return null;
   }

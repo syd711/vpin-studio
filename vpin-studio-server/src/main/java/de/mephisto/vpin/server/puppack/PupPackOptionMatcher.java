@@ -1,20 +1,18 @@
 package de.mephisto.vpin.server.puppack;
 
-import org.jspecify.annotations.NonNull;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import static de.mephisto.vpin.server.puppack.PupPack.*;
+import static de.mephisto.vpin.server.puppack.PupPack.SCREENS_PUP;
 
 public class PupPackOptionMatcher {
   private final static Logger LOG = LoggerFactory.getLogger(PupPackOptionMatcher.class);

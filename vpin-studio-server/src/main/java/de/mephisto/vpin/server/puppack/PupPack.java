@@ -6,9 +6,9 @@ import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
-import org.jspecify.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -184,7 +184,7 @@ public class PupPack {
           tmpCreated = true;
         }
 
-        SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("\"" + file.getName() + "\""));
+        SystemCommandExecutor executor = new SystemCommandExecutor(List.of("\"" + file.getName() + "\""));
         executor.setDir(getPupPackFolder());
         executor.executeCommand();
 

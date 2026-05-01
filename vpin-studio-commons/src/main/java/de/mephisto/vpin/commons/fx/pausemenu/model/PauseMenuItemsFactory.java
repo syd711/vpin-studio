@@ -14,11 +14,10 @@ import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.system.FeaturesInfo;
-import de.mephisto.vpin.restclient.wovp.WOVPSettings;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 import javafx.scene.image.Image;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

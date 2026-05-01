@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.components.emulators;
 
-import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorScript;
 import javafx.collections.FXCollections;

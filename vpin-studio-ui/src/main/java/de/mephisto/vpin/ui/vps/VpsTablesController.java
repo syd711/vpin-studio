@@ -21,7 +21,6 @@ import de.mephisto.vpin.ui.tables.vps.VpsTableColumn;
 import de.mephisto.vpin.ui.tables.vps.VpsTutorialColumn;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
-import org.jspecify.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -32,6 +31,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Paint;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -192,7 +192,7 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
 
     if (forceReload) {
       super.clearViewCache();
-      ProgressDialog.createProgressDialog(new VpsDBDownloadProgressModel("Download VPS Database", Arrays.asList(new File("<vpsdb.json>"))));
+      ProgressDialog.createProgressDialog(new VpsDBDownloadProgressModel("Download VPS Database", List.of(new File("<vpsdb.json>"))));
     }
 
     // calculate unmapped in a non blocking thread
@@ -383,7 +383,7 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
       NavigationController.setBreadCrumb(Arrays.asList("VPS Tables", newSelection.getName()));
     }
     else {
-      NavigationController.setBreadCrumb(Arrays.asList("VPS Tables"));
+      NavigationController.setBreadCrumb(List.of("VPS Tables"));
     }
 
     vpsOpenBtn.setDisable(newSelection == null);

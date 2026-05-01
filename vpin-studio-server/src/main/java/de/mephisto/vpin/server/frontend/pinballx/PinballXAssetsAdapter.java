@@ -12,6 +12,7 @@ import org.jspecify.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
@@ -105,7 +106,7 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
             return !isForAnotherEmulator(name, emulator) && !isForAnotherScreen(name, folders);
           }
           // and all files matching the term
-          if (ftpFile.isFile() && StringUtils.containsIgnoreCase(ftpFile.getName(), term)) {
+          if (ftpFile.isFile() && Strings.CI.contains(ftpFile.getName(), term)) {
             return true;
           }
           // else
@@ -164,7 +165,7 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
   }
 
   private static String clean(String name) {
-    return StringUtils.remove(name, " ").toLowerCase();
+    return Strings.CI.remove(name, " ").toLowerCase();
   }
 
   private static String[] clean(String... names) {
@@ -176,7 +177,7 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
   }
 
   private boolean isForEmulator(String name, String emulator) {
-    return StringUtils.contains(name, emulator) || StringUtils.contains(emulator, name);
+    return Strings.CI.contains(name, emulator) || Strings.CI.contains(emulator, name);
   }
 
   private boolean isForAnotherEmulator(String name, String emulator) {
@@ -185,7 +186,7 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
 
   private boolean isForScreen(String name, String[] screens) {
     for (String screen : screens) {
-      if (StringUtils.contains(name, screen) || StringUtils.contains(screen, name)) {
+      if (Strings.CI.contains(name, screen) || Strings.CI.contains(screen, name)) {
         return true;
       }
     }
@@ -201,7 +202,7 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
     int high = names.length - 1;
     while (low <= high) {
       int mid = (low + high) >>> 1;
-      if (StringUtils.contains(names[mid], name) || StringUtils.contains(name, names[mid])) {
+      if (Strings.CI.contains(names[mid], name) || Strings.CI.contains(name, names[mid])) {
         return true;
       }
       int cmp = names[mid].compareTo(name);

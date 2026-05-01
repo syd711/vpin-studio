@@ -28,6 +28,7 @@ import org.jspecify.annotations.Nullable;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -381,7 +382,7 @@ public class DefaultPictureService implements ApplicationListener<ApplicationRea
       }
       else {
         // when no year specified, prefer generic name
-        score += StringUtils.equalsIgnoreCase(manufacturer, filename) ? 2 : 1;
+        score += Strings.CI.equals(manufacturer, filename) ? 2 : 1;
       }
 
       if (score > prefscore) {
@@ -395,8 +396,8 @@ public class DefaultPictureService implements ApplicationListener<ApplicationRea
 
   private String cleanName(String name) {
     String ret = name.toLowerCase();
-    ret = StringUtils.remove(ret, " ");
-    ret = StringUtils.remove(ret, ".");
+    ret = Strings.CI.remove(ret, " ");
+    ret = Strings.CI.remove(ret, ".");
     return ret;
   }
 

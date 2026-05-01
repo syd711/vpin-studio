@@ -18,9 +18,9 @@ import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.panels.PlayButtonController;
+import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.vps.VpsTableContainer;
 import de.mephisto.vpin.ui.vps.VpsVersionContainer;
-import de.mephisto.vpin.ui.util.FrontendUtil;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -493,7 +493,7 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
     tableNavigateBtn.setDisable(model.isEmpty() || model.get().getGame() == null);
     dataManagerBtn.setDisable(model.isEmpty() || model.get().getGame() == null);
 
-    competitionsController.setCompetition(model.isPresent() ? model.get().competition : null);
+    competitionsController.setCompetition(model.map(weeklyCompetitionModel -> weeklyCompetitionModel.competition).orElse(null));
 
     PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
     reloadBtn.setDisable(defaultPlayer == null);

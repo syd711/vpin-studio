@@ -1,10 +1,10 @@
 package de.mephisto.vpin.server.steam;
 
 import de.mephisto.vpin.commons.utils.WinRegistry;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +76,7 @@ public class SteamUtil {
   }
 
   public static void main(String[] args) {
-    List<ProcessHandle> processHandles = ProcessHandle.allProcesses().collect(Collectors.toList());
+    List<ProcessHandle> processHandles = ProcessHandle.allProcesses().toList();
     for (ProcessHandle processHandle : processHandles) {
       if(processHandle.info() != null && processHandle.info().command().isPresent()) {
         System.out.println(processHandle.info().command().get());

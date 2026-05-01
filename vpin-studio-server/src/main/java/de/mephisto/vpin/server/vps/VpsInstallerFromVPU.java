@@ -1,25 +1,23 @@
 package de.mephisto.vpin.server.vps;
 
+import de.mephisto.vpin.restclient.vps.VpsInstallLink;
+import de.mephisto.vpin.restclient.vpu.VPUSettings;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.htmlunit.SilentCssErrorHandler;
+import org.htmlunit.UnexpectedPage;
+import org.htmlunit.WebClient;
+import org.htmlunit.WebWindow;
+import org.htmlunit.html.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
-
-import de.mephisto.vpin.server.vpauthenticators.VpfVPAuthenticator;
-import de.mephisto.vpin.server.vpauthenticators.VpuVPAuthenticator;
-import org.apache.commons.lang3.StringUtils;
-import org.htmlunit.SilentCssErrorHandler;
-import org.htmlunit.UnexpectedPage;
-import org.htmlunit.WebClient;
-import org.htmlunit.WebWindow;
-import org.htmlunit.html.*;
-
-import de.mephisto.vpin.restclient.vps.VpsInstallLink;
-import de.mephisto.vpin.restclient.vpu.VPUSettings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class VpsInstallerFromVPU implements VpsInstaller {
   private final static Logger LOG = LoggerFactory.getLogger(VpsInstallerFromVPU.class);
@@ -51,7 +49,7 @@ public class VpsInstallerFromVPU implements VpsInstaller {
       final HtmlPage loginPage = webClient.getPage("https://vpuniverse.com/login/");
 
       HtmlForm loginForm = loginPage.getForms().stream()
-          .filter(f -> StringUtils.containsIgnoreCase(f.getActionAttribute(), "/login"))
+          .filter(f -> Strings.CI.contains(f.getActionAttribute(), "/login"))
           .findFirst().orElseThrow();
 
       loginForm.getInputByName("auth").setValue(settings.getLogin());
@@ -60,7 +58,7 @@ public class VpsInstallerFromVPU implements VpsInstaller {
 
       // check that authentication happens successfully
       String title = homePage.getTitleText();
-      if (StringUtils.containsIgnoreCase(title, "sign in")) {
+      if (Strings.CI.contains(title, "sign in")) {
         DomNode node = homePage.querySelector("div.ipsMessage_error");
         return node != null ? node.getTextContent() : "Cannot login";
       }

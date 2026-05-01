@@ -31,6 +31,7 @@ import javafx.application.Platform;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -402,7 +403,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   public boolean killProcesses(String name) {
     List<ProcessHandle> filteredProceses = ProcessHandle.allProcesses()
         .filter(p -> p.info().command().isPresent() && (p.info().command().get().contains(name)))
-        .collect(Collectors.toList());
+        .toList();
     boolean success = false;
     for (ProcessHandle process : filteredProceses) {
       String cmd = process.info().command().get();
@@ -418,7 +419,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   public boolean isProcessRunning(String name) {
     List<ProcessHandle> filteredProceses = ProcessHandle.allProcesses()
         .filter(p -> p.info().command().isPresent() && (p.info().command().get().contains(name)))
-        .collect(Collectors.toList());
+        .toList();
     return !filteredProceses.isEmpty();
   }
 
@@ -429,7 +430,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public boolean isWindowOpened(String name) {
     List<DesktopWindow> windows = WindowUtils.getAllWindows(true);
-    return windows.stream().anyMatch(wdw -> StringUtils.containsIgnoreCase(wdw.getTitle(), name));
+    return windows.stream().anyMatch(wdw -> Strings.CI.contains(wdw.getTitle(), name));
   }
 
   public static void main(String[] args) {

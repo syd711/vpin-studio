@@ -14,7 +14,6 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.playlistmanager.PlaylistDialogs;
 import de.mephisto.vpin.ui.playlistmanager.PlaylistUpdateProgressModel;
-import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.util.PreferenceBindingUtil;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -42,9 +41,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static de.mephisto.vpin.ui.Studio.Features;
-import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.stage;
+import static de.mephisto.vpin.ui.Studio.*;
 
 public class TablesSidebarPlaylistsController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -117,8 +114,8 @@ public class TablesSidebarPlaylistsController implements Initializable {
     if (this.games.size() == 1) {
       List<PlaylistRepresentation> playlists = client.getPlaylistsService().getPlaylists();
       if (!playlists.isEmpty()) {
-        PlaylistRepresentation playlistRepresentation = playlists.get(0);
-        TableDialogs.openTableAssetsDialog(tableOverviewController, this.games.get(0), playlistRepresentation, VPinScreen.Wheel);
+        PlaylistRepresentation playlistRepresentation = playlists.getFirst();
+        TableDialogs.openTableAssetsDialog(tableOverviewController, this.games.getFirst(), playlistRepresentation, VPinScreen.Wheel);
       }
     }
   }
@@ -197,7 +194,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
   }
 
   private void renderPlaylist(List<GameRepresentation> games, PlaylistRepresentation playlist, UISettings uiSettings) {
-    boolean linkedToEmu = playlist.getEmulatorId() == null || (this.games.size() == 1 && playlist.getEmulatorId() == games.get(0).getEmulatorId());
+    boolean linkedToEmu = playlist.getEmulatorId() == null || (this.games.size() == 1 && playlist.getEmulatorId() == games.getFirst().getEmulatorId());
 
     HBox root = new HBox();
     root.setAlignment(Pos.BASELINE_LEFT);
@@ -219,13 +216,13 @@ public class TablesSidebarPlaylistsController implements Initializable {
         try {
           String title = "Removing " + games.size() + " games from \"" + playlist.getName() + "\"";
           if (games.size() == 1) {
-            title = "Removing \"" + games.get(0).getGameDisplayName() + "\" from \"" + playlist.getName() + "\"";
+            title = "Removing \"" + games.getFirst().getGameDisplayName() + "\" from \"" + playlist.getName() + "\"";
           }
 
           if (t1) {
             title = "Adding " + games.size() + " games to \"" + playlist.getName() + "\"";
             if (games.size() == 1) {
-              title = "Adding \"" + games.get(0).getGameDisplayName() + "\" to \"" + playlist.getName() + "\"";
+              title = "Adding \"" + games.getFirst().getGameDisplayName() + "\" to \"" + playlist.getName() + "\"";
             }
           }
 

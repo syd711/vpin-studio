@@ -5,11 +5,11 @@ import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.server.frontend.GameEntry;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
-import org.jspecify.annotations.NonNull;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,7 +118,7 @@ public class PinballXStatisticsParser {
     while ((p = sectionName.indexOf("__")) >= 0) {
       sectionName = sectionName.substring(0, p) + sectionName.substring(p + 1);
     }
-    sectionName = StringUtils.removeEnd(sectionName, "_");
+    sectionName = Strings.CI.removeEnd(sectionName, "_");
 
     SubnodeConfiguration s = iniConfiguration.getSection(sectionName);
     return s;
@@ -133,19 +133,19 @@ public class PinballXStatisticsParser {
         conf.clearProperty("favorite");
       }
     });
-  };
+  }
   public void writeNumberOfPlayed(Game game, long nbPlayed) {
     GameEmulator emu = connector.getEmulator(game.getEmulatorId());
     writeAlxData(emu, game.getGameName(), conf -> {
       conf.setProperty("timesplayed", Long.toString(nbPlayed));
     });
-  };
+  }
   public void writeSecondsPlayed(Game game, long secsPlayed) {
     GameEmulator emu = connector.getEmulator(game.getEmulatorId());
     writeAlxData(emu, game.getGameName(), conf -> {
       conf.setProperty("secondsplayed", Long.toString(secsPlayed));
     });
-  };
+  }
 
   private void writeAlxData(GameEmulator emu, String gameName, Consumer<SubnodeConfiguration> c) {
     File statsIni = getPinballXStatisticsIni();

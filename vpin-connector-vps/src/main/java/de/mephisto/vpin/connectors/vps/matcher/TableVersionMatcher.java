@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.text.similarity.CosineDistance;
 import org.apache.commons.text.similarity.EditDistance;
 
@@ -58,7 +59,7 @@ public class TableVersionMatcher {
     for (VpsTableVersion tableVersion : tableFiles) {
       // distance on name
       String name = tableVersion.getComment();
-      int pos = StringUtils.indexOfIgnoreCase(name, "Reupload");
+      int pos = Strings.CI.indexOf(name, "Reupload");
       if (pos >= 0) {
         name = name.substring(0, pos);
       }
@@ -192,7 +193,7 @@ public class TableVersionMatcher {
 
     String suffix1 = tokenizer1.getSuffix();
     String suffix2 = tokenizer2.getSuffix();
-    if (StringUtils.startsWithAny(suffix1, "-", "r", "/", ":") && StringUtils.startsWithAny(suffix2, "-", "r", "/", ":")) {
+    if (Strings.CI.startsWithAny(suffix1, "-", "r", "/", ":") && Strings.CI.startsWithAny(suffix2, "-", "r", "/", ":")) {
       return versionDistance(suffix1.substring(1), suffix2.substring(1)) / 4;
     } else {
       if (StringUtils.isNotEmpty(suffix1) && StringUtils.isEmpty(suffix2)) {
@@ -202,7 +203,7 @@ public class TableVersionMatcher {
         return 0.2;
       }
 
-      int diff = StringUtils.compare(suffix1, suffix2);
+      int diff = Strings.CI.compare(suffix1, suffix2);
       if (diff<0) {
         return 1;
       } else if (diff==0) {
@@ -237,7 +238,7 @@ public class TableVersionMatcher {
     if (version==null) {
       return "";
     }
-    if (StringUtils.startsWithIgnoreCase(version, "VP")) {
+    if (Strings.CI.startsWith(version, "VP")) {
       int p = 2, l = version.length();
       while (p<l && StringUtils.indexOf("XS0123456789.", version.charAt(p))>=0) {
         p++;

@@ -2,8 +2,6 @@ package de.mephisto.vpin.commons.utils.media;
 
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.control.Button;
@@ -13,8 +11,9 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.scene.paint.Paint;
-
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +42,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
   }
 
   public void render(@NonNull String url, @Nullable VPinScreen screen, boolean usePreview) {
-    if (StringUtils.endsWithIgnoreCase(mimeType, "/quicktime")) {
+    if (Strings.CI.endsWith(mimeType, "/quicktime")) {
       setCenter(getEncodingNotSupportedLabel());
       return;
     }

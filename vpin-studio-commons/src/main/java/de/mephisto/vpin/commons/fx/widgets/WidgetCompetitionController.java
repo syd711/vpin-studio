@@ -11,7 +11,6 @@ import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
-import de.mephisto.vpin.restclient.util.DateUtil;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import eu.hansolo.tilesfx.events.TileEvt;
@@ -204,7 +203,7 @@ public class WidgetCompetitionController extends WidgetController implements Ini
           ScoreSummaryRepresentation latestScore = competitionScores.getLatestScore();
           List<ScoreRepresentation> scores = latestScore.getScores();
           if (!scores.isEmpty()) {
-            ScoreRepresentation currentScore = scores.get(0);
+            ScoreRepresentation currentScore = scores.getFirst();
             Platform.runLater(() -> {
               turnoverTile.setTitle("#1 Place");
               turnoverTile.setValue(currentScore.getScore());

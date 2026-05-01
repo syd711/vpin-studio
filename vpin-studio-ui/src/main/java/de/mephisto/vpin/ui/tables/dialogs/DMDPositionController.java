@@ -1,5 +1,8 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.commons.fx.Debouncer;
+import de.mephisto.vpin.commons.utils.JFXFuture;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2sScreenRes;
@@ -15,16 +18,12 @@ import de.mephisto.vpin.ui.backglassmanager.BackglassManagerControllerUtils;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.panels.BaseGameModel;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
-import de.mephisto.vpin.ui.util.PositionResizer;
 import de.mephisto.vpin.ui.util.FileDragEventHandler;
+import de.mephisto.vpin.ui.util.PositionResizer;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
-import de.mephisto.vpin.commons.fx.Debouncer;
-import de.mephisto.vpin.commons.utils.JFXFuture;
-import de.mephisto.vpin.commons.utils.WidgetFactory;
 import javafx.application.Platform;
-import javafx.beans.property.*;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -36,18 +35,15 @@ import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -527,7 +523,7 @@ public class DMDPositionController extends BasePrevNextController {
         .setOnDragDropped(e -> {
           List<File> files = e.getDragboard().getFiles();
           if (files != null && files.size() == 1) {
-            File selection = files.get(0);
+            File selection = files.getFirst();
             Platform.runLater(() -> updateDMDImage(selection));
           }
         });
@@ -713,7 +709,7 @@ public class DMDPositionController extends BasePrevNextController {
     VPinScreen selectedScreen = loadedVpinScreen;
     if (forceRefresh || selectedScreen == null) {
       selectedScreen = dmdinfo.getZones().size() > 0 ? 
-        dmdinfo.getZones().get(0).getOnScreen() : VPinScreen.BackGlass;
+        dmdinfo.getZones().getFirst().getOnScreen() : VPinScreen.BackGlass;
     }
     selectTab(selectedScreen, forceRefresh);
 
@@ -741,7 +737,7 @@ public class DMDPositionController extends BasePrevNextController {
       imagepane.getChildren().remove(emptyImage);
       emptyImage.setWidth(fitWidth);
       emptyImage.setHeight(fitHeight);
-      imagepane.getChildren().add(0, emptyImage);
+      imagepane.getChildren().addFirst(emptyImage);
       parentpane.setCenter(imagepane);
       loadedVpinScreen = null;
     }
@@ -771,7 +767,7 @@ public class DMDPositionController extends BasePrevNextController {
           imagepane.getChildren().remove(emptyImage);
           emptyImage.setWidth(fitWidth);
           emptyImage.setHeight(fitHeight);
-          imagepane.getChildren().add(0, emptyImage);
+          imagepane.getChildren().addFirst(emptyImage);
 
           if (VPinScreen.Menu.equals(onScreen)) {
             noFullDMDPane.setVisible(true);
@@ -885,7 +881,7 @@ public class DMDPositionController extends BasePrevNextController {
       }
       // no selected box, pick first
       if (selectedBox == null && dragBoxes.size() > 0) {
-        selectedBox = dragBoxes.get(0);
+        selectedBox = dragBoxes.getFirst();
       }
       if (selectedBox != null) {
         selectedBox.select();
@@ -893,7 +889,7 @@ public class DMDPositionController extends BasePrevNextController {
       // no box on this screen, change screen and use the one of the first
       else if (forceRefresh) {
         VPinScreen selectedScreen = dmdinfo.getZones().size() > 0 ? 
-        dmdinfo.getZones().get(0).getOnScreen() : VPinScreen.BackGlass;
+        dmdinfo.getZones().getFirst().getOnScreen() : VPinScreen.BackGlass;
         selectTab(selectedScreen, false);
       }
     }   

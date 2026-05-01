@@ -1,9 +1,7 @@
 package de.mephisto.vpin.server;
 
 import de.mephisto.vpin.commons.SystemInfo;
-import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
-import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.system.FeaturesInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -20,7 +18,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import java.awt.*;
 import java.io.File;
 import java.time.OffsetDateTime;
 import java.util.Optional;

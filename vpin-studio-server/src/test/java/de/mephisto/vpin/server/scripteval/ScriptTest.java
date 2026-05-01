@@ -1,18 +1,17 @@
 package de.mephisto.vpin.server.scripteval;
 
+import de.mephisto.vpin.server.roms.ScanResult;
+import de.mephisto.vpin.server.util.VPXFileScanner;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.Strings;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.Test;
-
-import de.mephisto.vpin.server.roms.ScanResult;
-import de.mephisto.vpin.server.util.VPXFileScanner;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -131,7 +130,7 @@ public class ScriptTest {
           }
           // else check the scenario
           line = lines.get(++l);
-          if (StringUtils.containsIgnoreCase(line, scenario)) {
+          if (Strings.CI.contains(line, scenario)) {
             scriptLines = "";
           }
         }

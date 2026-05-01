@@ -17,7 +17,6 @@ import de.mephisto.vpin.ui.tables.panels.UploadsButtonController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.util.tags.TagButton;
-import org.jspecify.annotations.Nullable;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -29,6 +28,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -241,23 +241,17 @@ public class TablesSidebarTableDetailsController implements Initializable {
 
   @FXML
   private void onIniUpload() {
-    if (game.isPresent()) {
-      TableDialogs.directUpload(Studio.stage, AssetType.INI, game.get(), null);
-    }
+      game.ifPresent(gameRepresentation -> TableDialogs.directUpload(Studio.stage, AssetType.INI, gameRepresentation, null));
   }
 
   @FXML
   private void onResUpload() {
-    if (game.isPresent()) {
-      TableDialogs.directUpload(Studio.stage, AssetType.RES, game.get(), null);
-    }
+      game.ifPresent(gameRepresentation -> TableDialogs.directUpload(Studio.stage, AssetType.RES, gameRepresentation, null));
   }
 
   @FXML
   private void onPovUpload() {
-    if (game.isPresent()) {
-      TableDialogs.directUpload(Studio.stage, AssetType.POV, game.get(), null);
-    }
+      game.ifPresent(gameRepresentation -> TableDialogs.directUpload(Studio.stage, AssetType.POV, gameRepresentation, null));
   }
 
   @FXML
@@ -373,7 +367,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
   @FXML
   private void onAutoFill() {
     if (this.game.isPresent()) {
-      TableDialogs.openAutoFillSettingsDialog(Studio.stage, Arrays.asList(this.game.get()), null);
+      TableDialogs.openAutoFillSettingsDialog(Studio.stage, List.of(this.game.get()), null);
     }
   }
 
@@ -403,7 +397,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
       uploadsButtonController.setData(Collections.emptyList(), tablesSidebarController.getTableOverviewController().getEmulatorSelection());
     }
     else {
-      uploadsButtonController.setData(Arrays.asList(g.get()), tablesSidebarController.getTableOverviewController().getEmulatorSelection());
+      uploadsButtonController.setData(List.of(g.get()), tablesSidebarController.getTableOverviewController().getEmulatorSelection());
     }
 
     if (!Features.FIELDS_STANDARD) {
@@ -544,9 +538,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
       if (tableDetails.getStatus() >= 0) {
         List<TableStatus> statuses = TableDataController.supportedStatuses();
         Optional<TableStatus> first = statuses.stream().filter(status -> status.value == tableDetails.getStatus()).findFirst();
-        if (first.isPresent()) {
-          status.setText(first.get().label);
-        }
+          first.ifPresent(tableStatus -> status.setText(tableStatus.label));
       }
 
       //extras
@@ -623,7 +615,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
       Parent uploadsButton = loader.load();
       uploadsButtonController = loader.getController();
       uploadsButtonController.setCompact(false);
-      toolbar.getItems().add(0, uploadsButton);
+      toolbar.getItems().addFirst(uploadsButton);
     }
     catch (IOException e) {
       LOG.error("failed to load uploads button: " + e.getMessage(), e);

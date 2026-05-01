@@ -2,8 +2,6 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
-import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
@@ -73,7 +71,7 @@ public class TableDeleteProgressModel extends ProgressModel<Integer> {
   public void processNext(ProgressResultModel progressResultModel, Integer gameId) {
     try {
       GameRepresentation game = client.getGameService().getGame(gameId);
-      descriptor.setGameIds(Arrays.asList(gameId));
+      descriptor.setGameIds(List.of(gameId));
       client.getGameService().deleteGame(descriptor, game);
     }
     catch (Exception e) {

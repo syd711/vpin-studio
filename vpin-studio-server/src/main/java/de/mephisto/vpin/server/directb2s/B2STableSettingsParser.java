@@ -8,7 +8,7 @@ import org.jspecify.annotations.Nullable;
 
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.INIConfiguration;
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -129,7 +129,7 @@ public class B2STableSettingsParser extends DefaultHandler {
         for (String prop : B2S_TABLE_PROPERTIES) {
           if(standalone.containsKey("B2S" + prop)) {
             String value = standalone.getString("B2S" + prop);
-            if (StringUtils.isNotEmpty(value)) {
+            if (StringUtils.hasText(value)) {
               setTableValue(settings, prop, value);
             }
           }
@@ -138,7 +138,7 @@ public class B2STableSettingsParser extends DefaultHandler {
           for (String prop : B2S_SERVER_PROPERTIES) {
             if(standalone.containsKey("B2S" + prop)) {
               String value = standalone.getString("B2S" + prop);
-              if (StringUtils.isNotEmpty(value)) {
+              if (StringUtils.hasText(value)) {
                 setServerValue((DirectB2ServerSettings) settings, prop, value);
               }
             }
@@ -147,7 +147,7 @@ public class B2STableSettingsParser extends DefaultHandler {
         // 0 to hide all the B2S windows (grill, DMD frame, backglass), 1 to show them according to the other settings
         if(standalone.containsKey("B2SWindows")) {
           String value = standalone.getString("B2SWindows");
-          if (StringUtils.equals(value, "0")) {
+          if ("0".equals(value)) {
             settings.setHideB2SBackglass(true);
             settings.setHideB2SDMD(true);
             settings.setHideGrillBoolean(true);
@@ -176,7 +176,7 @@ public class B2STableSettingsParser extends DefaultHandler {
   public DirectB2STableSettings getEntry(String rom) {
     if (rom!=null) {
       // one table has space in rom, but tagnames cannot have spaces
-      rom = StringUtils.deleteWhitespace(rom);
+      rom = StringUtils.trimAllWhitespace(rom);
       return tableSettings.get(rom);
     }
     return null;
@@ -259,7 +259,7 @@ public class B2STableSettingsParser extends DefaultHandler {
       }
       case "StartAsEXE": {
         try {
-          int startAsExe = StringUtils.isEmpty(value) ? 2 : Integer.parseInt(value);
+          int startAsExe = !StringUtils.hasText(value) ? 2 : Integer.parseInt(value);
           settings.setStartAsEXE(startAsExe);
         }
         catch (Exception e) {

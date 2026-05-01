@@ -9,6 +9,7 @@ import java.util.function.Function;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,9 +69,9 @@ public class MediaRenamer {
             String name = finder.apply(parts);
 
             if (name != null) {
-              name = StringUtils.replace(name, "\"", "");
-              name = StringUtils.replace(name, "/", "-");
-              name = StringUtils.replace(name, ":", "-");
+              name = Strings.CI.replace(name, "\"", "");
+              name = Strings.CI.replace(name, "/", "-");
+              name = Strings.CI.replace(name, ":", "-");
 
               renameToTable(p, target, path.relativize(p), name, parts, addExtras, undo);
             }
@@ -102,7 +103,7 @@ public class MediaRenamer {
     return parts -> {
       List<IpdbTable> tables = db.find(parts.getTableName());
       if (tables.size() == 1) {
-        IpdbTable table = tables.get(0);
+        IpdbTable table = tables.getFirst();
         return table.getDisplayName();
       }
       else {
@@ -127,7 +128,7 @@ public class MediaRenamer {
    * Rename
    *
    * @param p     The file that comes from the folder
-   * @param table The closest table
+   * @param - table The closest table
    */
   protected void renameToTable(Path p, Path target, Path relativePath, String tableName, TableNameParts parts, boolean addExtras, StringBuilder undo) {
 
@@ -143,9 +144,9 @@ public class MediaRenamer {
 
     fileName = fileName.trim() + "." + ext;
 
-    fileName = StringUtils.replace(fileName, "\\", "-");
-    fileName = StringUtils.replace(fileName, "/", "-");
-    fileName = StringUtils.replace(fileName, ":", "-");
+    fileName = Strings.CI.replace(fileName, "\\", "-");
+    fileName = Strings.CI.replace(fileName, "/", "-");
+    fileName = Strings.CI.replace(fileName, ":", "-");
 
     Path newPath = target;
     if (subfolder != null) {

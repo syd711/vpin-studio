@@ -19,7 +19,6 @@ import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.jobs.JobType;
-import de.mephisto.vpin.restclient.mania.ManiaSettings;
 import de.mephisto.vpin.restclient.pinvol.PinVolPreferences;
 import de.mephisto.vpin.restclient.pinvol.PinVolTableEntry;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
@@ -48,7 +47,6 @@ import de.mephisto.vpin.ui.tables.vps.VpsTableColumn;
 import de.mephisto.vpin.ui.tables.vps.VpsTutorialColumn;
 import de.mephisto.vpin.ui.util.*;
 import de.mephisto.vpin.ui.vpxz.VPXZDialogs;
-import org.jspecify.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -78,6 +76,7 @@ import javafx.scene.paint.Paint;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -689,7 +688,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private void onDismissAll() {
     List<GameRepresentation> selectedItems = getSelections();
     if (selectedItems.size() == 1) {
-      TableDialogs.openDismissAllDialog(selectedItems.get(0));
+      TableDialogs.openDismissAllDialog(selectedItems.getFirst());
     }
     else if (selectedItems.size() > 1) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Dismiss All", "Dismiss all validation errors of the selected tables?", "You can re-enable them anytime by validating them again.", "Dismiss Selection");

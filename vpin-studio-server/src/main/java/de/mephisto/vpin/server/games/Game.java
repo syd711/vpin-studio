@@ -8,10 +8,10 @@ import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.dmd.DMDPackageTypes;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.validation.ValidationState;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.io.File;
 import java.time.Instant;
@@ -299,15 +299,11 @@ public class Game {
   }
 
   public Long getTemplateId(CardTemplateType templateType) {
-    switch (templateType) {
-      case HIGSCORE_CARD:
-        return getHighscoreCardTemplateId();
-      case INSTRUCTIONS_CARD:
-        return getInstructionCardTemplateId();
-      case WHEEL:
-        return getWheelTemplateId();
-    }
-    return null;
+      return switch (templateType) {
+          case HIGSCORE_CARD -> getHighscoreCardTemplateId();
+          case INSTRUCTIONS_CARD -> getInstructionCardTemplateId();
+          case WHEEL -> getWheelTemplateId();
+      };
   }
 
   public void setTemplateId(CardTemplateType templateType, Long id) {

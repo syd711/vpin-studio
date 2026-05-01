@@ -4,7 +4,6 @@ import de.mephisto.vpin.connectors.github.GithubRelease;
 import de.mephisto.vpin.connectors.github.GithubReleaseFactory;
 import de.mephisto.vpin.connectors.github.ReleaseArtifact;
 import de.mephisto.vpin.connectors.github.ReleaseArtifactActionLog;
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.server.dof.DOFService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import org.jspecify.annotations.NonNull;
@@ -88,6 +87,6 @@ public class DOFComponent implements ComponentFacade {
 
   @Override
   public List<String> getRootFolderInArchiveIndicators() {
-    return Arrays.asList("DirectOutput.dll");
+    return List.of("DirectOutput.dll");
   }
 }

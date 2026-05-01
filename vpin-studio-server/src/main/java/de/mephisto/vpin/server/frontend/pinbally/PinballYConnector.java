@@ -13,6 +13,7 @@ import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.system.SystemService;
 import org.jspecify.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +63,7 @@ public class PinballYConnector extends BaseConnector {
     List<VPinScreen> screens = new ArrayList<>(Arrays.asList(VPinScreen.values()));
     screens.remove(VPinScreen.Other2);
     frontend.setSupportedScreens(screens);
-    frontend.setIgnoredValidations(Arrays.asList(GameValidationCode.CODE_NO_OTHER2));
+    frontend.setIgnoredValidations(List.of(GameValidationCode.CODE_NO_OTHER2));
 
     frontend.setPlayfieldMediaInverted(true);
     return frontend;
@@ -180,7 +181,7 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
     String system = "System" + emuId;
 
     String sEnable = s.getProperty(system + ".Enabled");
-    boolean enabled = sEnable == null || StringUtils.equals(sEnable, "1");
+    boolean enabled = sEnable == null || Strings.CI.equals(sEnable, "1");
 
     EmulatorType type = null;
     String systemClass = s.getProperty(system + ".Class");
@@ -365,7 +366,7 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
    */
   private void createDisplay(List<FrontendPlayerDisplay> players, Properties display, String sectionName, VPinScreen screen, String name, boolean defaultVisibility) {
     String visible = display.getProperty(sectionName + ".Visible");
-    boolean isVisible = StringUtils.isEmpty(visible) ? defaultVisibility : StringUtils.equals(visible, "1");
+    boolean isVisible = StringUtils.isEmpty(visible) ? defaultVisibility : Strings.CI.equals(visible, "1");
     if (isVisible) {
       FrontendPlayerDisplay player = new FrontendPlayerDisplay();
       player.setName(name);

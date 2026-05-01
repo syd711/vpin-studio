@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.server.frontend.pinballx.PinballXTableParser;
 import de.mephisto.vpin.server.games.GameEmulator;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -101,7 +102,7 @@ public class PinballYTableParser extends PinballXTableParser {
   //----------------------------------------
 
   protected void appendDescription(BufferedWriter writer, TableDetails detail) throws IOException {
-    if (StringUtils.equals(detail.getGameName(), cleanGameName(detail.getGameDisplayName()))) {
+    if (Strings.CI.equals(detail.getGameName(), cleanGameName(detail.getGameDisplayName()))) {
       String gameDisplayName = detail.getGameDisplayName();
       appendValue(writer, "description", gameDisplayName);
     }

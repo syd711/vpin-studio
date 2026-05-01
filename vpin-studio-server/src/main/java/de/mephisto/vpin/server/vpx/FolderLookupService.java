@@ -4,17 +4,16 @@ import de.mephisto.vpin.restclient.system.ScoringDBMapping;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegFile;
-import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.lang.invoke.MethodHandles;

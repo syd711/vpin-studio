@@ -22,9 +22,10 @@ import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpx.VPXService;
-import org.jspecify.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -151,7 +152,7 @@ public abstract class BaseConnector implements FrontendConnector {
 
   private GameEntry popGameEntry(List<GameEntry> entries, int emuId, String filename) {
     GameEntry entry = entries.stream()
-        .filter(e -> e.getEmuId() == emuId && StringUtils.equalsIgnoreCase(e.getFilename(), filename))
+        .filter(e -> e.getEmuId() == emuId && Strings.CI.equals(e.getFilename(), filename))
         .findFirst().orElse(null);
 
     // new discovered entry, create id
@@ -173,7 +174,7 @@ public abstract class BaseConnector implements FrontendConnector {
   protected GameEntry findEntryFromFilename(int emuId, String filename) {
     for (Map.Entry<Integer, GameEntry> entry : mapFilenames.entrySet()) {
       GameEntry e = entry.getValue();
-      if (e.getEmuId() == emuId && StringUtils.equalsIgnoreCase(e.getFilename(), filename)) {
+      if (e.getEmuId() == emuId && Strings.CI.equals(e.getFilename(), filename)) {
         return e;
       }
     }
@@ -316,7 +317,7 @@ public abstract class BaseConnector implements FrontendConnector {
   @Override
   public List<Game> getGamesByFilename(String filename) {
     String gameFileName = filename.replaceAll("'", "''");
-    return getGames().stream().filter(g -> StringUtils.containsIgnoreCase(g.getGameFileName(), gameFileName)).collect(Collectors.toList());
+    return getGames().stream().filter(g -> Strings.CI.contains(g.getGameFileName(), gameFileName)).collect(Collectors.toList());
   }
 
   @NonNull
@@ -335,7 +336,7 @@ public abstract class BaseConnector implements FrontendConnector {
   public Game getGameByName(int emuId, String gameName) {
     return getGameEntries(emuId).stream()
         .map(e -> getGame(e))
-        .filter(g -> StringUtils.containsIgnoreCase(g.getGameName(), gameName))
+        .filter(g -> Strings.CI.contains(g.getGameName(), gameName))
         .findFirst().orElse(null);
   }
 
@@ -343,7 +344,7 @@ public abstract class BaseConnector implements FrontendConnector {
   public Game getGameByDisplayName(int emuId, String gameName) {
     return getGameEntries(emuId).stream()
         .map(e -> getGame(e))
-        .filter(g -> StringUtils.containsIgnoreCase(g.getGameDisplayName(), gameName))
+        .filter(g -> Strings.CI.contains(g.getGameDisplayName(), gameName))
         .findFirst().orElse(null);
   }
 
@@ -377,7 +378,7 @@ public abstract class BaseConnector implements FrontendConnector {
     }
 
     // detection of file renamed
-    if (!StringUtils.equalsIgnoreCase(e.getFilename(), tableDetails.getGameFileName())) {
+    if (!Strings.CI.equals(e.getFilename(), tableDetails.getGameFileName())) {
       deleteGame(id, false);
 
       // update filename, but do not change the id 
@@ -601,7 +602,7 @@ public abstract class BaseConnector implements FrontendConnector {
         s2.getNumberOfPlays() - s1.getNumberOfPlays();
 
     List<TableAlxEntry> games = getAlxData().stream().sorted(c).limit(10)
-        .collect(Collectors.toList());
+        .toList();
 
     List<PlaylistGame> plgames = games.stream().map(s -> toPlaylistGame(s.getGameId()))
         .collect(Collectors.toList());

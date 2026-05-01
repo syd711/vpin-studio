@@ -21,10 +21,10 @@ import de.mephisto.vpin.server.nvrams.NVRamService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.vpx.FolderLookupService;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -232,7 +232,7 @@ public class HighscoreService implements InitializingBean {
     }
 
     String rankingPoints = (String) preferencesService.getPreferenceValue(PreferenceNames.RANKING_POINTS, "4,2,1,0");
-    List<Integer> points = Arrays.stream(rankingPoints.split(",")).map(Integer::parseInt).collect(Collectors.toList());
+    List<Integer> points = Arrays.stream(rankingPoints.split(",")).map(Integer::parseInt).toList();
 
     List<RankedPlayer> rankedPlayers = new ArrayList<>(playerMap.values());
     for (RankedPlayer rankedPlayer : rankedPlayers) {
@@ -291,7 +291,7 @@ public class HighscoreService implements InitializingBean {
     scoreList.getScores().sort(Comparator.comparing(ScoreSummary::getCreatedAt));
 
     if (!scoreList.getScores().isEmpty()) {
-      scoreList.setLatestScore(scoreList.getScores().get(0));
+      scoreList.setLatestScore(scoreList.getScores().getFirst());
     }
     return scoreList;
   }

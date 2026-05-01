@@ -1,10 +1,8 @@
 package de.mephisto.vpin.server.puppack;
 
-import org.jspecify.annotations.NonNull;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.StringUtils;
-
-import java.io.File;
+import org.jspecify.annotations.NonNull;
 
 public class TriggerEntry {
 

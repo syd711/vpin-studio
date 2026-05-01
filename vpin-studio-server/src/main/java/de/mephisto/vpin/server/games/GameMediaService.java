@@ -46,6 +46,7 @@ import de.mephisto.vpin.server.vps.VpsService;
 import org.jspecify.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -256,8 +257,8 @@ public class GameMediaService extends MediaService {
 
 
   public void runHighscoreRefreshCheck(Game game, TableDetails oldDetails, TableDetails newDetails) {
-    boolean romChanged = !StringUtils.equalsIgnoreCase(oldDetails.getRomName(), newDetails.getRomName());
-    boolean hsChanged = !StringUtils.equalsIgnoreCase(oldDetails.getHsFilename(), newDetails.getHsFilename());
+    boolean romChanged = !Strings.CI.equals(oldDetails.getRomName(), newDetails.getRomName());
+    boolean hsChanged = !Strings.CI.equals(oldDetails.getHsFilename(), newDetails.getHsFilename());
 
     if (romChanged || hsChanged) {
       LOG.info("Game highscore data fields have been changed, triggering score check.");
@@ -843,10 +844,10 @@ public class GameMediaService extends MediaService {
             //only delete the assets, if there is no other game with the same "Game Name".
             List<Game> allOtherTables = this.frontendService.getGamesByEmulator(game.getEmulatorId())
                 .stream().filter(g -> g.getId() != game.getId())
-                .collect(Collectors.toList());
+                .toList();
             List<Game> duplicateGameNameTables = allOtherTables
                 .stream().filter(t -> t.getGameName().equalsIgnoreCase(game.getGameName()))
-                .collect(Collectors.toList());
+                .toList();
 
             if (duplicateGameNameTables.isEmpty()) {
               LOG.info("Deleting screen assets for \"{}\"", game.getGameDisplayName());

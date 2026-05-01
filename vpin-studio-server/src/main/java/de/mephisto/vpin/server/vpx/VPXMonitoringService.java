@@ -9,15 +9,15 @@ import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.games.*;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import jakarta.annotation.PreDestroy;
+import org.apache.commons.lang3.Strings;
 import org.jspecify.annotations.NonNull;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import jakarta.annotation.PreDestroy;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -59,7 +59,7 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
       List<GameEmulator> emulators = emulatorService.getValidGameEmulators();
 
       List<DesktopWindow> windows = WindowUtils.getAllWindows(true);
-      boolean playerRunning = windows.stream().anyMatch(wdw -> StringUtils.containsIgnoreCase(wdw.getTitle(), "Visual Pinball Player"));
+      boolean playerRunning = windows.stream().anyMatch(wdw -> Strings.CI.contains(wdw.getTitle(), "Visual Pinball Player"));
 
       if (playerRunning && !gameStatusService.isActive()) {
         int emuId = -1;
@@ -67,7 +67,7 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
 
         for (DesktopWindow wdw : windows) {
           for (GameEmulator emu : emulators) {
-            if (StringUtils.startsWithIgnoreCase(wdw.getFilePath(), emu.getInstallationDirectory())) {
+            if (Strings.CI.startsWith(wdw.getFilePath(), emu.getInstallationDirectory())) {
               String windowTitle = wdw.getTitle();
               //LOG.info("VPX process detected with window title " + wdw.getTitle());
               if (windowTitle.contains("[") && windowTitle.contains("]")) {

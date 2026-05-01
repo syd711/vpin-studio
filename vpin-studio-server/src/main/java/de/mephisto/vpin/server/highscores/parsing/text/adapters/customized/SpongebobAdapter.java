@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.highscores.parsing.text.adapters.customized;
 
 import de.mephisto.vpin.server.highscores.parsing.text.adapters.ScoreTextFileAdapter;
-import org.jspecify.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ public class SpongebobAdapter implements ScoreTextFileAdapter {
   @Override
   public List<String> resetHighscore(@NonNull File file, @NonNull List<String> lines, long score) {
     List<String> newScoreText = new ArrayList<>();
-    newScoreText.add(lines.get(0));
+    newScoreText.add(lines.getFirst());
     newScoreText.add("1.:???:" + score);
     newScoreText.add("2.:???:" + score);
     newScoreText.add("3.:???:" + score);

@@ -2,13 +2,11 @@ package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
-import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.competitions.dialogs.*;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 

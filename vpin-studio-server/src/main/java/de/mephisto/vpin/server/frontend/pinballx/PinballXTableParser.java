@@ -7,6 +7,7 @@ import de.mephisto.vpin.server.games.GameEmulator;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -60,7 +61,7 @@ public class PinballXTableParser extends DefaultHandler {
         Node node = list.item(temp);
         if (node.getNodeType() == Node.ELEMENT_NODE && node.hasChildNodes()) {
           Element element = (Element) node;
-          if (StringUtils.equalsIgnoreCase(element.getTagName(), "game")) {
+          if (Strings.CI.equals(element.getTagName(), "game")) {
             
             String gameName = element.getAttribute("name");
 
@@ -251,7 +252,7 @@ public class PinballXTableParser extends DefaultHandler {
         TableDetails detail = mapTableDetails.get(PinballXConnector.compose(emu.getId(), entry.getFilename()));
         if (detail!=null) {
           // <game name= /> stores the filename without extension 
-          String gameFileName =StringUtils.removeEndIgnoreCase(entry.getFilename(), "." + emu.getGameExt());
+          String gameFileName =Strings.CI.removeEnd(entry.getFilename(), "." + emu.getGameExt());
           writer.append("  <game name=\"").append(escapeXml(gameFileName)).append("\">\n");
 
           appendDescription(writer, detail);

@@ -1,9 +1,8 @@
 package de.mephisto.vpin.server.highscores;
 
 import de.mephisto.vpin.restclient.system.ScoringDB;
-import de.mephisto.vpin.server.highscores.parsing.ScoreListFactory;
 import de.mephisto.vpin.server.games.Game;
-
+import de.mephisto.vpin.server.highscores.parsing.ScoreListFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
@@ -228,7 +227,7 @@ public class ScoreListFactoryTest {
 
     List<Score> parse = ScoreListFactory.create(rawScore, OffsetDateTime.now(), game, scoringDB);
     assertEquals(5, parse.size());
-    assertScore("TOP WATER SLIDERS", "TIM", 101000000, null, parse.get(0));
+    assertScore("TOP WATER SLIDERS", "TIM", 101000000, null, parse.getFirst());
 
     parse = ScoreListFactory.create(rawScore, OffsetDateTime.now(), game, scoringDB, true);
     assertEquals(6, parse.size());

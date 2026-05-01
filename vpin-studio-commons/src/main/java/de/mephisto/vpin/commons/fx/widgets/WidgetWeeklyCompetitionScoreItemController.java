@@ -6,7 +6,6 @@ import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.competitions.CompetitionScore;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
-import org.jspecify.annotations.Nullable;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -22,6 +21,7 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +29,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
 import java.net.URL;
@@ -149,7 +148,7 @@ public class WidgetWeeklyCompetitionScoreItemController extends WidgetController
     nameLabel.setText(score.getParticipantName());
 
     if (score.getScore() > 0) {
-      long l = new Double(score.getScore()).longValue();
+      long l = Double.valueOf(score.getScore()).longValue();
       scoreLabel.setText(ScoreFormatUtil.formatScore(l, Locale.getDefault()));
     }
     else {

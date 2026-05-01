@@ -1,18 +1,18 @@
 package de.mephisto.vpin.connectors.vps.matcher;
 
-import java.lang.invoke.MethodHandles;
-import java.util.List;
-import java.util.Objects;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.matcher.TableNameSplitter.TableNameParts;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.invoke.MethodHandles;
+import java.util.List;
+import java.util.Objects;
 
 public class VpsAutomatcher {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -110,7 +110,7 @@ public class VpsAutomatcher {
 
           List<VpsTable> vpsTables = new LegacyTableMatcher(vpsDatabase.getTables()).find(gameFileName);
           if (!vpsTables.isEmpty()) {
-            vpsTable = vpsTables.get(0);
+            vpsTable = vpsTables.getFirst();
             LOG.info("Table found by legacy matcher '" + vpsTable + "'");
           }
           else {
@@ -145,7 +145,7 @@ public class VpsAutomatcher {
 
         if (parts.extra == null) {
           // extra being null, take table name but remove the vps table name
-          parts.extra = StringUtils.removeIgnoreCase(parts.tableName, vpsTable.getName()).trim();
+          parts.extra = Strings.CI.remove(parts.tableName, vpsTable.getName()).trim();
         }
         else {
           parts.extra = cleanChars(parts.extra);
@@ -155,16 +155,16 @@ public class VpsAutomatcher {
 
         // still no version found, try from tableInfo
         if (version == null && StringUtils.isNotEmpty(tableInfoVersion)) {
-          if (!StringUtils.containsIgnoreCase(tableInfoVersion, "VP")) {
+          if (!Strings.CI.contains(tableInfoVersion, "VP")) {
             version = tableNameSplitter.extractVersion(tableInfoVersion);
           }
         }
         // clean the version if found
         if (version != null) {
           version = version.replace('_', '.').toLowerCase().trim();
-          version = StringUtils.removeStart(version, "v");
-          version = StringUtils.removeStart(version, "r");
-          version = StringUtils.removeStart(version, ".");
+          version = Strings.CI.removeStart(version, "v");
+          version = Strings.CI.removeStart(version, "r");
+          version = Strings.CI.removeStart(version, ".");
         }
 
         // Parse and clean the authors

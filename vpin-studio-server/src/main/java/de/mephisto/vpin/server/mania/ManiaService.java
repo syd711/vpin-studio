@@ -23,9 +23,9 @@ import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.vps.VpsService;
+import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -263,7 +263,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
           List<Account> accounts = maniaClient.getCabinetClient().getAccounts(contactCabinet.getId());
           for (Account account : accounts) {
             List<TableScore> highscoresByAccount = maniaClient.getHighscoreClient().getHighscoresByAccountAndTable(account.getUuid(), vpsTableId, vpsVersionId);
-            List<Score> scores = highscoresByAccount.stream().map(h -> toScores(game, account, h)).collect(Collectors.toList());
+            List<Score> scores = highscoresByAccount.stream().map(h -> toScores(game, account, h)).toList();
             result.addAll(scores);
           }
         }

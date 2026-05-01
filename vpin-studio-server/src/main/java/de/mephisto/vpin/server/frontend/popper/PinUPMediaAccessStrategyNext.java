@@ -4,9 +4,9 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.playlists.Playlist;
+import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.List;
@@ -54,7 +54,7 @@ public class PinUPMediaAccessStrategyNext extends PinUPMediaAccessStrategy {
     }
 
     String baseFilename = game.getGameName();
-    List<File> mediaFiles = screenFiles.stream().filter(f -> f.getName().toLowerCase().startsWith(baseFilename.toLowerCase())).collect(Collectors.toList());
+    List<File> mediaFiles = screenFiles.stream().filter(f -> f.getName().toLowerCase().startsWith(baseFilename.toLowerCase())).toList();
     Pattern plainMatcher = Pattern.compile(Pattern.quote(baseFilename) + "\\d{0,2}\\.[a-zA-Z0-9]*");
     Pattern screenMatcher = Pattern.compile(Pattern.quote(baseFilename) + "\\d{0,2}\\(.*\\)\\.[a-zA-Z0-9]*");
     return mediaFiles.stream().filter(f -> plainMatcher.matcher(f.getName()).matches() || screenMatcher.matcher(f.getName()).matches()).collect(Collectors.toList());

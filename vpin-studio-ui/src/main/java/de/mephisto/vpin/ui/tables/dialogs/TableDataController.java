@@ -53,6 +53,7 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -376,7 +377,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
           openVpsTableVersionBtn.setDisable(false);
           copyTableVersionBtn.setDisable(false);
-          fixVersionBtn.setDisable(StringUtils.equals(gameVersion.getText(), game.getExtVersion()));
+          fixVersionBtn.setDisable(Strings.CI.equals(gameVersion.getText(), game.getExtVersion()));
         }
         refreshVersionsCombo(vpsTable);
         tableVersionsCombo.setValue(version);
@@ -447,7 +448,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
   private void onVpsTableVersionOpen() {
     VpsTableVersion value = this.tableVersionsCombo.getValue();
     if (value != null) {
-      VpsUrl vpsUrl = value.getUrls().get(0);
+      VpsUrl vpsUrl = value.getUrls().getFirst();
       Studio.browse(vpsUrl.getUrl());
     }
   }
@@ -1062,7 +1063,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
         gameFileName.setDisable(!client.getEmulatorService().isVpxGame(game) && !client.getEmulatorService().isFpGame(game));
       }
       else {
-        gameFileName.setDisable(StringUtils.contains(game.getGameFileName(), "/") || StringUtils.contains(game.getGameFileName(), "\\") || !client.getEmulatorService().isVpxGame(game));
+        gameFileName.setDisable(Strings.CI.contains(game.getGameFileName(), "/") || Strings.CI.contains(game.getGameFileName(), "\\") || !client.getEmulatorService().isVpxGame(game));
       }
 
       boolean hasNoDetail = tableDetails == null;
@@ -1226,7 +1227,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
       openVpsTableVersionBtn.setDisable(tableVersion == null);
       copyTableVersionBtn.setDisable(tableVersion == null);
-      fixVersionBtn.setDisable(tableVersion == null || StringUtils.equals(tableVersion.getVersion(), gameVersion.getText()));
+      fixVersionBtn.setDisable(tableVersion == null || Strings.CI.equals(tableVersion.getVersion(), gameVersion.getText()));
     }
 
     tableVersionsCombo.valueProperty().addListener(this);
@@ -1269,7 +1270,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
     openVpsTableVersionBtn.setDisable(newValue == null || newValue.getUrls().isEmpty());
     copyTableVersionBtn.setDisable(newValue == null);
-    fixVersionBtn.setDisable(mappedVersion == null || StringUtils.equals(gameVersion.getText(), game.getExtVersion()));
+    fixVersionBtn.setDisable(mappedVersion == null || Strings.CI.equals(gameVersion.getText(), game.getExtVersion()));
   }
 
   /**

@@ -1,21 +1,19 @@
 package de.mephisto.vpin.commons;
 
+import de.mephisto.vpin.commons.utils.WinRegistry;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import de.mephisto.vpin.commons.utils.WinRegistry;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.lang.invoke.MethodHandles;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.util.Map;
 
 public class SystemInfoWindows {
@@ -165,7 +163,7 @@ public class SystemInfoWindows {
     if (StringUtils.isNotEmpty(vpx)) {
       int indexOf = vpx.toLowerCase().indexOf(".exe");
       if (indexOf > 0) {
-        String exe = StringUtils.removeStart(vpx.substring(0, indexOf + 4), "\"");
+        String exe = Strings.CI.removeStart(vpx.substring(0, indexOf + 4), "\"");
         File fexe = new File(exe);
         if (fexe.exists()) {
           return fexe;

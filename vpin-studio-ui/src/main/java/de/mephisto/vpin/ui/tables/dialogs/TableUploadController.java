@@ -6,12 +6,12 @@ import de.mephisto.vpin.connectors.vps.matcher.TableMatcher;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.Frontend;
-import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
@@ -23,8 +23,6 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
 import de.mephisto.vpin.ui.util.*;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -40,6 +38,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -260,7 +260,7 @@ public class TableUploadController implements Initializable, DialogController {
       if (!similar) {
         Optional<ButtonType> result = WidgetFactory.showConfirmation(s, "Warning",
             "The selected file \"" + selection.getName() + "\" doesn't seem to match with table \"" + game.getGameDisplayName() + "\".", "Proceed anyway?", "Yes, replace table");
-        if (!result.isPresent() || result.get().equals(ButtonType.CANCEL)) {
+        if (result.isEmpty() || result.get().equals(ButtonType.CANCEL)) {
           return false;
         }
       }
@@ -280,7 +280,7 @@ public class TableUploadController implements Initializable, DialogController {
         if (game != null) {
           Optional<ButtonType> result = WidgetFactory.showConfirmation(s, "Potential Table Match Found", "The selected file \"" + selection.getName() + "\" seems to match with the table \"" + game.getGameDisplayName() + "\".",
               "Would you like to proceed adding a new table?", "Yes, upload as new table");
-          if (!result.isPresent() || result.get().equals(ButtonType.CANCEL)) {
+          if (result.isEmpty() || result.get().equals(ButtonType.CANCEL)) {
             return false;
           }
         }

@@ -1,17 +1,11 @@
 package de.mephisto.vpin.server.frontend.pinballx;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-
+import de.mephisto.vpin.connectors.assets.TableAsset;
 import org.junit.Test;
 
-import de.mephisto.vpin.connectors.assets.TableAsset;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 public class PinballXAssetsAdapterTest {
 

@@ -1,23 +1,22 @@
 package de.mephisto.vpin.connectors.iscored;
 
+import de.mephisto.vpin.connectors.iscored.models.GameModel;
+import de.mephisto.vpin.connectors.iscored.models.GameRoomModel;
+import de.mephisto.vpin.connectors.iscored.models.GameScoreModel;
+import org.apache.commons.io.IOUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.MapperFeature;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.json.JsonMapper;
-import de.mephisto.vpin.connectors.iscored.models.GameModel;
-import de.mephisto.vpin.connectors.iscored.models.GameRoomModel;
-import de.mephisto.vpin.connectors.iscored.models.GameScoreModel;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.lang.invoke.MethodHandles;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
@@ -105,11 +104,11 @@ public class IScored {
             gameRoom.getGames().add(game);
           }
 
-          Collections.sort(gameRoom.getGames(), new Comparator<IScoredGame>() {
-            @Override
-            public int compare(IScoredGame o1, IScoredGame o2) {
-              return o1.getName().compareTo(o2.getName());
-            }
+          gameRoom.getGames().sort(new Comparator<IScoredGame>() {
+              @Override
+              public int compare(IScoredGame o1, IScoredGame o2) {
+                  return o1.getName().compareTo(o2.getName());
+              }
           });
 
 

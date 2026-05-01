@@ -1,10 +1,10 @@
 package de.mephisto.vpin.ui.vpxz;
 
-import de.mephisto.vpin.restclient.vpxz.VPXZDescriptorRepresentation;
-import de.mephisto.vpin.restclient.vpxz.VPXZFileInfo;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.util.FileUtils;
+import de.mephisto.vpin.restclient.vpxz.VPXZDescriptorRepresentation;
+import de.mephisto.vpin.restclient.vpxz.VPXZFileInfo;
 import de.mephisto.vpin.restclient.vpxz.VPXZPackageInfo;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.StudioFXController;

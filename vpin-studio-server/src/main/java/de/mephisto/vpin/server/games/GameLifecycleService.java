@@ -12,8 +12,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
-import static de.mephisto.vpin.restclient.webhooks.WebhookType.game;
-
 @Service
 public class GameLifecycleService {
   private final static Logger LOG = LoggerFactory.getLogger(GameLifecycleService.class);

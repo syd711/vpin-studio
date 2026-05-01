@@ -5,6 +5,7 @@ import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import java.io.*;
 import java.net.URLConnection;
@@ -54,7 +55,7 @@ public class PinballXIndex {
   }
 
   private boolean matchTerm(Asset t, String term) {
-    return StringUtils.containsIgnoreCase(t.name, term) || StringUtils.containsIgnoreCase(t.folder, term);
+    return Strings.CI.contains(t.name, term) || Strings.CI.contains(t.folder, term);
   }
 
   public Optional<TableAsset> get(EmulatorType emutype, VPinScreen screen, String folder, String name) {
@@ -172,10 +173,10 @@ public class PinballXIndex {
       asset.setPlayfieldMediaInverted(true);
 
       String mimeType = URLConnection.guessContentTypeFromName(name);
-      if (StringUtils.endsWithIgnoreCase(name, ".apng")) {
+      if (Strings.CI.endsWith(name, ".apng")) {
         mimeType = "image/png";
       }
-      else if (StringUtils.endsWithIgnoreCase(name, ".f4v")) {
+      else if (Strings.CI.endsWith(name, ".f4v")) {
         mimeType = "video/x-f4v";
       }
       asset.setMimeType(mimeType);

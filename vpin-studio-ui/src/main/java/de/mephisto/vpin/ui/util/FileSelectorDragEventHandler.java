@@ -2,7 +2,6 @@ package de.mephisto.vpin.ui.util;
 
 import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.control.TextField;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;

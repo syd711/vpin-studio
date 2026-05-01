@@ -19,7 +19,7 @@ import java.util.Set;
 
 import org.jspecify.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.util.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 public class PinballXMediaAccessStrategy extends DefaultMediaAccessStrategy {
 
@@ -112,7 +112,7 @@ public class PinballXMediaAccessStrategy extends DefaultMediaAccessStrategy {
     if (_folders != null) {
       for (String folder : _folders) {
         File parent = new File(mediaDirectory, folder);
-        File[] files = parent.listFiles((dir, name) -> StringUtils.startsWithIgnoreCase(name, game.getGameName()));
+        File[] files = parent.listFiles((dir, name) -> Strings.CI.startsWith(name, game.getGameName()));
         if (files != null && files.length > 0) {
           for (File f : files) {
             lists.add(f);

@@ -25,6 +25,7 @@ import java.awt.image.BufferedImage;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -326,7 +327,7 @@ public class InstructionsCardsController  implements Initializable {
     while (tok.hasMoreTokens()) {
       String s = tok.nextToken();
       // If this is dot or equivalent, append the delimeter with a space
-      if (StringUtils.contains(".!?:;", s)) {
+      if (Strings.CI.contains(".!?:;", s)) {
         bld.append(s);
         appendSpace = true;  
       }

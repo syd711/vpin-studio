@@ -1,10 +1,10 @@
 package de.mephisto.vpin.ui.vpxz.dialogs;
 
-import de.mephisto.vpin.restclient.vpxz.VPXZSourceType;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.vpxz.VPXZType;
 import de.mephisto.vpin.restclient.vpxz.VPXZSourceRepresentation;
+import de.mephisto.vpin.restclient.vpxz.VPXZSourceType;
+import de.mephisto.vpin.restclient.vpxz.VPXZType;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
@@ -85,7 +85,7 @@ public class VPXZUploadController implements Initializable, DialogController {
   private void onFileSelect(ActionEvent event) {
     Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
 
-    List<String> filters = Arrays.asList("*." + VPXZType.VPXZ.name().toLowerCase());
+    List<String> filters = List.of("*." + VPXZType.VPXZ.name().toLowerCase());
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select Files");
     fileChooser.getExtensionFilters().addAll(

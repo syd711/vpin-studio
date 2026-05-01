@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.system;
 
 
-import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.system.FolderRepresentation;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;

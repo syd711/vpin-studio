@@ -1,7 +1,5 @@
 package de.mephisto.vpin.server.notifications;
 
-import de.mephisto.vpin.restclient.highscores.NVRamList;
-import de.mephisto.vpin.server.nvrams.NVRamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

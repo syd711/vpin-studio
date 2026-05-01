@@ -20,10 +20,10 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vps.VpsService;
 import de.mephisto.vpin.server.vpx.VPXService;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -594,7 +594,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     if (vpxGameEmulators.isEmpty()) {
       return getFrontendInstallationFolder();
     }
-    GameEmulator emulator = vpxGameEmulators.get(0);
+    GameEmulator emulator = vpxGameEmulators.getFirst();
     MediaAccessStrategy mediaStrategy = getFrontendConnector().getMediaAccessStrategy();
     return mediaStrategy != null ? mediaStrategy.getEmulatorMediaFolder(emulator, screen) : null;
   }
@@ -665,7 +665,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   public File getWheelImage(Game game) {
     List<File> mediaFiles = getMediaFiles(game, VPinScreen.Wheel);
-    return mediaFiles.isEmpty() ? null : mediaFiles.get(0);
+    return mediaFiles.isEmpty() ? null : mediaFiles.getFirst();
   }
 
   /**

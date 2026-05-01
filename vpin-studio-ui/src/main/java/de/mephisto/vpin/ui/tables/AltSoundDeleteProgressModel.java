@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.ProgressModel;
@@ -23,7 +22,7 @@ public class AltSoundDeleteProgressModel extends ProgressModel<Integer> {
   public AltSoundDeleteProgressModel(GameRepresentation gameRepresentation) {
     super("ALTSound Deletion");
     this.gameRepresentation = gameRepresentation;
-    this.games = Arrays.asList(gameRepresentation.getId());
+    this.games = List.of(gameRepresentation.getId());
     this.gameIterator = games.iterator();
   }
 

@@ -4,9 +4,9 @@ import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.server.games.Game;
+import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -69,7 +69,7 @@ public class CacheTableAssetsAdapter implements TableAssetsAdapter<Game> {
 
     cache.add(cached);
     if (cache.size() > CACHE_SIZE) {
-      cache.remove(0);
+      cache.removeFirst();
     }
 
     return cached.result;

@@ -5,11 +5,10 @@ import de.mephisto.vpin.connectors.github.ReleaseArtifact;
 import de.mephisto.vpin.connectors.github.ReleaseArtifactActionLog;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.server.components.facades.*;
-import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
+import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -125,7 +124,7 @@ public class ComponentService implements InitializingBean {
         ReleaseArtifactActionLog install = null;
         List<GithubRelease> githubReleases = getCached(component);
         Optional<GithubRelease> first = githubReleases.stream().filter(r -> r.getTag().equals(tag)).findFirst();
-        GithubRelease githubRelease = githubReleases.get(0);
+        GithubRelease githubRelease = githubReleases.getFirst();
         if (first.isPresent()) {
           githubRelease = first.get();
         }
@@ -226,7 +225,7 @@ public class ComponentService implements InitializingBean {
         githubReleases = githubReleases.stream().filter(release -> !component.getIgnoredVersions().contains(release.getTag())).collect(Collectors.toList());
       }
       if (!githubReleases.isEmpty()) {
-        component.setLatestReleaseVersion(githubReleases.get(0).getTag());
+        component.setLatestReleaseVersion(githubReleases.getFirst().getTag());
       }
       componentRepository.saveAndFlush(component);
       this.releaseCache.put(component.getType(), githubReleases);

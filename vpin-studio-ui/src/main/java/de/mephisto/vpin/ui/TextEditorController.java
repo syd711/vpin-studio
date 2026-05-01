@@ -1,9 +1,9 @@
 package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.util.RichText;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

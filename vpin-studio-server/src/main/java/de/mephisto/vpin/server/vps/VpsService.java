@@ -13,16 +13,19 @@ import de.mephisto.vpin.restclient.vps.VpsInstallLink;
 import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.restclient.vpu.VPUSettings;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
-import de.mephisto.vpin.server.games.*;
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameDetails;
+import de.mephisto.vpin.server.games.GameDetailsRepositoryService;
+import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.util.Version;
 import de.mephisto.vpin.server.vpsdb.VpsDbEntry;
 import de.mephisto.vpin.server.vpsdb.VpsEntryService;
 import de.mephisto.vpin.server.vpx.VPXService;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -33,8 +36,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.util.ArrayList;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -238,7 +241,7 @@ public class VpsService implements InitializingBean {
   private void applyVPSDiff(List<VpsDiffer> diff, List<Game> games) {
     for (VpsDiffer tableDiff : diff) {
       try {
-        List<Game> collect = games.stream().filter(g -> String.valueOf(g.getExtTableId()).equals(tableDiff.getId())).collect(Collectors.toList());
+        List<Game> collect = games.stream().filter(g -> String.valueOf(g.getExtTableId()).equals(tableDiff.getId())).toList();
         for (Game game : collect) {
           GameDetails gameDetails = gameDetailsRepositoryService.findByPupId(game.getId());
           if (gameDetails != null) {

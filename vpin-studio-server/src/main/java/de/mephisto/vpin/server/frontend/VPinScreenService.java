@@ -11,10 +11,10 @@ import de.mephisto.vpin.server.directb2s.BackglassService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpx.VPXService;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -126,7 +126,7 @@ public class VPinScreenService implements InitializingBean {
         }
       }
 
-      MonitorInfo monitor = monitors.get(0);
+      MonitorInfo monitor = monitors.getFirst();
       for (int i = 1; i < monitors.size(); i++) {
         MonitorInfo second = monitors.get(i);
         if (monitor.getY() != second.getY()) {
@@ -386,7 +386,7 @@ public class VPinScreenService implements InitializingBean {
       MonitorInfo monitor = getBackglassMonitor(screenres, monitors);
 
       FrontendPlayerDisplay playfield = new FrontendPlayerDisplay(VPinScreen.PlayField);
-      MonitorInfo firstMonitor = monitors.get(0);
+      MonitorInfo firstMonitor = monitors.getFirst();
       playfield.setX((int) firstMonitor.getX());
       playfield.setY((int) firstMonitor.getY());
       playfield.setWidth(screenres.getPlayfieldWidth());

@@ -5,6 +5,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsTable;
 
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.text.similarity.CosineDistance;
 import org.apache.commons.text.similarity.EditDistance;
 import org.apache.commons.text.similarity.JaccardDistance;
@@ -115,7 +116,7 @@ public class TableMatcher {
       List<VpsTableVersion> tableFiles = table.getTableFiles();
       List<String> supportedTableFormats = tableFiles.stream()
           .map(VpsTableVersion::getTableFormat)
-          .filter(Objects::nonNull).collect(Collectors.toList());
+          .filter(Objects::nonNull).toList();
 
       for (String supportedTableFormat : supportedTableFormats) {
         if (formats.contains(supportedTableFormat)) {
@@ -184,10 +185,10 @@ public class TableMatcher {
     double dManuf = 0.2;
     String[] altmanufs = getAlternateManuf(manuf);
     for (String altmanuf : altmanufs) {
-      if (StringUtils.containsIgnoreCase(clean, altmanuf)) {
-        clean = StringUtils.removeIgnoreCase(clean, altmanuf);
+      if (Strings.CI.contains(clean, altmanuf)) {
+        clean = Strings.CI.remove(clean, altmanuf);
         dManuf = 0;
-        if (!StringUtils.equalsIgnoreCase(manuf, altmanuf)) {
+        if (!Strings.CI.equals(manuf, altmanuf)) {
           manuf += " (" + altmanuf + ")";
         }
       }
@@ -195,7 +196,7 @@ public class TableMatcher {
 
     double dYear = 0.2;
     if (clean.contains(Integer.toString(year))) {
-      clean = StringUtils.removeIgnoreCase(clean, Integer.toString(year));
+      clean = Strings.CI.remove(clean, Integer.toString(year));
       dYear = 0;
     }
 
@@ -228,7 +229,7 @@ public class TableMatcher {
           altmanuf = m;
         }
       }
-      if (!StringUtils.equalsIgnoreCase(manuf, altmanuf)) {
+      if (!Strings.CI.equals(manuf, altmanuf)) {
         manuf += " (" + altmanuf + ")";
       }
     }
@@ -271,7 +272,7 @@ public class TableMatcher {
     // continue ignoring the case
     str1 = str1.toLowerCase();
     str2 = str2.toLowerCase();
-    if (StringUtils.equals(str1, str2)) {
+    if (Strings.CI.equals(str1, str2)) {
       return 0;
     }
 
@@ -325,8 +326,8 @@ public class TableMatcher {
       for (VpsAuthoredUrls romFile : romFiles) {
         found |= romFile.getVersion() != null
             // do not check equals, cf afm_113 && afm_113b
-            && (StringUtils.startsWithIgnoreCase(romFile.getVersion(), rom)
-            || StringUtils.startsWithIgnoreCase(rom, romFile.getVersion()));
+            && (Strings.CI.startsWith(romFile.getVersion(), rom)
+            || Strings.CI.startsWith(rom, romFile.getVersion()));
       }
       return found;
     }*/

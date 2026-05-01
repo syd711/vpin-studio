@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.highscores.parsing.text.adapters.customized;
 
 import de.mephisto.vpin.server.highscores.parsing.text.adapters.ScoreTextFileAdapter;
-import org.jspecify.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 
 import java.io.File;
 import java.util.ArrayList;

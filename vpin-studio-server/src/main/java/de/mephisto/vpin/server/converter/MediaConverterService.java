@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.converter;
 
+import de.mephisto.vpin.commons.fx.ImageUtil;
 import de.mephisto.vpin.restclient.converter.MediaConversionCommand;
 import de.mephisto.vpin.restclient.converter.MediaConversionCommand.ImageOp;
 import de.mephisto.vpin.restclient.converter.MediaOperation;
@@ -12,10 +13,9 @@ import de.mephisto.vpin.server.frontend.MediaService;
 import de.mephisto.vpin.server.games.GameMediaService;
 import de.mephisto.vpin.server.playlists.PlaylistMediaService;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.commons.fx.ImageUtil;
-import org.jspecify.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;

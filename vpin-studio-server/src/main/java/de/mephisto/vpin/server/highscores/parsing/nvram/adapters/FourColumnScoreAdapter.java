@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.highscores.parsing.nvram.adapters;
 
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
-import org.jspecify.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 

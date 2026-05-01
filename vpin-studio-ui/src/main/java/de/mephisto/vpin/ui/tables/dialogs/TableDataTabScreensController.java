@@ -11,6 +11,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,7 +84,7 @@ public class TableDataTabScreensController implements Initializable {
     if (StringUtils.isEmpty(keepDisplays)) {
       useEmuDefaultsCheckbox.setSelected(true);
     }
-    else if (StringUtils.equalsIgnoreCase(keepDisplays, "NONE")) {
+    else if (Strings.CI.equals(keepDisplays, "NONE")) {
       hideAllCheckbox.setSelected(true);
     }
     else {

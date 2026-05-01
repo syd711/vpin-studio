@@ -19,10 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.time.temporal.ChronoUnit;
@@ -160,7 +157,7 @@ public class AlxFactory {
     root.getChildren().removeAll(root.getChildren());
 
     List<TableAlxEntry> statEntries = new ArrayList<>(entries);
-    Collections.sort(statEntries, Comparator.comparingInt(TableAlxEntry::getScores));
+    statEntries.sort(Comparator.comparingInt(TableAlxEntry::getScores));
     Collections.reverse(statEntries);
 
     long maxValue = 0;
@@ -199,7 +196,7 @@ public class AlxFactory {
     root.getChildren().removeAll(root.getChildren());
 
     List<TableAlxEntry> statEntries = new ArrayList<>(entries);
-    Collections.sort(statEntries, Comparator.comparing(TableAlxEntry::getLastPlayed));
+    statEntries.sort(Comparator.comparing(TableAlxEntry::getLastPlayed));
     Collections.reverse(statEntries);
 
 
@@ -239,7 +236,7 @@ public class AlxFactory {
     root.getChildren().removeAll(root.getChildren());
 
     List<TableAlxEntry> statEntries = new ArrayList<>(entries);
-    Collections.sort(statEntries, Comparator.comparingInt(TableAlxEntry::getTimePlayedSecs));
+    statEntries.sort(Comparator.comparingInt(TableAlxEntry::getTimePlayedSecs));
     Collections.reverse(statEntries);
 
     long maxValue = 0;
@@ -279,7 +276,7 @@ public class AlxFactory {
     root.getChildren().removeAll(root.getChildren());
 
     List<TableAlxEntry> mostPlayedEntries = new ArrayList<>(entries);
-    Collections.sort(mostPlayedEntries, Comparator.comparingInt(TableAlxEntry::getNumberOfPlays));
+    mostPlayedEntries.sort(Comparator.comparingInt(TableAlxEntry::getNumberOfPlays));
     Collections.reverse(mostPlayedEntries);
 
     long maxValue = 0;

@@ -17,8 +17,8 @@ import de.mephisto.vpin.server.highscores.HighscoreBackupService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
-import org.jspecify.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -128,7 +128,7 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
                   List<Score> scores = highscoreParser.parseScores(hs.getCreatedAt(), hs.getRaw(), game, serverId);
 
                   if (!scores.isEmpty()) {
-                    String msg = discordSubscriptionMessageFactory.createFirstSubscriptionHighscoreMessage(game, competition, scores.get(0), competition.getScoreLimit());
+                    String msg = discordSubscriptionMessageFactory.createFirstSubscriptionHighscoreMessage(game, competition, scores.getFirst(), competition.getScoreLimit());
                     long newHighscoreMessageId = discordService.sendMessage(serverId, channelId, msg);
                     discordService.updateHighscoreMessage(serverId, channelId, newHighscoreMessageId);
                   }

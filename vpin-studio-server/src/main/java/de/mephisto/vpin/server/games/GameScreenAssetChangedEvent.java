@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.games;
 
-import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
