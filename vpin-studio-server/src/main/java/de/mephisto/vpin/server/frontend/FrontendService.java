@@ -272,11 +272,17 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
           }
         }
 
-        if (autoFillSettings.isNumberOfPlayers()) {
-          if (vpsTable.getPlayers() == 0 || overwrite) {
-            tableDetails.setNumberOfPlayers(vpsTable.getPlayers());
+          if (autoFillSettings.isNumberOfPlayers()) {
+              Integer vpsPlayers = vpsTable.getPlayers();
+              if (vpsPlayers != null) {
+                  if (vpsPlayers == 0 || overwrite) {
+                      tableDetails.setNumberOfPlayers(vpsPlayers);
+                  }
+              }
+              else if (overwrite) {
+                  tableDetails.setNumberOfPlayers(0);
+              }
           }
-        }
 
         if (autoFillSettings.isIpdbNumber()) {
           if (!StringUtils.isEmpty(vpsTable.getIpdbUrl())) {
