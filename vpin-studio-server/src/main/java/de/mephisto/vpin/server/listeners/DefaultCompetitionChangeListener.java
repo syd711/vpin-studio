@@ -8,7 +8,6 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 abstract public class DefaultCompetitionChangeListener implements CompetitionChangeListener {
 
