@@ -156,3 +156,4 @@ vpin-studio-logs.zip
 /resources/vpxscripts/**
 /resources/vr/**
 /vpin-tools/highscore-analysis.csv
+win32/java/bin/jinput-dx8_64.dll
