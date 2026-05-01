@@ -17,7 +17,7 @@
         <junit.version>5.11.4</junit.version>
         <ikonli.version>12.4.0</ikonli.version>
         <skipMacOSBuild>true</skipMacOSBuild>
-        <macOSBuild>false</macOSBuild>
+        <macOSBuild>true</macOSBuild>
     </properties>
 
     <repositories>
@@ -227,7 +227,7 @@
         <dependency>
             <groupId>net.sourceforge.tess4j</groupId>
             <artifactId>tess4j</artifactId>
-            <version>5.15.0</version>
+            <version>5.18.0</version>
         </dependency>
 
     </dependencies>

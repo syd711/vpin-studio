@@ -14,13 +14,14 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.StandardGuildMessageChannel;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
+import java.awt.Color;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -52,9 +53,8 @@ public class VPSBot {
 
     String token = System.getenv("VPS_BOT_TOKEN");
     if (token != null) {
-      jda = JDABuilder.createDefault(token, Arrays.asList(GatewayIntent.DIRECT_MESSAGES,
+      jda = JDABuilder.create(token, Arrays.asList(GatewayIntent.DIRECT_MESSAGES,
               GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT))
-          .setEventPassthrough(true)
           .setStatus(OnlineStatus.ONLINE)
           .setMemberCachePolicy(MemberCachePolicy.ALL)
           .addEventListeners(this.listenerAdapter)
@@ -188,8 +188,7 @@ public class VPSBot {
         }
         embed.setColor(Color.GREEN);
 
-        Message complete = textChannel.sendMessage("").addActionRow(Button.link(gameLink, "View Entry")).setEmbeds(embed.build()).complete();
-        long idLong = complete.getIdLong();
+        Message complete = textChannel.sendMessage("").setComponents(ActionRow.of(Button.link(gameLink, "View Entry"))).setEmbeds(embed.build()).complete();        long idLong = complete.getIdLong();
         if (textChannel instanceof NewsChannel) {
           Message complete1 = ((NewsChannel) textChannel).crosspostMessageById(idLong).complete();
           LOG.info("Crossposted message completed.");
