@@ -172,8 +172,8 @@ public class VpsTablesSidebarController extends BaseSideBarController<VpsTable> 
 
     if (selection.isPresent()) {
       VpsTable table = selection.get();
-      DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withZone(ZoneId.systemDefault());
-      updated.setText(formatter.format(Instant.ofEpochMilli(table.getUpdatedAt())));
+      DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM);
+      updated.setText(formatter.format(Instant.ofEpochMilli(table.getUpdatedAt()).atZone(ZoneId.systemDefault()).toLocalDate()));
       this.commentsArea.setText(table.getComment());
       this.commentsArea.textProperty().addListener(commentChangeListener);
 

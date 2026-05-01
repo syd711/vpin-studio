@@ -13,7 +13,6 @@ import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.DismissalUtil;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -27,7 +26,8 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -208,13 +208,13 @@ public class TablesSidebarDMDController implements Initializable {
           bundleSizeLabel.setText(FileUtils.readableFileSize(dmdPackage.getSize()));
         }
         if (dmdPackage.getModificationDate() != null) {
-          lastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(dmdPackage.getModificationDate()));
+          lastModifiedLabel.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(dmdPackage.getModificationDate()));
         }
 
         List<ValidationState> validationStates = dmdPackage.getValidationStates();
         errorBox.setVisible(!validationStates.isEmpty());
         if (!validationStates.isEmpty()) {
-          validationState = validationStates.get(0);
+          validationState = validationStates.getFirst();
           LocalizedValidation validationResult = GameValidationTexts.getValidationResult(game, validationState);
           errorTitle.setText(validationResult.getLabel());
           errorText.setText(validationResult.getText());

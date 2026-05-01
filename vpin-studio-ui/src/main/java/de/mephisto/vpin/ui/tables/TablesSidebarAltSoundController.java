@@ -27,7 +27,8 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -226,14 +227,14 @@ public class TablesSidebarAltSoundController implements Initializable {
               }
               else {
                 bundleSizeLabel.setText(FileUtils.readableFileSize(altSound.getFilesize()));
-                lastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(altSound.getModificationDate()));
+                lastModifiedLabel.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(altSound.getModificationDate()));
                 formatLabel.setText(altSound.getFormat());
               }
 
               List<ValidationState> validationStates = altSound.getValidationStates();
               errorBox.setVisible(!validationStates.isEmpty());
               if (!validationStates.isEmpty()) {
-                validationState = validationStates.get(0);
+                validationState = validationStates.getFirst();
                 LocalizedValidation validationResult = GameValidationTexts.getValidationResult(game, validationState);
                 errorTitle.setText(validationResult.getLabel());
                 errorText.setText(validationResult.getText());

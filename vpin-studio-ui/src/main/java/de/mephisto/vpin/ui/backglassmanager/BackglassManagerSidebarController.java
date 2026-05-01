@@ -54,7 +54,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -724,7 +725,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
       disableCombosFrames();
 
-      modificationDateLabel.setText(SimpleDateFormat.getDateTimeInstance().format(directB2SData.getModificationDate()));
+      modificationDateLabel.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(directB2SData.getModificationDate()));
 
       reloadBtn.setDisable(false);
       deleteBtn.setDisable(false);
