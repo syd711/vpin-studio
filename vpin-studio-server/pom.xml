@@ -22,8 +22,8 @@
         <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <commons-io.version>2.18.0</commons-io.version>
-        <commons-lang3.version>3.18.0</commons-lang3.version>
+        <commons-io.version>2.22.0</commons-io.version>
+        <commons-lang3.version>3.20.0</commons-lang3.version>
         <jspecify.version>1.0.0</jspecify.version>
     </properties>
 
@@ -190,7 +190,7 @@
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
-            <version>3.48.0.0</version>
+            <version>3.53.0.0</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -239,7 +239,7 @@
         <dependency>
             <groupId>com.github.spotbugs</groupId>
             <artifactId>spotbugs-annotations</artifactId>
-            <version>4.8.6</version>
+            <version>4.9.8</version>
         </dependency>
         <dependency>
             <groupId>com.jhlabs</groupId>
@@ -287,7 +287,7 @@
         <dependency>
             <groupId>com.akathist.maven.plugins.launch4j</groupId>
             <artifactId>launch4j-maven-plugin</artifactId>
-            <version>2.5.1</version>
+            <version>2.7.0</version>
         </dependency>
 
         <dependency>
@@ -335,7 +335,7 @@
             <plugin>
                 <groupId>org.openrewrite.maven</groupId>
                 <artifactId>rewrite-maven-plugin</artifactId>
-                <version>5.23.1</version>
+                <version>6.38.0</version>
             </plugin>
 
             <plugin>
