@@ -1,201 +1,138 @@
 [ {
   "name" : "downloader.vbs",
   "length" : 912,
-  "crc32" : "#BDCFE363",
-  "delete" : false,
-  "emptyParentFolder" : false
+  "crc32" : "#BDCFE363"
 }, {
   "name" : "mame-gamelist.txt",
   "length" : 2665822,
-  "crc32" : "#00D6EB14",
-  "delete" : false,
-  "emptyParentFolder" : false
+  "crc32" : "#00D6EB14"
 }, {
   "name" : "PupPackScreenTweaker.exe",
-  "delete" : true,
-  "emptyParentFolder" : false
+  "delete" : true
 }, {
   "name" : "puppacktweaker/PupPackScreenTweaker.exe",
   "length" : 154112,
-  "crc32" : "#2D78A5C1",
-  "delete" : false,
-  "emptyParentFolder" : false
+  "crc32" : "#2D78A5C1"
 }, {
   "name" : "puplauncher.exe",
   "length" : 1226752,
-  "crc32" : "#87595AD3",
-  "delete" : false,
-  "emptyParentFolder" : false
+  "crc32" : "#87595AD3"
 }, {
   "name" : "pupgames/pinball_fx.json",
   "length" : 211352,
-  "crc32" : "#BD25E0D2",
-  "delete" : false,
-  "emptyParentFolder" : false
+  "crc32" : "#BD25E0D2"
 }, {
   "name" : "pupgames/pinball_fx_b2s_mapping.json",
   "length" : 18173,
-  "crc32" : "#E5049796",
-  "delete" : false,
-  "emptyParentFolder" : false
+  "crc32" : "#E5049796"
 }, {
   "name" : "pupgames/pinball_fx3.json",
   "length" : 157634,
-  "crc32" : "#29B840C5",
-  "delete" : false,
-  "emptyParentFolder" : false
+  "crc32" : "#29B840C5"
 }, {
   "name" : "pupgames/pinball_fx3_b2s_mapping.json",
   "length" : 15228,
-  "crc32" : "#98189B24",
-  "delete" : false,
-  "emptyParentFolder" : false
+  "crc32" : "#98189B24"
 }, {
   "name" : "pupgames/zaccaria.json",
   "length" : 317156,
-  "crc32" : "#C07F4E88",
-  "delete" : false,
-  "emptyParentFolder" : false
+  "crc32" : "#C07F4E88"
 }, {
   "name" : "pupgames/pinball_m.json",
   "length" : 19923,
-  "crc32" : "#B080FBB0",
-  "delete" : false,
-  "emptyParentFolder" : false
+  "crc32" : "#B080FBB0"
 }, {
   "name" : "pupgames/pinball_m_b2s_mapping.json",
   "length" : 1467,
-  "crc32" : "#65215194",
-  "delete" : false,
-  "emptyParentFolder" : false
+  "crc32" : "#65215194"
 }, {
   "name" : "scoringdb.json",
   "length" : 78959,
-  "crc32" : "#268AC2C0",
-  "delete" : false,
-  "emptyParentFolder" : false
+  "crc32" : "#268AC2C0"
 }, {
   "name" : "maps/main.zip",
   "archiveFolder" : "pinmame-nvram-maps-main",
   "url" : "https://github.com/tomlogic/pinmame-nvram-maps/archive/refs/heads/main.zip",
   "length" : 611883,
   "crc32" : "#42D4E95F",
-  "delete" : false,
   "emptyParentFolder" : true
 }, {
   "name" : "superhac/roms.json",
   "url" : "https://github.com/superhac/pinmame-score-parser/releases/download/v1.0.7/roms.json",
   "length" : 351284,
-  "crc32" : "#57E61E51",
-  "delete" : false,
-  "emptyParentFolder" : false
+  "crc32" : "#57E61E51"
 }, {
   "name" : "PinVol.exe",
   "length" : 1103872,
-  "crc32" : "#768BD568",
-  "delete" : false,
-  "emptyParentFolder" : false
+  "crc32" : "#768BD568"
 }, {
   "name" : "vpxtool.exe",
   "length" : 15362048,
-  "crc32" : "#03016E10",
-  "delete" : false,
-  "emptyParentFolder" : false
+  "crc32" : "#03016E10"
 }, {
   "name" : "ffmpeg.exe",
   "length" : 99264000,
-  "crc32" : "#C860AE5A",
-  "delete" : false,
-  "emptyParentFolder" : false
+  "crc32" : "#C860AE5A"
 }, {
   "name" : "jptch.exe",
   "length" : 59976,
-  "crc32" : "#D3F56373",
-  "delete" : false,
-  "emptyParentFolder" : false
+  "crc32" : "#D3F56373"
 }, {
   "name" : "nircmd.exe",
   "length" : 119296,
-  "crc32" : "#25E7120C",
-  "delete" : false,
-  "emptyParentFolder" : false
+  "crc32" : "#25E7120C"
 }, {
   "name" : "competition-badges/wovp.png",
   "length" : 165579,
-  "crc32" : "#631AA95C",
-  "delete" : false,
-  "emptyParentFolder" : false
+  "crc32" : "#631AA95C"
 }, {
   "name" : "logos.txt",
   "length" : 119856,
-  "crc32" : "#4B326E1F",
-  "delete" : false,
-  "emptyParentFolder" : false
+  "crc32" : "#4B326E1F"
 }, {
   "name" : "manufacturers/manufacturers.zip",
   "length" : 11183207,
   "crc32" : "#9D15B0B2",
-  "delete" : false,
   "emptyParentFolder" : true
 }, {
   "name" : "frames/wheel-tarcissio.png",
   "length" : 460767,
-  "crc32" : "#C0879D7D",
-  "delete" : false,
-  "emptyParentFolder" : false
+  "crc32" : "#C0879D7D"
 }, {
   "name" : "frames/wheel-black.png",
   "length" : 180465,
-  "crc32" : "#979FBBA7",
-  "delete" : false,
-  "emptyParentFolder" : false
+  "crc32" : "#979FBBA7"
 }, {
   "name" : "maintenance.mp4",
   "length" : 9852691,
-  "crc32" : "#B6F53800",
-  "delete" : false,
-  "emptyParentFolder" : false
+  "crc32" : "#B6F53800"
 }, {
   "name" : "jvm/jinput-dx8_64.dll",
   "destination" : "win32/java/bin/jinput-dx8_64.dll",
   "length" : 142336,
-  "crc32" : "#4BE9DC44",
-  "delete" : false,
-  "emptyParentFolder" : false
+  "crc32" : "#4BE9DC44"
 }, {
   "name" : "DOFTest/Readme.txt",
   "length" : 2945,
-  "crc32" : "#04492084",
-  "delete" : false,
-  "emptyParentFolder" : false
+  "crc32" : "#04492084"
 }, {
   "name" : "DOFTest/DirectOutputTest.exe.config",
   "length" : 178,
-  "crc32" : "#A802149B",
-  "delete" : false,
-  "emptyParentFolder" : false
+  "crc32" : "#A802149B"
 }, {
   "name" : "DOFTest/DirectOutput.dll",
   "length" : 2560512,
-  "crc32" : "#B5B19E99",
-  "delete" : false,
-  "emptyParentFolder" : false
+  "crc32" : "#B5B19E99"
 }, {
   "name" : "DOFTest/DirectOutputTest.pdb",
   "length" : 19968,
-  "crc32" : "#CCB85DB2",
-  "delete" : false,
-  "emptyParentFolder" : false
+  "crc32" : "#CCB85DB2"
 }, {
   "name" : "DOFTest/DirectOutputTest.exe",
   "length" : 11264,
-  "crc32" : "#71C89BF9",
-  "delete" : false,
-  "emptyParentFolder" : false
+  "crc32" : "#71C89BF9"
 }, {
   "name" : "DOFTest/DirectOutputComObject.dll",
   "length" : 2731008,
-  "crc32" : "#3B6AAF8B",
-  "delete" : false,
-  "emptyParentFolder" : false
+  "crc32" : "#3B6AAF8B"
 } ]

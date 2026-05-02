@@ -62,12 +62,12 @@ public class ServerUpdateFileEntry {
   /**
    * Whether the file must be deleted instead of downloaded
    */
-  private boolean delete;
+  private Boolean delete;
 
     /**
    * Whether the parent folder must be empty first
    */
-  private boolean emptyParentFolder;
+  private Boolean emptyParentFolder;
 
   // -------------------------------------------------------------------------
   // Constructors
@@ -135,7 +135,7 @@ public class ServerUpdateFileEntry {
     this.crc32 = (crc32 == null) ? null : crc32.toUpperCase();
   }
 
-  public boolean isDelete() {
+  public Boolean isDelete() {
     return delete;
   }
 
@@ -143,7 +143,7 @@ public class ServerUpdateFileEntry {
     this.delete = delete;
   }
 
-  public boolean isEmptyParentFolder() {
+  public Boolean isEmptyParentFolder() {
     return emptyParentFolder;
   }
 

@@ -14,6 +14,7 @@ import net.sf.sevenzipjbinding.SevenZip;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,7 +95,7 @@ public class ServerUpdatePreProcessing {
       File localFile = resolveDestination(entry);
 
       // manage deletions
-      if (entry.isDelete()) {
+      if (BooleanUtils.isTrue(entry.isDelete())) {
         if (localFile.exists()) {
           if (entry.getName().endsWith("/") && localFile.isDirectory()) {
             FileUtils.deleteDirectory(localFile);
@@ -125,7 +126,7 @@ public class ServerUpdatePreProcessing {
       }
 
       if (download) {
-        if (entry.isEmptyParentFolder()) {
+        if (BooleanUtils.isTrue(entry.isEmptyParentFolder())) {
           File parentFolder = localFile.getParentFile();
           if (parentFolder.exists() && parentFolder.isDirectory()) {
             FileUtils.deleteDirectory(parentFolder);
@@ -357,4 +358,13 @@ public class ServerUpdatePreProcessing {
       this.crc32Hex = hex;
     }
   }
+
+  //-----------------------------------------------------
+
+  public static void main(String[] args) throws IOException {
+    ServerUpdatePreProcessing p = new ServerUpdatePreProcessing();
+    File manifest = new File(RESOURCES, "sync.json");
+    p.updateManifestFromLocal(manifest);
+  }
+
 }
