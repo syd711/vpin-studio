@@ -23,7 +23,6 @@ import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.recorder.EmulatorRecorderJob;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.util.WindowsUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
@@ -2701,18 +2700,21 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
   @EventListener(ApplicationReadyEvent.class)
   public void onApplicationReady() {
-    PopperSettings settings = getSettings();
-    //settings can be null for some t
-    if (settings != null && settings.isAutoStart() && getFrontend().getFrontendType().equals(FrontendType.Popper)) {
-      File popperFolder = systemService.getPinupInstallationFolder();
-      File popperMenu = new File(popperFolder, "PinUpMenu.exe");
-      if (popperMenu.exists()) {
-        SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList(popperMenu.getName()));
-        executor.setDir(popperFolder);
-        executor.executeCommandAsync();
-      }
-      else {
-        LOG.error("Failed to auto-start PinUP Popper Menu, file not found");
+    // When this connector is not used, it is not initialized then dbFilePath is null and studio can't get settings
+    if (dbFilePath != null) {
+      PopperSettings settings = getSettings();
+      //settings can be null for some t
+      if (settings != null && settings.isAutoStart()) {
+        File popperFolder = systemService.getPinupInstallationFolder();
+        File popperMenu = new File(popperFolder, "PinUpMenu.exe");
+        if (popperMenu.exists()) {
+          SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList(popperMenu.getName()));
+          executor.setDir(popperFolder);
+          executor.executeCommandAsync();
+        }
+        else {
+          LOG.error("Failed to auto-start PinUP Popper Menu, file not found");
+        }
       }
     }
   }

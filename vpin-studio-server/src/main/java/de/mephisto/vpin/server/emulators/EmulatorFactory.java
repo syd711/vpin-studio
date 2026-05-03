@@ -197,7 +197,7 @@ public class EmulatorFactory implements ApplicationContextAware, InitializingBea
     emu.setGamesDirectory("C:\\vPinball\\FuturePinall");
 
     File fpExe = getSystemService().resolveFpExe();
-    if (fpExe.exists()) {
+    if (fpExe != null && fpExe.exists()) {
       emu.setInstallationDirectory(fpExe.getParentFile().getAbsolutePath());
       emu.setGamesDirectory(new File(fpExe.getParentFile(), "Tables").getAbsolutePath());
     }
