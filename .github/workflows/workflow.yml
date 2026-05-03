@@ -42,21 +42,21 @@ jobs:
         with:
           repository: gonzonia/vpin-studio-popper-client
           path: ./vpin-studio-popper-client
-          token: ${{ secrets.ACCESS_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Checkout Mania Rest Client Repo
         uses: actions/checkout@v3
         with:
           repository: gonzonia/vpin-mania-rest-client
           path: ./vpin-mania-rest-client
-          token: ${{ secrets.ACCESS_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Checkout java-pinmame-nvmaps Repo
         uses: actions/checkout@v3
         with:
           repository: gonzonia/java-pinmame-nvmaps
           path: ./java-pinmame-nvmaps
-          token: ${{ secrets.ACCESS_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           submodules: recursive
 
       - name: Set up Zulu JDK 25
