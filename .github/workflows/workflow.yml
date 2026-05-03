@@ -82,25 +82,26 @@ jobs:
           architecture: ${{ matrix.java_arch }}
           cache: 'maven'
 
-      - name: Install Parent POM
-        run: mvn -N install -DskipTests
-
-      - name: Debug Maven cache
-        run: |
-          find ~/.m2/repository/de/mephisto/vpin/studio -type f | head -20
-          cat ~/.m2/repository/de/mephisto/vpin/studio/*/studio-*.pom | grep '<version>'
-
-      - name: Build Sub-Modules
-        run: |        
-          mvn -f vpin-connector-assets/pom.xml clean install -DskipTests
-          mvn -f vpin-studio-popper-client/pom.xml clean install -DskipTests
-
       - name: Extract Maven project version
         id: project
-        run: echo "version=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_OUTPUT
+        run: |
+          VERSION=$(grep -m1 '<revision>' pom.xml | sed 's/.*<revision>\(.*\)<\/revision>/\1/')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Install Parent POM
+        run: mvn -N install -Drevision=${{ steps.project.outputs.version }} -DskipTests
+
+      - name: Build Java 25 sub-modules and popper client
+        run: |
+          mvn -f vpin-connector-assets/pom.xml clean install \
+            -Drevision=${{ steps.project.outputs.version }} -DskipTests
+          mvn -f vpin-studio-popper-client/pom.xml clean install \
+            -Drevision=${{ steps.project.outputs.version }} -DskipTests
 
       - name: Build with Maven
-        run: mvn --batch-mode --update-snapshots clean package -DskipMacOSBuild=false -DmacOSBuild=true -DskipTests
+        run: mvn --batch-mode --update-snapshots clean package \
+          -Drevision=${{ steps.project.outputs.version }} \
+          -DskipMacOSBuild=false -DmacOSBuild=true -DskipTests
 
       - name: Download Zulu JRE for macOS
         run: |

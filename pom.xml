@@ -4,6 +4,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>de.mephisto.vpin</groupId>
+    <artifactId>studio</artifactId>
+    <version>${revision}</version>
+    <packaging>pom</packaging>
+
     <properties>
         <revision>4.8.4</revision>
         <maven.compiler.source>25</maven.compiler.source>
@@ -27,13 +32,6 @@
         <slf4j.version>2.0.17</slf4j.version>
         <jspecify.version>1.0.0</jspecify.version>
     </properties>
-
-    <groupId>de.mephisto.vpin</groupId>
-    <artifactId>studio</artifactId>
-    <version>${revision}</version>
-    <packaging>pom</packaging>
-
-
 
     <scm>
         <connection>git@github.com:syd711/vpin-studio.git</connection>
