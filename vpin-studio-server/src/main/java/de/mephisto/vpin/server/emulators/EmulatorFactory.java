@@ -100,7 +100,7 @@ public class EmulatorFactory implements ApplicationContextAware, InitializingBea
     emu.setGamesDirectory("C:\\vPinball\\VisualPinball");
 
     File vpxExe = getSystemService().resolveVpx64Exe();
-    if (vpxExe.exists()) {
+    if (vpxExe != null && vpxExe.exists()) {
       emu.setInstallationDirectory(vpxExe.getParentFile().getAbsolutePath());
       emu.setGamesDirectory(new File(vpxExe.getParentFile(), "Tables").getAbsolutePath());
     }
@@ -142,10 +142,10 @@ public class EmulatorFactory implements ApplicationContextAware, InitializingBea
     emu.setInstallationDirectory("C:\\vPinball\\VisualPinball");
     emu.setGamesDirectory("C:\\vPinball\\VisualPinball");
 
-    File vpxExe = getSystemService().resolveVpx64Exe();
-    if (vpxExe.exists()) {
-      emu.setInstallationDirectory(vpxExe.getParentFile().getAbsolutePath());
-      emu.setGamesDirectory(new File(vpxExe.getParentFile(), "Tables").getAbsolutePath());
+    File vptExe = getSystemService().resolveVptExe();
+    if (vptExe != null && vptExe.exists()) {
+      emu.setInstallationDirectory(vptExe.getParentFile().getAbsolutePath());
+      emu.setGamesDirectory(new File(vptExe.getParentFile(), "Tables").getAbsolutePath());
     }
 
     emu.setLaunchScript(createScript(true, "START \"\" \"[STARTDIR]Launch\\VPXSTARTER.exe\" 10 10 60\n" +
