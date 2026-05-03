@@ -407,7 +407,7 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
 
   private void setEnabled(boolean vrEnabled) {
     this.saveBtn.setDisable(!vrEnabled);
-    this.createBtn.setDisable(!vrEnabled);
+    //this.createBtn.setDisable(!vrEnabled);
     this.deleteBtn.setDisable(!vrEnabled);
     this.duplicateBtn.setDisable(!vrEnabled);
     this.enabledCheckbox.setDisable(!vrEnabled);
