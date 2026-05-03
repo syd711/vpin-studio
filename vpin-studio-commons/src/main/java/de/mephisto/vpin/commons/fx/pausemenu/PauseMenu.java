@@ -21,6 +21,7 @@ import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
+import de.mephisto.vpin.restclient.util.OSUtil;
 import org.jspecify.annotations.Nullable;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -117,8 +118,9 @@ public class PauseMenu extends Application {
       pauseMenuStage.setAlwaysOnTop(true);
       stage = pauseMenuStage;
 
-      stage.getIcons().add(new Image(Objects.requireNonNull(PauseMenu.class.getResourceAsStream("logo-64.png"))));
-
+        if (!OSUtil.isMac()) {//Let MacOS handle this to use dynamic icons
+            stage.getIcons().add(new Image(Objects.requireNonNull(PauseMenu.class.getResourceAsStream("logo-64.png"))));
+        }
       PauseMenuSettings pauseMenuSettings = ServerFX.client.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
       int pauseMenuScreenId = pauseMenuSettings.getPauseMenuScreenId();
 

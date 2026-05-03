@@ -225,7 +225,9 @@ public class Studio extends Application {
       Scene scene = new Scene(root);
       scene.setFill(Paint.valueOf("#212529"));
       stage.setTitle("VPin Studio Launcher");
-      stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-64.png")));
+        if (!OSUtil.isMac()) {//Let MacOS handle this to use dynamic icons
+            stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-64.png")));
+        }
       stage.setScene(scene);
       stage.initStyle(StageStyle.TRANSPARENT);
       stage.setX((screenBounds.getWidth() / 2) - (800 / 2));
@@ -347,7 +349,9 @@ public class Studio extends Application {
               height = position.getHeight();
             }
             Scene scene = new Scene(root, width, height, Paint.valueOf("#212529"));
-            stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-128.png")));
+              if (!OSUtil.isMac()) {//Let MacOS handle this to use dynamic icons
+                  stage.getIcons().add(new Image(Objects.requireNonNull(Studio.class.getResourceAsStream("logo-128.png"))));
+              }
             stage.setScene(scene);
             stage.setMinWidth(1280);
             stage.setMinHeight(700);
@@ -408,8 +412,10 @@ public class Studio extends Application {
     Rectangle2D screenBounds = Screen.getPrimary().getBounds();
 
     Stage stage = new Stage(StageStyle.TRANSPARENT);
-    stage.setAlwaysOnTop(true); // Ensure splash screen is always on top
-    stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-64.png")));
+    //stage.setAlwaysOnTop(true); // Ensure splash screen is always on top
+      if (!OSUtil.isMac()) {//Let MacOS handle this to use dynamic icons
+          stage.getIcons().add(new Image(Objects.requireNonNull(Studio.class.getResourceAsStream("logo-64.png"))));
+      }
     stage.setScene(scene);
     stage.setX((screenBounds.getWidth() / 2) - (imgWidth / 2));
     stage.setY((screenBounds.getHeight() / 2) - (imgHeight / 2));

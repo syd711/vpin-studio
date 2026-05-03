@@ -2,7 +2,9 @@ package de.mephisto.vpin.ui.cards;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
+import de.mephisto.vpin.restclient.util.OSUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,7 +62,9 @@ public class InstructionsCardScanner extends Application {
       Scene scene = new Scene(root);
       scene.setFill(Paint.valueOf("#212529"));
       stage.setTitle("Instructions Cards");
-      stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-64.png")));
+        if (!OSUtil.isMac()) {//Let MacOS handle this to use dynamic icons
+            stage.getIcons().add(new Image(Objects.requireNonNull(Studio.class.getResourceAsStream("logo-64.png"))));
+        }
       stage.setScene(scene);
       stage.initStyle(StageStyle.UNDECORATED);
       stage.setX((screenBounds.getWidth() / 2) - (1400 / 2));

@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
+import de.mephisto.vpin.restclient.util.OSUtil;
 import javafx.animation.Transition;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -21,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.invoke.MethodHandles;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 
 public class NotificationStage {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -47,8 +49,9 @@ public class NotificationStage {
 
     inTransition = null;
     try {
-      stage.getIcons().add(new Image(NotificationController.class.getResourceAsStream("logo-64.png")));
-
+        if (!OSUtil.isMac()) {//Let MacOS handle this to use dynamic icons
+            stage.getIcons().add(new Image(Objects.requireNonNull(NotificationController.class.getResourceAsStream("logo-64.png"))));
+        }
       NotificationSettings notificationSettings = ServerFX.client.getJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, NotificationSettings.class);
       this.screenBounds = ServerFX.client.getSystemService().getScreenInfo(notificationSettings.getNotificationsScreenId());
 

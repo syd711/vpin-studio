@@ -14,6 +14,7 @@ import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.restclient.util.FileUtils;
+import de.mephisto.vpin.restclient.util.OSUtil;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -573,7 +574,9 @@ public class WidgetFactory {
 
   public static Stage createStage() {
     Stage stage = new Stage();
-    stage.getIcons().add(new Image(ServerFX.class.getResourceAsStream("logo-64.png")));
+      if (!OSUtil.isMac()) {//Let MacOS handle this to use dynamic icons
+          stage.getIcons().add(new Image(ServerFX.class.getResourceAsStream("logo-64.png")));
+      }
     return stage;
   }
 
