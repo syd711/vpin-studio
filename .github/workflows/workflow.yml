@@ -85,6 +85,11 @@ jobs:
       - name: Install Parent POM
         run: mvn -N install -DskipTests
 
+      - name: Debug Maven cache
+        run: |
+          find ~/.m2/repository/de/mephisto/vpin/studio -type f | head -20
+          cat ~/.m2/repository/de/mephisto/vpin/studio/*/studio-*.pom | grep '<version>'
+
       - name: Build Sub-Modules
         run: |        
           mvn -f vpin-connector-assets/pom.xml clean install -DskipTests
