@@ -98,9 +98,8 @@ public class NvRamOutputToScoreTextTest {
     int status = STATUS_NOT_RUN;
     String baseName = FilenameUtils.getBaseName(entry.getName());
 
-    NVRamPinemhiParser parser = new NVRamPinemhiParser();
-    parser.setPinemhiFolder(new File("../resources/pinemhi/"));
-    if (!parser.getSupportedNVRams().contains(baseName) || parser.getSupportedNVRams().contains(baseName)) {
+    NVRamPinemhiParser parser = new NVRamPinemhiParser("../resources/pinemhi/");
+    if (!parser.getSupportedRoms().contains(baseName) || parser.getSupportedRoms().contains(baseName)) {
       return status;
     }
 
