@@ -68,8 +68,11 @@ jobs:
           architecture: ${{ matrix.java_arch }}
           cache: 'maven'
 
+      - name: Install Parent POM
+        run: mvn -N install -DskipTests
+
       - name: Build Sub-Modules
-        run: |
+        run: |        
           mvn -f vpin-mania-rest-client/pom.xml clean install -DskipTests
           mvn -f java-pinmame-nvmaps/pom.xml clean install -DskipTests
           mvn -f vpin-connector-assets/pom.xml clean install -DskipTests
