@@ -69,7 +69,7 @@ jobs:
           cache: 'maven'
 
       - name: Install Parent POM
-        run: mvn -N install -DskipTests
+        run: mvn --non-recursive flatten:flatten install -DskipTests
 
       - name: Build Sub-Modules
         run: |        
