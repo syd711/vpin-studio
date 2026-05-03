@@ -155,85 +155,11 @@ jobs:
             "VPin-Studio-${{ steps.project.outputs.version }}.dmg" \
             "Vpin-Studio.app"    
         shell: bash
-		
+
       - name: Package as macOS App
         working-directory: ./mac-build
         run: |
           cp ../VPin-Studio-${{ steps.project.outputs.version }}.dmg ../VPin-Studio-Client-MacOS-${{ matrix.arch }}.dmg
-          
-
-    #  - name: Package as macOS DMG from App Image
-    #    working-directory: ./mac-build
-    #    run: |
-    #      jpackage --name VPin-Studio \
-    #        --app-version ${{ steps.project.outputs.version }} \
-    #        --app-image VPin-Studio.app \
-    #        --type dmg --icon package/macos/VpinStudioIcon.icns --dest ../
-    #        
-    #  - name: Post-process DMG
-    #    run: |
-    #      VERSION=${{ steps.project.outputs.version }}
-    #      DMG="VPin-Studio-${VERSION}.dmg"
-    #      TEMP_DMG="VPin-Studio-temp.dmg"
-    #      FINAL_DMG="VPin-Studio-final.dmg"
-	#
-    #      hdiutil convert "$DMG" -format UDRW -o "$TEMP_DMG"
-    #      MOUNT_DIR=$(hdiutil attach "$TEMP_DMG" -readwrite -noverify | \
-    #        grep "Apple_HFS" | awk '{print $NF}')
-	#
-    #      # Add background
-    #      mkdir -p "$MOUNT_DIR/.background"
-    #      cp ./mac-build/package/macos/background.tiff "$MOUNT_DIR/.background/background.tiff"
-	#
-    #      # Add Applications symlink
-    #      ln -s /Applications "$MOUNT_DIR/Applications"
-	#
-    #      # Backup volume icon before AppleScript
-    #      cp "$MOUNT_DIR/.VolumeIcon.icns" /tmp/VPin-Studio-VolumeIcon.icns
-	#
-    #      # Give Finder time to register the volume
-    #      sleep 3
-    #      open "/Volumes/VPin-Studio"
-    #      sleep 2
-	#
-    #      osascript <<EOF
-    #      tell application "Finder"
-    #        activate
-    #        delay 3
-    #        tell disk "VPin-Studio"
-    #          open
-    #          set current view of container window to icon view
-    #          set toolbar visible of container window to false
-    #          set statusbar visible of container window to false
-    #          set bounds of container window to {100, 100, 760, 500}
-    #          set theViewOptions to the icon view options of container window
-    #          set arrangement of theViewOptions to not arranged
-    #          set icon size of theViewOptions to 128
-    #          set background picture of theViewOptions to file ".background:background.tiff"
-    #          set position of item "VPin-Studio.app" of container window to {160, 200}
-    #          set position of item "Applications" of container window to {500, 200}
-    #          close
-    #          open
-    #          delay 2
-    #          close
-    #        end tell
-    #      end tell
-    #      EOF
-	#
-    #      # Restore volume icon
-    #      cp /tmp/VPin-Studio-VolumeIcon.icns "$MOUNT_DIR/.VolumeIcon.icns"
-    #      chmod 444 "$MOUNT_DIR/.VolumeIcon.icns"
-    #      xattr -wx com.apple.FinderInfo \
-    #        "0000000000000000040000000000000000000000000000000000000000000000" \
-    #        "$MOUNT_DIR"
-	#
-    #      hdiutil detach "$MOUNT_DIR"
-    #      hdiutil convert "$TEMP_DMG" -format UDZO -imagekey zlib-level=9 -o "$FINAL_DMG"
-    #      rm "$TEMP_DMG" "$DMG"
-    #      mv "$FINAL_DMG" "$DMG"
-	#
-    #      cp "$DMG" "VPin-Studio-Client-MacOS-${{ matrix.arch }}.dmg"
-    #      
            
 
       - name: Upload Build Artifacts
