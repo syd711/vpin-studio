@@ -153,12 +153,15 @@ jobs:
             --hide-extension "Vpin-Studio.app" \
             --app-drop-link 450 200 \
             "VPin-Studio-${{ steps.project.outputs.version }}.dmg" \
-            "Vpin-Studio.app"
+            "Vpin-Studio.app"    
         shell: bash
+		
+      - name: Package as macOS App
+        working-directory: ./mac-build
+        run: |
+          cp ../VPin-Studio-${{ steps.project.outputs.version }}.dmg ../VPin-Studio-Client-MacOS-${{ matrix.arch }}.dmg
+          
 
-
-		  cp ../VPin-Studio-${{ steps.project.outputs.version }}.dmg ../VPin-Studio-Client-MacOS-${{ matrix.arch }}.dmg
-    
     #  - name: Package as macOS DMG from App Image
     #    working-directory: ./mac-build
     #    run: |
