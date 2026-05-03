@@ -253,6 +253,9 @@ public class UploaderAnalysis {
   public String getTableFileName(String fallback) {
     String fileNameForAssetType = getFileNameForAssetType(AssetType.VPX);
     if (fileNameForAssetType == null) {
+      fileNameForAssetType = getFileNameForAssetType(AssetType.VPT);
+    }
+    if (fileNameForAssetType == null) {
       fileNameForAssetType = getFileNameForAssetType(AssetType.FPT);
     }
     if (fileNameForAssetType == null) {
@@ -515,6 +518,12 @@ public class UploaderAnalysis {
         }
         return "This archive does not not contain a .vpx file.";
       }
+      case VPT: {
+        if (hasFileWithSuffix("vpt")) {
+          return null;
+        }
+        return "This archive does not not contain a .vpt file.";
+      }
       case FPT: {
         if (hasFileWithSuffix("fpt")) {
           return null;
@@ -642,6 +651,10 @@ public class UploaderAnalysis {
       result.add(AssetType.VPX);
     }
 
+    if (hasFileWithSuffix("vpt")) {
+      result.add(AssetType.VPX);
+    }
+
     if (hasFileWithSuffix("fpt")) {
       result.add(AssetType.FPT);
     }
@@ -751,20 +764,24 @@ public class UploaderAnalysis {
 
   public boolean isVpxOrFpTable() {
     String ext = FilenameUtils.getExtension(this.file.getName()).toLowerCase();
-    if (ext.equalsIgnoreCase(AssetType.VPX.name()) || ext.equalsIgnoreCase(AssetType.FPT.name())) {
+    if (ext.equalsIgnoreCase(AssetType.VPX.name()) 
+        || ext.equalsIgnoreCase(AssetType.VPT.name())
+        || ext.equalsIgnoreCase(AssetType.FPT.name())) {
       return true;
     }
 
-    return validateAssetTypeInArchive(AssetType.FPT) == null || validateAssetTypeInArchive(AssetType.VPX) == null;
+    return validateAssetTypeInArchive(AssetType.VPX) == null
+        || validateAssetTypeInArchive(AssetType.VPT) == null
+        || validateAssetTypeInArchive(AssetType.FPT) == null;
   }
 
   public boolean isVpxTable() {
     String ext = FilenameUtils.getExtension(this.file.getName()).toLowerCase();
-    if (ext.equalsIgnoreCase(AssetType.VPX.name())) {
+    if (ext.equalsIgnoreCase(AssetType.VPX.name()) || ext.equalsIgnoreCase(AssetType.VPT.name())) {
       return true;
     }
 
-    return validateAssetTypeInArchive(AssetType.VPX) == null;
+    return validateAssetTypeInArchive(AssetType.VPX) == null || validateAssetTypeInArchive(AssetType.VPT) == null;
   }
 
   public boolean isFpTable() {
@@ -789,6 +806,9 @@ public class UploaderAnalysis {
     String ext = FilenameUtils.getExtension(this.file.getName()).toLowerCase();
     if (validateAssetTypeInArchive(AssetType.FPT) == null || ext.equalsIgnoreCase(AssetType.FPT.name())) {
       return EmulatorType.FuturePinball;
+    }
+    if (validateAssetTypeInArchive(AssetType.VPT) == null || ext.equalsIgnoreCase(AssetType.VPT.name())) {
+      return EmulatorType.VisualPinball;
     }
     if (validateAssetTypeInArchive(AssetType.VPX) == null || ext.equalsIgnoreCase(AssetType.VPX.name())) {
       return EmulatorType.VisualPinball;

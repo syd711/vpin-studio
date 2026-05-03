@@ -50,7 +50,7 @@ public class EmulatorServiceClient extends VPinStudioClientService {
 
   public List<GameEmulatorRepresentation> getGameEmulatorsByType(@Nullable EmulatorType emutype) {
     if (emutype != null) {
-      if (emutype.equals(EmulatorType.VisualPinball)) {
+      if (emutype.equals(EmulatorType.VisualPinball) || emutype.equals(EmulatorType.VisualPinball9)) {
         return getVpxGameEmulators();
       }
       else if (emutype.equals(EmulatorType.FuturePinball)) {
