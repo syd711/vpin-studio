@@ -2,7 +2,9 @@ package de.mephisto.vpin.server.highscores;
 
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.highscores.parsing.ScoreListFactory;
+import de.mephisto.vpin.server.highscores.parsing.nvram.NvRamParsingConfiguration;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.system.SystemService;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
@@ -15,6 +17,46 @@ import static org.junit.Assert.assertEquals;
 public class ScoreListFactoryTest {
 
   private static ScoringDB scoringDB = ScoringDB.load();
+
+  static {
+    try {
+      SystemService.RESOURCES = "../resources/";
+      NvRamParsingConfiguration conf = new NvRamParsingConfiguration();
+      conf.afterPropertiesSet();
+    }
+    catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @Test
+  public void testParse() {
+    Game game = new Game();
+    game.setRom("mj_130");
+
+    String rawScore = 
+            "MVP\n" +
+            "#1 MJJ     200.000.000\n" +
+            "\n" +
+            "DUNK CHAMP\n" +
+            "#2 JVJ     175.000.000\n" +
+            "\n" +
+            "3 PT. CHAMP\n" +
+            "#3 JMJ     150.000.000\n" +
+            "\n" +
+            "SCORE CHAMP\n" +
+            "#4 MJJ     125.000.000\n" +
+            "\n" +
+            "STEAL CHAMP\n" +
+            "#5 DJ      100.000.000\n" +
+            "\n" +
+            "SIXTH MAN\n" +
+            "#6 EDY      81.105.540";
+
+    List<Score> parse = ScoreListFactory.create(rawScore, new Date(), game, scoringDB);
+    assertEquals(6, parse.size());
+  }
+
 
   @Test
   public void testScoreListFactoryDefaultAdapter() {
