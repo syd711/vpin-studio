@@ -51,6 +51,9 @@ public class NotificationStage {
 
       NotificationSettings notificationSettings = ServerFX.client.getJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, NotificationSettings.class);
       this.screenBounds = ServerFX.client.getSystemService().getScreenInfo(notificationSettings.getNotificationsScreenId());
+      if (this.screenBounds == null) {
+        this.screenBounds = ServerFX.client.getSystemService().getScreenInfo(-1);
+      }
 
       FXMLLoader loader = new FXMLLoader(NotificationController.class.getResource("notification.fxml"));
       root = loader.load();
@@ -112,7 +115,7 @@ public class NotificationStage {
       stage.setScene(scene);
     }
     catch (Exception e) {
-      LOG.error("Failed to load launcher: " + e.getMessage(), e);
+      LOG.error("Failed to load NotificationStage: " + e.getMessage(), e);
     }
   }
 

@@ -39,6 +39,7 @@
 - **Future Pinball**: Fixed import of FP tables, which was accidentally disabled.
 - **DOFLinx**: Fixed the auto-installer, which now also checks .exe files to determine if the latest version on GitHub is newer than the installed one.
 - **iScored**: Fixed game room deletion. When a game room is deleted, all associated competitions, their wheels, and TourneyIds are now reset.
+- **Emulators Setup**: Fixed emulator tabs for pinballX
 - **Preferences Menu**: Added natural order for hooks.
 - **Table Statistics**: Fixed "Last Played" timestamps.
 - **.res Editor**: Fixed dialog sizing issues caused by long filenames.

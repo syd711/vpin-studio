@@ -4,9 +4,10 @@ import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.listadapters.DefaultAdapter;
-import de.mephisto.vpin.server.highscores.parsing.listadapters.SortedScoreAdapter;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,25 +15,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class ScoreListFactory {
   private final static Logger LOG = LoggerFactory.getLogger(ScoreListFactory.class);
 
   private final static List<ScoreListAdapter> adapters = new ArrayList<>();
 
-  // Adapters are used to return a list of scores from the raw highscore
-  // If an adapter is applicable, this is the only adapter used to return scores
-  // (adapters don't "stack")
-  static {
-    adapters.add(new SortedScoreAdapter("tf_180"));
-  }
-
   public static void registerScoreListAdapter(ScoreListAdapter adapter) {
     adapters.add(adapter);
-  }
-
-  public static void unregisterScoreListAdapter(ScoreListAdapter adapter) {
-    adapters.remove(adapter);
   }
 
   //-------------------------------------------------------
@@ -45,6 +36,21 @@ public class ScoreListFactory {
    * The parseAll flag, when false (by default), filters on high scores only
    */
   public static List<Score> create(@NonNull String raw, @NonNull Date createdAt, @Nullable Game game, @NonNull ScoringDB scoringDB, boolean parseAll) {
+    List<Score> scores = getScores(raw, createdAt, game, scoringDB, parseAll);
+    List<Score> filteredScores = new ArrayList<>();
+    int position = 1;
+    for (Score sc : scores) {
+      if (filteredScores.stream().anyMatch(score -> Objects.equals(score.getScore(), sc.getScore()) && StringUtils.equals(score.getPlayerInitials(), sc.getPlayerInitials()))) {
+        continue;
+      }
+      sc.setPosition(position++);
+      filteredScores.add(sc);
+    }
+    return filteredScores;
+  }
+
+
+  private static List<Score> getScores(@NonNull String raw, @NonNull Date createdAt, @Nullable Game game, @NonNull ScoringDB scoringDB, boolean parseAll) {
     List<Score> scores = new ArrayList<>();
 
     try {
@@ -64,7 +70,8 @@ public class ScoreListFactory {
           }
         }
       }
-      // fall back adapter 
+
+      // fall back adapter, for non nvrams
       DefaultAdapter adapter = new DefaultAdapter(scoringDB);
       return adapter.getScores(game, createdAt, lines, parseAll);
     }

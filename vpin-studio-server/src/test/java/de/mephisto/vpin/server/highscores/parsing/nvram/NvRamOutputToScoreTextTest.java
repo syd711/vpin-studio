@@ -10,8 +10,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import net.nvrams.mapping.pinemhi.NVRamPinemhiParser;
-import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -36,6 +34,15 @@ public class NvRamOutputToScoreTextTest {
 
   static {
     SystemService.RESOURCES = "../resources/";
+
+  // useful for tests to force load services
+    try {
+      NvRamParsingConfiguration conf = new NvRamParsingConfiguration();
+      conf.afterPropertiesSet();
+    }
+    catch (Exception e) {
+      throw new RuntimeException("cannot initialize NvRamParsers", e);
+    }
   }
 
   @Test
@@ -54,7 +61,7 @@ public class NvRamOutputToScoreTextTest {
         continue;
       }
 
-      int status = doTestOneFile(entry);
+      int status = doTestOneFile(entry, false);
 
       if (status == STATUS_FAILED) {
         failedList.add(entry.getName());
@@ -77,14 +84,12 @@ public class NvRamOutputToScoreTextTest {
   public void testOneFile() throws Exception {
 
     // exotic nvrams ^^
-    String filename = "algar_l1.nv";
-    filename = "nbaf_31.nv";
+    String filename = "mtl_180hc.nv";
 
     File testFolder = new File("../testsystem/vPinball/VisualPinball/VPinMAME/nvram/");
-
     File entry = new File(testFolder, filename);
-    int status = doTestOneFile(entry);
-    assertEquals(STATUS_SUCCESS, status);
+
+    doTestOneFile(entry, true);
   }
 
   //-----------------------------------------------
@@ -94,21 +99,26 @@ public class NvRamOutputToScoreTextTest {
   private static final int STATUS_FAILED = 1;
   private static final int STATUS_NEW = 2;
 
-  private int doTestOneFile(File entry) throws Exception {
+  private int doTestOneFile(File entry, boolean useAssert) throws Exception {
     int status = STATUS_NOT_RUN;
-    String baseName = FilenameUtils.getBaseName(entry.getName());
+    String rom = entry.getName().replace(".nv", "");
 
-    NVRamPinemhiParser parser = new NVRamPinemhiParser("../resources/pinemhi/");
-    if (!parser.getSupportedRoms().contains(baseName) || parser.getSupportedRoms().contains(baseName)) {
+    Game game = new Game();
+    game.setGameDisplayName("Dummy test game for " + entry);
+    game.setRom(rom);
+
+    if (!NvRamOutputToScoreTextConverter.isSupportedRom(rom)) {
       return status;
     }
 
     LOG.info("Reading '" + entry.getName() + "'");
     String raw = NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(entry);
-
     assertNotNull(raw);
-    List<Score> parse = ScoreListFactory.create(raw, new Date(entry.length()), null, scoringDB);
-    assertFalse(parse.isEmpty(), "Found empty highscore for nvram " + entry.getAbsolutePath());
+
+    List<Score> parse = ScoreListFactory.create(raw, new Date(entry.length()), game, scoringDB);
+    if (parse.isEmpty()) {
+      assertFalse(parse.isEmpty(), "Found empty highscore for nvram " + entry.getAbsolutePath());
+    }
 
     File listFile = new File(entry.getAbsolutePath().concat(".list"));
 
@@ -123,17 +133,13 @@ public class NvRamOutputToScoreTextTest {
       // compare with test output
       String fileContents = Files.readString(listFile.toPath(), StandardCharsets.UTF_8);
       if (!fileContents.equals(scoreList.toString())) {
+        if (useAssert) {
+          assertEquals(fileContents, scoreList.toString());
+        }
         status = STATUS_FAILED;
         System.out.println(fileContents);
-        System.out.println(scoreList.toString());
-
-        byte[] scBytes = scoreList.toString().getBytes();
-        byte[] fcBytes = fileContents.getBytes();
-        for (int i = 0; i < fcBytes.length && i < scBytes.length; i++) {
-          if (scBytes[i] != fcBytes[i]) {
-            System.out.println(scBytes[i] + "|" + fcBytes[i]);
-          }
-        }
+        System.out.println("---");
+        System.out.println(scoreList);
       } else {
         status = STATUS_SUCCESS;
       }
@@ -199,7 +205,7 @@ public class NvRamOutputToScoreTextTest {
   @Test
   public void test_TF_180() throws Exception {
     doTestSingle("tf_180.nv",
-        "#1 DAD   101,548,900\r\n" + //
+            "#1 DAD   101,548,900\r\n" + //
             "#2 EDY   93,114,900\r\n" + //
             "#3 OPT   75,000,000\r\n" + //
             "#4 MEG   75,000,000\r\n" + //

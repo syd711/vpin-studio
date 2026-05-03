@@ -83,9 +83,8 @@ public class HighscoreService implements InitializingBean {
     return highscoreResolver.getHighscoreFile(game);
   }
 
-
-  public Set<String> getSupportedRoms() {
-    return NvRamOutputToScoreTextConverter.getSupportedRoms();
+  public boolean isSupportedRom(String rom) {
+    return NvRamOutputToScoreTextConverter.isSupportedRom(rom);
   }
 
   public HighscoreFiles getHighscoreFiles(@NonNull Game game) {

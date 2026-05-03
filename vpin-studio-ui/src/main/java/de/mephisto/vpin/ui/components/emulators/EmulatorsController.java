@@ -246,13 +246,19 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
 
       if (startScriptController != null) {
         startScriptController.applyValues();
-        exitScriptController.applyValues();
-        vrStartScriptController.applyValues();
+      }
+      if (exitScriptController != null) {
+        exitScriptController.applyValues();  
       }
 
-      if (emu.isVpxEmulator() && vrStartScriptController.getScript().isPresent()) {
-        client.getVRService().saveVrEmulatorLaunchScript(emu.getId(), vrStartScriptController.getScript().get());
+      if (vrStartScriptController != null) {
+        vrStartScriptController.applyValues();
+
+        if (emu.isVpxEmulator() && vrStartScriptController.getScript().isPresent()) {
+          client.getVRService().saveVrEmulatorLaunchScript(emu.getId(), vrStartScriptController.getScript().get());
+        }
       }
+
       client.getEmulatorService().saveGameEmulator(emu);
     }).thenLater(() -> {
       onReload();
@@ -355,19 +361,21 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
 
     client.getPreferenceService().clearCache(PreferenceNames.VR_SETTINGS);
     VRSettings vrSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VR_SETTINGS, VRSettings.class);
-    this.setEnabled(true);
-    vrStartScriptTab.setDisable(true);
+    this.setEnabled(false);
 
     if (model.isPresent()) {
       GameEmulatorRepresentation emulator = model.get();
-      vrStartScriptTab.setDisable(!emulator.isVpxEmulator());
 
       if (emulator.isVpxEmulator()) {
         boolean vrEnabled = vrSettings.isVrEnabled();
         this.setEnabled(!vrEnabled);
 
-        GameEmulatorScript vrLaunchScript = client.getVRService().getVrLaunchScript(emulator.getId());
-        vrStartScriptController.setData(model, vrLaunchScript != null ? Optional.of(vrLaunchScript) : Optional.of(new GameEmulatorScript()));
+        if (vrStartScriptController != null) {
+          GameEmulatorScript vrLaunchScript = client.getVRService().getVrLaunchScript(emulator.getId());
+          vrStartScriptController.setData(model, vrLaunchScript != null ? Optional.of(vrLaunchScript) : Optional.of(new GameEmulatorScript()));
+          vrStartScriptTab.setDisable(false);
+        }
+
         tabPane.getSelectionModel().select(0);
       }
 
@@ -399,7 +407,7 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
 
   private void setEnabled(boolean vrEnabled) {
     this.saveBtn.setDisable(!vrEnabled);
-    this.createBtn.setDisable(!vrEnabled);
+    //this.createBtn.setDisable(!vrEnabled);
     this.deleteBtn.setDisable(!vrEnabled);
     this.duplicateBtn.setDisable(!vrEnabled);
     this.enabledCheckbox.setDisable(!vrEnabled);
@@ -417,13 +425,18 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
     this.selectFolderButtonLaunch.setDisable(!vrEnabled);
     this.selectFolderButtonRoms.setDisable(!vrEnabled);
 
-    vrStartScriptTab.setDisable(!vrEnabled);
-    startScriptTab.setDisable(!vrEnabled);
-    exitScriptTab.setDisable(!vrEnabled);
-
-    startScriptController.setDisabled(!vrEnabled);
-    vrStartScriptController.setDisabled(!vrEnabled);
-    exitScriptController.setDisabled(!vrEnabled);
+    if (startScriptController != null) {
+      startScriptTab.setDisable(!vrEnabled);
+      startScriptController.setDisabled(!vrEnabled);
+    }
+    if (vrStartScriptController != null) {
+      vrStartScriptTab.setDisable(!vrEnabled);
+      vrStartScriptController.setDisabled(!vrEnabled);
+    }
+    if (exitScriptController != null) {
+      exitScriptTab.setDisable(!vrEnabled);
+      exitScriptController.setDisabled(!vrEnabled);
+    }
   }
 
   public void onViewActivated() {
@@ -508,6 +521,10 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
     catch (IOException e) {
       LOG.error("Failed to load emulator table: " + e.getMessage(), e);
     }
+
+    // self remove from tabs !
+    vrStartScriptTab.getTabPane().getTabs().remove(vrStartScriptTab);
+    vrStartScriptTab = null;
   }
 
   private void onFolderSelect(ActionEvent event, TextField field) {

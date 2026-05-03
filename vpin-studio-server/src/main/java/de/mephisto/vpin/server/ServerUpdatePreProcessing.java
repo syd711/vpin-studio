@@ -1,67 +1,56 @@
 package de.mephisto.vpin.server;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
+import java.io.*;
+import java.nio.file.*;
+import java.util.zip.CRC32;
+
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.system.NVRamsInfo;
-import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import net.sf.sevenzipjbinding.SevenZip;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.lang.invoke.MethodHandles;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.util.*;
 
-import static de.mephisto.vpin.server.system.SystemService.RESOURCES;
+import static de.mephisto.vpin.commons.SystemInfo.RESOURCES;
 
+/**
+ * Service that synchronizes local files against a remote JSON manifest.
+ *
+ * <h2>Manifest format</h2>
+ * Each entry may carry a {@code length} (bytes), a {@code crc32} (8-char hex),
+ * or both. At least one must be present for validation; if both are supplied,
+ * both must match before a download is skipped.
+ *
+ * // Synchronize remote -> local
+ * FileSyncService.SyncResult result = svc.sync();
+ * System.out.println(result);
+ *
+ * // After a manual install, refresh the manifest's length/crc values
+ * svc.updateManifestFromLocal(Path.of("manifest.json"));
+ */
 public class ServerUpdatePreProcessing {
-  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-  private final static List<String> deletions = List.of("PupPackScreenTweaker.exe");
-
-  private final static List<String> jvmFiles = List.of("jinput-dx8_64.dll");
+  private final static Logger LOG = LoggerFactory.getLogger(ServerUpdatePreProcessing.class);
 
   private final static String GITHUB_RESOURCES_URL = "https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/";
 
-  private final static Map<String, String> DOWNLOADS = new LinkedHashMap<>();
-
-  static {
-    DOWNLOADS.put("PinVol.exe", GITHUB_RESOURCES_URL + "PinVol.exe");
-    DOWNLOADS.put("jptch.exe", GITHUB_RESOURCES_URL + "jptch.exe");
-    DOWNLOADS.put("nircmd.exe", GITHUB_RESOURCES_URL + "nircmd.exe");
-    DOWNLOADS.put("downloader.vbs", GITHUB_RESOURCES_URL + "downloader.vbs");
-    DOWNLOADS.put("puppacktweaker/PupPackScreenTweaker.exe", GITHUB_RESOURCES_URL + "puppacktweaker/PupPackScreenTweaker.exe");
-    DOWNLOADS.put("puplauncher.exe", GITHUB_RESOURCES_URL + "puplauncher.exe");
-    DOWNLOADS.put("vpxtool.exe", GITHUB_RESOURCES_URL + "vpxtool.exe");
-    DOWNLOADS.put("maintenance.mp4", GITHUB_RESOURCES_URL + "maintenance.mp4");
-    DOWNLOADS.put("mame-gamelist.txt", GITHUB_RESOURCES_URL + "mame-gamelist.txt");
-    DOWNLOADS.put(ScoringDB.SCORING_DB_NAME, GITHUB_RESOURCES_URL + ScoringDB.SCORING_DB_NAME);
-    DOWNLOADS.put("manufacturers/manufacturers.zip", GITHUB_RESOURCES_URL + "manufacturers/manufacturers.zip");
-    DOWNLOADS.put("logos.txt", GITHUB_RESOURCES_URL + "logos.txt");
-    DOWNLOADS.put("competition-badges/wovp.png", GITHUB_RESOURCES_URL + "competition-badges/wovp.png");
-    DOWNLOADS.put("frames/wheel-black.png", GITHUB_RESOURCES_URL + "frames/wheel-black.png");
-    DOWNLOADS.put("frames/wheel-tarcissio.png", GITHUB_RESOURCES_URL + "frames/wheel-tarcissio.png");
-  }
-
-  private final static Map<String, Long> PUP_GAMES = new HashMap<>();
-
-  static {
-    PUP_GAMES.put("pinball_fx.json", 211352L);
-    PUP_GAMES.put("pinball_fx_b2s_mapping.json", 18173L);
-    PUP_GAMES.put("pinball_fx3.json", 157634L);
-    PUP_GAMES.put("pinball_fx3_b2s_mapping.json", 15228L);
-    PUP_GAMES.put("zaccaria.json", 317156L);
-    PUP_GAMES.put("pinball_m.json", 19923L);
-    PUP_GAMES.put("pinball_m_b2s_mapping.json", 1467L);
-  }
-
   public static void execute() {
+    ServerUpdatePreProcessing processor = new ServerUpdatePreProcessing();
+    processor.doRun();
+  }
+
+  public void doRun() {
+
     init7zip();
 
     new Thread(() -> {
@@ -69,25 +58,11 @@ public class ServerUpdatePreProcessing {
         Thread.currentThread().setName("ServerUpdatePreProcessing");
         long start = System.currentTimeMillis();
 
-
-        runJvmCheck();
         runScriptCheck();
-        runDeletionChecks();
-        runFfmpegUpdateCheck();
-        runPinVolUpdateCheck();
-        runVpxToolsUpdateCheck();
-        runLogosUpdateCheck();
-        runDOFTesterCheck();
-        runPupGamesUpdateCheck();
-        runTomsLogicUpdateCheck();
+
         runDownloadableInstallationsCheck();
-        runDeletions();
 
-
-        new Thread(() -> {
-          Thread.currentThread().setName("ServerUpdate Async Preprocessor");
-          synchronizeNVRams(false);
-        }).start();
+        synchronizeNVRams(false);
 
         LOG.info("Finished resource updates check, took {}ms.", System.currentTimeMillis() - start);
       }
@@ -97,157 +72,108 @@ public class ServerUpdatePreProcessing {
     }).start();
   }
 
-  private static void runTomsLogicUpdateCheck() {
-    File mapsFolder = new File(RESOURCES, "maps/");
-    if (!mapsFolder.exists()) {
-      mapsFolder.mkdirs();
+  private void runDownloadableInstallationsCheck() throws Exception {
+    ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+
+    File manifestFile = new File(RESOURCES + "sync.json");
+
+    // refresh manifest from github
+    Updater.downloadAndOverwrite(GITHUB_RESOURCES_URL + "sync.json", manifestFile, true);
+
+    if (!manifestFile.exists()) {
+      LOG.error("Manifest file not found: {}", manifestFile.getAbsolutePath());
+      return;
     }
+    // else
+    LOG.info("Starting sync from manifest: {}", manifestFile.getAbsolutePath());
 
-    File check = new File(mapsFolder, "main.zip");
-    if (!check.exists() || check.length() != 597680L) {
-      ServerUpdatePreProcessorUI.downloadWithProgressDialog("https://github.com/tomlogic/pinmame-nvram-maps/archive/refs/heads/main.zip", check, mapsFolder);
+    byte[] body = Files.readAllBytes(manifestFile.toPath());
+    ServerUpdateFileEntry[] files = objectMapper.readValue(body, ServerUpdateFileEntry[].class);
+    LOG.info("Manifest loaded: {} entries", files.length);
 
-      File extractedSubFolder = new File(mapsFolder, "pinmame-nvram-maps-main");
-      if (extractedSubFolder.exists() && extractedSubFolder.isDirectory()) {
-        try {
-          File[] entries = extractedSubFolder.listFiles();
-          if (entries != null) {
-            for (File entry : entries) {
-              File target = new File(mapsFolder, entry.getName());
-              if (entry.isDirectory()) {
-                FileUtils.moveDirectoryToDirectory(entry, mapsFolder, true);
-              }
-              else {
-                FileUtils.moveFile(entry, target);
-              }
-            }
+    for (ServerUpdateFileEntry entry : files) {
+      File localFile = resolveDestination(entry);
+
+      // manage deletions
+      if (BooleanUtils.isTrue(entry.isDelete())) {
+        if (localFile.exists()) {
+          if (entry.getName().endsWith("/") && localFile.isDirectory()) {
+            FileUtils.deleteDirectory(localFile);
           }
-          FileUtils.deleteDirectory(extractedSubFolder);
+          else if (!localFile.delete()) {
+            LOG.error("Failed to clean up file: {}", localFile.getAbsolutePath());
+          }
         }
-        catch (IOException e) {
-          LOG.error("Failed to flatten pinmame-nvram-maps folder: {}", e.getMessage(), e);
-        }
+        continue;
       }
-    }
-  }
 
-  private static void runDownloadableInstallationsCheck() {
-    for (Map.Entry<String, String> entry : DOWNLOADS.entrySet()) {
-      String key = entry.getKey();
-      String url = entry.getValue();
+      boolean isZip = FilenameUtils.getExtension(localFile.getName()).equalsIgnoreCase("zip");
 
-      if (key.endsWith("/")) {
-        // Folder-based download: download zip and extract into folder
-        File folder = new File(key);
-        if (!folder.exists() || Objects.requireNonNull(folder.listFiles()).length == 0) {
-          LOG.info("Starting installation of {}", url);
-          folder.mkdirs();
-          String fileName = new File(url).getName();
-          File targetFile = new File(folder, fileName);
-          ServerUpdatePreProcessorUI.downloadWithProgressDialog(url, targetFile, folder);
+      boolean download = false;
+      if (!localFile.exists()) {
+        LOG.info("[MISSING] {} -> downloading", entry.getName());
+        download = true;
+      }
+      else if (!entry.hasValidation()) {
+        // No way to tell if the file is current; always refresh.
+        LOG.info("[NO-VALIDATION] {} -> downloading (no checksum/length in manifest)", entry.getName());
+        download = true;
+      }
+      // Validate local file against manifest fields.
+      else if (!isUpToDate(entry, localFile)) {
+        LOG.info("[OUTDATED] {} -> downloading", entry.getName());
+        download = true;
+      }
+
+      if (download) {
+        if (BooleanUtils.isTrue(entry.isEmptyParentFolder())) {
+          File parentFolder = localFile.getParentFile();
+          if (parentFolder.exists() && parentFolder.isDirectory()) {
+            FileUtils.deleteDirectory(parentFolder);
+          }
         }
+
+        // File-based download: download to RESOURCES/<key>
+        if (!localFile.getParentFile().exists()) {
+          localFile.getParentFile().mkdirs();
+        }
+        LOG.info("Downloading missing resource file {}", localFile.getAbsolutePath());
+
+        String url = resolveUrl(entry);
+        ServerUpdatePreProcessorUI.downloadWithProgressDialog(url, localFile, null);
+
+        if (isZip) {
+          PackageUtil.unpackTargetFolder(localFile, localFile.getParentFile(), entry.getArchiveFolder(), Collections.emptyList(), null);
+        }
+        updateEntry(entry, localFile);
+        LOG.info("[OK] {} has been installed/updated", entry.getName());
       }
       else {
-        // File-based download: download to RESOURCES/<key>
-        File check = new File(RESOURCES, key);
-        if (!check.exists()) {
-          if (!check.getParentFile().exists()) {
-            check.getParentFile().mkdirs();
-          }
-          LOG.info("Downloading missing resource file {}", check.getAbsolutePath());
-          ServerUpdatePreProcessorUI.downloadWithProgressDialog(url, check, null);
-          if (FilenameUtils.getExtension(check.getName()).equalsIgnoreCase("zip")) {
-            PackageUtil.unpackTargetFolder(check, check.getParentFile(), null, Collections.emptyList(), null);
-          }
-        }
+        LOG.info("[OK] {} is up-to-date", entry.getName());
       }
     }
+    LOG.info("Sync complete.");
+
+    // write updated length and CRC 
+    objectMapper.writeValue(manifestFile, files);
+    LOG.info("Local synced file updated: {}", manifestFile.getAbsolutePath());
   }
 
-  private static void runDeletions() {
-    for (String deletion : deletions) {
-      File check = new File(RESOURCES, deletion);
-      if (check.exists() && !check.delete()) {
-        LOG.error("Failed to clean up file: {}", check.getAbsolutePath());
+  private void updateEntry(ServerUpdateFileEntry entry, File localFile) {
+    if (localFile.exists()) {
+      if (entry.getLength() < 0) {
+        // Local file not updated, keep force getContentLength
+        return;
       }
+      FileStats stats = computeStats(localFile);
+      entry.setLength(stats.length);
+      entry.setCrc32(stats.crc32Hex);
+
+      LOG.info("Updated {} -> length={}, crc32={}", entry.getName(), stats.length, stats.crc32Hex);
     }
   }
 
-  private static void runDeletionChecks() {
-
-  }
-
-  private static void runPinVolUpdateCheck() {
-    long expectedSize = 1103872;
-    File check = new File(RESOURCES, "PinVol.exe");
-    if (check.exists()) {
-      long size = check.length();
-      if (expectedSize != size) {
-        LOG.info("Outdated PinVol.exe found, updating...");
-        Updater.downloadAndOverwrite("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/PinVol.exe", check, true);
-      }
-    }
-  }
-
-  private static void runFfmpegUpdateCheck() {
-    long expectedSize = 99264000;
-    File check = new File(RESOURCES, "ffmpeg.exe");
-    if (!check.exists() || check.length() != expectedSize) {
-      LOG.info("Outdated ffmpeg.exe found, updating...");
-      Updater.downloadAndOverwrite("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/ffmpeg.exe", check, true);
-    }
-  }
-
-  private static void runVpxToolsUpdateCheck() {
-    long expectedSize = 15362048;
-    File check = new File(RESOURCES, "vpxtool.exe");
-    if (check.exists()) {
-      long size = check.length();
-      if (expectedSize != size) {
-        LOG.info("Outdated vpxtool.exe found, updating...");
-        Updater.downloadAndOverwrite("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/vpxtool.exe", check, true);
-      }
-    }
-  }
-
-  private static void runDOFTesterCheck() {
-    File testerFolder = new File(RESOURCES, "DOFTest");
-    if (!testerFolder.exists()) {
-      testerFolder.mkdirs();
-    }
-    List<String> dofTesterFileNames = Arrays.asList("DirectOutput.dll", "DirectOutputComObject.dll", "DirectOutputTest.exe", "DirectOutputTest.exe.config", "DirectOutputTest.pdb", "Readme.txt");
-    for (String dofTesterFileName : dofTesterFileNames) {
-      File check = new File(testerFolder, dofTesterFileName);
-      if (!check.exists()) {
-        LOG.info("Outdated {} found, updating...", check.getName());
-        Updater.download("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/DOFTest/" + dofTesterFileName, check);
-      }
-    }
-  }
-
-  private static void runLogosUpdateCheck() {
-    long expectedSize = 119856;
-    File check = new File(RESOURCES, "logos.txt");
-    if (!check.exists() || expectedSize != check.length()) {
-      LOG.info("Outdated logos.txt found, updating...");
-      Updater.downloadAndOverwrite("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/logos.txt", check, true);
-    }
-  }
-
-  private static void runPupGamesUpdateCheck() {
-    for (Map.Entry<String, Long> entry : PUP_GAMES.entrySet()) {
-      File check = new File(RESOURCES, "pupgames/" + entry.getKey());
-      long expectedSize = entry.getValue();
-      if (!check.exists() || check.length() != expectedSize) {
-        long checkedLength = check.length();
-        LOG.info("Outdated pupgames file {}/({}) found, updating...", entry.getKey(), checkedLength + "/" + expectedSize);
-        check.getParentFile().mkdirs();
-        Updater.downloadAndOverwrite("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/pupgames/" + entry.getKey(), check, true);
-      }
-    }
-  }
-
-  private static void runScriptCheck() {
+  private void runScriptCheck() {
     try {
       File scriptFolder = new File(RESOURCES, "scripts/");
       scriptFolder.mkdirs();
@@ -271,7 +197,7 @@ public class ServerUpdatePreProcessing {
     }
   }
 
-  private static void init7zip() {
+  private void init7zip() {
     try {
       LOG.info("Initializing 7z.");
       File sevenZipTempFolder = new File(System.getProperty("java.io.tmpdir"), "sevenZipServer/");
@@ -281,22 +207,6 @@ public class ServerUpdatePreProcessing {
     }
     catch (Exception e) {
       LOG.error("Failed to initialize sevenzip: {}", e.getMessage());
-    }
-  }
-
-  private static void runJvmCheck() {
-    for (String resource : jvmFiles) {
-      File folder = new File("win32\\java\\bin\\");
-      if (folder.exists()) {
-        File check = new File("win32\\java\\bin\\", resource);
-        if (!check.exists()) {
-          LOG.info("Downloading missing JVM file {}", check.getAbsolutePath());
-          Updater.download("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/jvm/" + resource, check);
-        }
-      }
-      else {
-        LOG.error("No JVM folder found: {}", folder.getAbsolutePath());
-      }
     }
   }
 
@@ -342,4 +252,119 @@ public class ServerUpdatePreProcessing {
 
     return info;
   }
+
+  //------------------------------------------------------------------------------
+
+  /**
+   * Updates the {@code length} and {@code crc32} fields of every entry in the
+   * given manifest file from the locally installed files, then writes the
+   * updated manifest back to the same path.
+   *
+   * <p>This is useful after a manual deployment: run this method to regenerate
+   * the manifest so that future sync runs reflect the current installation.
+   *
+   * <p>Entries whose destination file does not exist locally are left unchanged
+   * (their old values, if any, are preserved) and a warning is logged.
+   *
+   * @param manifestFile path to the local manifest JSON to read and rewrite
+   * @throws IOException if the manifest cannot be read or written
+   */
+  public void updateManifestFromLocal(File manifestFile) throws IOException {
+    LOG.info("Updating manifest checksums from local files: " + manifestFile);
+
+    ObjectMapper objectMapper  = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+    ServerUpdateFileEntry[] files = objectMapper.readValue(manifestFile, ServerUpdateFileEntry[].class);
+
+    int updated = 0;
+    for (ServerUpdateFileEntry entry : files) {
+      File localFile = resolveDestination(entry);
+      updateEntry(entry, localFile);
+      updated++;
+    }
+
+    objectMapper.writeValue(manifestFile, files);
+    LOG.info("Manifest updated (" + updated + " entries) and written to: " + manifestFile);
+  }
+
+  /**
+   * Returns {@code true} when the local file matches all validation criteria
+   * present in the manifest entry.
+   */
+  private boolean isUpToDate(ServerUpdateFileEntry entry, File localFile) throws IOException {
+    if (entry.getLength() != null || entry.getCrc32() != null) {
+      FileStats stats = computeStats(localFile);
+
+      if (entry.getLength() != null && stats.length != entry.getLength()) {
+        LOG.info("Length mismatch for {} : local={}, manifest={}", entry.getName(), stats.length,  entry.getLength());
+        return false;
+      }
+
+      if (entry.getCrc32() != null && !StringUtils.equals(stats.crc32Hex, entry.getCrc32())) {
+        LOG.info("CRC32 mismatch for {}: local={}, manifest={}", entry.getName(), stats.crc32Hex, entry.getCrc32());
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  /**
+   * Resolves a destination path from the manifest relative to RESOURCES
+   */
+  private File resolveDestination(ServerUpdateFileEntry entry) throws IOException {
+    String dest = StringUtils.defaultIfEmpty(entry.getDestination(), RESOURCES + entry.getName());
+    return new File(dest);
+  }
+
+  private String resolveUrl(ServerUpdateFileEntry entry) {
+    return StringUtils.defaultIfEmpty(entry.getUrl(), GITHUB_RESOURCES_URL + entry.getName());
+  }
+
+  /**
+   * Computes the byte length and CRC-32 checksum of a local file in a
+   * single streaming pass.
+   */
+  private FileStats computeStats(File file) {
+    CRC32 crc = new CRC32();
+    long length = 0;
+
+    // Size of the buffer used for CRC computation.
+    int BUFFER_SIZE = 8 * 1024; // 8 KB
+    byte[] buffer = new byte[BUFFER_SIZE];
+
+    String hex = null;
+    try (InputStream in = new BufferedInputStream(new FileInputStream(file), BUFFER_SIZE)) {
+      int read;
+      while ((read = in.read(buffer)) != -1) {
+          crc.update(buffer, 0, read);
+          length += read;
+      }
+      // Format CRC as 12 uppercase hex characters, zero-padded
+      hex = "#" + String.format("%08X", crc.getValue());
+    }
+    catch (IOException ioe) {
+      LOG.error("cannot calculate CRC for {}", file.getAbsolutePath());
+    }
+
+    return new FileStats(length, hex);
+  }
+
+  /** Immutable holder for a file's computed length and CRC-32. */
+  static class FileStats {
+    long length;
+    String crc32Hex;
+    public FileStats(long length, String hex) {
+      this.length = length;
+      this.crc32Hex = hex;
+    }
+  }
+
+  //-----------------------------------------------------
+
+  public static void main(String[] args) throws IOException {
+    ServerUpdatePreProcessing p = new ServerUpdatePreProcessing();
+    File manifest = new File(RESOURCES, "sync.json");
+    p.updateManifestFromLocal(manifest);
+  }
+
 }
