@@ -59,6 +59,21 @@ jobs:
           token: ${{ secrets.ACCESS_TOKEN }}
           submodules: recursive
 
+      - name: Set up Zulu JDK 11 for sub-modules
+        uses: actions/setup-java@v4
+        with:
+         distribution: 'zulu'
+         java-package: 'jdk+fx'
+         java-version: '11.0.21+9'
+         architecture: ${{ matrix.java_arch }}
+         cache: 'maven'
+
+      - name: Build Java 11 Sub-Modules
+        run: |
+          mvn -f vpin-mania-rest-client/pom.xml clean install -DskipTests
+          mvn -f java-pinmame-nvmaps/pom.xml clean install -DskipTests
+          mvn -f vpin-studio-popper-client/pom.xml clean install -DskipTests   
+
       - name: Set up Zulu JDK 25
         uses: actions/setup-java@v4
         with:
