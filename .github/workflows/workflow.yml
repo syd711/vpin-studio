@@ -35,24 +35,24 @@ jobs:
 
     steps:
       - name: Checkout VPin Studio
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
 
       - name: Checkout Popper Client Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
         with:
           repository: gonzonia/vpin-studio-popper-client
           path: ./vpin-studio-popper-client
           token: ${{ secrets.ACCESS_TOKEN }}
 
       - name: Checkout Mania Rest Client Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
         with:
           repository: gonzonia/vpin-mania-rest-client
           path: ./vpin-mania-rest-client
           token: ${{ secrets.ACCESS_TOKEN }}
 
       - name: Checkout java-pinmame-nvmaps Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
         with:
           repository: gonzonia/java-pinmame-nvmaps
           path: ./java-pinmame-nvmaps
@@ -60,7 +60,7 @@ jobs:
           submodules: recursive
 
       - name: Set up Zulu JDK 11 for sub-modules
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
          distribution: 'zulu'
          java-package: 'jdk+fx'
@@ -74,7 +74,7 @@ jobs:
           mvn -f java-pinmame-nvmaps/pom.xml clean install -DskipTests
 
       - name: Set up Zulu JDK 25
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
           java-package: 'jdk+fx'
@@ -82,21 +82,14 @@ jobs:
           architecture: ${{ matrix.java_arch }}
           cache: 'maven'
 
-      - name: Extract Maven project version
-        id: project
-        run: |
-          VERSION=$(grep -m1 '<revision>' pom.xml | sed 's/.*<revision>\(.*\)<\/revision>/\1/')
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-
-      - name: Install Parent POM with resolved version
-        run: |
-          VERSION=${{ steps.project.outputs.version }}
-          mvn -N install -DskipTests
-
       - name: Build Java 25 sub-modules and popper client
         run: |
           mvn -f vpin-connector-assets/pom.xml clean install -DskipTests
           mvn -f vpin-studio-popper-client/pom.xml clean install -DskipTests
+
+      - name: Extract Maven project version
+        run: echo ::set-output name=version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+        id: project
 
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots clean package -DskipMacOSBuild=false -DmacOSBuild=true -DskipTests
@@ -182,7 +175,7 @@ jobs:
            
 
       - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: macOS-build-${{ matrix.arch }}
           path: |
@@ -204,24 +197,24 @@ jobs:
         run: choco install innosetup --yes
 
       - name: Checkout VPin Studio
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
 
       - name: Checkout Popper Client Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
         with:
           repository: gonzonia/vpin-studio-popper-client
           path: ./vpin-studio-popper-client
           token: ${{ secrets.ACCESS_TOKEN }}
 
       - name: Checkout Mania Rest Client Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
         with:
           repository: gonzonia/vpin-mania-rest-client
           path: ./vpin-mania-rest-client
           token: ${{ secrets.ACCESS_TOKEN }}
 
       - name: Checkout java-pinmame-nvmaps Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
         with:
           repository: gonzonia/java-pinmame-nvmaps
           path: ./java-pinmame-nvmaps
@@ -229,7 +222,7 @@ jobs:
           submodules: recursive
 
       - name: Setup JDK 25
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
           java-package: 'jdk+fx'
@@ -261,13 +254,13 @@ jobs:
         run: mvn --batch-mode --update-snapshots clean package
 
       - name: Download macOS x64 Artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: macOS-build-x64
           path: ./Output/VPin-Studio/
 
       - name: Download macOS arm64 Artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: macOS-build-arm64
           path: ./Output/VPin-Studio/
@@ -280,7 +273,7 @@ jobs:
           echo "version=${version}" >> $env:GITHUB_OUTPUT
 
       - name: Draft Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
         with:
           body_path: RELEASE_NOTES.md
