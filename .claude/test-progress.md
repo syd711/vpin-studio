@@ -1,13 +1,13 @@
 # Unit Test Generation Progress
 
 Generated with Claude Code. Resume in any session by reading this file.
-Last updated: 2026-05-03
+Last updated: 2026-05-04
 
 ## Summary
 - Total `@Service` classes: 131
-- Tests generated total: 76 (4 session 1 + 6 session 2 + 9 session 3 + 3 session 4 + 6 session 5 + 6 session 6 + 4 session 7 + 4 session 8 + 5 session 9 + 4 session 10 + 9 session 11 + 5 session 12 + 11 session 13)
+- Tests generated total: 95 (4 session 1 + 6 session 2 + 9 session 3 + 3 session 4 + 6 session 5 + 6 session 6 + 4 session 7 + 4 session 8 + 5 session 9 + 4 session 10 + 9 session 11 + 5 session 12 + 11 session 13 + 7 session 14 + 9 session 15 + 3 session 16)
 - Tests already existed: ~27
-- Tests remaining: ~28
+- Tests remaining: ~9
 
 ## Test Style
 - New tests use `@ExtendWith(MockitoExtension.class)` (pure unit tests with Mockito)
@@ -21,13 +21,13 @@ Last updated: 2026-05-03
 | 1 | VRService | vr/ | VRServiceTest.java | ✅ GENERATED |
 | 2 | FrontendService | frontend/ | FrontendServiceTest.java | ✅ EXISTS |
 | 3 | GameDetailsRepositoryService | games/ | GameDetailsRepositoryServiceTest.java | ✅ GENERATED |
-| 4 | VPinMameService | vpinmame/ | - | ❌ TODO |
+| 4 | VPinMameService | vpinmame/ | VPinMameServiceTest.java | ✅ GENERATED |
 | 5 | GameValidationService | games/ | GameValidationServiceTest.java | ✅ GENERATED |
-| 6 | GameCachingService | games/ | - | ❌ TODO |
-| 7 | PinUPConnector | frontend/popper/ | - | ❌ TODO |
+| 6 | GameCachingService | games/ | GameCachingServiceTest.java | ✅ GENERATED |
+| 7 | PinUPConnector | frontend/popper/ | - | ❌ TODO (SQLite-heavy, skip) |
 | 8 | CompetitionChangeListenerImpl | listeners/ | CompetitionChangeListenerImplTest.java | ✅ GENERATED |
-| 9 | IScoredService | iscored/ | - | ❌ TODO |
-| 10 | DOFLinxComponent | components/facades/ | - | ❌ TODO |
+| 9 | IScoredService | iscored/ | IScoredServiceTest.java | ✅ GENERATED |
+| 10 | DOFLinxComponent | components/facades/ | DOFLinxComponentTest.java | ✅ GENERATED |
 | 11 | BackglassService | directb2s/ | BackglassServiceTest.java | ✅ EXISTS |
 | 12 | FrontendStatusService | frontend/ | FrontendStatusServiceTest.java | ✅ GENERATED |
 | 13 | GameService | games/ | GameServiceTest.java | ✅ EXISTS |
@@ -61,13 +61,13 @@ Last updated: 2026-05-03
 | 41 | GameMediaService | games/ | GameMediaServiceTest.java | ✅ EXISTS |
 | 42 | VpaService | backups/adapters/vpa/ | TableBackupVpaServiceTest.java | ✅ EXISTS |
 | 43 | CardTemplatesService | highscores/cards/ | CardTemplatesServiceTest.java | ✅ GENERATED |
-| 44 | DefaultTableAndFrontendStatusChangeListenerImpl | listeners/ | - | ❌ TODO |
+| 44 | DefaultTableAndFrontendStatusChangeListenerImpl | listeners/ | DefaultTableAndFrontendStatusChangeListenerImplTest.java | ✅ GENERATED |
 | 45 | IScoredCompetitionSynchronizer | competitions/iscored/ | IScoredCompetitionSynchronizerTest.java | ✅ GENERATED |
 | 46 | ManiaService | mania/ | - | ❌ TODO |
 | 47 | WovpService | wovp/ | WovpServiceTest.java | ✅ GENERATED |
 | 48 | VPAuthenticationService | vpauthenticators/ | VPAuthenticationServiceTest.java | ✅ GENERATED |
-| 49 | PinballYConnector | frontend/pinbally/ | - | ❌ TODO |
-| 50 | ScreenPreviewService | recorder/ | - | ❌ TODO |
+| 49 | PinballYConnector | frontend/pinbally/ | - | ❌ TODO (complex BaseConnector) |
+| 50 | ScreenPreviewService | recorder/ | - | ❌ TODO (java.awt.Robot, skip) |
 | 51 | VPXCommandLineService | vpx/ | - | ❌ TODO (skip — ApplicationContext dependency) |
 | 52 | VPXMonitoringService | vpx/ | VPXMonitoringServiceTest.java | ✅ GENERATED |
 | 53 | SteamService | steam/ | SteamServiceTest.java | ✅ GENERATED |
@@ -81,21 +81,21 @@ Last updated: 2026-05-03
 | 61 | DiscordCompetitionChangeListenerImpl | listeners/ | DiscordCompetitionChangeListenerImplTest.java | ✅ GENERATED |
 | 62 | IScoredHighscoreChangeListener | iscored/ | IScoredHighscoreChangeListenerTest.java | ✅ GENERATED |
 | 63 | IniService | ini/ | IniServiceTest.java | ✅ GENERATED |
-| 64 | TextHighscoreAdapters | highscores/parsing/text/ | - | ❌ TODO |
-| 65 | IniHighscoreAdapters | highscores/parsing/ini/ | - | ❌ TODO |
+| 64 | TextHighscoreAdapters | highscores/parsing/text/ | TextHighscoreAdaptersTest.java | ✅ GENERATED |
+| 65 | IniHighscoreAdapters | highscores/parsing/ini/ | IniHighscoreAdaptersTest.java | ✅ GENERATED |
 | 66 | HighscoreBackupService | highscores/ | HighscoreBackupServiceTest.java | ✅ EXISTS |
 | 67 | GameStatusService | games/ | GameStatusServiceTest.java | ✅ GENERATED |
 | 68 | StandaloneConnector | frontend/standalone/ | - | ❌ TODO (extends BaseConnector, complex wiring) |
-| 69 | PinballXConnector | frontend/pinballx/ | - | ❌ TODO |
-| 70 | PinballXAssetsIndexer | frontend/pinballx/ | - | ❌ TODO |
+| 69 | PinballXConnector | frontend/pinballx/ | - | ❌ TODO (complex BaseConnector) |
+| 70 | PinballXAssetsIndexer | frontend/pinballx/ | PinballXAssetsIndexerTest.java | ✅ GENERATED |
 | 71 | PinballXAssetsIndexAdapter | frontend/pinballx/ | PinballXAssetsIndexAdapterTest.java | ✅ EXISTS |
 | 72 | PinballXAssetsAdapter | frontend/pinballx/ | PinballXAssetsAdapterTest.java | ✅ EXISTS |
-| 73 | VPinScreenService | frontend/ | - | ❌ TODO |
-| 74 | FPCommandLineService | fp/ | - | ❌ TODO |
-| 75 | TableExporterService | exporter/ | - | ❌ TODO |
-| 76 | HighscoreExportService | exporter/ | - | ❌ TODO |
-| 77 | MediaExportService | exporter/ | - | ❌ TODO |
-| 78 | BackglassExportService | exporter/ | - | ❌ TODO |
+| 73 | VPinScreenService | frontend/ | VPinScreenServiceTest.java | ✅ GENERATED |
+| 74 | FPCommandLineService | fp/ | FPCommandLineServiceTest.java | ✅ GENERATED |
+| 75 | TableExporterService | exporter/ | TableExporterServiceTest.java | ✅ GENERATED |
+| 76 | HighscoreExportService | exporter/ | HighscoreExportServiceTest.java | ✅ GENERATED |
+| 77 | MediaExportService | exporter/ | MediaExportServiceTest.java | ✅ GENERATED |
+| 78 | BackglassExportService | exporter/ | BackglassExportServiceTest.java | ✅ GENERATED |
 | 79 | DOFService | dof/ | DOFTest.java | ✅ EXISTS |
 | 80 | DiscordService | discord/ | - | ❌ TODO |
 | 81 | DiscordCompetitionService | discord/ | - | ❌ TODO (heavy JDA dependencies) |
@@ -115,12 +115,12 @@ Last updated: 2026-05-03
 | 95 | AltSoundService | altsound/ | AltSoundServiceTest.java | ✅ EXISTS |
 | 96 | FlexDMDComponent | components/facades/ | FlexDMDComponentTest.java | ✅ GENERATED |
 | 97 | SerumComponent | components/facades/ | SerumComponentTest.java | ✅ GENERATED |
-| 98 | VPinMAMEComponent | components/facades/ | - | ❌ TODO |
+| 98 | VPinMAMEComponent | components/facades/ | VPinMAMEComponentTest.java | ✅ GENERATED |
 | 99 | FreezyComponent | components/facades/ | FreezyComponentTest.java | ✅ GENERATED |
 | 100 | BackglassValidationService | directb2s/ | BackglassValidationServiceTest.java | ✅ GENERATED |
 | 101 | VPXZFileService | vpxz/ | VPXZFileServiceTest.java | ✅ GENERATED |
 | 102 | VpxScriptOptionsService | vpx/ | VpxScriptOptionsServiceTest.java | ✅ GENERATED |
-| 103 | PlaylistMediaService | playlists/ | - | ❌ TODO |
+| 103 | PlaylistMediaService | playlists/ | PlaylistMediaServiceTest.java | ✅ GENERATED |
 | 104 | JobQueue | jobs/ | JobQueueTest.java | ✅ GENERATED |
 | 105 | VPRegService | highscores/parsing/vpreg/ | VPRegTest.java | ✅ EXISTS |
 | 106 | GameEmulatorValidationService | games/ | GameEmulatorValidationServiceTest.java | ✅ GENERATED |
@@ -133,9 +133,9 @@ Last updated: 2026-05-03
 | 113 | ResService | res/ | ResServiceTest.java | ✅ GENERATED |
 | 114 | GameLifecycleService | games/ | GameLifecycleServiceTest.java | ✅ GENERATED |
 | 115 | TableAssetAdapterFactory | assets/ | TableAssetAdapterFactoryTest.java | ✅ GENERATED |
-| 116 | TableAssetSourcesService | assets/ | - | ❌ TODO |
+| 116 | TableAssetSourcesService | assets/ | TableAssetSourcesServiceTest.java | ✅ GENERATED |
 | 117 | JobService | jobs/ | JobServiceTest.java | ✅ GENERATED |
-| 118 | TemplateMerger | highscores/cards/ | - | ❌ TODO |
+| 118 | TemplateMerger | highscores/cards/ | TemplateMergerTest.java | ✅ GENERATED |
 | 119 | WebhooksService | webhooks/ | WebhooksServiceTest.java | ✅ GENERATED |
 | 120 | DiscordBotResponseService | discord/ | DiscordBotResponseServiceTest.java | ✅ GENERATED |
 | 121 | VpsEntryService | vpsdb/ | VpsEntryServiceTest.java | ✅ GENERATED |
@@ -147,10 +147,14 @@ Last updated: 2026-05-03
 | 127 | DiscordChannelMessageFactory | discord/ | DiscordChannelMessageFactoryTest.java | ✅ GENERATED |
 | 128 | DiscoveryBroadcaster | discovery/ | DiscoveryBroadcasterTest.java | ✅ GENERATED |
 | 129 | HighscoreParsingService | highscores/parsing/ | HighscoreParserTest.java | ✅ EXISTS |
-| 130 | PinballXFtpClient | frontend/pinballx/ | - | ❌ TODO |
+| 130 | PinballXFtpClient | frontend/pinballx/ | PinballXFtpClientTest.java | ✅ GENERATED |
 | 131 | PlaylistService | playlists/ | PlaylistServiceTest.java | ✅ EXISTS |
 
 ## Sessions
+
+### Session 16 — 2026-05-04
+Generated: PinballXAssetsIndexer, VPinScreenService, FPCommandLineService
+Note: "Table" folder in PinballXAssetsIndexer maps to Audio (not PlayField) due to substring matching in isAmong()
 
 ### Session 1 — 2026-04-29
 Generated: MusicService, GameStatusService, VPinMameRomAliasService, VpsEntryService
@@ -192,20 +196,22 @@ Generated: BackglassValidationService, FuturePinballService, TableAssetsService,
 ### Session 13 — 2026-05-03
 Generated: VPAuthenticationService, ManiaServiceCache, TableAssetAdapterFactory, WovpService, VpxComponent, FlexDMDComponent, SerumComponent, FreezyComponent, BackglassComponent, DOFComponent, DiscordBotResponseService
 
+### Session 14 — 2026-05-04
+Generated: VPinMAMEComponent, TemplateMerger, TableExporterService, HighscoreExportService, MediaExportService, BackglassExportService, TableAssetSourcesService
+Also rebuilt vpin-studio-rest-client (ScoringDB.getHighscoreSkipTitlesCheck() was missing from installed jar)
+
+### Session 15 — 2026-05-04
+Generated: DOFLinxComponent, PlaylistMediaService, IScoredService, VPinMameService, GameCachingService, DefaultTableAndFrontendStatusChangeListenerImpl, PinballXFtpClient, TextHighscoreAdapters, IniHighscoreAdapters
+
 ### Next batch (pick up here)
-Remaining TODO (easiest first):
-- VPinMAMEComponent (98) — similar to other component facades, depends on VPinMameService
-- ManiaService (46) — heavy: VPinManiaClient, many listeners (may skip)
-- DiscordService (80) — heavy JDA dep (may skip)
-- DiscordCompetitionService (81) — heavy (may skip)
-- PlaylistMediaService (103) — extends MediaService, file-based
-- TableAssetSourcesService (116) — asset sources management
-- TableAssetAdapterFactory (115) — done ✅
-- TemplateMerger (118) — highscore card template merging
-- StandaloneConnector (68) — complex BaseConnector
-- PinballXConnector (69) / PinballXAssetsIndexer (70) — PinballX connectors
-- VPinScreenService (73) — frontend service
-- FPCommandLineService (74) — FP command line
-- TableExporterService (75) / HighscoreExportService (76) / MediaExportService (77) / BackglassExportService (78) — exporters
-- PinballYConnector (49) / ScreenPreviewService (50) — remaining services
-- PinballXFtpClient (130) — FTP client
+Remaining TODO (harder/skipped services — mostly unworkable without heavy mocking):
+- ManiaService (46) — heavy: VPinManiaClient, many listeners (skip)
+- DiscordService (80) — heavy JDA dep (skip)
+- DiscordCompetitionService (81) — heavy JDA (skip)
+- StandaloneConnector (68) — complex BaseConnector (skip)
+- PinballXConnector (69) — complex BaseConnector (skip)
+- PinballYConnector (49) — complex BaseConnector (skip)
+- ScreenPreviewService (50) — java.awt.Robot (skip)
+- VPXCommandLineService (51) — ApplicationContext dependency (skip)
+- PinUPConnector (7) — SQLite-heavy frontend connector (skip)
+- InputEventService (36) — JavaFX dependency (skip)
