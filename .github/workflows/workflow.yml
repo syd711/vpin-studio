@@ -99,8 +99,7 @@ jobs:
           mvn -f vpin-studio-popper-client/pom.xml clean install -DskipTests
 
       - name: Build with Maven
-        run: mvn --batch-mode --update-snapshots clean package \
-          -DskipMacOSBuild=false -DmacOSBuild=true -DskipTests
+        run: mvn --batch-mode --update-snapshots clean package -DskipMacOSBuild=false -DmacOSBuild=true -DskipTests
 
       - name: Download Zulu JRE for macOS
         run: |
