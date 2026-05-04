@@ -95,6 +95,10 @@ jobs:
         id: project
         run: echo "version=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_OUTPUT
 
+      - name: Copy JRE tarball to Output directory
+        run: |
+          mkdir -p Output/VPin-Studio
+          cp ${{ matrix.jre_bundle }} Output/VPin-Studio
 
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots clean package -DskipMacOSBuild=false -DmacOSBuild=true -DskipTests -Dzulu.jre.bundle=${{ matrix.jre_bundle }}
