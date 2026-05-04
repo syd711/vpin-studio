@@ -196,7 +196,7 @@ public class PinballXConnector extends BaseConnector {
 
     if (isSystemEmulator(emulator)) {
       // if the emulator has changed, rename also the database file
-      if (!StringUtils.equalsIgnoreCase(emulatorNode.getString("Name"), emulator.getName())) {
+      if (!Strings.CI.equals(emulatorNode.getString("Name"), emulator.getName())) {
         File oldDb = getDatabase(emulatorNode.getString("Name"));
         File newDb = getDatabase(emulator);
         if (!FileUtils.rename(oldDb, newDb)) {

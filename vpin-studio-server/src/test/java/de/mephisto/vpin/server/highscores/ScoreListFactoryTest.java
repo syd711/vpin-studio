@@ -53,7 +53,7 @@ public class ScoreListFactoryTest {
             "SIXTH MAN\n" +
             "#6 EDY      81.105.540";
 
-    List<Score> parse = ScoreListFactory.create(rawScore, new Date(), game, scoringDB);
+    List<Score> parse = ScoreListFactory.create(rawScore, OffsetDateTime.now(), game, scoringDB);
     assertEquals(6, parse.size());
   }
 

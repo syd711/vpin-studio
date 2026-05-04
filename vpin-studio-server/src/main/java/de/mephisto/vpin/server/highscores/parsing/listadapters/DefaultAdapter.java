@@ -36,7 +36,7 @@ public class DefaultAdapter implements ScoreListAdapter {
 
   @Override
   @NonNull
-  public List<Score> getScores(@Nullable Game game, @NonNull Date createdAt, @NonNull List<String> lines, boolean parseAll) {
+  public List<Score> getScores(@Nullable Game game, @NonNull OffsetDateTime createdAt, @NonNull List<String> lines, boolean parseAll) {
     try {
       List<Score> scores = new ArrayList<>();
 
@@ -154,7 +154,7 @@ public class DefaultAdapter implements ScoreListAdapter {
     }
 
   @Nullable
-  public Score createScore(@NonNull Date createdAt, @Nullable String title, @NonNull String line, @Nullable String source, int gameId) {
+  public Score createScore(@NonNull OffsetDateTime createdAt, @Nullable String title, @NonNull String line, @Nullable String source, int gameId) {
     String idx = StringUtils.substringBefore(line, " ");
     idx = idx.replace(")", "");
     idx = idx.replace("#", "");

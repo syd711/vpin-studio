@@ -117,8 +117,10 @@ public class NvRamOutputToScoreTextTest {
     String raw = NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(entry);
     assertNotNull(raw);
 
-    List<Score> parse = ScoreListFactory.create(raw, new Date(entry.length()), game, scoringDB);
-    if (parse.isEmpty()) {
+      //List<Score> parse = ScoreListFactory.create(raw, new Date(entry.length()), game, scoringDB);
+      OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochMilli(entry.length()), ZoneId.systemDefault());
+      List<Score> parse = ScoreListFactory.create(raw, date, game, scoringDB);
+      if (parse.isEmpty()) {
       assertFalse(parse.isEmpty(), "Found empty highscore for nvram " + entry.getAbsolutePath());
     }
 

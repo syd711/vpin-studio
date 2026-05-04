@@ -40,29 +40,29 @@ import static de.mephisto.vpin.commons.SystemInfo.RESOURCES;
  * svc.updateManifestFromLocal(Path.of("manifest.json"));
  */
 public class ServerUpdatePreProcessing {
-  private final static Logger LOG = LoggerFactory.getLogger(ServerUpdatePreProcessing.class);
+    private final static Logger LOG = LoggerFactory.getLogger(ServerUpdatePreProcessing.class);
 
     private final static String GITHUB_RESOURCES_URL = "https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/";
 
-  public static void execute() {
-    ServerUpdatePreProcessing processor = new ServerUpdatePreProcessing();
-    processor.doRun();
-  }
+    public static void execute() {
+        ServerUpdatePreProcessing processor = new ServerUpdatePreProcessing();
+        processor.doRun();
+    }
 
-  public void doRun() {
+    public void doRun() {
 
-    init7zip();
+        init7zip();
 
         new Thread(() -> {
             try {
                 Thread.currentThread().setName("ServerUpdatePreProcessing");
                 long start = System.currentTimeMillis();
 
-        runScriptCheck();
+                runScriptCheck();
 
-        runDownloadableInstallationsCheck();
+                runDownloadableInstallationsCheck();
 
-        synchronizeNVRams(false);
+                synchronizeNVRams(false);
 
                 LOG.info("Finished resource updates check, took {}ms.", System.currentTimeMillis() - start);
             }
@@ -72,110 +72,111 @@ public class ServerUpdatePreProcessing {
         }).start();
     }
 
-  private void runDownloadableInstallationsCheck() throws Exception {
-    ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+    private void runDownloadableInstallationsCheck() throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
-    File manifestFile = new File(RESOURCES + "sync.json");
+        File manifestFile = new File(RESOURCES + "sync.json");
 
-    // refresh manifest from github
-    Updater.downloadAndOverwrite(GITHUB_RESOURCES_URL + "sync.json", manifestFile, true);
+        // refresh manifest from github
+        Updater.downloadAndOverwrite(GITHUB_RESOURCES_URL + "sync.json", manifestFile, true);
 
-    if (!manifestFile.exists()) {
-      LOG.error("Manifest file not found: {}", manifestFile.getAbsolutePath());
-      return;
+        if (!manifestFile.exists()) {
+            LOG.error("Manifest file not found: {}", manifestFile.getAbsolutePath());
+            return;
+        }
+        // else
+        LOG.info("Starting sync from manifest: {}", manifestFile.getAbsolutePath());
+
+        byte[] body = Files.readAllBytes(manifestFile.toPath());
+        ServerUpdateFileEntry[] files = objectMapper.readValue(body, ServerUpdateFileEntry[].class);
+        LOG.info("Manifest loaded: {} entries", files.length);
+
+        for (ServerUpdateFileEntry entry : files) {
+            File localFile = resolveDestination(entry);
+
+            // manage deletions
+            if (BooleanUtils.isTrue(entry.isDelete())) {
+                if (localFile.exists()) {
+                    if (entry.getName().endsWith("/") && localFile.isDirectory()) {
+                        FileUtils.deleteDirectory(localFile);
+                    }
+                    else if (!localFile.delete()) {
+                        LOG.error("Failed to clean up file: {}", localFile.getAbsolutePath());
+                    }
+                }
+                continue;
+            }
+
+            boolean isZip = FilenameUtils.getExtension(localFile.getName()).equalsIgnoreCase("zip");
+
+            boolean download = false;
+            if (!localFile.exists()) {
+                LOG.info("[MISSING] {} -> downloading", entry.getName());
+                download = true;
+            }
+            else if (!entry.hasValidation()) {
+                // No way to tell if the file is current; always refresh.
+                LOG.info("[NO-VALIDATION] {} -> downloading (no checksum/length in manifest)", entry.getName());
+                download = true;
+            }
+            // Validate local file against manifest fields.
+            else if (!isUpToDate(entry, localFile)) {
+                LOG.info("[OUTDATED] {} -> downloading", entry.getName());
+                download = true;
+            }
+
+            if (download) {
+                if (BooleanUtils.isTrue(entry.isEmptyParentFolder())) {
+                    File parentFolder = localFile.getParentFile();
+                    if (parentFolder.exists() && parentFolder.isDirectory()) {
+                        FileUtils.deleteDirectory(parentFolder);
+                    }
+                }
+
+                // File-based download: download to RESOURCES/<key>
+                if (!localFile.getParentFile().exists()) {
+                    localFile.getParentFile().mkdirs();
+                }
+                LOG.info("Downloading missing resource file {}", localFile.getAbsolutePath());
+
+                String url = resolveUrl(entry);
+                ServerUpdatePreProcessorUI.downloadWithProgressDialog(url, localFile, null);
+
+                if (isZip) {
+                    PackageUtil.unpackTargetFolder(localFile, localFile.getParentFile(), entry.getArchiveFolder(), Collections.emptyList(), null);
+                }
+                updateEntry(entry, localFile);
+                LOG.info("[OK] {} has been installed/updated", entry.getName());
+            }
+            else {
+                LOG.info("[OK] {} is up-to-date", entry.getName());
+            }
+        }
+        LOG.info("Sync complete.");
+
+        // write updated length and CRC
+        objectMapper.writeValue(manifestFile, files);
+        LOG.info("Local synced file updated: {}", manifestFile.getAbsolutePath());
     }
-    // else
-    LOG.info("Starting sync from manifest: {}", manifestFile.getAbsolutePath());
 
-    byte[] body = Files.readAllBytes(manifestFile.toPath());
-    ServerUpdateFileEntry[] files = objectMapper.readValue(body, ServerUpdateFileEntry[].class);
-    LOG.info("Manifest loaded: {} entries", files.length);
-
-    for (ServerUpdateFileEntry entry : files) {
-      File localFile = resolveDestination(entry);
-
-      // manage deletions
-      if (BooleanUtils.isTrue(entry.isDelete())) {
+    private void updateEntry(ServerUpdateFileEntry entry, File localFile) {
         if (localFile.exists()) {
-          if (entry.getName().endsWith("/") && localFile.isDirectory()) {
-            FileUtils.deleteDirectory(localFile);
-          }
-          else if (!localFile.delete()) {
-            LOG.error("Failed to clean up file: {}", localFile.getAbsolutePath());
-          }
+            if (entry.getLength() < 0) {
+                // Local file not updated, keep force getContentLength
+                return;
+            }
+            FileStats stats = computeStats(localFile);
+            entry.setLength(stats.length);
+            entry.setCrc32(stats.crc32Hex);
+
+            LOG.info("Updated {} -> length={}, crc32={}", entry.getName(), stats.length, stats.crc32Hex);
         }
-        continue;
-      }
-
-      boolean isZip = FilenameUtils.getExtension(localFile.getName()).equalsIgnoreCase("zip");
-
-      boolean download = false;
-      if (!localFile.exists()) {
-        LOG.info("[MISSING] {} -> downloading", entry.getName());
-        download = true;
-      }
-      else if (!entry.hasValidation()) {
-        // No way to tell if the file is current; always refresh.
-        LOG.info("[NO-VALIDATION] {} -> downloading (no checksum/length in manifest)", entry.getName());
-        download = true;
-      }
-      // Validate local file against manifest fields.
-      else if (!isUpToDate(entry, localFile)) {
-        LOG.info("[OUTDATED] {} -> downloading", entry.getName());
-        download = true;
-      }
-
-      if (download) {
-        if (BooleanUtils.isTrue(entry.isEmptyParentFolder())) {
-          File parentFolder = localFile.getParentFile();
-          if (parentFolder.exists() && parentFolder.isDirectory()) {
-            FileUtils.deleteDirectory(parentFolder);
-          }
-        }
-
-        // File-based download: download to RESOURCES/<key>
-        if (!localFile.getParentFile().exists()) {
-          localFile.getParentFile().mkdirs();
-        }
-        LOG.info("Downloading missing resource file {}", localFile.getAbsolutePath());
-
-        String url = resolveUrl(entry);
-        ServerUpdatePreProcessorUI.downloadWithProgressDialog(url, localFile, null);
-
-        if (isZip) {
-          PackageUtil.unpackTargetFolder(localFile, localFile.getParentFile(), entry.getArchiveFolder(), Collections.emptyList(), null);
-        }
-        updateEntry(entry, localFile);
-        LOG.info("[OK] {} has been installed/updated", entry.getName());
-      }
-      else {
-        LOG.info("[OK] {} is up-to-date", entry.getName());
-      }
-    }
-    LOG.info("Sync complete.");
-
-    // write updated length and CRC
-    objectMapper.writeValue(manifestFile, files);
-    LOG.info("Local synced file updated: {}", manifestFile.getAbsolutePath());
-  }
-
-  private void updateEntry(ServerUpdateFileEntry entry, File localFile) {
-    if (localFile.exists()) {
-      if (entry.getLength() < 0) {
-        // Local file not updated, keep force getContentLength
-        return;
-      }
-      FileStats stats = computeStats(localFile);
-      entry.setLength(stats.length);
-      entry.setCrc32(stats.crc32Hex);
-
-      LOG.info("Updated {} -> length={}, crc32={}", entry.getName(), stats.length, stats.crc32Hex);
     }
 
-  private void runScriptCheck() {
-    try {
-      File scriptFolder = new File(RESOURCES, "scripts/");
-      scriptFolder.mkdirs();
+    private void runScriptCheck() {
+        try {
+            File scriptFolder = new File(RESOURCES, "scripts/");
+            scriptFolder.mkdirs();
 
             File emulatorLaunchScript = new File(scriptFolder, "emulator-launch.bat");
             if (!emulatorLaunchScript.exists()) {
@@ -196,28 +197,28 @@ public class ServerUpdatePreProcessing {
         }
     }
 
-  private void init7zip() {
-    try {
-      LOG.info("Initializing 7z.");
-      File sevenZipTempFolder = new File(System.getProperty("java.io.tmpdir"), "sevenZipServer/");
-      sevenZipTempFolder.mkdirs();
-      SevenZip.initSevenZipFromPlatformJAR(sevenZipTempFolder);
-      LOG.info("7z initialized.");
+    private void init7zip() {
+        try {
+            LOG.info("Initializing 7z.");
+            File sevenZipTempFolder = new File(System.getProperty("java.io.tmpdir"), "sevenZipServer/");
+            sevenZipTempFolder.mkdirs();
+            SevenZip.initSevenZipFromPlatformJAR(sevenZipTempFolder);
+            LOG.info("7z initialized.");
+        }
+        catch (Exception e) {
+            LOG.error("Failed to initialize sevenzip: {}", e.getMessage());
+        }
     }
-    catch (Exception e) {
-      LOG.error("Failed to initialize sevenzip: {}", e.getMessage());
-    }
-  }
 
-  public static NVRamsInfo synchronizeNVRams(boolean deleteAll) {
-    NVRamsInfo info = new NVRamsInfo();
-    try {
-      File nvRamIndex = new File(RESOURCES, "index.txt");
-      Updater.download("https://raw.githubusercontent.com/syd711/nvrams/main/index.txt", nvRamIndex, true);
-      if (!nvRamIndex.exists()) {
-        LOG.warn("Skipped nvram sync, download failed.");
-        return null;
-      }
+    public static NVRamsInfo synchronizeNVRams(boolean deleteAll) {
+        NVRamsInfo info = new NVRamsInfo();
+        try {
+            File nvRamIndex = new File(RESOURCES, "index.txt");
+            Updater.download("https://raw.githubusercontent.com/syd711/nvrams/main/index.txt", nvRamIndex, true);
+            if (!nvRamIndex.exists()) {
+                LOG.warn("Skipped nvram sync, download failed.");
+                return null;
+            }
 
             FileInputStream in = new FileInputStream(nvRamIndex);
             List<String> nvRams = IOUtils.readLines(in, Charset.defaultCharset());
@@ -249,121 +250,121 @@ public class ServerUpdatePreProcessing {
             LOG.error("Failed to sync nvrams: {}", e.getMessage(), e);
         }
 
-    return info;
-  }
-
-  //------------------------------------------------------------------------------
-
-  /**
-   * Updates the {@code length} and {@code crc32} fields of every entry in the
-   * given manifest file from the locally installed files, then writes the
-   * updated manifest back to the same path.
-   *
-   * <p>This is useful after a manual deployment: run this method to regenerate
-   * the manifest so that future sync runs reflect the current installation.
-   *
-   * <p>Entries whose destination file does not exist locally are left unchanged
-   * (their old values, if any, are preserved) and a warning is logged.
-   *
-   * @param manifestFile path to the local manifest JSON to read and rewrite
-   * @throws IOException if the manifest cannot be read or written
-   */
-  public void updateManifestFromLocal(File manifestFile) throws IOException {
-    LOG.info("Updating manifest checksums from local files: " + manifestFile);
-
-    ObjectMapper objectMapper  = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-    ServerUpdateFileEntry[] files = objectMapper.readValue(manifestFile, ServerUpdateFileEntry[].class);
-
-    int updated = 0;
-    for (ServerUpdateFileEntry entry : files) {
-      File localFile = resolveDestination(entry);
-      updateEntry(entry, localFile);
-      updated++;
+        return info;
     }
 
-    objectMapper.writeValue(manifestFile, files);
-    LOG.info("Manifest updated (" + updated + " entries) and written to: " + manifestFile);
-  }
+    //------------------------------------------------------------------------------
 
-  /**
-   * Returns {@code true} when the local file matches all validation criteria
-   * present in the manifest entry.
-   */
-  private boolean isUpToDate(ServerUpdateFileEntry entry, File localFile) throws IOException {
-    if (entry.getLength() != null || entry.getCrc32() != null) {
-      FileStats stats = computeStats(localFile);
+    /**
+     * Updates the {@code length} and {@code crc32} fields of every entry in the
+     * given manifest file from the locally installed files, then writes the
+     * updated manifest back to the same path.
+     *
+     * <p>This is useful after a manual deployment: run this method to regenerate
+     * the manifest so that future sync runs reflect the current installation.
+     *
+     * <p>Entries whose destination file does not exist locally are left unchanged
+     * (their old values, if any, are preserved) and a warning is logged.
+     *
+     * @param manifestFile path to the local manifest JSON to read and rewrite
+     * @throws IOException if the manifest cannot be read or written
+     */
+    public void updateManifestFromLocal(File manifestFile) throws IOException {
+        LOG.info("Updating manifest checksums from local files: " + manifestFile);
 
-      if (entry.getLength() != null && stats.length != entry.getLength()) {
-        LOG.info("Length mismatch for {} : local={}, manifest={}", entry.getName(), stats.length,  entry.getLength());
-        return false;
-      }
+        ObjectMapper objectMapper  = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+        ServerUpdateFileEntry[] files = objectMapper.readValue(manifestFile, ServerUpdateFileEntry[].class);
 
-      if (entry.getCrc32() != null && !StringUtils.equals(stats.crc32Hex, entry.getCrc32())) {
-        LOG.info("CRC32 mismatch for {}: local={}, manifest={}", entry.getName(), stats.crc32Hex, entry.getCrc32());
-        return false;
-      }
+        int updated = 0;
+        for (ServerUpdateFileEntry entry : files) {
+            File localFile = resolveDestination(entry);
+            updateEntry(entry, localFile);
+            updated++;
+        }
+
+        objectMapper.writeValue(manifestFile, files);
+        LOG.info("Manifest updated (" + updated + " entries) and written to: " + manifestFile);
     }
 
-    return true;
-  }
+    /**
+     * Returns {@code true} when the local file matches all validation criteria
+     * present in the manifest entry.
+     */
+    private boolean isUpToDate(ServerUpdateFileEntry entry, File localFile) throws IOException {
+        if (entry.getLength() != null || entry.getCrc32() != null) {
+            FileStats stats = computeStats(localFile);
 
-  /**
-   * Resolves a destination path from the manifest relative to RESOURCES
-   */
-  private File resolveDestination(ServerUpdateFileEntry entry) throws IOException {
-    String dest = StringUtils.defaultIfEmpty(entry.getDestination(), RESOURCES + entry.getName());
-    return new File(dest);
-  }
+            if (entry.getLength() != null && stats.length != entry.getLength()) {
+                LOG.info("Length mismatch for {} : local={}, manifest={}", entry.getName(), stats.length,  entry.getLength());
+                return false;
+            }
 
-  private String resolveUrl(ServerUpdateFileEntry entry) {
-    return StringUtils.defaultIfEmpty(entry.getUrl(), GITHUB_RESOURCES_URL + entry.getName());
-  }
+            if (entry.getCrc32() != null && !StringUtils.equals(stats.crc32Hex, entry.getCrc32())) {
+                LOG.info("CRC32 mismatch for {}: local={}, manifest={}", entry.getName(), stats.crc32Hex, entry.getCrc32());
+                return false;
+            }
+        }
 
-  /**
-   * Computes the byte length and CRC-32 checksum of a local file in a
-   * single streaming pass.
-   */
-  private FileStats computeStats(File file) {
-    CRC32 crc = new CRC32();
-    long length = 0;
-
-    // Size of the buffer used for CRC computation.
-    int BUFFER_SIZE = 8 * 1024; // 8 KB
-    byte[] buffer = new byte[BUFFER_SIZE];
-
-    String hex = null;
-    try (InputStream in = new BufferedInputStream(new FileInputStream(file), BUFFER_SIZE)) {
-      int read;
-      while ((read = in.read(buffer)) != -1) {
-          crc.update(buffer, 0, read);
-          length += read;
-      }
-      // Format CRC as 12 uppercase hex characters, zero-padded
-      hex = "#" + String.format("%08X", crc.getValue());
-    }
-    catch (IOException ioe) {
-      LOG.error("cannot calculate CRC for {}", file.getAbsolutePath());
+        return true;
     }
 
-    return new FileStats(length, hex);
-  }
-
-  /** Immutable holder for a file's computed length and CRC-32. */
-  static class FileStats {
-    long length;
-    String crc32Hex;
-    public FileStats(long length, String hex) {
-      this.length = length;
-      this.crc32Hex = hex;
+    /**
+     * Resolves a destination path from the manifest relative to RESOURCES
+     */
+    private File resolveDestination(ServerUpdateFileEntry entry) throws IOException {
+        String dest = StringUtils.defaultIfEmpty(entry.getDestination(), RESOURCES + entry.getName());
+        return new File(dest);
     }
-  }
 
-  //-----------------------------------------------------
+    private String resolveUrl(ServerUpdateFileEntry entry) {
+        return StringUtils.defaultIfEmpty(entry.getUrl(), GITHUB_RESOURCES_URL + entry.getName());
+    }
 
-  public static void main(String[] args) throws IOException {
-    ServerUpdatePreProcessing p = new ServerUpdatePreProcessing();
-    File manifest = new File(RESOURCES, "sync.json");
-    p.updateManifestFromLocal(manifest);
-  }
+    /**
+     * Computes the byte length and CRC-32 checksum of a local file in a
+     * single streaming pass.
+     */
+    private FileStats computeStats(File file) {
+        CRC32 crc = new CRC32();
+        long length = 0;
+
+        // Size of the buffer used for CRC computation.
+        int BUFFER_SIZE = 8 * 1024; // 8 KB
+        byte[] buffer = new byte[BUFFER_SIZE];
+
+        String hex = null;
+        try (InputStream in = new BufferedInputStream(new FileInputStream(file), BUFFER_SIZE)) {
+            int read;
+            while ((read = in.read(buffer)) != -1) {
+                crc.update(buffer, 0, read);
+                length += read;
+            }
+            // Format CRC as 12 uppercase hex characters, zero-padded
+            hex = "#" + String.format("%08X", crc.getValue());
+        }
+        catch (IOException ioe) {
+            LOG.error("cannot calculate CRC for {}", file.getAbsolutePath());
+        }
+
+        return new FileStats(length, hex);
+    }
+
+    /** Immutable holder for a file's computed length and CRC-32. */
+    static class FileStats {
+        long length;
+        String crc32Hex;
+        public FileStats(long length, String hex) {
+            this.length = length;
+            this.crc32Hex = hex;
+        }
+    }
+
+    //-----------------------------------------------------
+
+    public static void main(String[] args) throws IOException {
+        ServerUpdatePreProcessing p = new ServerUpdatePreProcessing();
+        File manifest = new File(RESOURCES, "sync.json");
+        p.updateManifestFromLocal(manifest);
+    }
 
 }
