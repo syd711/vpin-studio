@@ -82,6 +82,10 @@ jobs:
           architecture: ${{ matrix.java_arch }}
           cache: 'maven'
 
+      - name: Install Parent POM
+        run: |
+          mvn -N install -DskipTests
+
       - name: Build Java 25 sub-modules and popper client
         run: |
           mvn -f vpin-connector-assets/pom.xml clean install -DskipTests
