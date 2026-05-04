@@ -509,6 +509,9 @@ public class VPinMameService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() {
+    getRomsFolder();
+    getNvRamFolder();
+    getNvRamFolder();
     LOG.info("Initialized {}", this.getClass().getSimpleName());
   }
 }

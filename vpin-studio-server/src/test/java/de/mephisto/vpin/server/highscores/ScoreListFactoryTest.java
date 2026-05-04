@@ -18,50 +18,50 @@ public class ScoreListFactoryTest {
 
     private static ScoringDB scoringDB = ScoringDB.load();
 
-    static {
-        try {
-            SystemService.RESOURCES = "../resources/";
-            NvRamParsingConfiguration conf = new NvRamParsingConfiguration();
-            conf.afterPropertiesSet();
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+  static {
+    try {
+      SystemService.RESOURCES = "../resources/";
+      NvRamParsingConfiguration conf = new NvRamParsingConfiguration();
+      conf.afterPropertiesSet();
     }
-
-    @Test
-    public void testParse() {
-        Game game = new Game();
-        game.setRom("mj_130");
-
-        String rawScore =
-                "MVP\n" +
-                        "#1 MJJ     200.000.000\n" +
-                        "\n" +
-                        "DUNK CHAMP\n" +
-                        "#2 JVJ     175.000.000\n" +
-                        "\n" +
-                        "3 PT. CHAMP\n" +
-                        "#3 JMJ     150.000.000\n" +
-                        "\n" +
-                        "SCORE CHAMP\n" +
-                        "#4 MJJ     125.000.000\n" +
-                        "\n" +
-                        "STEAL CHAMP\n" +
-                        "#5 DJ      100.000.000\n" +
-                        "\n" +
-                        "SIXTH MAN\n" +
-                        "#6 EDY      81.105.540";
-
-        List<Score> parse = ScoreListFactory.create(rawScore, OffsetDateTime.now(), game, scoringDB);
-        assertEquals(6, parse.size());
+    catch (Exception e) {
+      throw new RuntimeException(e);
     }
+  }
+
+  @Test
+  public void testParse() {
+    Game game = new Game();
+    game.setRom("mj_130");
+
+    String rawScore =
+            "MVP\n" +
+            "#1 MJJ     200.000.000\n" +
+            "\n" +
+            "DUNK CHAMP\n" +
+            "#2 JVJ     175.000.000\n" +
+            "\n" +
+            "3 PT. CHAMP\n" +
+            "#3 JMJ     150.000.000\n" +
+            "\n" +
+            "SCORE CHAMP\n" +
+            "#4 MJJ     125.000.000\n" +
+            "\n" +
+            "STEAL CHAMP\n" +
+            "#5 DJ      100.000.000\n" +
+            "\n" +
+            "SIXTH MAN\n" +
+            "#6 EDY      81.105.540";
+
+    List<Score> parse = ScoreListFactory.create(rawScore, new Date(), game, scoringDB);
+    assertEquals(6, parse.size());
+  }
 
 
-    @Test
-    public void testScoreListFactoryDefaultAdapter() {
-        Game game = new Game();
-        game.setRom("mm_109c");
+  @Test
+  public void testScoreListFactoryDefaultAdapter() {
+    Game game = new Game();
+    game.setRom("mm_109c");
 
         String rawScore = "GRAND CHAMPION\n" +
                 "SLL      52.000.000\n" +

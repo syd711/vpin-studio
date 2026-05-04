@@ -244,27 +244,27 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
                 emu.setExeParameters(customField1.getText());
             }
 
-            if (startScriptController != null) {
-                startScriptController.applyValues();
-            }
-            if (exitScriptController != null) {
-                exitScriptController.applyValues();
-            }
+      if (startScriptController != null) {
+        startScriptController.applyValues();
+      }
+      if (exitScriptController != null) {
+        exitScriptController.applyValues();
+      }
 
-            if (vrStartScriptController != null) {
-                vrStartScriptController.applyValues();
+      if (vrStartScriptController != null) {
+        vrStartScriptController.applyValues();
 
-                if (emu.isVpxEmulator() && vrStartScriptController.getScript().isPresent()) {
-                    client.getVRService().saveVrEmulatorLaunchScript(emu.getId(), vrStartScriptController.getScript().get());
-                }
-            }
+        if (emu.isVpxEmulator() && vrStartScriptController.getScript().isPresent()) {
+          client.getVRService().saveVrEmulatorLaunchScript(emu.getId(), vrStartScriptController.getScript().get());
+        }
+      }
 
-            client.getEmulatorService().saveGameEmulator(emu);
-        }).thenLater(() -> {
-            onReload();
-            saveBtn.setDisable(false);
-        });
-    }
+      client.getEmulatorService().saveGameEmulator(emu);
+    }).thenLater(() -> {
+      onReload();
+      saveBtn.setDisable(false);
+    });
+  }
 
     @FXML
     private void onDuplicate() {
@@ -318,12 +318,12 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
         }
     }
 
-    @FXML
-    public void onReload() {
-        JFXFuture
-                .runAsync(() -> client.getEmulatorService().clearCache())
-                .thenLater(() -> tableController.reload());
-    }
+  @FXML
+  public void onReload() {
+    JFXFuture
+      .runAsync(() -> client.getEmulatorService().clearCache())
+      .thenLater(() -> tableController.reload());
+  }
 
     public void setSelection(Optional<GameEmulatorRepresentation> model) {
         int index = tabPane.getSelectionModel().getSelectedIndex();
@@ -355,31 +355,31 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
         saveBtn.setDisable(model.isEmpty());
         deleteBtn.setDisable(model.isEmpty());
 
-        openFolderButtonLaunch.setDisable(model.isEmpty());
-        openFolderButtonGames.setDisable(model.isEmpty());
-        openFolderButtonRoms.setDisable(model.isEmpty());
-        openFolderButtonMedia.setDisable(model.isEmpty());
-        selectFolderButtonLaunch.setDisable(model.isEmpty());
-        selectFolderButtonGames.setDisable(model.isEmpty());
-        selectFolderButtonRoms.setDisable(model.isEmpty());
-        selectFolderButtonMedia.setDisable(model.isEmpty());
+    openFolderButtonLaunch.setDisable(model.isEmpty());
+    openFolderButtonGames.setDisable(model.isEmpty());
+    openFolderButtonRoms.setDisable(model.isEmpty());
+    openFolderButtonMedia.setDisable(model.isEmpty());
+    selectFolderButtonLaunch.setDisable(model.isEmpty());
+    selectFolderButtonGames.setDisable(model.isEmpty());
+    selectFolderButtonRoms.setDisable(model.isEmpty());
+    selectFolderButtonMedia.setDisable(model.isEmpty());
 
-        boolean vrEnabled = false;
-        if (model.isPresent()) {
-            GameEmulatorRepresentation emulator = model.get();
+    boolean vrEnabled = false;
+    if (model.isPresent()) {
+      GameEmulatorRepresentation emulator = model.get();
 
-            if (emulator.isVpxEmulator()) {
-                client.getPreferenceService().clearCache(PreferenceNames.VR_SETTINGS);
-                VRSettings vrSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VR_SETTINGS, VRSettings.class);
-                vrEnabled = vrSettings.isEnabled();
+      if (emulator.isVpxEmulator()) {
+        client.getPreferenceService().clearCache(PreferenceNames.VR_SETTINGS);
+        VRSettings vrSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VR_SETTINGS, VRSettings.class);
+        vrEnabled = vrSettings.isEnabled();
 
-                if (vrStartScriptController != null) {
-                    GameEmulatorScript vrLaunchScript = client.getVRService().getVrLaunchScript(emulator.getId());
-                    vrStartScriptController.setData(model, vrLaunchScript != null ? Optional.of(vrLaunchScript) : Optional.of(new GameEmulatorScript()));
-                }
+        if (vrStartScriptController != null) {
+          GameEmulatorScript vrLaunchScript = client.getVRService().getVrLaunchScript(emulator.getId());
+          vrStartScriptController.setData(model, vrLaunchScript != null ? Optional.of(vrLaunchScript) : Optional.of(new GameEmulatorScript()));
+        }
 
-                tabPane.getSelectionModel().select(0);
-            }
+        tabPane.getSelectionModel().select(0);
+      }
 
             emulatorNameLabel.setText(emulator.getName());
             emulatorIdLabel.setText("(ID #" + emulator.getId() + ")");
@@ -403,24 +403,24 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
                 customField1.setText(emulator.getExeParameters());
             }
 
-            tabPane.getSelectionModel().select(index);
-        }
-
-        if (startScriptController != null) {
-            startScriptController.setData(model, model.map(GameEmulatorRepresentation::getLaunchScript));
-            startScriptTab.setDisable(model.isEmpty());
-            startScriptController.setDisabled(model.isEmpty());
-        }
-        if (vrStartScriptController != null) {
-            vrStartScriptTab.setDisable(model.isEmpty() || !vrEnabled);
-            vrStartScriptController.setDisabled(model.isEmpty() || !vrEnabled);
-        }
-        if (exitScriptController != null) {
-            exitScriptController.setData(model, model.map(GameEmulatorRepresentation::getExitScript));
-            exitScriptTab.setDisable(model.isEmpty());
-            exitScriptController.setDisabled(model.isEmpty());
-        }
+      tabPane.getSelectionModel().select(index);
     }
+
+    if (startScriptController != null) {
+      startScriptController.setData(model, model.map(GameEmulatorRepresentation::getLaunchScript));
+      startScriptTab.setDisable(model.isEmpty());
+      startScriptController.setDisabled(model.isEmpty());
+    }
+    if (vrStartScriptController != null) {
+      vrStartScriptTab.setDisable(model.isEmpty() || !vrEnabled);
+      vrStartScriptController.setDisabled(model.isEmpty() || !vrEnabled);
+    }
+    if (exitScriptController != null) {
+      exitScriptController.setData(model, model.map(GameEmulatorRepresentation::getExitScript));
+      exitScriptTab.setDisable(model.isEmpty());
+      exitScriptController.setDisabled(model.isEmpty());
+    }
+  }
 
     public void onViewActivated() {
         client.getPreferenceService().notifyPreferenceChange(PreferenceNames.VR_SETTINGS, null);
@@ -486,40 +486,40 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
         customField1Label.setText("Parameters:");
         customField2Label.setText("Executable:");
 
-        try {
-            FXMLLoader loader = new FXMLLoader(EmulatorBatScriptPanelController.class.getResource("panel-emulator-batscript.fxml"));
-            Parent builtInRoot = loader.load();
-            startScriptController = loader.getController();
-            startScriptTab.setContent(builtInRoot);
-        }
-        catch (IOException e) {
-            LOG.error("Failed to load emulator table: " + e.getMessage(), e);
-        }
-
-        try {
-            FXMLLoader loader = new FXMLLoader(EmulatorBatScriptPanelController.class.getResource("panel-emulator-batscript.fxml"));
-            Parent builtInRoot = loader.load();
-            vrStartScriptController = loader.getController();
-            vrStartScriptTab.setContent(builtInRoot);
-        }
-        catch (IOException e) {
-            LOG.error("Failed to load emulator table: " + e.getMessage(), e);
-        }
-
-        try {
-            FXMLLoader loader = new FXMLLoader(EmulatorBatScriptPanelController.class.getResource("panel-emulator-batscript.fxml"));
-            Parent builtInRoot = loader.load();
-            exitScriptController = loader.getController();
-            exitScriptTab.setContent(builtInRoot);
-        }
-        catch (IOException e) {
-            LOG.error("Failed to load emulator table: " + e.getMessage(), e);
-        }
-
-        // self remove from tabs !
-        //vrStartScriptTab.getTabPane().getTabs().remove(vrStartScriptTab);
-        //vrStartScriptTab = null;
+    try {
+      FXMLLoader loader = new FXMLLoader(EmulatorBatScriptPanelController.class.getResource("panel-emulator-batscript.fxml"));
+      Parent builtInRoot = loader.load();
+      startScriptController = loader.getController();
+      startScriptTab.setContent(builtInRoot);
     }
+    catch (IOException e) {
+      LOG.error("Failed to load emulator table: " + e.getMessage(), e);
+    }
+
+    try {
+      FXMLLoader loader = new FXMLLoader(EmulatorBatScriptPanelController.class.getResource("panel-emulator-batscript.fxml"));
+      Parent builtInRoot = loader.load();
+      vrStartScriptController = loader.getController();
+      vrStartScriptTab.setContent(builtInRoot);
+    }
+    catch (IOException e) {
+      LOG.error("Failed to load emulator table: " + e.getMessage(), e);
+    }
+
+    try {
+      FXMLLoader loader = new FXMLLoader(EmulatorBatScriptPanelController.class.getResource("panel-emulator-batscript.fxml"));
+      Parent builtInRoot = loader.load();
+      exitScriptController = loader.getController();
+      exitScriptTab.setContent(builtInRoot);
+    }
+    catch (IOException e) {
+      LOG.error("Failed to load emulator table: " + e.getMessage(), e);
+    }
+
+    // self remove from tabs !
+    //vrStartScriptTab.getTabPane().getTabs().remove(vrStartScriptTab);
+    //vrStartScriptTab = null;
+  }
 
     private void onFolderSelect(ActionEvent event, TextField field) {
         String value = field.getText();

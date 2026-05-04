@@ -853,7 +853,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       List<GameEmulatorRepresentation> vpxEmus = emulatorCombo.getItems().stream().filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
 
       GameEmulatorRepresentation emulatorRepresentation = emulatorCombo.getValue();
-      this.importBtn.setDisable(!emulatorRepresentation.isVpxEmulator() && !emulatorRepresentation.isMameEmulator());
+      this.importBtn.setDisable(!emulatorRepresentation.isVpxEmulator() && !emulatorRepresentation.isMameEmulator() && !emulatorRepresentation.isFpEmulator());
       this.exportBtn.setVisible(emulatorRepresentation.isVpxEmulator());
       this.exportBtn.setDisable(!emulatorRepresentation.isVpxEmulator());
       this.stopBtn.setDisable(false);

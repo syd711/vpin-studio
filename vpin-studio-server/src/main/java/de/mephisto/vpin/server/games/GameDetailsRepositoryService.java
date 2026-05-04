@@ -6,9 +6,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.invoke.MethodHandles;
 import java.util.List;
+import java.util.ArrayList;
 
 @Service
 public class GameDetailsRepositoryService {
@@ -52,5 +54,17 @@ public class GameDetailsRepositoryService {
 
   public void deleteAll() {
     gameDetailsRepository.deleteAll();
+  }
+
+  public List<Integer> findAllPupIds() {
+    return gameDetailsRepository.findAllPupIds();
+  }
+
+  @Transactional
+  public void deleteByPupId(List<Long> ids) {
+    int batchSize = 999;
+    for (int i = 0; i < ids.size(); i += batchSize) {
+      gameDetailsRepository.deleteByPupId(ids.subList(i, Math.min(i + batchSize, ids.size())));
+    }
   }
 }

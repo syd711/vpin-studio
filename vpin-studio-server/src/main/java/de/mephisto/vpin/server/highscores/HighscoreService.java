@@ -85,12 +85,12 @@ public class HighscoreService implements InitializingBean {
         return highscoreResolver.getHighscoreFile(game);
     }
 
-    public boolean isSupportedRom(String rom) {
-        return NvRamOutputToScoreTextConverter.isSupportedRom(rom);
-    }
+  public boolean isSupportedRom(String rom) {
+    return NvRamOutputToScoreTextConverter.isSupportedRom(rom);
+  }
 
-    public HighscoreFiles getHighscoreFiles(@NonNull Game game) {
-        HighscoreFiles highscoreFiles = new HighscoreFiles();
+  public HighscoreFiles getHighscoreFiles(@NonNull Game game) {
+    HighscoreFiles highscoreFiles = new HighscoreFiles();
 
         VPRegFile vpRegFile = vpRegService.getVPRegFile(game);
         if (vpRegFile != null && vpRegFile.isValid()) {
@@ -185,13 +185,13 @@ public class HighscoreService implements InitializingBean {
             }
         }
 
-        File highscoreIniFile = highscoreResolver.getHighscoreIniFile(game);
-        if (highscoreIniFile != null && highscoreIniFile.exists()) {
-            if (!highscoreIniFile.delete()) {
-                LOG.error("Failed to delete ini file {}", highscoreIniFile.getAbsolutePath());
-            }
-        }
+    File highscoreIniFile = highscoreResolver.getHighscoreIniFile(game);
+    if (highscoreIniFile != null && highscoreIniFile.exists()) {
+      if (!highscoreIniFile.delete()) {
+        LOG.error("Failed to delete ini file {}", highscoreIniFile.getAbsolutePath());
+      }
     }
+  }
 
     @NonNull
     public List<Score> parseScores(OffsetDateTime createdAt, String raw, @NonNull Game game, long serverId) {

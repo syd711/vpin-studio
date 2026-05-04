@@ -22,20 +22,20 @@ import java.util.*;
 public class NvRamOutputToScoreTextConverter {
     private final static Logger LOG = LoggerFactory.getLogger(NvRamOutputToScoreTextConverter.class);
 
-    private static final List<NvRamOutputToRaw> svcs = new ArrayList<>();
+  private static final List<NvRamOutputToRaw> svcs = new ArrayList<>();
 
-    public static void registerParser(NvRamOutputToRaw converter) {
-        svcs.add(converter);
-    }
+  public static void registerParser(NvRamOutputToRaw converter) {
+    svcs.add(converter);
+  }
 
-    public static boolean isSupportedRom(String rom) {
-        for (NvRamOutputToRaw svc : svcs) {
-            if (svc.isSupportedRom(rom)) {
-                return true;
-            }
-        }
-        return false;
+  public static boolean isSupportedRom(String rom) {
+    for (NvRamOutputToRaw svc : svcs) {
+      if (svc.isSupportedRom(rom)) {
+        return true;
+      }
     }
+    return false;
+  }
 
     @Nullable
     public static String convertNvRamTextToMachineReadable(@NonNull File nvRam) throws Exception {
@@ -68,42 +68,42 @@ public class NvRamOutputToScoreTextConverter {
                 nvOffset = true;
             }
 
-            // try with registered service
-            Locale locale = Locale.getDefault();
-            String rom = romFromNv(originalNVRamFile);
-            for (NvRamOutputToRaw svc : svcs) {
-                if (svc.isSupportedRom(rom)) {
-                    LOG.info("Used NvRam converter {} for {}", svc, nvRamName);
-                    return String.join("\n", svc.getRaw(rom, originalNVRamFile, locale));
-                }
-            }
-            LOG.warn("No registered converted to process nv file {}, rom {}", originalNVRamFile.getName(), rom);
-            return null;
+      // try with registered service
+      Locale locale = Locale.getDefault();
+      String rom = romFromNv(originalNVRamFile);
+      for (NvRamOutputToRaw svc : svcs) {
+        if (svc.isSupportedRom(rom)) {
+          LOG.info("Used NvRam converter {} for {}", svc, nvRamName);
+          return String.join("\n", svc.getRaw(rom, originalNVRamFile, locale));
         }
-        catch (RuntimeIOException ioe) {
-            String error = ioe.getMessage();
-            SLOG.error(error);
-            LOG.error(error);
-            return null;
-        }
-        catch (Exception e) {
-            LOG.error(e.getMessage());
-            throw e;
-        }
-        finally {
-            if (nvOffset && originalNVRamFile.delete()) {
-                FileUtils.copyFile(backedUpRamFile, originalNVRamFile);
-                LOG.info("Restored original nvram {}", originalNVRamFile.getAbsolutePath());
-            }
-        }
+      }
+      LOG.warn("No registered converted to process nv file {}, rom {}", originalNVRamFile.getName(), rom);
+      return null;
     }
+    catch (RuntimeIOException ioe) {
+      String error = ioe.getMessage();
+      SLOG.error(error);
+      LOG.error(error);
+      return null;
+    }
+    catch (Exception e) {
+      LOG.error(e.getMessage());
+      throw e;
+    }
+    finally {
+      if (nvOffset && originalNVRamFile.delete()) {
+        FileUtils.copyFile(backedUpRamFile, originalNVRamFile);
+        LOG.info("Restored original nvram {}", originalNVRamFile.getAbsolutePath());
+      }
+    }
+  }
 
-    private static String romFromNv(File nvFile) throws IOException {
-        String rom = nvFile.getName();
-        int dotIndex = rom.lastIndexOf('.');
-        if (dotIndex > 0) rom = rom.substring(0, dotIndex);
-        int hyphenIndex = rom.indexOf('-');
-        if (hyphenIndex > 0) rom = rom.substring(0, hyphenIndex);
-        return rom;
-    }
+  private static String romFromNv(File nvFile) throws IOException {
+    String rom = nvFile.getName();
+    int dotIndex = rom.lastIndexOf('.');
+    if (dotIndex > 0) rom = rom.substring(0, dotIndex);
+    int hyphenIndex = rom.indexOf('-');
+    if (hyphenIndex > 0) rom = rom.substring(0, hyphenIndex);
+    return rom;
+  }
 }

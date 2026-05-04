@@ -7,8 +7,8 @@ import java.util.Locale;
 
 public interface NvRamOutputToRaw {
 
-    boolean isSupportedRom(String rom);
+  boolean isSupportedRom(String rom);
 
-    List<String> getRaw(String rom, File originalNVRamFile, Locale locale) throws IOException;
+  List<String> getRaw(String rom, File originalNVRamFile, Locale locale) throws IOException;
 
 }

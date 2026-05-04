@@ -279,6 +279,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
   private void doReload(boolean forceReload) {
     markDirty = false;
     tableView.setVisible(false);
+    tableView.setItems(FXCollections.emptyObservableList());
 
     if (!tableStack.getChildren().contains(loadingOverlay)) {
       tableStack.getChildren().add(loadingOverlay);
@@ -342,7 +343,13 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
     List<IScoredGameRoom> gameRoomsComboValues = new ArrayList<>(validGameRooms);
     gameRoomsComboValues.add(0, null);
     gameRoomsCombo.setItems(FXCollections.observableList(gameRoomsComboValues));
-    gameRoomsCombo.setValue(value);
+
+    if (gameRoomsComboValues.contains(value)) {
+      gameRoomsCombo.setValue(value);
+    }
+    else {
+      gameRoomsCombo.setValue(null);
+    }
     gameRoomsCombo.setDisable(validGameRooms.isEmpty());
     if (gameRoomsComboValues.size() > 1) {
       gameRoomsCombo.setValue(validGameRooms.get(0));

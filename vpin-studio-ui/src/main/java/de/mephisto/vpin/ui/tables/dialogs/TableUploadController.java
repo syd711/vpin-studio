@@ -356,7 +356,7 @@ public class TableUploadController implements Initializable, DialogController {
 
             uploadBtn.setDisable(false);
             // If the analysis failed.
-              if (analyzeVpx != null && analyzeVpt != null && _analyzeFpt != null) {
+            if (analyzeVpx != null && analyzeVpt != null && _analyzeFpt != null) {
               uploadBtn.setDisable(true);
               WidgetFactory.showAlert(Studio.stage, "No table file found in this archive.");
               this.selection = null;

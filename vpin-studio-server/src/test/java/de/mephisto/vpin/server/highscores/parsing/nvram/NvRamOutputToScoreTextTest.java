@@ -34,18 +34,18 @@ public class NvRamOutputToScoreTextTest {
 
     private final static List<String> ignoreList = Arrays.asList("kiko_a10.nv", "dh_lx2.nv", "tmac_a24.nv");
 
-    static {
-        SystemService.RESOURCES = "../resources/";
+  static {
+    SystemService.RESOURCES = "../resources/";
 
-        // useful for tests to force load services
-        try {
-            NvRamParsingConfiguration conf = new NvRamParsingConfiguration();
-            conf.afterPropertiesSet();
-        }
-        catch (Exception e) {
-            throw new RuntimeException("cannot initialize NvRamParsers", e);
-        }
+  // useful for tests to force load services
+    try {
+      NvRamParsingConfiguration conf = new NvRamParsingConfiguration();
+      conf.afterPropertiesSet();
     }
+    catch (Exception e) {
+      throw new RuntimeException("cannot initialize NvRamParsers", e);
+    }
+  }
 
     @Test
     public void testAllFiles() throws Exception {
@@ -63,7 +63,7 @@ public class NvRamOutputToScoreTextTest {
                 continue;
             }
 
-            int status = doTestOneFile(entry, false);
+      int status = doTestOneFile(entry, false);
 
             if (status == STATUS_FAILED) {
                 failedList.add(entry.getName());
@@ -85,14 +85,14 @@ public class NvRamOutputToScoreTextTest {
     @Test
     public void testOneFile() throws Exception {
 
-        // exotic nvrams ^^
-        String filename = "mj_130.nv";
+    // exotic nvrams ^^
+    String filename = "mj_130.nv";
 
-        File testFolder = new File("../testsystem/vPinball/VisualPinball/VPinMAME/nvram/");
-        File entry = new File(testFolder, filename);
+    File testFolder = new File("../testsystem/vPinball/VisualPinball/VPinMAME/nvram/");
+    File entry = new File(testFolder, filename);
 
-        doTestOneFile(entry, true);
-    }
+    doTestOneFile(entry, true);
+  }
 
     //-----------------------------------------------
 
@@ -101,28 +101,26 @@ public class NvRamOutputToScoreTextTest {
     private static final int STATUS_FAILED = 1;
     private static final int STATUS_NEW = 2;
 
-    private int doTestOneFile(File entry, boolean useAssert) throws Exception {
-        int status = STATUS_NOT_RUN;
-        String rom = entry.getName().replace(".nv", "");
+  private int doTestOneFile(File entry, boolean useAssert) throws Exception {
+    int status = STATUS_NOT_RUN;
+    String rom = entry.getName().replace(".nv", "");
 
-        Game game = new Game();
-        game.setGameDisplayName("Dummy test game for " + entry);
-        game.setRom(rom);
+    Game game = new Game();
+    game.setGameDisplayName("Dummy test game for " + entry);
+    game.setRom(rom);
 
-        if (!NvRamOutputToScoreTextConverter.isSupportedRom(rom)) {
-            return status;
-        }
+    if (!NvRamOutputToScoreTextConverter.isSupportedRom(rom)) {
+      return status;
+    }
 
-        LOG.info("Reading '" + entry.getName() + "'");
-        String raw = NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(entry);
-        assertNotNull(raw);
+    LOG.info("Reading '" + entry.getName() + "'");
+    String raw = NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(entry);
+    assertNotNull(raw);
 
-        //List<Score> parse = ScoreListFactory.create(raw, new Date(entry.length()), game, scoringDB);
-        OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochMilli(entry.length()), ZoneId.systemDefault());
-        List<Score> parse = ScoreListFactory.create(raw, date, game, scoringDB);
-        if (parse.isEmpty()) {
-            assertFalse(parse.isEmpty(), "Found empty highscore for nvram " + entry.getAbsolutePath());
-        }
+    List<Score> parse = ScoreListFactory.create(raw, new Date(entry.length()), game, scoringDB);
+    if (parse.isEmpty()) {
+      assertFalse(parse.isEmpty(), "Found empty highscore for nvram " + entry.getAbsolutePath());
+    }
 
         File listFile = new File(entry.getAbsolutePath().concat(".list"));
 
@@ -133,29 +131,29 @@ public class NvRamOutputToScoreTextTest {
             scoreList.append("#" + score.getPosition() + " " + score.getPlayerInitials() + "   " + score.getFormattedScore(loc) + System.lineSeparator());
         }
 
-        if (listFile.exists()) {
-            // compare with test output
-            String fileContents = Files.readString(listFile.toPath(), StandardCharsets.UTF_8);
-            if (!fileContents.equals(scoreList.toString())) {
-                if (useAssert) {
-                    assertEquals(fileContents, scoreList.toString());
-                }
-                status = STATUS_FAILED;
-                System.out.println(fileContents);
-                System.out.println("---");
-                System.out.println(scoreList);
-            } else {
-                status = STATUS_SUCCESS;
-            }
+    if (listFile.exists()) {
+      // compare with test output
+      String fileContents = Files.readString(listFile.toPath(), StandardCharsets.UTF_8);
+      if (!fileContents.equals(scoreList.toString())) {
+        if (useAssert) {
+          assertEquals(fileContents, scoreList.toString());
         }
-        else {
-            // create for next test
-            listFile.createNewFile();
-            try (FileWriter writer = new FileWriter(listFile, StandardCharsets.UTF_8)) {
-                writer.write(scoreList.toString());
-            }
-            status = STATUS_NEW;
-        }
+        status = STATUS_FAILED;
+        System.out.println(fileContents);
+        System.out.println("---");
+        System.out.println(scoreList);
+      } else {
+        status = STATUS_SUCCESS;
+      }
+    }
+    else {
+      // create for next test
+      listFile.createNewFile();
+      try (FileWriter writer = new FileWriter(listFile, StandardCharsets.UTF_8)) {
+        writer.write(scoreList.toString());
+      }
+      status = STATUS_NEW;
+    }
 
         System.out.println("Parsed " + parse.size() + " score entries.");
         System.out.println("*******************************************************************************************");
@@ -203,23 +201,23 @@ public class NvRamOutputToScoreTextTest {
     }
 
 
-    /**
-     * Test SortedScoreAdapter
-     */
-    @Test
-    public void test_TF_180() throws Exception {
-        doTestSingle("tf_180.nv",
-                "#1 DAD   101,548,900\r\n" + //
-                        "#2 EDY   93,114,900\r\n" + //
-                        "#3 OPT   75,000,000\r\n" + //
-                        "#4 MEG   75,000,000\r\n" + //
-                        "#5 DAD   69,372,610\r\n" + //
-                        "#6 JAZ   55,000,000\r\n" + //
-                        "#7 STR   55,000,000\r\n" + //
-                        "#8 DAD   48,505,120\r\n" + //
-                        "#9 PWL   40,000,000\r\n" + //
-                        "#10 SND   40,000,000");
-    }
+  /**
+   * Test SortedScoreAdapter
+   */
+  @Test
+  public void test_TF_180() throws Exception {
+    doTestSingle("tf_180.nv",
+            "#1 DAD   101,548,900\r\n" + //
+            "#2 EDY   93,114,900\r\n" + //
+            "#3 OPT   75,000,000\r\n" + //
+            "#4 MEG   75,000,000\r\n" + //
+            "#5 DAD   69,372,610\r\n" + //
+            "#6 JAZ   55,000,000\r\n" + //
+            "#7 STR   55,000,000\r\n" + //
+            "#8 DAD   48,505,120\r\n" + //
+            "#9 PWL   40,000,000\r\n" + //
+            "#10 SND   40,000,000");
+  }
 
     /**
      * Test SortedScoreAdapter
@@ -260,9 +258,9 @@ public class NvRamOutputToScoreTextTest {
             scores.append(score.toString(Locale.US));
         }
 
-        assertFalse(parse.isEmpty(), "Parsed scores is empty for nvram '" + nv + "'");
-        if (expected != null) {
-            assertEquals(expected.trim(), scores.toString().trim());
-        }
+    assertFalse(parse.isEmpty(), "Parsed scores is empty for nvram '" + nv + "'");
+    if (expected != null) {
+      assertEquals(expected.trim(), scores.toString().trim());
     }
+  }
 }

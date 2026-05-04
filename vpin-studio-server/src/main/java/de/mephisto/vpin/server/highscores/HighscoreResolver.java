@@ -103,10 +103,10 @@ public class HighscoreResolver implements InitializingBean {
         return iniFile;
     }
 
-    @Nullable
-    public File getNvRamFile(@NonNull Game game) {
-        return folderLookupService.getNvRamFile(game);
-    }
+  @Nullable
+  public File getNvRamFile(@NonNull Game game) {
+    return folderLookupService.getNvRamFile(game);
+  }
 
 
     //--------------------------------------------
@@ -290,14 +290,13 @@ public class HighscoreResolver implements InitializingBean {
             metadata.setFilename(nvRam.getCanonicalPath());
             metadata.setModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(nvRam.lastModified()), ZoneId.systemDefault()));
 
-
-            if (!NvRamOutputToScoreTextConverter.isSupportedRom(nvRamName)) {
-                String msg = "The NV ram file \"" + nvRamName + ".nv\" is currently not supported.";
-                SLOG.info(msg);
-                metadata.setStatus(msg);
-                return null;
-            }
-            metadata.setType(HighscoreType.NVRam);
+      if (!NvRamOutputToScoreTextConverter.isSupportedRom(nvRamName)) {
+        String msg = "The NV ram file \"" + nvRamName + ".nv\" is currently not supported.";
+        SLOG.info(msg);
+        metadata.setStatus(msg);
+        return null;
+      }
+      metadata.setType(HighscoreType.NVRam);
 
             return NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(nvRam);
         }

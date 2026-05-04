@@ -43,7 +43,14 @@ public class CompetitionChangeListenerImpl extends DefaultCompetitionChangeListe
 
   @Override
   public void competitionDeleted(@NotNull Competition competition) {
-    refreshBadge(competition);
+    Game game = gameService.getGame(competition.getGameId());
+    if (game == null) {
+      game = gameService.getGameByVpsTable(competition.getVpsTableId(), competition.getVpsTableVersionId());
+    }
+
+    if (game != null) {
+      frontendStatusService.deAugmentWheel(game);
+    }
   }
 
   private void refreshBadge(@NotNull Competition competition) {

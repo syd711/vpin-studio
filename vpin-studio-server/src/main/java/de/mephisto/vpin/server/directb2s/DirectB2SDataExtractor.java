@@ -33,7 +33,9 @@ public class DirectB2SDataExtractor extends DefaultHandler {
 
   public DirectB2SData extractData(@NonNull File directB2S, int emulatorId, String filename) {
     this.data = new DirectB2SData();
-    this.data.setFilename(filename);
+
+    String updatedFileName = getRelativeDirectb2sFileName(directB2S, filename);
+    this.data.setFilename(updatedFileName);
     this.data.setFilesize(directB2S.length());
     this.data.setEmulatorId(emulatorId);
     this.data.setModificationDate(OffsetDateTime.ofInstant(Instant.ofEpochMilli(directB2S.lastModified()), ZoneId.systemDefault()));
@@ -48,6 +50,19 @@ public class DirectB2SDataExtractor extends DefaultHandler {
       }
     }
     return data;
+  }
+
+  private String getRelativeDirectb2sFileName(File directB2S, String filename) {
+    String path = directB2S.getAbsolutePath().replace('\\', '/');
+    int tablesIdx = path.lastIndexOf("/Tables/");
+    if (tablesIdx >= 0) {
+      String relative = path.substring(tablesIdx + "/Tables/".length());
+      int lastSlash = relative.lastIndexOf('/');
+      if (lastSlash > 0) {
+        return relative.substring(0, lastSlash + 1) + filename;
+      }
+    }
+    return filename;
   }
 
   public String getName() {

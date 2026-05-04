@@ -746,7 +746,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
       TableAssetSource defaultAssetSource = client.getAssetSourcesService().getDefaultAssetSource();
       if (defaultAssetSource != null) {
-        assetSources.add(1, client.getAssetSourcesService().getDefaultAssetSource());
+        assetSources.add(1, defaultAssetSource);
       }
     }
     List<AssetSourceModel> assetSourceModels = assetSources.stream().map(AssetSourceModel::new).collect(Collectors.toList());

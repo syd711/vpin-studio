@@ -130,11 +130,9 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
       GameRoom gr = (GameRoom) progressDialog.getResults().getFirst();
       nameLabel.setText(gr.getName());
 
-      urlField.setDisable(false);
       validateBtn.setDisable(false);
 
       badgeCombo.setDisable(false);
-      urlField.setDisable(false);
       validateBtn.setDisable(false);
       ignoreHiddenCheckbox.setDisable(false);
       setDisabled(false);
@@ -255,6 +253,8 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
   public void setData(@NonNull IScoredSettings iScoredSettings, @Nullable IScoredGameRoom gr) {
     this.iScoredSettings = iScoredSettings;
     this.gameRoom = gr;
+    this.urlField.setDisable(gr != null);
+
     if (this.gameRoom == null) {
       this.gameRoom = new IScoredGameRoom();
       this.gameRoom.setUuid(UUID.randomUUID().toString());

@@ -13,15 +13,6 @@ public class TableDataUtil {
   private final static Logger LOG = LoggerFactory.getLogger(TableDataUtil.class);
 
   @Nullable
-  public static String getEffectiveRom(TableDetails tableDetails, @NonNull GameDetails gameDetails) {
-    String rom = tableDetails != null ? tableDetails.getRomName() : null;
-    if (StringUtils.isEmpty(rom)) {
-      rom = gameDetails.getRomName();
-    }
-    return rom;
-  }
-
-  @Nullable
   public static String getEffectiveHighscoreFilename(TableDetails tableDetails, @NonNull GameDetails gameDetails, @NonNull ServerSettings serverSettings, @NonNull FrontendType frontendType) {
     if (frontendType.equals(FrontendType.Popper)) {
       String hs = tableDetails != null ? getMappedValue(tableDetails, serverSettings.getMappingHsFileName()) : null;

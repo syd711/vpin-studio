@@ -1,16 +1,16 @@
 ## Release Notes 4.9.0
 
 - **Media Recorder**:
-    - Updated ffmpeg.exe to version 8.0.1 to have OpenGL recording support.
-    - Added error logging in case the custom ffmpeg.exe command fails.
-    - Added custom GL mode which is **only used when you select "Use Custom Launcher" and VPX GL.** This mode will work with different parameters to allow smooth recordings with OpenGL. Note that **this mode still in experimental**, because the correct recording locations for screens needs verification. But you can still use the regular/non-GL recording.
+  - Updated ffmpeg.exe to version 8.0.1 to have OpenGL recording support.
+  - Added error logging in case the custom ffmpeg.exe command fails.
+  - Added custom GL mode which is **only used when you select "Use Custom Launcher" and VPX GL.** This mode will work with different parameters to allow smooth recordings with OpenGL. Note that **this mode still in experimental**, because the correct recording locations for screens needs verification. But you can still use the regular/non-GL recording.
 
-      <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/recorder/recorder-custom.png?raw=true" width="500" />
-
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/recorder/recorder-custom.png?raw=true" width="500" />
+    
 - **NVRam Highscores Parsing**: The nvram parsing has been extracted into a separate project: https://github.com/syd711/java-pinmame-nvmaps. The goal here is to provide a facade for the different nvram parsing approaches and support parsing with
-    - the Pinball Memory Maps project (https://github.com/tomlogic/pinmame-nvram-maps)
-    - Superhac's Score Parser (https://github.com/superhac/pinmame-score-parser)
-    - and https://www.pinemhi.com/ from DNA Disturber.
+  - the Pinball Memory Maps project (https://github.com/tomlogic/pinmame-nvram-maps)
+  - Superhac's Score Parser (https://github.com/superhac/pinmame-score-parser)
+  - and https://www.pinemhi.com/ from DNA Disturber.
 
 ### Bugfixes
 
@@ -39,7 +39,7 @@
 - **Future Pinball**: Fixed import of FP tables, which was accidentally disabled.
 - **DOFLinx**: Fixed the auto-installer, which now also checks .exe files to determine if the latest version on GitHub is newer than the installed one.
 - **iScored**: Fixed game room deletion. When a game room is deleted, all associated competitions, their wheels, and TourneyIds are now reset.
-- **Emulators Setup**:
+- **Emulators Setup**: 
     - Fixed emulator tabs for pinballX
     - Fixed creation of Emulator for pinballX
 - **Preferences Menu**: Added natural order for hooks.

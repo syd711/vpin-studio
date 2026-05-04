@@ -21,24 +21,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DefaultAdapter implements ScoreListAdapter {
-    private final static Logger LOG = LoggerFactory.getLogger(DefaultAdapter.class);
+  private final static Logger LOG = LoggerFactory.getLogger(DefaultAdapter.class);
 
-    private List<String> titles;
+  private List<String> titles;
 
-    public DefaultAdapter(ScoringDB scoringDB) {
-        this.titles = scoringDB.getHighscoreTitles();
-    }
+  public DefaultAdapter(ScoringDB scoringDB) {
+    this.titles = scoringDB.getHighscoreTitles();
+  }
 
-    @Override
-    public boolean isApplicable(@NonNull Game game) {
-        return true;
-    }
+  @Override
+  public boolean isApplicable(@NonNull Game game) {
+    return true;
+  }
 
-    @Override
-    @NonNull
-    public List<Score> getScores(@Nullable Game game, @NonNull OffsetDateTime createdAt, @NonNull List<String> lines, boolean parseAll) {
-        try {
-            List<Score> scores = new ArrayList<>();
+  @Override
+  @NonNull
+  public List<Score> getScores(@Nullable Game game, @NonNull Date createdAt, @NonNull List<String> lines, boolean parseAll) {
+    try {
+      List<Score> scores = new ArrayList<>();
 
             int gameId = -1;
             String source = null;
@@ -113,15 +113,15 @@ public class DefaultAdapter implements ScoreListAdapter {
     private static final Pattern patternScoreTitle = Pattern.compile(_patternScore);
 
 
-    public static boolean isTitleScoreLine(String line) {
-        Matcher m = patternScoreTitle.matcher(line);
-        return m.find();
-    }
+  public static boolean isTitleScoreLine(String line) {
+    Matcher m = patternScoreTitle.matcher(line);
+    return m.find();
+  }
 
-    public static boolean isScoreLine(String line) {
-        Matcher m = patternScoreLine.matcher(line);
-        return m.find();
-    }
+  public static boolean isScoreLine(String line) {
+    Matcher m = patternScoreLine.matcher(line);
+    return m.find();
+  }
 
     /**
      * Parses score that are shown right behind a possible title.
@@ -153,52 +153,52 @@ public class DefaultAdapter implements ScoreListAdapter {
         return null;
     }
 
-    @Nullable
-    public Score createScore(@NonNull OffsetDateTime createdAt, @Nullable String title, @NonNull String line, @Nullable String source, int gameId) {
-        String idx = StringUtils.substringBefore(line, " ");
-        idx = idx.replace(")", "");
-        idx = idx.replace("#", "");
-        idx = idx.replace(".:", "");
-        int index = Integer.parseInt(idx);
+  @Nullable
+  public Score createScore(@NonNull Date createdAt, @Nullable String title, @NonNull String line, @Nullable String source, int gameId) {
+    String idx = StringUtils.substringBefore(line, " ");
+    idx = idx.replace(")", "");
+    idx = idx.replace("#", "");
+    idx = idx.replace(".:", "");
+    int index = Integer.parseInt(idx);
+    
+    line = StringUtils.substringAfter(line, " ");
+    Score sc = createTitledScore(createdAt, title, line, source, gameId);
+    sc.setPosition(index);
+    return sc;
+  }
 
-        line = StringUtils.substringAfter(line, " ");
-        Score sc = createTitledScore(createdAt, title, line, source, gameId);
-        sc.setPosition(index);
-        return sc;
+  protected long toNumericScore(@Nullable String score, @Nullable String source, boolean log) {
+    if (StringUtils.isEmpty(score)) {
+      if (log) {
+        LOG.warn("Cannot parse empty numeric highscore, ignoring this segment, source: {}", source);
+      }
+      return -1;
     }
-
-    protected long toNumericScore(@Nullable String score, @Nullable String source, boolean log) {
-        if (StringUtils.isEmpty(score)) {
-            if (log) {
-                LOG.warn("Cannot parse empty numeric highscore, ignoring this segment, source: {}", source);
-            }
-            return -1;
-        }
-        try {
-            String cleanScore = ScoreFormatUtil.cleanScore(score);
-            return Long.parseLong(cleanScore);
-        }
-        catch (NumberFormatException e) {
-            if(log) {
-                LOG.warn("Failed to parse numeric highscore string '{}', ignoring this segment, source: {}", score, source);
-            }
-
-            return -1;
-        }
+    try {
+      String cleanScore = ScoreFormatUtil.cleanScore(score);
+      return Long.parseLong(cleanScore);
     }
+    catch (NumberFormatException e) {
+      if(log) {
+        LOG.warn("Failed to parse numeric highscore string '{}', ignoring this segment, source: {}", score, source);
+      }
 
-    protected List<Score> filterDuplicates(List<Score> scores) {
-        List<Score> scoreList = new ArrayList<>();
-        int pos = 1;
-        for (Score s : scores) {
-            Optional<Score> match = scoreList.stream().filter(score -> score.getFormattedScore().equals(s.getFormattedScore()) && String.valueOf(score.getPlayerInitials()).equals(s.getPlayerInitials())).findFirst();
-            if (match.isPresent()) {
-                continue;
-            }
-            s.setPosition(pos);
-            scoreList.add(s);
-            pos++;
-        }
-        return scoreList;
+      return -1;
     }
+  }
+
+  protected List<Score> filterDuplicates(List<Score> scores) {
+    List<Score> scoreList = new ArrayList<>();
+    int pos = 1;
+    for (Score s : scores) {
+      Optional<Score> match = scoreList.stream().filter(score -> score.getFormattedScore().equals(s.getFormattedScore()) && String.valueOf(score.getPlayerInitials()).equals(s.getPlayerInitials())).findFirst();
+      if (match.isPresent()) {
+        continue;
+      }
+      s.setPosition(pos);
+      scoreList.add(s);
+      pos++;
+    }
+    return scoreList;
+  }
 }

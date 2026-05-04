@@ -119,15 +119,15 @@ public class ScoringDB {
 
     private List<String> highscoreTitles = new ArrayList<>();
 
-    private List<String> highscoreSkipTitlesCheck = new ArrayList<>();
+  private List<String> highscoreSkipTitlesCheck = new ArrayList<>();
 
-    private List<Map<String, Object>> highscoreTextParsers = new ArrayList<>();
+  private List<Map<String, Object>> highscoreTextParsers = new ArrayList<>();
 
     private List<Map<String, Object>> highscoreIniParsers = new ArrayList<>();
 
-    public List<Map<String, Object>> getHighscoreIniParsers() {
-        return highscoreIniParsers;
-    }
+  public List<Map<String, Object>> getHighscoreIniParsers() {
+    return highscoreIniParsers;
+  }
 
     public void setHighscoreIniParsers(List<Map<String, Object>> highscoreIniParsers) {
         this.highscoreIniParsers = highscoreIniParsers;
@@ -135,7 +135,7 @@ public class ScoringDB {
 
     private List<ScoringDBMapping> highscoreMappings = new ArrayList<>();
 
-    private List<String> allRoms = new ArrayList<>();
+  private List<String> allRoms = new ArrayList<>();
 
     private List<String> ignoredVPRegEntries = new ArrayList<>();
 
@@ -158,9 +158,9 @@ public class ScoringDB {
         this.ignoredTextFiles = ignoredTextFiles;
     }
 
-    public List<String> getIgnoredVPRegEntries() {
-        return ignoredVPRegEntries;
-    }
+  public List<String> getIgnoredVPRegEntries() {
+    return ignoredVPRegEntries;
+  }
 
     public List<String> getHighscoreTitles() {
         return highscoreTitles;
@@ -170,17 +170,17 @@ public class ScoringDB {
         this.highscoreTitles = highscoreTitles;
     }
 
-    public List<String> getHighscoreSkipTitlesCheck() {
-        return highscoreSkipTitlesCheck;
-    }
+  public List<String> getHighscoreSkipTitlesCheck() {
+    return highscoreSkipTitlesCheck;
+  }
 
-    public void setHighscoreSkipTitlesCheck(List<String> highscoreSkipTitlesCheck) {
-        this.highscoreSkipTitlesCheck = highscoreSkipTitlesCheck;
-    }
+  public void setHighscoreSkipTitlesCheck(List<String> highscoreSkipTitlesCheck) {
+    this.highscoreSkipTitlesCheck = highscoreSkipTitlesCheck;
+  }
 
-    public String getPinemhiVersion() {
-        return pinemhiVersion;
-    }
+  public String getPinemhiVersion() {
+    return pinemhiVersion;
+  }
 
     public void setPinemhiVersion(String pinemhiVersion) {
         this.pinemhiVersion = pinemhiVersion;
@@ -199,31 +199,31 @@ public class ScoringDB {
         this.ignoredVPRegEntries = ignoredVPRegEntries;
     }
 
-    public List<ScoringDBMapping> getHighscoreMappings() {
-        return highscoreMappings;
-    }
+  public List<ScoringDBMapping> getHighscoreMappings() {
+    return highscoreMappings;
+  }
 
     public void setHighscoreMappings(List<ScoringDBMapping> highscoreMappings) {
         this.highscoreMappings = highscoreMappings;
     }
 
-    public boolean isNvRam(@Nullable String rom) {
-        if (StringUtils.isEmpty(rom)) {
-            return false;
-        }
-        return getAllRoms().contains(rom);
+  public boolean isNvRam(@Nullable String rom) {
+    if (StringUtils.isEmpty(rom)) {
+      return false;
+    }
+    return getAllRoms().contains(rom);
+  }
+
+  public ScoringDBMapping getHighscoreMapping(String rom) {
+    if (StringUtils.isEmpty(rom)) {
+      return null;
     }
 
-    public ScoringDBMapping getHighscoreMapping(String rom) {
-        if (StringUtils.isEmpty(rom)) {
-            return null;
-        }
-
-        for (ScoringDBMapping highscoreMapping : highscoreMappings) {
-            if (highscoreMapping.getRom().equalsIgnoreCase(rom)) {
-                return highscoreMapping;
-            }
-        }
-        return null;
+    for (ScoringDBMapping highscoreMapping : highscoreMappings) {
+      if (highscoreMapping.getRom().equalsIgnoreCase(rom)) {
+        return highscoreMapping;
+      }
     }
+    return null;
+  }
 }

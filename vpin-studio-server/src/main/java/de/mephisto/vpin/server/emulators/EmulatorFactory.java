@@ -99,11 +99,11 @@ public class EmulatorFactory implements ApplicationContextAware, InitializingBea
         emu.setInstallationDirectory("C:\\vPinball\\VisualPinball");
         emu.setGamesDirectory("C:\\vPinball\\VisualPinball");
 
-        File vpxExe = getSystemService().resolveVpx64Exe();
-        if (vpxExe != null && vpxExe.exists()) {
-            emu.setInstallationDirectory(vpxExe.getParentFile().getAbsolutePath());
-            emu.setGamesDirectory(new File(vpxExe.getParentFile(), "Tables").getAbsolutePath());
-        }
+    File vpxExe = getSystemService().resolveVpx64Exe();
+    if (vpxExe != null && vpxExe.exists()) {
+      emu.setInstallationDirectory(vpxExe.getParentFile().getAbsolutePath());
+      emu.setGamesDirectory(new File(vpxExe.getParentFile(), "Tables").getAbsolutePath());
+    }
 
         emu.setLaunchScript(createScript(true, "@echo off\n" +
                 "START \"\" \"[STARTDIR]Launch\\VPXSTARTER.exe\" 30 10 60 \"Visual Pinball Player\" 2\n" +
@@ -142,11 +142,11 @@ public class EmulatorFactory implements ApplicationContextAware, InitializingBea
         emu.setInstallationDirectory("C:\\vPinball\\VisualPinball");
         emu.setGamesDirectory("C:\\vPinball\\VisualPinball");
 
-        File vptExe = getSystemService().resolveVptExe();
-        if (vptExe != null && vptExe.exists()) {
-            emu.setInstallationDirectory(vptExe.getParentFile().getAbsolutePath());
-            emu.setGamesDirectory(new File(vptExe.getParentFile(), "Tables").getAbsolutePath());
-        }
+    File vptExe = getSystemService().resolveVptExe();
+    if (vptExe != null && vptExe.exists()) {
+      emu.setInstallationDirectory(vptExe.getParentFile().getAbsolutePath());
+      emu.setGamesDirectory(new File(vptExe.getParentFile(), "Tables").getAbsolutePath());
+    }
 
         emu.setLaunchScript(createScript(true, "START \"\" \"[STARTDIR]Launch\\VPXSTARTER.exe\" 10 10 60\n" +
                 "cd /d \"[DIREMU]\"\n" +
@@ -196,11 +196,11 @@ public class EmulatorFactory implements ApplicationContextAware, InitializingBea
         emu.setInstallationDirectory("C:\\vPinball\\FuturePinball");
         emu.setGamesDirectory("C:\\vPinball\\FuturePinall");
 
-        File fpExe = getSystemService().resolveFpExe();
-        if (fpExe != null && fpExe.exists()) {
-            emu.setInstallationDirectory(fpExe.getParentFile().getAbsolutePath());
-            emu.setGamesDirectory(new File(fpExe.getParentFile(), "Tables").getAbsolutePath());
-        }
+    File fpExe = getSystemService().resolveFpExe();
+    if (fpExe != null && fpExe.exists()) {
+      emu.setInstallationDirectory(fpExe.getParentFile().getAbsolutePath());
+      emu.setGamesDirectory(new File(fpExe.getParentFile(), "Tables").getAbsolutePath());
+    }
 
         String dmdDeviceIni = "C:\\vPinball\\VisualPinball\\VPinMAME\\DmdDevice.ini";
         String mamePath = "C:\\vPinball\\VisualPinball\\VPinMAME";

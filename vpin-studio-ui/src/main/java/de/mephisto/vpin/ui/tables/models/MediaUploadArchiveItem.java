@@ -49,7 +49,7 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
   }
 
   public boolean isTableAsset() {
-      return assetType.equals(AssetType.VPX) || assetType.equals(AssetType.VPT) || assetType.equals(AssetType.FPT);
+    return assetType.equals(AssetType.VPX) || assetType.equals(AssetType.VPT) || assetType.equals(AssetType.FPT);
   }
 
   public boolean isPatch() {

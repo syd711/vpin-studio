@@ -340,25 +340,25 @@ public class GameValidationService implements InitializingBean, PreferenceChange
             }
         }
 
-        if (isVPX && isValidationEnabled(game, CODE_NVOFFSET_MISMATCH)) {
-            if (!StringUtils.isEmpty(game.getRom()) && game.isRomRequired()) {
-                List<GameDetails> otherGameDetailsWithSameRom = new ArrayList<>(gameDetailsRepositoryService.findByRomName(game.getRom())).stream().filter(g -> g.getRomName() != null && g.getPupId() != game.getId() && g.getRomName().equalsIgnoreCase(game.getRom())).collect(Collectors.toList());
-                for (GameDetails otherGameDetails : otherGameDetailsWithSameRom) {
-                    if (otherGameDetails.getNvOffset() == 0 || otherGameDetails.getNvOffset() == game.getNvOffset()) {
-                        Game otherGame = frontendService.getOriginalGame(otherGameDetails.getPupId());
-                        if (otherGame != null) {
-                            //only complain if it is another table or has no VPS mapping!!!!!!!!!!!!!!
-                            if (otherGame.getExtTableId() != null && !otherGame.getExtTableId().equals(game.getExtTableId())) {
-                                result.add(ValidationStateFactory.create(GameValidationCode.CODE_NVOFFSET_MISMATCH, otherGame.getGameDisplayName(), String.valueOf(game.getNvOffset()), String.valueOf(otherGameDetails.getNvOffset())));
-                                if (findFirst) {
-                                    return result;
-                                }
-                            }
-                        }
-                    }
+    if (isVPX && isValidationEnabled(game, CODE_NVOFFSET_MISMATCH)) {
+      if (!StringUtils.isEmpty(game.getRom()) && game.isRomRequired()) {
+        List<GameDetails> otherGameDetailsWithSameRom = new ArrayList<>(gameDetailsRepositoryService.findByRomName(game.getRom())).stream().filter(g -> g.getRomName() != null && g.getPupId() != game.getId() && g.getRomName().equalsIgnoreCase(game.getRom())).collect(Collectors.toList());
+        for (GameDetails otherGameDetails : otherGameDetailsWithSameRom) {
+          if (otherGameDetails.getNvOffset() == 0 || otherGameDetails.getNvOffset() == game.getNvOffset()) {
+            Game otherGame = frontendService.getOriginalGame(otherGameDetails.getPupId());
+            if (otherGame != null) {
+              //only complain if it is another table or has no VPS mapping!!!!!!!!!!!!!!
+              if (otherGame.getExtTableId() != null && !otherGame.getExtTableId().equals(game.getExtTableId())) {
+                result.add(ValidationStateFactory.create(GameValidationCode.CODE_NVOFFSET_MISMATCH, otherGame.getGameDisplayName(), String.valueOf(game.getNvOffset()), String.valueOf(otherGameDetails.getNvOffset())));
+                if (findFirst) {
+                  return result;
                 }
+              }
             }
+          }
         }
+      }
+    }
 
         if (isVPX && isValidationEnabled(game, CODE_MUSIC_FILE_MISSING)) {
             List<String> missingResources = musicService.getMissingMp3Files(game);
@@ -724,21 +724,21 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         return false;
     }
 
-    public GameScoreValidation validateHighscoreStatus(Game game, GameDetails gameDetails, TableDetails tableDetails, FrontendType frontendType, ServerSettings serverSettings) {
-        GameScoreValidation validation = new GameScoreValidation();
-        validation.setValidScoreConfiguration(true);
-        HighscoreFiles highscoreFiles = highscoreService.getHighscoreFiles(game);
+  public GameScoreValidation validateHighscoreStatus(Game game, GameDetails gameDetails, TableDetails tableDetails, FrontendType frontendType, ServerSettings serverSettings) {
+    GameScoreValidation validation = new GameScoreValidation();
+    validation.setValidScoreConfiguration(true);
+    HighscoreFiles highscoreFiles = highscoreService.getHighscoreFiles(game);
 
-        String rom = tableDetails != null ? tableDetails.getRomName() : null;
-        if (StringUtils.isEmpty(rom)) {
-            rom = gameDetails.getRomName();
-        }
-        if (game.isRomRequired() && !vPinMameService.isRomExists(rom)) {
-            validation.setRomIcon(GameScoreValidation.ERROR_ICON);
-            validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);
-            validation.setRomStatus(GameScoreValidation.STATUS_ROM_NOT_FOUND);
-            return validation;
-        }
+    String rom = tableDetails != null ? tableDetails.getRomName() : null;
+    if (StringUtils.isEmpty(rom)) {
+      rom = gameDetails.getRomName();
+    }
+    if (game.isRomRequired() && !vPinMameService.isRomExists(rom)) {
+      validation.setRomIcon(GameScoreValidation.ERROR_ICON);
+      validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);
+      validation.setRomStatus(GameScoreValidation.STATUS_ROM_NOT_FOUND);
+      return validation;
+    }
 
         String originalRom = VPinMameRomAliasService.getRomForAlias(game.getEmulator(), rom);
         boolean aliasedRom = false;
@@ -758,21 +758,21 @@ public class GameValidationService implements InitializingBean, PreferenceChange
             return validation;
         }
 
-        //aliased ROM was found as nvram file
-        if (aliasedRom && (highscoreService.isSupportedRom(rom) || highscoreService.isSupportedRom(rom.toLowerCase()) || highscoreService.isSupportedRom(tableName))) {
-            validation.setRomIcon(GameScoreValidation.OK_ICON);
-            validation.setRomIconColor(GameScoreValidation.OK_COLOR);
-            validation.setRomStatus(GameScoreValidation.STATUS_ROM_ALIASED_MATCH_FOUND);
-            return validation;
-        }
+    //aliased ROM was found as nvram file
+    if (aliasedRom && (highscoreService.isSupportedRom(rom) || highscoreService.isSupportedRom(rom.toLowerCase()) || highscoreService.isSupportedRom(tableName))) {
+      validation.setRomIcon(GameScoreValidation.OK_ICON);
+      validation.setRomIconColor(GameScoreValidation.OK_COLOR);
+      validation.setRomStatus(GameScoreValidation.STATUS_ROM_ALIASED_MATCH_FOUND);
+      return validation;
+    }
 
-        //the ROM was found as nvram file
-        if (highscoreService.isSupportedRom(String.valueOf(rom)) || highscoreService.isSupportedRom(String.valueOf(rom).toLowerCase()) || highscoreService.isSupportedRom(tableName)) {
-            validation.setRomIcon(GameScoreValidation.OK_ICON);
-            validation.setRomIconColor(GameScoreValidation.OK_COLOR);
-            validation.setRomStatus(GameScoreValidation.STATUS_ROM_MATCH_FOUND);
-            return validation;
-        }
+    //the ROM was found as nvram file
+    if (highscoreService.isSupportedRom(String.valueOf(rom)) || highscoreService.isSupportedRom(String.valueOf(rom).toLowerCase()) || highscoreService.isSupportedRom(tableName)) {
+      validation.setRomIcon(GameScoreValidation.OK_ICON);
+      validation.setRomIconColor(GameScoreValidation.OK_COLOR);
+      validation.setRomStatus(GameScoreValidation.STATUS_ROM_MATCH_FOUND);
+      return validation;
+    }
 
         //the ROM was found as VPReg.stg entry
         if (vpRegService.isValid(game)) {
@@ -809,14 +809,14 @@ public class GameValidationService implements InitializingBean, PreferenceChange
             return validation;
         }
 
-        //ROM is not supported
-        if (!StringUtils.isEmpty(rom) && HighscoreType.NVRam.equals(game.getHighscoreType()) && (highscoreService.isSupportedRom(rom) || highscoreService.isSupportedRom(rom.toLowerCase()))) {
-            validation.setValidScoreConfiguration(false);
-            validation.setRomIcon(GameScoreValidation.ERROR_ICON);
-            validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);
-            validation.setRomStatus(GameScoreValidation.STATUS_ROM_NOT_SUPPORTED);
-            return validation;
-        }
+    //ROM is not supported
+    if (!StringUtils.isEmpty(rom) && HighscoreType.NVRam.equals(game.getHighscoreType()) && (highscoreService.isSupportedRom(rom) || highscoreService.isSupportedRom(rom.toLowerCase()))) {
+      validation.setValidScoreConfiguration(false);
+      validation.setRomIcon(GameScoreValidation.ERROR_ICON);
+      validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);
+      validation.setRomStatus(GameScoreValidation.STATUS_ROM_NOT_SUPPORTED);
+      return validation;
+    }
 
         //game has been played, but the text file has not been generated
         if (game.isPlayed() && !StringUtils.isEmpty(hsName) && !highscoreFiles.contains(hsName) && !highscoreFiles.contains(game.getScannedHsFileName())) {

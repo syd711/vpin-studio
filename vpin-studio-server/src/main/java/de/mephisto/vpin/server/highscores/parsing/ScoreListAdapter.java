@@ -12,6 +12,6 @@ public interface ScoreListAdapter {
 
     boolean isApplicable(@NonNull Game game);
 
-    @NonNull
-    List<Score> getScores(@NonNull Game game, @NonNull OffsetDateTime createdAt, @NonNull List<String> lines, boolean parseAll) throws IOException;
+  @NonNull
+  List<Score> getScores(@NonNull Game game, @NonNull OffsetDateTime createdAt, @NonNull List<String> lines, boolean parseAll) throws IOException;
 }

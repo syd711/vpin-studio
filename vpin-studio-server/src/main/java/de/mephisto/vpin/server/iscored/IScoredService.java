@@ -8,7 +8,11 @@ import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.connectors.iscored.IScoredResult;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
+import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
+import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
+import de.mephisto.vpin.server.competitions.Competition;
+import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.Score;
@@ -24,6 +28,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.List;
+import java.util.Optional;
 
 import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
@@ -38,9 +44,33 @@ public class IScoredService implements PreferenceChangedListener, InitializingBe
   private PreferencesService preferencesService;
 
   @Autowired
+  private CompetitionService competitionService;
+
+  @Autowired
   private GameService gameService;
 
   private NotificationSettings notificationSettings;
+
+  public boolean deleteGameRoom(String gameRoomId) throws Exception {
+    IScoredSettings settings = preferencesService.getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
+    Optional<IScoredGameRoom> first = settings.getGameRooms().stream().filter(g -> g.getUuid().equals(gameRoomId)).findFirst();
+    if (first.isPresent()) {
+      IScoredGameRoom room = first.get();
+
+      List<Competition> iScoredSubscriptions = competitionService.getIScoredSubscriptions();
+      for (Competition iScoredSubscription : iScoredSubscriptions) {
+        if (iScoredSubscription.getUrl().equals(room.getUrl())) {
+          competitionService.delete(iScoredSubscription.getId());
+          LOG.info("Deleted iScored competition {}", iScoredSubscription.getName());
+        }
+      }
+      settings.remove(room);
+      preferencesService.savePreference(settings, true);
+      LOG.info("Deleted {}", room);
+      return true;
+    }
+    return false;
+  }
 
   public void submitScore(@NonNull IScoredGame iScoredGame, Score newScore) {
     GameRoom gameRoom = IScored.getGameRoom(iScoredGame.getGameRoomUrl(), true);

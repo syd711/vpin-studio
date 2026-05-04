@@ -28,6 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
@@ -799,5 +801,33 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
       LOG.info("FrontendService initialization failed: {}", e.getMessage(), e);
     }
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
+  }
+
+  @EventListener(ApplicationReadyEvent.class)
+  public void onApplicationReady() {
+    try {
+      if (getFrontend().getFrontendType().equals(FrontendType.Standalone)) {
+        return;
+      }
+
+      List<Integer> gameIds = getGameIds();
+      List<Integer> allPupIds = gameDetailsRepositoryService.findAllPupIds();
+
+      if (gameIds.isEmpty() || allPupIds.isEmpty()) {
+        return;
+      }
+
+      List<Long> toDelete = new ArrayList<>();
+      for (Integer pupId : allPupIds) {
+        if (!gameIds.contains(pupId)) {
+          toDelete.add(pupId.longValue());
+        }
+      }
+      gameDetailsRepositoryService.deleteByPupId(toDelete);
+      LOG.info("Deleted {} orphaned GameDetail entries.", toDelete.size());
+    }
+    catch (Exception e) {
+      LOG.error("Failed to cleanup GameDetails entries: {}", e.getMessage(), e);
+    }
   }
 }

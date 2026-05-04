@@ -54,6 +54,9 @@ public class NotificationStage {
         }
       NotificationSettings notificationSettings = ServerFX.client.getJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, NotificationSettings.class);
       this.screenBounds = ServerFX.client.getSystemService().getScreenInfo(notificationSettings.getNotificationsScreenId());
+      if (this.screenBounds == null) {
+        this.screenBounds = ServerFX.client.getSystemService().getScreenInfo(-1);
+      }
 
       if (this.screenBounds == null) {
         this.screenBounds = ServerFX.client.getSystemService().getScreenInfo(-1);

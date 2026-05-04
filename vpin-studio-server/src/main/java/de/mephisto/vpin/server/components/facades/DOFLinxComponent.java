@@ -29,7 +29,7 @@ public class DOFLinxComponent implements ComponentFacade {
   @NonNull
   @Override
   public String[] getDiffList() {
-    return new String[]{".dll"};
+    return new String[]{".dll", ".exe"};
   }
 
   @NonNull

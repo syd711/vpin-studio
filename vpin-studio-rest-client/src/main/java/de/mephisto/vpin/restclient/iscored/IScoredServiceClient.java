@@ -12,13 +12,13 @@ import java.lang.invoke.MethodHandles;
  * iScored
  ********************************************************************************************************************/
 public class IScoredServiceClient extends VPinStudioClientService {
-    private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    public IScoredServiceClient(VPinStudioClient client) {
-        super(client);
-    }
+  public IScoredServiceClient(VPinStudioClient client) {
+    super(client);
+  }
 
-    public void deleteGameRoom(String uuid) {
-        getRestClient().delete(API + "iscored/" + uuid);
-    }
+  public void deleteGameRoom(String uuid) {
+    getRestClient().delete(API + "iscored/" + uuid);
+  }
 }

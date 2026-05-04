@@ -22,9 +22,11 @@ import java.util.Objects;
 
         private final static List<ScoreListAdapter> adapters = new ArrayList<>();
 
-        public static void registerScoreListAdapter(ScoreListAdapter adapter) {
-            adapters.add(adapter);
-        }
+  public static void registerScoreListAdapter(ScoreListAdapter adapter) {
+    adapters.add(adapter);
+  }
+
+  //-------------------------------------------------------
 
         //-------------------------------------------------------
 

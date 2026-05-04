@@ -27,58 +27,58 @@ import net.nvrams.mapping.superhac.NVRamSuperhacParser;
  * - as a ScoreListAdapter, to parse raw to Scores
  */
 public class NvRamParsingWithParser implements NvRamOutputToRaw, ScoreListAdapter {
-    private final static Logger LOG = LoggerFactory.getLogger(NvRamParsingWithParser.class);
+  private final static Logger LOG = LoggerFactory.getLogger(NvRamParsingWithParser.class);
 
-    // the parser which most of the work is delegated to
-    private NVRamParser parser;
+  // the parser which most of the work is delegated to
+  private NVRamParser parser;
 
 
-    public static NvRamParsingWithParser createPinemhiParser(ScoringDB scoringDB) throws IOException {
-        NVRamParser pinemhiParser = new NVRamPinemhiParser(SystemInfo.RESOURCES + "pinemhi/",
-                scoringDB.getHighscoreTitles(), scoringDB.getHighscoreSkipTitlesCheck());
-        return new NvRamParsingWithParser(pinemhiParser);
-    }
+  public static NvRamParsingWithParser createPinemhiParser(ScoringDB scoringDB) throws IOException {
+    NVRamParser pinemhiParser = new NVRamPinemhiParser(SystemInfo.RESOURCES + "pinemhi/",
+        scoringDB.getHighscoreTitles(), scoringDB.getHighscoreSkipTitlesCheck());
+    return new NvRamParsingWithParser(pinemhiParser);
+  }
 
-    public static NvRamParsingWithParser createSuperhacParser(ScoringDB scoringDB) throws IOException {
-        NVRamParser superhacParser = new NVRamSuperhacParser(SystemInfo.RESOURCES + "superhac/roms.json");
-        return new NvRamParsingWithParser(superhacParser);
-    }
+  public static NvRamParsingWithParser createSuperhacParser(ScoringDB scoringDB) throws IOException {
+    NVRamParser superhacParser = new NVRamSuperhacParser(SystemInfo.RESOURCES + "superhac/roms.json");
+    return new NvRamParsingWithParser(superhacParser);
+  }
 
-    public static NvRamParsingWithParser createNvramMapParser(ScoringDB scoringDB) throws IOException {
-        NVRamParser mapParser = new NVRamMapParser(SystemInfo.RESOURCES + "maps/");
-        return new NvRamParsingWithParser(mapParser);
-    }
+  public static NvRamParsingWithParser createNvramMapParser(ScoringDB scoringDB) throws IOException {
+    NVRamParser mapParser = new NVRamMapParser(SystemInfo.RESOURCES + "maps/");
+    return new NvRamParsingWithParser(mapParser);
+  }
 
-    NvRamParsingWithParser(NVRamParser parser) throws IOException {
-        this.parser = parser;
-    }
+  NvRamParsingWithParser(NVRamParser parser) throws IOException {
+    this.parser = parser;
+  }
 
-    @Override
-    public String toString() {
-        return this.getClass().getSimpleName() + " [" + this.parser.getClass().getSimpleName() + "]";
-    }
+  @Override
+  public String toString() {
+    return this.getClass().getSimpleName() + " [" + this.parser.getClass().getSimpleName() + "]";
+  }
 
-    //---------------------------------------
-    // implementation of NvRamOutputToRaw
+  //---------------------------------------
+  // implementation of NvRamOutputToRaw
 
-    @Override
-    public boolean isSupportedRom(String rom) {
-        return parser.isSupportedRom(rom);
-    }
+  @Override
+  public boolean isSupportedRom(String rom) {
+    return parser.isSupportedRom(rom);
+  }
 
-    @Override
-    public List<String> getRaw(String rom, File nvFile, Locale locale) throws IOException {
-        return parser.getRaw(rom, nvFile, locale);
-    }
+  @Override
+  public List<String> getRaw(String rom, File nvFile, Locale locale) throws IOException {
+    return parser.getRaw(rom, nvFile, locale);
+  }
 
-    //---------------------------------------
-    // implementation of ScoreListAdapter
+  //---------------------------------------
+  // implementation of ScoreListAdapter
 
-    @Override
-    public boolean isApplicable(Game game) {
-        String rom = game != null ? game.getRom().toLowerCase() : "<no rom>";
-        return isSupportedRom(rom);
-    }
+  @Override
+  public boolean isApplicable(Game game) {
+    String rom = game != null ? game.getRom().toLowerCase() : "<no rom>";
+    return isSupportedRom(rom);
+  }
 
     @Override
     public List<Score> getScores(Game game, OffsetDateTime createdAt, List<String> lines, boolean parseAll) throws IOException {

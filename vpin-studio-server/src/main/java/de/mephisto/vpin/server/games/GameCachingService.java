@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.games;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.dmd.DMDPackageTypes;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.FilterSettings;
@@ -123,21 +124,23 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
   public Game invalidate(int gameId) {
     Game game = getGame(gameId);
     if (game != null) {
-      List<Game> games = allGamesByEmulatorId.computeIfAbsent(game.getEmulatorId(), k -> new ArrayList<>());
-      games.remove(game);
+      GameEmulatorCache emulatorCache = allGamesByEmulatorId.get(game.getEmulatorId());
+      if (emulatorCache != null) {
+        emulatorCache.removeGame(game);
+      }
 //      LOG.info("-------------------> Evicted {}", game.getGameDisplayName());
     }
     return getGame(gameId);
   }
 
   public void invalidateByRom(int emulatorId, @NonNull String rom) {
-    List<Game> games = allGamesByEmulatorId.computeIfAbsent(emulatorId, k -> new ArrayList<>());
-    for (Game game : new ArrayList<>(games)) {
-      if (rom.trim().equals(game.getRom()) || rom.trim().equals(game.getRomAlias())) {
-        games.remove(game);
-        getGame(game.getId());
-//        LOG.info("-------------------> Evicted {}", game.getGameDisplayName());
-      }
+    GameEmulatorCache emulatorCache = allGamesByEmulatorId.get(emulatorId);
+    if (emulatorCache == null) {
+      return;
+    }
+    List<Game> games = emulatorCache.invalidateByRom(rom);
+    for (Game game : games) {
+      getGame(game.getId());
     }
   }
 
@@ -147,7 +150,9 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     try {
       game = frontendService.getOriginalGame(gameId);
       if (game != null) {
-        applyGameDetails(game, true, true, null, true);
+        GameDetailsInfo gameDetailsInfo = applyGameDetails(game, true, true, null);
+        applyGameValidation(gameDetailsInfo, true);
+
         vPinMameService.clearCacheFor(game.getRom());
         if (game.isVpxGame()) {
           highscoreService.scanScore(game, EventOrigin.USER_INITIATED);
@@ -180,17 +185,20 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
         return null;
       }
 
-      applyGameDetails(game, false, true, null, true);
-      List<Game> games = allGamesByEmulatorId.computeIfAbsent(game.getEmulatorId(), k -> new ArrayList<>());
-      games.add(game);
+      GameDetailsInfo gameDetailsInfo = applyGameDetails(game, false, true, null);
+      applyGameValidation(gameDetailsInfo, true);
+
+      EmulatorType emulatorType = game.getEmulator().getType();
+      GameEmulatorCache cache = allGamesByEmulatorId.computeIfAbsent(game.getEmulatorId(), emulatorId -> new GameEmulatorCache(emulatorType, emulatorId));
+      cache.addGame(game);
     }
     return game;
   }
 
   private Game getGameCached(int id) {
-    Collection<List<Game>> values = allGamesByEmulatorId.values();
-    for (List<Game> value : values) {
-      for (Game game : value) {
+    Collection<GameEmulatorCache> caches = allGamesByEmulatorId.values();
+    for (GameEmulatorCache cache : caches) {
+      for (Game game : cache.getGames()) {
         if (game.getId() == id) {
           return game;
         }
@@ -202,7 +210,8 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
   public List<Game> getGamesByRom(int emulatorId, @NonNull String rom) {
     List<Game> games = frontendService.getGamesByEmulator(emulatorId);
     for (Game game : games) {
-      applyGameDetails(game, false, false, null, true);
+      GameDetailsInfo gameDetailsInfo = applyGameDetails(game, false, false, null);
+      applyGameValidation(gameDetailsInfo, true);
     }
     return games.stream()
         .filter(g ->
@@ -220,10 +229,8 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     else {
       GameEmulator emulator = emulatorService.getGameEmulator(emulatorId);
       if (emulator != null && emulator.isEnabled()) {
-        if (!allGamesByEmulatorId.containsKey(emulator.getId())) {
-          fetchEmulatorGames(emulator, Collections.emptyMap());
-        }
-        games.addAll(allGamesByEmulatorId.get(emulator.getId()));
+        GameEmulatorCache emulatorCache = allGamesByEmulatorId.computeIfAbsent(emulator.getId(), id -> fetchEmulatorGames(emulator, Collections.emptyMap()));
+        games.addAll(emulatorCache.getGames());
       }
     }
 
@@ -242,10 +249,8 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     List<GameEmulator> gameEmulators = emulatorService.getVpxGameEmulators();
     for (GameEmulator gameEmulator : gameEmulators) {
       if (gameEmulator.isEnabled()) {
-        if (!allGamesByEmulatorId.containsKey(gameEmulator.getId())) {
-          fetchEmulatorGames(gameEmulator, mappedGameDetails);
-        }
-        games.addAll(allGamesByEmulatorId.get(gameEmulator.getId()));
+        GameEmulatorCache emulatorCache = allGamesByEmulatorId.computeIfAbsent(gameEmulator.getId(), id -> fetchEmulatorGames(gameEmulator, mappedGameDetails));
+        games.addAll(emulatorCache.getGames());
       }
     }
     return games;
@@ -257,45 +262,57 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     List<GameEmulator> gameEmulators = emulatorService.getZenGameEmulators();
     for (GameEmulator gameEmulator : gameEmulators) {
       if (gameEmulator.isEnabled()) {
-        if (!allGamesByEmulatorId.containsKey(gameEmulator.getId())) {
-          fetchEmulatorGames(gameEmulator, Collections.emptyMap());
-        }
-        games.addAll(allGamesByEmulatorId.get(gameEmulator.getId()));
+        GameEmulatorCache emulatorCache = allGamesByEmulatorId.computeIfAbsent(gameEmulator.getId(), id -> fetchEmulatorGames(gameEmulator, Collections.emptyMap()));
+        games.addAll(emulatorCache.getGames());
       }
     }
     return games;
   }
 
-  private void fetchEmulatorGames(@NonNull GameEmulator emulator, @NonNull Map<Integer, GameDetails> mappedGameDetails) {
+  private GameEmulatorCache fetchEmulatorGames(@NonNull GameEmulator emulator, @NonNull Map<Integer, GameDetails> mappedGameDetails) {
     long start = System.currentTimeMillis();
     List<Game> gamesByEmulator = frontendService.getGamesByEmulator(emulator.getId());
     FilterSettings filterSettings = preferencesService.getJsonPreference(PreferenceNames.FILTER_SETTINGS, FilterSettings.class);
     boolean findFirstIssueOnly = filterSettings.getIssueType() == -1;
-    boolean killFrontend = false;
-    for (Game game : gamesByEmulator) {
-      GameDetails gameDetails = mappedGameDetails.get(game.getId());
-      boolean newGame = applyGameDetails(game, false, false, gameDetails, findFirstIssueOnly);
-      if (newGame) {
-        gameLifecycleService.notifyGameCreated(game.getId());
-        highscoreService.scanScore(game, EventOrigin.INITIAL_SCAN);
-      }
 
-      if (newGame && !killFrontend) {
-        LOG.info("New games have been found, automatically killing frontend to release locks.");
-        frontendService.killFrontend();
-        killFrontend = true;
+    Map<Integer, GameDetails> gameDetailsMap = mappedGameDetails;
+    if (mappedGameDetails.isEmpty() && !gamesByEmulator.isEmpty()) {
+      gameDetailsMap = gameDetailsRepositoryService.findAll().stream()
+          .collect(Collectors.toMap(GameDetails::getPupId, gd -> gd, (a, b) -> a));
+    }
+
+    final Map<Integer, GameDetails> resolvedMap = gameDetailsMap;
+    List<GameDetailsInfo> infos = gamesByEmulator.parallelStream()
+        .map(game -> applyGameDetails(game, false, false, resolvedMap.get(game.getId())))
+        .collect(Collectors.toList());
+
+    boolean killFrontend = false;
+    for (GameDetailsInfo info : infos) {
+      if (info.newGame) {
+        gameLifecycleService.notifyGameCreated(info.game.getId());
+        highscoreService.scanScore(info.game, EventOrigin.INITIAL_SCAN);
+        if (!killFrontend) {
+          LOG.info("New games have been found, automatically killing frontend to release locks.");
+          frontendService.killFrontend();
+          killFrontend = true;
+        }
       }
     }
-    allGamesByEmulatorId.put(emulator.getId(), gamesByEmulator);
+
+    infos.parallelStream().forEach(info -> applyGameValidation(info, findFirstIssueOnly));
+
+
+    GameEmulatorCache cache = new GameEmulatorCache(emulator.getType(), emulator.getId(), gamesByEmulator);
     long duration = System.currentTimeMillis() - start;
     long avg = 0;
     if (!gamesByEmulator.isEmpty()) {
       avg = duration / gamesByEmulator.size();
     }
     LOG.info("Game fetch for emulator {} took {}ms / {} games / {}ms avg.", emulator.getName(), duration, gamesByEmulator.size(), avg);
+    return cache;
   }
 
-  private boolean applyGameDetails(@NonNull Game game, boolean forceScan, boolean forceScoreScan, @Nullable GameDetails gameDetails, boolean findFirstIssueOnly) {
+  private GameDetailsInfo applyGameDetails(@NonNull Game game, boolean forceScan, boolean forceScoreScan, @Nullable GameDetails gameDetails) {
     if (gameDetails == null) {
       gameDetails = gameDetailsRepositoryService.findByPupId(game.getId());
     }
@@ -350,7 +367,9 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
       gameDetails.setPupId(game.getId());
       gameDetails.setUpdatedAt(OffsetDateTime.now());
 
-      gameDetailsRepositoryService.saveAndFlush(gameDetails);
+      synchronized (saveLock) {
+        gameDetailsRepositoryService.saveAndFlush(gameDetails);
+      }
       LOG.info("Created GameDetails for {}, was forced: {}", game.getGameDisplayName(), forceScan);
     }
 
@@ -396,7 +415,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
 
     // fill scanned values
     game.setAssets(gameDetails.getAssets());
-    game.setMusicScripted(gameDetails.getAssets() != null && (gameDetails.getAssets().contains(".mp3") || game.getAssets().contains(".wav") || game.getAssets().contains(".ogg")));
+    game.setMusicScripted(gameDetails.getAssets() != null && (gameDetails.getAssets().contains(".mp3") || gameDetails.getAssets().contains(".wav") || gameDetails.getAssets().contains(".ogg")));
     game.setScannedRom(gameDetails.getRomName());
     game.setScannedHsFileName(gameDetails.getHsFileName());
     game.setScannedAltRom(gameDetails.getTableName());
@@ -481,8 +500,13 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
       }
     }
 
+    return new GameDetailsInfo(game, gameDetails, tableDetails, newGame);
+  }
+
+  private void applyGameValidation(@NotNull GameDetailsInfo gameDetailsInfo, boolean findFirstIssueOnly) {
     //run validations at the end!!!
-    List<ValidationState> validationStates = gameValidationService.validate(game, findFirstIssueOnly);
+    Game game = gameDetailsInfo.game;
+    List<ValidationState> validationStates = gameValidationService.validate(gameDetailsInfo.game, findFirstIssueOnly);
     game.setHasMissingAssets(gameValidationService.hasMissingAssets(validationStates));
     game.setIssueTypes(validationStates.stream().map(ValidationState::getCode).collect(Collectors.toList()));
 
@@ -491,10 +515,8 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     }
     game.setValidationState(validationStates.getFirst());
 
-    GameScoreValidation scoreValidation = gameValidationService.validateHighscoreStatus(game, gameDetails, tableDetails, frontendService.getFrontendType(), serverSettings);
+    GameScoreValidation scoreValidation = gameValidationService.validateHighscoreStatus(game, gameDetailsInfo.gameDetails, gameDetailsInfo.tableDetails, frontendService.getFrontendType(), serverSettings);
     game.setValidScoreConfiguration(scoreValidation.isValidScoreConfiguration());
-
-    return newGame;
   }
 
   @Override
@@ -518,13 +540,9 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
 
   @Override
   public void gameDeleted(int gameId) {
-    Collection<List<Game>> values = allGamesByEmulatorId.values();
-    for (List<Game> value : values) {
-      Optional<Game> first = value.stream().filter(g -> g.getId() == gameId).findFirst();
-      if (first.isPresent()) {
-        value.remove(first.get());
-        return;
-      }
+    Collection<GameEmulatorCache> caches = allGamesByEmulatorId.values();
+    for (GameEmulatorCache cache : caches) {
+      cache.delete(gameId);
     }
   }
 
@@ -583,6 +601,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
             }
           }
         }
+        break;
       }
       default: {
 //        LOG.warn("Unhandled asset change event found: {}", changedEvent.getAsset());
@@ -648,5 +667,19 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     gameLifecycleService.addGameDataChangedListener(this);
     competitionLifecycleService.addCompetitionChangeListener(this);
     emulatorService.addEmulatorChangeListener(this);
+  }
+
+  static class GameDetailsInfo {
+    private final Game game;
+    private final GameDetails gameDetails;
+    private final TableDetails tableDetails;
+    private final boolean newGame;
+
+    public GameDetailsInfo(Game game, GameDetails gameDetails, TableDetails tableDetails, boolean newGame) {
+      this.game = game;
+      this.gameDetails = gameDetails;
+      this.tableDetails = tableDetails;
+      this.newGame = newGame;
+    }
   }
 }
