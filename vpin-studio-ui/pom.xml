@@ -17,6 +17,7 @@
     <properties>
         <junit.version>6.0.3</junit.version>
         <ikonli.version>12.4.0</ikonli.version>
+         <zulu.jre.bundle>zulu25.32.21-ca-fx-jre25.0.2-macosx_aarch64.tar.gz</zulu.jre.bundle>
         <skipMacOSBuild>true</skipMacOSBuild>
         <macOSBuild>false</macOSBuild>
     </properties>
@@ -445,7 +446,7 @@
                                 <resource>
                                     <directory>${basedir}/../</directory>
                                     <includes>
-                                        <include>zulu25*.tar.gz</include>
+                                        <include>${zulu.jre.bundle}</include>
                                     </includes>
                                 </resource>
                             </resources>
@@ -464,7 +465,7 @@
                                 <resource>
                                     <directory>${basedir}/../</directory>
                                     <includes>
-                                        <include>zulu25*macosx_aarch64.tar.gz</include>
+                                        <include>${zulu.jre.bundle}</include>
                                     </includes>
                                 </resource>
                             </resources>
@@ -666,7 +667,7 @@
                                 <argument>a</argument>
                                 <argument>-tzip</argument>
                                 <argument>VPin-Studio-Client-linux-x64.zip</argument>
-                                <argument>zulu25*.tar.gz</argument>
+                                <argument>${zulu.jre.bundle}</argument>
                                 <argument>vpin-studio-ui.jar</argument>
                                 <argument>VPin-Studio-linux_x64.sh</argument>
                                 <argument>resources/vpsdb.json</argument>
@@ -692,7 +693,7 @@
                                 <argument>a</argument>
                                 <argument>-tzip</argument>
                                 <argument>VPin-Studio-Client-macosx_aarch64.zip</argument>
-                                <argument>zulu25*macosx_aarch64.tar.gz</argument>
+                                <argument>${zulu.jre.bundle}</argument>
                                 <argument>vpin-studio-ui.jar</argument>
                                 <argument>VPin-Studio-macosx_aarch64.sh</argument>
                                 <argument>resources/vpsdb.json</argument>
@@ -716,7 +717,7 @@
                             <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
                             <arguments>
                                 <argument>xvf</argument>
-                                <argument>zulu25*macosx_aarch64.tar.gz</argument>
+                                <argument>${zulu.jre.bundle}</argument>
                             </arguments>
                         </configuration>
                     </execution>
