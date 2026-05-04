@@ -88,19 +88,22 @@ jobs:
           VERSION=$(grep -m1 '<revision>' pom.xml | sed 's/.*<revision>\(.*\)<\/revision>/\1/')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Install Parent POM
-        run: mvn -N install -Drevision=${{ steps.project.outputs.version }} -DskipTests
+      - name: Install Parent POM with resolved version
+        run: |
+          VERSION=${{ steps.project.outputs.version }}
+          # Temporarily replace ${revision} with actual version in pom.xml
+          sed -i.bak "s/\${revision}/$VERSION/g" pom.xml
+          mvn -N install -DskipTests
+          # Restore original pom.xml
+          mv pom.xml.bak pom.xml
 
       - name: Build Java 25 sub-modules and popper client
         run: |
-          mvn -f vpin-connector-assets/pom.xml clean install \
-            -Drevision=${{ steps.project.outputs.version }} -DskipTests
-          mvn -f vpin-studio-popper-client/pom.xml clean install \
-            -Drevision=${{ steps.project.outputs.version }} -DskipTests
+          mvn -f vpin-connector-assets/pom.xml clean install -DskipTests
+          mvn -f vpin-studio-popper-client/pom.xml clean install -DskipTests
 
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots clean package \
-          -Drevision=${{ steps.project.outputs.version }} \
           -DskipMacOSBuild=false -DmacOSBuild=true -DskipTests
 
       - name: Download Zulu JRE for macOS
