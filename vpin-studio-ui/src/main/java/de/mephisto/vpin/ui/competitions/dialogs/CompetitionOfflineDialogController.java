@@ -177,7 +177,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
     });
 
     List<DiscordChannel> channels = new ArrayList<>(getDiscordChannels());
-    channels.add(0, null);
+    channels.addFirst( null);
     ObservableList<DiscordChannel> discordChannels = FXCollections.observableArrayList(channels);
     channelsCombo.getItems().addAll(discordChannels);
     channelsCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
@@ -193,7 +193,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
     });
 
     ArrayList<String> badges = new ArrayList<>(client.getCompetitionService().getCompetitionBadges());
-    badges.add(0, null);
+    badges.addFirst( null);
     ObservableList<String> imageList = FXCollections.observableList(badges);
     competitionIconCombo.setItems(imageList);
     competitionIconCombo.setCellFactory(c -> new CompetitionImageListCell(client));

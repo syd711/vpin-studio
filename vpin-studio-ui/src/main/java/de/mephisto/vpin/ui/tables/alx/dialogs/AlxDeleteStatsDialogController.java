@@ -102,7 +102,7 @@ public class AlxDeleteStatsDialogController implements Initializable, DialogCont
     GameEmulatorRepresentation allTables = new GameEmulatorRepresentation();
     allTables.setId(-1);
     allTables.setName("All Tables");
-    filtered.add(0, allTables);
+    filtered.addFirst( allTables);
 
     this.emulatorCombo.setItems(FXCollections.observableList(filtered));
     this.emulatorCombo.getSelectionModel().select(0);

@@ -92,7 +92,7 @@ public abstract class BaseFilterController<T, M extends BaseLoadingModel<T, M>> 
     filterRoot.setVisible(false);
     stackPane.setAlignment(Pos.TOP_LEFT);
 
-    stackPane.getChildren().add(0, filterRoot);
+    stackPane.getChildren().addFirst( filterRoot);
     filterRoot.prefHeightProperty().bind(stackPane.heightProperty());
     //titlePaneRoot.prefHeightProperty().bind(stackPane.heightProperty());
 

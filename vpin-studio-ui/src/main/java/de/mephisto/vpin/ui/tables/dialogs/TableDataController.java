@@ -1100,7 +1100,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
       }
 
       if (pinVolController != null) {
-        pinVolController.setData(stage, Arrays.asList(game), false);
+        pinVolController.setData(stage, List.of(game), false);
       }
 
       if (tableDataTabCommentsController != null) {
@@ -1108,7 +1108,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
       }
 
       if (tablesSidebarPlaylistsController != null) {
-        tablesSidebarPlaylistsController.setGames(Arrays.asList(game));
+        tablesSidebarPlaylistsController.setGames(List.of(game));
       }
 
       if (tableDataTabScriptOptionsController != null) {
@@ -1243,7 +1243,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
       List<VpsTableVersion> tableFiles = new ArrayList<>(tableById.getTableFilesForFormat(tableFormat));
 
       if (!tableFiles.isEmpty()) {
-        tableFiles.add(0, null);
+        tableFiles.addFirst( null);
         tableVersionsCombo.setItems(FXCollections.observableList(tableFiles));
       }
     }

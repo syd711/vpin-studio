@@ -597,7 +597,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
     this.playlistCombo.setDisable(true);
     JFXFuture.supplyAsync(() -> client.getPlaylistsService().getPlaylists()).thenAcceptLater(playlists -> {
       List<PlaylistRepresentation> pl = new ArrayList<>(playlists);
-      pl.add(0, null);
+      pl.addFirst( null);
       playlistCombo.setItems(FXCollections.observableList(pl));
 
       // reselect same playlist

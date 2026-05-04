@@ -788,7 +788,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
         // new table, add it to the list only if the emulator is matching
         GameEmulatorRepresentation value = this.emulatorCombo.getValue();
         if (value != null && (value.getId() == refreshedGame.getEmulatorId() || value.getType().equals(value.getType()))) {
-          models.add(0, new GameRepresentationModel(refreshedGame));
+          models.addFirst( new GameRepresentationModel(refreshedGame));
         }
       }
 

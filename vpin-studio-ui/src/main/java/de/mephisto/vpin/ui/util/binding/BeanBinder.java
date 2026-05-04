@@ -95,7 +95,7 @@ public class BeanBinder<T> {
       if (items != null) {
         items = new ArrayList<>(items);
         if (addEmpty) {
-          items.add(0, null);
+          items.addFirst(null);
         }
         comboBox.setItems(FXCollections.observableList(items));
       }
