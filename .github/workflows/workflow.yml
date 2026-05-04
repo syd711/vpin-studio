@@ -91,11 +91,7 @@ jobs:
       - name: Install Parent POM with resolved version
         run: |
           VERSION=${{ steps.project.outputs.version }}
-          # Temporarily replace ${revision} with actual version in pom.xml
-          sed -i.bak "s/\${revision}/$VERSION/g" pom.xml
           mvn -N install -DskipTests
-          # Restore original pom.xml
-          mv pom.xml.bak pom.xml
 
       - name: Build Java 25 sub-modules and popper client
         run: |
