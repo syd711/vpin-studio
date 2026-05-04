@@ -157,28 +157,19 @@ jobs:
       - name: Package as DMG (macOS)
         working-directory: ./mac-build
         run: |
-          echo "----------------------ls results----------------------"
-          ls -al
-          echo "----------------------ls .. results----------------------"
-          ls -al ..          
-          echo "----------------------ls package results----------------------"
-          ls -al package
-          echo "----------------------ls package/macos results----------------------"
-          ls -al package/macos
-          echo "----------------------ls ./mac_build results----------------------"
-          ls -al ./mac_build
+        
           create-dmg \
             --volname "VPin-Studio" \
-            --volicon "Vpin-Studio-volume.icns" \
-            --background "background.tiff" \
+            --volicon "package/macos/Vpin-Studio-volume.icns" \
+            --background "package/macos/background.tiff" \
             --window-pos 100 100 \
             --window-size 640 600 \
             --icon-size 128 \
-            --icon "Vpin-Studio.app" 110 200 \
-            --hide-extension "Vpin-Studio.app" \
+            --icon "package/macos/Vpin-Studio.app" 110 200 \
+            --hide-extension "package/macos/Vpin-Studio.app" \
             --app-drop-link 450 200 \
             "VPin-Studio-${{ steps.project.outputs.version }}.dmg" \
-            "Vpin-Studio.app"    
+            "package/macos/Vpin-Studio.app"
         shell: bash
 
       - name: Package as macOS App
