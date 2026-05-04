@@ -95,6 +95,10 @@ jobs:
         id: project
         run: echo "version=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_OUTPUT
 
+      - name: Download Zulu JRE for macOS
+        run: |
+          curl -L -o ${{ matrix.jre_bundle }} https://cdn.azul.com/zulu/bin/${{ matrix.jre_bundle }}
+
       - name: Copy JRE tarball to Output directory
         run: |
           mkdir -p Output/VPin-Studio
@@ -102,10 +106,6 @@ jobs:
 
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots clean package -DskipMacOSBuild=false -DmacOSBuild=true -DskipTests -Dzulu.jre.bundle=${{ matrix.jre_bundle }}
-
-      - name: Download Zulu JRE for macOS
-        run: |
-          curl -L -o ${{ matrix.jre_bundle }} https://cdn.azul.com/zulu/bin/${{ matrix.jre_bundle }}
 
       - name: Prepare Java Runtime
         run: tar -xzf ${{ matrix.jre_bundle }}
