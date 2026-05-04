@@ -157,6 +157,14 @@ jobs:
       - name: Package as DMG (macOS)
         working-directory: ./mac-build
         run: |
+          echo "----------------------ls .. results"
+          ls -al ..          
+          echo "----------------------ls package results"
+          ls -al package
+          echo "----------------------ls package/macos results"
+          ls -al package/macos
+          echo "----------------------ls ./mac_build results"
+          ls -al ./mac_build
           create-dmg \
             --volname "VPin-Studio" \
             --volicon "Vpin-Studio-volume.icns" \
