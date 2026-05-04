@@ -45,7 +45,7 @@ public class BackglassServiceTest extends AbstractVPinServerTest {
     List<DirectB2S> b2s = backglassService.getBackglasses();
     assertEquals(5, b2s.size());
 
-    DirectB2S b2s1 = b2s.get(0);
+    DirectB2S b2s1 = b2s.getFirst();
     assertEquals("250 cc (Inder 1992)" + File.separatorChar + "250 cc (Inder 1992).directb2s", b2s1.getFileName());
     assertEquals(1, b2s1.getNbVersions());
 
@@ -177,12 +177,12 @@ public class BackglassServiceTest extends AbstractVPinServerTest {
     DirectB2SDetail detail = backglassService.getBackglassDetail(1, "Twister (1996).directb2s", g);
     List<ValidationState> validations = detail.getValidations();
     assertEquals(1, validations.size());
-    assertEquals(0, validations.get(0).getCode());
+    assertEquals(0, validations.getFirst().getCode());
 
     detail = backglassService.getBackglassDetail(1, "Counterforce (Gottlieb 1980).directb2s", g);
     validations = detail.getValidations();
     assertEquals(1, validations.size());
-    assertEquals(BackglassValidationCode.CODE_NO_GAME, validations.get(0).getCode());
+    assertEquals(BackglassValidationCode.CODE_NO_GAME, validations.getFirst().getCode());
    
     // rerun but get all
     DirectB2ServerSettings serverSettings = backglassService.getServerSettings();
@@ -194,7 +194,7 @@ public class BackglassServiceTest extends AbstractVPinServerTest {
     detail = backglassService.getBackglassDetail(1, "Jaws.directb2s", g);
     validations = detail.getValidations();
     assertEquals(1, validations.size());
-    assertEquals(BackglassValidationCode.CODE_NO_FULLDMD, validations.get(0).getCode());
+    assertEquals(BackglassValidationCode.CODE_NO_FULLDMD, validations.getFirst().getCode());
     tableSettings = backglassService.getTableSettings(g);
     validations = backglassValidationService.validate(detail, g, tableSettings, serverSettings, false);
     assertEquals(1, validations.size());

@@ -58,7 +58,7 @@ public class VPinStudioClientService {
     try {
       Map<String, List<Object>> data = upload.getBody();
       List<?> fields = data.get("file");
-      ProgressableFileSystemResource resource = (ProgressableFileSystemResource) fields.get(0);
+      ProgressableFileSystemResource resource = (ProgressableFileSystemResource) fields.getFirst();
       resource.close();
     }
     catch (Exception e) {

@@ -187,7 +187,7 @@ public class UploadAnalysisDispatcher {
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(parentStage, model);
       List<Object> results = progressDialog.getResults();
       if (!results.isEmpty()) {
-        return (UploaderAnalysis) results.get(0);
+        return (UploaderAnalysis) results.getFirst();
       }
       else {
         WidgetFactory.showAlert(parentStage != null ? parentStage : Studio.stage, "Error", "Error opening archive: Upload likely cancelled.");
@@ -222,7 +222,7 @@ public class UploadAnalysisDispatcher {
           TableDialogs.openPatchUpload(game, file, analysis, finalizer);
         }
         else if (assetTypes.size() == 1) {
-          dispatchBySuffix(file, game, assetTypes.get(0), analysis, finalizer);
+          dispatchBySuffix(file, game, assetTypes.getFirst(), analysis, finalizer);
         }
         else {
           TableDialogs.openMediaUploadDialog(Studio.stage, game, file, analysis, null, -1);

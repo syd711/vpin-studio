@@ -113,7 +113,7 @@ public class EmulatorsTableController extends BaseTableController<GameEmulatorRe
       List<ValidationState> validationState = value.getValidationStates();
       FontIcon statusIcon = WidgetFactory.createCheckIcon(getIconColor(model));
       if (!validationState.isEmpty()) {
-        ValidationState v = validationState.get(0);
+        ValidationState v = validationState.getFirst();
         statusIcon = WidgetFactory.createExclamationIcon(getIconColor(model));
       }
 

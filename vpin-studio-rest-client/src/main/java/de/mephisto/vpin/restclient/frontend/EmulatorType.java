@@ -55,44 +55,29 @@ public enum EmulatorType {
   }
 
   public String shortName() {
-    switch (this) {
-      case VisualPinball:
-        return "VPX";
-      case FuturePinball:
-        return "FP";
-      default:
-        return "";
-    }
+      return switch (this) {
+          case VisualPinball -> "VPX";
+          case FuturePinball -> "FP";
+          default -> "";
+      };
   }
 
   @NonNull
   public String folderName() {
-    switch (this) {
-      case ZenFX:
-        return "Pinball FX";
-      case ZenFX2:
-        return "Pinball FX2";
-      case ZenFX3:
-        return "Pinball FX3";
-      case PinballM:
-        return "Pinball M";
-      case Zaccaria:
-        return "Zaccaria Pinball";
-      case FuturePinball:
-        return "Future Pinball";
-      case VisualPinball:
-        return "Visual Pinball X";
-      case VisualPinball9:
-        return "Visual Pinball";
-      case PinballArcade:
-        return "Pinball Arcade";
-      case MAME:
-        return "MAME";
-      case OTHER:
-        return "Other";
-      default:
-        throw new UnsupportedOperationException("No matching emulator type found for " + this);
-    }
+      return switch (this) {
+          case ZenFX -> "Pinball FX";
+          case ZenFX2 -> "Pinball FX2";
+          case ZenFX3 -> "Pinball FX3";
+          case PinballM -> "Pinball M";
+          case Zaccaria -> "Zaccaria Pinball";
+          case FuturePinball -> "Future Pinball";
+          case VisualPinball -> "Visual Pinball X";
+          case VisualPinball9 -> "Visual Pinball";
+          case PinballArcade -> "Pinball Arcade";
+          case MAME -> "MAME";
+          case OTHER -> "Other";
+          default -> throw new UnsupportedOperationException("No matching emulator type found for " + this);
+      };
   }
 
   public static EmulatorType fromName(String emuName) {

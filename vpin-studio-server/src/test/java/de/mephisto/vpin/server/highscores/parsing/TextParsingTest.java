@@ -40,7 +40,7 @@ public class TextParsingTest extends AbstractVPinServerTest {
         List<Score> scores = highscoreParsingService.parseScores(date, raw, null, -1);
         assertNotNull(scores, "Reading failed for " + entry);
         assertFalse(scores.isEmpty(), "No score entry found for " + entry);
-        assertNotNull(scores.get(0).getPlayerInitials(), "No score initials found for " + entry);
+        assertNotNull(scores.getFirst().getPlayerInitials(), "No score initials found for " + entry);
         assertNull(highscoreMetadata.getStatus());
       }
     }
@@ -64,7 +64,7 @@ public class TextParsingTest extends AbstractVPinServerTest {
           List<Score> scores = highscoreParsingService.parseScores(date, raw, null, -1);
           assertNotNull(scores, "Reading failed for " + entry);
           assertFalse(scores.isEmpty(), "No score entry found for " + entry);
-          assertNotNull(scores.get(0).getPlayerInitials(), "No score initials found for " + entry);
+          assertNotNull(scores.getFirst().getPlayerInitials(), "No score initials found for " + entry);
           assertNull(highscoreMetadata.getStatus());
         }
         break;

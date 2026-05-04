@@ -106,7 +106,7 @@ public class PlayerService {
     }
 
     if (!players.isEmpty()) {
-      return players.get(0);
+      return players.getFirst();
     }
 
     Player discordPlayer = discordService.getPlayerByInitials(serverId, initials);

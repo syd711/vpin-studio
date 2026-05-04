@@ -877,7 +877,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     JFXFuture
         .supplyAsync(() -> client.getHighscoreCardsService().getCardResolution(getSelectedTemplateType()))
         .thenAcceptLater(res -> {
-          templateBeanBinder.setWidth(res.get(0));
+          templateBeanBinder.setWidth(res.getFirst());
           templateBeanBinder.setHeight(res.get(1));
           // If the resolution changes, the preview must be adjusted
           resolutionLabel.setText(res.toString());

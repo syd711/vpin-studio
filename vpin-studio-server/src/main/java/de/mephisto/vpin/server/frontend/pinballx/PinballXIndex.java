@@ -73,16 +73,12 @@ public class PinballXIndex {
   }
 
   public static boolean isScreenEmulatorIndependent(VPinScreen screen) {
-    switch (screen) {
-      case GameInfo:
-        return true;
-      case GameHelp:
-        return true;
-      case Loading:
-        return true;
-      default:
-        return false;
-    }
+      return switch (screen) {
+          case GameInfo -> true;
+          case GameHelp -> true;
+          case Loading -> true;
+          default -> false;
+      };
   }
 
   //-----------------------------------------

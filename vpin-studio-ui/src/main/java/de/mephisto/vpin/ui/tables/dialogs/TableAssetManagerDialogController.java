@@ -477,7 +477,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     Stage stage = (Stage) ((Labeled) e.getSource()).getScene().getWindow();
     List<FrontendMediaItemRepresentation> selectedItems = assetList.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
-      String msg = selectedItems.size() == 1 ? ("Delete \"" + selectedItems.get(0).getName() + "\"?") : ("Delete " + selectedItems.size() + " items?");
+      String msg = selectedItems.size() == 1 ? ("Delete \"" + selectedItems.getFirst().getName() + "\"?") : ("Delete " + selectedItems.size() + " items?");
       Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, msg, "The selected media will be deleted.", null, "Delete");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         JFXFuture.runAsync(() -> {
@@ -627,7 +627,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         new TableAssetSearchProgressModel("Asset Search", game == null ? -1 : game.getId(), source, screen, term));
     List<Object> results = progressDialog.getResults();
     if (!results.isEmpty()) {
-      return (TableAssetSearch) results.get(0);
+      return (TableAssetSearch) results.getFirst();
     }
 
     TableAssetSearch empty = new TableAssetSearch();
@@ -742,7 +742,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     List<TableAssetSource> assetSources = new ArrayList<>(client.getAssetSourcesService().getAssetSources());
     assetSourceComboBox.setVisible(!assetSources.isEmpty());
     if (!assetSources.isEmpty()) {
-      assetSources.add(0, null);
+      assetSources.addFirst( null);
 
       TableAssetSource defaultAssetSource = client.getAssetSourcesService().getDefaultAssetSource();
       if (defaultAssetSource != null) {

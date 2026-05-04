@@ -55,48 +55,48 @@ public interface GameValidationCode {
   int CODE_SCRIPT_FILES_MISSING = 91;
 
   static String name(int code) {
-    switch (code) {
-      case CODE_NO_ROM: return "No ROM name resolved";
-      case CODE_ROM_NOT_EXISTS: return "ROM file does not exist";
-      case CODE_VPX_NOT_EXISTS: return "VPX file does not exist";
-      case CODE_NVOFFSET_MISMATCH: return "NVOffset mismatch";
-      case CODE_ROM_INVALID: return "ROM file is invalid";
-      case CODE_VR_DISABLED: return "VR room setting found, but is disabled";
-      case CODE_SCREEN_SIZE_ISSUE: return "Invalid screen size configuration";
-      case CODE_NO_DIRECTB2S_OR_PUPPACK: return "No directb2s or PUP pack found";
-      case CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED: return "PUP pack not enabled";
-      case CODE_NO_DMDFOLDER: return "DMD folder not found";
-      case CODE_BACKGLASS_AND_BACKGLASSES_DISABLED: return "Backglasses disabled";
-      case CODE_NO_AUDIO: return "Audio asset missing";
-      case CODE_NO_AUDIO_LAUNCH: return "Audio Launch asset missing";
-      case CODE_NO_APRON: return "Full DMD asset missing";
-      case CODE_NO_INFO: return "Info asset missing";
-      case CODE_NO_HELP: return "Help asset missing";
-      case CODE_NO_TOPPER: return "Topper asset missing";
-      case CODE_NO_BACKGLASS: return "Backglass asset missing";
-      case CODE_NO_DMD: return "DMD asset missing";
-      case CODE_NO_PLAYFIELD: return "Playfield asset missing";
-      case CODE_NO_LOADING: return "Loading asset missing";
-      case CODE_NO_OTHER2: return "Other2 asset missing";
-      case CODE_NO_WHEEL_IMAGE: return "Wheel image missing";
-      case CODE_NO_LOGO: return "Logo asset missing";
-      case CODE_ALT_SOUND_NOT_ENABLED: return "ALT sound not enabled";
-      case CODE_ALT_SOUND_FILE_MISSING: return "ALT sound files are missing in the installation";
-      case CODE_FORCE_STEREO: return "Force Stereo not enabled";
-      case CODE_PUP_PACK_FILE_MISSING: return "PUP pack media file missing";
-      case CODE_MUSIC_FILE_MISSING: return "Music file missing";
-      case CODE_VPS_MAPPING_MISSING: return "VP-Spreadsheet: Table mapping is missing";
-      case CODE_VPS_ALTCOLOR_MISSING: return "VP-Spreadsheet: ALT color files available";
-      case CODE_VPS_ALTSOUND_MISSING: return "VP-Spreadsheet: ALT sound bundles available";
-      case CODE_VPS_PUPPACK_MISSING: return "VP-Spreadsheet: PUP pack available";
-      case CODE_ALT_COLOR_COLORIZE_DMD_ENABLED: return "Colorize DMD not enabled";
-      case CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED: return "External DMD not enabled";
-      case CODE_ALT_COLOR_FILES_MISSING: return "ALT color files are missing in the installation";
-      case CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING: return "DMD device files missing";
-      case CODE_SCRIPT_CONTROLLER_STOP_MISSING: return "Controller.stop call missing";
-      case CODE_SCRIPT_FILES_MISSING: return "Included script missing";
-      default: return "Unknown validation code (" + code + ")";
-    }
+      return switch (code) {
+          case CODE_NO_ROM -> "No ROM name resolved";
+          case CODE_ROM_NOT_EXISTS -> "ROM file does not exist";
+          case CODE_VPX_NOT_EXISTS -> "VPX file does not exist";
+          case CODE_NVOFFSET_MISMATCH -> "NVOffset mismatch";
+          case CODE_ROM_INVALID -> "ROM file is invalid";
+          case CODE_VR_DISABLED -> "VR room setting found, but is disabled";
+          case CODE_SCREEN_SIZE_ISSUE -> "Invalid screen size configuration";
+          case CODE_NO_DIRECTB2S_OR_PUPPACK -> "No directb2s or PUP pack found";
+          case CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED -> "PUP pack not enabled";
+          case CODE_NO_DMDFOLDER -> "DMD folder not found";
+          case CODE_BACKGLASS_AND_BACKGLASSES_DISABLED -> "Backglasses disabled";
+          case CODE_NO_AUDIO -> "Audio asset missing";
+          case CODE_NO_AUDIO_LAUNCH -> "Audio Launch asset missing";
+          case CODE_NO_APRON -> "Full DMD asset missing";
+          case CODE_NO_INFO -> "Info asset missing";
+          case CODE_NO_HELP -> "Help asset missing";
+          case CODE_NO_TOPPER -> "Topper asset missing";
+          case CODE_NO_BACKGLASS -> "Backglass asset missing";
+          case CODE_NO_DMD -> "DMD asset missing";
+          case CODE_NO_PLAYFIELD -> "Playfield asset missing";
+          case CODE_NO_LOADING -> "Loading asset missing";
+          case CODE_NO_OTHER2 -> "Other2 asset missing";
+          case CODE_NO_WHEEL_IMAGE -> "Wheel image missing";
+          case CODE_NO_LOGO -> "Logo asset missing";
+          case CODE_ALT_SOUND_NOT_ENABLED -> "ALT sound not enabled";
+          case CODE_ALT_SOUND_FILE_MISSING -> "ALT sound files are missing in the installation";
+          case CODE_FORCE_STEREO -> "Force Stereo not enabled";
+          case CODE_PUP_PACK_FILE_MISSING -> "PUP pack media file missing";
+          case CODE_MUSIC_FILE_MISSING -> "Music file missing";
+          case CODE_VPS_MAPPING_MISSING -> "VP-Spreadsheet: Table mapping is missing";
+          case CODE_VPS_ALTCOLOR_MISSING -> "VP-Spreadsheet: ALT color files available";
+          case CODE_VPS_ALTSOUND_MISSING -> "VP-Spreadsheet: ALT sound bundles available";
+          case CODE_VPS_PUPPACK_MISSING -> "VP-Spreadsheet: PUP pack available";
+          case CODE_ALT_COLOR_COLORIZE_DMD_ENABLED -> "Colorize DMD not enabled";
+          case CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED -> "External DMD not enabled";
+          case CODE_ALT_COLOR_FILES_MISSING -> "ALT color files are missing in the installation";
+          case CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING -> "DMD device files missing";
+          case CODE_SCRIPT_CONTROLLER_STOP_MISSING -> "Controller.stop call missing";
+          case CODE_SCRIPT_FILES_MISSING -> "Included script missing";
+          default -> "Unknown validation code (" + code + ")";
+      };
   }
 
   static List<Integer> values() {

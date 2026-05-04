@@ -420,7 +420,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
         List<VpsTableVersion> tableFiles = vpsTable.getTableFiles();
         Optional<VpsTableVersion> tableVersion = tableFiles.stream().filter(t -> t.getId().equals(game.getExtTableVersionId())).findFirst();
         if (tableVersion.isPresent() && !tableVersion.get().getUrls().isEmpty()) {
-          downloadLinkField.setText(tableVersion.get().getUrls().get(0).getUrl());
+          downloadLinkField.setText(tableVersion.get().getUrls().getFirst().getUrl());
         }
       }
     }
@@ -535,7 +535,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     });
 
     List<String> badges = new ArrayList<>(client.getCompetitionService().getCompetitionBadges());
-    badges.add(0, null);
+    badges.addFirst(null);
     ObservableList<String> imageList = FXCollections.observableList(badges);
     competitionIconCombo.setItems(imageList);
     competitionIconCombo.setCellFactory(c -> new CompetitionImageListCell(client));

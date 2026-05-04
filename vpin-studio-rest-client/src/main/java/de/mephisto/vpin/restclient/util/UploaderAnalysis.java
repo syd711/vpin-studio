@@ -511,138 +511,132 @@ public class UploaderAnalysis {
   }
 
   public String validateAssetTypeInArchive(AssetType assetType) {
-    switch (assetType) {
-      case VPX: {
-        if (hasFileWithSuffix("vpx")) {
-          return null;
-        }
-        return "This archive does not not contain a .vpx file.";
-      }
-      case VPT: {
-        if (hasFileWithSuffix("vpt")) {
-          return null;
-        }
-        return "This archive does not not contain a .vpt file.";
-      }
-      case FPT: {
-        if (hasFileWithSuffix("fpt")) {
-          return null;
-        }
-        return "This archive does not not contain a .fpt file.";
-      }
-      case DIRECTB2S: {
-        if (hasFileWithSuffix("directb2s")) {
-          return null;
-        }
-        return "This archive does not not contain a .directb2s file.";
-      }
-      case RES: {
-        if (hasFileWithSuffix("res")) {
-          return null;
-        }
-        return "This archive does not not contain a .res file.";
-      }
-      case ROM: {
-        if ((isRom() || hasFileWithSuffixAndNot("zip", "pup", "pov")) && !isFpTable()) {
-          return null;
-        }
-        return "This archive does not not contain a ROM file.";
-      }
-      case DMD_PACK: {
-        if (isDMD()) {
-          return null;
-        }
-        return "This archive does not not contain a DMD bundle.";
-      }
-      case FP_MODEL_PACK: {
-        if (!getFpModelPacks().isEmpty()) {
-          return null;
-        }
-        return "This archive does not not contain a Future Pinball Model bundle.";
-      }
-      case DIF: {
-        if (hasFileWithSuffix("dif")) {
-          return null;
-        }
-        return "This archive does not not contain a .dif file.";
-      }
-      case ALT_SOUND: {
-        if (isAltSound()) {
-          return null;
-        }
-        return "This archive is not a valid ALT sound package.";
-      }
-      case NV: {
-        if (hasFileWithSuffix(NVRAM_SUFFIX)) {
-          return null;
-        }
-        return "This archive does not have a .nv file.";
-      }
-      case FPL: {
-        if (hasFileWithSuffix(FPL_SUFFIX)) {
-          return null;
-        }
-        return "This archive does not have a .fpl file.";
-      }
-      case CFG: {
-        if (hasFileWithSuffix(CFG_SUFFIX)) {
-          return null;
-        }
-        return "This archive does not have a .cfg file.";
-      }
-      case BAM_CFG: {
-        if (hasFileWithSuffix(BAM_CFG_SUFFIX)) {
-          return null;
-        }
-        return "This archive does not have a BAM .cfg file.";
-      }
-      case ALT_COLOR:
-      case PAC:
-      case VNI:
-      case CRZ:
-      case CROMC:
-      case PAL: {
-        if (isAltColor()) {
-          return null;
-        }
-        return "This archive is not a valid ALT color package.";
-      }
-      case MUSIC:
-      case MUSIC_BUNDLE: {
-        if (isMusic()) {
-          return null;
-        }
-        return "This archive is not a valid music files.";
-      }
-      case PUP_PACK: {
-        if (isPUPPack()) {
-          return null;
-        }
-        return "This archive is not a valid PUP pack.";
-      }
-      case FRONTEND_MEDIA: {
-        if (isMediaPack()) {
-          return null;
-        }
-        return "This archive is not a valid media pack.";
-      }
-      case POV: {
-        if (hasFileWithSuffix("pov")) {
-          return null;
-        }
-        return "This archive does not not contain a .pov file.";
-      }
-      case INI: {
-        if (hasFileWithSuffixAndNot("ini", "pinup")) {
-          return null;
-        }
-        return "This archive does not not contain a .ini file.";
-      }
-      default: {
-        LOG.error("Unmapped asset type: {}", assetType + "/" + assetType.name());
-        throw new UnsupportedOperationException("Unmapped asset type: " + assetType + "/" + assetType.name());
-      }
-    }
+      return switch (assetType) {
+          case VPX -> {
+              if (hasFileWithSuffix("vpx")) {
+                  yield null;
+              }
+              yield "This archive does not not contain a .vpx file.";
+          }
+          case VPT -> {
+              if (hasFileWithSuffix("vpt")) {
+                  yield null;
+              }
+              yield "This archive does not not contain a .vpt file.";
+          }
+          case FPT -> {
+              if (hasFileWithSuffix("fpt")) {
+                  yield null;
+              }
+              yield "This archive does not not contain a .fpt file.";
+          }
+          case DIRECTB2S -> {
+              if (hasFileWithSuffix("directb2s")) {
+                  yield null;
+              }
+              yield "This archive does not not contain a .directb2s file.";
+          }
+          case RES -> {
+              if (hasFileWithSuffix("res")) {
+                  yield null;
+              }
+              yield "This archive does not not contain a .res file.";
+          }
+          case ROM -> {
+              if ((isRom() || hasFileWithSuffixAndNot("zip", "pup", "pov")) && !isFpTable()) {
+                  yield null;
+              }
+              yield "This archive does not not contain a ROM file.";
+          }
+          case DMD_PACK -> {
+              if (isDMD()) {
+                  yield null;
+              }
+              yield "This archive does not not contain a DMD bundle.";
+          }
+          case FP_MODEL_PACK -> {
+              if (!getFpModelPacks().isEmpty()) {
+                  yield null;
+              }
+              yield "This archive does not not contain a Future Pinball Model bundle.";
+          }
+          case DIF -> {
+              if (hasFileWithSuffix("dif")) {
+                  yield null;
+              }
+              yield "This archive does not not contain a .dif file.";
+          }
+          case ALT_SOUND -> {
+              if (isAltSound()) {
+                  yield null;
+              }
+              yield "This archive is not a valid ALT sound package.";
+          }
+          case NV -> {
+              if (hasFileWithSuffix(NVRAM_SUFFIX)) {
+                  yield null;
+              }
+              yield "This archive does not have a .nv file.";
+          }
+          case FPL -> {
+              if (hasFileWithSuffix(FPL_SUFFIX)) {
+                  yield null;
+              }
+              yield "This archive does not have a .fpl file.";
+          }
+          case CFG -> {
+              if (hasFileWithSuffix(CFG_SUFFIX)) {
+                  yield null;
+              }
+              yield "This archive does not have a .cfg file.";
+          }
+          case BAM_CFG -> {
+              if (hasFileWithSuffix(BAM_CFG_SUFFIX)) {
+                  yield null;
+              }
+              yield "This archive does not have a BAM .cfg file.";
+          }
+          case ALT_COLOR, PAC, VNI, CRZ, CROMC, PAL -> {
+              if (isAltColor()) {
+                  yield null;
+              }
+              yield "This archive is not a valid ALT color package.";
+          }
+          case MUSIC, MUSIC_BUNDLE -> {
+              if (isMusic()) {
+                  yield null;
+              }
+              yield "This archive is not a valid music files.";
+          }
+          case PUP_PACK -> {
+              if (isPUPPack()) {
+                  yield null;
+              }
+              yield "This archive is not a valid PUP pack.";
+          }
+          case FRONTEND_MEDIA -> {
+              if (isMediaPack()) {
+                  yield null;
+              }
+              yield "This archive is not a valid media pack.";
+          }
+          case POV -> {
+              if (hasFileWithSuffix("pov")) {
+                  yield null;
+              }
+              yield "This archive does not not contain a .pov file.";
+          }
+          case INI -> {
+              if (hasFileWithSuffixAndNot("ini", "pinup")) {
+                  yield null;
+              }
+              yield "This archive does not not contain a .ini file.";
+          }
+          default -> {
+              LOG.error("Unmapped asset type: {}", assetType + "/" + assetType.name());
+              throw new UnsupportedOperationException("Unmapped asset type: " + assetType + "/" + assetType.name());
+          }
+      };
   }
 
   public List<AssetType> getAssetTypes() {

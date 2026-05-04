@@ -75,7 +75,7 @@ public class FrontendServiceTest extends AbstractVPinServerTest {
         List<Integer> gameIds = connector.getGameIds(1);
         assertFalse(gameIds.isEmpty());
 
-        Game game = connector.getGame(games.get(0).getId());
+        Game game = connector.getGame(games.getFirst().getId());
         assertNotNull(game);
 
         Game gameByFilename = connector.getGameByFilename(emuId, game.getGameFile().getName());

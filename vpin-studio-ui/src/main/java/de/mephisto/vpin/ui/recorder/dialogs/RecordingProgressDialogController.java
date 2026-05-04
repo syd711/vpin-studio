@@ -275,7 +275,7 @@ public class RecordingProgressDialogController implements Initializable, DialogC
     vpxSettings.setVisible(emulator.isVpxEmulator());
 
     if (recordingDataSummary.size() == 1) {
-      GameRepresentation game = client.getGameService().getGame(recordingDataSummary.getRecordingData().get(0).getGameId());
+      GameRepresentation game = client.getGameService().getGame(recordingDataSummary.getRecordingData().getFirst().getGameId());
       tablesLabel.setText(game.getGameDisplayName());
     }
 

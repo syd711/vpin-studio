@@ -18,7 +18,7 @@ public class BackupsColumnSorter implements BaseColumnSorter<BackupModel> {
     Comparator<BackupModel> comp = null;
 
     if (!tableView.getSortOrder().isEmpty()) {
-      TableColumn<BackupModel, ?> column = tableView.getSortOrder().get(0);
+      TableColumn<BackupModel, ?> column = tableView.getSortOrder().getFirst();
 
       if (column.equals(tableOverviewController.nameColumn)) {
         comp = Comparator.comparing(o -> o.getName().toLowerCase());

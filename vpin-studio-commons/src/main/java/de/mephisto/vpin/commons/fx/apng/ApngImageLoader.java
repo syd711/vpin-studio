@@ -60,17 +60,13 @@ public class ApngImageLoader extends ImageLoaderImpl {
    * Palette based image is not an option, as they are transformed on the fly by the decoder into PNG_COLOR_RGB or PNG_COLOR_RGB_ALPHA
    */
   private ImageType colorTypeToImageType(int colorType) {
-    switch (colorType) {
-      case ApngDecoder.PNG_COLOR_GRAY:
-        return ImageType.GRAY;
-      case ApngDecoder.PNG_COLOR_RGB:
-        return ImageType.RGB;
-      case ApngDecoder.PNG_COLOR_GRAY_ALPHA:
-        return ImageType.GRAY_ALPHA;
-      case ApngDecoder.PNG_COLOR_RGB_ALPHA:
-        return ImageType.RGBA;
-      default: // unreacheble
-        throw new RuntimeException("not supported colorType " + colorType);
-    }
+      // unreacheble
+      return switch (colorType) {
+          case ApngDecoder.PNG_COLOR_GRAY -> ImageType.GRAY;
+          case ApngDecoder.PNG_COLOR_RGB -> ImageType.RGB;
+          case ApngDecoder.PNG_COLOR_GRAY_ALPHA -> ImageType.GRAY_ALPHA;
+          case ApngDecoder.PNG_COLOR_RGB_ALPHA -> ImageType.RGBA;
+          default -> throw new RuntimeException("not supported colorType " + colorType);
+      };
   }
 }

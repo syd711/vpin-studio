@@ -56,21 +56,15 @@ public class HighscoreResolver implements InitializingBean {
     public File getHighscoreFile(Game game) {
         HighscoreType highscoreType = game.getHighscoreType();
         if (highscoreType != null) {
-            switch (highscoreType) {
-                case EM: {
-                    return folderLookupService.getHighscoreTextFile(game);
-                }
-                case VPReg: {
+            return switch (highscoreType) {
+                case EM -> folderLookupService.getHighscoreTextFile(game);
+                case VPReg -> {
                     VPRegFile vpRegFileForGame = folderLookupService.getVPRegFileForGame(game);
-                    return vpRegFileForGame.getFile();
+                    yield vpRegFileForGame.getFile();
                 }
-                case NVRam: {
-                    return getNvRamFile(game);
-                }
-                case Ini: {
-                    return getHighscoreIniFile(game);
-                }
-            }
+                case NVRam -> getNvRamFile(game);
+                case Ini -> getHighscoreIniFile(game);
+            };
         }
         return null;
     }

@@ -379,7 +379,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       }
     }
     FrontendMediaUploadProgressModel model = new FrontendMediaUploadProgressModel(game,
-        screenName + " Media Upload", Arrays.asList(tmp.toFile()), screen, append);
+        screenName + " Media Upload", List.of(tmp.toFile()), screen, append);
     ProgressDialog.createProgressDialog(model);
   }
 
@@ -622,7 +622,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
         .setOnDragDropped(e -> {
           List<File> files = e.getDragboard().getFiles();
           if (files != null && files.size() == 1) {
-            File selection = files.get(0);
+            File selection = files.getFirst();
             Platform.runLater(() -> {
               BackglassManagerControllerUtils.updateDMDImage(getEmulatorId(), getSelectedVersion(), game, selection);
             });
@@ -830,7 +830,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
         directB2SCombo.setVisible(false);
         directB2SLabel.setVisible(true);
 
-        directB2SLabel.setText(versions.get(0));
+        directB2SLabel.setText(versions.getFirst());
       }  
     }
     else {

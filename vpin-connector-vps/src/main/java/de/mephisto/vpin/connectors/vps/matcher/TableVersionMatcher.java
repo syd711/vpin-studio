@@ -31,7 +31,7 @@ public class TableVersionMatcher {
     
     // one single file, returns it
     if (tableFiles.size()==1) {
-        return tableFiles.get(0);
+        return tableFiles.getFirst();
     }
 
     // Clean version

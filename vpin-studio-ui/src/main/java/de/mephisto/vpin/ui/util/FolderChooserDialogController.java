@@ -100,7 +100,7 @@ public class FolderChooserDialogController implements Initializable, DialogContr
           treeView.refresh();
           treeView.getRoot().setExpanded(true);
 
-          treeView.getRoot().getChildren().get(0).setExpanded(true);
+          treeView.getRoot().getChildren().getFirst().setExpanded(true);
 
           if (path != null) {
             for (TreeItem t : roots) {

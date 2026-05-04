@@ -64,16 +64,13 @@ public class VPinScreenService implements InitializingBean {
   //---------------------------------------------------
 
   public FrontendPlayerDisplay getScreenDisplay(VPinScreen screen) {
-    switch (screen) {
-      case PlayField:
-        return firstDefined(screen, getVpxDisplays(false), getFrontendDisplays(false));
-      case BackGlass:
-        return firstDefined(screen, getVpxDisplays(false), getScreenResDisplays(), getFrontendDisplays(false));
-      case Menu:
-        return firstDefined(screen, getVpxDisplays(false), getScreenResDisplays(), getFrontendDisplays(false));
-      default:
-        return firstDefined(screen, getFrontendDisplays(false));
-    }
+      return switch (screen) {
+          case PlayField -> firstDefined(screen, getVpxDisplays(false), getFrontendDisplays(false));
+          case BackGlass ->
+                  firstDefined(screen, getVpxDisplays(false), getScreenResDisplays(), getFrontendDisplays(false));
+          case Menu -> firstDefined(screen, getVpxDisplays(false), getScreenResDisplays(), getFrontendDisplays(false));
+          default -> firstDefined(screen, getFrontendDisplays(false));
+      };
   }
 
   public FrontendPlayerDisplay getRecordingScreenDisplay(VPinScreen screen) {
@@ -382,7 +379,7 @@ public class VPinScreenService implements InitializingBean {
     List<FrontendPlayerDisplay> displays = new ArrayList<>();
     List<MonitorInfo> monitors = systemService.getMonitorInfos();
 
-    if (screenres != null && monitors.size() > 0) {
+    if (screenres != null && !monitors.isEmpty()) {
       MonitorInfo monitor = getBackglassMonitor(screenres, monitors);
 
       FrontendPlayerDisplay playfield = new FrontendPlayerDisplay(VPinScreen.PlayField);

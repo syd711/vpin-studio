@@ -86,19 +86,12 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
     if (game == null) {
       return;
     }
-    VPinScreen screen = VPinScreen.BackGlass;
-    switch (designMode) {
-      case wheel:
-        screen = VPinScreen.Wheel;
-        break;
-      case highscoreCard:
-        screen = VPinScreen.Other2;
-        break;
-      case instructionCard:
-        screen = VPinScreen.GameHelp;
-        break;
-    }
-    TableDialogs.openTableAssetsDialog(null, game, screen);
+    VPinScreen screen = switch (designMode) {
+        case wheel -> VPinScreen.Wheel;
+        case highscoreCard -> VPinScreen.Other2;
+        case instructionCard -> VPinScreen.GameHelp;
+    };
+      TableDialogs.openTableAssetsDialog(null, game, screen);
   }
 
   @FXML

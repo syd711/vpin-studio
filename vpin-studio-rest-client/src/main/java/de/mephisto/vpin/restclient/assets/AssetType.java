@@ -145,12 +145,10 @@ public enum AssetType {
       };
   }
 
-  public String getExtension() {
-    switch (this) {
-      case FP_MODEL_PACK: {
-        return "zip";
-      }
+    public String getExtension() {
+        return switch (this) {
+            case FP_MODEL_PACK -> "zip";
+            default -> name().toLowerCase();
+        };
     }
-    return name().toLowerCase();
-  }
 }

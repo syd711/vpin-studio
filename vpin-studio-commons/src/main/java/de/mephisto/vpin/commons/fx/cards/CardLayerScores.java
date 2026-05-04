@@ -268,7 +268,7 @@ public class CardLayerScores extends Canvas implements CardLayer {
       if (this.lines.isEmpty()) {
         return 0;
       }
-      Text theText = new Text(this.lines.get(0));
+      Text theText = new Text(this.lines.getFirst());
       theText.setFont(font);
       return (int) (theText.getBoundsInLocal().getHeight() * this.lines.size()) + (this.lines.size() * template.getRowMargin());
     }

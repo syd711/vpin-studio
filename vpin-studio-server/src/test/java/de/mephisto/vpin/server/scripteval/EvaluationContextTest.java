@@ -123,7 +123,7 @@ public class EvaluationContextTest {
     List<BigDecimal> values = (List<BigDecimal>) res[0]; 
     
     assertEquals(4, values.size());
-    assertEquals(4, values.get(0).intValue());
+    assertEquals(4, values.getFirst().intValue());
     assertEquals(2, values.get(1).intValue());
     assertEquals(2, values.get(2).intValue());
     assertEquals(2, values.get(3).intValue());

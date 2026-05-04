@@ -235,7 +235,7 @@ public class HighscoreService implements InitializingBean {
 
         List<RankedPlayer> rankedPlayers = new ArrayList<>(playerMap.values());
         for (RankedPlayer rankedPlayer : rankedPlayers) {
-            rankedPlayer.setPoints(rankedPlayer.getPoints() + (points.get(0) * rankedPlayer.getFirst()));
+            rankedPlayer.setPoints(rankedPlayer.getPoints() + (points.getFirst() * rankedPlayer.getFirst()));
             rankedPlayer.setPoints(rankedPlayer.getPoints() + (points.get(1) * rankedPlayer.getSecond()));
             rankedPlayer.setPoints(rankedPlayer.getPoints() + (points.get(2) * rankedPlayer.getThird()));
             rankedPlayer.setPoints(rankedPlayer.getPoints() + (points.get(3) * rankedPlayer.getCompetitionsWon()));
@@ -290,7 +290,7 @@ public class HighscoreService implements InitializingBean {
         scoreList.getScores().sort(Comparator.comparing(ScoreSummary::getCreatedAt));
 
         if (!scoreList.getScores().isEmpty()) {
-            scoreList.setLatestScore(scoreList.getScores().get(0));
+            scoreList.setLatestScore(scoreList.getScores().getFirst());
         }
         return scoreList;
     }

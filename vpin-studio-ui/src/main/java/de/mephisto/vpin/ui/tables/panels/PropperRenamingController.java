@@ -199,7 +199,7 @@ public class PropperRenamingController implements Initializable {
       if (vpsTableVersion != null) {
         if (authorBtn.isSelected() && vpsTableVersion.getAuthors() != null && !vpsTableVersion.getAuthors().isEmpty()) {
           builder.append(" ");
-          builder.append(vpsTableVersion.getAuthors().get(0));
+          builder.append(vpsTableVersion.getAuthors().getFirst());
         }
 
         if (versionBtn.isSelected() && !StringUtils.isEmpty(vpsTableVersion.getVersion())) {

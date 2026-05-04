@@ -89,7 +89,7 @@ public class ScriptTest {
     assertEquals("SEPF.UltraDMD", result.getDMDProjectFolder());
 
     assertEquals(2, result.getScripts().size());
-    assertEquals("UltraDMD_Options.vbs", result.getScripts().get(0));
+    assertEquals("UltraDMD_Options.vbs", result.getScripts().getFirst());
     assertEquals("includedScript.vbs", result.getScripts().get(1));
   }
 

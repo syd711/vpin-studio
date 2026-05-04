@@ -147,7 +147,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
   public final void onFolder() {
     ObservableList<BackupModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
-      BackupDescriptorRepresentation descriptor = selectedItems.get(0).getBean();
+      BackupDescriptorRepresentation descriptor = selectedItems.getFirst().getBean();
       BackupSourceRepresentation source = sourceCombo.getValue();
 
       File file = new File(source.getLocation(), descriptor.getFilename());
@@ -252,7 +252,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
     if (!selectedItems.isEmpty()) {
       String title = "Delete the " + selectedItems.size() + " selected archives?";
       if (selectedItems.size() == 1) {
-        title = "Delete Archive \"" + selectedItems.get(0).getName() + "\"?";
+        title = "Delete Archive \"" + selectedItems.getFirst().getName() + "\"?";
       }
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title, null, null, "Delete");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {

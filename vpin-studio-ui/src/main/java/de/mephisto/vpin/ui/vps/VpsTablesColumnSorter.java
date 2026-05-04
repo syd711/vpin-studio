@@ -24,7 +24,7 @@ public class VpsTablesColumnSorter implements BaseColumnSorter<VpsTableModel> {
     Comparator<VpsTableModel> comp = null;
 
     if (!tableView.getSortOrder().isEmpty()) {
-      TableColumn<VpsTableModel, ?> column = tableView.getSortOrder().get(0);
+      TableColumn<VpsTableModel, ?> column = tableView.getSortOrder().getFirst();
 
       if (column.equals(vpsTablesController.installedColumn)) {
         comp = Comparator.comparing(o -> !o.isInstalled());

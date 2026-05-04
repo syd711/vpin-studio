@@ -232,7 +232,7 @@ public class HighscoreParserTest extends AbstractVPinServerTest {
         assertFalse(test.isEmpty());
         assertTrue(test.size() > 3);
 
-        Score score = test.get(0);
+        Score score = test.getFirst();
         assertEquals(75000000, score.getScore());
         assertEquals("OPT", score.getPlayerInitials());
 

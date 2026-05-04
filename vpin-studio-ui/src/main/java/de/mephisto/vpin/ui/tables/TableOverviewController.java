@@ -1268,7 +1268,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         row.getChildren().add(compBtn);
         compBtn.setOnAction(event -> {
           Platform.runLater(() -> {
-            CompetitionType competitionType = value.getCompetitionTypes().get(0);
+            CompetitionType competitionType = value.getCompetitionTypes().getFirst();
             NavigationController.navigateTo(NavigationItem.Competitions, new NavigationOptions(competitionType));
           });
         });
@@ -1792,7 +1792,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }
     else {
       setValidationVisible(false);
-      NavigationController.setBreadCrumb(Arrays.asList("Tables"));
+      NavigationController.setBreadCrumb(List.of("Tables"));
     }
 
     if (getSelections().size() > 1) {
@@ -1824,7 +1824,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   @Override
   public void onViewActivated(NavigationOptions options) {
-    NavigationController.setBreadCrumb(Arrays.asList("Tables"));
+    NavigationController.setBreadCrumb(List.of("Tables"));
 
     refreshEmulators();
     if (this.models == null) {
@@ -1868,7 +1868,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       refreshView(null);
     }
     else {
-      GameRepresentationModel model = c.getList().get(0);
+      GameRepresentationModel model = c.getList().getFirst();
       GameRepresentation gameRepresentation = model.getGame();
       playButtonController.setDisable(gameRepresentation.getGameFilePath() == null);
       playButtonController.setData(gameRepresentation);

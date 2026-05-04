@@ -65,7 +65,7 @@ public class VPSTest {
       List<VpsDiffer> diff = vpsNew.diff(vpsOld.getTables(), vpsNew.getTables(), Collections.emptyList());
       assertFalse(diff.isEmpty());
 
-      List<VpsDiffer> diff2 = vpsNew.diff(vpsOld.getTables(), vpsNew.getTables(), Arrays.asList("bigus"));
+      List<VpsDiffer> diff2 = vpsNew.diff(vpsOld.getTables(), vpsNew.getTables(), List.of("bigus"));
       assertFalse(diff2.size() == diff.size());
     }
   }
@@ -81,14 +81,14 @@ public class VPSTest {
       assertFalse(diff.isEmpty());
       assertEquals(1, diff.size());
 
-      VpsDiffer diffTable1 = diff.get(0);
+      VpsDiffer diffTable1 = diff.getFirst();
       VPSChanges tableChanges = diffTable1.getTableChanges();
       assertFalse(tableChanges.isEmpty());
 
       List<VPSChange> changes = tableChanges.getChanges();
       assertEquals(2, changes.size());
       assertTrue(changes.stream().filter(c -> c.getDiffType().equals(VpsDiffTypes.tableVersionUpdate)).findFirst().isPresent());
-      assertEquals(1, changes.stream().filter(c -> c.getDiffType().equals(VpsDiffTypes.b2s)).collect(Collectors.toList()).size());
+      assertEquals(1, changes.stream().filter(c -> c.getDiffType().equals(VpsDiffTypes.b2s)).toList().size());
     }
   }
 
@@ -148,7 +148,7 @@ public class VPSTest {
     }
 
     assertEquals(1, vpsTables.size());
-    assertEquals("2 in 1 (Bally 1964)", vpsTables.get(0).getDisplayName());
+    assertEquals("2 in 1 (Bally 1964)", vpsTables.getFirst().getDisplayName());
 
     vpsTables = vps.find("X-Files");
     assertTrue(!vpsTables.isEmpty());

@@ -48,7 +48,7 @@ public class VpsTutorialColumn extends HBox {
 
       for (VpsTutorialUrls tutorialFile : tutorialFiles) {
         if (tutorialFile.getUrls() != null && !tutorialFile.getUrls().isEmpty()) {
-          VpsUrl vpsUrl = tutorialFile.getUrls().get(0);
+          VpsUrl vpsUrl = tutorialFile.getUrls().getFirst();
           if (!vpsUrl.isBroken()) {
             Button btn = new Button();
             btn.getStyleClass().add("table-media-button");

@@ -16,6 +16,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -299,7 +300,7 @@ public class ServerUpdatePreProcessing {
                 return false;
             }
 
-            if (entry.getCrc32() != null && !StringUtils.equals(stats.crc32Hex, entry.getCrc32())) {
+            if (entry.getCrc32() != null && !Strings.CI.equals(stats.crc32Hex, entry.getCrc32())) {
                 LOG.info("CRC32 mismatch for {}: local={}, manifest={}", entry.getName(), stats.crc32Hex, entry.getCrc32());
                 return false;
             }

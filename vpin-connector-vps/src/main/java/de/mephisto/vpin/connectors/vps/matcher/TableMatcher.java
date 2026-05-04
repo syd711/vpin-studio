@@ -35,7 +35,7 @@ public class TableMatcher {
 
   public VpsTable findClosest(String[] tableFormats, String fileName, String rom, String tableName, String manuf, int year, List<VpsTable> tables) {
     List<VpsTable> matches = findAllClosest(tableFormats, fileName, rom, tableName, manuf, year, tables);
-    return matches.size() > 0 ? matches.get(0) : null;
+    return matches.size() > 0 ? matches.getFirst() : null;
   }
 
   public List<VpsTable> findAllClosest(String[] tableFormats, String fileName, String rom, String tableName, String manuf, int year, List<VpsTable> tables) {

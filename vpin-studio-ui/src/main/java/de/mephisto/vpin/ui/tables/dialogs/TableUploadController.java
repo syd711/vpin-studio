@@ -582,7 +582,7 @@ public class TableUploadController implements Initializable, DialogController {
     this.fileNameField.textProperty().addListener((observableValue, s, t1) -> uploadBtn.setDisable(StringUtils.isEmpty(t1)));
 
     List<GameEmulatorRepresentation> gameEmulators = Studio.client.getEmulatorService().getValidatedGameEmulators().stream().filter(e -> e.isFpEmulator() || e.isVpxEmulator()).collect(Collectors.toList());
-    emulatorRepresentation = gameEmulators.get(0);
+    emulatorRepresentation = gameEmulators.getFirst();
     ObservableList<GameEmulatorRepresentation> emulators = FXCollections.observableList(gameEmulators);
     emulatorCombo.setItems(emulators);
     emulatorCombo.setValue(emulatorRepresentation);

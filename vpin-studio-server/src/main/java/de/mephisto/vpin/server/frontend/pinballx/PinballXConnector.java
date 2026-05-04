@@ -249,15 +249,11 @@ public class PinballXConnector extends BaseConnector {
   }
 
   private int systemTypeFromType(EmulatorType type) {
-    switch (type) {
-      case VisualPinball:
-      case VisualPinball9:
-        return 1;
-      case FuturePinball:
-        return 2;
-      default:
-        return 0;
-    }
+      return switch (type) {
+          case VisualPinball, VisualPinball9 -> 1;
+          case FuturePinball -> 2;
+          default -> 0;
+      };
   }
 
   private String safeNameFromType(EmulatorType type) {
@@ -439,17 +435,11 @@ public class PinballXConnector extends BaseConnector {
     // needed for named emulator
     else if (s.containsKey("SystemType")) {
       int systemType = s.getInt("SystemType");
-      switch (systemType) {
-        case 1:
-          type = EmulatorType.VisualPinball;
-          break; // Visual Pinball
-        case 2:
-          type = EmulatorType.FuturePinball;
-          break; // Future Pinball
-        default:
-          type = EmulatorType.fromName(emuname);
-          break; // Custom Exe, use name
-      }
+        type = switch (systemType) {
+            case 1 -> EmulatorType.VisualPinball; // Visual Pinball
+            case 2 -> EmulatorType.FuturePinball; // Future Pinball
+            default -> EmulatorType.fromName(emuname); // Custom Exe, use name
+        };
     }
     else {
       type = EmulatorType.fromName(emuname);

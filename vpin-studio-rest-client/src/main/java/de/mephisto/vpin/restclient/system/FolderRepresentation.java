@@ -11,7 +11,7 @@ public class FolderRepresentation extends FileRepresentation {
 
   public FolderRepresentation(File file) {
     try {
-      this.setName(file.getName().equals("") ? file.getCanonicalPath() : file.getName());
+      this.setName(file.getName().isEmpty() ? file.getCanonicalPath() : file.getName());
       this.setPath(file.getAbsolutePath());
     }
     catch (IOException e) {

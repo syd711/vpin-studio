@@ -374,7 +374,7 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
       @Override
       public Boolean call(TableView<WeeklyCompetitionModel> gameRepresentationTableView) {
         if (!gameRepresentationTableView.getSortOrder().isEmpty()) {
-          TableColumn<WeeklyCompetitionModel, ?> column = gameRepresentationTableView.getSortOrder().get(0);
+          TableColumn<WeeklyCompetitionModel, ?> column = gameRepresentationTableView.getSortOrder().getFirst();
           if (column.equals(tableColumn)) {
             Collections.sort(tableView.getItems(), Comparator.comparing(o -> o.competition != null ? o.competition.getName() : null));
             if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {

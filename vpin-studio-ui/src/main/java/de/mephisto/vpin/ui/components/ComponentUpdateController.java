@@ -68,7 +68,7 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
     ComponentCheckProgressModel model = new ComponentCheckProgressModel("Checking Status for " + type, install);
     ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
     if (!resultModel.getResults().isEmpty()) {
-      ComponentActionLogRepresentation log = (ComponentActionLogRepresentation) resultModel.getResults().get(0);
+      ComponentActionLogRepresentation log = (ComponentActionLogRepresentation) resultModel.getResults().getFirst();
       setText(log.toString());
       EventManager.getInstance().notify3rdPartyVersionUpdate(type);
     }
@@ -112,7 +112,7 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
         ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
 
         if (!resultModel.getResults().isEmpty()) {
-          ComponentActionLogRepresentation log = (ComponentActionLogRepresentation) resultModel.getResults().get(0);
+          ComponentActionLogRepresentation log = (ComponentActionLogRepresentation) resultModel.getResults().getFirst();
           setText(log.toString());
         }
         else {
@@ -155,7 +155,7 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
         ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
 
         if (resultModel.getResults().size() > 0) {
-          ComponentActionLogRepresentation log = (ComponentActionLogRepresentation) resultModel.getResults().get(0);
+          ComponentActionLogRepresentation log = (ComponentActionLogRepresentation) resultModel.getResults().getFirst();
           setText(log.toString());
         }
 
@@ -210,7 +210,7 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
         releasesCombo.setValue(release);
       }
       else {
-        releasesCombo.setValue(component.getReleases().get(0));
+        releasesCombo.setValue(component.getReleases().getFirst());
       }
 
       release = releasesCombo.getValue();
@@ -221,7 +221,7 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
       List<String> collect = release.getArtifacts();
       if (!collect.isEmpty()) {
         artifactCombo.setItems(FXCollections.observableList(collect));
-        artifactCombo.setValue(collect.get(0));
+        artifactCombo.setValue(collect.getFirst());
       }
       if (artifactId != null) {
         artifactCombo.setValue(artifactId);

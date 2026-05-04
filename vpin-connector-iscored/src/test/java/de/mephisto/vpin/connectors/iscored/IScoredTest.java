@@ -26,7 +26,7 @@ public class IScoredTest {
     gameRoom = IScored.getGameRoom("https://www.iScored.info?mode=public&user=Syd", false);
     assertNotNull(gameRoom);
 
-    IScoredResult iScoredResult = IScored.submitScore(gameRoom, games.get(0), "Matthias", "MFA", 999999);
+    IScoredResult iScoredResult = IScored.submitScore(gameRoom, games.getFirst(), "Matthias", "MFA", 999999);
     assertNotNull(iScoredResult);
     assertEquals(200, iScoredResult.getReturnCode());
   }

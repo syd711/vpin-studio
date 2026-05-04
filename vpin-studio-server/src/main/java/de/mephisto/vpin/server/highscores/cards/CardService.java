@@ -248,19 +248,16 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
   }
 
   public int[] getCardResolution(CardTemplateType templateType) {
-    switch (templateType) {
-      case HIGSCORE_CARD: {
-        if (cardSettings.isCustomResolution()) {
-          return new int[]{cardSettings.getCardWidth(), cardSettings.getCardHeight()};
-        }
-        return new int[]{cardSettings.getCardResolution().toWidth(), cardSettings.getCardResolution().toHeight()};
-      }
-      case INSTRUCTIONS_CARD:
-        return new int[]{CardResolution.HDReady.toWidth(), CardResolution.HDReady.toHeight()};
-      case WHEEL:
-        return new int[]{CardResolution.WHEEL.toWidth(), CardResolution.WHEEL.toHeight()};
-    }
-    return new int[]{CardResolution.HDReady.toWidth(), CardResolution.HDReady.toHeight()};
+      return switch (templateType) {
+          case HIGSCORE_CARD -> {
+              if (cardSettings.isCustomResolution()) {
+                  yield new int[]{cardSettings.getCardWidth(), cardSettings.getCardHeight()};
+              }
+              yield new int[]{cardSettings.getCardResolution().toWidth(), cardSettings.getCardResolution().toHeight()};
+          }
+          case INSTRUCTIONS_CARD -> new int[]{CardResolution.HDReady.toWidth(), CardResolution.HDReady.toHeight()};
+          case WHEEL -> new int[]{CardResolution.WHEEL.toWidth(), CardResolution.WHEEL.toHeight()};
+      };
   }
 
 //-----------------------------------------

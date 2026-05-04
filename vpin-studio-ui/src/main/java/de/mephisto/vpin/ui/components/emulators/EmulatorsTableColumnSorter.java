@@ -18,7 +18,7 @@ public class EmulatorsTableColumnSorter implements BaseColumnSorter<EmulatorMode
   public Comparator<EmulatorModel> buildComparator(TableView<EmulatorModel> tableView) {
     Comparator<EmulatorModel> comp = null;
     if (!tableView.getSortOrder().isEmpty()) {
-      TableColumn<EmulatorModel, ?> column = tableView.getSortOrder().get(0);
+      TableColumn<EmulatorModel, ?> column = tableView.getSortOrder().getFirst();
 
       if (column.equals(tableController.columnName)) {
         comp = Comparator.comparing(o -> o.getName());

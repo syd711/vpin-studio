@@ -69,7 +69,7 @@ public class GameValidationTexts {
       }
       case CODE_NVOFFSET_MISMATCH: {
         label = "\"NVOffset\" mismatch found.";
-        text = "This table has an \"NVOffset\" of \"" + state.getOptions().get(1) + "\" and shares the ROM with table \"" + state.getOptions().get(0) + "\" which has the NVOffset value \"" + state.getOptions().get(2) + "\".";
+        text = "This table has an \"NVOffset\" of \"" + state.getOptions().get(1) + "\" and shares the ROM with table \"" + state.getOptions().getFirst() + "\" which has the NVOffset value \"" + state.getOptions().get(2) + "\".";
         break;
       }
       case CODE_NO_DIRECTB2S_OR_PUPPACK: {

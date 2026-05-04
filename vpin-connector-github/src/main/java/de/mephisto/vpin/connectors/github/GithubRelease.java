@@ -60,7 +60,7 @@ public class GithubRelease {
   @Nullable
   public ReleaseArtifact getLatestArtifact() {
     if (!this.artifacts.isEmpty()) {
-      return this.artifacts.get(0);
+      return this.artifacts.getFirst();
     }
     return null;
   }

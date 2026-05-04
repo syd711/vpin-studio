@@ -23,7 +23,7 @@ public class PinballXAssetsAdapterTest {
     
     assets = adapter.search("Visual Pinball", "PlayField", null, "250Cc");
     assertEquals(2, assets.size());
-    assertEquals("250cc (Inder 1992).png", assets.get(0).getName());
+    assertEquals("250cc (Inder 1992).png", assets.getFirst().getName());
     assertEquals("250cc (Inder) (1992) (JPSalas) (1.1.0).f4v", assets.get(1).getName());
     //doPrintAssets(assets);
     

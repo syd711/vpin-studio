@@ -232,17 +232,11 @@ public class MediaConverterService implements InitializingBean {
   private void convertWithImageUtils(MediaOperationResult result, ImageOp command, File mediaFile) {
     try {
       BufferedImage img = ImageUtil.loadImage(mediaFile);
-      switch (command) {
-        case ROTATE_90:
-          img = ImageUtil.rotateRight(img);
-          break;
-        case ROTATE_90_CCW:
-          img = ImageUtil.rotateLeft(img);
-          break;
-        case ROTATE_180:
-          img = ImageUtil.rotate180(img);
-          break;
-      }
+        img = switch (command) {
+            case ROTATE_90 -> ImageUtil.rotateRight(img);
+            case ROTATE_90_CCW -> ImageUtil.rotateLeft(img);
+            case ROTATE_180 -> ImageUtil.rotate180(img);
+        };
 
       ImageUtil.write(img, mediaFile);
       result.setResult("Converted file " + mediaFile.getAbsolutePath());

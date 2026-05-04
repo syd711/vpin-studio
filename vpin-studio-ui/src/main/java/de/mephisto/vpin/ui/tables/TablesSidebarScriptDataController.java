@@ -258,7 +258,7 @@ public class TablesSidebarScriptDataController implements Initializable {
 
         ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new ScriptDownloadProgressModel("Extracting Table Script", game.get()));
         if (!resultModel.getResults().isEmpty()) {
-          File file = (File) resultModel.getResults().get(0);
+          File file = (File) resultModel.getResults().getFirst();
           try {
             Desktop.getDesktop().open(file);
           } catch (IOException e) {

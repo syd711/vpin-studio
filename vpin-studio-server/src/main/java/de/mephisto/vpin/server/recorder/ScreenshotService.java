@@ -308,7 +308,7 @@ public class ScreenshotService {
   private BufferedImage generateSummaryImage(List<BufferedImage> images) {
     try {
       int totalHeight = 0;
-      int totalWidth = images.get(0).getWidth();
+      int totalWidth = images.getFirst().getWidth();
       int additionalWidth = 0;
 
       int index = 0;
@@ -324,8 +324,8 @@ public class ScreenshotService {
 
       totalWidth = totalWidth + additionalWidth;
 
-      if (images.get(0).getHeight() > totalHeight) {
-        totalHeight = images.get(0).getHeight();
+      if (images.getFirst().getHeight() > totalHeight) {
+        totalHeight = images.getFirst().getHeight();
       }
 
 
@@ -339,7 +339,7 @@ public class ScreenshotService {
           g.drawImage(image, x, 0, null);
         }
         else {
-          g.drawImage(image, images.get(0).getWidth(), y, null);
+          g.drawImage(image, images.getFirst().getWidth(), y, null);
           y = y + image.getHeight();
         }
         index++;

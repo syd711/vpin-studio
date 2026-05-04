@@ -155,7 +155,7 @@ public class BackupRestoreDialogController implements Initializable, DialogContr
 
     String title = "Restore " + this.backupDescriptors.size() + " Tables?";
     if (this.backupDescriptors.size() == 1) {
-      title = "Restore \"" + this.backupDescriptors.get(0).getTableDetails().getGameDisplayName() + "\"?";
+      title = "Restore \"" + this.backupDescriptors.getFirst().getTableDetails().getGameDisplayName() + "\"?";
     }
     titleLabel.setText(title);
 
@@ -192,7 +192,7 @@ public class BackupRestoreDialogController implements Initializable, DialogContr
     List<GameEmulatorRepresentation> emulators = client.getEmulatorService().getFilteredEmulatorsWithoutAllVpx(uiSettings);
     ObservableList<GameEmulatorRepresentation> data = FXCollections.observableList(emulators);
     this.emulatorCombo.setItems(data);
-    this.emulatorCombo.setValue(data.get(0));
+    this.emulatorCombo.setValue(data.getFirst());
 
 
     frontendColumn.managedProperty().bindBidirectional(frontendColumn.visibleProperty());

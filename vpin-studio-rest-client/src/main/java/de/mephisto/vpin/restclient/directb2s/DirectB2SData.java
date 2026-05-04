@@ -39,23 +39,13 @@ public class DirectB2SData {
   private List<DirectB2SDataScore> scores;
 
   public static String getTableType(int type) {
-    switch (type) {
-      case 1: {
-        return "Electro Mechanical";
-      }
-      case 2: {
-        return "Solid State Electronic";
-      }
-      case 3: {
-        return "Solid State Electronic with DMD";
-      }
-      case 4: {
-        return "Original";
-      }
-      default: {
-        return "-";
-      }
-    }
+      return switch (type) {
+          case 1 -> "Electro Mechanical";
+          case 2 -> "Solid State Electronic";
+          case 3 -> "Solid State Electronic with DMD";
+          case 4 -> "Original";
+          default -> "-";
+      };
   }
 
   public int getEmulatorId() {

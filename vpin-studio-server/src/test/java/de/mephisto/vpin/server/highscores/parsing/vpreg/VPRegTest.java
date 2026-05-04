@@ -103,7 +103,7 @@ public class VPRegTest {
 
       assertNotNull(vpRegScoreSummary, "Reading failed for " + entry);
       assertFalse(vpRegScoreSummary.getScores().isEmpty(), "No score entry found for " + entry);
-      assertNotNull(vpRegScoreSummary.getScores().get(0).getInitials(), "No score initials found for " + entry);
+      assertNotNull(vpRegScoreSummary.getScores().getFirst().getInitials(), "No score initials found for " + entry);
       count++;
 
       List<Score> parse = ScoreListFactory.create(vpRegScoreSummary.toRaw(), OffsetDateTime.now(), null, scoringDB);

@@ -1,20 +1,24 @@
 package de.mephisto.vpin.restclient.system;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.*;
 import java.lang.invoke.MethodHandles;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -24,12 +28,13 @@ public class ScoringDB {
     public static String SCORING_DB_NAME = "scoringdb.json";
     public final static String URL = "https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/scoringdb.json";
 
-    private static final ObjectMapper objectMapper;
+    private static final JsonMapper objectMapper;
 
     static {
-        objectMapper = new ObjectMapper();
-        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper = JsonMapper.builder()
+                .enable(SerializationFeature.INDENT_OUTPUT)
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .build();
     }
 
     private static File getScoringDBFile() {
@@ -49,7 +54,7 @@ public class ScoringDB {
             File dbFile = getScoringDBFile();
             in = new FileInputStream(dbFile);
             db = objectMapper.readValue(in, ScoringDB.class);
-            LOG.info("Loaded " + dbFile.getName() + ", last updated: " + SimpleDateFormat.getDateTimeInstance().format(new Date(dbFile.lastModified())));
+            LOG.info("Loaded " + dbFile.getName() + ", last updated: " + DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(OffsetDateTime.ofInstant(Instant.ofEpochMilli(dbFile.lastModified()), ZoneId.systemDefault())));
         }
         catch (Exception e) {
             db = new ScoringDB();
@@ -71,7 +76,7 @@ public class ScoringDB {
     public static void update() {
         try {
             LOG.info("Updating Scoring Database " + SCORING_DB_NAME);
-            java.net.URL url = new URL(ScoringDB.URL);
+            URL url = URI.create(ScoringDB.URL).toURL();
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setDoOutput(true);
             BufferedInputStream in = new BufferedInputStream(url.openStream());

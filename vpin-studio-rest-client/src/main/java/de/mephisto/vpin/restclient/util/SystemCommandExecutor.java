@@ -135,9 +135,9 @@ public class SystemCommandExecutor {
     int exitValue = -99;
 
     try {
-      if (prependCmd && !commandInformation.get(0).equalsIgnoreCase("cmd.exe")) {
-        this.commandInformation.add(0, "/c");
-        this.commandInformation.add(0, "cmd.exe");
+      if (prependCmd && !commandInformation.getFirst().equalsIgnoreCase("cmd.exe")) {
+        this.commandInformation.addFirst( "/c");
+        this.commandInformation.addFirst( "cmd.exe");
 
         if(this.codePage != null) {
           this.commandInformation.add(2, "chcp");

@@ -74,7 +74,7 @@ public class AlxUpdateStatsDialogController implements Initializable, DialogCont
     int timePlayedSecs = 0;
     int numberOfPlays = 0;
     if (alxSummary != null && !alxSummary.getEntries().isEmpty()) {
-      TableAlxEntry tableAlxEntry = alxSummary.getEntries().get(0);
+      TableAlxEntry tableAlxEntry = alxSummary.getEntries().getFirst();
       timePlayedSecs = tableAlxEntry.getTimePlayedSecs() / 60;
       numberOfPlays = tableAlxEntry.getNumberOfPlays();
     }

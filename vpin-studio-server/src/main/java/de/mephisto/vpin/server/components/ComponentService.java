@@ -258,35 +258,17 @@ public class ComponentService implements InitializingBean {
   }
 
   public ComponentFacade getComponentFacade(ComponentType type) {
-    switch (type) {
-      case vpinmame: {
-        return vPinMAMEComponent;
-      }
-      case vpinball: {
-        return vpxComponent;
-      }
-      case b2sbackglass: {
-        return backglassComponent;
-      }
-      case flexdmd: {
-        return flexDMDComponent;
-      }
-      case freezy: {
-        return freezyComponent;
-      }
-      case serum: {
-        return serumComponent;
-      }
-      case doflinx: {
-        return dofLinxComponent;
-      }
-      case dof: {
-        return dofComponent;
-      }
-      default: {
-        throw new UnsupportedOperationException("Invalid component type " + type);
-      }
-    }
+      return switch (type) {
+          case vpinmame -> vPinMAMEComponent;
+          case vpinball -> vpxComponent;
+          case b2sbackglass -> backglassComponent;
+          case flexdmd -> flexDMDComponent;
+          case freezy -> freezyComponent;
+          case serum -> serumComponent;
+          case doflinx -> dofLinxComponent;
+          case dof -> dofComponent;
+          default -> throw new UnsupportedOperationException("Invalid component type " + type);
+      };
   }
 
   @Override

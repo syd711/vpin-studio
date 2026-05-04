@@ -226,7 +226,7 @@ public class AssetFactory {
         image = ImageUtil.resizeImage(image, IMAGE_WIDTH - 24);
       }
       else {
-        String initials = summary.getScores().get(0).getPlayerInitials();
+        String initials = summary.getScores().getFirst().getPlayerInitials();
         if (winner != null) {
           initials = winner.getInitials();
         }
@@ -284,7 +284,7 @@ public class AssetFactory {
       int scoreSize = 140;
       font = new Font("Digital Counter 7", Font.PLAIN, scoreSize);
       graphics.setFont(font);
-      String score = summary.getScores().get(0).getFormattedScore();
+      String score = summary.getScores().getFirst().getFormattedScore();
       textWidth = graphics.getFontMetrics().stringWidth(score);
       while (textWidth > 500) {
         font = new Font("Digital Counter 7", Font.PLAIN, scoreSize--);

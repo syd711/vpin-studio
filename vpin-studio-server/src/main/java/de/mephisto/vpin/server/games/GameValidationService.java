@@ -17,7 +17,6 @@ import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.vpinmame.VPinMameOptions;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
-import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.util.MimeTypeUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.validation.*;
@@ -232,7 +231,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         if (isVPX) {
             List<ValidationState> validationStates = validatePupPack(game);
             if (!validationStates.isEmpty()) {
-                result.add(validationStates.get(0));
+                result.add(validationStates.getFirst());
                 if (findFirst) {
                     return result;
                 }
@@ -302,7 +301,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         if (isVPX) {
             List<ValidationState> validationStates = validateAltSound(game);
             if (!validationStates.isEmpty()) {
-                result.add(validationStates.get(0));
+                result.add(validationStates.getFirst());
                 if (findFirst) {
                     return result;
                 }
@@ -310,7 +309,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
             validationStates = validateAltColor(game);
             if (!validationStates.isEmpty()) {
-                result.add(validationStates.get(0));
+                result.add(validationStates.getFirst());
                 if (findFirst) {
                     return result;
                 }
@@ -318,7 +317,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
             validationStates = validateForceStereo(game);
             if (!validationStates.isEmpty()) {
-                result.add(validationStates.get(0));
+                result.add(validationStates.getFirst());
                 if (findFirst) {
                     return result;
                 }
@@ -342,7 +341,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
     if (isVPX && isValidationEnabled(game, CODE_NVOFFSET_MISMATCH)) {
       if (!StringUtils.isEmpty(game.getRom()) && game.isRomRequired()) {
-        List<GameDetails> otherGameDetailsWithSameRom = new ArrayList<>(gameDetailsRepositoryService.findByRomName(game.getRom())).stream().filter(g -> g.getRomName() != null && g.getPupId() != game.getId() && g.getRomName().equalsIgnoreCase(game.getRom())).collect(Collectors.toList());
+        List<GameDetails> otherGameDetailsWithSameRom = new ArrayList<>(gameDetailsRepositoryService.findByRomName(game.getRom())).stream().filter(g -> g.getRomName() != null && g.getPupId() != game.getId() && g.getRomName().equalsIgnoreCase(game.getRom())).toList();
         for (GameDetails otherGameDetails : otherGameDetailsWithSameRom) {
           if (otherGameDetails.getNvOffset() == 0 || otherGameDetails.getNvOffset() == game.getNvOffset()) {
             Game otherGame = frontendService.getOriginalGame(otherGameDetails.getPupId());
@@ -701,7 +700,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     public boolean hasMissingAssets(List<ValidationState> states) {
-        List<Integer> codes = states.stream().map(s -> s.getCode()).collect(Collectors.toList());
+        List<Integer> codes = states.stream().map(s -> s.getCode()).toList();
         if (codes.isEmpty()) {
             return false;
         }

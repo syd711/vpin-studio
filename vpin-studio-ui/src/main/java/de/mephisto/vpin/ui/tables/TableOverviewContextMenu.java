@@ -101,7 +101,7 @@ public class TableOverviewContextMenu {
     if (games.isEmpty()) {
       return;
     }
-    GameRepresentationModel gameModel = games.get(0);
+    GameRepresentationModel gameModel = games.getFirst();
     GameRepresentation game = gameModel.getGame();
 
     MenuItem dataItem = new MenuItem("Edit Table Data");

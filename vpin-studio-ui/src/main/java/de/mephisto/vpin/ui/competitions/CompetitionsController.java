@@ -824,24 +824,14 @@ public class CompetitionsController implements Initializable, StudioFXController
   private StudioFXController getActiveController() {
     Tab selectedTab = getSelectedTab();
     String title = selectedTab.getText();
-    switch (title) {
-      case TAB_OFFLINE: {
-        return offlineController;
-      }
-      case TAB_ONLINE: {
-        return discordController;
-      }
-      case TAB_TABLE_SUBS: {
-        return tableSubscriptionsController;
-      }
-      case TAB_ISCORED: {
-        return iScoredSubscriptionsController;
-      }
-      case TAB_WEEKLY: {
-        return weeklySubscriptionsController;
-      }
-    }
-    return null;
+      return switch (title) {
+          case TAB_OFFLINE -> offlineController;
+          case TAB_ONLINE -> discordController;
+          case TAB_TABLE_SUBS -> tableSubscriptionsController;
+          case TAB_ISCORED -> iScoredSubscriptionsController;
+          case TAB_WEEKLY -> weeklySubscriptionsController;
+          default -> null;
+      };
   }
 
   @Override

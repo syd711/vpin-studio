@@ -186,23 +186,13 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
     EmulatorType type = null;
     String systemClass = s.getProperty(system + ".Class");
     if (systemClass != null) {
-      switch (systemClass) {
-        case "VP":
-          type = EmulatorType.VisualPinball9;
-          break; // Visual Pinball 9
-        case "VPX":
-          type = EmulatorType.VisualPinball;
-          break; // Visual Pinball
-        case "FP":
-          type = EmulatorType.FuturePinball;
-          break; // Future Pinball
-        case "STEAM":
-          type = EmulatorType.ZenFX;
-          break; // Future Pinball
-        default:
-          type = EmulatorType.OTHER;
-          break; // Custom Exe
-      }
+        type = switch (systemClass) {
+            case "VP" -> EmulatorType.VisualPinball9; // Visual Pinball 9
+            case "VPX" -> EmulatorType.VisualPinball; // Visual Pinball
+            case "FP" -> EmulatorType.FuturePinball; // Future Pinball
+            case "STEAM" -> EmulatorType.ZenFX; // Future Pinball
+            default -> EmulatorType.OTHER; // Custom Exe
+        };
     }
     else {
       type = EmulatorType.fromName(emuname);

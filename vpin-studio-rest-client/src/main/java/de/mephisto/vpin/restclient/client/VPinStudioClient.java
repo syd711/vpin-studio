@@ -8,7 +8,6 @@ import de.mephisto.vpin.restclient.assets.AssetServiceClient;
 import de.mephisto.vpin.restclient.assets.TableAssetSourcesServiceClient;
 import de.mephisto.vpin.restclient.backups.BackupServiceClient;
 import de.mephisto.vpin.restclient.iscored.IScoredServiceClient;
-import de.mephisto.vpin.restclient.vpxz.VPXZServiceClient;
 import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.cards.HighscoreCardTemplatesServiceClient;

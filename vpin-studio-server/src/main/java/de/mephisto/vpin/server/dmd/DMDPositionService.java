@@ -380,9 +380,9 @@ public class DMDPositionService {
             // coordinates are in pixels, transform in screen coordinate
             factorX /= buffered.getWidth();
             factorY /= buffered.getHeight();
-            dmdinfo.setX((int) (position.get(0) * factorX + dmdinfo.getMargin()));
+            dmdinfo.setX((int) (position.getFirst() * factorX + dmdinfo.getMargin()));
             dmdinfo.setY((int) (position.get(1) * factorY + dmdinfo.getMargin()));
-            dmdinfo.setWidth((int) ((position.get(2) - position.get(0)) * factorX - 2 * dmdinfo.getMargin()));
+            dmdinfo.setWidth((int) ((position.get(2) - position.getFirst()) * factorX - 2 * dmdinfo.getMargin()));
             dmdinfo.setHeight((int) ((position.get(3) - position.get(1)) * factorY - 2 * dmdinfo.getMargin()));
           }
         }
@@ -510,7 +510,7 @@ public class DMDPositionService {
 
   private DMDInfoZone getMainZone(DMDInfo dmdinfo) {
     List<DMDInfoZone> zones = dmdinfo.getZones();
-    return zones.size() > 0 ? zones.get(0) : null;
+    return zones.size() > 0 ? zones.getFirst() : null;
   }
 
 

@@ -264,15 +264,11 @@ public class GameRepresentation {
 
   @JsonIgnore
   public Long getTemplateId(CardTemplateType templateType) {
-    switch (templateType) {
-      case HIGSCORE_CARD:
-        return getHighscoreCardTemplateId();
-      case INSTRUCTIONS_CARD:
-        return getInstructionCardTemplateId();
-      case WHEEL:
-        return getWheelTemplateId();
-    }
-    return null;
+      return switch (templateType) {
+          case HIGSCORE_CARD -> getHighscoreCardTemplateId();
+          case INSTRUCTIONS_CARD -> getInstructionCardTemplateId();
+          case WHEEL -> getWheelTemplateId();
+      };
   }
 
   public Long getHighscoreCardTemplateId() {

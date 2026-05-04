@@ -200,15 +200,11 @@ public class PlayersController implements Initializable, StudioFXController {
 
   private StudioFXController getActiveController() {
     int selectedIndex = tabPane.getSelectionModel().getSelectedIndex();
-    switch (selectedIndex) {
-      case 0: {
-        return builtInPlayersController;
-      }
-      case 1: {
-        return discordPlayersController;
-      }
-    }
-    return null;
+      return switch (selectedIndex) {
+          case 0 -> builtInPlayersController;
+          case 1 -> discordPlayersController;
+          default -> null;
+      };
   }
 
   @Override

@@ -6,28 +6,14 @@ public enum VPinFile {
 
   @Override
   public String toString() {
-    switch (this) {
-      case DmdDeviceIni: {
-        return "DmdDevice.ini";
-      }
-      case VPinballXIni: {
-        return "VPinballX.ini";
-      }
-      case VPMAliasTxt: {
-        return "VPMAlias.txt";
-      }
-      case VBScript: {
-        return "VB Script";
-      }
-      case DOFLinxINI: {
-        return "DOFLinx.INI";
-      }
-      case LOCAL_GAME_FILE: {
-        return "Local File";
-      }
-      default: {
-        throw new UnsupportedOperationException("Invalid VPinFile");
-      }
-    }
+      return switch (this) {
+          case DmdDeviceIni -> "DmdDevice.ini";
+          case VPinballXIni -> "VPinballX.ini";
+          case VPMAliasTxt -> "VPMAlias.txt";
+          case VBScript -> "VB Script";
+          case DOFLinxINI -> "DOFLinx.INI";
+          case LOCAL_GAME_FILE -> "Local File";
+          default -> throw new UnsupportedOperationException("Invalid VPinFile");
+      };
   }
 }

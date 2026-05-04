@@ -4,18 +4,15 @@ import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.listadapters.DefaultAdapter;
+import org.apache.commons.lang3.Strings;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.OffsetDateTime;
 import java.util.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+
 
     public class ScoreListFactory {
         private final static Logger LOG = LoggerFactory.getLogger(de.mephisto.vpin.server.highscores.parsing.ScoreListFactory.class);
@@ -42,7 +39,7 @@ import java.util.Objects;
             List<Score> filteredScores = new ArrayList<>();
             int position = 1;
             for (Score sc : scores) {
-                if (filteredScores.stream().anyMatch(score -> Objects.equals(score.getScore(), sc.getScore()) && StringUtils.equals(score.getPlayerInitials(), sc.getPlayerInitials()))) {
+                if (filteredScores.stream().anyMatch(score -> Objects.equals(score.getScore(), sc.getScore()) && Strings.CI.equals(score.getPlayerInitials(), sc.getPlayerInitials()))) {
                     continue;
                 }
                 sc.setPosition(position++);

@@ -211,7 +211,7 @@ public class VpaService implements InitializingBean {
         }
 
         if (!files.isEmpty()) {
-          packageInfo.setDirectb2s(BackupFileInfoFactory.create(files.get(0), files));
+          packageInfo.setDirectb2s(BackupFileInfoFactory.create(files.getFirst(), files));
         }
       }
     }

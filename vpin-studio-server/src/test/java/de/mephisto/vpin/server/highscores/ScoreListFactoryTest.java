@@ -270,11 +270,11 @@ public class ScoreListFactoryTest {
 
         List<Score> parse = ScoreListFactory.create(rawScore, OffsetDateTime.now(), game, scoringDB);
         assertEquals(5, parse.size());
-        assertScore("TOP WATER SLIDERS", "TIM", 101000000, null, parse.get(0));
+        assertScore("TOP WATER SLIDERS", "TIM", 101000000, null, parse.getFirst());
 
         parse = ScoreListFactory.create(rawScore, OffsetDateTime.now(), game, scoringDB, true);
         assertEquals(6, parse.size());
-        assertScore("TOP WATER SLIDERS", "TIM", 101000000, null, parse.get(0));
+        assertScore("TOP WATER SLIDERS", "TIM", 101000000, null, parse.getFirst());
         assertScore("RAPIDS RECORD", "CGB", 9, null, parse.get(5));
     }
 
@@ -306,7 +306,7 @@ public class ScoreListFactoryTest {
 
         parse = ScoreListFactory.create(rawScore, OffsetDateTime.now(), game, scoringDB, true);
         assertEquals(8, parse.size());
-        assertScore("GRAND CHAMPION", "SSR", 75000000, null, parse.get(0));
+        assertScore("GRAND CHAMPION", "SSR", 75000000, null, parse.getFirst());
         assertScore("HIGH SCORES", "LON", 55000000, null, parse.get(2));
         assertScore("COMBO CHAMPION", "W  ", 12, " COMBOS", parse.get(5));
         assertScore("MEDALS CHAMPION", "XAQ", 5, "M", parse.get(7));

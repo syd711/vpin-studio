@@ -26,7 +26,7 @@ public class GameEmulatorValidationTexts {
     if (states.isEmpty()) {
       return null;
     }
-    return getValidationResult(emulator, states.get(0));
+    return getValidationResult(emulator, states.getFirst());
   }
 
   @NonNull
