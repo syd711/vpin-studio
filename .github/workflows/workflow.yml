@@ -121,13 +121,7 @@ jobs:
       - name: Create macOS App Image
         working-directory: ./mac-build
         run: |
-          jpackage --name VPin-Studio --input . \
-            --app-version ${{ steps.project.outputs.version }} \
-            --main-jar vpin-studio-ui.jar \
-            --main-class de.mephisto.vpin.ui.Studio \
-            --resource-dir package/macos \ 
-            --type app-image --icon package/macos/VpinStudioIcon.icns --dest ./ \
-            --runtime-image ../${{ matrix.jre_folder }}/zulu-25.jre @../jpackage_log.txt
+          jpackage --name VPin-Studio --input . --app-version ${{ steps.project.outputs.version }} --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Studio --resource-dir package/macos --type app-image --icon package/macos/VpinStudioIcon.icns --dest ./ --runtime-image ../${{ matrix.jre_folder }}/zulu-25.jre @../jpackage_log.txt
 
       - name: Create JRE Update Artifact from App Bundle
         working-directory: ./mac-build
