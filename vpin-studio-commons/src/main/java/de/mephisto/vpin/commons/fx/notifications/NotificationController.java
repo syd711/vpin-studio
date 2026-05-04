@@ -100,6 +100,13 @@ public class NotificationController implements Initializable {
 
     NotificationSettings notificationSettings = ServerFX.client.getJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, NotificationSettings.class);
     MonitorInfo screen = ServerFX.client.getSystemService().getScreenInfo(notificationSettings.getNotificationsScreenId());
+
+
+  if (screen == null) {
+      LOG.warn("The screen configured in notification settings does not exist, please adjust your settings... Took primary screen instead !");
+      screen = ServerFX.client.getSystemService().getScreenInfo(-1);
+  }
+
     int padding = 0;
     padding += notification.getTextBoxMargin();
 

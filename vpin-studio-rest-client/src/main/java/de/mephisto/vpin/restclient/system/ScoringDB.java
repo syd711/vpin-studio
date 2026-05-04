@@ -1,25 +1,20 @@
 package de.mephisto.vpin.restclient.system;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
-import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tools.jackson.databind.DeserializationFeature;
-import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.SerializationFeature;
-import tools.jackson.databind.json.JsonMapper;
 
 import java.io.*;
 import java.lang.invoke.MethodHandles;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URL;
-import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -32,10 +27,9 @@ public class ScoringDB {
     private static final ObjectMapper objectMapper;
 
     static {
-        objectMapper = JsonMapper.builder()
-                .enable(SerializationFeature.INDENT_OUTPUT)
-                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-                .build();
+        objectMapper = new ObjectMapper();
+        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     private static File getScoringDBFile() {
@@ -55,7 +49,7 @@ public class ScoringDB {
             File dbFile = getScoringDBFile();
             in = new FileInputStream(dbFile);
             db = objectMapper.readValue(in, ScoringDB.class);
-            LOG.info("Loaded " + dbFile.getName() + ", last updated: " + DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(OffsetDateTime.ofInstant(Instant.ofEpochMilli(dbFile.lastModified()), ZoneId.systemDefault())));
+            LOG.info("Loaded " + dbFile.getName() + ", last updated: " + SimpleDateFormat.getDateTimeInstance().format(new Date(dbFile.lastModified())));
         }
         catch (Exception e) {
             db = new ScoringDB();
@@ -77,7 +71,7 @@ public class ScoringDB {
     public static void update() {
         try {
             LOG.info("Updating Scoring Database " + SCORING_DB_NAME);
-            URL url = URI.create(ScoringDB.URL).toURL();
+            java.net.URL url = new URL(ScoringDB.URL);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setDoOutput(true);
             BufferedInputStream in = new BufferedInputStream(url.openStream());
@@ -125,6 +119,8 @@ public class ScoringDB {
 
     private List<String> highscoreTitles = new ArrayList<>();
 
+    private List<String> highscoreSkipTitlesCheck = new ArrayList<>();
+
     private List<Map<String, Object>> highscoreTextParsers = new ArrayList<>();
 
     private List<Map<String, Object>> highscoreIniParsers = new ArrayList<>();
@@ -166,16 +162,20 @@ public class ScoringDB {
         return ignoredVPRegEntries;
     }
 
-    public void setIgnoredVPRegEntries(List<String> ignoredVPRegEntries) {
-        this.ignoredVPRegEntries = ignoredVPRegEntries;
-    }
-
     public List<String> getHighscoreTitles() {
         return highscoreTitles;
     }
 
     public void setHighscoreTitles(List<String> highscoreTitles) {
         this.highscoreTitles = highscoreTitles;
+    }
+
+    public List<String> getHighscoreSkipTitlesCheck() {
+        return highscoreSkipTitlesCheck;
+    }
+
+    public void setHighscoreSkipTitlesCheck(List<String> highscoreSkipTitlesCheck) {
+        this.highscoreSkipTitlesCheck = highscoreSkipTitlesCheck;
     }
 
     public String getPinemhiVersion() {
@@ -193,6 +193,10 @@ public class ScoringDB {
 
     public void setHighscoreTextParsers(List<Map<String, Object>> highscoreTextParsers) {
         this.highscoreTextParsers = highscoreTextParsers;
+    }
+
+    public void setIgnoredVPRegEntries(List<String> ignoredVPRegEntries) {
+        this.ignoredVPRegEntries = ignoredVPRegEntries;
     }
 
     public List<ScoringDBMapping> getHighscoreMappings() {

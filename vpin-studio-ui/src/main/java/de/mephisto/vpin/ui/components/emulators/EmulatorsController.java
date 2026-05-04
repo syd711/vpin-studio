@@ -41,576 +41,587 @@ import java.util.ResourceBundle;
 import static de.mephisto.vpin.ui.Studio.*;
 
 public class EmulatorsController implements Initializable, PreferenceChangeListener, StudioEventListener {
-  private final static Logger LOG = LoggerFactory.getLogger(EmulatorsController.class);
+    private final static Logger LOG = LoggerFactory.getLogger(EmulatorsController.class);
 
-  @FXML
-  private BorderPane emulatorRoot;
+    @FXML
+    private BorderPane emulatorRoot;
 
-  @FXML
-  private BorderPane tableRoot;
+    @FXML
+    private BorderPane tableRoot;
 
-  @FXML
-  private Label emulatorNameLabel;
+    @FXML
+    private Label emulatorNameLabel;
 
-  @FXML
-  private Label emulatorIdLabel;
+    @FXML
+    private Label emulatorIdLabel;
 
-  @FXML
-  private Button saveBtn;
+    @FXML
+    private Button saveBtn;
 
-  @FXML
-  private CheckBox enabledCheckbox;
+    @FXML
+    private CheckBox enabledCheckbox;
 
-  @FXML
-  private TextField safeNameField;
+    @FXML
+    private TextField safeNameField;
 
-  @FXML
-  private TextField nameField;
+    @FXML
+    private TextField nameField;
 
-  @FXML
-  private TextField descriptionField;
+    @FXML
+    private TextField descriptionField;
 
-  @FXML
-  private TextField launchFolderField;
+    @FXML
+    private TextField launchFolderField;
 
-  @FXML
-  private TextField gamesFolderField;
+    @FXML
+    private TextField gamesFolderField;
 
-  @FXML
-  private TextField customField2;
+    @FXML
+    private TextField customField2;
 
-  @FXML
-  private TextField customField1;
+    @FXML
+    private TextField customField1;
 
-  @FXML
-  private TextField romsFolderField;
+    @FXML
+    private TextField romsFolderField;
 
-  @FXML
-  private TabPane tabPane;
+    @FXML
+    private TabPane tabPane;
 
-  @FXML
-  private Tab startScriptTab;
+    @FXML
+    private Tab startScriptTab;
 
-  @FXML
-  private Tab vrStartScriptTab;
+    @FXML
+    private Tab vrStartScriptTab;
 
-  @FXML
-  private Tab exitScriptTab;
+    @FXML
+    private Tab exitScriptTab;
 
-  @FXML
-  private Button deleteBtn;
+    @FXML
+    private Button deleteBtn;
 
-  @FXML
-  private Button createBtn;
+    @FXML
+    private Button createBtn;
 
-  @FXML
-  private Button duplicateBtn;
+    @FXML
+    private Button duplicateBtn;
 
-  @FXML
-  private Label customField1Label;
+    @FXML
+    private Label customField1Label;
 
-  @FXML
-  private Label customField2Label;
+    @FXML
+    private Label customField2Label;
 
-  @FXML
-  private Label descriptionLabel;
+    @FXML
+    private Label descriptionLabel;
 
-  @FXML
-  private Label romsFolderLabel;
+    @FXML
+    private Label romsFolderLabel;
 
-  @FXML
-  private Separator firstSeparator;
+    @FXML
+    private Separator firstSeparator;
 
-  @FXML
-  private Button openFolderButtonLaunch;
+    @FXML
+    private Button openFolderButtonLaunch;
 
-  @FXML
-  private Button openFolderButtonGames;
+    @FXML
+    private Button openFolderButtonGames;
 
-  @FXML
-  private Button openFolderButtonRoms;
+    @FXML
+    private Button openFolderButtonRoms;
 
-  @FXML
-  private Button openFolderButtonMedia;
+    @FXML
+    private Button openFolderButtonMedia;
 
-  @FXML
-  private Button selectFolderButtonLaunch;
+    @FXML
+    private Button selectFolderButtonLaunch;
 
-  @FXML
-  private Button selectFolderButtonGames;
+    @FXML
+    private Button selectFolderButtonGames;
 
-  @FXML
-  private Button selectFolderButtonRoms;
+    @FXML
+    private Button selectFolderButtonRoms;
 
-  @FXML
-  private Button selectFolderButtonMedia;
+    @FXML
+    private Button selectFolderButtonMedia;
 
-  @FXML
-  private Pane emuScrollRoot;
+    @FXML
+    private Pane emuScrollRoot;
 
-  @FXML
-  private Pane emuScrollChild;
+    @FXML
+    private Pane emuScrollChild;
 
-  @FXML
-  private ScrollPane emuScrollPane;
+    @FXML
+    private ScrollPane emuScrollPane;
 
-  private Optional<GameEmulatorRepresentation> emulator = Optional.empty();
+    private Optional<GameEmulatorRepresentation> emulator = Optional.empty();
 
-  private EmulatorsTableController tableController;
+    private EmulatorsTableController tableController;
 
-  private IEmulatorScriptPanel startScriptController;
-  private IEmulatorScriptPanel vrStartScriptController;
-  private IEmulatorScriptPanel exitScriptController;
+    private IEmulatorScriptPanel startScriptController;
+    private IEmulatorScriptPanel vrStartScriptController;
+    private IEmulatorScriptPanel exitScriptController;
 
-  @FXML
-  private void onFolderLaunch() {
-    if (!StringUtils.isEmpty(launchFolderField.getText())) {
-      File folder = new File(launchFolderField.getText());
-      SystemUtil.openFolder(folder);
-    }
-  }
-
-  @FXML
-  private void onSelectFolderLaunch(ActionEvent event) {
-    onFolderSelect(event, launchFolderField);
-  }
-
-  @FXML
-  private void onFolderGames() {
-    if (!StringUtils.isEmpty(gamesFolderField.getText())) {
-      File folder = new File(gamesFolderField.getText());
-      SystemUtil.openFolder(folder);
-    }
-  }
-
-  @FXML
-  private void onSelectFolderGames(ActionEvent event) {
-    onFolderSelect(event, gamesFolderField);
-  }
-
-  @FXML
-  private void onFolderRoms() {
-    if (!StringUtils.isEmpty(romsFolderField.getText())) {
-      File folder = new File(romsFolderField.getText());
-      SystemUtil.openFolder(folder);
-    }
-  }
-
-  @FXML
-  private void onSelectFolderRoms(ActionEvent event) {
-    onFolderSelect(event, romsFolderField);
-  }
-
-  @FXML
-  private void onFolderMedia() {
-    if (!StringUtils.isEmpty(customField1.getText())) {
-      File folder = new File(customField1.getText());
-      SystemUtil.openFolder(folder);
-    }
-  }
-
-  @FXML
-  private void onSelectFolderMedia(ActionEvent event) {
-    onFolderSelect(event, customField1);
-  }
-
-
-  @FXML
-  private void onSave() {
-    saveBtn.setDisable(true);
-    if (!FileUtils.isValidFilename(safeNameField.getText())) {
-      WidgetFactory.showAlert(stage, "Invalid Name", "The specified name contains invalid characters.");
-      return;
+    @FXML
+    private void onFolderLaunch() {
+        if (!StringUtils.isEmpty(launchFolderField.getText())) {
+            File folder = new File(launchFolderField.getText());
+            SystemUtil.openFolder(folder);
+        }
     }
 
-    JFXFuture.runAsync(() -> {
-      FrontendType frontendType = client.getFrontendService().getFrontendType();
-
-      GameEmulatorRepresentation emu = emulator.get();
-      emu.setEnabled(enabledCheckbox.isSelected());
-      emu.setSafeName(safeNameField.getText());
-      emu.setName(nameField.getText());
-      emu.setDescription(descriptionField.getText());
-      emu.setGamesDirectory(gamesFolderField.getText());
-      emu.setRomDirectory(romsFolderField.getText());
-      emu.setInstallationDirectory(launchFolderField.getText());
-
-      if (frontendType.equals(FrontendType.Popper)) {
-        emu.setGameExt(customField2.getText());
-        emu.setMediaDirectory(customField1.getText());
-      }
-      else if (frontendType.equals(FrontendType.PinballX)) {
-        emu.setExeName(customField2.getText());
-        emu.setExeParameters(customField1.getText());
-      }
-
-      if (startScriptController != null) {
-        startScriptController.applyValues();
-        exitScriptController.applyValues();
-        vrStartScriptController.applyValues();
-      }
-
-      if (emu.isVpxEmulator() && vrStartScriptController.getScript().isPresent()) {
-        client.getVRService().saveVrEmulatorLaunchScript(emu.getId(), vrStartScriptController.getScript().get());
-      }
-      client.getEmulatorService().saveGameEmulator(emu);
-    }).thenLater(() -> {
-      onReload();
-      saveBtn.setDisable(false);
-    });
-  }
-
-  @FXML
-  private void onDuplicate() {
-    GameEmulatorRepresentation template = emulator.get();
-    String s = WidgetFactory.showInputDialog(Studio.stage, "Clone Emulator", "Enter the folder save name for the copy of \"" + emulator.get().getName() + "\".", "You can edit the additional emulator parameters afterwards.", null, "Copy of " + template);
-    if (!StringUtils.isEmpty(s)) {
-      if (!FileUtils.isValidFilename(s)) {
-        WidgetFactory.showAlert(stage, "Invalid Name", "The specified name contains invalid characters.");
-        return;
-      }
-
-      GameEmulatorRepresentation emu = new GameEmulatorRepresentation();
-      emu.setSafeName(s);
-      emu.setName(s);
-      emu.setId(-1);
-      emu.setType(template.getType());
-      emu.setDescription(template.getDescription());
-      emu.setMediaDirectory(template.getMediaDirectory());
-      emu.setRomDirectory(template.getRomDirectory());
-      emu.setGameExt(template.getGameExt());
-      emu.setGamesDirectory(template.getGamesDirectory());
-      emu.setLaunchScript(template.getLaunchScript());
-      emu.setExitScript(template.getExitScript());
-      emu.setExeName(template.getExeName());
-      emu.setInstallationDirectory(template.getInstallationDirectory());
-      emu.setExeParameters(template.getExeParameters());
-
-      GameEmulatorRepresentation gameEmulatorRepresentation = client.getEmulatorService().saveGameEmulator(emu);
-      onReload();
-      tableController.select(gameEmulatorRepresentation);
-    }
-  }
-
-  @FXML
-  private void onDelete() {
-    if (emulator.isPresent()) {
-      GameEmulatorRepresentation gameEmulatorRepresentation = emulator.get();
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Game Emulator", "Delete Game Emulator \"" + gameEmulatorRepresentation.getName() + "\"?");
-      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        ProgressDialog.createProgressDialog(new EmulatorDeletionProgressModel(gameEmulatorRepresentation, this));
-      }
-    }
-  }
-
-  @FXML
-  private void onCreate() {
-    GameEmulatorRepresentation emulatorRepresentation = EmulatorDialogs.openNewEmulatorDialog();
-    if (emulatorRepresentation != null) {
-      ProgressDialog.createProgressDialog(new EmulatorCreateProgressModel(emulatorRepresentation, this));
-
-    }
-  }
-
-  @FXML
-  public void onReload() {
-    client.getEmulatorService().clearCache();
-    tableController.reload();
-  }
-
-  public void setSelection(Optional<GameEmulatorRepresentation> model) {
-    int index = tabPane.getSelectionModel().getSelectedIndex();
-    this.emulator = model;
-
-    emulatorNameLabel.setText("-");
-    emulatorIdLabel.setText("-");
-
-    enabledCheckbox.setSelected(false);
-    enabledCheckbox.setDisable(model.isEmpty());
-    safeNameField.setText("");
-    safeNameField.setDisable(model.isEmpty() || !Features.EMULATORS_CRUD);
-    nameField.setText("");
-    nameField.setDisable(model.isEmpty());
-    descriptionField.setText("");
-    descriptionField.setDisable(model.isEmpty());
-    launchFolderField.setText("");
-    launchFolderField.setDisable(model.isEmpty());
-    gamesFolderField.setText("");
-    gamesFolderField.setDisable(model.isEmpty());
-    customField2.setText("");
-    customField2.setDisable(model.isEmpty());
-    customField1.setText("");
-    customField1.setDisable(model.isEmpty());
-    romsFolderField.setText("");
-    romsFolderField.setDisable(model.isEmpty());
-
-    duplicateBtn.setDisable(model.isEmpty());
-    saveBtn.setDisable(model.isEmpty());
-    deleteBtn.setDisable(model.isEmpty());
-
-    if (startScriptController != null) {
-      startScriptController.setData(model, model.map(GameEmulatorRepresentation::getLaunchScript));
-      exitScriptController.setData(model, model.map(GameEmulatorRepresentation::getExitScript));
+    @FXML
+    private void onSelectFolderLaunch(ActionEvent event) {
+        onFolderSelect(event, launchFolderField);
     }
 
-    client.getPreferenceService().clearCache(PreferenceNames.VR_SETTINGS);
-    VRSettings vrSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VR_SETTINGS, VRSettings.class);
-    this.setEnabled(true);
-    vrStartScriptTab.setDisable(true);
-
-    if (model.isPresent()) {
-      GameEmulatorRepresentation emulator = model.get();
-      vrStartScriptTab.setDisable(!emulator.isVpxEmulator());
-
-      if (emulator.isVpxEmulator()) {
-        boolean vrEnabled = vrSettings.isVrEnabled();
-        this.setEnabled(!vrEnabled);
-
-        GameEmulatorScript vrLaunchScript = client.getVRService().getVrLaunchScript(emulator.getId());
-        vrStartScriptController.setData(model, vrLaunchScript != null ? Optional.of(vrLaunchScript) : Optional.of(new GameEmulatorScript()));
-        tabPane.getSelectionModel().select(0);
-      }
-
-      emulatorNameLabel.setText(emulator.getName());
-      emulatorIdLabel.setText("(ID #" + emulator.getId() + ")");
-
-      enabledCheckbox.setSelected(emulator.isEnabled());
-      safeNameField.setText(emulator.getSafeName());
-      nameField.setText(emulator.getName());
-      descriptionField.setText(emulator.getDescription());
-      launchFolderField.setText(emulator.getInstallationDirectory());
-      gamesFolderField.setText(emulator.getGamesDirectory());
-      romsFolderField.setText(emulator.getRomDirectory());
-
-      FrontendType frontendType = client.getFrontendService().getFrontendType();
-
-      if (frontendType.equals(FrontendType.Popper)) {
-        customField2.setText(emulator.getGameExt());
-        customField1.setText(emulator.getMediaDirectory());
-      }
-      else if (frontendType.equals(FrontendType.PinballX)) {
-        customField2.setText(emulator.getExeName());
-        customField1.setText(emulator.getExeParameters());
-      }
-
-      tabPane.getSelectionModel().select(index);
-    }
-  }
-
-  private void setEnabled(boolean vrEnabled) {
-    this.saveBtn.setDisable(!vrEnabled);
-    this.createBtn.setDisable(!vrEnabled);
-    this.deleteBtn.setDisable(!vrEnabled);
-    this.duplicateBtn.setDisable(!vrEnabled);
-    this.enabledCheckbox.setDisable(!vrEnabled);
-    this.nameField.setDisable(!vrEnabled);
-    this.descriptionField.setDisable(!vrEnabled);
-    this.gamesFolderField.setDisable(!vrEnabled);
-    this.launchFolderField.setDisable(!vrEnabled);
-    this.romsFolderField.setDisable(!vrEnabled);
-    this.customField1.setDisable(!vrEnabled);
-    this.customField2.setDisable(!vrEnabled);
-    this.safeNameField.setDisable(!vrEnabled);
-
-    this.selectFolderButtonGames.setDisable(!vrEnabled);
-    this.selectFolderButtonMedia.setDisable(!vrEnabled);
-    this.selectFolderButtonLaunch.setDisable(!vrEnabled);
-    this.selectFolderButtonRoms.setDisable(!vrEnabled);
-
-    vrStartScriptTab.setDisable(!vrEnabled);
-    startScriptTab.setDisable(!vrEnabled);
-    exitScriptTab.setDisable(!vrEnabled);
-
-    startScriptController.setDisabled(!vrEnabled);
-    vrStartScriptController.setDisabled(!vrEnabled);
-    exitScriptController.setDisabled(!vrEnabled);
-  }
-
-  public void onViewActivated() {
-    client.getPreferenceService().notifyPreferenceChange(PreferenceNames.VR_SETTINGS, null);
-    Platform.runLater(() -> {
-      refreshTableWidth();
-
-      stage.setWidth(stage.getWidth() - 5);
-      stage.setWidth(stage.getWidth() + 5);
-    });
-  }
-
-  public void onViewDeactivated() {
-
-  }
-
-  private void refreshTableWidth() {
-    Number newValue = stage.getWidth();
-    if (newValue.intValue() < 1800) {
-      tableRoot.setPrefWidth(400);
-    }
-    else {
-      tableRoot.setPrefWidth(-1);
-    }
-  }
-
-  private void loadPopperFrontend() {
-    try {
-      FXMLLoader loader = new FXMLLoader(EmulatorScriptPanelController.class.getResource("panel-emulator-script.fxml"));
-      Parent builtInRoot = loader.load();
-      startScriptController = loader.getController();
-      startScriptTab.setContent(builtInRoot);
-    }
-    catch (IOException e) {
-      LOG.error("Failed to load emulator table: " + e.getMessage(), e);
+    @FXML
+    private void onFolderGames() {
+        if (!StringUtils.isEmpty(gamesFolderField.getText())) {
+            File folder = new File(gamesFolderField.getText());
+            SystemUtil.openFolder(folder);
+        }
     }
 
-    try {
-      FXMLLoader loader = new FXMLLoader(EmulatorScriptPanelController.class.getResource("panel-emulator-script.fxml"));
-      Parent builtInRoot = loader.load();
-      vrStartScriptController = loader.getController();
-      vrStartScriptTab.setContent(builtInRoot);
-    }
-    catch (IOException e) {
-      LOG.error("Failed to load emulator table: " + e.getMessage(), e);
+    @FXML
+    private void onSelectFolderGames(ActionEvent event) {
+        onFolderSelect(event, gamesFolderField);
     }
 
-    try {
-      FXMLLoader loader = new FXMLLoader(EmulatorScriptPanelController.class.getResource("panel-emulator-script.fxml"));
-      Parent builtInRoot = loader.load();
-      exitScriptController = loader.getController();
-      exitScriptTab.setContent(builtInRoot);
-    }
-    catch (IOException e) {
-      LOG.error("Failed to load emulator table: " + e.getMessage(), e);
-    }
-  }
-
-  private void loadPinballXFrontend() {
-    descriptionField.setVisible(false);
-    descriptionLabel.setVisible(false);
-    romsFolderLabel.setVisible(false);
-    romsFolderField.setVisible(false);
-    customField1Label.setText("Parameters:");
-    customField2Label.setText("Executable:");
-
-    try {
-      FXMLLoader loader = new FXMLLoader(EmulatorBatScriptPanelController.class.getResource("panel-emulator-batscript.fxml"));
-      Parent builtInRoot = loader.load();
-      startScriptController = loader.getController();
-      startScriptTab.setContent(builtInRoot);
-    }
-    catch (IOException e) {
-      LOG.error("Failed to load emulator table: " + e.getMessage(), e);
-    }
-    try {
-      FXMLLoader loader = new FXMLLoader(EmulatorScriptPanelController.class.getResource("panel-emulator-batscript.fxml"));
-      Parent builtInRoot = loader.load();
-      exitScriptController = loader.getController();
-      exitScriptTab.setContent(builtInRoot);
-    }
-    catch (IOException e) {
-      LOG.error("Failed to load emulator table: " + e.getMessage(), e);
-    }
-  }
-
-  private void onFolderSelect(ActionEvent event, TextField field) {
-    String value = field.getText();
-
-    FolderRepresentation folder = FolderChooserDialog.open(value);
-    if (folder != null) {
-      field.setText(folder.getPath());
-    }
-  }
-
-  @Override
-  public void initialize(URL url, ResourceBundle resourceBundle) {
-    createBtn.managedProperty().bindBidirectional(createBtn.visibleProperty());
-    duplicateBtn.managedProperty().bindBidirectional(duplicateBtn.visibleProperty());
-    deleteBtn.managedProperty().bindBidirectional(deleteBtn.visibleProperty());
-    firstSeparator.managedProperty().bindBidirectional(firstSeparator.visibleProperty());
-    selectFolderButtonLaunch.managedProperty().bindBidirectional(selectFolderButtonLaunch.visibleProperty());
-    selectFolderButtonGames.managedProperty().bindBidirectional(selectFolderButtonGames.visibleProperty());
-    selectFolderButtonRoms.managedProperty().bindBidirectional(selectFolderButtonRoms.visibleProperty());
-    selectFolderButtonMedia.managedProperty().bindBidirectional(selectFolderButtonMedia.visibleProperty());
-
-    try {
-      FXMLLoader loader = new FXMLLoader(EmulatorsTableController.class.getResource("table-emulators.fxml"));
-      Parent parent = loader.load();
-      tableController = loader.getController();
-      tableController.setEmulatorController(this);
-      tableRoot.setCenter(parent);
-    }
-    catch (IOException e) {
-      LOG.error("Failed to load emulator table: " + e.getMessage(), e);
+    @FXML
+    private void onFolderRoms() {
+        if (!StringUtils.isEmpty(romsFolderField.getText())) {
+            File folder = new File(romsFolderField.getText());
+            SystemUtil.openFolder(folder);
+        }
     }
 
-    stage.widthProperty().addListener(new ChangeListener<Number>() {
-      @Override
-      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-        refreshTableWidth();
-      }
-    });
-
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
-    if (frontendType.equals(FrontendType.Popper)) {
-      loadPopperFrontend();
-    }
-    else if (frontendType.equals(FrontendType.PinballX)) {
-      openFolderButtonRoms.setVisible(false);
-      selectFolderButtonRoms.setVisible(false);
-
-      openFolderButtonMedia.setVisible(false);
-      selectFolderButtonMedia.setVisible(false);
-      loadPinballXFrontend();
-    }
-    else {
-      tabPane.setVisible(false);
+    @FXML
+    private void onSelectFolderRoms(ActionEvent event) {
+        onFolderSelect(event, romsFolderField);
     }
 
-    createBtn.setVisible(Features.EMULATORS_CRUD);
-    deleteBtn.setVisible(Features.EMULATORS_CRUD);
-    duplicateBtn.setVisible(Features.EMULATORS_CRUD);
-    firstSeparator.setVisible(Features.EMULATORS_CRUD);
-
-    emulatorRoot.widthProperty().addListener(new ChangeListener<Number>() {
-      @Override
-      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-        tabPane.setPrefWidth(newValue.intValue() - tableController.getTableView().getWidth() - 30);
-      }
-    });
-
-    emulatorRoot.heightProperty().addListener(new ChangeListener<Number>() {
-      @Override
-      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-        tabPane.setPrefHeight(newValue.intValue() - 426);
-      }
-    });
-
-    setSelection(Optional.empty());
-
-    Platform.runLater(() -> {
-      tabPane.setPrefWidth(emulatorRoot.widthProperty().intValue() - tableController.getTableView().getWidth() - 30);
-      tabPane.setPrefHeight(emulatorRoot.heightProperty().intValue() - 426);
-
-      refreshTableWidth();
-    });
-
-    client.getPreferenceService().addListener(this);
-    EventManager.getInstance().addListener(this);
-  }
-
-  public void select(GameEmulatorRepresentation gameEmulator) {
-    this.tableController.select(gameEmulator);
-  }
-
-  @Override
-  public void vrModeEnabled(boolean b) {
-    Platform.runLater(() -> {
-      setSelection(this.emulator);
-    });
-  }
-
-  @Override
-  public void preferencesChanged(String key, Object value) {
-    if (PreferenceNames.VR_SETTINGS.equals(key)) {
-      setSelection(this.emulator);
+    @FXML
+    private void onFolderMedia() {
+        if (!StringUtils.isEmpty(customField1.getText())) {
+            File folder = new File(customField1.getText());
+            SystemUtil.openFolder(folder);
+        }
     }
-  }
+
+    @FXML
+    private void onSelectFolderMedia(ActionEvent event) {
+        onFolderSelect(event, customField1);
+    }
+
+
+    @FXML
+    private void onSave() {
+        saveBtn.setDisable(true);
+        if (!FileUtils.isValidFilename(safeNameField.getText())) {
+            WidgetFactory.showAlert(stage, "Invalid Name", "The specified name contains invalid characters.");
+            return;
+        }
+
+        JFXFuture.runAsync(() -> {
+            FrontendType frontendType = client.getFrontendService().getFrontendType();
+
+            GameEmulatorRepresentation emu = emulator.get();
+            emu.setEnabled(enabledCheckbox.isSelected());
+            emu.setSafeName(safeNameField.getText());
+            emu.setName(nameField.getText());
+            emu.setDescription(descriptionField.getText());
+            emu.setGamesDirectory(gamesFolderField.getText());
+            emu.setRomDirectory(romsFolderField.getText());
+            emu.setInstallationDirectory(launchFolderField.getText());
+
+            if (frontendType.equals(FrontendType.Popper)) {
+                emu.setGameExt(customField2.getText());
+                emu.setMediaDirectory(customField1.getText());
+            }
+            else if (frontendType.equals(FrontendType.PinballX)) {
+                emu.setExeName(customField2.getText());
+                emu.setExeParameters(customField1.getText());
+            }
+
+            if (startScriptController != null) {
+                startScriptController.applyValues();
+            }
+            if (exitScriptController != null) {
+                exitScriptController.applyValues();
+            }
+
+            if (vrStartScriptController != null) {
+                vrStartScriptController.applyValues();
+
+                if (emu.isVpxEmulator() && vrStartScriptController.getScript().isPresent()) {
+                    client.getVRService().saveVrEmulatorLaunchScript(emu.getId(), vrStartScriptController.getScript().get());
+                }
+            }
+
+            client.getEmulatorService().saveGameEmulator(emu);
+        }).thenLater(() -> {
+            onReload();
+            saveBtn.setDisable(false);
+        });
+    }
+
+    @FXML
+    private void onDuplicate() {
+        GameEmulatorRepresentation template = emulator.get();
+        String s = WidgetFactory.showInputDialog(Studio.stage, "Clone Emulator", "Enter the folder save name for the copy of \"" + emulator.get().getName() + "\".", "You can edit the additional emulator parameters afterwards.", null, "Copy of " + template);
+        if (!StringUtils.isEmpty(s)) {
+            if (!FileUtils.isValidFilename(s)) {
+                WidgetFactory.showAlert(stage, "Invalid Name", "The specified name contains invalid characters.");
+                return;
+            }
+
+            GameEmulatorRepresentation emu = new GameEmulatorRepresentation();
+            emu.setSafeName(s);
+            emu.setName(s);
+            emu.setId(-1);
+            emu.setType(template.getType());
+            emu.setDescription(template.getDescription());
+            emu.setMediaDirectory(template.getMediaDirectory());
+            emu.setRomDirectory(template.getRomDirectory());
+            emu.setGameExt(template.getGameExt());
+            emu.setGamesDirectory(template.getGamesDirectory());
+            emu.setLaunchScript(template.getLaunchScript());
+            emu.setExitScript(template.getExitScript());
+            emu.setExeName(template.getExeName());
+            emu.setInstallationDirectory(template.getInstallationDirectory());
+            emu.setExeParameters(template.getExeParameters());
+
+            GameEmulatorRepresentation gameEmulatorRepresentation = client.getEmulatorService().saveGameEmulator(emu);
+            onReload();
+            tableController.select(gameEmulatorRepresentation);
+        }
+    }
+
+    @FXML
+    private void onDelete() {
+        if (emulator.isPresent()) {
+            GameEmulatorRepresentation gameEmulatorRepresentation = emulator.get();
+            Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Game Emulator", "Delete Game Emulator \"" + gameEmulatorRepresentation.getName() + "\"?");
+            if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+                ProgressDialog.createProgressDialog(new EmulatorDeletionProgressModel(gameEmulatorRepresentation, this));
+            }
+        }
+    }
+
+    @FXML
+    private void onCreate() {
+        GameEmulatorRepresentation emulatorRepresentation = EmulatorDialogs.openNewEmulatorDialog();
+        if (emulatorRepresentation != null) {
+            ProgressDialog.createProgressDialog(new EmulatorCreateProgressModel(emulatorRepresentation, this));
+
+        }
+    }
+
+    @FXML
+    public void onReload() {
+        JFXFuture
+                .runAsync(() -> client.getEmulatorService().clearCache())
+                .thenLater(() -> tableController.reload());
+    }
+
+    public void setSelection(Optional<GameEmulatorRepresentation> model) {
+        int index = tabPane.getSelectionModel().getSelectedIndex();
+        this.emulator = model;
+
+        emulatorNameLabel.setText("-");
+        emulatorIdLabel.setText("-");
+
+        enabledCheckbox.setSelected(false);
+        enabledCheckbox.setDisable(model.isEmpty());
+        safeNameField.setText("");
+        safeNameField.setDisable(model.isEmpty() || !Features.EMULATORS_CRUD);
+        nameField.setText("");
+        nameField.setDisable(model.isEmpty());
+        descriptionField.setText("");
+        descriptionField.setDisable(model.isEmpty());
+        launchFolderField.setText("");
+        launchFolderField.setDisable(model.isEmpty());
+        gamesFolderField.setText("");
+        gamesFolderField.setDisable(model.isEmpty());
+        customField2.setText("");
+        customField2.setDisable(model.isEmpty());
+        customField1.setText("");
+        customField1.setDisable(model.isEmpty());
+        romsFolderField.setText("");
+        romsFolderField.setDisable(model.isEmpty());
+
+        duplicateBtn.setDisable(model.isEmpty());
+        saveBtn.setDisable(model.isEmpty());
+        deleteBtn.setDisable(model.isEmpty());
+
+        openFolderButtonLaunch.setDisable(model.isEmpty());
+        openFolderButtonGames.setDisable(model.isEmpty());
+        openFolderButtonRoms.setDisable(model.isEmpty());
+        openFolderButtonMedia.setDisable(model.isEmpty());
+        selectFolderButtonLaunch.setDisable(model.isEmpty());
+        selectFolderButtonGames.setDisable(model.isEmpty());
+        selectFolderButtonRoms.setDisable(model.isEmpty());
+        selectFolderButtonMedia.setDisable(model.isEmpty());
+
+        boolean vrEnabled = false;
+        if (model.isPresent()) {
+            GameEmulatorRepresentation emulator = model.get();
+
+            if (emulator.isVpxEmulator()) {
+                client.getPreferenceService().clearCache(PreferenceNames.VR_SETTINGS);
+                VRSettings vrSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VR_SETTINGS, VRSettings.class);
+                vrEnabled = vrSettings.isEnabled();
+
+                if (vrStartScriptController != null) {
+                    GameEmulatorScript vrLaunchScript = client.getVRService().getVrLaunchScript(emulator.getId());
+                    vrStartScriptController.setData(model, vrLaunchScript != null ? Optional.of(vrLaunchScript) : Optional.of(new GameEmulatorScript()));
+                }
+
+                tabPane.getSelectionModel().select(0);
+            }
+
+            emulatorNameLabel.setText(emulator.getName());
+            emulatorIdLabel.setText("(ID #" + emulator.getId() + ")");
+
+            enabledCheckbox.setSelected(emulator.isEnabled());
+            safeNameField.setText(emulator.getSafeName());
+            nameField.setText(emulator.getName());
+            descriptionField.setText(emulator.getDescription());
+            launchFolderField.setText(emulator.getInstallationDirectory());
+            gamesFolderField.setText(emulator.getGamesDirectory());
+            romsFolderField.setText(emulator.getRomDirectory());
+
+            FrontendType frontendType = client.getFrontendService().getFrontendType();
+
+            if (frontendType.equals(FrontendType.Popper)) {
+                customField2.setText(emulator.getGameExt());
+                customField1.setText(emulator.getMediaDirectory());
+            }
+            else if (frontendType.equals(FrontendType.PinballX)) {
+                customField2.setText(emulator.getExeName());
+                customField1.setText(emulator.getExeParameters());
+            }
+
+            tabPane.getSelectionModel().select(index);
+        }
+
+        if (startScriptController != null) {
+            startScriptController.setData(model, model.map(GameEmulatorRepresentation::getLaunchScript));
+            startScriptTab.setDisable(model.isEmpty());
+            startScriptController.setDisabled(model.isEmpty());
+        }
+        if (vrStartScriptController != null) {
+            vrStartScriptTab.setDisable(model.isEmpty() || !vrEnabled);
+            vrStartScriptController.setDisabled(model.isEmpty() || !vrEnabled);
+        }
+        if (exitScriptController != null) {
+            exitScriptController.setData(model, model.map(GameEmulatorRepresentation::getExitScript));
+            exitScriptTab.setDisable(model.isEmpty());
+            exitScriptController.setDisabled(model.isEmpty());
+        }
+    }
+
+    public void onViewActivated() {
+        client.getPreferenceService().notifyPreferenceChange(PreferenceNames.VR_SETTINGS, null);
+        Platform.runLater(() -> {
+            refreshTableWidth();
+
+            stage.setWidth(stage.getWidth() - 5);
+            stage.setWidth(stage.getWidth() + 5);
+        });
+    }
+
+    public void onViewDeactivated() {
+
+    }
+
+    private void refreshTableWidth() {
+        Number newValue = stage.getWidth();
+        if (newValue.intValue() < 1800) {
+            tableRoot.setPrefWidth(400);
+        }
+        else {
+            tableRoot.setPrefWidth(-1);
+        }
+    }
+
+    private void loadPopperFrontend() {
+        try {
+            FXMLLoader loader = new FXMLLoader(EmulatorScriptPanelController.class.getResource("panel-emulator-script.fxml"));
+            Parent builtInRoot = loader.load();
+            startScriptController = loader.getController();
+            startScriptTab.setContent(builtInRoot);
+        }
+        catch (IOException e) {
+            LOG.error("Failed to load emulator table: " + e.getMessage(), e);
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(EmulatorScriptPanelController.class.getResource("panel-emulator-script.fxml"));
+            Parent builtInRoot = loader.load();
+            vrStartScriptController = loader.getController();
+            vrStartScriptTab.setContent(builtInRoot);
+        }
+        catch (IOException e) {
+            LOG.error("Failed to load emulator table: " + e.getMessage(), e);
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(EmulatorScriptPanelController.class.getResource("panel-emulator-script.fxml"));
+            Parent builtInRoot = loader.load();
+            exitScriptController = loader.getController();
+            exitScriptTab.setContent(builtInRoot);
+        }
+        catch (IOException e) {
+            LOG.error("Failed to load emulator table: " + e.getMessage(), e);
+        }
+    }
+
+    private void loadPinballXFrontend() {
+        descriptionField.setVisible(false);
+        descriptionLabel.setVisible(false);
+        romsFolderLabel.setVisible(false);
+        romsFolderField.setVisible(false);
+        customField1Label.setText("Parameters:");
+        customField2Label.setText("Executable:");
+
+        try {
+            FXMLLoader loader = new FXMLLoader(EmulatorBatScriptPanelController.class.getResource("panel-emulator-batscript.fxml"));
+            Parent builtInRoot = loader.load();
+            startScriptController = loader.getController();
+            startScriptTab.setContent(builtInRoot);
+        }
+        catch (IOException e) {
+            LOG.error("Failed to load emulator table: " + e.getMessage(), e);
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(EmulatorBatScriptPanelController.class.getResource("panel-emulator-batscript.fxml"));
+            Parent builtInRoot = loader.load();
+            vrStartScriptController = loader.getController();
+            vrStartScriptTab.setContent(builtInRoot);
+        }
+        catch (IOException e) {
+            LOG.error("Failed to load emulator table: " + e.getMessage(), e);
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(EmulatorBatScriptPanelController.class.getResource("panel-emulator-batscript.fxml"));
+            Parent builtInRoot = loader.load();
+            exitScriptController = loader.getController();
+            exitScriptTab.setContent(builtInRoot);
+        }
+        catch (IOException e) {
+            LOG.error("Failed to load emulator table: " + e.getMessage(), e);
+        }
+
+        // self remove from tabs !
+        //vrStartScriptTab.getTabPane().getTabs().remove(vrStartScriptTab);
+        //vrStartScriptTab = null;
+    }
+
+    private void onFolderSelect(ActionEvent event, TextField field) {
+        String value = field.getText();
+
+        FolderRepresentation folder = FolderChooserDialog.open(value);
+        if (folder != null) {
+            field.setText(folder.getPath());
+        }
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        createBtn.managedProperty().bindBidirectional(createBtn.visibleProperty());
+        duplicateBtn.managedProperty().bindBidirectional(duplicateBtn.visibleProperty());
+        deleteBtn.managedProperty().bindBidirectional(deleteBtn.visibleProperty());
+        firstSeparator.managedProperty().bindBidirectional(firstSeparator.visibleProperty());
+        selectFolderButtonLaunch.managedProperty().bindBidirectional(selectFolderButtonLaunch.visibleProperty());
+        selectFolderButtonGames.managedProperty().bindBidirectional(selectFolderButtonGames.visibleProperty());
+        selectFolderButtonRoms.managedProperty().bindBidirectional(selectFolderButtonRoms.visibleProperty());
+        selectFolderButtonMedia.managedProperty().bindBidirectional(selectFolderButtonMedia.visibleProperty());
+
+        try {
+            FXMLLoader loader = new FXMLLoader(EmulatorsTableController.class.getResource("table-emulators.fxml"));
+            Parent parent = loader.load();
+            tableController = loader.getController();
+            tableController.setEmulatorController(this);
+            tableRoot.setCenter(parent);
+        }
+        catch (IOException e) {
+            LOG.error("Failed to load emulator table: " + e.getMessage(), e);
+        }
+
+        stage.widthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                refreshTableWidth();
+            }
+        });
+
+        FrontendType frontendType = client.getFrontendService().getFrontendType();
+        if (frontendType.equals(FrontendType.Popper)) {
+            loadPopperFrontend();
+        }
+        else if (frontendType.equals(FrontendType.PinballX)) {
+            openFolderButtonRoms.setVisible(false);
+            selectFolderButtonRoms.setVisible(false);
+
+            openFolderButtonMedia.setVisible(false);
+            selectFolderButtonMedia.setVisible(false);
+            loadPinballXFrontend();
+        }
+        else {
+            tabPane.setVisible(false);
+        }
+
+        createBtn.setVisible(Features.EMULATORS_CRUD);
+        deleteBtn.setVisible(Features.EMULATORS_CRUD);
+        duplicateBtn.setVisible(Features.EMULATORS_CRUD);
+        firstSeparator.setVisible(Features.EMULATORS_CRUD);
+
+        emulatorRoot.widthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                tabPane.setPrefWidth(newValue.intValue() - tableController.getTableView().getWidth() - 30);
+            }
+        });
+
+        emulatorRoot.heightProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                tabPane.setPrefHeight(newValue.intValue() - 426);
+            }
+        });
+
+        setSelection(Optional.empty());
+
+        Platform.runLater(() -> {
+            tabPane.setPrefWidth(emulatorRoot.widthProperty().intValue() - tableController.getTableView().getWidth() - 30);
+            tabPane.setPrefHeight(emulatorRoot.heightProperty().intValue() - 426);
+
+            refreshTableWidth();
+        });
+
+        client.getPreferenceService().addListener(this);
+        EventManager.getInstance().addListener(this);
+    }
+
+    public void select(GameEmulatorRepresentation gameEmulator) {
+        this.tableController.select(gameEmulator);
+    }
+
+    @Override
+    public void vrModeEnabled(boolean b) {
+        Platform.runLater(() -> {
+            setSelection(this.emulator);
+        });
+    }
+
+    @Override
+    public void preferencesChanged(String key, Object value) {
+        if (PreferenceNames.VR_SETTINGS.equals(key)) {
+            setSelection(this.emulator);
+        }
+    }
 }

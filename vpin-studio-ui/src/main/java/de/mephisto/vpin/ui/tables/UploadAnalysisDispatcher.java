@@ -87,6 +87,7 @@ public class UploadAnalysisDispatcher {
         TableDialogs.openDMDUploadDialog(game, file, analysis, finalizer);
         return;
       }
+      case VPT:
       case VPX: {
         TableDialogs.openTableUploadDialog(game, EmulatorType.VisualPinball, null, analysis, finalizer);
         return;

@@ -350,12 +350,13 @@ public class TableUploadController implements Initializable, DialogController {
             }
 
             String analyzeVpx = uploaderAnalysis.validateAssetTypeInArchive(AssetType.VPX);
-            String analyzeFpt = uploaderAnalysis.validateAssetTypeInArchive(AssetType.FPT);
+            String analyzeVpt = uploaderAnalysis.validateAssetTypeInArchive(AssetType.VPT);
+            String _analyzeFpt = uploaderAnalysis.validateAssetTypeInArchive(AssetType.FPT);
             subfolderCheckbox.setDisable(analyzeVpx != null);
 
             uploadBtn.setDisable(false);
             // If the analysis failed.
-            if (analyzeVpx != null && analyzeFpt != null) {
+              if (analyzeVpx != null && analyzeVpt != null && _analyzeFpt != null) {
               uploadBtn.setDisable(true);
               WidgetFactory.showAlert(Studio.stage, "No table file found in this archive.");
               this.selection = null;

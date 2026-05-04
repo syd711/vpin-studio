@@ -49,7 +49,7 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
   }
 
   public boolean isTableAsset() {
-    return assetType.equals(AssetType.VPX) || assetType.equals(AssetType.FPT);
+      return assetType.equals(AssetType.VPX) || assetType.equals(AssetType.VPT) || assetType.equals(AssetType.FPT);
   }
 
   public boolean isPatch() {
@@ -155,7 +155,7 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
       }
     }
 
-    if (resolveTableFileAssets(Arrays.asList(AssetType.INI, AssetType.POV, AssetType.RES, AssetType.DIRECTB2S, AssetType.VPX, AssetType.FPT))) {
+    if (resolveTableFileAssets(Arrays.asList(AssetType.INI, AssetType.POV, AssetType.RES, AssetType.DIRECTB2S, AssetType.VPX, AssetType.VPT, AssetType.FPT))) {
       LOG.info(fileNameWithPath + ": " + assetType.name());
       return;
     }
