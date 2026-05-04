@@ -165,11 +165,11 @@ jobs:
             --window-pos 100 100 \
             --window-size 640 600 \
             --icon-size 128 \
-            --icon "package/macos/Vpin-Studio.app" 110 200 \
-            --hide-extension "package/macos/Vpin-Studio.app" \
+            --icon "Vpin-Studio.app" 110 200 \
+            --hide-extension "Vpin-Studio.app" \
             --app-drop-link 450 200 \
             "VPin-Studio-${{ steps.project.outputs.version }}.dmg" \
-            "package/macos/Vpin-Studio.app"
+            "Vpin-Studio.app"
         shell: bash
 
       - name: Package as macOS App
