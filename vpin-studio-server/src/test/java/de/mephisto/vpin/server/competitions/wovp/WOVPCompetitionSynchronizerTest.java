@@ -47,7 +47,7 @@ public class WOVPCompetitionSynchronizerTest {
 
   private WOVPSettings buildSettings(boolean enabled) {
     WOVPSettings settings = mock(WOVPSettings.class);
-    when(settings.isEnabled()).thenReturn(enabled);
+    lenient().when(settings.isEnabled()).thenReturn(enabled);
     when(preferencesService.getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class)).thenReturn(settings);
     return settings;
   }

@@ -96,7 +96,8 @@ public class JobServiceTest {
 
   @Test
   void offer_submitsToQueue() {
-    JobDescriptor d = activeDescriptor("offer-1");
+    JobDescriptor d = new JobDescriptor(JobType.ALTCOLOR_INSTALL);
+    d.setUuid("offer-1");
 
     jobService.offer(d);
 
@@ -194,10 +195,10 @@ public class JobServiceTest {
 
     Job otherJob = mock(Job.class);
     when(otherJob.isCancelable()).thenReturn(true);
-    JobDescriptor other = new JobDescriptor(JobType.ALTCOLOR_INSTALL);
+    JobDescriptor other = new JobDescriptor(JobType.DOF_SYNC);
     other.setJob(otherJob);
     other.setUuid("other-type");
-    other.setJobType(type);
+    other.setJobType(JobType.DOF_SYNC);
 
     when(jobQueue.getJobs()).thenReturn(List.of(active, other));
 

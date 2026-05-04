@@ -25,7 +25,7 @@ public class GameStatusServiceTest {
     game.setId(gameId);
     game.setGameDisplayName(displayName);
     TableStatusChangedEvent event = mock(TableStatusChangedEvent.class);
-    when(event.getGame()).thenReturn(game);
+    lenient().when(event.getGame()).thenReturn(game);
     return event;
   }
 

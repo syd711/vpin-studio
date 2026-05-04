@@ -44,7 +44,6 @@ public class FrontendStatusServiceTest {
   @Test
   void addTableStatusChangeListener_doesNotThrow() {
     TableStatusChangeListener listener = mock(TableStatusChangeListener.class);
-    when(listener.getPriority()).thenReturn(0);
 
     frontendStatusService.addTableStatusChangeListener(listener);
     // no exception expected
