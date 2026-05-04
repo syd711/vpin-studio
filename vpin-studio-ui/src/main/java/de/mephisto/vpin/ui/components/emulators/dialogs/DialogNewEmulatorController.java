@@ -113,7 +113,7 @@ public class DialogNewEmulatorController implements Initializable, DialogControl
 
             if (validation.getErrorTitle() != null) {
               infoContainer.setVisible(false);
-              errorContainer.setVisible(validation.getErrorTitle() != null);
+              errorContainer.setVisible(true);
               errorTitle.setText(validation.getErrorTitle());
               errorText.setText(validation.getErrorText());
             }
@@ -122,6 +122,7 @@ public class DialogNewEmulatorController implements Initializable, DialogControl
 
               validatedEmulator.setName(nameField.getText());
               infoContainer.setVisible(true);
+              errorContainer.setVisible(false);
               if (emulatorType.equals(EmulatorType.ZenFX) || emulatorType.equals(EmulatorType.ZenFX3) || emulatorType.equals(EmulatorType.Zaccaria) || emulatorType.equals(EmulatorType.PinballM)) {
                 validationText.setText("The games of this emulator type will be automatically imported.");
               }

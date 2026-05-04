@@ -36,6 +36,7 @@ public enum AssetType {
   PINVOL,
   POV,
   VPX,
+  VPT,
   FPT,
   ZIP,
   RAR,
@@ -45,7 +46,7 @@ public enum AssetType {
   CARD_ASSET;
 
   static final AssetType[] INSTALLABLE_ASSET_TYPES = {
-      ZIP, RAR, SEVENZIP, RES, DIF, INI, POV, DIRECTB2S, VNI, VPA, VPX, FPT, PAL, PAC, CROMC, CRZ, CFG, BAM_CFG, NV, FPL
+      ZIP, RAR, SEVENZIP, RES, DIF, INI, POV, DIRECTB2S, VNI, VPA, VPX, VPT, FPT, PAL, PAC, CROMC, CRZ, CFG, BAM_CFG, NV, FPL
   };
 
   public static AssetType fromExtension(@Nullable EmulatorType emulatorType, String extension) {
@@ -119,6 +120,9 @@ public enum AssetType {
       }
       case VPX: {
         return "VPX Table";
+      }
+      case VPT: {
+        return "VP9 Table";
       }
       case VPA: {
         return "VPin Archive";
@@ -212,6 +216,9 @@ public enum AssetType {
       }
       case VPX: {
         return "*.vpx";
+      }
+      case VPT: {
+        return "*.vpt";
       }
       case DMD_PACK: {
         return "DMD Pack";

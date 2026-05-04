@@ -320,8 +320,9 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
 
   @FXML
   public void onReload() {
-    client.getEmulatorService().clearCache();
-    tableController.reload();
+    JFXFuture
+      .runAsync(() -> client.getEmulatorService().clearCache())
+      .thenLater(() -> tableController.reload());
   }
 
   public void setSelection(Optional<GameEmulatorRepresentation> model) {
@@ -354,26 +355,27 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
     saveBtn.setDisable(model.isEmpty());
     deleteBtn.setDisable(model.isEmpty());
 
-    if (startScriptController != null) {
-      startScriptController.setData(model, model.map(GameEmulatorRepresentation::getLaunchScript));
-      exitScriptController.setData(model, model.map(GameEmulatorRepresentation::getExitScript));
-    }
+    openFolderButtonLaunch.setDisable(model.isEmpty());
+    openFolderButtonGames.setDisable(model.isEmpty());
+    openFolderButtonRoms.setDisable(model.isEmpty());
+    openFolderButtonMedia.setDisable(model.isEmpty());
+    selectFolderButtonLaunch.setDisable(model.isEmpty());
+    selectFolderButtonGames.setDisable(model.isEmpty());
+    selectFolderButtonRoms.setDisable(model.isEmpty());
+    selectFolderButtonMedia.setDisable(model.isEmpty());
 
-    client.getPreferenceService().clearCache(PreferenceNames.VR_SETTINGS);
-    VRSettings vrSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VR_SETTINGS, VRSettings.class);
-    this.setEnabled(false);
-
+    boolean vrEnabled = false;
     if (model.isPresent()) {
       GameEmulatorRepresentation emulator = model.get();
 
       if (emulator.isVpxEmulator()) {
-        boolean vrEnabled = vrSettings.isVrEnabled();
-        this.setEnabled(!vrEnabled);
+        client.getPreferenceService().clearCache(PreferenceNames.VR_SETTINGS);
+        VRSettings vrSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VR_SETTINGS, VRSettings.class);
+        vrEnabled = vrSettings.isEnabled();
 
         if (vrStartScriptController != null) {
           GameEmulatorScript vrLaunchScript = client.getVRService().getVrLaunchScript(emulator.getId());
           vrStartScriptController.setData(model, vrLaunchScript != null ? Optional.of(vrLaunchScript) : Optional.of(new GameEmulatorScript()));
-          vrStartScriptTab.setDisable(false);
         }
 
         tabPane.getSelectionModel().select(0);
@@ -403,39 +405,20 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
 
       tabPane.getSelectionModel().select(index);
     }
-  }
-
-  private void setEnabled(boolean vrEnabled) {
-    this.saveBtn.setDisable(!vrEnabled);
-    //this.createBtn.setDisable(!vrEnabled);
-    this.deleteBtn.setDisable(!vrEnabled);
-    this.duplicateBtn.setDisable(!vrEnabled);
-    this.enabledCheckbox.setDisable(!vrEnabled);
-    this.nameField.setDisable(!vrEnabled);
-    this.descriptionField.setDisable(!vrEnabled);
-    this.gamesFolderField.setDisable(!vrEnabled);
-    this.launchFolderField.setDisable(!vrEnabled);
-    this.romsFolderField.setDisable(!vrEnabled);
-    this.customField1.setDisable(!vrEnabled);
-    this.customField2.setDisable(!vrEnabled);
-    this.safeNameField.setDisable(!vrEnabled);
-
-    this.selectFolderButtonGames.setDisable(!vrEnabled);
-    this.selectFolderButtonMedia.setDisable(!vrEnabled);
-    this.selectFolderButtonLaunch.setDisable(!vrEnabled);
-    this.selectFolderButtonRoms.setDisable(!vrEnabled);
 
     if (startScriptController != null) {
-      startScriptTab.setDisable(!vrEnabled);
-      startScriptController.setDisabled(!vrEnabled);
+      startScriptController.setData(model, model.map(GameEmulatorRepresentation::getLaunchScript));
+      startScriptTab.setDisable(model.isEmpty());
+      startScriptController.setDisabled(model.isEmpty());
     }
     if (vrStartScriptController != null) {
-      vrStartScriptTab.setDisable(!vrEnabled);
-      vrStartScriptController.setDisabled(!vrEnabled);
+      vrStartScriptTab.setDisable(model.isEmpty() || !vrEnabled);
+      vrStartScriptController.setDisabled(model.isEmpty() || !vrEnabled);
     }
     if (exitScriptController != null) {
-      exitScriptTab.setDisable(!vrEnabled);
-      exitScriptController.setDisabled(!vrEnabled);
+      exitScriptController.setData(model, model.map(GameEmulatorRepresentation::getExitScript));
+      exitScriptTab.setDisable(model.isEmpty());
+      exitScriptController.setDisabled(model.isEmpty());
     }
   }
 
@@ -512,8 +495,19 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
     catch (IOException e) {
       LOG.error("Failed to load emulator table: " + e.getMessage(), e);
     }
+
     try {
-      FXMLLoader loader = new FXMLLoader(EmulatorScriptPanelController.class.getResource("panel-emulator-batscript.fxml"));
+      FXMLLoader loader = new FXMLLoader(EmulatorBatScriptPanelController.class.getResource("panel-emulator-batscript.fxml"));
+      Parent builtInRoot = loader.load();
+      vrStartScriptController = loader.getController();
+      vrStartScriptTab.setContent(builtInRoot);
+    }
+    catch (IOException e) {
+      LOG.error("Failed to load emulator table: " + e.getMessage(), e);
+    }
+
+    try {
+      FXMLLoader loader = new FXMLLoader(EmulatorBatScriptPanelController.class.getResource("panel-emulator-batscript.fxml"));
       Parent builtInRoot = loader.load();
       exitScriptController = loader.getController();
       exitScriptTab.setContent(builtInRoot);
@@ -523,8 +517,8 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
     }
 
     // self remove from tabs !
-    vrStartScriptTab.getTabPane().getTabs().remove(vrStartScriptTab);
-    vrStartScriptTab = null;
+    //vrStartScriptTab.getTabPane().getTabs().remove(vrStartScriptTab);
+    //vrStartScriptTab = null;
   }
 
   private void onFolderSelect(ActionEvent event, TextField field) {
