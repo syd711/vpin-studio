@@ -3,7 +3,7 @@
   <parent>
     <artifactId>studio</artifactId>
     <groupId>de.mephisto.vpin</groupId>
-    <version>4.8.4</version>
+    <version>4.9.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>vpin-studio-app</artifactId>
@@ -18,15 +18,15 @@
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.13.0</version>
+        <version>3.10.1</version>
         <configuration>
-          <source>25</source>
-          <target>25</target>
+          <source>11</source>
+          <target>11</target>
         </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
-        <version>3.3.2</version>
+        <version>2.5</version>
         <executions>
           <execution>
             <id>auto-clean</id>
@@ -46,7 +46,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.6.0</version>
+        <version>3.2.1</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -54,7 +54,6 @@
               <goal>shade</goal>
             </goals>
             <configuration>
-              <outputFile>${project.build.directory}/vpin-studio-app-shaded.jar</outputFile>
               <transformers>
                 <transformer>
                   <mainClass>de.mephisto.vpin.app.VPinStudioApp</mainClass>
@@ -77,7 +76,7 @@
               <goal>copy</goal>
             </goals>
             <configuration>
-              <sourceFile>${basedir}/target/vpin-studio-app-shaded.jar</sourceFile>
+              <sourceFile>${basedir}/target/vpin-studio-app-${project.version}.jar</sourceFile>
               <destinationFile>${basedir}/target/vpin-studio-app.jar</destinationFile>
             </configuration>
           </execution>
@@ -98,9 +97,6 @@
               <noManPages>true</noManPages>
               <stripDebug>true</stripDebug>
               <noHeaderFiles>true</noHeaderFiles>
-              <options>
-                <option>--enable-native-access=javafx.graphics</option>
-              </options>
             </configuration>
           </execution>
         </executions>
@@ -108,7 +104,7 @@
       <plugin>
         <groupId>com.akathist.maven.plugins.launch4j</groupId>
         <artifactId>launch4j-maven-plugin</artifactId>
-        <version>2.5.1</version>
+        <version>2.2.0</version>
         <executions>
           <execution>
             <id>l4j-clui</id>
@@ -118,7 +114,7 @@
             </goals>
             <configuration>
               <headerType>gui</headerType>
-              <icon>${project.basedir}/src/main/resources/de/mephisto/vpin/app/logo.ico</icon>
+              <icon>src/main/resources/de/mephisto/vpin/app/logo.ico</icon>
               <outfile>target/VPin-Studio-App.exe</outfile>
               <jar>target/vpin-studio-app.jar</jar>
               <errTitle>VPin-Studio-App</errTitle>
@@ -129,9 +125,6 @@
               </classPath>
               <jre>
                 <path>./win32/java</path>
-                <opts>
-                  <opt>--enable-native-access=javafx.graphics</opt>
-                </opts>
               </jre>
               <versionInfo>
                 <fileVersion>1.0.0.0</fileVersion>
@@ -150,7 +143,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>3.3.1</version>
+        <version>2.6</version>
         <executions>
           <execution>
             <id>copy-exe</id>
@@ -176,9 +169,10 @@
     </plugins>
   </build>
   <properties>
+    <maven.compiler.target>11</maven.compiler.target>
+    <maven.compiler.source>11</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.target>25</maven.compiler.target>
+    <junit.version>5.8.2</junit.version>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <maven.compiler.source>25</maven.compiler.source>
   </properties>
 </project>

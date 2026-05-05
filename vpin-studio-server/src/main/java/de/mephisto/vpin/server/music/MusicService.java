@@ -68,13 +68,13 @@ public class MusicService {
       return Collections.emptyList();
     }
     String assetsStr = game.getAssets();
-    if (StringUtils.isEmpty(assetsStr)) {
+    if (StringUtils.isBlank(assetsStr)) {
       return Collections.emptyList();
     }
     List<File> result = new ArrayList<>();
     Path root = musicFolder.toPath();
     for (String asset : assetsStr.split("\\|")) {
-      if (StringUtils.isEmpty(asset) || asset.contains("/.mp3") || asset.contains("/*.mp3")) {
+      if (StringUtils.isBlank(asset) || asset.contains("/.mp3") || asset.contains("/*.mp3")) {
         continue;
       }
       if (!asset.contains("*")) {

@@ -87,7 +87,6 @@ public class NvRamOutputToScoreTextTest {
 
     // exotic nvrams ^^
     String filename = "mj_130.nv";
-
     File testFolder = new File("../testsystem/vPinball/VisualPinball/VPinMAME/nvram/");
     File entry = new File(testFolder, filename);
 
