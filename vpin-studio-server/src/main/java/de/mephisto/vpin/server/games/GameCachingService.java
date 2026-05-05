@@ -418,6 +418,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
         game.setAssets(gameDetails.getAssets());
         game.setMusicScripted(gameDetails.getAssets() != null && (gameDetails.getAssets().contains(".mp3") || gameDetails.getAssets().contains(".wav") || gameDetails.getAssets().contains(".ogg")));
         game.setScannedRom(gameDetails.getRomName());
+        game.setRomExists(vPinMameService.isRomExists(game));
         game.setScannedHsFileName(gameDetails.getHsFileName());
         game.setScannedAltRom(gameDetails.getTableName());
         game.setIgnoreUpdates(gameDetails.getIgnoreUpdates() != null ? gameDetails.getIgnoreUpdates() : false);
@@ -511,7 +512,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
         if (validationStates.isEmpty()) {
             validationStates.add(ValidationStateFactory.empty());
         }
-        game.setValidationState(validationStates.getFirst());
+        game.setValidationState(validationStates.get(0)); //Note: .getFirst() will not return an empty value, so don't use it here.
 
         GameScoreValidation scoreValidation = gameValidationService.validateHighscoreStatus(game, gameDetailsInfo.gameDetails, gameDetailsInfo.tableDetails, frontendService.getFrontendType(), serverSettings);
         game.setValidScoreConfiguration(scoreValidation.isValidScoreConfiguration());

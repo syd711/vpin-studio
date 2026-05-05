@@ -25,7 +25,6 @@
         <spotbugs.version>4.9.8</spotbugs.version>
         <launch4j.version>2.7.0</launch4j.version>
         <jackson.version>3.1.1</jackson.version>
-        <jackson.annotations.version>2.21</jackson.annotations.version>
         <spring.boot.version>4.0.6</spring.boot.version>
         <logback.version>1.5.32</logback.version>
         <slf4j.version>2.0.17</slf4j.version>
@@ -69,19 +68,11 @@
                 <scope>runtime</scope>
             </dependency>
             <dependency>
-                <groupId>tools.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
+                <groupId>tools.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
                 <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>tools.jackson.core</groupId>
-                <artifactId>jackson-core</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-annotations</artifactId>
-                <version>${jackson.annotations.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
