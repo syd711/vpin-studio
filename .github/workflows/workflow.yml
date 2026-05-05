@@ -179,7 +179,7 @@ jobs:
           ls -al
           echo "----------------------ls .. results----------------------"
           ls -al ..                
-          cp ../VPin-Studio-${{ steps.project.outputs.version }}.dmg ../VPin-Studio-Client-MacOS-${{ matrix.arch }}.dmg
+          cp VPin-Studio-${{ steps.project.outputs.version }}.dmg VPin-Studio-Client-MacOS-${{ matrix.arch }}.dmg
            
 
       - name: Upload Build Artifacts
