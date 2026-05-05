@@ -151,6 +151,9 @@ public class Studio extends Application {
 
       //replace the OverlayFX client with the Studio one
       Studio.client = new VPinStudioClient("localhost");
+        if (splashController != null) {
+            splashController.setStatus("Checking localhost...");
+        }
       Studio.Features = client.getSystemService().getFeatures();
       ServerFX.client = Studio.client;
 
@@ -167,14 +170,19 @@ public class Studio extends Application {
         List<ConnectionEntry> connections = connectionProperties.getConnections();
         if (!connections.isEmpty()) {
           for (ConnectionEntry connection : connections) {
+              if (splashController != null) {
+                  splashController.setStatus("Checking " + connection.getName() + "...");
+              }
             Studio.client = new VPinStudioClient(connection.getIp());
-            Studio.Features = client.getSystemService().getFeatures();
             version = client.getSystemService().getVersion();
             if (!StringUtils.isEmpty(version)) {
+                //moved this inside because we are using the version to check connection. It was slowing this process down
+                Studio.Features = client.getSystemService().getFeatures();
               final VPinStudioClient foundClient = Studio.client;
               Platform.runLater(() -> loadStudio(stage, foundClient));
               return;
             }
+
           }
         }
         Platform.runLater(() -> loadLauncher(stage));
