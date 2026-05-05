@@ -306,12 +306,6 @@
             <groupId>org.jspecify</groupId>
             <artifactId>jspecify</artifactId>
         </dependency>
-        <dependency>
-            <groupId>de.mephisto.vpin</groupId>
-            <artifactId>vpin-studio-commons</artifactId>
-            <version>5.0.0</version>
-            <scope>compile</scope>
-        </dependency>
     </dependencies>
 
     <build>
