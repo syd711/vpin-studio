@@ -3,7 +3,7 @@
   <parent>
     <artifactId>studio</artifactId>
     <groupId>de.mephisto.vpin</groupId>
-    <version>4.8.4</version>
+    <version>4.9.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>vpin-studio-ui</artifactId>
@@ -18,21 +18,15 @@
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.14.0</version>
+        <version>3.10.1</version>
         <configuration>
-          <source>25</source>
-          <target>25</target>
-          <compilerArgs>
-            <arg>--add-exports</arg>
-            <arg>javafx.graphics/com.sun.javafx.iio=ALL-UNNAMED</arg>
-            <arg>--add-exports</arg>
-            <arg>javafx.graphics/com.sun.javafx.iio.common=ALL-UNNAMED</arg>
-          </compilerArgs>
+          <source>11</source>
+          <target>11</target>
         </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.6.0</version>
+        <version>3.2.1</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -93,13 +87,6 @@
               <noManPages>true</noManPages>
               <stripDebug>true</stripDebug>
               <noHeaderFiles>true</noHeaderFiles>
-              <options>
-                <option>--add-exports</option>
-                <option>javafx.graphics/com.sun.javafx.iio=ALL-UNNAMED</option>
-                <option>--add-exports</option>
-                <option>javafx.graphics/com.sun.javafx.iio.common=ALL-UNNAMED</option>
-                <option>--enable-native-access=javafx.graphics</option>
-              </options>
             </configuration>
           </execution>
         </executions>
@@ -107,7 +94,7 @@
       <plugin>
         <groupId>com.akathist.maven.plugins.launch4j</groupId>
         <artifactId>launch4j-maven-plugin</artifactId>
-        <version>${launch4j.version}</version>
+        <version>2.2.0</version>
         <executions>
           <execution>
             <id>l4j-clui</id>
@@ -128,11 +115,6 @@
               </classPath>
               <jre>
                 <path>./win32/java</path>
-                <opts>
-                  <opt>--add-exports=javafx.graphics/com.sun.javafx.iio=ALL-UNNAMED</opt>
-                  <opt>--add-exports=javafx.graphics/com.sun.javafx.iio.common=ALL-UNNAMED</opt>
-                  <opt>--enable-native-access=javafx.graphics</opt>
-                </opts>
               </jre>
               <versionInfo>
                 <fileVersion>1.0.0.0</fileVersion>
@@ -201,7 +183,7 @@
                 <resource>
                   <directory>${basedir}/../</directory>
                   <includes>
-                    <include>zulu25*.tar.gz</include>
+                    <include>zulu11.72.19-ca-fx-jre11.0.23-linux_x64.tar.gz</include>
                   </includes>
                 </resource>
               </resources>
@@ -219,7 +201,7 @@
                 <resource>
                   <directory>${basedir}/../</directory>
                   <includes>
-                    <include>zulu25*macosx_aarch64.tar.gz</include>
+                    <include>zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64.tar.gz</include>
                   </includes>
                 </resource>
               </resources>
@@ -281,50 +263,11 @@
               </resources>
             </configuration>
           </execution>
-          <execution>
-            <id>copy-jre</id>
-            <phase>package</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <skip>${skipMacOSBuild}</skip>
-              <outputDirectory>${basedir}/../Output/VPin-Studio.app/Contents/runtime/</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${basedir}/../Output/VPin-Studio/zulu-25.jre/</directory>
-                  <includes>
-                    <include>Contents</include>
-                  </includes>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-          <execution>
-            <id>copy-Macjar</id>
-            <phase>package</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <skip>${skipMacOSBuild}</skip>
-              <outputDirectory>${basedir}/../Output/VPin-Studio.app/Contents/app</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${basedir}/target/</directory>
-                  <includes>
-                    <include>vpin-studio-ui.jar</include>
-                  </includes>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
         </executions>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-        <version>3.5.0</version>
         <executions>
           <execution>
             <id>full-installer-creation</id>
@@ -354,6 +297,13 @@
               </arguments>
             </configuration>
           </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.4.0</version>
+        <executions>
           <execution>
             <id>zip-ui-exe</id>
             <phase>package</phase>
@@ -404,7 +354,7 @@
                 <argument>a</argument>
                 <argument>-tzip</argument>
                 <argument>VPin-Studio-Client-linux-x64.zip</argument>
-                <argument>zulu25*.tar.gz</argument>
+                <argument>zulu11.72.19-ca-fx-jre11.0.23-linux_x64.tar.gz</argument>
                 <argument>vpin-studio-ui.jar</argument>
                 <argument>VPin-Studio-linux_x64.sh</argument>
                 <argument>resources/vpsdb.json</argument>
@@ -426,7 +376,7 @@
                 <argument>a</argument>
                 <argument>-tzip</argument>
                 <argument>VPin-Studio-Client-macosx_aarch64.zip</argument>
-                <argument>zulu25*macosx_aarch64.tar.gz</argument>
+                <argument>zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64.tar.gz</argument>
                 <argument>vpin-studio-ui.jar</argument>
                 <argument>VPin-Studio-macosx_aarch64.sh</argument>
                 <argument>resources/vpsdb.json</argument>
@@ -446,10 +396,60 @@
               <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
               <arguments>
                 <argument>xvf</argument>
-                <argument>zulu25*macosx_aarch64.tar.gz</argument>
+                <argument>zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64.tar.gz</argument>
               </arguments>
             </configuration>
           </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.3.1</version>
+        <executions>
+          <execution>
+            <id>copy-jre</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <skip>${skipMacOSBuild}</skip>
+              <outputDirectory>${basedir}/../Output/VPin-Studio.app/Contents/runtime/</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${basedir}/../Output/VPin-Studio/zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64/zulu-11.jre/</directory>
+                  <includes>
+                    <include>Contents</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copy-Macjar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <skip>${skipMacOSBuild}</skip>
+              <outputDirectory>${basedir}/../Output/VPin-Studio.app/Contents/app</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${basedir}/target/</directory>
+                  <includes>
+                    <include>vpin-studio-ui.jar</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <executions>
           <execution>
             <id>zip-server-exe</id>
             <phase>package</phase>
@@ -485,44 +485,24 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
-      <version>5.11.4</version>
+      <version>5.8.2</version>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>opentest4j</artifactId>
-          <groupId>org.opentest4j</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>junit-platform-commons</artifactId>
-          <groupId>org.junit.platform</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>apiguardian-api</artifactId>
-          <groupId>org.apiguardian</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
-      <version>5.11.4</version>
+      <version>5.8.2</version>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>junit-platform-engine</artifactId>
-          <groupId>org.junit.platform</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>apiguardian-api</artifactId>
-          <groupId>org.apiguardian</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
   </dependencies>
   <properties>
-    <junit.version>5.11.4</junit.version>
-    <skipMacOSBuild>true</skipMacOSBuild>
+    <maven.compiler.target>11</maven.compiler.target>
     <macOSBuild>false</macOSBuild>
-    <ikonli.version>12.4.0</ikonli.version>
+    <maven.compiler.source>11</maven.compiler.source>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <javafx.version>11</javafx.version>
+    <junit.version>5.8.2</junit.version>
+    <skipMacOSBuild>true</skipMacOSBuild>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
 </project>

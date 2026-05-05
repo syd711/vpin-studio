@@ -32,7 +32,11 @@
       "Bash(powershell.exe -File - << 'PWSH'\nGet-Content 'C:\\\\workspace\\\\vpin-studio\\\\resources\\\\pupgames\\\\pinball_fx3.json' | ConvertFrom-Json | Select-Object -ExpandProperty GameExport | Select-Object GameName, GameDisplay | ConvertTo-Json\nPWSH)",
       "Bash(gh api:*)",
       "WebFetch(domain:raw.githubusercontent.com)",
-      "WebFetch(domain:www.ipdb.org)"
+      "WebFetch(domain:www.ipdb.org)",
+      "Bash(xargs -I{} jar -tf {})",
+      "Bash(xargs -I{} unzip -l {})",
+      "Bash(xargs -I{} bash -c 'unzip -l \"$1\" 2>/dev/null | grep NVRamPinemhiParser && echo \"FILE: $1\"' _ {})",
+      "Bash(javap -classpath /c/Users/matth/.m2/repository/net/nvrams/java-pinmame-nvmaps/1.0-SNAPSHOT/java-pinmame-nvmaps-1.0-SNAPSHOT.jar net.nvrams.mapping.pinemhi.NVRamPinemhiParser)"
     ]
   }
 }

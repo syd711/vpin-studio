@@ -6,7 +6,6 @@ This document provides guidance for AI agents working with the VPin Studio codeb
 
 **VPin Studio** is a comprehensive virtual pinball cabinet management system. It provides management of pinball cabinets running PinUP Popper with a client/server architecture supporting multi-machine management.
 
-- **Version:** 4.6.3
 - **License:** MIT
 - **Repository:** github.com/syd711/vpin-studio
 

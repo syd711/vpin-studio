@@ -109,19 +109,21 @@ public class VPinMameRomAliasService implements InitializingBean {
   public void saveAliasFile(@NonNull GameEmulator emulator, @NonNull String text) {
     File vpmAliasFile = getVPMAliasFile(emulator);
     try {
-      File backup = new File(vpmAliasFile.getParentFile(), vpmAliasFile.getName() + ".bak");
-      if (backup.exists() && backup.delete()) {
+      if (vpmAliasFile.exists()) {
+        File backup = new File(vpmAliasFile.getParentFile(), vpmAliasFile.getName() + ".bak");
+        if (backup.exists()) {
+          backup.delete();
+        }
         FileUtils.copyFile(vpmAliasFile, backup);
+        vpmAliasFile.delete();
       }
 
-      if (vpmAliasFile.exists() && vpmAliasFile.delete()) {
-        text = text.replaceAll("\n", "\r\n");
-        FileUtils.writeStringToFile(vpmAliasFile, text, Charset.defaultCharset());
-        LOG.info("Written alias file {}", vpmAliasFile.getAbsolutePath());
+      text = text.replaceAll("\n", "\r\n");
+      FileUtils.writeStringToFile(vpmAliasFile, text, Charset.defaultCharset());
+      LOG.info("Written alias file {}", vpmAliasFile.getAbsolutePath());
 
-        clearCache(emulatorService.getVpxGameEmulators());
-        invalidateAliasMappings();
-      }
+      clearCache(emulatorService.getVpxGameEmulators());
+      invalidateAliasMappings();
     }
     catch (IOException e) {
       LOG.error("Error saving {}: {}", vpmAliasFile.getAbsolutePath(), e.getMessage(), e);
@@ -174,6 +176,9 @@ public class VPinMameRomAliasService implements InitializingBean {
   }
 
   public boolean clearCache(List<GameEmulator> gameEmulators) {
+    if (gameEmulators == null) {
+      return true;
+    }
     for (GameEmulator gameEmulator : gameEmulators) {
       clearCache(gameEmulator);
     }

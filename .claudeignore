@@ -1,0 +1,129 @@
+# Maven build output
+**/target/
+dependency-reduced-pom.xml
+
+# Compiled classes and bytecode
+**/*.class
+
+# Log files
+*.log
+*.log.*
+vpin-studio-server.*.log
+vpin-studio-ui.*.log
+vps-bot.*.log
+
+# Java runtime bundles (large binary directories)
+java-runtime/
+java-runtime-linux/
+java-runtime-osx-arm-x64/
+java-runtime-osx-x64/
+java-runtime.zip
+*.tar.gz
+
+# Archives and distributables
+*.war
+*.nar
+*.ear
+*.jar
+*.zip
+*.rar
+*.vpa
+
+# Database files
+**/*.db
+**/*.db-journal
+**/*.db-shm
+**/*.db-wal
+**/*.db.bak
+**/*.db.backup
+**/*.sqbpro
+
+# Large generated/downloaded data files
+resources/vpsdb.json
+resources/scoringdb.json
+resources/cache/
+
+# Binary/media assets in test system
+testsystem/**/*.png
+testsystem/**/*.mp3
+testsystem/**/*.mp4
+testsystem/**/*.zip
+testsystem/**/*.db
+
+# Generated image resources
+resources/b2s-raw/
+resources/b2s-cropped/
+resources/media-raw/
+resources/media-cropped/
+resources/flags/
+resources/maps/
+resources/screenshots/
+resources/backgrounds/*.directb2s
+resources/directb2s/*.directb2s
+resources/b2s/*.png
+resources/backglassdesigner/Projects/
+resources/archives/
+resources/vlc/
+resources/vr/
+resources/vpxscripts/
+
+# Script outputs and temp files
+resources/text-temp/
+resources/component-archives/
+resources/vbs/
+resources/vpa/
+resources/vpa2/
+resources/VPReg/
+VPReg/
+
+# PinVol / cabinet runtime data
+resources/PinVolSettings.ini
+resources/PinVolTables.ini
+resources/PinVolVol.ini
+PinVolTables.ini
+PinVol.log
+
+# Local/installation-specific config
+resources/system.properties
+config/settings.properties
+config/*.json
+config/connection.properties
+resources/pinemhi/pinemhi.ini
+resources/pinemhi/PINemHi LeaderBoard/
+resources/menu-profile/
+resources/vpbm/
+
+# DOF test binaries
+doftest/DirectOutputTest/bin/
+doftest/DirectOutputTest/obj/
+doftest/.vs/
+
+# IDE and editor files
+.idea/
+.vscode/
+*.iml
+*.ctxt
+**/.vs/
+
+# OS artifacts
+**/.DS_Store
+**/Thumbs.db
+*.dmp
+
+# Crash / diagnostic output
+crash.txt
+hs_err_pid*
+
+# Generated release/packaging artifacts
+Output/
+output/
+deployment/
+releases/
+mac-package/
+psd/
+
+# Misc runtime files
+nul
+altsound.log
+vpin-studio-logs.zip
+vpin-studio-screenshots.zip
