@@ -38,6 +38,8 @@ public class GameMediaServiceTest extends AbstractVPinServerTest {
   @Test
   public void testGameMediaManipulation() throws Exception {
     Game game = frontendService.getGameByFilename(1, EM_TABLE_NAME);
+    // ensure clean state - delete any leftover BackGlass folder from a previous test run
+    frontendService.deleteMediaFolder(game, VPinScreen.BackGlass, null);
     try {
       doTest(gameMediaService, game.getId(), game.getGameName(), VPinScreen.BackGlass);
     }
