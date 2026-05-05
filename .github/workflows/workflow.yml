@@ -172,7 +172,7 @@ jobs:
             "Vpin-Studio.app"
         shell: bash
 
-      - name: Package as macOS App
+      - name: Copy DMG for Upload
         working-directory: ./mac-build
         run: |
           echo "----------------------realpath results----------------------"
@@ -181,6 +181,7 @@ jobs:
           ls -al
           echo "----------------------ls .. results----------------------"
           ls -al ..                
+          echo "----------------------Copy DMG from VPin-Studio-${{ steps.project.outputs.version }}.dmg to VPin-Studio-Client-MacOS-${{ matrix.arch }}.dmg----------------------"
           cp VPin-Studio-${{ steps.project.outputs.version }}.dmg VPin-Studio-Client-MacOS-${{ matrix.arch }}.dmg
 
 
@@ -189,7 +190,7 @@ jobs:
         with:
           name: macOS-build-${{ matrix.arch }}
           path: |
-            ./VPin-Studio-Client-MacOS-${{ matrix.arch }}.dmg
+            ./mac-build/VPin-Studio-Client-MacOS-${{ matrix.arch }}.dmg
 
       - name: Upload Build Artifact2
         uses: actions/upload-artifact@v7
