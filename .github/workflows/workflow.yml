@@ -275,9 +275,8 @@ jobs:
           Invoke-WebRequest -Uri "https://cdn.azul.com/zulu/bin/zulu25.32.21-ca-fx-jre25.0.2-win_x64.zip" -OutFile "java-runtime-win.zip"
 
       - name: Extract Windows Runtime for Installer
+        shell: bash
         run: |
-          dir
-          dir java-runtime
           mkdir -p java-runtime
           unzip -o java-runtime-win.zip -d ./java-runtime
 
