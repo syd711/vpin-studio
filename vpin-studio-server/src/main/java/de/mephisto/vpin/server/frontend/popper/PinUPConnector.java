@@ -912,13 +912,17 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.setString(23, tableDetails.getRomName());
 
       preparedStatement.executeUpdate();
-      preparedStatement.close();
+
 
       LOG.info("Added game entry for '{}', file name '{}', emulator {}", tableDetails.getGameName(), tableDetails.getGameFileName(), tableDetails.getEmulatorId());
       try (ResultSet keys = preparedStatement.getGeneratedKeys()) {
         if (keys.next()) {
           return keys.getInt(1);
         }
+        //Move this to AFTER we get the id
+        preparedStatement.close();
+      } catch (SQLException e) {
+          LOG.error("Failed to add game entry for '{}', file name '{}', emulator {}", tableDetails.getGameName(), tableDetails.getGameFileName(), tableDetails.getEmulatorId());
       }
     }
     catch (Exception e) {
