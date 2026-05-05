@@ -175,6 +175,10 @@ jobs:
       - name: Package as macOS App
         working-directory: ./mac-build
         run: |
+          echo "----------------------ls results----------------------"
+          ls -al
+          echo "----------------------ls .. results----------------------"
+          ls -al ..                
           cp ../VPin-Studio-${{ steps.project.outputs.version }}.dmg ../VPin-Studio-Client-MacOS-${{ matrix.arch }}.dmg
            
 
