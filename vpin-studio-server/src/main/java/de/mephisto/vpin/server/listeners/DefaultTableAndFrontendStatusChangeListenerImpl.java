@@ -149,7 +149,7 @@ public class DefaultTableAndFrontendStatusChangeListenerImpl implements Initiali
     }
 
     highscoreService.scanScore(game, EventOrigin.TABLE_EXIT_EVENT);
-    if (notificationSettings.isHighscoreCheckedNotification()) {
+    if (notificationSettings.isHighscoreCheckedNotification() && game.isVpxGame()) {
       File wheelImage = frontendService.getWheelImage(game);
       Notification notification = NotificationFactory.createNotification(wheelImage, game.getGameDisplayName(), "Highscore scan finished!");
       notificationService.showNotification(notification);

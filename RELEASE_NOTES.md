@@ -45,4 +45,5 @@
 - **Preferences Menu**: Added natural order for hooks.
 - **Table Statistics**: Fixed "Last Played" timestamps.
 - **.res Editor**: Fixed dialog sizing issues caused by long filenames.
+- **Notifications**: Skipped notifications for "Highscore Scan Finished" when the played table wasn't a VPX table.
 - **Misc**: Added a cleanup check to the server that removes orphaned game entries which exist only in the Studio and not in the frontend (if available). This handles the case where a game was removed using the original frontend admin tool.

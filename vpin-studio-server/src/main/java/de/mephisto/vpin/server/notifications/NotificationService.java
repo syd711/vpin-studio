@@ -72,7 +72,7 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
         notification.setWindowTitle(frontendService.getFrontendType().equals(FrontendType.Popper) && pinVolAutostart ? "PinUP Popper" : "VPin Studio Notification");
 
         if (checkEmulator) {
-          boolean vpxRunning = systemService.isPinballEmulatorRunning();
+          boolean vpxRunning = SystemService.isPinballEmulatorRunning();
           NotificationStageService.getInstance().queueNotification(notification, !vpxRunning);
         }
         else {
