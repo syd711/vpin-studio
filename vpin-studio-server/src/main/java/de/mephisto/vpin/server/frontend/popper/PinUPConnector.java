@@ -1249,15 +1249,18 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.setInt(index++, playlist.isUseDefaults() ? 1 : 0);
       preparedStatement.setString(index++, StringUtils.isEmpty(playlist.getDofCommand()) ? null : playlist.getDofCommand());
       preparedStatement.executeUpdate();
-      preparedStatement.close();
+
 
       try (ResultSet keys = preparedStatement.getGeneratedKeys()) {
         if (keys.next()) {
           int id = keys.getInt(1);
           return getPlaylist(id);
         }
+      } catch (SQLException e) {
+          LOG.error("Failed to update playlist: {}", e.getMessage(), e);
       }
-
+      //Close after last accessed.
+      preparedStatement.close();
       return getPlaylist(playlist.getId());
     }
     catch (Exception e) {
@@ -1481,16 +1484,20 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.setString(index++, emulator.getLaunchScript() != null ? emulator.getLaunchScript().getScript() : null);
       preparedStatement.setString(index++, emulator.getExitScript() != null ? emulator.getExitScript().getScript() : null);
       preparedStatement.executeUpdate();
-      preparedStatement.close();
+
 
       LOG.info("Saved {}", emulator);
       try (ResultSet keys = preparedStatement.getGeneratedKeys()) {
-        if (keys.next()) {
-          int id = keys.getInt(1);
-          return getEmulator(id);
-        }
-      }
+          if (keys.next()) {
+              int id = keys.getInt(1);
+              return getEmulator(id);
+          }
+      } catch (SQLException e) {
+              LOG.error("Failed to update emulator: {}", e.getMessage(), e);
+          }
 
+          //Close after last accessed
+        preparedStatement.close();
       return getEmulator(emulator.getId());
     }
     catch (Exception e) {
