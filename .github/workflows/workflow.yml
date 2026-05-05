@@ -276,6 +276,8 @@ jobs:
 
       - name: Extract Windows Runtime for Installer
         run: |
+          dir
+          dir java-runtime
           mkdir -p java-runtime
           unzip -o java-runtime-win.zip -d ./java-runtime
 
