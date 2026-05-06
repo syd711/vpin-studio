@@ -44,6 +44,7 @@
     - Fixed creation of Emulator for pinballX
 - **Preferences Menu**: Added natural order for hooks.
 - **Table Statistics**: Fixed "Last Played" timestamps.
+- **Table Options**: Fixed loading and saving of table options from the .ini file.
 - **Highscore Lookups**: 
   - Fixed the creation of backups.
   - Fixed lookups of highscores where the "scanned" value was ignored and scores might not have been detected at all.
