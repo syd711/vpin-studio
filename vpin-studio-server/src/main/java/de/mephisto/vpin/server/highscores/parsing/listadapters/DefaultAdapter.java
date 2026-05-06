@@ -194,6 +194,10 @@ public class DefaultAdapter implements ScoreListAdapter {
       if (match.isPresent()) {
         continue;
       }
+      if(s.getScore() == 0) {
+        continue;
+      }
+
       s.setPosition(pos);
       scoreList.add(s);
       pos++;

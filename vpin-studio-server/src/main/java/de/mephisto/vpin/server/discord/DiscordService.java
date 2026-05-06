@@ -530,7 +530,9 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
   private ScoreSummary toScoreSummary(@NonNull HighscoreParsingService highscoreParser, @NonNull DiscordMessage message) {
     String raw = message.getRaw();
-    List<Score> scores = highscoreParser.parseScores(message.getCreatedAt(), raw, null, message.getServerId());
+    String scoreString = raw.substring(raw.lastIndexOf("---") + 3);
+    scoreString = scoreString.replaceAll("`", "");
+    List<Score> scores = highscoreParser.parseScores(message.getCreatedAt(), scoreString, null, message.getServerId());
     return new ScoreSummary(scores, message.getCreatedAt(), raw);
   }
 
