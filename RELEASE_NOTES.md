@@ -44,6 +44,9 @@
     - Fixed creation of Emulator for pinballX
 - **Preferences Menu**: Added natural order for hooks.
 - **Table Statistics**: Fixed "Last Played" timestamps.
+- **Highscore Lookups**: 
+  - Fixed the creation of backups.
+  - Fixed lookups of highscores where the "scanned" value was ignored and scores might not have been detected at all.
 - **Discord Bot Settings**: Fixed "Bot Permission" screenshot where the setting "Pin Messages" was not checked. You bot needs this permission for online competitions.
 - **.res Editor**: Fixed dialog sizing issues caused by long filenames.
 - **Notifications**: Skipped notifications for "Highscore Scan Finished" when the played table wasn't a VPX table.

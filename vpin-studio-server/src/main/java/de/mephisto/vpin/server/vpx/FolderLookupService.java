@@ -224,7 +224,17 @@ public class FolderLookupService {
 
   public File getHighscoreTextFile(Game game) {
     if (!StringUtils.isEmpty(game.getHsFileName())) {
-      return new File(getUserFolder(game), game.getHsFileName());
+      File f = new File(getUserFolder(game), game.getHsFileName());
+      if (f.exists()) {
+        return f;
+      }
+
+      if (!StringUtils.isEmpty(game.getScannedHsFileName())) {
+        f = new File(getUserFolder(game), game.getScannedHsFileName());
+        if (f.exists()) {
+          return f;
+        }
+      }
     }
     return null;
   }
@@ -241,20 +251,35 @@ public class FolderLookupService {
     GameEmulator emulator = game.getEmulator();
     String tableName = game.getTableName();
     ScoringDBMapping highscoreMapping = systemService.getScoringDatabase().getHighscoreMapping(game.getRom());
+    if (highscoreMapping == null) {
+      highscoreMapping = systemService.getScoringDatabase().getHighscoreMapping(game.getScannedRom());
+    }
+
     if (StringUtils.isEmpty(tableName) && highscoreMapping != null) {
       tableName = highscoreMapping.getTableName();
     }
 
+    File stgFile = new File(emulator.getInstallationFolder(), "User/VPReg.stg");
     if (isPreferLegacyFileStructure(emulator)) {
-      File stgFile = new File(game.getGameFile().getParentFile(), "user/VPReg.stg");
-      VPRegFile reg = new VPRegFile(stgFile, game.getRom(), tableName);
-      if (reg.isValid()) {
-        return reg;
+      stgFile = new File(game.getGameFile().getParentFile(), "user/VPReg.stg");
+      if (!stgFile.exists()) {
+        stgFile = new File(game.getGameFile().getParentFile().getParentFile(), "user/VPReg.stg");
       }
     }
 
-    File stgFile = new File(emulator.getInstallationFolder(), "User/VPReg.stg");
-    return new VPRegFile(stgFile, game.getRom(), tableName);
+    VPRegFile reg = new VPRegFile(stgFile, game.getRom(), tableName);
+    if (reg.isValid()) {
+      return reg;
+    }
+
+    if (!StringUtils.isEmpty(game.getScannedRom())) {
+      VPRegFile regScanned = new VPRegFile(stgFile, game.getScannedRom(), tableName);
+      if (regScanned.isValid()) {
+        return regScanned;
+      }
+    }
+
+    return reg;
   }
 
   @Nullable
@@ -279,10 +304,24 @@ public class FolderLookupService {
       return defaultNvRam;
     }
 
+    if (!StringUtils.isEmpty(game.getScannedRom())) {
+      File defaultNvRam2 = new File(nvRamFolder, game.getScannedRom() + ".nv");
+      if (defaultNvRam2.exists() && game.getNvOffset() == 0) {
+        return defaultNvRam2;
+      }
+    }
+
     //if the text file exists, the version matches with the current table, so this one was played last and the default nvram has the latest score
     File versionTextFile = new File(nvRamFolder, game.getRom() + " v" + game.getNvOffset() + ".txt");
     if (versionTextFile.exists()) {
       return defaultNvRam;
+    }
+
+    if (!StringUtils.isEmpty(game.getScannedRom())) {
+      File versionTextFile2 = new File(nvRamFolder, game.getScannedRom() + " v" + game.getNvOffset() + ".txt");
+      if (versionTextFile2.exists()) {
+        return versionTextFile2;
+      }
     }
 
     //else, we can check if a nv file with the alias and version exists which means the another table with the same rom has been played after this table
@@ -298,7 +337,17 @@ public class FolderLookupService {
   public File getCfgFile(@NonNull Game game) {
     File folder = getCfgFolder(game);
     if (!StringUtils.isEmpty(game.getRom()) && folder != null) {
-      return new File(folder, game.getRom() + ".cfg");
+      File f = new File(folder, game.getRom() + ".cfg");
+      if (f.exists()) {
+        return f;
+      }
+    }
+
+    if (!StringUtils.isEmpty(game.getScannedRom())) {
+      File scannedRom = new File(folder, game.getScannedRom() + ".cfg");
+      if (scannedRom.exists()) {
+        return scannedRom;
+      }
     }
     return null;
   }
