@@ -767,6 +767,14 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
     return Optional.empty();
   }
 
+  public Optional<IScoredGameRoom> getSelectedGameRoom() {
+    IScoredGameRoom value = this.gameRoomsCombo.getValue();
+    if (value != null) {
+      return Optional.of(value);
+    }
+    return Optional.empty();
+  }
+
   public static String getLabelCss(IScoredGameRoomGameModel model) {
     String status = "";
 //    if (model.competition != null && model.competition.getValidationState().getCode() > 0) {

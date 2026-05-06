@@ -11,6 +11,7 @@ import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.competitions.JoinMode;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
+import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
@@ -413,6 +414,24 @@ public class CompetitionsController implements Initializable, StudioFXController
       rulesBtn.setVisible(competitionRepresentation.isPresent() && competitionRepresentation.get().getType().equals(CompetitionType.WEEKLY.name()));
       CompetitionRepresentation competition = competitionRepresentation.get();
       if (competition.getType().equals(CompetitionType.ISCORED.name())) {
+//        Optional<IScoredGameRoom> selectedGameRoom = iScoredSubscriptionsController.getSelectedGameRoom();
+//        if(selectedGameRoom.isPresent()) {
+//          String dashboardUrl = selectedGameRoom.get().getUrl();
+//          dashboardBtn.setDisable(dashboardUrl == null);
+//          dashboardWebView.setVisible(dashboardUrl != null);
+//          dashboardStatusLabel.setText("This competition has no dashboard URL.");
+//          dashboardStatusLabel.setVisible(dashboardUrl == null);
+//
+//          if (dashboardUrl != null) {
+//            WebEngine webEngine = dashboardWebView.getEngine();
+//            webEngine.setUserStyleSheetLocation(Studio.class.getResource("web-style.css").toString());
+//
+//            if (lastDashboardUrl == null || !lastDashboardUrl.equals(dashboardUrl)) {
+//              lastDashboardUrl = dashboardUrl;
+//              webEngine.load(dashboardUrl);
+//            }
+//          }
+//        }
         String dashboardUrl = competitionRepresentation.get().getUrl();
         dashboardBtn.setDisable(dashboardUrl == null);
         dashboardWebView.setVisible(dashboardUrl != null);
