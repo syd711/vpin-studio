@@ -235,6 +235,8 @@ public class FolderLookupService {
           return f;
         }
       }
+
+      return new File(getUserFolder(game), game.getHsFileName());
     }
     return null;
   }
