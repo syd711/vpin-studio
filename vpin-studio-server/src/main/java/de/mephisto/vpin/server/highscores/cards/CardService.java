@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.highscores.cards;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import de.mephisto.vpin.commons.fx.ImageUtil;
 import de.mephisto.vpin.commons.fx.cards.CardGraphicsHighscore;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
@@ -361,7 +361,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
     if (summary != null) {
       cardData.setRawScore(summary.getRaw());
 
-      ObjectMapper mapper = new ObjectMapper();
+      JsonMapper mapper = JsonMapper.builder().build();
       ArrayList<ScoreRepresentation> scores = new ArrayList<>();
       for (Score score : summary.getScores()) {
         try {

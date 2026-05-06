@@ -166,7 +166,8 @@ public class TableMatcher {
   private double getTableDistance(VpsTable table, String _fileName, String _tableName, String _manuf, int _year, String rom, double minDist) {
     String tableName = cleanTable(table.getName().toLowerCase());
     String manuf = table.getManufacturer();
-    int year = table.getYear();
+    //add null check
+    int year = table.getYear() != null ? table.getYear() : 0;
 
     if (checkRom(rom, table)) {
       // return the minimal distance considering alternative manufacturer

@@ -1,7 +1,8 @@
 package de.mephisto.vpin.server.backups.adapters.vpa;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 import de.mephisto.vpin.restclient.backups.BackupPackageInfo;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
@@ -100,9 +101,12 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
         }
       }, game, tableDetails);
 
-      ObjectMapper objectMapper = new ObjectMapper();
-      objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-      objectMapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
+        JsonMapper objectMapper = JsonMapper.builder()
+                .enable(SerializationFeature.INDENT_OUTPUT)
+                .enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS)
+                .build();
+
+
       String packageInfoJson = objectMapper.writeValueAsString(packageInfo);
 
       if (!cancelled) {

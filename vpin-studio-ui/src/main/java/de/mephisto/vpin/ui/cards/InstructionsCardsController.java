@@ -29,9 +29,9 @@ import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.util.DefaultIndenter;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.util.DefaultIndenter;
+import tools.jackson.core.util.DefaultPrettyPrinter;
+import tools.jackson.databind.json.JsonMapper;
 
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.utils.JFXFuture;
@@ -516,8 +516,7 @@ public class InstructionsCardsController  implements Initializable {
   private VpsTableData loadJson(VpsTable table) throws IOException {
     File jsonFile = new File(database, table.getId() + ".json");
     // Read existing data
-    ObjectMapper objectMapper = new ObjectMapper();
-    VpsTableData data = null;
+    JsonMapper objectMapper = JsonMapper.builder().build();    VpsTableData data = null;
     if (jsonFile.exists()) {
       data = objectMapper.readValue(jsonFile, VpsTableData.class);  
     }
@@ -561,7 +560,7 @@ public class InstructionsCardsController  implements Initializable {
   private void saveJson(VpsTable table, VpsTableData data) throws IOException {
     File jsonFile = new File(database, table.getId() + ".json");
     // Read existing data
-    ObjectMapper objectMapper = new ObjectMapper();
+      JsonMapper objectMapper = JsonMapper.builder().build();
 
     DefaultPrettyPrinter.Indenter indenter = new DefaultIndenter("  ", DefaultIndenter.SYS_LF);
     DefaultPrettyPrinter printer = new DefaultPrettyPrinter();
@@ -569,8 +568,8 @@ public class InstructionsCardsController  implements Initializable {
     printer.indentArraysWith(indenter);
 
     // Serialize it using the custom printer
-    objectMapper.writer(printer).writeValue(jsonFile, data);  
-  }
+      objectMapper.writer().with(printer).writeValue(jsonFile, data);
+    }
 
   public boolean save(VpsTable table) {
     try {

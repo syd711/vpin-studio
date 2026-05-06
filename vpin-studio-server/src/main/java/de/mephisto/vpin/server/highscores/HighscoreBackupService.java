@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.highscores;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 import de.mephisto.vpin.restclient.highscores.HighscoreBackup;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.util.FileUtils;
@@ -124,9 +124,11 @@ public class HighscoreBackupService implements InitializingBean {
 
   public HighscoreBackup readBackupFile(@NonNull File archiveFile) {
     try {
-      ObjectMapper objectMapper = new ObjectMapper();
-      objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-      objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        JsonMapper objectMapper =JsonMapper.builder()
+                .enable(SerializationFeature.INDENT_OUTPUT)
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .build();
 
       String json = ZipUtil.readZipFile(archiveFile, DESCRIPTOR_JSON);
 
@@ -139,9 +141,10 @@ public class HighscoreBackupService implements InitializingBean {
   }
 
   private File writeDescriptorJson(Game game, File folder, Highscore highscore, String filename) throws IOException {
-    ObjectMapper objectMapper = new ObjectMapper();
-    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+      JsonMapper objectMapper =JsonMapper.builder()
+              .enable(SerializationFeature.INDENT_OUTPUT)
+              .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+              .build();
 
     HighscoreBackup backup = new HighscoreBackup();
     backup.setCreationDate(OffsetDateTime.now());

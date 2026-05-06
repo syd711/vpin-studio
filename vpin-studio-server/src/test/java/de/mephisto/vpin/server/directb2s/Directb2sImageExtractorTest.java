@@ -24,7 +24,7 @@ public class Directb2sImageExtractorTest {
     DirectB2SData data = extractor.extractData(b2sFile, 1, b2sFile.getName());
     Assertions.assertTrue(data.isBackgroundAvailable());
 
-    byte[] imageData = Base64.getDecoder().decode(extractor.getBackgroundBase64());
+    byte[] imageData = Base64.getMimeDecoder().decode(extractor.getBackgroundBase64());
     BufferedImage img = ImageIO.read(new ByteArrayInputStream(imageData));
     Assertions.assertEquals(2011, img.getWidth());
     Assertions.assertEquals(1865, img.getHeight());

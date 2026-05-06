@@ -1,7 +1,8 @@
 package de.mephisto.vpin.server;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.*;
 import java.nio.file.*;
@@ -74,7 +75,9 @@ public class ServerUpdatePreProcessing {
     }
 
     private void runDownloadableInstallationsCheck() throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+         JsonMapper objectMapper =JsonMapper.builder()
+                .enable(SerializationFeature.INDENT_OUTPUT)
+                 .build();
 
         File manifestFile = new File(RESOURCES + "sync.json");
 
@@ -273,7 +276,10 @@ public class ServerUpdatePreProcessing {
     public void updateManifestFromLocal(File manifestFile) throws IOException {
         LOG.info("Updating manifest checksums from local files: " + manifestFile);
 
-        ObjectMapper objectMapper  = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+        JsonMapper objectMapper =JsonMapper.builder()
+                .enable(SerializationFeature.INDENT_OUTPUT)
+                .build();
+
         ServerUpdateFileEntry[] files = objectMapper.readValue(manifestFile, ServerUpdateFileEntry[].class);
 
         int updated = 0;

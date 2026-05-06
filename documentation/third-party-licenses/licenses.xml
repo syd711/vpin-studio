@@ -43,20 +43,7 @@
         </license>
       </licenses>
     </dependency>
-    <dependency>
-      <groupId>com.enigmabridge</groupId>
-      <artifactId>hibernate4-sqlite-dialect</artifactId>
-      <version>0.1.2</version>
-      <licenses>
-        <license>
-          <name>MIT</name>
-          <url>https://opensource.org/licenses/MIT</url>
-          <distribution>repo</distribution>
-          <file>mit - mit.html</file>
-        </license>
-      </licenses>
-    </dependency>
-    <dependency>
+      <dependency>
       <groupId>com.ezylang</groupId>
       <artifactId>EvalEx</artifactId>
       <version>3.5.0</version>

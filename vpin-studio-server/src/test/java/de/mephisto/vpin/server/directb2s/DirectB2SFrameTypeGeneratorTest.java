@@ -103,7 +103,7 @@ public class DirectB2SFrameTypeGeneratorTest {
     DirectB2SDataExtractor extractor = new DirectB2SDataExtractor();
     DirectB2SData data = extractor.extractData(directB2SFile, 1, directB2SFile.getName());
     if (data.isBackgroundAvailable()) {
-      byte[] imageData = Base64.getDecoder().decode(extractor.getBackgroundBase64());
+      byte[] imageData = Base64.getMimeDecoder().decode(extractor.getBackgroundBase64());
       return ImageIO.read(new ByteArrayInputStream(imageData));
     }
     return null;

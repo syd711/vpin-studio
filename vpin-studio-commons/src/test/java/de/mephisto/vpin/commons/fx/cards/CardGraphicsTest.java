@@ -10,7 +10,7 @@ import java.util.concurrent.CountDownLatch;
 
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
@@ -56,7 +56,7 @@ public class CardGraphicsTest extends Application {
 
   public CardTemplate loadTemplate(String filename) throws IOException {
     try (InputStream in = getClass().getResourceAsStream(filename)) {
-      ObjectMapper objectMapper = new ObjectMapper();
+      JsonMapper objectMapper = JsonMapper.builder().build();
       return objectMapper.readValue(in, CardTemplate.class);	
     }
   }
