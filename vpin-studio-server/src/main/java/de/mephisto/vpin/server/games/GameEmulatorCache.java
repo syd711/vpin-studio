@@ -9,6 +9,7 @@ import java.util.Optional;
 
 class GameEmulatorCache {
   private final List<Game> games = new ArrayList<>();
+  private final List<Integer> pendingNewGameIds = new ArrayList<>();
   private EmulatorType emulatorType;
   private int emulatorId;
 
@@ -41,6 +42,16 @@ class GameEmulatorCache {
     if (o == null || getClass() != o.getClass()) return false;
     GameEmulatorCache that = (GameEmulatorCache) o;
     return emulatorId == that.emulatorId;
+  }
+
+  public void addPendingNewGameId(int gameId) {
+    pendingNewGameIds.add(gameId);
+  }
+
+  public List<Integer> drainPendingNewGameIds() {
+    List<Integer> ids = new ArrayList<>(pendingNewGameIds);
+    pendingNewGameIds.clear();
+    return ids;
   }
 
   public List<Game> getGames() {

@@ -75,7 +75,7 @@ public class NvRamParsingWithParser implements NvRamOutputToRaw, ScoreListAdapte
 
   @Override
   public boolean isApplicable(Game game) {
-    String rom = game != null ? game.getRom().toLowerCase() : "<no rom>";
+    String rom = (game != null && game.getRom() != null) ? game.getRom().toLowerCase() : "<no rom>";
     return isSupportedRom(rom);
   }
 

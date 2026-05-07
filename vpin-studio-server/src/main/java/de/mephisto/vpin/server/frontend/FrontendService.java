@@ -797,6 +797,24 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 
+  private void runDatabaseCleanup() {
+    List<Integer> gameIds = getGameIds();
+    List<Integer> allPupIds = gameDetailsRepositoryService.findAllPupIds();
+
+    if (gameIds.isEmpty() || allPupIds.isEmpty()) {
+      return;
+    }
+
+    List<Long> toDelete = new ArrayList<>();
+    for (Integer pupId : allPupIds) {
+      if (!gameIds.contains(pupId)) {
+        toDelete.add(pupId.longValue());
+      }
+    }
+    gameDetailsRepositoryService.deleteByPupId(toDelete);
+    LOG.info("Deleted {} orphaned GameDetail entries.", toDelete.size());
+  }
+
   @EventListener(ApplicationReadyEvent.class)
   public void onApplicationReady() {
     try {
@@ -804,21 +822,8 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
         return;
       }
 
-      List<Integer> gameIds = getGameIds();
-      List<Integer> allPupIds = gameDetailsRepositoryService.findAllPupIds();
-
-      if (gameIds.isEmpty() || allPupIds.isEmpty()) {
-        return;
-      }
-
-      List<Long> toDelete = new ArrayList<>();
-      for (Integer pupId : allPupIds) {
-        if (!gameIds.contains(pupId)) {
-          toDelete.add(pupId.longValue());
-        }
-      }
-      gameDetailsRepositoryService.deleteByPupId(toDelete);
-      LOG.info("Deleted {} orphaned GameDetail entries.", toDelete.size());
+      //this breaks with the game detection and should be executed manually from the frontend to avoid concurrent access.
+      //runDatabaseCleanup();
     }
     catch (Exception e) {
       LOG.error("Failed to cleanup GameDetails entries: {}", e.getMessage(), e);

@@ -62,9 +62,14 @@ public class GameDetailsRepositoryService {
 
   @Transactional
   public void deleteByPupId(List<Long> ids) {
-    int batchSize = 999;
-    for (int i = 0; i < ids.size(); i += batchSize) {
-      gameDetailsRepository.deleteByPupId(ids.subList(i, Math.min(i + batchSize, ids.size())));
+    try {
+      int batchSize = 999;
+      for (int i = 0; i < ids.size(); i += batchSize) {
+        gameDetailsRepository.deleteByPupId(ids.subList(i, Math.min(i + batchSize, ids.size())));
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to delete GameDetails: {}", e.getMessage());
     }
   }
 }

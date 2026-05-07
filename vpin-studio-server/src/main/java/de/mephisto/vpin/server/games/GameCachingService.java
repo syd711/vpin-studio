@@ -250,6 +250,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     for (GameEmulator gameEmulator : gameEmulators) {
       if (gameEmulator.isEnabled()) {
         GameEmulatorCache emulatorCache = allGamesByEmulatorId.computeIfAbsent(gameEmulator.getId(), id -> fetchEmulatorGames(gameEmulator, mappedGameDetails));
+        emulatorCache.drainPendingNewGameIds().forEach(id -> gameLifecycleService.notifyGameCreated(id));
         games.addAll(emulatorCache.getGames());
       }
     }
@@ -263,6 +264,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     for (GameEmulator gameEmulator : gameEmulators) {
       if (gameEmulator.isEnabled()) {
         GameEmulatorCache emulatorCache = allGamesByEmulatorId.computeIfAbsent(gameEmulator.getId(), id -> fetchEmulatorGames(gameEmulator, Collections.emptyMap()));
+        emulatorCache.drainPendingNewGameIds().forEach(id -> gameLifecycleService.notifyGameCreated(id));
         games.addAll(emulatorCache.getGames());
       }
     }
@@ -289,7 +291,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     boolean killFrontend = false;
     for (GameDetailsInfo info : infos) {
       if (info.newGame) {
-        gameLifecycleService.notifyGameCreated(info.game.getId());
+        // notifyGameCreated is deferred to after computeIfAbsent to avoid recursive ConcurrentHashMap update
         highscoreService.scanScore(info.game, EventOrigin.INITIAL_SCAN);
         if (!killFrontend) {
           LOG.info("New games have been found, automatically killing frontend to release locks.");
@@ -303,6 +305,11 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
 
 
     GameEmulatorCache cache = new GameEmulatorCache(emulator.getType(), emulator.getId(), gamesByEmulator);
+    for (GameDetailsInfo info : infos) {
+      if (info.newGame) {
+        cache.addPendingNewGameId(info.game.getId());
+      }
+    }
     long duration = System.currentTimeMillis() - start;
     long avg = 0;
     if (!gamesByEmulator.isEmpty()) {
