@@ -56,7 +56,15 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
       try {
         DiscordMember member = this.discordClient.getMember(serverId, botId);
         if (member != null) {
-          status.setBotInitials(member.getInitials());
+          List<String> initials = new ArrayList<>();
+          if (member.getInitials().contains(",")) {
+            initials = Arrays.asList(member.getInitials().split(","));
+          }
+          else {
+            initials.add(member.getInitials());
+          }
+
+          status.setBotInitials(initials);
         }
       }
       catch (Exception e) {
@@ -682,7 +690,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
       List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
       for (DiscordMessage pinnedMessage : pinnedMessages) {
         if (pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.START_INDICATOR)) {
-          if(pinnedMessage.getMember() == null) {
+          if (pinnedMessage.getMember() == null) {
             LOG.warn("A pinned competition message was found for channel the channel, but the owner is not member of the server anymore.");
             continue;
           }

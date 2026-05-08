@@ -13,6 +13,7 @@
   - and https://www.pinemhi.com/ from DNA Disturber.
 
 - **New File Synchronizer**: We updated the implementation that checks if files are missing or need updates. You'll notice some additional downloads during the startup of the server.
+- **Discord Integration**: Multiplayer support for bots. For Discord competitions, your bot covers all local players now too. This means you and your family can compete with your cabinet on one Discord server against another family that owns and shares a cabinet. More details can be found here: https://github.com/syd711/vpin-studio/wiki/Competitions#discord-competitions 
 
 ### Bugfixes
 

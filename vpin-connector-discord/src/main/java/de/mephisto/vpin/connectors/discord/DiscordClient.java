@@ -619,9 +619,7 @@ public class DiscordClient {
       if (initials.contains("]")) {
         initials = initials.substring(0, initials.indexOf("]"));
       }
-      if (initials.length() > 3) {
-        initials = initials.substring(0, 3);
-      }
+      initials = initials.trim();
     }
     return initials;
   }
