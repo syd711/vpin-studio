@@ -413,14 +413,18 @@
                                         <include>nvrams/**</include>
                                         <include>scripts/**</include>
                                         <include>competition-badges/*</include>
-                                        <include>pubgames/*</include>
+                                        <include>pupgames/*</include>
                                         <include>puppacktweaker/*</include>
+                                        <include>manufacturers/**</include>
+                                        <include>frames/*</include>
                                         <include>*.exe</include>
                                         <include>*.dll</include>
+                                        <include>*.vbs</include>
                                         <include>sendKeys.bat</include>
                                         <include>update-runtime.bat</include>
                                         <include>highscore-card-background-*.jpg</include>
                                         <include>mame-gamelist.txt</include>
+                                        <include>logos.txt</include>
                                         <include>maintenance.jpg</include>
                                         <include>maintenance.mp4</include>
                                         <include>competition-bg-default.png</include>
@@ -500,6 +504,17 @@
                             <sourceFile>../resources/pinemhi/pinemhi.ini.template</sourceFile>
                             <destinationFile>${basedir}/../Output/VPin-Studio/resources/pinemhi/pinemhi.ini
                             </destinationFile>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-jinput-dll</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <sourceFile>../resources/jvm/jinput-dx8_64.dll</sourceFile>
+                            <destinationFile>${basedir}/../Output/VPin-Studio/win32/java/bin/jinput-dx8_64.dll</destinationFile>
                         </configuration>
                     </execution>
                 </executions>
