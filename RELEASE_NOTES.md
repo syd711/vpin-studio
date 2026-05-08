@@ -41,7 +41,7 @@
 - **Competitions / iScored**: Fixed broken/missing highscore reset for tables in iScored competitions.
 - **Table Overview**:
     - Fixed time formatting for the modification date and added an info tooltip to the column header.
-    - Improved table overview loading performance by ~30%.
+    - Improved table overview loading performance by **~30%**.
 - **Wheel Badges**: Fixed orientation of augmented wheels (again).
 - **VPX File Scanner**: Added .ogg audio format to the music scan detection.
 - **Backglass Preview**: Fixed backglass preview when the .directb2 file is located in a table subfolder.
@@ -57,7 +57,6 @@
 - **Highscore Lookups**: 
   - Fixed the creation of backups.
   - Fixed lookups of highscores where the "scanned" value was ignored and scores might not have been detected at all.
-- **Discord Bot Settings**: Fixed "Bot Permission" screenshot where the setting "Pin Messages" was not checked. You bot needs this permission for online competitions.
+- **Discord Bot Settings**: Fixed "Bot Permission" screenshot where the setting "Pin Messages" was not checked. Your bot needs this permission for online competitions. You can simply kick it from your server and re-add it with the correct permissions.
 - **.res Editor**: Fixed dialog sizing issues caused by long filenames.
 - **Notifications**: Skipped notifications for "Highscore Scan Finished" when the played table wasn't a VPX table.
-- **Misc**: Added a cleanup check to the server that removes orphaned game entries which exist only in the Studio and not in the frontend (if available). This handles the case where a game was removed using the original frontend admin tool.
