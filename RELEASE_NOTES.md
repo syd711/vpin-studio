@@ -12,6 +12,8 @@
   - Superhac's Score Parser (https://github.com/superhac/pinmame-score-parser)
   - and https://www.pinemhi.com/ from DNA Disturber.
 
+- **New File Synchronizer**: We updated the implementation that checks if files are missing or need updates. You'll notice some additional downloads during the startup of the server.
+
 ### Bugfixes
 
 - **Media Recorder**:
