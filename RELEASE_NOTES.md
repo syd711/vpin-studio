@@ -12,6 +12,10 @@
   - Superhac's Score Parser (https://github.com/superhac/pinmame-score-parser)
   - and https://www.pinemhi.com/ from DNA Disturber.
 
+- **Asset Manager**: Added new dialog for the loading screen downloads. You can select the screen assignment for the downloaded asset the same way you do in PinUP Popper.
+
+  <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/am/asset-assignment.png?raw=true" width="400" />
+  
 - **New File Synchronizer**: We updated the implementation that checks if files are missing or need updates. You'll notice some additional downloads during the startup of the server.
 - **Discord Integration**: Multiplayer support for bots. For Discord competitions, your bot covers all local players now too. This means you and your family can compete with your cabinet on one Discord server against another family that owns and shares a cabinet. More details can be found here: https://github.com/syd711/vpin-studio/wiki/Competitions#discord-competitions 
 
