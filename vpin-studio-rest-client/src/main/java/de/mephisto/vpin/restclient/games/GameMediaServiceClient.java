@@ -166,9 +166,9 @@ public class GameMediaServiceClient extends VPinStudioClientService {
     return search;
   }
 
-  public boolean downloadTableAsset(TableAsset tableAsset, VPinScreen screen, GameRepresentation game, boolean append) throws Exception {
+  public boolean downloadTableAsset(TableAsset tableAsset, VPinScreen screen, GameRepresentation game, boolean append, VPinScreen loadingScreenId) throws Exception {
     try {
-      return getRestClient().post(API + API_SEGMENT_MEDIA + "/assets/download/" + game.getId() + "/" + screen + "/" + append, tableAsset, Boolean.class);
+      return getRestClient().post(API + API_SEGMENT_MEDIA + "/assets/download/" + game.getId() + "/" + screen + "/" + append + "/" + loadingScreenId, tableAsset, Boolean.class);
     }
     catch (Exception e) {
       LOG.error("Failed to download asset: " + e.getMessage(), e);

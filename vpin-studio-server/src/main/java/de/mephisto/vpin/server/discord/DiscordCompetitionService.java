@@ -168,6 +168,10 @@ public class DiscordCompetitionService {
 
         //update the player info for the server the message is emitted to
         Player player = this.discordService.getPlayerByInitials(discordServerId, newScore.getPlayerInitials());
+        if (player == null && newScore.getPlayer() != null) {
+          //??? maybe always use the score player here? I'm not sure if a Discord player was set here already.
+          player = newScore.getPlayer();
+        }
         newScore.setPlayer(player);
 
         LOG.info("Emitting Discord highscore changed message for discord competition {}", competition);

@@ -424,8 +424,7 @@ public class BackglassService implements InitializingBean {
 
       // still null, create an empty one
       if (entry == null) {
-        // deep copy from serverSettings
-        entry = new DirectB2STableSettings(serverSettings);
+        entry = serverSettings != null ? new DirectB2STableSettings(serverSettings) : new DirectB2STableSettings();
         entry.setRom(rom);
       }
       return entry;

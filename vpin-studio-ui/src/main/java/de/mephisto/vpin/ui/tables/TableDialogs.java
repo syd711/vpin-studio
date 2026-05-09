@@ -105,6 +105,14 @@ public class TableDialogs {
     }
   }
 
+  public static VPinScreen openAssetScreenAssignmentDialog() {
+    Stage stage = Dialogs.createStudioDialogStage(LoadingAsset2ScreenAssignmentController.class, "dialog-loading-asset-assignment.fxml", "Loading Screen Assignment");
+    LoadingAsset2ScreenAssignmentController controller = (LoadingAsset2ScreenAssignmentController) stage.getUserData();
+    stage.showAndWait();
+
+    return controller.getScreen();
+  }
+
   public static void openCfgUploads(File file, Runnable finalizer) {
     Stage stage = Dialogs.createStudioDialogStage(CfgUploadController.class, "dialog-cfg-upload.fxml", "Config File Upload");
     CfgUploadController controller = (CfgUploadController) stage.getUserData();

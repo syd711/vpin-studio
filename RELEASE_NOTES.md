@@ -1,5 +1,7 @@
 ## Release Notes 4.9.0
 
+### Changes
+
 - **Media Recorder**:
   - Updated ffmpeg.exe to version 8.0.1 to have OpenGL recording support.
   - Added error logging in case the custom ffmpeg.exe command fails.
@@ -11,6 +13,13 @@
   - the Pinball Memory Maps project (https://github.com/tomlogic/pinmame-nvram-maps)
   - Superhac's Score Parser (https://github.com/superhac/pinmame-score-parser)
   - and https://www.pinemhi.com/ from DNA Disturber.
+
+- **Asset Manager**: Added new dialog for the loading screen downloads. You can select the screen assignment for the downloaded asset the same way you do in PinUP Popper.
+
+  <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/am/asset-assignment.png?raw=true" width="280" />
+  
+- **New File Synchronizer**: We updated the implementation that checks if files are missing or need updates. You'll notice some additional downloads during the startup of the server.
+- **Discord Integration**: Multiplayer support for bots. For Discord competitions, your bot covers all local players now too. This means you and your family can compete with your cabinet on one Discord server against another family that owns and shares a cabinet. More details can be found here: https://github.com/syd711/vpin-studio/wiki/Competitions#discord-competitions 
 
 ### Bugfixes
 
@@ -32,7 +41,7 @@
 - **Competitions / iScored**: Fixed broken/missing highscore reset for tables in iScored competitions.
 - **Table Overview**:
     - Fixed time formatting for the modification date and added an info tooltip to the column header.
-    - Improved table overview loading performance by ~30%.
+    - Improved table overview loading performance by **~30%**.
 - **Wheel Badges**: Fixed orientation of augmented wheels (again).
 - **VPX File Scanner**: Added .ogg audio format to the music scan detection.
 - **Backglass Preview**: Fixed backglass preview when the .directb2 file is located in a table subfolder.
@@ -48,7 +57,6 @@
 - **Highscore Lookups**: 
   - Fixed the creation of backups.
   - Fixed lookups of highscores where the "scanned" value was ignored and scores might not have been detected at all.
-- **Discord Bot Settings**: Fixed "Bot Permission" screenshot where the setting "Pin Messages" was not checked. You bot needs this permission for online competitions.
+- **Discord Bot Settings**: Fixed "Bot Permission" screenshot where the setting "Pin Messages" was not checked. Your bot needs this permission for online competitions. You can simply kick it from your server and re-add it with the correct permissions.
 - **.res Editor**: Fixed dialog sizing issues caused by long filenames.
 - **Notifications**: Skipped notifications for "Highscore Scan Finished" when the played table wasn't a VPX table.
-- **Misc**: Added a cleanup check to the server that removes orphaned game entries which exist only in the Studio and not in the frontend (if available). This handles the case where a game was removed using the original frontend admin tool.
