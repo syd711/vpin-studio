@@ -6,6 +6,8 @@ import de.mephisto.vpin.restclient.cards.CardTemplate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.id.IncrementGenerator;
 
 @Entity
 @Table(name = "TemplateMappings")
@@ -14,7 +16,8 @@ import jakarta.persistence.*;
 public class TemplateMapping {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GenericGenerator(name = "templatemapping_gen", type = IncrementGenerator.class)
+  @GeneratedValue(generator = "templatemapping_gen")
   private Long id;
 
   private String templateJson;

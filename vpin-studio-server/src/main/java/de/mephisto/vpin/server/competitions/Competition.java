@@ -5,6 +5,8 @@ import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import jakarta.persistence.*;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.id.IncrementGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -28,7 +30,8 @@ public class Competition {
   private Instant updatedAt;
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GenericGenerator(name = "competition_gen", type = IncrementGenerator.class)
+  @GeneratedValue(generator = "competition_gen")
   private Long id;
 
   @Column(name = "highscoreReset", nullable = false, columnDefinition = "boolean default true")

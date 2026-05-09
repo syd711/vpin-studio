@@ -7,6 +7,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.id.IncrementGenerator;
 import java.time.Instant;
 import java.util.Objects;
 
@@ -25,7 +27,8 @@ public class Asset {
   private Instant updatedAt;
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GenericGenerator(name = "asset_gen", type = IncrementGenerator.class)
+  @GeneratedValue(generator = "asset_gen")
   private Long id;
 
   private byte[] data;

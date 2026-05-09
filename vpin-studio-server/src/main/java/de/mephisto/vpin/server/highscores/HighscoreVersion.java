@@ -3,6 +3,8 @@ package de.mephisto.vpin.server.highscores;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.id.IncrementGenerator;
 import java.time.Instant;
 import java.util.Objects;
 
@@ -15,7 +17,8 @@ public class HighscoreVersion {
   private Instant createdAt;
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GenericGenerator(name = "highscoreversion_gen", type = IncrementGenerator.class)
+  @GeneratedValue(generator = "highscoreversion_gen")
   private Long id;
 
   private int gameId;

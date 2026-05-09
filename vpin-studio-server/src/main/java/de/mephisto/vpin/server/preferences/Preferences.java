@@ -5,6 +5,8 @@ import de.mephisto.vpin.server.assets.Asset;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.id.IncrementGenerator;
 
 @Entity
 @Table(name = "Preferences")
@@ -13,7 +15,8 @@ import jakarta.persistence.*;
 public class Preferences {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GenericGenerator(name = "preferences_gen", type = IncrementGenerator.class)
+  @GeneratedValue(generator = "preferences_gen")
   @Column(name = "id", nullable = false)
   private Long id;
 

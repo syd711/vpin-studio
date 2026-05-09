@@ -72,7 +72,7 @@ public class NvRamOutputToScoreTextConverter {
       Locale locale = Locale.getDefault();
       String rom = romFromNv(originalNVRamFile);
       for (NvRamOutputToRaw svc : svcs) {
-        if (svc.isSupportedRom(rom)) {
+        if (svc.isSupportedRom(rom) || svc.isSupportedRom(rom.toLowerCase())) {
           LOG.info("Used NvRam converter {} for {}", svc, nvRamName);
           return String.join("\n", svc.getRaw(rom, originalNVRamFile, locale));
         }
