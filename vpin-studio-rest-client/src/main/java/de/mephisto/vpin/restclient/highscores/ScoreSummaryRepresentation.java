@@ -32,7 +32,7 @@ public class ScoreSummaryRepresentation {
       List<Score> gameRoomScores = gameByVps.getScores();
       for (Score gameRoomScore : gameRoomScores) {
         ScoreRepresentation s = new ScoreRepresentation();
-        s.setCreatedAt(gameRoomScore.getDate() != null ? gameRoomScore.getDate().toInstant() : null);
+        s.setCreatedAt(gameRoomScore.getDate() != null ? gameRoomScore.getDate() : null);
         s.setScore(gameRoomScore.getScore());
 
         PlayerRepresentation playerRepresentation = new PlayerRepresentation();
