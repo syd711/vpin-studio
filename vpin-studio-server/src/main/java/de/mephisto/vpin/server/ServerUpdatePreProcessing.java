@@ -79,6 +79,7 @@ public class ServerUpdatePreProcessing {
          JsonMapper objectMapper =JsonMapper.builder()
                 .enable(SerializationFeature.INDENT_OUTPUT)
                 .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+                .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
                 .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
                  .build();
 
@@ -281,6 +282,7 @@ public class ServerUpdatePreProcessing {
 
         JsonMapper objectMapper =JsonMapper.builder()
                 .enable(SerializationFeature.INDENT_OUTPUT)
+                .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
                 .build();
 
         ServerUpdateFileEntry[] files = objectMapper.readValue(manifestFile, ServerUpdateFileEntry[].class);

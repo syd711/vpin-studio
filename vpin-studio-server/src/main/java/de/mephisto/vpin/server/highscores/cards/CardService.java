@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.highscores.cards;
 
+import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.cfg.EnumFeature;
 import tools.jackson.databind.json.JsonMapper;
 import de.mephisto.vpin.commons.fx.ImageUtil;
@@ -249,16 +250,16 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
   }
 
   public int[] getCardResolution(CardTemplateType templateType) {
-      return switch (templateType) {
-          case HIGSCORE_CARD -> {
-              if (cardSettings.isCustomResolution()) {
-                  yield new int[]{cardSettings.getCardWidth(), cardSettings.getCardHeight()};
-              }
-              yield new int[]{cardSettings.getCardResolution().toWidth(), cardSettings.getCardResolution().toHeight()};
-          }
-          case INSTRUCTIONS_CARD -> new int[]{CardResolution.HDReady.toWidth(), CardResolution.HDReady.toHeight()};
-          case WHEEL -> new int[]{CardResolution.WHEEL.toWidth(), CardResolution.WHEEL.toHeight()};
-      };
+    return switch (templateType) {
+      case HIGSCORE_CARD -> {
+        if (cardSettings.isCustomResolution()) {
+          yield new int[]{cardSettings.getCardWidth(), cardSettings.getCardHeight()};
+        }
+        yield new int[]{cardSettings.getCardResolution().toWidth(), cardSettings.getCardResolution().toHeight()};
+      }
+      case INSTRUCTIONS_CARD -> new int[]{CardResolution.HDReady.toWidth(), CardResolution.HDReady.toHeight()};
+      case WHEEL -> new int[]{CardResolution.WHEEL.toWidth(), CardResolution.WHEEL.toHeight()};
+    };
   }
 
 //-----------------------------------------
@@ -365,6 +366,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
       JsonMapper mapper = JsonMapper.builder()
           .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
           .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+          .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
           .build();
       ArrayList<ScoreRepresentation> scores = new ArrayList<>();
       for (Score score : summary.getScores()) {

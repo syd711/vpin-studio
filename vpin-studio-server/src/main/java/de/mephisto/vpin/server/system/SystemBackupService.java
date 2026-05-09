@@ -56,12 +56,13 @@ public class SystemBackupService {
   private final static JsonMapper objectMapper;
 
   static {
-      objectMapper = JsonMapper.builder()
-              .enable(SerializationFeature.INDENT_OUTPUT)
-              .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-              .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
-              .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
-              .build();
+    objectMapper = JsonMapper.builder()
+        .enable(SerializationFeature.INDENT_OUTPUT)
+        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+        .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+        .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+        .build();
   }
 
 

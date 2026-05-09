@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import tools.jackson.core.util.DefaultIndenter;
 import tools.jackson.core.util.DefaultPrettyPrinter;
+import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.cfg.EnumFeature;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -520,6 +521,7 @@ public class InstructionsCardsController  implements Initializable {
     JsonMapper objectMapper = JsonMapper.builder()
         .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
         .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+        .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
         .build();
     VpsTableData data = null;
     if (jsonFile.exists()) {
@@ -568,6 +570,7 @@ public class InstructionsCardsController  implements Initializable {
       JsonMapper objectMapper = JsonMapper.builder()
           .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
           .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+          .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
           .build();
 
     DefaultPrettyPrinter.Indenter indenter = new DefaultIndenter("  ", DefaultIndenter.SYS_LF);

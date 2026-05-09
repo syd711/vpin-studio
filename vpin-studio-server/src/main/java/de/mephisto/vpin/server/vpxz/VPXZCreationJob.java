@@ -109,12 +109,13 @@ public class VPXZCreationJob implements Job {
         }
       }, game, tableDetails);
 
-        JsonMapper objectMapper =JsonMapper.builder()
-                .enable(SerializationFeature.INDENT_OUTPUT)
-                .enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS)
-                .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
-                .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
-                .build();
+      JsonMapper objectMapper = JsonMapper.builder()
+          .enable(SerializationFeature.INDENT_OUTPUT)
+          .enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS)
+          .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+          .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+          .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+          .build();
 
       String packageInfoJson = objectMapper.writeValueAsString(packageInfo);
 

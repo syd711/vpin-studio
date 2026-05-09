@@ -126,12 +126,13 @@ public class HighscoreBackupService implements InitializingBean {
   public HighscoreBackup readBackupFile(@NonNull File archiveFile) {
     try {
 
-        JsonMapper objectMapper =JsonMapper.builder()
-                .enable(SerializationFeature.INDENT_OUTPUT)
-                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-                .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
-                .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
-                .build();
+      JsonMapper objectMapper = JsonMapper.builder()
+          .enable(SerializationFeature.INDENT_OUTPUT)
+          .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+          .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+          .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+          .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+          .build();
 
       String json = ZipUtil.readZipFile(archiveFile, DESCRIPTOR_JSON);
 
@@ -144,10 +145,11 @@ public class HighscoreBackupService implements InitializingBean {
   }
 
   private File writeDescriptorJson(Game game, File folder, Highscore highscore, String filename) throws IOException {
-      JsonMapper objectMapper =JsonMapper.builder()
-              .enable(SerializationFeature.INDENT_OUTPUT)
-              .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-              .build();
+    JsonMapper objectMapper = JsonMapper.builder()
+        .enable(SerializationFeature.INDENT_OUTPUT)
+        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+        .build();
 
     HighscoreBackup backup = new HighscoreBackup();
     backup.setCreationDate(OffsetDateTime.now());

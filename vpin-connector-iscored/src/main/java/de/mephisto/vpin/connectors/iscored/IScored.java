@@ -34,6 +34,7 @@ public class IScored {
         .enable(SerializationFeature.INDENT_OUTPUT)
         .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
         .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
         .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
         .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
         .build();

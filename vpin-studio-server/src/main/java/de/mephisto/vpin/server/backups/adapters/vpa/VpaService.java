@@ -67,17 +67,18 @@ public class VpaService implements InitializingBean {
 
   private final static String MAME_FOLDER = "VPinMAME";
 
-   private final static JsonMapper objectMapper;
+  private final static JsonMapper objectMapper;
 
-    static {
-        objectMapper = JsonMapper.builder()
-                .enable(SerializationFeature.INDENT_OUTPUT)
-                .enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS)
-                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-                .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
-                .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
-                .build();
-    }
+  static {
+    objectMapper = JsonMapper.builder()
+        .enable(SerializationFeature.INDENT_OUTPUT)
+        .enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS)
+        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+        .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+        .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+        .build();
+  }
 
   @Autowired
   private FrontendService frontendService;

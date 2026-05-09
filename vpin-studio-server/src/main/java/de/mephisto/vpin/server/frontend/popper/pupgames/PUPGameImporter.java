@@ -61,11 +61,12 @@ public class PUPGameImporter {
       File file = new File(SystemInfo.RESOURCES, "pupgames/" + filename);
       if (file.exists()) {
         JsonMapper mapper = JsonMapper.builder()
-                .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES)
-                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-                .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
-                .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
-                .build();
+            .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES)
+            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+            .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+            .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+            .build();
 
         String s = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
         PUPGameExport pupGameExport = mapper.readValue(s, PUPGameExport.class);

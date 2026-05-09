@@ -76,6 +76,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
         .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES) // Be lenient with older servers
         .defaultTimeZone(TimeZone.getDefault())
         .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+        .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
         .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
         .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
         .build();
@@ -104,6 +105,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
         .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES) // Be lenient with older servers
         .defaultTimeZone(TimeZone.getDefault())
         .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+        .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
         .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
         .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
         .build();

@@ -26,6 +26,7 @@ abstract public class LocalJsonSettings {
         .enable(SerializationFeature.INDENT_OUTPUT)
         .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
         .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+        .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
         .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
         .build();
   }
