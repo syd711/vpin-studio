@@ -26,7 +26,7 @@ public class Player {
   private OffsetDateTime updatedAt;
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @OneToOne(cascade = CascadeType.MERGE, optional = true)

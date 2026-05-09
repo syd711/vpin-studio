@@ -25,7 +25,7 @@ public class Asset {
   private OffsetDateTime updatedAt;
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   private byte[] data;

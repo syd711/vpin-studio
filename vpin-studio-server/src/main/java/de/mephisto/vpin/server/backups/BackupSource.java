@@ -15,7 +15,7 @@ public class BackupSource {
   private OffsetDateTime createdAt;
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   private String type;

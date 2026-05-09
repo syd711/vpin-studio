@@ -22,7 +22,7 @@ public class Highscore {
   private OffsetDateTime lastScanned;
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   private int gameId;
