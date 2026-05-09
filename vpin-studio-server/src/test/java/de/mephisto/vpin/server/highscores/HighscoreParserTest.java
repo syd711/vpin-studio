@@ -4,7 +4,7 @@ import de.mephisto.vpin.server.AbstractVPinServerTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -192,7 +192,7 @@ public class HighscoreParserTest extends AbstractVPinServerTest {
     @Test
     public void testParsing() {
         for (String testling : testlings) {
-            List<Score> test = highscoreParsingService.parseScores(OffsetDateTime.now(), testling, null, -1l);
+            List<Score> test = highscoreParsingService.parseScores(Instant.now(), testling, null, -1l);
             assertFalse(test.isEmpty());
             assertTrue(test.size() > 3);
         }
@@ -200,35 +200,35 @@ public class HighscoreParserTest extends AbstractVPinServerTest {
 
     @Test
     public void testRaw() {
-        List<Score> test = highscoreParsingService.parseScores(OffsetDateTime.now(), RAW3, null, -1l);
+        List<Score> test = highscoreParsingService.parseScores(Instant.now(), RAW3, null, -1l);
         assertFalse(test.isEmpty());
         assertEquals(test.size(), 5);
     }
 
     @Test
     public void testSingleton() {
-        List<Score> test = highscoreParsingService.parseScores(OffsetDateTime.now(), singleton, null, -1l);
+        List<Score> test = highscoreParsingService.parseScores(Instant.now(), singleton, null, -1l);
         assertFalse(test.isEmpty());
         assertTrue(test.size() > 3);
     }
 
     @Test
     public void testInvalidTitle() {
-        List<Score> test = highscoreParsingService.parseScores(OffsetDateTime.now(), invalidTitle, null, -1l);
+        List<Score> test = highscoreParsingService.parseScores(Instant.now(), invalidTitle, null, -1l);
         assertFalse(test.isEmpty());
         assertTrue(test.size() > 3);
     }
 
     @Test
     public void testBlankScores() {
-        List<Score> test = highscoreParsingService.parseScores(OffsetDateTime.now(), blankValues, null, -1l);
+        List<Score> test = highscoreParsingService.parseScores(Instant.now(), blankValues, null, -1l);
         assertFalse(test.isEmpty());
         assertTrue(test.size() > 3);
     }
 
     @Test
     public void testOrder() {
-        List<Score> test = highscoreParsingService.parseScores(OffsetDateTime.now(), orderCheck, null, -1l);
+        List<Score> test = highscoreParsingService.parseScores(Instant.now(), orderCheck, null, -1l);
         assertFalse(test.isEmpty());
         assertTrue(test.size() > 3);
 

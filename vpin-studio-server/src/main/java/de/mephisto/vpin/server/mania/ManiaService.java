@@ -38,8 +38,7 @@ import org.springframework.stereotype.Service;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -153,7 +152,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
           tableScore.setVpsVersionId(game.getExtTableVersionId());
           tableScore.setTableName(game.getGameDisplayName());
           tableScore.setAccountId(account.getId());
-          tableScore.setCreationDate(Date.from(score.getCreatedAt().toInstant()));
+          tableScore.setCreationDate(Date.from(score.getCreatedAt()));
           tableScore.setScoreSource(game.getRom());
 
           if (isOnDenyList(deniedScoresByTableId, score, game)) {
@@ -283,7 +282,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   }
 
   private Score toScores(Game game, Account account, TableScore accountScore) {
-    OffsetDateTime createdAt = accountScore.getCreationDate().toInstant().atZone(ZoneId.systemDefault()).toOffsetDateTime();
+    Instant createdAt = accountScore.getCreationDate().toInstant();
     Score score = new Score(createdAt, game.getId(), account.getInitials(), null, accountScore.getScoreText(), accountScore.getScore(), -1);
     score.setExternal(true);
     return score;

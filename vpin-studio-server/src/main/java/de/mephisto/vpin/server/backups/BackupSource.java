@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.backups;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import jakarta.persistence.*;
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.Objects;
 
 @Entity
@@ -12,7 +12,7 @@ import java.util.Objects;
 public class BackupSource {
 
   @Column(nullable = false)
-  private OffsetDateTime createdAt;
+  private Instant createdAt;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -66,11 +66,11 @@ public class BackupSource {
     this.type = type;
   }
 
-  public OffsetDateTime getCreatedAt() {
+  public Instant getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(OffsetDateTime createdAt) {
+  public void setCreatedAt(Instant createdAt) {
     this.createdAt = createdAt;
   }
 

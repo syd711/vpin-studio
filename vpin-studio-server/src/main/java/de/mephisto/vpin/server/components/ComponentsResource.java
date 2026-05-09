@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -100,7 +102,7 @@ public class ComponentsResource {
     representation.setType(componentType);
     representation.setInstalledVersion(component.getInstalledVersion());
     representation.setLatestReleaseVersion(component.getLatestReleaseVersion());
-    representation.setLastCheck(component.getLastCheck());
+    representation.setLastCheck(component.getLastCheck() != null ? OffsetDateTime.ofInstant(component.getLastCheck(), ZoneId.systemDefault()) : null);
     representation.setExclusions(componentFacade.getExcludedFilenames());
     representation.setInstalled(componentFacade.isInstalled());
 

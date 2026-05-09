@@ -49,7 +49,9 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -330,7 +332,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
         if (gameDetails == null || forceScan) {
             if (gameDetails == null) {
                 gameDetails = new GameDetails();
-                gameDetails.setCreatedAt(OffsetDateTime.now());
+                gameDetails.setCreatedAt(Instant.now());
             }
 
             tableDetails = frontendService.getTableDetails(game.getId());
@@ -373,7 +375,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
             }
 
             gameDetails.setPupId(game.getId());
-            gameDetails.setUpdatedAt(OffsetDateTime.now());
+            gameDetails.setUpdatedAt(Instant.now());
 
             synchronized (saveLock) {
                 gameDetailsRepositoryService.saveAndFlush(gameDetails);
@@ -405,10 +407,10 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
         }
 
         if (game.getDateAdded() == null) {
-            game.setDateAdded(gameDetails.getCreatedAt());
+            game.setDateAdded(OffsetDateTime.ofInstant(gameDetails.getCreatedAt(), ZoneId.systemDefault()));
         }
         if (game.getDateUpdated() == null) {
-            game.setDateUpdated(gameDetails.getUpdatedAt());
+            game.setDateUpdated(OffsetDateTime.ofInstant(gameDetails.getUpdatedAt(), ZoneId.systemDefault()));
         }
 
         //check alias

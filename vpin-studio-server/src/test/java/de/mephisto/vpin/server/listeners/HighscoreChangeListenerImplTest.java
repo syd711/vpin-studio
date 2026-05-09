@@ -17,7 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.Date;
 
@@ -120,8 +120,8 @@ public class HighscoreChangeListenerImplTest {
     Game game = mock(Game.class);
     when(game.getRom()).thenReturn("rom1");
     when(game.getId()).thenReturn(1);
-    Score newScore = new Score(OffsetDateTime.now(), 1, "AAA", null, "raw", 1000000L, 1);
-    Score oldScore = new Score(OffsetDateTime.now(), 1, "???", null, "raw", 0L, 2);
+    Score newScore = new Score(Instant.now(), 1, "AAA", null, "raw", 1000000L, 1);
+    Score oldScore = new Score(Instant.now(), 1, "???", null, "raw", 0L, 2);
     HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScore, newScore, raw, 1, initialScore, EventOrigin.USER_INITIATED);
     event.setEventReplay(eventReplay);
     return event;

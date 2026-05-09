@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.time.OffsetDateTime;
+import java.time.Instant;
 
 public class TableBackupAdapterVpa implements TableBackupAdapter {
   private final static Logger LOG = LoggerFactory.getLogger(TableBackupAdapterVpa.class);
@@ -53,7 +53,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
     BackupDescriptor backupDescriptor = new BackupDescriptor();
     BackupPackageInfo packageInfo = new BackupPackageInfo();
 
-    backupDescriptor.setCreatedAt(OffsetDateTime.now());
+    backupDescriptor.setCreatedAt(Instant.now());
     backupDescriptor.setTableDetails(tableDetails);
     backupDescriptor.setPackageInfo(packageInfo);
 

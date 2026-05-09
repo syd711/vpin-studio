@@ -6,8 +6,6 @@ import de.mephisto.vpin.server.system.SystemService;
 
 import java.io.File;
 import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
 
 public class VPXZSourceImpl extends VPXZSource {
   public final static long DEFAULT_VPXZ_SOURCE_ID = -1;
@@ -35,8 +33,8 @@ public class VPXZSourceImpl extends VPXZSource {
   }
 
   @Override
-  public OffsetDateTime getCreatedAt() {
-    return OffsetDateTime.ofInstant(Instant.ofEpochMilli(FOLDER.lastModified()), ZoneId.systemDefault());
+  public Instant getCreatedAt() {
+    return Instant.ofEpochMilli(FOLDER.lastModified());
   }
 
   @Override

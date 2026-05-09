@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.highscores.parsing.nvram;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.*;
 
 import org.slf4j.Logger;
@@ -81,7 +81,7 @@ public class NvRamParsingWithParser implements NvRamOutputToRaw, ScoreListAdapte
   }
 
     @Override
-    public List<Score> getScores(Game game, OffsetDateTime createdAt, List<String> lines, boolean parseAll) throws IOException {
+    public List<Score> getScores(Game game, Instant createdAt, List<String> lines, boolean parseAll) throws IOException {
         Locale locale = Locale.getDefault();
         String rom = game != null ? game.getRom().toLowerCase() : "<no rom>";
         if (isSupportedRom(rom)) {

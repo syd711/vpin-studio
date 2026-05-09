@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.time.OffsetDateTime;
+import java.time.Instant;
 
 public class VPXZCreationJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(VPXZCreationJob.class);
@@ -60,7 +60,7 @@ public class VPXZCreationJob implements Job {
     VPXZDescriptor descriptor = new VPXZDescriptor();
     VPXZPackageInfo packageInfo = new VPXZPackageInfo();
 
-    descriptor.setCreatedAt(OffsetDateTime.now());
+    descriptor.setCreatedAt(Instant.now());
     descriptor.setTableDetails(tableDetails);
     descriptor.setPackageInfo(packageInfo);
 

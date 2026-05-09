@@ -35,7 +35,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -186,7 +186,7 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
     }
     else {
       backupSource = new BackupSource();
-      backupSource.setCreatedAt(OffsetDateTime.now());
+      backupSource.setCreatedAt(Instant.now());
       backupSource.setType(representation.getType());
     }
 
@@ -282,7 +282,7 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
     if (all.isEmpty()) {
       BackupSource backupSource = new BackupSource();
       backupSource = new BackupSource();
-      backupSource.setCreatedAt(OffsetDateTime.now());
+      backupSource.setCreatedAt(Instant.now());
       backupSource.setName("Default Backups Folder");
       backupSource.setType(BackupSourceType.Folder.name());
       backupSource.setLocation(VpaBackupSource.FOLDER.getAbsolutePath());

@@ -9,7 +9,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -21,11 +21,11 @@ public class Competition {
 
   @Column(nullable = false, updatable = false)
   @CreatedDate
-  private OffsetDateTime createdAt;
+  private Instant createdAt;
 
   @Column(nullable = false)
   @LastModifiedDate
-  private OffsetDateTime updatedAt;
+  private Instant updatedAt;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,9 +59,9 @@ public class Competition {
 
   private String vpsTableVersionId;
 
-  private OffsetDateTime startDate;
+  private Instant startDate;
 
-  private OffsetDateTime endDate;
+  private Instant endDate;
 
   private boolean started;
 
@@ -244,19 +244,19 @@ public class Competition {
     this.gameId = gameId;
   }
 
-  public OffsetDateTime getStartDate() {
+  public Instant getStartDate() {
     return startDate;
   }
 
-  public void setStartDate(OffsetDateTime startDate) {
+  public void setStartDate(Instant startDate) {
     this.startDate = startDate;
   }
 
-  public OffsetDateTime getEndDate() {
+  public Instant getEndDate() {
     return endDate;
   }
 
-  public void setEndDate(OffsetDateTime endDate) {
+  public void setEndDate(Instant endDate) {
     this.endDate = endDate;
   }
 
@@ -276,19 +276,19 @@ public class Competition {
     this.name = name;
   }
 
-  public OffsetDateTime getCreatedAt() {
+  public Instant getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(OffsetDateTime createdAt) {
+  public void setCreatedAt(Instant createdAt) {
     this.createdAt = createdAt;
   }
 
-  public OffsetDateTime getUpdatedAt() {
+  public Instant getUpdatedAt() {
     return updatedAt;
   }
 
-  public void setUpdatedAt(OffsetDateTime updatedAt) {
+  public void setUpdatedAt(Instant updatedAt) {
     this.updatedAt = updatedAt;
   }
 
@@ -309,7 +309,7 @@ public class Competition {
       return true;
     }
 
-    OffsetDateTime now = OffsetDateTime.now();
+    Instant now = Instant.now();
     return (startDate != null && !now.isBefore(startDate)) && (endDate != null && !now.isAfter(endDate));
   }
 

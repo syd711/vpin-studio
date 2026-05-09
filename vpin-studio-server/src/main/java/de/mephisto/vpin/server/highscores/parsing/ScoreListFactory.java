@@ -10,7 +10,7 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.*;
 
 
@@ -27,14 +27,14 @@ import java.util.*;
 
         //-------------------------------------------------------
 
-        public static List<Score> create(@NonNull String raw, @NonNull OffsetDateTime createdAt, @Nullable Game game, @NonNull ScoringDB scoringDB) {
+        public static List<Score> create(@NonNull String raw, @NonNull Instant createdAt, @Nullable Game game, @NonNull ScoringDB scoringDB) {
             return create(raw, createdAt, game, scoringDB, false);
         }
 
         /**
          * The parseAll flag, when false (by default), filters on high scores only
          */
-        public static List<Score> create(@NonNull String raw, @NonNull OffsetDateTime createdAt, @Nullable Game game, @NonNull ScoringDB scoringDB, boolean parseAll) {
+        public static List<Score> create(@NonNull String raw, @NonNull Instant createdAt, @Nullable Game game, @NonNull ScoringDB scoringDB, boolean parseAll) {
             List<Score> scores = getScores(raw, createdAt, game, scoringDB, parseAll);
             List<Score> filteredScores = new ArrayList<>();
             int position = 1;
@@ -49,7 +49,7 @@ import java.util.*;
         }
 
 
-        private static List<Score> getScores(@NonNull String raw, @NonNull OffsetDateTime createdAt, @Nullable Game game, @NonNull ScoringDB scoringDB, boolean parseAll) {
+        private static List<Score> getScores(@NonNull String raw, @NonNull Instant createdAt, @Nullable Game game, @NonNull ScoringDB scoringDB, boolean parseAll) {
             List<Score> scores = new ArrayList<>();
 
             try {

@@ -6,7 +6,7 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import jakarta.persistence.*;
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.Objects;
 
 @Entity
@@ -15,11 +15,11 @@ import java.util.Objects;
 public class Highscore {
 
   @Column(nullable = false)
-  private OffsetDateTime createdAt;
+  private Instant createdAt;
 
-  private OffsetDateTime lastModified;
+  private Instant lastModified;
 
-  private OffsetDateTime lastScanned;
+  private Instant lastScanned;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -66,19 +66,19 @@ public class Highscore {
     this.options = options;
   }
 
-  public OffsetDateTime getLastScanned() {
+  public Instant getLastScanned() {
     return lastScanned;
   }
 
-  public void setLastScanned(OffsetDateTime lastScanned) {
+  public void setLastScanned(Instant lastScanned) {
     this.lastScanned = lastScanned;
   }
 
-  public OffsetDateTime getLastModified() {
+  public Instant getLastModified() {
     return lastModified;
   }
 
-  public void setLastModified(OffsetDateTime lastModified) {
+  public void setLastModified(Instant lastModified) {
     this.lastModified = lastModified;
   }
 
@@ -114,11 +114,11 @@ public class Highscore {
     this.displayName = displayName;
   }
 
-  public OffsetDateTime getCreatedAt() {
+  public Instant getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(OffsetDateTime createdAt) {
+  public void setCreatedAt(Instant createdAt) {
     this.createdAt = createdAt;
   }
 
@@ -133,7 +133,7 @@ public class Highscore {
   public static Highscore forGame(@NonNull Game game, @Nullable HighscoreMetadata metadata) {
     Highscore highscore = new Highscore();
     highscore.setGameId(game.getId());
-    highscore.setCreatedAt(OffsetDateTime.now());
+    highscore.setCreatedAt(Instant.now());
     highscore.setDisplayName(game.getGameDisplayName());
 
     if (metadata != null) {
@@ -141,8 +141,8 @@ public class Highscore {
       highscore.setFilename(metadata.getFilename());
       highscore.setType(metadata.getType() != null ? metadata.getType().name() : null);
       highscore.setStatus(metadata.getStatus());
-      highscore.setLastScanned(metadata.getScanned());
-      highscore.setLastModified(metadata.getModified());
+      highscore.setLastScanned(metadata.getScanned() != null ? metadata.getScanned().toInstant() : null);
+      highscore.setLastModified(metadata.getModified() != null ? metadata.getModified().toInstant() : null);
     }
     return highscore;
   }
@@ -150,7 +150,7 @@ public class Highscore {
   public HighscoreVersion toVersion(int changedPosition, String newRaw) {
     HighscoreVersion version = new HighscoreVersion();
     version.setChangedPosition(changedPosition);
-    version.setCreatedAt(OffsetDateTime.now());
+    version.setCreatedAt(Instant.now());
     version.setOldRaw(this.getRaw());
     version.setDisplayName(this.getDisplayName());
     version.setGameId(this.getGameId());

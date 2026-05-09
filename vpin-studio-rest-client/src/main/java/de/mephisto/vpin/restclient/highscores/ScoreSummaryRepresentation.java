@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.jspecify.annotations.NonNull;
 
 import java.lang.invoke.MethodHandles;
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -17,7 +17,7 @@ import java.util.Objects;
 public class ScoreSummaryRepresentation {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  private OffsetDateTime createdAt;
+  private Instant createdAt;
 
   private String raw;
 
@@ -32,7 +32,7 @@ public class ScoreSummaryRepresentation {
       List<Score> gameRoomScores = gameByVps.getScores();
       for (Score gameRoomScore : gameRoomScores) {
         ScoreRepresentation s = new ScoreRepresentation();
-        s.setCreatedAt(gameRoomScore.getDate());
+        s.setCreatedAt(gameRoomScore.getDate() != null ? gameRoomScore.getDate().toInstant() : null);
         s.setScore(gameRoomScore.getScore());
 
         PlayerRepresentation playerRepresentation = new PlayerRepresentation();
@@ -58,11 +58,11 @@ public class ScoreSummaryRepresentation {
     this.raw = raw;
   }
 
-  public OffsetDateTime getCreatedAt() {
+  public Instant getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(OffsetDateTime createdAt) {
+  public void setCreatedAt(Instant createdAt) {
     this.createdAt = createdAt;
   }
 

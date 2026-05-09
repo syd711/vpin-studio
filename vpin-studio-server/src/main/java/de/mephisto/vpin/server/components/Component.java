@@ -6,7 +6,7 @@ import de.mephisto.vpin.restclient.components.ComponentType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.time.OffsetDateTime;
+import java.time.Instant;
 
 @Entity
 @Table(name = "Components")
@@ -16,7 +16,7 @@ public class Component {
   @Id
   private ComponentType type;
 
-  private OffsetDateTime lastCheck;
+  private Instant lastCheck;
 
   private String installedVersion;
 
@@ -48,11 +48,11 @@ public class Component {
     this.installedVersion = installedVersion;
   }
 
-  public OffsetDateTime getLastCheck() {
+  public Instant getLastCheck() {
     return lastCheck;
   }
 
-  public void setLastCheck(OffsetDateTime lastCheck) {
+  public void setLastCheck(Instant lastCheck) {
     this.lastCheck = lastCheck;
   }
 

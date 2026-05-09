@@ -11,7 +11,7 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.players.Player;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.List;
@@ -71,7 +71,7 @@ public class DiscordBotCommandResponseFactory {
         formatter.format(competition.getStartDate()),
         formatter.format(competition.getEndDate()),
         DateUtil.formatDuration(competition.getStartDate(), competition.getEndDate()),
-        DateUtil.formatDuration(OffsetDateTime.now(), competition.getEndDate()));
+        DateUtil.formatDuration(Instant.now(), competition.getEndDate()));
 
 
     StringBuilder msgBuilder = new StringBuilder(format);

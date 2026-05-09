@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.net.URL;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -184,8 +185,8 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     validationContainer.setVisible(true);
     this.saveBtn.setDisable(true);
 
-    OffsetDateTime startDate = competition.getStartDate();
-    OffsetDateTime endDate = competition.getEndDate();
+    Instant startDate = competition.getStartDate();
+    Instant endDate = competition.getEndDate();
     this.durationLabel.setText(DateUtil.formatDuration(startDate, endDate));
 
     if (StringUtils.isEmpty(competition.getName())) {
@@ -362,14 +363,14 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       this.nameField.setText(selectedCompetition.getName());
       this.nameField.setDisable(!editable);
 
-      this.startDatePicker.setValue(selectedCompetition.getStartDate().toLocalDate());
+      this.startDatePicker.setValue(LocalDate.ofInstant(selectedCompetition.getStartDate(), ZoneId.systemDefault()));
       this.startDatePicker.setDisable(!editable);
-      this.startTime.setValue(DateUtil.formatTimeString(Date.from(selectedCompetition.getStartDate().toInstant())));
+      this.startTime.setValue(DateUtil.formatTimeString(Date.from(selectedCompetition.getStartDate())));
       this.startTime.setDisable(!editable);
 
-      this.endDatePicker.setValue(selectedCompetition.getEndDate().toLocalDate());
+      this.endDatePicker.setValue(LocalDate.ofInstant(selectedCompetition.getEndDate(), ZoneId.systemDefault()));
       this.endDatePicker.setDisable(!editable);
-      this.endTime.setValue(DateUtil.formatTimeString(Date.from(selectedCompetition.getEndDate().toInstant())));
+      this.endTime.setValue(DateUtil.formatTimeString(Date.from(selectedCompetition.getEndDate())));
       this.endTime.setDisable(!editable);
 
       this.tableCombo.setValue(game);
@@ -440,8 +441,8 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     competition.setOwner(String.valueOf(botStatus.getBotId()));
     competition.setHighscoreReset(true);
 
-    OffsetDateTime end = LocalDate.now().plus(7, ChronoUnit.DAYS).atStartOfDay(ZoneId.systemDefault()).toOffsetDateTime();
-    competition.setStartDate(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toOffsetDateTime());
+    Instant end = LocalDate.now().plus(7, ChronoUnit.DAYS).atStartOfDay(ZoneId.systemDefault()).toInstant();
+    competition.setStartDate(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
     competition.setEndDate(end);
 
     saveBtn.setDisable(true);
@@ -490,28 +491,28 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     startDatePicker.setValue(LocalDate.now());
     startDatePicker.valueProperty().addListener((observableValue, localDate, t1) -> {
       Date date = DateUtil.formatDate(startDatePicker.getValue(), startTime.getValue());
-      competition.setStartDate(date.toInstant().atZone(ZoneId.systemDefault()).toOffsetDateTime());
+      competition.setStartDate(date.toInstant());
       validate();
     });
     startTime.setItems(FXCollections.observableList(DateUtil.TIMES));
     startTime.setValue("00:00");
     startTime.valueProperty().addListener((observable, oldValue, newValue) -> {
       Date date = DateUtil.formatDate(startDatePicker.getValue(), startTime.getValue());
-      competition.setStartDate(date.toInstant().atZone(ZoneId.systemDefault()).toOffsetDateTime());
+      competition.setStartDate(date.toInstant());
       validate();
     });
 
     endDatePicker.setValue(LocalDate.now().plus(7, ChronoUnit.DAYS));
     endDatePicker.valueProperty().addListener((observableValue, localDate, t1) -> {
       Date date = DateUtil.formatDate(endDatePicker.getValue(), endTime.getValue());
-      competition.setEndDate(date.toInstant().atZone(ZoneId.systemDefault()).toOffsetDateTime());
+      competition.setEndDate(date.toInstant());
       validate();
     });
     endTime.setItems(FXCollections.observableList(DateUtil.TIMES));
     endTime.setValue("00:00");
     endTime.valueProperty().addListener((observable, oldValue, newValue) -> {
       Date date = DateUtil.formatDate(endDatePicker.getValue(), endTime.getValue());
-      competition.setEndDate(date.toInstant().atZone(ZoneId.systemDefault()).toOffsetDateTime());
+      competition.setEndDate(date.toInstant());
       validate();
     });
 

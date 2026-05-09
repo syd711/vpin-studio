@@ -5,7 +5,7 @@ import de.mephisto.vpin.server.highscores.Score;
 import org.jspecify.annotations.NonNull;
 
 import java.io.IOException;
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.List;
 
 public interface ScoreListAdapter {
@@ -13,5 +13,5 @@ public interface ScoreListAdapter {
     boolean isApplicable(@NonNull Game game);
 
   @NonNull
-  List<Score> getScores(@NonNull Game game, @NonNull OffsetDateTime createdAt, @NonNull List<String> lines, boolean parseAll) throws IOException;
+  List<Score> getScores(@NonNull Game game, @NonNull Instant createdAt, @NonNull List<String> lines, boolean parseAll) throws IOException;
 }

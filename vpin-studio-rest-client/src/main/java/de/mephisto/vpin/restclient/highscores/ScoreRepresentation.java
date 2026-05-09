@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 
 public class ScoreRepresentation {
 
@@ -16,15 +16,15 @@ public class ScoreRepresentation {
   private int position;
   private long score;
   private int gameId;
-  private OffsetDateTime createdAt;
+  private Instant createdAt;
   private String label;       // optional label for titled scores, high-scores, buy-in scores....
   private String suffix;      // optional suffix
 
-  public OffsetDateTime getCreatedAt() {
+  public Instant getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(OffsetDateTime createdAt) {
+  public void setCreatedAt(Instant createdAt) {
     this.createdAt = createdAt;
   }
 

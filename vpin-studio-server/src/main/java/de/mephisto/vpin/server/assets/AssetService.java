@@ -40,7 +40,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -313,7 +313,7 @@ public class AssetService {
     byte[] image = defaultPictureService.generateAvatarImage(avatar != null ? avatar.getData() : null);
     Asset clipped = new Asset();
     clipped.setAssetType(AssetType.AVATAR.name());
-    clipped.setUpdatedAt(OffsetDateTime.now());
+    clipped.setUpdatedAt(Instant.now());
     clipped.setMimeType("image/png");
     clipped.setData(image);
     return clipped;

@@ -8,7 +8,6 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Locale;
 
@@ -117,7 +116,7 @@ public class NvRamOutputToScoreTextTest {
     assertNotNull(raw);
 
       //List<Score> parse = ScoreListFactory.create(raw, new Date(entry.length()), game, scoringDB);
-      OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochMilli(entry.length()), ZoneId.systemDefault());
+      Instant date = Instant.ofEpochMilli(entry.length());
       List<Score> parse = ScoreListFactory.create(raw, date, game, scoringDB);
       if (parse.isEmpty()) {
       assertFalse(parse.isEmpty(), "Found empty highscore for nvram " + entry.getAbsolutePath());
@@ -246,7 +245,7 @@ public class NvRamOutputToScoreTextTest {
         LOG.info("raw : " + raw);
 
         //List<Score> parse = ScoreListFactory.create(raw, new Date(entry.length()), game, scoringDB);
-        OffsetDateTime date = OffsetDateTime.ofInstant(Instant.ofEpochMilli(entry.length()), ZoneId.systemDefault());
+        Instant date = Instant.ofEpochMilli(entry.length());
         List<Score> parse = ScoreListFactory.create(raw, date, game, scoringDB);
         LOG.info("Parsed " + parse.size() + " score entries.");
 

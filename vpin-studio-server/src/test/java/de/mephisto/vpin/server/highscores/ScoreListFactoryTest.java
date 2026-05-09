@@ -9,7 +9,7 @@ import de.mephisto.vpin.server.system.SystemService;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -53,7 +53,7 @@ public class ScoreListFactoryTest {
             "SIXTH MAN\n" +
             "#6 EDY      81.105.540";
 
-    List<Score> parse = ScoreListFactory.create(rawScore, OffsetDateTime.now(), game, scoringDB);
+    List<Score> parse = ScoreListFactory.create(rawScore, Instant.now(), game, scoringDB);
     assertEquals(6, parse.size());
   }
 
@@ -104,7 +104,7 @@ public class ScoreListFactoryTest {
                 "CROWNED FOR THE 1st TIME\n" +
                 "16 AUG, 2022 7:16 PM\n";
 
-        List<Score> parse = ScoreListFactory.create(rawScore, OffsetDateTime.now(), game, scoringDB);
+        List<Score> parse = ScoreListFactory.create(rawScore, Instant.now(), game, scoringDB);
         assertEquals(5, parse.size());
     }
 
@@ -141,7 +141,7 @@ public class ScoreListFactoryTest {
                 "BEST COMBO CHAMPION\n" +
                 "LON   5-WAY\n";
 
-        List<Score> parse = ScoreListFactory.create(rawScore, OffsetDateTime.now(), game, scoringDB);
+        List<Score> parse = ScoreListFactory.create(rawScore, Instant.now(), game, scoringDB);
         assertEquals(10, parse.size());
     }
 
@@ -174,11 +174,11 @@ public class ScoreListFactoryTest {
                 "3) BCM     4 000 000 000\n" +
                 "4) MOO     3 500 000 000";
 
-        List<Score> parse = ScoreListFactory.create(rawScore, OffsetDateTime.now(), game, scoringDB);
+        List<Score> parse = ScoreListFactory.create(rawScore, Instant.now(), game, scoringDB);
         assertEquals(5, parse.size());
         assertScore("HIGHEST SCORES", "BBB", 277437190, null, parse.get(1));
 
-        parse = ScoreListFactory.create(rawScore, OffsetDateTime.now(), game, scoringDB, true);
+        parse = ScoreListFactory.create(rawScore, Instant.now(), game, scoringDB, true);
         assertEquals(10, parse.size());
         assertScore("HIGHEST SCORES", "AAA", 271668560, null, parse.get(2));
         assertScore("MARTIAN CHAMPION", "LFS", 20, " MARTIANS DESTROYED", parse.get(5));
@@ -208,11 +208,11 @@ public class ScoreListFactoryTest {
                 "GOTHAM CITY CHAMPION\n"  +
                 "JLS        75 000 000";
 
-        List<Score> parse = ScoreListFactory.create(rawScore, OffsetDateTime.now(), game, scoringDB);
+        List<Score> parse = ScoreListFactory.create(rawScore, Instant.now(), game, scoringDB);
         assertEquals(parse.size(), 5);
         assertScore("HIGH SCORES", "GAG", 240000000, null, parse.get(1));
 
-        parse = ScoreListFactory.create(rawScore, OffsetDateTime.now(), game, scoringDB, true);
+        parse = ScoreListFactory.create(rawScore, Instant.now(), game, scoringDB, true);
         assertEquals(parse.size(), 8);
         assertScore("HIGH SCORES", "GAG", 240000000, null, parse.get(1));
         assertScore("BATMOBILE HURRY-UP CHAMPION", "AGE", 10287880, null, parse.get(5));
@@ -240,11 +240,11 @@ public class ScoreListFactoryTest {
                 "MIDNIGHT CHAMP\n" +
                 "XAQ";
 
-        List<Score> parse = ScoreListFactory.create(rawScore, OffsetDateTime.now(), game, scoringDB);
+        List<Score> parse = ScoreListFactory.create(rawScore, Instant.now(), game, scoringDB);
         assertEquals(parse.size(), 5);
         assertScore("HIGHEST SCORES", "DAD", 3696155350L, null, parse.get(1));
 
-        parse = ScoreListFactory.create(rawScore, OffsetDateTime.now(), game, scoringDB, true);
+        parse = ScoreListFactory.create(rawScore, Instant.now(), game, scoringDB, true);
         assertEquals(parse.size(), 5);
         assertScore("HIGHEST SCORES", "DAD", 3696155350L, null, parse.get(1));
         //assertScore("THE ROOF CHAMPION", "BBB", 0, null, parse.get(5));  // a score value is needed in the regexp
@@ -268,11 +268,11 @@ public class ScoreListFactoryTest {
                 "RAPIDS RECORD\n" +
                 "CGB - 9";
 
-        List<Score> parse = ScoreListFactory.create(rawScore, OffsetDateTime.now(), game, scoringDB);
+        List<Score> parse = ScoreListFactory.create(rawScore, Instant.now(), game, scoringDB);
         assertEquals(5, parse.size());
         assertScore("TOP WATER SLIDERS", "TIM", 101000000, null, parse.getFirst());
 
-        parse = ScoreListFactory.create(rawScore, OffsetDateTime.now(), game, scoringDB, true);
+        parse = ScoreListFactory.create(rawScore, Instant.now(), game, scoringDB, true);
         assertEquals(6, parse.size());
         assertScore("TOP WATER SLIDERS", "TIM", 101000000, null, parse.getFirst());
         assertScore("RAPIDS RECORD", "CGB", 9, null, parse.get(5));
@@ -301,10 +301,10 @@ public class ScoreListFactoryTest {
                 "MEDALS CHAMPION\n" +
                 "XAQ   5M";
 
-        List<Score> parse = ScoreListFactory.create(rawScore, OffsetDateTime.now(), game, scoringDB);
+        List<Score> parse = ScoreListFactory.create(rawScore, Instant.now(), game, scoringDB);
         assertEquals(5, parse.size());
 
-        parse = ScoreListFactory.create(rawScore, OffsetDateTime.now(), game, scoringDB, true);
+        parse = ScoreListFactory.create(rawScore, Instant.now(), game, scoringDB, true);
         assertEquals(8, parse.size());
         assertScore("GRAND CHAMPION", "SSR", 75000000, null, parse.getFirst());
         assertScore("HIGH SCORES", "LON", 55000000, null, parse.get(2));

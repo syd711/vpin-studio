@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -146,7 +146,7 @@ public class ComponentService implements InitializingBean {
             LOG.info("Applied current version \"{} for {}", githubRelease.getTag(), component.getType());
           }
 
-          component.setLastCheck(OffsetDateTime.now());
+          component.setLastCheck(Instant.now());
           componentRepository.saveAndFlush(component);
         }
         else {

@@ -3,22 +3,22 @@ package de.mephisto.vpin.server.competitions;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface CompetitionsRepository extends JpaRepository<Competition, Long> {
 
-  List<Competition> findByStartDateLessThanEqualAndEndDateGreaterThanEqual(OffsetDateTime now1, OffsetDateTime now2);
+  List<Competition> findByStartDateLessThanEqualAndEndDateGreaterThanEqual(Instant now1, Instant now2);
 
-  List<Competition> findByEndDateLessThanEqual(OffsetDateTime now);
+  List<Competition> findByEndDateLessThanEqual(Instant now);
 
-  List<Competition> findByAndWinnerInitialsIsNullAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndType(OffsetDateTime now1, OffsetDateTime now2, String type);
+  List<Competition> findByAndWinnerInitialsIsNullAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndType(Instant now1, Instant now2, String type);
 
   List<Competition> findByWinnerInitialsIsNotNull();
 
-  List<Competition> findByWinnerInitialsIsNullAndEndDateLessThanEqualOrderByEndDate(OffsetDateTime now);
+  List<Competition> findByWinnerInitialsIsNullAndEndDateLessThanEqualOrderByEndDate(Instant now);
 
   List<Competition> findByWinnerInitials(String initials);
 

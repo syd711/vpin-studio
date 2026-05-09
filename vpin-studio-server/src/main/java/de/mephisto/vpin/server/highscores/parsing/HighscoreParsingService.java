@@ -10,7 +10,7 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.List;
 
 /**
@@ -41,7 +41,7 @@ public class HighscoreParsingService {
   private SystemService systemService;
 
   @NonNull
-  public List<Score> parseScores(@NonNull OffsetDateTime createdAt, @NonNull String raw, @Nullable Game game, long serverId) {
+  public List<Score> parseScores(@NonNull Instant createdAt, @NonNull String raw, @Nullable Game game, long serverId) {
     List<Score> scores = ScoreListFactory.create(raw, createdAt, game, systemService.getScoringDatabase());
     for (Score score : scores) {
       Player player = playerService.getPlayerForInitials(serverId, score.getPlayerInitials());

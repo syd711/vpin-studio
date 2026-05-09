@@ -32,8 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -194,7 +193,7 @@ public class HighscoreService implements InitializingBean {
   }
 
     @NonNull
-    public List<Score> parseScores(OffsetDateTime createdAt, String raw, @NonNull Game game, long serverId) {
+    public List<Score> parseScores(Instant createdAt, String raw, @NonNull Game game, long serverId) {
         return highscoreParser.parseScores(createdAt, raw, game, serverId);
     }
 
@@ -265,13 +264,13 @@ public class HighscoreService implements InitializingBean {
 
     public ScoreList getScoreHistory(@NonNull Game game) {
         long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
-        return getScoresBetween(game, OffsetDateTime.ofInstant(java.time.Instant.ofEpochMilli(0), ZoneOffset.UTC), OffsetDateTime.now(), serverId);
+        return getScoresBetween(game, Instant.ofEpochMilli(0), Instant.now(), serverId);
     }
 
     /**
      * Returns all available scores for the game with the given id and time frame
      */
-    public ScoreList getScoresBetween(@NonNull Game game, OffsetDateTime start, OffsetDateTime end, long serverId) {
+    public ScoreList getScoresBetween(@NonNull Game game, Instant start, Instant end, long serverId) {
         ScoreList scoreList = new ScoreList();
         List<HighscoreVersion> byGameIdAndCreatedAtBetween = highscoreVersionRepository.findByGameIdAndCreatedAtBetween(game.getId(), start, end);
         for (HighscoreVersion version : byGameIdAndCreatedAtBetween) {

@@ -3,8 +3,10 @@ package de.mephisto.vpin.restclient.competitions;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import org.apache.commons.lang3.StringUtils;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
@@ -21,11 +23,11 @@ public class CompetitionRepresentation {
 
     private String type;
 
-    private OffsetDateTime createdAt;
+    private Instant createdAt;
 
-    private OffsetDateTime startDate;
+    private Instant startDate;
 
-    private OffsetDateTime endDate;
+    private Instant endDate;
 
     private String owner;
 
@@ -163,11 +165,11 @@ public class CompetitionRepresentation {
         this.discordServerId = discordServerId;
     }
 
-    public OffsetDateTime getCreatedAt() {
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(OffsetDateTime createdAt) {
+    public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
     }
 
@@ -243,19 +245,19 @@ public class CompetitionRepresentation {
         this.badge = badge;
     }
 
-    public OffsetDateTime getStartDate() {
+    public Instant getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(OffsetDateTime startDate) {
+    public void setStartDate(Instant startDate) {
         this.startDate = startDate;
     }
 
-    public OffsetDateTime getEndDate() {
+    public Instant getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(OffsetDateTime endDate) {
+    public void setEndDate(Instant endDate) {
         this.endDate = endDate;
     }
 
@@ -273,15 +275,15 @@ public class CompetitionRepresentation {
     public CompetitionRepresentation cloneCompetition() {
         CompetitionRepresentation clone = new CompetitionRepresentation();
 
-        LocalDate end = getEndDate().toLocalDate();
+        LocalDate end = LocalDate.ofInstant(getEndDate(), ZoneId.systemDefault());
         boolean hasEnded = end.isBefore(LocalDate.now());
 
         if (hasEnded) {
-            LocalDate start = getStartDate().toLocalDate();
+            LocalDate start = LocalDate.ofInstant(getStartDate(), ZoneId.systemDefault());
             long diff = Math.abs(ChronoUnit.DAYS.between(end, start));
 
-            OffsetDateTime newStartDate = OffsetDateTime.now().truncatedTo(ChronoUnit.DAYS);
-            OffsetDateTime newEndDate = newStartDate.plusDays(diff);
+            Instant newStartDate = Instant.now().truncatedTo(ChronoUnit.DAYS);
+            Instant newEndDate = newStartDate.plus(diff, ChronoUnit.DAYS);
 
             clone.setStartDate(newStartDate);
             clone.setEndDate(newEndDate);
@@ -328,7 +330,7 @@ public class CompetitionRepresentation {
             return true;
         }
 
-        OffsetDateTime now = OffsetDateTime.now();
+        Instant now = Instant.now();
         return (startDate != null && !now.isBefore(startDate)) && (endDate != null && !now.isAfter(endDate));
     }
 
@@ -339,12 +341,12 @@ public class CompetitionRepresentation {
         if (getType().equals(CompetitionType.ISCORED.name())) {
             return false;
         }
-        return getStartDate().isAfter(OffsetDateTime.now());
+        return getStartDate().isAfter(Instant.now());
     }
 
     public int remainingDays() {
         LocalDate start = LocalDate.now();
-        LocalDate end = getEndDate().toLocalDate();
+        LocalDate end = LocalDate.ofInstant(getEndDate(), ZoneId.systemDefault());
         return (int) Math.abs(ChronoUnit.DAYS.between(end, start)) + 1;
     }
 
@@ -353,8 +355,8 @@ public class CompetitionRepresentation {
     }
 
     public boolean isOverlappingWith(OffsetDateTime startSelection, OffsetDateTime endSelection) {
-        boolean startOverlap = getStartDate().isBefore(endSelection);
-        boolean endOverlap = startSelection.isBefore(this.getEndDate());
+        boolean startOverlap = getStartDate().isBefore(endSelection.toInstant());
+        boolean endOverlap = startSelection.toInstant().isBefore(this.getEndDate());
         return startOverlap && endOverlap;
     }
 

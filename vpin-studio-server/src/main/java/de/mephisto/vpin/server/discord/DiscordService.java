@@ -15,6 +15,7 @@ import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import java.time.Instant;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import org.apache.commons.lang3.StringUtils;
@@ -540,8 +541,9 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     String raw = message.getRaw();
     String scoreString = raw.substring(raw.lastIndexOf("---") + 3);
     scoreString = scoreString.replaceAll("`", "");
-    List<Score> scores = highscoreParser.parseScores(message.getCreatedAt(), scoreString, null, message.getServerId());
-    return new ScoreSummary(scores, message.getCreatedAt(), raw);
+    Instant createdAt = message.getCreatedAt() != null ? message.getCreatedAt().toInstant() : Instant.now();
+    List<Score> scores = highscoreParser.parseScores(createdAt, scoreString, null, message.getServerId());
+    return new ScoreSummary(scores, createdAt, raw);
   }
 
   public void initCompetition(long serverId, long channelId, long messageId, String topic) {

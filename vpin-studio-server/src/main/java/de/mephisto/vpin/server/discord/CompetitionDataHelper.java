@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
+import java.time.ZoneOffset;
 import java.util.List;
 
 public class CompetitionDataHelper {
@@ -44,13 +45,13 @@ public class CompetitionDataHelper {
       data.setName(competition.getName());
       data.setTname(game.getGameDisplayName());
       if (competition.getStartDate() != null) {
-          data.setSdt(competition.getStartDate());
+          data.setSdt(competition.getStartDate().atOffset(ZoneOffset.UTC));
       }
       data.setMode(competition.getJoinMode());
       data.setChksm(VPXUtil.getChecksum(game.getGameFile()));
       data.setScrL(competition.getScoreLimit());
       if (competition.getEndDate() != null) {
-          data.setEdt(competition.getEndDate());
+          data.setEdt(competition.getEndDate().atOffset(ZoneOffset.UTC));
       }
       data.setFs(game.getGameFileSize());
       data.setUuid(competition.getUuid());

@@ -4,13 +4,13 @@ import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.restclient.assets.AssetRepresentation;
 import org.jspecify.annotations.NonNull;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 
 public class PlayerRepresentation {
 
-  private OffsetDateTime createdAt;
+  private Instant createdAt;
 
-  private OffsetDateTime updatedAt;
+  private Instant updatedAt;
 
   private long id;
 
@@ -92,19 +92,19 @@ public class PlayerRepresentation {
     this.avatarUrl = avatarUrl;
   }
 
-  public OffsetDateTime getCreatedAt() {
+  public Instant getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(OffsetDateTime createdAt) {
+  public void setCreatedAt(Instant createdAt) {
     this.createdAt = createdAt;
   }
 
-  public OffsetDateTime getUpdatedAt() {
+  public Instant getUpdatedAt() {
     return updatedAt;
   }
 
-  public void setUpdatedAt(OffsetDateTime updatedAt) {
+  public void setUpdatedAt(Instant updatedAt) {
     this.updatedAt = updatedAt;
   }
 

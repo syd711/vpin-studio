@@ -13,7 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -59,8 +59,8 @@ public class DiscordChannelMessageFactoryTest {
   @Test
   void createCompetitionFinishedMessage_returnsFinishedMessage_whenScoresPresent() {
     Competition competition = buildCompetition("Finals", "uuid-002");
-    Score score = new Score(OffsetDateTime.now(), 1, "AAA", null, "raw", 1000000L, 1);
-    ScoreSummary summary = new ScoreSummary(Collections.singletonList(score), OffsetDateTime.now(), "raw");
+    Score score = new Score(Instant.now(), 1, "AAA", null, "raw", 1000000L, 1);
+    ScoreSummary summary = new ScoreSummary(Collections.singletonList(score), Instant.now(), "raw");
 
     String msg = factory.createCompetitionFinishedMessage(competition, summary);
 
@@ -120,8 +120,8 @@ public class DiscordChannelMessageFactoryTest {
     Game game = mock(Game.class);
     when(game.getGameDisplayName()).thenReturn("Funhouse");
 
-    Score oldScore = new Score(OffsetDateTime.now(), 1, "BBB", null, "raw", 500000L, 2);
-    Score newScore = new Score(OffsetDateTime.now(), 1, "AAA", null, "raw", 1000000L, 1);
+    Score oldScore = new Score(Instant.now(), 1, "BBB", null, "raw", 500000L, 2);
+    Score newScore = new Score(Instant.now(), 1, "AAA", null, "raw", 1000000L, 1);
     List<Score> updated = Arrays.asList(newScore, oldScore);
 
     String msg = factory.createCompetitionHighscoreCreatedMessage(game, competition, oldScore, newScore, updated);
@@ -135,8 +135,8 @@ public class DiscordChannelMessageFactoryTest {
 
   @Test
   void createHighscoreList_includesAllScores() {
-    Score s1 = new Score(OffsetDateTime.now(), 1, "AAA", null, "raw", 1000000L, 1);
-    Score s2 = new Score(OffsetDateTime.now(), 1, "BBB", null, "raw", 500000L, 2);
+    Score s1 = new Score(Instant.now(), 1, "AAA", null, "raw", 1000000L, 1);
+    Score s2 = new Score(Instant.now(), 1, "BBB", null, "raw", 500000L, 2);
     List<Score> scores = Arrays.asList(s1, s2);
 
     String result = DiscordChannelMessageFactory.createHighscoreList(scores, 2);
@@ -149,7 +149,7 @@ public class DiscordChannelMessageFactoryTest {
 
   @Test
   void createHighscoreList_fillsEmptySlots_whenScoresLessThanLimit() {
-    Score s1 = new Score(OffsetDateTime.now(), 1, "AAA", null, "raw", 1000000L, 1);
+    Score s1 = new Score(Instant.now(), 1, "AAA", null, "raw", 1000000L, 1);
     List<Score> scores = Collections.singletonList(s1);
 
     String result = DiscordChannelMessageFactory.createHighscoreList(scores, 3);
@@ -173,7 +173,7 @@ public class DiscordChannelMessageFactoryTest {
 
   @Test
   void createInitialHighscoreList_firstPositionIsScore_restArePlaceholders() {
-    Score score = new Score(OffsetDateTime.now(), 1, "ZZZ", null, "raw", 9999999L, 1);
+    Score score = new Score(Instant.now(), 1, "ZZZ", null, "raw", 9999999L, 1);
 
     String result = DiscordChannelMessageFactory.createInitialHighscoreList(score, 3);
 

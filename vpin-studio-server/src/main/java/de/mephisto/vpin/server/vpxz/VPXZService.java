@@ -32,7 +32,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.lang.invoke.MethodHandles;
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -267,7 +267,7 @@ public class VPXZService implements InitializingBean {
     }
     else {
       vpxzSource = new VPXZSource();
-      vpxzSource.setCreatedAt(OffsetDateTime.now());
+      vpxzSource.setCreatedAt(Instant.now());
       vpxzSource.setType(representation.getType());
     }
 
@@ -323,7 +323,7 @@ public class VPXZService implements InitializingBean {
     List<VPXZSource> all = vpxzSourceRepository.findAll();
     if (all.isEmpty()) {
       VPXZSource source = new VPXZSource();
-      source.setCreatedAt(OffsetDateTime.now());
+      source.setCreatedAt(Instant.now());
       source.setName("Default VPXZ Folder");
       source.setType(VPXZSourceType.Folder.name());
       source.setLocation(VPXZSourceImpl.FOLDER.getAbsolutePath());

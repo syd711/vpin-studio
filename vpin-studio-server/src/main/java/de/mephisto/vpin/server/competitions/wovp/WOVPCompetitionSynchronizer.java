@@ -31,7 +31,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -133,7 +133,7 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
         //When the challenge id has changed, it means that the existing competition is outdated.
         if (!challengeId.equals(competition.getUuid()) || game == null || forceReload) {
           //run de-augmentation for finished competitions
-          competition.setEndDate(OffsetDateTime.now());
+          competition.setEndDate(Instant.now());
 //          competitionService.save(competition);//TOOD required?
           competitionLifecycleService.notifyCompetitionDeleted(competition);
           refreshTags(game, wovpSettings, false);
@@ -172,9 +172,8 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
     }
     competition.setType(CompetitionType.WEEKLY.name());
     
-    // challenge.getStartDateUTC() returns OffsetDateTime, convert it to LocalDateTime
-    competition.setStartDate(challenge.getStartDateUTC());
-    competition.setEndDate(challenge.getEndDateUTC());
+    competition.setStartDate(challenge.getStartDateUTC().toInstant());
+    competition.setEndDate(challenge.getEndDateUTC().toInstant());
 
     competition.setMode(challenge.getChallengeTypeCode().name());
     competition.setHighscoreReset(wovpSettings.isResetHighscores());
