@@ -1,6 +1,7 @@
 package de.mephisto.vpin.tools;
 
 import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.cfg.EnumFeature;
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.node.ArrayNode;
 import tools.jackson.databind.node.ObjectNode;
@@ -19,6 +20,8 @@ public class PUPDatabaseExporter {
 
   private static final JsonMapper MAPPER= JsonMapper.builder()
                             .enable(SerializationFeature.INDENT_OUTPUT)
+                            .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+                            .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
                             .build();
   /**
    * Exports all games for the given emulator ID from the PUP database to a JSON file.

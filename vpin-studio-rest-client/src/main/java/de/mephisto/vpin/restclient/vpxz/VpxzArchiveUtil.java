@@ -3,6 +3,7 @@ package de.mephisto.vpin.restclient.vpxz;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.cfg.EnumFeature;
 import tools.jackson.databind.json.JsonMapper;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import net.lingala.zip4j.ZipFile;
@@ -28,6 +29,8 @@ public class VpxzArchiveUtil {
       objectMapper = JsonMapper.builder()
               .enable(SerializationFeature.INDENT_OUTPUT)
               .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+              .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+              .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
               .build();
   }
 

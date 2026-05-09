@@ -2,6 +2,7 @@ package de.mephisto.vpin.restclient;
 
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.cfg.EnumFeature;
 import tools.jackson.databind.json.JsonMapper; // Using JsonMapper for Jackson 3
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientErrorHandler;
@@ -75,6 +76,8 @@ public class RestClient implements ClientHttpRequestInterceptor {
         .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES) // Be lenient with older servers
         .defaultTimeZone(TimeZone.getDefault())
         .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+        .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+        .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
         .build();
 
     List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
@@ -101,6 +104,8 @@ public class RestClient implements ClientHttpRequestInterceptor {
         .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES) // Be lenient with older servers
         .defaultTimeZone(TimeZone.getDefault())
         .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+        .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+        .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
         .build();
 
     List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();

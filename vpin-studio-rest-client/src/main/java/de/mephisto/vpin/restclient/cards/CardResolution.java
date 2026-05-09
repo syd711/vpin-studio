@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.cards;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 public enum CardResolution {
   qHD(960, 540), 
   HDReady(1280, 720), 
@@ -15,6 +17,17 @@ public enum CardResolution {
   private int width;
   private int height;
 
+
+  @JsonCreator
+  public static CardResolution fromJson(String value) {
+    if (value == null) return HDReady;
+    for (CardResolution res : values()) {
+      if (res.name().equals(value) || res.toString().equals(value)) {
+        return res;
+      }
+    }
+    return HDReady;
+  }
 
   public static CardResolution valueOfString(String newValue) {
     for (CardResolution res : CardResolution.values()) {

@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import tools.jackson.core.util.DefaultIndenter;
 import tools.jackson.core.util.DefaultPrettyPrinter;
+import tools.jackson.databind.cfg.EnumFeature;
 import tools.jackson.databind.json.JsonMapper;
 
 import de.mephisto.vpin.commons.SystemInfo;
@@ -516,7 +517,11 @@ public class InstructionsCardsController  implements Initializable {
   private VpsTableData loadJson(VpsTable table) throws IOException {
     File jsonFile = new File(database, table.getId() + ".json");
     // Read existing data
-    JsonMapper objectMapper = JsonMapper.builder().build();    VpsTableData data = null;
+    JsonMapper objectMapper = JsonMapper.builder()
+        .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+        .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+        .build();
+    VpsTableData data = null;
     if (jsonFile.exists()) {
       data = objectMapper.readValue(jsonFile, VpsTableData.class);  
     }
@@ -560,7 +565,10 @@ public class InstructionsCardsController  implements Initializable {
   private void saveJson(VpsTable table, VpsTableData data) throws IOException {
     File jsonFile = new File(database, table.getId() + ".json");
     // Read existing data
-      JsonMapper objectMapper = JsonMapper.builder().build();
+      JsonMapper objectMapper = JsonMapper.builder()
+          .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+          .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+          .build();
 
     DefaultPrettyPrinter.Indenter indenter = new DefaultIndenter("  ", DefaultIndenter.SYS_LF);
     DefaultPrettyPrinter printer = new DefaultPrettyPrinter();

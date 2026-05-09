@@ -10,6 +10,7 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.cfg.EnumFeature;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.io.File;
@@ -40,6 +41,8 @@ public class PupServer {
     
     JsonMapper mapper = JsonMapper.builder()
         .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+        .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+        .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
         .build();
     
     JacksonJsonHttpMessageConverter converter = new JacksonJsonHttpMessageConverter(mapper);

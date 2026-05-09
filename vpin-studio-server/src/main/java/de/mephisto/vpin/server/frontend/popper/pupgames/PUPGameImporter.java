@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.frontend.popper.pupgames;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.cfg.EnumFeature;
 import tools.jackson.databind.MapperFeature;
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
@@ -62,6 +63,8 @@ public class PUPGameImporter {
         JsonMapper mapper = JsonMapper.builder()
                 .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES)
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+                .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
                 .build();
 
         String s = FileUtils.readFileToString(file, StandardCharsets.UTF_8);

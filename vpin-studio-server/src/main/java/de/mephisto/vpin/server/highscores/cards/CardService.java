@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.highscores.cards;
 
+import tools.jackson.databind.cfg.EnumFeature;
 import tools.jackson.databind.json.JsonMapper;
 import de.mephisto.vpin.commons.fx.ImageUtil;
 import de.mephisto.vpin.commons.fx.cards.CardGraphicsHighscore;
@@ -361,7 +362,10 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
     if (summary != null) {
       cardData.setRawScore(summary.getRaw());
 
-      JsonMapper mapper = JsonMapper.builder().build();
+      JsonMapper mapper = JsonMapper.builder()
+          .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+          .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+          .build();
       ArrayList<ScoreRepresentation> scores = new ArrayList<>();
       for (Score score : summary.getScores()) {
         try {

@@ -2,6 +2,7 @@ package de.mephisto.vpin.server;
 
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.cfg.EnumFeature;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.io.*;
@@ -77,6 +78,8 @@ public class ServerUpdatePreProcessing {
     private void runDownloadableInstallationsCheck() throws Exception {
          JsonMapper objectMapper =JsonMapper.builder()
                 .enable(SerializationFeature.INDENT_OUTPUT)
+                .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+                .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
                  .build();
 
         File manifestFile = new File(RESOURCES + "sync.json");
