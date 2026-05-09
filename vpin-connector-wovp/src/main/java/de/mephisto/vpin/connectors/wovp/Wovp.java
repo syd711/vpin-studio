@@ -1,23 +1,23 @@
 package de.mephisto.vpin.connectors.wovp;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.connectors.wovp.models.*;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.ContentBody;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.MapperFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.File;
 import java.lang.invoke.MethodHandles;
@@ -41,10 +41,11 @@ public class Wovp {
   private static Map<String, WovpPlayer> players = new HashMap<>();
 
   static {
-    objectMapper = new ObjectMapper();
-    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-    objectMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
-    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    objectMapper = JsonMapper.builder()
+        .enable(SerializationFeature.INDENT_OUTPUT)
+        .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
+        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        .build();
   }
 
   private final String apiKey;
@@ -103,30 +104,27 @@ public class Wovp {
   }
 
   private UploadResponse submitPhoto(File screenshot) throws Exception {
-    try {
-      CloseableHttpResponse response;
-      try (DefaultHttpClient httpclient = new DefaultHttpClient()) {
+    try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
+      HttpPost httppost = new HttpPost(SCORE_PHOTO_URL);
 
-        HttpPost httppost = new HttpPost(SCORE_PHOTO_URL);
-        MultipartEntity entity = new MultipartEntity();
+      HttpEntity entity = MultipartEntityBuilder.create()
+          .addBinaryBody("file", screenshot, ContentType.APPLICATION_OCTET_STREAM, screenshot.getName())
+          .build();
 
-        ContentBody contentBody = new FileBody(screenshot, ContentType.APPLICATION_OCTET_STREAM);
+      httppost.setEntity(entity);
+      httppost.setHeader("X-Client-ID", "vpin-studio");
+      httppost.setHeader("Authorization", "Bearer " + apiKey);
 
-        entity.addPart("file", contentBody);
-        httppost.setEntity(entity);
-        httppost.setHeader("X-Client-ID", "vpin-studio");
-        httppost.setHeader("Authorization", "Bearer " + apiKey);
+      try (CloseableHttpResponse response = httpclient.execute(httppost)) {
+        HttpEntity responseEntity = response.getEntity();
+        String body = EntityUtils.toString(responseEntity, "UTF-8");
 
-        response = httpclient.execute(httppost);
+        if (response.getCode() != 200) {
+          throw new UnsupportedOperationException("WOVP image upload failed with code " + response.getCode());
+        }
+
+        return objectMapper.readValue(body, UploadResponse.class);
       }
-      HttpEntity responseEntity = response.getEntity();
-      String body = IOUtils.toString(responseEntity.getContent(), "UTF-8");
-
-      if (response.getStatusLine().getStatusCode() != 200) {
-        throw new UnsupportedOperationException("WOVP image upload failed with code " + response.getStatusLine().getStatusCode());
-      }
-
-      return objectMapper.readValue(body, UploadResponse.class);
     }
     catch (Exception e) {
       LOG.error("Failed to post score image to wovp: {}", e.getMessage(), e);

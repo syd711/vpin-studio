@@ -6,8 +6,7 @@ import de.mephisto.vpin.restclient.validation.BackglassValidationCode;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.tables.panels.BaseGameModel;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingModel;
-
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,11 +35,11 @@ public class DirectB2SModel extends BaseLoadingModel<DirectB2S, DirectB2SModel> 
 
   @Override
   public boolean sameBean(DirectB2S other) {
-    return bean.getEmulatorId() == other.getEmulatorId() && StringUtils.equals(bean.getFileName(), other.getFileName());
+    return bean.getEmulatorId() == other.getEmulatorId() && Strings.CI.equals(bean.getFileName(), other.getFileName());
   }
 
   public boolean sameBean(int emulatorId, String fileName) {
-    return bean.getEmulatorId() == emulatorId && StringUtils.equals(bean.getFileName(), fileName);
+    return bean.getEmulatorId() == emulatorId && Strings.CI.equals(bean.getFileName(), fileName);
   }
 
   @Override
@@ -114,7 +113,7 @@ public class DirectB2SModel extends BaseLoadingModel<DirectB2S, DirectB2SModel> 
   public int getValidationCode() {
     ValidationState validationState = null;
     if (backglassDetail != null && !backglassDetail.getValidations().isEmpty()) {
-      validationState = backglassDetail.getValidations().get(0);
+      validationState = backglassDetail.getValidations().getFirst();
     }
     return validationState != null ? validationState.getCode() : -1;
   }

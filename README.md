@@ -33,7 +33,7 @@ You have feedback or want to report a bug? Join the VPin Studio Discord server:
 
 ## How To Update
 
-Please see: 
+Please see:
 
 https://github.com/syd711/vpin-studio/wiki#updates
 
@@ -47,7 +47,7 @@ https://github.com/syd711/vpin-studio/wiki
 
 https://www.youtube.com/@vpin-studio/videos
 
-## Donate 
+## Donate
 
 Creating and maintaing the VPin Studio takes a lot of time and resources. Please consider donating through ko-fi.com to support the development.
 
@@ -69,7 +69,7 @@ https://www.nailbuster.com/wikipinup/doku.php?id=start
 
 Download: https://github.com/mmattner/vPinBackupManagerApp/releases
 
-Documentation: https://github.com/mmattner/vPinBackupManagerApp/wiki 
+Documentation: https://github.com/mmattner/vPinBackupManagerApp/wiki
 
 
 ### PINemHi and PINemHi Leaderboard
@@ -110,7 +110,7 @@ Fonts: https://www.1001fonts.com/digital-7-font.html#license
 ### 7zip
 https://7-zip.org/
 
-### ffmpeg 
+### ffmpeg
 https://ffmpeg.org/ffmpeg.html
 
 ### nircmd
@@ -119,7 +119,7 @@ https://www.nirsoft.net/utils/nircmd.html
 ### PupPackScreenTweaker
 https://github.com/matiou11/PupPackScreenTweaker
 
-### Sounds 
+### Sounds
 Sound Effect by <a href="https://pixabay.com/users/edr-1177074/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=8325">EdR</a> from <a href="https://pixabay.com//?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=8325">Pixabay</a>
 
 Sound Effect from <a href="https://pixabay.com/sound-effects/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=92097">Pixabay</a>
@@ -131,10 +131,10 @@ https://kordamp.org/ikonli/cheat-sheet-bootstrapicons.html
 
 https://kordamp.org/ikonli/cheat-sheet-simplelineicons.html
 
-## Custom Icons 
-Pinball Flippers by [Angelo Troiano](https://thenounproject.com/creator/angelo.troiano28) under Creative Commons 3.0 license.  
+## Custom Icons
+Pinball Flippers by [Angelo Troiano](https://thenounproject.com/creator/angelo.troiano28) under Creative Commons 3.0 license.
 
-Scifi Starwars Darth from [Libre Icons](https://github.com/DennisSuitters/LibreICONS) by Dennis Suitters.  
+Scifi Starwars Darth from [Libre Icons](https://github.com/DennisSuitters/LibreICONS) by Dennis Suitters.
 
 Soccer Ball and Clapper Board from [Microsoft Fluent UI Emoji Set](https://github.com/microsoft/fluentui-emoji)
 
@@ -144,8 +144,8 @@ VPW icon created from [Virtual Pinball Workshop](https://www.vpinworkshop.com) l
 
 Pinball FX, Pinball FX3, and Pinball M icons created from Zen Studios [Pinball FX](https://www.pinballfx.com), [Pinball FX3](https://zenstudios.com/games/pinball-fx3/), and [Pinball M](https://zenstudios.com/games/pinball-m/) logos.
 
-Visual Pinball X icon created from [Visual Pinball](https://github.com/vpinball/vpinball) logo. 
+Visual Pinball X icon created from [Visual Pinball](https://github.com/vpinball/vpinball) logo.
 
-SuperHero icon from [Strong icons](https://www.flaticon.com/free-icons/strong) created by Leremy 
+SuperHero icon from [Strong icons](https://www.flaticon.com/free-icons/strong) created by Leremy
 
 VR icon from [IcoNoir](https://iconoir.com).

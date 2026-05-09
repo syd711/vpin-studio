@@ -11,7 +11,7 @@ import de.mephisto.vpin.restclient.validation.*;
 import de.mephisto.vpin.ui.tables.panels.BaseGameModel;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingModel;
 
-import java.util.Date;
+import java.time.OffsetDateTime;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.DISABLED_COLOR;
 import static de.mephisto.vpin.ui.Studio.client;
@@ -24,7 +24,7 @@ public class GameRepresentationModel extends BaseLoadingModel<GameRepresentation
 
   FrontendMediaRepresentation frontendMedia;
 
-  Date backupDate;
+    OffsetDateTime backupDate;
 
   public GameRepresentationModel(GameRepresentation game) {
     super(game);

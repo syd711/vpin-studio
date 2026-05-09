@@ -23,34 +23,16 @@ public enum ComponentType {
 
   @Override
   public String toString() {
-    switch (this) {
-      case vpinmame: {
-        return "VPin MAME";
-      }
-      case vpinball: {
-        return "Visual Pinball";
-      }
-      case b2sbackglass: {
-        return "Backglass Server";
-      }
-      case freezy: {
-        return "Freezy";
-      }
-      case flexdmd: {
-        return "FlexDMD";
-      }
-      case serum: {
-        return "Serum";
-      }
-      case dof: {
-        return "DOF";
-      }
-      case doflinx: {
-        return "DOFLinx";
-      }
-      default: {
-        throw new UnsupportedOperationException("Invalid component type " + this);
-      }
-    }
+      return switch (this) {
+          case vpinmame -> "VPin MAME";
+          case vpinball -> "Visual Pinball";
+          case b2sbackglass -> "Backglass Server";
+          case freezy -> "Freezy";
+          case flexdmd -> "FlexDMD";
+          case serum -> "Serum";
+          case dof -> "DOF";
+          case doflinx -> "DOFLinx";
+          default -> throw new UnsupportedOperationException("Invalid component type " + this);
+      };
   }
 }

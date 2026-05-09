@@ -27,7 +27,7 @@ public class ValidationState {
   }
 
   public String getOption() {
-    return options.size() > 0 ? options.get(0) : null;
+    return !options.isEmpty() ? options.getFirst() : null;
   }
 
   public static String toIdString(List<Integer> ignoredValidations) {

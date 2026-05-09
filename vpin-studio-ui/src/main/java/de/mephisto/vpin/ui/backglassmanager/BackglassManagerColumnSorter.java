@@ -20,7 +20,7 @@ public class BackglassManagerColumnSorter implements BaseColumnSorter<DirectB2SM
     Comparator<DirectB2SModel> comp = null;
 
     if (!tableView.getSortOrder().isEmpty()) {
-      TableColumn<DirectB2SModel, ?> column = tableView.getSortOrder().get(0);
+      TableColumn<DirectB2SModel, ?> column = tableView.getSortOrder().getFirst();
 
       if (column.equals(backglassManagerController.displayNameColumn)) {
         comp = Comparator.comparing(o -> o.getName());

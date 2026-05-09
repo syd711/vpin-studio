@@ -19,7 +19,7 @@ public class VpsUtil {
   }
 
   public static String abbreviate(String url) {
-    if (url.length() == 0) {
+    if (url.isEmpty()) {
       return "";
     }
 
@@ -46,71 +46,33 @@ public class VpsUtil {
   }
 
   public static String getFeatureColorTooltip(String abb) {
-    switch (abb) {
-      case "4K": {
-        return "The resources used for the playfield and other images are 4k (or higher). The term is probably outdated since VPX can handle different resolutions.";
-      }
-      case "B2S": {
-        return "Backglass";
-      }
-      case "Color Rom": {
-        return "Colorized Rom, needed to be placed in Visual Pinball/VPinMame/altcolor/<ROM>";
-      }
-      case "FastFlips": {
-        return "Process reducing lag in flippers.";
-      }
-      case "Fleep": {
-        return "Consists of various realistic mechanical sounds created by Fleep.";
-      }
-      case "FLEXDMD": {
-        return "A folder containing DMD animations, mostly used in Original tables. Needs to be places in your Visual Pinball/Tables folder";
-      }
-      case "FSS": {
-        return "Full Single Screen tables";
-      }
-      case "Hybrid": {
-        return "Tables can do cabinet, desktop and VR modes.";
-      }
-      case "Kids": {
-        return "Children Friendly";
-      }
-      case "LUT": {
-        return "Color Grade Look Up Table. Change table's color values.";
-      }
-      case "MediaPack": {
-        return "Mostly consisted of images, sounds and / or videos that could be used with frontends.";
-      }
-      case "MOD": {
-        return "Modification.";
-      }
-      case "NFOZZY": {
-        return "Nfozzy (and Rothbauerw)'s Physics.";
-      }
-      case "POV": {
-        return "Point of View";
-      }
-      case "ROM": {
-        return "Game Rom (Mame). Needs to be placed in placed in your Visual Pinball/VPinMame/<ROM> folder. Note: needs to be .zipped!";
-      }
-      case "SSF": {
-        return "Surround Sound Feedback";
-      }
-      case "VR": {
-        return "Virtual Reality, mostly used for VR glasses.";
-      }
-      case "Sound": {
-        return "ALTernative Sound. Enhanced music, sounds or a completely different music track. To be placed in Visual Pinball/VPinMame/altsound";
-      }
-      case "Wheel": {
-        return "Wheel art. Can be regular or animated.";
-      }
-      case "Topper": {
-        return "Can be used to play extra videos when needed. For users that have more than 3 screens.";
-      }
-      default: {
-        return abb;
-      }
-    }
+      return switch (abb) {
+          case "4K" ->
+                  "The resources used for the playfield and other images are 4k (or higher). The term is probably outdated since VPX can handle different resolutions.";
+          case "B2S" -> "Backglass";
+          case "Color Rom" -> "Colorized Rom, needed to be placed in Visual Pinball/VPinMame/altcolor/<ROM>";
+          case "FastFlips" -> "Process reducing lag in flippers.";
+          case "Fleep" -> "Consists of various realistic mechanical sounds created by Fleep.";
+          case "FLEXDMD" ->
+                  "A folder containing DMD animations, mostly used in Original tables. Needs to be places in your Visual Pinball/Tables folder";
+          case "FSS" -> "Full Single Screen tables";
+          case "Hybrid" -> "Tables can do cabinet, desktop and VR modes.";
+          case "Kids" -> "Children Friendly";
+          case "LUT" -> "Color Grade Look Up Table. Change table's color values.";
+          case "MediaPack" -> "Mostly consisted of images, sounds and / or videos that could be used with frontends.";
+          case "MOD" -> "Modification.";
+          case "NFOZZY" -> "Nfozzy (and Rothbauerw)'s Physics.";
+          case "POV" -> "Point of View";
+          case "ROM" ->
+                  "Game Rom (Mame). Needs to be placed in placed in your Visual Pinball/VPinMame/<ROM> folder. Note: needs to be .zipped!";
+          case "SSF" -> "Surround Sound Feedback";
+          case "VR" -> "Virtual Reality, mostly used for VR glasses.";
+          case "Sound" ->
+                  "ALTernative Sound. Enhanced music, sounds or a completely different music track. To be placed in Visual Pinball/VPinMame/altsound";
+          case "Wheel" -> "Wheel art. Can be regular or animated.";
+          case "Topper" -> "Can be used to play extra videos when needed. For users that have more than 3 screens.";
+          default -> abb;
+      };
   }
 
 
@@ -122,58 +84,28 @@ public class VpsUtil {
   }
 
   public static String getIconClass(String abb) {
-    if (abb.equals("VPU")) {
-      return "mdi2o-open-in-new";
-    }
+      return switch (abb) {
+          case "VPU" -> "mdi2o-open-in-new";
+          case "Dropbox" -> "mdi2d-dropbox";
+          case "VPF" -> "mdi2o-open-in-new";
+          case "Mega" -> "mdi2o-open-in-new";
+          case "YT" -> "mdi2y-youtube";
+          default -> "mdi2o-open-in-new";
+      };
 
-    if (abb.equals("Dropbox")) {
-      return "mdi2d-dropbox";
-    }
-
-    if (abb.equals("VPF")) {
-      return "mdi2o-open-in-new";
-    }
-
-    if (abb.equals("Mega")) {
-      return "mdi2o-open-in-new";
-    }
-
-    if (abb.equals("YT")) {
-      return "mdi2y-youtube";
-    }
-
-    return "mdi2o-open-in-new";
   }
 
   public static String getColor(String abb) {
-    if (abb.equals("VPU")) {
-      return "#3182ce";
-    }
+      return switch (abb) {
+          case "VPU" -> "#3182ce";
+          case "Dropbox" -> "#3182ce";
+          case "VPF" -> "#dd6b20";
+          case "Mega" -> "#e53e3e";
+          case "FP" -> "#718096";
+          case "VPX" -> "#718096";
+          case "YT" -> "#ff4e45";
+          default -> "#718096";
+      };
 
-    if (abb.equals("Dropbox")) {
-      return "#3182ce";
-    }
-
-    if (abb.equals("VPF")) {
-      return "#dd6b20";
-    }
-
-    if (abb.equals("Mega")) {
-      return "#e53e3e";
-    }
-
-    if (abb.equals("FP")) {
-      return "#718096";
-    }
-
-    if (abb.equals("VPX")) {
-      return "#718096";
-    }
-
-    if (abb.equals("YT")) {
-      return "#ff4e45";
-    }
-
-    return "#718096";
   }
 }

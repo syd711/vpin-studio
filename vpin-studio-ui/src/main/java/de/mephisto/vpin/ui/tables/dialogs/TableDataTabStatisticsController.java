@@ -1,20 +1,15 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.utils.JFXFuture;
-import de.mephisto.vpin.restclient.alx.AlxSummary;
 import de.mephisto.vpin.restclient.alx.AlxTileEntry;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.alx.AlxDialogs;
 import de.mephisto.vpin.ui.tables.alx.AlxTileEntryController;
-import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FrontendUtil;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -81,7 +76,7 @@ public class TableDataTabStatisticsController implements Initializable {
       int played = 0;
 
       if (!alxSummary.getEntries().isEmpty()) {
-        TableAlxEntry entry = alxSummary.getEntries().get(0);
+        TableAlxEntry entry = alxSummary.getEntries().getFirst();
 
         // may be overriden by TableDetail below
         played = entry.getNumberOfPlays();

@@ -9,11 +9,11 @@ import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
 import de.mephisto.vpin.restclient.recorder.RecordingWriteMode;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.games.Game;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
-import java.util.stream.Collectors;
 
 public class GameRecorder {
   private final static Logger LOG = LoggerFactory.getLogger(GameRecorder.class);
@@ -64,11 +63,11 @@ public class GameRecorder {
         }
 
         File recordingTempFile = createTemporaryRecordingFile(game, screen, option.getRecordMode());
-        List<FrontendPlayerDisplay> collect = recordingScreens.stream().filter(s -> s.getScreen().equals(screen)).collect(Collectors.toList());
+        List<FrontendPlayerDisplay> collect = recordingScreens.stream().filter(s -> s.getScreen().equals(screen)).toList();
         if (collect.isEmpty()) {
           continue;
         }
-        FrontendPlayerDisplay recordingScreen = collect.get(0);
+        FrontendPlayerDisplay recordingScreen = collect.getFirst();
         int totalDuration = option.getRecordingDuration() + option.getInitialDelay();
         if (totalDuration > totalTime) {
           totalTime = totalDuration;
@@ -218,7 +217,7 @@ public class GameRecorder {
           if (!screenMediaFiles.isEmpty()) {
             for (File screenMediaFile : screenMediaFiles) {
               if (screenMediaFile.getParentFile().equals(mediaFolder) &&
-                  StringUtils.equalsIgnoreCase(FilenameUtils.getBaseName(screenMediaFile.getName()), game.getGameName())) {
+                  Strings.CI.equals(FilenameUtils.getBaseName(screenMediaFile.getName()), game.getGameName())) {
                 if (!screenMediaFile.delete()) {
                   LOG.error("Failed to delete {}, can't overwrite file with media recording for {}, file will be appended instead", screenMediaFile.getAbsolutePath(), screen.name());
                 }
@@ -238,7 +237,7 @@ public class GameRecorder {
         }
         case append: {
           // simply switch recorded and target files and keep all other files and format
-          if (!StringUtils.equalsIgnoreCase(target.getName(), recordingTempFile.getName())) {
+          if (!Strings.CI.equals(target.getName(), recordingTempFile.getName())) {
             // another temporary not existing file that will be deleted
             target = frontend.getMediaAccessStrategy().createMedia(game, screen, "mp4", true);
             copyRecordingToTarget(game, screen, recordingTempFile, target);

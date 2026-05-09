@@ -14,8 +14,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.*;
-import java.text.DateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -268,7 +268,7 @@ public class CardLayerScores extends Canvas implements CardLayer {
       if (this.lines.isEmpty()) {
         return 0;
       }
-      Text theText = new Text(this.lines.get(0));
+      Text theText = new Text(this.lines.getFirst());
       theText.setFont(font);
       return (int) (theText.getBoundsInLocal().getHeight() * this.lines.size()) + (this.lines.size() * template.getRowMargin());
     }
@@ -371,7 +371,7 @@ public class CardLayerScores extends Canvas implements CardLayer {
         initialsLength = Math.max(initialsLength, score.getPlayerInitials().length());
         maxPosition = Math.max(maxPosition, score.getPosition());
       }
-      DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT);
+      DateTimeFormatter df = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT);
 
       for (ScoreRepresentation score : scores) {
         String renderString = "";

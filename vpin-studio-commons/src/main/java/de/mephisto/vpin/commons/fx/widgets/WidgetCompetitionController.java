@@ -11,10 +11,9 @@ import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
-import de.mephisto.vpin.restclient.util.DateUtil;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
-import eu.hansolo.tilesfx.events.TileEvent;
+import eu.hansolo.tilesfx.events.TileEvt;
 import eu.hansolo.tilesfx.tools.Rank;
 import eu.hansolo.tilesfx.tools.Ranking;
 import javafx.application.Platform;
@@ -38,12 +37,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
-import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.time.Duration;
 import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -106,12 +106,12 @@ public class WidgetCompetitionController extends WidgetController implements Ini
         .animated(true)
         .checkThreshold(true)
         .onTileEvent(e -> {
-          if (TileEvent.EventType.THRESHOLD_EXCEEDED == e.getEventType()) {
+          if (TileEvt.THRESHOLD_EXCEEDED == e.getEvtType()) {
             turnoverTile.setRank(firstRank);
             turnoverTile.setValueColor(firstRank.getColor());
             turnoverTile.setUnitColor(firstRank.getColor());
           }
-          else if (TileEvent.EventType.THRESHOLD_UNDERRUN == e.getEventType()) {
+          else if (TileEvt.THRESHOLD_UNDERRUN == e.getEvtType()) {
             turnoverTile.setRank(Rank.DEFAULT);
             turnoverTile.setValueColor(Tile.FOREGROUND);
             turnoverTile.setUnitColor(Tile.FOREGROUND);
@@ -161,8 +161,8 @@ public class WidgetCompetitionController extends WidgetController implements Ini
     root.setVisible(competition != null);
 
     if (competition != null) {
-      LocalDate end = competition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-      LocalDate now = DateUtil.today().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+      LocalDate end = competition.getEndDate().toLocalDate();
+      LocalDate now = OffsetDateTime.now().toLocalDate();
 
       long remainingDays = ChronoUnit.DAYS.between(now, end);
       if (remainingDays < 0) {
@@ -170,22 +170,22 @@ public class WidgetCompetitionController extends WidgetController implements Ini
       }
 
       if (remainingDays == 0) {
-        long ms = competition.getEndDate().getTime() - new Date().getTime();
+        long ms = Duration.between(OffsetDateTime.now(), competition.getEndDate()).toMillis();
         if ((ms / 1000) < 3600) {
           countdownTile.setTitle("Remaining Minutes");
           countdownTile.setDescription(DurationFormatUtils.formatDuration(ms, "mm", false));
-          countdownTile.setText("Competition End: " + DateFormat.getDateTimeInstance().format(competition.getEndDate()));
+          countdownTile.setText("Competition End: " + DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(competition.getEndDate()));
         }
         else {
           countdownTile.setTitle("Remaining Hours");
           countdownTile.setDescription(DurationFormatUtils.formatDuration(ms, "HH", false));
-          countdownTile.setText("Competition End: " + DateFormat.getDateTimeInstance().format(competition.getEndDate()));
+          countdownTile.setText("Competition End: " + DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(competition.getEndDate()));
         }
       }
       else {
         countdownTile.setTitle("Remaining Days");
         countdownTile.setDescription(String.valueOf(remainingDays));
-        countdownTile.setText("Competition End: " + DateFormat.getDateInstance().format(competition.getEndDate()));
+        countdownTile.setText("Competition End: " + DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(competition.getEndDate()));
       }
 
       if (competition.isActive()) {
@@ -203,7 +203,7 @@ public class WidgetCompetitionController extends WidgetController implements Ini
           ScoreSummaryRepresentation latestScore = competitionScores.getLatestScore();
           List<ScoreRepresentation> scores = latestScore.getScores();
           if (!scores.isEmpty()) {
-            ScoreRepresentation currentScore = scores.get(0);
+            ScoreRepresentation currentScore = scores.getFirst();
             Platform.runLater(() -> {
               turnoverTile.setTitle("#1 Place");
               turnoverTile.setValue(currentScore.getScore());

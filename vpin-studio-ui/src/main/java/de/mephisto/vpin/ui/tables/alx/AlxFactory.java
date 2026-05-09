@@ -19,10 +19,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.text.DateFormat;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -103,35 +102,29 @@ public class AlxFactory {
     }
   }
 
-  public static void createAvgWeekTimeTile(Stage stage, Pane root, List<TableAlxEntry> entries, Date start) {
+  public static void createAvgWeekTimeTile(Stage stage, Pane root, List<TableAlxEntry> entries, OffsetDateTime start) {
     long total = 0;
     for (TableAlxEntry entry : entries) {
       total += entry.getTimePlayedSecs();
     }
 
-
-    Instant d1i = Instant.ofEpochMilli(start.getTime());
-    Instant d2i = Instant.ofEpochMilli(new Date().getTime());
-
-    LocalDateTime startDate = LocalDateTime.ofInstant(d1i, ZoneId.systemDefault());
-    LocalDateTime endDate = LocalDateTime.ofInstant(d2i, ZoneId.systemDefault());
-
-    long weeks = ChronoUnit.WEEKS.between(startDate, endDate);
-    if (weeks == 0) {
+    long weeks = ChronoUnit.WEEKS.between(start, OffsetDateTime.now());
+    if (weeks <= 0) {
       weeks = 1;
     }
 
-    long avgSeksPerWeek = total / weeks;
-    String time = (avgSeksPerWeek / 60) + " min";
-    if (avgSeksPerWeek / 60 / 60 > 0) {
-      time = (avgSeksPerWeek / 60 / 60) + " hrs";
+    long avgSecsPerWeek = total / weeks;
+    String time = (avgSecsPerWeek / 60) + " min";
+    if (avgSecsPerWeek >= 3600) {
+      time = (avgSecsPerWeek / 3600) + " hrs";
     }
 
     try {
       FXMLLoader loader = new FXMLLoader(AlxTileEntryController.class.getResource("alx-tile-entry.fxml"));
       Parent builtInRoot = loader.load();
       AlxTileEntryController controller = loader.getController();
-      controller.refresh(stage, new AlxTileEntry("Avg. Playtime / Week", "(The average time played every week, starting " + DateFormat.getDateInstance().format(start) + ")", time));
+      String dateString = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(start);
+      controller.refresh(stage, new AlxTileEntry("Avg. Playtime / Week", "(The average time played every week, starting " + dateString + ")", time));
       root.getChildren().add(builtInRoot);
     } catch (IOException e) {
       LOG.error("Failed to load tile: " + e.getMessage(), e);
@@ -164,7 +157,7 @@ public class AlxFactory {
     root.getChildren().removeAll(root.getChildren());
 
     List<TableAlxEntry> statEntries = new ArrayList<>(entries);
-    Collections.sort(statEntries, Comparator.comparingInt(TableAlxEntry::getScores));
+    statEntries.sort(Comparator.comparingInt(TableAlxEntry::getScores));
     Collections.reverse(statEntries);
 
     long maxValue = 0;
@@ -203,7 +196,7 @@ public class AlxFactory {
     root.getChildren().removeAll(root.getChildren());
 
     List<TableAlxEntry> statEntries = new ArrayList<>(entries);
-    Collections.sort(statEntries, Comparator.comparing(TableAlxEntry::getLastPlayed));
+    statEntries.sort(Comparator.comparing(TableAlxEntry::getLastPlayed));
     Collections.reverse(statEntries);
 
 
@@ -211,39 +204,39 @@ public class AlxFactory {
     int counter = 0;
     for (TableAlxEntry alxEntry : statEntries) {
 
-    AlxBarEntry entry = new AlxBarEntry(alxEntry.getDisplayName(),DateFormat.getDateTimeInstance().format(alxEntry.getLastPlayed()), 100, PreferenceBindingUtil.toHexString(colors.get(counter)), alxEntry.getGameId());
-    rowCount++;
+      String lastPlayed = alxEntry.getLastPlayed() != null ? DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(alxEntry.getLastPlayed()) : "-";
+      AlxBarEntry entry = new AlxBarEntry(alxEntry.getDisplayName(), lastPlayed, 100, PreferenceBindingUtil.toHexString(colors.get(counter)), alxEntry.getGameId());
+      rowCount++;
 
-    //limit to 20 rows.
-    if (rowCount >= 21)
-    {
-      break;
+      //limit to 20 rows.
+      if (rowCount >= 21) {
+        break;
+      }
+
+      try {
+        FXMLLoader loader = new FXMLLoader(AlxBarEntryController.class.getResource("alx-bar-entry.fxml"));
+        Parent builtInRoot = loader.load();
+        AlxBarEntryController controller = loader.getController();
+        controller.refresh(stage, entry);
+        root.getChildren().add(builtInRoot);
+      } catch (IOException e) {
+        LOG.error("Failed to load bar: " + e.getMessage(), e);
+      }
+
+      counter++;
+
+      if (counter >= colors.size()) {
+        counter = 0;
+      }
+
     }
-
-    try {
-      FXMLLoader loader = new FXMLLoader(AlxBarEntryController.class.getResource("alx-bar-entry.fxml"));
-      Parent builtInRoot = loader.load();
-      AlxBarEntryController controller = loader.getController();
-      controller.refresh(stage, entry);
-      root.getChildren().add(builtInRoot);
-    } catch (IOException e) {
-      LOG.error("Failed to load bar: " + e.getMessage(), e);
-    }
-
-    counter++;
-
-    if (counter >= colors.size()) {
-      counter = 0;
-    }
-
   }
-}
 
   public static void createLongestPlayed(Stage stage, Pane root, List<TableAlxEntry> entries) {
     root.getChildren().removeAll(root.getChildren());
 
     List<TableAlxEntry> statEntries = new ArrayList<>(entries);
-    Collections.sort(statEntries, Comparator.comparingInt(TableAlxEntry::getTimePlayedSecs));
+    statEntries.sort(Comparator.comparingInt(TableAlxEntry::getTimePlayedSecs));
     Collections.reverse(statEntries);
 
     long maxValue = 0;
@@ -283,7 +276,7 @@ public class AlxFactory {
     root.getChildren().removeAll(root.getChildren());
 
     List<TableAlxEntry> mostPlayedEntries = new ArrayList<>(entries);
-    Collections.sort(mostPlayedEntries, Comparator.comparingInt(TableAlxEntry::getNumberOfPlays));
+    mostPlayedEntries.sort(Comparator.comparingInt(TableAlxEntry::getNumberOfPlays));
     Collections.reverse(mostPlayedEntries);
 
     long maxValue = 0;

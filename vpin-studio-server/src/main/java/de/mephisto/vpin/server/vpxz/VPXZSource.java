@@ -2,8 +2,9 @@ package de.mephisto.vpin.server.vpxz;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import javax.persistence.*;
-import java.util.Date;
+import jakarta.persistence.*;
+import java.time.OffsetDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "VPXZSources")
@@ -11,8 +12,7 @@ import java.util.Date;
 public class VPXZSource {
 
   @Column(nullable = false)
-  @Temporal(TemporalType.TIMESTAMP)
-  private Date createdAt;
+  private OffsetDateTime createdAt;
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -66,11 +66,11 @@ public class VPXZSource {
     this.type = type;
   }
 
-  public Date getCreatedAt() {
+  public OffsetDateTime getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(Date createdAt) {
+  public void setCreatedAt(OffsetDateTime createdAt) {
     this.createdAt = createdAt;
   }
 
@@ -117,19 +117,14 @@ public class VPXZSource {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof VPXZSource)) return false;
-
-    VPXZSource VPXZSource = (VPXZSource) o;
-
-    if (!id.equals(VPXZSource.id)) return false;
-    return location.equals(VPXZSource.location);
+    if (o == null || getClass() != o.getClass()) return false;
+    VPXZSource that = (VPXZSource) o;
+    return Objects.equals(id, that.id) && Objects.equals(location, that.location);
   }
 
   @Override
   public int hashCode() {
-    int result = id.hashCode();
-    result = 31 * result + location.hashCode();
-    return result;
+    return Objects.hash(id, location);
   }
 
   @Override

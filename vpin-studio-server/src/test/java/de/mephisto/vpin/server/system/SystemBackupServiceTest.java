@@ -18,6 +18,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -126,7 +127,7 @@ public class SystemBackupServiceTest {
     descriptor.setPinemhi(false);
     descriptor.setPinvol(false);
 
-    com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+    JsonMapper mapper = JsonMapper.builder().build();
     String backupJson = mapper.writeValueAsString(Collections.emptyMap());
     String descriptorJson = mapper.writeValueAsString(descriptor);
 

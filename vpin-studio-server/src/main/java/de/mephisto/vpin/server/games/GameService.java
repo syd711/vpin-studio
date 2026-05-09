@@ -26,11 +26,12 @@ import de.mephisto.vpin.server.vpinmame.VPinMameRomAliasService;
 import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.vps.VpsService;
 import de.mephisto.vpin.server.vpx.VPXService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -42,7 +43,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 @Order(10)
@@ -180,7 +180,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   public boolean reloadEmulator(int emulatorId) {
     GameEmulator emulator = emulatorService.getGameEmulator(emulatorId);
     if (emulator != null) {
-      VPinMameRomAliasService.clearCache(Arrays.asList(emulator));
+      VPinMameRomAliasService.clearCache(List.of(emulator));
       gameCachingService.clearCacheForEmulator(emulatorId);
     }
 
@@ -386,7 +386,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     }
 
     List<Game> games = frontendService.getGamesByEmulator(emulator.getId());
-    List<String> emulatorGameFileNames = games.stream().map(Game::getGameFileName).collect(Collectors.toList());
+    List<String> emulatorGameFileNames = games.stream().map(Game::getGameFileName).toList();
     for (File file : files) {
       String gameFileName = emulator.getGameFileName(file);
       if (!emulatorGameFileNames.contains(gameFileName)) {
@@ -441,7 +441,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
           continue;
         }
 
-        if (StringUtils.startsWithIgnoreCase(tableFile.getAbsolutePath(), emu.getGamesDirectory())) {
+        if (Strings.CI.startsWith(tableFile.getAbsolutePath(), emu.getGamesDirectory())) {
           matchingEmulators.add(emu);
           break;
         }

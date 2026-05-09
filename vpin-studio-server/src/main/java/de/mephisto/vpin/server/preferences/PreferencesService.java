@@ -73,7 +73,7 @@ public class PreferencesService implements InitializingBean, PreferenceChangedLi
   public Long getPreferenceValueLong(String key, long defaultValue) {
     BeanWrapper bean = new BeanWrapperImpl(preferences);
     Object value = bean.getPropertyValue(key);
-    if (value != null && String.valueOf(value).length() > 0) {
+    if (value != null && !String.valueOf(value).isEmpty()) {
       return Long.parseLong(String.valueOf(value));
     }
     return defaultValue;
@@ -186,7 +186,7 @@ public class PreferencesService implements InitializingBean, PreferenceChangedLi
         preferencesRepository.saveAndFlush(prefs);
         all = preferencesRepository.findAll();
       }
-      preferences = all.get(0);
+      preferences = all.getFirst();
     }
     catch (Exception e) {
       LOG.error("Preference Service init failed: {}", e.getMessage(), e);

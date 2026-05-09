@@ -25,7 +25,7 @@ public class RecorderColumnSorter implements BaseColumnSorter<GameRepresentation
     ValidationSettings validationSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VALIDATION_SETTINGS, ValidationSettings.class);
 
     if (!tableView.getSortOrder().isEmpty()) {
-      TableColumn<GameRepresentationModel, ?> column = tableView.getSortOrder().get(0);
+      TableColumn<GameRepresentationModel, ?> column = tableView.getSortOrder().getFirst();
 
       if (column.equals(recorderController.columnDisplayName)) {
         comp = Comparator.comparing(o -> o.getGame().getGameDisplayName());

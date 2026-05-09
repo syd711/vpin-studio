@@ -3,13 +3,14 @@ package de.mephisto.vpin.server.competitions;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.validation.ValidationState;
+import jakarta.persistence.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
-import java.util.Date;
+import java.time.OffsetDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -19,14 +20,12 @@ import java.util.UUID;
 public class Competition {
 
   @Column(nullable = false, updatable = false)
-  @Temporal(TemporalType.TIMESTAMP)
   @CreatedDate
-  private Date createdAt;
+  private OffsetDateTime createdAt;
 
   @Column(nullable = false)
-  @Temporal(TemporalType.TIMESTAMP)
   @LastModifiedDate
-  private Date updatedAt;
+  private OffsetDateTime updatedAt;
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -60,9 +59,9 @@ public class Competition {
 
   private String vpsTableVersionId;
 
-  private Date startDate;
+  private OffsetDateTime startDate;
 
-  private Date endDate;
+  private OffsetDateTime endDate;
 
   private boolean started;
 
@@ -245,19 +244,19 @@ public class Competition {
     this.gameId = gameId;
   }
 
-  public Date getStartDate() {
+  public OffsetDateTime getStartDate() {
     return startDate;
   }
 
-  public void setStartDate(Date startDate) {
+  public void setStartDate(OffsetDateTime startDate) {
     this.startDate = startDate;
   }
 
-  public Date getEndDate() {
+  public OffsetDateTime getEndDate() {
     return endDate;
   }
 
-  public void setEndDate(Date endDate) {
+  public void setEndDate(OffsetDateTime endDate) {
     this.endDate = endDate;
   }
 
@@ -277,19 +276,19 @@ public class Competition {
     this.name = name;
   }
 
-  public Date getCreatedAt() {
+  public OffsetDateTime getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(Date createdAt) {
+  public void setCreatedAt(OffsetDateTime createdAt) {
     this.createdAt = createdAt;
   }
 
-  public Date getUpdatedAt() {
+  public OffsetDateTime getUpdatedAt() {
     return updatedAt;
   }
 
-  public void setUpdatedAt(Date updatedAt) {
+  public void setUpdatedAt(OffsetDateTime updatedAt) {
     this.updatedAt = updatedAt;
   }
 
@@ -310,25 +309,21 @@ public class Competition {
       return true;
     }
 
-    long now = new Date().getTime();
-    long start = getStartDate().getTime();
-    long end = getEndDate().getTime();
-    return start <= now && end >= now;
+    OffsetDateTime now = OffsetDateTime.now();
+    return (startDate != null && !now.isBefore(startDate)) && (endDate != null && !now.isAfter(endDate));
   }
 
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-
     Competition that = (Competition) o;
-
-    return id.equals(that.id);
+    return Objects.equals(id, that.id);
   }
 
   @Override
   public int hashCode() {
-    return id.hashCode();
+    return Objects.hash(id);
   }
 
   @Override

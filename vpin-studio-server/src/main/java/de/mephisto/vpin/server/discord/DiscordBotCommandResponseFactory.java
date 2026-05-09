@@ -11,9 +11,9 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.players.Player;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
 
 public class DiscordBotCommandResponseFactory {
@@ -64,13 +64,14 @@ public class DiscordBotCommandResponseFactory {
     if (competition.getType().equals(CompetitionType.DISCORD.name())) {
       cType = "Discord";
     }
+    DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM);
     String format = String.format(COMPETITION_ACTIVE_TEMPLATE, competition.getName(),
         cType,
         game.getGameDisplayName(),
-        DateFormat.getDateInstance().format(competition.getStartDate()),
-        DateFormat.getDateInstance().format(competition.getEndDate()),
+        formatter.format(competition.getStartDate()),
+        formatter.format(competition.getEndDate()),
         DateUtil.formatDuration(competition.getStartDate(), competition.getEndDate()),
-        DateUtil.formatDuration(new Date(), competition.getEndDate()));
+        DateUtil.formatDuration(OffsetDateTime.now(), competition.getEndDate()));
 
 
     StringBuilder msgBuilder = new StringBuilder(format);
@@ -212,13 +213,14 @@ public class DiscordBotCommandResponseFactory {
     }
 
     StringBuilder builder = new StringBuilder("```");
+    DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT);
     for (Score score : scores) {
       Game game = gameService.getGame(score.getGameId());
       if(game == null) {
         continue;
       }
 
-      builder.append(SimpleDateFormat.getDateTimeInstance().format(score.getCreatedAt()));
+      builder.append(formatter.format(score.getCreatedAt()));
       builder.append("\t");
       builder.append(game.getGameDisplayName());
       builder.append("   ");

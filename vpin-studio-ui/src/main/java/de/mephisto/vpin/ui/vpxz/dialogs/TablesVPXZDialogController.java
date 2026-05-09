@@ -78,7 +78,7 @@ public class TablesVPXZDialogController implements Initializable, DialogControll
     ProgressDialog.createProgressDialog(new VPXZSyncProgressModel("VPX Standalone File Synchronization"));
     vpxStandaloneFiles = client.getVpxzService().getVpxStandaloneFiles(false);
     List<String> entries = new ArrayList<>(vpxStandaloneFiles);
-    entries.add(0, "");
+    entries.addFirst( "");
     this.filesCombo.setItems(FXCollections.observableList(entries));
   }
 
@@ -120,7 +120,7 @@ public class TablesVPXZDialogController implements Initializable, DialogControll
     }
 
     entries = new ArrayList<>(vpxStandaloneFiles);
-    entries.add(0, "");
+    entries.addFirst( "");
     this.filesCombo.setItems(FXCollections.observableList(entries));
 
 

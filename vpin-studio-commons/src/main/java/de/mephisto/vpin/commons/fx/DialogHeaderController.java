@@ -12,8 +12,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.net.URL;
@@ -155,7 +154,8 @@ public class DialogHeaderController implements Initializable {
       titleLabel.setText(title + dirtySuffix);
     }
     else if (!dirty.get() && title.endsWith(dirtySuffix)) {
-      titleLabel.setText(StringUtils.removeEnd(title, dirtySuffix));
+        //Should this be case sensitive? Originally used removeEnd and not removeEndIgnoreCase
+      titleLabel.setText(Strings.CI.removeEnd(title, dirtySuffix));
     }
   }
 

@@ -3,14 +3,13 @@ package de.mephisto.vpin.server.vpx;
 import de.mephisto.vpin.commons.POV;
 import de.mephisto.vpin.commons.utils.VPXKeyManager;
 import de.mephisto.vpin.commons.utils.WinRegistry;
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.INIConfiguration;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
@@ -23,10 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -288,7 +284,7 @@ public class VPXService implements InitializingBean {
   public boolean setNvOffset(Game game, int nvOffset, boolean keepVbsFiles) throws Exception {
     if (game.isVpxGame() && game.getNvOffset() != nvOffset) {
       String script = VPXUtil.exportVBS(game.getGameFile(), true);
-      List<String> lines = Arrays.stream(script.split("\n")).filter(l -> !l.contains("NVOffset(") && !l.contains("NVOffset (")).collect(Collectors.toList());
+      List<String> lines = Arrays.stream(script.split("\n")).filter(l -> !l.contains("NVOffset(") && !l.contains("NVOffset (")).toList();
 
       boolean replaced = nvOffset == 0;
       StringBuilder builder = new StringBuilder();

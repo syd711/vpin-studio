@@ -1,22 +1,22 @@
 package de.mephisto.vpin.connectors.iscored;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.connectors.iscored.models.GameModel;
 import de.mephisto.vpin.connectors.iscored.models.GameRoomModel;
 import de.mephisto.vpin.connectors.iscored.models.GameScoreModel;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.IOUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.MapperFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.lang.invoke.MethodHandles;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
@@ -29,10 +29,11 @@ public class IScored {
   private final static ObjectMapper objectMapper;
 
   static {
-    objectMapper = new ObjectMapper();
-    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-    objectMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
-    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    objectMapper = JsonMapper.builder()
+        .enable(SerializationFeature.INDENT_OUTPUT)
+        .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
+        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        .build();
   }
 
   private final static Map<String, GameRoom> cache = new ConcurrentHashMap<>();
@@ -66,7 +67,7 @@ public class IScored {
       long start = System.currentTimeMillis();
 
       // parse and align room URL 
-      URL roomurl = new URL(url);
+      URL roomurl = URI.create(url).toURL();
       String baseUrl = getBaseURL(roomurl);
       Map<String, Object> params = getBaseParams(roomurl);
 
@@ -103,11 +104,11 @@ public class IScored {
             gameRoom.getGames().add(game);
           }
 
-          Collections.sort(gameRoom.getGames(), new Comparator<IScoredGame>() {
-            @Override
-            public int compare(IScoredGame o1, IScoredGame o2) {
-              return o1.getName().compareTo(o2.getName());
-            }
+          gameRoom.getGames().sort(new Comparator<IScoredGame>() {
+              @Override
+              public int compare(IScoredGame o1, IScoredGame o2) {
+                  return o1.getName().compareTo(o2.getName());
+              }
           });
 
 
@@ -165,7 +166,7 @@ public class IScored {
         newUrl += "=" + entry.getValue();
       }
     }
-    return new URL(newUrl);
+    return URI.create(newUrl).toURL();
   }
 
   private static String loadJson(URL url) {
@@ -347,7 +348,7 @@ public class IScored {
     try {
       ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-      URL roomurl = new URL(gameRoom.getUrl());
+      URL roomurl = URI.create(gameRoom.getUrl()).toURL();
       String baseUrl = getBaseURL(roomurl);
       Map<String, Object> params = getBaseParams(roomurl);
 

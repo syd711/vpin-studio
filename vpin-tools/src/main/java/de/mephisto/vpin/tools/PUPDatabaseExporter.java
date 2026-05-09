@@ -1,9 +1,9 @@
 package de.mephisto.vpin.tools;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
 
 import java.io.File;
 import java.sql.*;
@@ -17,9 +17,9 @@ import java.sql.*;
  */
 public class PUPDatabaseExporter {
 
-  private static final ObjectMapper MAPPER = new ObjectMapper()
-      .enable(SerializationFeature.INDENT_OUTPUT);
-
+  private static final JsonMapper MAPPER= JsonMapper.builder()
+                            .enable(SerializationFeature.INDENT_OUTPUT)
+                            .build();
   /**
    * Exports all games for the given emulator ID from the PUP database to a JSON file.
    *

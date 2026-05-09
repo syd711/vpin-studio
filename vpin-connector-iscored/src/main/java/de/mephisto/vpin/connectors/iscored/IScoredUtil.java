@@ -1,6 +1,6 @@
 package de.mephisto.vpin.connectors.iscored;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.net.URLDecoder;
 import java.util.HashMap;

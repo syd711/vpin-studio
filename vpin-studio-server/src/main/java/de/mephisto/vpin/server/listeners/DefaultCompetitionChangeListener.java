@@ -3,16 +3,11 @@ package de.mephisto.vpin.server.listeners;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionChangeListener;
 import de.mephisto.vpin.server.competitions.CompetitionService;
-import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.players.Player;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 abstract public class DefaultCompetitionChangeListener implements CompetitionChangeListener {
 
@@ -21,7 +16,7 @@ abstract public class DefaultCompetitionChangeListener implements CompetitionCha
    * to any competition anymore.
    */
   protected void runCheckedDeAugmentation(CompetitionService competitionService, GameService gameService, FrontendStatusService frontendStatusService) {
-    List<Integer> competedGameIds = competitionService.getFinishedByDateCompetitions().stream().map(Competition::getGameId).collect(Collectors.toList());
+    List<Integer> competedGameIds = competitionService.getFinishedByDateCompetitions().stream().map(Competition::getGameId).toList();
     for (Integer competedGameId : competedGameIds) {
       Game game = gameService.getGame(competedGameId);
       if (game != null) {

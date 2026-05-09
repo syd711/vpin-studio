@@ -8,16 +8,10 @@ public class BackupSourceAdapterFactory {
 
   public static BackupSourceAdapter create(BackupService backupService, BackupSource source, VpaService vpaService) {
     BackupSourceType backupSourceType = BackupSourceType.valueOf(source.getType());
-    switch (backupSourceType) {
-      case Folder: {
-        return new BackupSourceAdapterFolder(source);
-      }
-      case Http: {
-        return new BackupSourceAdapterHttpServer(backupService, source);
-      }
-      default: {
-        throw new UnsupportedOperationException("Invalid source type: " + backupSourceType);
-      }
-    }
+      return switch (backupSourceType) {
+          case Folder -> new BackupSourceAdapterFolder(source);
+          case Http -> new BackupSourceAdapterHttpServer(backupService, source);
+          default -> throw new UnsupportedOperationException("Invalid source type: " + backupSourceType);
+      };
   }
 }

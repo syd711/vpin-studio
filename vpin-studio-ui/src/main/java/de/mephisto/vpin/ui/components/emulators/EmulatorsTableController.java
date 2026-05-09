@@ -12,12 +12,10 @@ import de.mephisto.vpin.ui.util.LocalizedValidation;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.Tooltip;
@@ -115,7 +113,7 @@ public class EmulatorsTableController extends BaseTableController<GameEmulatorRe
       List<ValidationState> validationState = value.getValidationStates();
       FontIcon statusIcon = WidgetFactory.createCheckIcon(getIconColor(model));
       if (!validationState.isEmpty()) {
-        ValidationState v = validationState.get(0);
+        ValidationState v = validationState.getFirst();
         statusIcon = WidgetFactory.createExclamationIcon(getIconColor(model));
       }
 

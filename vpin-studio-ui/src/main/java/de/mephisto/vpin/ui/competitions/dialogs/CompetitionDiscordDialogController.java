@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -183,8 +184,8 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     validationContainer.setVisible(true);
     this.saveBtn.setDisable(true);
 
-    Date startDate = competition.getStartDate();
-    Date endDate = competition.getEndDate();
+    OffsetDateTime startDate = competition.getStartDate();
+    OffsetDateTime endDate = competition.getEndDate();
     this.durationLabel.setText(DateUtil.formatDuration(startDate, endDate));
 
     if (StringUtils.isEmpty(competition.getName())) {
@@ -226,7 +227,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     }
 
 
-    if (startDate == null || endDate == null || startDate.getTime() >= endDate.getTime()) {
+    if (startDate == null || endDate == null || !startDate.isBefore(endDate)) {
       validationTitle.setText("Invalid start/end date set.");
       validationDescription.setText("Define a valid start and end date.");
       return;
@@ -239,8 +240,8 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       return;
     }
 
-    Date startSelection = Date.from(startDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
-    Date endSelection = Date.from(endDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
+    OffsetDateTime startSelection = startDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toOffsetDateTime();
+    OffsetDateTime endSelection = endDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toOffsetDateTime();
 
 
     //check if another active competition on this channel is active during the selected time span
@@ -361,14 +362,14 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       this.nameField.setText(selectedCompetition.getName());
       this.nameField.setDisable(!editable);
 
-      this.startDatePicker.setValue(selectedCompetition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+      this.startDatePicker.setValue(selectedCompetition.getStartDate().toLocalDate());
       this.startDatePicker.setDisable(!editable);
-      this.startTime.setValue(DateUtil.formatTimeString(selectedCompetition.getStartDate()));
+      this.startTime.setValue(DateUtil.formatTimeString(Date.from(selectedCompetition.getStartDate().toInstant())));
       this.startTime.setDisable(!editable);
 
-      this.endDatePicker.setValue(selectedCompetition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+      this.endDatePicker.setValue(selectedCompetition.getEndDate().toLocalDate());
       this.endDatePicker.setDisable(!editable);
-      this.endTime.setValue(DateUtil.formatTimeString(selectedCompetition.getEndDate()));
+      this.endTime.setValue(DateUtil.formatTimeString(Date.from(selectedCompetition.getEndDate().toInstant())));
       this.endTime.setDisable(!editable);
 
       this.tableCombo.setValue(game);
@@ -419,7 +420,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
         List<VpsTableVersion> tableFiles = vpsTable.getTableFiles();
         Optional<VpsTableVersion> tableVersion = tableFiles.stream().filter(t -> t.getId().equals(game.getExtTableVersionId())).findFirst();
         if (tableVersion.isPresent() && !tableVersion.get().getUrls().isEmpty()) {
-          downloadLinkField.setText(tableVersion.get().getUrls().get(0).getUrl());
+          downloadLinkField.setText(tableVersion.get().getUrls().getFirst().getUrl());
         }
       }
     }
@@ -439,8 +440,8 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     competition.setOwner(String.valueOf(botStatus.getBotId()));
     competition.setHighscoreReset(true);
 
-    Date end = Date.from(LocalDate.now().plus(7, ChronoUnit.DAYS).atStartOfDay(ZoneId.systemDefault()).toInstant());
-    competition.setStartDate(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+    OffsetDateTime end = LocalDate.now().plus(7, ChronoUnit.DAYS).atStartOfDay(ZoneId.systemDefault()).toOffsetDateTime();
+    competition.setStartDate(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toOffsetDateTime());
     competition.setEndDate(end);
 
     saveBtn.setDisable(true);
@@ -489,28 +490,28 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     startDatePicker.setValue(LocalDate.now());
     startDatePicker.valueProperty().addListener((observableValue, localDate, t1) -> {
       Date date = DateUtil.formatDate(startDatePicker.getValue(), startTime.getValue());
-      competition.setStartDate(date);
+      competition.setStartDate(date.toInstant().atZone(ZoneId.systemDefault()).toOffsetDateTime());
       validate();
     });
     startTime.setItems(FXCollections.observableList(DateUtil.TIMES));
     startTime.setValue("00:00");
     startTime.valueProperty().addListener((observable, oldValue, newValue) -> {
       Date date = DateUtil.formatDate(startDatePicker.getValue(), startTime.getValue());
-      competition.setStartDate(date);
+      competition.setStartDate(date.toInstant().atZone(ZoneId.systemDefault()).toOffsetDateTime());
       validate();
     });
 
     endDatePicker.setValue(LocalDate.now().plus(7, ChronoUnit.DAYS));
     endDatePicker.valueProperty().addListener((observableValue, localDate, t1) -> {
       Date date = DateUtil.formatDate(endDatePicker.getValue(), endTime.getValue());
-      competition.setEndDate(date);
+      competition.setEndDate(date.toInstant().atZone(ZoneId.systemDefault()).toOffsetDateTime());
       validate();
     });
     endTime.setItems(FXCollections.observableList(DateUtil.TIMES));
     endTime.setValue("00:00");
     endTime.valueProperty().addListener((observable, oldValue, newValue) -> {
       Date date = DateUtil.formatDate(endDatePicker.getValue(), endTime.getValue());
-      competition.setEndDate(date);
+      competition.setEndDate(date.toInstant().atZone(ZoneId.systemDefault()).toOffsetDateTime());
       validate();
     });
 
@@ -534,7 +535,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     });
 
     List<String> badges = new ArrayList<>(client.getCompetitionService().getCompetitionBadges());
-    badges.add(0, null);
+    badges.addFirst(null);
     ObservableList<String> imageList = FXCollections.observableList(badges);
     competitionIconCombo.setItems(imageList);
     competitionIconCombo.setCellFactory(c -> new CompetitionImageListCell(client));

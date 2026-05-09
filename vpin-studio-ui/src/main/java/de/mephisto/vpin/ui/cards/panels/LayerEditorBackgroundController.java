@@ -2,7 +2,6 @@ package de.mephisto.vpin.ui.cards.panels;
 
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
@@ -192,7 +191,7 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
     // fallback background
     String backgroundName = cardTemplate.getBackground();
     if (StringUtils.isEmpty(backgroundName)) {
-      backgroundImageCombo.setValue(imageList.get(0));
+      backgroundImageCombo.setValue(imageList.getFirst());
     }
     else {
       backgroundImageCombo.setValue(backgroundName);

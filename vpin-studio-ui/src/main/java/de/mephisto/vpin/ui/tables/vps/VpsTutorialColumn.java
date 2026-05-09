@@ -5,7 +5,7 @@ import de.mephisto.vpin.connectors.vps.model.*;
 import de.mephisto.vpin.restclient.util.HttpUtils;
 import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.ui.Studio;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -48,7 +48,7 @@ public class VpsTutorialColumn extends HBox {
 
       for (VpsTutorialUrls tutorialFile : tutorialFiles) {
         if (tutorialFile.getUrls() != null && !tutorialFile.getUrls().isEmpty()) {
-          VpsUrl vpsUrl = tutorialFile.getUrls().get(0);
+          VpsUrl vpsUrl = tutorialFile.getUrls().getFirst();
           if (!vpsUrl.isBroken()) {
             Button btn = new Button();
             btn.getStyleClass().add("table-media-button");

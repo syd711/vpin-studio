@@ -3,8 +3,8 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableDeleteProgressModel;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
@@ -315,7 +315,7 @@ public class TableDeleteController implements Initializable, DialogController {
     this.tableOverviewController = tableOverviewController;
     this.games = selectedGames;
     if (selectedGames.size() == 1) {
-      this.titleLabel.setText("Delete \"" + selectedGames.get(0).getGameDisplayName() + "\"?");
+      this.titleLabel.setText("Delete \"" + selectedGames.getFirst().getGameDisplayName() + "\"?");
     }
     else {
       this.titleLabel.setText("Delete " + selectedGames.size() + " Tables?");
@@ -325,7 +325,7 @@ public class TableDeleteController implements Initializable, DialogController {
     this.validationTitle.setVisible(false);
     this.validationDescription.setVisible(false);
 
-    GameEmulatorRepresentation emulator = client.getEmulatorService().getGameEmulator(selectedGames.get(0).getEmulatorId());
+    GameEmulatorRepresentation emulator = client.getEmulatorService().getGameEmulator(selectedGames.getFirst().getEmulatorId());
 
     //whole columns
     settingsColumn.setVisible(emulator.isVpxEmulator() || emulator.isFpEmulator());
@@ -345,7 +345,7 @@ public class TableDeleteController implements Initializable, DialogController {
   }
 
   private void refreshArchivesCheck(List<GameRepresentation> selectedGames, List<GameRepresentation> allGames) {
-    GameEmulatorRepresentation emulator = client.getEmulatorService().getGameEmulator(selectedGames.get(0).getEmulatorId());
+    GameEmulatorRepresentation emulator = client.getEmulatorService().getGameEmulator(selectedGames.getFirst().getEmulatorId());
     if (Features.BACKUPS_ENABLED && emulator.isVpxEmulator()) {
       for (GameRepresentation selectedGame : selectedGames) {
         boolean hasNoArchives = client.getBackupService().getBackupsForGame(selectedGame.getId()).isEmpty();
@@ -367,7 +367,7 @@ public class TableDeleteController implements Initializable, DialogController {
 
       if (!StringUtils.isEmpty(selectedGame.getRom())) {
         String rom = selectedGame.getRom();
-        List<GameRepresentation> variants = allGames.stream().filter(g -> rom.equalsIgnoreCase(g.getRom())).collect(Collectors.toList());
+        List<GameRepresentation> variants = allGames.stream().filter(g -> rom.equalsIgnoreCase(g.getRom())).toList();
         for (GameRepresentation variant : variants) {
           if (!selectedGames.contains(variant)) {
             variantExists = true;

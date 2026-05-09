@@ -4,13 +4,8 @@ import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTutorialUrls;
 import de.mephisto.vpin.restclient.util.HttpUtils;
-import org.apache.commons.io.FilenameUtils;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.net.URLConnection;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
 
 public class VPSTutorialAnalyzer {
 

@@ -11,7 +11,7 @@ import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 import de.mephisto.vpin.ui.Studio;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -21,7 +21,9 @@ import javafx.scene.layout.*;
 
 import java.io.ByteArrayInputStream;
 import java.net.URL;
-import java.text.DateFormat;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.getScoreFont;
@@ -85,7 +87,7 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
       scoreLabel.setFont(getScoreFont());
       scoreLabel.setText(score.getFormattedScore());
 
-      String date = DateFormat.getDateTimeInstance().format(score.getCreatedAt());
+      String date = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(score.getCreatedAt());
       changeDateLabel.setText("Updated: " + date);
 
       JFXFuture.supplyAsync(() -> {
@@ -135,7 +137,7 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
     scoreLabel.setFont(getScoreFont());
     scoreLabel.setText(tableScore.getScoreText());
 
-    String date = DateFormat.getDateTimeInstance().format(tableScore.getCreationDate());
+    String date = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(tableScore.getCreationDate().toInstant().atZone(ZoneId.systemDefault()));
     changeDateLabel.setText("Updated: " + date);
 
     if (game != null) {

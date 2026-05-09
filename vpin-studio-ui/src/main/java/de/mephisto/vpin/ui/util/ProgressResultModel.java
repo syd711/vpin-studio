@@ -69,7 +69,7 @@ public class ProgressResultModel {
 
   @SuppressWarnings("unchecked")
   public <T> T getFirstTypedResult() {
-    return results.size() > 0 ? (T) results.get(0) : null;
+    return results.size() > 0 ? (T) results.getFirst() : null;
   }
 
   public void addSkipped() {

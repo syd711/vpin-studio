@@ -31,8 +31,8 @@ import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.StudioFolderChooser;
 import de.mephisto.vpin.ui.util.SystemUtil;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -60,6 +60,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -475,7 +476,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     Stage stage = (Stage) ((Labeled) e.getSource()).getScene().getWindow();
     List<FrontendMediaItemRepresentation> selectedItems = assetList.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
-      String msg = selectedItems.size() == 1 ? ("Delete \"" + selectedItems.get(0).getName() + "\"?") : ("Delete " + selectedItems.size() + " items?");
+      String msg = selectedItems.size() == 1 ? ("Delete \"" + selectedItems.getFirst().getName() + "\"?") : ("Delete " + selectedItems.size() + " items?");
       Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, msg, "The selected media will be deleted.", null, "Delete");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         JFXFuture.runAsync(() -> {
@@ -512,7 +513,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       String name = selectedItem.getName();
       String baseName = FilenameUtils.getBaseName(name);
       String uniqueAssetName = null; //FileUtils.baseUniqueAsset(name);
-      if (StringUtils.equals(baseName, uniqueAssetName)) {
+      if (Strings.CI.equals(baseName, uniqueAssetName)) {
       }
 
       Optional<ButtonType> buttonType = WidgetFactory.showConfirmation(localStage, "Set As Default Asset",
@@ -625,7 +626,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         new TableAssetSearchProgressModel("Asset Search", game == null ? -1 : game.getId(), source, screen, term));
     List<Object> results = progressDialog.getResults();
     if (!results.isEmpty()) {
-      return (TableAssetSearch) results.get(0);
+      return (TableAssetSearch) results.getFirst();
     }
 
     TableAssetSearch empty = new TableAssetSearch();
@@ -748,7 +749,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     List<TableAssetSource> assetSources = new ArrayList<>(client.getAssetSourcesService().getAssetSources());
     assetSourceComboBox.setVisible(!assetSources.isEmpty());
     if (!assetSources.isEmpty()) {
-      assetSources.add(0, null);
+      assetSources.addFirst( null);
 
       TableAssetSource defaultAssetSource = client.getAssetSourcesService().getDefaultAssetSource();
       if (defaultAssetSource != null) {
@@ -943,7 +944,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           return;
         }
         // else
-        FrontendMediaItemRepresentation mediaItem = list.get(0);
+        FrontendMediaItemRepresentation mediaItem = list.getFirst();
         String mimeType = mediaItem.getMimeType();
         String baseType = MimeTypeUtil.mimeTypeToBaseType(mimeType);
 
@@ -1003,7 +1004,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
             String name = "Video Conversion of " + selectedItems.size() + " media items";
             if (selectedItems.size() == 1) {
-              name = "Video Conversion " + "\"" + selectedItems.get(0).getName() + "\"";
+              name = "Video Conversion " + "\"" + selectedItems.getFirst().getName() + "\"";
             }
 
             int objectId = isPlaylistMode() ? playlist.getId() : game.getId();
@@ -1013,7 +1014,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
             Platform.runLater(() -> {
               if (!results.isEmpty()) {
-                WidgetFactory.showAlert(stage, "Error", "Error converting video: " + results.get(0));
+                WidgetFactory.showAlert(stage, "Error", "Error converting video: " + results.getFirst());
               }
               else {
                 refreshTableMediaView();
@@ -1349,7 +1350,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       }
       else {
         if (this.game == null) {
-          this.game = tablesCombo.getItems().get(0);
+          this.game = tablesCombo.getItems().getFirst();
         }
         return client.getGameMediaService().getGameMedia(this.game.getId());
       }
@@ -1383,7 +1384,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           deleteBtn.setDisable(false);
         }
 
-        boolean convertable = items.size() == 1 && !items.get(0).getName().contains("(SCREEN");
+        boolean convertable = items.size() == 1 && !items.getFirst().getName().contains("(SCREEN");
         this.addToPlaylistBtn.setDisable(!convertable);
       }
       else {
@@ -1457,7 +1458,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       boolean modal = LocalUISettings.isModal(MODAL_STATE_ID);
       if (!modal) {
         Platform.runLater(() -> {
-          GameRepresentation gameRepresentation = games.get(0);
+          GameRepresentation gameRepresentation = games.getFirst();
           if (this.game == null || this.game.getId() != gameRepresentation.getId()) {
             tablesRadio.setSelected(true);
             setGame(gameRepresentation, screen);

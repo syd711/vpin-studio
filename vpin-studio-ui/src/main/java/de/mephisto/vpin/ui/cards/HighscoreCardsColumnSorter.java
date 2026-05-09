@@ -21,7 +21,7 @@ public class HighscoreCardsColumnSorter implements BaseColumnSorter<GameRepresen
     Comparator<GameRepresentationModel> comp = null;
 
     if (!tableView.getSortOrder().isEmpty()) {
-      TableColumn<GameRepresentationModel, ?> column = tableView.getSortOrder().get(0);
+      TableColumn<GameRepresentationModel, ?> column = tableView.getSortOrder().getFirst();
 
       if (column.equals(highscoreCardsController.columnDisplayName)) {
         comp = Comparator.comparing(o -> o.getName());

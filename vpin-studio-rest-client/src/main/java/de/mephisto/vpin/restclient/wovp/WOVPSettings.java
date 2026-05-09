@@ -30,50 +30,26 @@ public class WOVPSettings extends JsonSettings {
 
   @JsonIgnore
   public String getApiKey(int activeUser) {
-    switch (activeUser) {
-      case 1: {
-        return getApiKey1();
-      }
-      case 2: {
-        return getApiKey2();
-      }
-      case 3: {
-        return getApiKey3();
-      }
-      case 4: {
-        return getApiKey4();
-      }
-      case 5: {
-        return getApiKey5();
-      }
-      default: {
-        throw new UnsupportedOperationException("No valid user id set.");
-      }
-    }
+      return switch (activeUser) {
+          case 1 -> getApiKey1();
+          case 2 -> getApiKey2();
+          case 3 -> getApiKey3();
+          case 4 -> getApiKey4();
+          case 5 -> getApiKey5();
+          default -> throw new UnsupportedOperationException("No valid user id set.");
+      };
   }
 
   @JsonIgnore
   public boolean isApiKeyEnabled(int activeUser) {
-    switch (activeUser) {
-      case 1: {
-        return isApiKey1Enabled();
-      }
-      case 2: {
-        return isApiKey2Enabled();
-      }
-      case 3: {
-        return isApiKey3Enabled();
-      }
-      case 4: {
-        return isApiKey4Enabled();
-      }
-      case 5: {
-        return isApiKey5Enabled();
-      }
-      default: {
-        throw new UnsupportedOperationException("No valid user id set.");
-      }
-    }
+      return switch (activeUser) {
+          case 1 -> isApiKey1Enabled();
+          case 2 -> isApiKey2Enabled();
+          case 3 -> isApiKey3Enabled();
+          case 4 -> isApiKey4Enabled();
+          case 5 -> isApiKey5Enabled();
+          default -> throw new UnsupportedOperationException("No valid user id set.");
+      };
   }
 
   @JsonIgnore

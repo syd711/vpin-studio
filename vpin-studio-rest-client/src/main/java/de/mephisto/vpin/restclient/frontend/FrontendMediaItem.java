@@ -4,13 +4,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.util.MimeTypeUtil;
 
 import java.io.File;
-import java.util.Date;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 
 public class FrontendMediaItem {
   private String mimeType;
   private final File file;
   private final VPinScreen screen;
-  private Date modificationDate;
+  private OffsetDateTime modificationDate;
   private long size;
   private String uri;
 
@@ -25,7 +27,7 @@ public class FrontendMediaItem {
     this.file = file;
     this.screen = screen;
     this.mimeType = MimeTypeUtil.determineMimeType(file);
-    this.modificationDate = new Date(file.lastModified());
+    this.modificationDate = OffsetDateTime.ofInstant(Instant.ofEpochMilli(file.lastModified()), ZoneId.systemDefault());
     this.size = file.length();
     this.uri = uri;
   }
@@ -38,11 +40,11 @@ public class FrontendMediaItem {
     this.size = size;
   }
 
-  public Date getModificationDate() {
+  public OffsetDateTime getModificationDate() {
     return modificationDate;
   }
 
-  public void setModificationDate(Date modificationDate) {
+  public void setModificationDate(OffsetDateTime modificationDate) {
     this.modificationDate = modificationDate;
   }
 

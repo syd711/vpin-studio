@@ -2,7 +2,10 @@ package de.mephisto.vpin.commons.utils;
 
 import de.mephisto.vpin.commons.fx.*;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
-import de.mephisto.vpin.commons.utils.media.*;
+import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
+import de.mephisto.vpin.commons.utils.media.AudioMediaPlayer;
+import de.mephisto.vpin.commons.utils.media.ImageViewer;
+import de.mephisto.vpin.commons.utils.media.VideoMediaPlayer;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -11,8 +14,7 @@ import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.restclient.util.FileUtils;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import de.mephisto.vpin.restclient.util.OSUtil;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -38,8 +40,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -49,6 +49,8 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 import org.apache.commons.io.FilenameUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -541,23 +543,14 @@ public class WidgetFactory {
 
   private static String determineIconLiteral(String nameLower) {
     for (KeywordRule rule : keywordRules) {
-      String pattern;
+      String pattern = switch (rule.getType()) {
+          case EXACT -> "\\b" + Pattern.quote(rule.getKeyword()) + "\\b";
+          case PREFIX -> "\\b" + Pattern.quote(rule.getKeyword());
+          case ANYWHERE -> Pattern.quote(rule.getKeyword());
+          default -> throw new IllegalStateException("Unexpected match type: " + rule.getType());
+      };
 
-      switch (rule.getType()) {
-        case EXACT:
-          pattern = "\\b" + Pattern.quote(rule.getKeyword()) + "\\b";
-          break;
-        case PREFIX:
-          pattern = "\\b" + Pattern.quote(rule.getKeyword());
-          break;
-        case ANYWHERE:
-          pattern = Pattern.quote(rule.getKeyword());
-          break;
-        default:
-          throw new IllegalStateException("Unexpected match type: " + rule.getType());
-      }
-
-      if (Pattern.compile(pattern).matcher(nameLower).find()) {
+        if (Pattern.compile(pattern).matcher(nameLower).find()) {
         return rule.getIcon();
       }
     }
@@ -581,7 +574,9 @@ public class WidgetFactory {
 
   public static Stage createStage() {
     Stage stage = new Stage();
-    stage.getIcons().add(new Image(ServerFX.class.getResourceAsStream("logo-64.png")));
+      if (!OSUtil.isMac()) {//Let MacOS handle this to use dynamic icons
+          stage.getIcons().add(new Image(ServerFX.class.getResourceAsStream("logo-64.png")));
+      }
     return stage;
   }
 

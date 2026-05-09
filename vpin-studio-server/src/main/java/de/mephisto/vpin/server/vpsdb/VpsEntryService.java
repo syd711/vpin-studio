@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.vpsdb;
 
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 

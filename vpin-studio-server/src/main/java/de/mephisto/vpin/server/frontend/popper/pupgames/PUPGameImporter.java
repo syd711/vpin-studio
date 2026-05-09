@@ -1,8 +1,9 @@
 package de.mephisto.vpin.server.frontend.popper.pupgames;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.MapperFeature;
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
@@ -58,9 +59,11 @@ public class PUPGameImporter {
     try {
       File file = new File(SystemInfo.RESOURCES, "pupgames/" + filename);
       if (file.exists()) {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        JsonMapper mapper = JsonMapper.builder()
+                .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES)
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .build();
+
         String s = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
         PUPGameExport pupGameExport = mapper.readValue(s, PUPGameExport.class);
         List<PUPGame> gameExport = pupGameExport.getGameExport();

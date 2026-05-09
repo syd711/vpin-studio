@@ -7,11 +7,12 @@ import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.util.MimeTypeUtil;
 import de.mephisto.vpin.server.games.Game;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
@@ -33,7 +34,7 @@ import java.util.*;
 /**
  * No more used TableAssetsAdapter, does not use index
  *
- * @Deprecated
+ * -@Deprecated
  */
 @Service
 public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAssetsAdapter<Game> {
@@ -105,7 +106,7 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
             return !isForAnotherEmulator(name, emulator) && !isForAnotherScreen(name, folders);
           }
           // and all files matching the term
-          if (ftpFile.isFile() && StringUtils.containsIgnoreCase(ftpFile.getName(), term)) {
+          if (ftpFile.isFile() && Strings.CI.contains(ftpFile.getName(), term)) {
             return true;
           }
           // else
@@ -164,7 +165,7 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
   }
 
   private static String clean(String name) {
-    return StringUtils.remove(name, " ").toLowerCase();
+    return Strings.CI.remove(name, " ").toLowerCase();
   }
 
   private static String[] clean(String... names) {
@@ -176,7 +177,7 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
   }
 
   private boolean isForEmulator(String name, String emulator) {
-    return StringUtils.contains(name, emulator) || StringUtils.contains(emulator, name);
+    return Strings.CI.contains(name, emulator) || Strings.CI.contains(emulator, name);
   }
 
   private boolean isForAnotherEmulator(String name, String emulator) {
@@ -185,7 +186,7 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
 
   private boolean isForScreen(String name, String[] screens) {
     for (String screen : screens) {
-      if (StringUtils.contains(name, screen) || StringUtils.contains(screen, name)) {
+      if (Strings.CI.contains(name, screen) || Strings.CI.contains(screen, name)) {
         return true;
       }
     }
@@ -201,7 +202,7 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
     int high = names.length - 1;
     while (low <= high) {
       int mid = (low + high) >>> 1;
-      if (StringUtils.contains(names[mid], name) || StringUtils.contains(name, names[mid])) {
+      if (Strings.CI.contains(names[mid], name) || Strings.CI.contains(name, names[mid])) {
         return true;
       }
       int cmp = names[mid].compareTo(name);
@@ -272,48 +273,30 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
   }
 
   private String[] fromScreenToFolders(VPinScreen screen) {
-    switch (screen) {
-      case Audio:
-        return new String[]{"Table Audio"};
-      case AudioLaunch:
-        return new String[]{"Launch Audio"};
-      case Other2:
-        return null;
-      case GameInfo:
-        return new String[]{"Flyer Image"};
-      case GameHelp:
-        return new String[]{"Instruction Card"};
-      case Topper:
-        return new String[]{"Topper Video", "Topper Image"};
-      case BackGlass:
-        return new String[]{"Backglass Video", "Backglass Image"};
-      case Menu:
-        return new String[]{"Full DMD"};
-      case DMD:
-        return new String[]{"DMD Video", "DMD Image"};
-      case Loading:
-        return new String[]{"Loading Video", "Loading Image"};
-      case Logo:
-        return new String[]{"Logo"};
-      case Wheel:
-        return new String[]{"Wheel"};
-      case PlayField:
-        return new String[]{"Table Video", "Table Image"};
-    }
-    return null;
+      return switch (screen) {
+          case Audio -> new String[]{"Table Audio"};
+          case AudioLaunch -> new String[]{"Launch Audio"};
+          case Other2 -> null;
+          case GameInfo -> new String[]{"Flyer Image"};
+          case GameHelp -> new String[]{"Instruction Card"};
+          case Topper -> new String[]{"Topper Video", "Topper Image"};
+          case BackGlass -> new String[]{"Backglass Video", "Backglass Image"};
+          case Menu -> new String[]{"Full DMD"};
+          case DMD -> new String[]{"DMD Video", "DMD Image"};
+          case Loading -> new String[]{"Loading Video", "Loading Image"};
+          case Logo -> new String[]{"Logo"};
+          case Wheel -> new String[]{"Wheel"};
+          case PlayField -> new String[]{"Table Video", "Table Image"};
+      };
   }
 
   private boolean isScreenEmulatorIndependent(VPinScreen screen) {
-    switch (screen) {
-      case GameInfo:
-        return true;
-      case GameHelp:
-        return true;
-      case Loading:
-        return true;
-      default:
-        return false;
-    }
+      return switch (screen) {
+          case GameInfo -> true;
+          case GameHelp -> true;
+          case Loading -> true;
+          default -> false;
+      };
   }
 
 }

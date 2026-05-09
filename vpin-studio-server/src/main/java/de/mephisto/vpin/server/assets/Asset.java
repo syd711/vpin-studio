@@ -6,8 +6,9 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
-import java.util.Date;
+import jakarta.persistence.*;
+import java.time.OffsetDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "Assets")
@@ -16,14 +17,12 @@ import java.util.Date;
 public class Asset {
 
   @Column(nullable = false, updatable = false)
-  @Temporal(TemporalType.TIMESTAMP)
   @CreatedDate
-  private Date createdAt;
+  private OffsetDateTime createdAt;
 
   @Column(nullable = false)
-  @Temporal(TemporalType.TIMESTAMP)
   @LastModifiedDate
-  private Date updatedAt;
+  private OffsetDateTime updatedAt;
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -33,7 +32,7 @@ public class Asset {
 
   private String uuid;
 
-  @Column(nullable = true)
+  @Column
   private String externalId;
 
   public String getExternalId() {
@@ -65,20 +64,20 @@ public class Asset {
   }
 
   @JsonIgnore
-  public Date getCreatedAt() {
+  public OffsetDateTime getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(Date createdAt) {
+  public void setCreatedAt(OffsetDateTime createdAt) {
     this.createdAt = createdAt;
   }
 
   @JsonIgnore
-  public Date getUpdatedAt() {
+  public OffsetDateTime getUpdatedAt() {
     return updatedAt;
   }
 
-  public void setUpdatedAt(Date updatedAt) {
+  public void setUpdatedAt(OffsetDateTime updatedAt) {
     this.updatedAt = updatedAt;
   }
 
@@ -109,10 +108,15 @@ public class Asset {
 
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof Asset) {
-      return this.id.equals(((Asset) obj).getId());
-    }
-    return false;
+    if (this == obj) return true;
+    if (obj == null || getClass() != obj.getClass()) return false;
+    Asset asset = (Asset) obj;
+    return Objects.equals(id, asset.id);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id);
   }
 
   @Override

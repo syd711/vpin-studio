@@ -12,8 +12,8 @@ import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegFile;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpx.FolderLookupService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -24,84 +24,78 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 
 @Service
 public class HighscoreResolver implements InitializingBean {
-  private final static Logger LOG = LoggerFactory.getLogger(HighscoreResolver.class);
-  public static final String NO_SCORE_FOUND_MSG = "No nvram file, VPReg.stg entry or highscore text file found.";
+    private final static Logger LOG = LoggerFactory.getLogger(HighscoreResolver.class);
+    public static final String NO_SCORE_FOUND_MSG = "No nvram file, VPReg.stg entry or highscore text file found.";
 
-  @Autowired
-  private SystemService systemService;
+    @Autowired
+    private SystemService systemService;
 
-  @Autowired
-  private TextHighscoreAdapters textHighscoreAdapters;
+    @Autowired
+    private TextHighscoreAdapters textHighscoreAdapters;
 
-  @Autowired
-  private IniHighscoreAdapters initHighscoreAdapters;
+    @Autowired
+    private IniHighscoreAdapters initHighscoreAdapters;
 
-  @Autowired
-  private VPRegService vpRegService;
+    @Autowired
+    private VPRegService vpRegService;
 
-  @Autowired
-  private FolderLookupService folderLookupService;
+    @Autowired
+    private FolderLookupService folderLookupService;
 
 
-  //--------------------------------------------
-  // Resolution of highscore files
+    //--------------------------------------------
+    // Resolution of highscore files
 
-  @Nullable
-  public File getHighscoreFile(Game game) {
-    HighscoreType highscoreType = game.getHighscoreType();
-    if (highscoreType != null) {
-      switch (highscoreType) {
-        case EM: {
-          return folderLookupService.getHighscoreTextFile(game);
+    @Nullable
+    public File getHighscoreFile(Game game) {
+        HighscoreType highscoreType = game.getHighscoreType();
+        if (highscoreType != null) {
+            return switch (highscoreType) {
+                case EM -> folderLookupService.getHighscoreTextFile(game);
+                case VPReg -> {
+                    VPRegFile vpRegFileForGame = folderLookupService.getVPRegFileForGame(game);
+                    yield vpRegFileForGame.getFile();
+                }
+                case NVRam -> getNvRamFile(game);
+                case Ini -> getHighscoreIniFile(game);
+            };
         }
-        case VPReg: {
-          VPRegFile vpRegFileForGame = folderLookupService.getVPRegFileForGame(game);
-          return vpRegFileForGame.getFile();
-        }
-        case NVRam: {
-          return getNvRamFile(game);
-        }
-        case Ini: {
-          return getHighscoreIniFile(game);
-        }
-      }
-    }
-    return null;
-  }
-
-  @Nullable
-  private File getAlternateHighscoreTextFile(Game game, @NonNull String name) {
-    if (!StringUtils.isEmpty(name)) {
-      if (!name.endsWith(".txt")) {
-        name = name + ".txt";
-      }
-      return new File(folderLookupService.getUserFolder(game), name);
-    }
-    return null;
-  }
-
-  @Nullable
-  public File getHighscoreIniFile(Game game) {
-    File iniFile = null;
-    if (!StringUtils.isEmpty(game.getRom())) {
-      String iniScoreName = FilenameUtils.getBaseName(game.getRom()) + "_glf.ini";
-      iniFile = new File(game.getGameFile().getParentFile(), iniScoreName);
+        return null;
     }
 
-    if (iniFile == null || !iniFile.exists()) {
-      if (!StringUtils.isEmpty(game.getTableName())) {
-        String iniScoreName = FilenameUtils.getBaseName(game.getTableName()) + "_glf.ini";
-        iniFile = new File(game.getGameFile().getParentFile(), iniScoreName);
-      }
+    @Nullable
+    private File getAlternateHighscoreTextFile(Game game, @NonNull String name) {
+        if (!StringUtils.isEmpty(name)) {
+            if (!name.endsWith(".txt")) {
+                name = name + ".txt";
+            }
+            return new File(folderLookupService.getUserFolder(game), name);
+        }
+        return null;
     }
-    return iniFile;
-  }
+
+    @Nullable
+    public File getHighscoreIniFile(Game game) {
+        File iniFile = null;
+        if (!StringUtils.isEmpty(game.getRom())) {
+            String iniScoreName = FilenameUtils.getBaseName(game.getRom()) + "_glf.ini";
+            iniFile = new File(game.getGameFile().getParentFile(), iniScoreName);
+        }
+
+        if (iniFile == null || !iniFile.exists()) {
+            if (!StringUtils.isEmpty(game.getTableName())) {
+                String iniScoreName = FilenameUtils.getBaseName(game.getTableName()) + "_glf.ini";
+                iniFile = new File(game.getGameFile().getParentFile(), iniScoreName);
+            }
+        }
+        return iniFile;
+    }
 
   @Nullable
   public File getNvRamFile(@NonNull Game game) {
@@ -109,186 +103,186 @@ public class HighscoreResolver implements InitializingBean {
   }
 
 
-  //--------------------------------------------
+    //--------------------------------------------
 
-  public boolean deleteTextScore(Game game, long score) {
-    File hsFile = folderLookupService.getHighscoreTextFile(game);
-    if ((hsFile == null || !hsFile.exists())) {
-      hsFile = getAlternateHighscoreTextFile(game, game.getTableName());
-    }
-
-    if ((hsFile == null || !hsFile.exists())) {
-      if (!StringUtils.isEmpty(game.getRom())) {
-        ScoringDBMapping highscoreMapping = systemService.getScoringDatabase().getHighscoreMapping(game.getRom());
-        if (highscoreMapping != null && !StringUtils.isEmpty(highscoreMapping.getTextFile())) {
-          hsFile = getAlternateHighscoreTextFile(game, highscoreMapping.getTextFile());
+    public boolean deleteTextScore(Game game, long score) {
+        File hsFile = folderLookupService.getHighscoreTextFile(game);
+        if ((hsFile == null || !hsFile.exists())) {
+            hsFile = getAlternateHighscoreTextFile(game, game.getTableName());
         }
-      }
+
+        if ((hsFile == null || !hsFile.exists())) {
+            if (!StringUtils.isEmpty(game.getRom())) {
+                ScoringDBMapping highscoreMapping = systemService.getScoringDatabase().getHighscoreMapping(game.getRom());
+                if (highscoreMapping != null && !StringUtils.isEmpty(highscoreMapping.getTextFile())) {
+                    hsFile = getAlternateHighscoreTextFile(game, highscoreMapping.getTextFile());
+                }
+            }
+        }
+
+        if (hsFile != null && hsFile.exists()) {
+            return textHighscoreAdapters.resetHighscores(systemService.getScoringDatabase(), hsFile, score);
+        }
+        return false;
     }
 
-    if (hsFile != null && hsFile.exists()) {
-      return textHighscoreAdapters.resetHighscores(systemService.getScoringDatabase(), hsFile, score);
+    public boolean deleteIniScore(Game game, long score) {
+        File iniFile = getHighscoreIniFile(game);
+        if (iniFile != null && iniFile.exists()) {
+            return initHighscoreAdapters.resetHighscores(systemService.getScoringDatabase(), iniFile, score);
+        }
+        return false;
     }
-    return false;
-  }
 
-  public boolean deleteIniScore(Game game, long score) {
-    File iniFile = getHighscoreIniFile(game);
-    if (iniFile != null && iniFile.exists()) {
-      return initHighscoreAdapters.resetHighscores(systemService.getScoringDatabase(), iniFile, score);
-    }
-    return false;
-  }
+    /**
+     * Return a highscore object for the given table or null if no highscore has been achieved or created yet.
+     */
+    @NonNull
+    public synchronized HighscoreMetadata readHighscore(Game game) {
+        HighscoreMetadata metadata = new HighscoreMetadata();
+        metadata.setScanned(OffsetDateTime.now());
+        try {
+            String romName = game.getRom();
+            if (StringUtils.isEmpty(romName)) {
+                romName = game.getTableName();
+            }
 
-  /**
-   * Return a highscore object for the given table or null if no highscore has been achieved or created yet.
-   */
-  @NonNull
-  public synchronized HighscoreMetadata readHighscore(Game game) {
-    HighscoreMetadata metadata = new HighscoreMetadata();
-    metadata.setScanned(new Date());
-    try {
-      String romName = game.getRom();
-      if (StringUtils.isEmpty(romName)) {
-        romName = game.getTableName();
-      }
+            if (StringUtils.isEmpty(romName)) {
+                String msg = "No rom or table name found.";
+                SLOG.info("Game " + game.getGameDisplayName() + " is not a VPX game.");
+                metadata.setStatus(msg);
+                return metadata;
+            }
 
-      if (StringUtils.isEmpty(romName)) {
-        String msg = "No rom or table name found.";
-        SLOG.info("Game " + game.getGameDisplayName() + " is not a VPX game.");
-        metadata.setStatus(msg);
+            metadata.setRom(romName);
+
+            //always check NV ram first, the table might store additional data into the VPReg.stg too
+            String rawScore = readNvHighscore(game, metadata);
+            if (rawScore == null) {
+                rawScore = readVPRegHighscore(game, metadata);
+            }
+            if (rawScore == null) {
+                rawScore = readIniHighscore(game, metadata);
+            }
+            if (rawScore == null) {
+                rawScore = readHSFileHighscore(game, metadata);
+            }
+
+            if (rawScore == null) {
+                if (metadata.getStatus() == null) {
+                    metadata.setStatus(NO_SCORE_FOUND_MSG);
+                }
+            }
+            else {
+                LOG.debug("Successfully read highscore for {}", game.getGameDisplayName());
+                metadata.setRaw(rawScore);
+            }
+
+        }
+        catch (Exception e) {
+            LOG.error("Failed to find highscore for table {}: {}", game.getGameFileName(), e.getMessage(), e);
+        }
         return metadata;
-      }
+    }
 
-      metadata.setRom(romName);
-
-      //always check NV ram first, the table might store additional data into the VPReg.stg too
-      String rawScore = readNvHighscore(game, metadata);
-      if (rawScore == null) {
-        rawScore = readVPRegHighscore(game, metadata);
-      }
-      if (rawScore == null) {
-        rawScore = readIniHighscore(game, metadata);
-      }
-      if (rawScore == null) {
-        rawScore = readHSFileHighscore(game, metadata);
-      }
-
-      if (rawScore == null) {
-        if (metadata.getStatus() == null) {
-          metadata.setStatus(NO_SCORE_FOUND_MSG);
+    private String readHSFileHighscore(@NonNull Game game, @NonNull HighscoreMetadata metadata) throws IOException {
+        File hsFile = folderLookupService.getHighscoreTextFile(game);
+        if ((hsFile == null || !hsFile.exists())) {
+            hsFile = getAlternateHighscoreTextFile(game, game.getTableName());
         }
-      }
-      else {
-        LOG.debug("Successfully read highscore for {}", game.getGameDisplayName());
-        metadata.setRaw(rawScore);
-      }
 
-    }
-    catch (Exception e) {
-      LOG.error("Failed to find highscore for table {}: {}", game.getGameFileName(), e.getMessage(), e);
-    }
-    return metadata;
-  }
-
-  private String readHSFileHighscore(@NonNull Game game, @NonNull HighscoreMetadata metadata) throws IOException {
-    File hsFile = folderLookupService.getHighscoreTextFile(game);
-    if ((hsFile == null || !hsFile.exists())) {
-      hsFile = getAlternateHighscoreTextFile(game, game.getTableName());
-    }
-
-    if ((hsFile == null || !hsFile.exists())) {
-      if (!StringUtils.isEmpty(game.getRom())) {
-        ScoringDBMapping highscoreMapping = systemService.getScoringDatabase().getHighscoreMapping(game.getRom());
-        if (highscoreMapping != null && !StringUtils.isEmpty(highscoreMapping.getTextFile())) {
-          hsFile = getAlternateHighscoreTextFile(game, highscoreMapping.getTextFile());
+        if ((hsFile == null || !hsFile.exists())) {
+            if (!StringUtils.isEmpty(game.getRom())) {
+                ScoringDBMapping highscoreMapping = systemService.getScoringDatabase().getHighscoreMapping(game.getRom());
+                if (highscoreMapping != null && !StringUtils.isEmpty(highscoreMapping.getTextFile())) {
+                    hsFile = getAlternateHighscoreTextFile(game, highscoreMapping.getTextFile());
+                }
+            }
         }
-      }
-    }
 
-    if (hsFile != null && hsFile.exists()) {
-      metadata.setType(HighscoreType.EM);
-      metadata.setFilename(hsFile.getCanonicalPath());
-      metadata.setModified(new Date(hsFile.lastModified()));
-      metadata.setStatus(null);
+        if (hsFile != null && hsFile.exists()) {
+            metadata.setType(HighscoreType.EM);
+            metadata.setFilename(hsFile.getCanonicalPath());
+            metadata.setModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(hsFile.lastModified()), ZoneId.systemDefault()));
+            metadata.setStatus(null);
 
-      return textHighscoreAdapters.convertTextFileTextToMachineReadable(metadata, systemService.getScoringDatabase(), hsFile);
-    }
-    return null;
-  }
-
-  private String readIniHighscore(@NonNull Game game, @NonNull HighscoreMetadata metadata) throws IOException {
-    File iniFile = getHighscoreIniFile(game);
-    if (iniFile != null && iniFile.exists()) {
-      metadata.setType(HighscoreType.Ini);
-      metadata.setFilename(iniFile.getCanonicalPath());
-      metadata.setModified(new Date(iniFile.lastModified()));
-      metadata.setStatus(null);
-
-      return initHighscoreAdapters.convertTextFileTextToMachineReadable(metadata, systemService.getScoringDatabase(), iniFile);
-    }
-    return null;
-  }
-
-  /**
-   * We use the manual set rom name to find the highscore in the "/User/VPReg.stg" file.
-   */
-  private String readVPRegHighscore(@NonNull Game game, HighscoreMetadata metadata) throws IOException {
-    if (game.getRom() != null && systemService.getScoringDatabase().getIgnoredVPRegEntries().contains(game.getRom())) {
-      SLOG.info("\"" + game.getGameDisplayName() + "\" was marked as to be ignored for VPReg.stg highscores.");
-      return null;
-    }
-
-    if (game.getTableName() != null && systemService.getScoringDatabase().getIgnoredVPRegEntries().contains(game.getTableName())) {
-      SLOG.info("\"" + game.getGameDisplayName() + "\" was marked as to be ignored for VPReg.stg highscores.");
-      return null;
-    }
-
-    VPRegFile vpRegFile = vpRegService.getVPRegFile(game);
-    if (vpRegFile != null && vpRegFile.isValid()) {
-      metadata.setType(HighscoreType.VPReg);
-      metadata.setFilename(vpRegFile.getCanonicalPath());
-      metadata.setModified(vpRegFile.getLastModified());
-
-      ScoreParsingSummary summary = vpRegFile.getScoreParsingSummary();
-      if (summary != null) {
-        metadata.setStatus(null);
-        metadata.setRaw(summary.toRaw());
-      }
-      if (StringUtils.isEmpty(metadata.getRaw())) {
-        metadata.setStatus("Found VPReg entry, but no highscore entries in it.");
-        SLOG.info("Found VPReg entry, but no highscore entries in it.");
-      }
-      return metadata.getRaw();
-    }
-    LOG.debug("No VPReg highscore file found for '{}'", game.getRom());
-    return null;
-  }
-
-  /**
-   * Executes a single PINemHi command for the given game.
-   *
-   * @param game     the game to parse the highscore for
-   * @param metadata the metadata that are collected while parsing
-   * @return the Highscore object or null if no highscore could be parsed.
-   */
-  @Nullable
-  private String readNvHighscore(@NonNull Game game, HighscoreMetadata metadata) {
-    try {
-      File nvRam = getNvRamFile(game);
-      if (nvRam == null || !nvRam.exists()) {
+            return textHighscoreAdapters.convertTextFileTextToMachineReadable(metadata, systemService.getScoringDatabase(), hsFile);
+        }
         return null;
-      }
+    }
 
-      String nvRamFileName = nvRam.getCanonicalFile().getName().toLowerCase();
-      String nvRamName = FilenameUtils.getBaseName(nvRamFileName).toLowerCase();
-      if (nvRamFileName.contains(" ")) {
-        LOG.info("Stripping NV offset from nvram file \"{}\" to check if supported.", nvRamFileName);
-        nvRamName = nvRamFileName.substring(0, nvRamFileName.indexOf(" "));
-      }
+    private String readIniHighscore(@NonNull Game game, @NonNull HighscoreMetadata metadata) throws IOException {
+        File iniFile = getHighscoreIniFile(game);
+        if (iniFile != null && iniFile.exists()) {
+            metadata.setType(HighscoreType.Ini);
+            metadata.setFilename(iniFile.getCanonicalPath());
+            metadata.setModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(iniFile.lastModified()), ZoneId.systemDefault()));
+            metadata.setStatus(null);
 
-      metadata.setFilename(nvRam.getCanonicalPath());
-      metadata.setModified(new Date(nvRam.lastModified()));
+            return initHighscoreAdapters.convertTextFileTextToMachineReadable(metadata, systemService.getScoringDatabase(), iniFile);
+        }
+        return null;
+    }
+
+    /**
+     * We use the manual set rom name to find the highscore in the "/User/VPReg.stg" file.
+     */
+    private String readVPRegHighscore(@NonNull Game game, HighscoreMetadata metadata) throws IOException {
+        if (game.getRom() != null && systemService.getScoringDatabase().getIgnoredVPRegEntries().contains(game.getRom())) {
+            SLOG.info("\"" + game.getGameDisplayName() + "\" was marked as to be ignored for VPReg.stg highscores.");
+            return null;
+        }
+
+        if (game.getTableName() != null && systemService.getScoringDatabase().getIgnoredVPRegEntries().contains(game.getTableName())) {
+            SLOG.info("\"" + game.getGameDisplayName() + "\" was marked as to be ignored for VPReg.stg highscores.");
+            return null;
+        }
+
+        VPRegFile vpRegFile = vpRegService.getVPRegFile(game);
+        if (vpRegFile != null && vpRegFile.isValid()) {
+            metadata.setType(HighscoreType.VPReg);
+            metadata.setFilename(vpRegFile.getCanonicalPath());
+            metadata.setModified(vpRegFile.getLastModified());
+
+            ScoreParsingSummary summary = vpRegFile.getScoreParsingSummary();
+            if (summary != null) {
+                metadata.setStatus(null);
+                metadata.setRaw(summary.toRaw());
+            }
+            if (StringUtils.isEmpty(metadata.getRaw())) {
+                metadata.setStatus("Found VPReg entry, but no highscore entries in it.");
+                SLOG.info("Found VPReg entry, but no highscore entries in it.");
+            }
+            return metadata.getRaw();
+        }
+        LOG.debug("No VPReg highscore file found for '{}'", game.getRom());
+        return null;
+    }
+
+    /**
+     * Executes a single PINemHi command for the given game.
+     *
+     * @param game     the game to parse the highscore for
+     * @param metadata the metadata that are collected while parsing
+     * @return the Highscore object or null if no highscore could be parsed.
+     */
+    @Nullable
+    private String readNvHighscore(@NonNull Game game, HighscoreMetadata metadata) {
+        try {
+            File nvRam = getNvRamFile(game);
+            if (nvRam == null || !nvRam.exists()) {
+                return null;
+            }
+
+            String nvRamFileName = nvRam.getCanonicalFile().getName().toLowerCase();
+            String nvRamName = FilenameUtils.getBaseName(nvRamFileName).toLowerCase();
+            if (nvRamFileName.contains(" ")) {
+                LOG.info("Stripping NV offset from nvram file \"{}\" to check if supported.", nvRamFileName);
+                nvRamName = nvRamFileName.substring(0, nvRamFileName.indexOf(" "));
+            }
+
+            metadata.setFilename(nvRam.getCanonicalPath());
+            metadata.setModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(nvRam.lastModified()), ZoneId.systemDefault()));
 
       if (!NvRamOutputToScoreTextConverter.isSupportedRom(nvRamName)) {
         String msg = "The NV ram file \"" + nvRamName + ".nv\" is currently not supported.";
@@ -298,19 +292,19 @@ public class HighscoreResolver implements InitializingBean {
       }
       metadata.setType(HighscoreType.NVRam);
 
-      return NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(nvRam);
+            return NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(nvRam);
+        }
+        catch (Exception e) {
+            String msg = "Failed to parse highscore: " + e.getMessage();
+            SLOG.error(msg);
+            metadata.setStatus(msg);
+            LOG.error(msg, e);
+        }
+        return null;
     }
-    catch (Exception e) {
-      String msg = "Failed to parse highscore: " + e.getMessage();
-      SLOG.error(msg);
-      metadata.setStatus(msg);
-      LOG.error(msg, e);
-    }
-    return null;
-  }
 
-  @Override
-  public void afterPropertiesSet() throws Exception {
-    //nothing
-  }
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        //nothing
+    }
 }

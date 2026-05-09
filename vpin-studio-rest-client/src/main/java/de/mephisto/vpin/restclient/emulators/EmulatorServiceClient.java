@@ -5,7 +5,7 @@ import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,7 +84,7 @@ public class EmulatorServiceClient extends VPinStudioClientService {
         .filter(e -> e.isEnabled())
         .filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId())))
         .collect(Collectors.toList());
-    List<GameEmulatorRepresentation> vpxEmulators = filtered.stream().filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
+    List<GameEmulatorRepresentation> vpxEmulators = filtered.stream().filter(e -> e.isVpxEmulator()).toList();
 
     Collections.sort(filtered, new Comparator<GameEmulatorRepresentation>() {
       @Override
@@ -97,7 +97,7 @@ public class EmulatorServiceClient extends VPinStudioClientService {
     });
 
     if (vpxEmulators.size() > 1) {
-      filtered.add(0, createAllVpx());
+      filtered.addFirst( createAllVpx());
     }
     return filtered;
   }
@@ -133,7 +133,7 @@ public class EmulatorServiceClient extends VPinStudioClientService {
   public List<GameEmulatorRepresentation> getFilteredEmulatorsWithEmptyOption(UISettings uiSettings) {
     List<GameEmulatorRepresentation> emulators = getGameEmulatorsUncached();
     List<GameEmulatorRepresentation> filtered = emulators.stream().filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId()))).collect(Collectors.toList());
-    filtered.add(0, null);
+    filtered.addFirst( null);
     return filtered;
   }
 

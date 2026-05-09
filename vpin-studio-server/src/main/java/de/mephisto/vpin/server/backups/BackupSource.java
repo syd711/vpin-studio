@@ -2,8 +2,9 @@ package de.mephisto.vpin.server.backups;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import javax.persistence.*;
-import java.util.Date;
+import jakarta.persistence.*;
+import java.time.OffsetDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "BackupSources")
@@ -11,8 +12,7 @@ import java.util.Date;
 public class BackupSource {
 
   @Column(nullable = false)
-  @Temporal(TemporalType.TIMESTAMP)
-  private Date createdAt;
+  private OffsetDateTime createdAt;
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -66,11 +66,11 @@ public class BackupSource {
     this.type = type;
   }
 
-  public Date getCreatedAt() {
+  public OffsetDateTime getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(Date createdAt) {
+  public void setCreatedAt(OffsetDateTime createdAt) {
     this.createdAt = createdAt;
   }
 
@@ -117,19 +117,14 @@ public class BackupSource {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof BackupSource)) return false;
-
-    BackupSource backupSource = (BackupSource) o;
-
-    if (!id.equals(backupSource.id)) return false;
-    return location.equals(backupSource.location);
+    if (o == null || getClass() != o.getClass()) return false;
+    BackupSource that = (BackupSource) o;
+    return Objects.equals(id, that.id) && Objects.equals(location, that.location);
   }
 
   @Override
   public int hashCode() {
-    int result = id.hashCode();
-    result = 31 * result + location.hashCode();
-    return result;
+    return Objects.hash(id, location);
   }
 
   @Override

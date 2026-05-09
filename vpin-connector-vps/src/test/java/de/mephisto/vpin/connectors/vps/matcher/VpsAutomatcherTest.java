@@ -1,17 +1,15 @@
 package de.mephisto.vpin.connectors.vps.matcher;
 
+import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import org.apache.commons.lang3.StringUtils;
-
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import de.mephisto.vpin.connectors.vps.VPS;
-import de.mephisto.vpin.connectors.vps.model.VpsTable;
-
 import java.lang.invoke.MethodHandles;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class VpsAutomatcherTest {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());

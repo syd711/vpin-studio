@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import javax.net.ssl.*;
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -171,7 +172,7 @@ public class BackupSourceAdapterHttpServer implements BackupSourceAdapter {
       String login = getBackupSource().getLogin();
       String password = PasswordUtil.decrypt(getBackupSource().getPassword());
 
-      URL url = new URL(location);
+      URL url = URI.create(location).toURL();
       conn = (HttpURLConnection) url.openConnection();
 
       if (!StringUtils.isEmpty(login) && !StringUtils.isEmpty(password)) {

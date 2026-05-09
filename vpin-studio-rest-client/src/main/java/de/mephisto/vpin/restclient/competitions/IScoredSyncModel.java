@@ -3,8 +3,6 @@ package de.mephisto.vpin.restclient.competitions;
 import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 
-import java.util.List;
-
 public class IScoredSyncModel {
   private boolean invalidate;
   private boolean manualSubscription = false;

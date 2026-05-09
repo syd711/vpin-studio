@@ -34,5 +34,13 @@
             <Insets bottom="43.0" left="17.0" />
          </StackPane.margin>
       </Label>
+      <Label fx:id="statusLabel" text="" textFill="WHITE" StackPane.alignment="BOTTOM_RIGHT">
+         <font>
+            <Font size="14.0" />
+         </font>
+         <StackPane.margin>
+            <Insets bottom="17.0" right="17.0" />
+         </StackPane.margin>
+      </Label>
    </children>
 </StackPane>

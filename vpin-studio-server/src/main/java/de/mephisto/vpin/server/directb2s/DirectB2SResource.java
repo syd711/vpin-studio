@@ -23,6 +23,7 @@ import de.mephisto.vpin.server.system.DefaultPictureService;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,13 +40,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import javax.xml.bind.DatatypeConverter;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
@@ -84,7 +84,7 @@ public class DirectB2SResource {
 
   @PostMapping("/gameId")
   public Integer getGameId(@JsonArg("emulatorId") int emulatorId, @JsonArg("fileName") String fileName) {
-    String basefileName = StringUtils.removeEndIgnoreCase(fileName, ".directb2s");
+    String basefileName = Strings.CI.removeEnd(fileName, ".directb2s");
     Game game = frontedService.getGameByBaseFilename(emulatorId, basefileName);
     return game != null ? game.getId() : -1;
   }
@@ -187,11 +187,19 @@ public class DirectB2SResource {
   //-------
   // download utilities
 
-  private ResponseEntity<Resource> download(String base64, String filename) {
-    byte[] image = base64 != null ? DatatypeConverter.parseBase64Binary(base64) : null;
-    //TODO check impact if we turn to false
-    return download(image, filename, true);
-  }
+    private ResponseEntity<Resource> download(String base64, String filename) {
+        byte[] image = null;
+        if (base64 != null) {
+            try {
+                image = Base64.getMimeDecoder().decode(base64);
+            } catch (IllegalArgumentException e) {
+                LOG.error("Failed to decode base64 string for file '{}': {}", filename, e.getMessage());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        //TODO check impact if we turn to false
+        return download(image, filename, true);
+    }
 
   private ResponseEntity<Resource> download(byte[] image, String name, boolean forceDownload) {
     if (image == null) {
@@ -381,7 +389,7 @@ public class DirectB2SResource {
     }
 
     try {
-      String base64 = DatatypeConverter.printBase64Binary(file.getBytes());
+      String base64 = Base64.getEncoder().encodeToString(file.getBytes());
       return updateDmdImage(emulatorId, fileName, file.getOriginalFilename(), base64);
     }
     catch (IOException ioe) {

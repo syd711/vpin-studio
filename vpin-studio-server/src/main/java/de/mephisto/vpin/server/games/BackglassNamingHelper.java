@@ -3,14 +3,13 @@ package de.mephisto.vpin.server.games;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.server.doflinx.B2SMapping;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.Collections;
@@ -87,7 +86,7 @@ public class BackglassNamingHelper {
       LOG.info("Loaded .directb2s mapping {}", s);
       return list;
     }
-    catch (IOException e) {
+    catch (Exception e) {
       LOG.error("Failed to load b2s mapping: {}", e.getMessage(), e);
     }
     return Collections.emptyList();

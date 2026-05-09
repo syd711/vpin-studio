@@ -5,8 +5,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
@@ -26,7 +24,7 @@ public class VersionUtilTests {
 
   @Test
   public void testProcesses() {
-    List<ProcessHandle> allProcesses = ProcessHandle.allProcesses().collect(Collectors.toList());
+    List<ProcessHandle> allProcesses = ProcessHandle.allProcesses().toList();
     for (ProcessHandle p : allProcesses) {
       if (p.info().command().isPresent()) {
         String cmdName = p.info().command().get();

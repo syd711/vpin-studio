@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.lang.invoke.MethodHandles;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,7 @@ public class GithubFileDownloader {
 
     List<File> extracted = new ArrayList<>();
 
-    URL url = new URL(zipUrl);
+    URL url = URI.create(zipUrl).toURL();
     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
     conn.setRequestProperty("User-Agent", "VPinStudio");
     conn.setConnectTimeout(30_000);

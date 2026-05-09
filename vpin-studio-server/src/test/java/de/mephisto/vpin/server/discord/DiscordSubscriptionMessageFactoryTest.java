@@ -11,9 +11,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -60,7 +60,7 @@ public class DiscordSubscriptionMessageFactoryTest {
     Competition competition = buildCompetition("Sub Cup", "sub-uuid-003");
     competition.setScoreLimit(3);
     Game game = mock(Game.class);
-    Score newScore = new Score(new Date(), 1, "AAA", null, "raw", 1000000L, 1);
+    Score newScore = new Score(OffsetDateTime.now(), 1, "AAA", null, "raw", 1000000L, 1);
 
     String msg = factory.createFirstSubscriptionHighscoreMessage(game, competition, newScore, 3);
 
@@ -77,8 +77,8 @@ public class DiscordSubscriptionMessageFactoryTest {
     competition.setDiscordServerId(12345L);
     competition.setScoreLimit(2);
     Game game = mock(Game.class);
-    Score oldScore = new Score(new Date(), 1, "BBB", null, "raw", 500000L, 2);
-    Score newScore = new Score(new Date(), 1, "AAA", null, "raw", 1000000L, 1);
+    Score oldScore = new Score(OffsetDateTime.now(), 1, "BBB", null, "raw", 500000L, 2);
+    Score newScore = new Score(OffsetDateTime.now(), 1, "AAA", null, "raw", 1000000L, 1);
     List<Score> updatedScores = Arrays.asList(newScore, oldScore);
 
     String msg = factory.createSubscriptionHighscoreCreatedMessage(game, competition, oldScore, newScore, updatedScores);
@@ -94,8 +94,8 @@ public class DiscordSubscriptionMessageFactoryTest {
     competition.setDiscordServerId(0L);
     competition.setScoreLimit(2);
     Game game = mock(Game.class);
-    Score oldScore = new Score(new Date(), 1, "BBB", null, "raw", 500000L, 2);
-    Score newScore = new Score(new Date(), 1, "AAA", null, "raw", 1000000L, 1);
+    Score oldScore = new Score(OffsetDateTime.now(), 1, "BBB", null, "raw", 500000L, 2);
+    Score newScore = new Score(OffsetDateTime.now(), 1, "AAA", null, "raw", 1000000L, 1);
     List<Score> updatedScores = Collections.singletonList(newScore);
 
     String msg = factory.createSubscriptionHighscoreCreatedMessage(game, competition, oldScore, newScore, updatedScores);
@@ -109,8 +109,8 @@ public class DiscordSubscriptionMessageFactoryTest {
     competition.setDiscordServerId(0L);
     competition.setScoreLimit(1);
     Game game = mock(Game.class);
-    Score oldScore = new Score(new Date(), 1, "AAA", null, "raw", 500000L, 1);
-    Score newScore = new Score(new Date(), 1, "AAA", null, "raw", 1000000L, 1);
+    Score oldScore = new Score(OffsetDateTime.now(), 1, "AAA", null, "raw", 500000L, 1);
+    Score newScore = new Score(OffsetDateTime.now(), 1, "AAA", null, "raw", 1000000L, 1);
     List<Score> updatedScores = Collections.singletonList(newScore);
 
     String msg = factory.createSubscriptionHighscoreCreatedMessage(game, competition, oldScore, newScore, updatedScores);

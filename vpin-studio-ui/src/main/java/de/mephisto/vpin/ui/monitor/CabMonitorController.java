@@ -4,10 +4,10 @@ import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.monitor.MonitoringMode;
 import de.mephisto.vpin.restclient.monitor.MonitoringSettings;
-import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.ToolbarController;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.stage;
 
 public class CabMonitorController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(CabMonitorController.class);
@@ -84,7 +83,7 @@ public class CabMonitorController implements Initializable, DialogController {
       this.folder = targetFolder;
       ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new ScreenshotsDownloadProgressModel("Download Screenshots", targetFolder));
       if (!resultModel.getResults().isEmpty()) {
-        File target = (File) resultModel.getResults().get(0);
+        File target = (File) resultModel.getResults().getFirst();
         WidgetFactory.showInformation(stage, "Screenshots Generated", "Downloaded \"" + target.getAbsolutePath() + "\".");
       }
     }

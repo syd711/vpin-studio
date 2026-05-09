@@ -1,7 +1,7 @@
 package de.mephisto.vpin.restclient.frontend;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,15 +17,15 @@ public class TableDetails {
   private String gameDisplayName;
   private String gameType;
   private String gameVersion;
-  private Date dateAdded;
-  private Date dateModified;
+  private OffsetDateTime dateAdded;
+  private OffsetDateTime dateModified;
   private String gameTheme;
   private String notes;
   private Integer gameYear;
   private String romName;
   private String manufacturer;
   private Integer numberOfPlayers;
-  private Date lastPlayed;
+  private OffsetDateTime lastPlayed;
   private Integer numberPlays;
   private String tags;
   private String category;
@@ -214,11 +214,11 @@ public class TableDetails {
     this.emulatorId = emulatorId;
   }
 
-  public Date getLastPlayed() {
+  public OffsetDateTime getLastPlayed() {
     return lastPlayed;
   }
 
-  public void setLastPlayed(Date lastPlayed) {
+  public void setLastPlayed(OffsetDateTime lastPlayed) {
     this.lastPlayed = lastPlayed;
   }
 
@@ -286,19 +286,19 @@ public class TableDetails {
     this.gameRating = gameRating;
   }
 
-  public Date getDateAdded() {
+  public OffsetDateTime getDateAdded() {
     return dateAdded;
   }
 
-  public void setDateAdded(Date dateAdded) {
+  public void setDateAdded(OffsetDateTime dateAdded) {
     this.dateAdded = dateAdded;
   }
 
-  public Date getDateModified() {
+  public OffsetDateTime getDateModified() {
     return dateModified;
   }
 
-  public void setDateModified(Date dateModified) {
+  public void setDateModified(OffsetDateTime dateModified) {
     this.dateModified = dateModified;
   }
 

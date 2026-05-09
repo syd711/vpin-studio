@@ -2,23 +2,23 @@ package de.mephisto.vpin.server.competitions;
 
 import de.mephisto.vpin.server.highscores.Score;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 public class ScoreSummary {
   private String raw;
-  private Date createdAt;
+  private OffsetDateTime createdAt;
   private List<Score> scores = new ArrayList<>();
 
   public ScoreSummary() {
     this.scores = new ArrayList<>();
     this.raw = null;
-    this.createdAt = new Date();
+    this.createdAt = OffsetDateTime.now();
   }
 
-  public ScoreSummary(List<Score> scores, Date createdAt, String raw) {
+  public ScoreSummary(List<Score> scores, OffsetDateTime createdAt, String raw) {
     this.scores = scores;
     this.raw = raw;
     this.createdAt = createdAt;
@@ -32,11 +32,11 @@ public class ScoreSummary {
     this.raw = raw;
   }
 
-  public Date getCreatedAt() {
+  public OffsetDateTime getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(Date createdAt) {
+  public void setCreatedAt(OffsetDateTime createdAt) {
     this.createdAt = createdAt;
   }
 

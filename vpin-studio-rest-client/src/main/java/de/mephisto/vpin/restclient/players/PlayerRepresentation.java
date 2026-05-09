@@ -2,15 +2,15 @@ package de.mephisto.vpin.restclient.players;
 
 import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.restclient.assets.AssetRepresentation;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 
-import java.util.Date;
+import java.time.OffsetDateTime;
 
 public class PlayerRepresentation {
 
-  private Date createdAt;
+  private OffsetDateTime createdAt;
 
-  private Date updatedAt;
+  private OffsetDateTime updatedAt;
 
   private long id;
 
@@ -92,19 +92,19 @@ public class PlayerRepresentation {
     this.avatarUrl = avatarUrl;
   }
 
-  public Date getCreatedAt() {
+  public OffsetDateTime getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(Date createdAt) {
+  public void setCreatedAt(OffsetDateTime createdAt) {
     this.createdAt = createdAt;
   }
 
-  public Date getUpdatedAt() {
+  public OffsetDateTime getUpdatedAt() {
     return updatedAt;
   }
 
-  public void setUpdatedAt(Date updatedAt) {
+  public void setUpdatedAt(OffsetDateTime updatedAt) {
     this.updatedAt = updatedAt;
   }
 

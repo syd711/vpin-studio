@@ -13,6 +13,9 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.*;
 
@@ -51,7 +54,7 @@ public class BackupSourceAdapterFolder implements BackupSourceAdapter {
             TableDetails manifest = VpaArchiveUtil.readTableDetails(archiveFile);
             if(manifest != null) {
               BackupPackageInfo packageInfo = VpaArchiveUtil.readPackageInfo(archiveFile);
-              BackupDescriptor descriptor = new BackupDescriptor(source, manifest, packageInfo, new Date(archiveFile.lastModified()), archiveFile.getName(), archiveFile.getAbsolutePath(), archiveFile.length());
+              BackupDescriptor descriptor = new BackupDescriptor(source, manifest, packageInfo, OffsetDateTime.ofInstant(Instant.ofEpochMilli(archiveFile.lastModified()), ZoneId.systemDefault()), archiveFile.getName(), archiveFile.getAbsolutePath(), archiveFile.length());
               cache.add(descriptor);
             }
           }

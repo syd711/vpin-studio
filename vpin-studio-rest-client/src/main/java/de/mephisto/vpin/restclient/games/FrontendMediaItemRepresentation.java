@@ -1,6 +1,6 @@
 package de.mephisto.vpin.restclient.games;
 
-import java.util.Date;
+import java.time.OffsetDateTime;
 
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 
@@ -9,7 +9,7 @@ public class FrontendMediaItemRepresentation {
   private String uri;
   private VPinScreen screen;
   private String name;
-  private Date modificationDate;
+  private OffsetDateTime modificationDate;
   private long size;
 
   public long getSize() {
@@ -20,11 +20,11 @@ public class FrontendMediaItemRepresentation {
     this.size = size;
   }
 
-  public Date getModificationDate() {
+  public OffsetDateTime getModificationDate() {
     return modificationDate;
   }
 
-  public void setModificationDate(Date modificationDate) {
+  public void setModificationDate(OffsetDateTime modificationDate) {
     this.modificationDate = modificationDate;
   }
 

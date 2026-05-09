@@ -157,7 +157,7 @@ public class BackupRepositoriesPreferencesController implements Initializable {
     editBtn.setDisable(true);
 
     List<AuthenticationProvider> providers = new ArrayList<>(Arrays.asList(AuthenticationProvider.VPF, AuthenticationProvider.VPU));
-    providers.add(0, null);
+    providers.addFirst( null);
     providerCombo.setItems(FXCollections.observableList(providers));
 
     AuthenticationSettings authenticationSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.AUTHENTICATION_SETTINGS, AuthenticationSettings.class);

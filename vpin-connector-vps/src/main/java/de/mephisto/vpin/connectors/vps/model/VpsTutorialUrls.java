@@ -1,8 +1,11 @@
 package de.mephisto.vpin.connectors.vps.model;
 
-import java.text.DateFormat;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -61,8 +64,11 @@ public class VpsTutorialUrls extends VpsAuthoredUrls {
       builder.append("\n");
     }
 
-    builder.append("- Created At: ");
-    builder.append(DateFormat.getDateTimeInstance().format(new Date(getCreatedAt())));
+    if (getCreatedAt() != null) {
+      builder.append("- Created At: ");
+      OffsetDateTime dateTime = OffsetDateTime.ofInstant(Instant.ofEpochMilli(getCreatedAt()), ZoneId.systemDefault());
+      builder.append(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(dateTime));
+    }
     return builder.toString();
   }
 

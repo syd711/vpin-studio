@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
@@ -51,7 +51,7 @@ public class VpsResource {
   }
 
   @GetMapping("/changeDate")
-  public Date getChangeDate() {
+  public OffsetDateTime getChangeDate() {
     return vpsService.getChangeDate();
   }
 

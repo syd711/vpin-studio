@@ -1,6 +1,6 @@
 package de.mephisto.vpin.connectors.assets;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 
 import java.io.OutputStream;
 import java.util.List;

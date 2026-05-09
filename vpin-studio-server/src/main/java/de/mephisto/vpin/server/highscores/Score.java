@@ -6,7 +6,7 @@ import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.server.players.Player;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Date;
+import java.time.OffsetDateTime;
 import java.util.Locale;
 
 public class Score {
@@ -17,12 +17,12 @@ public class Score {
   /** Should not be used anymore, contains the raw score before parsing - consider removing */
   private String rawScore;
   private int position;
-  private Date createdAt;
+  private OffsetDateTime createdAt;
   private boolean external;
   private String label;       // optional label for titled scores, high-scores, buy-in scores....
   private String suffix;      // optional suffix for non high scores: 100M, 100Gb, 100 combos, 100 martians,... Include initial space if this is a unit
 
-  public Score(Date createdAt, int gameId, String playerInitials, Player player, String rawScore, long score, int position) {
+  public Score(OffsetDateTime createdAt, int gameId, String playerInitials, Player player, String rawScore, long score, int position) {
     this.createdAt = createdAt;
     this.gameId = gameId;
     this.player = player;
@@ -43,11 +43,11 @@ public class Score {
     this.external = external;
   }
 
-  public Date getCreatedAt() {
+  public OffsetDateTime getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(Date createdAt) {
+  public void setCreatedAt(OffsetDateTime createdAt) {
     this.createdAt = createdAt;
   }
 

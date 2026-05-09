@@ -5,8 +5,8 @@ import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -26,7 +26,7 @@ public class GameEmulatorValidationTexts {
     if (states.isEmpty()) {
       return null;
     }
-    return getValidationResult(emulator, states.get(0));
+    return getValidationResult(emulator, states.getFirst());
   }
 
   @NonNull

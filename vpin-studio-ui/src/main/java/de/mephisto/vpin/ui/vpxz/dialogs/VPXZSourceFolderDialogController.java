@@ -1,9 +1,9 @@
 package de.mephisto.vpin.ui.vpxz.dialogs;
 
-import de.mephisto.vpin.restclient.vpxz.VPXZSourceType;
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.restclient.vpxz.VPXZSourceRepresentation;
 import de.mephisto.vpin.restclient.system.FolderRepresentation;
+import de.mephisto.vpin.restclient.vpxz.VPXZSourceRepresentation;
+import de.mephisto.vpin.restclient.vpxz.VPXZSourceType;
 import de.mephisto.vpin.ui.util.FolderChooserDialog;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

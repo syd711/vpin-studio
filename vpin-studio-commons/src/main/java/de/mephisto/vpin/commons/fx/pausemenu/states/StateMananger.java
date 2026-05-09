@@ -15,7 +15,11 @@ import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
+import java.net.URL;
 
 
 public class StateMananger implements GameControllerInputListener {
@@ -39,31 +43,44 @@ public class StateMananger implements GameControllerInputListener {
   }
 
   private StateMananger() {
+    navPlayer = createMediaPlayer("select.mp3");
+    enterPlayer = createMediaPlayer("enter.mp3");
+    backPlayer = createMediaPlayer("back.mp3");
+  }
+
+  private MediaPlayer createMediaPlayer(String name) {
     try {
-      Media media = new Media(PauseMenu.class.getResource("select.mp3").toExternalForm());
-      navPlayer = new MediaPlayer(media);
-      navPlayer.setOnEndOfMedia(() -> {
-        navPlayer.stop();
-        navPlayer.seek(Duration.ZERO);
-      });
+      URL resource = PauseMenu.class.getResource(name);
+      if (resource != null) {
+        String externalForm = resource.toExternalForm();
+        // Handle "nested" or "jar" protocols by extracting to temp file if necessary
+        if (externalForm.startsWith("nested") || externalForm.startsWith("jar")) {
+          File tempFile = File.createTempFile("vpin-studio-sound-", "-" + name);
+          tempFile.deleteOnExit();
+          try (InputStream in = resource.openStream();
+               FileOutputStream out = new FileOutputStream(tempFile)) {
+            byte[] buffer = new byte[1024];
+            int read;
+            while ((read = in.read(buffer)) != -1) {
+              out.write(buffer, 0, read);
+            }
+          }
+          externalForm = tempFile.toURI().toString();
+        }
 
-      media = new Media(PauseMenu.class.getResource("enter.mp3").toExternalForm());
-      enterPlayer = new MediaPlayer(media);
-      enterPlayer.setOnEndOfMedia(() -> {
-        enterPlayer.stop();
-        enterPlayer.seek(Duration.ZERO);
-      });
-
-      media = new Media(PauseMenu.class.getResource("back.mp3").toExternalForm());
-      backPlayer = new MediaPlayer(media);
-      backPlayer.setOnEndOfMedia(() -> {
-        backPlayer.stop();
-        backPlayer.seek(Duration.ZERO);
-      });
+        Media media = new Media(externalForm);
+        MediaPlayer mediaPlayer = new MediaPlayer(media);
+        mediaPlayer.setOnEndOfMedia(() -> {
+          mediaPlayer.stop();
+          mediaPlayer.seek(Duration.ZERO);
+        });
+        return mediaPlayer;
+      }
     }
     catch (Exception e) {
-      LOG.error("StateManager init failed: {}", e.getMessage(), e);
+      LOG.error("Failed to create media player for " + name + ": " + e.getMessage());
     }
+    return null;
   }
 
   public void init(MenuController controller) {
@@ -79,16 +96,22 @@ public class StateMananger implements GameControllerInputListener {
     if (button.equals(pauseMenuSettings.getLeftButton())) {
       ServerFX.forceShow(PauseMenu.getInstance().getStage());
       this.activeState = activeState.left();
-      navPlayer.play();
+      if (navPlayer != null) {
+        navPlayer.play();
+      }
     }
     else if (button.equals(pauseMenuSettings.getRightButton())) {
       ServerFX.forceShow(PauseMenu.getInstance().getStage());
       this.activeState = activeState.right();
-      navPlayer.play();
+      if (navPlayer != null) {
+        navPlayer.play();
+      }
     }
     else if (button.equals(pauseMenuSettings.getStartButton())) {
       ServerFX.forceShow(PauseMenu.getInstance().getStage());
-      enterPlayer.play();
+      if (enterPlayer != null) {
+        enterPlayer.play();
+      }
       this.activeState = activeState.enter();
       LOG.info("Entered {}", this.activeState);
     }

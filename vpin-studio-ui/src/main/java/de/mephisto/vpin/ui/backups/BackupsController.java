@@ -18,7 +18,7 @@ import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.SystemUtil;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -39,8 +39,8 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -147,7 +147,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
   public final void onFolder() {
     ObservableList<BackupModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
-      BackupDescriptorRepresentation descriptor = selectedItems.get(0).getBean();
+      BackupDescriptorRepresentation descriptor = selectedItems.getFirst().getBean();
       BackupSourceRepresentation source = sourceCombo.getValue();
 
       File file = new File(source.getLocation(), descriptor.getFilename());
@@ -252,7 +252,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
     if (!selectedItems.isEmpty()) {
       String title = "Delete the " + selectedItems.size() + " selected archives?";
       if (selectedItems.size() == 1) {
-        title = "Delete Archive \"" + selectedItems.get(0).getName() + "\"?";
+        title = "Delete Archive \"" + selectedItems.getFirst().getName() + "\"?";
       }
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title, null, null, "Delete");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
@@ -347,7 +347,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
       size.setStyle("-fx-font-size: 12px;");
       vBox.getChildren().add(size);
 
-      Label created = new Label(new SimpleDateFormat().format(value.getCreatedAt()));
+      Label created = new Label(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(value.getCreatedAt()));
       created.getStyleClass().add("default-text");
       created.setStyle("-fx-font-size: 12px;");
       vBox.getChildren().add(created);
@@ -515,7 +515,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
     }, this, true);
 
     BaseLoadingColumn.configureColumn(createdAtColumn, (value, model) -> {
-      return new Label(DateFormat.getInstance().format(value.getCreatedAt()));
+      return new Label(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(value.getCreatedAt()));
     }, this, true);
 
 

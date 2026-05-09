@@ -16,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.Date;
 
@@ -97,8 +98,8 @@ public class IScoredHighscoreChangeListenerTest {
         .thenReturn(settings);
 
     Game game = mock(Game.class);
-    Score newScore = new Score(new Date(), 1, "AAA", null, "raw", 1000000L, 1);
-    Score oldScore = new Score(new Date(), 1, "???", null, "raw", 0L, 2);
+    Score newScore = new Score(OffsetDateTime.now(), 1, "AAA", null, "raw", 1000000L, 1);
+    Score oldScore = new Score(OffsetDateTime.now(), 1, "???", null, "raw", 0L, 2);
     HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScore, newScore, "raw", 1, false, EventOrigin.USER_INITIATED);
 
     listener.highscoreChanged(event);
@@ -116,8 +117,8 @@ public class IScoredHighscoreChangeListenerTest {
 
     Game game = mock(Game.class);
     de.mephisto.vpin.server.players.Player player = mock(de.mephisto.vpin.server.players.Player.class);
-    Score newScore = new Score(new Date(), 1, "AAA", player, "raw", 1000000L, 1);
-    Score oldScore = new Score(new Date(), 1, "???", null, "raw", 0L, 2);
+    Score newScore = new Score(OffsetDateTime.now(), 1, "AAA", player, "raw", 1000000L, 1);
+    Score oldScore = new Score(OffsetDateTime.now(), 1, "???", null, "raw", 0L, 2);
     HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScore, newScore, "raw", 1, false, EventOrigin.USER_INITIATED);
 
     listener.highscoreChanged(event);
@@ -129,8 +130,8 @@ public class IScoredHighscoreChangeListenerTest {
 
   private HighscoreChangeEvent buildEvent(boolean initialScore) {
     Game game = mock(Game.class);
-    Score newScore = new Score(new Date(), 1, "AAA", null, "raw", 1000000L, 1);
-    Score oldScore = new Score(new Date(), 1, "???", null, "raw", 0L, 2);
+    Score newScore = new Score(OffsetDateTime.now(), 1, "AAA", null, "raw", 1000000L, 1);
+    Score oldScore = new Score(OffsetDateTime.now(), 1, "???", null, "raw", 0L, 2);
     return new HighscoreChangeEvent(game, oldScore, newScore, "raw", 1, initialScore, EventOrigin.USER_INITIATED);
   }
 }

@@ -5,12 +5,11 @@ import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.server.frontend.GameEntry;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.FastDateFormat;
+import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +18,11 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.nio.charset.Charset;
 import java.text.ParseException;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -27,8 +31,8 @@ import java.util.function.Consumer;
 public class PinballXStatisticsParser {
   private final static Logger LOG = LoggerFactory.getLogger(PinballXStatisticsParser.class);
 
-  private final FastDateFormat statisticsSdf = FastDateFormat.getInstance("dd/MM/yyyy HH:mm:ss");
-  private final FastDateFormat statisticsSdfAlt = FastDateFormat.getInstance("dd.MM.yyyy HH:mm:ss");
+  private final DateTimeFormatter statisticsFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+  private final DateTimeFormatter statisticsFormatterAlt = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
 
   private PinballXConnector connector;
 
@@ -87,10 +91,18 @@ public class PinballXStatisticsParser {
       e.setUniqueId(gameId);
 
       try {
-        e.setLastPlayed(statisticsSdf.parse(s.getString("lastplayed")));
+        Instant lastPlayed = LocalDateTime.parse(s.getString("lastplayed"), statisticsFormatter)
+            .atZone(ZoneId.systemDefault()).toInstant();
+        e.setLastPlayed(OffsetDateTime.ofInstant(lastPlayed, ZoneId.systemDefault()));
       }
-      catch (ParseException ex) {
-        e.setLastPlayed(statisticsSdfAlt.parse(s.getString("lastplayed")));
+      catch (Exception ex) {
+        try {
+          Instant lastPlayed = LocalDateTime.parse(s.getString("lastplayed"), statisticsFormatterAlt)
+              .atZone(ZoneId.systemDefault()).toInstant();
+          e.setLastPlayed(OffsetDateTime.ofInstant(lastPlayed, ZoneId.systemDefault()));
+        } catch (Exception ex2) {
+          LOG.error("Failed to parse last played date for table " + game.getGameName() + ": " + s.getString("lastplayed"));
+        }
       }
 
       if (s.containsKey("secondsplayed")) {
@@ -110,7 +122,7 @@ public class PinballXStatisticsParser {
     while ((p = sectionName.indexOf("__")) >= 0) {
       sectionName = sectionName.substring(0, p) + sectionName.substring(p + 1);
     }
-    sectionName = StringUtils.removeEnd(sectionName, "_");
+    sectionName = Strings.CI.removeEnd(sectionName, "_");
 
     SubnodeConfiguration s = iniConfiguration.getSection(sectionName);
     return s;
@@ -125,19 +137,19 @@ public class PinballXStatisticsParser {
         conf.clearProperty("favorite");
       }
     });
-  };
+  }
   public void writeNumberOfPlayed(Game game, long nbPlayed) {
     GameEmulator emu = connector.getEmulator(game.getEmulatorId());
     writeAlxData(emu, game.getGameName(), conf -> {
       conf.setProperty("timesplayed", Long.toString(nbPlayed));
     });
-  };
+  }
   public void writeSecondsPlayed(Game game, long secsPlayed) {
     GameEmulator emu = connector.getEmulator(game.getEmulatorId());
     writeAlxData(emu, game.getGameName(), conf -> {
       conf.setProperty("secondsplayed", Long.toString(secsPlayed));
     });
-  };
+  }
 
   private void writeAlxData(GameEmulator emu, String gameName, Consumer<SubnodeConfiguration> c) {
     File statsIni = getPinballXStatisticsIni();

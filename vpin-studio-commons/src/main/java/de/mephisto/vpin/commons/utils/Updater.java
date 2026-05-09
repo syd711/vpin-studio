@@ -4,7 +4,7 @@ import de.mephisto.vpin.commons.utils.scripts.MacOS;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +14,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.attribute.PosixFilePermission;
@@ -21,7 +22,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class Updater {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -62,7 +62,7 @@ public class Updater {
       percentage = 99;
     }
 
-    LOG.info(tmp.getAbsolutePath() + " download at " + percentage + "%");
+    LOG.info("{} download at {}%", tmp.getAbsolutePath(), percentage);
     return percentage;
   }
 
@@ -72,8 +72,8 @@ public class Updater {
 
   public static void downloadAndOverwrite(String downloadUrl, File target, boolean overwrite) {
     try {
-      LOG.info("Downloading " + downloadUrl);
-      URL url = new URL(downloadUrl);
+      LOG.info("Downloading {}", downloadUrl);
+      URL url = URI.create(downloadUrl).toURL();
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.setReadTimeout(5000);
       connection.setDoOutput(true);
@@ -109,7 +109,7 @@ public class Updater {
       }
     }
     catch (Exception e) {
-      LOG.error("Updater Failed to execute download: " + e.getMessage(), e);
+      LOG.error("Updater Failed to execute download: {}", e.getMessage(), e);
     }
   }
 
@@ -137,7 +137,7 @@ public class Updater {
     if (OSUtil.isWindows()) {
       String cmds = "timeout /T 4 /nobreak\ncd /d %~dp0\nresources\\7z.exe -aoa x \"VPin-Studio.zip\"\ntimeout /T 4 /nobreak\ndel VPin-Studio.zip\nVPin-Studio.exe\nexit";
       FileUtils.writeBatch("update-client.bat", cmds);
-      LOG.info("Written temporary batch: " + cmds);
+      LOG.info("Written temporary batch: {}", cmds);
       List<String> commands = Arrays.asList("cmd", "/c", "start", "update-client.bat");
       SystemCommandExecutor executor = new SystemCommandExecutor(commands);
       executor.setDir(getWriteableBaseFolder());
@@ -156,16 +156,16 @@ public class Updater {
       try {
         String cmds = "#!/bin/bash\nsleep 4\nunzip -o vpin-studio-ui-jar.zip\nrm vpin-studio-ui-jar.zip\n./VPin-Studio.sh &";
         File file = FileUtils.writeBatch("update-client.sh", cmds);
-        LOG.info("Written temporary bash: " + cmds);
+        LOG.info("Written temporary bash: {}", cmds);
 
         Set<PosixFilePermission> perms = new HashSet<>();
         perms.add(PosixFilePermission.OWNER_READ);
         perms.add(PosixFilePermission.OWNER_WRITE);
         perms.add(PosixFilePermission.OWNER_EXECUTE);
         Files.setPosixFilePermissions(file.toPath(), perms);
-        LOG.info("Applied execute permissions to : " + file.getAbsolutePath());
+        LOG.info("Applied execute permissions to : {}", file.getAbsolutePath());
 
-        List<String> commands = Arrays.asList("./update-client.sh");
+        List<String> commands = List.of("./update-client.sh");
         SystemCommandExecutor executor = new SystemCommandExecutor(commands, false);
         executor.setDir(getWriteableBaseFolder());
         executor.enableLogging(true);
@@ -182,7 +182,7 @@ public class Updater {
         }).start();
       }
       catch (Exception e) {
-        LOG.error("Failed to execute update: " + e.getMessage(), e);
+        LOG.error("Failed to execute update: {}", e.getMessage(), e);
       }
     }
     else if (OSUtil.isMac()) {
@@ -205,7 +205,7 @@ public class Updater {
   }
 
   public static void restartServer() {
-    List<String> commands = Arrays.asList("VPin-Studio-Server.exe");
+    List<String> commands = List.of("VPin-Studio-Server.exe");
     SystemCommandExecutor executor = new SystemCommandExecutor(commands);
     executor.setDir(getWriteableBaseFolder());
     executor.executeCommandAsync();
@@ -213,7 +213,7 @@ public class Updater {
 
   public static String checkForUpdate() {
     try {
-      URL obj = new URL(LATEST_RELEASE_URL);
+      URL obj = URI.create(LATEST_RELEASE_URL).toURL();
       HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
       conn.setInstanceFollowRedirects(true);
       HttpURLConnection.setFollowRedirects(true);
@@ -229,7 +229,7 @@ public class Updater {
       return LATEST_VERSION;
     }
     catch (Exception e) {
-      LOG.error("Update check failed: " + e.getMessage());
+      LOG.error("Update check failed: {}", e.getMessage());
     }
     return null;
   }
@@ -239,8 +239,8 @@ public class Updater {
       return false;
     }
 
-    List<Integer> versionASegments = Arrays.asList(versionA.split("\\.")).stream().map(Integer::parseInt).collect(Collectors.toList());
-    List<Integer> versionBSegments = Arrays.asList(versionB.split("\\.")).stream().map(Integer::parseInt).collect(Collectors.toList());
+    List<Integer> versionASegments = Arrays.stream(versionA.split("\\.")).map(Integer::parseInt).toList();
+    List<Integer> versionBSegments = Arrays.stream(versionB.split("\\.")).map(Integer::parseInt).toList();
 
     for (int i = 0; i < versionBSegments.size(); i++) {
       if (versionASegments.get(i).intValue() == versionBSegments.get(i).intValue()) {
@@ -259,7 +259,7 @@ public class Updater {
       return new File("./");
     }
     else {
-      LOG.info("Setting Base Path for Mac Download to -" + System.getProperty("MAC_WRITE_PATH"));
+      LOG.info("Setting Base Path for Mac Download to -{}", System.getProperty("MAC_WRITE_PATH"));
       return new File(System.getProperty("MAC_WRITE_PATH"));
     }
   }

@@ -3,13 +3,14 @@ package de.mephisto.vpin.commons.utils;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import javafx.scene.chart.XYChart;
 import javafx.scene.paint.Color;
 
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class ScoreGraphUtil {
   public static Tile createGraph(ScoreListRepresentation list) {
     if (!list.getScores().isEmpty()) {
       List<XYChart.Series<String, Long>> series = new ArrayList<>();
-      ScoreSummaryRepresentation firstEntry = list.getScores().get(0);
+      ScoreSummaryRepresentation firstEntry = list.getScores().getFirst();
       if(firstEntry == null) {
         return null;
       }
@@ -40,7 +41,7 @@ public class ScoreGraphUtil {
           if(i > (series.size()-1)) {
             break;
           }
-          series.get(i).getData().add(new XYChart.Data<>(SimpleDateFormat.getDateTimeInstance().format(s.getCreatedAt()), s.getScore()));
+          series.get(i).getData().add(new XYChart.Data<>(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).format(s.getCreatedAt()), s.getScore()));
         }
       }
 

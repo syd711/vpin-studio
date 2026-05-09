@@ -5,9 +5,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.lang.invoke.MethodHandles;
-import java.text.DateFormat;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class ReleaseArtifactActionLog {
@@ -92,7 +93,7 @@ public class ReleaseArtifactActionLog {
   }
 
   public void log(String msg) {
-    String format = DateFormat.getTimeInstance().format(new Date());
+    String format = OffsetDateTime.now().format(DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM));
     msg = "[" + format + "] " + msg;
     logs.add(msg);
   }

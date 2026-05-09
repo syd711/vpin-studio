@@ -29,10 +29,10 @@ public class VpsTable implements VPSEntity {
   private String manufacturer;
   @JsonProperty("MPU")
   private String MPU;
-  private int players;
+  private Integer players;
   private String type;
-  private int year;
-  private long updatedAt;
+  private Integer year;
+  private Long updatedAt;
 
   //----------- Custom fields
   private String comment;
@@ -138,11 +138,11 @@ public class VpsTable implements VPSEntity {
     this.b2sFiles = b2sFiles;
   }
 
-  public int getPlayers() {
+  public Integer getPlayers() {
     return players;
   }
 
-  public void setPlayers(int players) {
+  public void setPlayers(Integer players) {
     this.players = players;
   }
 
@@ -154,19 +154,19 @@ public class VpsTable implements VPSEntity {
     this.type = type;
   }
 
-  public int getYear() {
+  public Integer getYear() {
     return year;
   }
 
-  public void setYear(int year) {
+  public void setYear(Integer year) {
     this.year = year;
   }
 
-  public long getUpdatedAt() {
+  public Long getUpdatedAt() {
     return updatedAt;
   }
 
-  public void setUpdatedAt(long updatedAt) {
+  public void setUpdatedAt(Long updatedAt) {
     this.updatedAt = updatedAt;
   }
 
@@ -208,7 +208,7 @@ public class VpsTable implements VPSEntity {
   }
 
   public void setTableFiles(List<VpsTableVersion> tableFiles) {
-    Collections.sort(tableFiles, Comparator.comparingLong((VpsTableVersion o) -> o.getCreatedAt()));
+    Collections.sort(tableFiles, Comparator.comparingLong((VpsTableVersion o) -> o.getCreatedAt() != null ? o.getCreatedAt() : 0));
     Collections.reverse(tableFiles);
     this.tableFiles = tableFiles;
   }
@@ -271,7 +271,7 @@ public class VpsTable implements VPSEntity {
       result = result + " (" + this.manufacturer;
     }
 
-    if (this.year > 0) {
+    if (this.year != null && this.year > 0) {
       result = result + " " + this.year + ")";
     }
     else {

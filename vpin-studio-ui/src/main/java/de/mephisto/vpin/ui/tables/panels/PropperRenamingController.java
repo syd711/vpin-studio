@@ -1,9 +1,9 @@
 package de.mephisto.vpin.ui.tables.panels;
 
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -199,7 +199,7 @@ public class PropperRenamingController implements Initializable {
       if (vpsTableVersion != null) {
         if (authorBtn.isSelected() && vpsTableVersion.getAuthors() != null && !vpsTableVersion.getAuthors().isEmpty()) {
           builder.append(" ");
-          builder.append(vpsTableVersion.getAuthors().get(0));
+          builder.append(vpsTableVersion.getAuthors().getFirst());
         }
 
         if (versionBtn.isSelected() && !StringUtils.isEmpty(vpsTableVersion.getVersion())) {

@@ -3,10 +3,9 @@ package de.mephisto.vpin.ui.util;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.Tooltip;
+import org.apache.commons.lang3.Strings;
 
 import static de.mephisto.vpin.ui.Studio.Features;
-
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * ex: Stop all [Emulator] and [Frontend] processes 
@@ -27,9 +26,9 @@ public class FrontendUtil {
     }
     public static String replaceName(String text, Frontend frontend) {
         if (Features.IS_STANDALONE) {
-            text = StringUtils.replace(text, " and [Frontend]", "");
+            text = Strings.CI.replace(text, " and [Frontend]", "");
         }
-        return StringUtils.replace(text, "[Frontend]", frontend.getName());
+        return Strings.CI.replace(text, "[Frontend]", frontend.getName());
     }
 
     public static void replaceNames(Labeled node, Frontend frontend, String emulator) {
@@ -39,7 +38,7 @@ public class FrontendUtil {
         tp.setText(replaceNames(tp.getText(),frontend, emulator));
     }
     public static String replaceNames(String text, Frontend frontend, String emulator) {
-        return StringUtils.replace(replaceName(text, frontend), "[Emulator]", emulator);
+        return Strings.CI.replace(replaceName(text, frontend), "[Emulator]", emulator);
     }
 
 }

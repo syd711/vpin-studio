@@ -5,11 +5,10 @@ import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.util.FileUpdateWriter;
 import de.mephisto.vpin.server.util.XMLUtil;
-import edu.umd.cs.findbugs.annotations.NonNull;
-
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -20,7 +19,6 @@ import org.w3c.dom.NodeList;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -38,7 +36,7 @@ public class B2STableSettingsSerializer {
       "ArePluginsOn", "DefaultStartMode", "ShowStartupError", "DisableFuzzyMatching",
       "HideGrill", "HideB2SDMD", "HideDMD", "FormToFront", "FormToBack", "FormNoFocus", "UsedLEDType");
 
-  private final static List<String> skippedWhenMinusOne = Arrays.asList("UsedLEDType");
+  private final static List<String> skippedWhenMinusOne = List.of("UsedLEDType");
 
   public B2STableSettingsSerializer() {
   }
@@ -252,88 +250,42 @@ public class B2STableSettingsSerializer {
   //-------------------------------
 
   private String getServerValue(DirectB2ServerSettings settings, String qName) {
-    switch (qName) {
-      case "Plugins":
-      case "ArePluginsOn": {
-        return intValue(settings.isPluginsOn());
-      }
-      case "DefaultStartMode": {
-        return String.valueOf(settings.getDefaultStartMode());
-      }
-      case "ShowStartupError": {
-        return intValue(settings.isShowStartupError());
-      }
-      default: {
-        return getTableValue(settings, qName);
-      }
-    }
+      return switch (qName) {
+          case "Plugins", "ArePluginsOn" -> intValue(settings.isPluginsOn());
+          case "DefaultStartMode" -> String.valueOf(settings.getDefaultStartMode());
+          case "ShowStartupError" -> intValue(settings.isShowStartupError());
+          default -> getTableValue(settings, qName);
+      };
   }
 
   protected String getTableValue(@Nullable DirectB2STableSettings settings, String qName) {
-    switch (qName) {
-      case "HideGrill": {
-        return String.valueOf(settings.getHideGrill());
-      }
-      case "HideB2SDMD": {
-        return intValue(settings.isHideB2SDMD());
-      }
-      case "HideB2SBackglass": {
-        return intValue(settings.isHideB2SBackglass());
-      }
-      case "HideDMD": {
-        return String.valueOf(settings.getHideDMD());
-      }
-      case "LampsSkipFrames": {
-        return String.valueOf(settings.getLampsSkipFrames());
-      }
-      case "SolenoidsSkipFrames": {
-        return String.valueOf(settings.getSolenoidsSkipFrames());
-      }
-      case "GIStringsSkipFrames": {
-        return String.valueOf(settings.getGiStringsSkipFrames());
-      }
-      case "LEDsSkipFrames": {
-        return String.valueOf(settings.getLedsSkipFrames());
-      }
-      case "UsedLEDType": {
-        return String.valueOf(settings.getUsedLEDType());
-      }
-      case "IsGlowBulbOn": {
-        return intValue(settings.isGlowBulbOn());
-      }
-      case "GlowIndex": {
-        return String.valueOf(settings.getGlowIndex());
-      }
-      case "StartAsEXE": {
-        int startAsEXE = settings.getStartAsEXE();
-        return startAsEXE == 2 ? null : String.valueOf(startAsEXE);
-      }
-      case "StartBackground": {
-        // absence of settings means standard, else a boolean encoded as 0/1n which is invers from visibility (0=visible)
-        return (settings.getStartBackground() == 2) ? null : settings.getStartBackground() == 1 ? "0" : "1";
-      }
-      case "DualMode": {
-        return String.valueOf(settings.getDualMode());
-      }
-      case "DisableFuzzyMatching": {
-        return intValue(settings.isDisableFuzzyMatching());
-      }
-      case "FormToFront": {
-        return intValue(settings.isFormToFront());
-      }
-      case "FormToBack": {
-        return intValue(settings.isFormToBack());
-      }
-      case "FormNoFocus": {
-        return intValue(settings.isFormNoFocus());
-      }
-      case "Animations": {
-        return "";
-      }
-      default: {
-        return null;
-      }
-    }
+      return switch (qName) {
+          case "HideGrill" -> String.valueOf(settings.getHideGrill());
+          case "HideB2SDMD" -> intValue(settings.isHideB2SDMD());
+          case "HideB2SBackglass" -> intValue(settings.isHideB2SBackglass());
+          case "HideDMD" -> String.valueOf(settings.getHideDMD());
+          case "LampsSkipFrames" -> String.valueOf(settings.getLampsSkipFrames());
+          case "SolenoidsSkipFrames" -> String.valueOf(settings.getSolenoidsSkipFrames());
+          case "GIStringsSkipFrames" -> String.valueOf(settings.getGiStringsSkipFrames());
+          case "LEDsSkipFrames" -> String.valueOf(settings.getLedsSkipFrames());
+          case "UsedLEDType" -> String.valueOf(settings.getUsedLEDType());
+          case "IsGlowBulbOn" -> intValue(settings.isGlowBulbOn());
+          case "GlowIndex" -> String.valueOf(settings.getGlowIndex());
+          case "StartAsEXE" -> {
+              int startAsEXE = settings.getStartAsEXE();
+              yield startAsEXE == 2 ? null : String.valueOf(startAsEXE);
+          }
+          case "StartBackground" ->
+              // absence of settings means standard, else a boolean encoded as 0/1n which is invers from visibility (0=visible)
+                  (settings.getStartBackground() == 2) ? null : settings.getStartBackground() == 1 ? "0" : "1";
+          case "DualMode" -> String.valueOf(settings.getDualMode());
+          case "DisableFuzzyMatching" -> intValue(settings.isDisableFuzzyMatching());
+          case "FormToFront" -> intValue(settings.isFormToFront());
+          case "FormToBack" -> intValue(settings.isFormToBack());
+          case "FormNoFocus" -> intValue(settings.isFormNoFocus());
+          case "Animations" -> "";
+          default -> null;
+      };
   }
 
   protected String intValue(boolean b) {

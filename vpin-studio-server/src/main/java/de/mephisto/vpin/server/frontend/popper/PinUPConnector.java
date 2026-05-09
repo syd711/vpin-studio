@@ -23,12 +23,13 @@ import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.recorder.EmulatorRecorderJob;
 import de.mephisto.vpin.server.system.SystemService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -44,8 +45,9 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.*;
-import java.sql.Date;
-import java.text.SimpleDateFormat;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.regex.Matcher;
@@ -194,8 +196,8 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
         manifest.setGameFileName(rs.getString("GameFileName"));
         manifest.setGameDisplayName(rs.getString("GameDisplay"));
         manifest.setGameVersion(rs.getString("GAMEVER"));
-        manifest.setDateAdded(getDateAsTimestamp(rs, "DateAdded"));
-        manifest.setDateModified(getDateAsTimestamp(rs, "DateUpdated"));
+        manifest.setDateAdded(getOffsetDateTime(rs, "DateAdded"));
+        manifest.setDateModified(getOffsetDateTime(rs, "DateUpdated"));
         manifest.setNotes(rs.getString("Notes"));
         manifest.setGameYear(rs.getInt("GameYear"));
         if (rs.wasNull()) {
@@ -279,9 +281,8 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       String stmt = "UPDATE Games SET DateFileUpdated=? WHERE GameID=?";
       PreparedStatement preparedStatement = Objects.requireNonNull(connect).prepareStatement(stmt);
 
-      SimpleDateFormat sdf = new SimpleDateFormat(POPPER_DATE_FORMAT);
-      Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-      String ts = sdf.format(timestamp);
+      DateTimeFormatter dtf = DateTimeFormatter.ofPattern(POPPER_DATE_FORMAT);
+      String ts = dtf.format(OffsetDateTime.now());
       preparedStatement.setObject(1, ts);
       preparedStatement.setInt(2, id);
 
@@ -393,9 +394,8 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
         index++;
       }
 
-      SimpleDateFormat sdf = new SimpleDateFormat(POPPER_DATE_FORMAT);
-      Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-      String ts = sdf.format(timestamp);
+      DateTimeFormatter dtf = DateTimeFormatter.ofPattern(POPPER_DATE_FORMAT);
+      String ts = dtf.format(OffsetDateTime.now());
 
       preparedStatement.setObject(index, ts);
       index++;
@@ -428,9 +428,8 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.setString(index++, extTableId);
       preparedStatement.setString(index++, extTableVersionId);
 
-      SimpleDateFormat sdf = new SimpleDateFormat(POPPER_DATE_FORMAT);
-      Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-      String ts = sdf.format(timestamp);
+      DateTimeFormatter dtf = DateTimeFormatter.ofPattern(POPPER_DATE_FORMAT);
+      String ts = dtf.format(OffsetDateTime.now());
       preparedStatement.setObject(index++, ts);
 
       preparedStatement.setInt(index++, gameId);
@@ -891,11 +890,10 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.setInt(5, 1);
       preparedStatement.setString(6, tableDetails.getLaunchCustomVar() != null ? tableDetails.getLaunchCustomVar() : "");
 
-      SimpleDateFormat sdf = new SimpleDateFormat(POPPER_DATE_FORMAT);
-      Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-      String ts = sdf.format(timestamp);
+      DateTimeFormatter dtf = DateTimeFormatter.ofPattern(POPPER_DATE_FORMAT);
+      String ts = dtf.format(OffsetDateTime.now());
       preparedStatement.setString(7, ts);
-      preparedStatement.setString(8, tableDetails.getDateModified() != null ? sdf.format(tableDetails.getDateModified()) : sdf.format(new java.util.Date()));
+      preparedStatement.setString(8, tableDetails.getDateModified() != null ? dtf.format(tableDetails.getDateModified()) : dtf.format(OffsetDateTime.now()));
 
       preparedStatement.setString(9, tableDetails.getAuthor());
       preparedStatement.setString(10, tableDetails.getTags());
@@ -914,13 +912,17 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.setString(23, tableDetails.getRomName());
 
       preparedStatement.executeUpdate();
-      preparedStatement.close();
+
 
       LOG.info("Added game entry for '{}', file name '{}', emulator {}", tableDetails.getGameName(), tableDetails.getGameFileName(), tableDetails.getEmulatorId());
       try (ResultSet keys = preparedStatement.getGeneratedKeys()) {
         if (keys.next()) {
           return keys.getInt(1);
         }
+        //Move this to AFTER we get the id
+        preparedStatement.close();
+      } catch (SQLException e) {
+          LOG.error("Failed to add game entry for '{}', file name '{}', emulator {}", tableDetails.getGameName(), tableDetails.getGameFileName(), tableDetails.getEmulatorId());
       }
     }
     catch (Exception e) {
@@ -1029,7 +1031,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   @NonNull
   public Playlist getPlaylistTree() {
     List<Playlist> result = new ArrayList<>();
-    List<Playlist> playLists = getPlaylists().stream().filter(p -> p.getId() >= 0).collect(Collectors.toList());
+    List<Playlist> playLists = getPlaylists().stream().filter(p -> p.getId() >= 0).toList();
     Playlist root = playLists.stream().filter(p -> p.getParentId() == -1).findFirst().get();
     result.add(root);
     buildPlaylistTree(root);
@@ -1247,15 +1249,18 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.setInt(index++, playlist.isUseDefaults() ? 1 : 0);
       preparedStatement.setString(index++, StringUtils.isEmpty(playlist.getDofCommand()) ? null : playlist.getDofCommand());
       preparedStatement.executeUpdate();
-      preparedStatement.close();
+
 
       try (ResultSet keys = preparedStatement.getGeneratedKeys()) {
         if (keys.next()) {
           int id = keys.getInt(1);
           return getPlaylist(id);
         }
+      } catch (SQLException e) {
+          LOG.error("Failed to update playlist: {}", e.getMessage(), e);
       }
-
+      //Close after last accessed.
+      preparedStatement.close();
       return getPlaylist(playlist.getId());
     }
     catch (Exception e) {
@@ -1479,16 +1484,20 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.setString(index++, emulator.getLaunchScript() != null ? emulator.getLaunchScript().getScript() : null);
       preparedStatement.setString(index++, emulator.getExitScript() != null ? emulator.getExitScript().getScript() : null);
       preparedStatement.executeUpdate();
-      preparedStatement.close();
+
 
       LOG.info("Saved {}", emulator);
       try (ResultSet keys = preparedStatement.getGeneratedKeys()) {
-        if (keys.next()) {
-          int id = keys.getInt(1);
-          return getEmulator(id);
-        }
-      }
+          if (keys.next()) {
+              int id = keys.getInt(1);
+              return getEmulator(id);
+          }
+      } catch (SQLException e) {
+              LOG.error("Failed to update emulator: {}", e.getMessage(), e);
+          }
 
+          //Close after last accessed
+        preparedStatement.close();
       return getEmulator(emulator.getId());
     }
     catch (Exception e) {
@@ -1623,7 +1632,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
             @NotNull
             @Override
             public FileVisitResult visitFile(@NotNull Path file, @NotNull BasicFileAttributes attributes) {
-              if (StringUtils.endsWithIgnoreCase(file.toString(), ext)) {
+              if (Strings.CI.endsWith(file.toString(), ext)) {
                 fileFound[0] = file;
                 return FileVisitResult.TERMINATE;
               }
@@ -1660,7 +1669,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
         e.setDisplayName(rs.getString("GameDisplay"));
         e.setGameId(rs.getInt("GameId"));
         e.setUniqueId(rs.getInt("UniqueId"));
-        e.setLastPlayed(getDateAsTimestamp(rs, "LastPlayed"));
+        e.setLastPlayed(getOffsetDateTime(rs, "LastPlayed"));
         e.setTimePlayedSecs(rs.getInt("TimePlayedSecs"));
         e.setNumberOfPlays(rs.getInt("NumberPlays"));
         result.add(e);
@@ -1689,7 +1698,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
         e.setDisplayName(rs.getString("GameDisplay"));
         e.setGameId(rs.getInt("GameId"));
         e.setUniqueId(rs.getInt("UniqueId"));
-        e.setLastPlayed(rs.getDate("LastPlayed"));
+        e.setLastPlayed(getOffsetDateTime(rs, "LastPlayed"));
         e.setTimePlayedSecs(rs.getInt("TimePlayedSecs"));
         e.setNumberOfPlays(rs.getInt("NumberPlays"));
         result.add(e);
@@ -1799,22 +1808,13 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
 
   public FrontendControl getFrontendControlFor(VPinScreen screen) {
-    switch (screen) {
-      case Other2: {
-        return getFrontendControl(FrontendControl.FUNCTION_SHOW_OTHER);
-      }
-      case GameHelp: {
-        return getFrontendControl(FrontendControl.FUNCTION_SHOW_HELP);
-      }
-      case GameInfo: {
-        return getFrontendControl(FrontendControl.FUNCTION_SHOW_FLYER);
-      }
-      default: {
+      return switch (screen) {
+          case Other2 -> getFrontendControl(FrontendControl.FUNCTION_SHOW_OTHER);
+          case GameHelp -> getFrontendControl(FrontendControl.FUNCTION_SHOW_HELP);
+          case GameInfo -> getFrontendControl(FrontendControl.FUNCTION_SHOW_FLYER);
+          default -> new FrontendControl();
+      };
 
-      }
-    }
-
-    return new FrontendControl();
   }
 
   @NonNull
@@ -1919,16 +1919,16 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     return results;
   }
 
-  @NonNull
   @Override
-  public java.util.Date getStartDate() {
+  @NonNull
+  public OffsetDateTime getStartDate() {
     Connection connect = this.connect();
-    Date date = null;
+    OffsetDateTime date = null;
     try {
       Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery("SELECT DateAdded from Games asc limit 1;");
       while (rs.next()) {
-        date = getDate(rs, "DateAdded");
+        date = getOffsetDateTime(rs, "DateAdded");
       }
       rs.close();
       statement.close();
@@ -1940,7 +1940,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       this.disconnect(connect);
     }
 
-    return date;
+    return date != null ? date : OffsetDateTime.now();
   }
 
   @Override
@@ -2211,8 +2211,8 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
     String gameName = rs.getString("GameName");
     game.setGameName(gameName);
-    game.setDateAdded(getDateAsTimestamp(rs, "DateAdded"));
-    game.setDateUpdated(getDateAsTimestamp(rs, "DateUpdated"));
+    game.setDateAdded(getOffsetDateTime(rs, "DateAdded"));
+    game.setDateUpdated(getOffsetDateTime(rs, "DateUpdated"));
     game.setTags(TaggingUtil.getTags(rs.getString("TAGS")));
     game.setMediaSearch(rs.getString("MediaSearch"));
 
@@ -2261,7 +2261,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       ResultSet rs = statement.executeQuery("SELECT * FROM GamesStats where GameID = " + gameId + ";");
       while (rs.next()) {
         int numberPlays = rs.getInt("NumberPlays");
-        Date lastPlayed = rs.getDate("LastPlayed");
+        OffsetDateTime lastPlayed = getOffsetDateTime(rs, "LastPlayed");
 
         manifest.setLastPlayed(lastPlayed);
         manifest.setNumberPlays(numberPlays);
@@ -2516,7 +2516,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
                     p.info().command().get().contains("Zaccaria") ||
                     p.info().command().get().contains("MAME") ||
                     p.info().command().get().contains("Future Pinball") ||
-                    p.info().command().get().contains("B2SBackglassServerEXE"))).collect(Collectors.toList());
+                    p.info().command().get().contains("B2SBackglassServerEXE"))).toList();
 
     if (pinUpProcesses.isEmpty()) {
       LOG.info("No remaining PinUP processes found, termination finished.");
@@ -2532,7 +2532,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     //actually redundant, but who knows what else is in there
     File showTaskbarExe = new File(getInstallationFolder(), "showtaskbar.exe");
     if (showTaskbarExe.exists()) {
-      SystemCommandExecutor exec = new SystemCommandExecutor(Arrays.asList("showtaskbar.exe"));
+      SystemCommandExecutor exec = new SystemCommandExecutor(List.of("showtaskbar.exe"));
       exec.setDir(getInstallationFolder());
       exec.executeCommandAsync();
     }
@@ -2660,30 +2660,12 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     return false;
   }
 
-  private Date getDate(ResultSet set, String field) {
-    try {
-      return set.getDate(field);
+  private OffsetDateTime getOffsetDateTime(ResultSet rs, String column) throws SQLException {
+    Timestamp timestamp = rs.getTimestamp(column);
+    if (timestamp != null) {
+      return OffsetDateTime.ofInstant(timestamp.toInstant(), ZoneId.systemDefault());
     }
-    catch (Exception e) {
-      LOG.warn("Failed to parse date from database: {}", e.getMessage());
-    }
-    return new Date(new java.util.Date().getTime());
-  }
-
-  private java.util.Date getDateAsTimestamp(ResultSet set, String field) {
-    try {
-      return set.getTimestamp(field);
-    }
-    catch (Exception e) {
-      LOG.warn("Failed to parse timestapm from database: {}", e.getMessage());
-      try {
-        return set.getDate(field);
-      }
-      catch (Exception ex) {
-        LOG.warn("Failed to parse date from database: {}", e.getMessage());
-      }
-    }
-    return new Date(new java.util.Date().getTime());
+    return null;
   }
 
   @Override
@@ -2708,7 +2690,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
         File popperFolder = systemService.getPinupInstallationFolder();
         File popperMenu = new File(popperFolder, "PinUpMenu.exe");
         if (popperMenu.exists()) {
-          SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList(popperMenu.getName()));
+          SystemCommandExecutor executor = new SystemCommandExecutor(List.of(popperMenu.getName()));
           executor.setDir(popperFolder);
           executor.executeCommandAsync();
         }

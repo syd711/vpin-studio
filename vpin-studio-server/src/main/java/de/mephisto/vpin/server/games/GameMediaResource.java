@@ -21,6 +21,7 @@ import org.apache.catalina.connector.ClientAbortException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +31,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -185,7 +186,7 @@ public class GameMediaResource {
     if (rangeHeader != null) {
       List<HttpRange> ranges = HttpRange.parseRanges(rangeHeader);
       if (ranges.size() == 1) {
-        HttpRange range = ranges.get(0);
+        HttpRange range = ranges.getFirst();
         start = range.getRangeStart(contentLength);
         end = range.getRangeEnd(contentLength);
 
@@ -282,7 +283,7 @@ public class GameMediaResource {
     final boolean getPreview;
     long contentLength = -1;
     String mimeType = frontendMediaItem.getMimeType();
-    if (preview && StringUtils.startsWithIgnoreCase(mimeType, "video/")) {
+    if (preview && Strings.CI.startsWith(mimeType, "video/")) {
       // will return only a frame, content length cannot be calculated
       mimeType = "image/png";
       getPreview = true;
@@ -304,7 +305,7 @@ public class GameMediaResource {
     if (rangeHeader != null) {
       List<HttpRange> ranges = HttpRange.parseRanges(rangeHeader);
       if (ranges.size() == 1) {
-        HttpRange range = ranges.get(0);
+        HttpRange range = ranges.getFirst();
         start = range.getRangeStart(contentLength);
         end = range.getRangeEnd(contentLength);
 

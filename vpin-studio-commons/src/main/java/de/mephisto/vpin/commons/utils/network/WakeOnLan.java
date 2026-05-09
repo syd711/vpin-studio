@@ -1,6 +1,5 @@
 package de.mephisto.vpin.commons.utils.network;
 
-import de.mephisto.vpin.commons.utils.FileMonitoringThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

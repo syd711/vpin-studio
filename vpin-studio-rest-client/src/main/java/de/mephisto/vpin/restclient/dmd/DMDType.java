@@ -5,22 +5,12 @@ public enum DMDType {
 
   @Override
   public String toString() {
-    switch (this) {
-      case NoDMD: {
-        return "Use Backglass Scores";
-      }
-      case VirtualDMD: {
-        return "Virtual Ext. DMD";
-      }
-      case AlphaNumericDMD: {
-        return "AlphaNumeric Ext. DMD";
-      }
-      case VpinMAMEDMD: {
-        return "Visual PinMAME DMD";
-      }
-      default: {
-        return null;
-      }
-    }
+      return switch (this) {
+          case NoDMD -> "Use Backglass Scores";
+          case VirtualDMD -> "Virtual Ext. DMD";
+          case AlphaNumericDMD -> "AlphaNumeric Ext. DMD";
+          case VpinMAMEDMD -> "Visual PinMAME DMD";
+          default -> null;
+      };
   }
 }

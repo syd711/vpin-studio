@@ -3,12 +3,12 @@ package de.mephisto.vpin.commons.fx.cards;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.commons.lang3.StringUtils;
-
 import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
+
+import java.util.Objects;
 
 public class CardLayerCanvas extends Rectangle implements CardLayer {
 
@@ -17,7 +17,7 @@ public class CardLayerCanvas extends Rectangle implements CardLayer {
 
     int value = 255 - (255 * template.getCanvasAlphaPercentage() / 100);
     String hex = Integer.toHexString(value);
-    String color = StringUtils.defaultString(template.getCanvasBackground(), "#FFFFFF");
+    String color = Objects.toString(template.getCanvasBackground(), "#FFFFFF");
     this.setFill(Paint.valueOf(color + hex));
     this.setArcWidth(template.getCanvasBorderRadius() * zoomX);
     this.setArcHeight(template.getCanvasBorderRadius() * zoomY);

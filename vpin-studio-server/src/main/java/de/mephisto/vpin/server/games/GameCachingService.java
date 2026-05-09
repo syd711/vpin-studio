@@ -38,8 +38,8 @@ import de.mephisto.vpin.server.roms.RomService;
 import de.mephisto.vpin.server.roms.ScanResult;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vps.VpsService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -49,263 +49,264 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Service
 public class GameCachingService implements InitializingBean, PreferenceChangedListener, GameLifecycleListener, GameDataChangedListener, CompetitionChangeListener, HighscoreChangeListener, EmulatorChangeListener {
-  private final static Logger LOG = LoggerFactory.getLogger(GameCachingService.class);
+    private final static Logger LOG = LoggerFactory.getLogger(GameCachingService.class);
 
-  @Autowired
-  private FrontendService frontendService;
+    @Autowired
+    private FrontendService frontendService;
 
-  @Autowired
-  private EmulatorService emulatorService;
+    @Autowired
+    private EmulatorService emulatorService;
 
-  @Autowired
-  private GameDetailsRepositoryService gameDetailsRepositoryService;
+    @Autowired
+    private GameDetailsRepositoryService gameDetailsRepositoryService;
 
-  @Autowired
-  private VPinMameRomAliasService VPinMameRomAliasService;
+    @Autowired
+    private VPinMameRomAliasService VPinMameRomAliasService;
 
-  @Autowired
-  private BackglassService backglassService;
+    @Autowired
+    private BackglassService backglassService;
 
-  @Autowired
-  private VpsService vpsService;
+    @Autowired
+    private VpsService vpsService;
 
-  @Autowired
-  private GameValidationService gameValidationService;
+    @Autowired
+    private GameValidationService gameValidationService;
 
-  @Autowired
-  private HighscoreService highscoreService;
+    @Autowired
+    private HighscoreService highscoreService;
 
-  @Autowired
-  private AltSoundService altSoundService;
+    @Autowired
+    private AltSoundService altSoundService;
 
-  @Autowired
-  private AltColorService altColorService;
+    @Autowired
+    private AltColorService altColorService;
 
-  @Autowired
-  private PupPacksService pupPacksService;
+    @Autowired
+    private PupPacksService pupPacksService;
 
-  @Autowired
-  private PreferencesService preferencesService;
+    @Autowired
+    private PreferencesService preferencesService;
 
-  @Autowired
-  private VPinMameService vPinMameService;
+    @Autowired
+    private VPinMameService vPinMameService;
 
-  @Autowired
-  private RomService romService;
+    @Autowired
+    private RomService romService;
 
-  @Autowired
-  private GameLifecycleService gameLifecycleService;
+    @Autowired
+    private GameLifecycleService gameLifecycleService;
 
-  @Autowired
-  private CompetitionLifecycleService competitionLifecycleService;
+    @Autowired
+    private CompetitionLifecycleService competitionLifecycleService;
 
-  @Autowired
-  private SystemService systemService;
+    @Autowired
+    private SystemService systemService;
 
-  private ServerSettings serverSettings;
+    private ServerSettings serverSettings;
 
-  private final Map<Integer, GameEmulatorCache> allGamesByEmulatorId = new ConcurrentHashMap<>();
-  private final Object saveLock = new Object();
+    private final Map<Integer, GameEmulatorCache> allGamesByEmulatorId = new ConcurrentHashMap<>();
+    private final Object saveLock = new Object();
 
-  public void clearCache() {
-    allGamesByEmulatorId.clear();
-  }
+    public void clearCache() {
+        allGamesByEmulatorId.clear();
+    }
 
-  public void clearCacheForEmulator(int emulatorId) {
-    allGamesByEmulatorId.remove(emulatorId);
-  }
+    public void clearCacheForEmulator(int emulatorId) {
+        allGamesByEmulatorId.remove(emulatorId);
+    }
 
-  public Game invalidate(int gameId) {
-    Game game = getGame(gameId);
-    if (game != null) {
-      GameEmulatorCache emulatorCache = allGamesByEmulatorId.get(game.getEmulatorId());
-      if (emulatorCache != null) {
-        emulatorCache.removeGame(game);
-      }
+    public Game invalidate(int gameId) {
+        Game game = getGame(gameId);
+        if (game != null) {
+            GameEmulatorCache emulatorCache = allGamesByEmulatorId.get(game.getEmulatorId());
+            if (emulatorCache != null) {
+                emulatorCache.removeGame(game);
+            }
 //      LOG.info("-------------------> Evicted {}", game.getGameDisplayName());
-    }
-    return getGame(gameId);
-  }
-
-  public void invalidateByRom(int emulatorId, @NonNull String rom) {
-    GameEmulatorCache emulatorCache = allGamesByEmulatorId.get(emulatorId);
-    if (emulatorCache == null) {
-      return;
-    }
-    List<Game> games = emulatorCache.invalidateByRom(rom);
-    for (Game game : games) {
-      getGame(game.getId());
-    }
-  }
-
-  @Nullable
-  public Game scanGame(int gameId) {
-    Game game = null;
-    try {
-      game = frontendService.getOriginalGame(gameId);
-      if (game != null) {
-        GameDetailsInfo gameDetailsInfo = applyGameDetails(game, true, true, null);
-        applyGameValidation(gameDetailsInfo, true);
-
-        vPinMameService.clearCacheFor(game.getRom());
-        if (game.isVpxGame()) {
-          highscoreService.scanScore(game, EventOrigin.USER_INITIATED);
         }
-        invalidate(gameId);
         return getGame(gameId);
-      }
-      else {
-        LOG.error("No game found to be scanned with ID '{}'", gameId);
-      }
     }
-    catch (Exception e) {
-      if (game != null) {
-        LOG.error("Game scan for \"{}\" ({}) failed: {}", game.getGameDisplayName(), gameId, e.getMessage(), e);
-      }
-      else {
-        LOG.error("Game scan for game {} failed: {}", gameId, e.getMessage(), e);
-      }
-    }
-    return game;
-  }
 
-  @Nullable
-  public Game getGame(int id) {
-    Game game = getGameCached(id);
-    if (game == null) {
-      game = frontendService.getOriginalGame(id);
-      //ignore unlinked games
-      if (game == null || game.getEmulator() == null) {
+    public void invalidateByRom(int emulatorId, @NonNull String rom) {
+        GameEmulatorCache emulatorCache = allGamesByEmulatorId.get(emulatorId);
+        if (emulatorCache == null) {
+            return;
+        }
+        List<Game> games = emulatorCache.invalidateByRom(rom);
+        for (Game game : games) {
+            getGame(game.getId());
+        }
+    }
+
+    @Nullable
+    public Game scanGame(int gameId) {
+        Game game = null;
+        try {
+            game = frontendService.getOriginalGame(gameId);
+            if (game != null) {
+                GameDetailsInfo gameDetailsInfo = applyGameDetails(game, true, true, null);
+                applyGameValidation(gameDetailsInfo, true);
+
+                vPinMameService.clearCacheFor(game.getRom());
+                if (game.isVpxGame()) {
+                    highscoreService.scanScore(game, EventOrigin.USER_INITIATED);
+                }
+                invalidate(gameId);
+                return getGame(gameId);
+            }
+            else {
+                LOG.error("No game found to be scanned with ID '{}'", gameId);
+            }
+        }
+        catch (Exception e) {
+            if (game != null) {
+                LOG.error("Game scan for \"{}\" ({}) failed: {}", game.getGameDisplayName(), gameId, e.getMessage(), e);
+            }
+            else {
+                LOG.error("Game scan for game {} failed: {}", gameId, e.getMessage(), e);
+            }
+        }
+        return game;
+    }
+
+    @Nullable
+    public Game getGame(int id) {
+        Game game = getGameCached(id);
+        if (game == null) {
+            game = frontendService.getOriginalGame(id);
+            //ignore unlinked games
+            if (game == null || game.getEmulator() == null) {
+                return null;
+            }
+
+            GameDetailsInfo gameDetailsInfo = applyGameDetails(game, false, true, null);
+            applyGameValidation(gameDetailsInfo, true);
+
+            EmulatorType emulatorType = game.getEmulator().getType();
+            GameEmulatorCache cache = allGamesByEmulatorId.computeIfAbsent(game.getEmulatorId(), emulatorId -> new GameEmulatorCache(emulatorType, emulatorId));
+            cache.addGame(game);
+        }
+        return game;
+    }
+
+    private Game getGameCached(int id) {
+        Collection<GameEmulatorCache> caches = allGamesByEmulatorId.values();
+        for (GameEmulatorCache cache : caches) {
+            for (Game game : cache.getGames()) {
+                if (game.getId() == id) {
+                    return game;
+                }
+            }
+        }
         return null;
-      }
-
-      GameDetailsInfo gameDetailsInfo = applyGameDetails(game, false, true, null);
-      applyGameValidation(gameDetailsInfo, true);
-
-      EmulatorType emulatorType = game.getEmulator().getType();
-      GameEmulatorCache cache = allGamesByEmulatorId.computeIfAbsent(game.getEmulatorId(), emulatorId -> new GameEmulatorCache(emulatorType, emulatorId));
-      cache.addGame(game);
     }
-    return game;
-  }
 
-  private Game getGameCached(int id) {
-    Collection<GameEmulatorCache> caches = allGamesByEmulatorId.values();
-    for (GameEmulatorCache cache : caches) {
-      for (Game game : cache.getGames()) {
-        if (game.getId() == id) {
-          return game;
+    public List<Game> getGamesByRom(int emulatorId, @NonNull String rom) {
+        List<Game> games = frontendService.getGamesByEmulator(emulatorId);
+        for (Game game : games) {
+            GameDetailsInfo gameDetailsInfo = applyGameDetails(game, false, false, null);
+            applyGameValidation(gameDetailsInfo, true);
         }
-      }
-    }
-    return null;
-  }
-
-  public List<Game> getGamesByRom(int emulatorId, @NonNull String rom) {
-    List<Game> games = frontendService.getGamesByEmulator(emulatorId);
-    for (Game game : games) {
-      GameDetailsInfo gameDetailsInfo = applyGameDetails(game, false, false, null);
-      applyGameValidation(gameDetailsInfo, true);
-    }
-    return games.stream()
-        .filter(g ->
-            (!StringUtils.isEmpty(g.getRom()) && g.getRom().equalsIgnoreCase(rom)) ||
-                (!StringUtils.isEmpty(g.getTableName()) && g.getTableName().equalsIgnoreCase(rom)))
-        .collect(Collectors.toList());
-  }
-
-  @SuppressWarnings("unused")
-  public List<Game> getKnownGames(int emulatorId) {
-    List<Game> games = new ArrayList<>();
-    if (emulatorId == -1) {
-      games.addAll(getVpxGames());
-    }
-    else {
-      GameEmulator emulator = emulatorService.getGameEmulator(emulatorId);
-      if (emulator != null && emulator.isEnabled()) {
-        GameEmulatorCache emulatorCache = allGamesByEmulatorId.computeIfAbsent(emulator.getId(), id -> fetchEmulatorGames(emulator, Collections.emptyMap()));
-        games.addAll(emulatorCache.getGames());
-      }
+        return games.stream()
+                .filter(g ->
+                        (!StringUtils.isEmpty(g.getRom()) && g.getRom().equalsIgnoreCase(rom)) ||
+                                (!StringUtils.isEmpty(g.getTableName()) && g.getTableName().equalsIgnoreCase(rom)))
+                .collect(Collectors.toList());
     }
 
-    games = games.stream().filter(g -> g.getEmulator() != null).collect(Collectors.toList());
-    games.sort(Comparator.comparing(o -> o.getGameDisplayName().toLowerCase()));
-    return games;
-  }
-
-  private List<Game> getVpxGames() {
-    List<GameDetails> all = gameDetailsRepositoryService.findAll();
-    Map<Integer, GameDetails> mappedGameDetails = new LinkedHashMap<>();
-    for (GameDetails gameDetails : all) {
-      mappedGameDetails.put(gameDetails.getPupId(), gameDetails);
-    }
-    List<Game> games = new ArrayList<>();
-    List<GameEmulator> gameEmulators = emulatorService.getVpxGameEmulators();
-    for (GameEmulator gameEmulator : gameEmulators) {
-      if (gameEmulator.isEnabled()) {
-        GameEmulatorCache emulatorCache = allGamesByEmulatorId.computeIfAbsent(gameEmulator.getId(), id -> fetchEmulatorGames(gameEmulator, mappedGameDetails));
-        emulatorCache.drainPendingNewGameIds().forEach(id -> gameLifecycleService.notifyGameCreated(id));
-        games.addAll(emulatorCache.getGames());
-      }
-    }
-    return games;
-  }
-
-
-  private List<Game> getZenGames() {
-    List<Game> games = new ArrayList<>();
-    List<GameEmulator> gameEmulators = emulatorService.getZenGameEmulators();
-    for (GameEmulator gameEmulator : gameEmulators) {
-      if (gameEmulator.isEnabled()) {
-        GameEmulatorCache emulatorCache = allGamesByEmulatorId.computeIfAbsent(gameEmulator.getId(), id -> fetchEmulatorGames(gameEmulator, Collections.emptyMap()));
-        emulatorCache.drainPendingNewGameIds().forEach(id -> gameLifecycleService.notifyGameCreated(id));
-        games.addAll(emulatorCache.getGames());
-      }
-    }
-    return games;
-  }
-
-  private GameEmulatorCache fetchEmulatorGames(@NonNull GameEmulator emulator, @NonNull Map<Integer, GameDetails> mappedGameDetails) {
-    long start = System.currentTimeMillis();
-    List<Game> gamesByEmulator = frontendService.getGamesByEmulator(emulator.getId());
-    FilterSettings filterSettings = preferencesService.getJsonPreference(PreferenceNames.FILTER_SETTINGS, FilterSettings.class);
-    boolean findFirstIssueOnly = filterSettings.getIssueType() == -1;
-
-    Map<Integer, GameDetails> gameDetailsMap = mappedGameDetails;
-    if (mappedGameDetails.isEmpty() && !gamesByEmulator.isEmpty()) {
-      gameDetailsMap = gameDetailsRepositoryService.findAll().stream()
-          .collect(Collectors.toMap(GameDetails::getPupId, gd -> gd, (a, b) -> a));
-    }
-
-    final Map<Integer, GameDetails> resolvedMap = gameDetailsMap;
-    List<GameDetailsInfo> infos = gamesByEmulator.parallelStream()
-        .map(game -> applyGameDetails(game, false, false, resolvedMap.get(game.getId())))
-        .collect(Collectors.toList());
-
-    boolean killFrontend = false;
-    for (GameDetailsInfo info : infos) {
-      if (info.newGame) {
-        // notifyGameCreated is deferred to after computeIfAbsent to avoid recursive ConcurrentHashMap update
-        highscoreService.scanScore(info.game, EventOrigin.INITIAL_SCAN);
-        if (!killFrontend) {
-          LOG.info("New games have been found, automatically killing frontend to release locks.");
-          frontendService.killFrontend();
-          killFrontend = true;
+    @SuppressWarnings("unused")
+    public List<Game> getKnownGames(int emulatorId) {
+        List<Game> games = new ArrayList<>();
+        if (emulatorId == -1) {
+            games.addAll(getVpxGames());
         }
-      }
+        else {
+            GameEmulator emulator = emulatorService.getGameEmulator(emulatorId);
+            if (emulator != null && emulator.isEnabled()) {
+                GameEmulatorCache emulatorCache = allGamesByEmulatorId.computeIfAbsent(emulator.getId(), id -> fetchEmulatorGames(emulator, Collections.emptyMap()));
+                games.addAll(emulatorCache.getGames());
+            }
+        }
+
+        games = games.stream().filter(g -> g.getEmulator() != null).collect(Collectors.toList());
+        games.sort(Comparator.comparing(o -> o.getGameDisplayName().toLowerCase()));
+        return games;
     }
 
-    infos.parallelStream().forEach(info -> applyGameValidation(info, findFirstIssueOnly));
+    private List<Game> getVpxGames() {
+        List<GameDetails> all = gameDetailsRepositoryService.findAll();
+        Map<Integer, GameDetails> mappedGameDetails = new LinkedHashMap<>();
+        for (GameDetails gameDetails : all) {
+            mappedGameDetails.put(gameDetails.getPupId(), gameDetails);
+        }
+        List<Game> games = new ArrayList<>();
+        List<GameEmulator> gameEmulators = emulatorService.getVpxGameEmulators();
+        for (GameEmulator gameEmulator : gameEmulators) {
+            if (gameEmulator.isEnabled()) {
+                GameEmulatorCache emulatorCache = allGamesByEmulatorId.computeIfAbsent(gameEmulator.getId(), id -> fetchEmulatorGames(gameEmulator, mappedGameDetails));
+                emulatorCache.drainPendingNewGameIds().forEach(id -> gameLifecycleService.notifyGameCreated(id));
+        games.addAll(emulatorCache.getGames());
+      }
+    }
+    return games;
+  }
 
 
-    GameEmulatorCache cache = new GameEmulatorCache(emulator.getType(), emulator.getId(), gamesByEmulator);
-    for (GameDetailsInfo info : infos) {
+    private List<Game> getZenGames() {
+        List<Game> games = new ArrayList<>();
+        List<GameEmulator> gameEmulators = emulatorService.getZenGameEmulators();
+        for (GameEmulator gameEmulator : gameEmulators) {
+            if (gameEmulator.isEnabled()) {
+                GameEmulatorCache emulatorCache = allGamesByEmulatorId.computeIfAbsent(gameEmulator.getId(), id -> fetchEmulatorGames(gameEmulator, Collections.emptyMap()));
+                emulatorCache.drainPendingNewGameIds().forEach(id -> gameLifecycleService.notifyGameCreated(id));
+        games.addAll(emulatorCache.getGames());
+      }
+    }
+    return games;
+  }
+
+    private GameEmulatorCache fetchEmulatorGames(@NonNull GameEmulator emulator, @NonNull Map<Integer, GameDetails> mappedGameDetails) {
+        long start = System.currentTimeMillis();
+        List<Game> gamesByEmulator = frontendService.getGamesByEmulator(emulator.getId());
+        FilterSettings filterSettings = preferencesService.getJsonPreference(PreferenceNames.FILTER_SETTINGS, FilterSettings.class);
+        boolean findFirstIssueOnly = filterSettings.getIssueType() == -1;
+
+        Map<Integer, GameDetails> gameDetailsMap = mappedGameDetails;
+        if (mappedGameDetails.isEmpty() && !gamesByEmulator.isEmpty()) {
+            gameDetailsMap = gameDetailsRepositoryService.findAll().stream()
+                    .collect(Collectors.toMap(GameDetails::getPupId, gd -> gd, (a, b) -> a));
+        }
+
+        final Map<Integer, GameDetails> resolvedMap = gameDetailsMap;
+        List<GameDetailsInfo> infos = gamesByEmulator.parallelStream()
+                .map(game -> applyGameDetails(game, false, false, resolvedMap.get(game.getId())))
+                .toList();
+
+        boolean killFrontend = false;
+        for (GameDetailsInfo info : infos) {
+            if (info.newGame) {
+                // notifyGameCreated is deferred to after computeIfAbsent to avoid recursive ConcurrentHashMap update
+                highscoreService.scanScore(info.game, EventOrigin.INITIAL_SCAN);
+                if (!killFrontend) {
+                    LOG.info("New games have been found, automatically killing frontend to release locks.");
+                    frontendService.killFrontend();
+                    killFrontend = true;
+                }
+            }
+        }
+
+        infos.parallelStream().forEach(info -> applyGameValidation(info, findFirstIssueOnly));
+
+
+        GameEmulatorCache cache = new GameEmulatorCache(emulator.getType(), emulator.getId(), gamesByEmulator);
+        for (GameDetailsInfo info : infos) {
       if (info.newGame) {
         cache.addPendingNewGameId(info.game.getId());
       }
@@ -319,371 +320,372 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     return cache;
   }
 
-  private GameDetailsInfo applyGameDetails(@NonNull Game game, boolean forceScan, boolean forceScoreScan, @Nullable GameDetails gameDetails) {
-    if (gameDetails == null) {
-      gameDetails = gameDetailsRepositoryService.findByPupId(game.getId());
-    }
-    boolean newGame = (gameDetails == null);
-
-    TableDetails tableDetails = null;
-    if (gameDetails == null || forceScan) {
-      if (gameDetails == null) {
-        gameDetails = new GameDetails();
-        gameDetails.setCreatedAt(new java.util.Date());
-      }
-
-      tableDetails = frontendService.getTableDetails(game.getId());
-
-      if (game.isVpxGame()) {
-        ScanResult scanResult = romService.scanGameFile(game);
-        String scannedRomName = scanResult.getRom();
-        String scannedTableName = scanResult.getTableName();
-
-        //always prefer PinUP Popper ROM name over the scanned value
-        if (tableDetails != null && StringUtils.isEmpty(scannedRomName) && !StringUtils.isEmpty(tableDetails.getRomName())) {
-          scannedRomName = tableDetails.getRomName();
+    private GameDetailsInfo applyGameDetails(@NonNull Game game, boolean forceScan, boolean forceScoreScan, @Nullable GameDetails gameDetails) {
+        if (gameDetails == null) {
+            gameDetails = gameDetailsRepositoryService.findByPupId(game.getId());
         }
+        boolean newGame = (gameDetails == null);
 
-        if (tableDetails != null && StringUtils.isEmpty(scannedTableName) && !StringUtils.isEmpty(tableDetails.getRomAlt())) {
-          scannedTableName = tableDetails.getRomAlt();
-        }
-        gameDetails.setFoundControllerStop(scanResult.isFoundControllerStop());
-        gameDetails.setFoundTableExit(scanResult.isFoundTableExit());
-        gameDetails.setRomName(scannedRomName);
-        gameDetails.setTableName(scannedTableName);
-        gameDetails.setNvOffset(scanResult.getNvOffset());
-        gameDetails.setHsFileName(scanResult.getHsFileName());
-        gameDetails.setVrRoomEnabled(!scanResult.isVrRoomDisabled());
-        gameDetails.setVrRoomSupport(scanResult.isVrRoomSupport());
-
-        gameDetails.setDMDType(scanResult.getDMDType() != null ? DMDPackageTypes.valueOf(scanResult.getDMDType()) : DMDPackageTypes.Standard);
-        gameDetails.setDMDGameName(scanResult.getDMDGameName());
-        gameDetails.setDMDProjectFolder(scanResult.getDMDProjectFolder());
-
-        gameDetails.setPupPack(scanResult.getPupPackName());
-        gameDetails.setAssets(StringUtils.join(scanResult.getAssets(), "|"));
-        gameDetails.setScripts(StringUtils.join(scanResult.getScripts(), ","));
-      }
-      else {
-        if (tableDetails != null) {
-          gameDetails.setRomName(tableDetails.getRomName());
-          gameDetails.setTableName(tableDetails.getRomAlt());
-        }
-      }
-
-      gameDetails.setPupId(game.getId());
-      gameDetails.setUpdatedAt(new java.util.Date());
-
-      synchronized (saveLock) {
-        gameDetailsRepositoryService.saveAndFlush(gameDetails);
-      }
-      LOG.info("Created GameDetails for {}, was forced: {}", game.getGameDisplayName(), forceScan);
-    }
-
-    GameEmulator emulator = game.getEmulator();
-    if (emulator != null && emulator.isVpxEmulator() && emulator.getExe() != null && emulator.getExe().exists()) {
-      game.setLauncher(emulator.getExe().getName());
-    }
-
-    //apply the alt launcher exe as actually used one
-    if (!StringUtils.isEmpty(game.getAltLauncherExe()) && game.getAltLauncherExe().contains(".exe")) {
-      game.setLauncher(game.getAltLauncherExe());
-    }
-
-    //only apply legacy table name if the frontend fields are empty
-    if (StringUtils.isEmpty(game.getTableName())) {
-      game.setTableName(gameDetails.getTableName());
-    }
-
-    if (StringUtils.isEmpty(game.getRom())) {
-      game.setRom(gameDetails.getRomName());
-    }
-
-    if (game.isZenGame()) {
-      game.setRom(game.getGameDisplayName());
-    }
-
-    if (game.getDateAdded() == null) {
-      game.setDateAdded(gameDetails.getCreatedAt());
-    }
-    if (game.getDateUpdated() == null) {
-      game.setDateUpdated(gameDetails.getUpdatedAt());
-    }
-
-    //check alias
-    if (game.getEmulator() != null && !game.isZenGame()) {
-      String originalRom = VPinMameRomAliasService.getRomForAlias(game.getEmulator(), game.getRom());
-      if (!StringUtils.isEmpty(originalRom)) {
-        String aliasName = game.getRom();
-        game.setRom(originalRom);
-        game.setRomAlias(aliasName);
-      }
-    }
-
-    // fill scanned values
-    game.setAssets(gameDetails.getAssets());
-    game.setMusicScripted(gameDetails.getAssets() != null && (gameDetails.getAssets().contains(".mp3") || gameDetails.getAssets().contains(".wav") || gameDetails.getAssets().contains(".ogg")));
-    game.setScannedRom(gameDetails.getRomName());
-    game.setScannedHsFileName(gameDetails.getHsFileName());
-    game.setScannedAltRom(gameDetails.getTableName());
-    game.setIgnoreUpdates(gameDetails.getIgnoreUpdates() != null ? gameDetails.getIgnoreUpdates() : false);
-    game.setVrRoomEnabled(gameDetails.getVrRoomEnabled() != null ? gameDetails.getVrRoomEnabled() : false);
-    game.setVrRoomSupport(gameDetails.getVrRoomSupport() != null ? gameDetails.getVrRoomSupport() : false);
-    game.setFoundControllerStop(gameDetails.getFoundControllerStop() != null ? gameDetails.getFoundControllerStop() : true);
-    game.setFoundTableExit(gameDetails.getFoundTableExit() != null ? gameDetails.getFoundTableExit() : true);
-
-    game.setDMDType(gameDetails.getDMDType());
-    game.setDMDGameName(gameDetails.getDMDGameName());
-    game.setDMDProjectFolder(gameDetails.getDMDProjectFolder());
-
-    game.setScripts(StringUtils.split(gameDetails.getScripts(), ","));
-
-    game.setNvOffset(gameDetails.getNvOffset());
-    game.setCardDisabled(gameDetails.isCardsDisabled() != null && gameDetails.isCardsDisabled());
-
-    game.setEventLogAvailable(gameDetails.getEventLog() != null);
-
-    //only apply legacy highscore name if the Popper fields are empty
-    if (StringUtils.isEmpty(game.getHsFileName())) {
-      game.setHsFileName(gameDetails.getHsFileName());
-    }
-    else {
-      //TODO this smells. The TableDetails are only loaded in case the game has no highscore filename, because this one is mapped to a custom field
-      if (tableDetails == null) {
-        tableDetails = frontendService.getTableDetails(game.getId());
-      }
-    }
-
-    // Only apply VPS data if the frontend does not provide them
-    if (StringUtils.isEmpty(game.getExtTableId())) {
-      game.setExtTableId(gameDetails.getExtTableId());
-    }
-    if (StringUtils.isEmpty(game.getExtTableVersionId())) {
-      game.setExtTableVersionId(gameDetails.getExtTableVersionId());
-    }
-    if (StringUtils.isEmpty(game.getVersion())) {
-      game.setVersion(gameDetails.getTableVersion());
-    }
-
-    game.setHighscoreCardTemplateId(gameDetails.getTemplateId());
-    game.setInstructionCardTemplateId(gameDetails.getInstructionCardTemplateId());
-    game.setWheelTemplateId(gameDetails.getWheelTemplateId());
-
-    game.setComment(gameDetails.getNotes());
-
-    //PUP pack assignment: we have to differ between the scanned name and the actual resolved one which could be different.
-    game.setPupPackName(gameDetails.getPupPack());
-    PupPack pupPack = pupPacksService.getPupPackCached(game);
-    if (pupPack != null) {
-      game.setPupPackName(pupPack.getName());
-    }
-
-    game.setIgnoredValidations(ValidationState.toIds(gameDetails.getIgnoredValidations()));
-    game.setAltSoundAvailable(altSoundService.isAltSoundAvailable(game));
-    game.setAltColorType(altColorService.getAltColorType(game));
-
-    DirectB2S b2s = backglassService.getCacheDirectB2SAndVersions(game);
-    game.setNbDirectB2S(b2s != null ? b2s.getNbVersions() : -1);
-
-    String updates = gameDetails.getUpdates();
-    game.setVpsUpdates(VPSChanges.fromJson(updates));
-    vpsService.applyVersionInfo(game);
-
-    //do not parse highscore and generate highscore cards for new games, causing concurrent DB access likely through the FX thread
-    if (game.isVpxGame()) {
-      if (!newGame) {
-        Optional<Highscore> highscore = this.highscoreService.getHighscore(game, forceScoreScan, EventOrigin.USER_INITIATED);
-        if (highscore.isPresent()) {
-          Highscore hscr = highscore.get();
-          game.setHighscoreType(hscr.getType() != null ? HighscoreType.valueOf(hscr.getType()) : null);
-        }
-
-        if (game.getHighscoreType() == null && systemService.getScoringDatabase().isNvRam(game.getRom())) {
-          game.setHighscoreType(HighscoreType.NVRam);
-        }
-      }
-    }
-
-    return new GameDetailsInfo(game, gameDetails, tableDetails, newGame);
-  }
-
-  private void applyGameValidation(@NotNull GameDetailsInfo gameDetailsInfo, boolean findFirstIssueOnly) {
-    //run validations at the end!!!
-    Game game = gameDetailsInfo.game;
-    List<ValidationState> validationStates = gameValidationService.validate(gameDetailsInfo.game, findFirstIssueOnly);
-    game.setHasMissingAssets(gameValidationService.hasMissingAssets(validationStates));
-    game.setIssueTypes(validationStates.stream().map(ValidationState::getCode).collect(Collectors.toList()));
-
-    if (validationStates.isEmpty()) {
-      validationStates.add(ValidationStateFactory.empty());
-    }
-    game.setValidationState(validationStates.get(0));
-
-    GameScoreValidation scoreValidation = gameValidationService.validateHighscoreStatus(game, gameDetailsInfo.gameDetails, gameDetailsInfo.tableDetails, frontendService.getFrontendType(), serverSettings);
-    game.setValidScoreConfiguration(scoreValidation.isValidScoreConfiguration());
-  }
-
-  @Override
-  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
-    if (PreferenceNames.SERVER_SETTINGS.equals(propertyName)) {
-      serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
-    }
-  }
-
-  //---------- Game Lifecycle Listener ---------------------
-
-  @Override
-  public void gameCreated(int gameId) {
-    invalidate(gameId);
-  }
-
-  @Override
-  public void gameUpdated(int gameId) {
-    invalidate(gameId);
-  }
-
-  @Override
-  public void gameDeleted(int gameId) {
-    Collection<GameEmulatorCache> caches = allGamesByEmulatorId.values();
-    for (GameEmulatorCache cache : caches) {
-      cache.delete(gameId);
-    }
-  }
-
-  //---------- GameDataChange Listener ---------------------
-
-  @Override
-  public void gameDataChanged(@NonNull GameDataChangedEvent changedEvent) {
-    invalidate(changedEvent.getGameId());
-  }
-
-  @Override
-  public void gameAssetChanged(@NonNull GameAssetChangedEvent changedEvent) {
-    invalidate(changedEvent.getGameId());
-
-    switch (changedEvent.getAssetType()) {
-      case ROM:
-      case ALT_COLOR:
-      case PUP_PACK:
-      case ALT_SOUND: {
-        if (changedEvent.getAsset() != null) {
-          Object asset = changedEvent.getAsset();
-          if (asset instanceof String) {
-            List<Game> vpxGames = getVpxGames();
-            String rom = String.valueOf(asset);
-            for (Game vpxGame : vpxGames) {
-              if (rom.equalsIgnoreCase(vpxGame.getRom()) || rom.equalsIgnoreCase(vpxGame.getTableName())) {
-                invalidate(vpxGame.getId());
-              }
+        TableDetails tableDetails = null;
+        if (gameDetails == null || forceScan) {
+            if (gameDetails == null) {
+                gameDetails = new GameDetails();
+                gameDetails.setCreatedAt(OffsetDateTime.now());
             }
 
-            List<Game> zenGames = getZenGames();
-            String tableName = String.valueOf(asset);
-            for (Game zenGame : zenGames) {
-              if (tableName.equalsIgnoreCase(zenGame.getGameName())) {
-                invalidate(zenGame.getId());
-              }
+            tableDetails = frontendService.getTableDetails(game.getId());
+
+            if (game.isVpxGame()) {
+                ScanResult scanResult = romService.scanGameFile(game);
+                String scannedRomName = scanResult.getRom();
+                String scannedTableName = scanResult.getTableName();
+
+                //always prefer PinUP Popper ROM name over the scanned value
+                if (tableDetails != null && StringUtils.isEmpty(scannedRomName) && !StringUtils.isEmpty(tableDetails.getRomName())) {
+                    scannedRomName = tableDetails.getRomName();
+                }
+
+                if (tableDetails != null && StringUtils.isEmpty(scannedTableName) && !StringUtils.isEmpty(tableDetails.getRomAlt())) {
+                    scannedTableName = tableDetails.getRomAlt();
+                }
+                gameDetails.setFoundControllerStop(scanResult.isFoundControllerStop());
+                gameDetails.setFoundTableExit(scanResult.isFoundTableExit());
+                gameDetails.setRomName(scannedRomName);
+                gameDetails.setTableName(scannedTableName);
+                gameDetails.setNvOffset(scanResult.getNvOffset());
+                gameDetails.setHsFileName(scanResult.getHsFileName());
+                gameDetails.setVrRoomEnabled(!scanResult.isVrRoomDisabled());
+                gameDetails.setVrRoomSupport(scanResult.isVrRoomSupport());
+
+                gameDetails.setDMDType(scanResult.getDMDType() != null ? DMDPackageTypes.valueOf(scanResult.getDMDType()) : DMDPackageTypes.Standard);
+                gameDetails.setDMDGameName(scanResult.getDMDGameName());
+                gameDetails.setDMDProjectFolder(scanResult.getDMDProjectFolder());
+
+                gameDetails.setPupPack(scanResult.getPupPackName());
+                gameDetails.setAssets(StringUtils.join(scanResult.getAssets(), "|"));
+                gameDetails.setScripts(StringUtils.join(scanResult.getScripts(), ","));
             }
-          }
+            else {
+                if (tableDetails != null) {
+                    gameDetails.setRomName(tableDetails.getRomName());
+                    gameDetails.setTableName(tableDetails.getRomAlt());
+                }
+            }
+
+            gameDetails.setPupId(game.getId());
+            gameDetails.setUpdatedAt(OffsetDateTime.now());
+
+            synchronized (saveLock) {
+                gameDetailsRepositoryService.saveAndFlush(gameDetails);
+            }
+            LOG.info("Created GameDetails for {}, was forced: {}", game.getGameDisplayName(), forceScan);
         }
 
-        return;
-      }
-      case INI:
-      case POV:
-      case RES:
-      case DIRECTB2S: {
-        Object asset = changedEvent.getAsset();
-        if (asset instanceof String) {
-          String filename = String.valueOf(asset);
-          String fileAssetBaseName = FilenameUtils.getBaseName(filename);
-          List<Game> knownGames = getKnownGames(-1);
-          for (Game knownGame : knownGames) {
-            String gameBaseName = FilenameUtils.getBaseName(knownGame.getGameFileName());
-            if (gameBaseName.equalsIgnoreCase(fileAssetBaseName)) {
-              invalidate(knownGame.getId());
-            }
-          }
+        GameEmulator emulator = game.getEmulator();
+        if (emulator != null && emulator.isVpxEmulator() && emulator.getExe() != null && emulator.getExe().exists()) {
+            game.setLauncher(emulator.getExe().getName());
         }
-        break;
-      }
-      default: {
+
+        //apply the alt launcher exe as actually used one
+        if (!StringUtils.isEmpty(game.getAltLauncherExe()) && game.getAltLauncherExe().contains(".exe")) {
+            game.setLauncher(game.getAltLauncherExe());
+        }
+
+        //only apply legacy table name if the frontend fields are empty
+        if (StringUtils.isEmpty(game.getTableName())) {
+            game.setTableName(gameDetails.getTableName());
+        }
+
+        if (StringUtils.isEmpty(game.getRom())) {
+            game.setRom(gameDetails.getRomName());
+        }
+
+        if (game.isZenGame()) {
+            game.setRom(game.getGameDisplayName());
+        }
+
+        if (game.getDateAdded() == null) {
+            game.setDateAdded(gameDetails.getCreatedAt());
+        }
+        if (game.getDateUpdated() == null) {
+            game.setDateUpdated(gameDetails.getUpdatedAt());
+        }
+
+        //check alias
+        if (game.getEmulator() != null && !game.isZenGame()) {
+            String originalRom = VPinMameRomAliasService.getRomForAlias(game.getEmulator(), game.getRom());
+            if (!StringUtils.isEmpty(originalRom)) {
+                String aliasName = game.getRom();
+                game.setRom(originalRom);
+                game.setRomAlias(aliasName);
+            }
+        }
+
+        // fill scanned values
+        game.setAssets(gameDetails.getAssets());
+        game.setMusicScripted(gameDetails.getAssets() != null && (gameDetails.getAssets().contains(".mp3") || gameDetails.getAssets().contains(".wav") || gameDetails.getAssets().contains(".ogg")));
+        game.setScannedRom(gameDetails.getRomName());
+        game.setRomExists(vPinMameService.isRomExists(game));
+        game.setScannedHsFileName(gameDetails.getHsFileName());
+        game.setScannedAltRom(gameDetails.getTableName());
+        game.setIgnoreUpdates(gameDetails.getIgnoreUpdates() != null ? gameDetails.getIgnoreUpdates() : false);
+        game.setVrRoomEnabled(gameDetails.getVrRoomEnabled() != null ? gameDetails.getVrRoomEnabled() : false);
+        game.setVrRoomSupport(gameDetails.getVrRoomSupport() != null ? gameDetails.getVrRoomSupport() : false);
+        game.setFoundControllerStop(gameDetails.getFoundControllerStop() != null ? gameDetails.getFoundControllerStop() : true);
+        game.setFoundTableExit(gameDetails.getFoundTableExit() != null ? gameDetails.getFoundTableExit() : true);
+
+        game.setDMDType(gameDetails.getDMDType());
+        game.setDMDGameName(gameDetails.getDMDGameName());
+        game.setDMDProjectFolder(gameDetails.getDMDProjectFolder());
+
+        game.setScripts(StringUtils.split(gameDetails.getScripts(), ","));
+
+        game.setNvOffset(gameDetails.getNvOffset());
+        game.setCardDisabled(gameDetails.isCardsDisabled() != null && gameDetails.isCardsDisabled());
+
+        game.setEventLogAvailable(gameDetails.getEventLog() != null);
+
+        //only apply legacy highscore name if the Popper fields are empty
+        if (StringUtils.isEmpty(game.getHsFileName())) {
+            game.setHsFileName(gameDetails.getHsFileName());
+        }
+        else {
+            //TODO this smells. The TableDetails are only loaded in case the game has no highscore filename, because this one is mapped to a custom field
+            if (tableDetails == null) {
+                tableDetails = frontendService.getTableDetails(game.getId());
+            }
+        }
+
+        // Only apply VPS data if the frontend does not provide them
+        if (StringUtils.isEmpty(game.getExtTableId())) {
+            game.setExtTableId(gameDetails.getExtTableId());
+        }
+        if (StringUtils.isEmpty(game.getExtTableVersionId())) {
+            game.setExtTableVersionId(gameDetails.getExtTableVersionId());
+        }
+        if (StringUtils.isEmpty(game.getVersion())) {
+            game.setVersion(gameDetails.getTableVersion());
+        }
+
+        game.setHighscoreCardTemplateId(gameDetails.getTemplateId());
+        game.setInstructionCardTemplateId(gameDetails.getInstructionCardTemplateId());
+        game.setWheelTemplateId(gameDetails.getWheelTemplateId());
+
+        game.setComment(gameDetails.getNotes());
+
+        //PUP pack assignment: we have to differ between the scanned name and the actual resolved one which could be different.
+        game.setPupPackName(gameDetails.getPupPack());
+        PupPack pupPack = pupPacksService.getPupPackCached(game);
+        if (pupPack != null) {
+            game.setPupPackName(pupPack.getName());
+        }
+
+        game.setIgnoredValidations(ValidationState.toIds(gameDetails.getIgnoredValidations()));
+        game.setAltSoundAvailable(altSoundService.isAltSoundAvailable(game));
+        game.setAltColorType(altColorService.getAltColorType(game));
+
+        DirectB2S b2s = backglassService.getCacheDirectB2SAndVersions(game);
+        game.setNbDirectB2S(b2s != null ? b2s.getNbVersions() : -1);
+
+        String updates = gameDetails.getUpdates();
+        game.setVpsUpdates(VPSChanges.fromJson(updates));
+        vpsService.applyVersionInfo(game);
+
+        //do not parse highscore and generate highscore cards for new games, causing concurrent DB access likely through the FX thread
+        if (game.isVpxGame()) {
+            if (!newGame) {
+                Optional<Highscore> highscore = this.highscoreService.getHighscore(game, forceScoreScan, EventOrigin.USER_INITIATED);
+                if (highscore.isPresent()) {
+                    Highscore hscr = highscore.get();
+                    game.setHighscoreType(hscr.getType() != null ? HighscoreType.valueOf(hscr.getType()) : null);
+                }
+
+                if (game.getHighscoreType() == null && systemService.getScoringDatabase().isNvRam(game.getRom())) {
+                    game.setHighscoreType(HighscoreType.NVRam);
+                }
+            }
+        }
+
+        return new GameDetailsInfo(game, gameDetails, tableDetails, newGame);
+    }
+
+    private void applyGameValidation(@NotNull GameDetailsInfo gameDetailsInfo, boolean findFirstIssueOnly) {
+        //run validations at the end!!!
+        Game game = gameDetailsInfo.game;
+        List<ValidationState> validationStates = gameValidationService.validate(gameDetailsInfo.game, findFirstIssueOnly);
+        game.setHasMissingAssets(gameValidationService.hasMissingAssets(validationStates));
+        game.setIssueTypes(validationStates.stream().map(ValidationState::getCode).collect(Collectors.toList()));
+
+        if (validationStates.isEmpty()) {
+            validationStates.add(ValidationStateFactory.empty());
+        }
+        game.setValidationState(validationStates.get(0)); //Note: .getFirst() will not return an empty value, so don't use it here.
+
+        GameScoreValidation scoreValidation = gameValidationService.validateHighscoreStatus(game, gameDetailsInfo.gameDetails, gameDetailsInfo.tableDetails, frontendService.getFrontendType(), serverSettings);
+        game.setValidScoreConfiguration(scoreValidation.isValidScoreConfiguration());
+    }
+
+    @Override
+    public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
+        if (PreferenceNames.SERVER_SETTINGS.equals(propertyName)) {
+            serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+        }
+    }
+
+    //---------- Game Lifecycle Listener ---------------------
+
+    @Override
+    public void gameCreated(int gameId) {
+        invalidate(gameId);
+    }
+
+    @Override
+    public void gameUpdated(int gameId) {
+        invalidate(gameId);
+    }
+
+    @Override
+    public void gameDeleted(int gameId) {
+        Collection<GameEmulatorCache> caches = allGamesByEmulatorId.values();
+        for (GameEmulatorCache cache : caches) {
+            cache.delete(gameId);
+        }
+    }
+
+    //---------- GameDataChange Listener ---------------------
+
+    @Override
+    public void gameDataChanged(@NonNull GameDataChangedEvent changedEvent) {
+        invalidate(changedEvent.getGameId());
+    }
+
+    @Override
+    public void gameAssetChanged(@NonNull GameAssetChangedEvent changedEvent) {
+        invalidate(changedEvent.getGameId());
+
+        switch (changedEvent.getAssetType()) {
+            case ROM:
+            case ALT_COLOR:
+            case PUP_PACK:
+            case ALT_SOUND: {
+                if (changedEvent.getAsset() != null) {
+                    Object asset = changedEvent.getAsset();
+                    if (asset instanceof String) {
+                        List<Game> vpxGames = getVpxGames();
+                        String rom = String.valueOf(asset);
+                        for (Game vpxGame : vpxGames) {
+                            if (rom.equalsIgnoreCase(vpxGame.getRom()) || rom.equalsIgnoreCase(vpxGame.getTableName())) {
+                                invalidate(vpxGame.getId());
+                            }
+                        }
+
+                        List<Game> zenGames = getZenGames();
+                        String tableName = String.valueOf(asset);
+                        for (Game zenGame : zenGames) {
+                            if (tableName.equalsIgnoreCase(zenGame.getGameName())) {
+                                invalidate(zenGame.getId());
+                            }
+                        }
+                    }
+                }
+
+                return;
+            }
+            case INI:
+            case POV:
+            case RES:
+            case DIRECTB2S: {
+                Object asset = changedEvent.getAsset();
+                if (asset instanceof String) {
+                    String filename = String.valueOf(asset);
+                    String fileAssetBaseName = FilenameUtils.getBaseName(filename);
+                    List<Game> knownGames = getKnownGames(-1);
+                    for (Game knownGame : knownGames) {
+                        String gameBaseName = FilenameUtils.getBaseName(knownGame.getGameFileName());
+                        if (gameBaseName.equalsIgnoreCase(fileAssetBaseName)) {
+                            invalidate(knownGame.getId());
+                        }
+                    }
+                }
+                break;
+            }
+            default: {
 //        LOG.warn("Unhandled asset change event found: {}", changedEvent.getAsset());
-      }
+            }
+        }
     }
-  }
-  //---------- Competition Change Listener ---------------------
+    //---------- Competition Change Listener ---------------------
 
-  @Override
-  public void competitionStarted(@NonNull Competition competition) {
-    invalidate(competition.getGameId());
-  }
-
-  @Override
-  public void competitionCreated(@NonNull Competition competition) {
-    invalidate(competition.getGameId());
-  }
-
-  @Override
-  public void competitionChanged(@NonNull Competition competition) {
-    invalidate(competition.getGameId());
-  }
-
-  @Override
-  public void competitionFinished(@NonNull Competition competition, @Nullable Player winner, @NonNull ScoreSummary scoreSummary) {
-    invalidate(competition.getGameId());
-  }
-
-  @Override
-  public void competitionDeleted(@NonNull Competition competition) {
-    invalidate(competition.getGameId());
-  }
-
-  //---------- Highscore Change Listener ---------------------
-
-  @Override
-  public void highscoreChanged(@NotNull HighscoreChangeEvent event) {
-    invalidate(event.getGame().getId());
-  }
-
-  @Override
-  public void highscoreUpdated(@NotNull Game game, @NotNull Highscore highscore) {
-    invalidate(game.getId());
-  }
-
-  //---------- Emulator Change Listener ---------------------
-
-  @Override
-  public void emulatorChanged(int emulatorId) {
-    clearCacheForEmulator(emulatorId);
-  }
-
-  //---------- InitializingBean----------------------------------
-
-  @Override
-  public void afterPropertiesSet() throws Exception {
-    VPinMameRomAliasService.setGameCachingService(this);
-
-    serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
-
-    preferencesService.addChangeListener(this);
-    gameLifecycleService.addGameLifecycleListener(this);
-    gameLifecycleService.addGameDataChangedListener(this);
-    competitionLifecycleService.addCompetitionChangeListener(this);
-    emulatorService.addEmulatorChangeListener(this);
-  }
-
-  static class GameDetailsInfo {
-    private final Game game;
-    private final GameDetails gameDetails;
-    private final TableDetails tableDetails;
-    private final boolean newGame;
-
-    public GameDetailsInfo(Game game, GameDetails gameDetails, TableDetails tableDetails, boolean newGame) {
-      this.game = game;
-      this.gameDetails = gameDetails;
-      this.tableDetails = tableDetails;
-      this.newGame = newGame;
+    @Override
+    public void competitionStarted(@NonNull Competition competition) {
+        invalidate(competition.getGameId());
     }
-  }
+
+    @Override
+    public void competitionCreated(@NonNull Competition competition) {
+        invalidate(competition.getGameId());
+    }
+
+    @Override
+    public void competitionChanged(@NonNull Competition competition) {
+        invalidate(competition.getGameId());
+    }
+
+    @Override
+    public void competitionFinished(@NonNull Competition competition, @Nullable Player winner, @NonNull ScoreSummary scoreSummary) {
+        invalidate(competition.getGameId());
+    }
+
+    @Override
+    public void competitionDeleted(@NonNull Competition competition) {
+        invalidate(competition.getGameId());
+    }
+
+    //---------- Highscore Change Listener ---------------------
+
+    @Override
+    public void highscoreChanged(@NotNull HighscoreChangeEvent event) {
+        invalidate(event.getGame().getId());
+    }
+
+    @Override
+    public void highscoreUpdated(@NotNull Game game, @NotNull Highscore highscore) {
+        invalidate(game.getId());
+    }
+
+    //---------- Emulator Change Listener ---------------------
+
+    @Override
+    public void emulatorChanged(int emulatorId) {
+        clearCacheForEmulator(emulatorId);
+    }
+
+    //---------- InitializingBean----------------------------------
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        VPinMameRomAliasService.setGameCachingService(this);
+
+        serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+
+        preferencesService.addChangeListener(this);
+        gameLifecycleService.addGameLifecycleListener(this);
+        gameLifecycleService.addGameDataChangedListener(this);
+        competitionLifecycleService.addCompetitionChangeListener(this);
+        emulatorService.addEmulatorChangeListener(this);
+    }
+
+    static class GameDetailsInfo {
+        private final Game game;
+        private final GameDetails gameDetails;
+        private final TableDetails tableDetails;
+        private final boolean newGame;
+
+        public GameDetailsInfo(Game game, GameDetails gameDetails, TableDetails tableDetails, boolean newGame) {
+            this.game = game;
+            this.gameDetails = gameDetails;
+            this.tableDetails = tableDetails;
+            this.newGame = newGame;
+        }
+    }
 }

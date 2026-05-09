@@ -1,11 +1,7 @@
 package de.mephisto.vpin.ui.mania;
 
-import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
-import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.mania.ManiaSettings;
 import de.mephisto.vpin.ui.HeaderResizeableController;
-import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.mania.util.ManiaHelper;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -19,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
 
 public class ManiaAccountSettingsController implements Initializable {

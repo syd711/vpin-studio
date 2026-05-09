@@ -3,12 +3,13 @@ package de.mephisto.vpin.server.util;
 import de.mephisto.vpin.server.roms.ScanResult;
 import de.mephisto.vpin.server.scripteval.EvaluationContext;
 import de.mephisto.vpin.server.vpx.VPXUtil;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,11 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -227,7 +224,7 @@ public class VPXFileScanner {
     Matcher matcher = MP3_EXPRESSION_PATTERN.matcher(line);
     while (matcher.find()) {
       String expr = matcher.group();
-      if (!StringUtils.containsIgnoreCase(expr, ".mp3") && !StringUtils.containsIgnoreCase(expr, ".wav") && !StringUtils.containsIgnoreCase(expr, ".ogg")) {
+      if (!Strings.CI.contains(expr, ".mp3") && !Strings.CI.contains(expr, ".wav") && !Strings.CI.contains(expr, ".ogg")) {
         continue;
       }
       String filename = buildMusicWildcard(expr);
@@ -282,13 +279,13 @@ public class VPXFileScanner {
       }
       else {
         // variable or number — use wildcard, but don't double up
-        if (sb.length() == 0 || sb.charAt(sb.length() - 1) != '*') {
+        if (sb.isEmpty() || sb.charAt(sb.length() - 1) != '*') {
           sb.append('*');
         }
       }
     }
     String result = sb.toString();
-    return (StringUtils.containsIgnoreCase(result, ".mp3") || StringUtils.containsIgnoreCase(result, ".wav") || StringUtils.containsIgnoreCase(result, ".ogg")) ? result : null;
+    return (Strings.CI.contains(result, ".mp3") || Strings.CI.contains(result, ".wav") || Strings.CI.contains(result, ".ogg")) ? result : null;
   }
 
   /**
@@ -390,12 +387,12 @@ public class VPXFileScanner {
     //-------------------
     // Copy discovered variables into Scanresult
 
-    String cGameName = StringUtils.defaultString(evalctxt.getVarValue("cGameName"), evalctxt.getVarValue("GameName"));
+    String cGameName = Objects.toString(evalctxt.getVarValue("cGameName"), evalctxt.getVarValue("GameName"));
     if (StringUtils.isNotEmpty(cGameName)) {
       result.setRom(cGameName);
     }
 
-    String tableName = StringUtils.defaultString(evalctxt.getVarValue("TableName"), evalctxt.getVarValue("B2STableName"));
+    String tableName = Objects.toString(evalctxt.getVarValue("TableName"), evalctxt.getVarValue("B2STableName"));
     if (StringUtils.isNotEmpty(tableName)) {
       result.setTableName(tableName);
     }
@@ -488,7 +485,7 @@ public class VPXFileScanner {
   }
 
   private static void lineEvaluateVars(String line, EvaluationContext evalctxt) {
-    if (StringUtils.startsWithIgnoreCase(line, "const ")) {
+    if (Strings.CI.startsWith(line, "const ")) {
       final String varargs = line.substring(6);
       evalctxt.onEvaluateList("TO_ARRAY(" + varargs + ")", list -> {
         //LOG.info("line parsed {}", varargs);
@@ -564,10 +561,10 @@ public class VPXFileScanner {
   private static void lineDetectWith(@NonNull String line, EvaluationContext evalctxt) {
     if (line.startsWith("With ")) {
       String object = null;
-      if (StringUtils.startsWithIgnoreCase(line, "With Controller")) {
+      if (Strings.CI.startsWith(line, "With Controller")) {
         object = "Controller";
       }
-      else if (StringUtils.startsWithIgnoreCase(line, "With FlexDMD")) {
+      else if (Strings.CI.startsWith(line, "With FlexDMD")) {
         object = "FlexDMD";
       }
       if (object != null) {
@@ -644,16 +641,16 @@ public class VPXFileScanner {
     }
   }*/
   private static void lineSearchDMDType(ScanResult result, String line) {
-    if (StringUtils.containsIgnoreCase(line, "CreateObject(\"UltraDMD.DMDObject\")")) {
+    if (Strings.CI.contains(line, "CreateObject(\"UltraDMD.DMDObject\")")) {
       result.setDMDType("UltraDMD");
     }
-    else if (StringUtils.containsIgnoreCase(line, "CreateObject(\"FlexDMD.FlexDMD\")")) {
+    else if (Strings.CI.contains(line, "CreateObject(\"FlexDMD.FlexDMD\")")) {
       result.setDMDType("FlexDMD");
     }
   }
 
   private static void lineSearchInitUltraDmd(ScanResult result, String line, EvaluationContext evalctxt) {
-    if (StringUtils.startsWithIgnoreCase(line, "InitUltraDMD")) {
+    if (Strings.CI.startsWith(line, "InitUltraDMD")) {
       int idx = line.indexOf(",");
       String folder = line.substring(12, idx);
       //String tableName = line.substring(idx + 1);
@@ -666,10 +663,10 @@ public class VPXFileScanner {
 
   private static void lineSearchDMDProjectFolder(ScanResult result, String line, EvaluationContext evalctxt) {
     String prjFolder = null;
-    if (StringUtils.containsIgnoreCase(line, ".SetProjectFolder")) {
+    if (Strings.CI.contains(line, ".SetProjectFolder")) {
       prjFolder = extractAfterPatternsValue(line, ".SetProjectFolder");
     }
-    else if (StringUtils.containsIgnoreCase(line, ".ProjectFolder")) {
+    else if (Strings.CI.contains(line, ".ProjectFolder")) {
       prjFolder = extractAfterPatternsValue(line, ".ProjectFolder", "=");
     }
 
@@ -677,11 +674,11 @@ public class VPXFileScanner {
       evalctxt.onEvaluateString(prjFolder, res -> {
         if (res.startsWith(".\\")) {
           res = StringUtils.substring(res, 2);
-          res = StringUtils.removeEnd(res, "\\");
+          res = Strings.CI.removeEnd(res, "\\");
         }
         else if (res.startsWith("./")) {
           res = StringUtils.substring(res, 2);
-          res = StringUtils.removeEnd(res, "/");
+          res = Strings.CI.removeEnd(res, "/");
         }
         result.setDMDProjectFolder(res);
       });
@@ -689,7 +686,7 @@ public class VPXFileScanner {
   }
 
   private static void lineSearchScript(List<String> includedScripts, String line, EvaluationContext evalctxt) {
-    if (StringUtils.containsIgnoreCase(line, "GetTextFile")) {
+    if (Strings.CI.contains(line, "GetTextFile")) {
       String script = StringUtils.substringAfter(line, "GetTextFile");
       script = StringUtils.substringBetween(script, "(", ")").trim();
       evalctxt.onEvaluateString(script, includedScripts::add);
@@ -721,7 +718,7 @@ public class VPXFileScanner {
   private static String extractAfterPatternsValue(String line, String... patterns) {
     String extract = line;
     for (String pattern : patterns) {
-      int idx = StringUtils.indexOfIgnoreCase(extract, pattern);
+      int idx = Strings.CI.indexOf(extract, pattern);
       // pattern not found
       if (idx < 0) {
         return extract;

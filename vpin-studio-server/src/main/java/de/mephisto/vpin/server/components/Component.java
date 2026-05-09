@@ -3,10 +3,10 @@ package de.mephisto.vpin.server.components;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.mephisto.vpin.restclient.components.ComponentType;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import java.util.Date;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "Components")
@@ -16,7 +16,7 @@ public class Component {
   @Id
   private ComponentType type;
 
-  private Date lastCheck;
+  private OffsetDateTime lastCheck;
 
   private String installedVersion;
 
@@ -48,11 +48,11 @@ public class Component {
     this.installedVersion = installedVersion;
   }
 
-  public Date getLastCheck() {
+  public OffsetDateTime getLastCheck() {
     return lastCheck;
   }
 
-  public void setLastCheck(Date lastCheck) {
+  public void setLastCheck(OffsetDateTime lastCheck) {
     this.lastCheck = lastCheck;
   }
 

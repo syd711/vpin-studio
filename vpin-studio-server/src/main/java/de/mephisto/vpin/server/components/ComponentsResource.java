@@ -2,11 +2,7 @@ package de.mephisto.vpin.server.components;
 
 import de.mephisto.vpin.connectors.github.GithubRelease;
 import de.mephisto.vpin.connectors.github.ReleaseArtifactActionLog;
-import de.mephisto.vpin.restclient.components.ComponentActionLogRepresentation;
-import de.mephisto.vpin.restclient.components.ComponentInstallation;
-import de.mephisto.vpin.restclient.components.ComponentRepresentation;
-import de.mephisto.vpin.restclient.components.ComponentType;
-import de.mephisto.vpin.restclient.components.GithubReleaseRepresentation;
+import de.mephisto.vpin.restclient.components.*;
 import de.mephisto.vpin.server.components.facades.ComponentFacade;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -82,7 +78,7 @@ public class ComponentsResource {
     ComponentFacade componentFacade = componentService.getComponentFacade(componentType);
     List<GithubRelease> releases = componentService.getReleases(componentType);
     if (!StringUtils.isEmpty(component.getIgnoredVersions())) {
-      releases = releases.stream().filter(release -> !component.getIgnoredVersions().contains(release.getTag())).collect(Collectors.toList());
+      releases = releases.stream().filter(release -> !component.getIgnoredVersions().contains(release.getTag())).toList();
     }
 
     List<GithubReleaseRepresentation> artifacts = new ArrayList<>();

@@ -5,7 +5,9 @@ import de.mephisto.vpin.server.backups.BackupSource;
 import de.mephisto.vpin.server.system.SystemService;
 
 import java.io.File;
-import java.util.Date;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 
 public class VpaBackupSource extends BackupSource {
   public final static long DEFAULT_ARCHIVE_SOURCE_ID = -1;
@@ -33,8 +35,8 @@ public class VpaBackupSource extends BackupSource {
   }
 
   @Override
-  public Date getCreatedAt() {
-    return new Date(FOLDER.lastModified());
+  public OffsetDateTime getCreatedAt() {
+    return OffsetDateTime.ofInstant(Instant.ofEpochMilli(FOLDER.lastModified()), ZoneId.systemDefault());
   }
 
   @Override

@@ -23,7 +23,7 @@ public class PauseMenuSettings extends JsonSettings {
   private int stageOffsetY = 0;
   private boolean multiScreenUser = false;
   private boolean includeDmdFrame = false;
-  private List<Integer> multiScreenIds = new ArrayList<>(List.of(new Integer(1)));
+  private List<Integer> multiScreenIds = new ArrayList<>(List.of(1));
 
   private int testDuration = 8;
   private int testGameId = -1;

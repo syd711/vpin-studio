@@ -1,9 +1,10 @@
 package de.mephisto.vpin.connectors.vps.model;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,11 +15,13 @@ import java.util.stream.Collectors;
 
 public class VPSChanges {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-  private final static ObjectMapper objectMapper = new ObjectMapper();
+  private final static ObjectMapper objectMapper;
 
   static {
-    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    objectMapper = JsonMapper.builder()
+        .enable(SerializationFeature.INDENT_OUTPUT)
+        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        .build();
   }
 
   public static VPSChanges fromJson(String json) {
@@ -34,16 +37,16 @@ public class VPSChanges {
     return new VPSChanges();
   }
 
-  public String toJson() throws JsonProcessingException {
+  public String toJson() throws JacksonException {
     return objectMapper.writeValueAsString(this);
   }
 
   public boolean contains(VpsDiffTypes diffType) {
-    for (VPSChange change : this.changes) {
-      if (change.getDiffType().equals(diffType)) {
-        return true;
+      for (VPSChange change : this.changes) {
+          if (change != null && change.getDiffType() != null && change.getDiffType().equals(diffType)) {
+              return true;
+          }
       }
-    }
     return false;
   }
 

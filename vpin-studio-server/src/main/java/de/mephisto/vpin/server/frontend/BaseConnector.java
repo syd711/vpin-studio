@@ -22,9 +22,10 @@ import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpx.VPXService;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,8 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -149,7 +152,7 @@ public abstract class BaseConnector implements FrontendConnector {
 
   private GameEntry popGameEntry(List<GameEntry> entries, int emuId, String filename) {
     GameEntry entry = entries.stream()
-        .filter(e -> e.getEmuId() == emuId && StringUtils.equalsIgnoreCase(e.getFilename(), filename))
+        .filter(e -> e.getEmuId() == emuId && Strings.CI.equals(e.getFilename(), filename))
         .findFirst().orElse(null);
 
     // new discovered entry, create id
@@ -171,7 +174,7 @@ public abstract class BaseConnector implements FrontendConnector {
   protected GameEntry findEntryFromFilename(int emuId, String filename) {
     for (Map.Entry<Integer, GameEntry> entry : mapFilenames.entrySet()) {
       GameEntry e = entry.getValue();
-      if (e.getEmuId() == emuId && StringUtils.equalsIgnoreCase(e.getFilename(), filename)) {
+      if (e.getEmuId() == emuId && Strings.CI.equals(e.getFilename(), filename)) {
         return e;
       }
     }
@@ -314,7 +317,7 @@ public abstract class BaseConnector implements FrontendConnector {
   @Override
   public List<Game> getGamesByFilename(String filename) {
     String gameFileName = filename.replaceAll("'", "''");
-    return getGames().stream().filter(g -> StringUtils.containsIgnoreCase(g.getGameFileName(), gameFileName)).collect(Collectors.toList());
+    return getGames().stream().filter(g -> Strings.CI.contains(g.getGameFileName(), gameFileName)).collect(Collectors.toList());
   }
 
   @NonNull
@@ -333,7 +336,7 @@ public abstract class BaseConnector implements FrontendConnector {
   public Game getGameByName(int emuId, String gameName) {
     return getGameEntries(emuId).stream()
         .map(e -> getGame(e))
-        .filter(g -> StringUtils.containsIgnoreCase(g.getGameName(), gameName))
+        .filter(g -> Strings.CI.contains(g.getGameName(), gameName))
         .findFirst().orElse(null);
   }
 
@@ -341,7 +344,7 @@ public abstract class BaseConnector implements FrontendConnector {
   public Game getGameByDisplayName(int emuId, String gameName) {
     return getGameEntries(emuId).stream()
         .map(e -> getGame(e))
-        .filter(g -> StringUtils.containsIgnoreCase(g.getGameDisplayName(), gameName))
+        .filter(g -> Strings.CI.contains(g.getGameDisplayName(), gameName))
         .findFirst().orElse(null);
   }
 
@@ -375,7 +378,7 @@ public abstract class BaseConnector implements FrontendConnector {
     }
 
     // detection of file renamed
-    if (!StringUtils.equalsIgnoreCase(e.getFilename(), tableDetails.getGameFileName())) {
+    if (!Strings.CI.equals(e.getFilename(), tableDetails.getGameFileName())) {
       deleteGame(id, false);
 
       // update filename, but do not change the id 
@@ -576,9 +579,9 @@ public abstract class BaseConnector implements FrontendConnector {
     int intValue = toColorCode(uiSettings.getJustAddedColor());
     pl.setMenuColor(intValue);
     pl.setSqlPlayList(true);
-    long dayMinus7 = System.currentTimeMillis() - 7 * 24 * 60 * 60 * 1000;
+    OffsetDateTime dayMinus7 = OffsetDateTime.now().minus(7, ChronoUnit.DAYS);
     List<PlaylistGame> games = getGames().stream().filter(g -> {
-      return g.getDateAdded() != null ? g.getDateAdded().getTime() > dayMinus7 : false;
+      return g.getDateAdded() != null ? g.getDateAdded().isAfter(dayMinus7) : false;
     }).map(g -> toPlaylistGame(g.getId())).collect(Collectors.toList());
     pl.setGames(games);
     return pl;
@@ -599,7 +602,7 @@ public abstract class BaseConnector implements FrontendConnector {
         s2.getNumberOfPlays() - s1.getNumberOfPlays();
 
     List<TableAlxEntry> games = getAlxData().stream().sorted(c).limit(10)
-        .collect(Collectors.toList());
+        .toList();
 
     List<PlaylistGame> plgames = games.stream().map(s -> toPlaylistGame(s.getGameId()))
         .collect(Collectors.toList());
@@ -792,7 +795,7 @@ public abstract class BaseConnector implements FrontendConnector {
   }
 
   @Override
-  public java.util.Date getStartDate() {
+  public OffsetDateTime getStartDate() {
     return null;
   }
 

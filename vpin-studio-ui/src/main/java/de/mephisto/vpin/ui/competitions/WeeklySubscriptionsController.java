@@ -18,9 +18,9 @@ import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.panels.PlayButtonController;
+import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.vps.VpsTableContainer;
 import de.mephisto.vpin.ui.vps.VpsVersionContainer;
-import de.mephisto.vpin.ui.util.FrontendUtil;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -43,6 +43,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.OffsetDateTime;
 import java.util.*;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.ERROR_STYLE;
@@ -345,7 +346,7 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
       Label timeRemainingValueLabel = new Label();
       timeRemainingValueLabel.getStyleClass().add("default-text");
       timeRemainingValueLabel.setStyle(getLabelCss(value));
-      timeRemainingValueLabel.setText(DateUtil.formatDuration(new Date(), value.competition.getEndDate()));
+      timeRemainingValueLabel.setText(DateUtil.formatDuration(OffsetDateTime.now(), value.competition.getEndDate()));
       remainingBox.getChildren().addAll(timeRemainingLabel, timeRemainingValueLabel);
 
       vBox.getChildren().addAll(endDateLabel, durationBox, remainingBox);
@@ -373,7 +374,7 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
       @Override
       public Boolean call(TableView<WeeklyCompetitionModel> gameRepresentationTableView) {
         if (!gameRepresentationTableView.getSortOrder().isEmpty()) {
-          TableColumn<WeeklyCompetitionModel, ?> column = gameRepresentationTableView.getSortOrder().get(0);
+          TableColumn<WeeklyCompetitionModel, ?> column = gameRepresentationTableView.getSortOrder().getFirst();
           if (column.equals(tableColumn)) {
             Collections.sort(tableView.getItems(), Comparator.comparing(o -> o.competition != null ? o.competition.getName() : null));
             if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
@@ -492,7 +493,7 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
     tableNavigateBtn.setDisable(model.isEmpty() || model.get().getGame() == null);
     dataManagerBtn.setDisable(model.isEmpty() || model.get().getGame() == null);
 
-    competitionsController.setCompetition(model.isPresent() ? model.get().competition : null);
+    competitionsController.setCompetition(model.map(weeklyCompetitionModel -> weeklyCompetitionModel.competition).orElse(null));
 
     PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
     reloadBtn.setDisable(defaultPlayer == null);

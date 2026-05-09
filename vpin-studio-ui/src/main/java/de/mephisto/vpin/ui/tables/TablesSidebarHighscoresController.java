@@ -31,7 +31,6 @@ import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ResourceLoader;
 
 import java.io.File;
 import java.io.IOException;
@@ -221,7 +220,7 @@ public class TablesSidebarHighscoresController implements Initializable {
       GameRepresentation g = this.game.get();
       String last = null;
       if (highscoreBackups != null && !this.highscoreBackups.isEmpty()) {
-        last = "The last backup was created at " + this.highscoreBackups.get(0);
+        last = "The last backup was created at " + this.highscoreBackups.getFirst();
       }
 
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Create highscore backup for table \"" + g.getGameDisplayName() + "\"?", last);
@@ -272,7 +271,7 @@ public class TablesSidebarHighscoresController implements Initializable {
     this.games = games;
 
     if (!games.isEmpty()) {
-      this.game = Optional.of(games.get(0));
+      this.game = Optional.of(games.getFirst());
     }
 
     Platform.runLater(() -> {
@@ -285,7 +284,7 @@ public class TablesSidebarHighscoresController implements Initializable {
     if (g.isPresent()) {
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableHighscoresScanProgressModel(Arrays.asList(g.get())));
       if (!progressDialog.getResults().isEmpty()) {
-        metadata = (HighscoreMetadataRepresentation) progressDialog.getResults().get(0);
+        metadata = (HighscoreMetadataRepresentation) progressDialog.getResults().getFirst();
       }
     }
 

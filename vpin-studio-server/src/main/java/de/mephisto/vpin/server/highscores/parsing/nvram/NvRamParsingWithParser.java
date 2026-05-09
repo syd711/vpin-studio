@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.highscores.parsing.nvram;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.OffsetDateTime;
 import java.util.*;
 
 import org.slf4j.Logger;
@@ -33,7 +34,7 @@ public class NvRamParsingWithParser implements NvRamOutputToRaw, ScoreListAdapte
 
 
   public static NvRamParsingWithParser createPinemhiParser(ScoringDB scoringDB) throws IOException {
-    NVRamParser pinemhiParser = new NVRamPinemhiParser(SystemInfo.RESOURCES + "pinemhi/", 
+    NVRamParser pinemhiParser = new NVRamPinemhiParser(SystemInfo.RESOURCES + "pinemhi/",
         scoringDB.getHighscoreTitles(), scoringDB.getHighscoreSkipTitlesCheck());
     return new NvRamParsingWithParser(pinemhiParser);
   }
@@ -79,25 +80,25 @@ public class NvRamParsingWithParser implements NvRamOutputToRaw, ScoreListAdapte
     return isSupportedRom(rom);
   }
 
-  @Override
-  public List<Score> getScores(Game game, Date createdAt, List<String> lines, boolean parseAll) throws IOException {
-    Locale locale = Locale.getDefault();
-    String rom = game != null ? game.getRom().toLowerCase() : "<no rom>";
-    if (isSupportedRom(rom)) {
-      List<NVRamScore> nvRamScores = parser.parseRaw(rom, lines, locale, parseAll);
-      List<Score> scores = new ArrayList<>();
-      for (NVRamScore nvramScore : nvRamScores) {
-        Score sc = new Score(createdAt, game.getId(),
-            nvramScore.getInitials(), null,
-            nvramScore.getRawScore(),
-            nvramScore.getScore(),
-            nvramScore.getPosition());
-        sc.setSuffix(nvramScore.getSuffix());
-        sc.setLabel(nvramScore.getLabel());
-        scores.add(sc);
-      }
-      return scores;
+    @Override
+    public List<Score> getScores(Game game, OffsetDateTime createdAt, List<String> lines, boolean parseAll) throws IOException {
+        Locale locale = Locale.getDefault();
+        String rom = game != null ? game.getRom().toLowerCase() : "<no rom>";
+        if (isSupportedRom(rom)) {
+            List<NVRamScore> nvRamScores = parser.parseRaw(rom, lines, locale, parseAll);
+            List<Score> scores = new ArrayList<>();
+            for (NVRamScore nvramScore : nvRamScores) {
+                Score sc = new Score(createdAt, game.getId(),
+                        nvramScore.getInitials(), null,
+                        nvramScore.getRawScore(),
+                        nvramScore.getScore(),
+                        nvramScore.getPosition());
+                sc.setSuffix(nvramScore.getSuffix());
+                sc.setLabel(nvramScore.getLabel());
+                scores.add(sc);
+            }
+            return scores;
+        }
+        return Collections.emptyList();
     }
-    return Collections.emptyList();
-  }
 }

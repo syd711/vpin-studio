@@ -64,7 +64,7 @@ public class FunctionsAndOperatorsTest {
     EvaluationContext evalctxt = new EvaluationContext();
     List<?> values = evalctxt.evaluateList("TO_ARRAY(1, 2, \"3\", 5.0 - 0.5)");
     assertEquals(4, values.size());
-    assertEquals(1, ((BigDecimal) values.get(0)).intValue());
+    assertEquals(1, ((BigDecimal) values.getFirst()).intValue());
     assertEquals(2, ((BigDecimal) values.get(1)).intValue());
     assertEquals("3", values.get(2));
     assertEquals(4.5, ((BigDecimal) values.get(3)).doubleValue());

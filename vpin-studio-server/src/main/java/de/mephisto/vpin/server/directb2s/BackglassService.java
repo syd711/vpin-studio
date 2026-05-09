@@ -19,14 +19,15 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.system.JCodec;
 import de.mephisto.vpin.server.system.SystemService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -35,7 +36,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 
 import javax.imageio.ImageIO;
-import javax.xml.bind.DatatypeConverter;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -156,7 +156,7 @@ public class BackglassService implements InitializingBean {
 
   private void extractBackgroundData(DirectB2SData data, String backgroundBase64) throws IOException {
     if (backgroundBase64 != null) {
-      byte[] imageData = DatatypeConverter.parseBase64Binary(backgroundBase64);
+      byte[] imageData = Base64.getMimeDecoder().decode(sanitizeBase64(backgroundBase64));
       BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageData));
       int backgroundWidth = (int) image.getWidth();
       int backgroundHeight = (int) image.getHeight();
@@ -172,7 +172,7 @@ public class BackglassService implements InitializingBean {
   private void exportDMDData(DirectB2SData data, String dmdBase64) throws IOException {
     if (data.isDmdImageAvailable()) {
       if (dmdBase64 != null) {
-        byte[] dmdData = DatatypeConverter.parseBase64Binary(dmdBase64);
+        byte[] dmdData = Base64.getMimeDecoder().decode(sanitizeBase64(dmdBase64));
         BufferedImage dmdImage = ImageIO.read(new ByteArrayInputStream(dmdData));
         int dmdWidth = (int) dmdImage.getWidth();
         int dmdHeight = (int) dmdImage.getHeight();
@@ -184,6 +184,13 @@ public class BackglassService implements InitializingBean {
         data.setDmdHeight(0);
       }
     }
+  }
+
+  private String sanitizeBase64(String base64) {
+    if (base64 != null && base64.startsWith("data:image")) {
+      return base64.substring(base64.indexOf(",") + 1);
+    }
+    return base64;
   }
 
   @Nullable
@@ -483,7 +490,7 @@ public class BackglassService implements InitializingBean {
     for (GameEmulator emu : emulatorService.getVpxGameEmulators()) {
       // check in installation
       try (Stream<Path> walkStream = Files.walk(emu.getInstallationFolder().toPath())) {
-        Optional<Path> found = walkStream.filter(p -> StringUtils.equalsIgnoreCase(p.getFileName().toString(), "B2SBackglassServer.dll")).findFirst();
+        Optional<Path> found = walkStream.filter(p -> Strings.CI.equals(p.getFileName().toString(), "B2SBackglassServer.dll")).findFirst();
         if (found.isPresent()) {
           return found.get().toFile().getParentFile();
         }
@@ -723,7 +730,7 @@ public class BackglassService implements InitializingBean {
       b2s.clearVersions();
       for (String version : versions) {
         // rename the file
-        String newVersion = StringUtils.replaceIgnoreCase(version, baseName, newBaseName);
+        String newVersion = Strings.CI.replace(version, baseName, newBaseName);
         File b2sFile = new File(emulator.getGamesDirectory(), version);
         File b2sNewFile = new File(emulator.getGamesDirectory(), newVersion);
         if (b2sFile.exists() && b2sFile.renameTo(b2sNewFile)) {
@@ -871,13 +878,13 @@ public class BackglassService implements InitializingBean {
       return null;
     }
     DirectB2sScreenRes res = new DirectB2sScreenRes();
-    res.setScreenresFilePath(lines.remove(0));
-    res.setGlobal(b2sFile == null || StringUtils.containsIgnoreCase(res.getScreenresFilePath(), b2sFile.getName()));
+    res.setScreenresFilePath(lines.removeFirst());
+    res.setGlobal(b2sFile == null || Strings.CI.contains(res.getScreenresFilePath(), b2sFile.getName()));
 
-    res.setVersion(lines.remove(0));
+    res.setVersion(lines.removeFirst());
 
     // cf https://github.com/vpinball/b2s-backglass/blob/7842b3638b62741e21ebb511e2a886fa2091a40f/b2s_screenresidentifier/b2s_screenresidentifier/module.vb#L105
-    res.setPlayfieldWidth(parseIntSafe(lines.get(0)));
+    res.setPlayfieldWidth(parseIntSafe(lines.getFirst()));
     res.setPlayfieldHeight(parseIntSafe(lines.get(1)));
 
     res.setBackglassWidth(parseIntSafe(lines.get(2)));
@@ -968,7 +975,7 @@ public class BackglassService implements InitializingBean {
         LOG.info("Failed to read Screenres.txt via standard patterns, trying first VPX emulator instead.");
         List<GameEmulator> vpxGameEmulators = emulatorService.getVpxGameEmulators();
         if (!vpxGameEmulators.isEmpty()) {
-          GameEmulator emulator = vpxGameEmulators.get(0);
+          GameEmulator emulator = vpxGameEmulators.getFirst();
           target = new File(emulator.getGamesDirectory(), "ScreenRes.txt");
         }
 
@@ -1003,8 +1010,8 @@ public class BackglassService implements InitializingBean {
         version = "# V1";
       }
       // insert additional information
-      lines.add(0, version);
-      lines.add(0, target.getAbsolutePath());
+      lines.addFirst(version);
+      lines.addFirst(target.getAbsolutePath());
       return lines;
     }
     catch (Exception e) {
@@ -1080,17 +1087,17 @@ public class BackglassService implements InitializingBean {
     if (lines == null) {
       throw new IOException("Cannot find an existing table nor table .res");
     }
-    String templateName = lines.remove(0);
+    String templateName = lines.removeFirst();
 
     // if already a table file exists, replace it
-    File screenresFile = StringUtils.containsIgnoreCase(templateName, FilenameUtils.getBaseName(screenres.getB2SFileName())) ?
-        new File(templateName) : new File(emulator.getGamesDirectory(), StringUtils.replaceIgnoreCase(screenres.getB2SFileName(), ".directb2s", ".res"));
+    File screenresFile = Strings.CI.contains(templateName, FilenameUtils.getBaseName(screenres.getB2SFileName())) ?
+        new File(templateName) : new File(emulator.getGamesDirectory(), Strings.CI.replace(screenres.getB2SFileName(), ".directb2s", ".res"));
 
     if (!screenresFile.exists() || screenresFile.delete()) {
       try (BufferedWriter writer = new BufferedWriter(new FileWriter(screenresFile))) {
 
         // check version number in case it is not in the original file
-        String version = lines.remove(0);
+        String version = lines.removeFirst();
         if (!version.replace(" ", "").startsWith("#V2")) {
           // fetch the b2s version from the file itself
           File b2sServerExe = new File(getBackglassServerFolder(), "B2SBackglassServerEXE.exe");
@@ -1246,7 +1253,7 @@ public class BackglassService implements InitializingBean {
     try {
       byte[] img = grabFromFrontendMedia(item);
       if (img != null) {
-        String base64 = DatatypeConverter.printBase64Binary(img);
+        String base64 = Base64.getEncoder().encodeToString(img);
         setDmdImage(game.getEmulatorId(), BackglassNamingHelper.getBackglassFileName(game), item.getFile().getName(), base64);
       }
     }
@@ -1310,7 +1317,7 @@ public class BackglassService implements InitializingBean {
     if (tableData != null && tableData.isBackgroundAvailable()) {
       String base64 = getBackgroundBase64(tableData.getEmulatorId(), tableData.getFilename());
       if (base64 != null) {
-        byte[] bytes = DatatypeConverter.parseBase64Binary(base64);
+        byte[] bytes = Base64.getMimeDecoder().decode(sanitizeBase64(base64));
         try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes)) {
           BufferedImage preview = ImageIO.read(bais);
           if (tableData.getGrillHeight() > 0) {
@@ -1372,7 +1379,7 @@ public class BackglassService implements InitializingBean {
     if (tableData != null && tableData.isBackgroundAvailable()) {
       String base64 = getDmdBase64(tableData.getEmulatorId(), tableData.getFilename());
       if (base64 != null) {
-        return DatatypeConverter.parseBase64Binary(base64);
+        return Base64.getMimeDecoder().decode(sanitizeBase64(base64));
       }
     }
     // not found or error

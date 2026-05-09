@@ -1,16 +1,15 @@
 package de.mephisto.vpin.server.frontend.pinballx;
 
-import java.io.IOException;
-
-import org.apache.commons.lang3.StringUtils;
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import de.mephisto.vpin.restclient.frontend.EmulatorType;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import java.io.IOException;
 
 @Service
 public class PinballXAssetsIndexer {
@@ -109,7 +108,7 @@ public class PinballXAssetsIndexer {
   //---------------
 
   private static String clean(String name) {
-    return StringUtils.remove(name, " ").toLowerCase();
+    return Strings.CI.remove(name, " ").toLowerCase();
   }
   private static String[] clean(String... names) {
     for (int i = 0; i<names.length; i++) {
@@ -119,11 +118,11 @@ public class PinballXAssetsIndexer {
   }
 
   private String isAmong(String[] names, String name) {
-    for (int i = 0, n = names.length; i < n; i++) {
-      if (StringUtils.contains(names[i], name) || StringUtils.contains(name, names[i])) {
-        return names[i];
+      for (String s : names) {
+          if (Strings.CI.contains(s, name) || Strings.CI.contains(name, s)) {
+              return s;
+          }
       }
-    }
     return null;
   }
 
