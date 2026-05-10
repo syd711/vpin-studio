@@ -4,13 +4,12 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
-import de.mephisto.vpin.server.dmd.DMDInstallationUtil;
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -29,12 +28,25 @@ public class FuturePinballService {
   @Autowired
   private FPCommandLineService fpCommandLineService;
 
+  @Autowired
+  private EmulatorService emulatorService;
+
   public boolean play(@Nullable Game game, @Nullable String altExe) {
     if (game != null) {
       return fpCommandLineService.execute(game, altExe);
     }
 
     return fpCommandLineService.launch();
+  }
+
+  public File getFPRamFolder() {
+    Collection<GameEmulator> gameEmulators = emulatorService.getGameEmulators();
+    for (GameEmulator gameEmulator : gameEmulators) {
+      if (gameEmulator.isFpEmulator()) {
+        return new File(gameEmulator.getInstallationFolder(), "fpRAM");
+      }
+    }
+    return null;
   }
 
   public void installBAMCfg(@NonNull UploadDescriptor uploadDescriptor, @Nullable Game game, @NonNull GameEmulator gameEmulator, @NonNull File tempFile, @NonNull UploaderAnalysis analysis) throws IOException {

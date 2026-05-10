@@ -1575,7 +1575,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       e.setExeName(exeName);
     }
     else if (e.getType().equals(EmulatorType.FuturePinball)) {
-      e.setExeName("Future Pinball.exe");
+      e.setExeName("BAM/FPLoader.exe");
     }
   }
 

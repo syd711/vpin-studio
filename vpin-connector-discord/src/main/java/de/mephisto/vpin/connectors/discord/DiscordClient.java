@@ -293,6 +293,30 @@ public class DiscordClient {
     }
   }
 
+  /**
+   *   Inside pinMessage (DiscordClient.java:296-327):
+   *   1. channel.pinMessageById(messageId).complete() — pins on Discord
+   *   2. Adds the message to pinnedMessagesCache
+   *   3. invalidateMessageCache(channelId, -1) — immediately removes the cache entry because botId != -1
+   *
+   *   So after the first highscoreChanged completes, the newly pinned message was added to the cache and then evicted in the same call.
+   *   The second highscoreChanged gets a cache miss and falls through to channel.retrievePinnedMessages().complete().
+   *
+   *   This is where the race lives: pinMessage used .complete() (synchronous), so Discord has received the pin request —
+   *   but Discord's own servers don't guarantee that retrievePinnedMessages immediately reflects a just-pinned message.
+   *   The second call can still get back an empty list from the Discord REST API.
+   *
+   *   Change it to pass botId so the guard works as intended:
+   *
+   *   invalidateMessageCache(channelId, botId);
+   *
+   *   With this change, when the bot pins a message it updates the cache (line 307) and then invalidateMessageCache does nothing (because botId == botId).
+   *   The second highscoreChanged call would then get a cache HIT with the pinned message already in it, isEmpty() would be false,
+   *   and createFirstCompetitionHighscoreCreatedMessage would not be called again.
+   * @param serverId
+   * @param channelId
+   * @param messageId
+   */
   public void pinMessage(long serverId, long channelId, long messageId) {
     Guild guild = getGuild(serverId);
     if (guild != null) {
@@ -314,7 +338,7 @@ public class DiscordClient {
               channel.deleteMessageById(message.getId()).complete();
             }
           }
-          invalidateMessageCache(channelId, -1);
+          invalidateMessageCache(channelId, botId);
         }
         catch (Exception e) {
           LOG.error("Failed to cleanup pin messages: " + e.getMessage(), e);
