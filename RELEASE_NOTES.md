@@ -9,7 +9,7 @@
 - **Future Pinball**
   - Added first steps to parse fpRAMs by adjusting the PinEMHi settings (to be continued).
   - Replaced the "Future Pinball.exe" for the launcher drop-down with the "BAM/FPLauncher.exe".
-- **Media Recorder**: Added additional adjustments for the GL recording command. Note that
+- **Media Recorder**: Added additional adjustments for the GL recording command. Note that the GL recordings are still experimental.
 
 ---
 
