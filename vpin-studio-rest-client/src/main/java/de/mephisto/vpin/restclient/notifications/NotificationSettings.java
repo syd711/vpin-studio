@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.notifications;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 
@@ -92,6 +94,7 @@ public class NotificationSettings extends JsonSettings {
     this.highscoreCheckedNotification = highscoreCheckedNotification;
   }
 
+  @JsonProperty("iScoredNotification")
   public boolean isiScoredNotification() {
     return iScoredNotification;
   }

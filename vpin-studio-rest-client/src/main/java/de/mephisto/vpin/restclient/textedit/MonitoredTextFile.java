@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.textedit;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.File;
 import java.time.OffsetDateTime;
 
@@ -45,6 +47,7 @@ public class MonitoredTextFile {
     this.path = path;
   }
 
+  @JsonProperty("vPinFile")
   public VPinFile getvPinFile() {
     return vPinFile;
   }

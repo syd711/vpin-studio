@@ -84,6 +84,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Consumer;
@@ -1476,7 +1478,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       for (BackupDescriptorRepresentation backup : backupsForGame) {
         if (backup.getTableDetails().getGameFileName().equals(value.getGameFileName())) {
           model.backupDate = backup.getCreatedAt();
-          label.setText(dateTimeFormat.format(backup.getCreatedAt()));
+          label.setText(dateTimeFormat.format(LocalDateTime.ofInstant(backup.getCreatedAt(), ZoneId.systemDefault())));
           break;
         }
       }

@@ -77,8 +77,8 @@ public class RestClient implements ClientHttpRequestInterceptor {
         .defaultTimeZone(TimeZone.getDefault())
         .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
         .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
-        .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
-        .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+        .enable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+        .enable(EnumFeature.READ_ENUMS_USING_TO_STRING)
         .build();
 
     List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
@@ -106,8 +106,8 @@ public class RestClient implements ClientHttpRequestInterceptor {
         .defaultTimeZone(TimeZone.getDefault())
         .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
         .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
-        .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
-        .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+        .enable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+        .enable(EnumFeature.READ_ENUMS_USING_TO_STRING)
         .build();
 
     List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
