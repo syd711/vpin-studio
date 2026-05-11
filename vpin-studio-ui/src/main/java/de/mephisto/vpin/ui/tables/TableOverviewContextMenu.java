@@ -176,14 +176,12 @@ public class TableOverviewContextMenu {
     vpsResetItem.setGraphic(iconVpsReset);
     ctxMenu.getItems().add(vpsResetItem);
 
-    if (client.getEmulatorService().isVpxGame(game)) {
-      ctxMenu.getItems().add(new SeparatorMenuItem());
+    ctxMenu.getItems().add(new SeparatorMenuItem());
 
-      MenuItem resetRatingsItem = new MenuItem("Reset Ratings");
-      resetRatingsItem.setOnAction(actionEvent -> tableOverviewController.onResetRatings());
-      resetRatingsItem.setGraphic(WidgetFactory.createIcon("mdi2u-undo-variant"));
-      ctxMenu.getItems().add(resetRatingsItem);
-    }
+    MenuItem resetRatingsItem = new MenuItem("Reset Ratings");
+    resetRatingsItem.setOnAction(actionEvent -> tableOverviewController.onResetRatings());
+    resetRatingsItem.setGraphic(WidgetFactory.createIcon("mdi2u-undo-variant"));
+    ctxMenu.getItems().add(resetRatingsItem);
 
     if (Features.MANIA_ENABLED && client.getEmulatorService().isVpxGame(game)) {
       ctxMenu.getItems().add(new SeparatorMenuItem());
@@ -215,7 +213,7 @@ public class TableOverviewContextMenu {
 
     ctxMenu.getItems().add(new SeparatorMenuItem());
 
-    if (client.getEmulatorService().isVpxGame(game)) {
+    if (client.getEmulatorService().isVpxOrFpGame(game)) {
       MenuItem eventLogItem = new MenuItem("Event Log");
       KeyCombination eventLogItemKey = new KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN);
       eventLogItem.setAccelerator(eventLogItemKey);
@@ -229,7 +227,7 @@ public class TableOverviewContextMenu {
     }
 
 
-    if (client.getEmulatorService().isVpxGame(game)) {
+    if (client.getEmulatorService().isVpxOrFpGame(game)) {
       MenuItem pinVolItem = new MenuItem("PinVol Settings");
       pinVolItem.setOnAction(actionEvent -> TableDialogs.openPinVolSettings(tableView.getSelectionModel().getSelectedItems().stream().map(m -> m.getGame()).collect(Collectors.toList())));
 //    pinVolItem.setDisable(games.isEmpty());

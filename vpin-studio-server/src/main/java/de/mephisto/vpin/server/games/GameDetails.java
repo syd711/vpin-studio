@@ -68,7 +68,7 @@ public class GameDetails {
 
   private int pupId;
 
-  private int nvOffset;
+  private int nvOffset = -1;
 
   private Boolean cardsDisabled = false;
 

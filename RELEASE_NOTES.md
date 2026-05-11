@@ -1,3 +1,17 @@
+## Release Notes 4.9.2
+
+- **Future Pinball**
+  - Fixed "Reset Rating" context menu action.
+- **Emulator Management**:
+  - Fixed "No matching games found" error message which does not apply for Zen Studio games.
+- **Pause Menu**
+  - Fixed issue that all screens have been rotated.
+- **Tables Overview**
+  - Fixed "NVOffset Mismatch" validator which was triggered for all tables that have an nvoffset of "0" which unfortunately was also the default value for nvoffsets. **The fix requires a rescan of all VPX tables.**
+
+---
+
+
 ## Release Notes 4.9.1
 
 ### Changes

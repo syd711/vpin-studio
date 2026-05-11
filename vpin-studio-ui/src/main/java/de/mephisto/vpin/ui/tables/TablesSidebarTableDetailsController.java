@@ -423,7 +423,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
       GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
       tableFilesBox.setVisible(gameEmulator != null && gameEmulator.isVpxEmulator());
 
-      autoFillBtn.setVisible(client.getEmulatorService().isVpxGame(game) && Features.FIELDS_STANDARD);
+      autoFillBtn.setVisible(client.getEmulatorService().isVpxOrFpGame(game) && Features.FIELDS_STANDARD);
 
       dateAdded.setText(game.getDateAdded() == null ? "-" : DateFormat.getDateTimeInstance().format(game.getDateAdded()));
       emulatorLabel.setText(client.getEmulatorService().getGameEmulator(game.getEmulatorId()).getName());

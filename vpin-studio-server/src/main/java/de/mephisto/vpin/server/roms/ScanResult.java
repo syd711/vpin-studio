@@ -7,7 +7,7 @@ import java.util.List;
 
 public class ScanResult {
   
-  private int nvOffset = 0;
+  private int nvOffset = -1;
 
   private String rom;
   private String gameName;

@@ -280,7 +280,7 @@ public class ScreenshotService {
     for (MonitorInfo monitorInfo : screenshotMonitors) {
       try {
         BufferedImage bufferedImage = screenPreviewService.capture(monitorInfo);
-        if (rotateMain) {
+        if (rotateMain && monitorInfo.isPrimary()) {
           bufferedImage = ImageUtil.rotateRight(bufferedImage);
         }
         images.add(bufferedImage);

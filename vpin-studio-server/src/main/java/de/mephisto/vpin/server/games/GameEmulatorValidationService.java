@@ -57,7 +57,7 @@ public class GameEmulatorValidationService implements InitializingBean {
       }
     }
 
-    if ((emulator.isZenEmulator() || emulator.isFpEmulator() || emulator.isVpxEmulator() || emulator.isMameEmulator()) && !StringUtils.isEmpty(emulator.getGamesDirectory()) && !StringUtils.isEmpty(emulator.getGameExt())) {
+    if ((emulator.isFpEmulator() || emulator.isVpxEmulator() || emulator.isMameEmulator()) && !StringUtils.isEmpty(emulator.getGamesDirectory()) && !StringUtils.isEmpty(emulator.getGameExt())) {
       File folder = new File(emulator.getGamesDirectory());
       if (folder.exists()) {
         File[] files = folder.listFiles(new FileFilter() {
@@ -67,7 +67,7 @@ public class GameEmulatorValidationService implements InitializingBean {
           }
         });
 
-        if (files == null || files.length == 0) {
+        if ((files == null || files.length == 0)) {
           result.add(ValidationStateFactory.create(GameEmulatorValidationCode.CODE_NO_GAMES_FOUND));
           if (findFirst) {
             return result;

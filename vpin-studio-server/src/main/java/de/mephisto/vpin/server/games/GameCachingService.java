@@ -437,7 +437,6 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     game.setDMDProjectFolder(gameDetails.getDMDProjectFolder());
 
     game.setScripts(StringUtils.split(gameDetails.getScripts(), ","));
-
     game.setNvOffset(gameDetails.getNvOffset());
     game.setCardDisabled(gameDetails.isCardsDisabled() != null && gameDetails.isCardsDisabled());
 

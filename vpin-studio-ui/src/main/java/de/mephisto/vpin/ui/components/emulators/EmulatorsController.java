@@ -223,47 +223,45 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
       return;
     }
 
-    JFXFuture.runAsync(() -> {
-      FrontendType frontendType = client.getFrontendService().getFrontendType();
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
 
-      GameEmulatorRepresentation emu = emulator.get();
-      emu.setEnabled(enabledCheckbox.isSelected());
-      emu.setSafeName(safeNameField.getText());
-      emu.setName(nameField.getText());
-      emu.setDescription(descriptionField.getText());
-      emu.setGamesDirectory(gamesFolderField.getText());
-      emu.setRomDirectory(romsFolderField.getText());
-      emu.setInstallationDirectory(launchFolderField.getText());
+    GameEmulatorRepresentation emu = emulator.get();
+    emu.setEnabled(enabledCheckbox.isSelected());
+    emu.setSafeName(safeNameField.getText());
+    emu.setName(nameField.getText());
+    emu.setDescription(descriptionField.getText());
+    emu.setGamesDirectory(gamesFolderField.getText());
+    emu.setRomDirectory(romsFolderField.getText());
+    emu.setInstallationDirectory(launchFolderField.getText());
 
-      if (frontendType.equals(FrontendType.Popper)) {
-        emu.setGameExt(customField2.getText());
-        emu.setMediaDirectory(customField1.getText());
+    if (frontendType.equals(FrontendType.Popper)) {
+      emu.setGameExt(customField2.getText());
+      emu.setMediaDirectory(customField1.getText());
+    }
+    else if (frontendType.equals(FrontendType.PinballX)) {
+      emu.setExeName(customField2.getText());
+      emu.setExeParameters(customField1.getText());
+    }
+
+    if (startScriptController != null) {
+      startScriptController.applyValues();
+    }
+    if (exitScriptController != null) {
+      exitScriptController.applyValues();
+    }
+
+    if (vrStartScriptController != null) {
+      vrStartScriptController.applyValues();
+
+      if (emu.isVpxEmulator() && vrStartScriptController.getScript().isPresent()) {
+        client.getVRService().saveVrEmulatorLaunchScript(emu.getId(), vrStartScriptController.getScript().get());
       }
-      else if (frontendType.equals(FrontendType.PinballX)) {
-        emu.setExeName(customField2.getText());
-        emu.setExeParameters(customField1.getText());
-      }
+    }
 
-      if (startScriptController != null) {
-        startScriptController.applyValues();
-      }
-      if (exitScriptController != null) {
-        exitScriptController.applyValues();  
-      }
+    ProgressDialog.createProgressDialog(new EmulatorSaveProgressModel(emu, this));
 
-      if (vrStartScriptController != null) {
-        vrStartScriptController.applyValues();
-
-        if (emu.isVpxEmulator() && vrStartScriptController.getScript().isPresent()) {
-          client.getVRService().saveVrEmulatorLaunchScript(emu.getId(), vrStartScriptController.getScript().get());
-        }
-      }
-
-      client.getEmulatorService().saveGameEmulator(emu);
-    }).thenLater(() -> {
-      onReload();
-      saveBtn.setDisable(false);
-    });
+    onReload();
+    saveBtn.setDisable(false);
   }
 
   @FXML
@@ -321,8 +319,8 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
   @FXML
   public void onReload() {
     JFXFuture
-      .runAsync(() -> client.getEmulatorService().clearCache())
-      .thenLater(() -> tableController.reload());
+        .runAsync(() -> client.getEmulatorService().clearCache())
+        .thenLater(() -> tableController.reload());
   }
 
   public void setSelection(Optional<GameEmulatorRepresentation> model) {
