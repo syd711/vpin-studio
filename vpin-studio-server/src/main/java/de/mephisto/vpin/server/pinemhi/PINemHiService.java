@@ -102,22 +102,6 @@ public class PINemHiService implements InitializingBean {
     return true;
   }
 
-  public static String[] getPinemhiSupportedNVRams() {
-    try {
-      List<String> commands = Arrays.asList(PINEMHI_COMMAND, "-lr");
-      SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-      executor.setDir(new File(SystemService.RESOURCES + "pinemhi"));
-      executor.executeCommand();
-      StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
-      String stdOut = standardOutputFromCommand.toString();
-      return stdOut.split("\n");
-    }
-    catch (IOException | InterruptedException e) {
-      LOG.error("Cannot extract supported rams", e);
-      return new String[0];
-    }
-  }
-
   //----------------------
 
   public Map<String, Object> saveSettings(Map<String, Object> settings) {
@@ -199,34 +183,6 @@ public class PINemHiService implements InitializingBean {
     return new File(SystemService.RESOURCES + "pinemhi", PINEMHI_COMMAND);
   }
 
-
-  //----------------------
-
-  @Nullable
-  public static String executePINemHi(@NonNull File originalNVRamFile) throws Exception {
-    File commandFile = getPinemhiExe();
-
-    // make sure nvram can be found
-    adjustVPPathForEmulator(originalNVRamFile.getParentFile(), true);
-
-    String nvRamName = originalNVRamFile.getName().toLowerCase();
-    List<String> commands = Arrays.asList(commandFile.getName(), nvRamName);
-//      LOG.info("PinemHI: " + String.join(" ", commands));
-    SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-//      executor.setEnv("LANG", "en_US.UTF-8");
-//      executor.setEnv("LC_ALL", "en_US.UTF-8");
-//      executor.setEnv("LC_CTYPE", "en_US.UTF-8");
-//      executor.setCodePage("65001");
-    executor.setDir(commandFile.getParentFile());
-    executor.executeCommand();
-    StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
-    StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
-    if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-      String error = "Pinemhi command (" + commandFile.getCanonicalPath() + " " + nvRamName + ") failed. Error output:\n" + standardErrorFromCommand + "\nStandard output:\n" + standardOutputFromCommand;
-      throw new RuntimeIOException(error);
-    }
-    return standardOutputFromCommand.toString();
-  }
 
   //----------------------
   private void checkForUpdates() {

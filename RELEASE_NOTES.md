@@ -4,10 +4,11 @@
   - Fixed "Reset Rating" context menu action.
 - **Emulator Management**:
   - Fixed "No matching games found" error message which does not apply for Zen Studio games.
+  - Added progress dialog for saving emulator changes since this can take a while longer if missing pupgame entries are imported.
 - **Pause Menu**
   - Fixed issue that all screens have been rotated.
 - **Tables Overview**
-  - Fixed "NVOffset Mismatch" validator which was triggered for all tables that have an nvoffset of "0" which unfortunately was also the default value for nvoffsets. **The fix requires a rescan of all VPX tables.**
+  - Fixed "NVOffset Mismatch" validator that is skipped for tables with a zero offset value now.
 
 ---
 
