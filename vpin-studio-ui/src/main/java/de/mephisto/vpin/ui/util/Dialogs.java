@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.util;
 
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.FXResizeHelper;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
@@ -212,17 +213,21 @@ public class Dialogs {
       }
       return false;
     }
-    else {
-      Optional<ButtonType> buttonType = WidgetFactory.showAlertOption(stage,
-          FrontendUtil.replaceName("[Frontend] is running.", frontend),
-          "Kill Processes", "Cancel",
-          FrontendUtil.replaceName("[Frontend] is running. To perform this operation, you have to close it.", frontend),
-          null);
-      if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
-        client.getFrontendService().terminateFrontend();
-        return true;
-      }
-      return false;
+    return Dialogs.killFrontend();
+  }
+
+  public static boolean killFrontend() {
+    Frontend frontend = client.getFrontendService().getFrontendCached();
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage,
+        FrontendUtil.replaceNames("Stop all emulators and [Frontend] processes?", frontend, null));
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      JFXFuture.supplyAsync(() -> {
+        return client.getFrontendService().terminateFrontend();
+      }).thenAcceptLater((requestResult) -> {
+        LOG.info("Kill frontend request finished.");
+      });
+      return true;
     }
+    return false;
   }
 }

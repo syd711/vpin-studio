@@ -19,7 +19,6 @@ import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.jobs.JobType;
-import de.mephisto.vpin.restclient.mania.ManiaSettings;
 import de.mephisto.vpin.restclient.pinvol.PinVolPreferences;
 import de.mephisto.vpin.restclient.pinvol.PinVolTableEntry;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
@@ -520,15 +519,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   @FXML
   public void onStop() {
-    Frontend frontend = client.getFrontendService().getFrontendCached();
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, FrontendUtil.replaceNames("Stop all emulators and [Frontend] processes?", frontend, null));
-    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      JFXFuture.supplyAsync(() -> {
-        return client.getFrontendService().terminateFrontend();
-      }).thenAcceptLater((requestResult) -> {
-        LOG.info("Kill frontend request finished.");
-      });
-    }
+    Dialogs.killFrontend();
   }
 
 

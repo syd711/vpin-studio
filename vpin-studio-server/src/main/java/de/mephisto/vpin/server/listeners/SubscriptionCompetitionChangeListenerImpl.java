@@ -25,12 +25,13 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitionChangeListener implements InitializingBean {
-  private final static Logger LOG = LoggerFactory.getLogger(CompetitionChangeListenerImpl.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @Autowired
   private CompetitionService competitionService;
@@ -64,21 +65,7 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
 
   @Override
   public void competitionCreated(@NonNull Competition competition) {
-    if (competition.getType().equals(CompetitionType.ISCORED.name())) {
-      Game game = gameService.getGame(competition.getGameId());
-      if (game == null) {
-        game = gameService.getGameByVpsTable(competition.getVpsTableId(), competition.getVpsTableVersionId());
-      }
-
-      if (game != null) {
-        if (competition.isHighscoreReset()) {
-          if (highscoreBackupService.backup(game) != null) {
-            highscoreService.resetHighscore(game);
-          }
-        }
-      }
-    }
-    else if (competition.getType().equals(CompetitionType.SUBSCRIPTION.name())) {
+    if (competition.getType().equals(CompetitionType.SUBSCRIPTION.name())) {
       try {
         Game game = gameService.getGame(competition.getGameId());
         boolean isOwner = competition.getOwner().equals(String.valueOf(discordService.getBotId()));

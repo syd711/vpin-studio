@@ -11,6 +11,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
+import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
@@ -23,12 +24,11 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.tables.TableDialogs;
+import de.mephisto.vpin.ui.tables.panels.PlayButtonController;
+import de.mephisto.vpin.ui.util.*;
 import de.mephisto.vpin.ui.vps.VpsTableContainer;
 import de.mephisto.vpin.ui.vps.VpsVersionContainer;
 import de.mephisto.vpin.ui.preferences.dialogs.IScoredGameRoomLoadingProgressModel;
-import de.mephisto.vpin.ui.util.ProgressDialog;
-import de.mephisto.vpin.ui.util.WaitNProgressModel;
-import de.mephisto.vpin.ui.util.WaitProgressModel;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -94,6 +94,9 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
   private Button eventLogBtn;
 
   @FXML
+  private Button stopBtn;
+
+  @FXML
   private Button reloadBtn;
 
   @FXML
@@ -117,10 +120,17 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
   @FXML
   private StackPane tableStack;
 
+  @FXML
+  private ToolBar toolbar;
+
+  @FXML
+  private Separator playBtnSeparator;
+
   private Parent loadingOverlay;
   private WidgetCompetitionSummaryController competitionWidgetController;
   private BorderPane competitionWidgetRoot;
 
+  private PlayButtonController playButtonController;
   private CompetitionsController competitionsController;
   private List<CompetitionRepresentation> iScoredSubscriptions;
 
@@ -129,6 +139,12 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
 
   // Add a public no-args constructor
   public IScoredSubscriptionsController() {
+  }
+
+
+  @FXML
+  public void onStop() {
+    Dialogs.killFrontend();
   }
 
   @FXML
@@ -368,6 +384,9 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
     tableView.setPlaceholder(new Label("         No iScored subscription found.\nClick the '+' button to create a new one."));
 
     this.editBtn.setDisable(true);
+
+    Frontend frontend = client.getFrontendService().getFrontend();
+    FrontendUtil.replaceName(stopBtn.getTooltip(), frontend);
 
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
@@ -611,6 +630,17 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       }
     });
 
+    try {
+      FXMLLoader loader = new FXMLLoader(PlayButtonController.class.getResource("play-btn.fxml"));
+      Parent playBtnRoot = loader.load();
+      playButtonController = loader.getController();
+      playButtonController.setDisable(true);
+      toolbar.getItems().add(toolbar.getItems().indexOf(playBtnSeparator) + 1, playBtnRoot);
+    }
+    catch (IOException e) {
+      LOG.error("Failed to load play button: " + e.getMessage(), e);
+    }
+
     gameRoomsCombo.valueProperty().addListener(this);
     bindSearchField();
     onViewActivated(null);
@@ -686,11 +716,14 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       newSelection = model.get();
     }
 
+    playButtonController.setDisable(true);
     eventLogBtn.setDisable(model.isEmpty());
     if (model.isPresent()) {
       List<GameRepresentation> matches = newSelection.getMatches();
       if (!matches.isEmpty()) {
         GameRepresentation gameRepresentation = matches.get(0);
+        playButtonController.setDisable(false);
+        playButtonController.setData(gameRepresentation);
         if (gameRepresentation.isEventLogAvailable()) {
           eventLogBtn.setDisable(false);
         }

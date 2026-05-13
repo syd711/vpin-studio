@@ -5,7 +5,6 @@ import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FilterSettings;
@@ -28,7 +27,6 @@ import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.tables.panels.PlayButtonController;
 import de.mephisto.vpin.ui.util.Dialogs;
-import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -192,12 +190,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
   @FXML
   public void onStop() {
-    Frontend frontend = client.getFrontendService().getFrontendCached();
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage,
-        FrontendUtil.replaceNames("Stop all emulators and [Frontend] processes?", frontend, null));
-    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      client.getFrontendService().terminateFrontend();
-    }
+    Dialogs.killFrontend();
   }
 
   @FXML
@@ -209,7 +202,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
         client.getRecorderService().stopRecording(recording);
       }
     }
-    RecorderDialogs.openRecordingDialog(this,this.emulatorCombo.getValue(), selection);
+    RecorderDialogs.openRecordingDialog(this, this.emulatorCombo.getValue(), selection);
   }
 
   @FXML

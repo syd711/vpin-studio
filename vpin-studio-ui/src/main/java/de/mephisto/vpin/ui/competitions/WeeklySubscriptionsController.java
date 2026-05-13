@@ -18,6 +18,7 @@ import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.panels.PlayButtonController;
+import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.vps.VpsTableContainer;
 import de.mephisto.vpin.ui.vps.VpsVersionContainer;
 import de.mephisto.vpin.ui.util.FrontendUtil;
@@ -109,16 +110,7 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
 
   @FXML
   public void onStop() {
-    Frontend frontend = client.getFrontendService().getFrontendCached();
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage,
-        FrontendUtil.replaceNames("Stop all emulators and [Frontend] processes?", frontend, null));
-    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      JFXFuture.supplyAsync(() -> {
-        return client.getFrontendService().terminateFrontend();
-      }).thenAcceptLater((requestResult) -> {
-        LOG.info("Kill frontend request finished.");
-      });
-    }
+    Dialogs.killFrontend();
   }
 
   @FXML

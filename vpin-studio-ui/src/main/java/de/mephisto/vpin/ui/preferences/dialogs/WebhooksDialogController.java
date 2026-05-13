@@ -95,6 +95,8 @@ public class WebhooksDialogController implements Initializable, DialogController
     addWebhookPanel(webhookSet.getGames(), WebhookType.game);
     addWebhookPanel(webhookSet.getScores(), WebhookType.score);
     addWebhookPanel(webhookSet.getPlayers(), WebhookType.player);
+    addWebhookPanel(webhookSet.getPause(), WebhookType.pause);
+    addWebhookPanel(webhookSet.getUnpause(), WebhookType.unpause);
 
     saveBtn.setDisable(StringUtils.isEmpty(webhookSet.getName()));
   }

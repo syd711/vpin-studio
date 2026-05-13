@@ -3,12 +3,17 @@
 - **Future Pinball**
   - Fixed "Reset Rating" context menu action.
 - **Emulator Management**:
-  - Fixed "No matching games found" error message which does not apply for Zen Studio games.
+  - Fixed "No matching games found" error message which does not apply for Zen Studio games (hopefully).
   - Added progress dialog for saving emulator changes since this can take a while longer if missing pupgame entries are imported.
 - **Pause Menu**
   - Fixed issue that all screens have been rotated.
 - **Tables Overview**
   - Fixed "NVOffset Mismatch" validator that is skipped for tables with a zero offset value now.
+  - Possible fix for the issue that for the first loading not all games are loaded (blind fix).
+- **iScored Competitions**
+  - Added play and stop buttons.
+- **Webhooks**
+  - Added new webhooks for called when the pause menu is shown/hidden. 
 
 ---
 

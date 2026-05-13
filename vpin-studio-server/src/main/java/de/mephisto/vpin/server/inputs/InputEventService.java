@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.inputs;
 
 import de.mephisto.vpin.commons.fx.ServerFX;
+import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
+import de.mephisto.vpin.commons.fx.pausemenu.PauseMenuStatusChangeListener;
 import de.mephisto.vpin.commons.utils.controller.GameController;
 import de.mephisto.vpin.commons.utils.controller.GameControllerInputListener;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -10,7 +12,9 @@ import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.preferences.OverlaySettings;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
+import de.mephisto.vpin.restclient.webhooks.WebhookEventType;
 import de.mephisto.vpin.server.VPinStudioServerTray;
+import de.mephisto.vpin.server.competitions.CompetitionCheckRunnable;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusChangeListener;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
@@ -24,22 +28,25 @@ import de.mephisto.vpin.server.recorder.RecorderService;
 import de.mephisto.vpin.server.recorder.ScreenshotService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vr.VRService;
+import de.mephisto.vpin.server.webhooks.WebhooksService;
 import javafx.application.Platform;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
+import java.awt.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
-public class InputEventService implements TableStatusChangeListener, FrontendStatusChangeListener, PreferenceChangedListener, GameControllerInputListener {
+public class InputEventService implements TableStatusChangeListener, FrontendStatusChangeListener, PreferenceChangedListener, GameControllerInputListener, PauseMenuStatusChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(InputEventService.class);
 
   @Autowired
@@ -68,6 +75,9 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
 
   @Autowired
   private JobQueue queue;
+
+  @Autowired
+  private WebhooksService webhooksService;
 
   private boolean overlayVisible;
   private ShutdownThread shutdownThread;
@@ -389,6 +399,11 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
     frontendStatusService.addFrontendStatusChangeListener(this);
 
     GameController.getInstance().addListener(this);
+
+    if (!GraphicsEnvironment.isHeadless()) {
+      PauseMenu.getInstance().addListener(this);
+    }
+
     LOG.info("Server startup finished, running version is {}", systemService.getVersion());
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
@@ -396,5 +411,15 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
   public void shutdown() {
     shutdownThread.shutdown();
     LOG.info("Shutdown watcher has been shut down.");
+  }
+
+  @Override
+  public void pauseMenuShow() {
+    webhooksService.notifyGamePauseHooks(frontendStatusService.getGameStatus().getGameId(), WebhookEventType.update);
+  }
+
+  @Override
+  public void pauseMenuHide() {
+    webhooksService.notifyGameUnPauseHooks(frontendStatusService.getGameStatus().getGameId(), WebhookEventType.update);
   }
 }
