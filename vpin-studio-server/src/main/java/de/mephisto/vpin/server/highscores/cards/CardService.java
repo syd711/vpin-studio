@@ -25,6 +25,7 @@ import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vps.VpsService;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -144,13 +145,15 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
   private byte[] generatePreview(Game game, ScoreSummary summary, CardTemplate template) {
     try {
       BufferedImage bufferedImage = doGenerateCardImage(game, summary, template);
-      return ImageUtil.toBytes(bufferedImage);
+      if (bufferedImage != null) {
+        return ImageUtil.toBytes(bufferedImage);
+      }
     }
     catch (Exception e) {
       LOG.error("Failed to generate highscore preview", e);
       SLOG.error("Failed to generate highscore card: " + e.getMessage());
-      return null;
     }
+    return null;
   }
 
   /**
@@ -215,7 +218,12 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
    * The card must be drawn synchronized and in a FX thread.
    * We need to wait until finished, because otherwise the UI would show the previous result
    */
+  @Nullable
   private BufferedImage doGenerateCardImage(Game game, ScoreSummary summary, CardTemplate template) throws Exception {
+    if (summary.getScores().isEmpty()) {
+      return null;
+    }
+
     // sync between FX thread and calling thread
     CountDownLatch latch = new CountDownLatch(1);
     BufferedImage[] generatedImage = {null};

@@ -153,25 +153,25 @@ public class HighscoreResolver implements InitializingBean {
     HighscoreMetadata metadata = new HighscoreMetadata();
     metadata.setScanned(new Date());
     try {
-      String romName = game.getRom();
-      if (StringUtils.isEmpty(romName)) {
-        romName = game.getTableName();
-      }
-
-      if (StringUtils.isEmpty(romName)) {
-        String msg = "No rom or table name found.";
-        SLOG.info("Game " + game.getGameDisplayName() + " is not a VPX game.");
-        metadata.setStatus(msg);
-        return metadata;
-      }
-
-      metadata.setRom(romName);
-
       String rawScore = null;
       if (game.isFpGame()) {
         rawScore = readFPHighscore(game, metadata);
       }
       else {
+        String romName = game.getRom();
+        if (StringUtils.isEmpty(romName)) {
+          romName = game.getTableName();
+        }
+
+        if (StringUtils.isEmpty(romName)) {
+          String msg = "No rom or table name found.";
+          SLOG.info("Game " + game.getGameDisplayName() + " is not a VPX game.");
+          metadata.setStatus(msg);
+          return metadata;
+        }
+
+        metadata.setRom(romName);
+
         //always check NV ram first, the table might store additional data into the VPReg.stg too
         rawScore = readNvHighscore(game, metadata);
         if (rawScore == null) {
