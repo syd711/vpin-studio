@@ -347,7 +347,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
       size.setStyle("-fx-font-size: 12px;");
       vBox.getChildren().add(size);
 
-      Label created = new Label(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(value.getCreatedAt()));
+      Label created = new Label(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(value.getCreatedAt().atZone(java.time.ZoneId.systemDefault())));
       created.getStyleClass().add("default-text");
       created.setStyle("-fx-font-size: 12px;");
       vBox.getChildren().add(created);

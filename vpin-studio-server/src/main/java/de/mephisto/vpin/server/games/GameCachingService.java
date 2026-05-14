@@ -287,7 +287,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
         }
 
         final Map<Integer, GameDetails> resolvedMap = gameDetailsMap;
-        List<GameDetailsInfo> infos = gamesByEmulator.parallelStream()
+        List<GameDetailsInfo> infos = gamesByEmulator.stream()
                 .map(game -> applyGameDetails(game, false, false, resolvedMap.get(game.getId())))
                 .toList();
 
