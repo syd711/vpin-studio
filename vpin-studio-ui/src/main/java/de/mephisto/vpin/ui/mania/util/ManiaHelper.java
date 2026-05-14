@@ -56,7 +56,14 @@ public class ManiaHelper {
         //this is the server side registration where the API key is set server side, not here yet....
         ManiaRegistration completedRegistration = client.getManiaService().register(registration);
         if (!StringUtils.isEmpty(completedRegistration.getResult())) {
-          WidgetFactory.showAlert(Studio.stage, "Registration Failed", completedRegistration.getResult());
+          String result = completedRegistration.getResult();
+          if(result != null && result.contains("Token not found")) {
+            WidgetFactory.showAlert(Studio.stage, "Registration Failed", "The API key is invalid.");
+          }
+          else {
+            WidgetFactory.showAlert(Studio.stage, "Registration Failed", completedRegistration.getResult());
+          }
+
           LOG.error("VPin Mania registration failed: {}", completedRegistration.getResult());
           return false;
         }

@@ -15,7 +15,10 @@
 - **Webhooks** 
   - Added new webhooks for called when the pause menu is shown/hidden.
 - **Table Asset Manager**
-  - The media converters are no filtered depending on the selected asset type anymore. This allows a more flexible handling of custom converters. 
+  - The media converters are no filtered depending on the selected asset type anymore. This allows a more flexible handling of custom converters.
+- **VPin Mania**
+  - Fixed registration issues.
+  - Added more help to the registration dialog.
 
 ---
 
