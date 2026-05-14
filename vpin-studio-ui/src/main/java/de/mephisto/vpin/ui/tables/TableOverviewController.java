@@ -971,7 +971,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       String rom = value.getRom();
 
       if (model == null || model.getGameEmulator() == null) {
-        return new Label();
+        return new Label("...");
       }
 
       if (!model.getGameEmulator().isFxEmulator() && StringUtils.isEmpty(rom)) {

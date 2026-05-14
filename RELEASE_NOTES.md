@@ -12,8 +12,10 @@
   - Possible fix for the issue that for the first loading not all games are loaded (blind fix).
 - **iScored Competitions**
   - Added play and stop buttons.
-- **Webhooks**
-  - Added new webhooks for called when the pause menu is shown/hidden. 
+- **Webhooks** 
+  - Added new webhooks for called when the pause menu is shown/hidden.
+- **Table Asset Manager**
+  - The media converters are no filtered depending on the selected asset type anymore. This allows a more flexible handling of custom converters. 
 
 ---
 

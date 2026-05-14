@@ -950,12 +950,12 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         // add a condition, asset should not be the default asset already
         setDefaultBtn.setDisable(setDefaultBtn.isDisable() || FileUtils.isDefaultAsset(mediaItem.getName()));
 
-        boolean atleastone = false;
+        boolean atleastone = !conversionMenu.getItems().isEmpty();
         for (MenuItem item : conversionMenu.getItems()) {
           MediaConversionCommand cmd = (MediaConversionCommand) item.getUserData();
-          boolean visible = cmd.isActiveForType(baseType);
-          atleastone |= visible;
-          item.setVisible(visible);
+//          boolean visible = cmd.isActiveForType(baseType);
+//          atleastone |= visible;
+          item.setVisible(true);
         }
         conversionMenu.setDisable(!atleastone);
 

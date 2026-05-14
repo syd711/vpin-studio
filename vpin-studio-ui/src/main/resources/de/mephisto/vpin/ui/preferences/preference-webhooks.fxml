@@ -124,7 +124,7 @@
                   <Label styleClass="default-text" text="Pause Menu:" textFill="WHITE" />
                   <VBox GridPane.columnIndex="1">
                      <children>
-                        <CheckBox fx:id="pauseMenuScreenshotCheckbox" mnemonicParsing="false" styleClass="default-text" text="Alway take a screenshot before opening the pause menu." />
+                        <CheckBox fx:id="pauseMenuScreenshotCheckbox" mnemonicParsing="false" styleClass="default-text" text="Always take a screenshot before opening the pause menu." />
                         <Label styleClass="checkbox-description" text="The screenshot can be read from the URL:" textFill="WHITE" />
                         <Label layoutX="10.0" layoutY="30.0" styleClass="checkbox-description" text="http://&lt;HOST&gt;:8089/api/v1/recorder/screenshot/latest" textFill="WHITE" />
                      </children>
