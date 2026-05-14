@@ -71,8 +71,8 @@ public class SubscriptionCompetitionChangeListenerImplTest {
   void competitionCreated_withIscored_skips_whenGameNotFound() {
     Competition competition = buildCompetition(CompetitionType.ISCORED.name());
     competition.setGameId(99);
-    when(gameService.getGame(99)).thenReturn(null);
-    when(gameService.getGameByVpsTable(any(), any())).thenReturn(null);
+//    when(gameService.getGame(99)).thenReturn(null);
+//    when(gameService.getGameByVpsTable(any(), any())).thenReturn(null);
 
     listener.competitionCreated(competition);
 
