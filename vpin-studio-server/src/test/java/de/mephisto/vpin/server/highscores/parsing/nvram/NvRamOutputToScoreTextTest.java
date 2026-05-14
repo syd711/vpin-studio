@@ -10,6 +10,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
+import de.mephisto.vpin.server.games.GameEmulator;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -106,12 +108,16 @@ public class NvRamOutputToScoreTextTest {
     game.setGameDisplayName("Dummy test game for " + entry);
     game.setRom(rom);
 
-    if (!NvRamOutputToScoreTextConverter.isSupportedRom(rom)) {
+    GameEmulator emulator = new GameEmulator();
+    emulator.setType(EmulatorType.VisualPinball);
+    game.setEmulator(emulator);
+
+    if (!RamOutputToScoreTextConverter.isSupportedRom(rom)) {
       return status;
     }
 
     LOG.info("Reading '" + entry.getName() + "'");
-    String raw = NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(entry);
+    String raw = RamOutputToScoreTextConverter.convertRamTextToMachineReadable(game, entry);
     assertNotNull(raw);
 
     List<Score> parse = ScoreListFactory.create(raw, new Date(entry.length()), game, scoringDB);
@@ -234,9 +240,13 @@ public class NvRamOutputToScoreTextTest {
     game.setGameDisplayName("Dummy test game for " + nv);
     game.setRom(nv.replace(".nv", ""));
 
+    GameEmulator emulator = new GameEmulator();
+    emulator.setType(EmulatorType.VisualPinball);
+    game.setEmulator(emulator);
+
     File testFolder = new File("../testsystem/vPinball/VisualPinball/VPinMAME/nvram/");
     File entry = new File(testFolder, nv);
-    String raw = NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(entry);
+    String raw = RamOutputToScoreTextConverter.convertRamTextToMachineReadable(game, entry);
     assertNotNull(raw);
 
     LOG.info("raw : " + raw);

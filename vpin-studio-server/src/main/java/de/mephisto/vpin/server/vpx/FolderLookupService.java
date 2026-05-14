@@ -294,6 +294,22 @@ public class FolderLookupService {
   }
 
   @Nullable
+  public File getFPRamFile(@NonNull Game game) {
+    if (game.getEmulator() == null) {
+      return null;
+    }
+
+    File fpRamFolder = new File(game.getEmulator().getInstallationFolder(), "fpRAM");
+
+    String name = FilenameUtils.getBaseName(game.getGameFileName()) + ".fpRAM";
+    File fpRamFile = new File(fpRamFolder, name);
+    if (fpRamFile.exists()) {
+      return fpRamFile;
+    }
+    return null;
+  }
+
+  @Nullable
   public File getNvRamFile(@NonNull Game game) {
     if (game.getEmulator() == null || game.getEmulator().getMameDirectory() == null) {
       return null;
