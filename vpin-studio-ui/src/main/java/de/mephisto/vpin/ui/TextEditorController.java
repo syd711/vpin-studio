@@ -1,9 +1,9 @@
 package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.util.RichText;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -23,7 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.text.DateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -72,7 +73,7 @@ public class TextEditorController implements Initializable, DialogController {
     try {
       file.setContent(this.richText.getCodeArea().getText());
       MonitoredTextFile save = client.getTextEditorService().save(file);
-      lastModified.setText(DateFormat.getDateTimeInstance().format(save.getLastModified()));
+      lastModified.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(save.getLastModified()));
       size.setText(FileUtils.readableFileSize(save.getSize()));
     }
     catch (Exception ex) {
@@ -138,7 +139,7 @@ public class TextEditorController implements Initializable, DialogController {
     }
     else {
       MonitoredTextFile value = client.getTextEditorService().getText(file);
-      lastModified.setText(DateFormat.getDateTimeInstance().format(value.getLastModified()));
+      lastModified.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(value.getLastModified()));
       size.setText(FileUtils.readableFileSize(value.getSize()));
       richText = new RichText(value.getContent());
 

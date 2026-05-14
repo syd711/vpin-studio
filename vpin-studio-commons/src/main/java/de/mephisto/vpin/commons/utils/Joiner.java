@@ -476,14 +476,11 @@ public class Joiner {
 
       @Override
       public Object get(int index) {
-        switch (index) {
-          case 0:
-            return first;
-          case 1:
-            return second;
-          default:
-            return rest[index - 2];
-        }
+          return switch (index) {
+              case 0 -> first;
+              case 1 -> second;
+              default -> rest[index - 2];
+          };
       }
     };
   }

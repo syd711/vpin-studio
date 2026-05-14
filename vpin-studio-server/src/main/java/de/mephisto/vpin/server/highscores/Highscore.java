@@ -2,11 +2,14 @@ package de.mephisto.vpin.server.highscores;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.mephisto.vpin.server.games.Game;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
-import javax.persistence.*;
-import java.util.Date;
+import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.id.IncrementGenerator;
+import java.time.Instant;
+import java.util.Objects;
 
 @Entity
 @Table(name = "Highscores")
@@ -14,15 +17,15 @@ import java.util.Date;
 public class Highscore {
 
   @Column(nullable = false)
-  @Temporal(TemporalType.TIMESTAMP)
-  private Date createdAt;
+  private Instant createdAt;
 
-  private Date lastModified;
+  private Instant lastModified;
 
-  private Date lastScanned;
+  private Instant lastScanned;
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GenericGenerator(name = "highscore_gen", type = IncrementGenerator.class)
+  @GeneratedValue(generator = "highscore_gen")
   private Long id;
 
   private int gameId;
@@ -66,19 +69,19 @@ public class Highscore {
     this.options = options;
   }
 
-  public Date getLastScanned() {
+  public Instant getLastScanned() {
     return lastScanned;
   }
 
-  public void setLastScanned(Date lastScanned) {
+  public void setLastScanned(Instant lastScanned) {
     this.lastScanned = lastScanned;
   }
 
-  public Date getLastModified() {
+  public Instant getLastModified() {
     return lastModified;
   }
 
-  public void setLastModified(Date lastModified) {
+  public void setLastModified(Instant lastModified) {
     this.lastModified = lastModified;
   }
 
@@ -114,11 +117,11 @@ public class Highscore {
     this.displayName = displayName;
   }
 
-  public Date getCreatedAt() {
+  public Instant getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(Date createdAt) {
+  public void setCreatedAt(Instant createdAt) {
     this.createdAt = createdAt;
   }
 
@@ -133,7 +136,7 @@ public class Highscore {
   public static Highscore forGame(@NonNull Game game, @Nullable HighscoreMetadata metadata) {
     Highscore highscore = new Highscore();
     highscore.setGameId(game.getId());
-    highscore.setCreatedAt(new Date());
+    highscore.setCreatedAt(Instant.now());
     highscore.setDisplayName(game.getGameDisplayName());
 
     if (metadata != null) {
@@ -141,8 +144,8 @@ public class Highscore {
       highscore.setFilename(metadata.getFilename());
       highscore.setType(metadata.getType() != null ? metadata.getType().name() : null);
       highscore.setStatus(metadata.getStatus());
-      highscore.setLastScanned(metadata.getScanned());
-      highscore.setLastModified(metadata.getModified());
+      highscore.setLastScanned(metadata.getScanned() != null ? metadata.getScanned().toInstant() : null);
+      highscore.setLastModified(metadata.getModified() != null ? metadata.getModified().toInstant() : null);
     }
     return highscore;
   }
@@ -150,7 +153,7 @@ public class Highscore {
   public HighscoreVersion toVersion(int changedPosition, String newRaw) {
     HighscoreVersion version = new HighscoreVersion();
     version.setChangedPosition(changedPosition);
-    version.setCreatedAt(new Date());
+    version.setCreatedAt(Instant.now());
     version.setOldRaw(this.getRaw());
     version.setDisplayName(this.getDisplayName());
     version.setGameId(this.getGameId());
@@ -162,15 +165,13 @@ public class Highscore {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-
     Highscore highscore = (Highscore) o;
-
-    return id.equals(highscore.id) && this.gameId == ((Highscore) o).gameId;
+    return gameId == highscore.gameId && Objects.equals(id, highscore.id);
   }
 
   @Override
   public int hashCode() {
-    return id.hashCode();
+    return Objects.hash(id, gameId);
   }
 
   @Override

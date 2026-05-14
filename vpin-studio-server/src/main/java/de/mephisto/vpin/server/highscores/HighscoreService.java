@@ -21,10 +21,10 @@ import de.mephisto.vpin.server.nvrams.NVRamService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.vpx.FolderLookupService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -89,9 +90,6 @@ public class HighscoreService implements InitializingBean {
 
   public HighscoreFiles getHighscoreFiles(@NonNull Game game) {
     HighscoreFiles highscoreFiles = new HighscoreFiles();
-    if (!game.isVpxGame()) {
-      return highscoreFiles;
-    }
 
     VPRegFile vpRegFile = vpRegService.getVPRegFile(game);
     if (vpRegFile != null && vpRegFile.isValid()) {
@@ -194,10 +192,10 @@ public class HighscoreService implements InitializingBean {
     }
   }
 
-  @NonNull
-  public List<Score> parseScores(Date createdAt, String raw, @NonNull Game game, long serverId) {
-    return highscoreParser.parseScores(createdAt, raw, game, serverId);
-  }
+    @NonNull
+    public List<Score> parseScores(Instant createdAt, String raw, @NonNull Game game, long serverId) {
+        return highscoreParser.parseScores(createdAt, raw, game, serverId);
+    }
 
   @NonNull
   public List<RankedPlayer> getPlayersByRanks() {
@@ -264,15 +262,15 @@ public class HighscoreService implements InitializingBean {
     return result;
   }
 
-  public ScoreList getScoreHistory(@NonNull Game game) {
-    long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
-    return getScoresBetween(game, new Date(0), new Date(), serverId);
-  }
+    public ScoreList getScoreHistory(@NonNull Game game) {
+        long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
+        return getScoresBetween(game, Instant.ofEpochMilli(0), Instant.now(), serverId);
+    }
 
   /**
    * Returns all available scores for the game with the given id and time frame
    */
-  public ScoreList getScoresBetween(@NonNull Game game, Date start, Date end, long serverId) {
+  public ScoreList getScoresBetween(@NonNull Game game, Instant start, Instant end, long serverId) {
     ScoreList scoreList = new ScoreList();
     List<HighscoreVersion> byGameIdAndCreatedAtBetween = highscoreVersionRepository.findByGameIdAndCreatedAtBetween(game.getId(), start, end);
     for (HighscoreVersion version : byGameIdAndCreatedAtBetween) {
@@ -568,8 +566,6 @@ public class HighscoreService implements InitializingBean {
     long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
     List<Score> newScores = highscoreParser.parseScores(newHighscore.getLastModified(), newHighscore.getRaw(), game, serverId);
     List<Score> oldScores = getOrCloneOldHighscores(oldHighscore, game, oldRaw, serverId, newScores);
-    fillScores(game.getId(), newScores, oldScores);
-
     List<HighscoreChangeEvent> highscoreChangeEvents = new ArrayList<>();
     if (!oldScores.isEmpty()) {
       List<Integer> changedPositions = calculateChangedPositions(game.getGameDisplayName(), oldScores, newScores);
@@ -583,11 +579,6 @@ public class HighscoreService implements InitializingBean {
         if (!changedPositions.isEmpty()) {
           for (Integer changedPosition : changedPositions) {
             //so we have a highscore update, let's decide the distribution
-            if (changedPosition - 1 >= oldScores.size() || changedPosition - 1 >= newScores.size()) {
-              //this should never happen anymore because of the fillScores
-              LOG.info("Skipping highscore event for position {} — out of bounds (oldScores={}, newScores={})", changedPosition, oldScores.size(), newScores.size());
-              continue;
-            }
             Score oldScore = oldScores.get(changedPosition - 1);
             Score newScore = newScores.get(changedPosition - 1);
 
@@ -629,20 +620,6 @@ public class HighscoreService implements InitializingBean {
     triggerHighscoreUpdate(game, oldHighscore);
 
     return Optional.of(oldHighscore);
-  }
-
-  /**
-   * Ensures both score list have the same length.
-   * @param newScores
-   * @param oldScores
-   */
-  private void fillScores(int gameId, List<Score> newScores, List<Score> oldScores) {
-    while (newScores.size() < oldScores.size()) {
-      newScores.add(new Score(new Date(), gameId, "???", null, null, 0, newScores.size() + 1));
-    }
-    while (oldScores.size() < newScores.size()) {
-      oldScores.add(new Score(new Date(), gameId, "???", null, null, 0, oldScores.size() + 1));
-    }
   }
 
   /**
@@ -696,9 +673,7 @@ public class HighscoreService implements InitializingBean {
         boolean notFound = oldScores.stream().noneMatch(score -> score.matches(newScore));
         if (notFound) {
           changes.add(newScore.getPosition());
-          int oldIdx = newScore.getPosition() - 1;
-          String beaten = oldIdx < oldScores.size() ? oldScores.get(oldIdx).toString() : "<no previous entry>";
-          LOG.info("{}: Calculated changed score [{}] has beaten [{}]", gameDisplayName, newScore, beaten);
+          LOG.info("{}: Calculated changed score [{}] has beaten [{}]", gameDisplayName, newScore, oldScores.get(newScore.getPosition() - 1));
         }
       }
     }

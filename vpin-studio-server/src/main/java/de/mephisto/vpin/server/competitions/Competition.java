@@ -3,13 +3,16 @@ package de.mephisto.vpin.server.competitions;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.validation.ValidationState;
+import jakarta.persistence.*;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.id.IncrementGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
-import java.util.Date;
+import java.time.Instant;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -19,17 +22,16 @@ import java.util.UUID;
 public class Competition {
 
   @Column(nullable = false, updatable = false)
-  @Temporal(TemporalType.TIMESTAMP)
   @CreatedDate
-  private Date createdAt;
+  private Instant createdAt;
 
   @Column(nullable = false)
-  @Temporal(TemporalType.TIMESTAMP)
   @LastModifiedDate
-  private Date updatedAt;
+  private Instant updatedAt;
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GenericGenerator(name = "competition_gen", type = IncrementGenerator.class)
+  @GeneratedValue(generator = "competition_gen")
   private Long id;
 
   @Column(name = "highscoreReset", nullable = false, columnDefinition = "boolean default true")
@@ -60,9 +62,9 @@ public class Competition {
 
   private String vpsTableVersionId;
 
-  private Date startDate;
+  private Instant startDate;
 
-  private Date endDate;
+  private Instant endDate;
 
   private boolean started;
 
@@ -245,19 +247,19 @@ public class Competition {
     this.gameId = gameId;
   }
 
-  public Date getStartDate() {
+  public Instant getStartDate() {
     return startDate;
   }
 
-  public void setStartDate(Date startDate) {
+  public void setStartDate(Instant startDate) {
     this.startDate = startDate;
   }
 
-  public Date getEndDate() {
+  public Instant getEndDate() {
     return endDate;
   }
 
-  public void setEndDate(Date endDate) {
+  public void setEndDate(Instant endDate) {
     this.endDate = endDate;
   }
 
@@ -277,19 +279,19 @@ public class Competition {
     this.name = name;
   }
 
-  public Date getCreatedAt() {
+  public Instant getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(Date createdAt) {
+  public void setCreatedAt(Instant createdAt) {
     this.createdAt = createdAt;
   }
 
-  public Date getUpdatedAt() {
+  public Instant getUpdatedAt() {
     return updatedAt;
   }
 
-  public void setUpdatedAt(Date updatedAt) {
+  public void setUpdatedAt(Instant updatedAt) {
     this.updatedAt = updatedAt;
   }
 
@@ -310,25 +312,21 @@ public class Competition {
       return true;
     }
 
-    long now = new Date().getTime();
-    long start = getStartDate().getTime();
-    long end = getEndDate().getTime();
-    return start <= now && end >= now;
+    Instant now = Instant.now();
+    return (startDate != null && !now.isBefore(startDate)) && (endDate != null && !now.isAfter(endDate));
   }
 
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-
     Competition that = (Competition) o;
-
-    return id.equals(that.id);
+    return Objects.equals(id, that.id);
   }
 
   @Override
   public int hashCode() {
-    return id.hashCode();
+    return Objects.hash(id);
   }
 
   @Override

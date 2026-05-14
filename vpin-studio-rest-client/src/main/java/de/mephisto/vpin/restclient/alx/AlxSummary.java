@@ -1,18 +1,18 @@
 package de.mephisto.vpin.restclient.alx;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class AlxSummary {
-  private Date startDate;
+  private OffsetDateTime startDate;
   private List<TableAlxEntry> entries = new ArrayList<>();
 
-  public Date getStartDate() {
+  public OffsetDateTime getStartDate() {
     return startDate;
   }
 
-  public void setStartDate(Date startDate) {
+  public void setStartDate(OffsetDateTime startDate) {
     this.startDate = startDate;
   }
 

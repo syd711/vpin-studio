@@ -8,7 +8,6 @@ import de.mephisto.vpin.restclient.assets.AssetServiceClient;
 import de.mephisto.vpin.restclient.assets.TableAssetSourcesServiceClient;
 import de.mephisto.vpin.restclient.backups.BackupServiceClient;
 import de.mephisto.vpin.restclient.iscored.IScoredServiceClient;
-import de.mephisto.vpin.restclient.vpxz.VPXZServiceClient;
 import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.cards.HighscoreCardTemplatesServiceClient;
@@ -30,7 +29,6 @@ import de.mephisto.vpin.restclient.highscores.HigscoreBackupServiceClient;
 import de.mephisto.vpin.restclient.hooks.HooksServiceClient;
 import de.mephisto.vpin.restclient.ini.IniServiceClient;
 import de.mephisto.vpin.restclient.jobs.JobsServiceClient;
-import de.mephisto.vpin.restclient.vpinmame.VPinMameServiceClient;
 import de.mephisto.vpin.restclient.mania.ManiaServiceClient;
 import de.mephisto.vpin.restclient.notifications.NotificationsServiceClient;
 import de.mephisto.vpin.restclient.patcher.PatcherServiceClient;
@@ -47,13 +45,15 @@ import de.mephisto.vpin.restclient.textedit.TextEditorServiceClient;
 import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.restclient.vpauthenticators.VpAuthenticationServiceClient;
+import de.mephisto.vpin.restclient.vpinmame.VPinMameServiceClient;
 import de.mephisto.vpin.restclient.vps.VpsServiceClient;
-import de.mephisto.vpin.restclient.vpx.VpxServiceClient;
 import de.mephisto.vpin.restclient.vpx.VpxScriptOptionsServiceClient;
+import de.mephisto.vpin.restclient.vpx.VpxServiceClient;
+import de.mephisto.vpin.restclient.vpxz.VPXZServiceClient;
 import de.mephisto.vpin.restclient.vr.VRServiceClient;
 import de.mephisto.vpin.restclient.wovp.WOVPServiceClient;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.IOUtils;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -62,7 +62,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.*;
 import java.lang.invoke.MethodHandles;
-import java.net.URL;
+import java.net.URI;
 
 public class VPinStudioClient {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -493,10 +493,10 @@ public class VPinStudioClient {
   public InputStream getScreenshot() {
     try {
       if (latestScreenshot != null) {
-        return new URL(getURL("recorder/screenshot/" + latestScreenshot)).openStream();
+        return URI.create(getURL("recorder/screenshot/" + latestScreenshot)).toURL().openStream();
       }
     }
-    catch (IOException e) {
+    catch (Exception e) {
       LOG.error("Failed to load screenshot: {}", e.getMessage(), e);
     }
     return null;

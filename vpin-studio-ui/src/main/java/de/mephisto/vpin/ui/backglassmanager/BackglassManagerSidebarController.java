@@ -23,8 +23,8 @@ import de.mephisto.vpin.ui.util.JFXHelper;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import de.mephisto.vpin.ui.util.StudioFolderChooser;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -54,7 +54,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -378,7 +379,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       }
     }
     FrontendMediaUploadProgressModel model = new FrontendMediaUploadProgressModel(game,
-        screenName + " Media Upload", Arrays.asList(tmp.toFile()), screen, append);
+        screenName + " Media Upload", List.of(tmp.toFile()), screen, append);
     ProgressDialog.createProgressDialog(model);
   }
 
@@ -621,7 +622,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
         .setOnDragDropped(e -> {
           List<File> files = e.getDragboard().getFiles();
           if (files != null && files.size() == 1) {
-            File selection = files.get(0);
+            File selection = files.getFirst();
             Platform.runLater(() -> {
               BackglassManagerControllerUtils.updateDMDImage(getEmulatorId(), getSelectedVersion(), game, selection);
             });
@@ -724,7 +725,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
       disableCombosFrames();
 
-      modificationDateLabel.setText(SimpleDateFormat.getDateTimeInstance().format(directB2SData.getModificationDate()));
+      modificationDateLabel.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(directB2SData.getModificationDate()));
 
       reloadBtn.setDisable(false);
       deleteBtn.setDisable(false);
@@ -829,7 +830,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
         directB2SCombo.setVisible(false);
         directB2SLabel.setVisible(true);
 
-        directB2SLabel.setText(versions.get(0));
+        directB2SLabel.setText(versions.getFirst());
       }  
     }
     else {

@@ -1,17 +1,16 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
+import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.validation.ValidationState;
-import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.util.DismissalUtil;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
-import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -27,7 +26,8 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -207,7 +207,7 @@ public class TablesSidebarAltColorController implements Initializable {
       deleteBtn.setDisable(!altColorAvailable);
 
       if (altColorAvailable) {
-        lastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(altColor.getModificationDate()));
+        lastModifiedLabel.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(altColor.getModificationDate()));
         typeLabel.setText(altColor.getAltColorType().name());
         nameLabel.setText(altColor.getName());
         altColor = client.getAltColorService().getAltColor(game.getId());
@@ -221,7 +221,7 @@ public class TablesSidebarAltColorController implements Initializable {
         List<ValidationState> validationStates = altColor.getValidationStates();
         errorBox.setVisible(!validationStates.isEmpty());
         if (!validationStates.isEmpty()) {
-          validationState = validationStates.get(0);
+          validationState = validationStates.getFirst();
           LocalizedValidation validationResult = GameValidationTexts.getValidationResult(game, validationState);
           errorTitle.setText(validationResult.getLabel());
           errorText.setText(validationResult.getText());

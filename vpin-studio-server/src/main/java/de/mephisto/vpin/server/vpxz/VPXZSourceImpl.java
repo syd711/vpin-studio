@@ -2,11 +2,10 @@ package de.mephisto.vpin.server.vpxz;
 
 import de.mephisto.vpin.restclient.vpxz.VPXZSourceType;
 import de.mephisto.vpin.restclient.vpxz.VPXZType;
-import de.mephisto.vpin.server.backups.BackupSource;
 import de.mephisto.vpin.server.system.SystemService;
 
 import java.io.File;
-import java.util.Date;
+import java.time.Instant;
 
 public class VPXZSourceImpl extends VPXZSource {
   public final static long DEFAULT_VPXZ_SOURCE_ID = -1;
@@ -34,8 +33,8 @@ public class VPXZSourceImpl extends VPXZSource {
   }
 
   @Override
-  public Date getCreatedAt() {
-    return new Date(FOLDER.lastModified());
+  public Instant getCreatedAt() {
+    return Instant.ofEpochMilli(FOLDER.lastModified());
   }
 
   @Override

@@ -5,7 +5,7 @@ import de.mephisto.vpin.restclient.alx.AlxSummary;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.events.EventManager;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -74,7 +74,7 @@ public class AlxUpdateStatsDialogController implements Initializable, DialogCont
     int timePlayedSecs = 0;
     int numberOfPlays = 0;
     if (alxSummary != null && !alxSummary.getEntries().isEmpty()) {
-      TableAlxEntry tableAlxEntry = alxSummary.getEntries().get(0);
+      TableAlxEntry tableAlxEntry = alxSummary.getEntries().getFirst();
       timePlayedSecs = tableAlxEntry.getTimePlayedSecs() / 60;
       numberOfPlays = tableAlxEntry.getNumberOfPlays();
     }

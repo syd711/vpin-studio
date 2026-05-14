@@ -1,9 +1,9 @@
 package de.mephisto.vpin.restclient.competitions;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
-
-import java.util.List;
 
 public class IScoredSyncModel {
   private boolean invalidate;
@@ -27,6 +27,7 @@ public class IScoredSyncModel {
     this.invalidate = invalidate;
   }
 
+  @JsonProperty("iScoredGameRoom")
   public IScoredGameRoom getiScoredGameRoom() {
     return iScoredGameRoom;
   }

@@ -1,22 +1,22 @@
 package de.mephisto.vpin.restclient.highscores;
 
-import java.util.Date;
+import java.time.OffsetDateTime;
 
 public class HighscoreMetadataRepresentation {
 
   private String type;
   private String filename;
-  private Date modified;
-  private Date scanned;
+  private OffsetDateTime modified;
+  private OffsetDateTime scanned;
   private String raw;
   private String rom;
   private String status;
 
-  public Date getScanned() {
+  public OffsetDateTime getScanned() {
     return scanned;
   }
 
-  public void setScanned(Date scanned) {
+  public void setScanned(OffsetDateTime scanned) {
     this.scanned = scanned;
   }
 
@@ -36,11 +36,11 @@ public class HighscoreMetadataRepresentation {
     this.filename = filename;
   }
 
-  public Date getModified() {
+  public OffsetDateTime getModified() {
     return modified;
   }
 
-  public void setModified(Date modified) {
+  public void setModified(OffsetDateTime modified) {
     this.modified = modified;
   }
 

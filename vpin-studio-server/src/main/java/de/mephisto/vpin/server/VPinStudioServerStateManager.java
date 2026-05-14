@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server;
 
 import de.mephisto.vpin.restclient.util.SystemUtil;
-import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.RequestUtil;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;

@@ -1,7 +1,6 @@
 package de.mephisto.vpin.commons.fx.widgets;
 
 import de.mephisto.vpin.commons.fx.ServerFX;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;

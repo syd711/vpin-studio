@@ -19,10 +19,10 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.jobs.JobService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.lang.invoke.MethodHandles;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -266,7 +267,7 @@ public class VPXZService implements InitializingBean {
     }
     else {
       vpxzSource = new VPXZSource();
-      vpxzSource.setCreatedAt(new Date());
+      vpxzSource.setCreatedAt(Instant.now());
       vpxzSource.setType(representation.getType());
     }
 
@@ -322,7 +323,7 @@ public class VPXZService implements InitializingBean {
     List<VPXZSource> all = vpxzSourceRepository.findAll();
     if (all.isEmpty()) {
       VPXZSource source = new VPXZSource();
-      source.setCreatedAt(new Date());
+      source.setCreatedAt(Instant.now());
       source.setName("Default VPXZ Folder");
       source.setType(VPXZSourceType.Folder.name());
       source.setLocation(VPXZSourceImpl.FOLDER.getAbsolutePath());

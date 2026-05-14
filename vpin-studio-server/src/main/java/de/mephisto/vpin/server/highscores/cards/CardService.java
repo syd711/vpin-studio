@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.highscores.cards;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.cfg.EnumFeature;
+import tools.jackson.databind.json.JsonMapper;
 import de.mephisto.vpin.commons.fx.ImageUtil;
 import de.mephisto.vpin.commons.fx.cards.CardGraphicsHighscore;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
@@ -24,10 +26,10 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vps.VpsService;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -248,19 +250,16 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
   }
 
   public int[] getCardResolution(CardTemplateType templateType) {
-    switch (templateType) {
-      case HIGSCORE_CARD: {
+    return switch (templateType) {
+      case HIGSCORE_CARD -> {
         if (cardSettings.isCustomResolution()) {
-          return new int[]{cardSettings.getCardWidth(), cardSettings.getCardHeight()};
+          yield new int[]{cardSettings.getCardWidth(), cardSettings.getCardHeight()};
         }
-        return new int[]{cardSettings.getCardResolution().toWidth(), cardSettings.getCardResolution().toHeight()};
+        yield new int[]{cardSettings.getCardResolution().toWidth(), cardSettings.getCardResolution().toHeight()};
       }
-      case INSTRUCTIONS_CARD:
-        return new int[]{CardResolution.HDReady.toWidth(), CardResolution.HDReady.toHeight()};
-      case WHEEL:
-        return new int[]{CardResolution.WHEEL.toWidth(), CardResolution.WHEEL.toHeight()};
-    }
-    return new int[]{CardResolution.HDReady.toWidth(), CardResolution.HDReady.toHeight()};
+      case INSTRUCTIONS_CARD -> new int[]{CardResolution.HDReady.toWidth(), CardResolution.HDReady.toHeight()};
+      case WHEEL -> new int[]{CardResolution.WHEEL.toWidth(), CardResolution.WHEEL.toHeight()};
+    };
   }
 
 //-----------------------------------------
@@ -364,7 +363,11 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
     if (summary != null) {
       cardData.setRawScore(summary.getRaw());
 
-      ObjectMapper mapper = new ObjectMapper();
+      JsonMapper mapper = JsonMapper.builder()
+          .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+          .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+          .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+          .build();
       ArrayList<ScoreRepresentation> scores = new ArrayList<>();
       for (Score score : summary.getScores()) {
         try {

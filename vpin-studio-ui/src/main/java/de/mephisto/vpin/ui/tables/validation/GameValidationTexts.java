@@ -6,7 +6,7 @@ import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
@@ -69,7 +69,7 @@ public class GameValidationTexts {
       }
       case CODE_NVOFFSET_MISMATCH: {
         label = "\"NVOffset\" mismatch found.";
-        text = "This table has an \"NVOffset\" of \"" + state.getOptions().get(1) + "\" and shares the ROM with table \"" + state.getOptions().get(0) + "\" which has the NVOffset value \"" + state.getOptions().get(2) + "\".";
+        text = "This table has an \"NVOffset\" of \"" + state.getOptions().get(1) + "\" and shares the ROM with table \"" + state.getOptions().getFirst() + "\" which has the NVOffset value \"" + state.getOptions().get(2) + "\".";
         break;
       }
       case CODE_NO_DIRECTB2S_OR_PUPPACK: {

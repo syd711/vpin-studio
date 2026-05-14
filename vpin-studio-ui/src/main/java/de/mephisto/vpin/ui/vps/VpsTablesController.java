@@ -7,7 +7,6 @@ import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -22,7 +21,6 @@ import de.mephisto.vpin.ui.tables.vps.VpsTableColumn;
 import de.mephisto.vpin.ui.tables.vps.VpsTutorialColumn;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -33,6 +31,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Paint;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,9 +40,10 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -114,7 +114,7 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
   // calculated global KPIs on vpsTables
   private int unmapped = 0;
 
-  private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+  private DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.getDefault());
 
 
   // Add a public no-args constructor
@@ -192,7 +192,7 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
 
     if (forceReload) {
       super.clearViewCache();
-      ProgressDialog.createProgressDialog(new VpsDBDownloadProgressModel("Download VPS Database", Arrays.asList(new File("<vpsdb.json>"))));
+      ProgressDialog.createProgressDialog(new VpsDBDownloadProgressModel("Download VPS Database", List.of(new File("<vpsdb.json>"))));
     }
 
     // calculate unmapped in a non blocking thread
@@ -314,7 +314,7 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
     });
 
     BaseLoadingColumn.configureColumn(updatedColumn, (value, model) -> {
-      Label label = new Label(dateFormat.format(new Date(value.getUpdatedAt())));
+      Label label = new Label(dateFormat.format(Instant.ofEpochMilli(value.getUpdatedAt()).atZone(ZoneId.systemDefault()).toLocalDate()));
       label.getStyleClass().add("default-text");
       return label;
     }, this, true);
@@ -383,7 +383,7 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
       NavigationController.setBreadCrumb(Arrays.asList("VPS Tables", newSelection.getName()));
     }
     else {
-      NavigationController.setBreadCrumb(Arrays.asList("VPS Tables"));
+      NavigationController.setBreadCrumb(List.of("VPS Tables"));
     }
 
     vpsOpenBtn.setDisable(newSelection == null);
@@ -457,7 +457,7 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
     }
 
     public boolean sameBean(VpsTable otherTable) {
-      return StringUtils.equals(bean.getId(), otherTable.getId());
+      return Objects.equals(bean.getId(), otherTable.getId());
     }
 
     public boolean isInstalled() {

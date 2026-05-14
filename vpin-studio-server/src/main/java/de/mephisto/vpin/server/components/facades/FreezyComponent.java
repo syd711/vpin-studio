@@ -6,16 +6,18 @@ import de.mephisto.vpin.connectors.github.ReleaseArtifact;
 import de.mephisto.vpin.connectors.github.ReleaseArtifactActionLog;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.server.vpinmame.VPinMameService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -51,13 +53,13 @@ public class FreezyComponent implements ComponentFacade {
 
   @Nullable
   @Override
-  public Date getModificationDate() {
+  public OffsetDateTime getModificationDate() {
     File file = new File(vPinMameService.getMameFolder(), "DmdDevice64.dll");
     if (!file.exists()) {
       file = new File(vPinMameService.getMameFolder(), "DmdDevice.dll");
     }
     if (file.exists()) {
-      return new Date(file.lastModified());
+      return OffsetDateTime.ofInstant(Instant.ofEpochMilli(file.lastModified()), ZoneId.systemDefault());
     }
     return null;
   }

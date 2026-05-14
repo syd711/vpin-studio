@@ -11,8 +11,9 @@ import de.mephisto.vpin.server.frontend.pinballx.PinballXMediaAccessStrategy;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.system.SystemService;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +63,7 @@ public class PinballYConnector extends BaseConnector {
     List<VPinScreen> screens = new ArrayList<>(Arrays.asList(VPinScreen.values()));
     screens.remove(VPinScreen.Other2);
     frontend.setSupportedScreens(screens);
-    frontend.setIgnoredValidations(Arrays.asList(GameValidationCode.CODE_NO_OTHER2));
+    frontend.setIgnoredValidations(List.of(GameValidationCode.CODE_NO_OTHER2));
 
     frontend.setPlayfieldMediaInverted(true);
     return frontend;
@@ -180,28 +181,18 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
     String system = "System" + emuId;
 
     String sEnable = s.getProperty(system + ".Enabled");
-    boolean enabled = sEnable == null || StringUtils.equals(sEnable, "1");
+    boolean enabled = sEnable == null || Strings.CI.equals(sEnable, "1");
 
     EmulatorType type = null;
     String systemClass = s.getProperty(system + ".Class");
     if (systemClass != null) {
-      switch (systemClass) {
-        case "VP":
-          type = EmulatorType.VisualPinball9;
-          break; // Visual Pinball 9
-        case "VPX":
-          type = EmulatorType.VisualPinball;
-          break; // Visual Pinball
-        case "FP":
-          type = EmulatorType.FuturePinball;
-          break; // Future Pinball
-        case "STEAM":
-          type = EmulatorType.ZenFX;
-          break; // Future Pinball
-        default:
-          type = EmulatorType.OTHER;
-          break; // Custom Exe
-      }
+        type = switch (systemClass) {
+            case "VP" -> EmulatorType.VisualPinball9; // Visual Pinball 9
+            case "VPX" -> EmulatorType.VisualPinball; // Visual Pinball
+            case "FP" -> EmulatorType.FuturePinball; // Future Pinball
+            case "STEAM" -> EmulatorType.ZenFX; // Future Pinball
+            default -> EmulatorType.OTHER; // Custom Exe
+        };
     }
     else {
       type = EmulatorType.fromName(emuname);
@@ -365,7 +356,7 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
    */
   private void createDisplay(List<FrontendPlayerDisplay> players, Properties display, String sectionName, VPinScreen screen, String name, boolean defaultVisibility) {
     String visible = display.getProperty(sectionName + ".Visible");
-    boolean isVisible = StringUtils.isEmpty(visible) ? defaultVisibility : StringUtils.equals(visible, "1");
+    boolean isVisible = StringUtils.isEmpty(visible) ? defaultVisibility : Strings.CI.equals(visible, "1");
     if (isVisible) {
       FrontendPlayerDisplay player = new FrontendPlayerDisplay();
       player.setName(name);
@@ -373,7 +364,7 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
 
       String position = display.getProperty(sectionName + ".Position");
       String[] positions = StringUtils.split(position, ",");
-      String rotation = StringUtils.defaultString(display.getProperty(sectionName + ".Rotation"), "0");
+      String rotation = Objects.toString(display.getProperty(sectionName + ".Rotation"), "0");
       if (VPinScreen.PlayField.equals(screen)) {
         player.setInverted(true);
       }

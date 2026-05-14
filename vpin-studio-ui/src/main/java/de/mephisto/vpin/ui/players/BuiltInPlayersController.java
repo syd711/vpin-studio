@@ -5,16 +5,15 @@ import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.mania.ManiaSettings;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
-import de.mephisto.vpin.restclient.mania.ManiaSettings;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.util.AvatarFactory;
 import de.mephisto.vpin.ui.util.Dialogs;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -26,17 +25,17 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
-import java.text.DateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.*;
 
-import static de.mephisto.vpin.ui.Studio.Features;
-import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.maniaClient;
+import static de.mephisto.vpin.ui.Studio.*;
 
 public class BuiltInPlayersController extends BasePlayersController implements Initializable, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(BuiltInPlayersController.class);
@@ -289,7 +288,7 @@ public class BuiltInPlayersController extends BasePlayersController implements I
 
     columnCreatedAt.setCellValueFactory(cellData -> {
       PlayerRepresentation value = cellData.getValue();
-      return new SimpleObjectProperty(DateFormat.getInstance().format(value.getCreatedAt()));
+      return new SimpleObjectProperty(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(value.getCreatedAt()));
     });
 
     editBtn.setDisable(true);

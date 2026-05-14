@@ -8,7 +8,7 @@ import de.mephisto.vpin.server.highscores.parsing.ScoreParsingSummary;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -103,10 +103,10 @@ public class VPRegTest {
 
       assertNotNull(vpRegScoreSummary, "Reading failed for " + entry);
       assertFalse(vpRegScoreSummary.getScores().isEmpty(), "No score entry found for " + entry);
-      assertNotNull(vpRegScoreSummary.getScores().get(0).getInitials(), "No score initials found for " + entry);
+      assertNotNull(vpRegScoreSummary.getScores().getFirst().getInitials(), "No score initials found for " + entry);
       count++;
 
-      List<Score> parse = ScoreListFactory.create(vpRegScoreSummary.toRaw(), new Date(), null, scoringDB);
+      List<Score> parse = ScoreListFactory.create(vpRegScoreSummary.toRaw(), Instant.now(), null, scoringDB);
       assertFalse(parse.isEmpty(), "No scores parsed for " + entry);
     }
     System.out.println("Tested " + count + " entries");

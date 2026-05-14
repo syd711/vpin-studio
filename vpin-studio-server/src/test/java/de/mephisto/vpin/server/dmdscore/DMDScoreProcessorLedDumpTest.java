@@ -1,15 +1,11 @@
 package de.mephisto.vpin.server.dmdscore;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.file.Files;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
+
+import java.io.*;
+import java.nio.file.Files;
 
 /**
  * Read a dump.txt and replay it

@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.system;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.jcodec.api.FrameGrab;
 import org.jcodec.common.model.Picture;
 import org.jcodec.scale.AWTUtil;

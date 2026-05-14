@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import de.mephisto.vpin.connectors.vps.model.VpsAuthoredUrls;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
@@ -257,8 +258,8 @@ class VpsTablesPredicateFactory {
         }
 
         if (StringUtils.isNotEmpty(searchTerm)
-            && !StringUtils.containsIgnoreCase(table.getName(), searchTerm)
-          //&& !StringUtils.containsIgnoreCase(table.getRom(), filterValue)
+            && !Strings.CI.contains(table.getName(), searchTerm)
+          //&& !Strings.CI.contains(table.getRom(), filterValue)
         ) {
           return false;
         }
@@ -397,7 +398,7 @@ class VpsTablesPredicateFactory {
       return true;
     }
     for (String m : _manufacturers) {
-      if (StringUtils.containsIgnoreCase(manufacturer, m)) {
+      if (Strings.CI.contains(manufacturer, m)) {
         return true;
       }
     }
@@ -424,7 +425,7 @@ class VpsTablesPredicateFactory {
     }
     if (values != null) {
       for (String t : values) {
-        if (StringUtils.containsIgnoreCase(t, value)) {
+        if (Strings.CI.contains(t, value)) {
           return true;
         }
       }
@@ -438,7 +439,7 @@ class VpsTablesPredicateFactory {
     }
     if (values != null) {
       for (String t : values) {
-        if (StringUtils.containsIgnoreCase(t, value)) {
+        if (Strings.CI.contains(t, value)) {
           return true;
         }
       }

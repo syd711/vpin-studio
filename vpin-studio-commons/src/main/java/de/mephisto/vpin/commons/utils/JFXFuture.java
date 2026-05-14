@@ -1,15 +1,14 @@
 package de.mephisto.vpin.commons.utils;
 
+import de.mephisto.vpin.restclient.util.ReturnMessage;
+import javafx.application.Platform;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
-import org.apache.commons.lang3.StringUtils;
-
-import de.mephisto.vpin.restclient.util.ReturnMessage;
-import javafx.application.Platform;
 
 /**
  * A wrapper around CompletableFuture to simplify async call in JFX context

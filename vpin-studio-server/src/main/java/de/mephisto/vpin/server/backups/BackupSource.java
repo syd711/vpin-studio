@@ -2,8 +2,11 @@ package de.mephisto.vpin.server.backups;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import javax.persistence.*;
-import java.util.Date;
+import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.id.IncrementGenerator;
+import java.time.Instant;
+import java.util.Objects;
 
 @Entity
 @Table(name = "BackupSources")
@@ -11,11 +14,11 @@ import java.util.Date;
 public class BackupSource {
 
   @Column(nullable = false)
-  @Temporal(TemporalType.TIMESTAMP)
-  private Date createdAt;
+  private Instant createdAt;
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GenericGenerator(name = "backupsource_gen", type = IncrementGenerator.class)
+  @GeneratedValue(generator = "backupsource_gen")
   private Long id;
 
   private String type;
@@ -66,11 +69,11 @@ public class BackupSource {
     this.type = type;
   }
 
-  public Date getCreatedAt() {
+  public Instant getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(Date createdAt) {
+  public void setCreatedAt(Instant createdAt) {
     this.createdAt = createdAt;
   }
 
@@ -117,19 +120,14 @@ public class BackupSource {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof BackupSource)) return false;
-
-    BackupSource backupSource = (BackupSource) o;
-
-    if (!id.equals(backupSource.id)) return false;
-    return location.equals(backupSource.location);
+    if (o == null || getClass() != o.getClass()) return false;
+    BackupSource that = (BackupSource) o;
+    return Objects.equals(id, that.id) && Objects.equals(location, that.location);
   }
 
   @Override
   public int hashCode() {
-    int result = id.hashCode();
-    result = 31 * result + location.hashCode();
-    return result;
+    return Objects.hash(id, location);
   }
 
   @Override

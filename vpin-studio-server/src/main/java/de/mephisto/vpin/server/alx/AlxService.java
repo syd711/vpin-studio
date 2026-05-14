@@ -8,7 +8,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.HighscoreVersion;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,8 +48,8 @@ public class AlxService {
 
     for (TableAlxEntry entry : alxData) {
       List<HighscoreVersion> byGameId = highscoreService.getHighscoreVersionsByGame(entry.getGameId());
-      List<HighscoreVersion> collect = byGameId.stream().filter(score -> score.getChangedPosition() > 0).collect(Collectors.toList());
-      List<HighscoreVersion> highscores = byGameId.stream().filter(score -> score.getChangedPosition() == 1).collect(Collectors.toList());
+      List<HighscoreVersion> collect = byGameId.stream().filter(score -> score.getChangedPosition() > 0).toList();
+      List<HighscoreVersion> highscores = byGameId.stream().filter(score -> score.getChangedPosition() == 1).toList();
       entry.setScores(collect.size());
       entry.setHighscores(highscores.size());
 
@@ -108,7 +108,7 @@ public class AlxService {
     AlxSummary alxSummary = getAlxSummary(gameId);
     if (alxSummary != null && pauseDurationMs > 0 && !alxSummary.getEntries().isEmpty()) {
       long durationSec = pauseDurationMs / 1000;
-      TableAlxEntry tableAlxEntry = alxSummary.getEntries().get(0);
+      TableAlxEntry tableAlxEntry = alxSummary.getEntries().getFirst();
       if (tableAlxEntry.getTimePlayedSecs() > durationSec) {
         tableAlxEntry.setTimePlayedSecs((int) (tableAlxEntry.getTimePlayedSecs() - durationSec));
         updateSecondsPlayedForGame(gameId, tableAlxEntry.getTimePlayedSecs());

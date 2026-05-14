@@ -4,11 +4,12 @@ import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.server.games.Game;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 
 import java.io.BufferedInputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 
 import org.apache.commons.io.IOUtils;
@@ -54,7 +55,7 @@ abstract public class DefaultTableAssetAdapter implements TableAssetsAdapter<Gam
 
   protected void writeUrlAsset(@NonNull OutputStream outputStream, @NonNull TableAsset tableAsset, long start, long length) throws Exception {
     String urlString = tableAsset.getUrl();
-    URL url = new URL(urlString.replaceAll(" ", "%20"));
+    URL url = URI.create(urlString.replaceAll(" ", "%20")).toURL();
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
     connection.setDoOutput(true);
     try (BufferedInputStream in = new BufferedInputStream(url.openStream())) {

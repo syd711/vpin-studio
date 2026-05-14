@@ -14,13 +14,13 @@ import de.mephisto.vpin.server.frontend.pinbally.PinballYTableParser;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.system.SystemService;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.io.ByteOrderMark;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.input.BOMInputStream;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +30,8 @@ import java.awt.*;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.commons.SystemInfo.RESOURCES;
@@ -106,7 +106,7 @@ public class PinballXConnector extends BaseConnector {
     List<VPinScreen> screens = new ArrayList<>(Arrays.asList(VPinScreen.values()));
     screens.remove(VPinScreen.Other2);
     frontend.setSupportedScreens(screens);
-    frontend.setIgnoredValidations(Arrays.asList(GameValidationCode.CODE_NO_OTHER2));
+    frontend.setIgnoredValidations(List.of(GameValidationCode.CODE_NO_OTHER2));
 
     frontend.setPlayfieldMediaInverted(true);
     return frontend;
@@ -196,7 +196,7 @@ public class PinballXConnector extends BaseConnector {
 
     if (isSystemEmulator(emulator)) {
       // if the emulator has changed, rename also the database file
-      if (!StringUtils.equalsIgnoreCase(emulatorNode.getString("Name"), emulator.getName())) {
+      if (!Strings.CI.equals(emulatorNode.getString("Name"), emulator.getName())) {
         File oldDb = getDatabase(emulatorNode.getString("Name"));
         File newDb = getDatabase(emulator);
         if (!FileUtils.rename(oldDb, newDb)) {
@@ -249,15 +249,11 @@ public class PinballXConnector extends BaseConnector {
   }
 
   private int systemTypeFromType(EmulatorType type) {
-    switch (type) {
-      case VisualPinball:
-      case VisualPinball9:
-        return 1;
-      case FuturePinball:
-        return 2;
-      default:
-        return 0;
-    }
+      return switch (type) {
+          case VisualPinball, VisualPinball9 -> 1;
+          case FuturePinball -> 2;
+          default -> 0;
+      };
   }
 
   private String safeNameFromType(EmulatorType type) {
@@ -270,7 +266,7 @@ public class PinballXConnector extends BaseConnector {
   }
 
   private boolean isSystemEmulator(GameEmulator emu) {
-    return StringUtils.startsWith(emu.getSafeName(), "System_");
+    return Strings.CI.startsWith(emu.getSafeName(), "System_");
   }
 
   @Override
@@ -439,17 +435,11 @@ public class PinballXConnector extends BaseConnector {
     // needed for named emulator
     else if (s.containsKey("SystemType")) {
       int systemType = s.getInt("SystemType");
-      switch (systemType) {
-        case 1:
-          type = EmulatorType.VisualPinball;
-          break; // Visual Pinball
-        case 2:
-          type = EmulatorType.FuturePinball;
-          break; // Future Pinball
-        default:
-          type = EmulatorType.fromName(emuname);
-          break; // Custom Exe, use name
-      }
+        type = switch (systemType) {
+            case 1 -> EmulatorType.VisualPinball; // Visual Pinball
+            case 2 -> EmulatorType.FuturePinball; // Future Pinball
+            default -> EmulatorType.fromName(emuname); // Custom Exe, use name
+        };
     }
     else {
       type = EmulatorType.fromName(emuname);
@@ -632,11 +622,11 @@ public class PinballXConnector extends BaseConnector {
   @Override
   public boolean deletePlaylist(int playlistId) {
     List<Playlist> playlists = this.loadPlayLists();
-    playlists = playlists.stream().filter(p -> p.getId() == playlistId).collect(Collectors.toList());
+    playlists = playlists.stream().filter(p -> p.getId() == playlistId).toList();
 
     for (GameEmulator emu : emulators.values()) {
       File dbfolder = getDatabaseFolder(emu);
-      for (File f : dbfolder.listFiles((dir, name) -> StringUtils.endsWithIgnoreCase(name, ".xml"))) {
+      for (File f : dbfolder.listFiles((dir, name) -> Strings.CI.endsWith(name, ".xml"))) {
         String playlistname = FilenameUtils.getBaseName(f.getName());
 
         for (Playlist playlist : playlists) {
@@ -662,9 +652,9 @@ public class PinballXConnector extends BaseConnector {
     for (GameEmulator emu : emulators.values()) {
       File dbfolder = getDatabaseFolder(emu);
       if (dbfolder.exists()) {
-        for (File f : dbfolder.listFiles((dir, name) -> StringUtils.endsWithIgnoreCase(name, ".xml"))) {
+        for (File f : dbfolder.listFiles((dir, name) -> Strings.CI.endsWith(name, ".xml"))) {
           String playlistname = FilenameUtils.getBaseName(f.getName());
-          if (!StringUtils.equalsIgnoreCase(playlistname, emu.getName())) {
+          if (!Strings.CI.equals(playlistname, emu.getName())) {
 
             Playlist playlist = new Playlist();
             playlist.setId(id++);
@@ -851,7 +841,7 @@ public class PinballXConnector extends BaseConnector {
     List<ProcessHandle> processes = ProcessHandle
         .allProcesses()
         .filter(p -> p.info().command().isPresent() && p.info().command().get().contains("Settings.exe"))
-        .collect(Collectors.toList());
+        .toList();
 
     if (processes.isEmpty()) {
       LOG.info("No PinballX processes found, termination canceled.");

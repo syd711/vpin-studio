@@ -2,11 +2,7 @@ package de.mephisto.vpin.server.components;
 
 import de.mephisto.vpin.connectors.github.GithubRelease;
 import de.mephisto.vpin.connectors.github.ReleaseArtifactActionLog;
-import de.mephisto.vpin.restclient.components.ComponentActionLogRepresentation;
-import de.mephisto.vpin.restclient.components.ComponentInstallation;
-import de.mephisto.vpin.restclient.components.ComponentRepresentation;
-import de.mephisto.vpin.restclient.components.ComponentType;
-import de.mephisto.vpin.restclient.components.GithubReleaseRepresentation;
+import de.mephisto.vpin.restclient.components.*;
 import de.mephisto.vpin.server.components.facades.ComponentFacade;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -15,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -82,7 +80,7 @@ public class ComponentsResource {
     ComponentFacade componentFacade = componentService.getComponentFacade(componentType);
     List<GithubRelease> releases = componentService.getReleases(componentType);
     if (!StringUtils.isEmpty(component.getIgnoredVersions())) {
-      releases = releases.stream().filter(release -> !component.getIgnoredVersions().contains(release.getTag())).collect(Collectors.toList());
+      releases = releases.stream().filter(release -> !component.getIgnoredVersions().contains(release.getTag())).toList();
     }
 
     List<GithubReleaseRepresentation> artifacts = new ArrayList<>();
@@ -104,7 +102,7 @@ public class ComponentsResource {
     representation.setType(componentType);
     representation.setInstalledVersion(component.getInstalledVersion());
     representation.setLatestReleaseVersion(component.getLatestReleaseVersion());
-    representation.setLastCheck(component.getLastCheck());
+    representation.setLastCheck(component.getLastCheck() != null ? OffsetDateTime.ofInstant(component.getLastCheck(), ZoneId.systemDefault()) : null);
     representation.setExclusions(componentFacade.getExcludedFilenames());
     representation.setInstalled(componentFacade.isInstalled());
 

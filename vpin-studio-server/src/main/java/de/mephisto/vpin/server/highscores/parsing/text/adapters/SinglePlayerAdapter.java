@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.highscores.parsing.text.adapters;
 
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 
 import java.io.File;
 import java.util.ArrayList;

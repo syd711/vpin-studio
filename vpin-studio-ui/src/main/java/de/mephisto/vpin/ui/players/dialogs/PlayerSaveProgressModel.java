@@ -23,9 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.FutureTask;
 
-import static de.mephisto.vpin.ui.Studio.Features;
-import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.maniaClient;
+import static de.mephisto.vpin.ui.Studio.*;
 
 public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(PlayerSaveProgressModel.class);

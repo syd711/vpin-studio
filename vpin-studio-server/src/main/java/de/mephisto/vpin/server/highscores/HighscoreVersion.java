@@ -2,8 +2,11 @@ package de.mephisto.vpin.server.highscores;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import javax.persistence.*;
-import java.util.Date;
+import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.id.IncrementGenerator;
+import java.time.Instant;
+import java.util.Objects;
 
 @Entity
 @Table(name = "HighscoreVersions")
@@ -11,11 +14,11 @@ import java.util.Date;
 public class HighscoreVersion {
 
   @Column(nullable = false)
-  @Temporal(TemporalType.TIMESTAMP)
-  private Date createdAt;
+  private Instant createdAt;
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GenericGenerator(name = "highscoreversion_gen", type = IncrementGenerator.class)
+  @GeneratedValue(generator = "highscoreversion_gen")
   private Long id;
 
   private int gameId;
@@ -70,11 +73,11 @@ public class HighscoreVersion {
     this.displayName = displayName;
   }
 
-  public Date getCreatedAt() {
+  public Instant getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(Date createdAt) {
+  public void setCreatedAt(Instant createdAt) {
     this.createdAt = createdAt;
   }
 
@@ -93,12 +96,12 @@ public class HighscoreVersion {
 
     HighscoreVersion version = (HighscoreVersion) o;
 
-    return id.equals(version.id);
+    return Objects.equals(id, version.id);
   }
 
   @Override
   public int hashCode() {
-    return id.hashCode();
+    return Objects.hash(id);
   }
 
   @Override

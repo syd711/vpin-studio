@@ -6,7 +6,6 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.VPXZSettings;
 import de.mephisto.vpin.restclient.vpxz.VPXZSourceRepresentation;
 import de.mephisto.vpin.restclient.vpxz.VPXZSourceType;
-import de.mephisto.vpin.restclient.vpxz.VPXZType;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;

@@ -281,7 +281,7 @@ public class DiscordBotPreferencesController implements Initializable {
 
         List<DiscordChannel> discordChannels = client.getDiscordService().getDiscordChannels(discordServer.getId());
         List<DiscordChannel> updatedList = new ArrayList<>(discordChannels);
-        updatedList.add(0, null);
+        updatedList.addFirst( null);
         channelCombo.setItems(FXCollections.observableArrayList(updatedList));
         tableUpdatesCombo.setItems(FXCollections.observableArrayList(updatedList));
 

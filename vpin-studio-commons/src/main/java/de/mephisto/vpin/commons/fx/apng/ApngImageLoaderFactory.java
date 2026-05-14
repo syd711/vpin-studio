@@ -3,12 +3,15 @@ package de.mephisto.vpin.commons.fx.apng;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.sun.javafx.iio.ImageFormatDescription;
 import com.sun.javafx.iio.ImageLoader;
 import com.sun.javafx.iio.ImageLoaderFactory;
 import com.sun.javafx.iio.ImageStorage;
 
 public class ApngImageLoaderFactory implements ImageLoaderFactory {
+  private static final Logger LOG = LoggerFactory.getLogger(ApngImageLoaderFactory.class);
 
   private static ApngImageLoaderFactory theInstance;
 
@@ -26,11 +29,15 @@ public class ApngImageLoaderFactory implements ImageLoaderFactory {
     return new ApngImageLoader(input);
   }
 
-  public static void install() {
+  public static synchronized void install() {
     // avoid several installation
     if (theInstance == null) {
       theInstance = new ApngImageLoaderFactory();
-      ImageStorage.getInstance().addImageLoaderFactory(theInstance);
+      try {
+        ImageStorage.getInstance().addImageLoaderFactory(theInstance);
+      } catch (Exception e) {
+        LOG.error("Failed to install APNG image loader: " + e.getMessage(), e);
+      }
     }
   }
 

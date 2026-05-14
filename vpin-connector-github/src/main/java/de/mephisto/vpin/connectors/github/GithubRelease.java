@@ -1,6 +1,6 @@
 package de.mephisto.vpin.connectors.github;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +60,7 @@ public class GithubRelease {
   @Nullable
   public ReleaseArtifact getLatestArtifact() {
     if (!this.artifacts.isEmpty()) {
-      return this.artifacts.get(0);
+      return this.artifacts.getFirst();
     }
     return null;
   }

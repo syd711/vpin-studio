@@ -32,7 +32,6 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.*;
-import static de.mephisto.vpin.ui.util.PreferenceBindingUtil.debouncer;
 
 public class CabinetSettingsPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(CabinetSettingsPreferencesController.class);

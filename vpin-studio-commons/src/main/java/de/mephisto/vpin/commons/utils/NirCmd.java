@@ -1,13 +1,11 @@
 package de.mephisto.vpin.commons.utils;
 
 import com.sun.jna.ptr.FloatByReference;
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.List;

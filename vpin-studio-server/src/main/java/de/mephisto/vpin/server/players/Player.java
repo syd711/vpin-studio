@@ -2,13 +2,16 @@ package de.mephisto.vpin.server.players;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.mephisto.vpin.server.assets.Asset;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
-import java.util.Date;
+import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.id.IncrementGenerator;
+import java.time.Instant;
+import java.util.Objects;
 
 @Entity
 @Table(name = "Players")
@@ -17,17 +20,16 @@ import java.util.Date;
 public class Player {
 
   @Column(nullable = false, updatable = false)
-  @Temporal(TemporalType.TIMESTAMP)
   @CreatedDate
-  private Date createdAt;
+  private Instant createdAt;
 
   @Column(nullable = false)
-  @Temporal(TemporalType.TIMESTAMP)
   @LastModifiedDate
-  private Date updatedAt;
+  private Instant updatedAt;
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GenericGenerator(name = "player_gen", type = IncrementGenerator.class)
+  @GeneratedValue(generator = "player_gen")
   private Long id;
 
   @OneToOne(cascade = CascadeType.MERGE, optional = true)
@@ -128,19 +130,19 @@ public class Player {
     this.email = email;
   }
 
-  public Date getCreatedAt() {
+  public Instant getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(Date createdAt) {
+  public void setCreatedAt(Instant createdAt) {
     this.createdAt = createdAt;
   }
 
-  public Date getUpdatedAt() {
+  public Instant getUpdatedAt() {
     return updatedAt;
   }
 
-  public void setUpdatedAt(Date updatedAt) {
+  public void setUpdatedAt(Instant updatedAt) {
     this.updatedAt = updatedAt;
   }
 
@@ -161,11 +163,16 @@ public class Player {
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (obj instanceof Player) {
-      return this.id.equals(((Player) obj).getId());
-    }
-    return false;
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Player player = (Player) o;
+    return Objects.equals(id, player.id);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id);
   }
 
   @Override

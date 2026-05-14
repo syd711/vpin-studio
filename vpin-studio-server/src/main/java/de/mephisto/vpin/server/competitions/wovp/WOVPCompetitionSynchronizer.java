@@ -20,9 +20,9 @@ import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.vpx.VPXUtil;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -31,9 +31,8 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class WOVPCompetitionSynchronizer implements InitializingBean, ApplicationListener<ApplicationReadyEvent>, PreferenceChangedListener {
@@ -96,7 +95,7 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
   }
 
   private void runCompetitionCleanupCheck(Challenges challenges, List<Competition> weeklyCompetitions) {
-    List<String> challengesIds = challenges.getItems().stream().map(c -> c.getId()).collect(Collectors.toList());
+    List<String> challengesIds = challenges.getItems().stream().map(c -> c.getId()).toList();
     for (Competition weeklyCompetition : weeklyCompetitions) {
       String uuid = weeklyCompetition.getUuid();
       if (!challengesIds.contains(uuid)) {
@@ -134,7 +133,7 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
         //When the challenge id has changed, it means that the existing competition is outdated.
         if (!challengeId.equals(competition.getUuid()) || game == null || forceReload) {
           //run de-augmentation for finished competitions
-          competition.setEndDate(new Date());
+          competition.setEndDate(Instant.now());
 //          competitionService.save(competition);//TOOD required?
           competitionLifecycleService.notifyCompetitionDeleted(competition);
           refreshTags(game, wovpSettings, false);
@@ -172,8 +171,10 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
       addIssue(competition, "WOVP did not set a VPS version id for this challenge.");
     }
     competition.setType(CompetitionType.WEEKLY.name());
-    competition.setStartDate(challenge.getStartDateUTC());
-    competition.setEndDate(challenge.getEndDateUTC());
+    
+    competition.setStartDate(challenge.getStartDateUTC().toInstant());
+    competition.setEndDate(challenge.getEndDateUTC().toInstant());
+
     competition.setMode(challenge.getChallengeTypeCode().name());
     competition.setHighscoreReset(wovpSettings.isResetHighscores());
 
@@ -192,7 +193,7 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
         LOG.info("Found matching wovp game for {}: {} / {} / {}", challenge.getName(), gameMatch.getGameDisplayName(), gameMatch.getExtTableId(), gameMatch.getExtTableVersionId());
       }
 
-      Game game = gameMatches.get(0);
+      Game game = gameMatches.getFirst();
       List<String> scriptMatchKeywords = challenge.getScriptMatchKeywords();
       if (validateGameScript(game, scriptMatchKeywords)) {
         LOG.info("WOVP game validation successful, found phrase \"{}\" in VPX file {}", scriptMatchKeywords, game.getGameFileName());

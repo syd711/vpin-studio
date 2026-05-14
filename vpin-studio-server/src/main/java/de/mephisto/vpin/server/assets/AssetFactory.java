@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.assets;
 
+import de.mephisto.vpin.commons.fx.ImageUtil;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.restclient.util.DateUtil;
@@ -7,12 +8,11 @@ import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.players.Player;
-import de.mephisto.vpin.commons.fx.ImageUtil;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -226,7 +226,7 @@ public class AssetFactory {
         image = ImageUtil.resizeImage(image, IMAGE_WIDTH - 24);
       }
       else {
-        String initials = summary.getScores().get(0).getPlayerInitials();
+        String initials = summary.getScores().getFirst().getPlayerInitials();
         if (winner != null) {
           initials = winner.getInitials();
         }
@@ -284,7 +284,7 @@ public class AssetFactory {
       int scoreSize = 140;
       font = new Font("Digital Counter 7", Font.PLAIN, scoreSize);
       graphics.setFont(font);
-      String score = summary.getScores().get(0).getFormattedScore();
+      String score = summary.getScores().getFirst().getFormattedScore();
       textWidth = graphics.getFontMetrics().stringWidth(score);
       while (textWidth > 500) {
         font = new Font("Digital Counter 7", Font.PLAIN, scoreSize--);

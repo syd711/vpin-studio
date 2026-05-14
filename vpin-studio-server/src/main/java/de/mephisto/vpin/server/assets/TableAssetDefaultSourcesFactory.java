@@ -4,7 +4,7 @@ import de.mephisto.vpin.connectors.assets.AssetLookupStrategy;
 import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.connectors.assets.TableAssetSourceType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -18,13 +18,14 @@ import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.listeners.EventOrigin;
 import de.mephisto.vpin.server.players.Player;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.*;
 
 @Service
@@ -68,8 +69,8 @@ public class DiscordCompetitionService {
       highscoreService.scanScore(game, EventOrigin.COMPETITION_UPDATE);
 
       LOG.info("Synchronizing {}", competition);
-      Date startDate = competition.getCreatedAt();
-      ScoreList scoreHistory = highscoreService.getScoresBetween(game, startDate, new Date(), competition.getDiscordServerId());
+        Instant startDate = competition.getCreatedAt();
+        ScoreList scoreHistory = highscoreService.getScoresBetween(game, startDate, Instant.now(), competition.getDiscordServerId());
       List<ScoreSummary> versionedScores = new ArrayList<>(scoreHistory.getScores());
 
       ScoreSummary latestScore = highscoreService.getScoreSummary(competition.getDiscordServerId(), game);
@@ -218,7 +219,7 @@ public class DiscordCompetitionService {
     if (competitionData != null && competitionData.getScrL() > 0) {
       int scoreCount = competitionData.getScrL();
       while (sanitized.size() < scoreCount) {
-        Score score = new Score(new Date(), gameId, "???", null, "0", 0, index);
+        Score score = new Score(Instant.now(), gameId, "???", null, "0", 0, index);
         sanitized.add(score);
         index++;
         LOG.info("Appended empty default score: {}", score);

@@ -1,20 +1,23 @@
 package de.mephisto.vpin.server.altsound;
 
 import de.mephisto.vpin.restclient.altsound.*;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.csv.QuoteMode;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileReader;
 import java.lang.invoke.MethodHandles;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 public class AltSound2Loader {
@@ -34,7 +37,7 @@ public class AltSound2Loader {
     altSound.setCsvFile(gSoundCsv);
     altSound.setName(gSoundCsv.getParentFile().getName());
     altSound.setFormat(AltSoundFormats.gsound);
-    altSound.setModificationDate(new Date(gSoundCsv.lastModified()));
+    altSound.setModificationDate(OffsetDateTime.ofInstant(Instant.ofEpochMilli(gSoundCsv.lastModified()), ZoneId.systemDefault()));
 
     SubnodeConfiguration systemSection = iniConfiguration.getSection("system");
     altSound.setRecordSoundCmds(systemSection.getBoolean("record_sound_cmds"));
@@ -58,18 +61,21 @@ public class AltSound2Loader {
 
 
     long size = gSoundCsv.length();
-    FileReader in = null;
     Map<String, String> audioFiles = new HashMap<>();
-    try {
-      in = new FileReader(gSoundCsv);
-      Iterable<CSVRecord> records = CSVFormat.RFC4180
-          .withIgnoreEmptyLines(true)
-          .withQuoteMode(QuoteMode.NON_NUMERIC)
-          .withQuote('"')
-          .withTrim().parse(in);
+    try (FileReader in = new FileReader(gSoundCsv)) {
+      CSVFormat format = CSVFormat.RFC4180.builder()
+          .setIgnoreEmptyLines(true)
+          .setQuoteMode(QuoteMode.NON_NUMERIC)
+          .setQuote('"')
+          .setTrim(true)
+          .get();
+
+      Iterable<CSVRecord> records = format.parse(in);
       Iterator<CSVRecord> iterator = records.iterator();
-      CSVRecord header = iterator.next();
-      altSound.setHeaders(header.toList());
+      if (iterator.hasNext()) {
+        CSVRecord header = iterator.next();
+        altSound.setHeaders(header.toList());
+      }
 
       while (iterator.hasNext()) {
         CSVRecord record = iterator.next();
@@ -103,8 +109,6 @@ public class AltSound2Loader {
 
         altSound.getEntries().add(entry);
       }
-
-      in.close();
 
       altSound.setFilesize(size);
       altSound.setFiles(audioFiles.size());

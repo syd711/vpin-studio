@@ -31,5 +31,4 @@ public class ApngDescriptor extends ImageDescriptor {
     }
     return theInstance;
   }
-
 }

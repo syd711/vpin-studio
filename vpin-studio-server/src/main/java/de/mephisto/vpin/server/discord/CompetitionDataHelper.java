@@ -1,32 +1,42 @@
 package de.mephisto.vpin.server.discord;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.cfg.EnumFeature;
+import tools.jackson.databind.json.JsonMapper;
 import com.thoughtworks.xstream.core.util.Base64Encoder;
 import de.mephisto.vpin.connectors.discord.DiscordMessage;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.vpx.VPXUtil;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
+import java.time.ZoneOffset;
 import java.util.List;
 
 public class CompetitionDataHelper {
   private final static Logger LOG = LoggerFactory.getLogger(CompetitionDataHelper.class);
 
-  private static final ObjectMapper objectMapper = new ObjectMapper();
+  private final static JsonMapper objectMapper;
   public static final String DATA_INDICATOR = "Data: ";
 
   static {
-    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+    objectMapper = JsonMapper.builder()
+        .enable(SerializationFeature.INDENT_OUTPUT)
+        .enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS)
+        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+        .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+        .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+        .build();
   }
 
   @Nullable
@@ -35,11 +45,15 @@ public class CompetitionDataHelper {
       DiscordCompetitionData data = new DiscordCompetitionData();
       data.setName(competition.getName());
       data.setTname(game.getGameDisplayName());
-      data.setSdt(competition.getStartDate());
+      if (competition.getStartDate() != null) {
+        data.setSdt(competition.getStartDate().atOffset(ZoneOffset.UTC));
+      }
       data.setMode(competition.getJoinMode());
       data.setChksm(VPXUtil.getChecksum(game.getGameFile()));
       data.setScrL(competition.getScoreLimit());
-      data.setEdt(competition.getEndDate());
+      if (competition.getEndDate() != null) {
+        data.setEdt(competition.getEndDate().atOffset(ZoneOffset.UTC));
+      }
       data.setFs(game.getGameFileSize());
       data.setUuid(competition.getUuid());
       data.setRom(game.getRom());
@@ -47,7 +61,8 @@ public class CompetitionDataHelper {
 
       String json = objectMapper.writeValueAsString(data);
       return new Base64Encoder().encode(json.getBytes(StandardCharsets.UTF_8));
-    } catch (JsonProcessingException e) {
+    }
+    catch (JacksonException e) {
       LOG.error("Failed to persist competition data: {}", e.getMessage(), e);
     }
     return null;
@@ -57,7 +72,7 @@ public class CompetitionDataHelper {
   @Nullable
   public static DiscordCompetitionData getCompetitionData(@NonNull DiscordMessage msg) {
     DiscordCompetitionData competitionData = getCompetitionData(msg.getEmbedDescription());
-    if(competitionData != null) {
+    if (competitionData != null) {
       competitionData.setMsgId(msg.getId());
     }
 
@@ -69,7 +84,7 @@ public class CompetitionDataHelper {
     List<MessageEmbed> embeds = msg.getEmbeds();
     for (MessageEmbed embed : embeds) {
       DiscordCompetitionData competitionData = getCompetitionData(embed.getDescription());
-      if(competitionData != null) {
+      if (competitionData != null) {
         competitionData.setMsgId(msg.getIdLong());
       }
 
@@ -90,7 +105,8 @@ public class CompetitionDataHelper {
         return objectMapper.readValue(data, DiscordCompetitionData.class);
       }
       return null;
-    } catch (JsonProcessingException e) {
+    }
+    catch (JacksonException e) {
       LOG.info("Failed to read competition data from '{}':{}", messageText, e.getMessage());
     }
     return null;

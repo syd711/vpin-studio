@@ -6,16 +6,10 @@ public class VPXZSourceAdapterFactory {
 
   public static VPXZSourceAdapter create(VPXZService vpxzService, VPXZSource source, VPXZFileService vpxzFileService) {
     VPXZSourceType sourceType = VPXZSourceType.valueOf(source.getType());
-    switch (sourceType) {
-      case Folder: {
-        return new VPXZSourceAdapterFolder(source);
-      }
-      case Http: {
-        return new VPXZSourceAdapterHttpServer(vpxzService, source);
-      }
-      default: {
-        throw new UnsupportedOperationException("Invalid source type: " + sourceType);
-      }
-    }
+      return switch (sourceType) {
+          case Folder -> new VPXZSourceAdapterFolder(source);
+          case Http -> new VPXZSourceAdapterHttpServer(vpxzService, source);
+          default -> throw new UnsupportedOperationException("Invalid source type: " + sourceType);
+      };
   }
 }

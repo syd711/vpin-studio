@@ -7,8 +7,8 @@ import de.mephisto.vpin.server.frontend.DefaultMediaAccessStrategy;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.playlists.Playlist;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;

@@ -1,60 +1,49 @@
 package de.mephisto.vpin.server.games;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.PropertyWriter;
-import com.fasterxml.jackson.databind.ser.ResolvableSerializer;
-import com.fasterxml.jackson.databind.ser.std.BeanSerializerBase;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.ser.PropertyWriter;
+import tools.jackson.databind.ser.bean.BeanSerializerBase;
 import de.mephisto.vpin.server.vpinmame.VPinMameService;
 
-import java.io.IOException;
 import java.util.Iterator;
 
-/**
- * Custom serializer for Game that delegates to Jackson's default bean serialization
- * (which respects @JsonIgnore) and allows adding custom fields or transformations.
- */
-public class GameSerializer extends JsonSerializer<Game> implements ResolvableSerializer {
+public class GameSerializer extends ValueSerializer<Game> {
 
-  private final VPinMameService vPinMameService;
-  private final JsonSerializer<Object> defaultSerializer;
+    private final VPinMameService vPinMameService;
+    private final ValueSerializer<Object> defaultSerializer;
 
-  public GameSerializer(VPinMameService vPinMameService, JsonSerializer<Object> defaultSerializer) {
-    this.vPinMameService = vPinMameService;
-    this.defaultSerializer = defaultSerializer;
-  }
-
-  @Override
-  public void resolve(SerializerProvider provider) throws JsonMappingException {
-    if (defaultSerializer instanceof ResolvableSerializer) {
-      ((ResolvableSerializer) defaultSerializer).resolve(provider);
-    }
-  }
-
-  @Override
-  public void serialize(Game game, JsonGenerator gen, SerializerProvider provider) throws IOException {
-    gen.writeStartObject();
-
-    // Write all default (non-@JsonIgnore) fields automatically
-    if (defaultSerializer instanceof BeanSerializerBase) {
-      BeanSerializerBase beanSerializer = (BeanSerializerBase) defaultSerializer;
-      Iterator<PropertyWriter> it = beanSerializer.properties();
-      while (it.hasNext()) {
-        PropertyWriter writer = it.next();
-        try {
-          writer.serializeAsField(game, gen, provider);
-        }
-        catch (Exception e) {
-          throw new IOException("Failed to serialize field: " + writer.getName(), e);
-        }
-      }
+    public GameSerializer(VPinMameService vPinMameService, ValueSerializer<Object> defaultSerializer) {
+        this.vPinMameService = vPinMameService;
+        this.defaultSerializer = defaultSerializer;
     }
 
-    // Add custom fields here
-    gen.writeBooleanField("romExists", vPinMameService.isRomExists(game));
+    @Override
+    public void resolve(SerializationContext context) {
+        defaultSerializer.resolve(context);
+    }
 
-    gen.writeEndObject();
-  }
+    @Override
+    public void serialize(Game game, JsonGenerator gen, SerializationContext context) throws JacksonException {
+        gen.writeStartObject();
+
+        if (defaultSerializer instanceof BeanSerializerBase) {
+            BeanSerializerBase beanSerializer = (BeanSerializerBase) defaultSerializer;
+            Iterator<PropertyWriter> it = beanSerializer.properties();
+            while (it.hasNext()) {
+                PropertyWriter writer = it.next();
+                try {
+                    writer.serializeAsProperty(game, gen, context);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        gen.writeBooleanProperty("romExists", vPinMameService.isRomExists(game));
+
+        gen.writeEndObject();
+    }
 }

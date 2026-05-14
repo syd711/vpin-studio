@@ -3,8 +3,8 @@ package de.mephisto.vpin.ui.tables.panels;
 import de.mephisto.vpin.ui.backglassmanager.DirectB2SModel;
 import de.mephisto.vpin.ui.tables.GameRepresentationModel;
 import de.mephisto.vpin.ui.vps.VpsTablesController;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import javafx.scene.Node;
 
 import java.util.HashMap;

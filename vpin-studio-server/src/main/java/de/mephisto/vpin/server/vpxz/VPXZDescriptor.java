@@ -4,14 +4,14 @@ package de.mephisto.vpin.server.vpxz;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.vpxz.VPXZPackageInfo;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.Objects;
 
 public class VPXZDescriptor {
   private TableDetails tableDetails;
   private VPXZPackageInfo packageInfo;
   private VPXZSource source;
-  private Date createdAt;
+  private Instant createdAt;
   private String filename;
   private String absoluteFileName;
   private long size;
@@ -21,7 +21,7 @@ public class VPXZDescriptor {
     //used for JSON serialization
   }
 
-  public VPXZDescriptor(VPXZSource source, TableDetails tableDetails, VPXZPackageInfo packageInfo, Date createdAt, String filename, String absoluteFileName, long size) {
+  public VPXZDescriptor(VPXZSource source, TableDetails tableDetails, VPXZPackageInfo packageInfo, Instant createdAt, String filename, String absoluteFileName, long size) {
     this.source = source;
     this.tableDetails = tableDetails;
     this.packageInfo = packageInfo;
@@ -71,11 +71,11 @@ public class VPXZDescriptor {
     this.filename = filename;
   }
 
-  public Date getCreatedAt() {
+  public Instant getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(Date createdAt) {
+  public void setCreatedAt(Instant createdAt) {
     this.createdAt = createdAt;
   }
 

@@ -6,25 +6,13 @@ public enum CommentType {
 
   @Override
   public String toString() {
-    switch (this) {
-      case Any: {
-        return "Any";
-      }
-      case Errors: {
-        return "Errors";
-      }
-      case Todos: {
-        return "Todos";
-      }
-      case Outdated: {
-        return "Outdated";
-      }
-      case None: {
-        return "No Comment";
-      }
-      default: {
-        throw new UnsupportedOperationException("Unmapped note type " + this);
-      }
-    }
+      return switch (this) {
+          case Any -> "Any";
+          case Errors -> "Errors";
+          case Todos -> "Todos";
+          case Outdated -> "Outdated";
+          case None -> "No Comment";
+          default -> throw new UnsupportedOperationException("Unmapped note type " + this);
+      };
   }
 }

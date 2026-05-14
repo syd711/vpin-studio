@@ -25,7 +25,7 @@ public class GameMediaServiceTest extends AbstractVPinServerTest {
   @Test
   public void testPlaylistMediaManipulation() throws Exception {
     List<Playlist> playlists = frontendService.getPlaylists();
-    Playlist playlist = playlists.get(0);
+    Playlist playlist = playlists.getFirst();
     try {
       doTest(playlistMediaService, playlist.getId(), playlist.getName(), VPinScreen.BackGlass);
     }
@@ -53,7 +53,7 @@ public class GameMediaServiceTest extends AbstractVPinServerTest {
     // check presence of media files in DMD folder
     List<File> files = mediaService.getMediaFiles(objectId, VPinScreen.DMD);
     assertEquals(2, files.size());
-    assertEquals(name + ".mp4", files.get(0).getName());
+    assertEquals(name + ".mp4", files.getFirst().getName());
     assertEquals(name + ".png", files.get(1).getName());
 
     // check absence of files for wheel
@@ -64,8 +64,8 @@ public class GameMediaServiceTest extends AbstractVPinServerTest {
     mediaService.addBlank(objectId, screen);
     files = mediaService.getMediaFiles(objectId, screen);
     assertEquals(1, files.size());
-    assertEquals(name + ".mp4", files.get(0).getName());
-    File empty = files.get(0);
+    assertEquals(name + ".mp4", files.getFirst().getName());
+    File empty = files.getFirst();
     assertEquals(MediaService.EMPTY_MP4.length, empty.length());
 
     // copy from one folder to another
@@ -76,11 +76,11 @@ public class GameMediaServiceTest extends AbstractVPinServerTest {
     files = mediaService.getMediaFiles(objectId, screen);
     assertEquals(3, files.size());
     // check unique asset name
-    assertEquals(name + ".mp4", files.get(0).getName());
+    assertEquals(name + ".mp4", files.getFirst().getName());
     assertEquals(name + ".png", files.get(1).getName());
     assertEquals(name + "01.mp4", files.get(2).getName());
     // the blank file should still be the firstone
-    assertEquals(MediaService.EMPTY_MP4.length, files.get(0).length());
+    assertEquals(MediaService.EMPTY_MP4.length, files.getFirst().length());
 
     // rename asset
     mediaService.renameAsset(objectId, screen, name + "01.mp4", name + "02.mp4");
@@ -88,7 +88,7 @@ public class GameMediaServiceTest extends AbstractVPinServerTest {
     Thread.sleep(400);
     files = mediaService.getMediaFiles(objectId, screen);
     assertEquals(3, files.size());
-    assertEquals(name + ".mp4", files.get(0).getName());
+    assertEquals(name + ".mp4", files.getFirst().getName());
     assertEquals(name + ".png", files.get(1).getName());
     assertEquals(name + "02.mp4", files.get(2).getName());
     
@@ -98,7 +98,7 @@ public class GameMediaServiceTest extends AbstractVPinServerTest {
     Thread.sleep(400);
     files = mediaService.getMediaFiles(objectId, screen);
     assertEquals(3, files.size());
-    assertEquals(name + ".mp4", files.get(0).getName());
+    assertEquals(name + ".mp4", files.getFirst().getName());
     assertEquals(name + ".png", files.get(1).getName());
     assertEquals(name + "01.mp4", files.get(2).getName());
 
@@ -112,8 +112,8 @@ public class GameMediaServiceTest extends AbstractVPinServerTest {
     Thread.sleep(400);
     files = mediaService.getMediaFiles(objectId, screen);
     assertEquals(1, files.size());
-    assertEquals(name + "01.mp4", files.get(0).getName());
-    assertEquals(MediaService.EMPTY_MP4.length, files.get(0).length());
+    assertEquals(name + "01.mp4", files.getFirst().getName());
+    assertEquals(MediaService.EMPTY_MP4.length, files.getFirst().length());
   }
 
 }

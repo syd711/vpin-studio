@@ -10,8 +10,8 @@ import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.server.jobs.JobService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -20,10 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.util.Date;
+import java.time.*;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -96,7 +93,7 @@ public class DOFService implements InitializingBean {
     File mappingsFile = new File(configFolder, "tablemappings.xml");
 
     if (mappingsFile.exists()) {
-      LocalTime time = LocalDateTime.ofInstant(new Date(mappingsFile.lastModified()).toInstant(), ZoneId.systemDefault()).toLocalTime();
+      LocalTime time = LocalDateTime.ofInstant(Instant.ofEpochMilli(mappingsFile.lastModified()), ZoneId.systemDefault()).toLocalTime();
       LocalTime plus = time.plusHours(interval * 24L);
       if (plus.isBefore(LocalTime.now())) {
         return true;
@@ -127,7 +124,7 @@ public class DOFService implements InitializingBean {
       File tableMappingsfile = new File(getInstallationFolder(), "Config/tablemappings.xml");
       if (tableMappingsfile.exists()) {
         summary.addEntry("tablemappings.xml", tableMappingsfile.getAbsolutePath());
-        summary.addEntry("Last Modified", DateUtil.formatDateTime(new Date(tableMappingsfile.lastModified())));
+        summary.addEntry("Last Modified", DateUtil.formatDateTime(OffsetDateTime.ofInstant(Instant.ofEpochMilli(tableMappingsfile.lastModified()), ZoneId.systemDefault())));
       }
     }
     else {

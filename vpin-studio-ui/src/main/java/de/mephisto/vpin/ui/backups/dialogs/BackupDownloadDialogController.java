@@ -116,7 +116,7 @@ public class BackupDownloadDialogController implements Initializable, DialogCont
   public void setData(List<BackupDescriptorRepresentation> archiveDescriptors) {
     this.archiveDescriptors = archiveDescriptors;
     if (archiveDescriptors.size() == 1) {
-      this.titleLabel.setText("Download \"" + archiveDescriptors.get(0).getFilename() + "\"");
+      this.titleLabel.setText("Download \"" + archiveDescriptors.getFirst().getFilename() + "\"");
     }
     else {
       this.titleLabel.setText("Download " + archiveDescriptors.size() + " Archives");

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.dmdscore;
 
+import com.jhlabs.image.BoxBlurFilter;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.system.SystemService;
 import javafx.embed.swing.SwingFXUtils;
@@ -9,8 +10,6 @@ import javafx.scene.image.WritableImage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.jhlabs.image.BoxBlurFilter;
 
 import javax.imageio.ImageIO;
 import java.io.File;

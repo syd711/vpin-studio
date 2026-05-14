@@ -140,7 +140,7 @@ public class PauseMenuPreferencesController implements Initializable {
       checkBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-          pauseMenuSettings.getMultiScreenIds().remove(new Integer(monitorInfo.getId()));
+          pauseMenuSettings.getMultiScreenIds().remove(Integer.valueOf(monitorInfo.getId()));
           if (newValue) {
             pauseMenuSettings.getMultiScreenIds().add(monitorInfo.getId());
           }

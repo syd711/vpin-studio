@@ -7,6 +7,8 @@ open module de.mephisto.vpin.connectors.iscored {
 
   requires com.github.spotbugs.annotations;
   requires java.desktop;
-  requires com.fasterxml.jackson.databind;
+  requires tools.jackson.databind;
+  requires com.fasterxml.jackson.annotation;
   requires org.apache.commons.codec;
+  requires org.jspecify;
 }

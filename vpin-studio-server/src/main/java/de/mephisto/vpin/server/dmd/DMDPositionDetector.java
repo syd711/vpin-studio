@@ -135,7 +135,7 @@ public class DMDPositionDetector {
     for (int i = 0; i < polylines.size(); i++) {
       int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, maxX = 0, maxY = 0;
       List<Point2D_I32> points = polylines.get(i);
-      points.add(points.get(0));
+      points.add(points.getFirst());
       Point2D_I32 pt1 = null, pt2 = null;
       for (int j = 1; j < points.size(); j++) {
         pt1 = points.get(j - 1); 
@@ -182,7 +182,7 @@ public class DMDPositionDetector {
       
       for (int i = 0; i < polylines.size(); i++) {
         List<Point2D_I32> points = polylines.get(i);
-        points.add(points.get(0));
+        points.add(points.getFirst());
         for (int j = 1; j < points.size(); j++) {
           Point2D_I32 pt1 = points.get(j - 1); 
           Point2D_I32 pt2 = points.get(j); 
@@ -209,7 +209,7 @@ public class DMDPositionDetector {
       g.drawImage(buffered, 0, 0, null);
       g.setColor(Color.GREEN);
 
-      int minX = dmd.get(0);
+      int minX = dmd.getFirst();
       int minY = dmd.get(1);
       int maxX = dmd.get(2);
       int maxY = dmd.get(3);

@@ -3,13 +3,15 @@ package de.mephisto.vpin.server.games;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import de.mephisto.vpin.restclient.dmd.DMDPackageTypes;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
-import java.util.Date;
+import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.id.IncrementGenerator;
+import java.time.Instant;
 
 @Entity
 @Table(name = "GameDetails")
@@ -17,19 +19,18 @@ import java.util.Date;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GameDetails {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GenericGenerator(name = "gamedetails_gen", type = IncrementGenerator.class)
+  @GeneratedValue(generator = "gamedetails_gen")
   @Column(name = "id", nullable = false, unique = true)
   private Long id;
 
   @Column(nullable = false, updatable = false)
-  @Temporal(TemporalType.TIMESTAMP)
   @CreatedDate
-  private Date createdAt;
+  private Instant createdAt;
 
   @Column(nullable = false)
-  @Temporal(TemporalType.TIMESTAMP)
   @LastModifiedDate
-  private Date updatedAt;
+  private Instant updatedAt;
 
   public String assets;
 
@@ -242,19 +243,19 @@ public class GameDetails {
     this.scripts = scripts;
   }
 
-  public Date getCreatedAt() {
+  public Instant getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(Date createdAt) {
+  public void setCreatedAt(Instant createdAt) {
     this.createdAt = createdAt;
   }
 
-  public Date getUpdatedAt() {
+  public Instant getUpdatedAt() {
     return updatedAt;
   }
 
-  public void setUpdatedAt(Date updatedAt) {
+  public void setUpdatedAt(Instant updatedAt) {
     this.updatedAt = updatedAt;
   }
 

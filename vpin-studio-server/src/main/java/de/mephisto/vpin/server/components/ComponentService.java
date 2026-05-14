@@ -5,11 +5,10 @@ import de.mephisto.vpin.connectors.github.ReleaseArtifact;
 import de.mephisto.vpin.connectors.github.ReleaseArtifactActionLog;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.server.components.facades.*;
-import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -18,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -124,7 +124,7 @@ public class ComponentService implements InitializingBean {
         ReleaseArtifactActionLog install = null;
         List<GithubRelease> githubReleases = getCached(component);
         Optional<GithubRelease> first = githubReleases.stream().filter(r -> r.getTag().equals(tag)).findFirst();
-        GithubRelease githubRelease = githubReleases.get(0);
+        GithubRelease githubRelease = githubReleases.getFirst();
         if (first.isPresent()) {
           githubRelease = first.get();
         }
@@ -146,7 +146,7 @@ public class ComponentService implements InitializingBean {
             LOG.info("Applied current version \"{} for {}", githubRelease.getTag(), component.getType());
           }
 
-          component.setLastCheck(new Date());
+          component.setLastCheck(Instant.now());
           componentRepository.saveAndFlush(component);
         }
         else {
@@ -225,7 +225,7 @@ public class ComponentService implements InitializingBean {
         githubReleases = githubReleases.stream().filter(release -> !component.getIgnoredVersions().contains(release.getTag())).collect(Collectors.toList());
       }
       if (!githubReleases.isEmpty()) {
-        component.setLatestReleaseVersion(githubReleases.get(0).getTag());
+        component.setLatestReleaseVersion(githubReleases.getFirst().getTag());
       }
       componentRepository.saveAndFlush(component);
       this.releaseCache.put(component.getType(), githubReleases);
@@ -258,35 +258,17 @@ public class ComponentService implements InitializingBean {
   }
 
   public ComponentFacade getComponentFacade(ComponentType type) {
-    switch (type) {
-      case vpinmame: {
-        return vPinMAMEComponent;
-      }
-      case vpinball: {
-        return vpxComponent;
-      }
-      case b2sbackglass: {
-        return backglassComponent;
-      }
-      case flexdmd: {
-        return flexDMDComponent;
-      }
-      case freezy: {
-        return freezyComponent;
-      }
-      case serum: {
-        return serumComponent;
-      }
-      case doflinx: {
-        return dofLinxComponent;
-      }
-      case dof: {
-        return dofComponent;
-      }
-      default: {
-        throw new UnsupportedOperationException("Invalid component type " + type);
-      }
-    }
+      return switch (type) {
+          case vpinmame -> vPinMAMEComponent;
+          case vpinball -> vpxComponent;
+          case b2sbackglass -> backglassComponent;
+          case flexdmd -> flexDMDComponent;
+          case freezy -> freezyComponent;
+          case serum -> serumComponent;
+          case doflinx -> dofLinxComponent;
+          case dof -> dofComponent;
+          default -> throw new UnsupportedOperationException("Invalid component type " + type);
+      };
   }
 
   @Override

@@ -23,8 +23,6 @@ import de.mephisto.vpin.restclient.vpu.VPUSettings;
 import de.mephisto.vpin.restclient.webhooks.WebhookSettings;
 import de.mephisto.vpin.restclient.wovp.WOVPSettings;
 
-import javax.swing.text.html.HTML;
-
 public interface PreferenceNames {
   String IGNORED_VALIDATION_SETTINGS = "ignoredValidations";
   String VALIDATION_SETTINGS = "validationSettings";
@@ -90,97 +88,37 @@ public interface PreferenceNames {
   String WOVP_SETTINGS = "wovpSettings";
 
   static Class<? extends JsonSettings> getClassFromKey(String key) {
-    switch (key) {
-      case PreferenceNames.UI_SETTINGS: {
-        return UISettings.class;
-      }
-      case PreferenceNames.SERVER_SETTINGS: {
-        return ServerSettings.class;
-      }
-      case PreferenceNames.HIGHSCORE_CARD_SETTINGS: {
-        return CardSettings.class;
-      }
-      case PreferenceNames.MANIA_SETTINGS: {
-        return ManiaSettings.class;
-      }
-      case PreferenceNames.DOF_SETTINGS: {
-        return DOFSettings.class;
-      }
-      case PreferenceNames.DOFLINX_SETTINGS: {
-        return DOFLinxSettings.class;
-      }
-      case PreferenceNames.PAUSE_MENU_SETTINGS: {
-        return PauseMenuSettings.class;
-      }
-      case PreferenceNames.VALIDATION_SETTINGS: {
-        return ValidationSettings.class;
-      }
-      case PreferenceNames.IGNORED_VALIDATION_SETTINGS: {
-        return IgnoredValidationSettings.class;
-      }
-      case PreferenceNames.NOTIFICATION_SETTINGS: {
-        return NotificationSettings.class;
-      }
-      case PreferenceNames.PINBALLX_SETTINGS: {
-        return PinballXSettings.class;
-      }
-      case PreferenceNames.PINBALLY_SETTINGS: {
-        return PinballYSettings.class;
-      }
-      case PreferenceNames.FILTER_SETTINGS: {
-        return FilterSettings.class;
-      }
-      case PreferenceNames.RECORDINGS_FILTER_SETTINGS: {
-        return RecorderFilterSettings.class;
-      }
-      case PreferenceNames.VPU_SETTINGS: {
-        return VPUSettings.class;
-      }
-      case PreferenceNames.OVERLAY_SETTINGS: {
-        return OverlaySettings.class;
-      }
-      case PreferenceNames.VPF_SETTINGS: {
-        return VPFSettings.class;
-      }
-      case PreferenceNames.BACKUP_SETTINGS: {
-        return BackupSettings.class;
-      }
-      case PreferenceNames.RECORDER_SETTINGS: {
-        return RecorderSettings.class;
-      }
-      case PreferenceNames.MONITORING_SETTINGS: {
-        return MonitoringSettings.class;
-      }
-      case PreferenceNames.WEBHOOK_SETTINGS: {
-        return WebhookSettings.class;
-      }
-      case PreferenceNames.ISCORED_SETTINGS: {
-        return IScoredSettings.class;
-      }
-      case PreferenceNames.VPS_SETTINGS: {
-        return VpsSettings.class;
-      }
-      case PreferenceNames.AUTHENTICATION_SETTINGS: {
-        return AuthenticationSettings.class;
-      }
-      case PreferenceNames.ASSET_SOURCES_SETTINGS: {
-        return AuthenticationSettings.class;
-      }
-      case PreferenceNames.TAGGING_SETTINGS: {
-        return TaggingSettings.class;
-      }
-      case PreferenceNames.WOVP_SETTINGS: {
-        return WOVPSettings.class;
-      }
-      case PreferenceNames.VPXZ_SETTINGS: {
-        return VPXZSettings.class;
-      }
-      case PreferenceNames.VR_SETTINGS: {
-        return VRSettings.class;
-      }
-      default: {
-        throw new UnsupportedOperationException("JSON format not supported for preference '" + key + "'");
-      }
-    }
+      return switch (key) {
+          case PreferenceNames.UI_SETTINGS -> UISettings.class;
+          case PreferenceNames.SERVER_SETTINGS -> ServerSettings.class;
+          case PreferenceNames.HIGHSCORE_CARD_SETTINGS -> CardSettings.class;
+          case PreferenceNames.MANIA_SETTINGS -> ManiaSettings.class;
+          case PreferenceNames.DOF_SETTINGS -> DOFSettings.class;
+          case PreferenceNames.DOFLINX_SETTINGS -> DOFLinxSettings.class;
+          case PreferenceNames.PAUSE_MENU_SETTINGS -> PauseMenuSettings.class;
+          case PreferenceNames.VALIDATION_SETTINGS -> ValidationSettings.class;
+          case PreferenceNames.IGNORED_VALIDATION_SETTINGS -> IgnoredValidationSettings.class;
+          case PreferenceNames.NOTIFICATION_SETTINGS -> NotificationSettings.class;
+          case PreferenceNames.PINBALLX_SETTINGS -> PinballXSettings.class;
+          case PreferenceNames.PINBALLY_SETTINGS -> PinballYSettings.class;
+          case PreferenceNames.FILTER_SETTINGS -> FilterSettings.class;
+          case PreferenceNames.RECORDINGS_FILTER_SETTINGS -> RecorderFilterSettings.class;
+          case PreferenceNames.VPU_SETTINGS -> VPUSettings.class;
+          case PreferenceNames.OVERLAY_SETTINGS -> OverlaySettings.class;
+          case PreferenceNames.VPF_SETTINGS -> VPFSettings.class;
+          case PreferenceNames.BACKUP_SETTINGS -> BackupSettings.class;
+          case PreferenceNames.RECORDER_SETTINGS -> RecorderSettings.class;
+          case PreferenceNames.MONITORING_SETTINGS -> MonitoringSettings.class;
+          case PreferenceNames.WEBHOOK_SETTINGS -> WebhookSettings.class;
+          case PreferenceNames.ISCORED_SETTINGS -> IScoredSettings.class;
+          case PreferenceNames.VPS_SETTINGS -> VpsSettings.class;
+          case PreferenceNames.AUTHENTICATION_SETTINGS -> AuthenticationSettings.class;
+          case PreferenceNames.ASSET_SOURCES_SETTINGS -> AuthenticationSettings.class;
+          case PreferenceNames.TAGGING_SETTINGS -> TaggingSettings.class;
+          case PreferenceNames.WOVP_SETTINGS -> WOVPSettings.class;
+          case PreferenceNames.VPXZ_SETTINGS -> VPXZSettings.class;
+          case PreferenceNames.VR_SETTINGS -> VRSettings.class;
+          default -> throw new UnsupportedOperationException("JSON format not supported for preference '" + key + "'");
+      };
   }
 }

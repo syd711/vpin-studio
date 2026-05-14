@@ -3,13 +3,13 @@ package de.mephisto.vpin.server.components.facades;
 import de.mephisto.vpin.connectors.github.GithubRelease;
 import de.mephisto.vpin.connectors.github.ReleaseArtifact;
 import de.mephisto.vpin.connectors.github.ReleaseArtifactActionLog;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.OffsetDateTime;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 public interface ComponentFacade {
@@ -25,7 +25,7 @@ public interface ComponentFacade {
   File getTargetFolder();
 
   @Nullable
-  Date getModificationDate();
+  OffsetDateTime getModificationDate();
 
   @NonNull
   List<String> getExcludedFilenames();

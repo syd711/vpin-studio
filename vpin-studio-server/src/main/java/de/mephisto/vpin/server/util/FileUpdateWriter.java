@@ -1,7 +1,8 @@
 package de.mephisto.vpin.server.util;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -41,7 +42,7 @@ public class FileUpdateWriter {
       }
       // start of a section
       else if (section != null && line.startsWith("[")) {
-        if (StringUtils.equals(line, "[" + section + "]")) {
+        if (Strings.CI.equals(line, "[" + section + "]")) {
           inSection = true;
           insertAfter = t;
         }

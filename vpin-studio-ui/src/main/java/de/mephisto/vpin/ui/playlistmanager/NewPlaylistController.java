@@ -10,7 +10,9 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -74,7 +76,7 @@ public class NewPlaylistController implements Initializable, DialogController {
     List<PlaylistRepresentation> playlists = client.getPlaylistsService().getPlaylists();
 
     if (!filtered.isEmpty()) {
-      this.emulatorCombo.setValue(filtered.get(0));
+      this.emulatorCombo.setValue(filtered.getFirst());
     }
 
     nameField.textProperty().addListener(new ChangeListener<String>() {

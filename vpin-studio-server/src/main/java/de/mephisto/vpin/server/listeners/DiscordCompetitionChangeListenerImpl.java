@@ -20,10 +20,10 @@ import de.mephisto.vpin.server.highscores.HighscoreBackupService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.vps.VpsService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -105,7 +105,7 @@ public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChan
               List<VpsTableVersion> tableFiles = vpsTable.getTableFiles();
               Optional<VpsTableVersion> tableVersion = tableFiles.stream().filter(t -> t.getId().equals(game.getExtTableVersionId())).findFirst();
               if (tableVersion.isPresent() && !tableVersion.get().getUrls().isEmpty()) {
-                imageMessage += "\n\nTable Download:\n" + tableVersion.get().getUrls().get(0).getUrl();
+                imageMessage += "\n\nTable Download:\n" + tableVersion.get().getUrls().getFirst().getUrl();
               }
             }
           }

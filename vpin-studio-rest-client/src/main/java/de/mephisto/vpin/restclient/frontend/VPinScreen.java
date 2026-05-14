@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.validation.GameValidationCode;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 
 public enum VPinScreen {
@@ -88,7 +89,7 @@ public enum VPinScreen {
 
   public static VPinScreen valueOfSegment(String segment) {
     for (VPinScreen v : values()) {
-      if (StringUtils.equalsIgnoreCase(segment, v.segment)) {
+      if (Strings.CI.equals(segment, v.segment)) {
         return v;
       }
     }
@@ -102,7 +103,7 @@ public enum VPinScreen {
 
   public static VPinScreen valueOfCode(String code) {
     for (VPinScreen v : values()) {
-      if (StringUtils.equalsIgnoreCase(code, "" + v.code)) {
+      if (Strings.CI.equals(code, "" + v.code)) {
         return v;
       }
     }

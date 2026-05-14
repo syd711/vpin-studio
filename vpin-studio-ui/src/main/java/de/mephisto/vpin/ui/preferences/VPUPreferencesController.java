@@ -3,7 +3,6 @@ package de.mephisto.vpin.ui.preferences;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.vpauthenticators.AuthenticationProvider;
-import de.mephisto.vpin.restclient.vpf.VPFSettings;
 import de.mephisto.vpin.restclient.vpu.VPUSettings;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

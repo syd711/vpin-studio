@@ -269,7 +269,7 @@ public class TablesBackupDialogController implements Initializable, DialogContro
   public void setGames(List<GameRepresentation> games) {
     this.games = games;
     if(games.size() == 1) {
-      this.titleLabel.setText(games.get(0).getGameDisplayName());
+      this.titleLabel.setText(games.getFirst().getGameDisplayName());
     }
     else {
       this.titleLabel.setText("Backup of " + games.size() + " tables");

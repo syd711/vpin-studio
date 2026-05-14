@@ -1,16 +1,18 @@
 package de.mephisto.vpin.restclient.players;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.restclient.assets.AssetRepresentation;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 
-import java.util.Date;
+import java.time.Instant;
 
 public class PlayerRepresentation {
 
-  private Date createdAt;
+  private Instant createdAt;
 
-  private Date updatedAt;
+  private Instant updatedAt;
 
   private long id;
 
@@ -44,6 +46,7 @@ public class PlayerRepresentation {
     return account;
   }
 
+  @JsonProperty("iScoredName")
   public String getiScoredName() {
     return iScoredName;
   }
@@ -92,19 +95,19 @@ public class PlayerRepresentation {
     this.avatarUrl = avatarUrl;
   }
 
-  public Date getCreatedAt() {
+  public Instant getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(Date createdAt) {
+  public void setCreatedAt(Instant createdAt) {
     this.createdAt = createdAt;
   }
 
-  public Date getUpdatedAt() {
+  public Instant getUpdatedAt() {
     return updatedAt;
   }
 
-  public void setUpdatedAt(Date updatedAt) {
+  public void setUpdatedAt(Instant updatedAt) {
     this.updatedAt = updatedAt;
   }
 

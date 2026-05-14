@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -44,7 +45,7 @@ public class AlxServiceTest {
   void getAlxSummary_withGameId_fetchesSingleGameAlxData() {
     TableAlxEntry entry = new TableAlxEntry();
     entry.setGameId(5);
-    when(frontendService.getStartDate()).thenReturn(new Date());
+    when(frontendService.getStartDate()).thenReturn(OffsetDateTime.now());
     when(frontendService.getAlxData(5)).thenReturn(List.of(entry));
     when(highscoreService.getHighscoreVersionsByGame(5)).thenReturn(Collections.emptyList());
 
@@ -58,7 +59,7 @@ public class AlxServiceTest {
 
   @Test
   void getAlxSummary_withNegativeId_fetchesAllAlxData() {
-    when(frontendService.getStartDate()).thenReturn(new Date());
+    when(frontendService.getStartDate()).thenReturn(OffsetDateTime.now());
     when(frontendService.getAlxData()).thenReturn(Collections.emptyList());
 
     AlxSummary result = alxService.getAlxSummary(-1);
@@ -72,7 +73,7 @@ public class AlxServiceTest {
   void getAlxSummary_countsScoresAndHighscores() {
     TableAlxEntry entry = new TableAlxEntry();
     entry.setGameId(3);
-    when(frontendService.getStartDate()).thenReturn(new Date());
+    when(frontendService.getStartDate()).thenReturn(OffsetDateTime.now());
     when(frontendService.getAlxData(3)).thenReturn(List.of(entry));
 
     HighscoreVersion rank1 = mock(HighscoreVersion.class);
@@ -93,7 +94,7 @@ public class AlxServiceTest {
 
   @Test
   void getAlxSummary_noArgs_delegatesToGetAlxSummaryWithMinusOne() {
-    when(frontendService.getStartDate()).thenReturn(new Date());
+    when(frontendService.getStartDate()).thenReturn(OffsetDateTime.now());
     when(frontendService.getAlxData()).thenReturn(Collections.emptyList());
 
     AlxSummary result = alxService.getAlxSummary();
@@ -182,7 +183,7 @@ public class AlxServiceTest {
     entry.setGameId(5);
     entry.setTimePlayedSecs(100);
 
-    when(frontendService.getStartDate()).thenReturn(new Date());
+    when(frontendService.getStartDate()).thenReturn(OffsetDateTime.now());
     when(frontendService.getAlxData(5)).thenReturn(List.of(entry));
     when(highscoreService.getHighscoreVersionsByGame(5)).thenReturn(Collections.emptyList());
 
@@ -201,7 +202,7 @@ public class AlxServiceTest {
     entry.setGameId(5);
     entry.setTimePlayedSecs(5); // only 5 seconds played
 
-    when(frontendService.getStartDate()).thenReturn(new Date());
+    when(frontendService.getStartDate()).thenReturn(OffsetDateTime.now());
     when(frontendService.getAlxData(5)).thenReturn(List.of(entry));
     when(highscoreService.getHighscoreVersionsByGame(5)).thenReturn(Collections.emptyList());
 

@@ -7,8 +7,10 @@ import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.ui.*;
+import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.NavigationOptions;
+import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.competitions.validation.CompetitionValidationTexts;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
@@ -37,7 +39,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.text.DateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -258,7 +261,7 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize();
-    NavigationController.setBreadCrumb(Arrays.asList("Competitions"));
+    NavigationController.setBreadCrumb(List.of("Competitions"));
     tableView.setPlaceholder(new Label("            No competitions found.\nClick the '+' button to create a new one."));
 
     try {
@@ -329,7 +332,7 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
 
     columnStartDate.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
-      Label label = new Label(DateFormat.getDateTimeInstance().format(value.getStartDate()));
+      Label label = new Label(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(value.getEndDate()));
       if (value.isActive()) {
         label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00;");
       }
@@ -338,7 +341,7 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
 
     columnEndDate.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
-      Label label = new Label(DateFormat.getDateTimeInstance().format(value.getEndDate()));
+      Label label = new Label(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(value.getEndDate()));
       if (value.isActive()) {
         label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00;");
       }

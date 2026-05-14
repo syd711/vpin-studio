@@ -1,15 +1,18 @@
 package de.mephisto.vpin.server.assets;
 
-import de.mephisto.vpin.connectors.assets.*;
+import de.mephisto.vpin.connectors.assets.AssetLookupStrategy;
+import de.mephisto.vpin.connectors.assets.TableAsset;
+import de.mephisto.vpin.connectors.assets.TableAssetSource;
+import de.mephisto.vpin.connectors.assets.TableAssetSourceType;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.util.HttpUtils;
 import de.mephisto.vpin.server.games.Game;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

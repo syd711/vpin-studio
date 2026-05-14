@@ -1,13 +1,13 @@
 package de.mephisto.vpin.connectors.discord;
 
-import java.util.Date;
+import java.time.OffsetDateTime;
 
 public class DiscordMessage {
   private long id;
   private DiscordMember member;
   private String raw;
   private String embedDescription;
-  private Date createdAt;
+  private OffsetDateTime createdAt;
   private long serverId;
 
   public long getId() {
@@ -34,11 +34,11 @@ public class DiscordMessage {
     this.serverId = serverId;
   }
 
-  public Date getCreatedAt() {
+  public OffsetDateTime getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(Date createdAt) {
+  public void setCreatedAt(OffsetDateTime createdAt) {
     this.createdAt = createdAt;
   }
 

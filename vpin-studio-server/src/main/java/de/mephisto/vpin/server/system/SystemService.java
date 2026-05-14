@@ -5,7 +5,6 @@ import com.sun.jna.platform.WindowUtils;
 import com.zaxxer.hikari.HikariDataSource;
 import de.mephisto.vpin.commons.MonitorInfoUtil;
 import de.mephisto.vpin.commons.SystemInfo;
-import de.mephisto.vpin.commons.SystemInfoWindows;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.commons.utils.controller.GameController;
@@ -15,7 +14,6 @@ import de.mephisto.vpin.restclient.system.FeaturesInfo;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.restclient.system.NVRamsInfo;
 import de.mephisto.vpin.restclient.system.ScoringDB;
-import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.server.ServerUpdatePreProcessing;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.VPinStudioServer;
@@ -27,12 +25,13 @@ import de.mephisto.vpin.server.pinemhi.PINemHiService;
 import de.mephisto.vpin.server.util.VersionUtil;
 import de.mephisto.vpin.server.util.WindowsUtil;
 import de.mephisto.vpin.server.vpx.VPXMonitoringService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import javafx.application.Platform;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -51,7 +50,9 @@ import java.lang.reflect.Field;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.nio.charset.Charset;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
@@ -403,7 +404,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   public boolean killProcesses(String name) {
     List<ProcessHandle> filteredProceses = ProcessHandle.allProcesses()
         .filter(p -> p.info().command().isPresent() && (p.info().command().get().contains(name)))
-        .collect(Collectors.toList());
+        .toList();
     boolean success = false;
     for (ProcessHandle process : filteredProceses) {
       String cmd = process.info().command().get();
@@ -419,7 +420,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   public boolean isProcessRunning(String name) {
     List<ProcessHandle> filteredProceses = ProcessHandle.allProcesses()
         .filter(p -> p.info().command().isPresent() && (p.info().command().get().contains(name)))
-        .collect(Collectors.toList());
+        .toList();
     return !filteredProceses.isEmpty();
   }
 
@@ -430,7 +431,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public boolean isWindowOpened(String name) {
     List<DesktopWindow> windows = WindowUtils.getAllWindows(true);
-    return windows.stream().anyMatch(wdw -> StringUtils.containsIgnoreCase(wdw.getTitle(), name));
+    return windows.stream().anyMatch(wdw -> Strings.CI.contains(wdw.getTitle(), name));
   }
 
   public static void main(String[] args) {
@@ -763,7 +764,8 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public String backup() {
     File source = new File(RESOURCES, "vpin-studio.db");
-    String name = FilenameUtils.getBaseName(source.getName()) + "_" + new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date()) + ".db";
+    DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss").withZone(ZoneId.systemDefault());
+    String name = FilenameUtils.getBaseName(source.getName()) + "_" + df.format(Instant.now()) + ".db";
     File targetFolder = new File(RESOURCES, "backups/");
     File target = new File(targetFolder, name);
     try {

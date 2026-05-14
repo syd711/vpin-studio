@@ -11,8 +11,10 @@ import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.ui.*;
+import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.NavigationOptions;
+import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSavingProgressModel;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSyncProgressModel;
 import de.mephisto.vpin.ui.competitions.validation.CompetitionValidationTexts;
@@ -160,7 +162,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
         ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Creating Subscription", Arrays.asList(c)));
         Platform.runLater(() -> {
           onReload();
-          tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
+          tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.getFirst());
         });
       }
       catch (Exception e) {
@@ -303,7 +305,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize();
-    NavigationController.setBreadCrumb(Arrays.asList("Competitions"));
+    NavigationController.setBreadCrumb(List.of("Competitions"));
     tableView.setPlaceholder(new Label("            No competitions found.\nClick the '+' button to create a new one."));
 
     try {
@@ -473,7 +475,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
       public Boolean call(TableView<CompetitionRepresentation> gameRepresentationTableView) {
         CompetitionRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
         if (!gameRepresentationTableView.getSortOrder().isEmpty()) {
-          TableColumn<CompetitionRepresentation, ?> column = gameRepresentationTableView.getSortOrder().get(0);
+          TableColumn<CompetitionRepresentation, ?> column = gameRepresentationTableView.getSortOrder().getFirst();
           if (column.equals(columnName)) {
             Collections.sort(tableView.getItems(), Comparator.comparing(o -> o.getName()));
             if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {

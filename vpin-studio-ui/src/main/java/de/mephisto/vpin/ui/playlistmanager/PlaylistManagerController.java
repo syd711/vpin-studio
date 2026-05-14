@@ -2,12 +2,14 @@ package de.mephisto.vpin.ui.playlistmanager;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.frontend.*;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
+import de.mephisto.vpin.restclient.frontend.PlaylistGame;
+import de.mephisto.vpin.restclient.frontend.PlaylistOrder;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.util.FileUtils;
@@ -242,7 +244,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
             }
           }
           else {
-            TreeItem<PlaylistRepresentation> rootList = treeView.getRoot().getChildren().get(0);
+            TreeItem<PlaylistRepresentation> rootList = treeView.getRoot().getChildren().getFirst();
             select(rootList, selection);
           }
         }));
@@ -940,7 +942,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
   private GameEmulatorRepresentation getDefaultGameEmulator() {
     List<GameEmulatorRepresentation> gameEmulators = client.getEmulatorService().getVpxGameEmulators();
     gameEmulators.sort((o1, o2) -> o2.getId() - o1.getId());
-    return gameEmulators.size() > 0 ? gameEmulators.get(0) : null;
+    return gameEmulators.size() > 0 ? gameEmulators.getFirst() : null;
   }
 
 

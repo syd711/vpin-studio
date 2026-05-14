@@ -262,7 +262,7 @@ public class EmulatorService implements InitializingBean, PreferenceChangedListe
         Game keepGame = duplicates.stream()
             .max(Comparator.comparingInt(g -> alxService.getAlxSummary(g.getId()).getEntries().stream()
                 .mapToInt(TableAlxEntry::getTimePlayedSecs).sum()))
-            .orElse(duplicates.get(0));
+            .orElse(duplicates.getFirst());
         for (Game duplicate : duplicates) {
           if (duplicate != keepGame) {
             LOG.info("Removing duplicate with less playtime: [{}] {}", duplicate.getId(), duplicate.getGameFileName());

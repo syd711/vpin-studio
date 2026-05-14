@@ -2,9 +2,8 @@ package de.mephisto.vpin.server.vps;
 
 import de.mephisto.vpin.restclient.vpf.VPFSettings;
 import de.mephisto.vpin.restclient.vps.VpsInstallLink;
-import de.mephisto.vpin.server.vpauthenticators.VpfVPAuthenticator;
-import de.mephisto.vpin.server.vpauthenticators.VpuVPAuthenticator;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.htmlunit.*;
 import org.htmlunit.html.*;
 import org.slf4j.Logger;
@@ -47,7 +46,7 @@ public class VpsInstallerFromVPF implements VpsInstaller {
       // Perfom VPF authentication
       HtmlPage loginPage = webClient.getPage("https://www.vpforums.org/index.php?app=core&module=global&section=login");
       HtmlForm loginForm = loginPage.getForms().stream()
-          .filter(f -> StringUtils.equalsIgnoreCase(f.getId(), "login"))
+          .filter(f -> Strings.CI.equals(f.getId(), "login"))
           .findFirst().orElseThrow();
       loginForm.getInputByName("ips_username").setValue(settings.getLogin());
       loginForm.getInputByName("ips_password").setValue(settings.getPassword());
@@ -56,7 +55,7 @@ public class VpsInstallerFromVPF implements VpsInstaller {
 
       // check authentication happens correctly
       String title = homePage.getTitleText();
-      if (StringUtils.containsIgnoreCase(title, "sign in")) {
+      if (Strings.CI.contains(title, "sign in")) {
         DomNode node = homePage.querySelector("p.message.error");
         return node != null ? node.getTextContent().trim() : "Cannot login";
       }

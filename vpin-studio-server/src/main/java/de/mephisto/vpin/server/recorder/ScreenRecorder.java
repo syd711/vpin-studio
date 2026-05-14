@@ -6,7 +6,7 @@ import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
 import de.mephisto.vpin.restclient.util.Ffmpeg;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.system.SystemService;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

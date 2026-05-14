@@ -1,24 +1,18 @@
 package de.mephisto.vpin.server.dmd;
 
 import de.mephisto.vpin.restclient.util.ZipUtil;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileOutStream;
 import net.sf.sevenzipjbinding.simple.ISimpleInArchiveItem;
-
-import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.RandomAccessFile;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 public class DMDInstallationUtil {
   private final static Logger LOG = LoggerFactory.getLogger(DMDInstallationUtil.class);

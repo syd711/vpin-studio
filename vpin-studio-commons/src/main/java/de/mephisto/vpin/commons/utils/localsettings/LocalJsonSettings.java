@@ -1,8 +1,10 @@
 package de.mephisto.vpin.commons.utils.localsettings;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.cfg.EnumFeature;
+import tools.jackson.databind.json.JsonMapper;
 import de.mephisto.vpin.commons.utils.Updater;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,13 +17,18 @@ import java.lang.invoke.MethodHandles;
 abstract public class LocalJsonSettings {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  public final static ObjectMapper objectMapper = new ObjectMapper();
+  public final static ObjectMapper objectMapper;
 
   File settingsFile;
 
   static {
-    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    objectMapper = JsonMapper.builder()
+        .enable(SerializationFeature.INDENT_OUTPUT)
+        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+        .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+        .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+        .build();
   }
 
 
@@ -72,7 +79,7 @@ abstract public class LocalJsonSettings {
     try {
       objectMapper.writeValue(settingsFile, this);
     }
-    catch (IOException e) {
+    catch (Exception e) {
       LOG.error("Failed to write {}: {}", settingsFile.getName(), e.getMessage(), e);
     }
   }

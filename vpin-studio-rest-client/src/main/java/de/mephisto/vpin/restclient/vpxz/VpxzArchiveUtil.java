@@ -1,18 +1,17 @@
 package de.mephisto.vpin.restclient.vpxz;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
-import de.mephisto.vpin.restclient.dmd.DMDBackupData;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.cfg.EnumFeature;
+import tools.jackson.databind.json.JsonMapper;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.model.FileHeader;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,18 +23,23 @@ import java.util.List;
 public class VpxzArchiveUtil {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  private static final ObjectMapper objectMapper = new ObjectMapper();
+  private static final JsonMapper objectMapper;
 
   static {
-    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+      objectMapper = JsonMapper.builder()
+              .enable(SerializationFeature.INDENT_OUTPUT)
+              .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+              .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+              .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+              .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+              .build();
   }
 
   public static ZipFile createZipFile(File target) {
     return new ZipFile(target);
   }
 
-  public static TableDetails readTableDetails(File file) throws JsonProcessingException {
+  public static TableDetails readTableDetails(File file) throws JacksonException {
     ZipFile zipFile = VpxzArchiveUtil.createZipFile(file);
     try {
       String text = readStringFromZip(zipFile, TableDetails.ARCHIVE_FILENAME);

@@ -2,16 +2,15 @@ package de.mephisto.vpin.ui.cards.panels;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
-import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.util.PositionResizer;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
+import java.util.Optional;
+
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.stage;
-
-import java.util.*;
 
 public class LayerEditorScoresController extends LayerEditorBaseController {
 

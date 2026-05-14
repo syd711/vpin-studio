@@ -51,10 +51,10 @@
   "crc32" : "#268AC2C0"
 }, {
   "name" : "maps/main.zip",
-  "archiveFolder" : "pinmame-nvram-maps-main",
   "url" : "https://github.com/tomlogic/pinmame-nvram-maps/archive/refs/heads/main.zip",
   "length" : 611883,
   "crc32" : "#42D4E95F",
+  "archiveFolder" : "pinmame-nvram-maps-main",
   "emptyParentFolder" : true
 }, {
   "name" : "superhac/roms.json",

@@ -1,7 +1,7 @@
 package de.mephisto.vpin.restclient.assets;
 
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.lang3.ArrayUtils;
 
 public enum AssetType {
@@ -78,95 +78,37 @@ public enum AssetType {
 
   @Override
   public String toString() {
-    switch (this) {
-      case NV: {
-        return "NV RAM";
-      }
-      case RES: {
-        return ".res File";
-      }
-      case POV: {
-        return ".pov File";
-      }
-      case INI: {
-        return ".ini File";
-      }
-      case BAM_CFG: {
-        return "BAM .cfg File";
-      }
-      case DIRECTB2S: {
-        return "Backglass";
-      }
-      case ALT_SOUND: {
-        return "ALT Sound Bundle";
-      }
-      case ALT_COLOR: {
-        return "ALT Color File";
-      }
-      case CFG: {
-        return ".cfg File";
-      }
-      case DIF: {
-        return "Patch File";
-      }
-      case FPT: {
-        return "FP Table";
-      }
-      case FPL: {
-        return "FP Library";
-      }
-      case ROM: {
-        return "ROM";
-      }
-      case VPX: {
-        return "VPX Table";
-      }
-      case VPT: {
-        return "VP9 Table";
-      }
-      case VPA: {
-        return "VPin Archive";
-      }
-      case DMD_PACK: {
-        return "DMD Pack";
-      }
-      case FP_MODEL_PACK: {
-        return "FP Model Pack";
-      }
-      case CRZ: {
-        return ".cRZ File";
-      }
-      case CROMC: {
-        return ".cROMc File";
-      }
-      case PAC: {
-        return ".pac File";
-      }
-      case PAL: {
-        return ".pal File";
-      }
-      case VNI: {
-        return ".vni File";
-      }
-      case MUSIC: {
-        return "Music File";
-      }
-      case PUP_PACK: {
-        return "PUP Pack";
-      }
-      case FRONTEND_MEDIA: {
-        return "Frontend Media";
-      }
-      case MUSIC_BUNDLE: {
-        return "Music Bundle";
-      }
-      case TABLE: {
-        return "Table";
-      }
-      default: {
-        return this.name();
-      }
-    }
+      return switch (this) {
+          case NV -> "NV RAM";
+          case RES -> ".res File";
+          case POV -> ".pov File";
+          case INI -> ".ini File";
+          case BAM_CFG -> "BAM .cfg File";
+          case DIRECTB2S -> "Backglass";
+          case ALT_SOUND -> "ALT Sound Bundle";
+          case ALT_COLOR -> "ALT Color File";
+          case CFG -> ".cfg File";
+          case DIF -> "Patch File";
+          case FPT -> "FP Table";
+          case FPL -> "FP Library";
+          case ROM -> "ROM";
+          case VPX -> "VPX Table";
+          case VPT -> "VP9 Table";
+          case VPA -> "VPin Archive";
+          case DMD_PACK -> "DMD Pack";
+          case FP_MODEL_PACK -> "FP Model Pack";
+          case CRZ -> ".cRZ File";
+          case CROMC -> ".cROMc File";
+          case PAC -> ".pac File";
+          case PAL -> ".pal File";
+          case VNI -> ".vni File";
+          case MUSIC -> "Music File";
+          case PUP_PACK -> "PUP Pack";
+          case FRONTEND_MEDIA -> "Frontend Media";
+          case MUSIC_BUNDLE -> "Music Bundle";
+          case TABLE -> "Table";
+          default -> this.name();
+      };
   }
 
   public String[] installableExtension() {
@@ -174,92 +116,39 @@ public enum AssetType {
   }
 
   public String defaultExtension() {
-    switch (this) {
-      case RES: {
-        return "*.res";
-      }
-      case POV: {
-        return "*.pov";
-      }
-      case INI: {
-        return "*.ini";
-      }
-      case DIRECTB2S: {
-        return "*.directb2s";
-      }
-      case NV: {
-        return "*.nv";
-      }
-      case ALT_SOUND: {
-        return "*.zip";
-      }
-      case ALT_COLOR: {
-        return "*.zip";
-      }
-      case CFG: {
-        return "*.cfg";
-      }
-      case BAM_CFG: {
-        return "*.cfg";
-      }
-      case FPT: {
-        return "*.fpt";
-      }
-      case FPL: {
-        return "*.fpl";
-      }
-      case ROM: {
-        return "*.zip";
-      }
-      case VPA: {
-        return "*.vpa";
-      }
-      case VPX: {
-        return "*.vpx";
-      }
-      case VPT: {
-        return "*.vpt";
-      }
-      case DMD_PACK: {
-        return "DMD Pack";
-      }
-      case FP_MODEL_PACK: {
-        return "FP Model Pack";
-      }
-      case CRZ: {
-        return ".cRZ";
-      }
-      case CROMC: {
-        return ".cROMc";
-      }
-      case PAC: {
-        return ".pac";
-      }
-      case PAL: {
-        return ".pal";
-      }
-      case VNI: {
-        return ".vni";
-      }
-      case MUSIC:
-      case MUSIC_BUNDLE: {
-        return "*.zip";
-      }
-      case PUP_PACK: {
-        return "*.zip";
-      }
-      default: {
-        return null;
-      }
-    }
+      return switch (this) {
+          case RES -> "*.res";
+          case POV -> "*.pov";
+          case INI -> "*.ini";
+          case DIRECTB2S -> "*.directb2s";
+          case NV -> "*.nv";
+          case ALT_SOUND -> "*.zip";
+          case ALT_COLOR -> "*.zip";
+          case CFG -> "*.cfg";
+          case BAM_CFG -> "*.cfg";
+          case FPT -> "*.fpt";
+          case FPL -> "*.fpl";
+          case ROM -> "*.zip";
+          case VPA -> "*.vpa";
+          case VPX -> "*.vpx";
+          case VPT -> "*.vpt";
+          case DMD_PACK -> "DMD Pack";
+          case FP_MODEL_PACK -> "FP Model Pack";
+          case CRZ -> ".cRZ";
+          case CROMC -> ".cROMc";
+          case PAC -> ".pac";
+          case PAL -> ".pal";
+          case VNI -> ".vni";
+          case MUSIC, MUSIC_BUNDLE -> "*.zip";
+          case PUP_PACK -> "*.zip";
+          default -> null;
+      };
   }
 
-  public String getExtension() {
-    switch (this) {
-      case FP_MODEL_PACK: {
-        return "zip";
-      }
+    public String getExtension() {
+        return switch (this) {
+            case FP_MODEL_PACK -> "zip";
+            default -> name().toLowerCase();
+        };
     }
-    return name().toLowerCase();
-  }
 }

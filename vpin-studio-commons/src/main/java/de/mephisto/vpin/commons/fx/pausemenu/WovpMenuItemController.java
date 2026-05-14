@@ -132,7 +132,7 @@ public class WovpMenuItemController implements Initializable {
       return players;
     }).thenAcceptLater(players -> {
       if (this.wovpPlayer == null) {
-        this.wovpPlayer = players.get(0);
+        this.wovpPlayer = players.getFirst();
       }
       this.playerSelectorBox.setVisible(players.size() > 1);
       this.rightBtn.setVisible(players.size() > 1);

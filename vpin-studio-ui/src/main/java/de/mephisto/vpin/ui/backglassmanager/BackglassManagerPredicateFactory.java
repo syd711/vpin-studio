@@ -6,8 +6,8 @@ import de.mephisto.vpin.ui.tables.models.B2SVisibility;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
-
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +54,7 @@ public class BackglassManagerPredicateFactory {
           return false;
         }
 
-        if (StringUtils.isNotEmpty(searchTerm) && !StringUtils.containsIgnoreCase(backglass.getName(), searchTerm)) {
+        if (StringUtils.isNotEmpty(searchTerm) && !Strings.CI.contains(backglass.getName(), searchTerm)) {
           return false;
         }
 

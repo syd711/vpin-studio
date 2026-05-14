@@ -1,13 +1,14 @@
 package de.mephisto.vpin.connectors.github;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.lang.invoke.MethodHandles;
-import java.text.DateFormat;
-import java.util.Date;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
 
 public class ReleaseArtifact {
@@ -68,7 +69,7 @@ public class ReleaseArtifact {
         summary.append("The following files have been checked for the version comparison: " + String.join(", ", names) + "\n");
         summary.append("-------------------------------------------------------------------------------------\n");
         summary.append("Total time:\t" + duration + "ms\n");
-        summary.append("Finished at:\t" + DateFormat.getDateTimeInstance().format(new Date()) + "\n");
+        summary.append("Finished at:\t" + DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).format(OffsetDateTime.now()) + "\n");
         summary.append("-------------------------------------------------------------------------------------\n");
         installLog.setSummary(summary.toString());
       }
@@ -81,7 +82,7 @@ public class ReleaseArtifact {
         summary.append("The following files have been checked for the version comparison: " + String.join(", ", names) + "\n");
         summary.append("-------------------------------------------------------------------------------------\n");
         summary.append("Total time:\t" + duration + "ms\n");
-        summary.append("Finished at:\t" + DateFormat.getDateTimeInstance().format(new Date()) + "\n");
+        summary.append("Finished at:\t" + DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).format(OffsetDateTime.now()) + "\n");
         summary.append("-------------------------------------------------------------------------------------\n");
         installLog.setSummary(summary.toString());
       }
@@ -97,7 +98,7 @@ public class ReleaseArtifact {
       summary.append(e.getMessage());
       summary.append("-------------------------------------------------------------------------------------\n");
       summary.append("Total time:\t" + duration + "ms\n");
-      summary.append("Finished at:\t" + DateFormat.getDateTimeInstance().format(new Date()) + "\n");
+      summary.append("Finished at:\t" + DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).format(OffsetDateTime.now()) + "\n");
       summary.append("-------------------------------------------------------------------------------------\n");
       installLog.setSummary(summary.toString());
       installLog.setStatus(e.getMessage());

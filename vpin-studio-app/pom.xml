@@ -6,6 +6,7 @@
         <artifactId>studio</artifactId>
         <groupId>de.mephisto.vpin</groupId>
         <version>4.9.2</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -13,11 +14,10 @@
     <name>vpin-studio-app</name>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <junit.version>5.8.2</junit.version>
     </properties>
 
     <dependencies>
@@ -42,70 +42,69 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.30</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.9</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.9</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.15.1</version>
         </dependency>
         <dependency>
             <groupId>com.github.spotbugs</groupId>
             <artifactId>spotbugs-annotations</artifactId>
-            <version>4.7.2</version>
+            <version>4.9.8</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>17.0.2</version>
+            <version>${javafx.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>17.0.2</version>
+            <version>${javafx.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-web</artifactId>
-            <version>17.0.2</version>
+            <version>${javafx.version}</version>
         </dependency>
         <dependency>
             <groupId>org.controlsfx</groupId>
             <artifactId>controlsfx</artifactId>
-            <version>11.1.1</version>
+            <version>11.2.1</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-swing</artifactId>
-            <version>17.0.2</version>
+            <version>${javafx.version}</version>
         </dependency>
 
 
+        <!-- Jackson 3 Dependencies -->
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
+            <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.11.4</version>
+        </dependency>
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>2.11.4</version>
+            <artifactId>jackson-annotations</artifactId>
         </dependency>
 
         <dependency>
             <groupId>com.akathist.maven.plugins.launch4j</groupId>
             <artifactId>launch4j-maven-plugin</artifactId>
-            <version>2.2.0</version>
+            <version>${launch4j.version}</version>
         </dependency>
 
         <dependency>
@@ -128,7 +127,10 @@
             <artifactId>ikonli-materialdesign2-pack</artifactId>
             <version>12.4.0</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.jspecify</groupId>
+            <artifactId>jspecify</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -143,16 +145,16 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.10.1</version>
+                <version>3.15.0</version>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
+                    <source>25</source>
+                    <target>25</target>
                 </configuration>
             </plugin>
 
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version>2.5</version>
+                <version>3.3.2</version>
                 <executions>
                     <execution>
                         <id>auto-clean</id>
@@ -173,7 +175,7 @@
 
             <plugin>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.1</version>
+                <version>3.6.0</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -181,6 +183,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <outputFile>${project.build.directory}/vpin-studio-app-shaded.jar</outputFile>
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
@@ -207,7 +210,7 @@
                             <goal>copy</goal>
                         </goals>
                         <configuration>
-                            <sourceFile>${basedir}/target/vpin-studio-app-${project.version}.jar</sourceFile>
+                            <sourceFile>${basedir}/target/vpin-studio-app-shaded.jar</sourceFile>
                             <destinationFile>${basedir}/target/vpin-studio-app.jar</destinationFile>
                         </configuration>
                     </execution>
@@ -231,6 +234,9 @@
                             <noManPages>true</noManPages>
                             <stripDebug>true</stripDebug>
                             <noHeaderFiles>true</noHeaderFiles>
+                            <options>
+                                <option>--enable-native-access=javafx.graphics</option>
+                            </options>
                         </configuration>
                     </execution>
                 </executions>
@@ -240,7 +246,7 @@
                 <!-- This calls launch4j to create the program EXE -->
                 <groupId>com.akathist.maven.plugins.launch4j</groupId>
                 <artifactId>launch4j-maven-plugin</artifactId>
-                <version>2.2.0</version>
+                <version>2.5.1</version>
                 <executions>
                     <execution>
                         <id>l4j-clui</id>
@@ -250,7 +256,7 @@
                         </goals>
                         <configuration>
                             <headerType>gui</headerType>
-                            <icon>src/main/resources/de/mephisto/vpin/app/logo.ico</icon>
+                            <icon>${project.basedir}/src/main/resources/de/mephisto/vpin/app/logo.ico</icon>
                             <outfile>target/VPin-Studio-App.exe</outfile>
                             <jar>target/vpin-studio-app.jar</jar>
                             <errTitle>VPin-Studio-App</errTitle>
@@ -261,6 +267,9 @@
                             </classPath>
                             <jre>
                                 <path>./win32/java</path>
+                                <opts>
+                                    <opt>--enable-native-access=javafx.graphics</opt>
+                                </opts>
                             </jre>
                             <versionInfo>
                                 <fileVersion>1.0.0.0</fileVersion>
@@ -280,7 +289,7 @@
 
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>2.6</version>
+                <version>3.3.1</version>
                 <executions>
 
                     <execution>

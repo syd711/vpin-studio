@@ -3,7 +3,9 @@ package de.mephisto.vpin.server.vpsdb;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.id.IncrementGenerator;
 import java.util.Objects;
 
 @Entity
@@ -13,7 +15,8 @@ import java.util.Objects;
 public class VpsDbEntry {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GenericGenerator(name = "vpsdbentry_gen", type = IncrementGenerator.class)
+  @GeneratedValue(generator = "vpsdbentry_gen")
   @Column(name = "id", nullable = false)
   private Long id;
 

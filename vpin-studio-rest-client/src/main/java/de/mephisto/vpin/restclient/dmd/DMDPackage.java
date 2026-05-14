@@ -2,14 +2,14 @@ package de.mephisto.vpin.restclient.dmd;
 
 import de.mephisto.vpin.restclient.validation.ValidationState;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class DMDPackage {
   private String name;
   private DMDPackageTypes dmdPackageTypes;
-  private Date modificationDate;
+  private OffsetDateTime modificationDate;
   private List<String> files = new ArrayList<>();
   private List<ValidationState> validationStates = new ArrayList<>();
   private long size;
@@ -46,11 +46,11 @@ public class DMDPackage {
     this.dmdPackageTypes = dmdPackageTypes;
   }
 
-  public Date getModificationDate() {
+  public OffsetDateTime getModificationDate() {
     return modificationDate;
   }
 
-  public void setModificationDate(Date modificationDate) {
+  public void setModificationDate(OffsetDateTime modificationDate) {
     this.modificationDate = modificationDate;
   }
 

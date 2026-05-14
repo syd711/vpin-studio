@@ -1,14 +1,14 @@
 package de.mephisto.vpin.server.directb2s;
 
 import de.mephisto.vpin.server.VPinStudioException;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.bind.DatatypeConverter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Base64;
 
 public class DirectB2SImageExporter {
   private final static Logger LOG = LoggerFactory.getLogger(DirectB2SImageExporter.class);
@@ -29,7 +29,7 @@ public class DirectB2SImageExporter {
 
   public static void export(@NonNull File target, String base64) throws VPinStudioException {
     if (base64 != null) {
-      byte[] bytes = DatatypeConverter.parseBase64Binary(base64);
+      byte[] bytes = Base64.getMimeDecoder().decode(base64);
       write(bytes, target);
     }
   }

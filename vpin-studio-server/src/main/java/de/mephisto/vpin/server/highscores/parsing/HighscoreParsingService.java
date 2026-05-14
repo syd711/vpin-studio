@@ -5,12 +5,12 @@ import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.system.SystemService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 
 /**
@@ -41,7 +41,7 @@ public class HighscoreParsingService {
   private SystemService systemService;
 
   @NonNull
-  public List<Score> parseScores(@NonNull Date createdAt, @NonNull String raw, @Nullable Game game, long serverId) {
+  public List<Score> parseScores(@NonNull Instant createdAt, @NonNull String raw, @Nullable Game game, long serverId) {
     List<Score> scores = ScoreListFactory.create(raw, createdAt, game, systemService.getScoringDatabase());
     for (Score score : scores) {
       Player player = playerService.getPlayerForInitials(serverId, score.getPlayerInitials());
