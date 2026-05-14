@@ -16,7 +16,7 @@ import de.mephisto.vpin.server.highscores.parsing.ScoreListAdapter;
 import net.nvrams.mapping.NVRamParser;
 import net.nvrams.mapping.NVRamScore;
 import net.nvrams.mapping.map.NVRamMapParser;
-import net.nvrams.mapping.pinemhi.NVRamPinemhiParser;
+import net.nvrams.mapping.pinemhi.PinemhiRamParser;
 import net.nvrams.mapping.superhac.NVRamSuperhacParser;
 
 /**
@@ -33,7 +33,7 @@ public class NvRamParsingWithParser implements NvRamOutputToRaw, ScoreListAdapte
 
 
   public static NvRamParsingWithParser createPinemhiParser(ScoringDB scoringDB) throws IOException {
-    NVRamParser pinemhiParser = new NVRamPinemhiParser(SystemInfo.RESOURCES + "pinemhi/", 
+    NVRamParser pinemhiParser = new PinemhiRamParser(SystemInfo.RESOURCES + "pinemhi/",
         scoringDB.getHighscoreTitles(), scoringDB.getHighscoreSkipTitlesCheck());
     return new NvRamParsingWithParser(pinemhiParser);
   }
