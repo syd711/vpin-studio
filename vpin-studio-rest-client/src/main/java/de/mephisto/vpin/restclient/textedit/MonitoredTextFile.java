@@ -6,7 +6,11 @@ import java.io.File;
 import java.time.OffsetDateTime;
 
 public class MonitoredTextFile {
-  private VPinFile vPinFile;
+
+//moved to field, otherwise it doesn't seem to work.
+    @JsonProperty("vPinFile")
+    private VPinFile vPinFile;
+
   private String content;
   private OffsetDateTime lastModified;
   private String path;
@@ -47,7 +51,6 @@ public class MonitoredTextFile {
     this.path = path;
   }
 
-  @JsonProperty("vPinFile")
   public VPinFile getvPinFile() {
     return vPinFile;
   }

@@ -11,7 +11,10 @@ public class NotificationSettings extends JsonSettings {
   private boolean startupNotification = false;
   private boolean highscoreUpdatedNotification = true;
   private boolean highscoreCheckedNotification = true;
+
+  @JsonProperty("iScoredNotification")
   private boolean iScoredNotification = true;
+
   private boolean discordNotification = true;
   private boolean competitionNotification = true;
   private boolean recordingStartNotification = true;
@@ -94,7 +97,6 @@ public class NotificationSettings extends JsonSettings {
     this.highscoreCheckedNotification = highscoreCheckedNotification;
   }
 
-  @JsonProperty("iScoredNotification")
   public boolean isiScoredNotification() {
     return iScoredNotification;
   }

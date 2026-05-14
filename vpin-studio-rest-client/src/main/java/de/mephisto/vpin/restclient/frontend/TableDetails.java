@@ -57,9 +57,16 @@ public class TableDetails {
   private boolean mod;
 
   //Game Extra
+  @JsonProperty("gDetails")
   private String gDetails;
+
+  @JsonProperty("gNotes")
   private String gNotes;
+
+  @JsonProperty("gLog")
   private String gLog;
+
+  @JsonProperty("gPlayLog")
   private String gPlayLog;
 
   // mapped values
@@ -102,7 +109,6 @@ public class TableDetails {
     this.sqlVersion = sqlVersion;
   }
 
-  @JsonProperty("gPlayLog")
   public String getgPlayLog() {
     return gPlayLog;
   }
@@ -175,7 +181,6 @@ public class TableDetails {
     this.tourneyId = tourneyId;
   }
 
-  @JsonProperty("gDetails")
   public String getgDetails() {
     return gDetails;
   }
@@ -184,7 +189,6 @@ public class TableDetails {
     this.gDetails = gDetails;
   }
 
-  @JsonProperty("gNotes")
   public String getgNotes() {
     return gNotes;
   }
@@ -193,7 +197,6 @@ public class TableDetails {
     this.gNotes = gNotes;
   }
 
-  @JsonProperty("gLog")
   public String getgLog() {
     return gLog;
   }

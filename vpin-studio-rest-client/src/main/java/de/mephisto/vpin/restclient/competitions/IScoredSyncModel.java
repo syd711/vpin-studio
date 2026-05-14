@@ -8,7 +8,10 @@ import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 public class IScoredSyncModel {
   private boolean invalidate;
   private boolean manualSubscription = false;
+
+  @JsonProperty("iScoredGameRoom")
   private IScoredGameRoom iScoredGameRoom;
+
   private IScoredGame game;
 
   public boolean isManualSubscription() {
@@ -27,7 +30,6 @@ public class IScoredSyncModel {
     this.invalidate = invalidate;
   }
 
-  @JsonProperty("iScoredGameRoom")
   public IScoredGameRoom getiScoredGameRoom() {
     return iScoredGameRoom;
   }
