@@ -5,6 +5,7 @@ import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
+import net.nvrams.mapping.NVRamParser;
 import net.nvrams.mapping.pinemhi.PinemhiRamParser;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -84,8 +85,9 @@ public class RamOutputToScoreTextConverter {
       }
       else if (game.isFpGame()) {
         for (NvRamOutputToRaw svc : svcs) {
-          if (svc instanceof PinemhiRamParser) {
-            List<String> raw = ((PinemhiRamParser) svc).getRaw(null, ramFile, locale);
+          NVRamParser parser = svc.getParser();
+          if (parser instanceof PinemhiRamParser) {
+            List<String> raw = parser.getRaw(null, ramFile, locale);
             if (raw.isEmpty()) {
               return null;
             }

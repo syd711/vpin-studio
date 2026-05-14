@@ -2,7 +2,6 @@ package de.mephisto.vpin.ui.tables.panels;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.localsettings.BaseTableSettings;
-import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
@@ -31,19 +30,18 @@ public class BaseLoadingColumn {
       }
     });
 
-    column.setCellValueFactory(cellData -> {
-      M model = cellData.getValue();
-      return model;
-    });
-    column.setCellFactory(cellData -> {
-      TableCell<M, M> cell = new TableCell<>();
-      cell.itemProperty().addListener((obs, old, model) -> {
-        if (model != null) {
-          Node node = renderer.render(model.getBean(), model);
-          cell.graphicProperty().bind(Bindings.when(cell.emptyProperty()).then((Node) null).otherwise(node));
+    column.setCellValueFactory(cellData -> cellData.getValue());
+    column.setCellFactory(cellData -> new TableCell<M, M>() {
+      @Override
+      protected void updateItem(M model, boolean empty) {
+        super.updateItem(model, empty);
+        if (empty || model == null) {
+          setGraphic(null);
         }
-      });
-      return cell;
+        else {
+          setGraphic(renderer.render(model.getBean(), model));
+        }
+      }
     });
   }
 

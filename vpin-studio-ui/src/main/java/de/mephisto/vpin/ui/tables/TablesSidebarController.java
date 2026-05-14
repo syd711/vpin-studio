@@ -778,6 +778,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
     boolean mMode = newValue == null || newValue.getType().equals(EmulatorType.PinballM);
     boolean fpMode = newValue == null || newValue.getType().equals(EmulatorType.FuturePinball);
 
+//    titledPaneHighscores.setVisible(vpxMode || fpMode);
     titledPaneHighscores.setVisible(vpxMode);
     titledPanePov.setVisible(vpxMode);
     titledPaneAltSound.setVisible(vpxMode);

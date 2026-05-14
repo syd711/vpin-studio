@@ -1,5 +1,7 @@
 package de.mephisto.vpin.server.highscores.parsing.nvram;
 
+import net.nvrams.mapping.NVRamParser;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -11,4 +13,5 @@ public interface NvRamOutputToRaw {
 
   List<String> getRaw(String rom, File originalNVRamFile, Locale locale) throws IOException;
 
+  NVRamParser getParser();
 }

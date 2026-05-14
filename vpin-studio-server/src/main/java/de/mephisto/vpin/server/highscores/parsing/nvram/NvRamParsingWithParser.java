@@ -52,6 +52,10 @@ public class NvRamParsingWithParser implements NvRamOutputToRaw, ScoreListAdapte
     this.parser = parser;
   }
 
+  public NVRamParser getParser() {
+    return parser;
+  }
+
   @Override
   public String toString() {
     return this.getClass().getSimpleName() + " [" + this.parser.getClass().getSimpleName() + "]";

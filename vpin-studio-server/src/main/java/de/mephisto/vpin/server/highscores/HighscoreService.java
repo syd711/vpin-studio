@@ -476,7 +476,7 @@ public class HighscoreService implements InitializingBean {
 
   @Nullable
   public HighscoreMetadata scanScore(@NonNull Game game, @NonNull EventOrigin eventOrigin) {
-    if (!game.isVpxGame() || !game.isFpGame()) {
+    if (!game.isVpxGame() && !game.isFpGame()) {
       SLOG.info("Game " + game.getGameDisplayName() + " is not a VPX or FP game, highscore parsing cancelled.");
       LOG.info("Game {} is not a VPX or FP game, highscore parsing cancelled.", game.getGameDisplayName());
       return null;
@@ -633,6 +633,7 @@ public class HighscoreService implements InitializingBean {
 
   /**
    * Ensures both score list have the same length.
+   *
    * @param newScores
    * @param oldScores
    */
