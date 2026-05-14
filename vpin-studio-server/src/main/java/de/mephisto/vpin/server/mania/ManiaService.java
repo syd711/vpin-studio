@@ -374,7 +374,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
       maniaClient.getRestClient().setApiKey(registration.getApiKey());
 
       BufferedImage avatar = ResourceLoader.getResource("avatar-default.png");
-      if (avatarEntry != null) {
+      if (avatarEntry != null && avatar != null) {
         avatar = ImageIO.read(new ByteArrayInputStream(avatarEntry.getData()));
       }
 
