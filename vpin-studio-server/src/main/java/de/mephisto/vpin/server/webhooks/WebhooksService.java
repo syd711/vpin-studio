@@ -75,7 +75,7 @@ public class WebhooksService implements InitializingBean, PreferenceChangedListe
     List<WebhookSet> sets = webhookSettings.getSets();
     for (WebhookSet set : sets) {
       LOG.info("Executing webhook set \"{}\" / {}", set, eventType.name());
-      handleWebhookSet(set, set.getPause(), WebhookType.unpause, eventType, gameId);
+      handleWebhookSet(set, set.getUnpause(), WebhookType.unpause, eventType, gameId);
     }
   }
 

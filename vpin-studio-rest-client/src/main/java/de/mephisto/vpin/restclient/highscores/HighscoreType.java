@@ -4,5 +4,6 @@ public enum HighscoreType {
   VPReg,
   EM,
   NVRam,
+  FPRam,
   Ini
 }

@@ -26,7 +26,7 @@ public class NvRamParsingConfiguration implements InitializingBean {
       NvRamParsingWithParser svc = NvRamParsingWithParser.createPinemhiParser(scoringDB);
 
       // register this service as a converter to convert nvFile to Raw
-      NvRamOutputToScoreTextConverter.registerParser(svc);
+      RamOutputToScoreTextConverter.registerParser(svc);
       // register this service as an adapter to parse Raw
       ScoreListFactory.registerScoreListAdapter(svc);
     }
@@ -35,7 +35,7 @@ public class NvRamParsingConfiguration implements InitializingBean {
       NvRamParsingWithParser svc = NvRamParsingWithParser.createNvramMapParser(scoringDB);
 
       // register this service as a converter to convert nvFile to Raw
-      NvRamOutputToScoreTextConverter.registerParser(svc);
+      RamOutputToScoreTextConverter.registerParser(svc);
       // register this service as an adapter to parse Raw
       ScoreListFactory.registerScoreListAdapter(svc);
     }
@@ -44,7 +44,7 @@ public class NvRamParsingConfiguration implements InitializingBean {
       NvRamParsingWithParser svc = NvRamParsingWithParser.createSuperhacParser(scoringDB);
 
       // register this service as a converter to convert nvFile to Raw
-      NvRamOutputToScoreTextConverter.registerParser(svc);
+      RamOutputToScoreTextConverter.registerParser(svc);
       // register this service as an adapter to parse Raw
       ScoreListFactory.registerScoreListAdapter(svc);
     }

@@ -13,7 +13,7 @@ import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
-import de.mephisto.vpin.server.highscores.parsing.nvram.NvRamOutputToScoreTextConverter;
+import de.mephisto.vpin.server.highscores.parsing.nvram.RamOutputToScoreTextConverter;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegFile;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegService;
 import de.mephisto.vpin.server.listeners.EventOrigin;
@@ -84,7 +84,7 @@ public class HighscoreService implements InitializingBean {
   }
 
   public boolean isSupportedRom(String rom) {
-    return NvRamOutputToScoreTextConverter.isSupportedRom(rom);
+    return RamOutputToScoreTextConverter.isSupportedRom(rom);
   }
 
   public HighscoreFiles getHighscoreFiles(@NonNull Game game) {
@@ -476,9 +476,9 @@ public class HighscoreService implements InitializingBean {
 
   @Nullable
   public HighscoreMetadata scanScore(@NonNull Game game, @NonNull EventOrigin eventOrigin) {
-    if (!game.isVpxGame()) {
-      SLOG.info("Game " + game.getGameDisplayName() + " is not a VPX game, highscore parsing cancelled.");
-      LOG.info("Game {} is not a VPX game, highscore parsing cancelled.", game.getGameDisplayName());
+    if (!game.isVpxGame() || !game.isFpGame()) {
+      SLOG.info("Game " + game.getGameDisplayName() + " is not a VPX or FP game, highscore parsing cancelled.");
+      LOG.info("Game {} is not a VPX or FP game, highscore parsing cancelled.", game.getGameDisplayName());
       return null;
     }
     HighscoreMetadata highscoreMetadata = readHighscore(game);
