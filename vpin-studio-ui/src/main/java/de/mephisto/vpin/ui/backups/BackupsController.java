@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.net.URL;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.*;
@@ -515,7 +516,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
     }, this, true);
 
     BaseLoadingColumn.configureColumn(createdAtColumn, (value, model) -> {
-      return new Label(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(value.getCreatedAt()));
+      return new Label(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(value.getCreatedAt().atZone(ZoneId.systemDefault())));
     }, this, true);
 
 
