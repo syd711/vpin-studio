@@ -45,9 +45,15 @@ public class FPCommandLineService implements ApplicationContextAware {
     String altLaunchExe = tableDetails != null ? tableDetails.getAltLaunchExe() : null;
     if (altExe != null) {
       fpExe = new File(emulator.getInstallationFolder(), altExe);
+      if (!fpExe.exists()) {
+        fpExe = new File(new File(emulator.getInstallationFolder(), "BAM"), altExe);
+      }
     }
     else if (!StringUtils.isEmpty(altLaunchExe)) {
       fpExe = new File(emulator.getInstallationFolder(), altLaunchExe);
+      if (!fpExe.exists()) {
+        fpExe = new File(new File(emulator.getInstallationFolder(), "BAM"), altLaunchExe);
+      }
     }
 
     try {

@@ -520,15 +520,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   @FXML
   public void onStop() {
-    Frontend frontend = client.getFrontendService().getFrontendCached();
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, FrontendUtil.replaceNames("Stop all emulators and [Frontend] processes?", frontend, null));
-    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      JFXFuture.supplyAsync(() -> {
-        return client.getFrontendService().terminateFrontend();
-      }).thenAcceptLater((requestResult) -> {
-        LOG.info("Kill frontend request finished.");
-      });
-    }
+    Dialogs.killFrontend();
   }
 
 
@@ -855,9 +847,11 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       List<GameEmulatorRepresentation> vpxEmus = emulatorCombo.getItems().stream().filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
 
       GameEmulatorRepresentation emulatorRepresentation = emulatorCombo.getValue();
-      this.importBtn.setDisable(!emulatorRepresentation.isVpxEmulator() && !emulatorRepresentation.isMameEmulator() && !emulatorRepresentation.isFpEmulator());
-      this.exportBtn.setVisible(emulatorRepresentation.isVpxEmulator());
-      this.exportBtn.setDisable(!emulatorRepresentation.isVpxEmulator());
+      if (emulatorRepresentation != null) {
+        this.importBtn.setDisable(!emulatorRepresentation.isVpxEmulator() && !emulatorRepresentation.isMameEmulator() && !emulatorRepresentation.isFpEmulator());
+        this.exportBtn.setVisible(emulatorRepresentation.isVpxEmulator());
+        this.exportBtn.setDisable(!emulatorRepresentation.isVpxEmulator());
+      }
       this.stopBtn.setDisable(false);
       this.searchTextField.setDisable(false);
       this.reloadBtn.setDisable(false);
@@ -978,7 +972,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       String rom = value.getRom();
 
       if (model == null || model.getGameEmulator() == null) {
-        return new Label();
+        return new Label("...");
       }
 
       if (!model.getGameEmulator().isFxEmulator() && StringUtils.isEmpty(rom)) {

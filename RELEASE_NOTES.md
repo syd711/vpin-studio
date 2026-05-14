@@ -1,3 +1,41 @@
+## Release Notes 4.9.2
+
+- **Future Pinball**
+  - Fixed "Reset Rating" context menu action.
+- **Emulator Management**:
+  - Fixed "No matching games found" error message which does not apply for Zen Studio games (hopefully).
+  - Added progress dialog for saving emulator changes since this can take a while longer if missing pupgame entries are imported.
+- **Pause Menu**
+  - Fixed issue that all screens have been rotated.
+- **Tables Overview**
+  - Fixed "NVOffset Mismatch" validator that is skipped for tables with a zero offset value now.
+  - Possible fix for the issue that for the first loading not all games are loaded (blind fix).
+- **iScored Competitions**
+  - Added play and stop buttons.
+- **Webhooks** 
+  - Added new webhooks for called when the pause menu is shown/hidden.
+- **Table Asset Manager**
+  - The media converters are no filtered depending on the selected asset type anymore. This allows a more flexible handling of custom converters. 
+
+---
+
+
+## Release Notes 4.9.1
+
+### Changes
+
+- **Table Overview**: Fixed game fetch for Zen games which was broken for some users.
+- **Discord Competitions**: 
+  - Fixed issue that if multiple new scores have been created and the score list is still empty, **all** scores are submitted to Discord and not only the first one.
+  - Fixed timing issue during the Discord communication where the first highscore of a competition was overwritten by a second "first" highscore.
+- **Future Pinball**
+  - Added first steps to parse fpRAMs by adjusting the PinEMHi settings (to be continued).
+  - Replaced the "Future Pinball.exe" for the launcher drop-down with the "BAM/FPLauncher.exe".
+- **Media Recorder**: Added additional adjustments for the GL recording command. Note that the GL recordings are still experimental.
+
+---
+
+
 ## Release Notes 4.9.0
 
 ### Changes

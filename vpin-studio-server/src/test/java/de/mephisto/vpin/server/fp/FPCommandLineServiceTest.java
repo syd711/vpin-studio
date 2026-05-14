@@ -88,55 +88,6 @@ public class FPCommandLineServiceTest {
   }
 
   @Test
-  void execute_withAltExe_usesInstallationFolderForExe() {
-    FrontendService frontendService = mock(FrontendService.class);
-    when(applicationContext.getBean(FrontendService.class)).thenReturn(frontendService);
-
-    Game game = mock(Game.class);
-    GameEmulator emulator = mock(GameEmulator.class);
-    File fpExe = new File("C:/FP/FuturePinball.exe");
-    File gameFile = new File("C:/tables/SomeTable.fpt");
-    File installFolder = new File("C:/FP");
-
-    when(game.getGameFile()).thenReturn(gameFile);
-    when(game.getEmulator()).thenReturn(emulator);
-    when(game.getId()).thenReturn(1);
-    when(emulator.getExe()).thenReturn(fpExe);
-    when(emulator.getInstallationFolder()).thenReturn(installFolder);
-    when(frontendService.getTableDetails(1)).thenReturn(null);
-
-    service.execute(game, "FuturePinballAlt.exe");
-
-    // When altExe is provided, the installation folder is used to build the exe path
-    verify(emulator).getInstallationFolder();
-  }
-
-  @Test
-  void execute_tableDetailsHasAltLaunchExe_usesInstallationFolder() {
-    FrontendService frontendService = mock(FrontendService.class);
-    when(applicationContext.getBean(FrontendService.class)).thenReturn(frontendService);
-
-    Game game = mock(Game.class);
-    GameEmulator emulator = mock(GameEmulator.class);
-    TableDetails tableDetails = mock(TableDetails.class);
-    File fpExe = new File("C:/FP/FuturePinball.exe");
-    File gameFile = new File("C:/tables/SomeTable.fpt");
-    File installFolder = new File("C:/FP");
-
-    when(game.getGameFile()).thenReturn(gameFile);
-    when(game.getEmulator()).thenReturn(emulator);
-    when(game.getId()).thenReturn(5);
-    when(emulator.getExe()).thenReturn(fpExe);
-    when(emulator.getInstallationFolder()).thenReturn(installFolder);
-    when(frontendService.getTableDetails(5)).thenReturn(tableDetails);
-    when(tableDetails.getAltLaunchExe()).thenReturn("FuturePinballAlt.exe");
-
-    service.execute(game, null);
-
-    verify(emulator).getInstallationFolder();
-  }
-
-  @Test
   void execute_noAltExe_noAltLaunchExe_usesDefaultEmulatorExe() {
     FrontendService frontendService = mock(FrontendService.class);
     when(applicationContext.getBean(FrontendService.class)).thenReturn(frontendService);

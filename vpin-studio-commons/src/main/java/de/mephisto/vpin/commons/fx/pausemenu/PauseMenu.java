@@ -58,6 +58,7 @@ public class PauseMenu extends Application {
   private boolean alreadyMuted = false;
 
   private final List<FrontendScreenAsset> screenAssets = new ArrayList<>();
+  private final List<PauseMenuStatusChangeListener> listeners = new ArrayList<>();
 
   private static PauseMenu INSTANCE = null;
   private MenuController menuController;
@@ -104,6 +105,10 @@ public class PauseMenu extends Application {
 
   public boolean isVisible() {
     return visible;
+  }
+
+  public void addListener(PauseMenuStatusChangeListener listener) {
+    this.listeners.add(listener);
   }
 
   public void loadPauseMenu() {
@@ -297,6 +302,8 @@ public class PauseMenu extends Application {
           if (pauseMenuSettings.isMuteOnPause() && !alreadyMuted) {
             NirCmd.muteSystem(true);
           }
+
+          listeners.forEach(PauseMenuStatusChangeListener::pauseMenuShow);
           return true;
         }).thenAcceptLater((result) -> {
           long start = System.currentTimeMillis();
@@ -346,6 +353,7 @@ public class PauseMenu extends Application {
         asset.getFrontendScreenController().dispose();
       });
       screenAssets.clear();
+      listeners.forEach(PauseMenuStatusChangeListener::pauseMenuHide);
     });
 
 

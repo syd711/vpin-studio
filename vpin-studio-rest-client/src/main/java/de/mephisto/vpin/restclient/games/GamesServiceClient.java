@@ -479,12 +479,16 @@ public class GamesServiceClient extends VPinStudioClientService {
             }
           }, "LoadingThreadFor_" + emulatorId).start();
         }
-        try {
-          lock.wait();
-        }
-        catch (InterruptedException ie) {
-          LOG.error("The loading of known games for emulator " + emulatorId + " has been interrupted, "
-              + "games may be in an inconsistant state, consider reloading the games", ie);
+        while (!allGames.containsKey(emulatorId)) {
+          try {
+            lock.wait();
+          }
+          catch (InterruptedException ie) {
+            LOG.error("The loading of known games for emulator " + emulatorId + " has been interrupted, "
+                + "games may be in an inconsistant state, consider reloading the games", ie);
+            Thread.currentThread().interrupt();
+            break;
+          }
         }
       }
     }

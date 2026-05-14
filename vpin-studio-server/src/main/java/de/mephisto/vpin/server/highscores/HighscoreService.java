@@ -90,6 +90,9 @@ public class HighscoreService implements InitializingBean {
 
   public HighscoreFiles getHighscoreFiles(@NonNull Game game) {
     HighscoreFiles highscoreFiles = new HighscoreFiles();
+    if (!game.isVpxGame()) {
+      return highscoreFiles;
+    }
 
         VPRegFile vpRegFile = vpRegService.getVPRegFile(game);
         if (vpRegFile != null && vpRegFile.isValid()) {
@@ -566,7 +569,7 @@ public class HighscoreService implements InitializingBean {
         long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
         List<Score> newScores = highscoreParser.parseScores(newHighscore.getLastModified(), newHighscore.getRaw(), game, serverId);
         List<Score> oldScores = getOrCloneOldHighscores(oldHighscore, game, oldRaw, serverId, newScores);
-        List<HighscoreChangeEvent> highscoreChangeEvents = new ArrayList<>();
+        fillScores(game.getId(), newScores, oldScores);List<HighscoreChangeEvent> highscoreChangeEvents = new ArrayList<>();
         if (!oldScores.isEmpty()) {
             List<Integer> changedPositions = calculateChangedPositions(game.getGameDisplayName(), oldScores, newScores);
             if (changedPositions.isEmpty()) {
@@ -578,7 +581,11 @@ public class HighscoreService implements InitializingBean {
                 SLOG.info("Calculated changed positions for '" + game.getRom() + "': " + changedPositions.stream().map(String::valueOf).collect(Collectors.joining(", ")));
                 if (!changedPositions.isEmpty()) {
                     for (Integer changedPosition : changedPositions) {
-                        //so we have a highscore update, let's decide the distribution
+                        //so we have a highscore update, let's decide the distributionif (changedPosition - 1 >= oldScores.size() || changedPosition - 1 >= newScores.size()) {
+              //this should never happen anymore because of the fillScores
+              LOG.info("Skipping highscore event for position {} — out of bounds (oldScores={}, newScores={})", changedPosition, oldScores.size(), newScores.size());
+              continue;
+            }
                         Score oldScore = oldScores.get(changedPosition - 1);
                         Score newScore = newScores.get(changedPosition - 1);
 
@@ -623,6 +630,20 @@ public class HighscoreService implements InitializingBean {
     }
 
     /**
+   * Ensures both score list have the same length.
+   * @param newScores
+   * @param oldScores
+   */
+  private void fillScores(int gameId, List<Score> newScores, List<Score> oldScores) {
+    while (newScores.size() < oldScores.size()) {
+      newScores.add(new Score(new Date(), gameId, "???", null, null, 0, newScores.size() + 1));
+    }
+    while (oldScores.size() < newScores.size()) {
+      oldScores.add(new Score(new Date(), gameId, "???", null, null, 0, oldScores.size() + 1));
+    }
+  }
+
+  /**
      * The old highscore may be empty if a competitions did reset them.
      */
     @NonNull
@@ -673,7 +694,9 @@ public class HighscoreService implements InitializingBean {
                 boolean notFound = oldScores.stream().noneMatch(score -> score.matches(newScore));
                 if (notFound) {
                     changes.add(newScore.getPosition());
-                    LOG.info("{}: Calculated changed score [{}] has beaten [{}]", gameDisplayName, newScore, oldScores.get(newScore.getPosition() - 1));
+                    int oldIdx = newScore.getPosition() - 1;
+          String beaten = oldIdx < oldScores.size() ? oldScores.get(oldIdx).toString() : "<no previous entry>";
+          LOG.info("{}: Calculated changed score [{}] has beaten [{}]", gameDisplayName, newScore, beaten);
                 }
             }
         }

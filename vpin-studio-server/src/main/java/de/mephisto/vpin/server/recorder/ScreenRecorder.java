@@ -125,6 +125,7 @@ public class ScreenRecorder {
     command = command.replace("[duration]", String.valueOf(duration));
     command = command.replace("[width]", String.valueOf(width));
     command = command.replace("[height]", String.valueOf(height));
+    command = command.replace("[adapter_idx]", "0");
     return command;
   }
 
@@ -152,6 +153,7 @@ public class ScreenRecorder {
     command = command.replace("[duration]", String.valueOf(duration));
     command = command.replace("[width]", String.valueOf(width));
     command = command.replace("[height]", String.valueOf(height));
+    command = command.replace("[adapter_idx]", "0");
     return command;
   }
 

@@ -223,7 +223,7 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
             return;
         }
 
-        JFXFuture.runAsync(() -> {
+
             FrontendType frontendType = client.getFrontendService().getFrontendType();
 
             GameEmulatorRepresentation emu = emulator.get();
@@ -244,26 +244,25 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
                 emu.setExeParameters(customField1.getText());
             }
 
-      if (startScriptController != null) {
-        startScriptController.applyValues();
-      }
-      if (exitScriptController != null) {
-        exitScriptController.applyValues();
-      }
+    if (startScriptController != null) {
+      startScriptController.applyValues();
+    }
+    if (exitScriptController != null) {
+      exitScriptController.applyValues();
+    }
 
-      if (vrStartScriptController != null) {
-        vrStartScriptController.applyValues();
+    if (vrStartScriptController != null) {
+      vrStartScriptController.applyValues();
 
-        if (emu.isVpxEmulator() && vrStartScriptController.getScript().isPresent()) {
-          client.getVRService().saveVrEmulatorLaunchScript(emu.getId(), vrStartScriptController.getScript().get());
-        }
+      if (emu.isVpxEmulator() && vrStartScriptController.getScript().isPresent()) {
+        client.getVRService().saveVrEmulatorLaunchScript(emu.getId(), vrStartScriptController.getScript().get());
       }
+    }
 
-      client.getEmulatorService().saveGameEmulator(emu);
-    }).thenLater(() -> {
-      onReload();
-      saveBtn.setDisable(false);
-    });
+    ProgressDialog.createProgressDialog(new EmulatorSaveProgressModel(emu, this));
+
+    onReload();
+    saveBtn.setDisable(false);
   }
 
     @FXML
@@ -321,8 +320,8 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
   @FXML
   public void onReload() {
     JFXFuture
-      .runAsync(() -> client.getEmulatorService().clearCache())
-      .thenLater(() -> tableController.reload());
+        .runAsync(() -> client.getEmulatorService().clearCache())
+        .thenLater(() -> tableController.reload());
   }
 
     public void setSelection(Optional<GameEmulatorRepresentation> model) {

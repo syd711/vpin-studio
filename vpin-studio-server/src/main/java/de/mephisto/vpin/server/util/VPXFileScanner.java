@@ -510,7 +510,10 @@ public class VPXFileScanner {
       String nvOffsetString = null;
       try {
         nvOffsetString = line.substring(line.indexOf("(") + 1, line.indexOf(")"));
-        result.setNvOffset(Integer.parseInt(nvOffsetString));
+        int i = Integer.parseInt(nvOffsetString);
+        if (i >= 0) {
+          result.setNvOffset(i);
+        }
       }
       catch (Exception e) {
         LOG.error("Failed to read NVOffset from line \"{}\" and segment \"{}\": {}", line, nvOffsetString, e.getMessage());

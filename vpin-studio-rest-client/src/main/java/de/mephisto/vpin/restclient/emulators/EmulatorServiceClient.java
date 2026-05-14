@@ -89,7 +89,7 @@ public class EmulatorServiceClient extends VPinStudioClientService {
     Collections.sort(filtered, new Comparator<GameEmulatorRepresentation>() {
       @Override
       public int compare(GameEmulatorRepresentation o1, GameEmulatorRepresentation o2) {
-        if(o1.isVpxEmulator()) {
+        if (o1.isVpxEmulator()) {
           return -1;
         }
         return 1;
@@ -109,7 +109,7 @@ public class EmulatorServiceClient extends VPinStudioClientService {
     Collections.sort(filtered, new Comparator<GameEmulatorRepresentation>() {
       @Override
       public int compare(GameEmulatorRepresentation o1, GameEmulatorRepresentation o2) {
-        if(o1.isVpxEmulator()) {
+        if (o1.isVpxEmulator()) {
           return -1;
         }
         return 1;
@@ -165,6 +165,10 @@ public class EmulatorServiceClient extends VPinStudioClientService {
   public boolean isFpGame(GameRepresentation game) {
     GameEmulatorRepresentation gameEmulator = getGameEmulator(game.getEmulatorId());
     return gameEmulator != null && gameEmulator.isFpEmulator();
+  }
+
+  public boolean isVpxOrFpGame(GameRepresentation game) {
+    return isVpxGame(game) || isFpGame(game);
   }
 
   public boolean isZenGame(GameRepresentation game) {

@@ -60,6 +60,16 @@ public class WebhookConfigPanelController implements Initializable {
       case player:
         titleLabel.setText("Players Webhook");
         break;
+      case pause:
+        titleLabel.setText("Game Pause");
+        deleteCheckbox.setVisible(false);
+        createCheckbox.setVisible(false);
+        break;
+      case unpause:
+        titleLabel.setText("Game Unpause");
+        deleteCheckbox.setVisible(false);
+        createCheckbox.setVisible(false);
+        break;
     }
   }
 

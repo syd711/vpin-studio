@@ -31,13 +31,14 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.invoke.MethodHandles;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class OfflineCompetitionChangeListenerImpl extends DefaultCompetitionChangeListener implements InitializingBean {
-  private final static Logger LOG = LoggerFactory.getLogger(OfflineCompetitionChangeListenerImpl.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @Autowired
   private CompetitionService competitionService;

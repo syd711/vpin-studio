@@ -117,6 +117,7 @@ public class SystemUtil {
           String path = folder.getAbsolutePath();
 
           String remotePath = resolveNetworkPath(publicUrl, path);
+          LOG.info("Resolved network path '{}', use publicUrl '{}' and path '{}'", remotePath, publicUrl, path);
           if (remotePath != null) {
             openFolderWithOS(remotePath);
           }

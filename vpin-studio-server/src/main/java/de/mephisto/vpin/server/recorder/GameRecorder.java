@@ -199,6 +199,11 @@ public class GameRecorder {
   private void finalizeGameRecorder(@NonNull RecordingResult result) {
     VPinScreen screen = result.getScreen();
     File recordingTempFile = result.getRecordingTempFile();
+    if (!recordingTempFile.exists()) {
+      LOG.info("GameRecorder finalization cancelled, recording temp file does not exist.");
+      return;
+    }
+
     RecordingWriteMode recordingWriteMode = result.getRecordingScreenOptions().getRecordMode();
 
     LOG.info("Finalizing temporary recording file {} for screen {}", recordingTempFile.getAbsolutePath(), screen.name());

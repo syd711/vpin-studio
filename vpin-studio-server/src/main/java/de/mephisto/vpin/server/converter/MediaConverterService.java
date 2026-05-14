@@ -50,7 +50,7 @@ public class MediaConverterService implements InitializingBean {
     LOG.info("Executing video conversion for {} / {} ", operation.getFilename(), operation.getCommand());
     try {
       List<File> mediaItemFiles = getMediaItemFiles(result, operation);
-      List<File> filteredFiles = filterMediaFiles(mediaItemFiles, operation.getCommand().getType());
+      List<File> filteredFiles = mediaItemFiles; //filterMediaFiles(mediaItemFiles, operation.getCommand().getType());
 
       for (File mediaItemFile : filteredFiles) {
         convert(operation.getCommand(), result, mediaItemFile);
@@ -219,14 +219,14 @@ public class MediaConverterService implements InitializingBean {
     SystemCommandExecutor executor = new SystemCommandExecutor(commandList, false);
 
     executor = new SystemCommandExecutor(commandList);
-//      executor.enableLogging(true);
+    executor.enableLogging(true);
     executor.setDir(resources);
     executor.executeCommand();
 
-    //StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
-    //LOG.info("Conversion failed: {}", standardErrorFromCommand);
-    //StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
-    //LOG.info("Video conversion output: {}", standardOutputFromCommand);
+    StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
+    LOG.info("Conversion failed: {}", standardErrorFromCommand);
+    StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
+    LOG.info("Video conversion output: {}", standardOutputFromCommand);
   }
 
   private void convertWithImageUtils(MediaOperationResult result, ImageOp command, File mediaFile) {

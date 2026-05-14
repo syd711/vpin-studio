@@ -63,6 +63,22 @@ public class WebhooksService implements InitializingBean, PreferenceChangedListe
     }
   }
 
+  public void notifyGamePauseHooks(int gameId, @NonNull WebhookEventType eventType) {
+    List<WebhookSet> sets = webhookSettings.getSets();
+    for (WebhookSet set : sets) {
+      LOG.info("Executing webhook set \"{}\" / {}", set, eventType.name());
+      handleWebhookSet(set, set.getPause(), WebhookType.pause, eventType, gameId);
+    }
+  }
+
+  public void notifyGameUnPauseHooks(int gameId, @NonNull WebhookEventType eventType) {
+    List<WebhookSet> sets = webhookSettings.getSets();
+    for (WebhookSet set : sets) {
+      LOG.info("Executing webhook set \"{}\" / {}", set, eventType.name());
+      handleWebhookSet(set, set.getPause(), WebhookType.unpause, eventType, gameId);
+    }
+  }
+
   private void handleWebhookSet(@NonNull WebhookSet webhookSet, @NonNull Webhook webhook, @NonNull WebhookType webhookType, @NonNull WebhookEventType eventType, long entityId) {
     if (!NetworkUtil.isValidUrl(webhook.getEndpoint())) {
       LOG.info("{} / {} not fired, no valid endpoint set.", webhookSet.getName(), eventType.name());
