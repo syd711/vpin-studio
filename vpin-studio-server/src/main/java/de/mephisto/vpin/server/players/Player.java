@@ -8,8 +8,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.id.IncrementGenerator;
+import jakarta.persistence.GenerationType;
 import java.time.Instant;
 import java.util.Objects;
 
@@ -28,8 +27,7 @@ public class Player {
   private Instant updatedAt;
 
   @Id
-  @GenericGenerator(name = "player_gen", type = IncrementGenerator.class)
-  @GeneratedValue(generator = "player_gen")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @OneToOne(cascade = CascadeType.MERGE, optional = true)

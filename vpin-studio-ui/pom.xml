@@ -17,7 +17,9 @@
     <properties>
         <junit.version>6.0.3</junit.version>
         <ikonli.version>12.4.0</ikonli.version>
-         <zulu.jre.bundle>zulu25.32.21-ca-fx-jre25.0.2-macosx_aarch64.tar.gz</zulu.jre.bundle>
+        <zulu.jre.bundle>zulu25.32.21-ca-fx-jre25.0.2-macosx_aarch64.tar.gz</zulu.jre.bundle>
+        <!-- Added Linux JRE for workflow -->
+        <zulu.jre.bundle.linux>zulu25.32.21-ca-fx-jre25.0.2-linux_x64.tar.gz</zulu.jre.bundle.linux>
         <skipMacOSBuild>true</skipMacOSBuild>
         <macOSBuild>false</macOSBuild>
     </properties>

@@ -6,8 +6,7 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.id.IncrementGenerator;
+import jakarta.persistence.GenerationType;
 import java.time.Instant;
 import java.util.Objects;
 
@@ -24,8 +23,8 @@ public class Highscore {
   private Instant lastScanned;
 
   @Id
-  @GenericGenerator(name = "highscore_gen", type = IncrementGenerator.class)
-  @GeneratedValue(generator = "highscore_gen")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+
   private Long id;
 
   private int gameId;

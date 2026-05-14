@@ -200,9 +200,11 @@ public class WidgetWeeklyCompetitionScoreItemController extends WidgetController
   private static BufferedImage getFlagBackground(CompetitionScore score) throws Exception {
     URL url = URI.create(score.getFlagUrl()).toURL();
     String flagFileName = FilenameUtils.getName(url.getFile());
-    File flagsFolder = new File(RESOURCES, "flags/");
+    //Add basePath to make sure it writes to correct folder for Mac
+    File basePath = Updater.getWriteableBaseFolder();
+    File flagsFolder = new File(basePath + RESOURCES, "flags/");
     if (!flagsFolder.exists() && !flagsFolder.mkdirs()) {
-      LOG.error("Failed to create flags folder");
+      LOG.error("Failed to create flags folder at {}",basePath + RESOURCES + "flags/");
       return null;
     }
     File flagFile = new File(flagsFolder, flagFileName);
