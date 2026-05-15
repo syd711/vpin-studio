@@ -186,7 +186,7 @@ public class VPinStudioClient {
     return restClient.getHost();
   }
 
-  //May need Json Property or renaming of get method
+
   public IScoredServiceClient getiScoredService() {
     return iScoredServiceClient;
   }

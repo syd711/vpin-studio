@@ -24,6 +24,7 @@ public class PlayerRepresentation {
 
   private String name;
 
+  @JsonProperty("iScoredName")
   private String iScoredName;
 
   private String domain;
@@ -46,7 +47,6 @@ public class PlayerRepresentation {
     return account;
   }
 
-  @JsonProperty("iScoredName")
   public String getiScoredName() {
     return iScoredName;
   }
