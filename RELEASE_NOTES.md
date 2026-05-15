@@ -1,3 +1,12 @@
+## Release Notes 4.9.3
+
+- **iScored**
+  - Improved error handling so that not all competitions are recreated when the corresponding game room is temporary not available.
+- **Table Asset Manager**
+  - Added screen assignment option when PinUP Popper is used and Loading screen assets are uploaded (e.g. via file upload and not via media server downloads).
+
+---
+
 ## Release Notes 4.9.2
 
 - **Future Pinball**

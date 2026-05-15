@@ -32,6 +32,7 @@ public enum VPinScreen {
   }
 
   public static VPinScreen valueOfScreen(String name) {
+    name = name.replaceAll("\"", "");
     if (Other2.name().equalsIgnoreCase(name)) {
       return Other2;
     }
