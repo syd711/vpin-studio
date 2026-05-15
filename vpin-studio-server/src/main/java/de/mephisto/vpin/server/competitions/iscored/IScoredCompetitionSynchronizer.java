@@ -139,11 +139,10 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
         continue;
       }
 
-      //delete if the game room could not be loaded
+      //skip validation if the game room could not be loaded (transient network failure, API error)
       GameRoom gameRoom = IScored.getGameRoom(iScoredSubscription.getUrl(), false);
       if (gameRoom == null) {
-        deleteSubscription(iScoredSubscriptions, iScoredSubscription);
-        LOG.info("Deleted competition {} because no matching iScored Game Room found for URL {}", iScoredSubscription, iScoredSubscription.getUrl());
+        LOG.warn("Skipped validation of competition '{}' because iScored Game Room could not be loaded for URL {} — keeping existing subscription", iScoredSubscription.getName(), iScoredSubscription.getUrl());
         continue;
       }
 
