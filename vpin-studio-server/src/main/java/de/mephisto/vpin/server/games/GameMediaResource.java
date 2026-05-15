@@ -123,20 +123,28 @@ public class GameMediaResource {
       }
 
       //the loading screen is the default, so we are only interested in other screen assignments
-      if (VPinScreen.Loading.equals(screen) && !VPinScreen.Loading.equals(loadingScreenId)) {
-        String name = target.getName();
-        String baseName = FilenameUtils.getBaseName(name);
-        baseName = FileUtils.baseUniqueFile(baseName);
-        String suffix = FilenameUtils.getExtension(name);
-        String updatedTargetName = baseName + "(SCREEN" + loadingScreenId.getCode() + ")." + suffix;
-        return target.renameTo(new File(target.getParentFile(), updatedTargetName));
-      }
-
+      runScreenRenamingCheck(screen, loadingScreenId, target);
       return true;
     }
     finally {
       gameLifecycleService.notifyGameAssetsChanged(gameId, AssetType.FRONTEND_MEDIA, null);
     }
+  }
+
+  private static File runScreenRenamingCheck(VPinScreen screen, VPinScreen loadingScreenId, File target) {
+    if (loadingScreenId != null && VPinScreen.Loading.equals(screen) && !VPinScreen.Loading.equals(loadingScreenId)) {
+      String name = target.getName();
+      String baseName = FilenameUtils.getBaseName(name);
+      baseName = FileUtils.baseUniqueFile(baseName);
+      String suffix = FilenameUtils.getExtension(name);
+      String updatedTargetName = baseName + "(SCREEN" + loadingScreenId.getCode() + ")." + suffix;
+
+      File newTarget = new File(target.getParentFile(), updatedTargetName);
+      target.renameTo(newTarget);
+      return newTarget;
+    }
+
+    return null;
   }
 
   @GetMapping("/assets/{assetSourceId}/test")
@@ -396,6 +404,7 @@ public class GameMediaResource {
   public JobDescriptor upload(@PathVariable("screen") VPinScreen screen,
                               @PathVariable("append") boolean append,
                               @RequestParam(value = "file", required = false) MultipartFile file,
+                              @RequestParam(value = "loadingScreenId", required = false) String vPinScreen,
                               @RequestParam("objectId") Integer gameId) {
     try {
       if (file == null) {
@@ -412,6 +421,12 @@ public class GameMediaResource {
 
       LOG.info("Uploading {}", out.getAbsolutePath());
       UploadUtil.upload(file, out);
+
+      if (vPinScreen != null) {
+        VPinScreen loadingScreen = VPinScreen.valueOfScreen(vPinScreen);
+        out = runScreenRenamingCheck(screen, loadingScreen, out);
+      }
+
       gameLifecycleService.notifyGameScreenAssetsChanged(gameId, screen, out);
       return JobDescriptorFactory.empty();
     }

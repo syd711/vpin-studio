@@ -26,8 +26,7 @@ import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /*********************************************************************************************************************
  * Game Media
@@ -125,10 +124,12 @@ public class GameMediaServiceClient extends VPinStudioClientService {
 
   //-------------------------
 
-  public JobDescriptor uploadMedia(File file, int objectId, boolean playlistMode, VPinScreen screen, boolean append, FileUploadProgressListener listener) throws Exception {
+  public JobDescriptor uploadMedia(File file, int objectId, boolean playlistMode, VPinScreen screen, boolean append, VPinScreen loadingScreenId, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + getSegment(playlistMode) + "/upload/" + screen.name() + "/" + append;
       HttpEntity<MultiValueMap<String, Object>> upload = createUpload(file, objectId, null, AssetType.FRONTEND_MEDIA, listener);
+      Map<String, List<Object>> data = upload.getBody();
+      data.put("loadingScreenId", Collections.singletonList(loadingScreenId));
       ResponseEntity<JobDescriptor> exchange = new RestTemplate().exchange(url, HttpMethod.POST, upload, JobDescriptor.class);
       finalizeUpload(upload);
       return exchange.getBody();
