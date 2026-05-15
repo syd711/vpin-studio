@@ -10,6 +10,10 @@
   - Fixed the registration for users that already had registered a cabinet, but re-installed VPin Studio. The registration dialog will offer your existing VPin Mania cabinets now so that you can link it again.
 - **ALT Color**
   - Fixed ALT color validation and uploads for aliased tables.
+- **PinVol**
+  - Fixed issue that even if the external installation path was set, the .ini files from the resources folder were used.
+- **VPS Updates**
+  - Fixed issue that e.g. tutorial updates have not been properly ignored.
 
 ---
 
