@@ -3,9 +3,9 @@ package de.mephisto.vpin.server.competitions;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.validation.ValidationState;
+import de.mephisto.vpin.server.util.IncrementGenerated;
 import jakarta.persistence.*;
 import org.apache.commons.lang3.StringUtils;
-import jakarta.persistence.GenerationType;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -29,7 +29,7 @@ public class Competition {
   private Instant updatedAt;
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @IncrementGenerated
   private Long id;
 
   @Column(name = "highscoreReset", nullable = false, columnDefinition = "boolean default true")

@@ -1,10 +1,10 @@
 package de.mephisto.vpin.server.vpsdb;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import de.mephisto.vpin.server.util.IncrementGenerated;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.*;
-import jakarta.persistence.GenerationType;
 import java.util.Objects;
 
 @Entity
@@ -14,7 +14,7 @@ import java.util.Objects;
 public class VpsDbEntry {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @IncrementGenerated
   @Column(name = "id", nullable = false)
   private Long id;
 

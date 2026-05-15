@@ -2,10 +2,10 @@ package de.mephisto.vpin.server.preferences;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.mephisto.vpin.server.assets.Asset;
+import de.mephisto.vpin.server.util.IncrementGenerated;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.*;
-import jakarta.persistence.GenerationType;
 
 @Entity
 @Table(name = "Preferences")
@@ -14,8 +14,8 @@ import jakarta.persistence.GenerationType;
 public class Preferences {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "id", nullable = false)
+  @IncrementGenerated
+  @Column(name = "id")
   private Long id;
 
   @OneToOne(cascade = CascadeType.ALL)

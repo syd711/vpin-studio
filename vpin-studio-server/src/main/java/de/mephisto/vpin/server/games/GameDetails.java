@@ -3,13 +3,13 @@ package de.mephisto.vpin.server.games;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import de.mephisto.vpin.restclient.dmd.DMDPackageTypes;
+import de.mephisto.vpin.server.util.IncrementGenerated;
 import org.jspecify.annotations.Nullable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.*;
-import jakarta.persistence.GenerationType;
 import java.time.Instant;
 
 @Entity
@@ -18,7 +18,7 @@ import java.time.Instant;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GameDetails {
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @IncrementGenerated
   @Column(name = "id", nullable = false, unique = true)
   private Long id;
 
