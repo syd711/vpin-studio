@@ -190,8 +190,9 @@ public class AltColorService implements InitializingBean {
       installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.CROMC, name + "." + UploaderAnalysis.CROMC_SUFFIX);
     }
     else {
-      installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.CRZ, game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX);
-      installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.CROMC, game.getRom() + "." + UploaderAnalysis.CROMC_SUFFIX);
+      String romName = !StringUtils.isEmpty(game.getRomAlias()) ? game.getRomAlias() : game.getRom();
+      installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.CRZ, romName + "." + UploaderAnalysis.SERUM_SUFFIX);
+      installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.CROMC, romName + "." + UploaderAnalysis.CROMC_SUFFIX);
     }
 
     setAltColorEnabled(game, true);
@@ -230,8 +231,9 @@ public class AltColorService implements InitializingBean {
           installAltColorFromFile(name, folder, out, altColorName + "." + UploaderAnalysis.CROMC_SUFFIX);
         }
         else {
-          installAltColorFromFile(name, folder, out, game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX);
-          installAltColorFromFile(name, folder, out, game.getRom() + "." + UploaderAnalysis.CROMC_SUFFIX);
+          String romName = !StringUtils.isEmpty(game.getRomAlias()) ? game.getRomAlias() : game.getRom();
+          installAltColorFromFile(name, folder, out, romName + "." + UploaderAnalysis.SERUM_SUFFIX);
+          installAltColorFromFile(name, folder, out, romName + "." + UploaderAnalysis.CROMC_SUFFIX);
         }
       }
       catch (IOException e) {
