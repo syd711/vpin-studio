@@ -1,17 +1,22 @@
 package de.mephisto.vpin.ui.mania.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.connectors.mania.model.Cabinet;
+import de.mephisto.vpin.connectors.mania.model.User;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.mania.ManiaRegistration;
 import de.mephisto.vpin.restclient.mania.ManiaSettings;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
+import de.mephisto.vpin.restclient.util.DateUtil;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -22,9 +27,12 @@ import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.Studio.maniaClient;
 
 public class ManiaRegistrationDialogController implements DialogController, Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(ManiaRegistrationDialogController.class);
@@ -39,7 +47,7 @@ public class ManiaRegistrationDialogController implements DialogController, Init
   private VBox playersRoot;
 
   @FXML
-  private VBox dataBox;
+  private VBox cabinetsBox;
 
   @FXML
   private CheckBox registrationCheckbox;
@@ -54,11 +62,12 @@ public class ManiaRegistrationDialogController implements DialogController, Init
   private CheckBox synchronizeRatingsCheckbox;
 
   @FXML
-  private TextField apiKeyText;
+  private ComboBox<CabinetModel> cabinets;
 
   private final List<CheckBox> playerCheckboxes = new ArrayList<>();
 
   private ManiaRegistration maniaRegistration;
+  private String apiKey;
 
   @Override
   public void onDialogCancel() {
@@ -77,7 +86,12 @@ public class ManiaRegistrationDialogController implements DialogController, Init
     maniaRegistration.setSubmitRatings(synchronizeRatingsCheckbox.isSelected());
     maniaRegistration.setSubmitPlayCount(synchronizeRatingsCheckbox.isSelected());
     maniaRegistration.setSubmitTables(synchronizeTablesCheckbox.isSelected());
-    maniaRegistration.setApiKey(apiKeyText.getText());
+    maniaRegistration.setApiKey(this.apiKey);
+
+    if (this.cabinets.getValue() != null) {
+      maniaRegistration.setCabinetUuid(this.cabinets.getValue().getUuid());
+    }
+
 
     for (CheckBox playerCheckbox : playerCheckboxes) {
       if (playerCheckbox.isSelected()) {
@@ -94,7 +108,7 @@ public class ManiaRegistrationDialogController implements DialogController, Init
   public void initialize(URL location, ResourceBundle resources) {
     playerList.managedProperty().bindBidirectional(playerList.visibleProperty());
     playersRoot.managedProperty().bindBidirectional(playersRoot.visibleProperty());
-    apiKeyText.setDisable(true);
+    cabinetsBox.managedProperty().bindBidirectional(cabinetsBox.visibleProperty());
 
     synchronizeRatingsCheckbox.setDisable(true);
     synchronizeRatingsCheckbox.setSelected(true);
@@ -109,7 +123,7 @@ public class ManiaRegistrationDialogController implements DialogController, Init
         synchronizeRatingsCheckbox.setDisable(!newValue);
         synchronizePlayCountCheckbox.setDisable(!newValue);
         synchronizeTablesCheckbox.setDisable(!newValue);
-        apiKeyText.setDisable(!newValue);
+        okButton.setDisable(!newValue);
 
         for (CheckBox playerCheckbox : playerCheckboxes) {
           playerCheckbox.setDisable(!newValue);
@@ -132,20 +146,35 @@ public class ManiaRegistrationDialogController implements DialogController, Init
     }
 
     okButton.setDisable(true);
-    apiKeyText.textProperty().addListener(new ChangeListener<String>() {
-      @Override
-      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-        okButton.setDisable(StringUtils.isEmpty(newValue));
-      }
-    });
+  }
 
-    ManiaSettings maniaSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
-    apiKeyText.setText(maniaSettings.getApiKey());
+  public void setApiKey(String apiKey) {
+    this.apiKey = apiKey;
 
-
+    User currentUser = maniaClient.getUserClient().getCurrentUser();
+    List<Cabinet> cabinetsByUserUuid = maniaClient.getCabinetClient().getCabinetsByUserUuid(currentUser.getUuid());
+    cabinetsBox.setVisible(!cabinetsByUserUuid.isEmpty());
+    cabinets.setItems(FXCollections.observableList(cabinetsByUserUuid.stream().map(c -> new CabinetModel(c)).collect(Collectors.toList())));
   }
 
   public ManiaRegistration getManiaRegistration() {
     return maniaRegistration;
+  }
+
+  class CabinetModel {
+    private final Cabinet cabinet;
+
+    CabinetModel(Cabinet cabinet) {
+      this.cabinet = cabinet;
+    }
+
+    @Override
+    public String toString() {
+      return cabinet.getDisplayName() + " (registered " + DateUtil.formatDateTime(cabinet.getCreationDate()) + ")";
+    }
+
+    public String getUuid() {
+      return cabinet.getUuid();
+    }
   }
 }

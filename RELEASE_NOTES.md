@@ -4,6 +4,10 @@
   - Improved error handling so that not all competitions are recreated when the corresponding game room is temporary not available.
 - **Table Asset Manager**
   - Added screen assignment option when PinUP Popper is used and Loading screen assets are uploaded (e.g. via file upload and not via media server downloads).
+- **Music Files**:
+  - Improved detection of the game music with a more thorough check of different possible installed directories.
+- **VPin Mania**
+  - Fixed the registration for users that already had registered a cabinet, but re-installed VPin Studio. The registration dialog will offer your existing VPin Mania cabinets now so that you can link it again. 
 
 ---
 

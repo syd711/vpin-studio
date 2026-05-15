@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
+import de.mephisto.vpin.connectors.mania.model.User;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.mania.ManiaRegistration;
 import de.mephisto.vpin.restclient.mania.ManiaSettings;
@@ -50,14 +51,20 @@ public class ManiaHelper {
   }
 
   public static boolean register() {
-    ManiaRegistration registration = ManiaDialogs.openRegistrationDialog();
+    String apiKey = getApiKey();
+
+    if (apiKey == null) {
+      return false;
+    }
+
+    ManiaRegistration registration = ManiaDialogs.openRegistrationDialog(apiKey);
     if (registration != null) {
       try {
         //this is the server side registration where the API key is set server side, not here yet....
         ManiaRegistration completedRegistration = client.getManiaService().register(registration);
         if (!StringUtils.isEmpty(completedRegistration.getResult())) {
           String result = completedRegistration.getResult();
-          if(result != null && result.contains("Token not found")) {
+          if (result != null && result.contains("Token not found")) {
             WidgetFactory.showAlert(Studio.stage, "Registration Failed", "The API key is invalid.");
           }
           else {
@@ -96,6 +103,24 @@ public class ManiaHelper {
     return false;
   }
 
+  private static String getApiKey() {
+    User currentUser = null;
+    try {
+      currentUser = Studio.maniaClient.getUserClient().getCurrentUser();
+      return currentUser.getApiKey();
+    }
+    catch (Exception e) {
+      LOG.info("Client authentication check for mania failed, requesting API key.");
+    }
+
+    String s = WidgetFactory.showInputDialog(Studio.stage, "API Key", "Enter you VPin-Mania API key here", "The API key is required for the registration. You need to register on https://app.vpin-mania.net.", null, null);
+    if (s != null) {
+      maniaClient.getRestClient().setApiKey(s);
+      return getApiKey();
+    }
+    return null;
+  }
+
   public static boolean deregister() {
     ConfirmationResult confirmationResult = WidgetFactory.showAlertOptionWithMandatoryCheckbox(Studio.stage, "Delete Cabinet Data", "Cancel", "Delete", "Delete this cabinet from your VPin-Mania account?",
         "This will delete the cabinet and all data linked to it from the VPin Mania services.", "I understand, delete my account.");
@@ -125,6 +150,8 @@ public class ManiaHelper {
 
       client.getPreferenceService().clearCache(PreferenceNames.MANIA_SETTINGS);
       client.getPreferenceService().notifyPreferenceChange(PreferenceNames.MANIA_SETTINGS, null);
+
+      maniaClient.getRestClient().setApiKey(null);
       return true;
     }
     return false;
