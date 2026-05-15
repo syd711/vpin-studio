@@ -124,6 +124,9 @@ public class IScored {
   }
 
   private static List<Score> getScoresFor(int id, GameScoreModel[] allScores) {
+    if (allScores == null) {
+      return Collections.emptyList();
+    }
     for (GameScoreModel allScore : allScores) {
       if (allScore.getGameID() == id) {
         if (allScore.getScores() != null) {
