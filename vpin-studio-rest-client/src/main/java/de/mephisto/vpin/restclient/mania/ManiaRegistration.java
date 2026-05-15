@@ -8,9 +8,18 @@ public class ManiaRegistration {
   private boolean submitRatings = false;
   private boolean submitPlayCount = false;
   private boolean submitTables = false;
+  private String cabinetUuid = null;
   private String apiKey;
 
   private String result;
+
+  public String getCabinetUuid() {
+    return cabinetUuid;
+  }
+
+  public void setCabinetUuid(String cabinetUuid) {
+    this.cabinetUuid = cabinetUuid;
+  }
 
   public String getApiKey() {
     return apiKey;
