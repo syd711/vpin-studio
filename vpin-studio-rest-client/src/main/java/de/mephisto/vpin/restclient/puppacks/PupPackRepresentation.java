@@ -3,14 +3,14 @@ package de.mephisto.vpin.restclient.puppacks;
 import de.mephisto.vpin.restclient.frontend.ScreenMode;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PupPackRepresentation {
   private long size;
   private String name;
-  private OffsetDateTime modificationDate;
+  private Instant modificationDate;
   private boolean enabled;
   private List<String> options = new ArrayList<>();
   private List<String> txtFiles = new ArrayList<>();
@@ -158,11 +158,11 @@ public class PupPackRepresentation {
     this.enabled = enabled;
   }
 
-  public OffsetDateTime getModificationDate() {
+  public Instant getModificationDate() {
     return modificationDate;
   }
 
-  public void setModificationDate(OffsetDateTime modificationDate) {
+  public void setModificationDate(Instant modificationDate) {
     this.modificationDate = modificationDate;
   }
 

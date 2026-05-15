@@ -31,8 +31,9 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -44,7 +45,9 @@ public class TablesSidebarPUPPackController implements Initializable {
 
   private Optional<GameRepresentation> game = Optional.empty();
 
-  @FXML
+  private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    @FXML
   private Button uploadBtn;
 
   @FXML
@@ -402,7 +405,7 @@ public class TablesSidebarPUPPackController implements Initializable {
         }
 
         bundleSizeLabel.setText(FileUtils.readableFileSize(pupPack.getSize()));
-        lastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(pupPack.getModificationDate()));
+        lastModifiedLabel.setText(LocalDateTime.ofInstant(pupPack.getModificationDate(), ZoneOffset.UTC).format(FORMATTER));
 
         List<ValidationState> validationStates = pupPack.getValidationStates();
         errorBox.setVisible(!validationStates.isEmpty());
