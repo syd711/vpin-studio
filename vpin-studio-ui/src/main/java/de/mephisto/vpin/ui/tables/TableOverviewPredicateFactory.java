@@ -79,10 +79,14 @@ public class TableOverviewPredicateFactory {
         }
 
         if (filterSettings.isVpsUpdates() && game.getVpsUpdates() != null) {
+          boolean hasVisibleUpdate = false;
           for (VPSChange change : game.getVpsUpdates().getChanges()) {
             if (!VpsTableColumn.isFiltered(vpsSettings, change)) {
-              continue;
+              hasVisibleUpdate = true;
+              break;
             }
+          }
+          if (!hasVisibleUpdate) {
             return false;
           }
         }
