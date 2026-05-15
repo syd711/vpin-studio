@@ -778,8 +778,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
     boolean mMode = newValue == null || newValue.getType().equals(EmulatorType.PinballM);
     boolean fpMode = newValue == null || newValue.getType().equals(EmulatorType.FuturePinball);
 
-//    titledPaneHighscores.setVisible(vpxMode || fpMode);
-    titledPaneHighscores.setVisible(vpxMode);
+    titledPaneHighscores.setVisible(vpxMode || (fpMode && Features.FP_HIGHSCORES_ENABLED));
     titledPanePov.setVisible(vpxMode);
     titledPaneAltSound.setVisible(vpxMode);
     titledPaneDirectB2s.setVisible(newValue == null || newValue.isVpxEmulator() || newValue.isFpEmulator() || fx3Mode || fx1Mode || mMode);

@@ -592,7 +592,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         break;
       }
       case serum: {
-        String name = game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX;
+        String name = (!StringUtils.isEmpty(game.getRomAlias()) ? game.getRomAlias() : game.getRom()) + "." + UploaderAnalysis.SERUM_SUFFIX;
         if (game.isZenGame()) {
           String gameNameForAltSound = dofLinxService.getGameNameForAltColor(game);
           name = gameNameForAltSound + "." + UploaderAnalysis.SERUM_SUFFIX;
@@ -603,7 +603,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         break;
       }
       case cROMc: {
-        String name = game.getRom() + "." + UploaderAnalysis.CROMC_SUFFIX;
+        String name = (!StringUtils.isEmpty(game.getRomAlias()) ? game.getRomAlias() : game.getRom()) + "." + UploaderAnalysis.CROMC_SUFFIX;
         if (game.isZenGame()) {
           String gameNameForAltSound = dofLinxService.getGameNameForAltColor(game);
           name = gameNameForAltSound + "." + UploaderAnalysis.CROMC_SUFFIX;

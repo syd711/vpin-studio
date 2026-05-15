@@ -77,4 +77,5 @@ public class FeaturesInfo {
   public boolean IS_STANDALONE = false;
 
   public boolean VPXZ_ENABLED  = true;
+  public boolean FP_HIGHSCORES_ENABLED  = true;
 }
