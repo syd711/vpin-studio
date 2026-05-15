@@ -63,7 +63,7 @@ public class MusicService {
   }
 
   public List<File> getMp3Files(Game game) {
-    File musicFolder = folderLookupService.getMusicFolder(game);
+    File musicFolder = folderLookupService.getGameMusicFolder(game);
     if (musicFolder == null || !musicFolder.exists()) {
       return Collections.emptyList();
     }
@@ -100,7 +100,8 @@ public class MusicService {
   }
 
   public List<String> getMissingMp3Files(Game game) {
-    File musicFolder = folderLookupService.getMusicFolder(game);
+    File musicFolder = folderLookupService.getGameMusicFolder(game);
+  //    getGameMusicFolder
     if (musicFolder == null || !musicFolder.exists()) {
       return Collections.emptyList();
     }
