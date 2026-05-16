@@ -15,13 +15,17 @@ import javafx.scene.layout.*;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.getScoreFont;
 
 public class WidgetLatestScoreItemController extends WidgetController implements Initializable {
-  private final static DateTimeFormatter simpleDateFormat = DateTimeFormatter.ofPattern("MM-dd-yyyy / hh:mm");
+  private final static DateTimeFormatter simpleDateFormat = DateTimeFormatter.ISO_LOCAL_DATE_TIME.withZone(ZoneId.from(ZoneOffset.UTC));
+
+    //DateTimeFormatter.ofPattern("MM-dd-yyyy / hh:mm");
 
   @FXML
   private BorderPane root;
