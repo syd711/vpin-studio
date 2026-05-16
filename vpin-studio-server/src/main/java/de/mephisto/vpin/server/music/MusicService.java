@@ -73,25 +73,37 @@ public class MusicService {
     }
     List<File> result = new ArrayList<>();
     Path root = musicFolder.toPath();
+    String currentFolderName = musicFolder.getName(); // e.g., "AMH"
     for (String asset : assetsStr.split("\\|")) {
       if (StringUtils.isBlank(asset) || asset.contains("/.mp3") || asset.contains("/*.mp3")) {
         continue;
       }
-      if (!asset.contains("*")) {
-        File f = new File(musicFolder, asset);
+
+        // Normalize slashes for safe prefix checking
+        String normalizedAsset = asset.replace('\\', '/');
+        String finalAssetPath;
+
+        // Strip the folder prefix if it overlaps with the resolved music directory
+        if (normalizedAsset.startsWith(currentFolderName + "/")) {
+            finalAssetPath = normalizedAsset.substring(currentFolderName.length() + 1);
+        } else {
+            finalAssetPath = normalizedAsset;
+        }
+
+        // Now evaluate using the cleaned finalAssetPath
+        if (!finalAssetPath.contains("*")) {
+        File f = new File(musicFolder, finalAssetPath);
         if (f.exists() && !result.contains(f)) {
           result.add(f);
         }
-      }
-      else {
+      } else {
         try (Stream<Path> walk = Files.walk(root)) {
           walk.filter(p -> !Files.isDirectory(p))
-              .filter(p -> FilenameUtils.wildcardMatch(root.relativize(p).toString().replace('\\', '/'), asset))
+              .filter(p -> FilenameUtils.wildcardMatch(root.relativize(p).toString().replace('\\', '/'), finalAssetPath))
               .map(Path::toFile)
               .filter(f -> !result.contains(f))
               .forEach(result::add);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
           LOG.warn("Failed to resolve asset {} in {}: {}", asset, musicFolder.getAbsolutePath(), e.getMessage());
         }
       }
@@ -110,16 +122,20 @@ public class MusicService {
     }
     List<String> missing = new ArrayList<>();
     for (String asset : assetsStr.split("\\|")) {
-      if (StringUtils.isEmpty(asset)) {
-        continue;
-      }
-      if (asset.contains("/.mp3") || asset.contains("/*.mp3")) {
-        continue;
-      }
+        if (StringUtils.isEmpty(asset) || asset.contains("/.mp3") || asset.contains("/*.mp3")) {
+            continue;
+        }
 
-      if (!assetExists(musicFolder, asset)) {
-        missing.add(asset);
-      }
+        // Extract just the file name (e.g., "File1.mp3" from "AMH/File1.mp3")
+        String fileNameOnly = org.apache.commons.io.FilenameUtils.getName(asset);
+
+        // Check BOTH variants to cover any erratic table paths safely
+        boolean existsAsRawPath = assetExists(musicFolder, asset);
+        boolean existsAsFileName = assetExists(musicFolder, fileNameOnly);
+
+        if (!existsAsRawPath && !existsAsFileName) {
+            missing.add(asset); // Log original asset string as missing
+        }
     }
     return missing;
   }
