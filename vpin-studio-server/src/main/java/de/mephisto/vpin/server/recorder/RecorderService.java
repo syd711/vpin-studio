@@ -12,6 +12,9 @@ import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
 import de.mephisto.vpin.restclient.recorder.*;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
+import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
+import de.mephisto.vpin.server.dof.DOFService;
+import de.mephisto.vpin.server.doflinx.DOFLinxService;
 import de.mephisto.vpin.server.fp.FuturePinballService;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.FrontendService;
@@ -29,6 +32,7 @@ import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -220,6 +224,42 @@ public class RecorderService {
     frontendStatusService.setEventsEnabled(enabled);
   }
 
+  public void recordingStartHook() {
+    RecorderSettings settings = preferencesService.getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+    String cmd = settings.getStartCommand();
+    if (!StringUtils.isEmpty(cmd)) {
+      runCommand(cmd);
+    }
+  }
+
+  public void recodingEndHook() {
+    RecorderSettings settings = preferencesService.getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+    String cmd = settings.getStopCommand();
+    if (!StringUtils.isEmpty(cmd)) {
+      runCommand(cmd);
+    }
+  }
+
+  private void runCommand(String cmd) {
+    try {
+      if (StringUtils.isEmpty(cmd)) {
+        LOG.info("Skipped DOF command, not set.");
+        return;
+      }
+
+      File commandFile = new File(cmd);
+      if (commandFile.exists()) {
+        File folder = commandFile.getParentFile();
+        List<String> commands = Arrays.asList("cmd", "/c", "start", commandFile.getName());
+        SystemCommandExecutor executor = new SystemCommandExecutor(commands);
+        executor.setDir(folder);
+        executor.executeCommandAsync();
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to execute DOF command: {}", e.getMessage(), e);
+    }
+  }
 
   void notifyGameAssetsChanged(int gameId, @NonNull AssetType assetType, @Nullable Object asset) {
     gameLifecycleService.notifyGameAssetsChanged(gameId, assetType, asset);

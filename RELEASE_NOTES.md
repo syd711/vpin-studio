@@ -13,7 +13,10 @@
 - **PinVol**
   - Fixed issue that even if the external installation path was set, the .ini files from the resources folder were used.
 - **VPS Updates**
-  - Fixed issue that e.g. tutorial updates have not been properly ignored.
+  - Fixed issue that e.g. tutorial updates have not been properly ignored.  
+- **Media Recorder**
+  - Fixed Future Pinball recordings.
+  - **Added launch and exit hooks for media recordings**. You can select .bat files in the **Integration Settings** that are executed before and after recordings. This allows you to e.g. turn off you toys and lights via DOF. 
 
 ---
 
