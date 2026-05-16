@@ -154,22 +154,28 @@ jobs:
         run: brew install create-dmg
         shell: bash
 
-      - name: Package as DMG (macOS)
+      - name: Package as DMG (macOS) #Will need to play with window sizing with new background image
         working-directory: ./mac-build
         run: |
-          
+          mkdir deploy-mac
+          mv VPin-Studio.app deploy-mac/VPin-Studio.app
+          cd deploy-mac
+               
           create-dmg \
             --volname "VPin-Studio" \
-            --volicon "package/macos/Vpin-Studio-volume.icns" \
-            --background "package/macos/background.tiff" \
+            --volicon "../package/macos/Vpin-Studio-volume.icns" \
+            --background "../package/macos/background.tiff" \
             --window-pos 100 100 \
-            --window-size 640 600 \
+            --window-size 565 450 \
             --icon-size 128 \
             --icon "Vpin-Studio.app" 110 200 \
             --hide-extension "Vpin-Studio.app" \
             --app-drop-link 450 200 \
+            --hdiutil-quiet \ 
             "VPin-Studio-${{ steps.project.outputs.version }}.dmg" \
-            "Vpin-Studio.app"
+            "Vpin-Studio.app" \
+           
+
         shell: bash
 
       - name: Copy DMG for Upload
@@ -182,7 +188,7 @@ jobs:
           echo "----------------------ls .. results----------------------"
           ls -al ..                
           echo "----------------------Copy DMG from VPin-Studio-${{ steps.project.outputs.version }}.dmg to VPin-Studio-Client-MacOS-${{ matrix.arch }}.dmg----------------------"
-          cp VPin-Studio-${{ steps.project.outputs.version }}.dmg VPin-Studio-Client-MacOS-${{ matrix.arch }}.dmg
+          cp deploy-mac/VPin-Studio-${{ steps.project.outputs.version }}.dmg VPin-Studio-Client-MacOS-${{ matrix.arch }}.dmg
 
 
       - name: Upload Build Artifact1
