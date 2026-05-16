@@ -40,21 +40,21 @@ jobs:
       - name: Checkout Popper Client Repo
         uses: actions/checkout@v6
         with:
-          repository: syd711/vpin-studio-popper-client
+          repository: gonzonia/vpin-studio-popper-client
           path: ./vpin-studio-popper-client
           token: ${{ secrets.ACCESS_TOKEN }}
 
       - name: Checkout Mania Rest Client Repo
         uses: actions/checkout@v6
         with:
-          repository: syd711/vpin-mania-rest-client
+          repository: gonzonia/vpin-mania-rest-client
           path: ./vpin-mania-rest-client
           token: ${{ secrets.ACCESS_TOKEN }}
 
       - name: Checkout java-pinmame-nvmaps Repo
         uses: actions/checkout@v6
         with:
-          repository: syd711/java-pinmame-nvmaps
+          repository: gonzonia/java-pinmame-nvmaps
           path: ./java-pinmame-nvmaps
           token: ${{ secrets.ACCESS_TOKEN }}
           submodules: recursive
@@ -160,7 +160,7 @@ jobs:
           mkdir deploy-mac
           mv VPin-Studio.app deploy-mac/VPin-Studio.app
           cd deploy-mac
-               
+          
           create-dmg \
             --volname "VPin-Studio" \
             --volicon "../package/macos/Vpin-Studio-volume.icns" \
@@ -174,7 +174,7 @@ jobs:
             --hdiutil-quiet \ 
             "VPin-Studio-${{ steps.project.outputs.version }}.dmg" \
             "Vpin-Studio.app" \
-           
+        
 
         shell: bash
 
