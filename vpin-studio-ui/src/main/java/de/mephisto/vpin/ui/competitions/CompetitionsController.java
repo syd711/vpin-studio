@@ -11,7 +11,6 @@ import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.competitions.JoinMode;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
-import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
@@ -45,6 +44,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.*;
@@ -558,7 +558,8 @@ public class CompetitionsController implements Initializable, StudioFXController
           }
 
 
-          createdAtLabel.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(competition.getCreatedAt()));
+          createdAtLabel.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
+                  .format(competition.getCreatedAt().atZone(ZoneId.systemDefault())));
 
           //TODO mpf
           if (type.equals(CompetitionType.DISCORD.name()) || type.equals(CompetitionType.SUBSCRIPTION.name())) {
@@ -612,8 +613,12 @@ public class CompetitionsController implements Initializable, StudioFXController
 
 
           if (competition.getStartDate() != null) {
-            startLabel.setText(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(competition.getStartDate()));
-            endLabel.setText(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(competition.getEndDate()));
+
+
+            startLabel.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
+                    .format(competition.getStartDate().atZone(ZoneId.systemDefault())));
+            endLabel.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
+                    .format(competition.getEndDate().atZone(ZoneId.systemDefault())));
           }
         }
       }
