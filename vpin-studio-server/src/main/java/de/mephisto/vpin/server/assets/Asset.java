@@ -2,12 +2,12 @@ package de.mephisto.vpin.server.assets;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import de.mephisto.vpin.server.util.IncrementGenerated;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.*;
-import jakarta.persistence.GenerationType;
 import java.time.Instant;
 import java.util.Objects;
 
@@ -26,7 +26,7 @@ public class Asset {
   private Instant updatedAt;
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @IncrementGenerated
   private Long id;
 
   private byte[] data;

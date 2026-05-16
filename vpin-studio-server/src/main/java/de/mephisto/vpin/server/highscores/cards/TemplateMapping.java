@@ -1,12 +1,12 @@
 package de.mephisto.vpin.server.highscores.cards;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import de.mephisto.vpin.server.util.IncrementGenerated;
 import tools.jackson.core.JacksonException;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.*;
-import jakarta.persistence.GenerationType;
 
 @Entity
 @Table(name = "TemplateMappings")
@@ -15,7 +15,7 @@ import jakarta.persistence.GenerationType;
 public class TemplateMapping {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @IncrementGenerated
   private Long id;
 
   private String templateJson;

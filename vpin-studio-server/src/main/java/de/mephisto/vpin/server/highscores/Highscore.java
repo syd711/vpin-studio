@@ -2,11 +2,11 @@ package de.mephisto.vpin.server.highscores;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.util.IncrementGenerated;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import jakarta.persistence.*;
-import jakarta.persistence.GenerationType;
 import java.time.Instant;
 import java.util.Objects;
 
@@ -23,7 +23,7 @@ public class Highscore {
   private Instant lastScanned;
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @IncrementGenerated
 
   private Long id;
 

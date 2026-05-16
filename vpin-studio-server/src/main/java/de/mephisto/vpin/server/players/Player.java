@@ -2,13 +2,13 @@ package de.mephisto.vpin.server.players;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.mephisto.vpin.server.assets.Asset;
+import de.mephisto.vpin.server.util.IncrementGenerated;
 import org.jspecify.annotations.Nullable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.*;
-import jakarta.persistence.GenerationType;
 import java.time.Instant;
 import java.util.Objects;
 
@@ -27,7 +27,7 @@ public class Player {
   private Instant updatedAt;
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @IncrementGenerated
   private Long id;
 
   @OneToOne(cascade = CascadeType.MERGE, optional = true)

@@ -2,8 +2,8 @@ package de.mephisto.vpin.server.backups;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import de.mephisto.vpin.server.util.IncrementGenerated;
 import jakarta.persistence.*;
-import jakarta.persistence.GenerationType;
 import java.time.Instant;
 import java.util.Objects;
 
@@ -16,7 +16,7 @@ public class BackupSource {
   private Instant createdAt;
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @IncrementGenerated
   private Long id;
 
   private String type;
