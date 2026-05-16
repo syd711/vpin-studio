@@ -77,7 +77,7 @@ public class RamOutputToScoreTextConverter {
         // try with registered service
         String rom = resolveRomNameFromFileanme(originalRamFile);
         for (NvRamOutputToRaw svc : svcs) {
-          if (svc.isSupportedRom(rom)) {
+          if (svc.isSupportedRom(rom.toLowerCase()) || svc.isSupportedRom(rom)) {
             LOG.info("Used NvRam converter {} for {}", svc, ramName);
             return String.join("\n", svc.getRaw(rom, originalRamFile, locale));
           }
