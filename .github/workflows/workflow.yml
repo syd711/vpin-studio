@@ -171,7 +171,7 @@ jobs:
             --icon "Vpin-Studio.app" 110 200 \
             --hide-extension "Vpin-Studio.app" \
             --app-drop-link 450 200 \
-            --hdiutil-quiet \ 
+            --hdiutil-quiet \
             "VPin-Studio-${{ steps.project.outputs.version }}.dmg" \
             "Vpin-Studio.app" 
         
