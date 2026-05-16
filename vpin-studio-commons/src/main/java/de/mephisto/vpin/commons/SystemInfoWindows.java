@@ -218,10 +218,10 @@ public class SystemInfoWindows {
   private String readRegistry(String location, String key) {
     try {
       // Run reg query, then read output with StreamReader (internal class)
-      String cmd = "reg query " + "\"" + location + "\"";
-      if (key != null) {
-        cmd = "reg query " + '"' + location + "\" /v " + key;
-      }
+        String[] cmd = {"reg query " + "\"" + location + "\""};
+        if (key != null) {
+            cmd = new String[]{"reg query " + '"' + location + "\" /v " + key};
+        }
       Process process = Runtime.getRuntime().exec(cmd);
       StreamReader reader = new StreamReader(process.getInputStream());
       reader.start();
@@ -248,7 +248,7 @@ public class SystemInfoWindows {
    */
   private void writeRegistry(String location, String key, int value) {
     try {
-      String cmd = "REG ADD \"" + location + "\" /v " + key + " /t REG_DWORD /d " + value + " /f";
+      String[] cmd = {"REG ADD \"" + location + "\" /v " + key + " /t REG_DWORD /d " + value + " /f"};
       Process process = Runtime.getRuntime().exec(cmd);
       StreamReader reader = new StreamReader(process.getInputStream());
       reader.start();

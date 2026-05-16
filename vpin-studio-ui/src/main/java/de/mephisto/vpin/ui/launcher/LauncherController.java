@@ -557,7 +557,8 @@ public class LauncherController implements Initializable {
   private String detectMacAddressViaArp(String host) {
     try {
       // Run the 'arp -a' command
-      Process process = Runtime.getRuntime().exec("arp -a " + host);
+      String[] cmd = {"arp -a " + host};
+      Process process = Runtime.getRuntime().exec(cmd);
       BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
       String line;
