@@ -145,7 +145,10 @@
             </HBox>
             <VBox fx:id="recordingProgressPanel" layoutX="22.0" layoutY="88.0" spacing="6.0">
                <children>
-                  <Label fx:id="durationLabel21" styleClass="default-headline" text="Recording Progress" />
+                  <Label styleClass="default-headline" text="Recording Progress">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin></Label>
                   <ProgressBar fx:id="progressBar" disable="true" prefWidth="800.0" progress="0.0" />
                   <GridPane hgap="3.0" vgap="3.0">
                      <columnConstraints>

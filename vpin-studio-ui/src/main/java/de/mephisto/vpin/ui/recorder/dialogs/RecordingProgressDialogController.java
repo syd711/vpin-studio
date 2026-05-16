@@ -291,7 +291,7 @@ public class RecordingProgressDialogController implements Initializable, DialogC
         break;
       }
       else {
-        GameEmulatorRepresentation gameEmulator= client.getEmulatorService().getGameEmulator(game.getEmulatorId());
+        GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
         List<String> altExeNames = client.getEmulatorService().getAltExeNames(gameEmulator.getId());
         List<String> filteredAltExeNames = altExeNames.stream()
 //            .filter(exe -> !exe.toLowerCase().contains("gl"))

@@ -32,8 +32,9 @@ public class EmulatorRecorderJob extends FrontendRecorderJob {
     FrontendConnector frontend = recorderService.getFrontendConnector();
 
     LOG.info("***************************** Game Recording Log ******************************************************");
+    recorderService.recordingStartHook();
     recorderService.setFrontedEventsEnabled(false);
- 
+
     for (RecordingData data : recordingDataSummary.getRecordingData()) {
       Game game = recorderService.getGame(data);
 
@@ -112,6 +113,7 @@ public class EmulatorRecorderJob extends FrontendRecorderJob {
     jobDescriptor.setGameId(-1);
 
     recorderService.setFrontedEventsEnabled(true);
+    recorderService.recodingEndHook();
     LOG.info("***************************** /Game Recording Log *****************************************************");
   }
 
