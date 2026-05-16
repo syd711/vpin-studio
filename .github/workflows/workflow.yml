@@ -173,7 +173,7 @@ jobs:
             --app-drop-link 450 200 \
             --hdiutil-quiet \ 
             "VPin-Studio-${{ steps.project.outputs.version }}.dmg" \
-            "Vpin-Studio.app" \
+            "Vpin-Studio.app" 
         
 
         shell: bash
