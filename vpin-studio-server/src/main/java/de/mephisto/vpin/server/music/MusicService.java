@@ -62,67 +62,89 @@ public class MusicService {
     }
   }
 
-  public List<File> getMp3Files(Game game) {
-    File musicFolder = folderLookupService.getGameMusicFolder(game);
-    if (musicFolder == null || !musicFolder.exists()) {
-      return Collections.emptyList();
-    }
-    String assetsStr = game.getAssets();
-    if (StringUtils.isBlank(assetsStr)) {
-      return Collections.emptyList();
-    }
-    List<File> result = new ArrayList<>();
-    Path root = musicFolder.toPath();
-    for (String asset : assetsStr.split("\\|")) {
-      if (StringUtils.isBlank(asset) || asset.contains("/.mp3") || asset.contains("/*.mp3")) {
-        continue;
-      }
-      if (!asset.contains("*")) {
-        File f = new File(musicFolder, asset);
-        if (f.exists() && !result.contains(f)) {
-          result.add(f);
+    public List<File> getMp3Files(Game game) {
+        File musicFolder = folderLookupService.getGameMusicFolder(game);
+        if (musicFolder == null || !musicFolder.exists()) {
+            return Collections.emptyList();
         }
-      }
-      else {
-        try (Stream<Path> walk = Files.walk(root)) {
-          walk.filter(p -> !Files.isDirectory(p))
-              .filter(p -> FilenameUtils.wildcardMatch(root.relativize(p).toString().replace('\\', '/'), asset))
-              .map(Path::toFile)
-              .filter(f -> !result.contains(f))
-              .forEach(result::add);
-        }
-        catch (IOException e) {
-          LOG.warn("Failed to resolve asset {} in {}: {}", asset, musicFolder.getAbsolutePath(), e.getMessage());
-        }
-      }
-    }
-    return result;
-  }
 
-  public List<String> getMissingMp3Files(Game game) {
-    File musicFolder = folderLookupService.getGameMusicFolder(game);
-    if (musicFolder == null || !musicFolder.exists()) {
-      return Collections.emptyList();
-    }
-    String assetsStr = game.getAssets();
-    if (StringUtils.isEmpty(assetsStr)) {
-      return Collections.emptyList();
-    }
-    List<String> missing = new ArrayList<>();
-    for (String asset : assetsStr.split("\\|")) {
-      if (StringUtils.isEmpty(asset)) {
-        continue;
-      }
-      if (asset.contains("/.mp3") || asset.contains("/*.mp3")) {
-        continue;
-      }
+        String assetsStr = game.getAssets();
+        if (StringUtils.isBlank(assetsStr)) {
+            return Collections.emptyList();
+        }
 
-      if (!assetExists(musicFolder, asset)) {
-        missing.add(asset);
-      }
+        List<File> result = new ArrayList<>();
+        Path root = musicFolder.toPath();
+        String currentFolderName = musicFolder.getName(); // e.g., "AMH"
+
+        for (String asset : assetsStr.split("\\|")) {
+            if (StringUtils.isBlank(asset) || asset.contains("/.mp3") || asset.contains("/*.mp3")) {
+                continue;
+            }
+
+            // Normalize slashes for safe prefix checking
+            String normalizedAsset = asset.replace('\\', '/');
+            String finalAssetPath;
+
+            // Strip the folder prefix if it overlaps with the resolved music directory
+            if (normalizedAsset.startsWith(currentFolderName + "/")) {
+                finalAssetPath = normalizedAsset.substring(currentFolderName.length() + 1);
+            } else {
+                finalAssetPath = normalizedAsset;
+            }
+
+            // Now evaluate using the cleaned finalAssetPath
+            if (!finalAssetPath.contains("*")) {
+                File f = new File(musicFolder, finalAssetPath);
+                if (f.exists() && !result.contains(f)) {
+                    result.add(f);
+                }
+            } else {
+                try (Stream<Path> walk = Files.walk(root)) {
+                    walk.filter(p -> !Files.isDirectory(p))
+                            // Compare the relative path against the cleaned wildcard string
+                            .filter(p -> FilenameUtils.wildcardMatch(root.relativize(p).toString().replace('\\', '/'), finalAssetPath))
+                            .map(Path::toFile)
+                            .filter(f -> !result.contains(f))
+                            .forEach(result::add);
+                } catch (IOException e) {
+                    LOG.warn("Failed to resolve asset {} in {}: {}", asset, musicFolder.getAbsolutePath(), e.getMessage());
+                }
+            }
+        }
+        return result;
     }
-    return missing;
-  }
+
+    public List<String> getMissingMp3Files(Game game) {
+        File musicFolder = folderLookupService.getGameMusicFolder(game);
+        if (musicFolder == null || !musicFolder.exists()) {
+            return Collections.emptyList();
+        }
+
+        String assetsStr = game.getAssets();
+        if (StringUtils.isEmpty(assetsStr)) {
+            return Collections.emptyList();
+        }
+
+        List<String> missing = new ArrayList<>();
+        for (String asset : assetsStr.split("\\|")) {
+            if (StringUtils.isEmpty(asset) || asset.contains("/.mp3") || asset.contains("/*.mp3")) {
+                continue;
+            }
+
+            // Extract just the file name (e.g., "File1.mp3" from "AMH/File1.mp3")
+            String fileNameOnly = org.apache.commons.io.FilenameUtils.getName(asset);
+
+            // Check BOTH variants to cover any erratic table paths safely
+            boolean existsAsRawPath = assetExists(musicFolder, asset);
+            boolean existsAsFileName = assetExists(musicFolder, fileNameOnly);
+
+            if (!existsAsRawPath && !existsAsFileName) {
+                missing.add(asset); // Log original asset string as missing
+            }
+        }
+        return missing;
+    }
 
   private boolean assetExists(File musicFolder, String asset) {
     if (!asset.contains("*")) {
