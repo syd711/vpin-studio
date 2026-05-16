@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRange;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.AsyncRequestNotUsableException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -226,12 +227,14 @@ public class GameMediaResource {
       tableAssetsService.download(outputStream, tableAsset, start, contentLength);
       response.flushBuffer();
     }
-    catch (ClientAbortException cae) {
+    catch (ClientAbortException | AsyncRequestNotUsableException cae) {
       LOG.info("Connection aborted while streaming media {} from {}", name, assetSourceId);
     }
     catch (IOException e) {
       LOG.error("Failed to stream media {} from {}: {}", name, assetSourceId, e.getMessage(), e);
-      response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
+        if (!response.isCommitted()) {
+            response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
+        }
     }
   }
 
@@ -374,12 +377,14 @@ public class GameMediaResource {
       }
       response.flushBuffer();
     }
-    catch (ClientAbortException cae) {
+    catch (ClientAbortException | AsyncRequestNotUsableException cae) {
       LOG.info("Connection aborted while downloading {} for game {}", name, id);
     }
     catch (IOException e) {
       LOG.error("Failed to stream media {} for game {}: {}", name, id, e.getMessage(), e);
-      response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
+        if (!response.isCommitted()) {
+            response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
+        }
     }
   }
 
