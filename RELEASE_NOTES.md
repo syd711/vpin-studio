@@ -16,7 +16,9 @@
   - Fixed issue that e.g. tutorial updates have not been properly ignored.  
 - **Media Recorder**
   - Fixed Future Pinball recordings.
-  - **Added launch and exit hooks for media recordings**. You can select .bat files in the **Integration Settings** that are executed before and after recordings. This allows you to e.g. turn off you toys and lights via DOF. 
+  - **Added launch and exit hooks for media recordings**. You can select .bat files in the **Integration Settings** that are executed before and after recordings. This allows you to e.g. turn off you toys and lights via DOF.
+- **Music Detection**
+  - The subfolder was getting duplicated to both the music folder and the asset path when doing a check, resulting in false positives for missing files.
 
 ---
 
