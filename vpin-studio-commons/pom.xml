@@ -52,7 +52,7 @@
         <dependency>
             <groupId>de.mephisto.vpin</groupId>
             <artifactId>vpin-mania-rest-client</artifactId>
-            <version>1.0.0</version>
+            <version>${mania.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
