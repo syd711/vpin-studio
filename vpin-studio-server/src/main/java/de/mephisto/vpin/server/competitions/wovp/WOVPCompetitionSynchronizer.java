@@ -14,6 +14,7 @@ import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameCachingService;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreBackupService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
@@ -65,6 +66,9 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
 
   @Autowired
   private CompetitionIdUpdater competitionIdUpdater;
+
+  @Autowired
+  private GameCachingService gameCachingService;
 
   public synchronized boolean synchronizeWovp(String apiKey, boolean forceReload) {
     try {
@@ -280,6 +284,8 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
         synchronizeWovp(settings.getAnyApiKey(), true);
         LOG.info("----------------------------- /Initial WOVP Sync -------------------------------------------------");
         LOG.info("Initial sync finished, took {}ms", (System.currentTimeMillis() - start));
+        gameCachingService.clearCache();
+
       }).start();
     }
   }
