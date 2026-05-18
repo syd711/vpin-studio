@@ -1,0 +1,319 @@
+name: VPin Studio Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ######################################################################################################################
+  # macOS Build (Matrix for x64 and arm64)
+  ######################################################################################################################
+  mac-app-build:
+    name: mac-app-build-${{ matrix.arch }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - arch: x64
+            java_arch: x64
+            os: macos-15-intel
+            jre_bundle: zulu25.32.21-ca-fx-jre25.0.2-macosx_x64.tar.gz
+            jre_folder: zulu25.32.21-ca-fx-jre25.0.2-macosx_x64
+          - arch: arm64
+            java_arch: aarch64
+            os: macos-15
+            jre_bundle: zulu25.32.21-ca-fx-jre25.0.2-macosx_aarch64.tar.gz
+            jre_folder: zulu25.32.21-ca-fx-jre25.0.2-macosx_aarch64
+
+    steps:
+      - name: Checkout VPin Studio
+        uses: actions/checkout@v6
+
+      - name: Checkout Popper Client Repo
+        uses: actions/checkout@v6
+        with:
+          ref: Java-25
+          repository: gonzonia/vpin-studio-popper-client
+          path: ./vpin-studio-popper-client
+          token: ${{ secrets.ACCESS_TOKEN }}
+
+      - name: Checkout Mania Rest Client Repo
+        uses: actions/checkout@v6
+        with:
+          ref: Java-25
+          repository: gonzonia/vpin-mania-rest-client
+          path: ./vpin-mania-rest-client
+          token: ${{ secrets.ACCESS_TOKEN }}
+
+      - name: Checkout java-pinmame-nvmaps Repo
+        uses: actions/checkout@v6
+        with:
+          ref: Java-25
+          repository: gonzonia/java-pinmame-nvmaps
+          path: ./java-pinmame-nvmaps
+          token: ${{ secrets.ACCESS_TOKEN }}
+          submodules: recursive
+
+
+      - name: Set up Zulu JDK 25
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'zulu'
+          java-package: 'jdk+fx'
+          java-version: '25'
+          architecture: ${{ matrix.java_arch }}
+          cache: 'maven'
+
+      - name: Install Parent POM
+        run: |
+          mvn -N install -DskipTests
+
+      - name: Build Java 25 sub-modules and popper client
+        run: |
+          run: |
+          mvn -f vpin-mania-rest-client/pom.xml clean install -DskipTests
+          mvn -f java-pinmame-nvmaps/pom.xml clean install -DskipTests
+          mvn -f vpin-connector-assets/pom.xml clean install -DskipTests
+          mvn -f vpin-studio-popper-client/pom.xml clean install -DskipTests
+
+      - name: Extract Maven project version
+        id: project
+        run: echo "version=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_OUTPUT
+
+      - name: Download Zulu JRE for macOS
+        run: |
+          curl -L -o ${{ matrix.jre_bundle }} https://cdn.azul.com/zulu/bin/${{ matrix.jre_bundle }}
+
+      - name: Copy JRE tarball to Output directory
+        run: |
+          mkdir -p Output/VPin-Studio
+          cp ${{ matrix.jre_bundle }} Output/VPin-Studio
+
+      - name: Build with Maven
+        run: mvn --batch-mode --update-snapshots clean package -DskipMacOSBuild=false -DmacOSBuild=true -DskipTests -Dzulu.jre.bundle=${{ matrix.jre_bundle }}
+
+      - name: Prepare Java Runtime
+        run: tar -xzf ${{ matrix.jre_bundle }}
+
+      - name: Build structure for packaging
+        run: |
+          mkdir -p ./mac-build
+          cp ./vpin-studio-ui/target/vpin-studio-ui.jar ./mac-build
+          cp -R ./mac-package/package ./mac-build
+          cp -R ./mac-package/Assets.car ./mac-build
+          cp ./mac-package/jpackage_log.txt ./
+
+      - name: Create macOS App Image
+        working-directory: ./mac-build
+        run: |
+          jpackage --name VPin-Studio --input . --app-version ${{ steps.project.outputs.version }} --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Studio --resource-dir package/macos --type app-image --icon package/macos/VpinStudioIcon.icns --dest ./ --runtime-image ../${{ matrix.jre_folder }}/zulu-25.jre @../jpackage_log.txt
+
+      - name: Create JRE Update Artifact from App Bundle
+        working-directory: ./mac-build
+        run: |
+          mkdir -p jre-artifact
+          # Sourcing runtime exactly as it appears in the bundle
+          cp -R VPin-Studio.app/Contents/runtime ./jre-artifact/runtime
+          cd jre-artifact
+          zip -r ../../java-runtime-mac-${{ matrix.arch }}.zip runtime
+
+      - name: Add Dynamic App Icon to App Bundle
+        working-directory: ./mac-build
+        run: |
+          cp Assets.car VPin-Studio.app/Contents/Resources/ 
+
+      - name: Ad-hoc sign the app (macOS)
+        working-directory: ./mac-build
+        run: |
+          codesign --force --deep --sign - VPin-Studio.app
+          codesign --verify --verbose VPin-Studio.app
+        shell: bash
+
+      - name: Remove extended attributes (macOS)
+        working-directory: ./mac-build
+        run: |
+          sudo xattr -rc VPin-Studio.app
+        shell: bash
+
+      - name: Install create-dmg
+        run: brew install create-dmg
+        shell: bash
+
+      - name: Package as DMG (macOS) #Will need to play with window sizing with new background image
+        working-directory: ./mac-build
+        run: |
+          mkdir deploy-mac
+          mv VPin-Studio.app deploy-mac/VPin-Studio.app
+          cd deploy-mac
+          
+          create-dmg \
+            --volname "VPin-Studio" \
+            --volicon "../package/macos/Vpin-Studio-volume.icns" \
+            --background "../package/macos/background.tiff" \
+            --window-pos 100 100 \
+            --window-size 565 450 \
+            --icon-size 128 \
+            --icon "Vpin-Studio.app" 110 200 \
+            --hide-extension "Vpin-Studio.app" \
+            --app-drop-link 450 200 \
+            --hdiutil-quiet \
+            "VPin-Studio-${{ steps.project.outputs.version }}.dmg" \
+            "Vpin-Studio.app" 
+        
+
+        shell: bash
+
+      - name: Copy DMG for Upload
+        working-directory: ./mac-build
+        run: |
+          echo "----------------------realpath results----------------------"
+          realpath      
+          echo "----------------------ls results----------------------"
+          ls -al
+          echo "----------------------ls .. results----------------------"
+          ls -al ..                
+          echo "----------------------Copy DMG from VPin-Studio-${{ steps.project.outputs.version }}.dmg to VPin-Studio-Client-MacOS-${{ matrix.arch }}.dmg----------------------"
+          cp deploy-mac/VPin-Studio-${{ steps.project.outputs.version }}.dmg VPin-Studio-Client-MacOS-${{ matrix.arch }}.dmg
+
+
+      - name: Upload Build Artifact1
+        uses: actions/upload-artifact@v7
+        with:
+          name: macOS-build-${{ matrix.arch }}
+          path: |
+            ./mac-build/VPin-Studio-Client-MacOS-${{ matrix.arch }}.dmg
+
+      - name: Upload Build Artifact2
+        uses: actions/upload-artifact@v7
+        with:
+          name: java-runtime-mac-${{ matrix.arch }}
+          path: |
+            ./java-runtime-mac-${{ matrix.arch }}.zip
+
+  ######################################################################################################################
+  # Windows Packaging and Release
+  ######################################################################################################################
+  build:
+    name: Packaging
+    runs-on: windows-latest
+    needs: [mac-app-build]
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Install Inno Setup
+        run: choco install innosetup --yes
+
+      - name: Checkout VPin Studio
+        uses: actions/checkout@v6
+
+      - name: Checkout Popper Client Repo
+        uses: actions/checkout@v6
+        with:
+          ref: Java-25
+          repository: gonzonia/vpin-studio-popper-client
+          path: ./vpin-studio-popper-client
+          token: ${{ secrets.ACCESS_TOKEN }}
+
+      - name: Checkout Mania Rest Client Repo
+        uses: actions/checkout@v6
+        with:
+          ref: Java-25
+          repository: gonzonia/vpin-mania-rest-client
+          path: ./vpin-mania-rest-client
+          token: ${{ secrets.ACCESS_TOKEN }}
+
+      - name: Checkout java-pinmame-nvmaps Repo
+        uses: actions/checkout@v6
+        with:
+          ref: Java-25
+          repository: gonzonia/java-pinmame-nvmaps
+          path: ./java-pinmame-nvmaps
+          token: ${{ secrets.ACCESS_TOKEN }}
+          submodules: recursive
+
+      - name: Setup JDK 25
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'zulu'
+          java-package: 'jdk+fx'
+          java-version: '25'
+          cache: 'maven'
+
+      - name: Install Parent POM
+        run: |
+          mvn -N install -DskipTests
+
+      - name: Build Java 25 Sub-Modules
+        shell: bash
+        run: |
+          mvn -f vpin-mania-rest-client/pom.xml clean install -DskipTests
+          mvn -f java-pinmame-nvmaps/pom.xml clean install -DskipTests
+          mvn -f vpin-connector-assets/pom.xml clean install -DskipTests
+          mvn -f vpin-studio-popper-client/pom.xml clean install -DskipTests
+
+      - name: Download Zulu JRE for Windows
+        shell: pwsh
+        run: |
+          Invoke-WebRequest -Uri "https://cdn.azul.com/zulu/bin/zulu25.32.21-ca-fx-jre25.0.2-win_x64.zip" -OutFile "java-runtime-win.zip"
+
+      - name: Extract Windows Runtime for Installer
+        shell: bash
+        run: |
+          mkdir -p java-runtime
+          unzip -o java-runtime-win.zip -d ./java-runtime
+
+      - name: Install Native DLLs
+        run: copy "${{ github.workspace }}\resources\jvm\jinput-dx8_64.dll" "$env:JAVA_HOME\bin\"
+
+      - name: Build with Maven
+        run: mvn --batch-mode --update-snapshots clean package
+
+      - name: Download macOS x64 Artifacts
+        uses: actions/download-artifact@v8
+        with:
+          name: macOS-build-x64
+          path: ./Output/VPin-Studio/
+
+      - name: Download macOS arm64 Artifacts
+        uses: actions/download-artifact@v8
+        with:
+          name: macOS-build-arm64
+          path: ./Output/VPin-Studio/
+
+      - name: Set Release Version
+        id: set-release-version
+        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+        run: |
+          $version = mvn "--batch-mode" org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate "-Dexpression=project.version" "-q" "-DforceStdout"
+          echo "version=${version}" >> $env:GITHUB_OUTPUT
+
+      - name: Draft Release
+        uses: softprops/action-gh-release@v3
+        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+        with:
+          body_path: RELEASE_NOTES.md
+          draft: true
+          tag_name: ${{ steps.set-release-version.outputs.version }}
+          files: |
+            ./Output/VPin-Studio/VPin-Studio-Client-Installer*.exe
+            ./Output/VPin-Studio/VPin-Studio-Full-Installer*.exe
+            ./Output/VPin-Studio/VPin-Studio-Server.zip
+            ./Output/VPin-Studio/VPin-Studio.zip
+            ./Output/VPin-Studio/VPin-Studio-Client-linux-x64.zip
+            ./Output/VPin-Studio/VPin-Studio-Client-MacOS-arm64.dmg
+            ./Output/VPin-Studio/VPin-Studio-Client-MacOS-x64.dmg
+            ./Output/VPin-Studio/vpin-studio-ui-jar.zip
+            ./java-runtime-win.zip
+            ./Output/VPin-Studio/java-runtime-mac-x64.zip
+            ./Output/VPin-Studio/java-runtime-mac-arm64.zip
+        env:
+          GITHUB_REPOSITORY: https://github.com/syd711/vpin-studio
