@@ -139,7 +139,7 @@ public class SystemServiceClient extends VPinStudioClientService {
 
   public String getVersion() {
     try {
-      final RestTemplate restTemplate = RestClient.createTimeoutBasedTemplate(2000);
+      final RestTemplate restTemplate = RestClient.createTimeoutBasedTemplate(3000);
       return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/version", String.class);
     } catch (Exception e) {
       LOG.info("Get version failed for {} ({})", getRestClient().getBaseUrl(), e.getMessage());
