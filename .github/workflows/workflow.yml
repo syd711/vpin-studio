@@ -40,24 +40,24 @@ jobs:
       - name: Checkout Popper Client Repo
         uses: actions/checkout@v6
         with:
-          ref: Java-25
           repository: gonzonia/vpin-studio-popper-client
+          ref: Java-25
           path: ./vpin-studio-popper-client
           token: ${{ secrets.ACCESS_TOKEN }}
 
       - name: Checkout Mania Rest Client Repo
         uses: actions/checkout@v6
         with:
-          ref: Java-25
           repository: gonzonia/vpin-mania-rest-client
+          ref: Java-25
           path: ./vpin-mania-rest-client
           token: ${{ secrets.ACCESS_TOKEN }}
 
       - name: Checkout java-pinmame-nvmaps Repo
         uses: actions/checkout@v6
         with:
-          ref: Java-25
           repository: gonzonia/java-pinmame-nvmaps
+          ref: Java-25
           path: ./java-pinmame-nvmaps
           token: ${{ secrets.ACCESS_TOKEN }}
           submodules: recursive
@@ -218,24 +218,24 @@ jobs:
       - name: Checkout Popper Client Repo
         uses: actions/checkout@v6
         with:
-          ref: Java-25
           repository: gonzonia/vpin-studio-popper-client
+          ref: Java-25
           path: ./vpin-studio-popper-client
           token: ${{ secrets.ACCESS_TOKEN }}
 
       - name: Checkout Mania Rest Client Repo
         uses: actions/checkout@v6
         with:
-          ref: Java-25
           repository: gonzonia/vpin-mania-rest-client
+          ref: Java-25
           path: ./vpin-mania-rest-client
           token: ${{ secrets.ACCESS_TOKEN }}
 
       - name: Checkout java-pinmame-nvmaps Repo
         uses: actions/checkout@v6
         with:
-          ref: Java-25
           repository: gonzonia/java-pinmame-nvmaps
+          ref: Java-25
           path: ./java-pinmame-nvmaps
           token: ${{ secrets.ACCESS_TOKEN }}
           submodules: recursive
