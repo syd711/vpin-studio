@@ -218,18 +218,18 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
    * We need to wait until finished, because otherwise the UI would show the previous result
    */
   private BufferedImage doGenerateCardImage(Game game, ScoreSummary summary, CardTemplate template) throws Exception {
-    // sync between FX thread and calling thread
+
+      //Moved out of .runLater to prevent DB locks
+      CardData data = getCardData(game, summary, template, true);
+
+      // sync between FX thread and calling thread
     CountDownLatch latch = new CountDownLatch(1);
     BufferedImage[] generatedImage = {null};
     Platform.runLater(() -> {
       try {
         int[] res = getCardResolution(template.getTemplateType());
-
         CardGraphicsHighscore cardGraphics = new CardGraphicsHighscore(false);
         cardGraphics.setTemplate(template);
-
-        CardData data = getCardData(game, summary, template, true);
-
         cardGraphics.setData(data, res[0], res[1]);
         // resize the cards to the needed resolution
         cardGraphics.resize(res[0], res[1]);
