@@ -1,2 +1,2 @@
---java-options -DOSLOG_PATH="${user.home}/Library/Application\" \"Support/Vpin-Studio/Logs"
+--java-options -DOSLOG_PATH="${user.home}/Library/Application\" \"Support/Vpin-Studio/Logs"  --java-options "--add-exports=javafx.graphics/com.sun.javafx.iio=ALL-UNNAMED" --java-options "--add-exports=javafx.graphics/com.sun.javafx.iio.common=ALL-UNNAMED" --java-options "--enable-native-access=javafx.graphics" --java-options "--enable-native-access=javafx.web"
 
