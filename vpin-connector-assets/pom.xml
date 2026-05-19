@@ -5,7 +5,7 @@
     <parent>
         <artifactId>studio</artifactId>
         <groupId>de.mephisto.vpin</groupId>
-        <version>4.9.2</version>
+        <version>4.9.4</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -20,7 +20,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <slf4j.version>2.0.17</slf4j.version>
-      <logback.version>1.5.32</logback.version>
+        <logback.version>1.5.32</logback.version>
     </properties>
 
     <dependencies>

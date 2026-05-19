@@ -28,7 +28,7 @@ public class FrontendRecorderJob implements Job {
   // currently recording game
   GameRecorder gameRecorder;
 
-  public FrontendRecorderJob(RecorderService recorderService, RecorderSettings settings, 
+  public FrontendRecorderJob(RecorderService recorderService, RecorderSettings settings,
                              RecordingDataSummary recordingDataSummary, List<FrontendPlayerDisplay> recordingScreens) {
     this.recorderService = recorderService;
     this.recorderSettings = settings;
@@ -41,6 +41,7 @@ public class FrontendRecorderJob implements Job {
     FrontendConnector frontend = recorderService.getFrontendConnector();
 
     LOG.info("***************************** Game Recording Log ******************************************************");
+    recorderService.recordingStartHook();
     recorderService.setFrontedEventsEnabled(false);
 
     for (RecordingData data : recordingDataSummary.getRecordingData()) {
@@ -130,6 +131,7 @@ public class FrontendRecorderJob implements Job {
     jobDescriptor.setGameId(-1);
 
     recorderService.setFrontedEventsEnabled(true);
+    recorderService.recodingEndHook();
     LOG.info("***************************** /Game Recording Log *****************************************************");
   }
 

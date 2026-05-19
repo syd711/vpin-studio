@@ -379,7 +379,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       }
     }
     FrontendMediaUploadProgressModel model = new FrontendMediaUploadProgressModel(game,
-        screenName + " Media Upload", List.of(tmp.toFile()), screen, append);
+        screenName + " Media Upload", List.of(tmp.toFile()), screen, append, null);
     ProgressDialog.createProgressDialog(model);
   }
 

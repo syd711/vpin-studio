@@ -39,7 +39,7 @@ public class MusicServiceTest {
 
   @Test
   void getMp3Files_returnsEmpty_whenMusicFolderIsNull() {
-    when(folderLookupService.getMusicFolder(game)).thenReturn(null);
+    when(folderLookupService.getGameMusicFolder(game)).thenReturn(null);
 
     List<File> result = musicService.getMp3Files(game);
 
@@ -49,7 +49,7 @@ public class MusicServiceTest {
   @Test
   void getMp3Files_returnsEmpty_whenMusicFolderDoesNotExist(@TempDir Path tempDir) {
     File nonExistent = new File(tempDir.toFile(), "nonexistent");
-    when(folderLookupService.getMusicFolder(game)).thenReturn(nonExistent);
+    when(folderLookupService.getGameMusicFolder(game)).thenReturn(nonExistent);
     game.setAssets("intro.mp3");
 
     List<File> result = musicService.getMp3Files(game);
@@ -59,7 +59,7 @@ public class MusicServiceTest {
 
   @Test
   void getMp3Files_returnsEmpty_whenAssetsIsNull(@TempDir Path tempDir) {
-    when(folderLookupService.getMusicFolder(game)).thenReturn(tempDir.toFile());
+    when(folderLookupService.getGameMusicFolder(game)).thenReturn(tempDir.toFile());
     game.setAssets(null);
 
     List<File> result = musicService.getMp3Files(game);
@@ -69,7 +69,7 @@ public class MusicServiceTest {
 
   @Test
   void getMp3Files_returnsEmpty_whenAssetsIsBlank(@TempDir Path tempDir) {
-    when(folderLookupService.getMusicFolder(game)).thenReturn(tempDir.toFile());
+    when(folderLookupService.getGameMusicFolder(game)).thenReturn(tempDir.toFile());
     game.setAssets("   ");
 
     List<File> result = musicService.getMp3Files(game);
@@ -80,7 +80,7 @@ public class MusicServiceTest {
   @Test
   void getMp3Files_returnsFile_whenExactAssetExists(@TempDir Path tempDir) throws IOException {
     File mp3 = Files.createFile(tempDir.resolve("intro.mp3")).toFile();
-    when(folderLookupService.getMusicFolder(game)).thenReturn(tempDir.toFile());
+    when(folderLookupService.getGameMusicFolder(game)).thenReturn(tempDir.toFile());
     game.setAssets("intro.mp3");
 
     List<File> result = musicService.getMp3Files(game);
@@ -91,7 +91,7 @@ public class MusicServiceTest {
 
   @Test
   void getMp3Files_skipsNonExistentExactAsset(@TempDir Path tempDir) {
-    when(folderLookupService.getMusicFolder(game)).thenReturn(tempDir.toFile());
+    when(folderLookupService.getGameMusicFolder(game)).thenReturn(tempDir.toFile());
     game.setAssets("missing.mp3");
 
     List<File> result = musicService.getMp3Files(game);
@@ -102,7 +102,7 @@ public class MusicServiceTest {
   @Test
   void getMp3Files_skipsBogusPureWildcard(@TempDir Path tempDir) throws IOException {
     Files.createFile(tempDir.resolve("track.mp3"));
-    when(folderLookupService.getMusicFolder(game)).thenReturn(tempDir.toFile());
+    when(folderLookupService.getGameMusicFolder(game)).thenReturn(tempDir.toFile());
     // pattern "/.mp3" and "/*.mp3" must be skipped
     game.setAssets("/.mp3|/*.mp3");
 
@@ -116,7 +116,7 @@ public class MusicServiceTest {
     Path sub = Files.createDirectory(tempDir.resolve("MFDOOM"));
     Files.createFile(sub.resolve("Attract1.mp3"));
     Files.createFile(sub.resolve("Attract2.mp3"));
-    when(folderLookupService.getMusicFolder(game)).thenReturn(tempDir.toFile());
+    when(folderLookupService.getGameMusicFolder(game)).thenReturn(tempDir.toFile());
     game.setAssets("MFDOOM/Attract*.mp3");
 
     List<File> result = musicService.getMp3Files(game);
@@ -127,7 +127,7 @@ public class MusicServiceTest {
   @Test
   void getMp3Files_deduplicatesFiles(@TempDir Path tempDir) throws IOException {
     Files.createFile(tempDir.resolve("intro.mp3"));
-    when(folderLookupService.getMusicFolder(game)).thenReturn(tempDir.toFile());
+    when(folderLookupService.getGameMusicFolder(game)).thenReturn(tempDir.toFile());
     // same asset listed twice
     game.setAssets("intro.mp3|intro.mp3");
 
@@ -140,7 +140,7 @@ public class MusicServiceTest {
 
   @Test
   void getMissingMp3Files_returnsEmpty_whenMusicFolderIsNull() {
-    when(folderLookupService.getMusicFolder(game)).thenReturn(null);
+    when(folderLookupService.getGameMusicFolder(game)).thenReturn(null);
 
     List<String> result = musicService.getMissingMp3Files(game);
 
@@ -149,7 +149,7 @@ public class MusicServiceTest {
 
   @Test
   void getMissingMp3Files_returnsEmpty_whenAssetsIsEmpty(@TempDir Path tempDir) {
-    when(folderLookupService.getMusicFolder(game)).thenReturn(tempDir.toFile());
+    when(folderLookupService.getGameMusicFolder(game)).thenReturn(tempDir.toFile());
     game.setAssets("");
 
     List<String> result = musicService.getMissingMp3Files(game);
@@ -159,7 +159,7 @@ public class MusicServiceTest {
 
   @Test
   void getMissingMp3Files_reportsMissingExactFile(@TempDir Path tempDir) {
-    when(folderLookupService.getMusicFolder(game)).thenReturn(tempDir.toFile());
+    when(folderLookupService.getGameMusicFolder(game)).thenReturn(tempDir.toFile());
     game.setAssets("missing.mp3");
 
     List<String> result = musicService.getMissingMp3Files(game);
@@ -171,7 +171,7 @@ public class MusicServiceTest {
   @Test
   void getMissingMp3Files_doesNotReportExistingFile(@TempDir Path tempDir) throws IOException {
     Files.createFile(tempDir.resolve("present.mp3"));
-    when(folderLookupService.getMusicFolder(game)).thenReturn(tempDir.toFile());
+    when(folderLookupService.getGameMusicFolder(game)).thenReturn(tempDir.toFile());
     game.setAssets("present.mp3");
 
     List<String> result = musicService.getMissingMp3Files(game);
@@ -181,7 +181,7 @@ public class MusicServiceTest {
 
   @Test
   void getMissingMp3Files_skipsBogusWildcardPatterns(@TempDir Path tempDir) {
-    when(folderLookupService.getMusicFolder(game)).thenReturn(tempDir.toFile());
+    when(folderLookupService.getGameMusicFolder(game)).thenReturn(tempDir.toFile());
     game.setAssets("/.mp3|/*.mp3");
 
     List<String> result = musicService.getMissingMp3Files(game);
@@ -191,7 +191,7 @@ public class MusicServiceTest {
 
   @Test
   void getMissingMp3Files_reportsMissingWildcard(@TempDir Path tempDir) {
-    when(folderLookupService.getMusicFolder(game)).thenReturn(tempDir.toFile());
+    when(folderLookupService.getGameMusicFolder(game)).thenReturn(tempDir.toFile());
     game.setAssets("MFDOOM/Attract*.mp3");
 
     List<String> result = musicService.getMissingMp3Files(game);
@@ -204,7 +204,7 @@ public class MusicServiceTest {
   void getMissingMp3Files_doesNotReportMatchedWildcard(@TempDir Path tempDir) throws IOException {
     Path sub = Files.createDirectory(tempDir.resolve("MFDOOM"));
     Files.createFile(sub.resolve("Attract1.mp3"));
-    when(folderLookupService.getMusicFolder(game)).thenReturn(tempDir.toFile());
+    when(folderLookupService.getGameMusicFolder(game)).thenReturn(tempDir.toFile());
     game.setAssets("MFDOOM/Attract*.mp3");
 
     List<String> result = musicService.getMissingMp3Files(game);
@@ -237,7 +237,7 @@ public class MusicServiceTest {
 
   @Test
   void delete_returnsTrue_whenNoMp3FilesExist(@TempDir Path tempDir) {
-    when(folderLookupService.getMusicFolder(game)).thenReturn(tempDir.toFile());
+    when(folderLookupService.getGameMusicFolder(game)).thenReturn(tempDir.toFile());
     game.setAssets("");
 
     boolean result = musicService.delete(game);
@@ -248,7 +248,7 @@ public class MusicServiceTest {
   @Test
   void delete_deletesFilesAndReturnsTrue(@TempDir Path tempDir) throws IOException {
     File mp3 = Files.createFile(tempDir.resolve("track.mp3")).toFile();
-    when(folderLookupService.getMusicFolder(game)).thenReturn(tempDir.toFile());
+    when(folderLookupService.getGameMusicFolder(game)).thenReturn(tempDir.toFile());
     game.setAssets("track.mp3");
 
     boolean result = musicService.delete(game);
