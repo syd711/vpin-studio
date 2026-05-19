@@ -377,15 +377,12 @@ public class HighscoreService implements InitializingBean {
 
       // for each line of scores, check when it has been lastly changed
       int offset = 0;
-
       for (int pos = 0; pos < scores.size(); pos++) {
         Score newScore = scores.get(pos);
         boolean found = false;
         for (HighscoreVersion version : versions) {
-
           //change positions start with 1!
           int changedPos = version.getChangedPosition() - 1;
-
           // last version where line has been changed
           // As better score could have been inserted before, check changedPos <= pos
           if (((pos - offset) <= changedPos) && (changedPos <= pos)) {
@@ -394,14 +391,12 @@ public class HighscoreService implements InitializingBean {
               versionScores = highscoreParser.parseScores(version.getCreatedAt(), version.getNewRaw(), game, serverId);
               parsedVersions.put(version, versionScores);
             }
-
           // Guard against historical snapshots with fewer entries than changedPos implies
           if (changedPos >= versionScores.size()) {
               LOG.warn("Changed Position of {} is out of bounds for high score version {} with {} scores (game: {})",
                       changedPos, version.getId(), versionScores.size(), game.getGameDisplayName());
               continue;
           }
-
             Score oldScore = versionScores.get(changedPos);
             // verify same score and same player
             if (newScore.matches(oldScore)) {

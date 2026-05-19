@@ -228,8 +228,11 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
     Platform.runLater(() -> {
       try {
         int[] res = getCardResolution(template.getTemplateType());
+
         CardGraphicsHighscore cardGraphics = new CardGraphicsHighscore(false);
         cardGraphics.setTemplate(template);
+
+
         cardGraphics.setData(data, res[0], res[1]);
         // resize the cards to the needed resolution
         cardGraphics.resize(res[0], res[1]);

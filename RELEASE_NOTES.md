@@ -1,3 +1,8 @@
+## Relase Notes 5.0.0
+- **Mac**
+  - App Icon now works as dynamic icon with MacOS 26+ correctly
+
+
 ## Release Notes 4.9.2
 
 - **Future Pinball**
