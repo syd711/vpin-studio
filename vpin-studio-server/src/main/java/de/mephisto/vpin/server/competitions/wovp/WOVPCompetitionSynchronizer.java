@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.competitions.wovp;
 
+import de.mephisto.vpin.connectors.mania.CabinetClient;
 import de.mephisto.vpin.connectors.wovp.Wovp;
 import de.mephisto.vpin.connectors.wovp.models.*;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -11,9 +12,11 @@ import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionIdUpdater;
 import de.mephisto.vpin.server.competitions.CompetitionLifecycleService;
 import de.mephisto.vpin.server.competitions.CompetitionService;
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameCachingService;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreBackupService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
@@ -64,6 +67,12 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
 
   @Autowired
   private CompetitionIdUpdater competitionIdUpdater;
+
+  @Autowired
+  private EmulatorService emulatorService;
+
+  @Autowired
+  private GameCachingService gameCachingService;
 
   public synchronized boolean synchronizeWovp(String apiKey, boolean forceReload) {
     try {
@@ -281,7 +290,9 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
         synchronizeWovp(settings.getAnyApiKey(), true);
         LOG.info("----------------------------- /Initial WOVP Sync -------------------------------------------------");
         LOG.info("Initial sync finished, took {}ms", (System.currentTimeMillis() - start));
+        gameCachingService.clearCache();
       }).start();
+
     }
   }
 
