@@ -112,7 +112,7 @@ jobs:
       - name: Create macOS App Image
         working-directory: ./mac-build
         run: |
-          jpackage --name VPin-Studio 
+          jpackage --name VPin-Studio \
             --input input \
             --app-version ${{ steps.project.outputs.version }} \
             --main-jar vpin-studio-ui.jar \
