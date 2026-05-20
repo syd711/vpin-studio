@@ -1,12 +1,14 @@
 package de.mephisto.vpin.ui.tables.drophandler;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.dialogs.FrontendMediaUploadProgressModel;
 import de.mephisto.vpin.ui.tables.dialogs.TableAssetManagerDialogController;
@@ -147,6 +149,7 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
       }
 
       boolean append = true;
+      VPinScreen loadingScreenId = VPinScreen.Loading;
       if (!medias.getMediaItems(screen).isEmpty()) {
         append = false;
         Optional<ButtonType> buttonType = WidgetFactory.showConfirmationWithOption(Studio.stage, "Replace Media?",
@@ -156,6 +159,13 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
         }
         else if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
           append = true;
+
+          if (screen.equals(VPinScreen.Loading) && client.getFrontendService().getFrontendType().equals(FrontendType.Popper)) {
+            VPinScreen vPinScreen = TableDialogs.openAssetScreenAssignmentDialog();
+            if (vPinScreen != null) {
+              loadingScreenId = vPinScreen;
+            }
+          }
         }
         else {
           return;
@@ -169,7 +179,7 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
       }
       else if (game != null) {
         FrontendMediaUploadProgressModel model = new FrontendMediaUploadProgressModel(game,
-            "Media Upload", draggedCopies, screen, append);
+            "Media Upload", draggedCopies, screen, append, loadingScreenId);
         ProgressDialog.createProgressDialog(model);
       }
 

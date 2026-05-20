@@ -1,7 +1,42 @@
 ## Relase Notes 5.0.0
+- **Splash Scree**
+  - Added details to splash screen showing connection steps/attempts
 - **Mac**
   - App Icon now works as dynamic icon with MacOS 26+ correctly
+  - Fix splash screen not showing
+  
 
+
+## Release Notes 4.9.5
+
+- **Statistics**
+  - Analytics not updated for PinballY in pauseMenu
+- **DMD SCreen Capture**
+  - Fixed the DMD capture when dmddevice is set to double or scale2X scaler mode. Used to transfer DMD score in WoVP
+
+## Release Notes 4.9.3
+
+- **iScored**
+  - Improved error handling so that not all competitions are recreated when the corresponding game room is temporary not available.
+- **Table Asset Manager**
+  - Added screen assignment option when PinUP Popper is used and Loading screen assets are uploaded (e.g. via file upload and not via media server downloads).
+- **Music Files**:
+  - Improved detection of the game music with a more thorough check of different possible installed directories.
+- **VPin Mania**
+  - Fixed the registration for users that already had registered a cabinet, but re-installed VPin Studio. The registration dialog will offer your existing VPin Mania cabinets now so that you can link it again.
+- **ALT Color**
+  - Fixed ALT color validation and uploads for aliased tables.
+- **PinVol**
+  - Fixed issue that even if the external installation path was set, the .ini files from the resources folder were used.
+- **VPS Updates**
+  - Fixed issue that e.g. tutorial updates have not been properly ignored.  
+- **Media Recorder**
+  - Fixed Future Pinball recordings.
+  - **Added launch and exit hooks for media recordings**. You can select .bat files in the **Integration Settings** that are executed before and after recordings. This allows you to e.g. turn off you toys and lights via DOF.
+- **Music Detection**
+  - The subfolder was getting duplicated to both the music folder and the asset path when doing a check, resulting in false positives for missing files.
+
+---
 
 ## Release Notes 4.9.2
 
@@ -20,10 +55,12 @@
 - **Webhooks** 
   - Added new webhooks for called when the pause menu is shown/hidden.
 - **Table Asset Manager**
-  - The media converters are no filtered depending on the selected asset type anymore. This allows a more flexible handling of custom converters. 
+  - The media converters are no filtered depending on the selected asset type anymore. This allows a more flexible handling of custom converters.
+- **VPin Mania**
+  - Fixed registration issues.
+  - Added more help to the registration dialog.
 
 ---
-
 
 ## Release Notes 4.9.1
 

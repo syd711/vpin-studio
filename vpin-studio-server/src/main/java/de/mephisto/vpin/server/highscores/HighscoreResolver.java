@@ -6,7 +6,7 @@ import de.mephisto.vpin.restclient.system.ScoringDBMapping;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.parsing.ScoreParsingSummary;
 import de.mephisto.vpin.server.highscores.parsing.ini.IniHighscoreAdapters;
-import de.mephisto.vpin.server.highscores.parsing.nvram.NvRamOutputToScoreTextConverter;
+import de.mephisto.vpin.server.highscores.parsing.nvram.RamOutputToScoreTextConverter;
 import de.mephisto.vpin.server.highscores.parsing.text.TextHighscoreAdapters;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegFile;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegService;
@@ -66,19 +66,31 @@ public class HighscoreResolver implements InitializingBean {
                 case Ini -> getHighscoreIniFile(game);
             };
         }
-        return null;
-    }
-
-    @Nullable
-    private File getAlternateHighscoreTextFile(Game game, @NonNull String name) {
-        if (!StringUtils.isEmpty(name)) {
-            if (!name.endsWith(".txt")) {
-                name = name + ".txt";
-            }
-            return new File(folderLookupService.getUserFolder(game), name);
+        case FPRam: {
+          return getFPRamFile(game);
         }
-        return null;
+        case Ini: {
+          return getHighscoreIniFile(game);
+        }
+      }
     }
+    return null;
+  }
+
+  private File getFPRamFile(Game game) {
+    return folderLookupService.getFPRamFile(game);
+  }
+
+  @Nullable
+  private File getAlternateHighscoreTextFile(Game game, @NonNull String name) {
+    if (!StringUtils.isEmpty(name)) {
+      if (!name.endsWith(".txt")) {
+        name = name + ".txt";
+      }
+      return new File(folderLookupService.getUserFolder(game), name);
+    }
+    return null;
+  }
 
     @Nullable
     public File getHighscoreIniFile(Game game) {
@@ -134,39 +146,46 @@ public class HighscoreResolver implements InitializingBean {
         return false;
     }
 
-    /**
-     * Return a highscore object for the given table or null if no highscore has been achieved or created yet.
-     */
-    @NonNull
-    public synchronized HighscoreMetadata readHighscore(Game game) {
-        HighscoreMetadata metadata = new HighscoreMetadata();
-        metadata.setScanned(OffsetDateTime.now());
-        try {
-            String romName = game.getRom();
-            if (StringUtils.isEmpty(romName)) {
-                romName = game.getTableName();
-            }
+  /**
+   * Return a highscore object for the given table or null if no highscore has been achieved or created yet.
+   */
+  @NonNull
+  public synchronized HighscoreMetadata readHighscore(Game game) {
+    HighscoreMetadata metadata = new HighscoreMetadata();
+    metadata.setScanned(OffsetDateTime.now());
+    try {
+      String rawScore = null;
+      if (game.isFpGame()) {
+        rawScore = readFPHighscore(game, metadata);
+      }
+      else {
+        String romName = game.getRom();
+        if (StringUtils.isEmpty(romName)) {
+          romName = game.getTableName();
+        }
 
-            if (StringUtils.isEmpty(romName)) {
-                String msg = "No rom or table name found.";
-                SLOG.info("Game " + game.getGameDisplayName() + " is not a VPX game.");
-                metadata.setStatus(msg);
-                return metadata;
-            }
+        if (StringUtils.isEmpty(romName)) {
+          String msg = "No rom or table name found.";
+          SLOG.info("Game " + game.getGameDisplayName() + " is not a VPX game.");
+          metadata.setStatus(msg);
+          return metadata;
+        }
 
-            metadata.setRom(romName);
+        metadata.setRom(romName);
 
-            //always check NV ram first, the table might store additional data into the VPReg.stg too
-            String rawScore = readNvHighscore(game, metadata);
-            if (rawScore == null) {
-                rawScore = readVPRegHighscore(game, metadata);
-            }
-            if (rawScore == null) {
-                rawScore = readIniHighscore(game, metadata);
-            }
-            if (rawScore == null) {
-                rawScore = readHSFileHighscore(game, metadata);
-            }
+        //always check NV ram first, the table might store additional data into the VPReg.stg too
+        rawScore = readNvHighscore(game, metadata);
+        if (rawScore == null) {
+          rawScore = readVPRegHighscore(game, metadata);
+        }
+        if (rawScore == null) {
+          rawScore = readIniHighscore(game, metadata);
+        }
+        if (rawScore == null) {
+          rawScore = readHSFileHighscore(game, metadata);
+        }
+      }
+
 
             if (rawScore == null) {
                 if (metadata.getStatus() == null) {
@@ -284,7 +303,7 @@ public class HighscoreResolver implements InitializingBean {
             metadata.setFilename(nvRam.getCanonicalPath());
             metadata.setModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(nvRam.lastModified()), ZoneId.systemDefault()));
 
-      if (!NvRamOutputToScoreTextConverter.isSupportedRom(nvRamName)) {
+      if (!RamOutputToScoreTextConverter.isSupportedRom(nvRamName)) {
         String msg = "The NV ram file \"" + nvRamName + ".nv\" is currently not supported.";
         SLOG.info(msg);
         metadata.setStatus(msg);
@@ -292,16 +311,45 @@ public class HighscoreResolver implements InitializingBean {
       }
       metadata.setType(HighscoreType.NVRam);
 
-            return NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(nvRam);
-        }
-        catch (Exception e) {
-            String msg = "Failed to parse highscore: " + e.getMessage();
-            SLOG.error(msg);
-            metadata.setStatus(msg);
-            LOG.error(msg, e);
-        }
-        return null;
+      return RamOutputToScoreTextConverter.convertRamTextToMachineReadable(game, nvRam);
     }
+    catch (Exception e) {
+      String msg = "Failed to parse highscore: " + e.getMessage();
+      SLOG.error(msg);
+      metadata.setStatus(msg);
+      LOG.error(msg, e);
+    }
+    return null;
+  }
+  /**
+   * Executes a single PINemHi command for the given game.
+   *
+   * @param game     the game to parse the highscore for
+   * @param metadata the metadata that are collected while parsing
+   * @return the Highscore object or null if no highscore could be parsed.
+   */
+  @Nullable
+  private String readFPHighscore(@NonNull Game game, HighscoreMetadata metadata) {
+    try {
+      File fpRamFile = getFPRamFile(game);
+      if (fpRamFile == null || !fpRamFile.exists()) {
+        return null;
+      }
+
+      metadata.setFilename(fpRamFile.getCanonicalPath());
+      metadata.setModified(new Date(fpRamFile.lastModified()));
+      metadata.setType(HighscoreType.FPRam);
+
+      return RamOutputToScoreTextConverter.convertRamTextToMachineReadable(game, fpRamFile);
+    }
+    catch (Exception e) {
+      String msg = "Failed to parse highscore: " + e.getMessage();
+      SLOG.error(msg);
+      metadata.setStatus(msg);
+      LOG.error(msg, e);
+    }
+    return null;
+  }
 
     @Override
     public void afterPropertiesSet() throws Exception {

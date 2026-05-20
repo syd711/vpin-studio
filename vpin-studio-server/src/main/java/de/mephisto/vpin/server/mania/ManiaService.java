@@ -375,14 +375,14 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
       maniaClient.getRestClient().setApiKey(registration.getApiKey());
 
       BufferedImage avatar = ResourceLoader.getResource("avatar-default.png");
-      if (avatarEntry != null) {
+      if (avatarEntry != null && avatarEntry.getData() != null) {
         avatar = ImageIO.read(new ByteArrayInputStream(avatarEntry.getData()));
       }
 
       Cabinet newCab = new Cabinet();
       newCab.setCreationDate(new Date());
       newCab.setSettings(new CabinetSettings());
-      newCab.setUuid(null);
+      newCab.setUuid(registration.getCabinetUuid());
       newCab.setDisplayName(systemName != null ? systemName : "My VPin");
       Cabinet registeredCabinet = maniaClient.getCabinetClient().register(newCab, avatar, null);
       if (registeredCabinet == null) {
@@ -598,6 +598,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
     try {
       maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
       maniaSettings.setCabinetUuid(null);
+      maniaSettings.setApiKey(null);
       preferencesService.savePreference(maniaSettings);
 
       return maniaClient.getCabinetClient().deleteCabinet();

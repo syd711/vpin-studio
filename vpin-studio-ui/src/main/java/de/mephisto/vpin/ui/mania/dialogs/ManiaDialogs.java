@@ -12,9 +12,10 @@ import java.util.List;
 public class ManiaDialogs {
   private final static Logger LOG = LoggerFactory.getLogger(ManiaDialogs.class);
 
-  public static ManiaRegistration openRegistrationDialog() {
+  public static ManiaRegistration openRegistrationDialog(String apiKey) {
     Stage stage = Dialogs.createStudioDialogStage(ManiaRegistrationDialogController.class, "dialog-mania-registration.fxml", "VPin Mania Registration");
     ManiaRegistrationDialogController controller = (ManiaRegistrationDialogController) stage.getUserData();
+    controller.setApiKey(apiKey);
     stage.showAndWait();
     return controller.getManiaRegistration();
   }
