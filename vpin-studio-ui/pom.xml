@@ -448,7 +448,7 @@
                                 <resource>
                                     <directory>${basedir}/../</directory>
                                     <includes>
-                                        <include>${zulu.jre.bundle}</include>
+                                        <include>${zulu.jre.bundle.linux}</include>
                                     </includes>
                                 </resource>
                             </resources>
