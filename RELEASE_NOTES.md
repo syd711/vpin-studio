@@ -3,6 +3,8 @@
 
 - **Statistics**
   - Analytics not updated for PinballY in pauseMenu
+- **DMD SCreen Capture**
+  - Fixed the DMD capture when dmddevice is set to double or scale2X scaler mode. Used to transfer DMD score in WoVP
 
 ## Release Notes 4.9.3
 
