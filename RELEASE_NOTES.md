@@ -1,5 +1,5 @@
 
-## Release Notes 4.9.4
+## Release Notes 4.9.5
 
 - **Statistics**
   - Analytics not updated for PinballY in pauseMenu
