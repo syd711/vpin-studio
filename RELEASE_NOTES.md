@@ -1,3 +1,9 @@
+
+## Release Notes 4.9.4
+
+- **Statistics**
+  - Analytics not updated for PinballY in pauseMenu
+
 ## Release Notes 4.9.3
 
 - **iScored**
