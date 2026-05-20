@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Base64;
 import java.util.List;
 
@@ -164,9 +165,13 @@ public abstract class MediaService  {
         new WheelAugmenter(media).deAugment();
         new WheelIconDelete(media).delete();
       }
-      if (media.delete()) {
+      try {
+        Files.delete(media.toPath());
         notifyGameScreenAssetsChanged(objectId, screen, media);
         return true;
+      }
+      catch (IOException ioe) {
+        LOG.error("Cannot delete file {}", media.getAbsolutePath(), ioe);
       }
     }
     return false;
