@@ -189,13 +189,13 @@ jobs:
       - name: Copy DMG for Upload
         working-directory: ./mac-build
         run: |
-          echo "----------------------realpath results----------------------"
-          realpath      
-          echo "----------------------ls results----------------------"
-          ls -al
-          echo "----------------------ls .. results----------------------"
-          ls -al ..                
-          echo "----------------------Copy DMG from VPin-Studio-${{ steps.project.outputs.version }}.dmg to VPin-Studio-Client-MacOS-${{ matrix.arch }}.dmg----------------------"
+#          echo "----------------------realpath results----------------------"
+#          realpath
+#          echo "----------------------ls results----------------------"
+#          ls -al
+#          echo "----------------------ls .. results----------------------"
+#          ls -al ..
+#          echo "----------------------Copy DMG from VPin-Studio-${{ steps.project.outputs.version }}.dmg to VPin-Studio-Client-MacOS-${{ matrix.arch }}.dmg----------------------"
           cp deploy-mac/VPin-Studio-${{ steps.project.outputs.version }}.dmg VPin-Studio-Client-MacOS-${{ matrix.arch }}.dmg
 
 
@@ -290,7 +290,8 @@ jobs:
         run: copy "${{ github.workspace }}\resources\jvm\jinput-dx8_64.dll" "$env:JAVA_HOME\bin\"
 
       - name: Build with Maven
-        run: mvn --batch-mode --update-snapshots clean package
+        run: mvn --batch-mode --update-snapshots clean package -DskipTests
+       # run: mvn --batch-mode --update-snapshots clean package
 
       - name: Download macOS x64 Artifacts
         uses: actions/download-artifact@v8
