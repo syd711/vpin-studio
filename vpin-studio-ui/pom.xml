@@ -669,7 +669,7 @@
                                 <argument>a</argument>
                                 <argument>-tzip</argument>
                                 <argument>VPin-Studio-Client-linux-x64.zip</argument>
-                                <argument>${zulu.jre.bundle}</argument>
+                                <argument>${zulu.jre.bundle.linux}</argument>
                                 <argument>vpin-studio-ui.jar</argument>
                                 <argument>VPin-Studio-linux_x64.sh</argument>
                                 <argument>resources/vpsdb.json</argument>
