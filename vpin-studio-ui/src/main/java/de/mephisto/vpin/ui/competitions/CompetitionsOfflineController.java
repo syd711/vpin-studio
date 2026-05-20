@@ -296,7 +296,7 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
       HBox hBox = new HBox(6);
       hBox.setAlignment(Pos.CENTER_LEFT);
 
-      InputStream gameMediaItem = ServerFX.client.getWheelIcon(game.getId(), true);
+      InputStream gameMediaItem = game != null ? ServerFX.client.getWheelIcon(game.getId(), true) : null;
       if (gameMediaItem == null) {
         gameMediaItem = Studio.class.getResourceAsStream("avatar-blank.png");
       }
