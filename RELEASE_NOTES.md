@@ -1,5 +1,7 @@
 ## Relase Notes 5.0.0
-- **Splash Scree**
+- **WOVP Icon**
+  - Added icon augmentation to APNG wheels
+- **Splash Screen**
   - Added details to splash screen showing connection steps/attempts
 - **Mac**
   - App Icon now works as dynamic icon with MacOS 26+ correctly
