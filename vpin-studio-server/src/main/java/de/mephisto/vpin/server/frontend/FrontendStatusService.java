@@ -13,6 +13,7 @@ import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.*;
 import de.mephisto.vpin.server.system.SystemService;
+import org.apache.commons.io.FilenameUtils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -238,7 +239,11 @@ public class FrontendStatusService implements InitializingBean {
         if (first.isPresent()) {
           rotate = !first.get().isPortraitMode();
         }
-        augmenter.augment(badgeFile, rotate);
+          if ("apng".equalsIgnoreCase(FilenameUtils.getExtension(wheelIcon.getName()))){
+              augmenter.augmentApng(badgeFile, rotate);
+          } else {
+              augmenter.augment(badgeFile, rotate);
+          }
         gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.FRONTEND_MEDIA, null);
       }
     }
