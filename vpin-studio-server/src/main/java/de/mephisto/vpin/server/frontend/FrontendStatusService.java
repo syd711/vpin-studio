@@ -239,11 +239,13 @@ public class FrontendStatusService implements InitializingBean {
         if (first.isPresent()) {
           rotate = !first.get().isPortraitMode();
         }
-          if ("apng".equalsIgnoreCase(FilenameUtils.getExtension(wheelIcon.getName()))){
-              augmenter.augmentApng(badgeFile, rotate);
-          } else {
-              augmenter.augment(badgeFile, rotate);
-          }
+
+        if ("apng".equalsIgnoreCase(FilenameUtils.getExtension(wheelIcon.getName()))){
+            augmenter.augmentApng(badgeFile, rotate);
+        } else {
+            augmenter.augment(badgeFile, rotate);
+        }
+
         gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.FRONTEND_MEDIA, null);
       }
     }

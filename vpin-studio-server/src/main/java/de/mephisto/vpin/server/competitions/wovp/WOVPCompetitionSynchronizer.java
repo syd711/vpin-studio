@@ -180,7 +180,7 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
       addIssue(competition, "WOVP did not set a VPS version id for this challenge.");
     }
     competition.setType(CompetitionType.WEEKLY.name());
-    
+
     competition.setStartDate(challenge.getStartDateUTC().toInstant());
     competition.setEndDate(challenge.getEndDateUTC().toInstant());
 

@@ -26,6 +26,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.jspecify.annotations.NonNull;
+import org.apache.commons.collections4.ListUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -247,7 +249,7 @@ public abstract class BaseConnector implements FrontendConnector {
     game.setGameFileName(details != null ? details.getGameFileName() : filename);
     game.setGameDisplayName(details != null ? details.getGameDisplayName() : gameName);
     game.setGameStatus(details != null ? details.getStatus() : 1);
-    game.setDisabled(details != null ? details.getStatus() == 0 : false);
+    game.setDisabled(details != null && details.getStatus() == 0);
     game.setVersion(details != null ? details.getGameVersion() : null);
     game.setRating(details != null && details.getGameRating() != null ? details.getGameRating() : 0);
     game.setRom(details != null && details.getRomName() != null ? details.getRomName() : null);
@@ -581,7 +583,7 @@ public abstract class BaseConnector implements FrontendConnector {
     pl.setSqlPlayList(true);
     OffsetDateTime dayMinus7 = OffsetDateTime.now().minus(7, ChronoUnit.DAYS);
     List<PlaylistGame> games = getGames().stream().filter(g -> {
-      return g.getDateAdded() != null ? g.getDateAdded().isAfter(dayMinus7) : false;
+      return g.getDateAdded() != null && g.getDateAdded().isAfter(dayMinus7);
     }).map(g -> toPlaylistGame(g.getId())).collect(Collectors.toList());
     pl.setGames(games);
     return pl;
@@ -758,7 +760,7 @@ public abstract class BaseConnector implements FrontendConnector {
     if (playlistConfFile != null) {
       try {
         String content = o.toString();
-        Files.write(playlistConfFile.toPath(), content.getBytes(StandardCharsets.UTF_8));
+        Files.writeString(playlistConfFile.toPath(), content);
       }
       catch (IOException ioe) {
         LOG.error("Ignored error, cannot write file {}", playlistConfFile.getAbsolutePath(), ioe);
@@ -815,20 +817,18 @@ public abstract class BaseConnector implements FrontendConnector {
 
   @Override
   public final List<TableAlxEntry> getAlxData(int gameId) {
-    loadStats();
-    List<TableAlxEntry> result = new ArrayList<>();
-    TableAlxEntry stat = getGameStat(gameId);
-    if (stat != null) {
-      result.add(stat);
-    }
-    return result;
+    // force reload of stats and update of cache
+    List<TableAlxEntry> stats = getAlxData();
+    return ListUtils.select(stats, stat -> stat.getGameId() == gameId);
   }
 
   @Override
   public boolean updateNumberOfPlaysForGame(int gameId, long value) {
     // update internal cache
     TableAlxEntry stat = gameStats.get(gameId);
-    stat.setNumberOfPlays((int) value);
+    if (stat != null) {
+      stat.setNumberOfPlays((int) value);
+    }
     return true;
   }
 
@@ -836,7 +836,9 @@ public abstract class BaseConnector implements FrontendConnector {
   public boolean updateSecondsPlayedForGame(int gameId, long seconds) {
     // update internal cache
     TableAlxEntry stat = gameStats.get(gameId);
-    stat.setTimePlayedSecs((int) seconds);
+    if (stat != null) {
+      stat.setTimePlayedSecs((int) seconds);
+    }
     return true;
   }
 
@@ -934,7 +936,7 @@ public abstract class BaseConnector implements FrontendConnector {
                     p.info().command().get().startsWith("MAME") ||
                     p.info().command().get().contains("B2SBackglassServerEXE") ||
                     p.info().command().get().contains("DOF")))
-        .collect(Collectors.toList());
+        .toList();
 
     if (processes.isEmpty()) {
       LOG.info("No vpin processes found, termination canceled.");
@@ -992,7 +994,7 @@ public abstract class BaseConnector implements FrontendConnector {
   private boolean launchGame(Game game, boolean wait) {
     if (game.isVpxGame()) {
       if (vpxService.play(game, null, null)) {
-        return !wait ? true : vpxService.waitForPlayer();
+        return !wait || vpxService.waitForPlayer();
       }
       return false;
     }

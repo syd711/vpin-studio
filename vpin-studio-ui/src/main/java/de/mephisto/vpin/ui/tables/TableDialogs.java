@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.assets.AssetMetaData;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
@@ -76,7 +77,7 @@ public class TableDialogs {
     List<File> files = fileChooser.showOpenMultipleDialog(stage);
     if (files != null && !files.isEmpty()) {
       Platform.runLater(() -> {
-
+        VPinScreen loadingScreenId = null;
         FrontendMediaRepresentation medias = client.getGameMediaService().getMedia(id, playlistMode);
         boolean append = false;
         if (medias.getMediaItems(screen).size() > 0) {
@@ -87,6 +88,13 @@ public class TableDialogs {
           }
           else if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
             append = true;
+
+            if (screen.equals(VPinScreen.Loading) && client.getFrontendService().getFrontendType().equals(FrontendType.Popper)) {
+              VPinScreen vPinScreen = TableDialogs.openAssetScreenAssignmentDialog();
+              if (vPinScreen != null) {
+                loadingScreenId = vPinScreen;
+              }
+            }
           }
           else {
             return;
@@ -94,7 +102,7 @@ public class TableDialogs {
         }
 
         FrontendMediaUploadProgressModel model = new FrontendMediaUploadProgressModel(id, playlistMode,
-            "Media Upload", files, screen, append);
+            "Media Upload", files, screen, append, loadingScreenId);
         ProgressDialog.createProgressDialog(model);
       });
     }

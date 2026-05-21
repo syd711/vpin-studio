@@ -218,22 +218,29 @@ public class SystemInfoWindows {
   private String readRegistry(String location, String key) {
     try {
       // Run reg query, then read output with StreamReader (internal class)
-        String[] cmd = {"reg query " + "\"" + location + "\""};
+          //When using array for non-deprecated getRuntime().exec, each argument is an element of the array
+          //Watch out for extra spaces
+              String[] cmd = {"reg", "query", location};
         if (key != null) {
-            cmd = new String[]{"reg query " + '"' + location + "\" /v " + key};
+                  cmd = new String[]{"reg", "query", location + " /v " + key};
         }
+              try {
       Process process = Runtime.getRuntime().exec(cmd);
       StreamReader reader = new StreamReader(process.getInputStream());
       reader.start();
       process.waitFor();
       reader.join();
       return reader.getResult();
+              } catch (Exception e) {
+                  LOG.error("Failed to run process to read registry key at {}: {} ", location, e.getMessage());
+                  return null;
     }
-    catch (Exception e) {
-      LOG.info("Failed to read registry key " + location);
+         } catch (Exception e) {
+          LOG.error("Failed to read registry key at {}: {} ", location, e.getMessage());
       return null;
     }
   }
+
   private String readRegistryValue(String location, String key) {
     String reg = readRegistry(location, key);
     return StringUtils.isNotEmpty(reg) ? extractRegistryValue(reg) : null;
@@ -248,7 +255,7 @@ public class SystemInfoWindows {
    */
   private void writeRegistry(String location, String key, int value) {
     try {
-      String[] cmd = {"REG ADD \"" + location + "\" /v " + key + " /t REG_DWORD /d " + value + " /f"};
+      String[] cmd = {"REG","ADD","\"" + location + "\"","/v",key,"/t","REG_DWORD","/d",""+ value,"/f"};
       Process process = Runtime.getRuntime().exec(cmd);
       StreamReader reader = new StreamReader(process.getInputStream());
       reader.start();

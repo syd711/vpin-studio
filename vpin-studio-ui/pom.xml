@@ -102,7 +102,7 @@
         <dependency>
             <groupId>de.mephisto.vpin</groupId>
             <artifactId>vpin-connector-assets</artifactId>
-            <version>2.0.0</version>
+            <version>1.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.reactfx</groupId>
@@ -448,7 +448,7 @@
                                 <resource>
                                     <directory>${basedir}/../</directory>
                                     <includes>
-                                        <include>${zulu.jre.bundle}</include>
+                                        <include>${zulu.jre.bundle.linux}</include>
                                     </includes>
                                 </resource>
                             </resources>
@@ -669,7 +669,7 @@
                                 <argument>a</argument>
                                 <argument>-tzip</argument>
                                 <argument>VPin-Studio-Client-linux-x64.zip</argument>
-                                <argument>${zulu.jre.bundle}</argument>
+                                <argument>${zulu.jre.bundle.linux}</argument>
                                 <argument>vpin-studio-ui.jar</argument>
                                 <argument>VPin-Studio-linux_x64.sh</argument>
                                 <argument>resources/vpsdb.json</argument>

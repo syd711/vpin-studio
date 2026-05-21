@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.highscores.cards;
 
+import org.jspecify.annotations.Nullable;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.cfg.EnumFeature;
 import tools.jackson.databind.json.JsonMapper;
@@ -146,13 +147,15 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
   private byte[] generatePreview(Game game, ScoreSummary summary, CardTemplate template) {
     try {
       BufferedImage bufferedImage = doGenerateCardImage(game, summary, template);
-      return ImageUtil.toBytes(bufferedImage);
+      if (bufferedImage != null) {
+        return ImageUtil.toBytes(bufferedImage);
+      }
     }
     catch (Exception e) {
       LOG.error("Failed to generate highscore preview", e);
       SLOG.error("Failed to generate highscore card: " + e.getMessage());
-      return null;
     }
+    return null;
   }
 
   /**
@@ -217,11 +220,14 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
    * The card must be drawn synchronized and in a FX thread.
    * We need to wait until finished, because otherwise the UI would show the previous result
    */
+  @Nullable
   private BufferedImage doGenerateCardImage(Game game, ScoreSummary summary, CardTemplate template) throws Exception {
-
+    if (summary.getScores().isEmpty()) {
+      return null;
+    }
       //Moved out of .runLater to prevent DB locks
       CardData data = getCardData(game, summary, template, true);
-      
+
       // sync between FX thread and calling thread
     CountDownLatch latch = new CountDownLatch(1);
     BufferedImage[] generatedImage = {null};

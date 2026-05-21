@@ -13,7 +13,7 @@ import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
-import de.mephisto.vpin.server.highscores.parsing.nvram.NvRamOutputToScoreTextConverter;
+import de.mephisto.vpin.server.highscores.parsing.nvram.RamOutputToScoreTextConverter;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegFile;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegService;
 import de.mephisto.vpin.server.listeners.EventOrigin;
@@ -85,7 +85,7 @@ public class HighscoreService implements InitializingBean {
   }
 
   public boolean isSupportedRom(String rom) {
-    return NvRamOutputToScoreTextConverter.isSupportedRom(rom);
+    return RamOutputToScoreTextConverter.isSupportedRom(rom);
   }
 
   public HighscoreFiles getHighscoreFiles(@NonNull Game game) {
@@ -391,12 +391,12 @@ public class HighscoreService implements InitializingBean {
               versionScores = highscoreParser.parseScores(version.getCreatedAt(), version.getNewRaw(), game, serverId);
               parsedVersions.put(version, versionScores);
             }
-              // Guard against historical snapshots with fewer entries than changedPos implies
-              if (changedPos >= versionScores.size()) {
-                  LOG.warn("Changed Position of {} is out of bounds for high score version {} with {} scores (game: {})",
-                          changedPos, version.getId(), versionScores.size(), game.getGameDisplayName());
-                  continue;
-              }
+          // Guard against historical snapshots with fewer entries than changedPos implies
+          if (changedPos >= versionScores.size()) {
+              LOG.warn("Changed Position of {} is out of bounds for high score version {} with {} scores (game: {})",
+                      changedPos, version.getId(), versionScores.size(), game.getGameDisplayName());
+              continue;
+          }
             Score oldScore = versionScores.get(changedPos);
             // verify same score and same player
             if (newScore.matches(oldScore)) {
@@ -480,9 +480,9 @@ public class HighscoreService implements InitializingBean {
 
   @Nullable
   public HighscoreMetadata scanScore(@NonNull Game game, @NonNull EventOrigin eventOrigin) {
-    if (!game.isVpxGame()) {
-      SLOG.info("Game " + game.getGameDisplayName() + " is not a VPX game, highscore parsing cancelled.");
-      LOG.info("Game {} is not a VPX game, highscore parsing cancelled.", game.getGameDisplayName());
+    if (!game.isVpxGame() && !game.isFpGame()) {
+      SLOG.info("Game " + game.getGameDisplayName() + " is not a VPX or FP game, highscore parsing cancelled.");
+      LOG.info("Game {} is not a VPX or FP game, highscore parsing cancelled.", game.getGameDisplayName());
       return null;
     }
     HighscoreMetadata highscoreMetadata = readHighscore(game);
@@ -626,6 +626,21 @@ public class HighscoreService implements InitializingBean {
     triggerHighscoreUpdate(game, oldHighscore);
 
     return Optional.of(oldHighscore);
+  }
+
+  /**
+   * Ensures both score list have the same length.
+   *
+   * @param newScores
+   * @param oldScores
+   */
+  private void fillScores(int gameId, List<Score> newScores, List<Score> oldScores) {
+    while (newScores.size() < oldScores.size()) {
+      newScores.add(new Score(Instant.now(), gameId, "???", null, null, 0, newScores.size() + 1));
+    }
+    while (oldScores.size() < newScores.size()) {
+      oldScores.add(new Score(Instant.now(), gameId, "???", null, null, 0, oldScores.size() + 1));
+    }
   }
 
   /**

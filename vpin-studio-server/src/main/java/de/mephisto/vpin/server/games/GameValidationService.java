@@ -584,38 +584,38 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 //          if (altColor.contains("pin2dmd.pal") && !altColor.contains("pin2dmd.vni")) {
 //            result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, "pin2dmd.vni"));
 //          }
-                    if (!altColor.contains("pin2dmd.pal") && altColor.contains("pin2dmd.vni")) {
-                        result.add(ValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, "pin2dmd.pal"));
-                    }
-                }
-                break;
-            }
-            case serum: {
-                String name = game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX;
-                if (game.isZenGame()) {
-                    String gameNameForAltSound = dofLinxService.getGameNameForAltColor(game);
-                    name = gameNameForAltSound + "." + UploaderAnalysis.SERUM_SUFFIX;
-                }
-                if (isValidationEnabled(game, CODE_ALT_COLOR_FILES_MISSING) && !altColor.contains(name)) {
-                    result.add(ValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, name));
-                }
-                break;
-            }
-            case cROMc: {
-                String name = game.getRom() + "." + UploaderAnalysis.CROMC_SUFFIX;
-                if (game.isZenGame()) {
-                    String gameNameForAltSound = dofLinxService.getGameNameForAltColor(game);
-                    name = gameNameForAltSound + "." + UploaderAnalysis.CROMC_SUFFIX;
-                }
-                if (isValidationEnabled(game, CODE_ALT_COLOR_FILES_MISSING) && !altColor.contains(name)) {
-                    result.add(ValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, name));
-                }
-                break;
-            }
-            default: {
-                //ignore
-            }
+          if (!altColor.contains("pin2dmd.pal") && altColor.contains("pin2dmd.vni")) {
+            result.add(ValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, "pin2dmd.pal"));
+          }
         }
+        break;
+      }
+      case serum: {
+        String name = (!StringUtils.isEmpty(game.getRomAlias()) ? game.getRomAlias() : game.getRom()) + "." + UploaderAnalysis.SERUM_SUFFIX;
+        if (game.isZenGame()) {
+          String gameNameForAltSound = dofLinxService.getGameNameForAltColor(game);
+          name = gameNameForAltSound + "." + UploaderAnalysis.SERUM_SUFFIX;
+        }
+        if (isValidationEnabled(game, CODE_ALT_COLOR_FILES_MISSING) && !altColor.contains(name)) {
+          result.add(ValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, name));
+        }
+        break;
+      }
+      case cROMc: {
+        String name = (!StringUtils.isEmpty(game.getRomAlias()) ? game.getRomAlias() : game.getRom()) + "." + UploaderAnalysis.CROMC_SUFFIX;
+        if (game.isZenGame()) {
+          String gameNameForAltSound = dofLinxService.getGameNameForAltColor(game);
+          name = gameNameForAltSound + "." + UploaderAnalysis.CROMC_SUFFIX;
+        }
+        if (isValidationEnabled(game, CODE_ALT_COLOR_FILES_MISSING) && !altColor.contains(name)) {
+          result.add(ValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, name));
+        }
+        break;
+      }
+      default: {
+        //ignore
+      }
+    }
 
         if (game.isVpxGame() && !StringUtils.isEmpty(game.getRom())) {
             VPinMameOptions gameOptions = vPinMameService.getOptions(game.getRom());

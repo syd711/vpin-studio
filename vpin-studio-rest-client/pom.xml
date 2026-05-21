@@ -19,7 +19,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <slf4j.version>2.0.17</slf4j.version>
-      <logback.version>1.5.32</logback.version>
+        <logback.version>1.5.32</logback.version>
     </properties>
 
     <dependencies>
@@ -41,7 +41,7 @@
         <dependency>
             <groupId>de.mephisto.vpin</groupId>
             <artifactId>vpin-connector-assets</artifactId>
-            <version>2.0.0</version>
+            <version>1.1.0</version>
         </dependency>
         <dependency>
             <groupId>de.mephisto.vpin</groupId>
@@ -66,7 +66,7 @@
         <dependency>
             <groupId>de.mephisto.vpin</groupId>
             <artifactId>vpin-mania-rest-client</artifactId>
-            <version>2.0.0</version>
+            <version>${mania.version}</version>
         </dependency>
         <dependency>
             <groupId>net.sf.sevenzipjbinding</groupId>

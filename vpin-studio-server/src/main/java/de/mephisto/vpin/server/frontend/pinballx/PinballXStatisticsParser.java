@@ -62,6 +62,18 @@ public class PinballXStatisticsParser {
     }
   }
 
+  public void getAlxData(GameEmulator emu, int gameId, List<TableAlxEntry> stats, Set<Integer> favs) {
+    INIConfiguration iniConfiguration = new INIConfiguration();
+    try (FileReader fileReader = new FileReader(getPinballXStatisticsIni(), Charset.forName("UTF-8"))) {
+      iniConfiguration.read(fileReader);
+      TableDetails details = connector.getTableDetails(gameId);
+      getAlxData(iniConfiguration, stats, favs, emu, gameId, details);
+    }
+    catch (Exception e) {
+      LOG.error("cannot parse Statistics.ini", e);
+    }
+  }
+
   private void getAlxData(INIConfiguration iniConfiguration, List<TableAlxEntry> stats, Set<Integer> favs, GameEmulator emu, int gameId, TableDetails game) throws ParseException {
     if (game == null) {
       return;
