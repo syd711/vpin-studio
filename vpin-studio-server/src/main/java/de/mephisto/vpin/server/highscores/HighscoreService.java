@@ -636,10 +636,10 @@ public class HighscoreService implements InitializingBean {
    */
   private void fillScores(int gameId, List<Score> newScores, List<Score> oldScores) {
     while (newScores.size() < oldScores.size()) {
-      newScores.add(new Score(new Date(), gameId, "???", null, null, 0, newScores.size() + 1));
+      newScores.add(new Score(Instant.now(), gameId, "???", null, null, 0, newScores.size() + 1));
     }
     while (oldScores.size() < newScores.size()) {
-      oldScores.add(new Score(new Date(), gameId, "???", null, null, 0, oldScores.size() + 1));
+      oldScores.add(new Score(Instant.now(), gameId, "???", null, null, 0, oldScores.size() + 1));
     }
   }
 

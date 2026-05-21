@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.highscores.cards;
 
+import org.jspecify.annotations.Nullable;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.cfg.EnumFeature;
 import tools.jackson.databind.json.JsonMapper;
