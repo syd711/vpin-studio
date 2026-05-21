@@ -262,6 +262,13 @@ public class FolderLookupService {
     }
 
     File stgFile = new File(emulator.getInstallationFolder(), "User/VPReg.stg");
+    if (stgFile.exists()) {
+      VPRegFile reg = new VPRegFile(stgFile, game.getRom(), tableName);
+      if (reg.isValid()) {
+        return reg;
+      }
+    }
+
     if (isPreferLegacyFileStructure(emulator)) {
       stgFile = new File(game.getGameFile().getParentFile(), "user/VPReg.stg");
       if (!stgFile.exists()) {
