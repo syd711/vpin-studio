@@ -23,6 +23,8 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
+
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -812,20 +814,18 @@ public abstract class BaseConnector implements FrontendConnector {
 
   @Override
   public final List<TableAlxEntry> getAlxData(int gameId) {
-    loadStats();
-    List<TableAlxEntry> result = new ArrayList<>();
-    TableAlxEntry stat = getGameStat(gameId);
-    if (stat != null) {
-      result.add(stat);
-    }
-    return result;
+    // force reload of stats and update of cache
+    List<TableAlxEntry> stats = getAlxData();
+    return ListUtils.select(stats, stat -> stat.getGameId() == gameId);
   }
 
   @Override
   public boolean updateNumberOfPlaysForGame(int gameId, long value) {
     // update internal cache
     TableAlxEntry stat = gameStats.get(gameId);
-    stat.setNumberOfPlays((int) value);
+    if (stat != null) {
+      stat.setNumberOfPlays((int) value);
+    }
     return true;
   }
 
@@ -833,7 +833,9 @@ public abstract class BaseConnector implements FrontendConnector {
   public boolean updateSecondsPlayedForGame(int gameId, long seconds) {
     // update internal cache
     TableAlxEntry stat = gameStats.get(gameId);
-    stat.setTimePlayedSecs((int) seconds);
+    if (stat != null) {
+      stat.setTimePlayedSecs((int) seconds);
+    }
     return true;
   }
 
