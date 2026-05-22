@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.cards.panels;
 
-import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.cards.CardTemplateType;
 import de.mephisto.vpin.ui.util.binding.BeanBinder;

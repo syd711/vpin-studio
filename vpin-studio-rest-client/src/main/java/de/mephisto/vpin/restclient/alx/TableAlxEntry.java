@@ -1,11 +1,11 @@
 package de.mephisto.vpin.restclient.alx;
 
-import java.util.Date;
+import java.time.OffsetDateTime;
 
 public class TableAlxEntry {
   private int uniqueId;
   private int gameId;
-  private Date lastPlayed;
+  private OffsetDateTime lastPlayed;
   private int numberOfPlays;
   private int timePlayedSecs;
   private String displayName;
@@ -52,11 +52,11 @@ public class TableAlxEntry {
     this.gameId = gameId;
   }
 
-  public Date getLastPlayed() {
+  public OffsetDateTime getLastPlayed() {
     return lastPlayed;
   }
 
-  public void setLastPlayed(Date lastPlayed) {
+  public void setLastPlayed(OffsetDateTime lastPlayed) {
     this.lastPlayed = lastPlayed;
   }
 

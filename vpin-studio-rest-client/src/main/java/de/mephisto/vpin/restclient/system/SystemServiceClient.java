@@ -1,14 +1,16 @@
 package de.mephisto.vpin.restclient.system;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.cfg.EnumFeature;
+import tools.jackson.databind.json.JsonMapper;
 import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.backups.StudioBackupDescriptor;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -18,7 +20,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.lang.invoke.MethodHandles;
-import java.util.Date;
+import java.time.OffsetDateTime;
 import java.util.HashMap;
 
 /*********************************************************************************************************************
@@ -31,11 +33,16 @@ public class SystemServiceClient extends VPinStudioClientService {
     super(client);
   }
 
-  private final static ObjectMapper objectMapper = new ObjectMapper();
+  private final static ObjectMapper objectMapper;
 
   static {
-    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    objectMapper = JsonMapper.builder()
+        .enable(SerializationFeature.INDENT_OUTPUT)
+        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+        .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+        .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+        .build();
   }
 
   public String backupSystem() {
@@ -61,8 +68,8 @@ public class SystemServiceClient extends VPinStudioClientService {
     }
   }
 
-  public Date getStartupTime() {
-    return getRestClient().get(API + "system/startupTime", Date.class);
+  public OffsetDateTime getStartupTime() {
+    return getRestClient().get(API + "system/startupTime", OffsetDateTime.class);
   }
 
   public String logs() {

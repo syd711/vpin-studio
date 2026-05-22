@@ -76,7 +76,7 @@ public class HighscoreResetController implements Initializable, DialogController
   public void setGames(List<GameRepresentation> games) {
     this.games = games;
     if (games.size() == 1) {
-      GameRepresentation game = games.get(0);
+      GameRepresentation game = games.getFirst();
 
       boolean nvRamScore = HighscoreType.NVRam.name().equals(game.getHighscoreType());
       this.multiNVRamLabel.setVisible(false);

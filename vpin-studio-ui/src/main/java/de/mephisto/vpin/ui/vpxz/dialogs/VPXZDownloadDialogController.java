@@ -2,9 +2,9 @@ package de.mephisto.vpin.ui.vpxz.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.vpxz.VPXZDescriptorRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.DownloadJobDescriptor;
 import de.mephisto.vpin.restclient.util.FileUtils;
+import de.mephisto.vpin.restclient.vpxz.VPXZDescriptorRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import javafx.event.ActionEvent;
@@ -116,7 +116,7 @@ public class VPXZDownloadDialogController implements Initializable, DialogContro
   public void setData(List<VPXZDescriptorRepresentation> descriptors) {
     this.descriptors = descriptors;
     if (descriptors.size() == 1) {
-      this.titleLabel.setText("Download \"" + descriptors.get(0).getFilename() + "\"");
+      this.titleLabel.setText("Download \"" + descriptors.getFirst().getFilename() + "\"");
     }
     else {
       this.titleLabel.setText("Download " + descriptors.size() + " files");

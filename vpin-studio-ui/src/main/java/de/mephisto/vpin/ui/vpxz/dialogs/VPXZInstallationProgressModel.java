@@ -1,9 +1,6 @@
 package de.mephisto.vpin.ui.vpxz.dialogs;
 
-import de.mephisto.vpin.commons.utils.JFXFuture;
-import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.vpxz.VPXZDescriptorRepresentation;
-import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;

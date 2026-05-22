@@ -10,12 +10,12 @@ import java.util.Optional;
 @Repository
 public interface HighscoreRepository extends JpaRepository<Highscore, Long> {
 
-  Optional<Highscore> findByGameId(int gameId);
+    Optional<Highscore> findByGameId(int gameId);
 
-  @Query(value = "SELECT * FROM Highscores h WHERE h.raw NOT NULL ORDER BY lastModified DESC", nativeQuery = true)
-  List<Highscore> findRecent();
+    @Query(value = "SELECT * FROM Highscores h WHERE h.raw NOT NULL ORDER BY lastModified DESC", nativeQuery = true)
+    List<Highscore> findRecent();
 
-  List<Highscore> findAllByOrderByCreatedAtDesc();
+    List<Highscore> findAllByOrderByCreatedAtDesc();
 
-  List<Highscore> findByRawIsNotNull();
+    List<Highscore> findByRawIsNotNull();
 }

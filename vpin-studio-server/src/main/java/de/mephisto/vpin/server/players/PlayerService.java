@@ -5,9 +5,9 @@ import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.highscores.Score;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,7 +106,7 @@ public class PlayerService {
     }
 
     if (!players.isEmpty()) {
-      return players.get(0);
+      return players.getFirst();
     }
 
     Player discordPlayer = discordService.getPlayerByInitials(serverId, initials);

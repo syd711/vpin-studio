@@ -125,7 +125,12 @@ public class ScreenRecorderPanelController implements Initializable {
 
     recordModeComboBox.setItems(FXCollections.observableList(RECORD_MODE_LIST));
 
-    RecorderSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+    RecorderSettings settingsLookup = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+    if (settingsLookup == null) {
+      settingsLookup = new RecorderSettings();
+    }
+    final RecorderSettings settings = settingsLookup;
+
     RecordingScreenOptions option = settings.getRecordingScreenOption(recordingScreen);
     if (option == null) {
       option = new RecordingScreenOptions();
@@ -141,9 +146,13 @@ public class ScreenRecorderPanelController implements Initializable {
       public void changed(ObservableValue<? extends RecordingWriteMode> observable, RecordingWriteMode oldValue, RecordingWriteMode newValue) {
         Platform.runLater(() -> {
           RecorderSettings s = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
-          RecordingScreenOptions option2 = s.getRecordingScreenOption(recordingScreen);
-          option2.setRecordMode(newValue);
-          client.getPreferenceService().setJsonPreference(s);
+          if (s != null) {
+            RecordingScreenOptions option2 = s.getRecordingScreenOption(recordingScreen);
+            if (option2 != null) {
+              option2.setRecordMode(newValue);
+              client.getPreferenceService().setJsonPreference(s);
+            }
+          }
         });
       }
     });
@@ -151,30 +160,42 @@ public class ScreenRecorderPanelController implements Initializable {
     fps60Checkbox.setSelected(option.isFps60());
     fps60Checkbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       RecorderSettings s = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
-      RecordingScreenOptions option2 = s.getRecordingScreenOption(recordingScreen);
-      option2.setFps60(t1);
-      client.getPreferenceService().setJsonPreference(s);
+      if (s != null) {
+        RecordingScreenOptions option2 = s.getRecordingScreenOption(recordingScreen);
+        if (option2 != null) {
+          option2.setFps60(t1);
+          client.getPreferenceService().setJsonPreference(s);
+        }
+      }
     });
 
 
     expertModeCheckbox.setSelected(option.isExpertSettingsEnabled());
     expertModeCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       RecorderSettings s = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
-      RecordingScreenOptions option2 = s.getRecordingScreenOption(recordingScreen);
-      option2.setExpertSettingsEnabled(t1);
-      client.getPreferenceService().setJsonPreference(s);
+      if (s != null) {
+        RecordingScreenOptions option2 = s.getRecordingScreenOption(recordingScreen);
+        if (option2 != null) {
+          option2.setExpertSettingsEnabled(t1);
+          client.getPreferenceService().setJsonPreference(s);
 
-      fpsPanel.setVisible(!t1);
-      rotationPanel.setVisible(!t1 && VPinScreen.PlayField.equals(this.recordingScreen.getScreen()));
-      settingsBtn.setDisable(!t1);
+          fpsPanel.setVisible(!t1);
+          rotationPanel.setVisible(!t1 && VPinScreen.PlayField.equals(this.recordingScreen.getScreen()));
+          settingsBtn.setDisable(!t1);
+        }
+      }
     });
 
     inGameRecordingCheckbox.setSelected(option.isInGameRecording());
     inGameRecordingCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       RecorderSettings s = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
-      RecordingScreenOptions option2 = s.getRecordingScreenOption(recordingScreen);
-      option2.setInGameRecording(t1);
-      client.getPreferenceService().setJsonPreference(s);
+      if (s != null) {
+        RecordingScreenOptions option2 = s.getRecordingScreenOption(recordingScreen);
+        if (option2 != null) {
+          option2.setInGameRecording(t1);
+          client.getPreferenceService().setJsonPreference(s);
+        }
+      }
     });
 
 
@@ -189,16 +210,20 @@ public class ScreenRecorderPanelController implements Initializable {
 
     rotationCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       RecorderSettings s = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
-      RecordingScreenOptions option2 = s.getRecordingScreenOption(recordingScreen);
-      option2.setRotated(t1);
-      client.getPreferenceService().setJsonPreference(s);
+      if (s != null) {
+        RecordingScreenOptions option2 = s.getRecordingScreenOption(recordingScreen);
+        if (option2 != null) {
+          option2.setRotated(t1);
+          client.getPreferenceService().setJsonPreference(s);
 
-      if (recordingScreen.getScreen().equals(VPinScreen.PlayField)) {
-        if (t1) {
-          imageView.setRotate(180);
-        }
-        else {
-          imageView.setRotate(0);
+          if (recordingScreen.getScreen().equals(VPinScreen.PlayField)) {
+            if (t1) {
+              imageView.setRotate(180);
+            }
+            else {
+              imageView.setRotate(0);
+            }
+          }
         }
       }
     });
@@ -206,9 +231,13 @@ public class ScreenRecorderPanelController implements Initializable {
     audioCheckbox.setSelected(option.isRecordAudio());
     audioCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       RecorderSettings s = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
-      RecordingScreenOptions option2 = s.getRecordingScreenOption(recordingScreen);
-      option2.setRecordAudio(t1);
-      client.getPreferenceService().setJsonPreference(s);
+      if (s != null) {
+        RecordingScreenOptions option2 = s.getRecordingScreenOption(recordingScreen);
+        if (option2 != null) {
+          option2.setRecordAudio(t1);
+          client.getPreferenceService().setJsonPreference(s);
+        }
+      }
     });
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(3, 3600, option.getRecordingDuration());
@@ -222,9 +251,13 @@ public class ScreenRecorderPanelController implements Initializable {
     durationSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
       debouncer.debounce(key, () -> {
         RecorderSettings s = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
-        RecordingScreenOptions option2 = s.getRecordingScreenOption(recordingScreen);
-        option2.setRecordingDuration(newValue);
-        client.getPreferenceService().setJsonPreference(s);
+        if (s != null) {
+          RecordingScreenOptions option2 = s.getRecordingScreenOption(recordingScreen);
+          if (option2 != null) {
+            option2.setRecordingDuration(newValue);
+            client.getPreferenceService().setJsonPreference(s);
+          }
+        }
       }, 300);
     });
 
@@ -239,9 +272,13 @@ public class ScreenRecorderPanelController implements Initializable {
     delaySpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
       debouncer.debounce(spinnerKey, () -> {
         RecorderSettings s = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
-        RecordingScreenOptions option2 = s.getRecordingScreenOption(recordingScreen);
-        option2.setInitialDelay(newValue);
-        client.getPreferenceService().setJsonPreference(s);
+        if (s != null) {
+          RecordingScreenOptions option2 = s.getRecordingScreenOption(recordingScreen);
+          if (option2 != null) {
+            option2.setInitialDelay(newValue);
+            client.getPreferenceService().setJsonPreference(s);
+          }
+        }
       }, 300);
     });
 
@@ -256,7 +293,7 @@ public class ScreenRecorderPanelController implements Initializable {
     previewTitle.setText("Screen Preview (" + recordingScreen.getWidth() + " x " + recordingScreen.getHeight() + ")");
 
     preview.setVisible(Studio.stage.widthProperty().intValue() >= PREVIEW_WIDTH_THRESHOLD);
-    RecorderSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+    // RecorderSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
 
     if (preview.isVisible()) {
       double w = preview.widthProperty().get();

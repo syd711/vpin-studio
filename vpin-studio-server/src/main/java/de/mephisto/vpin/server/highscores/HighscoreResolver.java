@@ -12,8 +12,8 @@ import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegFile;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpx.FolderLookupService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -24,7 +24,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 
 @Service
 public class HighscoreResolver implements InitializingBean {
@@ -151,7 +153,7 @@ public class HighscoreResolver implements InitializingBean {
   @NonNull
   public synchronized HighscoreMetadata readHighscore(Game game) {
     HighscoreMetadata metadata = new HighscoreMetadata();
-    metadata.setScanned(new Date());
+    metadata.setScanned(OffsetDateTime.now());
     try {
       String rawScore = null;
       if (game.isFpGame()) {
@@ -221,7 +223,7 @@ public class HighscoreResolver implements InitializingBean {
     if (hsFile != null && hsFile.exists()) {
       metadata.setType(HighscoreType.EM);
       metadata.setFilename(hsFile.getCanonicalPath());
-      metadata.setModified(new Date(hsFile.lastModified()));
+      metadata.setModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(hsFile.lastModified()), ZoneId.systemDefault()));
       metadata.setStatus(null);
 
       return textHighscoreAdapters.convertTextFileTextToMachineReadable(metadata, systemService.getScoringDatabase(), hsFile);
@@ -234,7 +236,7 @@ public class HighscoreResolver implements InitializingBean {
     if (iniFile != null && iniFile.exists()) {
       metadata.setType(HighscoreType.Ini);
       metadata.setFilename(iniFile.getCanonicalPath());
-      metadata.setModified(new Date(iniFile.lastModified()));
+      metadata.setModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(iniFile.lastModified()), ZoneId.systemDefault()));
       metadata.setStatus(null);
 
       return initHighscoreAdapters.convertTextFileTextToMachineReadable(metadata, systemService.getScoringDatabase(), iniFile);
@@ -300,7 +302,7 @@ public class HighscoreResolver implements InitializingBean {
       }
 
       metadata.setFilename(nvRam.getCanonicalPath());
-      metadata.setModified(new Date(nvRam.lastModified()));
+      metadata.setModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(nvRam.lastModified()), ZoneId.systemDefault()));
 
       if (!RamOutputToScoreTextConverter.isSupportedRom(nvRamName)) {
         String msg = "The NV ram file \"" + nvRamName + ".nv\" is currently not supported.";
@@ -320,6 +322,7 @@ public class HighscoreResolver implements InitializingBean {
     }
     return null;
   }
+
   /**
    * Executes a single PINemHi command for the given game.
    *
@@ -336,7 +339,7 @@ public class HighscoreResolver implements InitializingBean {
       }
 
       metadata.setFilename(fpRamFile.getCanonicalPath());
-      metadata.setModified(new Date(fpRamFile.lastModified()));
+      metadata.setModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(fpRamFile.lastModified()), ZoneId.systemDefault()));
       metadata.setType(HighscoreType.FPRam);
 
       return RamOutputToScoreTextConverter.convertRamTextToMachineReadable(game, fpRamFile);

@@ -50,7 +50,7 @@ public class MediaViewPane extends Pane {
     }
     this.child = n;
     if (child != null) {
-      getChildren().add(0, child);
+      getChildren().addFirst( child);
     }
   }
 

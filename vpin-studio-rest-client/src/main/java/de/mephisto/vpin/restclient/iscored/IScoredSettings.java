@@ -2,7 +2,6 @@ package de.mephisto.vpin.restclient.iscored;
 
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.webhooks.WebhookSet;
 
 import java.util.ArrayList;
 import java.util.Iterator;

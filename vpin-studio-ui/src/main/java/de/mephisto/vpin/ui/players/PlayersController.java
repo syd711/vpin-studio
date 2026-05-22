@@ -5,10 +5,8 @@ import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.NavigationOptions;
-import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.players.dialogs.PlayerScoreLoadingProgressModel;
-import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -202,15 +200,11 @@ public class PlayersController implements Initializable, StudioFXController {
 
   private StudioFXController getActiveController() {
     int selectedIndex = tabPane.getSelectionModel().getSelectedIndex();
-    switch (selectedIndex) {
-      case 0: {
-        return builtInPlayersController;
-      }
-      case 1: {
-        return discordPlayersController;
-      }
-    }
-    return null;
+      return switch (selectedIndex) {
+          case 0 -> builtInPlayersController;
+          case 1 -> discordPlayersController;
+          default -> null;
+      };
   }
 
   @Override

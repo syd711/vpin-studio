@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.vpsdb;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Objects;
 
 @Entity
@@ -13,7 +13,6 @@ import java.util.Objects;
 public class VpsDbEntry {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(name = "id", nullable = false)
   private Long id;
 

@@ -1,10 +1,5 @@
 package de.mephisto.vpin.commons.fx.apng;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.Test;
-
-
 import de.mephisto.vpin.commons.fx.apng.image.ApngFrame;
 import de.mephisto.vpin.commons.fx.apng.image.ApngFrameDecoder;
 import javafx.application.Application;
@@ -21,8 +16,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,9 +28,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
 /**
  * Runs a serie of APNG tests
- * @see https://philip.html5.org/tests/apng/tests.html
+ * @see - https://philip.html5.org/tests/apng/tests.html
  */
 public class ApngTests extends Application {
 

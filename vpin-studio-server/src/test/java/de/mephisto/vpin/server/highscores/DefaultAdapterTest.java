@@ -5,7 +5,7 @@ import de.mephisto.vpin.server.highscores.parsing.listadapters.DefaultAdapter;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Date;
+import java.time.Instant;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,7 +33,7 @@ public class DefaultAdapterTest{
   }
 
   private void doTest(DefaultAdapter adapter, String input, int index, String initials, long score) {
-    Date d = new Date();
+    Instant d = Instant.now();
 
     String[] seps = { ".", ",", "?", " ", ""};
     for (String sep : seps) {

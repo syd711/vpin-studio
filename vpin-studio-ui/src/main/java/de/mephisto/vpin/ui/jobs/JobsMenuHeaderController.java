@@ -10,8 +10,6 @@ import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static de.mephisto.vpin.ui.Studio.client;
-
 public class JobsMenuHeaderController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(JobsMenuHeaderController.class);
 

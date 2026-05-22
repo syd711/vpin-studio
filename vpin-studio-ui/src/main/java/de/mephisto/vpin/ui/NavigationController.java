@@ -17,7 +17,6 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.players.PlayersController;
 import de.mephisto.vpin.ui.tables.TablesController;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -33,6 +32,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -173,26 +173,30 @@ public class NavigationController implements Initializable, StudioEventListener,
       activeNavigation.getNavigationButton().getStyleClass().add("navigation-button-selected");
     }
 
-    Node lookup = Studio.stage.getScene().lookup("#main");
-    BorderPane main = (BorderPane) lookup;
+    if (Studio.stage != null && Studio.stage.getScene() != null) {
+      Node lookup = Studio.stage.getScene().lookup("#main");
+      if (lookup instanceof BorderPane) {
+        BorderPane main = (BorderPane) lookup;
 
-    if (activeNavigation.getController() != null) {
-      Parent root = activeNavigation.getRoot();
-      main.setCenter(root);
-      activeNavigation.getController().onViewActivated(options);
-    }
-    else {
-      try {
-        FXMLLoader loader = new FXMLLoader(activeNavigation.getControllerClass().getResource(activeNavigation.getFxml()));
-        Parent root = loader.load();
-        StudioFXController controller = loader.<StudioFXController>getController();
-        activeNavigation.setController(controller);
-        activeNavigation.setRoot(root);
-        main.setCenter(root);
-        activeNavigation.getController().onViewActivated(options);
-      }
-      catch (IOException e) {
-        LOG.info("Failed to load main view: {}", e.getMessage(), e);
+        if (activeNavigation.getController() != null) {
+          Parent root = activeNavigation.getRoot();
+          main.setCenter(root);
+          activeNavigation.getController().onViewActivated(options);
+        }
+        else {
+          try {
+            FXMLLoader loader = new FXMLLoader(activeNavigation.getControllerClass().getResource(activeNavigation.getFxml()));
+            Parent root = loader.load();
+            StudioFXController controller = loader.<StudioFXController>getController();
+            activeNavigation.setController(controller);
+            activeNavigation.setRoot(root);
+            main.setCenter(root);
+            activeNavigation.getController().onViewActivated(options);
+          }
+          catch (IOException e) {
+            LOG.info("Failed to load main view: {}", e.getMessage(), e);
+          }
+        }
       }
     }
   }
@@ -214,7 +218,7 @@ public class NavigationController implements Initializable, StudioEventListener,
     }
 
     try {
-      if (staticAvatarPane.isVisible()) {
+      if (staticAvatarPane != null && staticAvatarPane.isVisible()) {
         staticAvatarPane.setCenter(avatar);
       }
     }
@@ -222,20 +226,30 @@ public class NavigationController implements Initializable, StudioEventListener,
       LOG.error("Failed to refresh avatar tile: {}", e.getMessage());
     }
 
-    Studio.stage.setTitle("VPin Studio (" + Studio.getVersion() + ") - " + name);
+    if (Studio.stage != null) {
+      Studio.stage.setTitle("VPin Studio (" + Studio.getVersion() + ") - " + name);
 
-    if (Studio.stage != null && Studio.stage.getScene() != null) {
-      Node header = Studio.stage.getScene().lookup("#header");
-      HeaderResizeableController dialogHeaderController = (HeaderResizeableController) header.getUserData();
-      dialogHeaderController.setTitle(Studio.stage.getTitle());
+      if (Studio.stage.getScene() != null) {
+        Node header = Studio.stage.getScene().lookup("#header");
+        if (header != null) {
+          HeaderResizeableController dialogHeaderController = (HeaderResizeableController) header.getUserData();
+          if (dialogHeaderController != null) {
+            dialogHeaderController.setTitle(Studio.stage.getTitle());
+          }
+        }
+      }
     }
   }
 
   public static void setBreadCrumb(List<String> crumbs) {
     Platform.runLater(() -> {
-      Label breadCrumb = (Label) Studio.stage.getScene().lookup("#breadcrumb");
-      String join = StringUtils.join(crumbs, " / ");
-      if (breadCrumb != null) {
+      if (Studio.stage == null || Studio.stage.getScene() == null) {
+        return;
+      }
+      Node lookup = Studio.stage.getScene().lookup("#breadcrumb");
+      if (lookup instanceof Label) {
+        Label breadCrumb = (Label) lookup;
+        String join = StringUtils.join(crumbs, " / ");
         breadCrumb.setText("/ " + join);
       }
     });

@@ -3,7 +3,7 @@ package de.mephisto.vpin.commons;
 
 import de.mephisto.vpin.commons.utils.WinRegistry;
 import de.mephisto.vpin.restclient.util.OSUtil;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

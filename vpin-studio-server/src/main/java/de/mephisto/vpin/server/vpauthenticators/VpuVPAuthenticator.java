@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.vpauthenticators;
 
 import de.mephisto.vpin.restclient.vpu.VPUSettings;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.htmlunit.SilentCssErrorHandler;
 import org.htmlunit.WebClient;
 import org.htmlunit.html.DomNode;
@@ -42,7 +43,7 @@ public class VpuVPAuthenticator implements VPAuthenticator {
       final HtmlPage loginPage = webClient.getPage("https://vpuniverse.com/login/");
 
       HtmlForm loginForm = loginPage.getForms().stream()
-          .filter(f -> StringUtils.containsIgnoreCase(f.getActionAttribute(), "/login"))
+          .filter(f -> Strings.CI.contains(f.getActionAttribute(), "/login"))
           .findFirst().orElseThrow();
 
       loginForm.getInputByName("auth").setValue(settings.getLogin());
@@ -51,7 +52,7 @@ public class VpuVPAuthenticator implements VPAuthenticator {
 
       // check that authentication happens successfully
       String title = homePage.getTitleText();
-      if (StringUtils.containsIgnoreCase(title, "sign in")) {
+      if (Strings.CI.contains(title, "sign in")) {
         DomNode node = homePage.querySelector("div.ipsMessage_error");
         return node != null ? node.getTextContent() : "Cannot login";
       }

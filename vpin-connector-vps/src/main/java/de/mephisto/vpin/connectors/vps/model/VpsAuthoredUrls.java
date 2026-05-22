@@ -1,8 +1,11 @@
 package de.mephisto.vpin.connectors.vps.model;
 
-import java.text.DateFormat;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class VpsAuthoredUrls implements VPSEntity {
@@ -10,7 +13,7 @@ public class VpsAuthoredUrls implements VPSEntity {
 
   private List<String> authors = new ArrayList<>();
   private String version;
-  private long createdAt;
+  private Long createdAt;
   private String id;
   private String comment;
 
@@ -38,11 +41,11 @@ public class VpsAuthoredUrls implements VPSEntity {
     this.version = version;
   }
 
-  public long getCreatedAt() {
+  public Long getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(long createdAt) {
+  public void setCreatedAt(Long createdAt) {
     this.createdAt = createdAt;
   }
 
@@ -109,7 +112,8 @@ public class VpsAuthoredUrls implements VPSEntity {
     if (!String.valueOf(version).equals(String.valueOf(that.version))) return false;
     if (urls == null && that.urls != null) return false;
     if (urls != null && that.urls == null) return false;
-    if (createdAt != that.createdAt) return false;
+    if (createdAt != null && !createdAt.equals(that.createdAt)) return false;
+    if (createdAt == null && that.createdAt != null) return false;
     if (urls != null && that.urls != null && !urls.equals(that.urls)) return false;
     return true;
   }
@@ -119,7 +123,7 @@ public class VpsAuthoredUrls implements VPSEntity {
     int result = urls.hashCode();
     result = 31 * result + authors.hashCode();
     result = 31 * result + version.hashCode();
-    result = 31 * result + (int) (createdAt ^ (createdAt >>> 32));
+    result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
     return result;
   }
 
@@ -144,8 +148,11 @@ public class VpsAuthoredUrls implements VPSEntity {
       builder.append("\n");
     }
 
-    builder.append("- Created At: ");
-    builder.append(DateFormat.getDateTimeInstance().format(new Date(createdAt)));
+    if (createdAt != null) {
+      builder.append("- Created At: ");
+      OffsetDateTime dateTime = OffsetDateTime.ofInstant(Instant.ofEpochMilli(createdAt), ZoneId.systemDefault());
+      builder.append(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(dateTime));
+    }
     return builder.toString();
   }
 }

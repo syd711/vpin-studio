@@ -35,7 +35,7 @@ public class VpsInstallerUtils {
       }
       else if (installLinks.size() == 1) {
         // only one link to install, run the installer
-        installFile(game, link, installLinks.get(0), assetType);
+        installFile(game, link, installLinks.getFirst(), assetType);
         return true;
       }
       else {
@@ -74,31 +74,21 @@ public class VpsInstallerUtils {
   }
 
   private static AssetType vpsDiffTypeToAssetType(VpsDiffTypes type) {
-    switch (type) {
-      case altColor:
-        return AssetType.ALT_COLOR;
-      case altSound:
-        return AssetType.ALT_SOUND;
-      case b2s:
-        return AssetType.DIRECTB2S;
-      case pov:
-        return AssetType.POV;
-      case rom:
-        return AssetType.ROM;
-      case sound:
-        return AssetType.MUSIC;
-      case pupPack:
-        return AssetType.PUP_PACK;
-      case tableNewVPX:
-        return AssetType.VPX;
-      case tableNewVersionVPX:
-        return AssetType.VPX;
-      //case wheel : return AssetType.?;
-      //case topper : return AssetType.?;
-      //case tutorial : return AssetType.?;
-      //case feature : return AssetType.?;
-      default:
-        return null;
-    }
+      return switch (type) {
+          case altColor -> AssetType.ALT_COLOR;
+          case altSound -> AssetType.ALT_SOUND;
+          case b2s -> AssetType.DIRECTB2S;
+          case pov -> AssetType.POV;
+          case rom -> AssetType.ROM;
+          case sound -> AssetType.MUSIC;
+          case pupPack -> AssetType.PUP_PACK;
+          case tableNewVPX -> AssetType.VPX;
+          case tableNewVersionVPX -> AssetType.VPX;
+          //case wheel : return AssetType.?;
+          //case topper : return AssetType.?;
+          //case tutorial : return AssetType.?;
+          //case feature : return AssetType.?;
+          default -> null;
+      };
   }
 }

@@ -1,7 +1,6 @@
 package de.mephisto.vpin.commons.fx.cards;
 
 import de.mephisto.vpin.restclient.cards.CardData;
-import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Rectangle2D;
@@ -10,13 +9,13 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.image.BufferedImage;
 import java.lang.invoke.MethodHandles;
-import java.util.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Arrays;
+import java.util.List;
 
 public class CardGraphicsHighscore extends StackPane {
   protected final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());

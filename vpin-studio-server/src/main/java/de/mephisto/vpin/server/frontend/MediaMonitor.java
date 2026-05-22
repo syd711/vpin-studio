@@ -3,8 +3,8 @@ package de.mephisto.vpin.server.frontend;
 
 import de.mephisto.vpin.commons.utils.FolderChangeListener;
 import de.mephisto.vpin.commons.utils.FolderMonitoringThread;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

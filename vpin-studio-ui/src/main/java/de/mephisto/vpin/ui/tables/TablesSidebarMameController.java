@@ -4,11 +4,11 @@ import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
-import de.mephisto.vpin.restclient.vpinmame.VPinMameOptions;
 import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
 import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.restclient.validation.ValidationState;
+import de.mephisto.vpin.restclient.vpinmame.VPinMameOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
@@ -412,12 +411,12 @@ public class TablesSidebarMameController implements Initializable {
     showDmd.setSelected(false);
     useExternalDmd.setSelected(false);
     colorizeDmd.setSelected(false);
-    soundModeCombo.setValue(SOUND_MODES.get(0));
+    soundModeCombo.setValue(SOUND_MODES.getFirst());
     forceStereo.setSelected(false);
     volumeSpinner.getValueFactory().setValue(0);
 
     this.errorBox.setVisible(false);
-    this.applyDefaultsBtn.setDisable(!gameOptional.isPresent());
+    this.applyDefaultsBtn.setDisable(gameOptional.isEmpty());
     noInputDataBox.setVisible(false);
     tablesBox.setVisible(false);
 
@@ -438,7 +437,7 @@ public class TablesSidebarMameController implements Initializable {
 
       List<GameRepresentation> data = tablesSidebarController.getTableOverviewController().getData();
       String rom = game.getRom();
-      List<GameRepresentation> sharedGames = data.stream().filter(g -> !StringUtils.isEmpty(g.getRom()) && g.getRom().equals(rom) && g.getId() != game.getId()).collect(Collectors.toList());
+      List<GameRepresentation> sharedGames = data.stream().filter(g -> !StringUtils.isEmpty(g.getRom()) && g.getRom().equals(rom) && g.getId() != game.getId()).toList();
       if (!sharedGames.isEmpty()) {
         tablesBox.setVisible(true);
         tableListBox.getChildren().removeAll(tableListBox.getChildren());

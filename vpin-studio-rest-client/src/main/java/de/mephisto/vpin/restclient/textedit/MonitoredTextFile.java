@@ -1,12 +1,14 @@
 package de.mephisto.vpin.restclient.textedit;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.File;
-import java.util.Date;
+import java.time.OffsetDateTime;
 
 public class MonitoredTextFile {
   private VPinFile vPinFile;
   private String content;
-  private Date lastModified;
+  private OffsetDateTime lastModified;
   private String path;
   private String fileId;
   private int emulatorId;
@@ -45,6 +47,7 @@ public class MonitoredTextFile {
     this.path = path;
   }
 
+  @JsonProperty("vPinFile")
   public VPinFile getvPinFile() {
     return vPinFile;
   }
@@ -69,11 +72,11 @@ public class MonitoredTextFile {
     this.content = content;
   }
 
-  public Date getLastModified() {
+  public OffsetDateTime getLastModified() {
     return lastModified;
   }
 
-  public void setLastModified(Date lastModified) {
+  public void setLastModified(OffsetDateTime lastModified) {
     this.lastModified = lastModified;
   }
 

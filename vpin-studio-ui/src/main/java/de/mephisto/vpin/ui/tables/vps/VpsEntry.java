@@ -28,9 +28,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
-import java.text.DateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -261,7 +263,7 @@ public class VpsEntry extends HBox {
     }
 
     // Add change date at the end
-    Label changedLabel = WidgetFactory.createDefaultLabel(DateFormat.getDateInstance().format(new Date(changeDate)));
+    Label changedLabel = WidgetFactory.createDefaultLabel(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(Instant.ofEpochMilli(changeDate).atZone(ZoneId.systemDefault()).toLocalDate()));
     changedLabel.setPrefWidth(100);
     changedLabel.setStyle("-fx-padding: 0 3px 0 0;-fx-font-size: 14px;");
     changedLabel.setAlignment(Pos.CENTER_RIGHT);

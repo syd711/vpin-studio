@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.games;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.invoke.MethodHandles;
 import java.util.List;
-import java.util.ArrayList;
 
 @Service
 public class GameDetailsRepositoryService {
@@ -28,7 +27,7 @@ public class GameDetailsRepositoryService {
       LOG.error("Failed to fetch game by PUP id: {}", e.getMessage());
       List<GameDetails> allByPupId = gameDetailsRepository.findAllByPupId(pupId);
       if (!allByPupId.isEmpty()) {
-        delete(allByPupId.get(0));
+        delete(allByPupId.getFirst());
         LOG.warn("Deleted duplicate GameDetails entry PUP id: {}", pupId);
         return findByPupId(pupId);
       }

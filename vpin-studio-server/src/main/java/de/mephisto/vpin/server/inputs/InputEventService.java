@@ -360,21 +360,31 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
   @EventListener(ApplicationReadyEvent.class)
   public void onApplicationReady() {
     ServerFX.client = new VPinStudioClient("localhost");
-    new Thread(() -> {
-      ServerFX.main(new String[]{});
-      LOG.info("Overlay listener started.");
-    }).start();
+
+    if (!GraphicsEnvironment.isHeadless()) {
+      new Thread(() -> {
+        try {
+          Thread.currentThread().setName("JavaFX App Thread Launcher");
+          ServerFX.main(new String[]{});
+        } catch (Exception e) {
+          LOG.error("Failed to start JavaFX Application: {}", e.getMessage(), e);
+        }
+      }).start();
+
+      LOG.info("Waiting for JavaFX initialization...");
+      ServerFX.waitForOverlay();
+      LOG.info("JavaFX initialization completed.");
+
+      new VPinStudioServerTray();
+      LOG.info("Application tray created.");
+
+      ServerFX.getInstance().setOverlayTitle(
+          frontendService.getFrontendType().equals(FrontendType.Popper) ? "PinUP Popper" : "VPin Studio Overlay");
+      LOG.info("Finished initialization of OverlayWindowFX");
+    }
 
     shutdownThread = new ShutdownThread(preferencesService, queue);
     shutdownThread.start();
-
-    ServerFX.waitForOverlay();
-    ServerFX.getInstance().setOverlayTitle(
-        frontendService.getFrontendType().equals(FrontendType.Popper) ? "PinUP Popper" : "VPin Studio Overlay");
-    LOG.info("Finished initialization of OverlayWindowFX");
-
-    new VPinStudioServerTray();
-    LOG.info("Application tray created.");
 
     try {
       InetAddress localHost = InetAddress.getLocalHost();

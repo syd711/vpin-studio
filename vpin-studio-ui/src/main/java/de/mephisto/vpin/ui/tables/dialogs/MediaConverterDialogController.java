@@ -71,7 +71,7 @@ public class MediaConverterDialogController implements Initializable, DialogCont
     saveBtn.setDisable(true);
 
     List<CommandModel> collect = client.getMediaConversionService().getCommandList().stream().map(c -> new CommandModel(c)).collect(Collectors.toList());
-    collect.add(0, null);
+    collect.addFirst( null);
     conversionsCombo.setItems(FXCollections.observableList(collect));
 
     screensCombo.valueProperty().addListener(new ChangeListener<String>() {

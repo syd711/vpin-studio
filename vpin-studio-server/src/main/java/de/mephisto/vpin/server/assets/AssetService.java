@@ -21,8 +21,8 @@ import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.UploadUtil;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.io.IOUtils;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.parser.ParseContext;
@@ -40,6 +40,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -312,7 +313,7 @@ public class AssetService {
     byte[] image = defaultPictureService.generateAvatarImage(avatar != null ? avatar.getData() : null);
     Asset clipped = new Asset();
     clipped.setAssetType(AssetType.AVATAR.name());
-    clipped.setUpdatedAt(new Date());
+    clipped.setUpdatedAt(Instant.now());
     clipped.setMimeType("image/png");
     clipped.setData(image);
     return clipped;

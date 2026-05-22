@@ -36,7 +36,7 @@ public class PlaylistServiceTest extends AbstractVPinServerTest {
       return;
     }
 
-    Playlist playlist = playlists.get(0);
+    Playlist playlist = playlists.getFirst();
     Game game = gameService.getGameByFilename(1, EM_TABLE_NAME);
     assertNotNull(game);
 

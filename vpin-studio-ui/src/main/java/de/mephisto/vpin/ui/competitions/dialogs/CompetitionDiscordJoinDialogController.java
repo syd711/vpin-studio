@@ -1,24 +1,23 @@
 package de.mephisto.vpin.ui.competitions.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.restclient.util.FileUtils;
+import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.competitions.JoinMode;
-import de.mephisto.vpin.restclient.highscores.NVRamList;
-import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
-import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.highscores.NVRamList;
+import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.competitions.CompetitionsDialogHelper;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -30,12 +29,15 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.net.URL;
-import java.text.DateFormat;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -128,8 +130,8 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     competition.setName(this.discordCompetitionData.getName());
     competition.setUuid(this.discordCompetitionData.getUuid());
     competition.setOwner(this.discordCompetitionData.getOwner());
-    competition.setStartDate(this.discordCompetitionData.getSdt());
-    competition.setEndDate(this.discordCompetitionData.getEdt());
+    competition.setStartDate(this.discordCompetitionData.getSdt().toInstant());
+    competition.setEndDate(this.discordCompetitionData.getEdt().toInstant());
     competition.setJoinMode(this.discordCompetitionData.getMode());
     competition.setHighscoreReset(true);
 
@@ -166,7 +168,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     });
 
     ArrayList<String> badges = new ArrayList<>(client.getCompetitionService().getCompetitionBadges());
-    badges.add(0, null);
+    badges.addFirst(null);
     ObservableList<String> imageList = FXCollections.observableList(badges);
     competitionIconCombo.setItems(imageList);
     competitionIconCombo.setCellFactory(c -> new CompetitionImageListCell(client));
@@ -259,7 +261,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
 
       tableCombo.getItems().addAll(FXCollections.observableList(gamesByRom));
       if (!gamesByRom.isEmpty()) {
-        tableCombo.setValue(gamesByRom.get(0));
+        tableCombo.setValue(gamesByRom.getFirst());
         refreshPreview(tableCombo.getValue(), null);
       }
     }
@@ -274,9 +276,10 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     }
 
 
+    DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM);
     this.tableLabel.setText(this.discordCompetitionData.getTname());
-    this.startDateLabel.setText(DateFormat.getDateInstance().format(this.discordCompetitionData.getSdt()));
-    this.endDateLabel.setText(DateFormat.getDateInstance().format(this.discordCompetitionData.getEdt()));
+    this.startDateLabel.setText(formatter.format(this.discordCompetitionData.getSdt()));
+    this.endDateLabel.setText(formatter.format(this.discordCompetitionData.getEdt()));
     this.remainingTimeLabel.setText(DateUtil.formatDuration(this.discordCompetitionData.getSdt(), this.discordCompetitionData.getEdt()));
     this.nameLabel.setText(this.discordCompetitionData.getName());
 
@@ -319,7 +322,7 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
       return;
     }
 
-    if (this.discordCompetitionData.getEdt().before(DateUtil.today())) {
+    if (this.discordCompetitionData.getEdt().isBefore(OffsetDateTime.now())) {
       validationTitle.setText("Invalid competition data");
       validationDescription.setText("Ups, looks like the selected competition wasn't reset. It's already finished.");
       return;

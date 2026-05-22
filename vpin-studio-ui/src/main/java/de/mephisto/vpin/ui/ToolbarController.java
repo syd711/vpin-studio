@@ -43,10 +43,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.Features;
@@ -336,6 +333,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    LOG.info("Initializing ToolbarController..."); // ADDED LOG
     INSTANCE = this;
 
     monitorBtn.managedProperty().bindBidirectional(monitorBtn.visibleProperty());
@@ -357,13 +355,13 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
     FrontendUtil.replaceName(frontendMenuBtn.getTooltip(), frontend);
 
     if (frontend.getIconName() != null) {
-      Image image1 = new Image(Studio.class.getResourceAsStream(frontend.getIconName()));
+      Image image1 = new Image(Objects.requireNonNull(Studio.class.getResourceAsStream(frontend.getIconName())));
       ImageView view1 = new ImageView(image1);
       view1.setPreserveRatio(true);
       view1.setFitHeight(18);
       frontendMenuItem.setGraphic(view1);
 
-      Image image2 = new Image(Studio.class.getResourceAsStream(frontend.getIconName()));
+      Image image2 = new Image(Objects.requireNonNull(Studio.class.getResourceAsStream(frontend.getIconName())));
       ImageView view2 = new ImageView(image2);
       view2.setPreserveRatio(true);
       view2.setFitHeight(18);
@@ -397,7 +395,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
     Platform.runLater(() -> {
       DropInManager.getInstance().init(dropInsBtn);
       MonitoringSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MONITORING_SETTINGS, MonitoringSettings.class);
-      if (settings.isOpen()) {
+       if (settings != null && settings.isOpen()) {
         toggleMonitor();
       }
     });
@@ -493,6 +491,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
     vrModeButton.setVisible(vrSettings.isEnabled());
 
     refreshVrState();
+    LOG.info("Finished Initializing ToolbarController."); // ADDED LOG
   }
 
   private void onCabSwitch(ConnectionEntry connection) {

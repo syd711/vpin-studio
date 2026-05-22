@@ -10,7 +10,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 
 public class FreezySummarizer {
   private final static Logger LOG = LoggerFactory.getLogger(FreezySummarizer.class);
@@ -29,7 +32,11 @@ public class FreezySummarizer {
 
       String defaultEncoding = "UTF-8";
       FileInputStream in = new FileInputStream(iniFile);
-      BOMInputStream bOMInputStream = new BOMInputStream(in);
+      BOMInputStream bOMInputStream = BOMInputStream.builder()
+                .setInputStream(in)
+                .get();
+      //deprecated use
+      // BOMInputStream bOMInputStream = new BOMInputStream(in);
       ByteOrderMark bom = bOMInputStream.getBOM();
       String charsetName = bom == null ? defaultEncoding : bom.getCharsetName();
       InputStreamReader reader = new InputStreamReader(new BufferedInputStream(bOMInputStream), charsetName);

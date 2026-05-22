@@ -1,16 +1,17 @@
 package de.mephisto.vpin.ui.cards.panels;
 
-import org.apache.commons.beanutils.PropertyUtils;
-
-import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.ui.util.PositionResizer;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
+import org.apache.commons.beanutils.PropertyUtils;
 
 public class LayerSubEditorPositionController {
 

@@ -11,19 +11,18 @@ import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.*;
-import de.mephisto.vpin.server.mania.ManiaService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static de.mephisto.vpin.server.VPinStudioServer.Features;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 @Service
 public class IScoredHighscoreChangeListener implements HighscoreChangeListener, InitializingBean {

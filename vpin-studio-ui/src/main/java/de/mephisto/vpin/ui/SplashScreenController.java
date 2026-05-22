@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -28,6 +29,9 @@ public class SplashScreenController implements Initializable {
   @FXML
   private Label factLabel;
 
+  @FXML
+  private Label statusLabel;
+
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     versionLabel.setText("Version " + Studio.getVersion());
@@ -45,5 +49,11 @@ public class SplashScreenController implements Initializable {
 
   public void setImage(Image image) {
     splashImage.setImage(image);
+  }
+
+  public void setStatus(String status) {
+    Platform.runLater(() -> {
+      statusLabel.setText(status);
+    });
   }
 }

@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.players;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 
 public interface PlayerLifecycleListener {
   void playerCreated(@NonNull Player player);

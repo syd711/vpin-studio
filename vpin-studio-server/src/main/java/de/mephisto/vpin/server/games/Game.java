@@ -8,14 +8,16 @@ import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.dmd.DMDPackageTypes;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.validation.ValidationState;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.io.File;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class Game {
@@ -24,6 +26,7 @@ public class Game {
   private String romAlias;
   private String scannedRom;
   private String scannedAltRom;
+  private boolean romExists;
 
   private String gameDisplayName;
   private String gameFileName;
@@ -33,8 +36,8 @@ public class Game {
   private String mediaSearch;
   private boolean disabled;
   private boolean updateAvailable;
-  private Date dateAdded;
-  private Date dateUpdated;
+  private OffsetDateTime dateAdded;
+  private OffsetDateTime dateUpdated;
   private int id;
   private int nvOffset;
   private String hsFileName;
@@ -250,11 +253,11 @@ public class Game {
     this.pupPackDisabled = pupPackDisabled;
   }
 
-  public Date getDateUpdated() {
+  public OffsetDateTime getDateUpdated() {
     return dateUpdated;
   }
 
-  public void setDateUpdated(Date dateUpdated) {
+  public void setDateUpdated(OffsetDateTime dateUpdated) {
     this.dateUpdated = dateUpdated;
   }
 
@@ -297,15 +300,11 @@ public class Game {
   }
 
   public Long getTemplateId(CardTemplateType templateType) {
-    switch (templateType) {
-      case HIGSCORE_CARD:
-        return getHighscoreCardTemplateId();
-      case INSTRUCTIONS_CARD:
-        return getInstructionCardTemplateId();
-      case WHEEL:
-        return getWheelTemplateId();
-    }
-    return null;
+      return switch (templateType) {
+          case HIGSCORE_CARD -> getHighscoreCardTemplateId();
+          case INSTRUCTIONS_CARD -> getInstructionCardTemplateId();
+          case WHEEL -> getWheelTemplateId();
+      };
   }
 
   public void setTemplateId(CardTemplateType templateType, Long id) {
@@ -346,11 +345,11 @@ public class Game {
     this.wheelTemplateId = wheelTemplateId;
   }
 
-  public Date getDateAdded() {
+  public OffsetDateTime getDateAdded() {
     return dateAdded;
   }
 
-  public void setDateAdded(Date dateAdded) {
+  public void setDateAdded(OffsetDateTime dateAdded) {
     this.dateAdded = dateAdded;
   }
 
@@ -533,9 +532,9 @@ public class Game {
     return -1;
   }
 
-  public Date getModified() {
+  public OffsetDateTime getModified() {
     if (this.gameFile != null && this.gameFile.lastModified() > 0) {
-      return new Date(this.gameFile.lastModified());
+      return OffsetDateTime.ofInstant(Instant.ofEpochMilli(this.gameFile.lastModified()), ZoneId.systemDefault());
     }
     return null;
   }
@@ -629,6 +628,14 @@ public class Game {
   public void setScannedRom(String scannedRom) {
     this.scannedRom = scannedRom;
   }
+
+    public boolean getRomExists() {
+        return romExists;
+    }
+
+    public void setRomExists(boolean romExists) {
+        this.romExists = romExists;
+    }
 
   public String getScannedAltRom() {
     return scannedAltRom;

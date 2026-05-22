@@ -31,7 +31,7 @@ public class SingleEntryWithLettersVPRegHighscoreAdapter extends SingleEntryAnon
     String letter2 = getNameEntry(gameFolder, 2);
     String letter3 = getNameEntry(gameFolder, 3);
 
-    ScoreParsingEntry entry = summary.getScores().get(0);
+    ScoreParsingEntry entry = summary.getScores().getFirst();
     entry.setInitials(letter1 + letter2 + letter3);
     return summary;
   }

@@ -1,7 +1,5 @@
 package de.mephisto.vpin.connectors.vps.model;
 
-import java.text.DateFormat;
-import java.util.Date;
 import java.util.Objects;
 
 public class VpsBackglassFile extends VpsAuthoredUrls {

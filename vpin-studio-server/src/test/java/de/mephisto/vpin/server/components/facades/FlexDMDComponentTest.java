@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
+import java.time.OffsetDateTime;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -52,7 +53,7 @@ public class FlexDMDComponentTest {
     File tempDir = new File(System.getProperty("java.io.tmpdir"), "flexdmd-test-" + System.nanoTime());
     when(vPinMameService.getMameFolder()).thenReturn(tempDir);
 
-    Date result = component.getModificationDate();
+      OffsetDateTime result = component.getModificationDate();
 
     assertNull(result);
   }

@@ -27,7 +27,6 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.util.*;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -47,12 +46,13 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.*;
 import java.util.function.Consumer;
@@ -350,10 +350,10 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     CardTemplate cardTemplate = getSelectedCardTemplate();
 
     String url = client.getHighscoreCardTemplatesClient().getCardTemplateUrl(cardTemplate);
-    try (BufferedInputStream in = new BufferedInputStream(new URL(url).openStream())) {
+    try (BufferedInputStream in = new BufferedInputStream(URI.create(url).toURL().openStream())) {
       TableDialogs.download(stage, "template_" + cardTemplate.getName() + ".json", in);
     }
-    catch (IOException ioe) {
+    catch (Exception ioe) {
       LOG.error("Cannot download template {}", cardTemplate.getName(), ioe);
       WidgetFactory.showAlert(stage, "Error", "Cannot download template " + cardTemplate.getName() + ": " + ioe.getMessage());
     }
@@ -615,7 +615,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       else {
         nagBar.setStyle("-fx-background-color: #116611;");
         Optional<CardTemplate> parent = this.templateCombo.getItems().stream().filter(t -> t.getId().equals(cardTemplate.getParentId())).findFirst();
-        if (!parent.isPresent()) {
+        if (parent.isEmpty()) {
           parent = this.templateCombo.getItems().stream().filter(t -> t.isDefault()).findFirst();
         }
         if (parent.isPresent()) {
@@ -877,7 +877,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     JFXFuture
         .supplyAsync(() -> client.getHighscoreCardsService().getCardResolution(getSelectedTemplateType()))
         .thenAcceptLater(res -> {
-          templateBeanBinder.setWidth(res.get(0));
+          templateBeanBinder.setWidth(res.getFirst());
           templateBeanBinder.setHeight(res.get(1));
           // If the resolution changes, the preview must be adjusted
           resolutionLabel.setText(res.toString());

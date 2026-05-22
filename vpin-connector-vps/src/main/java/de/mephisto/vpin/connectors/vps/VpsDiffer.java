@@ -5,7 +5,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
-import java.util.Date;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,8 +27,8 @@ public class VpsDiffer {
     return newTable.getId();
   }
 
-  public Date getLastModified() {
-    return new Date(newTable.getUpdatedAt());
+  public OffsetDateTime getLastModified() {
+    return OffsetDateTime.ofInstant(Instant.ofEpochMilli(newTable.getUpdatedAt()), ZoneId.systemDefault());
   }
 
   public VPSChanges getTableChanges() {

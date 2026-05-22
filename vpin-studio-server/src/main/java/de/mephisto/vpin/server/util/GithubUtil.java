@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 
 public class GithubUtil {
@@ -11,7 +12,7 @@ public class GithubUtil {
 
   public static String checkForUpdate(String referenceVersion, String latestReleaseUrl) {
     try {
-      URL obj = new URL(latestReleaseUrl);
+      URL obj = URI.create(latestReleaseUrl).toURL();
       HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
       conn.setInstanceFollowRedirects(true);
       HttpURLConnection.setFollowRedirects(true);

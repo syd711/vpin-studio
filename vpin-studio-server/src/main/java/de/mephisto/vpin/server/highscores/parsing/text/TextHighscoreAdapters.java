@@ -7,7 +7,7 @@ import de.mephisto.vpin.server.highscores.parsing.text.adapters.*;
 import de.mephisto.vpin.server.highscores.parsing.text.adapters.customized.Route66Adapter;
 import de.mephisto.vpin.server.highscores.parsing.text.adapters.customized.SpongebobAdapter;
 import de.mephisto.vpin.server.system.SystemService;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;

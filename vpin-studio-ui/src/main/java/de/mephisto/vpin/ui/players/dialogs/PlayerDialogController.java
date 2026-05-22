@@ -44,9 +44,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import static de.mephisto.vpin.ui.Studio.Features;
-import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.maniaClient;
+import static de.mephisto.vpin.ui.Studio.*;
 
 public class PlayerDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(PlayerDialogController.class);
@@ -114,7 +112,7 @@ public class PlayerDialogController implements Initializable, DialogController {
           Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(player.getManiaAccountUuid());
           if (accountByUuid != null && !this.vpinManiaPlayerCheckbox.isSelected()) {
             Optional<ButtonType> result2 = WidgetFactory.showConfirmation(stage, "VPin Mania Player", "The player \"" + this.player.getName() + "\" is a registered VPin Mania player and the \"VPin Mania\" checkbox is unchecked.", "This will delete the online account and all related highscores and data.");
-            if (!result2.isPresent() || !result2.get().equals(ButtonType.OK)) {
+            if (result2.isEmpty() || !result2.get().equals(ButtonType.OK)) {
               return;
             }
           }
@@ -127,7 +125,7 @@ public class PlayerDialogController implements Initializable, DialogController {
       AccountVisibility visibility = visibilityCheckbox.isSelected() ? AccountVisibility.searchable : AccountVisibility.hidden;
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(stage, new PlayerSaveProgressModel(stage, this.player, maniaAccount, maniaName, visibility, this.avatarFile, this.avatarStack));
       if (!progressDialog.getResults().isEmpty()) {
-        Object o = progressDialog.getResults().get(0);
+        Object o = progressDialog.getResults().getFirst();
         if (o instanceof PlayerRepresentation) {
           this.player = (PlayerRepresentation) o;
         }
@@ -171,7 +169,7 @@ public class PlayerDialogController implements Initializable, DialogController {
       ProgressDialog.createProgressDialog(ClearCacheProgressModel.getFullClearCacheModel());
 
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new AvatarGeneratorProgressModel(avatar, this.avatarFile));
-      this.avatarFile = (File) progressDialog.getResults().get(0);
+      this.avatarFile = (File) progressDialog.getResults().getFirst();
       this.initialsOverlayLabel.setText("");
       return;
     }

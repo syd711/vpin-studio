@@ -19,7 +19,7 @@ public class PlaylistTableColumnSorter implements BaseColumnSorter<GameRepresent
   public Comparator<GameRepresentationModel> buildComparator(TableView<GameRepresentationModel> tableView) {
     Comparator<GameRepresentationModel> comp = null;
     if (!tableView.getSortOrder().isEmpty()) {
-      TableColumn<GameRepresentationModel, ?> column = tableView.getSortOrder().get(0);
+      TableColumn<GameRepresentationModel, ?> column = tableView.getSortOrder().getFirst();
 
       if (column.equals(playlistTableController.columnName)) {
         comp = Comparator.comparing(o -> o.getName());

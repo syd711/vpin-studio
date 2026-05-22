@@ -247,7 +247,7 @@ public class TablesSidebarPUPPackController implements Initializable {
       WidgetFactory.showAlert(Studio.stage, "Did not find PupPackScreenTweaker.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
     }
     else {
-      SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList(file.getName()));
+      SystemCommandExecutor executor = new SystemCommandExecutor(List.of(file.getName()));
       executor.setDir(file.getParentFile());
       executor.executeCommandAsync();
     }
@@ -348,7 +348,7 @@ public class TablesSidebarPUPPackController implements Initializable {
     if (g.isPresent()) {
       GameRepresentation game = g.get();
       ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new PupPackLoadProgressModel(game));
-      pupPack = (PupPackRepresentation) resultModel.getResults().get(0);
+      pupPack = (PupPackRepresentation) resultModel.getResults().getFirst();
       boolean pupPackAvailable = pupPack != null;
       scriptOnlyCheckbox.setSelected(pupPackAvailable && pupPack.isScriptOnly());
       screensPanel.setVisible(pupPackAvailable && !pupPack.isScriptOnly());
@@ -407,7 +407,7 @@ public class TablesSidebarPUPPackController implements Initializable {
         List<ValidationState> validationStates = pupPack.getValidationStates();
         errorBox.setVisible(!validationStates.isEmpty());
         if (!validationStates.isEmpty()) {
-          validationState = validationStates.get(0);
+          validationState = validationStates.getFirst();
           LocalizedValidation validationResult = GameValidationTexts.getValidationResult(game, validationState);
           errorTitle.setText(validationResult.getLabel());
           errorText.setText(validationResult.getText());

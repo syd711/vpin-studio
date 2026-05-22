@@ -10,11 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -29,12 +25,15 @@ import java.awt.image.BufferedImage;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.util.DefaultIndenter;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.util.DefaultIndenter;
+import tools.jackson.core.util.DefaultPrettyPrinter;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.cfg.EnumFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.utils.JFXFuture;
@@ -330,7 +329,7 @@ public class InstructionsCardsController  implements Initializable {
     while (tok.hasMoreTokens()) {
       String s = tok.nextToken();
       // If this is dot or equivalent, append the delimeter with a space
-      if (StringUtils.contains(".!?:;", s)) {
+      if (Strings.CI.contains(".!?:;", s)) {
         bld.append(s);
         appendSpace = true;  
       }
@@ -519,7 +518,11 @@ public class InstructionsCardsController  implements Initializable {
   private VpsTableData loadJson(VpsTable table) throws IOException {
     File jsonFile = new File(database, table.getId() + ".json");
     // Read existing data
-    ObjectMapper objectMapper = new ObjectMapper();
+    JsonMapper objectMapper = JsonMapper.builder()
+        .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+        .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+        .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+        .build();
     VpsTableData data = null;
     if (jsonFile.exists()) {
       data = objectMapper.readValue(jsonFile, VpsTableData.class);  
@@ -544,7 +547,7 @@ public class InstructionsCardsController  implements Initializable {
         String imageBase64 = getImageBase64(imageFile.get());
         VpsTableInstructions instructionSet = data.getInstructionSetFor(imageBase64);
 
-        languagesCombo.setValue(StringUtils.defaultString(instructionSet.getLanguage(), "EN"));
+        languagesCombo.setValue(Objects.toString(instructionSet.getLanguage(), "EN"));
         String[] instructions = instructionSet.getInstructions();
         if (instructions != null && instructions.length > 0) {
           String instructionsText = StringUtils.join(instructions, System.lineSeparator()+System.lineSeparator());
@@ -564,7 +567,11 @@ public class InstructionsCardsController  implements Initializable {
   private void saveJson(VpsTable table, VpsTableData data) throws IOException {
     File jsonFile = new File(database, table.getId() + ".json");
     // Read existing data
-    ObjectMapper objectMapper = new ObjectMapper();
+      JsonMapper objectMapper = JsonMapper.builder()
+          .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+          .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+          .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+          .build();
 
     DefaultPrettyPrinter.Indenter indenter = new DefaultIndenter("  ", DefaultIndenter.SYS_LF);
     DefaultPrettyPrinter printer = new DefaultPrettyPrinter();
@@ -572,8 +579,8 @@ public class InstructionsCardsController  implements Initializable {
     printer.indentArraysWith(indenter);
 
     // Serialize it using the custom printer
-    objectMapper.writer(printer).writeValue(jsonFile, data);  
-  }
+      objectMapper.writer().with(printer).writeValue(jsonFile, data);
+    }
 
   public boolean save(VpsTable table) {
     try {
@@ -587,7 +594,7 @@ public class InstructionsCardsController  implements Initializable {
         String base64 = getImageBase64(imageFile.get());
         VpsTableInstructions instructionSet = data.getInstructionSetFor(base64);
 
-        String language = StringUtils.defaultString(languagesCombo.getValue(), "EN");
+        String language = Objects.toString(languagesCombo.getValue(), "EN");
         instructionSet.setLanguage(language);
         String[] instructions = instructionsTextArea.getText().split("\\R\\s*\\R");
         for (int i = 0; i < instructions.length; i++) {

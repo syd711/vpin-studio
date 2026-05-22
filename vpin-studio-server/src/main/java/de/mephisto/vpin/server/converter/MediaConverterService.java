@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.converter;
 
+import de.mephisto.vpin.commons.fx.ImageUtil;
 import de.mephisto.vpin.restclient.converter.MediaConversionCommand;
 import de.mephisto.vpin.restclient.converter.MediaConversionCommand.ImageOp;
 import de.mephisto.vpin.restclient.converter.MediaOperation;
@@ -12,10 +13,9 @@ import de.mephisto.vpin.server.frontend.MediaService;
 import de.mephisto.vpin.server.games.GameMediaService;
 import de.mephisto.vpin.server.playlists.PlaylistMediaService;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.commons.fx.ImageUtil;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -232,17 +232,11 @@ public class MediaConverterService implements InitializingBean {
   private void convertWithImageUtils(MediaOperationResult result, ImageOp command, File mediaFile) {
     try {
       BufferedImage img = ImageUtil.loadImage(mediaFile);
-      switch (command) {
-        case ROTATE_90:
-          img = ImageUtil.rotateRight(img);
-          break;
-        case ROTATE_90_CCW:
-          img = ImageUtil.rotateLeft(img);
-          break;
-        case ROTATE_180:
-          img = ImageUtil.rotate180(img);
-          break;
-      }
+        img = switch (command) {
+            case ROTATE_90 -> ImageUtil.rotateRight(img);
+            case ROTATE_90_CCW -> ImageUtil.rotateLeft(img);
+            case ROTATE_180 -> ImageUtil.rotate180(img);
+        };
 
       ImageUtil.write(img, mediaFile);
       result.setResult("Converted file " + mediaFile.getAbsolutePath());

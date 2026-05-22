@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.vpx;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.util.MD5ChecksumUtil;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.poi.poifs.filesystem.*;
@@ -225,10 +225,10 @@ public class VPXUtil {
   }
 
   public static String getChecksum(File gameFile) {
-    if (gameFile.exists()) {
+    if (gameFile != null && gameFile.exists()) {
       String s = readScript(gameFile);
       return MD5ChecksumUtil.checksum(s);
     }
-    throw new UnsupportedOperationException("No game file found");
+    return null;
   }
 }

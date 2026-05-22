@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.dmd;
 
-import boofcv.struct.flow.ImageFlow;
 import de.mephisto.vpin.restclient.dmd.DMDPackageTypes;
 import de.mephisto.vpin.server.games.Game;
 import org.apache.commons.configuration2.INIConfiguration;

@@ -1,8 +1,8 @@
 package de.mephisto.vpin.connectors.vps.matcher;
 
-import java.text.DecimalFormat;
-
 import org.apache.commons.lang3.StringUtils;
+
+import java.text.DecimalFormat;
 
 public class VpsDebug {
 

@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
+import java.time.OffsetDateTime;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -54,7 +55,7 @@ public class VpxComponentTest {
   void getModificationDate_returnsNull_whenExeIsNull() {
     when(systemService.resolveVpx64Exe()).thenReturn(null);
 
-    Date result = component.getModificationDate();
+    OffsetDateTime result = component.getModificationDate();
 
     assertNull(result);
   }
@@ -65,7 +66,7 @@ public class VpxComponentTest {
     when(nonExistent.exists()).thenReturn(false);
     when(systemService.resolveVpx64Exe()).thenReturn(nonExistent);
 
-    Date result = component.getModificationDate();
+      OffsetDateTime result = component.getModificationDate();
 
     assertNull(result);
   }
@@ -77,10 +78,10 @@ public class VpxComponentTest {
     when(exe.lastModified()).thenReturn(1000L);
     when(systemService.resolveVpx64Exe()).thenReturn(exe);
 
-    Date result = component.getModificationDate();
+      OffsetDateTime result = component.getModificationDate();
 
     assertNotNull(result);
-    assertEquals(1000L, result.getTime());
+    assertEquals(1000L, result.toInstant().toEpochMilli());
   }
 
   @Test

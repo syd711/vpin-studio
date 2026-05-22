@@ -1,7 +1,7 @@
 package de.mephisto.vpin.connectors.github;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.lang.invoke.MethodHandles;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.text.DecimalFormat;
 
@@ -48,7 +49,7 @@ public class Downloader {
     LOG.info("Downloading " + downloadUrl + " to " + targetFile.getAbsolutePath());
 
 
-    URL url = new URL(downloadUrl);
+    URL url = URI.create(downloadUrl).toURL();
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
     connection.setReadTimeout(5000);
     connection.setDoOutput(true);

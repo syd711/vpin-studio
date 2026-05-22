@@ -10,20 +10,20 @@ import de.mephisto.vpin.server.games.GameMediaService;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static de.mephisto.vpin.server.VPinStudioServer.Features;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 @Service
 public class CompetitionIdUpdater implements CompetitionChangeListener, InitializingBean {

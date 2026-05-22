@@ -9,7 +9,6 @@ import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.backglassmanager.dialogs.BackglassManagerDialogs;
@@ -39,6 +38,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Paint;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +48,6 @@ import java.io.File;
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static de.mephisto.vpin.ui.Studio.*;
 
@@ -303,7 +302,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       return getEmulatorList();
     }).thenAcceptLater(emulators -> {
       List<GameEmulatorRepresentation> pl = new ArrayList<>(emulators);
-      pl.add(0, null);
+      pl.addFirst(null);
       emulatorCombo.setItems(FXCollections.observableList(pl));
 
       if (selected != null) {
@@ -363,7 +362,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       });
 
       if (!emulators.isEmpty()) {
-        emulatorCombo.setValue(emulators.get(0));
+        emulatorCombo.setValue(emulators.getFirst());
       }
     });
 
@@ -373,13 +372,13 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
   @Override
   public void onViewDeactivated() {
-    double position = splitPane.getDividers().get(0).getPosition();
+    double position = splitPane.getDividers().getFirst().getPosition();
     LocalUISettings.saveProperty("backglassesDivider", String.valueOf(position));
   }
 
   @Override
   public void onViewActivated(NavigationOptions options) {
-    NavigationController.setBreadCrumb(Arrays.asList("Backglasses"));
+    NavigationController.setBreadCrumb(List.of("Backglasses"));
 
     // first time activation
     if (models == null || models.isEmpty()) {
@@ -397,7 +396,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
     String backglassesDivider = LocalUISettings.getString("backglassesDivider");
     if (!StringUtils.isEmpty(backglassesDivider)) {
-      splitPane.getDividers().get(0).setPosition(Double.parseDouble(backglassesDivider));
+      splitPane.getDividers().getFirst().setPosition(Double.parseDouble(backglassesDivider));
     }
   }
 
@@ -540,7 +539,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       NavigationController.setBreadCrumb(Arrays.asList("Backglasses", model.getName()));
     }
     else {
-      NavigationController.setBreadCrumb(Arrays.asList("Backglasses"));
+      NavigationController.setBreadCrumb(List.of("Backglasses"));
     }
 
     setValidationVisible(false);
@@ -622,12 +621,12 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
   private void selectGame(String gameBaseName, String gameDisplayName) {
     for (DirectB2SModel backglass : models) {
-      if (StringUtils.startsWithIgnoreCase(backglass.getFileName(), gameBaseName)) {
+      if (Strings.CI.startsWith(backglass.getFileName(), gameBaseName)) {
         tableView.scrollTo(backglass);
         tableView.getSelectionModel().select(backglass);
         return;
       }
-      if (gameDisplayName != null && StringUtils.startsWithIgnoreCase(backglass.getFileName(), gameDisplayName)) {
+      if (gameDisplayName != null && Strings.CI.startsWith(backglass.getFileName(), gameDisplayName)) {
         tableView.scrollTo(backglass);
         tableView.getSelectionModel().select(backglass);
         return;
@@ -678,7 +677,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
   @Override
   public void backglassChanged(int emulatorId, String b2sFileName) {
-    Optional<DirectB2SModel> model = models.stream().filter(m -> m.getEmulatorId() == emulatorId && StringUtils.equals(m.getFileName(), b2sFileName)).findFirst();
+    Optional<DirectB2SModel> model = models.stream().filter(m -> m.getEmulatorId() == emulatorId && Strings.CI.equals(m.getFileName(), b2sFileName)).findFirst();
     if (model.isPresent()) {
       reloadItem(model.get().getBean());
     }

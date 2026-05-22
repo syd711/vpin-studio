@@ -10,11 +10,12 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.StandardGuildMessageChannel;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.slf4j.Logger;
@@ -22,9 +23,13 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.lang.invoke.MethodHandles;
-import java.text.DateFormat;
-import java.util.List;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class VPSBot {
@@ -33,7 +38,7 @@ public class VPSBot {
 
   private final JDA jda;
   private final VPSDiscordListenerAdapter listenerAdapter;
-  private Date lastUpdate = new Date();
+  private Instant lastUpdate = Instant.now();
   private int totalDiffCount = 0;
   private boolean postSummary = false;
 
@@ -48,9 +53,8 @@ public class VPSBot {
 
     String token = System.getenv("VPS_BOT_TOKEN");
     if (token != null) {
-      jda = JDABuilder.createDefault(token, Arrays.asList(GatewayIntent.DIRECT_MESSAGES,
+      jda = JDABuilder.create(token, Arrays.asList(GatewayIntent.DIRECT_MESSAGES,
               GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT))
-          .setEventPassthrough(true)
           .setStatus(OnlineStatus.ONLINE)
           .setMemberCachePolicy(MemberCachePolicy.ALL)
           .addEventListeners(this.listenerAdapter)
@@ -85,7 +89,7 @@ public class VPSBot {
       Thread.currentThread().setName("VPS Discord Notifier");
       try {
         if (!tableDiffs.isEmpty()) {
-          lastUpdate = new Date();
+          lastUpdate = Instant.now();
 
           Map<String, String> entries = new HashMap<>();
           int counter = 0;
@@ -150,7 +154,7 @@ public class VPSBot {
     }).start();
   }
 
-  private void sendVpsUpdateFull(String title, Date updated, String imgUrl, String gameLink, Map<String, String> fields) {
+  private void sendVpsUpdateFull(String title, OffsetDateTime updated, String imgUrl, String gameLink, Map<String, String> fields) {
     if (jda == null) {
       return;
     }
@@ -184,8 +188,7 @@ public class VPSBot {
         }
         embed.setColor(Color.GREEN);
 
-        Message complete = textChannel.sendMessage("").addActionRow(Button.link(gameLink, "View Entry")).setEmbeds(embed.build()).complete();
-        long idLong = complete.getIdLong();
+        Message complete = textChannel.sendMessage("").setComponents(ActionRow.of(Button.link(gameLink, "View Entry"))).setEmbeds(embed.build()).complete();        long idLong = complete.getIdLong();
         if (textChannel instanceof NewsChannel) {
           Message complete1 = ((NewsChannel) textChannel).crosspostMessageById(idLong).complete();
           LOG.info("Crossposted message completed.");
@@ -261,7 +264,8 @@ public class VPSBot {
   }
 
   public String getStatus() {
-    return "Last Update: " + DateFormat.getDateTimeInstance().format(lastUpdate) + "\nTotal Changes: " + totalDiffCount;
+    DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withZone(ZoneId.systemDefault());
+    return "Last Update: " + formatter.format(lastUpdate) + "\nTotal Changes: " + totalDiffCount;
   }
 
 

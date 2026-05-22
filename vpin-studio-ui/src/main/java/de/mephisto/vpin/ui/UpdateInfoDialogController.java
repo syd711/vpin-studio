@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.BufferedInputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -94,7 +95,7 @@ public class UpdateInfoDialogController implements Initializable, DialogControll
 
   public static String download(String downloadUrl) {
     try {
-      URL url = new URL(downloadUrl);
+      URL url = URI.create(downloadUrl).toURL();
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.setReadTimeout(5000);
       connection.setDoOutput(true);

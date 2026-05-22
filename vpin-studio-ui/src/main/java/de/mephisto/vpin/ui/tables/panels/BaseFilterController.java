@@ -6,7 +6,7 @@ import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import javafx.animation.Animation;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
@@ -92,7 +92,7 @@ public abstract class BaseFilterController<T, M extends BaseLoadingModel<T, M>> 
     filterRoot.setVisible(false);
     stackPane.setAlignment(Pos.TOP_LEFT);
 
-    stackPane.getChildren().add(0, filterRoot);
+    stackPane.getChildren().addFirst( filterRoot);
     filterRoot.prefHeightProperty().bind(stackPane.heightProperty());
     //titlePaneRoot.prefHeightProperty().bind(stackPane.heightProperty());
 

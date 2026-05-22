@@ -1,6 +1,6 @@
 package de.mephisto.vpin.restclient.competitions;
 
-import java.util.Date;
+import java.time.OffsetDateTime;
 import java.util.Objects;
 
 public class CompetitionScore {
@@ -15,7 +15,7 @@ public class CompetitionScore {
   private String challengeImageUrl;
   private String league;
   private int platform;
-  private Date creationDate;
+  private OffsetDateTime creationDate;
   private String note;
   private boolean pending = false;
   private boolean myScore = false;
@@ -68,11 +68,11 @@ public class CompetitionScore {
     this.challengeImageUrl = challengeImageUrl;
   }
 
-  public Date getCreationDate() {
+  public OffsetDateTime getCreationDate() {
     return creationDate;
   }
 
-  public void setCreationDate(Date creationDate) {
+  public void setCreationDate(OffsetDateTime creationDate) {
     this.creationDate = creationDate;
   }
 

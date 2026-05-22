@@ -1,10 +1,10 @@
 package de.mephisto.vpin.ui.tables.editors;
 
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.altsound.AltSoundEntry;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TablesController;
@@ -191,7 +191,7 @@ public class AltSoundEditorController implements Initializable {
         tableView.refresh();
       } catch (Exception e) {
         String value = String.valueOf(oldValue);
-        if (String.valueOf(newValue).equals("")) {
+        if (String.valueOf(newValue).isEmpty()) {
           value = "";
         }
 
@@ -321,7 +321,7 @@ public class AltSoundEditorController implements Initializable {
     channelField.setDisable(selectedItems.isEmpty());
 
     if (!selectedItems.isEmpty()) {
-      AltSoundEntryModel altSoundEntryModel = selectedItems.get(0);
+      AltSoundEntryModel altSoundEntryModel = selectedItems.getFirst();
       gainVolume.valueProperty().set(altSoundEntryModel.gain.get());
       gainLabel.setText("" + altSoundEntryModel.gain.getValue());
       duckVolume.valueProperty().set(altSoundEntryModel.duck.get());

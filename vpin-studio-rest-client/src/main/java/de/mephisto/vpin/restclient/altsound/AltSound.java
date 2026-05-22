@@ -2,11 +2,11 @@ package de.mephisto.vpin.restclient.altsound;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.validation.ValidationState;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.File;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class AltSound {
@@ -16,7 +16,7 @@ public class AltSound {
   private List<String> headers = new ArrayList<>();
   private int files;
   private long filesize;
-  private Date modificationDate;
+  private OffsetDateTime modificationDate;
   private boolean missingAudioFiles;
   private List<ValidationState> validationStates;
 
@@ -215,11 +215,11 @@ public class AltSound {
     this.headers = headers;
   }
 
-  public Date getModificationDate() {
+  public OffsetDateTime getModificationDate() {
     return modificationDate;
   }
 
-  public void setModificationDate(Date modificationDate) {
+  public void setModificationDate(OffsetDateTime modificationDate) {
     this.modificationDate = modificationDate;
   }
 
@@ -276,133 +276,62 @@ public class AltSound {
   }
 
   public List<AltSound2DuckingProfile> getProfiles(AltSound2SampleType sampleType) {
-    switch (sampleType) {
-      case sfx: {
-        return getSfxDuckingProfiles();
-      }
-      case music: {
-        return getMusicDuckingProfiles();
-      }
-      case callout: {
-        return getCalloutDuckingProfiles();
-      }
-      case solo: {
-        return getSoloDuckingProfiles();
-      }
-      case overlay: {
-        return getOverlayDuckingProfiles();
-      }
-      default: {
-        throw new UnsupportedOperationException("Invalid sample type");
-      }
-    }
+    return switch (sampleType) {
+      case sfx -> getSfxDuckingProfiles();
+      case music -> getMusicDuckingProfiles();
+      case callout -> getCalloutDuckingProfiles();
+      case solo -> getSoloDuckingProfiles();
+      case overlay -> getOverlayDuckingProfiles();
+      default -> throw new UnsupportedOperationException("Invalid sample type");
+    };
   }
 
   public AltSound2DuckingProfile getProfile(AltSound2SampleType sampleType, int id) {
-    switch (sampleType) {
-      case sfx: {
-        return getSfxDuckingProfiles().stream().filter(p -> p.getId() == id).findFirst().orElse(null);
-      }
-      case music: {
-        return getMusicDuckingProfiles().stream().filter(p -> p.getId() == id).findFirst().orElse(null);
-      }
-      case callout: {
-        return getCalloutDuckingProfiles().stream().filter(p -> p.getId() == id).findFirst().orElse(null);
-      }
-      case solo: {
-        return getSoloDuckingProfiles().stream().filter(p -> p.getId() == id).findFirst().orElse(null);
-      }
-      case overlay: {
-        return getOverlayDuckingProfiles().stream().filter(p -> p.getId() == id).findFirst().orElse(null);
-      }
-      default: {
-        throw new UnsupportedOperationException("Invalid sample type");
-      }
-    }
+    return switch (sampleType) {
+      case sfx -> getSfxDuckingProfiles().stream().filter(p -> p.getId() == id).findFirst().orElse(null);
+      case music -> getMusicDuckingProfiles().stream().filter(p -> p.getId() == id).findFirst().orElse(null);
+      case callout -> getCalloutDuckingProfiles().stream().filter(p -> p.getId() == id).findFirst().orElse(null);
+      case solo -> getSoloDuckingProfiles().stream().filter(p -> p.getId() == id).findFirst().orElse(null);
+      case overlay -> getOverlayDuckingProfiles().stream().filter(p -> p.getId() == id).findFirst().orElse(null);
+      default -> throw new UnsupportedOperationException("Invalid sample type");
+    };
   }
 
   public void addProfile(AltSound2DuckingProfile profile) {
     switch (profile.getType()) {
-      case sfx: {
-        getSfxDuckingProfiles().add(profile);
-        break;
-      }
-      case music: {
-        getMusicDuckingProfiles().add(profile);
-        break;
-      }
-      case callout: {
-        getCalloutDuckingProfiles().add(profile);
-        break;
-      }
-      case solo: {
-        getSoloDuckingProfiles().add(profile);
-        break;
-      }
-      case overlay: {
-        getOverlayDuckingProfiles().add(profile);
-        break;
-      }
-      default: {
-        throw new UnsupportedOperationException("Invalid sample type");
-      }
+      case sfx -> getSfxDuckingProfiles().add(profile);
+      case music -> getMusicDuckingProfiles().add(profile);
+      case callout -> getCalloutDuckingProfiles().add(profile);
+      case solo -> getSoloDuckingProfiles().add(profile);
+      case overlay -> getOverlayDuckingProfiles().add(profile);
+      default -> throw new UnsupportedOperationException("Invalid sample type");
     }
   }
 
   public AltSound2Group getGroup(AltSound2SampleType sampleType) {
-    switch (sampleType) {
-      case sfx: {
-        return sfx;
-      }
-      case music: {
-        return music;
-      }
-      case callout: {
-        return callout;
-      }
-      case solo: {
-        return solo;
-      }
-      case overlay: {
-        return overlay;
-      }
-      default: {
-        throw new UnsupportedOperationException("Invalid sample type");
-      }
-    }
+    return switch (sampleType) {
+      case sfx -> sfx;
+      case music -> music;
+      case callout -> callout;
+      case solo -> solo;
+      case overlay -> overlay;
+      default -> throw new UnsupportedOperationException("Invalid sample type");
+    };
   }
 
   public void removeDuckingProfileValue(AltSound2SampleType profileListType, AltSound2SampleType typeToRemove) {
     switch (profileListType) {
-      case sfx: {
-        getSfxDuckingProfiles().stream().forEach(p -> p.removeProfileValue(typeToRemove));
-        break;
-      }
-      case callout: {
-        getCalloutDuckingProfiles().stream().forEach(p -> p.removeProfileValue(typeToRemove));
-        break;
-      }
-      case overlay: {
-        getOverlayDuckingProfiles().stream().forEach(p -> p.removeProfileValue(typeToRemove));
-        break;
-      }
+      case sfx -> getSfxDuckingProfiles().forEach(p -> p.removeProfileValue(typeToRemove));
+      case callout -> getCalloutDuckingProfiles().forEach(p -> p.removeProfileValue(typeToRemove));
+      case overlay -> getOverlayDuckingProfiles().forEach(p -> p.removeProfileValue(typeToRemove));
     }
   }
 
   public void addDuckingProfileValue(AltSound2SampleType profileListType, AltSound2SampleType typeToAdd) {
     switch (profileListType) {
-      case sfx: {
-        getSfxDuckingProfiles().stream().forEach(p -> p.addProfileValue(typeToAdd, 60));
-        break;
-      }
-      case callout: {
-        getCalloutDuckingProfiles().stream().forEach(p -> p.addProfileValue(typeToAdd, 60));
-        break;
-      }
-      case overlay: {
-        getOverlayDuckingProfiles().stream().forEach(p -> p.addProfileValue(typeToAdd, 60));
-        break;
-      }
+      case sfx -> getSfxDuckingProfiles().forEach(p -> p.addProfileValue(typeToAdd, 60));
+      case callout -> getCalloutDuckingProfiles().forEach(p -> p.addProfileValue(typeToAdd, 60));
+      case overlay -> getOverlayDuckingProfiles().forEach(p -> p.addProfileValue(typeToAdd, 60));
     }
   }
 }

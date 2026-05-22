@@ -11,11 +11,10 @@ import de.mephisto.vpin.server.directb2s.BackglassService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpx.VPXService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -26,6 +25,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static de.mephisto.vpin.server.directb2s.BackglassService.parseIntSafe;
 
@@ -64,16 +64,13 @@ public class VPinScreenService implements InitializingBean {
   //---------------------------------------------------
 
   public FrontendPlayerDisplay getScreenDisplay(VPinScreen screen) {
-    switch (screen) {
-      case PlayField:
-        return firstDefined(screen, getVpxDisplays(false), getFrontendDisplays(false));
-      case BackGlass:
-        return firstDefined(screen, getVpxDisplays(false), getScreenResDisplays(), getFrontendDisplays(false));
-      case Menu:
-        return firstDefined(screen, getVpxDisplays(false), getScreenResDisplays(), getFrontendDisplays(false));
-      default:
-        return firstDefined(screen, getFrontendDisplays(false));
-    }
+      return switch (screen) {
+          case PlayField -> firstDefined(screen, getVpxDisplays(false), getFrontendDisplays(false));
+          case BackGlass ->
+                  firstDefined(screen, getVpxDisplays(false), getScreenResDisplays(), getFrontendDisplays(false));
+          case Menu -> firstDefined(screen, getVpxDisplays(false), getScreenResDisplays(), getFrontendDisplays(false));
+          default -> firstDefined(screen, getFrontendDisplays(false));
+      };
   }
 
   public FrontendPlayerDisplay getRecordingScreenDisplay(VPinScreen screen) {
@@ -126,7 +123,7 @@ public class VPinScreenService implements InitializingBean {
         }
       }
 
-      MonitorInfo monitor = monitors.get(0);
+      MonitorInfo monitor = monitors.getFirst();
       for (int i = 1; i < monitors.size(); i++) {
         MonitorInfo second = monitors.get(i);
         if (monitor.getY() != second.getY()) {
@@ -165,11 +162,11 @@ public class VPinScreenService implements InitializingBean {
     FrontendPlayerDisplay display2 = FrontendPlayerDisplay.valueOfScreen(displays2, screen);
     if (display1 != null && display2 != null) {
       if (display1.getX() != display2.getX()) {
-        errors.add(StringUtils.defaultString(name, screen.name()) + " x position in " + name1 + " mismatch with x position defined in " + name2 + ": " +
+        errors.add(Objects.toString(name, screen.name()) + " x position in " + name1 + " mismatch with x position defined in " + name2 + ": " +
             display1.getX() + " vs " + display2.getX());
       }
       if (display1.getY() != display2.getY()) {
-        errors.add(StringUtils.defaultString(name, screen.name()) + " y position in " + name1 + " mismatch with y position defined in " + name2 + ": " +
+        errors.add(Objects.toString(name, screen.name()) + " y position in " + name1 + " mismatch with y position defined in " + name2 + ": " +
             display1.getY() + " vs " + display2.getY());
       }
     }
@@ -183,11 +180,11 @@ public class VPinScreenService implements InitializingBean {
     FrontendPlayerDisplay display2 = FrontendPlayerDisplay.valueOfScreen(displays2, screen);
     if (display1 != null && display2 != null) {
       if (display1.getWidth() != display2.getWidth()) {
-        errors.add(StringUtils.defaultString(name, screen.name()) + " width in " + name1 + " mismatch with width defined in " + name2 + ": " +
+        errors.add(Objects.toString(name, screen.name()) + " width in " + name1 + " mismatch with width defined in " + name2 + ": " +
             display1.getWidth() + " vs " + display2.getWidth());
       }
       if (display1.getHeight() != display2.getHeight()) {
-        errors.add(StringUtils.defaultString(name, screen.name()) + " height in " + name1 + " mismatch with height defined in " + name2 + ": " +
+        errors.add(Objects.toString(name, screen.name()) + " height in " + name1 + " mismatch with height defined in " + name2 + ": " +
             display1.getHeight() + " vs " + display2.getHeight());
       }
     }
@@ -382,11 +379,11 @@ public class VPinScreenService implements InitializingBean {
     List<FrontendPlayerDisplay> displays = new ArrayList<>();
     List<MonitorInfo> monitors = systemService.getMonitorInfos();
 
-    if (screenres != null && monitors.size() > 0) {
+    if (screenres != null && !monitors.isEmpty()) {
       MonitorInfo monitor = getBackglassMonitor(screenres, monitors);
 
       FrontendPlayerDisplay playfield = new FrontendPlayerDisplay(VPinScreen.PlayField);
-      MonitorInfo firstMonitor = monitors.get(0);
+      MonitorInfo firstMonitor = monitors.getFirst();
       playfield.setX((int) firstMonitor.getX());
       playfield.setY((int) firstMonitor.getY());
       playfield.setWidth(screenres.getPlayfieldWidth());

@@ -1,17 +1,11 @@
 package de.mephisto.vpin.server.frontend.pinballx;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-
+import de.mephisto.vpin.connectors.assets.TableAsset;
 import org.junit.Test;
 
-import de.mephisto.vpin.connectors.assets.TableAsset;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 public class PinballXAssetsAdapterTest {
 
@@ -29,7 +23,7 @@ public class PinballXAssetsAdapterTest {
     
     assets = adapter.search("Visual Pinball", "PlayField", null, "250Cc");
     assertEquals(2, assets.size());
-    assertEquals("250cc (Inder 1992).png", assets.get(0).getName());
+    assertEquals("250cc (Inder 1992).png", assets.getFirst().getName());
     assertEquals("250cc (Inder) (1992) (JPSalas) (1.1.0).f4v", assets.get(1).getName());
     //doPrintAssets(assets);
     

@@ -18,7 +18,7 @@ public class VPXZColumnSorter implements BaseColumnSorter<VPXZModel> {
     Comparator<VPXZModel> comp = null;
 
     if (!tableView.getSortOrder().isEmpty()) {
-      TableColumn<VPXZModel, ?> column = tableView.getSortOrder().get(0);
+      TableColumn<VPXZModel, ?> column = tableView.getSortOrder().getFirst();
 
       if (column.equals(tableOverviewController.nameColumn)) {
         comp = Comparator.comparing(o -> o.getName().toLowerCase());

@@ -1,9 +1,9 @@
 package de.mephisto.vpin.connectors.github;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.safety.Whitelist;
+import org.jsoup.safety.Safelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +54,7 @@ public class GithubReleaseFactory {
       bodyDoc.select("p").prepend("\\n\\n");
       bodyDoc.select("div.markdown-body").stream().forEach(e -> {
         String s = e.html().replaceAll("\\\\n", "\n");
-        String formatted= Jsoup.clean(s, "", Whitelist.none(), new Document.OutputSettings().prettyPrint(false));
+        String formatted= Jsoup.clean(s, "", Safelist.none(), new Document.OutputSettings().prettyPrint(false));
         githubRelease.setReleaseNotes(formatted);
       });
 
@@ -112,7 +112,6 @@ public class GithubReleaseFactory {
       Document doc = Jsoup
         .connect(url)
         .userAgent("Mozilla")
-        .followRedirects(true)
         .get();
 
       Map<String, String> tag2Url = new LinkedHashMap<>();

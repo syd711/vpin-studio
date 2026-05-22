@@ -10,9 +10,9 @@ import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.vpinmame.VPinMameRomAliasService;
 import de.mephisto.vpin.server.vpinmame.VPinMameService;
-import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.vpx.VPXService;
 import de.mephisto.vpin.server.vpx.VPXUtil;
 import org.apache.commons.io.FileUtils;
@@ -27,9 +27,11 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -78,7 +80,8 @@ public class TextEditService {
           monitoredTextFile.setContent(iniText);
           monitoredTextFile.setPath(init.getAbsolutePath());
           monitoredTextFile.setSize(init.length());
-          monitoredTextFile.setLastModified(new Date(init.lastModified()));
+          monitoredTextFile.setLastModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(init.lastModified()), ZoneId.systemDefault()));
+            
           break;
         }
         case DOFLinxINI: {
@@ -90,7 +93,7 @@ public class TextEditService {
           monitoredTextFile.setContent(iniText);
           monitoredTextFile.setPath(init.getAbsolutePath());
           monitoredTextFile.setSize(init.length());
-          monitoredTextFile.setLastModified(new Date(init.lastModified()));
+          monitoredTextFile.setLastModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(init.lastModified()), ZoneId.systemDefault()));
           break;
         }
         case VPinballXIni: {
@@ -100,7 +103,7 @@ public class TextEditService {
           monitoredTextFile.setContent(iniText);
           monitoredTextFile.setPath(init.getAbsolutePath());
           monitoredTextFile.setSize(init.length());
-          monitoredTextFile.setLastModified(new Date(init.lastModified()));
+          monitoredTextFile.setLastModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(init.lastModified()), ZoneId.systemDefault()));
           break;
         }
         case VPMAliasTxt: {
@@ -111,14 +114,14 @@ public class TextEditService {
           Game game = frontendService.getOriginalGame(Integer.parseInt(monitoredTextFile.getFileId()));
           File gameFile = game.getGameFile();
           String vbs = VPXUtil.exportVBS(gameFile, serverSettings.isKeepVbsFiles());
-          monitoredTextFile.setLastModified(new Date(gameFile.lastModified()));
+          monitoredTextFile.setLastModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(gameFile.lastModified()), ZoneId.systemDefault()));
           monitoredTextFile.setPath(gameFile.getAbsolutePath());
           monitoredTextFile.setSize(vbs.getBytes().length);
           monitoredTextFile.setContent(vbs);
           return monitoredTextFile;
         }
         case LOCAL_GAME_FILE: {
-          monitoredTextFile.setLastModified(new Date());
+          monitoredTextFile.setLastModified(OffsetDateTime.now());
           File f = new File(monitoredTextFile.getPath());
           if (!f.exists()) {
             throw new UnsupportedOperationException("No such file: " + f.getAbsolutePath());
@@ -127,7 +130,7 @@ public class TextEditService {
           monitoredTextFile.setContent(iniText);
           monitoredTextFile.setPath(f.getAbsolutePath());
           monitoredTextFile.setSize(f.length());
-          monitoredTextFile.setLastModified(new Date(f.lastModified()));
+          monitoredTextFile.setLastModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(f.lastModified()), ZoneId.systemDefault()));
           return monitoredTextFile;
         }
         default: {
@@ -146,7 +149,7 @@ public class TextEditService {
   public MonitoredTextFile save(MonitoredTextFile monitoredTextFile) {
     try {
       ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
-      monitoredTextFile.setLastModified(new Date());
+      monitoredTextFile.setLastModified(OffsetDateTime.now());
       VPinFile vPinFile = monitoredTextFile.getvPinFile();
       switch (vPinFile) {
         case DmdDeviceIni: {
@@ -168,7 +171,7 @@ public class TextEditService {
             throw new IOException("Failed to delete target file.");
           }
           monitoredTextFile.setSize(iniFile.length());
-          monitoredTextFile.setLastModified(new Date(iniFile.lastModified()));
+          monitoredTextFile.setLastModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(iniFile.lastModified()), ZoneId.systemDefault()));
           return monitoredTextFile;
         }
         case DOFLinxINI: {
@@ -188,7 +191,7 @@ public class TextEditService {
           else {
             throw new IOException("Failed to delete target file.");
           }
-          monitoredTextFile.setLastModified(new Date(dofLinxIni.lastModified()));
+          monitoredTextFile.setLastModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(dofLinxIni.lastModified()), ZoneId.systemDefault()));
           monitoredTextFile.setSize(dofLinxIni.length());
           return monitoredTextFile;
         }
@@ -207,7 +210,7 @@ public class TextEditService {
           if (game != null) {
             File gameFile = game.getGameFile();
             VPXUtil.importVBS(gameFile, monitoredTextFile.getContent(), serverSettings.isKeepVbsFiles());
-            monitoredTextFile.setLastModified(new Date(gameFile.lastModified()));
+            monitoredTextFile.setLastModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(gameFile.lastModified()), ZoneId.systemDefault()));
             monitoredTextFile.setSize(monitoredTextFile.getContent().getBytes().length);
             LOG.info("Saved {}, performing table table.", gameFile.getAbsolutePath());
             gameService.scanGame(game.getId());
@@ -224,7 +227,7 @@ public class TextEditService {
           String content = String.join("\n", allLines);
           FileUtils.writeStringToFile(f, content, Charset.defaultCharset());
           LOG.info("Written {}", f.getAbsolutePath());
-          monitoredTextFile.setLastModified(new Date(f.lastModified()));
+          monitoredTextFile.setLastModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(f.lastModified()), ZoneId.systemDefault()));
           monitoredTextFile.setSize(monitoredTextFile.getContent().getBytes().length);
           return monitoredTextFile;
         }
@@ -235,7 +238,7 @@ public class TextEditService {
           String content = String.join("\n", allLines);
           FileUtils.writeStringToFile(f, content, Charset.defaultCharset());
           LOG.info("Written {}", f.getAbsolutePath());
-          monitoredTextFile.setLastModified(new Date(f.lastModified()));
+          monitoredTextFile.setLastModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(f.lastModified()), ZoneId.systemDefault()));
           monitoredTextFile.setSize(monitoredTextFile.getContent().getBytes().length);
           return monitoredTextFile;
         }

@@ -43,9 +43,10 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.vps.VpsService;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,11 +55,12 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.time.OffsetDateTime;
 
 @Service
 public class GameMediaService extends MediaService {
@@ -254,8 +256,8 @@ public class GameMediaService extends MediaService {
 
 
   public void runHighscoreRefreshCheck(Game game, TableDetails oldDetails, TableDetails newDetails) {
-    boolean romChanged = !StringUtils.equalsIgnoreCase(oldDetails.getRomName(), newDetails.getRomName());
-    boolean hsChanged = !StringUtils.equalsIgnoreCase(oldDetails.getHsFilename(), newDetails.getHsFilename());
+    boolean romChanged = !Strings.CI.equals(oldDetails.getRomName(), newDetails.getRomName());
+    boolean hsChanged = !Strings.CI.equals(oldDetails.getHsFilename(), newDetails.getHsFilename());
 
     if (romChanged || hsChanged) {
       LOG.info("Game highscore data fields have been changed, triggering score check.");
@@ -285,12 +287,13 @@ public class GameMediaService extends MediaService {
 
     //create backup first and delete existing table
     File existingVPXFile = new File(gameEmulator.getGamesDirectory(), tableDetails.getGameFileName());
-    long existingModifiationDate = existingVPXFile.lastModified();
+    long existingModificationDate = existingVPXFile.lastModified();
     if (existingVPXFile.exists()) {
       if (keepCopy) {
         File tableBackupsFolder = gameEmulator.getTableBackupsFolder();
         tableBackupsFolder.mkdirs();
-        String format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
+        String format = df.format(OffsetDateTime.now());
         String suffix = FilenameUtils.getExtension(existingVPXFile.getName());
         File backup = new File(tableBackupsFolder, FilenameUtils.getBaseName(existingVPXFile.getName()) + "[" + format + "]." + suffix);
         org.apache.commons.io.FileUtils.copyFile(existingVPXFile, backup);
@@ -330,9 +333,9 @@ public class GameMediaService extends MediaService {
 
     //keep modification date
     if (keepModificationDate) {
-      boolean b = target.setLastModified(existingModifiationDate);
+      boolean b = target.setLastModified(existingModificationDate);
       if (b) {
-        LOG.info("Reverted modification of VPX file \"{}\" to \"{}\"", temporaryVPXFile.getAbsolutePath(), new Date(existingModifiationDate));
+        LOG.info("Reverted modification of VPX file \"{}\" to \"{}\"", temporaryVPXFile.getAbsolutePath(), OffsetDateTime.ofInstant(Instant.ofEpochMilli(existingModificationDate), ZoneId.systemDefault()));
       }
       else {
         LOG.warn("Revetring modification of VPX file \"{}\" failed.", temporaryVPXFile.getAbsolutePath());
@@ -434,7 +437,7 @@ public class GameMediaService extends MediaService {
           TableDetails backedUpTableDetails = VpaArchiveUtil.readTableDetails(analysis.getFile());
           backedUpTableDetails.setGameName(newTableDetails.getGameName());
           backedUpTableDetails.setGameFileName(newTableDetails.getGameFileName());
-          backedUpTableDetails.setDateAdded(new Date());
+          backedUpTableDetails.setDateAdded(OffsetDateTime.now());
           backedUpTableDetails.setTourneyId(null);
           backedUpTableDetails.setLastPlayed(null);
           backedUpTableDetails.setEmulatorId(uploadDescriptor.getEmulatorId());
@@ -840,10 +843,10 @@ public class GameMediaService extends MediaService {
             //only delete the assets, if there is no other game with the same "Game Name".
             List<Game> allOtherTables = this.frontendService.getGamesByEmulator(game.getEmulatorId())
                 .stream().filter(g -> g.getId() != game.getId())
-                .collect(Collectors.toList());
+                .toList();
             List<Game> duplicateGameNameTables = allOtherTables
                 .stream().filter(t -> t.getGameName().equalsIgnoreCase(game.getGameName()))
-                .collect(Collectors.toList());
+                .toList();
 
             if (duplicateGameNameTables.isEmpty()) {
               LOG.info("Deleting screen assets for \"{}\"", game.getGameDisplayName());

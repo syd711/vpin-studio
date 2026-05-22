@@ -1,9 +1,10 @@
 package de.mephisto.vpin.server.ipdb;
 
- 
 
+import de.mephisto.vpin.commons.SystemInfo;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.htmlunit.SilentCssErrorHandler;
 import org.htmlunit.WebClient;
 import org.htmlunit.WebRequest;
@@ -15,12 +16,12 @@ import org.htmlunit.html.HtmlSubmitInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.mephisto.vpin.commons.SystemInfo;
-
 import java.io.*;
-import java.net.URL;
+import java.net.URI;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 
 public class IpdbDatabase {
@@ -143,7 +144,7 @@ public class IpdbDatabase {
     }
 
     try (FileOutputStream fos = new FileOutputStream(tmp)) {
-      WebRequest req = new WebRequest(new URL(BASE_URL + listUrl));
+      WebRequest req = new WebRequest(URI.create(BASE_URL + listUrl).toURL());
       WebResponse res = webClient.getWebConnection().getResponse(req);
       IOUtils.copy(res.getContentAsStream(), fos);
     }
@@ -194,9 +195,9 @@ public class IpdbDatabase {
 
     // check that authentication happens successfully
     String title = homePage.getTitleText();
-    if (StringUtils.equalsIgnoreCase(title, "Pinball DataBase Lists")) {
-      DomElement firstlink = homePage.getElementsByTagName("a").get(0);
-      if (firstlink != null && StringUtils.equalsIgnoreCase(firstlink.getTextContent(), "Alphabetical Game Listing")) {
+    if (Strings.CI.equals(title, "Pinball DataBase Lists")) {
+      DomElement firstlink = homePage.getElementsByTagName("a").getFirst();
+      if (firstlink != null && Strings.CI.equals(firstlink.getTextContent(), "Alphabetical Game Listing")) {
         return firstlink.getAttribute("href");
       }
     }

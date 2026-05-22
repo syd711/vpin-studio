@@ -1,12 +1,12 @@
 package de.mephisto.vpin.ui.tables.editors;
 
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.altsound.AltSound2DuckingProfile;
 import de.mephisto.vpin.restclient.altsound.AltSound2SampleType;
 import de.mephisto.vpin.restclient.altsound.AltSoundEntry;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableDialogs;
@@ -304,7 +304,7 @@ public class AltSound2EditorController implements Initializable {
 
 
     List<String> altSoundSampleTypes = new ArrayList<>(AltSound2SampleType.toStringValues());
-    altSoundSampleTypes.add(0, null);
+    altSoundSampleTypes.addFirst(null);
     typeFilterCombo.setItems(FXCollections.observableList(altSoundSampleTypes));
 
     profilesCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -456,7 +456,7 @@ public class AltSound2EditorController implements Initializable {
     gainLabel.setDisable(selectedItems.isEmpty());
 
     if (!selectedItems.isEmpty()) {
-      AltSoundEntryModel altSoundEntryModel = selectedItems.get(0);
+      AltSoundEntryModel altSoundEntryModel = selectedItems.getFirst();
 
       boolean hasMismatch = false;
       if (selectedItems.size() > 1) {
@@ -476,7 +476,7 @@ public class AltSound2EditorController implements Initializable {
         AltSound2SampleType altSound2SampleType = AltSound2SampleType.valueOf(name.toLowerCase());
         List<AltSound2DuckingProfile> profiles = new ArrayList<>(altSound.getProfiles(altSound2SampleType));
         duckingProfileCombo.setDisable(profiles.isEmpty());
-        profiles.add(0, null);
+        profiles.addFirst(null);
         duckingProfileCombo.setItems(FXCollections.observableList(profiles));
 
         Optional<AltSound2DuckingProfile> first = profiles.stream().filter(p -> p != null && p.getId() == altSoundEntryModel.duck.get()).findFirst();

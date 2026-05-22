@@ -7,7 +7,7 @@ import de.mephisto.vpin.restclient.recorder.RecordingDataSummary;
 import de.mephisto.vpin.ui.recorder.dialogs.FFMpegOptionsDialogController;
 import de.mephisto.vpin.ui.recorder.dialogs.RecordingProgressDialogController;
 import de.mephisto.vpin.ui.util.Dialogs;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import javafx.stage.Stage;
 
 public class RecorderDialogs {

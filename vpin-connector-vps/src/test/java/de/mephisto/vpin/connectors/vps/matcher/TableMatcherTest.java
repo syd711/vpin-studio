@@ -88,14 +88,14 @@ public class TableMatcherTest {
     LOG.error(debug.toString());
     assertEquals(nbExpectedTables, tables.size());
     // ensure first table returned is the expected one
-    assertEquals(tableId, tables.get(0).getId());
+    assertEquals(tableId, tables.getFirst().getId());
 
     debug.clear();
     // do same test but without the parsed parts
     tables = matcher.findAllClosest(new String[]{"VPX"}, fileName, null, null, null, -1, vpsDatabase.getTables());
     LOG.error(debug.toString());
     assertEquals(nbExpectedTables, tables.size());
-    assertEquals(tableId, tables.get(0).getId());
+    assertEquals(tableId, tables.getFirst().getId());
   }
 
 }

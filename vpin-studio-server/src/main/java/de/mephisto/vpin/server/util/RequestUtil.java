@@ -1,9 +1,9 @@
 package de.mephisto.vpin.server.util;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.CacheControl;
@@ -13,9 +13,8 @@ import org.springframework.http.ResponseEntity;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 public class RequestUtil {
@@ -29,13 +28,13 @@ public class RequestUtil {
 
   public static boolean doGet(String url) {
     try {
-      HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+      HttpURLConnection connection = (HttpURLConnection) URI.create(url).toURL().openConnection();
       connection.setConnectTimeout(5000);
       connection.setReadTimeout(500);
       connection.setRequestMethod("GET");
       int responseCode = connection.getResponseCode();
       return (200 <= responseCode && responseCode <= 399);
-    } catch (IOException exception) {
+    } catch (Exception exception) {
       return false;
     }
   }

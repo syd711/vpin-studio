@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.listeners;
 
 import de.mephisto.vpin.connectors.discord.DiscordMember;
-import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.server.assets.AssetService;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionLifecycleService;
@@ -11,6 +11,7 @@ import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.discord.DiscordChannelMessageFactory;
 import de.mephisto.vpin.server.discord.DiscordOfflineChannelMessageFactory;
 import de.mephisto.vpin.server.discord.DiscordService;
+import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.Highscore;
@@ -19,12 +20,11 @@ import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.players.Player;
-import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -32,7 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.invoke.MethodHandles;
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -94,7 +94,7 @@ public class OfflineCompetitionChangeListenerImpl extends DefaultCompetitionChan
                 Optional<Highscore> hs = highscoreService.getHighscore(game, true, EventOrigin.USER_INITIATED);
                 if (hs.isPresent() && !StringUtils.isEmpty(hs.get().getRaw())) {
                   String raw = hs.get().getRaw();
-                  List<Score> scores = highscoreParsingService.parseScores(new Date(), raw, game, -1);
+                  List<Score> scores = highscoreParsingService.parseScores(Instant.now(), raw, game, -1);
                   String highscoreList = DiscordChannelMessageFactory.createHighscoreList(scores, -1);
                   subText += "\nHere is the current highscore:\n\n" + highscoreList;
                 }
@@ -141,7 +141,7 @@ public class OfflineCompetitionChangeListenerImpl extends DefaultCompetitionChan
             else {
               Platform.runLater(() -> {
                 byte[] image = assetService.getCompetitionFinishedCard(competition, game, winner, scoreSummary);
-                List<Score> scores = highscoreParsingService.parseScores(new Date(), scoreSummary.getRaw(), game, -1);
+                List<Score> scores = highscoreParsingService.parseScores(Instant.now(), scoreSummary.getRaw(), game, -1);
                 String highscoreList = DiscordChannelMessageFactory.createHighscoreList(scores, -1);
                 String imageMessage = "Here are the final results:\n" + highscoreList + "\nYou can duplicate the competition to continue it with another table or duration.";
                 discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", imageMessage);

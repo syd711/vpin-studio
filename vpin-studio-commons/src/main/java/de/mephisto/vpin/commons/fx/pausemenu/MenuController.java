@@ -18,7 +18,6 @@ import de.mephisto.vpin.restclient.cards.CardTemplateType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.animation.ParallelTransition;
 import javafx.animation.Transition;
 import javafx.application.Platform;
@@ -40,6 +39,7 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -463,7 +463,7 @@ public class MenuController implements Initializable {
     }
 
     //ensures that the scrolling row is centered to the screen.
-    Pane node = (Pane) menuItemsRow.getChildren().get(0);
+    Pane node = (Pane) menuItemsRow.getChildren().getFirst();
     menuItemsRow.setTranslateX(PauseMenuUIDefaults.getScreenWidth() / 2);
 
     BorderPane child = (BorderPane) menuItemsRow.getChildren().get(selectionIndex);

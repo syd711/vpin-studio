@@ -195,7 +195,7 @@ public class Keys {
     for (int keyCode : KEY_CODES) {
       result.add(getKeyDisplayName(keyCode));
     }
-    result.add(0, "");
+    result.addFirst( "");
     Collections.sort(result);
     return result;
   }
@@ -205,7 +205,7 @@ public class Keys {
     for (int keyCode : KEY_CODES_PINEMHI) {
       result.add(getKeyDisplayName(keyCode));
     }
-    result.add(0, "");
+    result.addFirst( "");
     Collections.sort(result);
     return result;
   }

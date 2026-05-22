@@ -1,12 +1,14 @@
 package de.mephisto.vpin.server.highscores.parsing.vpreg;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.cfg.EnumFeature;
+import tools.jackson.databind.json.JsonMapper;
 import com.thoughtworks.xstream.core.util.Base64Encoder;
 import de.mephisto.vpin.server.highscores.parsing.ScoreParsingSummary;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.adapters.*;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.poi.poifs.filesystem.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +17,9 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 public class VPRegFile {
@@ -186,11 +191,15 @@ public class VPRegFile {
         }
       }
 
-      ObjectMapper objectMapper = new ObjectMapper();
-      objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+      ObjectMapper objectMapper = JsonMapper.builder()
+          .enable(SerializationFeature.INDENT_OUTPUT)
+          .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+          .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+          .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+          .build();
       return objectMapper.writeValueAsString(target);
     }
-    catch (IOException e) {
+    catch (Exception e) {
       LOG.error("Failed to read VPReg.stg: {}", e.getMessage(), e);
     }
     finally {
@@ -209,8 +218,12 @@ public class VPRegFile {
   public void restore(String data) {
     POIFSFileSystem fs = null;
     try {
-      ObjectMapper objectMapper = new ObjectMapper();
-      objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+      ObjectMapper objectMapper = JsonMapper.builder()
+          .enable(SerializationFeature.INDENT_OUTPUT)
+          .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+          .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+          .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+          .build();
       TypeReference<HashMap<String, String>> typeRef = new TypeReference<HashMap<String, String>>() {
       };
       HashMap<String, String> values = objectMapper.readValue(data, typeRef);
@@ -236,7 +249,7 @@ public class VPRegFile {
 
       fs.writeFilesystem();
     }
-    catch (IOException e) {
+    catch (Exception e) {
       LOG.error("Failed to read VPReg.stg: {}", e.getMessage(), e);
     }
     finally {
@@ -270,7 +283,7 @@ public class VPRegFile {
         }
       }
     }
-    catch (IOException e) {
+    catch (Exception e) {
       LOG.error("Failed to read VPReg.stg: {}", e.getMessage(), e);
     }
     finally {
@@ -304,7 +317,7 @@ public class VPRegFile {
 
       fs.writeFilesystem();
     }
-    catch (IOException e) {
+    catch (Exception e) {
       LOG.error("Failed to deleting entry from VPReg.stg: {}", e.getMessage(), e);
     }
     finally {
@@ -376,8 +389,8 @@ public class VPRegFile {
     return vpregFile.getCanonicalPath();
   }
 
-  public Date getLastModified() {
-    return new Date(vpregFile.lastModified());
+  public OffsetDateTime getLastModified() {
+    return OffsetDateTime.ofInstant(Instant.ofEpochMilli(vpregFile.lastModified()), ZoneId.systemDefault());
   }
 
   public boolean isValid() {

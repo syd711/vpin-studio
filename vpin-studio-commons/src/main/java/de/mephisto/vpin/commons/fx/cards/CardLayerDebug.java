@@ -36,13 +36,13 @@ public class CardLayerDebug extends Canvas implements CardLayer {
   }
 
   private Color getDebugColor(CardLayer layer) {
-    switch (layer.getClass().getSimpleName()) {
-      case "CardLayerBackground": return Color.color(1.0f, 1.0f, 1.0f, 0.2f);
-      case "CardLayerCanvas": return Color.color(1.0f, 1.0f, 0.0f, 0.5f);
-      case "CardLayerText": return Color.color(0.0f, 1.0f, 0.0f, 0.5f);
-      case "CardLayerScores": return Color.color(0.0f, 1.0f, 1.0f, 0.5f);
-      case "CardLayerWheel": return Color.color(1.0f, 0.0f, 1.0f, 0.3f);
-      default: return Color.TRANSPARENT;
-    }
+      return switch (layer.getClass().getSimpleName()) {
+          case "CardLayerBackground" -> Color.color(1.0f, 1.0f, 1.0f, 0.2f);
+          case "CardLayerCanvas" -> Color.color(1.0f, 1.0f, 0.0f, 0.5f);
+          case "CardLayerText" -> Color.color(0.0f, 1.0f, 0.0f, 0.5f);
+          case "CardLayerScores" -> Color.color(0.0f, 1.0f, 1.0f, 0.5f);
+          case "CardLayerWheel" -> Color.color(1.0f, 0.0f, 1.0f, 0.3f);
+          default -> Color.TRANSPARENT;
+      };
   }
 }

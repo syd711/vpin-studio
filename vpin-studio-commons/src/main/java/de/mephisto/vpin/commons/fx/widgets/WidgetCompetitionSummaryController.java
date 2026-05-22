@@ -25,7 +25,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -363,7 +363,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
       ScoreRepresentation score = new ScoreRepresentation();
       score.setScore(maniaScore.getScore());
       score.setPosition(pos);
-      score.setCreatedAt(maniaScore.getCreationDate());
+      score.setCreatedAt(maniaScore.getCreationDate().toInstant());
       score.setPlayerInitials(maniaScore.getInitials());
 
       Account accountByUuid = ServerFX.maniaClient.getAccountClient().getAccountByUuid(maniaScore.getAccountUUID());

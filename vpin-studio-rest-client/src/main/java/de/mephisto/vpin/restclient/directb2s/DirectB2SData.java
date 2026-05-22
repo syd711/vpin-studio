@@ -1,7 +1,7 @@
 package de.mephisto.vpin.restclient.directb2s;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,7 +23,7 @@ public class DirectB2SData {
   private int b2sElements;
 
   private long filesize;
-  private Date modificationDate;
+  private OffsetDateTime modificationDate;
 
   private boolean backgroundAvailable;
   private boolean dmdImageAvailable;
@@ -39,23 +39,13 @@ public class DirectB2SData {
   private List<DirectB2SDataScore> scores;
 
   public static String getTableType(int type) {
-    switch (type) {
-      case 1: {
-        return "Electro Mechanical";
-      }
-      case 2: {
-        return "Solid State Electronic";
-      }
-      case 3: {
-        return "Solid State Electronic with DMD";
-      }
-      case 4: {
-        return "Original";
-      }
-      default: {
-        return "-";
-      }
-    }
+      return switch (type) {
+          case 1 -> "Electro Mechanical";
+          case 2 -> "Solid State Electronic";
+          case 3 -> "Solid State Electronic with DMD";
+          case 4 -> "Original";
+          default -> "-";
+      };
   }
 
   public int getEmulatorId() {
@@ -228,11 +218,11 @@ public class DirectB2SData {
     this.filesize = filesize;
   }
 
-  public Date getModificationDate() {
+  public OffsetDateTime getModificationDate() {
     return modificationDate;
   }
 
-  public void setModificationDate(Date modificationDate) {
+  public void setModificationDate(OffsetDateTime modificationDate) {
     this.modificationDate = modificationDate;
   }
 

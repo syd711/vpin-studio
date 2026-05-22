@@ -2,7 +2,6 @@ package de.mephisto.vpin.commons.fx.pausemenu;
 
 import de.mephisto.vpin.restclient.alx.AlxTileEntry;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
-import de.mephisto.vpin.restclient.util.DateUtil;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
@@ -12,7 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.util.Date;
+import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 public class TileFactory {
@@ -40,7 +40,7 @@ public class TileFactory {
 
     String totalTimeFormatted = null;
     try {
-      totalTimeFormatted = DurationFormatUtils.formatDuration(total * 1000, "HH 'hrs'", false);
+      totalTimeFormatted = DurationFormatUtils.formatDuration(total * 1000L, "HH 'hrs'", false);
     } catch (Exception e) {
       LOG.error("Error calculating total play time: " + e.getMessage());
     }
@@ -59,9 +59,8 @@ public class TileFactory {
   }
   //--------------------------------------------------------------------------------------------------------------------
 
-  public static AlxTileEntry toSessionDurationTile(Date startDate) {
-    long durationMs = System.currentTimeMillis() - startDate.getTime();
-    long durationMin = durationMs/1000/60;
+  public static AlxTileEntry toSessionDurationTile(OffsetDateTime startDate) {
+    long durationMin = Duration.between(startDate, OffsetDateTime.now()).toMinutes();
     if(durationMin == 0) {
       durationMin = 1;
     }

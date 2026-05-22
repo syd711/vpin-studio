@@ -1,9 +1,9 @@
 package de.mephisto.vpin.restclient.util;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,9 +59,10 @@ public class FileUtils {
 
   public static boolean isTempFile(File file) {
     String filename = file.getName();
-    return StringUtils.endsWithIgnoreCase(filename, "tmp")
-        || StringUtils.endsWithIgnoreCase(filename, "crdownload")
-        || StringUtils.startsWith(filename, ".");
+    return Strings.CI.endsWith(filename, "tmp")
+        || Strings.CI.endsWith(filename, "crdownload")
+        || Strings.CI.startsWith(filename, ".");
+    //Should that be case sensitive? Originally was startsWith vs. startsWithIgnoreCase
   }
 
   public static boolean deleteIfTempFile(@Nullable File file) {
@@ -254,7 +255,7 @@ public class FileUtils {
 
   public static boolean isAssetOf(String filename, String baseAssetName) {
     String basename = baseUniqueAsset(filename);
-    return StringUtils.startsWithIgnoreCase(basename, baseAssetName);
+    return Strings.CI.startsWith(basename, baseAssetName);
   }
 
   public static String baseUniqueAsset(String filename) {
@@ -283,7 +284,7 @@ public class FileUtils {
   static Pattern filePattern = Pattern.compile(" \\(\\d\\d?\\)$");
 
   public static boolean equalsUniqueFile(String file1, String file2) {
-    return StringUtils.equalsIgnoreCase(fromUniqueFile(file1), fromUniqueFile(file2));
+    return Strings.CI.equals(fromUniqueFile(file1), fromUniqueFile(file2));
   }
 
   /**

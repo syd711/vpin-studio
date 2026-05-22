@@ -1,7 +1,7 @@
 package de.mephisto.vpin.commons.utils.localsettings;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 public interface LocalSettingsChangeListener {
 

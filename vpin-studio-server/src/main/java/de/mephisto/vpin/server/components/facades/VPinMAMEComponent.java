@@ -3,16 +3,18 @@ package de.mephisto.vpin.server.components.facades;
 import de.mephisto.vpin.connectors.github.GithubRelease;
 import de.mephisto.vpin.connectors.github.GithubReleaseFactory;
 import de.mephisto.vpin.server.vpinmame.VPinMameService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -46,13 +48,13 @@ public class VPinMAMEComponent implements ComponentFacade {
 
   @Nullable
   @Override
-  public Date getModificationDate() {
+  public OffsetDateTime getModificationDate() {
     File setupExe = new File(vPinMameService.getMameFolder(), "Setup64.exe");
     if (!setupExe.exists()) {
       setupExe = new File(vPinMameService.getMameFolder(), "Setup.exe");
     }
     if (setupExe.exists()) {
-      return new Date(setupExe.lastModified());
+      return OffsetDateTime.ofInstant(Instant.ofEpochMilli(setupExe.lastModified()), ZoneId.systemDefault());
     }
     return null;
   }

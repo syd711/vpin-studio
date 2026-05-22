@@ -1,8 +1,9 @@
 package de.mephisto.vpin.server.highscores;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.cfg.EnumFeature;
+import tools.jackson.databind.json.JsonMapper;
 import de.mephisto.vpin.restclient.highscores.HighscoreBackup;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.util.FileUtils;
@@ -14,9 +15,9 @@ import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegService;
 import de.mephisto.vpin.server.listeners.EventOrigin;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpx.FolderLookupService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -27,10 +28,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.text.SimpleDateFormat;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.zip.ZipOutputStream;
 
@@ -42,7 +42,7 @@ public class HighscoreBackupService implements InitializingBean {
   public static final String DESCRIPTOR_JSON = "descriptor.json";
   public static final String VPREG_STG_JSON = "vpreg-stg.json";
 
-  private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+  private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
 
   @Autowired
   private HighscoreService highscoreService;
@@ -125,9 +125,14 @@ public class HighscoreBackupService implements InitializingBean {
 
   public HighscoreBackup readBackupFile(@NonNull File archiveFile) {
     try {
-      ObjectMapper objectMapper = new ObjectMapper();
-      objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-      objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+      JsonMapper objectMapper = JsonMapper.builder()
+          .enable(SerializationFeature.INDENT_OUTPUT)
+          .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+          .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+          .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+          .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+          .build();
 
       String json = ZipUtil.readZipFile(archiveFile, DESCRIPTOR_JSON);
 
@@ -140,12 +145,14 @@ public class HighscoreBackupService implements InitializingBean {
   }
 
   private File writeDescriptorJson(Game game, File folder, Highscore highscore, String filename) throws IOException {
-    ObjectMapper objectMapper = new ObjectMapper();
-    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    JsonMapper objectMapper = JsonMapper.builder()
+        .enable(SerializationFeature.INDENT_OUTPUT)
+        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+        .build();
 
     HighscoreBackup backup = new HighscoreBackup();
-    backup.setCreationDate(new Date());
+    backup.setCreationDate(OffsetDateTime.now());
     backup.setHighscoreType(game.getHighscoreType());
     backup.setRaw(highscore.getRaw());
     backup.setFilename(filename);
@@ -227,7 +234,7 @@ public class HighscoreBackupService implements InitializingBean {
     Optional<Highscore> hs = highscoreService.getHighscore(game, true, EventOrigin.USER_INITIATED);
     if (hs.isPresent()) {
 
-      String filename = dateFormatter.format(new Date());
+      String filename = dateFormatter.format(OffsetDateTime.now());
       filename = filename + "." + FILE_SUFFIX;
 
       if (!romBasedBackupFolder.exists() && !romBasedBackupFolder.mkdirs()) {

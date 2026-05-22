@@ -2,7 +2,6 @@ package de.mephisto.vpin.restclient.preferences;
 
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 
 public class OverlaySettings extends JsonSettings {
   private String designType;

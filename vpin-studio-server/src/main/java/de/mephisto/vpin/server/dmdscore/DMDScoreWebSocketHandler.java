@@ -1,12 +1,6 @@
 package de.mephisto.vpin.server.dmdscore;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.BinaryMessage;
@@ -14,6 +8,12 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
 
@@ -114,7 +114,7 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
   }
 
   private void processGameStart(String newGameName) {
-    if (!StringUtils.equals(newGameName, gameName)) {
+    if (!Strings.CI.equals(newGameName, gameName)) {
       // new game started, close previous one
       processGameStop();
 

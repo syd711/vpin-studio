@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.Properties;
 import java.util.Set;
 
 import static org.junit.Assert.assertNotNull;

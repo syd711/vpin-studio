@@ -7,7 +7,7 @@ import de.mephisto.vpin.restclient.util.ini.IniSettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.preferences.DiscordBotPreferencesController;
 import de.mephisto.vpin.ui.util.Dialogs;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import javafx.stage.Stage;
 
 public class PreferencesDialogs {

@@ -6,11 +6,11 @@ import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
-import de.mephisto.vpin.restclient.highscores.NVRamList;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.highscores.NVRamList;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.competitions.CompetitionsDialogHelper;
 import javafx.collections.FXCollections;
@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.net.URL;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -121,8 +122,8 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
     competition.setName("My next competition");
     competition.setUuid(UUID.randomUUID().toString());
 
-    Date end = Date.from(LocalDate.now().plus(7, ChronoUnit.DAYS).atStartOfDay(ZoneId.systemDefault()).toInstant());
-    competition.setStartDate(DateUtil.today());
+    Instant end = LocalDate.now().plus(7, ChronoUnit.DAYS).atStartOfDay(ZoneId.systemDefault()).toInstant();
+    competition.setStartDate(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
     competition.setEndDate(end);
 
     saveBtn.setDisable(true);
@@ -141,28 +142,28 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
     startDatePicker.setValue(LocalDate.now());
     startDatePicker.valueProperty().addListener((observableValue, localDate, t1) -> {
       Date date = DateUtil.formatDate(startDatePicker.getValue(), startTime.getValue());
-      competition.setStartDate(date);
+      competition.setStartDate(date.toInstant());
       validate();
     });
     startTime.setItems(FXCollections.observableList(DateUtil.TIMES));
     startTime.setValue("00:00");
     startTime.valueProperty().addListener((observable, oldValue, newValue) -> {
       Date date = DateUtil.formatDate(startDatePicker.getValue(), startTime.getValue());
-      competition.setStartDate(date);
+      competition.setStartDate(date.toInstant());
       validate();
     });
 
     endDatePicker.setValue(LocalDate.now().plus(7, ChronoUnit.DAYS));
     endDatePicker.valueProperty().addListener((observableValue, localDate, t1) -> {
       Date date = DateUtil.formatDate(endDatePicker.getValue(), endTime.getValue());
-      competition.setEndDate(date);
+      competition.setEndDate(date.toInstant());
       validate();
     });
     endTime.setItems(FXCollections.observableList(DateUtil.TIMES));
     endTime.setValue("00:00");
     endTime.valueProperty().addListener((observable, oldValue, newValue) -> {
       Date date = DateUtil.formatDate(endDatePicker.getValue(), endTime.getValue());
-      competition.setEndDate(date);
+      competition.setEndDate(date.toInstant());
       validate();
     });
 
@@ -176,7 +177,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
     });
 
     List<DiscordChannel> channels = new ArrayList<>(getDiscordChannels());
-    channels.add(0, null);
+    channels.addFirst( null);
     ObservableList<DiscordChannel> discordChannels = FXCollections.observableArrayList(channels);
     channelsCombo.getItems().addAll(discordChannels);
     channelsCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
@@ -192,7 +193,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
     });
 
     ArrayList<String> badges = new ArrayList<>(client.getCompetitionService().getCompetitionBadges());
-    badges.add(0, null);
+    badges.addFirst( null);
     ObservableList<String> imageList = FXCollections.observableList(badges);
     competitionIconCombo.setItems(imageList);
     competitionIconCombo.setCellFactory(c -> new CompetitionImageListCell(client));
@@ -234,8 +235,8 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
     validationContainer.setVisible(true);
     this.saveBtn.setDisable(true);
 
-    Date startDate = competition.getStartDate();
-    Date endDate = competition.getEndDate();
+    Instant startDate = competition.getStartDate();
+    Instant endDate = competition.getEndDate();
     this.durationLabel.setText(DateUtil.formatDuration(startDate, endDate));
 
     if (StringUtils.isEmpty(competition.getName())) {
@@ -250,7 +251,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
       return;
     }
 
-    if (startDate == null || endDate == null || startDate.getTime() >= endDate.getTime()) {
+    if (startDate == null || endDate == null || !startDate.isBefore(endDate)) {
       validationTitle.setText("Invalid start/end date set.");
       validationDescription.setText("Define a valid start and end date.");
       return;
@@ -293,13 +294,13 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
       GameRepresentation game = client.getGameService().getGame(selectedCompetition.getGameId());
 
       nameField.setText(selectedCompetition.getName());
-      this.startDatePicker.setValue(selectedCompetition.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+      this.startDatePicker.setValue(LocalDate.ofInstant(selectedCompetition.getStartDate(), ZoneId.systemDefault()));
       this.startDatePicker.setDisable(selectedCompetition.isFinished());
-      this.startTime.setValue(DateUtil.formatTimeString(selectedCompetition.getStartDate()));
+      this.startTime.setValue(DateUtil.formatTimeString(Date.from(selectedCompetition.getStartDate())));
 
-      this.endDatePicker.setValue(selectedCompetition.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+      this.endDatePicker.setValue(LocalDate.ofInstant(selectedCompetition.getEndDate(), ZoneId.systemDefault()));
       this.endDatePicker.setDisable(selectedCompetition.isFinished());
-      this.endTime.setValue(DateUtil.formatTimeString(selectedCompetition.getEndDate()));
+      this.endTime.setValue(DateUtil.formatTimeString(Date.from(selectedCompetition.getEndDate())));
 
       this.tableCombo.setValue(game);
       this.tableCombo.setDisable((selectedCompetition.getId() != null && !selectedCompetition.isPlanned()) || selectedCompetition.isFinished());

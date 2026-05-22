@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.util;
 
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -12,20 +13,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Stage;
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.mephisto.vpin.commons.utils.JFXFuture;
-
 import java.lang.invoke.MethodHandles;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 /**
  * This class is a TextField which implements an "autocomplete" functionality, based on a supplied list of entries.
@@ -213,7 +207,7 @@ public class AutoCompleteTextField {
       JFXFuture.supplyAsync(() -> matcher.match(textField.getText()))
           .thenAcceptLater(searchResult -> {
             if (searchResult.size() == 1) {
-              AutoMatchModel match = searchResult.get(0);
+              AutoMatchModel match = searchResult.getFirst();
               String value = match.getId();
               defaultValue = value;
               setText(value);

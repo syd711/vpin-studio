@@ -9,14 +9,11 @@ import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
-import de.mephisto.vpin.restclient.recorder.RecorderFilterSettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlay;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.util.Keys;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
@@ -33,12 +30,16 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import org.apache.commons.collections4.ListUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -350,7 +351,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
   /**
    * Reload just one item in the table
    *
-   * @param The item in the table to be reloaded
+   * @param - The item in the table to be reloaded
    */
   public void reloadItem(T bean) {
     if (bean != null) {
@@ -370,7 +371,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
         else {
           M newModel = toModel(bean);
           if (newModel != null) {
-            models.add(0, newModel);
+            models.addFirst(newModel);
           }
         }
         // force refresh the view for elements not observed by the table
@@ -596,7 +597,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
     this.playlistCombo.setDisable(true);
     JFXFuture.supplyAsync(() -> client.getPlaylistsService().getPlaylists()).thenAcceptLater(playlists -> {
       List<PlaylistRepresentation> pl = new ArrayList<>(playlists);
-      pl.add(0, null);
+      pl.addFirst( null);
       playlistCombo.setItems(FXCollections.observableList(pl));
 
       // reselect same playlist

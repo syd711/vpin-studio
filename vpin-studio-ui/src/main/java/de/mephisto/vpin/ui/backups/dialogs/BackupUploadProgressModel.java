@@ -3,7 +3,6 @@ package de.mephisto.vpin.ui.backups.dialogs;
 import de.mephisto.vpin.restclient.backups.BackupServiceClient;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;

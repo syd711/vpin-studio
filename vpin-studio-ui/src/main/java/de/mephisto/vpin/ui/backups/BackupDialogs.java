@@ -4,11 +4,9 @@ import de.mephisto.vpin.restclient.backups.BackupDescriptorRepresentation;
 import de.mephisto.vpin.restclient.backups.BackupSourceRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.backups.dialogs.*;
-import de.mephisto.vpin.ui.backups.dialogs.TablesBackupDialogController;
 import de.mephisto.vpin.ui.util.Dialogs;
-import edu.umd.cs.findbugs.annotations.Nullable;
-import javafx.collections.ObservableList;
 import javafx.stage.Stage;
+import org.jspecify.annotations.Nullable;
 
 import java.io.File;
 import java.util.List;

@@ -16,8 +16,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
-import java.text.DateFormat;
-import java.util.Date;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
 
 public class VpsVersionContainer extends VBox {
@@ -69,7 +71,10 @@ public class VpsVersionContainer extends VBox {
       titleLabel = new Label("VPS Update:");
       titleLabel.setPrefWidth(TITLE_WIDTH);
       titleLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;-fx-font-weight : bold;" + customStyle);
-      valueLabel = new Label(DateFormat.getDateInstance().format(new Date(item.getCreatedAt())));
+      
+      DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withZone(ZoneId.systemDefault());
+      valueLabel = new Label(dateTimeFormatter.format(Instant.ofEpochMilli(item.getCreatedAt())));
+
       valueLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;" + customStyle);
       row.getChildren().addAll(titleLabel, valueLabel);
       this.getChildren().add(row);

@@ -1,7 +1,9 @@
 package de.mephisto.vpin.server.backups.adapters.vpa;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.cfg.EnumFeature;
+import tools.jackson.databind.json.JsonMapper;
 import de.mephisto.vpin.restclient.backups.BackupPackageInfo;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
@@ -12,7 +14,7 @@ import de.mephisto.vpin.server.backups.BackupDescriptor;
 import de.mephisto.vpin.server.backups.BackupSource;
 import de.mephisto.vpin.server.backups.adapters.TableBackupAdapter;
 import de.mephisto.vpin.server.games.Game;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import net.lingala.zip4j.ZipFile;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -21,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Date;
+import java.time.Instant;
 
 public class TableBackupAdapterVpa implements TableBackupAdapter {
   private final static Logger LOG = LoggerFactory.getLogger(TableBackupAdapterVpa.class);
@@ -51,7 +53,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
     BackupDescriptor backupDescriptor = new BackupDescriptor();
     BackupPackageInfo packageInfo = new BackupPackageInfo();
 
-    backupDescriptor.setCreatedAt(new Date());
+    backupDescriptor.setCreatedAt(Instant.now());
     backupDescriptor.setTableDetails(tableDetails);
     backupDescriptor.setPackageInfo(packageInfo);
 
@@ -100,9 +102,15 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
         }
       }, game, tableDetails);
 
-      ObjectMapper objectMapper = new ObjectMapper();
-      objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-      objectMapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
+        JsonMapper objectMapper = JsonMapper.builder()
+                .enable(SerializationFeature.INDENT_OUTPUT)
+                .enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS)
+                .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+                .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+                .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+                .build();
+
+
       String packageInfoJson = objectMapper.writeValueAsString(packageInfo);
 
       if (!cancelled) {

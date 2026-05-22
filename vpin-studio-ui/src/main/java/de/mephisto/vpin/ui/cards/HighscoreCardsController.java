@@ -17,8 +17,6 @@ import de.mephisto.vpin.ui.tables.GameRepresentationModel;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -32,6 +30,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,19 +94,12 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
     if (game == null) {
       return;
     }
-    VPinScreen screen = VPinScreen.BackGlass;
-    switch (designMode) {
-      case wheel:
-        screen = VPinScreen.Wheel;
-        break;
-      case highscoreCard:
-        screen = VPinScreen.Other2;
-        break;
-      case instructionCard:
-        screen = VPinScreen.GameHelp;
-        break;
-    }
-    TableDialogs.openTableAssetsDialog(null, game, screen);
+    VPinScreen screen = switch (designMode) {
+        case wheel -> VPinScreen.Wheel;
+        case highscoreCard -> VPinScreen.Other2;
+        case instructionCard -> VPinScreen.GameHelp;
+    };
+      TableDialogs.openTableAssetsDialog(null, game, screen);
   }
 
   @FXML
@@ -255,7 +248,7 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
     }
 
     try {
-      ignoreList.addAll(Arrays.asList("popperScreen"));
+      ignoreList.add("popperScreen");
     }
     catch (Exception e) {
       LOG.error("Failed to init card editor: " + e.getMessage(), e);

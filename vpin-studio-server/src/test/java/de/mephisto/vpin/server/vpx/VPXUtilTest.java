@@ -1,10 +1,8 @@
 package de.mephisto.vpin.server.vpx;
 
-import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.Map;
 import java.util.Set;
 

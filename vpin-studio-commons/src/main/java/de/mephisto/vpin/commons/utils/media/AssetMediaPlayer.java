@@ -7,10 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 abstract public class AssetMediaPlayer extends MediaViewPane {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -72,19 +68,19 @@ abstract public class AssetMediaPlayer extends MediaViewPane {
 
   public void play() {
     if (mediaPlayer != null) {
-      mediaPlayer.play();;
+      mediaPlayer.play();
     }
   }
 
   public void pause() {
     if (mediaPlayer != null) {
-      mediaPlayer.pause();;
+      mediaPlayer.pause();
     }
   }
 
   public void stopAndDispose() {
     if (mediaPlayer != null) {
-      mediaPlayer.stop();;
+      mediaPlayer.stop();
       mediaPlayer.dispose();
     }
   }

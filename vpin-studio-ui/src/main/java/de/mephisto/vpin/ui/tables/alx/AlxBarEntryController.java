@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.tables.alx;
 
 import de.mephisto.vpin.restclient.alx.AlxBarEntry;
 import de.mephisto.vpin.ui.tables.TableDialogs;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;

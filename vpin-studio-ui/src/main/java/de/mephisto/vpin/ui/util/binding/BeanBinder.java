@@ -14,13 +14,12 @@ import javafx.scene.text.FontWeight;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.inject.internal.util.Objects;
 
 public class BeanBinder<T> {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -96,7 +95,7 @@ public class BeanBinder<T> {
       if (items != null) {
         items = new ArrayList<>(items);
         if (addEmpty) {
-          items.add(0, null);
+          items.addFirst(null);
         }
         comboBox.setItems(FXCollections.observableList(items));
       }
@@ -337,7 +336,7 @@ public class BeanBinder<T> {
       try {
         Object oldValue = PropertyUtils.getProperty(bean, property);
         PropertyUtils.setProperty(bean, property, value);
-        if (!skipChangeEvent && !paused && !Objects.equal(oldValue, value)) {
+        if (!skipChangeEvent && !paused && !Objects.equals(oldValue, value)) {
           for (BindingChangedListener listener : listeners) {
             listener.beanPropertyChanged(bean, property, value);
           }

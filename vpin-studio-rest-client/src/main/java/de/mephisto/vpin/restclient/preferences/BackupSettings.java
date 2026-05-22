@@ -3,7 +3,6 @@ package de.mephisto.vpin.restclient.preferences;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.vpauthenticators.AuthenticationProvider;
 
 public class BackupSettings extends JsonSettings {
   private boolean directb2s = true;
@@ -30,52 +29,23 @@ public class BackupSettings extends JsonSettings {
   private boolean overwriteBackup = true;
 
   public boolean isAssetEnabled(AssetType assetType) {
-    switch (assetType) {
-      case DIRECTB2S: {
-        return directb2s;
-      }
-      case PUP_PACK: {
-        return pupPack;
-      }
-      case NV: {
-        return nvRam;
-      }
-      case RES: {
-        return res;
-      }
-      case VBS: {
-        return vbs;
-      }
-      case FRONTEND_MEDIA: {
-        return frontendMedia;
-      }
-      case POV: {
-        return pov;
-      }
-      case INI: {
-        return ini;
-      }
-      case MUSIC:
-      case MUSIC_BUNDLE: {
-        return music;
-      }
-      case ALT_SOUND: {
-        return altSound;
-      }
-      case ALT_COLOR: {
-        return altColor;
-      }
-      case DMD_PACK: {
-        return dmd;
-      }
-      case VPX: {
-        return vpx;
-      }
-      case ROM: {
-        return rom;
-      }
-    }
-    return false;
+      return switch (assetType) {
+          case DIRECTB2S -> directb2s;
+          case PUP_PACK -> pupPack;
+          case NV -> nvRam;
+          case RES -> res;
+          case VBS -> vbs;
+          case FRONTEND_MEDIA -> frontendMedia;
+          case POV -> pov;
+          case INI -> ini;
+          case MUSIC, MUSIC_BUNDLE -> music;
+          case ALT_SOUND -> altSound;
+          case ALT_COLOR -> altColor;
+          case DMD_PACK -> dmd;
+          case VPX -> vpx;
+          case ROM -> rom;
+          default -> false;
+      };
   }
 
   public int getEmulatorId() {

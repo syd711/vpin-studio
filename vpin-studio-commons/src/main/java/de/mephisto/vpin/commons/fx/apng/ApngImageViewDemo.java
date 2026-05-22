@@ -5,11 +5,14 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -25,7 +28,7 @@ public class ApngImageViewDemo extends Application {
     stage.setScene(new Scene(layout, 500, 500));
 
     Pane pane = new Pane();
-    pane.setBackground(Background.fill(Color.PINK));
+    pane.setBackground(new Background(new BackgroundFill(Color.PINK, CornerRadii.EMPTY, Insets.EMPTY)));
 
     File wheelIcon;
     //wheelIcon = new File("./testsystem/vPinball/PinUPSystem/POPMedia/Visual Pinball X/Wheel/Jaws.png");
@@ -39,16 +42,17 @@ public class ApngImageViewDemo extends Application {
         System.err.println("error creating image");
         image.getException().printStackTrace();
       }
-      ImageView iv = new ImageView(image);
-      pane.getChildren().add(iv);
-    } 
-    catch (Exception e) {
-      System.err.println("error loading image");
+
+      ImageView view = new ImageView();
+      view.setImage(image);
+
+      pane.getChildren().add(view);
+      layout.setCenter(pane);
+
+      stage.show();
+    } catch (Exception e) {
       e.printStackTrace();
     }
-    
-    layout.setCenter(pane);
-    stage.show();
   }
 
   public static void main(String[] args) {

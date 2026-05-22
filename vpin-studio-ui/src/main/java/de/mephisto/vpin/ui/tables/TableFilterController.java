@@ -16,7 +16,7 @@ import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
 import de.mephisto.vpin.ui.tables.models.TableStatus;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
 import de.mephisto.vpin.ui.util.tags.TagField;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -221,7 +221,7 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
 
     List<ValidationType> issueTypes = GameValidationCode.values().stream().map(code -> new ValidationType(code, GameValidationCode.name(code))).collect(Collectors.toList());
     issueTypes.sort(Comparator.comparing(o -> o.name));
-    issueTypes.add(0, null);
+    issueTypes.addFirst( null);
     issueTypesCombo.setItems(FXCollections.observableList(issueTypes));
 
     if (filterSettings.getIssueType() != -1) {
@@ -339,7 +339,7 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
     });
 
     List<TableStatus> statuses = new ArrayList<>(TableDataController.supportedStatuses());
-    statuses.add(0, null);
+    statuses.addFirst( null);
     statusCombo.setItems(FXCollections.observableList(statuses));
     if (filterSettings.getGameStatus() >= 0) {
       statusCombo.setValue(statuses.get(filterSettings.getGameStatus()));
@@ -355,7 +355,7 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
     });
 
     List<CommentType> noteTypes = new ArrayList<>(Arrays.asList(CommentType.values()));
-    noteTypes.add(0, null);
+    noteTypes.addFirst( null);
     commentsCombo.setItems(FXCollections.observableList(noteTypes));
     commentsCombo.setValue(filterSettings.getNoteType());
     commentsCombo.valueProperty().addListener((observable, oldValue, newValue) -> {

@@ -1,16 +1,14 @@
 package de.mephisto.vpin.restclient.util;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
-import java.net.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.URI;
 
 public class NetworkUtil {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -39,9 +37,9 @@ public class NetworkUtil {
       return false;
     }
     try {
-      new URL(url);
+      new URI(url).toURL();
     }
-    catch (MalformedURLException e) {
+    catch (Exception e) {
       return false;
     }
     return true;

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.vr;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.File;
 
@@ -68,6 +69,7 @@ public class VRFilesInfo {
     this.dmdDeviceIniVr = dmdDeviceIniVr;
   }
 
+  @JsonProperty("vPinballXIni")
   public String getvPinballXIni() {
     return vPinballXIni;
   }
@@ -76,6 +78,7 @@ public class VRFilesInfo {
     this.vPinballXIni = vPinballXIni;
   }
 
+  @JsonProperty("vPinballXIniVr")
   public String getvPinballXIniVr() {
     return vPinballXIniVr;
   }

@@ -80,7 +80,7 @@ public class FXResizeHelper {
     double centerY = stage.getY() + stage.getHeight() / 2;
 
     ObservableList<Screen> screensForRectangle = Screen.getScreensForRectangle(centerX, centerY, 1, 1);
-    return screensForRectangle.get(0);
+    return screensForRectangle.getFirst();
   }
 
   public static boolean isMaximized(Stage stage) {

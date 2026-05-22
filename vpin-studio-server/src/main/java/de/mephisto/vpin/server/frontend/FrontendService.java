@@ -20,10 +20,10 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vps.VpsService;
 import de.mephisto.vpin.server.vpx.VPXService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -34,15 +34,15 @@ import org.springframework.stereotype.Service;
 
 import java.awt.*;
 import java.io.File;
-import java.io.IOException;
-import java.lang.invoke.MethodHandles;
-import java.sql.Date;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.List;
 
 @Service
 public class FrontendService implements InitializingBean, PreferenceChangedListener {
-  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+  private final static Logger LOG = LoggerFactory.getLogger(FrontendService.class);
 
   @Autowired
   private SystemService systemService;
@@ -233,8 +233,8 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
       Map<String, Object> data = JsonSettings.objectMapper.readValue(serialize, HashMap.class);
       saveSettings(data);
     }
-    catch (IOException ioe) {
-      LOG.error("Cannot save settings", ioe);
+    catch (Exception e) {
+      LOG.error("Cannot save settings: " + e.getMessage(), e);
     }
   }
 
@@ -274,11 +274,17 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
           }
         }
 
-        if (autoFillSettings.isNumberOfPlayers()) {
-          if (vpsTable.getPlayers() == 0 || overwrite) {
-            tableDetails.setNumberOfPlayers(vpsTable.getPlayers());
+          if (autoFillSettings.isNumberOfPlayers()) {
+              Integer vpsPlayers = vpsTable.getPlayers();
+              if (vpsPlayers != null) {
+                  if (vpsPlayers == 0 || overwrite) {
+                      tableDetails.setNumberOfPlayers(vpsPlayers);
+                  }
+              }
+              else if (overwrite) {
+                  tableDetails.setNumberOfPlayers(0);
+              }
           }
-        }
 
         if (autoFillSettings.isIpdbNumber()) {
           if (!StringUtils.isEmpty(vpsTable.getIpdbUrl())) {
@@ -438,11 +444,11 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     tableDetails.setGameName(formattedBaseName);
     tableDetails.setGameFileName(gameFileName);
     tableDetails.setGameDisplayName(gameDisplayName);
-    tableDetails.setDateModified(new Date(file.lastModified()));
+    tableDetails.setDateModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(file.lastModified()), ZoneId.systemDefault()));
 
     if (gameEmulator.isMameEmulator()) {
       String fullName = mameService.resolveMAMENameFor(baseName);
-      if (!StringUtils.isEmpty(fullName)) {
+      if(!StringUtils.isEmpty(fullName)) {
         tableDetails.setGameDisplayName(fullName);
       }
       tableDetails.setRomName(baseName);
@@ -524,7 +530,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   //--------------------------
 
-  public java.util.Date getStartDate() {
+  public OffsetDateTime getStartDate() {
     return getFrontendConnector().getStartDate();
   }
 
@@ -541,21 +547,13 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   //--------------------------
 
   public FrontendControl getPinUPControlFor(VPinScreen screen) {
-    switch (screen) {
-      case Other2: {
-        return getFrontendConnector().getFrontendControl(FrontendControl.FUNCTION_SHOW_OTHER);
-      }
-      case GameHelp: {
-        return getFrontendConnector().getFrontendControl(FrontendControl.FUNCTION_SHOW_HELP);
-      }
-      case GameInfo: {
-        return getFrontendConnector().getFrontendControl(FrontendControl.FUNCTION_SHOW_FLYER);
-      }
-      default: {
-      }
-    }
+      return switch (screen) {
+          case Other2 -> getFrontendConnector().getFrontendControl(FrontendControl.FUNCTION_SHOW_OTHER);
+          case GameHelp -> getFrontendConnector().getFrontendControl(FrontendControl.FUNCTION_SHOW_HELP);
+          case GameInfo -> getFrontendConnector().getFrontendControl(FrontendControl.FUNCTION_SHOW_FLYER);
+          default -> null;
+      };
 
-    return null;
   }
 
   public FrontendControls getControls() {
@@ -590,7 +588,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     if (vpxGameEmulators.isEmpty()) {
       return getFrontendInstallationFolder();
     }
-    GameEmulator emulator = vpxGameEmulators.get(0);
+    GameEmulator emulator = vpxGameEmulators.getFirst();
     MediaAccessStrategy mediaStrategy = getFrontendConnector().getMediaAccessStrategy();
     return mediaStrategy != null ? mediaStrategy.getEmulatorMediaFolder(emulator, screen) : null;
   }
@@ -661,7 +659,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   public File getWheelImage(Game game) {
     List<File> mediaFiles = getMediaFiles(game, VPinScreen.Wheel);
-    return mediaFiles.isEmpty() ? null : mediaFiles.get(0);
+    return mediaFiles.isEmpty() ? null : mediaFiles.getFirst();
   }
 
   /**

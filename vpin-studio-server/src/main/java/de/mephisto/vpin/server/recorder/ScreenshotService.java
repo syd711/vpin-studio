@@ -22,8 +22,8 @@ import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -308,7 +308,7 @@ public class ScreenshotService {
   private BufferedImage generateSummaryImage(List<BufferedImage> images) {
     try {
       int totalHeight = 0;
-      int totalWidth = images.get(0).getWidth();
+      int totalWidth = images.getFirst().getWidth();
       int additionalWidth = 0;
 
       int index = 0;
@@ -324,8 +324,8 @@ public class ScreenshotService {
 
       totalWidth = totalWidth + additionalWidth;
 
-      if (images.get(0).getHeight() > totalHeight) {
-        totalHeight = images.get(0).getHeight();
+      if (images.getFirst().getHeight() > totalHeight) {
+        totalHeight = images.getFirst().getHeight();
       }
 
 
@@ -339,7 +339,7 @@ public class ScreenshotService {
           g.drawImage(image, x, 0, null);
         }
         else {
-          g.drawImage(image, images.get(0).getWidth(), y, null);
+          g.drawImage(image, images.getFirst().getWidth(), y, null);
           y = y + image.getHeight();
         }
         index++;

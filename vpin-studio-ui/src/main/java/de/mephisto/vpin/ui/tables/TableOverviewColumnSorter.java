@@ -25,7 +25,7 @@ public class TableOverviewColumnSorter implements BaseColumnSorter<GameRepresent
     ValidationSettings validationSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VALIDATION_SETTINGS, ValidationSettings.class);
 
     if (!tableView.getSortOrder().isEmpty()) {
-      TableColumn<GameRepresentationModel, ?> column = tableView.getSortOrder().get(0);
+      TableColumn<GameRepresentationModel, ?> column = tableView.getSortOrder().getFirst();
 
       if (column.equals(tableOverviewController.columnDisplayName)) {
         comp = Comparator.comparing(o -> o.getGame().getGameDisplayName().toLowerCase());

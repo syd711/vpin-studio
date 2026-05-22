@@ -1,47 +1,38 @@
 package de.mephisto.vpin.server.frontend.pinbally;
 
+import de.mephisto.vpin.restclient.alx.TableAlxEntry;
+import de.mephisto.vpin.restclient.frontend.PlaylistGame;
+import de.mephisto.vpin.server.frontend.FrontendConnector;
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.playlists.Playlist;
+import org.apache.commons.csv.*;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import de.mephisto.vpin.server.games.GameEmulator;
-import edu.umd.cs.findbugs.annotations.NonNull;
-
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.CSVRecord;
-import org.apache.commons.csv.QuoteMode;
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.FastDateFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import de.mephisto.vpin.restclient.alx.TableAlxEntry;
-import de.mephisto.vpin.restclient.frontend.PlaylistGame;
-import de.mephisto.vpin.server.frontend.FrontendConnector;
-import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.playlists.Playlist;
 
 public class PinballYStatisticsParser {
   private final static Logger LOG = LoggerFactory.getLogger(PinballYStatisticsParser.class);
 
-  private final FastDateFormat statisticsSdf = FastDateFormat.getInstance("yyyyMMddHHmmss");
+  private final DateTimeFormatter statisticsFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
   private FrontendConnector connector;
 
@@ -83,10 +74,12 @@ public class PinballYStatisticsParser {
       e.setUniqueId(game.getId());
 
       try {
-        e.setLastPlayed(statisticsSdf.parse(lastPlayed));
+        Instant lastPlayedInstant = LocalDateTime.parse(lastPlayed, statisticsFormatter)
+            .atZone(ZoneId.systemDefault()).toInstant();
+        e.setLastPlayed(OffsetDateTime.ofInstant(lastPlayedInstant, ZoneId.systemDefault()));
       }
-      catch (ParseException pe) {
-        LOG.error("Cannot parse date {},{}", lastPlayed, pe.getMessage());
+      catch (Exception ex) {
+        LOG.error("Cannot parse date {}, {}", lastPlayed, ex.getMessage());
       }
 
       String playTime = safeGet(record, "Play Time");
@@ -131,7 +124,7 @@ public class PinballYStatisticsParser {
   }
 
   private Playlist getPlaylist(List<Playlist> playlists, String cat) {
-    return playlists.stream().filter(pl -> StringUtils.equalsIgnoreCase(pl.getName(), cat)).findFirst().orElse(null);
+    return playlists.stream().filter(pl -> Strings.CI.equals(pl.getName(), cat)).findFirst().orElse(null);
   }
 
   //------------------------------------
@@ -152,7 +145,7 @@ public class PinballYStatisticsParser {
         .setQuoteMode(QuoteMode.NON_NUMERIC)
         .setQuote('"')
         .setTrim(true)
-        .build();
+        .get();
 
       CSVParser parser = format.parse(fileReader);
 
@@ -166,7 +159,7 @@ public class PinballYStatisticsParser {
         CSVRecord record = iterator.next();
         String game = safeGet(record, "Game");
         for (GameEmulator emu : emus) {
-          if (StringUtils.endsWith(game, "." + emu.getName())) {
+          if (Strings.CI.endsWith(game, "." + emu.getName())) {
             String gameName = StringUtils.substringBefore(game, "." + emu.getName());
             Game g = connector.getGameByName(emu.getId(), gameName);
             try {
@@ -237,7 +230,7 @@ public class PinballYStatisticsParser {
     writeGameData(game, (values, g) -> {
       values.put("Play Time", Long.toString(stat.getTimePlayedSecs()));
       values.put("Play Count", Long.toString(stat.getNumberOfPlays()));
-      values.put("Last Played", statisticsSdf.format(stat.getLastPlayed()));
+      values.put("Last Played", stat.getLastPlayed().format(statisticsFormatter));
     });
   }
 
@@ -252,7 +245,7 @@ public class PinballYStatisticsParser {
       .setQuoteMode(QuoteMode.MINIMAL)
       .setQuote('"')
       .setTrim(true)
-      .build();
+      .get();
 
     GameEmulator emu = connector.getEmulator(g.getEmulatorId());
 

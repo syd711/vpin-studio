@@ -1,7 +1,7 @@
 package de.mephisto.vpin.restclient.mania;
 
 import de.mephisto.vpin.connectors.mania.model.TableScore;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class ManiaTableSyncResult {
   @Nullable

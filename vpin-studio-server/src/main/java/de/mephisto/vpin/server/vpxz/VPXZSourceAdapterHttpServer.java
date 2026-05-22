@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import javax.net.ssl.*;
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -120,7 +121,7 @@ public class VPXZSourceAdapterHttpServer implements VPXZSourceAdapter {
 //          jsonBuffer.append(str);
 //        }
 //        in.close();
-//
+
 //        String json = jsonBuffer.toString();
 //        List<ArchiveDescriptor> archiveDescriptors = ArchiveUtil.readArchiveDescriptors(json, this.getArchiveSource());
 //        for (ArchiveDescriptor archiveDescriptor : archiveDescriptors) {
@@ -165,13 +166,13 @@ public class VPXZSourceAdapterHttpServer implements VPXZSourceAdapter {
     return new BufferedInputStream(conn.getInputStream());
   }
 
-  private HttpURLConnection getConnection(String location) {
+  private HttpURLConnection getConnection(String location) throws IOException {
     HttpURLConnection conn = null;
     try {
       String login = getVPXZSource().getLogin();
       String password = PasswordUtil.decrypt(getVPXZSource().getPassword());
 
-      URL url = new URL(location);
+      URL url = URI.create(location).toURL();
       conn = (HttpURLConnection) url.openConnection();
 
       if (!StringUtils.isEmpty(login) && !StringUtils.isEmpty(password)) {
@@ -195,9 +196,9 @@ public class VPXZSourceAdapterHttpServer implements VPXZSourceAdapter {
         throw e;
       } catch (IOException ex) {
         LOG.error(ex.getMessage(), ex);
+        throw ex;
       }
     }
-    return null;
   }
 
   /**
