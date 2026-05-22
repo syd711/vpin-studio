@@ -517,6 +517,19 @@ public class GamesServiceClient extends VPinStudioClientService {
     return games;
   }
 
+  public List<GameRepresentation> getFPGamesCached() {
+    List<GameRepresentation> games = new ArrayList<>();
+    List<GameEmulatorRepresentation> gameEmulators = client.getEmulatorService().getValidatedGameEmulators();
+    for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
+      if (gameEmulator.isFpEmulator()) {
+        int emulatorId = gameEmulator.getId();
+        List<GameRepresentation> gamesCached = getGamesCached(emulatorId);
+        games.addAll(gamesCached);
+      }
+    }
+    return games;
+  }
+
   public GameRepresentation getVpxGameCached(int gameId) {
     List<GameRepresentation> games = this.getVpxGamesCached();
     Optional<GameRepresentation> first = games.stream().filter(g -> g.getId() == gameId).findFirst();

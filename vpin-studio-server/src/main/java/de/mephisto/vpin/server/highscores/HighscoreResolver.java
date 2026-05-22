@@ -187,6 +187,7 @@ public class HighscoreResolver implements InitializingBean {
         }
       }
 
+
       if (rawScore == null) {
         if (metadata.getStatus() == null) {
           metadata.setStatus(NO_SCORE_FOUND_MSG);
