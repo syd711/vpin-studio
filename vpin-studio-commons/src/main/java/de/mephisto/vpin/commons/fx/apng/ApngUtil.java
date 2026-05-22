@@ -1,5 +1,6 @@
 package de.mephisto.vpin.commons.fx.apng;
 
+import de.mephisto.vpin.commons.fx.apng.chunks.ApngChunkDataInputStream;
 import de.mephisto.vpin.commons.fx.apng.chunks.ApngDecoder;
 import de.mephisto.vpin.commons.fx.apng.chunks.ApngFrameControl;
 import de.mephisto.vpin.commons.fx.apng.image.ApngFrame;
@@ -30,17 +31,8 @@ import java.util.zip.CRC32;
  */
 public final class ApngUtil {
 
-    // PNG signature
-    private static final byte[] PNG_SIGNATURE = {
-            (byte) 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A
-    };
-
-    // Pre-computed chunk type codes
-    private static final int CHUNK_IHDR = chunkTypeCode("IHDR");
-    private static final int CHUNK_IDAT = chunkTypeCode("IDAT");
-    private static final int CHUNK_IEND = chunkTypeCode("IEND");
-
-    private ApngUtil() {}
+    private ApngUtil() {
+    }
 
     // -------------------------------------------------------------------------
     // Public API
@@ -59,9 +51,9 @@ public final class ApngUtil {
      * @throws IOException if the stream cannot be read or is not a valid APNG
      */
     public static ApngDecodeResult decodeFrames(InputStream input) throws IOException {
-        List<BufferedImage> frames   = new ArrayList<>();
-        List<Integer>       delaysMs = new ArrayList<>();
-        int                 numPlays;
+        List<BufferedImage> frames = new ArrayList<>();
+        List<Integer> delaysMs = new ArrayList<>();
+        int numPlays;
 
         try (InputStream in = input) {
             ApngFrameDecoder decoder = new ApngFrameDecoder(in);
@@ -103,38 +95,38 @@ public final class ApngUtil {
      * output file is also a valid static PNG for viewers that do not understand
      * APNG.</p>
      *
-     * @param frames    fully-composited frames in display order
-     * @param delaysMs  per-frame display duration in milliseconds
-     * @param numPlays  number of animation loops ({@code 0} = infinite)
+     * @param frames   fully-composited frames in display order
+     * @param delaysMs per-frame display duration in milliseconds
+     * @param numPlays number of animation loops ({@code 0} = infinite)
      * @throws IOException if any frame cannot be PNG-encoded by {@link ImageIO}
      */
     public static byte[] encodeApng(
             List<BufferedImage> frames,
-            List<Integer>       delaysMs,
-            int                 numPlays) throws IOException {
+            List<Integer> delaysMs,
+            int numPlays) throws IOException {
 
         int numFrames = frames.size();
-        int width     = frames.getFirst().getWidth();
-        int height    = frames.getFirst().getHeight();
+        int width = frames.getFirst().getWidth();
+        int height = frames.getFirst().getHeight();
 
         // Encode frame 0 now so we can borrow its IHDR verbatim.
         byte[] frame0Png = encodeFramePng(frames.getFirst());
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        DataOutputStream      dos = new DataOutputStream(out);
+        DataOutputStream dos = new DataOutputStream(out);
 
         // 1. PNG signature
-        dos.write(PNG_SIGNATURE);
+        dos.write(ApngChunkDataInputStream.APNG_SIGNATURE);
 
         // 2. IHDR — copied from the ImageIO-encoded frame 0
-        writeChunkFromPng(dos, frame0Png, CHUNK_IHDR);
+        writeChunkFromPng(dos, frame0Png, ApngChunkDataInputStream.IHDR);
 
         // 3. acTL (Animation Control)
         ByteArrayOutputStream actlBuf = new ByteArrayOutputStream(8);
-        DataOutputStream      actlDos = new DataOutputStream(actlBuf);
+        DataOutputStream actlDos = new DataOutputStream(actlBuf);
         actlDos.writeInt(numFrames);
         actlDos.writeInt(numPlays);
-        writeChunk(dos, "acTL", actlBuf.toByteArray());
+        writeChunk(dos, ApngChunkDataInputStream.acTL, actlBuf.toByteArray());
 
         int sequence = 0; // monotonically increasing across fcTL and fdAT chunks
 
@@ -143,7 +135,7 @@ public final class ApngUtil {
             // 4. fcTL (Frame Control)
             //    Delay: delayMs / 1000 seconds  →  numerator = delayMs, denominator = 1000
             ByteArrayOutputStream fctlBuf = new ByteArrayOutputStream(26);
-            DataOutputStream      fctlDos = new DataOutputStream(fctlBuf);
+            DataOutputStream fctlDos = new DataOutputStream(fctlBuf);
             fctlDos.writeInt(sequence++);                        // sequence_number
             fctlDos.writeInt(width);                             // width
             fctlDos.writeInt(height);                            // height
@@ -153,31 +145,31 @@ public final class ApngUtil {
             fctlDos.writeShort(1000);                            // delay_den  (1/1000 s = 1 ms)
             fctlDos.writeByte(ApngFrameControl.DISPOSE_OP_NONE);
             fctlDos.writeByte(ApngFrameControl.BLEND_OP_SOURCE);
-            writeChunk(dos, "fcTL", fctlBuf.toByteArray());
+            writeChunk(dos, ApngChunkDataInputStream.fcTL, fctlBuf.toByteArray());
 
             // 5. Image data
-            byte[]       framePng   = (i == 0) ? frame0Png : encodeFramePng(frames.get(i));
+            byte[] framePng = (i == 0) ? frame0Png : encodeFramePng(frames.get(i));
             List<byte[]> idatBlocks = extractIdatBlocks(framePng);
 
             if (i == 0) {
                 // Frame 0 → standard IDAT (keeps file valid as a static PNG)
                 for (byte[] block : idatBlocks) {
-                    writeChunk(dos, "IDAT", block);
+                    writeChunk(dos, ApngChunkDataInputStream.IDAT, block);
                 }
             } else {
                 // Frames 1+ → fdAT with a leading 4-byte sequence number
                 for (byte[] block : idatBlocks) {
                     ByteArrayOutputStream fdatBuf = new ByteArrayOutputStream(4 + block.length);
-                    DataOutputStream      fdatDos = new DataOutputStream(fdatBuf);
+                    DataOutputStream fdatDos = new DataOutputStream(fdatBuf);
                     fdatDos.writeInt(sequence++);
                     fdatDos.write(block);
-                    writeChunk(dos, "fdAT", fdatBuf.toByteArray());
+                    writeChunk(dos, ApngChunkDataInputStream.fdAT, fdatBuf.toByteArray());
                 }
             }
         }
 
         // 6. IEND
-        writeChunk(dos, "IEND", new byte[0]);
+        writeChunk(dos, ApngChunkDataInputStream.IEND, new byte[0]);
 
         dos.flush();
         return out.toByteArray();
@@ -197,10 +189,10 @@ public final class ApngUtil {
      * channel.</p>
      */
     private static BufferedImage toBufferedImage(ApngFrame frame, int colorType) {
-        int    width  = frame.getWidth();
-        int    height = frame.getHeight();
-        int    bpp    = frame.getBpp();
-        byte[] src    = frame.getBytes();
+        int width = frame.getWidth();
+        int height = frame.getHeight();
+        int bpp = frame.getBpp();
+        byte[] src = frame.getBytes();
 
         BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
@@ -209,32 +201,33 @@ public final class ApngUtil {
                 int base = (y * width + x) * bpp;
 
                 int argb = switch (colorType) {
-
                     // 4 bytes: R G B A
-                    case ApngDecoder.PNG_COLOR_RGB_ALPHA ->
-                            ((src[base + 3] & 0xFF) << 24)
-                                    | ((src[base    ] & 0xFF) << 16)
-                                    | ((src[base + 1] & 0xFF) <<  8)
-                                    |  (src[base + 2] & 0xFF);
-
+                    // Alpha is shifted via long to avoid signed-int overflow when alpha >= 128.
+                    case ApngDecoder.PNG_COLOR_RGB_ALPHA -> {
+                        int a = src[base + 3] & 0xFF;
+                        int r = src[base] & 0xFF;
+                        int g = src[base + 1] & 0xFF;
+                        int b = src[base + 2] & 0xFF;
+                        yield (int) ((long) a << 24) | (r << 16) | (g << 8) | b;
+                    }
                     // 3 bytes: R G B  (fully opaque)
-                    case ApngDecoder.PNG_COLOR_RGB ->
-                            (0xFF << 24)
-                                    | ((src[base    ] & 0xFF) << 16)
-                                    | ((src[base + 1] & 0xFF) <<  8)
-                                    |  (src[base + 2] & 0xFF);
+                    // 0xFF000000 is a valid int literal (-16777216); avoids the (0xFF << 24) overflow expression.
+                    case ApngDecoder.PNG_COLOR_RGB -> 0xFF000000
+                            | ((src[base] & 0xFF) << 16)
+                            | ((src[base + 1] & 0xFF) << 8)
+                            | (src[base + 2] & 0xFF);
 
                     // 2 bytes: Y A  (greyscale + alpha)
                     case ApngDecoder.PNG_COLOR_GRAY_ALPHA -> {
-                        int luma  = src[base    ] & 0xFF;
+                        int luma = src[base] & 0xFF;
                         int alpha = src[base + 1] & 0xFF;
-                        yield (alpha << 24) | (luma << 16) | (luma << 8) | luma;
+                        yield (int) ((long) alpha << 24) | (luma << 16) | (luma << 8) | luma;
                     }
 
                     // 1 byte: Y  (greyscale, fully opaque)
                     default -> {
                         int luma = src[base] & 0xFF;
-                        yield (0xFF << 24) | (luma << 16) | (luma << 8) | luma;
+                        yield 0xFF000000 | (luma << 16) | (luma << 8) | luma;
                     }
                 };
 
@@ -248,7 +241,9 @@ public final class ApngUtil {
     // PNG chunk helpers
     // -------------------------------------------------------------------------
 
-    /** Encodes a single {@link BufferedImage} as a standard PNG byte array. */
+    /**
+     * Encodes a single {@link BufferedImage} as a standard PNG byte array.
+     */
     private static byte[] encodeFramePng(BufferedImage image) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         if (!ImageIO.write(image, "png", baos)) {
@@ -262,8 +257,8 @@ public final class ApngUtil {
      * {@code IDAT} chunk (length / type / CRC stripped; recalculated on write).
      */
     private static List<byte[]> extractIdatBlocks(byte[] pngBytes) throws IOException {
-        List<byte[]>    blocks = new ArrayList<>();
-        DataInputStream dis    = new DataInputStream(new ByteArrayInputStream(pngBytes));
+        List<byte[]> blocks = new ArrayList<>();
+        DataInputStream dis = new DataInputStream(new ByteArrayInputStream(pngBytes));
 
         dis.skipBytes(8); // PNG signature
 
@@ -274,14 +269,14 @@ public final class ApngUtil {
             } catch (EOFException e) {
                 break;
             }
-            int    type = dis.readInt();
+            int type = dis.readInt();
             byte[] data = new byte[length];
             if (length > 0) dis.readFully(data);
             dis.readFully(new byte[4]); // CRC — discarded; recalculated on write
 
-            if (type == CHUNK_IDAT) {
+            if (type == ApngChunkDataInputStream.IDAT) {
                 blocks.add(data);
-            } else if (type == CHUNK_IEND) {
+            } else if (type == ApngChunkDataInputStream.IEND) {
                 break;
             }
         }
@@ -299,9 +294,9 @@ public final class ApngUtil {
         dis.skipBytes(8); // PNG signature
 
         while (true) {
-            int    length = dis.readInt();
-            int    type   = dis.readInt();
-            byte[] data   = new byte[length];
+            int length = dis.readInt();
+            int type = dis.readInt();
+            byte[] data = new byte[length];
             if (length > 0) dis.readFully(data);
             dis.readFully(new byte[4]); // CRC
 
@@ -309,17 +304,11 @@ public final class ApngUtil {
                 writeChunk(dos, type, data);
                 return;
             }
-            if (type == CHUNK_IEND) break;
+            if (type == ApngChunkDataInputStream.IEND) break;
         }
         throw new IOException(
                 "Required PNG chunk not found in encoded frame (type=0x"
                         + Integer.toHexString(targetType) + ")");
-    }
-
-    /** Writes a single PNG/APNG chunk: {@code [length][type][data][CRC32]}. */
-    private static void writeChunk(DataOutputStream dos, String typeName, byte[] data)
-            throws IOException {
-        writeChunk(dos, chunkTypeCode(typeName), data);
     }
 
     private static void writeChunk(DataOutputStream dos, int type, byte[] data)
@@ -330,23 +319,13 @@ public final class ApngUtil {
         CRC32 crc = new CRC32();
         crc.update((type >>> 24) & 0xFF);
         crc.update((type >>> 16) & 0xFF);
-        crc.update((type >>>  8) & 0xFF);
-        crc.update( type         & 0xFF);
+        crc.update((type >>> 8) & 0xFF);
+        crc.update(type & 0xFF);
         if (dataLen > 0) crc.update(data, 0, dataLen);
 
         dos.writeInt(dataLen);
         dos.writeInt(type);
         if (dataLen > 0) dos.write(data, 0, dataLen);
         dos.writeInt((int) crc.getValue());
-    }
-
-    /**
-     * Converts a 4-character ASCII chunk name to its 4-byte integer type code.
-     * All standard PNG/APNG chunk names use ASCII letters ({@code < 128}),
-     * so no sign-extension occurs during the shifts.
-     */
-    private static int chunkTypeCode(String name) {
-        byte[] b = name.getBytes();
-        return (b[0] << 24) | (b[1] << 16) | (b[2] << 8) | b[3];
     }
 }
