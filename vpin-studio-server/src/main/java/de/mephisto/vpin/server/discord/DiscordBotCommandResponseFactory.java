@@ -12,6 +12,7 @@ import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.players.Player;
 
 import java.time.Instant;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.List;
@@ -220,7 +221,7 @@ public class DiscordBotCommandResponseFactory {
         continue;
       }
 
-      builder.append(formatter.format(score.getCreatedAt()));
+      builder.append(formatter.format(score.getCreatedAt().atZone(ZoneId.systemDefault())));
       builder.append("\t");
       builder.append(game.getGameDisplayName());
       builder.append("   ");

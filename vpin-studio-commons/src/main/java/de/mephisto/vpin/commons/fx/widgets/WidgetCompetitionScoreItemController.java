@@ -12,6 +12,7 @@ import javafx.scene.layout.*;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
@@ -67,7 +68,7 @@ public class WidgetCompetitionScoreItemController extends WidgetController imple
     scoreLabel.setFont(getScoreFont());
     scoreLabel.setText(score.getFormattedScore());
 
-    String date = simpleDateFormat.format(score.getCreatedAt());
+    String date = simpleDateFormat.format(score.getCreatedAt().atZone(ZoneId.systemDefault()));
     changeDateLabel.setText("Updated: " + date);
 
     InputStream competitionBackground = ServerFX.client.getCompetitionService().getCompetitionBackground(gameId);

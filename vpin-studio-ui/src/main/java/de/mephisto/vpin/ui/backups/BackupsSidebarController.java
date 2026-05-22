@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Optional;
@@ -227,7 +228,7 @@ public class BackupsSidebarController implements Initializable, StudioFXControll
       filenameLabel.setText(descriptorRepresentation.getFilename());
       filenameLabel.setTooltip(new Tooltip(descriptorRepresentation.getFilename()));
       fileSizeLabel.setText(descriptorRepresentation.getSize() > 0 ? FileUtils.readableFileSize(descriptorRepresentation.getSize()) : "-");
-      lastModifiedLabel.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(descriptorRepresentation.getCreatedAt()));
+      lastModifiedLabel.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(descriptorRepresentation.getCreatedAt().atZone(ZoneId.systemDefault())));
       sourceLabel.setText(descriptorRepresentation.getSource().getLocation());
       sourceLabel.setTooltip(new Tooltip(descriptorRepresentation.getSource().getLocation()));
 

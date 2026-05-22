@@ -9,6 +9,7 @@ import eu.hansolo.tilesfx.TileBuilder;
 import javafx.scene.chart.XYChart;
 import javafx.scene.paint.Color;
 
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ public class ScoreGraphUtil {
           if(i > (series.size()-1)) {
             break;
           }
-          series.get(i).getData().add(new XYChart.Data<>(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).format(s.getCreatedAt()), s.getScore()));
+          series.get(i).getData().add(new XYChart.Data<>(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).format(s.getCreatedAt().atZone(ZoneId.systemDefault())), s.getScore()));
         }
       }
 

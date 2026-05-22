@@ -1,6 +1,7 @@
 package de.mephisto.vpin.connectors.discord;
 
 
+import net.dv8tion.jda.api.requests.restaction.pagination.PinnedMessagePaginationAction;
 import org.jspecify.annotations.Nullable;
 import net.dv8tion.jda.api.*;
 import net.dv8tion.jda.api.entities.*;
@@ -259,15 +260,14 @@ public class DiscordClient {
                 if (channel != null) {
                     long start = System.currentTimeMillis();
                     // Fix: Map the PinnedMessage objects to Message objects
-                    List<Message> complete = channel.retrievePinnedMessages().complete().stream()
-                            .map(pinnedMessage -> (Message) pinnedMessage)
-                            .collect(Collectors.toList());
-                    for (Message message : complete) {
-                        this.messageCacheById.put(message.getIdLong(), message);
+                    List<PinnedMessagePaginationAction.PinnedMessage> complete = channel.retrievePinnedMessages().complete().stream()
+                            .toList();
+                    for (PinnedMessagePaginationAction.PinnedMessage message : complete) {
+                        this.messageCacheById.put(message.getMessage().getIdLong(), message.getMessage());
                     }
 
                     LOG.info("Pinned messages fetch for channel \"" + channel.getName() + "\" took " + (System.currentTimeMillis() - start) + "ms.");
-                    List<DiscordMessage> collect = complete.stream().map(this::toMessage).collect(Collectors.toList());
+                    List<DiscordMessage> collect = complete.stream().map(PinnedMessagePaginationAction.PinnedMessage::getMessage).map(this::toMessage).collect(Collectors.toList());
                     pinnedMessagesCache.put(channelId, new PinnedMessages());
                     pinnedMessagesCache.get(channelId).getMessages().addAll(collect);
                     return collect;
