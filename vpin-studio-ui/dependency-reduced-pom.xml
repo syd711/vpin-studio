@@ -519,7 +519,7 @@
               <goal>exec</goal>
             </goals>
             <configuration>
-              <skip>${macOSBuild}</skip>
+              <skip>${skipMacOSBuild}</skip>
               <executable>${basedir}/../Output/VPin-Studio/resources/7z.exe</executable>
               <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
               <arguments>
@@ -546,7 +546,7 @@
               <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
               <arguments>
                 <argument>xvf</argument>
-                <argument>${zulu.jre.bundle}</argument>
+                <argument>${zulu.jre.bundle.macosarch}</argument>
               </arguments>
             </configuration>
           </execution>

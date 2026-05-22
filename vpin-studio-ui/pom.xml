@@ -788,7 +788,7 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <skip>${macOSBuild}</skip>
+                            <skip>${skipMacOSBuild}</skip>
 
                             <!-- define the command to execute -->
                             <executable>${basedir}/../Output/VPin-Studio/resources/7z.exe</executable>
