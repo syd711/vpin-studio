@@ -1,11 +1,16 @@
 ## Relase Notes 5.0.0
+- **MIGRATION TO JAVA 25**
+  - Code base has been brought forward to Azul Zulu Java 25.
 - **WOVP Icon**
   - Added icon augmentation to APNG wheels
 - **Splash Screen**
   - Added details to splash screen showing connection steps/attempts
 - **Mac**
-  - App Icon now works as dynamic icon with MacOS 26+ correctly
+  - App Icon now works correctly as dynamic icon with MacOS 26+ 
   - Fix splash screen not showing
+  - Added background to DMG
+  - Changed DMG creation to use create-dmg instead of jpackage for more robust options and simpler workflow
+   
   
 
 ## Release Notes 4.10.0
