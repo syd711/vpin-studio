@@ -9,8 +9,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.id.IncrementGenerator;
 import java.time.Instant;
 
 @Entity
@@ -19,8 +17,6 @@ import java.time.Instant;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GameDetails {
   @Id
-  @GenericGenerator(name = "gamedetails_gen", type = IncrementGenerator.class)
-  @GeneratedValue(generator = "gamedetails_gen")
   @Column(name = "id", nullable = false, unique = true)
   private Long id;
 

@@ -15,8 +15,6 @@ import org.hibernate.id.IncrementGenerator;
 public class Preferences {
 
   @Id
-  @GenericGenerator(name = "preferences_gen", type = IncrementGenerator.class)
-  @GeneratedValue(generator = "preferences_gen")
   @Column(name = "id", nullable = false)
   private Long id;
 
