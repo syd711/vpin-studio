@@ -23,13 +23,13 @@ jobs:
           - arch: x64
             java_arch: x64
             os: macos-15-intel
-            jre_bundle: zulu25.32.21-ca-fx-jre25.0.2-macosx_x64.tar.gz
-            jre_folder: zulu25.32.21-ca-fx-jre25.0.2-macosx_x64
+            jre_bundle: zulu25.34.17-ca-fx-jre25.0.3-macosx_x64.tar.gz
+            jre_folder: zulu25.34.17-ca-fx-jre25.0.3-macosx_x64
           - arch: arm64
             java_arch: aarch64
             os: macos-15
-            jre_bundle: zulu25.32.21-ca-fx-jre25.0.2-macosx_aarch64.tar.gz
-            jre_folder: zulu25.32.21-ca-fx-jre25.0.2-macosx_aarch64
+            jre_bundle: zulu25.34.17-ca-fx-jre25.0.3-macosx_aarch64.tar.gz
+            jre_folder: zulu25.34.17-ca-fx-jre25.0.3-macosx_aarch64
 
     steps:
       - name: Checkout VPin Studio
@@ -270,7 +270,7 @@ jobs:
       - name: Download Zulu JRE for Windows
         shell: pwsh
         run: |
-          Invoke-WebRequest -Uri "https://cdn.azul.com/zulu/bin/zulu25.32.21-ca-fx-jre25.0.2-win_x64.zip" -OutFile "java-runtime-win.zip"
+          Invoke-WebRequest -Uri "https://cdn.azul.com/zulu/bin/zulu25.34.17-ca-fx-jre25.0.3-win_x64.zip" -OutFile "java-runtime-win.zip"
 
       - name: Extract Windows Runtime for Installer
         shell: bash
