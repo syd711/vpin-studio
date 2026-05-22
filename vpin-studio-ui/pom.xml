@@ -17,7 +17,8 @@
     <properties>
         <junit.version>6.0.3</junit.version>
         <ikonli.version>12.4.0</ikonli.version>
-         <zulu.jre.bundle>zulu25.34.17-ca-fx-jre25.0.3-macosx_aarch64.tar.gz</zulu.jre.bundle>
+        <zulu.jre.bundle>zulu25.34.17-ca-fx-jre25.0.3-macosx_aarch64.tar.gz</zulu.jre.bundle>
+        <zulu.jre.bundle.linux>zulu25.34.17-ca-fx-jre25.0.3-linux_x64.tar.gz</zulu.jre.bundle.linux>
         <skipMacOSBuild>true</skipMacOSBuild>
         <macOSBuild>false</macOSBuild>
     </properties>
@@ -391,6 +392,41 @@
             </plugin>
 
             <plugin>
+                <groupId>com.googlecode.maven-download-plugin</groupId>
+                <artifactId>download-maven-plugin</artifactId>
+                <version>1.9.0</version>
+                <executions>
+                    <execution>
+                        <id>download-zulu-linux</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>https://cdn.azul.com/zulu/bin/${zulu.jre.bundle.linux}</url>
+                            <outputDirectory>${basedir}/..</outputDirectory>
+                            <outputFileName>${zulu.jre.bundle.linux}</outputFileName>
+                            <overwrite>false</overwrite>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>download-zulu-osx-arm</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${skipMacOSBuild}</skip>
+                            <url>https://cdn.azul.com/zulu/bin/${zulu.jre.bundle}</url>
+                            <outputDirectory>${basedir}/..</outputDirectory>
+                            <outputFileName>${zulu.jre.bundle}</outputFileName>
+                            <overwrite>false</overwrite>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <!-- This copies resources and JRE -->
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>3.5.0</version>
@@ -446,7 +482,7 @@
                                 <resource>
                                     <directory>${basedir}/../</directory>
                                     <includes>
-                                        <include>${zulu.jre.bundle}</include>
+                                        <include>${zulu.jre.bundle.linux}</include>
                                     </includes>
                                 </resource>
                             </resources>
@@ -546,7 +582,7 @@
                                     <directory>${basedir}/../Output/VPin-Studio/zulu-25.jre/</directory>
                                     <includes>
                                         <include>Contents</include>
-                                     </includes>
+                                    </includes>
                                 </resource>
                             </resources>
                         </configuration>
@@ -667,7 +703,7 @@
                                 <argument>a</argument>
                                 <argument>-tzip</argument>
                                 <argument>VPin-Studio-Client-linux-x64.zip</argument>
-                                <argument>${zulu.jre.bundle}</argument>
+                                <argument>${zulu.jre.bundle.linux}</argument>
                                 <argument>vpin-studio-ui.jar</argument>
                                 <argument>VPin-Studio-linux_x64.sh</argument>
                                 <argument>resources/vpsdb.json</argument>
@@ -701,16 +737,16 @@
                             </arguments>
                         </configuration>
                     </execution>
-                     <!--**************************************** OS depending MacOS App Bundle ***********************************-->
-                     <!--NEED TO ADD ICONS THIS IS JUST THE JRE AND JAR-->
-                   	<execution>
+                    <!--**************************************** OS depending MacOS App Bundle ***********************************-->
+                    <!--NEED TO ADD ICONS THIS IS JUST THE JRE AND JAR-->
+                    <execution>
                         <id>unpack-targz-from-jdk-osx-arm</id>
                         <!-- here the phase you need -->
                         <phase>package</phase>
                         <goals>
                             <goal>exec</goal>
                         </goals>
-                         <configuration>
+                        <configuration>
                             <skip>${skipMacOSBuild}</skip>
                             <!-- define the command to execute -->
                             <executable>tar</executable>
