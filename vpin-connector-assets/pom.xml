@@ -19,8 +19,6 @@
         <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <juni-jupiter.version>6.0.3</juni-jupiter.version>
-        <maven-dependency-plugin.version>3.9.0</maven-dependency-plugin.version>
     </properties>
 
     <dependencies>

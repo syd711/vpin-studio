@@ -17,13 +17,6 @@
         <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <slf4j.version>2.0.17</slf4j.version>
-        <jspecify.version>1.0.0</jspecify.version>
-        <logback.version>1.5.32</logback.version>
-        <jna.version>5.16.0</jna.version>
-        <iconli.version>12.4.0</iconli.version>
-
-        <maven-dependency-plugin.version>3.9.0</maven-dependency-plugin.version>
     </properties>
 
     <dependencies>
@@ -40,17 +33,17 @@
         <dependency>
             <groupId>org.kordamp.ikonli</groupId>
             <artifactId>ikonli-materialdesign2-pack</artifactId>
-            <version>${iconli.version}</version>
+            <version>${ikonli.version}</version>
         </dependency>
         <dependency>
             <groupId>org.kordamp.ikonli</groupId>
             <artifactId>ikonli-javafx</artifactId>
-            <version>${iconli.version}</version>
+            <version>${ikonli.version}</version>
         </dependency>
         <dependency>
             <groupId>org.kordamp.ikonli</groupId>
             <artifactId>ikonli-core</artifactId>
-            <version>${iconli.version}</version>
+            <version>${ikonli.version}</version>
         </dependency>
         <dependency>
             <groupId>de.mephisto.vpin</groupId>
@@ -75,17 +68,15 @@
         <dependency>
             <groupId>de.mephisto.vpin</groupId>
             <artifactId>vpin-mania-rest-client</artifactId>
-            <version>1.0.0</version>
+            <version>${vpin-mania-rest-client.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jspecify</groupId>
             <artifactId>jspecify</artifactId>
-            <version>${jspecify.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -94,32 +85,32 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
-            <version>1.12.0</version>
+            <version>${commons-text.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-configuration2</artifactId>
-            <version>2.11.0</version>
+            <version>${commons-configuration2.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>
-            <version>3.6.1</version>
+            <version>${commons-math3.version}</version>
         </dependency>
         <dependency>
             <groupId>com.jhlabs</groupId>
             <artifactId>filters</artifactId>
-            <version>2.0.235</version>
+            <version>${jhlabs-filters.version}</version>
         </dependency>
         <dependency>
             <groupId>org.imgscalr</groupId>
             <artifactId>imgscalr-lib</artifactId>
-            <version>4.2</version>
+            <version>${imgscalr.version}</version>
         </dependency>
         <dependency>
             <groupId>net.java.jinput</groupId>
             <artifactId>jinput</artifactId>
-            <version>2.0.9</version>
+            <version>${jinput.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -129,7 +120,7 @@
         <dependency>
             <groupId>eu.hansolo</groupId>
             <artifactId>tilesfx</artifactId>
-            <version>21.0.3</version>
+            <version>${tilesfx.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.openjfx</groupId>
@@ -140,7 +131,7 @@
         <dependency>
             <groupId>eu.hansolo</groupId>
             <artifactId>toolbox</artifactId>
-            <version>21.0.5</version>
+            <version>${toolbox.version}</version>
         </dependency>
 
         <dependency>
@@ -182,13 +173,13 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>6.0.3</version>
+            <version>${juni-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.13.2</version>
+            <version>${junit4.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -234,5 +225,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

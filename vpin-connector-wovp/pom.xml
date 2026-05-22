@@ -18,21 +18,16 @@
         <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <slf4j.version>2.0.17</slf4j.version>
-        <juni-jupiter.version>6.0.3</juni-jupiter.version>
-        <maven-dependency-plugin.version>3.9.0</maven-dependency-plugin.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -63,6 +58,7 @@
             <version>${juni-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.jspecify</groupId>
             <artifactId>jspecify</artifactId>

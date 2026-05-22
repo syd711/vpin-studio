@@ -15,10 +15,10 @@
     <name>vpin-studio-ui</name>
 
     <properties>
-        <junit.version>6.0.3</junit.version>
-        <ikonli.version>12.4.0</ikonli.version>
-        <zulu.jre.bundle>zulu25.34.17-ca-fx-jre25.0.3-macosx_aarch64.tar.gz</zulu.jre.bundle>
+        <zulu.jre.bundle.macosx64>zulu25.34.17-ca-fx-jre25.0.3-macosx_x64.tar.gz</zulu.jre.bundle.macosx64>
+        <zulu.jre.bundle.macosarch>zulu25.34.17-ca-fx-jre25.0.3-macosx_aarch64.tar.gz</zulu.jre.bundle.macosarch>
         <zulu.jre.bundle.linux>zulu25.34.17-ca-fx-jre25.0.3-linux_x64.tar.gz</zulu.jre.bundle.linux>
+        <zulu.jre.bundle.win>zulu25.34.17-ca-fx-jre25.0.3-win_x64.zip</zulu.jre.bundle.win>
         <skipMacOSBuild>true</skipMacOSBuild>
         <macOSBuild>false</macOSBuild>
     </properties>
@@ -38,27 +38,27 @@
         <dependency>
             <groupId>org.commonmark</groupId>
             <artifactId>commonmark</artifactId>
-            <version>0.28.0</version>
+            <version>${commonmark.version}</version>
         </dependency>
         <dependency>
             <groupId>net.sf.sevenzipjbinding</groupId>
             <artifactId>sevenzipjbinding</artifactId>
-            <version>16.02-2.01</version>
+            <version>${sevenzipjbinding.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.shayartzi.sevenzipjbinding</groupId>
             <artifactId>sevenzipjbinding-all-platforms</artifactId>
-            <version>16.02-2.01</version>
+            <version>${sevenzipjbinding.version}</version>
         </dependency>
         <dependency>
             <groupId>net.java.jinput</groupId>
             <artifactId>jinput</artifactId>
-            <version>2.0.10</version>
+            <version>${jinput.version}</version>
         </dependency>
         <dependency>
             <groupId>net.java.jinput</groupId>
             <artifactId>jinput</artifactId>
-            <version>2.0.10</version>
+            <version>${jinput.version}</version>
             <classifier>natives-all</classifier>
         </dependency>
 
@@ -101,17 +101,17 @@
         <dependency>
             <groupId>de.mephisto.vpin</groupId>
             <artifactId>vpin-connector-assets</artifactId>
-            <version>1.1.0</version>
+            <version>${vpin-connector-assets.version}</version>
         </dependency>
         <dependency>
             <groupId>org.reactfx</groupId>
             <artifactId>reactfx</artifactId>
-            <version>2.0-M5</version>
+            <version>${reactfx.version}</version>
         </dependency>
         <dependency>
             <groupId>org.fxmisc.richtext</groupId>
             <artifactId>richtextfx</artifactId>
-            <version>0.11.7</version>
+            <version>${richtextfx.version}</version>
         </dependency>
 
         <dependency>
@@ -125,7 +125,7 @@
         <dependency>
             <groupId>org.codehaus.janino</groupId>
             <artifactId>janino</artifactId>
-            <version>3.1.12</version>
+            <version>${janino.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -138,7 +138,7 @@
         <dependency>
             <groupId>com.github.spotbugs</groupId>
             <artifactId>spotbugs-annotations</artifactId>
-            <version>4.9.8</version>
+            <version>${spotbugs.version}</version>
         </dependency>
 
         <dependency>
@@ -180,7 +180,7 @@
         <dependency>
             <groupId>org.controlsfx</groupId>
             <artifactId>controlsfx</artifactId>
-            <version>11.2.3</version>
+            <version>${controlsfx.version}</version>
         </dependency>
 
         <!-- Jackson 3 Dependencies -->
@@ -200,7 +200,7 @@
         <dependency>
             <groupId>eu.hansolo</groupId>
             <artifactId>tilesfx</artifactId>
-            <version>21.0.9</version>
+            <version>${tilesfx.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.openjfx</groupId>
@@ -211,26 +211,26 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.version}</version>
+            <version>${juni-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit.version}</version>
+            <version>${juni-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
-            <version>1.11.0</version>
+            <version>${commons-beanutils.version}</version>
         </dependency>
 
         <dependency>
             <groupId>net.sourceforge.tess4j</groupId>
             <artifactId>tess4j</artifactId>
-            <version>5.18.0</version>
+            <version>${tess4j.version}</version>
         </dependency>
 
     </dependencies>
@@ -397,6 +397,19 @@
                 <version>1.9.0</version>
                 <executions>
                     <execution>
+                        <id>download-zulu-win</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>https://cdn.azul.com/zulu/bin/${zulu.jre.bundle.win}</url>
+                            <outputDirectory>${basedir}/..</outputDirectory>
+                            <outputFileName>${zulu.jre.bundle.win}</outputFileName>
+                            <overwrite>false</overwrite>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>download-zulu-linux</id>
                         <phase>generate-resources</phase>
                         <goals>
@@ -417,10 +430,48 @@
                         </goals>
                         <configuration>
                             <skip>${skipMacOSBuild}</skip>
-                            <url>https://cdn.azul.com/zulu/bin/${zulu.jre.bundle}</url>
+                            <url>https://cdn.azul.com/zulu/bin/${zulu.jre.bundle.macosarch}</url>
                             <outputDirectory>${basedir}/..</outputDirectory>
-                            <outputFileName>${zulu.jre.bundle}</outputFileName>
+                            <outputFileName>${zulu.jre.bundle.macosarch}</outputFileName>
                             <overwrite>false</overwrite>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>download-zulu-osx-x64</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${skipMacOSBuild}</skip>
+                            <url>https://cdn.azul.com/zulu/bin/${zulu.jre.bundle.macosx64}</url>
+                            <outputDirectory>${basedir}/..</outputDirectory>
+                            <outputFileName>${zulu.jre.bundle.macosx64}</outputFileName>
+                            <overwrite>false</overwrite>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>unzip-zulu-win</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <available file="${basedir}/../java-runtime/bin/java.exe" property="zulu.win.extracted"/>
+                                <unzip src="${basedir}/../${zulu.jre.bundle.win}"
+                                       dest="${basedir}/../java-runtime">
+                                    <cutdirsmapper dirs="1"/>
+                                </unzip>
+                            </target>
                         </configuration>
                     </execution>
                 </executions>
@@ -501,7 +552,7 @@
                                 <resource>
                                     <directory>${basedir}/../</directory>
                                     <includes>
-                                        <include>${zulu.jre.bundle}</include>
+                                        <include>${zulu.jre.bundle.macosarch}</include>
                                     </includes>
                                 </resource>
                             </resources>
@@ -608,6 +659,23 @@
                         </configuration>
                     </execution>
 
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>${maven-dependency-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>analyze</id>
+                        <goals>
+                            <goal>analyze-only</goal>
+                        </goals>
+                        <configuration>
+                            <failOnWarning>false</failOnWarning>
+                            <outputXML>false</outputXML>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
 
@@ -729,7 +797,7 @@
                                 <argument>a</argument>
                                 <argument>-tzip</argument>
                                 <argument>VPin-Studio-Client-macosx_aarch64.zip</argument>
-                                <argument>${zulu.jre.bundle}</argument>
+                                <argument>${zulu.jre.bundle.macosarch}</argument>
                                 <argument>vpin-studio-ui.jar</argument>
                                 <argument>VPin-Studio-macosx_aarch64.sh</argument>
                                 <argument>resources/vpsdb.json</argument>
@@ -753,7 +821,7 @@
                             <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
                             <arguments>
                                 <argument>xvf</argument>
-                                <argument>${zulu.jre.bundle}</argument>
+                                <argument>${zulu.jre.bundle.macosarch}</argument>
                             </arguments>
                         </configuration>
                     </execution>

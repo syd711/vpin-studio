@@ -18,16 +18,13 @@
         <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <slf4j.version>2.0.17</slf4j.version>
-        <logback.version>1.5.32</logback.version>
-        <maven-dependency-plugin.version>3.9.0</maven-dependency-plugin.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>
-            <version>3.0.2</version>
+            <version>${jsr305.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat.embed</groupId>
@@ -49,12 +46,12 @@
         <dependency>
             <groupId>com.github.spotbugs</groupId>
             <artifactId>spotbugs-annotations</artifactId>
-            <version>4.9.8</version>
+            <version>${spotbugs.version}</version>
         </dependency>
         <dependency>
             <groupId>de.mephisto.vpin</groupId>
             <artifactId>vpin-connector-assets</artifactId>
-            <version>1.1.0</version>
+            <version>${vpin-connector-assets.version}</version>
         </dependency>
         <dependency>
             <groupId>de.mephisto.vpin</groupId>
@@ -74,23 +71,22 @@
         <dependency>
             <groupId>de.mephisto.vpin</groupId>
             <artifactId>vpin-mania-rest-client</artifactId>
-            <version>1.0.0</version>
+            <version>${vpin-mania-rest-client.version}</version>
         </dependency>
         <dependency>
             <groupId>net.sf.sevenzipjbinding</groupId>
             <artifactId>sevenzipjbinding</artifactId>
-            <version>16.02-2.01</version>
+            <version>${sevenzipjbinding.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.shayartzi.sevenzipjbinding</groupId>
             <artifactId>sevenzipjbinding-all-platforms</artifactId>
-            <version>16.02-2.01</version>
+            <version>${sevenzipjbinding.version}</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -99,7 +95,7 @@
         <dependency>
             <groupId>net.lingala.zip4j</groupId>
             <artifactId>zip4j</artifactId>
-            <version>2.11.5</version>
+            <version>${zip4j.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -141,10 +137,6 @@
                     <source>25</source>
                     <target>25</target>
                 </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.8.1</version>
             </plugin>
             <plugin>
                 <groupId>org.openrewrite.maven</groupId>

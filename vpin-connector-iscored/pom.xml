@@ -18,18 +18,12 @@
         <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <slf4j.version>2.0.17</slf4j.version>
-        <juni-jupiter.version>6.0.3</juni-jupiter.version>
-        <logback.version>1.5.32</logback.version>
-
-        <maven-dependency-plugin.version>3.9.0</maven-dependency-plugin.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
         <!-- Jackson 3 Dependencies -->
         <dependency>
@@ -51,7 +45,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>6.0.3</version>
+            <version>${juni-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
