@@ -613,8 +613,9 @@ public class CompetitionsController implements Initializable, StudioFXController
 
 
           if (competition.getStartDate() != null) {
-            startLabel.setText(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(competition.getStartDate()));
-            endLabel.setText(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(competition.getEndDate()));
+            DateTimeFormatter fmt = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM);
+            startLabel.setText(fmt.format(competition.getStartDate().atZone(ZoneId.systemDefault()).toLocalDate()));
+            endLabel.setText(fmt.format(competition.getEndDate().atZone(ZoneId.systemDefault()).toLocalDate()));
           }
         }
       }
