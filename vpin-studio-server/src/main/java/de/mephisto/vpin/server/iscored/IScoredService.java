@@ -86,7 +86,7 @@ public class IScoredService implements PreferenceChangedListener, InitializingBe
       IScoredResult result = IScored.submitScore(gameRoom, iScoredGame, playerName, newScore.getPlayerInitials(), newScore.getScore());
       SLOG.info(result.toString());
 
-      if (Features.NOTIFICATIONS_ENABLED && result.isSent() && notificationSettings.isiScoredNotification()) {
+      if (Features.NOTIFICATIONS_ENABLED && result.isSent() && notificationSettings.isIscoredNotification()) {
         Game game = gameService.getGame(newScore.getGameId());
         File wheelImage = gameService.getWheelImage(game);
         Notification notification = NotificationFactory.createNotification(wheelImage,

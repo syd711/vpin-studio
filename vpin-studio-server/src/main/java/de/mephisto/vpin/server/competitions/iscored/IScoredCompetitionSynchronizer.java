@@ -62,7 +62,7 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
       for (IScoredGameRoom gameRoom : gameRooms) {
         if (gameRoom.isSynchronize()) {
           IScoredSyncModel model = new IScoredSyncModel();
-          model.setiScoredGameRoom(gameRoom);
+          model.setGameRoom(gameRoom);
           model.setInvalidate(true);
           synchronize(model, knownGames);
         }
@@ -81,15 +81,15 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
       LOG.info("--- ------- iScored Sync ({})-----------------", syncModel.getGame().getName());
     }
     else {
-      LOG.info("--- ------- iScored Sync ({})-----------------", syncModel.getiScoredGameRoom().getUrl());
+      LOG.info("--- ------- iScored Sync ({})-----------------", syncModel.getGameRoom().getUrl());
     }
 
-    GameRoom gameRoom = IScored.getGameRoom(syncModel.getiScoredGameRoom().getUrl(), syncModel.isInvalidate());
+    GameRoom gameRoom = IScored.getGameRoom(syncModel.getGameRoom().getUrl(), syncModel.isInvalidate());
     if (gameRoom != null) {
       List<Competition> iScoredSubscriptions = competitionService.getIScoredSubscriptions();
 
       //clean up invalid competitions
-      if (syncModel.getiScoredGameRoom().isSynchronize() || (syncModel.getGame() != null && syncModel.isManualSubscription())) {
+      if (syncModel.getGameRoom().isSynchronize() || (syncModel.getGame() != null && syncModel.isManualSubscription())) {
         if (syncModel.getGame() != null) {
           synchronizeGame(syncModel, syncModel.getGame(), iScoredSubscriptions, knownGames);
           LOG.info("Synchronization finished: {} ({})", syncModel.getGame().getName(), gameRoom.getUrl());
@@ -107,7 +107,7 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
       LOG.info("Cancelled sync, game room could not be loaded.");
     }
 
-    LOG.info("--- ------- /iScored Sync ({})-----------------", syncModel.getiScoredGameRoom().getUrl());
+    LOG.info("--- ------- /iScored Sync ({})-----------------", syncModel.getGameRoom().getUrl());
     return syncModel;
   }
 
@@ -219,7 +219,7 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
       return;
     }
 
-    IScoredGameRoom iScoredGameRoom = syncModel.getiScoredGameRoom();
+    IScoredGameRoom iScoredGameRoom = syncModel.getGameRoom();
     if (game.isGameHidden() && iScoredGameRoom.isIgnoreHidden()) {
       LOG.info("Skipped synchronization of iScored game \"{}\": Game is hidden and ignored for synchronization.", game.getName());
       return;
@@ -257,7 +257,7 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
     competition.setBadge(iScoredGameRoom.getBadge());
     competition.setVpsTableId(game.getVpsTableId());
     competition.setVpsTableVersionId(game.isAllVersionsEnabled() ? null : game.getVpsTableVersionId());
-    competition.setUrl(syncModel.getiScoredGameRoom().getUrl());
+    competition.setUrl(syncModel.getGameRoom().getUrl());
     competition.setUuid(UUID.randomUUID().toString());
     competitionService.save(competition);
 
@@ -311,7 +311,7 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
         continue;
       }
       IScoredSyncModel model = new IScoredSyncModel();
-      model.setiScoredGameRoom(gameRoom);
+      model.setGameRoom(gameRoom);
       model.setGame(iScoredGame);
       model.setInvalidate(true);
       synchronize(model, knownGames);

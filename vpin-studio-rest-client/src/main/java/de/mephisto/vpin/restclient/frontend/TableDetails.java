@@ -57,10 +57,10 @@ public class TableDetails {
   private boolean mod;
 
   //Game Extra
-  private String gDetails;
-  private String gNotes;
-  private String gLog;
-  private String gPlayLog;
+  private String extraDetails;
+  private String extraNotes;
+  private String extraLog;
+  private String extraPlayLog;
 
   // mapped values
   private String hsFilename;
@@ -102,13 +102,12 @@ public class TableDetails {
     this.sqlVersion = sqlVersion;
   }
 
-  @JsonProperty("gPlayLog")
-  public String getgPlayLog() {
-    return gPlayLog;
+  public String getExtraPlayLog() {
+    return extraPlayLog;
   }
 
-  public void setgPlayLog(String gPlayLog) {
-    this.gPlayLog = gPlayLog;
+  public void setExtraPlayLog(String extraPlayLog) {
+    this.extraPlayLog = extraPlayLog;
   }
 
   public String getCustom2() {
@@ -175,31 +174,28 @@ public class TableDetails {
     this.tourneyId = tourneyId;
   }
 
-  @JsonProperty("gDetails")
-  public String getgDetails() {
-    return gDetails;
+  public String getExtraDetails() {
+    return extraDetails;
   }
 
-  public void setgDetails(String gDetails) {
-    this.gDetails = gDetails;
+  public void setExtraDetails(String extraDetails) {
+    this.extraDetails = extraDetails;
   }
 
-  @JsonProperty("gNotes")
-  public String getgNotes() {
-    return gNotes;
+  public String getExtraNotes() {
+    return extraNotes;
   }
 
-  public void setgNotes(String gNotes) {
-    this.gNotes = gNotes;
+  public void setExtraNotes(String extraNotes) {
+    this.extraNotes = extraNotes;
   }
 
-  @JsonProperty("gLog")
-  public String getgLog() {
-    return gLog;
+  public String getExtraLog() {
+    return extraLog;
   }
 
-  public void setgLog(String gLog) {
-    this.gLog = gLog;
+  public void setExtraLog(String extraLog) {
+    this.extraLog = extraLog;
   }
 
   private List<String> launcherList = new ArrayList<>();
@@ -465,12 +461,12 @@ public class TableDetails {
     if (o == null || getClass() != o.getClass()) return false;
     TableDetails that = (TableDetails) o;
     //todo ignored dates because of different base objects
-    return sqlVersion == that.sqlVersion && emulatorId == that.emulatorId && status == that.status && mod == that.mod && Objects.equals(gameName, that.gameName) && Objects.equals(gameFileName, that.gameFileName) && Objects.equals(gameDisplayName, that.gameDisplayName) && Objects.equals(gameType, that.gameType) && Objects.equals(gameVersion, that.gameVersion) && Objects.equals(gameTheme, that.gameTheme) && Objects.equals(notes, that.notes) && Objects.equals(gameYear, that.gameYear) && Objects.equals(romName, that.romName) && Objects.equals(manufacturer, that.manufacturer) && Objects.equals(numberOfPlayers, that.numberOfPlayers) && Objects.equals(lastPlayed, that.lastPlayed) && Objects.equals(numberPlays, that.numberPlays) && Objects.equals(tags, that.tags) && Objects.equals(category, that.category) && Objects.equals(author, that.author) && Objects.equals(volume, that.volume) && Objects.equals(launchCustomVar, that.launchCustomVar) && Objects.equals(keepDisplays, that.keepDisplays) && Objects.equals(gameRating, that.gameRating) && Objects.equals(dof, that.dof) && Objects.equals(IPDBNum, that.IPDBNum) && Objects.equals(altRunMode, that.altRunMode) && Objects.equals(url, that.url) && Objects.equals(designedBy, that.designedBy) && Objects.equals(altLaunchExe, that.altLaunchExe) && Objects.equals(custom2, that.custom2) && Objects.equals(custom3, that.custom3) && Objects.equals(special, that.special) && Objects.equals(mediaSearch, that.mediaSearch) && Objects.equals(custom4, that.custom4) && Objects.equals(custom5, that.custom5) && Objects.equals(webGameId, that.webGameId) && Objects.equals(romAlt, that.romAlt) && Objects.equals(webLink2Url, that.webLink2Url) && Objects.equals(tourneyId, that.tourneyId) && Objects.equals(gDetails, that.gDetails) && Objects.equals(gNotes, that.gNotes) && Objects.equals(gLog, that.gLog) && Objects.equals(gPlayLog, that.gPlayLog) && Objects.equals(hsFilename, that.hsFilename) && Objects.equals(launcherList, that.launcherList);
+    return sqlVersion == that.sqlVersion && emulatorId == that.emulatorId && status == that.status && mod == that.mod && Objects.equals(gameName, that.gameName) && Objects.equals(gameFileName, that.gameFileName) && Objects.equals(gameDisplayName, that.gameDisplayName) && Objects.equals(gameType, that.gameType) && Objects.equals(gameVersion, that.gameVersion) && Objects.equals(gameTheme, that.gameTheme) && Objects.equals(notes, that.notes) && Objects.equals(gameYear, that.gameYear) && Objects.equals(romName, that.romName) && Objects.equals(manufacturer, that.manufacturer) && Objects.equals(numberOfPlayers, that.numberOfPlayers) && Objects.equals(lastPlayed, that.lastPlayed) && Objects.equals(numberPlays, that.numberPlays) && Objects.equals(tags, that.tags) && Objects.equals(category, that.category) && Objects.equals(author, that.author) && Objects.equals(volume, that.volume) && Objects.equals(launchCustomVar, that.launchCustomVar) && Objects.equals(keepDisplays, that.keepDisplays) && Objects.equals(gameRating, that.gameRating) && Objects.equals(dof, that.dof) && Objects.equals(IPDBNum, that.IPDBNum) && Objects.equals(altRunMode, that.altRunMode) && Objects.equals(url, that.url) && Objects.equals(designedBy, that.designedBy) && Objects.equals(altLaunchExe, that.altLaunchExe) && Objects.equals(custom2, that.custom2) && Objects.equals(custom3, that.custom3) && Objects.equals(special, that.special) && Objects.equals(mediaSearch, that.mediaSearch) && Objects.equals(custom4, that.custom4) && Objects.equals(custom5, that.custom5) && Objects.equals(webGameId, that.webGameId) && Objects.equals(romAlt, that.romAlt) && Objects.equals(webLink2Url, that.webLink2Url) && Objects.equals(tourneyId, that.tourneyId) && Objects.equals(extraDetails, that.extraDetails) && Objects.equals(extraNotes, that.extraNotes) && Objects.equals(extraLog, that.extraLog) && Objects.equals(extraPlayLog, that.extraPlayLog) && Objects.equals(hsFilename, that.hsFilename) && Objects.equals(launcherList, that.launcherList);
   }
 
   @Override
   public int hashCode() {
     //todo ignored dates because of different base objects
-    return Objects.hash(sqlVersion, emulatorId, status, gameName, gameFileName, gameDisplayName, gameType, gameVersion, gameTheme, notes, gameYear, romName, manufacturer, numberOfPlayers, lastPlayed, numberPlays, tags, category, author, volume, launchCustomVar, keepDisplays, gameRating, dof, IPDBNum, altRunMode, url, designedBy, altLaunchExe, custom2, custom3, special, mediaSearch, custom4, custom5, webGameId, romAlt, webLink2Url, tourneyId, mod, gDetails, gNotes, gLog, gPlayLog, hsFilename, launcherList);
+    return Objects.hash(sqlVersion, emulatorId, status, gameName, gameFileName, gameDisplayName, gameType, gameVersion, gameTheme, notes, gameYear, romName, manufacturer, numberOfPlayers, lastPlayed, numberPlays, tags, category, author, volume, launchCustomVar, keepDisplays, gameRating, dof, IPDBNum, altRunMode, url, designedBy, altLaunchExe, custom2, custom3, special, mediaSearch, custom4, custom5, webGameId, romAlt, webLink2Url, tourneyId, mod, extraDetails, extraNotes, extraLog, extraPlayLog, hsFilename, launcherList);
   }
 }

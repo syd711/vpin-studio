@@ -231,7 +231,7 @@ public class PlayerDialogController implements Initializable, DialogController {
       this.player = p;
       nameField.setText(this.player.getName());
       initialsField.setText(this.player.getInitials());
-      iScoredNameField.setText(this.player.getiScoredName());
+      iScoredNameField.setText(this.player.getCompetitionName());
       adminRoleCheckbox.setSelected(player.isAdministrative());
 
       vpinManiaPlayerCheckbox.setSelected(false);
@@ -299,9 +299,9 @@ public class PlayerDialogController implements Initializable, DialogController {
       validateInput();
     });
 
-    iScoredNameField.setText(player.getiScoredName());
+    iScoredNameField.setText(player.getCompetitionName());
     iScoredNameField.textProperty().addListener((observableValue, s, t1) -> {
-      player.setiScoredName(t1);
+      player.setCompetitionName(t1);
     });
 
     Font font = Font.font("Impact", FontPosture.findByName("regular"), 60);

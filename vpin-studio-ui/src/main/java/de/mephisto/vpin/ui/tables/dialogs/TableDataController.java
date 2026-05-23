@@ -953,10 +953,10 @@ public class TableDataController extends BasePrevNextController implements AutoC
     tableDetailsBinder.bindTextField(tourneyId, "tourneyId");
     tableDetailsBinder.bindCheckbox(modCheckbox, "mod");
 
-    tableDetailsBinder.bindTextField(gDetails, "gDetails");
-    tableDetailsBinder.bindTextField(gLog, "gLog");
-    tableDetailsBinder.bindTextField(gPlayLog, "gPlayLog");
-    tableDetailsBinder.bindTextField(gNotes, "gNotes");
+    tableDetailsBinder.bindTextField(gDetails, "extraDetails");
+    tableDetailsBinder.bindTextField(gLog, "extraLog");
+    tableDetailsBinder.bindTextField(gPlayLog, "extraPlayLog");
+    tableDetailsBinder.bindTextField(gNotes, "extraNotes");
 
   }
 

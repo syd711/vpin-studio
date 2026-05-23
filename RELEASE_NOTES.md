@@ -10,3 +10,9 @@
 ### Bugfixes
 
 - **Highscores**: Fixed VPReg.stg file lookup.
+
+
+### Breaking Changes
+
+- Player comp. name (iscored)
+- iScored notification settings

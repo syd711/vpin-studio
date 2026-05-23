@@ -362,15 +362,15 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
                 details.append(tableDescription);
               }
 
-              if (StringUtils.isEmpty(tableDetails.getgDetails()) || overwrite) {
-                tableDetails.setgDetails(details.toString());
+              if (StringUtils.isEmpty(tableDetails.getExtraDetails()) || overwrite) {
+                tableDetails.setExtraDetails(details.toString());
               }
 
             }
 
             if (autoFillSettings.isNotes()) {
-              if (tableInfo != null && !StringUtils.isEmpty(tableInfo.getTableRules()) && (StringUtils.isEmpty(tableDetails.getgNotes()) || overwrite)) {
-                tableDetails.setgNotes(tableInfo.getTableRules());
+              if (tableInfo != null && !StringUtils.isEmpty(tableInfo.getTableRules()) && (StringUtils.isEmpty(tableDetails.getExtraNotes()) || overwrite)) {
+                tableDetails.setExtraNotes(tableInfo.getTableRules());
               }
             }
 

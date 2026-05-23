@@ -549,10 +549,10 @@ public class TablesSidebarTableDetailsController implements Initializable {
         webDbId.setText(StringUtils.isEmpty(tableDetails.getWebGameId()) ? "-" : tableDetails.getWebGameId());
         webLink.setText(StringUtils.isEmpty(tableDetails.getWebLink2Url()) ? "-" : tableDetails.getWebLink2Url());
         isMod.setText(String.valueOf(tableDetails.isMod()));
-        gDetails.setText(StringUtils.isEmpty(tableDetails.getgDetails()) ? "" : tableDetails.getgDetails());
-        gNotes.setText(StringUtils.isEmpty(tableDetails.getgNotes()) ? "" : tableDetails.getgNotes());
-        gLog.setText(StringUtils.isEmpty(tableDetails.getgLog()) ? "" : tableDetails.getgLog());
-        gPlayLog.setText(StringUtils.isEmpty(tableDetails.getgPlayLog()) ? "" : tableDetails.getgPlayLog());
+        gDetails.setText(StringUtils.isEmpty(tableDetails.getExtraDetails()) ? "" : tableDetails.getExtraDetails());
+        gNotes.setText(StringUtils.isEmpty(tableDetails.getExtraNotes()) ? "" : tableDetails.getExtraNotes());
+        gLog.setText(StringUtils.isEmpty(tableDetails.getExtraLog()) ? "" : tableDetails.getExtraLog());
+        gPlayLog.setText(StringUtils.isEmpty(tableDetails.getExtraPlayLog()) ? "" : tableDetails.getExtraPlayLog());
       }
     }
     else {
