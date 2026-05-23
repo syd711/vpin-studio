@@ -81,7 +81,7 @@ public class WebhooksService implements InitializingBean, PreferenceChangedListe
 
   private void handleWebhookSet(@NonNull WebhookSet webhookSet, @NonNull Webhook webhook, @NonNull WebhookType webhookType, @NonNull WebhookEventType eventType, long entityId) {
     if (!NetworkUtil.isValidUrl(webhook.getEndpoint())) {
-      LOG.info("{} / {} not fired, no valid endpoint set.", webhookSet.getName(), eventType.name());
+      //LOG.info("{} / {} not fired, no valid endpoint set.", webhookSet.getName(), eventType.name());
       return;
     }
 

@@ -89,8 +89,10 @@ public class NvRamParsingWithParser implements NvRamOutputToRaw, ScoreListAdapte
         Locale locale = Locale.getDefault();
         String rom = game != null ? game.getRom().toLowerCase() : "<no rom>";
         if (isSupportedRom(rom)) {
+          List<Score> scores = null;
+          try {
             List<NVRamScore> nvRamScores = parser.parseRaw(rom, lines, locale, parseAll);
-            List<Score> scores = new ArrayList<>();
+            scores = new ArrayList<>();
             for (NVRamScore nvramScore : nvRamScores) {
                 Score sc = new Score(createdAt, game.getId(),
                         nvramScore.getInitials(), null,
@@ -101,7 +103,11 @@ public class NvRamParsingWithParser implements NvRamOutputToRaw, ScoreListAdapte
                 sc.setLabel(nvramScore.getLabel());
                 scores.add(sc);
             }
-            return scores;
+          }
+          catch (Exception e) {
+            LOG.info("Parsing score for ROM {} failed: {}", rom, e.getMessage());
+          }
+          return scores;
         }
         return Collections.emptyList();
     }
