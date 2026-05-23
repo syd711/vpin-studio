@@ -118,7 +118,7 @@ jobs:
             --type app-image \
             --icon ../mac-package/package/macos/VpinStudioIcon.icns \
             --dest ./ \
-            --runtime-image ../${{ matrix.jre_folder }}/zulu-25.jre \
+            --runtime-image ../zulu-25.jre \
             @../jpackage_log.txt
 
       - name: Update Info.plist version
