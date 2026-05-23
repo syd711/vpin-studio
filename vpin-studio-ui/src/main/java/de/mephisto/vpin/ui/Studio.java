@@ -502,16 +502,28 @@ public class Studio extends Application {
 
   public static boolean open(@Nullable File file) {
     if (file != null && file.exists()) {
-      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-      if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
+      String osName = System.getProperty("os.name");
+      if (osName.contains("Windows")) {
         try {
-          desktop.open(file);
-          return true;
+          new ProcessBuilder("cmd", "/c", "start", "", file.getAbsolutePath()).start();
         }
-        catch (Exception e) {
-          LOG.error("Failed to open file: " + e.getMessage(), e);
+        catch (IOException e) {
+          LOG.error("Browse failed: {}", e.getMessage());
         }
       }
+      else {
+        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
+          try {
+            desktop.open(file);
+            return true;
+          }
+          catch (Exception e) {
+            LOG.error("Failed to open file: " + e.getMessage(), e);
+          }
+        }
+      }
+
     }
     return false;
   }
