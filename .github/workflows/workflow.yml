@@ -268,12 +268,6 @@ jobs:
           mvn -f vpin-connector-assets/pom.xml clean install -DskipTests
           mvn -f vpin-studio-popper-client/pom.xml clean install -DskipTests
 
-      - name: Extract Windows Runtime for Installer
-        shell: bash
-        run: |
-          mkdir -p java-runtime
-          unzip -o java-runtime-win.zip -d ./java-runtime
-
       - name: Install Native DLLs
         run: copy "${{ github.workspace }}\resources\jvm\jinput-dx8_64.dll" "$env:JAVA_HOME\bin\"
 
