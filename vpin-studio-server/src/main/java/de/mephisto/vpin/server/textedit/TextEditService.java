@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.textedit;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
-import de.mephisto.vpin.restclient.textedit.VPinFile;
+import de.mephisto.vpin.restclient.textedit.MonitoredFile;
 import de.mephisto.vpin.server.doflinx.DOFLinxService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
@@ -68,8 +68,8 @@ public class TextEditService {
     try {
       ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
 
-      VPinFile vPinFile = monitoredTextFile.getvPinFile();
-      switch (vPinFile) {
+      MonitoredFile monitoredFile = monitoredTextFile.getFile();
+      switch (monitoredFile) {
         case DmdDeviceIni: {
           File mameFolder = vPinMameService.getMameFolder();
           File init = new File(mameFolder, "DmdDevice.ini");
@@ -134,7 +134,7 @@ public class TextEditService {
           return monitoredTextFile;
         }
         default: {
-          throw new UnsupportedOperationException("Unknown VPin file: " + vPinFile);
+          throw new UnsupportedOperationException("Unknown VPin file: " + monitoredFile);
         }
       }
 
@@ -150,8 +150,8 @@ public class TextEditService {
     try {
       ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
       monitoredTextFile.setLastModified(OffsetDateTime.now());
-      VPinFile vPinFile = monitoredTextFile.getvPinFile();
-      switch (vPinFile) {
+      MonitoredFile monitoredFile = monitoredTextFile.getFile();
+      switch (monitoredFile) {
         case DmdDeviceIni: {
           File mameFolder = vPinMameService.getMameFolder();
           File iniFile = new File(mameFolder, "DmdDevice.ini");
@@ -243,7 +243,7 @@ public class TextEditService {
           return monitoredTextFile;
         }
         default: {
-          throw new UnsupportedOperationException("Unknown VPin file: " + vPinFile);
+          throw new UnsupportedOperationException("Unknown VPin file: " + monitoredFile);
         }
       }
     }

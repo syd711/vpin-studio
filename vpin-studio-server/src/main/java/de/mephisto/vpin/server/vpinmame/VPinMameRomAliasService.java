@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.vpinmame;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
-import de.mephisto.vpin.restclient.textedit.VPinFile;
+import de.mephisto.vpin.restclient.textedit.MonitoredFile;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.GameCachingService;
 import de.mephisto.vpin.server.games.GameEmulator;
@@ -30,7 +30,7 @@ import java.util.*;
 public class VPinMameRomAliasService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(VPinMameRomAliasService.class);
 
-  private final static String VPM_ALIAS = VPinFile.VPMAliasTxt.toString();
+  private final static String VPM_ALIAS = MonitoredFile.VPMAliasTxt.toString();
 
   private final Map<Integer, Map<String, String>> aliasNamToRom = new HashMap<>();
 

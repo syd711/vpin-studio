@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.textedit;
 
+import de.mephisto.vpin.restclient.textedit.MonitoredFile;
 import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
-import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.server.doflinx.DOFLinxService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
@@ -63,7 +63,7 @@ public class TextEditServiceTest {
     GameEmulator emulator = mock(GameEmulator.class);
     MonitoredTextFile expected = new MonitoredTextFile();
     MonitoredTextFile request = new MonitoredTextFile();
-    request.setvPinFile(VPinFile.VPMAliasTxt);
+    request.setvPinFile(MonitoredFile.VPMAliasTxt);
     request.setEmulatorId(1);
 
     when(emulatorService.getGameEmulator(1)).thenReturn(emulator);
@@ -80,7 +80,7 @@ public class TextEditServiceTest {
   @Test
   void getText_throwsException_whenLocalGameFileDoesNotExist() {
     MonitoredTextFile request = new MonitoredTextFile();
-    request.setvPinFile(VPinFile.LOCAL_GAME_FILE);
+    request.setvPinFile(MonitoredFile.LOCAL_GAME_FILE);
     request.setPath("/nonexistent/path/to/file.txt");
 
     assertThrows(Exception.class, () -> textEditService.getText(request));
@@ -92,7 +92,7 @@ public class TextEditServiceTest {
     Files.writeString(testFile.toPath(), "key=value");
 
     MonitoredTextFile request = new MonitoredTextFile();
-    request.setvPinFile(VPinFile.LOCAL_GAME_FILE);
+    request.setvPinFile(MonitoredFile.LOCAL_GAME_FILE);
     request.setPath(testFile.getAbsolutePath());
 
     MonitoredTextFile result = textEditService.getText(request);
@@ -108,7 +108,7 @@ public class TextEditServiceTest {
     GameEmulator emulator = mock(GameEmulator.class);
     MonitoredTextFile expected = new MonitoredTextFile();
     MonitoredTextFile request = new MonitoredTextFile();
-    request.setvPinFile(VPinFile.VPMAliasTxt);
+    request.setvPinFile(MonitoredFile.VPMAliasTxt);
     request.setEmulatorId(2);
     request.setContent("zebra=1\nalpha=2\nmiddle=3");
 
@@ -130,7 +130,7 @@ public class TextEditServiceTest {
     Files.writeString(testFile.toPath(), "original");
 
     MonitoredTextFile request = new MonitoredTextFile();
-    request.setvPinFile(VPinFile.LOCAL_GAME_FILE);
+    request.setvPinFile(MonitoredFile.LOCAL_GAME_FILE);
     request.setPath(testFile.getAbsolutePath());
     request.setContent("line1\nline2");
 

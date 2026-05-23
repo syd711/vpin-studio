@@ -5,7 +5,7 @@ import de.mephisto.vpin.restclient.components.ComponentSummary;
 import de.mephisto.vpin.restclient.components.ComponentSummaryEntry;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
-import de.mephisto.vpin.restclient.textedit.VPinFile;
+import de.mephisto.vpin.restclient.textedit.MonitoredFile;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
@@ -77,7 +77,7 @@ public class TabDOFLinxController extends AbstractComponentTab implements Initia
       File folder = new File(installFolder);
       if (folder.exists()) {
         try {
-          boolean b = Dialogs.openTextEditor(new MonitoredTextFile(VPinFile.DOFLinxINI), "DOFLinx.INI");
+          boolean b = Dialogs.openTextEditor(new MonitoredTextFile(MonitoredFile.DOFLinxINI), "DOFLinx.INI");
           if (b) {
             onReload();
           }

@@ -16,7 +16,7 @@ import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.system.FeaturesInfo;
 import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
-import de.mephisto.vpin.restclient.textedit.VPinFile;
+import de.mephisto.vpin.restclient.textedit.MonitoredFile;
 import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.jobs.JobPoller;
@@ -466,7 +466,13 @@ public class Studio extends Application {
     if (!StringUtils.isEmpty(url)) {
       String osName = System.getProperty("os.name");
       if (osName.contains("Windows")) {
-        Studio.hostServices.showDocument(url);
+//        Studio.hostServices.showDocument(url);
+        try {
+          new ProcessBuilder("cmd", "/c", "start", "", url).start();
+        }
+        catch (IOException e) {
+          LOG.error("Browse failed: {}", e.getMessage());
+        }
       }
       else if (osName.toLowerCase().contains("mac")) {
         Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
@@ -514,7 +520,7 @@ public class Studio extends Application {
   public static boolean editGameFile(@NonNull GameRepresentation game, @NonNull String filePath) throws Exception {
     FileMonitoringService.getInstance().setPaused(true);
 
-    MonitoredTextFile monitoredTextFile = new MonitoredTextFile(VPinFile.LOCAL_GAME_FILE);
+    MonitoredTextFile monitoredTextFile = new MonitoredTextFile(MonitoredFile.LOCAL_GAME_FILE);
     monitoredTextFile.setFileId(String.valueOf(game.getId()));
     monitoredTextFile.setPath(filePath);
     MonitoredTextFile loadedMonitoredFile = client.getTextEditorService().getText(monitoredTextFile);
@@ -537,7 +543,13 @@ public class Studio extends Application {
     if (file != null && file.exists()) {
       String osName = System.getProperty("os.name");
       if (osName.contains("Windows")) {
-        Studio.hostServices.showDocument(file.getAbsolutePath());
+//        Studio.hostServices.showDocument(file.getAbsolutePath());
+        try {
+          new ProcessBuilder("cmd", "/c", "start", "", file.getAbsolutePath()).start();
+        }
+        catch (IOException e) {
+          LOG.error("Open failed: {}", e.getMessage());
+        }
       }
       else if (osName.toLowerCase().contains("mac")) {
         try {

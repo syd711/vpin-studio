@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui.tables.vbsedit;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
-import de.mephisto.vpin.restclient.textedit.VPinFile;
+import de.mephisto.vpin.restclient.textedit.MonitoredFile;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.Dialogs;
@@ -38,7 +38,7 @@ public class VBSManager {
 
   public void edit(Optional<GameRepresentation> game, boolean embeddedEditor) {
     try {
-      MonitoredTextFile monitoredTextFile = new MonitoredTextFile(VPinFile.VBScript);
+      MonitoredTextFile monitoredTextFile = new MonitoredTextFile(MonitoredFile.VBScript);
       monitoredTextFile.setFileId(String.valueOf(game.get().getId()));
 
       if (game.isPresent()) {

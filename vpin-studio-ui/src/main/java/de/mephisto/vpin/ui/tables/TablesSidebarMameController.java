@@ -5,7 +5,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
-import de.mephisto.vpin.restclient.textedit.VPinFile;
+import de.mephisto.vpin.restclient.textedit.MonitoredFile;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.restclient.vpinmame.VPinMameOptions;
@@ -262,7 +262,7 @@ public class TablesSidebarMameController implements Initializable {
       if (game.isPresent()) {
         GameRepresentation gameRepresentation = game.get();
 
-        MonitoredTextFile monitoredTextFile = new MonitoredTextFile(VPinFile.VPMAliasTxt);
+        MonitoredTextFile monitoredTextFile = new MonitoredTextFile(MonitoredFile.VPMAliasTxt);
         monitoredTextFile.setEmulatorId(gameRepresentation.getEmulatorId());
         boolean b = Dialogs.openTextEditor(monitoredTextFile, "VPMAlias.txt");
         if (b) {
