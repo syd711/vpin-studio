@@ -216,7 +216,6 @@ public class HighscoreResolver implements InitializingBean {
       metadata.setType(HighscoreType.EM);
       metadata.setFilename(hsFile.getCanonicalPath());
       metadata.setModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(hsFile.lastModified()), ZoneId.systemDefault()));
-
       metadata.setStatus(null);
 
       return textHighscoreAdapters.convertTextFileTextToMachineReadable(metadata, systemService.getScoringDatabase(), hsFile);
@@ -230,8 +229,7 @@ public class HighscoreResolver implements InitializingBean {
       metadata.setType(HighscoreType.Ini);
       metadata.setFilename(iniFile.getCanonicalPath());
       metadata.setModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(iniFile.lastModified()), ZoneId.systemDefault()));
-
-        metadata.setStatus(null);
+      metadata.setStatus(null);
 
       return initHighscoreAdapters.convertTextFileTextToMachineReadable(metadata, systemService.getScoringDatabase(), iniFile);
     }
@@ -297,6 +295,7 @@ public class HighscoreResolver implements InitializingBean {
 
       metadata.setFilename(nvRam.getCanonicalPath());
       metadata.setModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(nvRam.lastModified()), ZoneId.systemDefault()));
+
       if (!RamOutputToScoreTextConverter.isSupportedRom(nvRamName)) {
         String msg = "The NV ram file \"" + nvRamName + ".nv\" is currently not supported.";
         SLOG.info(msg);
@@ -315,6 +314,7 @@ public class HighscoreResolver implements InitializingBean {
     }
     return null;
   }
+
   /**
    * Executes a single PINemHi command for the given game.
    *
@@ -332,8 +332,7 @@ public class HighscoreResolver implements InitializingBean {
 
       metadata.setFilename(fpRamFile.getCanonicalPath());
       metadata.setModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(fpRamFile.lastModified()), ZoneId.systemDefault()));
-
-        metadata.setType(HighscoreType.FPRam);
+      metadata.setType(HighscoreType.FPRam);
 
       return RamOutputToScoreTextConverter.convertRamTextToMachineReadable(game, fpRamFile);
     }

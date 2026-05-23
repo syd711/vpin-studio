@@ -303,9 +303,10 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
                 }
             }
         }
-        infos.forEach(info -> applyGameValidation(info, findFirstIssueOnly));
+        // Keeping for testing.
+        // infos.forEach(info -> applyGameValidation(info, findFirstIssueOnly));
 
-        //infos.parallelStream().forEach(info -> applyGameValidation(info, findFirstIssueOnly));
+        infos.stream().forEach(info -> applyGameValidation(info, findFirstIssueOnly));
 
 
         GameEmulatorCache cache = new GameEmulatorCache(emulator.getType(), emulator.getId(), gamesByEmulator);

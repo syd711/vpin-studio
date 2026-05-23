@@ -289,8 +289,7 @@ public class BuiltInPlayersController extends BasePlayersController implements I
 
     columnCreatedAt.setCellValueFactory(cellData -> {
       PlayerRepresentation value = cellData.getValue();
-      return new SimpleObjectProperty(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
-              .format(value.getCreatedAt().atZone(ZoneId.systemDefault())));
+      return new SimpleObjectProperty(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(value.getCreatedAt().atZone(ZoneId.systemDefault())));
     });
 
     editBtn.setDisable(true);

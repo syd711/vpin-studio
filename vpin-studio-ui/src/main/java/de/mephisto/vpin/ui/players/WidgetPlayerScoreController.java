@@ -87,7 +87,7 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
       scoreLabel.setFont(getScoreFont());
       scoreLabel.setText(score.getFormattedScore());
 
-      String date = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(score.getCreatedAt());
+      String date = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(score.getCreatedAt().atZone(ZoneId.systemDefault()));
       changeDateLabel.setText("Updated: " + date);
 
       JFXFuture.supplyAsync(() -> {

@@ -819,7 +819,7 @@ public abstract class BaseConnector implements FrontendConnector {
   public final List<TableAlxEntry> getAlxData(int gameId) {
     // force reload of stats and update of cache
     List<TableAlxEntry> stats = getAlxData();
-    return ListUtils.select(stats, stat -> stat.getGameId() == gameId);
+    return stats.stream().filter(stat -> stat.getGameId() == gameId).collect(Collectors.toList());
   }
 
   @Override

@@ -48,6 +48,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.*;
@@ -524,16 +525,18 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
       return new SimpleObjectProperty(label);
     });
 
+    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withZone(ZoneId.systemDefault());
+
     columnStartDate.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
-      Label label = new Label(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(value.getStartDate()));
+      Label label = new Label(dateTimeFormatter.format(value.getStartDate()));
       label.setStyle(getLabelCss(value));
       return new SimpleObjectProperty(label);
     });
 
     columnEndDate.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
-      Label label = new Label(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(value.getEndDate()));
+      Label label = new Label(dateTimeFormatter.format(value.getEndDate()));
       label.setStyle(getLabelCss(value));
       return new SimpleObjectProperty(label);
     });

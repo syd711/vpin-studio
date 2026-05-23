@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -174,7 +175,7 @@ public class VPXZSidebarController implements Initializable, StudioFXController 
       filenameLabel.setText(descriptorRepresentation.getFilename());
       filenameLabel.setTooltip(new Tooltip(descriptorRepresentation.getFilename()));
       fileSizeLabel.setText(descriptorRepresentation.getSize() > 0 ? FileUtils.readableFileSize(descriptorRepresentation.getSize()) : "-");
-      lastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(descriptorRepresentation.getCreatedAt()));
+      lastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(Date.from(descriptorRepresentation.getCreatedAt())));
       sourceLabel.setText(descriptorRepresentation.getSource().getLocation());
       sourceLabel.setTooltip(new Tooltip(descriptorRepresentation.getSource().getLocation()));
 

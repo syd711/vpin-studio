@@ -18,7 +18,7 @@ public class RecorderSettings extends JsonSettings {
     private String customLauncher;
     private boolean primaryParam;
 
-  private String startCommand;
+    private String startCommand;
   private String stopCommand;
 
   public String getStartCommand() {
@@ -35,11 +35,9 @@ public class RecorderSettings extends JsonSettings {
 
   public void setStopCommand(String stopCommand) {
     this.stopCommand = stopCommand;
-  }
-
-  public boolean isPrimaryParam() {
-    return primaryParam;
-  }
+  }public boolean isPrimaryParam() {
+        return primaryParam;
+    }
 
     public void setPrimaryParam(boolean primaryParam) {
         this.primaryParam = primaryParam;

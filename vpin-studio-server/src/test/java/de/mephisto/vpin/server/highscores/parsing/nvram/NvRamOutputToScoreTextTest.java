@@ -243,14 +243,12 @@ public class NvRamOutputToScoreTextTest {
         game.setGameDisplayName("Dummy test game for " + nv);
         game.setRom(nv.replace(".nv", ""));
 
-    GameEmulator emulator = new GameEmulator();
+        GameEmulator emulator = new GameEmulator();
     emulator.setType(EmulatorType.VisualPinball);
-    game.setEmulator(emulator);
-
-    File testFolder = new File("../testsystem/vPinball/VisualPinball/VPinMAME/nvram/");
-    File entry = new File(testFolder, nv);
-    String raw = RamOutputToScoreTextConverter.convertRamTextToMachineReadable(game, entry);
-    assertNotNull(raw);
+    game.setEmulator(emulator);File testFolder = new File("../testsystem/vPinball/VisualPinball/VPinMAME/nvram/");
+        File entry = new File(testFolder, nv);
+        String raw = RamOutputToScoreTextConverter.convertRamTextToMachineReadable(game,entry);
+        assertNotNull(raw);
 
         LOG.info("raw : " + raw);
 

@@ -121,7 +121,7 @@ public class CabinetSettingsPreferencesController implements Initializable {
     factory.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
       int value1 = Integer.parseInt(String.valueOf(t1));
       client.getPreferenceService().setPreference(PreferenceNames.IDLE_TIMEOUT, String.valueOf(value1));
-    }, 500));
+    }, 800));
 
     stickyKeysCheckbox.setSelected(!serverSettings.isStickyKeysEnabled());
     stickyKeysCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {

@@ -25,13 +25,13 @@ jobs:
           - arch: x64
             java_arch: x64
             os: macos-15-intel
-            jre_bundle: zulu25.32.21-ca-fx-jre25.0.2-macosx_x64.tar.gz
-            jre_folder: zulu25.32.21-ca-fx-jre25.0.2-macosx_x64
+            jre_bundle: zulu25.34.17-ca-fx-jre25.0.3-macosx_x64.tar.gz
+            jre_folder: zulu25.34.17-ca-fx-jre25.0.3-macosx_x64
           - arch: arm64
             java_arch: aarch64
             os: macos-15
-            jre_bundle: zulu25.32.21-ca-fx-jre25.0.2-macosx_aarch64.tar.gz
-            jre_folder: zulu25.32.21-ca-fx-jre25.0.2-macosx_aarch64
+            jre_bundle: zulu25.34.17-ca-fx-jre25.0.3-macosx_aarch64.tar.gz
+            jre_folder: zulu25.34.17-ca-fx-jre25.0.3-macosx_aarch64
 
     steps:
       - name: Checkout VPin Studio
@@ -40,24 +40,21 @@ jobs:
       - name: Checkout Popper Client Repo
         uses: actions/checkout@v6
         with:
-          repository: gonzonia/vpin-studio-popper-client
-          ref: Java-25
+          repository: syd711/vpin-studio-popper-client
           path: ./vpin-studio-popper-client
           token: ${{ secrets.ACCESS_TOKEN }}
 
       - name: Checkout Mania Rest Client Repo
         uses: actions/checkout@v6
         with:
-          repository: gonzonia/vpin-mania-rest-client
-          ref: Java-25
+          repository: syd711/vpin-mania-rest-client
           path: ./vpin-mania-rest-client
           token: ${{ secrets.ACCESS_TOKEN }}
 
       - name: Checkout java-pinmame-nvmaps Repo
         uses: actions/checkout@v6
         with:
-          repository: gonzonia/java-pinmame-nvmaps
-          ref: java-25
+          repository: syd711/java-pinmame-nvmaps
           path: ./java-pinmame-nvmaps
           token: ${{ secrets.ACCESS_TOKEN }}
           submodules: recursive
@@ -226,24 +223,21 @@ jobs:
       - name: Checkout Popper Client Repo
         uses: actions/checkout@v6
         with:
-          repository: gonzonia/vpin-studio-popper-client
-          ref: Java-25
+          repository: syd711/vpin-studio-popper-client
           path: ./vpin-studio-popper-client
           token: ${{ secrets.ACCESS_TOKEN }}
 
       - name: Checkout Mania Rest Client Repo
         uses: actions/checkout@v6
         with:
-          repository: gonzonia/vpin-mania-rest-client
-          ref: Java-25
+          repository: syd711/vpin-mania-rest-client
           path: ./vpin-mania-rest-client
           token: ${{ secrets.ACCESS_TOKEN }}
 
       - name: Checkout java-pinmame-nvmaps Repo
         uses: actions/checkout@v6
         with:
-          repository: gonzonia/java-pinmame-nvmaps
-          ref: java-25
+          repository: syd711/java-pinmame-nvmaps
           path: ./java-pinmame-nvmaps
           token: ${{ secrets.ACCESS_TOKEN }}
           submodules: recursive
@@ -268,38 +262,6 @@ jobs:
           mvn -f vpin-connector-assets/pom.xml clean install -DskipTests
           mvn -f vpin-studio-popper-client/pom.xml clean install -DskipTests
 
-      - name: Download Zulu JRE for MacOSX Arm
-        shell: pwsh
-        run: |
-          Invoke-WebRequest -Uri "https://cdn.azul.com/zulu/bin/zulu25.32.21-ca-fx-jre25.0.2-macosx_aarch64.tar.gz" -OutFile "zulu25.32.21-ca-fx-jre25.0.2-macosx_aarch64.tar.gz"
-
-      - name: Download Zulu JRE for MacOSX x64
-        shell: pwsh
-        run: |
-          Invoke-WebRequest -Uri "https://cdn.azul.com/zulu/bin/zulu25.32.21-ca-fx-jre25.0.2-macosx_x64.tar.gz" -OutFile "zulu25.32.21-ca-fx-jre25.0.2-macosx_x64.tar.gz"
-    
-
-      - name: Download Zulu JRE for Windows
-        shell: pwsh
-        run: |
-          Invoke-WebRequest -Uri "https://cdn.azul.com/zulu/bin/zulu25.32.21-ca-fx-jre25.0.2-win_x64.zip" -OutFile "java-runtime-win.zip"
-
-      - name: Download Zulu JRE for Linux
-        shell: pwsh
-        run: |
-          Invoke-WebRequest -Uri "https://cdn.azul.com/zulu/bin/zulu25.32.21-ca-fx-jre25.0.2-linux_x64.tar.gz" -OutFile "zulu25.32.21-ca-fx-jre25.0.2-linux_x64.tar.gz"
-
-      - name: Download Zulu JRE for Windows
-        shell: pwsh
-        run: |
-          Invoke-WebRequest -Uri "https://cdn.azul.com/zulu/bin/zulu25.32.21-ca-fx-jre25.0.2-win_x64.zip" -OutFile "java-runtime-win.zip"
-
-      - name: Extract Windows Runtime for Installer
-        shell: bash
-        run: |
-          mkdir -p java-runtime
-          unzip -o java-runtime-win.zip -d ./java-runtime
-
       - name: Install Native DLLs
         run: copy "${{ github.workspace }}\resources\jvm\jinput-dx8_64.dll" "$env:JAVA_HOME\bin\"
 
@@ -320,14 +282,14 @@ jobs:
 
       - name: Set Release Version
         id: set-release-version
-        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/java-25-gonzonia'
+        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
         run: |
           $version = mvn "--batch-mode" org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate "-Dexpression=project.version" "-q" "-DforceStdout"
           echo "version=${version}" >> $env:GITHUB_OUTPUT
 
       - name: Draft Release
         uses: softprops/action-gh-release@v3
-        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/java-25-gonzonia'
+        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
         with:
           body_path: RELEASE_NOTES.md
           draft: true
@@ -345,4 +307,4 @@ jobs:
             ./Output/VPin-Studio/java-runtime-mac-x64.zip
             ./Output/VPin-Studio/java-runtime-mac-arm64.zip
         env:
-          GITHUB_REPOSITORY: https://github.com/gonzonia/vpin-studio
+          GITHUB_REPOSITORY: https://github.com/syd711/vpin-studio

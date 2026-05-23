@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
@@ -388,7 +389,7 @@ public class CardLayerScores extends Canvas implements CardLayer {
 
         if (renderDate && score.hasPlayer() && score.getCreatedAt() != null) {
           renderString += "  ";
-          renderString += df.format(score.getCreatedAt());
+          renderString += df.format(score.getCreatedAt().atZone(ZoneId.systemDefault()));
         }
 
         text.addLine(renderString, score.isExternal());

@@ -21,12 +21,12 @@ public class GameController {
 
   private GameController() {
     new Thread(() -> {
-      Controller[] controllers = null;
+      Controller[] controllers = new Controller[0];
       try {
         DirectInputEnvironmentPlugin plugin = new DirectInputEnvironmentPlugin();
         controllers = plugin.getControllers();
       }
-      catch (UnsatisfiedLinkError e) {
+      catch (UnsatisfiedLinkError | NoClassDefFoundError e) {
         LOG.info("Loaded game controllers: " + e.getMessage());
       }
       List<Controller> filteredControllers = Arrays.stream(controllers)

@@ -558,8 +558,7 @@ public class CompetitionsController implements Initializable, StudioFXController
           }
 
 
-          createdAtLabel.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
-                  .format(competition.getCreatedAt().atZone(ZoneId.systemDefault())));
+          createdAtLabel.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(competition.getCreatedAt().atZone(ZoneId.systemDefault())));
 
           //TODO mpf
           if (type.equals(CompetitionType.DISCORD.name()) || type.equals(CompetitionType.SUBSCRIPTION.name())) {
@@ -613,12 +612,9 @@ public class CompetitionsController implements Initializable, StudioFXController
 
 
           if (competition.getStartDate() != null) {
-
-
-            startLabel.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
-                    .format(competition.getStartDate().atZone(ZoneId.systemDefault())));
-            endLabel.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
-                    .format(competition.getEndDate().atZone(ZoneId.systemDefault())));
+            DateTimeFormatter fmt = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM);
+            startLabel.setText(fmt.format(competition.getStartDate().atZone(ZoneId.systemDefault()).toLocalDate()));
+            endLabel.setText(fmt.format(competition.getEndDate().atZone(ZoneId.systemDefault()).toLocalDate()));
           }
         }
       }
