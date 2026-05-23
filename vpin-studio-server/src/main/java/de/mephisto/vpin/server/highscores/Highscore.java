@@ -2,10 +2,9 @@ package de.mephisto.vpin.server.highscores;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.mephisto.vpin.server.games.Game;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.id.IncrementGenerator;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -25,6 +24,8 @@ public class Highscore {
   private Instant lastScanned;
 
   @Id
+  @GenericGenerator(name = "highscore_gen", type = IncrementGenerator.class)
+  @GeneratedValue(generator = "highscore_gen")
   private Long id;
 
   private int gameId;

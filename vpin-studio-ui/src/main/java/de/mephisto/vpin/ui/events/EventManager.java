@@ -46,7 +46,7 @@ public class EventManager {
     maintenanceMode = enabled;
     client.getSystemService().setMaintenanceMode(maintenanceMode);
     new Thread(() -> {
-      for (StudioEventListener listener : listeners) {
+      for (StudioEventListener listener : new ArrayList<>(listeners)) {
         listener.maintenanceEnabled(enabled);
       }
     }).start();
@@ -65,7 +65,7 @@ public class EventManager {
   public void notifyTableChange(int tableId, @Nullable String rom, @Nullable String gameName) {
     Platform.runLater(() -> {
       synchronized (listeners) {
-        for (StudioEventListener listener : listeners) {
+        for (StudioEventListener listener : new ArrayList<>(listeners)) {
           listener.tableChanged(tableId, rom, gameName);
         }
       }
@@ -74,7 +74,7 @@ public class EventManager {
 
   public void notifyBackglassChange(int emulatorId, String b2sFileName) {
     Platform.runLater(() -> {
-      for (StudioEventListener listener : listeners) {
+      for (StudioEventListener listener : new ArrayList<>(listeners)) {
         listener.backglassChanged(emulatorId, b2sFileName);
       }
     });
@@ -88,7 +88,7 @@ public class EventManager {
   public void notifyJobFinished(JobType type, int gameId, boolean cancelled, boolean finished) {
     JobFinishedEvent event = new JobFinishedEvent(type, gameId, cancelled, finished);
     new Thread(() -> {
-      for (StudioEventListener listener : listeners) {
+      for (StudioEventListener listener : new ArrayList<>(listeners)) {
         listener.jobFinished(event);
       }
     }).start();
@@ -96,7 +96,7 @@ public class EventManager {
 
   public void notifyRepositoryUpdate() {
     new Thread(() -> {
-      for (StudioEventListener listener : listeners) {
+      for (StudioEventListener listener : new ArrayList<>(listeners)) {
         listener.repositoryUpdated();
       }
     }).start();
@@ -104,7 +104,7 @@ public class EventManager {
 
   public void notifyTableSelectionChanged(List<GameRepresentation> games) {
     new Thread(() -> {
-      for (StudioEventListener listener : listeners) {
+      for (StudioEventListener listener : new ArrayList<>(listeners)) {
         listener.tablesSelected(games);
       }
     }).start();
@@ -112,7 +112,7 @@ public class EventManager {
 
   public void notifyAlxUpdate(@Nullable GameRepresentation game) {
     new Thread(() -> {
-      for (StudioEventListener listener : listeners) {
+      for (StudioEventListener listener : new ArrayList<>(listeners)) {
         listener.alxDataUpdated(game);
       }
     }).start();
@@ -128,7 +128,7 @@ public class EventManager {
 
   public void notifyTablesChanged() {
     new Thread(() -> {
-      for (StudioEventListener listener : listeners) {
+      for (StudioEventListener listener : new ArrayList<>(listeners)) {
         listener.tablesChanged();
       }
     }).start();
@@ -136,7 +136,7 @@ public class EventManager {
 
   public void notifyTableUploaded(UploadDescriptor result) {
     new Thread(() -> {
-      for (StudioEventListener listener : listeners) {
+      for (StudioEventListener listener : new ArrayList<>(listeners)) {
         listener.tableUploaded(result);
       }
     }).start();
@@ -144,7 +144,7 @@ public class EventManager {
 
   public void notify3rdPartyVersionUpdate(ComponentType type) {
     new Thread(() -> {
-      for (StudioEventListener listener : listeners) {
+      for (StudioEventListener listener : new ArrayList<>(listeners)) {
         listener.thirdPartyVersionUpdated(type);
       }
     }).start();
@@ -152,7 +152,7 @@ public class EventManager {
 
   public void notifyVpsTableChange(String id) {
     new Thread(() -> {
-      for (StudioEventListener listener : listeners) {
+      for (StudioEventListener listener : new ArrayList<>(listeners)) {
         listener.vpsTableChanged(id);
       }
     }).start();
@@ -160,7 +160,7 @@ public class EventManager {
 
   public void notifyVRModeEnabled(boolean b) {
     new Thread(() -> {
-      for (StudioEventListener listener : listeners) {
+      for (StudioEventListener listener : new ArrayList<>(listeners)) {
         listener.vrModeEnabled(b);
       }
     }).start();

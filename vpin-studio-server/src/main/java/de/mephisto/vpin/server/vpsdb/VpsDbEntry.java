@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.id.IncrementGenerator;
 import java.util.Objects;
 
 @Entity
@@ -13,7 +15,8 @@ import java.util.Objects;
 public class VpsDbEntry {
 
   @Id
-  @Column(name = "id", nullable = false)
+  @GenericGenerator(name = "vpsdbentry_gen", type = IncrementGenerator.class)
+  @GeneratedValue(generator = "vpsdbentry_gen")
   private Long id;
 
   private String vpsTableId;
