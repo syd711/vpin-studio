@@ -79,8 +79,8 @@ public class IScoredService implements PreferenceChangedListener, InitializingBe
       if (newScore.getPlayer() != null) {
         playerName = newScore.getPlayer().getName();
 
-        if (!StringUtils.isEmpty(newScore.getPlayer().getiScoredName())) {
-          playerName = newScore.getPlayer().getiScoredName();
+        if (!StringUtils.isEmpty(newScore.getPlayer().getCompetitionName())) {
+          playerName = newScore.getPlayer().getCompetitionName();
         }
       }
       IScoredResult result = IScored.submitScore(gameRoom, iScoredGame, playerName, newScore.getPlayerInitials(), newScore.getScore());
