@@ -226,17 +226,17 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
       return null;
     }
 
+    // fetch DB data before entering the FX thread to avoid blocking the JavaFX Application Thread
+    int[] res = getCardResolution(template.getTemplateType());
+    CardData data = getCardData(game, summary, template, true);
+
     // sync between FX thread and calling thread
     CountDownLatch latch = new CountDownLatch(1);
     BufferedImage[] generatedImage = {null};
     Platform.runLater(() -> {
       try {
-        int[] res = getCardResolution(template.getTemplateType());
-
         CardGraphicsHighscore cardGraphics = new CardGraphicsHighscore(false);
         cardGraphics.setTemplate(template);
-
-        CardData data = getCardData(game, summary, template, true);
 
         cardGraphics.setData(data, res[0], res[1]);
         // resize the cards to the needed resolution
