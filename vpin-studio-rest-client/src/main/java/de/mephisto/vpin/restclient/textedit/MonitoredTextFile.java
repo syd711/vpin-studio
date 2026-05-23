@@ -6,11 +6,7 @@ import java.io.File;
 import java.time.OffsetDateTime;
 
 public class MonitoredTextFile {
-
-//moved to field, otherwise it doesn't seem to work.
-    @JsonProperty("vPinFile")
-    private VPinFile vPinFile;
-
+  private MonitoredFile file;
   private String content;
   private OffsetDateTime lastModified;
   private String path;
@@ -18,13 +14,13 @@ public class MonitoredTextFile {
   private int emulatorId;
   private long size;
 
-  public MonitoredTextFile(VPinFile vPinFile) {
-    this.vPinFile = vPinFile;
+  public MonitoredTextFile(MonitoredFile monitoredFile) {
+    this.file = monitoredFile;
   }
 
   public MonitoredTextFile(File file) {
     this.path = file.getAbsolutePath();
-    this.vPinFile = VPinFile.LOCAL_GAME_FILE;
+    this.file = MonitoredFile.LOCAL_GAME_FILE;
   }
 
   public MonitoredTextFile(String text) {
@@ -51,12 +47,12 @@ public class MonitoredTextFile {
     this.path = path;
   }
 
-  public VPinFile getvPinFile() {
-    return vPinFile;
+  public MonitoredFile getFile() {
+    return file;
   }
 
-  public void setvPinFile(VPinFile vPinFile) {
-    this.vPinFile = vPinFile;
+  public void setFile(MonitoredFile file) {
+    this.file = file;
   }
 
   public long getSize() {
