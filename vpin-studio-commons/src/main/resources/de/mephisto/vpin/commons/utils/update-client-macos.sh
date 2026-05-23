@@ -1,24 +1,5 @@
 #!/bin/sh
 sleep 4
-
-ARCH=$(uname -m)
-if [ "$ARCH" = "arm64" ]; then
-    ZULU_BUNDLE="{{ZULU_BUNDLE_MACOS_AARCH64}}"
-else
-    ZULU_BUNDLE="{{ZULU_BUNDLE_MACOS_X64}}"
-fi
-ZULU_URL="https://cdn.azul.com/zulu/bin/${ZULU_BUNDLE}"
-JAVA_RELEASE="java-runtime/Contents/Home/release"
-
-if ! [ -f "${JAVA_RELEASE}" ] || ! grep -q "{{ZULU_VERSION_CHECK}}" "${JAVA_RELEASE}"; then
-    echo "Downloading Java runtime..." >> '{{MAC_WRITE_PATH}}Logs/vpin-studio-ui.log' 2>&1
-    rm -rf java-runtime
-    curl -L -o "${ZULU_BUNDLE}" "${ZULU_URL}" >> '{{MAC_WRITE_PATH}}Logs/vpin-studio-ui.log' 2>&1
-    mkdir -p java-runtime
-    tar -xzf "${ZULU_BUNDLE}" --strip-components=1 -C java-runtime >> '{{MAC_WRITE_PATH}}Logs/vpin-studio-ui.log' 2>&1
-    rm "${ZULU_BUNDLE}"
-fi
-
 echo "Unzipping jar..." >> '{{MAC_WRITE_PATH}}Logs/vpin-studio-ui.log' 2>&1
 unzip -o '{{MAC_WRITE_PATH}}/vpin-studio-ui-jar.zip' -d '{{MAC_WRITE_PATH}}_updatefolder' >> '{{MAC_WRITE_PATH}}Logs/vpin-studio-ui.log' 2>&1
 echo "Removing Zip..." >> '{{MAC_WRITE_PATH}}Logs/vpin-studio-ui.log' 2>&1

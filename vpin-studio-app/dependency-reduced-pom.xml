@@ -3,7 +3,7 @@
   <parent>
     <artifactId>studio</artifactId>
     <groupId>de.mephisto.vpin</groupId>
-    <version>4.9.4</version>
+    <version>5.0.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>vpin-studio-app</artifactId>
@@ -23,6 +23,22 @@
           <source>25</source>
           <target>25</target>
         </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>${maven-dependency-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>analyze</id>
+            <goals>
+              <goal>analyze-only</goal>
+            </goals>
+            <configuration>
+              <failOnWarning>false</failOnWarning>
+              <outputXML>false</outputXML>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>

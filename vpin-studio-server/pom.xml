@@ -47,7 +47,7 @@
         <jna.version>5.16.0</jna.version>
         <jinput.version>2.0.10</jinput.version>
         <evalex.version>3.3.0</evalex.version>
-        <vpin-studio-popper-client.version>1.1.0</vpin-studio-popper-client.version>
+        <vpin-studio-popper-client.version>2.0.0</vpin-studio-popper-client.version>
         <jda.version>6.4.1</jda.version>
         <vpin-connector-assets.version>1.1.0</vpin-connector-assets.version>
         <vpin-mania-rest-client.version>2.0.0</vpin-mania-rest-client.version>
