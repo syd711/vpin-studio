@@ -33,6 +33,7 @@ public class ShutdownThread extends Thread {
 
         boolean uiRunning = ServerFX.getInstance().isOverlayVisible() || PauseMenu.getInstance().isVisible();
         if (uiRunning) {
+          LOG.info("Shutdown reset, because UI is visible.");
           idleMinutes = 0;
           continue;
         }
