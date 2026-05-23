@@ -1,6 +1,6 @@
 package de.mephisto.vpin.commons.utils;
 
-import de.mephisto.vpin.commons.utils.scripts.MacOS;
+import de.mephisto.vpin.commons.MacOSUpdater;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
@@ -12,10 +12,12 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.Arrays;
@@ -37,6 +39,14 @@ public class Updater {
   public final static String UI_ZIP = "VPin-Studio.zip";
   public final static String UI_JAR_ZIP = "vpin-studio-ui-jar.zip";
   public final static long UI_ZIP_SIZE = 137 * 1000 * 1000;
+
+  private final static String JRE_MACOS_X64 = "zulu25.34.17-ca-fx-jre25.0.3-macosx_x64.tar.gz";
+  private final static String JRE_MACOS_ARCH64 = "zulu25.34.17-ca-fx-jre25.0.3-macosx_aarch64.tar.gz";
+  private final static String JRE_LINUX_X64 = "zulu25.34.17-ca-fx-jre25.0.3-linux_x64.tar.gz";
+  private final static String JRE_WIN_X64 = "zulu25.34.17-ca-fx-jre25.0.3-win_x64.zip";
+
+  // must match the IMPLEMENTOR_VERSION prefix in the JRE release file (e.g. "Zulu25.34.17+21-CA")
+  private final static String JRE_VERSION_CHECK = "Zulu25.34";
 
   private final static String DOWNLOAD_SUFFIX = ".bak";
 
@@ -125,7 +135,7 @@ public class Updater {
   }
 
   public static boolean installServerUpdate() throws IOException {
-    FileUtils.writeBatch("update-server.bat", "timeout /T 8 /nobreak\ncd /d %~dp0\ndel VPin-Studio-Server.exe\nresources\\7z.exe -aoa x \"VPin-Studio-Server.zip\"\ntimeout /T 4 /nobreak\ndel VPin-Studio-Server.zip\nwscript server.vbs\nexit");
+    FileUtils.writeBatch("update-server.bat", loadTemplate("update-server.bat"));
     List<String> commands = Arrays.asList("cmd", "/c", "start", "update-server.bat");
     SystemCommandExecutor executor = new SystemCommandExecutor(commands);
     executor.setDir(getWriteableBaseFolder());
@@ -135,7 +145,7 @@ public class Updater {
 
   public static boolean installClientUpdate(@Nullable String oldVersion, @Nullable String newVersion) throws IOException {
     if (OSUtil.isWindows()) {
-      String cmds = "timeout /T 4 /nobreak\ncd /d %~dp0\nresources\\7z.exe -aoa x \"VPin-Studio.zip\"\ntimeout /T 4 /nobreak\ndel VPin-Studio.zip\nVPin-Studio.exe\nexit";
+      String cmds = loadTemplate("update-client-windows.bat");
       FileUtils.writeBatch("update-client.bat", cmds);
       LOG.info("Written temporary batch: {}", cmds);
       List<String> commands = Arrays.asList("cmd", "/c", "start", "update-client.bat");
@@ -154,7 +164,7 @@ public class Updater {
     }
     else if (OSUtil.isLinux()) {
       try {
-        String cmds = "#!/bin/bash\nsleep 4\nunzip -o vpin-studio-ui-jar.zip\nrm vpin-studio-ui-jar.zip\n./VPin-Studio.sh &";
+        String cmds = loadTemplate("update-client-linux.sh");
         File file = FileUtils.writeBatch("update-client.sh", cmds);
         LOG.info("Written temporary bash: {}", cmds);
 
@@ -189,13 +199,13 @@ public class Updater {
       // For the macOS we'll use our startup bash to perform our upgrade.
       try {
         // Create update-client script.
-        MacOS.createUpdateScript();
+        MacOSUpdater.createUpdateScript();
 
-        MacOS.UpdateAppVersion(oldVersion, newVersion);
+        MacOSUpdater.UpdateAppVersion(oldVersion, newVersion);
 
         // Log the exit message
         LOG.info("Exiting VPin-Studio to perform update...");
-        MacOS.launchUpdateScript();
+        MacOSUpdater.launchUpdateScript();
       }
       catch (Exception e) {
         LOG.error("Failed to execute update and restart: {}", e.getMessage(), e);
@@ -251,6 +261,21 @@ public class Updater {
     }
 
     return false;
+  }
+
+  public static String loadTemplate(String templateName) throws IOException {
+    String resourcePath = "/de/mephisto/vpin/commons/utils/" + templateName;
+    try (InputStream is = Updater.class.getResourceAsStream(resourcePath)) {
+      if (is == null) {
+        throw new IOException("Update template not found on classpath: " + resourcePath);
+      }
+      return new String(is.readAllBytes(), StandardCharsets.UTF_8)
+          .replace("{{ZULU_VERSION_CHECK}}", JRE_VERSION_CHECK)
+          .replace("{{ZULU_BUNDLE_WIN}}", JRE_WIN_X64)
+          .replace("{{ZULU_BUNDLE_LINUX}}", JRE_LINUX_X64)
+          .replace("{{ZULU_BUNDLE_MACOS_AARCH64}}", JRE_MACOS_ARCH64)
+          .replace("{{ZULU_BUNDLE_MACOS_X64}}", JRE_MACOS_X64);
+    }
   }
 
   public static File getWriteableBaseFolder() {

@@ -1,3 +1,7 @@
-Menz — 8:44 PM
-hello... i am having 2 issues with the latest updates:
-2) everyday it reset the highscore on one (maybe more i just haven't noticed) of my tables. its associated with a iScore gameroom competition if that helps. i reset the score manually when the competition started and that was fine, now its reset the score everyday and i have had to restore the high scores i want to keep everyday
+Autobott — Yesterday at 8:15 PM
+I don't know it used to work when I had it on 60 but it stopped shutting down.
+I'll leave it going when I go to pick up my kids. I'm gone for about an hour when they I do that
+I basically went in. changed it to zero. let it save. went back in. change it to 60 then back that again
+it's currently set to shut down after 60
+
+
