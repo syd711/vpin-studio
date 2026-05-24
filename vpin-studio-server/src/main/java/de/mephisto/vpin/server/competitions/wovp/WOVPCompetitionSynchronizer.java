@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.competitions.wovp;
 
+import de.mephisto.vpin.connectors.mania.CabinetClient;
 import de.mephisto.vpin.connectors.wovp.Wovp;
 import de.mephisto.vpin.connectors.wovp.models.*;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -11,6 +12,7 @@ import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionIdUpdater;
 import de.mephisto.vpin.server.competitions.CompetitionLifecycleService;
 import de.mephisto.vpin.server.competitions.CompetitionService;
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.games.Game;
@@ -65,6 +67,9 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
 
   @Autowired
   private CompetitionIdUpdater competitionIdUpdater;
+
+  @Autowired
+  private EmulatorService emulatorService;
 
   @Autowired
   private GameCachingService gameCachingService;
@@ -175,7 +180,7 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
       addIssue(competition, "WOVP did not set a VPS version id for this challenge.");
     }
     competition.setType(CompetitionType.WEEKLY.name());
-    
+
     competition.setStartDate(challenge.getStartDateUTC().toInstant());
     competition.setEndDate(challenge.getEndDateUTC().toInstant());
 
@@ -286,8 +291,8 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
         LOG.info("----------------------------- /Initial WOVP Sync -------------------------------------------------");
         LOG.info("Initial sync finished, took {}ms", (System.currentTimeMillis() - start));
         gameCachingService.clearCache();
-
       }).start();
+
     }
   }
 

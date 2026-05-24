@@ -102,7 +102,7 @@ public class TablesSidebarDMDController implements Initializable {
     }
     else {
       try {
-        boolean b = Dialogs.openTextEditor(new MonitoredTextFile(MonitoredFile.DmdDeviceIni), "DmdDevice.ini");
+        boolean b = Dialogs.openTextEditor(new MonitoredTextFile(String.valueOf(MonitoredFile.DmdDeviceIni)), "DmdDevice.ini");
         if (b) {
           client.getMameService().clearCache();
           EventManager.getInstance().notifyTablesChanged();

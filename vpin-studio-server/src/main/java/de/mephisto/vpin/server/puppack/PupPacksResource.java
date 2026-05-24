@@ -25,8 +25,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
 import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.util.List;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
@@ -156,7 +154,7 @@ public class PupPacksResource {
     representation.setSize(pupPack.getSize());
     representation.setScriptOnly(pupPack.isScriptOnly());
     representation.setPath(pupPack.getPupPackFolder().getPath().replaceAll("\\\\", "/"));
-    representation.setModificationDate(OffsetDateTime.ofInstant(Instant.ofEpochMilli(pupPack.getPupPackFolder().lastModified()), ZoneId.systemDefault()));
+    representation.setModificationDate(Instant.ofEpochMilli(pupPack.getPupPackFolder().lastModified()));
     representation.setOptions(pupPack.getOptions());
     representation.setScreenDMDMode(pupPack.getScreenMode(VPinScreen.DMD));
     representation.setScreenBackglassMode(pupPack.getScreenMode(VPinScreen.BackGlass));

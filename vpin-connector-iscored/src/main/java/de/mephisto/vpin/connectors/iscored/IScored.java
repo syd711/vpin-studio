@@ -40,7 +40,7 @@ public class IScored {
 
       @Override
       public Instant deserialize(JsonParser p, DeserializationContext ctxt) {
-        String text = p.getText();
+        String text = p.getString();
         if (text == null || text.isBlank()) {
           return null;
         }

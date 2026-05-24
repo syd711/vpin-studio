@@ -303,6 +303,8 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
                 }
             }
         }
+        // Keeping for testing.
+        // infos.forEach(info -> applyGameValidation(info, findFirstIssueOnly));
 
         infos.stream().forEach(info -> applyGameValidation(info, findFirstIssueOnly));
 

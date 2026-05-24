@@ -26,6 +26,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.jspecify.annotations.NonNull;
+import org.apache.commons.collections4.ListUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -247,7 +249,7 @@ public abstract class BaseConnector implements FrontendConnector {
     game.setGameFileName(details != null ? details.getGameFileName() : filename);
     game.setGameDisplayName(details != null ? details.getGameDisplayName() : gameName);
     game.setGameStatus(details != null ? details.getStatus() : 1);
-    game.setDisabled(details != null ? details.getStatus() == 0 : false);
+    game.setDisabled(details != null && details.getStatus() == 0);
     game.setVersion(details != null ? details.getGameVersion() : null);
     game.setRating(details != null && details.getGameRating() != null ? details.getGameRating() : 0);
     game.setRom(details != null && details.getRomName() != null ? details.getRomName() : null);
@@ -581,7 +583,7 @@ public abstract class BaseConnector implements FrontendConnector {
     pl.setSqlPlayList(true);
     OffsetDateTime dayMinus7 = OffsetDateTime.now().minus(7, ChronoUnit.DAYS);
     List<PlaylistGame> games = getGames().stream().filter(g -> {
-      return g.getDateAdded() != null ? g.getDateAdded().isAfter(dayMinus7) : false;
+      return g.getDateAdded() != null && g.getDateAdded().isAfter(dayMinus7);
     }).map(g -> toPlaylistGame(g.getId())).collect(Collectors.toList());
     pl.setGames(games);
     return pl;
@@ -758,7 +760,7 @@ public abstract class BaseConnector implements FrontendConnector {
     if (playlistConfFile != null) {
       try {
         String content = o.toString();
-        Files.write(playlistConfFile.toPath(), content.getBytes(StandardCharsets.UTF_8));
+        Files.writeString(playlistConfFile.toPath(), content);
       }
       catch (IOException ioe) {
         LOG.error("Ignored error, cannot write file {}", playlistConfFile.getAbsolutePath(), ioe);
@@ -934,7 +936,7 @@ public abstract class BaseConnector implements FrontendConnector {
                     p.info().command().get().startsWith("MAME") ||
                     p.info().command().get().contains("B2SBackglassServerEXE") ||
                     p.info().command().get().contains("DOF")))
-        .collect(Collectors.toList());
+        .toList();
 
     if (processes.isEmpty()) {
       LOG.info("No vpin processes found, termination canceled.");
@@ -992,7 +994,7 @@ public abstract class BaseConnector implements FrontendConnector {
   private boolean launchGame(Game game, boolean wait) {
     if (game.isVpxGame()) {
       if (vpxService.play(game, null, null)) {
-        return !wait ? true : vpxService.waitForPlayer();
+        return !wait || vpxService.waitForPlayer();
       }
       return false;
     }

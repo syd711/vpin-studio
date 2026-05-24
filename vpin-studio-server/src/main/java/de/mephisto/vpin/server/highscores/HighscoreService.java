@@ -230,7 +230,7 @@ public class HighscoreService implements InitializingBean {
     }
 
     String rankingPoints = (String) preferencesService.getPreferenceValue(PreferenceNames.RANKING_POINTS, "4,2,1,0");
-    List<Integer> points = Arrays.stream(rankingPoints.split(",")).map(Integer::parseInt).collect(Collectors.toList());
+    List<Integer> points = Arrays.stream(rankingPoints.split(",")).map(Integer::parseInt).toList();
 
     List<RankedPlayer> rankedPlayers = new ArrayList<>(playerMap.values());
     for (RankedPlayer rankedPlayer : rankedPlayers) {
@@ -289,7 +289,7 @@ public class HighscoreService implements InitializingBean {
     scoreList.getScores().sort(Comparator.comparing(ScoreSummary::getCreatedAt));
 
     if (!scoreList.getScores().isEmpty()) {
-      scoreList.setLatestScore(scoreList.getScores().get(0));
+      scoreList.setLatestScore(scoreList.getScores().getFirst());
     }
     return scoreList;
   }
@@ -391,6 +391,12 @@ public class HighscoreService implements InitializingBean {
               versionScores = highscoreParser.parseScores(version.getCreatedAt(), version.getNewRaw(), game, serverId);
               parsedVersions.put(version, versionScores);
             }
+          // Guard against historical snapshots with fewer entries than changedPos implies
+          if (changedPos >= versionScores.size()) {
+              LOG.warn("Changed Position of {} is out of bounds for high score version {} with {} scores (game: {})",
+                      changedPos, version.getId(), versionScores.size(), game.getGameDisplayName());
+              continue;
+          }
             Score oldScore = versionScores.get(changedPos);
             // verify same score and same player
             if (newScore.matches(oldScore)) {
@@ -719,7 +725,7 @@ public class HighscoreService implements InitializingBean {
       return;
     }
 
-    Collections.sort(events, (o1, o2) -> Long.compare(o2.getNewScore().getScore(), o1.getNewScore().getScore()));
+    events.sort((o1, o2) -> Long.compare(o2.getNewScore().getScore(), o1.getNewScore().getScore()));
     for (HighscoreChangeEvent event : events) {
       for (HighscoreChangeListener listener : listeners) {
         listener.highscoreChanged(event);

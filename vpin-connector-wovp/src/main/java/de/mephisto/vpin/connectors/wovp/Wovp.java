@@ -5,7 +5,6 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
@@ -119,16 +118,16 @@ public class Wovp {
       httppost.setHeader("X-Client-ID", "vpin-studio");
       httppost.setHeader("Authorization", "Bearer " + apiKey);
 
-      try (CloseableHttpResponse response = httpclient.execute(httppost)) {
-        HttpEntity responseEntity = response.getEntity();
-        String body = EntityUtils.toString(responseEntity, "UTF-8");
+        return httpclient.execute(httppost, response -> {
+            HttpEntity responseEntity = response.getEntity();
+            String body = EntityUtils.toString(responseEntity, "UTF-8");
 
-        if (response.getCode() != 200) {
-          throw new UnsupportedOperationException("WOVP image upload failed with code " + response.getCode());
-        }
+            if (response.getCode() != 200) {
+                throw new UnsupportedOperationException("WOVP image upload failed with code " + response.getCode());
+            }
 
-        return objectMapper.readValue(body, UploadResponse.class);
-      }
+            return objectMapper.readValue(body, UploadResponse.class);
+        });
     }
     catch (Exception e) {
       LOG.error("Failed to post score image to wovp: {}", e.getMessage(), e);
