@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.*;
 
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,31 +85,31 @@ public class NvRamParsingWithParser implements NvRamOutputToRaw, ScoreListAdapte
     return isSupportedRom(rom);
   }
 
-    @Override
-    public List<Score> getScores(Game game, Instant createdAt, List<String> lines, boolean parseAll) throws IOException {
-        Locale locale = Locale.getDefault();
-        String rom = game != null ? game.getRom().toLowerCase() : "<no rom>";
-        if (isSupportedRom(rom)) {
-          List<Score> scores = null;
-          try {
-            List<NVRamScore> nvRamScores = parser.parseRaw(rom, lines, locale, parseAll);
-            scores = new ArrayList<>();
-            for (NVRamScore nvramScore : nvRamScores) {
-                Score sc = new Score(createdAt, game.getId(),
-                        nvramScore.getInitials(), null,
-                        nvramScore.getRawScore(),
-                        nvramScore.getScore(),
-                        nvramScore.getPosition());
-                sc.setSuffix(nvramScore.getSuffix());
-                sc.setLabel(nvramScore.getLabel());
-                scores.add(sc);
-            }
-          }
-          catch (Exception e) {
-            LOG.info("Parsing score for ROM {} failed: {}", rom, e.getMessage());
-          }
-          return scores;
+  @NotNull
+  @Override
+  public List<Score> getScores(@NotNull Game game, @NotNull Instant createdAt, @NotNull List<String> lines, boolean parseAll) throws IOException {
+    Locale locale = Locale.getDefault();
+    String rom = game != null ? game.getRom().toLowerCase() : "<no rom>";
+    if (isSupportedRom(rom)) {
+      List<Score> scores = new ArrayList<>();
+      try {
+        List<NVRamScore> nvRamScores = parser.parseRaw(rom, lines, locale, parseAll);
+        for (NVRamScore nvramScore : nvRamScores) {
+          Score sc = new Score(createdAt, game.getId(),
+              nvramScore.getInitials(), null,
+              nvramScore.getRawScore(),
+              nvramScore.getScore(),
+              nvramScore.getPosition());
+          sc.setSuffix(nvramScore.getSuffix());
+          sc.setLabel(nvramScore.getLabel());
+          scores.add(sc);
         }
-        return Collections.emptyList();
+      }
+      catch (Exception e) {
+        LOG.info("Parsing score for ROM {} failed: {}", rom, e.getMessage());
+      }
+      return scores;
     }
+    return Collections.emptyList();
+  }
 }

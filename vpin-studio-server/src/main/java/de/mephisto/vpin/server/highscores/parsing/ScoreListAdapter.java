@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface ScoreListAdapter {
 
-    boolean isApplicable(@NonNull Game game);
+  boolean isApplicable(@NonNull Game game);
 
   @NonNull
   List<Score> getScores(@NonNull Game game, @NonNull Instant createdAt, @NonNull List<String> lines, boolean parseAll) throws IOException;
