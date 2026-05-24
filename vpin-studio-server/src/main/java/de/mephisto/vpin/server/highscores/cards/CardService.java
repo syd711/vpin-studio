@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.highscores.cards;
 
-import org.jspecify.annotations.Nullable;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.cfg.EnumFeature;
 import tools.jackson.databind.json.JsonMapper;
@@ -226,19 +225,18 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
     if (summary.getScores().isEmpty()) {
       return null;
     }
-      //Moved out of .runLater to prevent DB locks
-      CardData data = getCardData(game, summary, template, true);
 
-      // sync between FX thread and calling thread
+    // fetch DB data before entering the FX thread to avoid blocking the JavaFX Application Thread
+    int[] res = getCardResolution(template.getTemplateType());
+    CardData data = getCardData(game, summary, template, true);
+
+    // sync between FX thread and calling thread
     CountDownLatch latch = new CountDownLatch(1);
     BufferedImage[] generatedImage = {null};
     Platform.runLater(() -> {
       try {
-        int[] res = getCardResolution(template.getTemplateType());
-
         CardGraphicsHighscore cardGraphics = new CardGraphicsHighscore(false);
         cardGraphics.setTemplate(template);
-
 
         cardGraphics.setData(data, res[0], res[1]);
         // resize the cards to the needed resolution

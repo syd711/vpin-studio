@@ -170,7 +170,7 @@ public class CompetitionsServiceClient extends VPinStudioClientService {
     try {
       IScoredSyncModel sync = new IScoredSyncModel();
       sync.setGame(next);
-      sync.setiScoredGameRoom(gameRoom);
+      sync.setGameRoom(gameRoom);
       sync.setManualSubscription(manualSubscription);
       sync.setInvalidate(invalidate);
       return getRestClient().post(API + "competitions/iscored/synchronizeGameRoom", sync, IScoredSyncModel.class);

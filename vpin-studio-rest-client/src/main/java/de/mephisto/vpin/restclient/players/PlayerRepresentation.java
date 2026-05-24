@@ -24,8 +24,7 @@ public class PlayerRepresentation {
 
   private String name;
 
-  @JsonProperty("iScoredName")
-  private String iScoredName;
+  private String competitionName;
 
   private String domain;
 
@@ -47,12 +46,12 @@ public class PlayerRepresentation {
     return account;
   }
 
-  public String getiScoredName() {
-    return iScoredName;
+  public String getCompetitionName() {
+    return competitionName;
   }
 
-  public void setiScoredName(String iScoredName) {
-    this.iScoredName = iScoredName;
+  public void setCompetitionName(String competitionName) {
+    this.competitionName = competitionName;
   }
 
   public String getManiaAccountUuid() {

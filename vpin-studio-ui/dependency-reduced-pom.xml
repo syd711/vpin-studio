@@ -517,7 +517,7 @@
               <goal>exec</goal>
             </goals>
             <configuration>
-              <skip>${skipMacOSBuild}</skip>
+              <skip>${macOSBuild}</skip>
               <executable>${basedir}/../Output/VPin-Studio/resources/7z.exe</executable>
               <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
               <arguments>
